@@ -1,0 +1,131 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <ProjectGuid>{4E3A54B3-66DF-4E09-B2B6-65690FF8122E}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <OutputPath>bin</OutputPath>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <TypeScriptToolsVersion>1.0</TypeScriptToolsVersion>
+    <UseIISExpress>true</UseIISExpress>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="css\platypus.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <TypeScriptCompile Include="acquire\acquire.ts" />
+    <TypeScriptCompile Include="app\app.ts" />
+    <TypeScriptCompile Include="async\ajax.ts" />
+    <TypeScriptCompile Include="async\promise.ts" />
+    <TypeScriptCompile Include="compat\compat.ts" />
+    <TypeScriptCompile Include="controls\attributecontrol\attributecontrol.ts" />
+    <TypeScriptCompile Include="controls\bind\bind.ts" />
+    <TypeScriptCompile Include="controls\elementpropertycontrol\elementpropertycontrol.ts" />
+    <TypeScriptCompile Include="controls\keycodeevent\keycodeevent.ts" />
+    <TypeScriptCompile Include="controls\name\namecontrol.ts" />
+    <TypeScriptCompile Include="controls\observableattributecontrol\observableattributecontrol.ts" />
+    <TypeScriptCompile Include="controls\options\options.ts" />
+    <TypeScriptCompile Include="controls\setattributecontrol\setattributecontrol.ts" />
+    <TypeScriptCompile Include="controls\simpleevent\simpleevent.ts" />
+    <TypeScriptCompile Include="control\control.ts" />
+    <TypeScriptCompile Include="dependency\injector\injector.ts" />
+    <TypeScriptCompile Include="document\document.ts" />
+    <TypeScriptCompile Include="events\dispatchevent.ts" />
+    <TypeScriptCompile Include="events\errorevent.ts" />
+    <TypeScriptCompile Include="events\eventmanager.ts" />
+    <TypeScriptCompile Include="events\lifecycleevent.ts" />
+    <TypeScriptCompile Include="events\navigationevent.ts" />
+    <TypeScriptCompile Include="exception\exception.ts" />
+    <TypeScriptCompile Include="expressions\operators\operators.ts" />
+    <TypeScriptCompile Include="expressions\parser\parser.ts" />
+    <TypeScriptCompile Include="expressions\regex\regex.ts" />
+    <TypeScriptCompile Include="expressions\tokenizer\tokenizer.ts" />
+    <TypeScriptCompile Include="injectables\geolocation\geolocation.ts" />
+    <TypeScriptCompile Include="injectables\indexeddb\indexeddb.ts" />
+    <TypeScriptCompile Include="jqm\platypus.jqm.ts" />
+    <TypeScriptCompile Include="navigation\basenavigator.ts" />
+    <TypeScriptCompile Include="navigation\navigator.ts" />
+    <TypeScriptCompile Include="navigation\routingnavigator.ts" />
+    <TypeScriptCompile Include="observable\contextmanager\contextmanager.ts" />
+    <TypeScriptCompile Include="processing\compiler\compiler.ts" />
+    <TypeScriptCompile Include="processing\nodemanager\commentmanager.ts" />
+    <TypeScriptCompile Include="processing\nodemanager\elementmanager.ts" />
+    <TypeScriptCompile Include="processing\nodemanager\nodemanager.ts" />
+    <TypeScriptCompile Include="processing\nodemanager\textmanager.ts" />
+    <TypeScriptCompile Include="register\register.ts" />
+    <TypeScriptCompile Include="storage\basestorage.ts" />
+    <TypeScriptCompile Include="storage\cache\cache.ts" />
+    <TypeScriptCompile Include="storage\cache\templatecache.ts" />
+    <TypeScriptCompile Include="storage\localstorage.ts" />
+    <TypeScriptCompile Include="storage\sessionstorage.ts" />
+    <TypeScriptCompile Include="ui\attributes\attributes.ts" />
+    <TypeScriptCompile Include="ui\bindabletemplates\bindabletemplates.ts" />
+    <TypeScriptCompile Include="ui\controls\anchor\anchor.ts" />
+    <TypeScriptCompile Include="ui\controls\foreach\foreach.ts" />
+    <TypeScriptCompile Include="ui\controls\html\html.ts" />
+    <TypeScriptCompile Include="ui\controls\if\if.ts" />
+    <TypeScriptCompile Include="ui\controls\ignore\ignore.ts" />
+    <TypeScriptCompile Include="ui\controls\select\select.ts" />
+    <TypeScriptCompile Include="ui\controls\template\template.ts" />
+    <TypeScriptCompile Include="ui\controls\viewport\baseport.ts" />
+    <TypeScriptCompile Include="ui\controls\viewport\routeport.ts" />
+    <TypeScriptCompile Include="ui\controls\viewport\viewport.ts" />
+    <TypeScriptCompile Include="ui\dom\dom.ts" />
+    <TypeScriptCompile Include="ui\resources\resources.ts" />
+    <TypeScriptCompile Include="ui\templatecontrol\templatecontrol.ts" />
+    <TypeScriptCompile Include="ui\viewcontrol\viewcontrol.ts" />
+    <TypeScriptCompile Include="utils\utils.ts" />
+    <TypeScriptCompile Include="utils\utilsglobal.ts" />
+    <TypeScriptCompile Include="web\browser\browser.config.ts" />
+    <TypeScriptCompile Include="web\browser\browser.ts" />
+    <TypeScriptCompile Include="web\router\router.ts" />
+    <TypeScriptCompile Include="window\window.ts" />
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace>framework</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>52347</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:52572/framework</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <TypeScriptTarget>ES5</TypeScriptTarget>
+    <TypeScriptRemoveComments>false</TypeScriptRemoveComments>
+    <TypeScriptSourceMap>true</TypeScriptSourceMap>
+    <TypeScriptModuleKind>none</TypeScriptModuleKind>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <TypeScriptTarget>ES5</TypeScriptTarget>
+    <TypeScriptRemoveComments>False</TypeScriptRemoveComments>
+    <TypeScriptSourceMap>True</TypeScriptSourceMap>
+    <TypeScriptModuleKind>none</TypeScriptModuleKind>
+  </PropertyGroup>
+  <Import Project="$(VSToolsPath)\TypeScript\Microsoft.TypeScript.targets" Condition="Exists('$(VSToolsPath)\TypeScript\Microsoft.TypeScript.targets')" />
+</Project>
