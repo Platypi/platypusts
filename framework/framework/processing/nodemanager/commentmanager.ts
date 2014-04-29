@@ -1,0 +1,79 @@
+module plat.processing {
+    /**
+     * A class used to manage Comment nodes. Provides a way to 
+     * clone a Comment node.
+     */
+    export class CommentManager extends NodeManager implements ICommentManager {
+        /**
+         * Creates a new CommentManager for the given Comment node.
+         * 
+         * @static
+         * @param node The Comment to associate with the new manager.
+         * @param parent The parent IElementManager.
+         */
+        static create(node: Node, parent: IElementManager) {
+            var manager = new CommentManager();
+
+            manager.initialize({
+                nodes: [{
+                    node: node
+                }]
+            }, parent);
+        }
+
+        /**
+         * Specifies the type of INodeManager.
+         */
+        type: string = 'comment';
+
+        /**
+         * A method for cloning this CommentManager.
+         * 
+         * @param newNode The new Comment node to associate with the cloned
+         * manager.
+         * @param parentManager The parent IElementManager for the new clone.
+         */
+        clone(newNode: Node, parentManager: IElementManager) {
+            CommentManager.create(newNode, parentManager);
+            return 1;
+        }
+    }
+
+    /**
+     * The Type for referencing the '$CommentManagerStatic' injectable as a dependency.
+     */
+    export function CommentManagerStatic() {
+        return CommentManager;
+    }
+
+    register.injectable('$CommentManagerStatic', CommentManagerStatic,
+        null, register.injectableType.STATIC);
+
+    /**
+     * An object used to manage Comment nodes.
+     */
+    export interface ICommentManager extends INodeManager {
+        /**
+         * A method for cloning this CommentManager.
+         * 
+         * @param newNode The new Comment node to associate with the cloned
+         * manager.
+         * @param parentManager The parent IElementManager for the new clone.
+         */
+        clone(newNode: Node, parentManager: IElementManager): number;
+    }
+
+    /**
+     * The external interface for the '$CommentManagerStatic' injectable.
+     */
+    export interface ICommentManagerStatic {
+        /**
+         * Creates a new CommentManager for the given Comment node.
+         *
+         * @static
+         * @param node The Comment to associate with the new manager.
+         * @param parent The parent IElementManager.
+         */
+        create(node: Node, parent: IElementManager): ICommentManager;
+    }
+}
