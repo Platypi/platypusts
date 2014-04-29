@@ -22,7 +22,7 @@
         /**
          * A function for adding listeners.
          */
-        _boundAddListener;
+        _boundAddListener: (listener: (newValue: any, oldValue: any) => void) => IRemoveListener;
 
         /**
          * The function to stop listening for property changes.
