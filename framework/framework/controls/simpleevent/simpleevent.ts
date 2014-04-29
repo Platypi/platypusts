@@ -16,7 +16,7 @@ module plat.controls {
         /**
          * Our event handler bound to our own context.
          */
-        _listener: any;
+        _listener: (ev: any) => void;
 
         /**
          * A parsed form of the expression found in the attribute's value.
