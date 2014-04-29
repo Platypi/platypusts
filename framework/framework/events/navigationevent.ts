@@ -60,7 +60,7 @@
          * @param sender The object that initiated the event.
          * @param direction This will always be a direct event no matter what is sent in.
          * 
-         * @see eventDirection
+         * @see EventManager.direction
          */
         initialize(name: string, sender: V, direction?: string, eventOptions?: INavigationEventOptions<T, U>) {
             super.initialize(name, sender, this.$EventManagerStatic.direction.DIRECT);
@@ -176,9 +176,9 @@
          * 
          * @param name The name of the event.
          * @param sender The object that initiated the event.
-         * @param direction='direct' Equivalent to EventManager.DIRECT.
+         * @param direction='direct' Equivalent to EventManager.direction.DIRECT.
          * 
-         * @see eventDirection
+         * @see EventManager.direction
          */
         initialize(name: string, sender: V, direction?: 'direct', eventOptions?: INavigationEventOptions<T, U>);
         /**
@@ -188,7 +188,7 @@
          * @param sender The object that initiated the event.
          * @param direction This will always be a direct event no matter what is sent in.
          * 
-         * @see eventDirection
+         * @see EventManager.direction
          */
         initialize(name: string, sender: V, direction?: string, eventOptions?: INavigationEventOptions<T, U>);
     }

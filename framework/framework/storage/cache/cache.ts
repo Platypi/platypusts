@@ -254,7 +254,7 @@ module plat.storage {
         clear(): void;
 
         /**
-         * Method for removing an ICache from the CacheFactory.
+         * Method for removing an ICache from the $CacheStatic.
          */
         dispose(): void;
     }
