@@ -5,9 +5,6 @@ module app {
         };
         hello = true;
         templateUrl = 'viewcontrols/main/main.viewcontrol.html';
-        initialize() {
-            this.context;
-        }
     }
 
     plat.register.viewControl('viewcontrol', MainViewControl, undefined, ['/', ':test/page(/:baz)(/*path)']);
