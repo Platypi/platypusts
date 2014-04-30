@@ -1,5 +1,16 @@
 module plat {
     /**
+     * We need to add [plat-hide] as a css property so we can use it to temporarily 
+     * hide elements.
+     */
+    if (isDocument(document)) {
+        var style = <HTMLStyleElement>document.createElement('style');
+
+        style.textContent = '[plat-hide] { display: none; }';
+        document.head.appendChild(style);
+    }
+
+    /**
      * Class for every app. This class contains hooks for Application Lifecycle Events 
      * as well as error handling.
      */
@@ -64,16 +75,25 @@ module plat {
         static load(node?: Node) {
             var $LifecycleEventStatic = App.$LifecycleEventStatic,
                 compiler = App.$compiler,
-                $document = App.$document;
+                body = App.$document.body;
 
             $LifecycleEventStatic.dispatch('beforeLoad', App);
 
+
             if (isNull(node)) {
-                compiler.compile($document.body);
+                body.setAttribute('plat-hide', '');
+                compiler.compile(body);
+                body.removeAttribute('plat-hide');
                 return;
             }
 
-            compiler.compile(node);
+            if (isFunction((<HTMLElement>node).setAttribute)) {
+                (<HTMLElement>node).setAttribute('plat-hide', '');
+                compiler.compile(node);
+                (<HTMLElement>node).removeAttribute('plat-hide');
+            } else {
+                compiler.compile(node);
+            }
         }
 
         /**

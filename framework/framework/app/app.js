@@ -1,5 +1,16 @@
-var plat;
+﻿var plat;
 (function (plat) {
+    /**
+    * We need to add [plat-hide] as a css property so we can use it to temporarily
+    * hide elements.
+    */
+    if (isDocument(document)) {
+        var style = document.createElement('style');
+
+        style.textContent = '[plat-hide] { display: none; }';
+        document.head.appendChild(style);
+    }
+
     /**
     * Class for every app. This class contains hooks for Application Lifecycle Events
     * as well as error handling.
@@ -62,16 +73,24 @@ var plat;
         * @param node The node at which DOM compilation begins.
         */
         App.load = function (node) {
-            var $LifecycleEventStatic = App.$LifecycleEventStatic, compiler = App.$compiler, $document = App.$document;
+            var $LifecycleEventStatic = App.$LifecycleEventStatic, compiler = App.$compiler, body = App.$document.body;
 
             $LifecycleEventStatic.dispatch('beforeLoad', App);
 
             if (isNull(node)) {
-                compiler.compile($document.body);
+                body.setAttribute('plat-hide', '');
+                compiler.compile(body);
+                body.removeAttribute('plat-hide');
                 return;
             }
 
-            compiler.compile(node);
+            if (isFunction(node.setAttribute)) {
+                node.setAttribute('plat-hide', '');
+                compiler.compile(node);
+                node.removeAttribute('plat-hide');
+            } else {
+                compiler.compile(node);
+            }
         };
 
         /**
