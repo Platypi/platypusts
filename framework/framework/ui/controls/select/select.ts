@@ -71,7 +71,7 @@ module plat.ui.controls {
 
             if (isNull(this.__removeListener)) {
                 this.__removeListener = this.observeArray(this, 'context',
-                function watchArray(ev?: observable.IArrayMethodInfo<any>) {
+                (ev?: observable.IArrayMethodInfo<any>) => {
                     if (isFunction(this['_' + ev.method])) {
                         this['_' + ev.method](ev);
                     }
@@ -98,7 +98,7 @@ module plat.ui.controls {
 
             this._addItems(context.length, 0);
 
-            this.__removeListener = this.observeArray(this, 'context', function watchArray(ev?: observable.IArrayMethodInfo<any>) {
+            this.__removeListener = this.observeArray(this, 'context', (ev?: observable.IArrayMethodInfo<any>) => {
                 if (isFunction(this['_' + ev.method])) {
                     this['_' + ev.method](ev);
                 }
@@ -130,7 +130,7 @@ module plat.ui.controls {
             for (var i = 0; i < numberOfItems; ++i, ++index) {
                 item = this.context[index];
 
-                this.bindableTemplates.bind('option', this._insertOptions.bind(this, index, item), '' + index);
+                this.bindableTemplates.bind('option', this._insertOptions.bind(this, index, item), index);
             }
         }
 

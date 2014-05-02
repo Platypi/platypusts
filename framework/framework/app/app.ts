@@ -60,7 +60,7 @@ module plat {
                 var $LifecycleEventStatic = App.$LifecycleEventStatic,
                     dispatch = $LifecycleEventStatic.dispatch;
 
-                postpone(function ready() {
+                postpone(() => {
                     dispatch('ready', $LifecycleEventStatic);
                 });
             }

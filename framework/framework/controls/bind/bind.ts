@@ -171,7 +171,7 @@ module plat.controls {
                 this._propertyChanged();
             };
 
-            this._postponedEventListener = function () {
+            this._postponedEventListener = () => {
                 if (!!timeout) {
                     return;
                 }
@@ -366,7 +366,7 @@ module plat.controls {
         _pushRemoveEventListener(event: string, listener: () => void) {
             var element = this.element;
 
-            this._removeEventListeners.push(function () {
+            this._removeEventListeners.push(() => {
                 element.removeEventListener(event, listener, false);
             });
         }

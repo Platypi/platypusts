@@ -161,9 +161,7 @@ module plat.dependency {
 
         private static __wrap(value: any): IInjector<any> {
             return {
-                inject: function () {
-                    return value;
-                },
+                inject: () => value,
                 name: 'wrapped',
                 __dependencies: [],
                 Constructor: value
@@ -257,9 +255,7 @@ module plat.dependency {
                 name: this.name,
                 __dependencies: this.__dependencies,
                 Constructor: this.Constructor,
-                inject: function () {
-                    return <T>value;
-                }
+                inject: () => <T>value
             };
         }
     }

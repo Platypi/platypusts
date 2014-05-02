@@ -143,7 +143,7 @@ module plat.ui {
                 return;
             }
 
-            if (!(isNumber(relativeIdentifier) || isString(relativeIdentifier))) {
+            if (!(isNull(relativeIdentifier) || isNumber(relativeIdentifier) || isString(relativeIdentifier))) {
                 this.$ExceptionStatic.warn('Cannot bind template with relativeIdentifier: ' +
                     relativeIdentifier +
                     '. Identifier must be either a string or number', this.$ExceptionStatic.BIND);

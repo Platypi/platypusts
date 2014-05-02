@@ -167,9 +167,7 @@ module plat.observable {
          */
         static defineGetter(obj: any, key: string, value: any, enumerable?: boolean, configurable?: boolean) {
             Object.defineProperty(obj, key, {
-                get: function () {
-                    return value;
-                },
+                get: () => value,
                 enumerable: !!enumerable,
                 configurable: !!configurable
             });
@@ -324,7 +322,7 @@ module plat.observable {
                     removeObservedCallback = this._addObservableListener(observedIdentifier, observableListener);
                 }
 
-                removeCallback = function removeObservableCallback() {
+                removeCallback = () => {
                     removeAbsoluteCallback();
                     removeObservedCallback();
                 };
@@ -604,7 +602,7 @@ module plat.observable {
 
             ContextManager.pushRemoveListener(absoluteIdentifier, uid, contextManagerCallback);
 
-            return function removeObservableCallback() {
+            return () => {
                 ContextManager.removeIdentifier([uid], absoluteIdentifier);
                 contextManagerCallback(absoluteIdentifier, uid);
             };

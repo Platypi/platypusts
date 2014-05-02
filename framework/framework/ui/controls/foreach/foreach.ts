@@ -152,7 +152,7 @@ module plat.ui.controls {
             var bindableTemplates = this.bindableTemplates;
             
             for (var i = 0; i < numberOfItems; ++i, ++index) {
-                bindableTemplates.bind('item', this._addItem, '' + index, this._getAliases(index));
+                bindableTemplates.bind('item', this._addItem, index, this._getAliases(index));
             }
         }
 

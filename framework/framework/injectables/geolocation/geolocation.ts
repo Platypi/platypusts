@@ -14,7 +14,7 @@ module plat {
          */
         getCurrentPosition(positionOptions?: IGeolocationPositionOptions) {
             return new this.$PromiseStatic<IGeolocationPosition,
-                IGeolocationPositionError>(function (resolve, reject) {
+                IGeolocationPositionError>((resolve, reject) => {
                     navigator.geolocation.getCurrentPosition(resolve, reject, positionOptions);
                 });
         }
@@ -40,7 +40,7 @@ module plat {
 
             var timeoutId = navigator.geolocation.watchPosition(updateCallback, errorCallback, positionOptions);
 
-            return function clearWatch() {
+            return () => {
                 navigator.geolocation.clearWatch(timeoutId);
             };
         }

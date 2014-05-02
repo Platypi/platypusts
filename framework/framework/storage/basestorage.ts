@@ -4,9 +4,9 @@ module plat.storage {
      */
     export class BaseStorage implements IBaseStorage {
         constructor() {
-            forEach((<Storage>(<any>this).__storage), function (value, key) {
+            forEach((<Storage>(<any>this).__storage), (value, key) => {
                 this[key] = value;
-            }, this);
+            });
         }
 
         /**

@@ -239,7 +239,7 @@ module plat.processing {
             }
 
             if (!isClone) {
-                nodes.sort(function (a, b) {
+                nodes.sort((a, b) => {
                     var aControl = <controls.IAttributeControl>a.control,
                         bControl = <controls.IAttributeControl>b.control;
 
@@ -543,7 +543,7 @@ module plat.processing {
             }
 
             if (clonedManager.hasOwnContext) {
-                postpone(function observeRootContext() {
+                postpone(() => {
                     clonedManager.observeRootContext(newControl, clonedManager.bindAndLoad);
                 });
             }
