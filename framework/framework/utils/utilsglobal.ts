@@ -284,15 +284,17 @@ function uniqueId(prefix?: string) {
     return join();
 }
 
+var camelCaseRegex: RegExp;
+
 function camelCase(str: string) {
     if (!isString(str) || isEmpty(str)) {
         return str;
     }
 
     str = str.charAt(0).toLowerCase() + str.substr(1);
-    var regex: plat.expressions.IRegex = plat.acquire('$regex');
+    camelCaseRegex = camelCaseRegex || (<plat.expressions.IRegex>plat.acquire('$regex')).camelCaseRegex;
 
-    return str.replace(regex.camelCaseRegex,
+    return str.replace(camelCaseRegex,
         function delimiterMatch(match: string, delimiter?: string, char?: string, index?: number) {
             return index ? char.toUpperCase() : char;
         });

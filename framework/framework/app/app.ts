@@ -15,12 +15,12 @@ module plat {
      * as well as error handling.
      */
     export class App implements IApp {
-        static $compat: plat.ICompat;
-        static $ExceptionStatic: plat.IExceptionStatic;
-        static $EventManagerStatic: plat.events.IEventManagerStatic;
+        static $compat: ICompat;
+        static $ExceptionStatic: IExceptionStatic;
+        static $EventManagerStatic: events.IEventManagerStatic;
         static $document: Document;
-        static $compiler: plat.processing.ICompiler;
-        static $LifecycleEventStatic: plat.events.ILifecycleEventStatic;
+        static $compiler: processing.ICompiler;
+        static $LifecycleEventStatic: events.ILifecycleEventStatic;
 
         /**
          * A static method for initiating the app startup.
@@ -317,12 +317,12 @@ module plat {
     /**
      * The Type for referencing the '$AppStatic' injectable as a dependency.
      */
-    export function AppStatic($compat: plat.ICompat,
-    $ExceptionStatic: plat.IExceptionStatic,
-    $EventManagerStatic: plat.events.IEventManagerStatic,
+    export function AppStatic($compat: ICompat,
+    $ExceptionStatic: IExceptionStatic,
+    $EventManagerStatic: events.IEventManagerStatic,
     $document: Document,
-    $compiler: plat.processing.ICompiler,
-    $LifecycleEventStatic: plat.events.ILifecycleEventStatic) {
+    $compiler: processing.ICompiler,
+    $LifecycleEventStatic: events.ILifecycleEventStatic) {
         App.$compat = $compat;
         App.$ExceptionStatic = $ExceptionStatic;
         App.$EventManagerStatic = $EventManagerStatic;

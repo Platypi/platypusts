@@ -385,7 +385,7 @@ module plat.async {
             process.nextTick(flush);
         };
     }
-
+    
     function useMutationObserver() {
         var observer = new BrowserMutationObserver(flush),
             $document = acquire('$document'),

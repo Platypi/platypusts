@@ -164,7 +164,7 @@ module plat.dependency {
                 inject: function () {
                     return value;
                 },
-                __name: 'wrapped',
+                name: 'wrapped',
                 __dependencies: [],
                 Constructor: value
             };
@@ -174,7 +174,7 @@ module plat.dependency {
             return {
                 inject: noop,
                 type: 'noop',
-                __name: 'noop',
+                name: 'noop',
                 __dependencies: [],
                 Constructor: <any>noop
             };
@@ -183,14 +183,14 @@ module plat.dependency {
         private static __isInjector(dependency: Injector<any>): boolean {
             return isFunction(dependency.inject) &&
                 !isUndefined(dependency.type) &&
-                !isUndefined(dependency.__name) &&
+                !isUndefined(dependency.name) &&
                 !isUndefined(dependency.Constructor);
         }
 
         private __dependencies: Array<any>;
 
         /**
-         * @param __name The name of the injected type.
+         * @param name The name of the injected type.
          * @param dependencies An array of strings specifying the injectable dependencies for the 
          * associated constructor.
          * @param Constructor The constructor method for the component requiring the dependency 
@@ -198,7 +198,7 @@ module plat.dependency {
          * @param type The type of injector, used for injectables specifying a register.injectableType of 
          * STATIC, SINGLE, or MULTI. The default is SINGLE.
          */
-        constructor(private __name: string, public Constructor: new () => T, dependencies?: Array<any>, public type?: string) {
+        constructor(public name: string, public Constructor: new () => T, dependencies?: Array<any>, public type?: string) {
             var deps = this.__dependencies = Injector.convertDependencies(dependencies),
                 index = deps.indexOf('noop');
 
@@ -208,11 +208,11 @@ module plat.dependency {
                 throw new TypeError('Could not resolve dependency ' +
                     dependency.substring(9, dependency.indexOf('(')) +
                     ' for ' +
-                    __name +
+                    name +
                     '. Are you using a static injectable Type?');
             }
 
-            if (__name === '$AppStatic') {
+            if (name === '$AppStatic') {
                 var App: IAppStatic = <IAppStatic>(<any>this).inject();
                 App.start();
             }
@@ -252,9 +252,9 @@ module plat.dependency {
          * SINGLE or STATIC type so that it does not re-instantiate.
          */
         _wrapInjector(value: any) {
-            return injectableInjectors[this.__name] = <IInjector<any>>{
+            return injectableInjectors[this.name] = <IInjector<any>>{
                 type: this.type,
-                __name: this.__name,
+                name: this.name,
                 __dependencies: this.__dependencies,
                 Constructor: this.Constructor,
                 inject: function () {
@@ -291,5 +291,10 @@ module plat.dependency {
          * STATIC, SINGLE, or MULTI. The default is SINGLE.
          */
         type?: string;
+
+        /**
+         * The name registered for the injector.
+         */
+        name: string;
     }
 }

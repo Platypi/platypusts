@@ -1083,11 +1083,11 @@ module plat.processing {
                 key = camelCase(node.nodeName),
                 attribute = <Attr>node.node,
                 value = this.$NodeManagerStatic.build(node.expressions, parent),
-                attributes: plat.ui.Attributes,
+                attributes: ui.Attributes,
                 oldValue;
 
             for (var i = 0; i < length; ++i) {
-                attributes = <plat.ui.Attributes>controls[i].attributes;
+                attributes = <ui.Attributes>controls[i].attributes;
                 oldValue = attributes[key];
                 attributes[key] = value;
                 attributes.attributeChanged(key, value, oldValue);

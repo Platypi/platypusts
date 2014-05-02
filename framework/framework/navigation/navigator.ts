@@ -45,7 +45,7 @@ module plat.navigation {
 
             if (isFunction(Constructor.inject)) {
                 injector = Constructor;
-                key = Constructor.type;
+                key = (<dependency.IInjector<any>>Constructor).name;
             } else {
                 var keys = Object.keys(viewControlInjectors),
                     control: dependency.IInjector<ui.IViewControl>;

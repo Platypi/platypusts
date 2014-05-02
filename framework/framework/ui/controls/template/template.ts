@@ -167,8 +167,8 @@ module plat.ui.controls {
         }
 
         private __mapBindableTemplates(control: Template) {
-            (<plat.ui.BindableTemplates>this.bindableTemplates)._cache =
-                (<plat.ui.BindableTemplates>control.bindableTemplates)._cache;
+            (<BindableTemplates>this.bindableTemplates)._cache =
+                (<BindableTemplates>control.bindableTemplates)._cache;
             this.bindableTemplates.templates = control.bindableTemplates.templates;
         }
     }
