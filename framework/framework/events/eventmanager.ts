@@ -67,7 +67,7 @@ module plat.events {
 
             if (compat.cordova) {
                 var eventNames = ['resume', 'online', 'offline'],
-                    event;
+                    event: string;
 
                 length = eventNames.length;
 
@@ -75,10 +75,8 @@ module plat.events {
                     event = eventNames[i];
                     lifecycleListeners.push({
                         name: event,
-                        value: (function (ev) {
-                            return function () {
-                                dispatch(event, EventManager);
-                            };
+                        value: ((ev) => () => {
+                            dispatch(ev, EventManager);
                         })(event)
                     });
 
@@ -87,7 +85,7 @@ module plat.events {
 
                 lifecycleListeners.push({
                     name: 'pause',
-                    value: function () {
+                    value: () => {
                         dispatch('suspend', EventManager);
                     }
                 });
@@ -96,7 +94,7 @@ module plat.events {
 
                 lifecycleListeners.push({
                     name: 'deviceReady',
-                    value: function () {
+                    value: () => {
                         dispatch('ready', EventManager);
                     }
                 });
@@ -105,7 +103,7 @@ module plat.events {
 
                 lifecycleListeners.push({
                     name: 'backbutton',
-                    value: function () {
+                    value: () => {
                         dispatch('goBack', EventManager);
                     }
                 });
@@ -114,7 +112,7 @@ module plat.events {
             } else if (compat.amd) {
                 return;
             } else {
-                EventManager.$window.addEventListener('load', function onWindowLoad() {
+                EventManager.$window.addEventListener('load', () => {
                     dispatch('ready', EventManager);
                 });
             }
@@ -163,7 +161,7 @@ module plat.events {
 
             var index = eventListeners.length - 1;
 
-            return function removeListener() {
+            return () => {
                 eventListeners.splice(index, 1);
             };
         }
@@ -175,10 +173,10 @@ module plat.events {
          * @static
          * @param name The name of the event.
          * @param sender The object sending the event.
-         * @param direction The eventDirection in which to send the event.
+         * @param direction The direction in which to send the event.
          * @param args The arguments to send to the listeners.
          * 
-         * @see eventDirection
+         * @see EventManager.direction
          */
         static dispatch(name: string, sender: any, direction: string, args?: Array<any>);
         /**
@@ -188,10 +186,10 @@ module plat.events {
          * @static
          * @param name The name of the event.
          * @param sender The object sending the event.
-         * @param direction='up' Equivalent to EventManager.UP.
+         * @param direction='up' Equivalent to EventManager.direction.UP.
          * @param args The arguments to send to the listeners.
          * 
-         * @see eventDirection
+         * @see EventManager.direction
          */
         static dispatch(name: string, sender: any, direction: 'up', args?: Array<any>);
         /**
@@ -201,10 +199,10 @@ module plat.events {
          * @static
          * @param name The name of the event.
          * @param sender The object sending the event.
-         * @param direction='down' Equivalent to EventManager.DOWN.
+         * @param direction='down' Equivalent to EventManager.direction.DOWN.
          * @param args The arguments to send to the listeners.
          * 
-         * @see eventDirection
+         * @see EventManager.direction
          */
         static dispatch(name: string, sender: any, direction: 'down', args?: Array<any>);
         /**
@@ -214,10 +212,10 @@ module plat.events {
          * @static
          * @param name The name of the event.
          * @param sender The object sending the event.
-         * @param direction='direct' Equivalent to EventManager.DIRECT.
+         * @param direction='direct' Equivalent to EventManager.direction.DIRECT.
          * @param args The arguments to send to the listeners.
          * 
-         * @see eventDirection
+         * @see EventManager.direction
          */
         static dispatch(name: string, sender: any, direction: 'direct', args?: Array<any>);
         static dispatch(name: string, sender: any, direction: string, args?: Array<any>) {
@@ -228,6 +226,8 @@ module plat.events {
 
         /**
          * Returns whether or not the given string is a registered direction.
+         * 
+         * @param direction The direction of the event
          */
         static hasDirection(direction: string) {
             var dir = EventManager.direction;
@@ -239,6 +239,9 @@ module plat.events {
 
         /**
          * Determines the appropriate direction and dispatches the event accordingly.
+         * 
+         * @param event The IDispatchEvent to send
+         * @param args The arguments associated with the event
          */
         static sendEvent(event: IDispatchEvent, args?: Array<any>) {
             var name = event.name,
@@ -267,6 +270,9 @@ module plat.events {
 
         /**
          * Dispatches the event up the control chain.
+         * 
+         * @param event The event being dispatched.
+         * @param args The arguments associated with the event.
          */
         static _dispatchUp(event: IDispatchEvent, args: Array<any>) {
             var name = event.name,
@@ -283,6 +289,9 @@ module plat.events {
 
         /**
          * Dispatches the event down the control chain.
+         * 
+         * @param event The event being dispatched.
+         * @param args The arguments associated with the event.
          */
         static _dispatchDown(event: IDispatchEvent, args: Array<any>) {
             var controls = [],
@@ -310,6 +319,9 @@ module plat.events {
 
         /**
          * Dispatches the event directly to all control's listening.
+         * 
+         * @param event The event being dispatched.
+         * @param args The arguments associated with the event.
          */
         static _dispatchDirect(event: IDispatchEvent, args: Array<any>) {
             var uids = Object.keys(EventManager.__eventsListeners),
@@ -385,9 +397,9 @@ module plat.events {
     ], register.injectableType.STATIC);
 
     /**
-     * Desscribes an object that contains event listeners.
+     * Describes an object that contains event listeners.
      */
-    export interface IEventsListener {
+    interface IEventsListener {
         /**
          * An IObject of listener arrays, keyed by event name.
          */
@@ -617,10 +629,10 @@ module plat.events {
          * @static
          * @param name The name of the event.
          * @param sender The object sending the event.
-         * @param direction='up' Equivalent to EventManager.UP.
+         * @param direction='up' Equivalent to EventManager.direction.UP.
          * @param args The arguments to send to the listeners.
          *
-         * @see eventDirection
+         * @see EventManager.direction
          */
         dispatch(name: string, sender: any, direction: 'up', args?: Array<any>): void;
         /**
@@ -630,10 +642,10 @@ module plat.events {
          * @static
          * @param name The name of the event.
          * @param sender The object sending the event.
-         * @param direction='down' Equivalent to EventManager.DOWN.
+         * @param direction='down' Equivalent to EventManager.direction.DOWN.
          * @param args The arguments to send to the listeners.
          *
-         * @see eventDirection
+         * @see EventManager.direction
          */
         dispatch(name: string, sender: any, direction: 'down', args?: Array<any>): void;
         /**
@@ -643,10 +655,10 @@ module plat.events {
          * @static
          * @param name The name of the event.
          * @param sender The object sending the event.
-         * @param direction='direct' Equivalent to EventManager.DIRECT.
+         * @param direction='direct' Equivalent to EventManager.direction.DIRECT.
          * @param args The arguments to send to the listeners.
          *
-         * @see eventDirection
+         * @see EventManager.direction
          */
         dispatch(name: string, sender: any, direction: 'direct', args?: Array<any>): void;
         /**
@@ -656,10 +668,10 @@ module plat.events {
          * @static
          * @param name The name of the event.
          * @param sender The object sending the event.
-         * @param direction The eventDirection in which to send the event.
+         * @param direction The direction in which to send the event.
          * @param args The arguments to send to the listeners.
          *
-         * @see eventDirection
+         * @see EventManager.direction
          */
         dispatch(name: string, sender: any, direction: string, args?: Array<any>): void;
 

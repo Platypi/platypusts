@@ -239,7 +239,7 @@ module plat.processing {
             }
 
             if (!isClone) {
-                nodes.sort(function (a, b) {
+                nodes.sort((a, b) => {
                     var aControl = <controls.IAttributeControl>a.control,
                         bControl = <controls.IAttributeControl>b.control;
 
@@ -543,7 +543,7 @@ module plat.processing {
             }
 
             if (clonedManager.hasOwnContext) {
-                postpone(function observeRootContext() {
+                postpone(() => {
                     clonedManager.observeRootContext(newControl, clonedManager.bindAndLoad);
                 });
             }
@@ -1083,11 +1083,11 @@ module plat.processing {
                 key = camelCase(node.nodeName),
                 attribute = <Attr>node.node,
                 value = this.$NodeManagerStatic.build(node.expressions, parent),
-                attributes: plat.ui.Attributes,
+                attributes: ui.Attributes,
                 oldValue;
 
             for (var i = 0; i < length; ++i) {
-                attributes = <plat.ui.Attributes>controls[i].attributes;
+                attributes = <ui.Attributes>controls[i].attributes;
                 oldValue = attributes[key];
                 attributes[key] = value;
                 attributes.attributeChanged(key, value, oldValue);

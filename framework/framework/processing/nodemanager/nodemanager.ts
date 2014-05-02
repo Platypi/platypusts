@@ -248,9 +248,7 @@ module plat.processing {
          */
         static _wrapExpression(text: string): expressions.IParsedExpression {
             return {
-                evaluate: function unboundText() {
-                    return text;
-                },
+                evaluate: () => text,
                 identifiers: [],
                 aliases: [],
                 expression: text

@@ -35,15 +35,13 @@
         }
     }
 
-    $(document).on('mobileinit', function () {
+    $(document).on('mobileinit', () => {
         disableJqmHashChange();
         setLoaderOptions();
         removeBase();
     });
 
-    register.injectable('$document', function ($window: Window) {
-        return $($window.document);
-    }, ['$window']);
+    register.injectable('$document', ($window: Window) => $($window.document), ['$window']);
 
     function overwriteFunctions(fns) {
         if (arguments.length > 1) {
@@ -53,7 +51,7 @@
             if (!fns.hasOwnProperty(key)) {
                 continue;
             }
-            (function (base, key) {
+            ((base, key) => {
                 var fn = base[key];
                 base[key] = function () {
                     return (<any>window).MSApp.execUnsafeLocalFunction(

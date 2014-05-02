@@ -282,8 +282,9 @@ module plat {
             var parser: expressions.IParser = acquire('$parser'),
                 parsedExpression: expressions.IParsedExpression = isString(expression) ? parser.parse(expression) : expression,
                 aliases = parsedExpression.aliases,
-                that: ui.ITemplateControl = <any>this,
-                control: ui.ITemplateControl = !isNull(that.resources) ? that : that.parent,
+                control: ui.TemplateControl = !isNull((<ui.TemplateControl>this).resources) ?
+                    <ui.TemplateControl>this :
+                    <ui.TemplateControl>this.parent,
                 alias: string,
                 length = aliases.length,
                 resources = {},
@@ -347,15 +348,15 @@ module plat {
 
                 listeners.push(managers[identifier].observe(identifier, {
                     uid: this.uid,
-                    listener: function () {
+                    listener: () => {
                         var value = evaluateExpression(parsedExpression, control);
-                        listener.call(that, value, oldValue);
+                        listener.call(this, value, oldValue);
                         oldValue = value;
                     }
                 }));
             }
 
-            return function removeExpressionListener() {
+            return () => {
                 var length = listeners.length;
 
                 for (var i = 0; i < length; ++i) {

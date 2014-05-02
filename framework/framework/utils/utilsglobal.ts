@@ -16,14 +16,14 @@ function extend(destination: any, ...sources: any[]): any {
 
     var keys, property;
 
-    forEach(sources, function (source, k) {
+    forEach(sources, (source, k) => {
         if (!(isObject(source) || isArray(source))) {
             return;
         }
 
         keys = Object.keys(source);
 
-        forEach(keys, function (key: string) {
+        forEach(keys, (key: string) => {
             property = source[key];
             if (deep) {
                 if (isArray(property)) {
@@ -131,7 +131,7 @@ function filter<T>(obj: any, iterator: (value: T, key: any, obj: any) => boolean
         return obj.filter(iterator, context);
     }
 
-    forEach<T>(obj, function (value: T, key: any, obj: any) {
+    forEach<T>(obj, (value: T, key: any, obj: any) => {
         if (iterator(value, key, obj)) {
             arr.push(value);
         }
@@ -141,11 +141,9 @@ function filter<T>(obj: any, iterator: (value: T, key: any, obj: any) => boolean
 }
 
 function where(obj: any, properties: any): Array<any> {
-    return filter(obj, function (value) {
-        return !some(properties, function (property, key) {
-            return value[key] !== property;
-        });
-    });
+    return filter(obj, (value)
+        => !some(properties, (property, key)
+            => value[key] !== property));
 }
 
 function forEach<T>(obj: any, iterator: (value: T, key: any, obj: any) => void, context?: any): any {
@@ -181,15 +179,15 @@ function map<T, U>(obj: any, iterator: (value: T, key: any, obj: any) => U, cont
         return obj.map(iterator, context);
     }
 
-    forEach(obj, function (value, key) {
-        arr.push(iterator.call(this, value, key, obj));
-    }, context);
+    forEach(obj, (value, key) => {
+        arr.push(iterator.call(context, value, key, obj));
+    });
 
     return arr;
 }
 
 function pluck<T, U>(obj: any, key: string): Array<U> {
-    return map<T, U>(obj, function (value) { return value[key]; });
+    return map<T, U>(obj, (value) => value[key]);
 }
 
 function some<T>(obj: any, iterator: (value: T, key: any, obj: any) => boolean, context?: any): boolean {
@@ -233,7 +231,7 @@ function defer(method: (...args: any[]) => void, timeout: number, args?: Array<a
 
     var timeoutId = setTimeout(defer, timeout);
 
-    return function clearDefer() {
+    return () => {
         clearTimeout(timeoutId);
     };
 }
@@ -284,16 +282,17 @@ function uniqueId(prefix?: string) {
     return join();
 }
 
+var camelCaseRegex: RegExp;
+
 function camelCase(str: string) {
     if (!isString(str) || isEmpty(str)) {
         return str;
     }
 
     str = str.charAt(0).toLowerCase() + str.substr(1);
-    var regex: plat.expressions.IRegex = plat.acquire('$regex');
+    camelCaseRegex = camelCaseRegex || (<plat.expressions.IRegex>plat.acquire('$regex')).camelCaseRegex;
 
-    return str.replace(regex.camelCaseRegex,
-        function delimiterMatch(match: string, delimiter?: string, char?: string, index?: number) {
-            return index ? char.toUpperCase() : char;
-        });
+    return str.replace(camelCaseRegex,
+        (match: string, delimiter?: string, char?: string, index?: number)
+            => index ? char.toUpperCase() : char);
 }

@@ -99,9 +99,9 @@ module plat.ui.controls {
          * Removes the node from the DOM.
          */
         _removeItem() {
-            postpone(function () {
+            postpone(() => {
                 Control.dispose(this.controls[0]);
-            }, null, this);
+            });
         }
     }
 

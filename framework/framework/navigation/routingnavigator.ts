@@ -68,7 +68,7 @@
         /**
          * The method called prior to a route change event.
          * 
-         * @param ev The INavigationEvent containing information regarding the ViewControl, the routing infomration, 
+         * @param ev The INavigationEvent containing information regarding the ViewControl, the routing information, 
          * and the Router.
          */
         _beforeRouteChange(ev: events.INavigationEvent<dependency.IInjector<ui.IViewControl>, web.IRoute<any>, web.IRouter>) {
