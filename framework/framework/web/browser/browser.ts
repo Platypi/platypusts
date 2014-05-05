@@ -41,8 +41,8 @@
                 trimmedUrl = url.replace(this.$regex.initialUrlRegex, '/'),
                 changed = this._urlChanged.bind(this);
 
-            if (config.routingType === config.routeType.HASH) {
-                this.$config.baseUrl = trimmedUrl.replace(/#.*/, '');
+            if (isEmpty(config.baseUrl)) {
+                acquire('$urlUtils');
             }
 
             if (trimmedUrl !== url) {
@@ -51,7 +51,7 @@
 
             if (compat.pushState) {
                 if (config.routingType === config.routeType.STATE) {
-                    this.url(this._getBaseUrl(trimmedUrl), true);
+                    this.url(config.baseUrl, true);
                 }
                 this.$window.addEventListener('popstate', changed, false);
             }
@@ -116,18 +116,6 @@
             return urlUtils.protocol !== locationUtils.protocol ||
                 urlUtils.hostname !== locationUtils.hostname ||
                 urlUtils.port !== locationUtils.port;
-        }
-
-        /**
-         * Obtains the base URL for doing STATE type routing
-         * 
-         * @param url The initial URL passed into the Browser.
-         */
-        _getBaseUrl(url: string) {
-            var colon = url.substring(url.indexOf(':')),
-                next = colon.substring(colon.search(/\w+/));
-                
-            return url.substring(0, url.indexOf('/', url.indexOf(next))) + '/';
         }
 
         /**
@@ -234,6 +222,18 @@
         }
 
         /**
+         * Obtains the base URL for doing STATE type routing
+         * 
+         * @param url The initial URL passed into the Browser.
+         */
+        private static __getBaseUrl(url: string) {
+            var colon = url.substring(url.indexOf(':')),
+                next = colon.substring(colon.search(/\w+/));
+
+            return url.substring(0, url.indexOf('/', url.indexOf(next))) + '/';
+        }
+
+        /**
          * The whole associated URL.
          */
         href: string;
@@ -294,8 +294,24 @@
         query: IObject<string>;
         $ContextManagerStatic: observable.IContextManagerStatic = acquire('$ContextManagerStatic');
         $document: Document = acquire('$document');
+        $window: Window = acquire('$window');
         $compat: ICompat = acquire('$compat');
+        $regex: expressions.IRegex = acquire('$regex');
         $config: IBrowserConfig = acquire('$browser.config');
+
+        constructor() {
+            var config = this.$config;
+            if (isEmpty(config.baseUrl)) {
+                var url = this.$window.location.href,
+                    trimmedUrl = url.replace(this.$regex.initialUrlRegex, '/');
+
+                if (config.routingType === config.routeType.HASH) {
+                    config.baseUrl = trimmedUrl.replace(/#.*/, '');
+                } else {
+                    config.baseUrl = UrlUtils.__getBaseUrl(trimmedUrl);
+                }
+            }
+        }
 
         /**
          * Initiializes this instance of the UrlUtils and defines its properties using 
@@ -317,6 +333,17 @@
 
             element.setAttribute('href', url);
             url = element.href;
+
+            // We need to do this twice for cerain browsers (e.g. win8)
+            element.setAttribute('href', url);
+            url = element.href;
+
+            var protocol = element.protocol ? element.protocol.replace(/:$/, '') : '';
+
+            // Cordova adds //www for some urls, so we want to take those out.
+            if (protocol.indexOf('http') === -1 && protocol.indexOf('ms-appx') === -1) {
+                url = url.replace('//', '');
+            }
 
             define(this, 'href', url, true, true);
             define(this, 'protocol', element.protocol ? element.protocol.replace(/:$/, '') : '', true, true);
