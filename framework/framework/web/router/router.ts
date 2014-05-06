@@ -297,9 +297,8 @@
 
             route = route.replace(escapeRegex, '\\$')
                 .replace(optionalRegex, '(?:$1)?')
-                .replace(namedRegex, function (match, optional) {
-                    return optional ? match : '([^/?]+)';
-                })
+                .replace(namedRegex, (match, optional)
+                    => optional ? match : '([^/?]+)')
                 .replace(wildcardRegex, '([^?]*?)');
 
             if (!isNull(regexArgs)) {

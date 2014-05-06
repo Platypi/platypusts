@@ -67,7 +67,7 @@ module plat.events {
 
             if (compat.cordova) {
                 var eventNames = ['resume', 'online', 'offline'],
-                    event;
+                    event: string;
 
                 length = eventNames.length;
 
@@ -75,10 +75,8 @@ module plat.events {
                     event = eventNames[i];
                     lifecycleListeners.push({
                         name: event,
-                        value: (function (ev) {
-                            return function () {
-                                dispatch(event, EventManager);
-                            };
+                        value: ((ev) => () => {
+                            dispatch(ev, EventManager);
                         })(event)
                     });
 
@@ -87,7 +85,7 @@ module plat.events {
 
                 lifecycleListeners.push({
                     name: 'pause',
-                    value: function () {
+                    value: () => {
                         dispatch('suspend', EventManager);
                     }
                 });
@@ -96,7 +94,7 @@ module plat.events {
 
                 lifecycleListeners.push({
                     name: 'deviceReady',
-                    value: function () {
+                    value: () => {
                         dispatch('ready', EventManager);
                     }
                 });
@@ -105,7 +103,7 @@ module plat.events {
 
                 lifecycleListeners.push({
                     name: 'backbutton',
-                    value: function () {
+                    value: () => {
                         dispatch('goBack', EventManager);
                     }
                 });
@@ -114,7 +112,7 @@ module plat.events {
             } else if (compat.amd) {
                 return;
             } else {
-                EventManager.$window.addEventListener('load', function onWindowLoad() {
+                EventManager.$window.addEventListener('load', () => {
                     dispatch('ready', EventManager);
                 });
             }
@@ -163,7 +161,7 @@ module plat.events {
 
             var index = eventListeners.length - 1;
 
-            return function removeListener() {
+            return () => {
                 eventListeners.splice(index, 1);
             };
         }

@@ -55,7 +55,7 @@ module plat.ui {
 
             listeners.push(listener);
 
-            return function removeListener() {
+            return () => {
                 listeners.splice(length, 1);
             };
         }

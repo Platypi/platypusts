@@ -123,16 +123,15 @@ module plat.ui {
          * @param key The key used to retrieve the template.
          * @param callback The callback associated with binding the template to the specified data
          * context. 
-         * @param context An object on this control's context. The framework will find the 
-         * correct path to the object. It is recommended to use the relativeIdentifier if possible,
-         * as it is a more efficient method.
+         * @param relativeIdentifier The identifier number relative to this control's context. Only 
+         * necessary when context is an array.
          * @param resources An object used as the resources for any top-level 
          * controls created in the template.
          * @return {DocumentFragment} A clone of the template, fully reconstructed and ready to put
          * in the DOM.
          */
-        bind(key: string, callback: IBindableTemplateCallback, context?: any, resources?: IObject<IResource>);
-        bind(key: any, callback: IBindableTemplateCallback, context?: any, resources?: IObject<IResource>) {
+        bind(key: string, callback: IBindableTemplateCallback, relativeIdentifier?: number, resources?: IObject<IResource>);
+        bind(key: any, callback: IBindableTemplateCallback, relativeIdentifier?: any, resources?: IObject<IResource>) {
             var template: any = this.templates[key],
                 control: ITemplateControl = this.control,
                 nodeMap: processing.INodeMap,
@@ -144,13 +143,16 @@ module plat.ui {
                 return;
             }
 
-            if (!isNull(context) && !isString(context)) {
-                context = this.control.getIdentifier(context);
+            if (!(isNull(relativeIdentifier) || isNumber(relativeIdentifier) || isString(relativeIdentifier))) {
+                this.$ExceptionStatic.warn('Cannot bind template with relativeIdentifier: ' +
+                    relativeIdentifier +
+                    '. Identifier must be either a string or number', this.$ExceptionStatic.BIND);
+                return;
             }
 
             if (isFunction(template.then)) {
                 template.then((result: DocumentFragment) => {
-                    this._bindTemplate(key, <DocumentFragment>result.cloneNode(true), context, resources, callback);
+                    this._bindTemplate(key, <DocumentFragment>result.cloneNode(true), relativeIdentifier, resources, callback);
                 }).catch((error) => {
                     postpone(() => {
                         this.$ExceptionStatic.fatal(error, this.$ExceptionStatic.COMPILE);
@@ -158,7 +160,7 @@ module plat.ui {
                 });
                 return;
             }
-            this._bindTemplate(key, <DocumentFragment>template.cloneNode(true), context, resources, callback);
+            this._bindTemplate(key, <DocumentFragment>template.cloneNode(true), relativeIdentifier, resources, callback);
         }
 
         /**
@@ -415,7 +417,7 @@ module plat.ui {
          * (e.g. 'foo.bar.baz' would signify the object this.context.foo.bar.baz). This is the 
          * most efficient way of specifying context, else the framework has to search for the 
          * object.
-         * @param resources An object used as the resources for any top-level  
+         * @param resources An object used as the resources for any top-level 
          * controls created in the template.
          * @return {DocumentFragment} A clone of the template, fully reconstructed and ready to put
          * in the DOM.
@@ -429,15 +431,14 @@ module plat.ui {
          * @param key The key used to retrieve the template.
          * @param callback The callback associated with binding the template to the specified data
          * context. 
-         * @param context An object on this control's context. The framework will find the 
-         * correct path to the object. It is recommended to use the relativeIdentifier if possible,
-         * as it is a more efficient method.
+         * @param relativeIdentifier The identifier number relative to this control's context. Only 
+         * necessary when context is an array.
          * @param resources An object used as the resources for any top-level 
          * controls created in the template.
          * @return {DocumentFragment} A clone of the template, fully reconstructed and ready to put
          * in the DOM.
          */
-        bind(key: string, callback: IBindableTemplateCallback, context?: any, resources?: IObject<IResource>);
+        bind(key: string, callback: IBindableTemplateCallback, relativeIdentifier?: number, resources?: IObject<IResource>);
 
         /**
          * Adds a template to this object. The template will be stored with the key,

@@ -17,9 +17,6 @@
     <IISExpressUseClassicPipelineMode />
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="css\platypus.css" />
-  </ItemGroup>
-  <ItemGroup>
     <TypeScriptCompile Include="acquire\acquire.ts" />
     <TypeScriptCompile Include="app\app.ts" />
     <TypeScriptCompile Include="async\ajax.ts" />

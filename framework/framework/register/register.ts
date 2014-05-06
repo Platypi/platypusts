@@ -141,7 +141,6 @@ module plat.register {
         return add(injectableInjectors, name, Type, dependencies, injectableType || register.injectableType.SINGLE);
     }
 
-
     /**
      * Defines the different types of injectables.
      */

@@ -19,7 +19,7 @@ module plat.async {
              * @param callback The callback to push to the queue.
              * @param arg The argument to pass to the callback.
              */
-            async: function (callback: (arg?: IPromise<any, any>) => void, arg?: IPromise<any, any>) {
+            async: (callback: (arg?: IPromise<any, any>) => void, arg?: IPromise<any, any>) => {
                 var length = queue.push([callback, arg]);
                 if (length === 1) {
                     scheduleFlush();
@@ -381,11 +381,11 @@ module plat.async {
 
     // node
     function useNextTick() {
-        return function processNextTick() {
+        return () => {
             process.nextTick(flush);
         };
     }
-
+    
     function useMutationObserver() {
         var observer = new BrowserMutationObserver(flush),
             $document = acquire('$document'),
@@ -394,12 +394,12 @@ module plat.async {
 
         observer.observe(element, { attributes: true });
 
-        $window.addEventListener('unload', function unloadPromise() {
+        $window.addEventListener('unload', () => {
             observer.disconnect();
             observer = null;
         }, false);
 
-        return function drainQueue() {
+        return () => {
             element.setAttribute('drainQueue', 'drainQueue');
         };
     }
@@ -408,7 +408,7 @@ module plat.async {
         var global: any = global,
             local = (typeof global !== 'undefined') ? global : this;
 
-        return function setFlush() {
+        return () => {
             local.setTimeout(flush, 1);
         };
     }

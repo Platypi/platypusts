@@ -1,15 +1,26 @@
 module plat {
     /**
+     * We need to add [plat-hide] as a css property so we can use it to temporarily 
+     * hide elements.
+     */
+    if (isDocument(document)) {
+        var style = <HTMLStyleElement>document.createElement('style');
+
+        style.textContent = '[plat-hide] { display: none; }';
+        document.head.appendChild(style);
+    }
+
+    /**
      * Class for every app. This class contains hooks for Application Lifecycle Events 
      * as well as error handling.
      */
     export class App implements IApp {
-        static $compat: plat.ICompat;
-        static $ExceptionStatic: plat.IExceptionStatic;
-        static $EventManagerStatic: plat.events.IEventManagerStatic;
+        static $compat: ICompat;
+        static $ExceptionStatic: IExceptionStatic;
+        static $EventManagerStatic: events.IEventManagerStatic;
         static $document: Document;
-        static $compiler: plat.processing.ICompiler;
-        static $LifecycleEventStatic: plat.events.ILifecycleEventStatic;
+        static $compiler: processing.ICompiler;
+        static $LifecycleEventStatic: events.ILifecycleEventStatic;
 
         /**
          * A static method for initiating the app startup.
@@ -49,7 +60,7 @@ module plat {
                 var $LifecycleEventStatic = App.$LifecycleEventStatic,
                     dispatch = $LifecycleEventStatic.dispatch;
 
-                postpone(function ready() {
+                postpone(() => {
                     dispatch('ready', $LifecycleEventStatic);
                 });
             }
@@ -64,16 +75,25 @@ module plat {
         static load(node?: Node) {
             var $LifecycleEventStatic = App.$LifecycleEventStatic,
                 compiler = App.$compiler,
-                $document = App.$document;
+                body = App.$document.body;
 
             $LifecycleEventStatic.dispatch('beforeLoad', App);
 
+
             if (isNull(node)) {
-                compiler.compile($document.body);
+                body.setAttribute('plat-hide', '');
+                compiler.compile(body);
+                body.removeAttribute('plat-hide');
                 return;
             }
 
-            compiler.compile(node);
+            if (isFunction((<HTMLElement>node).setAttribute)) {
+                (<HTMLElement>node).setAttribute('plat-hide', '');
+                compiler.compile(node);
+                (<HTMLElement>node).removeAttribute('plat-hide');
+            } else {
+                compiler.compile(node);
+            }
         }
 
         /**
@@ -297,12 +317,12 @@ module plat {
     /**
      * The Type for referencing the '$AppStatic' injectable as a dependency.
      */
-    export function AppStatic($compat: plat.ICompat,
-    $ExceptionStatic: plat.IExceptionStatic,
-    $EventManagerStatic: plat.events.IEventManagerStatic,
+    export function AppStatic($compat: ICompat,
+    $ExceptionStatic: IExceptionStatic,
+    $EventManagerStatic: events.IEventManagerStatic,
     $document: Document,
-    $compiler: plat.processing.ICompiler,
-    $LifecycleEventStatic: plat.events.ILifecycleEventStatic) {
+    $compiler: processing.ICompiler,
+    $LifecycleEventStatic: events.ILifecycleEventStatic) {
         App.$compat = $compat;
         App.$ExceptionStatic = $ExceptionStatic;
         App.$EventManagerStatic = $EventManagerStatic;

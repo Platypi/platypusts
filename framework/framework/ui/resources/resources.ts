@@ -268,7 +268,7 @@ module plat.ui {
                 } else {
                     resource.initialValue = value;
                 }
-                var listener = control.observeExpression(value, function resourceChanged(newValue) {
+                var listener = control.observeExpression(value, (newValue) => {
                     resource.value = newValue;
                 });
                 resource.value = control.evaluateExpression(value);

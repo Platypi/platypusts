@@ -384,7 +384,7 @@ module plat.ui {
 
                 return templateCache.put(templateUrl, template);
             }, (error) => {
-                postpone(function () {
+                postpone(() => {
                     Exception.fatal('Failure to get template from ' + templateUrl + '.', Exception.TEMPLATE);
                 });
                 return error;

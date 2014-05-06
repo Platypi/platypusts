@@ -122,21 +122,20 @@ module plat {
             createObjectStore(name: string, options?: IObjectStoreOptions) {
                 if (this.isOpen) {
                     var objectStore = this._db.createObjectStore(name, options),
-                        store = new ObjectStore(objectStore),
-                        that = this;
+                        store = new ObjectStore(objectStore);
 
-                    return new ObjectStorePromise(function (resolve, reject) {
-                        objectStore.transaction.oncomplete = function transactionComplete(event) {
-                            resolve(that);
+                    return new ObjectStorePromise((resolve, reject) => {
+                        objectStore.transaction.oncomplete = (event) => {
+                            resolve(this);
                         };
 
-                        objectStore.transaction.onerror = function transactionError(event) {
+                        objectStore.transaction.onerror = (event) => {
                             reject(new DatabaseError(event.target['errorCode'], 'Unknown error'));
                         };
                     }, { _store: store });
                 }
 
-                return new ObjectStorePromise(function (resolve, reject) {
+                return new ObjectStorePromise((resolve, reject) => {
                     reject(new DatabaseError(0, 'Cannot modify database schema outside of a database upgrade'));
                 });
             }
@@ -172,18 +171,17 @@ module plat {
             transaction(storeNames: Array<string>, mode: string): ITransactionPromise;
             transaction(storeName: any, mode: string) {
                 var tr = this._db.transaction(storeName, mode),
-                    transaction = new Transaction(tr),
-                    that = this;
+                    transaction = new Transaction(tr);
 
-                return new TransactionPromise(function (resolve, reject) {
-                    tr.oncomplete = function (event) {
-                        resolve(that);
+                return new TransactionPromise((resolve, reject) => {
+                    tr.oncomplete = (event) => {
+                        resolve(this);
                     };
 
-                    tr.onerror = function (event) {
+                    tr.onerror = (event) => {
                         reject(new DatabaseError(event.target['errorCode'], 'Unknown error'));
                     };
-                }, { db: that, _transaction: transaction });
+                }, { db: this, _transaction: transaction });
             }
 
             /**
@@ -536,12 +534,12 @@ module plat {
                 var request = this._store.openCursor(),
                     that = this;
 
-                return new DatabaseEventResultPromise(function (resolve, reject) {
+                return new DatabaseEventResultPromise((resolve, reject) => {
                     request.onsuccess = function requestSuccess(event) {
                         resolve(new Cursor(this.result, that));
                     };
 
-                    request.onerror = function requestError(event) {
+                    request.onerror = (event) => {
                         reject(new DatabaseError(event.target['errorCode'], 'Unknown error'));
                     };
                 });
@@ -551,12 +549,12 @@ module plat {
                 var request = this._store[fn](arg0, arg1),
                     that = this;
 
-                return new DatabaseEventResultPromise(function (resolve, reject) {
+                return new DatabaseEventResultPromise((resolve, reject) => {
                     request.onsuccess = function requestSuccess(event) {
                         resolve(this.result);
                     };
 
-                    request.onerror = function requestError(event) {
+                    request.onerror = (event) => {
                         reject(new DatabaseError(event.target['errorCode'], 'Unknown error'));
                     };
                 });
@@ -686,19 +684,18 @@ module plat {
              * @return {IObjectStorePromise} The newly created ObjectStorePromise.
              */
             objectStore(storeName: string) {
-                var objectStore = this._transaction.objectStore(storeName),
-                    that = this;
+                var objectStore = this._transaction.objectStore(storeName);
 
-                return new ObjectStorePromise(function (resolve, reject) {
-                    objectStore.transaction.oncomplete = function transactionComplete(event) {
-                        resolve(that.db);
+                return new ObjectStorePromise((resolve, reject) => {
+                    objectStore.transaction.oncomplete = (event) => {
+                        resolve(this.db);
                     };
 
-                    objectStore.transaction.onerror = function transactionError(event) {
-                        var error = that.error = new DatabaseError(event.target['errorCode'], 'Unknown error');
+                    objectStore.transaction.onerror = (event) => {
+                        var error = this.error = new DatabaseError(event.target['errorCode'], 'Unknown error');
                         reject(error);
                     };
-                }, { db: that.db, _store: objectStore });
+                }, { db: this.db, _store: objectStore });
             }
         }
 
@@ -816,27 +813,26 @@ module plat {
                 var request = this._index.openCursor(range, direction),
                     that = this;
 
-                return new DatabaseEventResultPromise(function (resolve, reject) {
+                return new DatabaseEventResultPromise((resolve, reject) => {
                     request.onsuccess = function requestSuccess(event) {
                         resolve(new Cursor(this.result, that));
                     };
 
-                    request.onerror = function requestError(event) {
+                    request.onerror = (event) => {
                         reject(new DatabaseError(event.target['errorCode'], 'Unknown error'));
                     };
                 });
             }
 
             private requestFn(fn: string, arg?: any) {
-                var request = this._index[fn](arg),
-                    that = this;
+                var request = this._index[fn](arg);
 
-                return new DatabaseEventResultPromise(function (resolve, reject) {
+                return new DatabaseEventResultPromise((resolve, reject) => {
                     request.onsuccess = function requestSuccess(event) {
                         resolve(this.result);
                     };
 
-                    request.onerror = function requestError(event) {
+                    request.onerror = (event) => {
                         reject(new DatabaseError(event.target['errorCode'], 'Unknown error'));
                     };
                 });
@@ -1385,12 +1381,12 @@ module plat {
             update(value: any) {
                 var request = this._cursor.update(value);
 
-                return new DatabaseEventResultPromise(function (resolve, reject) {
+                return new DatabaseEventResultPromise((resolve, reject) => {
                     request.onsuccess = function updateSuccess(event) {
                         resolve(this.result);
                     };
 
-                    request.onerror = function updateError(event) {
+                    request.onerror = (event) => {
                         reject(new DatabaseError(event.target['errorCode'], 'Unknown error'));
                     };
                 });
@@ -1481,19 +1477,18 @@ module plat {
              * @return {IObjectStorePromise} The newly created ObjectStorePromise.
              */
             objectStore(storeName: string) {
-                var objectStore = this._transaction.objectStore(storeName),
-                    that = this;
+                var objectStore = this._transaction.objectStore(storeName);
 
-                return new ObjectStorePromise(function (resolve, reject) {
-                    objectStore.transaction.oncomplete = function transactionComplete(event) {
-                        resolve(that.db);
+                return new ObjectStorePromise((resolve, reject) => {
+                    objectStore.transaction.oncomplete = (event) => {
+                        resolve(this.db);
                     };
 
-                    objectStore.transaction.onerror = function transactionError(event) {
-                        var error = that.error = new DatabaseError(event.target['errorCode'], 'Unknown error');
+                    objectStore.transaction.onerror = (event) => {
+                        var error = this.error = new DatabaseError(event.target['errorCode'], 'Unknown error');
                         reject(error);
                     };
-                }, { db: that.db, _store: objectStore });
+                }, { db: this.db, _store: objectStore });
             }
         }
 
@@ -1652,14 +1647,14 @@ module plat {
             open(name: string, version?: number, onUpgradeNeeded?: (db: Db) => void): IDatabasePromise {
                 var indexedDb = window.indexedDB;
 
-                return new DatabasePromise(function openDb(resolve, reject) {
+                return new DatabasePromise((resolve, reject) => {
                     if (isNull(indexedDb)) {
                         reject(new DatabaseError(null, 'IndexedDb is not supported'));
                     }
 
                     var dbRequest = indexedDb.open(name, version);
 
-                    dbRequest.onerror = function errorOnOpen(event) {
+                    dbRequest.onerror = (event) => {
                         reject(new DatabaseError(event.target['errorCode'], 'Unknown error'));
                     };
 
@@ -1693,18 +1688,18 @@ module plat {
             deleteDatabase(name: string) {
                 var indexedDb = window.indexedDB;
 
-                return new DatabasePromise(function deleteDb(resolve, reject) {
+                return new DatabasePromise((resolve, reject) => {
                     if (isNull(indexedDb)) {
                         reject(new DatabaseError(null, 'IndexedDb is not supported'));
                     }
 
                     var dbRequest = indexedDb.deleteDatabase(name);
 
-                    dbRequest.onerror = function errorOnOpen(event) {
+                    dbRequest.onerror = (event) => {
                         reject(new DatabaseError(event.target['errorCode'], 'Unknown error'));
                     };
 
-                    dbRequest.onsuccess = function onOpen(event) {
+                    dbRequest.onsuccess = (event) => {
                         resolve();
                     };
                 });

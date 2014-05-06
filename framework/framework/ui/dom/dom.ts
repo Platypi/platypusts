@@ -465,7 +465,7 @@ module plat.ui {
         var compat = acquire('$compat');
 
         if (compat.msApp) {
-            MSApp.execUnsafeLocalFunction(function () {
+            MSApp.execUnsafeLocalFunction(() => {
                 element.innerHTML = html;
             });
         } else {
