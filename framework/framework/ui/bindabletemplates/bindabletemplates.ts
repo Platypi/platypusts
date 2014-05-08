@@ -114,7 +114,8 @@ module plat.ui {
          * @return {DocumentFragment} A clone of the template, fully reconstructed and ready to put
          * in the DOM.
          */
-        bind(key: string, callback: IBindableTemplateCallback, relativeIdentifier?: string, resources?: IObject<IResource>);
+        bind(key: string, callback: IBindableTemplateCallback, relativeIdentifier?: string,
+            resources?: IObject<IResource>): DocumentFragment;
         /**
          * Method for linking a new template to a data context and returning a clone of the template, 
          * with all new IControls created if the template contains controls. It is not necessary
@@ -130,8 +131,9 @@ module plat.ui {
          * @return {DocumentFragment} A clone of the template, fully reconstructed and ready to put
          * in the DOM.
          */
-        bind(key: string, callback: IBindableTemplateCallback, relativeIdentifier?: number, resources?: IObject<IResource>);
-        bind(key: any, callback: IBindableTemplateCallback, relativeIdentifier?: any, resources?: IObject<IResource>) {
+        bind(key: string, callback: IBindableTemplateCallback, relativeIdentifier?: number,
+            resources?: IObject<IResource>): DocumentFragment;
+        bind(key: any, callback: IBindableTemplateCallback, relativeIdentifier?: any, resources?: IObject<IResource>): DocumentFragment {
             var template: any = this.templates[key],
                 control: ITemplateControl = this.control,
                 nodeMap: processing.INodeMap,
@@ -170,7 +172,7 @@ module plat.ui {
          * @param key The key used to store the template.
          * @param template An HTMLElement represending the template DOM.
          */
-        add(key: string, template: HTMLElement);
+        add(key: string, template: HTMLElement): void;
         /**
          * Adds a template to this object. The template will be stored with the key,
          * and it will be transformed into a DocumentFragment.
@@ -178,7 +180,7 @@ module plat.ui {
          * @param key The key used to store the template.
          * @param template A Node array represending the template DOM.
          */
-        add(key: string, template: Array<Node>);
+        add(key: string, template: Array<Node>): void;
         /**
          * Adds a template to this object. The template will be stored with the key,
          * and it will be transformed into a DocumentFragment.
@@ -186,14 +188,14 @@ module plat.ui {
          * @param key The key used to store the template.
          * @param template A NodeList represending the template DOM.
          */
-        add(key: string, template: NodeList);
+        add(key: string, template: NodeList): void;
         /**
          * Adds a template to this object. The template will be stored with the key.
          * 
          * @param key The key used to store the template.
          * @param template A DocumentFragment represending the template DOM.
          */
-        add(key: string, template: DocumentFragment);
+        add(key: string, template: DocumentFragment): void;
         /**
          * Adds a template to this object. The template will be stored with the key,
          * and it will be transformed into a DocumentFragment.
@@ -201,7 +203,7 @@ module plat.ui {
          * @param key The key used to store the template.
          * @param template A Node represending the template DOM.
          */
-        add(key: string, template: Node);
+        add(key: string, template: Node): void;
         add(key: string, template: any) {
             if (isNull(template)) {
                 return;
@@ -422,7 +424,8 @@ module plat.ui {
          * @return {DocumentFragment} A clone of the template, fully reconstructed and ready to put
          * in the DOM.
          */
-        bind(key: string, callback: IBindableTemplateCallback, relativeIdentifier?: string, resources?: IObject<IResource>);
+        bind(key: string, callback: IBindableTemplateCallback, relativeIdentifier?: string,
+            resources?: IObject<IResource>): DocumentFragment;
         /**
          * Method for linking a new template to a data context and returning a clone of the template, 
          * with all new IControls created if the template contains controls. It is not necessary
@@ -438,7 +441,8 @@ module plat.ui {
          * @return {DocumentFragment} A clone of the template, fully reconstructed and ready to put
          * in the DOM.
          */
-        bind(key: string, callback: IBindableTemplateCallback, relativeIdentifier?: number, resources?: IObject<IResource>);
+        bind(key: string, callback: IBindableTemplateCallback, relativeIdentifier?: number,
+            resources?: IObject<IResource>): DocumentFragment;
 
         /**
          * Adds a template to this object. The template will be stored with the key,
@@ -447,7 +451,7 @@ module plat.ui {
          * @param key The key used to store the template.
          * @param template An HTMLElement represending the template DOM.
          */
-        add(key: string, template: HTMLElement);
+        add(key: string, template: HTMLElement): void;
         /**
          * Adds a template to this object. The template will be stored with the key,
          * and it will be transformed into a DocumentFragment.
@@ -455,7 +459,7 @@ module plat.ui {
          * @param key The key used to store the template.
          * @param template A Node array represending the template DOM.
          */
-        add(key: string, template: Array<Node>);
+        add(key: string, template: Array<Node>): void;
         /**
          * Adds a template to this object. The template will be stored with the key,
          * and it will be transformed into a DocumentFragment.
@@ -463,14 +467,14 @@ module plat.ui {
          * @param key The key used to store the template.
          * @param template A NodeList represending the template DOM.
          */
-        add(key: string, template: NodeList);
+        add(key: string, template: NodeList): void;
         /**
          * Adds a template to this object. The template will be stored with the key.
          * 
          * @param key The key used to store the template.
          * @param template A DocumentFragment represending the template DOM.
          */
-        add(key: string, template: DocumentFragment);
+        add(key: string, template: DocumentFragment): void;
         /**
          * Adds a template to this object. The template will be stored with the key,
          * and it will be transformed into a DocumentFragment.
@@ -478,7 +482,7 @@ module plat.ui {
          * @param key The key used to store the template.
          * @param template A Node represending the template DOM.
          */
-        add(key: string, template: Node);
+        add(key: string, template: Node): void;
     }
 
     /**
