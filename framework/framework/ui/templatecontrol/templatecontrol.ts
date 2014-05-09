@@ -3,6 +3,15 @@ module plat.ui {
      * A control class which provides properties and methods for managing its body HTML.
      */
     export class TemplateControl extends Control implements ITemplateControl {
+        static $ContextManagerStatic: observable.IContextManagerStatic;
+        static $ResourcesStatic: IResourcesStatic;
+        static $BindableTemplatesStatic: IBindableTemplatesStatic;
+        static $ManagerCacheStatic: storage.ICache<processing.IElementManager>;
+        static $ExceptionStatic: IExceptionStatic;
+        static $templateCache: storage.ITemplateCache;
+        static $parser: expressions.IParser;
+        static $http: async.IHttp;
+
         /**
          * Evaluates an expression string with a given control and optional context.
          * 
@@ -26,9 +35,7 @@ module plat.ui {
                 return;
             }
 
-            var parser = acquire('$parser');
-
-            expression = isString(expression) ? parser.parse(expression) : expression;
+            expression = isString(expression) ? TemplateControl.$parser.parse(expression) : expression;
 
             if (isNull(control)) {
                 return expression.evaluate(null, aliases);
@@ -91,7 +98,7 @@ module plat.ui {
                 }
 
                 if (isNull(resourceObj)) {
-                    var Exception: IExceptionStatic = acquire('$ExceptionStatic');
+                    var Exception = TemplateControl.$ExceptionStatic;
                     Exception.warn('Attempting to use a resource that is not defined.', Exception.CONTEXT);
                     continue;
                 }
@@ -158,15 +165,10 @@ module plat.ui {
             }
 
             var parent = control.parent,
-                rootControl,
-                parentControls = !isNull(parent) ? parent.controls : null,
                 uid = control.uid,
                 controls = (control.controls && control.controls.slice(0)),
-                ContextManager: observable.IContextManagerStatic = acquire('$ContextManagerStatic'),
-                define = ContextManager.defineProperty,
-                Resources: IResourcesStatic = acquire('$ResourcesStatic'),
-                BindableTemplates: IBindableTemplatesStatic = acquire('$BindableTemplatesStatic'),
-                managerCache: storage.ICache<processing.IElementManager> = acquire('$ManagerCacheStatic');
+                ContextManager = TemplateControl.$ContextManagerStatic,
+                define = ContextManager.defineProperty;
 
             if (!isNull(controls)) {
                 var length = controls.length - 1;
@@ -180,10 +182,11 @@ module plat.ui {
                 control.dispose();
             }
 
+            Control.removeEventListeners(control);
             TemplateControl.removeElement(control);
 
-            Resources.dispose(control);
-            BindableTemplates.dispose(control);
+            TemplateControl.$ResourcesStatic.dispose(control);
+            TemplateControl.$BindableTemplatesStatic.dispose(control);
 
             TemplateControl.__resourceCache[control.uid] = null;
             delete TemplateControl.__resourceCache[control.uid];
@@ -191,7 +194,7 @@ module plat.ui {
             ContextManager.dispose(control);
             events.EventManager.dispose(control.uid);
 
-            managerCache.remove(uid);
+            TemplateControl.$ManagerCacheStatic.remove(uid);
             Control.removeParent(control);
 
             define(control, 'context', null, true, true);
@@ -255,8 +258,7 @@ module plat.ui {
             var value = control.context;
 
             if (isNull(control.resources)) {
-                var Resources: IResourcesStatic = acquire('$ResourcesStatic');
-                control.resources = Resources.getInstance();
+                control.resources = TemplateControl.$ResourcesStatic.getInstance();
                 control.resources.initialize(control);
             }
 
@@ -295,14 +297,13 @@ module plat.ui {
          * @param control The control whose element should be removed.
          */
         static removeElement(control: ITemplateControl) {
-            var parentNode: Node,
-                dom: IDom = acquire('$dom');
-
             if (isNull(control)) {
                 return;
             }
 
-            var element = control.element;
+            var dom = control.dom,
+                element = control.element,
+                parentNode: Node;
 
             if (control.replaceWith === null ||
             control.replaceWith === '' ||
@@ -330,8 +331,7 @@ module plat.ui {
          * @param path The path to set on the control.
          */
         static setAbsoluteContextPath(control: ITemplateControl, path: string) {
-            var ContextManager: observable.IContextManagerStatic = acquire('$ContextManagerStatic');
-            ContextManager.defineGetter(control, 'absoluteContextPath', path, false, true);
+            TemplateControl.$ContextManagerStatic.defineGetter(control, 'absoluteContextPath', path, false, true);
         }
 
         /**
@@ -339,9 +339,9 @@ module plat.ui {
          * using the provided templateUrl, or serializing the control's templateString.
          */
         static determineTemplate(control: ITemplateControl, templateUrl?: string) {
-            var template,
-                templateCache: storage.ITemplateCache = acquire('$templateCache'),
-                dom: IDom = acquire('$dom');
+            var templateCache = TemplateControl.$templateCache,
+                dom = control.dom,
+                template;
 
             if (!isNull(templateUrl)) {
                 control.templateUrl = templateUrl;
@@ -365,8 +365,8 @@ module plat.ui {
                 return template;
             }
 
-            var ajax = (<async.IHttp>acquire('$http')).ajax,
-                Exception: IExceptionStatic = acquire('$ExceptionStatic');
+            var ajax = TemplateControl.$http.ajax,
+                Exception = TemplateControl.$ExceptionStatic;
 
             return templateCache.put(templateUrl, ajax({ url: templateUrl }).then((success) => {
                 if (!isObject(success) || !isString(success.response)) {
@@ -398,15 +398,7 @@ module plat.ui {
          * @param control The control to be detached.
          */
         static detach(control: ITemplateControl) {
-            if (isNull(control)) {
-                return;
-            }
-
-            var ContextManager: observable.IContextManagerStatic = acquire('$ContextManagerStatic'),
-                Resources: IResourcesStatic = acquire('$ResourcesStatic'),
-                managerCache: storage.ICache<processing.IElementManager> = acquire('$ManagerCacheStatic');
-
-            if (isNull(control.controls)) {
+            if (isNull(control) || isNull(control.controls)) {
                 return;
             }
 
@@ -419,15 +411,15 @@ module plat.ui {
 
             TemplateControl.removeElement(control);
 
-            Resources.dispose(control, true);
+            TemplateControl.$ResourcesStatic.dispose(control, true);
 
             TemplateControl.__resourceCache[control.uid] = null;
             delete TemplateControl.__resourceCache[control.uid];
 
-            ContextManager.dispose(control, true);
+            TemplateControl.$ContextManagerStatic.dispose(control, true);
             events.EventManager.dispose(control.uid);
 
-            managerCache.remove(control.uid);
+            TemplateControl.$ManagerCacheStatic.remove(control.uid);
             Control.removeParent(control);
 
             control.controls = [];
@@ -567,11 +559,6 @@ module plat.ui {
         constructor() {
             super();
         }
-
-        /**
-         * Contains DOM helper methods for manipulating this control's element.
-         */
-        dom: IDom = acquire('$dom');
 
         /**
          * Set to the root ancestor control from which this control inherits its context. This value
@@ -739,7 +726,7 @@ module plat.ui {
 
             var control = !isFunction((<any>this).getAbsoluteIdentifier) ? this.parent : <ITemplateControl>this,
                 absoluteIdentifier = control.getAbsoluteIdentifier(context),
-                ContextManager: observable.IContextManagerStatic = acquire('$ContextManagerStatic');
+                ContextManager = TemplateControl.$ContextManagerStatic;
 
             if (isNull(absoluteIdentifier)) {
                 return;
@@ -788,7 +775,7 @@ module plat.ui {
 
             var control = !isFunction((<any>this).getAbsoluteIdentifier) ? this.parent : <ITemplateControl>this,
                 absoluteIdentifier = control.getAbsoluteIdentifier(context),
-                ContextManager: observable.IContextManagerStatic = acquire('$ContextManagerStatic');
+                ContextManager = TemplateControl.$ContextManagerStatic;
 
             if (isNull(absoluteIdentifier)) {
                 if (property === 'context') {
@@ -821,11 +808,36 @@ module plat.ui {
     /**
      * The Type for referencing the '$TemplateControlStatic' injectable as a dependency.
      */
-    export function TemplateControlStatic() {
+    export function TemplateControlStatic(
+        $ContextManagerStatic,
+        $ResourcesStatic,
+        $BindableTemplatesStatic,
+        $ManagerCacheStatic,
+        $ExceptionStatic,
+        $templateCache,
+        $parser,
+        $http) {
+            TemplateControl.$ContextManagerStatic = $ContextManagerStatic;
+            TemplateControl.$ResourcesStatic = $ResourcesStatic;
+            TemplateControl.$BindableTemplatesStatic = $BindableTemplatesStatic;
+            TemplateControl.$ManagerCacheStatic = $ManagerCacheStatic;
+            TemplateControl.$ExceptionStatic = $ExceptionStatic;
+            TemplateControl.$templateCache = $templateCache;
+            TemplateControl.$parser = $parser;
+            TemplateControl.$http = $http;
         return TemplateControl;
     }
 
-    register.injectable('$TemplateControlStatic', TemplateControlStatic, null, register.injectableType.STATIC);
+    register.injectable('$TemplateControlStatic', TemplateControlStatic, [
+        '$ContextManagerStatic',
+        '$ResourcesStatic',
+        '$BindableTemplatesStatic',
+        '$ManagerCacheStatic',
+        '$ExceptionStatic',
+        '$templateCache',
+        '$parser',
+        '$http'
+    ], register.injectableType.STATIC);
 
     /**
      * The external interface for the '$TemplateControlStatic' injectable.
@@ -1071,11 +1083,6 @@ module plat.ui {
          * attributes (as well as attribute IControls), those attributes will be carried to the swapped element.
          */
         replaceWith?: string;
-
-        /**
-         * Contains DOM helper methods for manipulating this control's element.
-         */
-        dom: IDom;
 
         /**
          * Set to the root ancestor control from which this control inherits its context. This value

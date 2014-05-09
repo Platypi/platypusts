@@ -8,8 +8,6 @@ module plat.ui {
      * separate those templates and reuse them accordingly.
      */
     export class BindableTemplates implements IBindableTemplates {
-        static $TemplateControlStatic: ITemplateControlStatic;
-
         /**
          * Creates a new instance of BindableTemplates and returns it. If a BindableTemplates is 
          * passed in, it will use the properties on the original BindableTemplates.
@@ -40,24 +38,7 @@ module plat.ui {
          * @param control The control whose bindableTemplates will be disposed.
          */
         static dispose(control: ITemplateControl) {
-            var bindableTemplates = <BindableTemplates>control.bindableTemplates,
-                dispose = BindableTemplates.$TemplateControlStatic.dispose;
-
-            if (isNull(control.bindableTemplates)) {
-                return;
-            }
-
-            var compiledControls = bindableTemplates.__compiledControls,
-                length = compiledControls.length;
-
-            for (var i = 0; i < length; ++i) {
-                dispose(compiledControls[i]);
-            }
-
-            bindableTemplates.__compiledControls = [];
-            bindableTemplates.control = null;
-            bindableTemplates._cache = {};
-            bindableTemplates.templates = {};
+            control.bindableTemplates.dispose();
         }
 
         /**
@@ -79,6 +60,7 @@ module plat.ui {
         _cache: IObject<processing.IElementManager> = {};
 
         $ResourcesStatic: IResourcesStatic = acquire('$ResourcesStatic');
+        $TemplateControlStatic: ITemplateControlStatic = acquire('$TemplateControlStatic');
         $PromiseStatic: async.IPromiseStatic = acquire('$PromiseStatic');
         $ManagerCacheStatic: storage.ICache<processing.IElementManager> = acquire('$ManagerCacheStatic');
         $dom: IDom = acquire('$dom');
@@ -232,6 +214,24 @@ module plat.ui {
         }
 
         /**
+         * Clears the memory being held by this BindableTemplates instance.
+         */
+        dispose() {
+            var dispose = this.$TemplateControlStatic.dispose,
+                compiledControls = this.__compiledControls,
+                length = compiledControls.length;
+
+            for (var i = 0; i < length; ++i) {
+                dispose(compiledControls[i]);
+            }
+
+            this.__compiledControls = [];
+            this.control = null;
+            this._cache = {};
+            this.templates = {};
+        }
+
+        /**
          * Creates the template's bound control and INodeMap and initiates 
          * the binding of the INodeMap for a cloned template.
          */
@@ -344,7 +344,8 @@ module plat.ui {
          */
         _createBoundControl(key: string, template: DocumentFragment,
             relativeIdentifier?: string, resources?: IObject<IResource>) {
-            var control = new BindableTemplates.$TemplateControlStatic(),
+            var $TemplateControlStatic = this.$TemplateControlStatic,
+                control = new $TemplateControlStatic(),
                 parent = this.control,
                 hasRelativeIdentifier = !isEmpty(relativeIdentifier),
                 absoluteContextPath: string;
@@ -355,7 +356,7 @@ module plat.ui {
                 absoluteContextPath = parent.absoluteContextPath;
             }
 
-            BindableTemplates.$TemplateControlStatic.setAbsoluteContextPath(control, absoluteContextPath);
+            $TemplateControlStatic.setAbsoluteContextPath(control, absoluteContextPath);
 
             var _resources = this.$ResourcesStatic.getInstance();
 
@@ -377,13 +378,10 @@ module plat.ui {
      * The Type for referencing the '$BindableTemplatesStatic' injectable as a dependency.
      */
     export function BindableTemplatesStatic($TemplateControlStatic) {
-        BindableTemplates.$TemplateControlStatic = $TemplateControlStatic;
         return BindableTemplates;
     }
 
-    register.injectable('$BindableTemplatesStatic', BindableTemplatesStatic, [
-        '$TemplateControlStatic'
-    ], register.injectableType.STATIC);
+    register.injectable('$BindableTemplatesStatic', BindableTemplatesStatic, null, register.injectableType.STATIC);
 
     /**
      * Describes an object which provides a way for ITemplateControls to bind a template 
@@ -483,6 +481,11 @@ module plat.ui {
          * @param template A Node represending the template DOM.
          */
         add(key: string, template: Node): void;
+
+        /**
+         * Clears the memory being held by this BindableTemplates instance.
+         */
+        dispose(): void;
     }
 
     /**

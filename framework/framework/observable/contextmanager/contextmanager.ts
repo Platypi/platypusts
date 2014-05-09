@@ -52,7 +52,7 @@ module plat.observable {
 
             var uid = control.uid,
                 controls = ContextManager.__controls,
-                identifiers = controls[uid],
+                identifiers = controls[uid] || {},
                 managers = ContextManager.__managers,
                 manager = managers[uid];
 
@@ -62,19 +62,15 @@ module plat.observable {
                 delete managers[uid];
             }
 
-            if (isNull(identifiers)) {
-                return;
-            }
-
             var keys = Object.keys(identifiers),
-                identifier, listeners, i, j, jLength;
+                identifier, listeners: Array<IRemoveListener>, i, j, jLength;
 
             while (keys.length > 0) {
                 identifier = keys.shift();
                 listeners = identifiers[identifier];
                 jLength = listeners.length;
                 for (j = 0; j < jLength; ++j) {
-                    listeners[j](identifier, uid);
+                    listeners[j]();
                 }
             }
 

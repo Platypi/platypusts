@@ -7,7 +7,12 @@ module plat {
     export class Control implements IControl {
         static $ContextManagerStatic: observable.IContextManagerStatic;
         static $EventManagerStatic: events.IEventManagerStatic;
-        
+
+        /**
+         * An object containing all controls' registered event listeners.
+         */
+        private static __eventListeners: IObject<Array<IRemoveListener>> = {};
+
         /**
          * Finds the ancestor control for the given control that contains the root 
          * context.
@@ -58,26 +63,23 @@ module plat {
          * @param control The Control to dispose.
          */
         static dispose(control: IControl) {
-            var ctrl = <any>control,
-                ContextManager = Control.$ContextManagerStatic,
-                AttributeControl = controls.AttributeControl,
-                ViewControl = ui.ViewControl,
-                TemplateControl = ui.TemplateControl;
+            var ctrl = <any>control;
 
             if (isNull(ctrl)) {
                 return;
             } else if (!isUndefined(ctrl.templateControl)) {
-                AttributeControl.dispose(ctrl);
+                controls.AttributeControl.dispose(ctrl);
                 return;
             } else if (ctrl.hasOwnContext) {
-                ViewControl.dispose(ctrl);
+                ui.ViewControl.dispose(ctrl);
                 return;
             } else if (ctrl.controls) {
-                TemplateControl.dispose(ctrl);
+                ui.TemplateControl.dispose(ctrl);
                 return;
             }
 
-            ContextManager.dispose(control);
+            Control.removeEventListeners(control);
+            Control.$ContextManagerStatic.dispose(control);
             control.dispose();
 
             Control.removeParent(control);
@@ -109,6 +111,65 @@ module plat {
             }
 
             control.parent = null;
+        }
+
+        /**
+         * Removes all event listeners for a control with the given uid.
+         * 
+         * @static
+         * @param control The control having its event listeners removed.
+         */
+        static removeEventListeners(control: IControl) {
+            if (isNull(control)) {
+                return;
+            }
+
+            var removeListeners = Control.__eventListeners,
+                uid = control.uid;
+
+            var listeners = removeListeners[uid];
+            if (isArray(listeners)) {
+                var index = listeners.length;
+                while (index-- > 0) {
+                    listeners[index]();
+                }
+
+                removeListeners[uid] = null;
+                delete removeListeners[uid];
+            }
+        }
+
+        /**
+         * Adds a function to remove an event listener for the control specified 
+         * by its uid.
+         * 
+         * @static
+         * @param uid The uid of the control associated with the remove function.
+         * @param listener The remove function to add.
+         */
+        private static __addRemoveListener(uid: string, listener: IRemoveListener) {
+            var removeListeners = Control.__eventListeners;
+
+            if (isArray(removeListeners[uid])) {
+                removeListeners[uid].push(listener);
+                return;
+            }
+
+            removeListeners[uid] = [listener];
+        }
+
+        private static __spliceRemoveListener(uid: string, listener: IRemoveListener) {
+            var removeListeners = Control.__eventListeners,
+                controlListeners = removeListeners[uid];
+
+            if (isArray(controlListeners)) {
+                var index = controlListeners.indexOf(listener);
+                if (index === -1) {
+                    return;
+                }
+
+                controlListeners.splice(index, 1);
+            }
         }
 
         private static __getControls(control: IControl, method: string, key: string) {
@@ -199,6 +260,11 @@ module plat {
         attributes: ui.IAttributes;
 
         /**
+         * Contains DOM helper methods for manipulating this control's element.
+         */
+        dom: ui.IDom = acquire('$dom');
+
+        /**
          * The constructor for a control. Any injectables specified during control registration will be
          * passed into the constructor as arguments as long as the control is instantiated with its associated
          * injector.
@@ -254,6 +320,27 @@ module plat {
                 return Control.__getControls(this, 'type', type);
             }
             return Control.__getControls(this, 'constructor', type);
+        }
+
+        /**
+         * Adds an event listener of the specified type to the specified element.
+         * 
+         * @param element The element to add the event listener to.
+         * @param type The type of event to listen to.
+         * @param listener The listener to fire when the event occurs.
+         * @param useCapture Whether to fire the event on the capture or the bubble phase 
+         * of event propagation.
+         */
+        addEventListener(element: Node, type: string, listener: ui.IGestureListener, useCapture?: boolean): IRemoveListener {
+            var removeListener = this.dom.addEventListener(element, type, listener, useCapture),
+                uid = this.uid;
+
+            Control.__addRemoveListener(uid, removeListener);
+
+            return () => {
+                removeListener();
+                Control.__spliceRemoveListener(uid, removeListener);
+            };
         }
 
         /**
@@ -557,6 +644,14 @@ module plat {
         removeParent(control: IControl): void;
 
         /**
+         * Removes all event listeners for a control with the given uid.
+         *
+         * @static
+         * @param control The control having its event listeners removed.
+         */
+        removeEventListeners(control: IControl): void;
+
+        /**
          * Create a new empty IControl
          */
         new (): IControl;
@@ -612,6 +707,11 @@ module plat {
         attributes?: ui.IAttributes;
 
         /**
+         * Contains DOM helper methods for manipulating this control's element.
+         */
+        dom: ui.IDom;
+
+        /**
          * The initialize event method for a control. In this method a control should initialize all the necessary 
          * variables. This method is typically only necessary for view controls. If a control does not implement 
          * ui.IViewControl then it is not safe to access, observe, or modify the context property in this method.
@@ -648,6 +748,18 @@ module plat {
          * @example this.getControlsByType<ui.controls.ForEach>(ui.controls.ForEach)
          */
         getControlsByType? <T extends IControl>(Constructor: new () => T): Array<T>;
+
+        /**
+         * Adds an event listener of the specified type to the specified element. Removal of the 
+         * event is handled automatically upon disposal.
+         * 
+         * @param element The element to add the event listener to.
+         * @param type The type of event to listen to.
+         * @param listener The listener to fire when the event occurs.
+         * @param useCapture Whether to fire the event on the capture or the bubble phase 
+         * of event propagation.
+         */
+        addEventListener(element: Node, type: string, listener: ui.IGestureListener, useCapture?: boolean): IRemoveListener;
 
         /**
          * Parses an expression string and observes any associated identifiers. When an identifier

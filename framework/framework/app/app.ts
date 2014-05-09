@@ -317,19 +317,20 @@ module plat {
     /**
      * The Type for referencing the '$AppStatic' injectable as a dependency.
      */
-    export function AppStatic($compat: ICompat,
-    $ExceptionStatic: IExceptionStatic,
-    $EventManagerStatic: events.IEventManagerStatic,
-    $document: Document,
-    $compiler: processing.ICompiler,
-    $LifecycleEventStatic: events.ILifecycleEventStatic) {
-        App.$compat = $compat;
-        App.$ExceptionStatic = $ExceptionStatic;
-        App.$EventManagerStatic = $EventManagerStatic;
-        App.$document = $document;
-        App.$compiler = $compiler;
-        App.$LifecycleEventStatic = $LifecycleEventStatic;
-        return App;
+    export function AppStatic(
+        $compat: ICompat,
+        $ExceptionStatic: IExceptionStatic,
+        $EventManagerStatic: events.IEventManagerStatic,
+        $document: Document,
+        $compiler: processing.ICompiler,
+        $LifecycleEventStatic: events.ILifecycleEventStatic) {
+            App.$compat = $compat;
+            App.$ExceptionStatic = $ExceptionStatic;
+            App.$EventManagerStatic = $EventManagerStatic;
+            App.$document = $document;
+            App.$compiler = $compiler;
+            App.$LifecycleEventStatic = $LifecycleEventStatic;
+            return App;
     }
 
     register.injectable('$AppStatic', AppStatic, [

@@ -80,14 +80,16 @@
         constructor() {
             this.__determineTypes();
         }
-        addEventListener(element: Node, type: string, listener: IGestureListener,
-            useCapture?: boolean, options?: IDomEventConfig) {
+
+        addEventListener(element: Node, type: string, listener: IGestureListener, useCapture?: boolean): IRemoveListener {
             var gestures = this.__gestures;
             if (!isUndefined(element['on' + type])) {
                 element.addEventListener(type, listener, useCapture);
-                return;
+                return () => {
+                    element.removeEventListener(type, listener, useCapture);
+                };
             } else if (isUndefined(gestures[type])) {
-                return;
+                return noop;
             }
 
             element.addEventListener(type, listener, useCapture);
@@ -109,33 +111,12 @@
 
             this.__registerElement(element, type, listener, removeSelect);
             this.__gestureCount[countType]++;
+
+            return () => {
+                this.__removeEventListener(element, type, listener, useCapture);
+            };
         }
-        removeEventListener(element: Node, type: string, listener: IGestureListener, useCapture?: boolean) {
-            var gestures = this.__gestures;
-            if (!isUndefined(element['on' + type])) {
-                element.removeEventListener(type, listener, useCapture);
-                return;
-            } else if (isUndefined(gestures[type])) {
-                return;
-            }
 
-            element.removeEventListener(type, listener, useCapture);
-
-            var swipeGesture = gestures.swipe,
-                trackGesture = gestures.track,
-                countType = type;
-
-            if (type.indexOf(trackGesture) !== -1) {
-                countType = trackGesture;
-                this.__moveEventCount--;
-            } else if (type.indexOf(swipeGesture) !== -1) {
-                countType = swipeGesture;
-                this.__moveEventCount--;
-            }
-
-            this.__unregisterElement(element, type, listener, (this.__moveEventCount <= 0 && !this.config.allowTextSelection));
-            this.__gestureCount[countType]--;
-        }
         dispose() {
             this.__unregisterTypes();
 
@@ -335,6 +316,26 @@
             };
         }
 
+        private __removeEventListener(element: Node, type: string, listener: IGestureListener, useCapture?: boolean) {
+            var gestures = this.__gestures;
+
+            element.removeEventListener(type, listener, useCapture);
+
+            var swipeGesture = gestures.swipe,
+                trackGesture = gestures.track,
+                countType = type;
+
+            if (type.indexOf(trackGesture) !== -1) {
+                countType = trackGesture;
+                this.__moveEventCount--;
+            } else if (type.indexOf(swipeGesture) !== -1) {
+                countType = swipeGesture;
+                this.__moveEventCount--;
+            }
+
+            this.__unregisterElement(element, type, listener, (this.__moveEventCount <= 0 && !this.config.allowTextSelection));
+            this.__gestureCount[countType]--;
+        }
         private __handleTap(ev: ITouchEvent) {
             this.__touchCount++;
 
@@ -408,7 +409,7 @@
                 direction = lastMove.direction,
                 velocity = lastMove.velocity,
                 swipeDirectionGesture = swipeGesture + direction,
-                eventTarget = <Node>this.__lastTouchDown.target,
+                eventTarget = <Node>this.__swipeOrigin.target,
                 swipeSubscriber = this.__findFirstSubscriber(eventTarget, swipeGesture),
                 swipeDirectionSubscriber = this.__findFirstSubscriber(eventTarget, gestures[swipeDirectionGesture]);
 
@@ -779,10 +780,8 @@
     export interface IDomEvents {
         hasTouch: boolean;
         config: IDomEventConfig;
-        addEventListener: (element: Node, type: string, listener: IGestureListener,
-            useCapture?: boolean, options?: IDomEventConfig) => void;
-        removeEventListener: (element: Node, type: string, listener: IGestureListener,
-            useCapture?: boolean) => void;
+        addEventListener(element: Node, type: string, listener: IGestureListener,
+            useCapture?: boolean): IRemoveListener;
         dispose(): void;
     }
 }
