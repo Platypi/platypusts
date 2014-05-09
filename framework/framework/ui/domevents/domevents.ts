@@ -6,7 +6,7 @@
         $window: Window = acquire('$window');
         $document: Document = acquire('$document');
 
-        hasTouch = ('ontouchstart' in this.$window);
+        hasTouch = !isUndefined(this.$window['ontouchstart']);
         config: IDomEventConfig = {
             allowDblTapZoom: false,
             allowTextSelection: false,
@@ -72,6 +72,13 @@
             swipe: 0,
             track: 0
         };
+        private __mappedGestures: IMappedGestures = {
+            touchstart: 'touchstart',
+            touchend: 'touchend',
+            touchmove: 'touchmove',
+            touchenter: 'touchenter',
+            touchcancel: 'touchcancel'
+        };
         private __listeners: IDocumentListeners = {
             start: this._onTouchStart.bind(this),
             move: this._onMove.bind(this),
@@ -81,18 +88,24 @@
             this.__determineTypes();
         }
 
-        addEventListener(element: Node, type: string, listener: IGestureListener, useCapture?: boolean): IRemoveListener {
-            var gestures = this.__gestures;
-            if (!isUndefined(element['on' + type])) {
-                element.addEventListener(type, listener, useCapture);
-                return () => {
-                    element.removeEventListener(type, listener, useCapture);
-                };
-            } else if (isUndefined(gestures[type])) {
-                return noop;
+        addEventListener(element: Node, type: string, listener: IGestureListener, useCapture?: boolean): IRemoveListener;
+        addEventListener(element: Window, type: string, listener: IGestureListener, useCapture?: boolean): IRemoveListener;
+        addEventListener(element: any, type: string, listener: IGestureListener, useCapture?: boolean): IRemoveListener {
+            var mappedGestures = this.__mappedGestures,
+                mappedType = mappedGestures[type];
+
+            if (!isNull(mappedType)) {
+                type = mappedGestures[type];
             }
 
             element.addEventListener(type, listener, useCapture);
+
+            var gestures = this.__gestures;
+            if (!isUndefined(element['on' + type]) || isUndefined(gestures[type])) {
+                return () => {
+                    element.removeEventListener(type, listener, useCapture);
+                };
+            }
 
             var swipeGesture = gestures.swipe,
                 trackGesture = gestures.track,
@@ -217,6 +230,9 @@
             if (!this.__detectMove || (this.__inTouch && ev.type.indexOf('mouse') !== -1)) {
                 return;
             }
+
+            // call prevent default to try and avoid mouse events
+            ev.preventDefault();
 
             // clear hold
             this.__clearHold();
@@ -467,16 +483,19 @@
             } while (!isNull(eventTarget = eventTarget.parentNode));
         }
         private __determineTypes() {
-            var navigator = this.$window.navigator;
+            var navigator = this.$window.navigator,
+                mappedGestures = this.__mappedGestures;
             if (navigator.pointerEnabled) {
-                this.__startEvents = ['pointerdown'];
-                this.__moveEvents = ['pointermove'];
-                this.__endEvents = ['pointerup', 'pointercancel'];
+                this.__startEvents = [(mappedGestures.touchstart = 'pointerdown')];
+                this.__moveEvents = [(mappedGestures.touchmove = 'pointermove')];
+                this.__endEvents = [(mappedGestures.touchend = 'pointerup'), (mappedGestures.touchcancel = 'pointercancel')];
+                mappedGestures.touchenter = 'pointerover';
                 return;
             } else if (navigator.msPointerEnabled) {
-                this.__startEvents = ['MSPointerDown'];
-                this.__moveEvents = ['MSPointerMove'];
-                this.__endEvents = ['MSPointerUp', 'MSPointerCancel'];
+                this.__startEvents = [(mappedGestures.touchstart = 'MSPointerDown')];
+                this.__moveEvents = [(mappedGestures.touchmove = 'MSPointerMove')];
+                this.__endEvents = [(mappedGestures.touchend = 'MSPointerUp'), (mappedGestures.touchcancel = 'MSPointerCancel')];
+                mappedGestures.touchenter = 'MSPointerOver';
                 return;
             } else if (this.hasTouch) {
                 this.__startEvents = ['touchstart', 'mousedown'];
@@ -485,9 +504,11 @@
                 return;
             }
 
-            this.__startEvents = ['mousedown'];
-            this.__moveEvents = ['mousemove'];
-            this.__endEvents = ['mouseup'];
+            this.__startEvents = [(mappedGestures.touchstart = 'mousedown')];
+            this.__moveEvents = [(mappedGestures.touchmove = 'mousemove')];
+            this.__endEvents = [(mappedGestures.touchend = 'mouseup')];
+            mappedGestures.touchenter = 'mouseenter';
+            mappedGestures.touchcancel = null;
         }
         private __registerTypes() {
             this.__registerType(this.__START);
@@ -681,6 +702,14 @@
         move?: EventListener;
     }
 
+    interface IMappedGestures extends IObject<string> {
+        touchstart: string;
+        touchend: string;
+        touchmove: string;
+        touchenter: string;
+        touchcancel: string;
+    }
+
     export interface IDomEvent {
         element: Node;
         event: string;
@@ -781,6 +810,8 @@
         hasTouch: boolean;
         config: IDomEventConfig;
         addEventListener(element: Node, type: string, listener: IGestureListener,
+            useCapture?: boolean): IRemoveListener;
+        addEventListener(element: Window, type: string, listener: IGestureListener,
             useCapture?: boolean): IRemoveListener;
         dispose(): void;
     }

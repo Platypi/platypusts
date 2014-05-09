@@ -147,11 +147,11 @@ function where(obj: any, properties: any): Array<any> {
 }
 
 function forEach<T>(obj: any, iterator: (value: T, key: any, obj: any) => void, context?: any): any {
-    if (isNull(obj)) {
+    if (isNull(obj) || isFunction(obj)) {
         return obj;
     }
-    var i, key, length;
 
+    var i, key, length;
     if (isFunction(obj.forEach)) {
         return obj.forEach(iterator, context);
     } else if (isArrayLike(obj)) {
@@ -159,10 +159,11 @@ function forEach<T>(obj: any, iterator: (value: T, key: any, obj: any) => void, 
             iterator.call(context, obj[i], i, obj);
         }
     } else {
-        for (key in obj) {
-            if (obj.hasOwnProperty(key)) {
-                iterator.call(context, obj[key], key, obj);
-            }
+        var keys = Object.keys(obj);
+        length = keys.length;
+        while (keys.length > 0) {
+            key = keys.shift();
+            iterator.call(context, obj[key], key, obj);
         }
     }
 
@@ -191,11 +192,11 @@ function pluck<T, U>(obj: any, key: string): Array<U> {
 }
 
 function some<T>(obj: any, iterator: (value: T, key: any, obj: any) => boolean, context?: any): boolean {
-    if (isNull(obj)) {
+    if (isNull(obj) || isFunction(obj)) {
         return false;
     }
-    var i, key, length, ret;
 
+    var i, key, length, ret;
     if (isFunction(obj.some)) {
         return obj.some(iterator, context);
     } else if (isArrayLike(obj)) {
@@ -206,12 +207,13 @@ function some<T>(obj: any, iterator: (value: T, key: any, obj: any) => boolean, 
             }
         }
     } else {
-        for (key in obj) {
-            if (obj.hasOwnProperty(key)) {
-                ret = iterator.call(context, obj[key], key, obj);
-                if (ret === true) {
-                    return true;
-                }
+        var keys = Object.keys(obj);
+        length = keys.length;
+        while (keys.length > 0) {
+            key = keys.shift();
+            ret = iterator.call(context, obj[key], key, obj);
+            if (ret === true) {
+                return true;
             }
         }
     }

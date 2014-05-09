@@ -47,10 +47,6 @@ module plat.controls {
          * Disposes of the event listener.
          */
         dispose() {
-            if (isNull(this._listener) || isNull(this.element)) {
-                return;
-            }
-            this.element.removeEventListener(this.event, this._listener);
             this._listener = null;
         }
 
@@ -59,7 +55,7 @@ module plat.controls {
          */
         _addEventListener() {
             this._listener = this._onEvent.bind(this);
-            this.element.addEventListener(this.event, this._listener, false);
+            this.addEventListener(this.element, this.event, this._listener, false);
         }
 
         /**
@@ -244,7 +240,7 @@ module plat.controls {
         /**
          * The event name.
          */
-        event: string = 'click';
+        event: string = 'tap';
     }
 
     export class Blur extends SimpleEventControl {
@@ -286,7 +282,7 @@ module plat.controls {
         /**
          * The event name.
          */
-        event: string = 'dblclick';
+        event: string = 'dbltap';
     }
 
     export class Focus extends SimpleEventControl {
@@ -296,46 +292,123 @@ module plat.controls {
         event: string = 'focus';
     }
 
-    export class MouseEnter extends SimpleEventControl {
+    export class TouchStart extends SimpleEventControl {
         /**
          * The event name.
          */
-        event: string = 'mouseenter';
+        event: string = 'touchstart';
     }
 
-    export class MouseLeave extends SimpleEventControl {
+    export class TouchEnd extends SimpleEventControl {
         /**
          * The event name.
          */
-        event: string = 'mouseleave';
+        event: string = 'touchend';
     }
 
-    export class MouseDown extends SimpleEventControl {
+    export class TouchMove extends SimpleEventControl {
         /**
          * The event name.
          */
-        event: string = 'mousedown';
+        event: string = 'touchmove';
     }
 
-    export class MouseUp extends SimpleEventControl {
+    export class TouchEnter extends SimpleEventControl {
         /**
          * The event name.
          */
-        event: string = 'mouseup';
+        event: string = 'touchenter';
     }
 
-    export class MouseOver extends SimpleEventControl {
+    export class TouchCancel extends SimpleEventControl {
         /**
          * The event name.
          */
-        event: string = 'mouseover';
+        event: string = 'touchcancel';
     }
 
-    export class MouseMove extends SimpleEventControl {
+    export class Hold extends SimpleEventControl {
         /**
          * The event name.
          */
-        event: string = 'mousemove';
+        event: string = 'hold';
+    }
+
+    export class Release extends SimpleEventControl {
+        /**
+         * The event name.
+         */
+        event: string = 'release';
+    }
+
+    export class Swipe extends SimpleEventControl {
+        /**
+         * The event name.
+         */
+        event: string = 'swipe';
+    }
+
+    export class SwipeLeft extends SimpleEventControl {
+        /**
+         * The event name.
+         */
+        event: string = 'swipeleft';
+    }
+
+    export class SwipeRight extends SimpleEventControl {
+        /**
+         * The event name.
+         */
+        event: string = 'swiperight';
+    }
+
+    export class SwipeUp extends SimpleEventControl {
+        /**
+         * The event name.
+         */
+        event: string = 'swipeup';
+    }
+
+    export class SwipeDown extends SimpleEventControl {
+        /**
+         * The event name.
+         */
+        event: string = 'swipedown';
+    }
+
+    export class Track extends SimpleEventControl {
+        /**
+         * The event name.
+         */
+        event: string = 'track';
+    }
+
+    export class TrackLeft extends SimpleEventControl {
+        /**
+         * The event name.
+         */
+        event: string = 'trackleft';
+    }
+
+    export class TrackRight extends SimpleEventControl {
+        /**
+         * The event name.
+         */
+        event: string = 'trackright';
+    }
+
+    export class TrackUp extends SimpleEventControl {
+        /**
+         * The event name.
+         */
+        event: string = 'trackup';
+    }
+
+    export class TrackDown extends SimpleEventControl {
+        /**
+         * The event name.
+         */
+        event: string = 'trackdown';
     }
 
     export class Submit extends SimpleEventControl {
@@ -367,11 +440,22 @@ module plat.controls {
     register.control('plat-paste', Paste);
     register.control('plat-dbltap', DblTap);
     register.control('plat-focus', Focus);
-    register.control('plat-mouseenter', MouseEnter);
-    register.control('plat-mouseleave', MouseLeave);
-    register.control('plat-mousedown', MouseDown);
-    register.control('plat-mouseup', MouseUp);
-    register.control('plat-mouseover', MouseOver);
-    register.control('plat-mousemove', MouseMove);
     register.control('plat-submit', Submit);
+    register.control('plat-touchstart', TouchStart);
+    register.control('plat-touchend', TouchEnd);
+    register.control('plat-touchmove', TouchMove);
+    register.control('plat-touchenter', TouchEnter);
+    register.control('plat-touchcancel', TouchCancel);
+    register.control('plat-hold', Hold);
+    register.control('plat-release', Release);
+    register.control('plat-swipe', Swipe);
+    register.control('plat-swipeleft', SwipeLeft);
+    register.control('plat-swiperight', SwipeRight);
+    register.control('plat-swipeup', SwipeUp);
+    register.control('plat-swipedown', SwipeDown);
+    register.control('plat-track', Track);
+    register.control('plat-trackleft', TrackLeft);
+    register.control('plat-trackright', TrackRight);
+    register.control('plat-trackup', TrackUp);
+    register.control('plat-trackdown', TrackDown);
 }

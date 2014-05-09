@@ -24,12 +24,6 @@ module plat.controls {
         _setter: any;
 
         /**
-         * An array of functions to remove the event listeners attached 
-         * to this element.
-         */
-        _removeEventListeners: Array<IRemoveListener> = [];
-
-        /**
          * The event listener attached to this element.
          */
         _eventListener: () => void;
@@ -137,19 +131,6 @@ module plat.controls {
          * Removes all of the element's event listeners.
          */
         dispose() {
-            var element = this.element;
-
-            if (!isNull(element)) {
-                var removeListeners = this._removeEventListeners,
-                    length = removeListeners.length;
-
-                for (var i = 0; i < length; ++i) {
-                    removeListeners[i]();
-                }
-
-                this._removeEventListeners = null;
-            }
-
             this._eventListener = null;
             this._postponedEventListener = null;
             this._addEventType = null;
@@ -224,9 +205,7 @@ module plat.controls {
             var listener = listener ||
                 (!!postpone ? this._postponedEventListener : this._eventListener);
 
-            this._pushRemoveEventListener(event, listener);
-
-            this.element.addEventListener(event, listener, false);
+            this.addEventListener(this.element, event, listener, false);
         }
 
         /**
@@ -354,21 +333,6 @@ module plat.controls {
             var expression = this._expression;
             this.observeExpression(expression, this._setter);
             this._setter(this.parent.evaluateExpression(expression));
-        }
-
-        /**
-         * Pushes a new function for removing a newly added 
-         * event listener.
-         * 
-         * @param event The event type
-         * @param listener The event listener
-         */
-        _pushRemoveEventListener(event: string, listener: () => void) {
-            var element = this.element;
-
-            this._removeEventListeners.push(() => {
-                element.removeEventListener(event, listener, false);
-            });
         }
 
         /**
