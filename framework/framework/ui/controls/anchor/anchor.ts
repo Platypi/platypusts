@@ -1,5 +1,6 @@
 ﻿module plat.ui.controls {
     class Anchor extends TemplateControl {
+        replaceWith = 'a';
         element: HTMLAnchorElement;
         loaded() {
             var href = this.element.href;

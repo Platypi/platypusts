@@ -71,6 +71,10 @@ module plat.register {
      * @example register.control('plat-tap', Tap, [plat.expressions.Parser]);
      */
     export function control(name: string, Type: new (...args: any[]) => IControl, dependencies?: Array<any>): typeof register {
+        if (isString(name)) {
+            name = name.toLowerCase();
+        }
+
         return add(controlInjectors, name, Type, dependencies);
     }
 
@@ -88,6 +92,10 @@ module plat.register {
      */
     export function viewControl(name: string, Type: new (...args: any[]) => ui.IViewControl,
         dependencies?: Array<any>, routes?: Array<any>): typeof register {
+        if (isString(name)) {
+            name = name.toLowerCase();
+        }
+
         var ret = add(viewControlInjectors, name, Type, dependencies);
 
         if (isArray(routes)) {

@@ -46,14 +46,18 @@
                 controlType = ev.type,
                 newControl = isFunction(control.inject);
 
-            var node = this.$document.createElement(controlType),
+            //var node = this.$document.createElement(controlType),
+            var injectedControl = newControl ? control.inject() : control,
+                replaceType = injectedControl.replaceWith,
+                node = isEmpty(replaceType) ? this.$document.createElement('div') :
+                    <HTMLElement>this.$document.createElement(replaceType),
                 attributes: IObject<string> = {},
                 nodeMap = {
                     element: node,
                     attributes: attributes,
                     nodes: [],
                     uiControlNode: {
-                        control: newControl ? control.inject() : control,
+                        control: injectedControl,
                         nodeName: controlType,
                         expressions: [],
                         injector: control,
@@ -61,6 +65,7 @@
                     }
                 };
 
+            node.setAttribute('plat-control', controlType);
             element.appendChild(node);
 
             var viewportManager = this.$ManagerCacheStatic.read(this.uid);
