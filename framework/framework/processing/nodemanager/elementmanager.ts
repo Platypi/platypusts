@@ -22,13 +22,12 @@ module plat.processing {
             var name = element.nodeName.toLowerCase(),
                 nodeName = name,
                 injector = controlInjectors[name] || viewControlInjectors[name],
-                noImmediateInjector = isNull(injector),
                 hasUiControl = false,
                 uiControlNode: IUiControlNode,
                 dom = ElementManager.$dom,
                 $document = ElementManager.$document;
 
-            if (noImmediateInjector && element.hasAttribute('plat-control')) {
+            if (isNull(injector) && element.hasAttribute('plat-control')) {
                 name = element.getAttribute('plat-control').toLowerCase();
                 injector = controlInjectors[name] || viewControlInjectors[name];
             }
@@ -53,12 +52,13 @@ module plat.processing {
 
                 hasUiControl = true;
 
+                element.setAttribute('plat-control', name);
+
                 var replacementType = uiControl.replaceWith;
-                if (!isEmpty(replacementType) && (!noImmediateInjector || replacementType.toLowerCase() !== nodeName)) {
+                if (!isEmpty(replacementType) && replacementType.toLowerCase() !== nodeName) {
                     var replacement = $document.createElement(replacementType);
                     if (replacement.nodeType === Node.ELEMENT_NODE) {
                         element = dom.replaceWith(element, <HTMLElement>replacement.cloneNode(true));
-                        element.setAttribute('plat-control', name);
                     }
                 }
             }
