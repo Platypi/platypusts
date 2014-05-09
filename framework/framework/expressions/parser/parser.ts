@@ -173,7 +173,7 @@ module plat.expressions {
         private __convertFunction(index: number, token: string, useLocalContext: boolean) {
             var tokens = this._tokens,
                 tempIdentifiers = this.__tempIdentifiers,
-                nextChar = this._peek(index);
+                nextToken = this._peek(index);
 
             if (token[0] === '@' && isNull(this.__uniqueAliases[token])) {
                 this.__uniqueAliases[token] = true;
@@ -183,9 +183,14 @@ module plat.expressions {
                 return token;
             }
 
-            tempIdentifiers.push(token);
-            if (!isNull(nextChar)) {
-                switch (nextChar.val) {
+            if (this._isValEqual(tokens[index - 1], '()') && this._isValEqual(nextToken, '[].')) {
+                tempIdentifiers.push('.');
+            } else {
+                tempIdentifiers.push(token);
+            }
+
+            if (!isNull(nextToken)) {
+                switch (nextToken.val) {
                     case '.':
                     case '()':
                         return token;
@@ -319,8 +324,8 @@ module plat.expressions {
                 }
             } else {
                 if (grabFnName) {
-                    codeStr = '(initialContext = (' + this.__findInitialContext.toString() + ')(context,aliases,"' +
-                    fnName + '") || (function () {}))' + codeStr;
+                    codeStr = '(initialContext = ((' + this.__findInitialContext.toString() + ')(context,aliases,"' +
+                    fnName + '") || (function () {}))' + codeStr + ')';
 
                     identifiers.push(fnName);
                 } else {
