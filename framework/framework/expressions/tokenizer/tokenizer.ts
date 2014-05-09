@@ -261,8 +261,10 @@ module plat.expressions {
                 this.__lastCommaChar.pop();
 
                 //check if function on top of stack
-                if (!isNull(localArgCountObj) && this.__removeFnFromStack(localArgCountObj.num + 1)) {
-                    this.__outputQueue.push({ val: '()', args: (this.__previousChar === '(') ? 0 : (localArgCountObj.num + 1) });
+                var previousParen = this.__previousChar === '(';
+                if (!isNull(localArgCountObj) &&
+                    this.__removeFnFromStack(previousParen ? localArgCountObj.num : localArgCountObj.num + 1)) {
+                    this.__outputQueue.push({ val: '()', args: previousParen ? 0 : (localArgCountObj.num + 1) });
                 }
             }
         }
