@@ -586,13 +586,13 @@
         private __determineTypes() {
             var navigator = this.$window.navigator,
                 mappedGestures = this._mappedGestures;
-            if (navigator.pointerEnabled) {
+            if (!!navigator.pointerEnabled) {
                 this._startEvents = [(mappedGestures.touchstart = 'pointerdown')];
                 this._moveEvents = [(mappedGestures.touchmove = 'pointermove')];
                 this._endEvents = [(mappedGestures.touchend = 'pointerup'), (mappedGestures.touchcancel = 'pointercancel')];
                 mappedGestures.touchenter = 'pointerover';
                 return;
-            } else if (navigator.msPointerEnabled) {
+            } else if (!!navigator.msPointerEnabled) {
                 this._startEvents = [(mappedGestures.touchstart = 'MSPointerDown')];
                 this._moveEvents = [(mappedGestures.touchmove = 'MSPointerMove')];
                 this._endEvents = [(mappedGestures.touchend = 'MSPointerUp'), (mappedGestures.touchcancel = 'MSPointerCancel')];
