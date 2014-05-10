@@ -20,11 +20,17 @@ module plat.processing {
          */
         static create(element: HTMLElement, parent?: IElementManager) {
             var name = element.nodeName.toLowerCase(),
+                nodeName = name,
                 injector = controlInjectors[name] || viewControlInjectors[name],
                 hasUiControl = false,
                 uiControlNode: IUiControlNode,
                 dom = ElementManager.$dom,
                 $document = ElementManager.$document;
+
+            if (isNull(injector) && element.hasAttribute('plat-control')) {
+                name = element.getAttribute('plat-control').toLowerCase();
+                injector = controlInjectors[name] || viewControlInjectors[name];
+            }
 
             if (!isNull(injector)) {
                 var uiControl = <ui.ITemplateControl>injector.inject(),
@@ -46,8 +52,10 @@ module plat.processing {
 
                 hasUiControl = true;
 
+                element.setAttribute('plat-control', name);
+
                 var replacementType = uiControl.replaceWith;
-                if (!isEmpty(replacementType)) {
+                if (!isEmpty(replacementType) && replacementType.toLowerCase() !== nodeName) {
                     var replacement = $document.createElement(replacementType);
                     if (replacement.nodeType === Node.ELEMENT_NODE) {
                         element = dom.replaceWith(element, <HTMLElement>replacement.cloneNode(true));
@@ -326,7 +334,7 @@ module plat.processing {
                             value + ', must contain a single identifier.', Exception.COMPILE);
                     }
                     childIdentifier = childContext.identifiers[0];
-                } else {
+                } else if (name !== 'plat-control') {
                     hasMarkup = hasMarkupFn(value);
 
                     if (hasMarkup) {

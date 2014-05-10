@@ -29,6 +29,7 @@
     <Content Include="..\framework\**\*.css">
       <Link>lib\%(RecursiveDir)%(Filename)%.css</Link>
     </Content>
+    <Content Include="viewcontrols\main\main.viewcontrol.css" />
     <Content Include="viewcontrols\main\main.viewcontrol.html" />
     <Content Include="web.config" />
   </ItemGroup>

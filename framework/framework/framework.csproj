@@ -74,6 +74,7 @@
     <TypeScriptCompile Include="ui\controls\viewport\baseport.ts" />
     <TypeScriptCompile Include="ui\controls\viewport\routeport.ts" />
     <TypeScriptCompile Include="ui\controls\viewport\viewport.ts" />
+    <TypeScriptCompile Include="ui\domevents\domevents.ts" />
     <TypeScriptCompile Include="ui\dom\dom.ts" />
     <TypeScriptCompile Include="ui\resources\resources.ts" />
     <TypeScriptCompile Include="ui\templatecontrol\templatecontrol.ts" />

@@ -1,0 +1,32 @@
+﻿.input-text {
+    border: none;
+    outline: none;
+    background-color: transparent;
+    border-bottom: solid;
+    border-bottom-width: 1px;
+}
+
+div[plat-viewcontrol] {
+    animation-duration: 3s;
+    -webkit-animation-duration: 3s;
+    animation-name: animate;
+    -webkit-animation-name: animate;
+}
+
+@-webkit-keyframes animate {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes animate {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}

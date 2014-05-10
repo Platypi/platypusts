@@ -41,8 +41,6 @@
         removeBase();
     });
 
-    register.injectable('$document', ($window: Window) => $($window.document), ['$window']);
-
     function overwriteFunctions(fns) {
         if (arguments.length > 1) {
             overwriteFunctions.apply(this, Array.prototype.slice.call(arguments, 1));

@@ -561,12 +561,14 @@ module plat.ui {
         endNode: Node;
 
         /**
-         * TemplateControls are the base control for any UIControl. They provide properties for the control to use
-         * to manage its body HTML.
+         * Allows a ITemplateControl to either swap its element with another element (e.g. plat-select), or
+         * replace its element altogether. If null or empty string, the element will be removed from the DOM, and the 
+         * childNodes of the element will be in its place. In addition, when the element is placed an endNode Comment
+         * is created, and the childNodes are added to the elementNodes property on the control. The replaceWith 
+         * property can be any property that works with document.createElement(). If the control's element had 
+         * attributes (as well as attribute IControls), those attributes will be carried to the swapped element.
          */
-        constructor() {
-            super();
-        }
+        replaceWith = 'div';
 
         /**
          * Contains DOM helper methods for manipulating this control's element.
@@ -578,6 +580,14 @@ module plat.ui {
          * can be equal to this control.
          */
         root: ITemplateControl;
+
+        /**
+         * TemplateControls are the base control for any UIControl. They provide properties for the control to use
+         * to manage its body HTML.
+         */
+        constructor() {
+            super();
+        }
 
         /**
          * This event is fired when a TemplateControl's context property is changed by an ancestor control.
