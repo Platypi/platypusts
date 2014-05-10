@@ -9,6 +9,7 @@ module plat.processing {
         static $ManagerCacheStatic: storage.ICache<IElementManager>;
         static $ResourcesStatic: ui.IResourcesStatic;
         static $BindableTemplatesStatic: ui.IBindableTemplatesStatic;
+
         /**
          * Determines if the associated HTMLElement has controls that need to be instantiated or Attr nodes
          * containing text markup. If controls exist or markup is found a new ElementManager will be created,
@@ -20,11 +21,22 @@ module plat.processing {
          */
         static create(element: HTMLElement, parent?: IElementManager) {
             var name = element.nodeName.toLowerCase(),
+                nodeName = name,
                 injector = controlInjectors[name] || viewControlInjectors[name],
                 hasUiControl = false,
                 uiControlNode: IUiControlNode,
                 dom = ElementManager.$dom,
                 $document = ElementManager.$document;
+
+            if (isNull(injector)) {
+                if (element.hasAttribute('plat-control')) {
+                    name = element.getAttribute('plat-control').toLowerCase();
+                    injector = controlInjectors[name] || viewControlInjectors[name];
+                } else if (element.hasAttribute('data-plat-control')) {
+                    name = element.getAttribute('data-plat-control').toLowerCase();
+                    injector = controlInjectors[name] || viewControlInjectors[name];
+                }
+            }
 
             if (!isNull(injector)) {
                 var uiControl = <ui.ITemplateControl>injector.inject(),
@@ -46,8 +58,10 @@ module plat.processing {
 
                 hasUiControl = true;
 
+                element.setAttribute('plat-control', name);
+
                 var replacementType = uiControl.replaceWith;
-                if (!isEmpty(replacementType)) {
+                if (!isEmpty(replacementType) && replacementType.toLowerCase() !== nodeName) {
                     var replacement = $document.createElement(replacementType);
                     if (replacement.nodeType === Node.ELEMENT_NODE) {
                         element = dom.replaceWith(element, <HTMLElement>replacement.cloneNode(true));
@@ -179,13 +193,14 @@ module plat.processing {
             templateControl?: ui.ITemplateControl, newElement?: HTMLElement, isClone?: boolean) {
             var nodes = nodeMap.nodes,
                 length = nodes.length,
-                element = isClone ? newElement : nodeMap.element;
+                element = isClone ? newElement : nodeMap.element,
+                elementExists = !isNull(element);
 
-            if (!isNull(element) && element.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
+            if (elementExists && element.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
                 return isClone ? ElementManager._copyAttributeNodes(nodes) : [];
             }
 
-            var attributes = !isNull(element) ? element.attributes : null,
+            var attributes = elementExists ? element.attributes : null,
                 attrs = nodeMap.attributes,
                 newAttributes: ui.IAttributes,
                 node: INode,
@@ -197,6 +212,7 @@ module plat.processing {
 
             for (i = 0; i < length; ++i) {
                 node = nodes[i];
+                nodeName = node.nodeName;
                 injector = node.injector;
                 control = null;
 
@@ -210,18 +226,19 @@ module plat.processing {
                     newAttributes.initialize(control, attrs);
                     control.attributes = newAttributes;
 
-                    control.type = node.nodeName;
+                    control.type = nodeName;
                     control.uid = control.uid || uniqueId('plat_');
                     control.templateControl = templateControl;
                 }
 
                 if (isClone) {
-                    nodeName = node.nodeName;
                     newNodes.push({
                         control: control,
                         expressions: node.expressions,
                         identifiers: node.identifiers,
-                        node: !!attributes ? attributes.getNamedItem(nodeName) : null,
+                        node: !!attributes ?
+                            (attributes.getNamedItem(nodeName) || attributes.getNamedItem('data-' + nodeName)) :
+                            null,
                         nodeName: nodeName,
                         injector: injector
                     });
@@ -313,7 +330,7 @@ module plat.processing {
             for (var i = 0; i < length; ++i) {
                 attribute = attributes[i];
                 value = attribute.value;
-                name = attribute.name.replace(/data-/i, '').toLowerCase();
+                name = attribute.name.replace(/^data-/i, '').toLowerCase();
                 injector = controlInjectors[name] || viewControlInjectors[name];
                 expressions = [];
                 uniqueIdentifiers = [];
@@ -326,7 +343,7 @@ module plat.processing {
                             value + ', must contain a single identifier.', Exception.COMPILE);
                     }
                     childIdentifier = childContext.identifiers[0];
-                } else {
+                } else if (name !== 'plat-control') {
                     hasMarkup = hasMarkupFn(value);
 
                     if (hasMarkup) {
