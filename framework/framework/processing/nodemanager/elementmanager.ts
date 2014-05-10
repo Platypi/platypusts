@@ -24,9 +24,7 @@ module plat.processing {
                 nodeName = name,
                 injector = controlInjectors[name] || viewControlInjectors[name],
                 hasUiControl = false,
-                uiControlNode: IUiControlNode,
-                dom = ElementManager.$dom,
-                $document = ElementManager.$document;
+                uiControlNode: IUiControlNode;
 
             if (isNull(injector)) {
                 if (element.hasAttribute('plat-control')) {
@@ -56,20 +54,19 @@ module plat.processing {
 
                 var replacementType = uiControl.replaceWith;
                 if (!isEmpty(replacementType) && replacementType.toLowerCase() !== nodeName) {
-                    var replacement = $document.createElement(replacementType);
+                    var replacement = ElementManager.$document.createElement(replacementType);
                     if (replacement.nodeType === Node.ELEMENT_NODE) {
-                        element = dom.replaceWith(element, <HTMLElement>replacement.cloneNode(true));
+                        element = ElementManager.$dom.replaceWith(element, <HTMLElement>replacement.cloneNode(true));
                     }
                 }
             }
 
             var attributes = element.attributes,
-                elementMap = ElementManager._collectAttributes(attributes);
+                elementMap = ElementManager._collectAttributes(attributes),
+                manager = new ElementManager();
 
             elementMap.element = element;
             elementMap.uiControlNode = uiControlNode;
-
-            var manager = new ElementManager();
 
             manager.initialize(elementMap, parent);
 
@@ -165,8 +162,6 @@ module plat.processing {
 
             var uiControl = uiControlNode.control,
                 newUiControl = <ui.ITemplateControl>uiControlNode.injector.inject(),
-                Resources = ElementManager.$ResourcesStatic,
-                BindableTemplates = ElementManager.$BindableTemplatesStatic,
                 resources = ElementManager.$ResourcesStatic.getInstance(),
                 attributes: ui.IAttributes = acquire('$attributes');
 
@@ -180,14 +175,14 @@ module plat.processing {
             resources.initialize(newUiControl, uiControl.resources);
             newUiControl.resources = resources;
 
-            Resources.addControlResources(newUiControl);
+            ElementManager.$ResourcesStatic.addControlResources(newUiControl);
 
             if (!isNull(uiControl.innerTemplate)) {
                 newUiControl.innerTemplate = <DocumentFragment>uiControl.innerTemplate.cloneNode(true);
             }
 
             newUiControl.type = uiControl.type;
-            newUiControl.bindableTemplates = BindableTemplates.create(newUiControl, uiControl.bindableTemplates);
+            newUiControl.bindableTemplates = ElementManager.$BindableTemplatesStatic.create(newUiControl, uiControl.bindableTemplates);
             newUiControl.replaceWith = uiControl.replaceWith;
 
             return newUiControl;
@@ -208,7 +203,6 @@ module plat.processing {
         static createAttributeControls(nodeMap: INodeMap, parent: ui.ITemplateControl,
             templateControl?: ui.ITemplateControl, newElement?: HTMLElement, isClone?: boolean) {
             var nodes = nodeMap.nodes,
-                length = nodes.length,
                 element = isClone ? newElement : nodeMap.element,
                 elementExists = !isNull(element);
 
@@ -223,6 +217,7 @@ module plat.processing {
                 injector: dependency.IInjector<IControl>,
                 control: controls.IAttributeControl,
                 newNodes: Array<INode> = [],
+                length = nodes.length,
                 nodeName: string,
                 i;
 
