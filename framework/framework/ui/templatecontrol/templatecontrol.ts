@@ -3,7 +3,6 @@ module plat.ui {
      * A control class which provides properties and methods for managing its body HTML.
      */
     export class TemplateControl extends Control implements ITemplateControl {
-        static $ContextManagerStatic: observable.IContextManagerStatic;
         static $ResourcesStatic: IResourcesStatic;
         static $BindableTemplatesStatic: IBindableTemplatesStatic;
         static $ManagerCacheStatic: storage.ICache<processing.IElementManager>;
@@ -167,7 +166,7 @@ module plat.ui {
             var parent = control.parent,
                 uid = control.uid,
                 controls = (control.controls && control.controls.slice(0)),
-                ContextManager = TemplateControl.$ContextManagerStatic,
+                ContextManager = Control.$ContextManagerStatic,
                 define = ContextManager.defineProperty;
 
             if (!isNull(controls)) {
@@ -331,7 +330,7 @@ module plat.ui {
          * @param path The path to set on the control.
          */
         static setAbsoluteContextPath(control: ITemplateControl, path: string) {
-            TemplateControl.$ContextManagerStatic.defineGetter(control, 'absoluteContextPath', path, false, true);
+            Control.$ContextManagerStatic.defineGetter(control, 'absoluteContextPath', path, false, true);
         }
 
         /**
@@ -416,7 +415,7 @@ module plat.ui {
             TemplateControl.__resourceCache[control.uid] = null;
             delete TemplateControl.__resourceCache[control.uid];
 
-            TemplateControl.$ContextManagerStatic.dispose(control, true);
+            Control.$ContextManagerStatic.dispose(control, true);
             events.EventManager.dispose(control.uid);
 
             TemplateControl.$ManagerCacheStatic.remove(control.uid);
@@ -424,6 +423,15 @@ module plat.ui {
 
             control.controls = [];
             control.attributes = null;
+        }
+
+        /**
+         * Returns a new instance of TemplateControl.
+         * 
+         * @static
+         */
+        static getInstance() {
+            return new TemplateControl();
         }
 
         private static __resourceCache: any = {};
@@ -735,14 +743,13 @@ module plat.ui {
             }
 
             var control = !isFunction((<any>this).getAbsoluteIdentifier) ? this.parent : <ITemplateControl>this,
-                absoluteIdentifier = control.getAbsoluteIdentifier(context),
-                ContextManager = TemplateControl.$ContextManagerStatic;
+                absoluteIdentifier = control.getAbsoluteIdentifier(context);
 
             if (isNull(absoluteIdentifier)) {
                 return;
             }
 
-            var contextManager = ContextManager.getManager(Control.getRootControl(this));
+            var contextManager = Control.$ContextManagerStatic.getManager(Control.getRootControl(this));
             return contextManager.observe(absoluteIdentifier + '.' + property, {
                 listener: listener.bind(this),
                 uid: this.uid
@@ -785,7 +792,7 @@ module plat.ui {
 
             var control = !isFunction((<any>this).getAbsoluteIdentifier) ? this.parent : <ITemplateControl>this,
                 absoluteIdentifier = control.getAbsoluteIdentifier(context),
-                ContextManager = TemplateControl.$ContextManagerStatic;
+                ContextManager = Control.$ContextManagerStatic;
 
             if (isNull(absoluteIdentifier)) {
                 if (property === 'context') {
@@ -819,7 +826,6 @@ module plat.ui {
      * The Type for referencing the '$TemplateControlStatic' injectable as a dependency.
      */
     export function TemplateControlStatic(
-        $ContextManagerStatic,
         $ResourcesStatic,
         $BindableTemplatesStatic,
         $ManagerCacheStatic,
@@ -827,7 +833,6 @@ module plat.ui {
         $templateCache,
         $parser,
         $http) {
-            TemplateControl.$ContextManagerStatic = $ContextManagerStatic;
             TemplateControl.$ResourcesStatic = $ResourcesStatic;
             TemplateControl.$BindableTemplatesStatic = $BindableTemplatesStatic;
             TemplateControl.$ManagerCacheStatic = $ManagerCacheStatic;
@@ -839,7 +844,6 @@ module plat.ui {
     }
 
     register.injectable('$TemplateControlStatic', TemplateControlStatic, [
-        '$ContextManagerStatic',
         '$ResourcesStatic',
         '$BindableTemplatesStatic',
         '$ManagerCacheStatic',
@@ -952,9 +956,11 @@ module plat.ui {
         detach(control: ITemplateControl): void;
 
         /**
-         * Create a new empty ITemplateControl
+         * Returns a new instance of TemplateControl.
+         *
+         * @static
          */
-        new (): ITemplateControl;
+        getInstance(): ITemplateControl;
     }
 
     /**

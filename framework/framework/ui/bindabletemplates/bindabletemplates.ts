@@ -345,7 +345,7 @@ module plat.ui {
         _createBoundControl(key: string, template: DocumentFragment,
             relativeIdentifier?: string, resources?: IObject<IResource>) {
             var $TemplateControlStatic = this.$TemplateControlStatic,
-                control = new $TemplateControlStatic(),
+                control = $TemplateControlStatic.getInstance(),
                 parent = this.control,
                 hasRelativeIdentifier = !isEmpty(relativeIdentifier),
                 absoluteContextPath: string;
