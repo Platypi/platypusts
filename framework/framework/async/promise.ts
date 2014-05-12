@@ -360,6 +360,10 @@ module plat.async {
      * The Type for referencing the '$PromiseStatic' injectable as a dependency.
      */
     export function PromiseStatic($Exception) {
+        if (!isNull((<any>window).Promise)) {
+            return (<any>window).Promise;
+        }
+
         (<any>Promise).$Exception = $Exception;
         return Promise;
     }
