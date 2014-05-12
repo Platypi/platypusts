@@ -133,7 +133,7 @@ module plat.controls {
 
                 keys = isArray(keys) ? keys : [key];
                 this._setKeyCodes(keys);
-                this._addEventListener();
+                this.addEventListener(this.element, this.event, this._listener, false);
 
                 return;
             }

@@ -16,7 +16,7 @@ module plat.controls {
         /**
          * Our event handler bound to our own context.
          */
-        _listener: (ev: any) => void;
+        _listener: EventListener = this._onEvent.bind(this);
 
         /**
          * A parsed form of the expression found in the attribute's value.
@@ -51,14 +51,6 @@ module plat.controls {
         }
 
         /**
-         * Adds the event listener to the element.
-         */
-        _addEventListener() {
-            this._listener = this._onEvent.bind(this);
-            this.addEventListener(this.element, this.event, this._listener, false);
-        }
-
-        /**
          * Sets the event listener.
          */
         _setListener() {
@@ -73,7 +65,7 @@ module plat.controls {
                 return;
             }
 
-            this._addEventListener();
+            this.addEventListener(this.element, this.event, this._listener, false);
         }
 
         /**
