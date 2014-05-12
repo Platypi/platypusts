@@ -575,6 +575,7 @@
 
             this.__standardizeEventObject(ev);
             ev.preventDefault();
+            ev.stopPropagation();
             domEvent.trigger(ev);
         }
 
