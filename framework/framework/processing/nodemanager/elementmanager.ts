@@ -24,9 +24,7 @@ module plat.processing {
                 nodeName = name,
                 injector = controlInjectors[name] || viewControlInjectors[name],
                 hasUiControl = false,
-                uiControlNode: IUiControlNode,
-                dom = ElementManager.$dom,
-                $document = ElementManager.$document;
+                uiControlNode: IUiControlNode;
 
             if (isNull(injector)) {
                 if (element.hasAttribute('plat-control')) {
@@ -40,13 +38,7 @@ module plat.processing {
 
             if (!isNull(injector)) {
                 var uiControl = <ui.ITemplateControl>injector.inject(),
-                    resourceElement = <HTMLElement>element.firstElementChild;
-
-                if (!isNull(resourceElement) && resourceElement.nodeName.toLowerCase() === 'plat-resources') {
-                    resourceElement = <HTMLElement>element.removeChild(resourceElement);
-                } else {
-                    resourceElement = null;
-                }
+                    resourceElement = ElementManager.locateResources(element);
 
                 uiControlNode = {
                     control: uiControl,
@@ -62,20 +54,19 @@ module plat.processing {
 
                 var replacementType = uiControl.replaceWith;
                 if (!isEmpty(replacementType) && replacementType.toLowerCase() !== nodeName) {
-                    var replacement = $document.createElement(replacementType);
+                    var replacement = ElementManager.$document.createElement(replacementType);
                     if (replacement.nodeType === Node.ELEMENT_NODE) {
-                        element = dom.replaceWith(element, <HTMLElement>replacement.cloneNode(true));
+                        element = ElementManager.$dom.replaceWith(element, <HTMLElement>replacement.cloneNode(true));
                     }
                 }
             }
 
             var attributes = element.attributes,
-                elementMap = ElementManager._collectAttributes(attributes);
+                elementMap = ElementManager._collectAttributes(attributes),
+                manager = new ElementManager();
 
             elementMap.element = element;
             elementMap.uiControlNode = uiControlNode;
-
-            var manager = new ElementManager();
 
             manager.initialize(elementMap, parent);
 
@@ -87,6 +78,28 @@ module plat.processing {
             }
 
             return manager;
+        }
+
+        /**
+         * Looks through the HTMLElement's child nodes to try and find any 
+         * defined Resources in a <plat-resources> tags.
+         * 
+         * @param node The node who may have Resources as a child node.
+         */
+        static locateResources(node: Node) {
+            var childNodes: Array<Node> = Array.prototype.slice.call(node.childNodes),
+                length = childNodes.length,
+                childNode: Node;
+
+            while (childNodes.length > 0) {
+                childNode = childNodes.shift();
+
+                if (childNode.nodeName.toLowerCase() === 'plat-resources') {
+                    return <HTMLElement>node.removeChild(childNode);
+                }
+            }
+
+            return null;
         }
 
         /**
@@ -149,8 +162,6 @@ module plat.processing {
 
             var uiControl = uiControlNode.control,
                 newUiControl = <ui.ITemplateControl>uiControlNode.injector.inject(),
-                Resources = ElementManager.$ResourcesStatic,
-                BindableTemplates = ElementManager.$BindableTemplatesStatic,
                 resources = ElementManager.$ResourcesStatic.getInstance(),
                 attributes: ui.IAttributes = acquire('$attributes');
 
@@ -164,14 +175,14 @@ module plat.processing {
             resources.initialize(newUiControl, uiControl.resources);
             newUiControl.resources = resources;
 
-            Resources.addControlResources(newUiControl);
+            ElementManager.$ResourcesStatic.addControlResources(newUiControl);
 
             if (!isNull(uiControl.innerTemplate)) {
                 newUiControl.innerTemplate = <DocumentFragment>uiControl.innerTemplate.cloneNode(true);
             }
 
             newUiControl.type = uiControl.type;
-            newUiControl.bindableTemplates = BindableTemplates.create(newUiControl, uiControl.bindableTemplates);
+            newUiControl.bindableTemplates = ElementManager.$BindableTemplatesStatic.create(newUiControl, uiControl.bindableTemplates);
             newUiControl.replaceWith = uiControl.replaceWith;
 
             return newUiControl;
@@ -192,7 +203,6 @@ module plat.processing {
         static createAttributeControls(nodeMap: INodeMap, parent: ui.ITemplateControl,
             templateControl?: ui.ITemplateControl, newElement?: HTMLElement, isClone?: boolean) {
             var nodes = nodeMap.nodes,
-                length = nodes.length,
                 element = isClone ? newElement : nodeMap.element,
                 elementExists = !isNull(element);
 
@@ -207,6 +217,7 @@ module plat.processing {
                 injector: dependency.IInjector<IControl>,
                 control: controls.IAttributeControl,
                 newNodes: Array<INode> = [],
+                length = nodes.length,
                 nodeName: string,
                 i;
 
@@ -1013,26 +1024,6 @@ module plat.processing {
         }
 
         /**
-         * Looks through the HTMLElement's child nodes to try and find any 
-         * defined Resources in a <plat-resources> tags.
-         * 
-         * @param node The node who has may have Resources as a child node.
-         */
-        _locateResources(node: Node) {
-            var childNodes: Array<Node> = Array.prototype.slice.call(node.childNodes),
-                length = childNodes.length,
-                childNode: Node;
-
-            while (childNodes.length > 0) {
-                childNode = childNodes.shift();
-
-                if (childNode.nodeName.toLowerCase() === 'plat-resources') {
-                    return <HTMLElement>node.removeChild(childNode);
-                }
-            }
-        }
-
-        /**
          * Initializes a control's template and compiles the control.
          * 
          * @param uiControl The ITemplateControl associated with this ElementManager.
@@ -1047,7 +1038,7 @@ module plat.processing {
                 endNode: Node;
 
             if (!isNull(template)) {
-                var resourceElement = this._locateResources(template);
+                var resourceElement = this.$ElementManagerStatic.locateResources(template);
 
                 if (!isNull(resourceElement)) {
                     uiControl.resources.add(ElementManager.$ResourcesStatic.parseElement(resourceElement));
@@ -1270,6 +1261,7 @@ module plat.processing {
          * Creates new nodes for an INodeMap corresponding to the element associated with the nodeMap or
          * the passed-in element.
          *
+         * @static
          * @param nodeMap The nodeMap to populate with attribute nodes.
          * @param parent The parent control for the new attribute controls.
          * @param templateControl The TemplateControl linked to these AttributeControls if 
@@ -1283,6 +1275,7 @@ module plat.processing {
         /**
          * Clones a UI Control with a new nodeMap.
          *
+         * @static
          * @param sourceMap The source INodeMap used to clone the UI Control
          * @param parent The parent control of the clone.
          */
@@ -1291,6 +1284,7 @@ module plat.processing {
         /**
          * Clones an ElementManager with a new element.
          *
+         * @static
          * @param sourceManager The original IElementManager.
          * @param parent The parent IElementManager for the new clone.
          * @param element The new element to associate with the clone.
@@ -1301,7 +1295,18 @@ module plat.processing {
             element: HTMLElement, newControl?: ui.ITemplateControl, nodeMap?: INodeMap): IElementManager;
 
         /**
+         * Looks through the HTMLElement's child nodes to try and find any
+         * defined Resources in a <plat-resources> tags.
+         *
+         * @static
+         * @param node The node who may have Resources as a child node.
+         */
+        locateResources(node: Node): HTMLElement;
+
+        /**
          * Returns a new instance of an IElementManager
+         * 
+         * @static
          */
         getInstance(): IElementManager;
     }
