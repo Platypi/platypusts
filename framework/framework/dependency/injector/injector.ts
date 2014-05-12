@@ -137,9 +137,9 @@ module plat.dependency {
             } else if (isString(Constructor)) {
                 return injectableInjectors[Constructor];
             } else if (Constructor === window) {
-                return injectableInjectors['$window'];
+                return (<any>injectableInjectors).$window;
             } else if (Constructor === window.document) {
-                return injectableInjectors['$document'];
+                return (<any>injectableInjectors).$document;
             }
 
             var injectors = injectableInjectors,

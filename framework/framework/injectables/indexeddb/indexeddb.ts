@@ -130,7 +130,7 @@ module plat {
                         };
 
                         objectStore.transaction.onerror = (event) => {
-                            reject(new DatabaseError(event.target['errorCode'], 'Unknown error'));
+                            reject(new DatabaseError((<any>event.target).errorCode, 'Unknown error'));
                         };
                     }, { _store: store });
                 }
@@ -179,7 +179,7 @@ module plat {
                     };
 
                     tr.onerror = (event) => {
-                        reject(new DatabaseError(event.target['errorCode'], 'Unknown error'));
+                        reject(new DatabaseError((<any>event.target).errorCode, 'Unknown error'));
                     };
                 }, { db: this, _transaction: transaction });
             }
@@ -411,7 +411,7 @@ module plat {
              * The boolean value of this object store's autoIncrement flag.
              */
             get autoIncrement() {
-                return <boolean>this._store['autoIncrement'];
+                return <boolean>(<any>this._store).autoIncrement;
             }
 
             /**
@@ -540,7 +540,7 @@ module plat {
                     };
 
                     request.onerror = (event) => {
-                        reject(new DatabaseError(event.target['errorCode'], 'Unknown error'));
+                        reject(new DatabaseError((<any>event.target).errorCode, 'Unknown error'));
                     };
                 });
             }
@@ -555,7 +555,7 @@ module plat {
                     };
 
                     request.onerror = (event) => {
-                        reject(new DatabaseError(event.target['errorCode'], 'Unknown error'));
+                        reject(new DatabaseError((<any>event.target).errorCode, 'Unknown error'));
                     };
                 });
             }
@@ -692,7 +692,7 @@ module plat {
                     };
 
                     objectStore.transaction.onerror = (event) => {
-                        var error = this.error = new DatabaseError(event.target['errorCode'], 'Unknown error');
+                        var error = this.error = new DatabaseError((<any>event.target).errorCode, 'Unknown error');
                         reject(error);
                     };
                 }, { db: this.db, _store: objectStore });
@@ -819,7 +819,7 @@ module plat {
                     };
 
                     request.onerror = (event) => {
-                        reject(new DatabaseError(event.target['errorCode'], 'Unknown error'));
+                        reject(new DatabaseError((<any>event.target).errorCode, 'Unknown error'));
                     };
                 });
             }
@@ -833,7 +833,7 @@ module plat {
                     };
 
                     request.onerror = (event) => {
-                        reject(new DatabaseError(event.target['errorCode'], 'Unknown error'));
+                        reject(new DatabaseError((<any>event.target).errorCode, 'Unknown error'));
                     };
                 });
             }
@@ -1017,7 +1017,7 @@ module plat {
              * The boolean value of this object store's autoIncrement flag.
              */
             get autoIncrement() {
-                return <boolean>this._store['autoIncrement'];
+                return <boolean>(<any>this._store).autoIncrement;
             }
 
             /**
@@ -1387,7 +1387,7 @@ module plat {
                     };
 
                     request.onerror = (event) => {
-                        reject(new DatabaseError(event.target['errorCode'], 'Unknown error'));
+                        reject(new DatabaseError((<any>event.target).errorCode, 'Unknown error'));
                     };
                 });
             }
@@ -1485,7 +1485,7 @@ module plat {
                     };
 
                     objectStore.transaction.onerror = (event) => {
-                        var error = this.error = new DatabaseError(event.target['errorCode'], 'Unknown error');
+                        var error = this.error = new DatabaseError((<any>event.target).errorCode, 'Unknown error');
                         reject(error);
                     };
                 }, { db: this.db, _store: objectStore });
@@ -1655,7 +1655,7 @@ module plat {
                     var dbRequest = indexedDb.open(name, version);
 
                     dbRequest.onerror = (event) => {
-                        reject(new DatabaseError(event.target['errorCode'], 'Unknown error'));
+                        reject(new DatabaseError((<any>event.target).errorCode, 'Unknown error'));
                     };
 
                     dbRequest.onsuccess = function onOpen(event) {
@@ -1696,7 +1696,7 @@ module plat {
                     var dbRequest = indexedDb.deleteDatabase(name);
 
                     dbRequest.onerror = (event) => {
-                        reject(new DatabaseError(event.target['errorCode'], 'Unknown error'));
+                        reject(new DatabaseError((<any>event.target).errorCode, 'Unknown error'));
                     };
 
                     dbRequest.onsuccess = (event) => {
