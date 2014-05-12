@@ -262,7 +262,7 @@ module plat.ui {
             }
 
             if (control.hasOwnContext) {
-                if (isNull(control.resources['rootContext'])) {
+                if (isNull((<any>control.resources).rootContext)) {
                     control.resources.add({
                         root: {
                             type: 'observable',
@@ -270,11 +270,11 @@ module plat.ui {
                         }
                     });
                 } else {
-                    control.resources['rootContext'].value = value;
+                    (<any>control.resources).rootContext.value = value;
                 }
             }
 
-            if (isNull(control.resources['context'])) {
+            if (isNull((<any>control.resources).context)) {
                 control.resources.add({
                     context: {
                         type: 'observable',
@@ -285,7 +285,7 @@ module plat.ui {
                 return;
             }
 
-            control.resources['context'].value = value;
+            (<any>control.resources).context.value = value;
         }
 
         /**

@@ -523,7 +523,7 @@ module plat.async {
     }
 
     // Have to bypass TS flags in order to properly extend Error
-    (<any>AjaxError)['prototype'] = Error.prototype;
+    (<any>AjaxError).prototype = Error.prototype;
 
     /**
      * Describes an object that forms an Error object with an IAjaxResponse.
