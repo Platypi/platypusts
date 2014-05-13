@@ -6,9 +6,10 @@ module plat.ui.controls {
         context: Array<any>;
 
         /**
-         * The ForEach element will not appear in the DOM.
+         * Specifies that the foreach's element can be replaced with 
+         * any type of element.
          */
-        replaceWith: string = null;
+        replaceWith = 'any';
 
         controls: Array<ITemplateControl>;
         private __clearTimeouts: Array<IRemoveListener> = [];
@@ -19,7 +20,7 @@ module plat.ui.controls {
          * specified for the ForEach.
          */
         setTemplate() {
-            this.bindableTemplates.add('item', this.elementNodes);
+            this.bindableTemplates.add('item', this.element.childNodes);
         }
 
         /**
@@ -87,8 +88,7 @@ module plat.ui.controls {
          * Adds an item to the ForEach's element.
          */
         _addItem(item: DocumentFragment) {
-            var endNode = this.endNode;
-            this.dom.insertBefore(endNode.parentNode, item, endNode);
+            this.dom.insertBefore(this.element, item);
         }
 
         /**

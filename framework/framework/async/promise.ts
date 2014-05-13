@@ -359,9 +359,15 @@ module plat.async {
     /**
      * The Type for referencing the '$PromiseStatic' injectable as a dependency.
      */
-    export function PromiseStatic($Exception) {
-        if (!isNull((<any>window).Promise)) {
-            return (<any>window).Promise;
+    export function PromiseStatic($window, $Exception) {
+        if (!isNull($window.Promise) &&
+            isFunction($window.Promise.all) &&
+            isFunction($window.Promise.cast) &&
+            isFunction($window.Promise.race) &&
+            isFunction($window.Promise.resolve) &&
+            isFunction($window.Promise.reject)) {
+            console.log('using native promise!');
+            return $window.Promise;
         }
 
         (<any>Promise).$Exception = $Exception;
@@ -369,6 +375,7 @@ module plat.async {
     }
 
     register.injectable('$PromiseStatic', PromiseStatic, [
+        '$window',
         '$ExceptionStatic'
     ], register.injectableType.STATIC);
 
