@@ -85,6 +85,17 @@ module plat {
         }
 
         /**
+         * Takes in anything and determines if it is a DocumentFragment.
+         * 
+         * @param obj Anything.
+         * 
+         * @return {boolean} True if obj is a DocumentFragment, false otherwise.
+         */
+        isDocumentFragment(obj: any): boolean {
+            return isDocumentFragment(obj);
+        }
+
+        /**
          * Takes in anything and determines if it is a string.
          * 
          * @param obj Anything.
@@ -479,6 +490,15 @@ module plat {
          * @return {boolean} True if obj is a Node, false otherwise.
          */
         isNode(obj: any): boolean;
+
+        /**
+         * Takes in anything and determines if it is a DocumentFragment.
+         * 
+         * @param obj Anything.
+         * 
+         * @return {boolean} True if obj is a DocumentFragment, false otherwise.
+         */
+        isDocumentFragment(obj: any): boolean;
 
         /**
          * Takes in anything and determines if it is a string.

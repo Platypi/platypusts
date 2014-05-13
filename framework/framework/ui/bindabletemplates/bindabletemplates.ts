@@ -209,7 +209,7 @@ module plat.ui {
                 return;
             }
 
-            if (template.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
+            if (isDocumentFragment(template)) {
                 this.templates[key] = template;
                 this._compile(key, template);
                 return;

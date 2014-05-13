@@ -726,23 +726,20 @@ module plat.processing {
             if (!isNull(controlNode)) {
                 control = controlNode.control;
 
-                var template = this.$TemplateControlStatic.determineTemplate(control, templateUrl);
-
-                if (!isNull(template)) {
-                    if (isFunction(template.then)) {
-                        this.templatePromise = template.then((template: DocumentFragment) => {
-                            this.templatePromise = null;
-                            this._initializeControl(control, <DocumentFragment>template.cloneNode(true));
-                        }).catch((error) => {
-                            postpone(() => {
-                                this.$ExceptionStatic.fatal(error, this.$ExceptionStatic.COMPILE);
-                            });
+                this.templatePromise = this.$TemplateControlStatic.determineTemplate(control, templateUrl).then((template) => {
+                    this.templatePromise = null;
+                    this._initializeControl(control, <DocumentFragment>template.cloneNode(true));
+                }, (error) => {
+                    this.templatePromise = null;
+                    if (isNull(error)) {
+                        this._initializeControl(control, error);
+                    } else {
+                        postpone(() => {
+                            this.$ExceptionStatic.fatal(error, this.$ExceptionStatic.COMPILE);
                         });
-
-                        return this.templatePromise;
                     }
-                }
-                this._initializeControl(control, template);
+                });
+
                 return;
             }
 

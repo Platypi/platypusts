@@ -61,6 +61,10 @@ function isNode(obj: any): boolean {
     return !!(obj && typeof obj.nodeType === 'number');
 }
 
+function isDocumentFragment(obj: any): boolean {
+    return !!(obj && (<Node>obj).nodeType === Node.DOCUMENT_FRAGMENT_NODE);
+}
+
 function isString(obj: any): boolean {
     return typeof obj === 'string';
 }

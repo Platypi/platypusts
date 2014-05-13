@@ -6,27 +6,37 @@ module plat.storage {
      */
     class TemplateCache extends Cache<any> implements ITemplateCache {
         $ExceptionStatic: IExceptionStatic = acquire('$ExceptionStatic');
+        $Promise: async.IPromiseStatic = acquire('$PromiseStatic');
         constructor() {
             super('__templateCache');
         }
 
         /**
-         * Takes in a Node or a Promise. If the value is a 
-         * Node, the node will be cloned and put into the cache.
+         * Stores a Node in the cache as a DocumentFragment.
          * 
          * @param key The key used to store the value.
-         * @param value The template promise or Node.
-         * 
-         * @return {T|async.IPromise<T, Error>} The value
+         * @param value The Node.
          */
-        put(key: string, value: any) {
-            super.put(key, value);
+        put(key: string, value: Node): async.IPromise<DocumentFragment, any>;
+        /**
+         * Stores a Promise in the cache.
+         * 
+         * @param key The key used to store the value.
+         * @param value The Promise.
+         */
+        put(key: string, value: async.IPromise<Node, any>): async.IPromise<DocumentFragment, any>;
+        put(key: string, value: any): async.IPromise<DocumentFragment, any> {
+            super.put(key, this.$Promise.resolve<DocumentFragment>(value));
 
-            if (isNode(value)) {
+            if (isDocumentFragment(value)) {
                 value = value.cloneNode(true);
+            } else if (isNode(value)) {
+                var fragment = document.createDocumentFragment();
+                fragment.appendChild(value.cloneNode(true));
+                value = fragment;
             }
-
-            return value;
+            
+            return this.$Promise.resolve<DocumentFragment>(value);
         }
 
         /**
@@ -38,17 +48,15 @@ module plat.storage {
          * @return {T|async.IPromise<T, Error>} The value found at the associated key. 
          * Returns null for an ITemplateCache miss.
          */
-        read(key: string) {
-            var template: any = super.read(key);
+        read(key: string): async.IPromise<DocumentFragment, any>{
+            var promise: async.IPromise<DocumentFragment, any> = super.read(key);
 
-            if (isNull(template)) {
-                return template;
-            } else if (isNode(template)) {
-                return template.cloneNode(true);
+            if (isNull(promise)) {
+                return <any>this.$Promise.reject(null);
             }
 
-            return template.then((node: Node) => {
-                return this.put(key, node).cloneNode(true);
+            return promise.then((node: Node) => {
+                return this.put(key, node);
             }).catch((error) => {
                 this.$ExceptionStatic.warn('Error retrieving template from promise.', this.$ExceptionStatic.TEMPLATE);
             });
@@ -63,23 +71,26 @@ module plat.storage {
      */
     export interface ITemplateCache extends ICache<async.IPromise<DocumentFragment, Error>> {
         /**
-         * Takes in a Node or a Promise. If the value is a 
-         * Node, the node will be cloned and put into the cache.
+         * Stores a Node in the cache as a DocumentFragment.
          * 
          * @param key The key used to store the value.
-         * @param value The template promise or Node.
+         * @param value The Node.
          */
-        put(key: string, value: any): any;
+        put(key: string, value: Node): async.IPromise<DocumentFragment, any>;
+        /**
+         * Stores a Promise in the cache.
+         * 
+         * @param key The key used to store the value.
+         * @param value The Promise.
+         */
+        put(key: string, value: async.IPromise<Node, any>): async.IPromise<DocumentFragment, any>;
 
         /**
-         * Method for retrieving a Node from an ITemplateCache. The returned Node will be 
-         * cloned to avoid manipulating the cached template.
+         * Method for retrieving a Node from an ITemplateCache. The returned DocumentFragment will be 
+         * cloned to avoid manipulating the cached template. 
          * 
          * @param key The key to search for in an ITemplateCache.
-         * 
-         * @return {Node|async.IPromise<T, Error>} The value found at the associated key. 
-         * Returns null for an ITemplateCache miss.
          */
-        read(key: string): any;
+        read(key: string): async.IPromise<DocumentFragment, any>;
     }
 }

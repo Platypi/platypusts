@@ -72,7 +72,6 @@ module plat.ui.controls {
          */
         dispose() {
             if (this.__isFirst) {
-                this.$templateCache.remove(this._id);
                 this.__templateControlCache.dispose();
             }
         }
@@ -95,7 +94,7 @@ module plat.ui.controls {
                 template;
 
             if (!isNull(url)) {
-                template = this.$templateCache.read(url) || TemplateControl.determineTemplate(this, url);
+                template = this.$templateCache.read(url);
                 //determineTemplate sets the templateUrl so we need to reset it back to null
                 this.templateUrl = null;
                 this.dom.clearNodeBlock(this.elementNodes, parentNode);
@@ -106,7 +105,11 @@ module plat.ui.controls {
 
             var controlPromise;
             if (isFunction(template.then)) {
-                controlPromise = template.then((template: DocumentFragment) => {
+                controlPromise = template.catch((error) => {
+                    if (isNull(error)) {
+                        return TemplateControl.determineTemplate(this, url);
+                    }
+                }).then((template: DocumentFragment) => {
                     var bindableTemplates = this.bindableTemplates;
                     bindableTemplates.add(id, template.cloneNode(true));
                     return this;

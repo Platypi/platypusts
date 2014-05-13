@@ -338,57 +338,65 @@ module plat.ui {
          * Determines the template for a control by searching for a templateUrl, 
          * using the provided templateUrl, or serializing the control's templateString.
          */
-        static determineTemplate(control: ITemplateControl, templateUrl?: string) {
+        static determineTemplate(control: ITemplateControl, templateUrl?: string): async.IPromise<DocumentFragment, any> {
             var template,
                 templateCache: storage.ITemplateCache = acquire('$templateCache'),
-                dom: IDom = acquire('$dom');
+                dom: IDom = acquire('$dom'),
+                Promise: async.IPromiseStatic = acquire('$PromiseStatic');
 
             if (!isNull(templateUrl)) {
-                control.templateUrl = templateUrl;
+                // do nothing
             } else if (!isNull(control.templateUrl)) {
                 templateUrl = control.templateUrl;
             } else if (!isNull(control.templateString)) {
                 var type = control.type;
-                template = templateCache.read(type);
-                if (!isNull(template)) {
-                    return template;
-                }
-                template = dom.serializeHtml(control.templateString);
-                return templateCache.put(type, template);
+
+                return templateCache.read(type).catch((template) => {
+                    if (isNull(template)) {
+                        template = dom.serializeHtml(control.templateString);
+                    }
+
+                    return templateCache.put(type, template);
+                });
             } else {
-                return null;
+                return <any>Promise.reject(null);
             }
 
             template = templateCache.read(templateUrl);
 
-            if (!isNull(template)) {
-                return template;
-            }
-
             var ajax = (<async.IHttp>acquire('$http')).ajax,
                 Exception: IExceptionStatic = acquire('$ExceptionStatic');
 
-            return templateCache.put(templateUrl, ajax({ url: templateUrl }).then((success) => {
-                if (!isObject(success) || !isString(success.response)) {
-                    Exception.warn('No template found at ' + templateUrl, Exception.AJAX);
-                    return dom.serializeHtml();
+            return Promise.cast<DocumentFragment, any>(template).catch((error) => {
+                if (isNull(error)) {
+                    return templateCache.put(templateUrl, <any>ajax({ url: templateUrl }).then((success) => {
+                        if (!isObject(success) || !isString(success.response)) {
+                            Exception.warn('No template found at ' + templateUrl, Exception.AJAX);
+                            return Promise.resolve(dom.serializeHtml());
+                        }
+
+                        var templateString = success.response;
+
+                        if (isEmpty(templateString.trim())) {
+                            return Promise.resolve(dom.serializeHtml());
+                        }
+
+                        template = dom.serializeHtml(templateString);
+
+                        return templateCache.put(templateUrl, template);
+                    }, (error) => {
+                        postpone(() => {
+                            Exception.fatal('Failure to get template from ' + templateUrl + '.', Exception.TEMPLATE);
+                        });
+                        return error;
+                    }));
                 }
-
-                var templateString = success.response;
-
-                if (isEmpty(templateString.trim())) {
-                    return dom.serializeHtml();
-                }
-
-                template = dom.serializeHtml(templateString);
-
-                return templateCache.put(templateUrl, template);
-            }, (error) => {
+            }).catch((error) => {
                 postpone(() => {
                     Exception.fatal('Failure to get template from ' + templateUrl + '.', Exception.TEMPLATE);
                 });
                 return error;
-            }));
+            });
         }
 
         /**
@@ -930,7 +938,7 @@ module plat.ui {
          * Determines the template for a control by searching for a templateUrl, 
          * using the provided templateUrl, or serializing the control's templateString.
          */
-        determineTemplate(control: ITemplateControl, templateUrl?: string);
+        determineTemplate(control: ITemplateControl, templateUrl?: string): async.IPromise<DocumentFragment, any>;
 
         /**
          * Detaches a TemplateControl. Disposes its children, but does not dispose the TemplateControl.
