@@ -293,17 +293,22 @@
             var eventType = ev.type.toLowerCase(),
                 isTouch = eventType.indexOf('mouse') === -1;
 
-            this.__touches = [];
-
             // return immediately if mouse event and currently in a touch or
             // if the touch count is greater than 1
-            if ((this._inTouch && !isTouch) ||
-                ((this.__touchCount = isTouch ? this.__setTouch(ev) : 1) > 1)) {
+            if (this._inTouch && !isTouch) {
+                return;
+            }
+
+            this.__touches = [];
+
+            if ((this.__touchCount = isTouch ? this.__setTouch(ev) : 1) > 1) {
                 return;
             }
 
             this._inTouch = isTouch;
             this.__hasMoved = false;
+
+            this.__standardizeEventObject(ev);
 
             this.__lastTouchDown = this.__swipeOrigin = {
                 x: ev.clientX,
@@ -328,8 +333,6 @@
             if (noHolds && noRelease) {
                 return;
             }
-
-            this.__standardizeEventObject(ev);
 
             var holdInterval = DomEvents.config.intervals.holdInterval,
                 domEvent: IDomEvent,
@@ -392,6 +395,8 @@
                 return;
             }
 
+            this.__standardizeEventObject(ev);
+
             var config = DomEvents.config,
                 swipeOrigin = this.__swipeOrigin,
                 x = ev.clientX,
@@ -409,8 +414,6 @@
             if (noMoveEvents || (noTracking && !minMove)) {
                 return;
             }
-
-            this.__standardizeEventObject(ev);
 
             var lastMove = this.__lastMoveEvent,
                 direction = ev.direction = isNull(lastMove) ? this.__getDirection(x - lastX, y - lastY) :
