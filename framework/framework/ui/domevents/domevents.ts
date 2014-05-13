@@ -290,7 +290,8 @@
             var eventType = ev.type.toLowerCase(),
                 isTouch = eventType.indexOf('mouse') === -1;
 
-            // return immediately if mouse event and currently in a touch
+            // return immediately if mouse event and currently in a touch or
+            // if the touch count is greater than 1
             if ((this._inTouch && !isTouch) ||
                 ((this.__touchCount = isTouch ? this.__setTouch(ev) : 1) > 1)) {
                 return;
@@ -310,6 +311,7 @@
                 noHolds = gestureCount.hold <= 0,
                 noRelease = gestureCount.release <= 0;
 
+            // check to see if we need to detect movement
             if (gestureCount.tap > 0 || gestureCount.dbltap > 0 ||
                 gestureCount.track > 0 || gestureCount.swipe > 0) {
                 this.__lastMoveEvent = null;
@@ -317,6 +319,7 @@
                 this.__registerType(this.__MOVE);
             }
 
+            // return if no hold or release events are registered
             if (noHolds && noRelease) {
                 return;
             }
@@ -347,6 +350,7 @@
                 };
             }
 
+            // set timeout to fire the subscribeFn
             if (!isNull(domEvent)) {
                 this.__holdTimeout = setTimeout(subscribeFn, holdInterval);
             }
@@ -358,8 +362,12 @@
          * @param ev The touch start event object.
          */
         _onMove(ev: ITouchEvent) {
-            // return immediately if mouse event and currently in a touch
-            if (!this.__detectMove || (this._inTouch && ev.type.indexOf('mouse') !== -1)) {
+            // return immediately if we should not be detecting move, 
+            // if there are multiple touches present, or 
+            // if it is a mouse event and currently in a touch
+            if (!this.__detectMove ||
+                this.__touchCount > 1 ||
+                (this._inTouch && ev.type.indexOf('mouse') !== -1)) {
                 return;
             }
 
@@ -374,6 +382,7 @@
                 noMoveEvents = gestureCount.swipe <= 0 && noTracking,
                 noTapEvents = gestureCount.dbltap <= 0 && gestureCount.tap <= 0;
 
+            // return if no move events and no tap events are registred
             if (noMoveEvents && noTapEvents) {
                 return;
             }
@@ -386,10 +395,12 @@
                 lastY = swipeOrigin.y,
                 minMove = this.__getDistance(lastX, x, lastY, y) >= config.distances.minScrollDistance;
 
+            // if minimum distance moved
             if (minMove) {
                 this.__hasMoved = true;
             }
 
+            // if no move events or no tracking events and the user hasn't moved the minimum swipe distance
             if (noMoveEvents || (noTracking && !minMove)) {
                 return;
             }
@@ -403,9 +414,9 @@
             this.__checkForOriginChanged(direction);
 
             var velocity = ev.velocity = this.__getVelocity(x - swipeOrigin.x, y - swipeOrigin.y, ev.timeStamp - swipeOrigin.timeStamp);
-
             this.__hasSwiped = (this.__isHorizontal(direction) ? velocity.x : velocity.y) >= config.velocities.minSwipeVelocity;
 
+            // if tracking events exist
             if (!noTracking) {
                 this.__handleTrack(ev);
             }
@@ -427,15 +438,18 @@
             this.__clearHold();
             this._inTouch = false;
             var touchCount = this.__touchCount;
+            // reset touch count and pointer collection
             this.__touchCount = 0;
             this.__pointers = {};
 
+            // return if the touch count was greater than 1
             if (touchCount > 1) {
                 return;
             }
 
             this.__standardizeEventObject(ev);
 
+            // if we were detecting move events, unregister them
             if (this.__detectMove) {
                 this.__unregisterType(this.__MOVE);
                 this.__detectMove = false;
@@ -453,6 +467,8 @@
                 intervals = config.intervals,
                 touchEnd = ev.timeStamp;
             
+            // if the user moved their finger (for scroll) or had their finger down too long to be 
+            // considered a tap
             if (this.__hasMoved || ((touchEnd - this.__lastTouchDown.timeStamp) > intervals.tapInterval)) {
                 this.__tapCount = 0;
                 return;
@@ -462,6 +478,8 @@
                 x = ev.clientX,
                 y = ev.clientY;
 
+            // check if can be a double tap event by checking number of taps, distance between taps, 
+            // and time between taps
             if (this.__tapCount > 0 &&
                 this.__getDistance(x, lastTouchUp.x, y, lastTouchUp.y) <= config.distances.maxDblTapDistance &&
                 ((touchEnd - lastTouchUp.timeStamp) <= intervals.dblTapInterval)) {
@@ -585,6 +603,10 @@
             }
         }
         private __handleMappedEvent(ev: IExtendedEvent) {
+            if (isObject((<CustomEvent>ev).detail)) {
+                return;
+            }
+
             var mappedType = ev.type,
                 eventType = this.__reverseMap[mappedType],
                 domEvent = this.__findFirstSubscriber(<Node>ev.target, eventType);
@@ -594,7 +616,6 @@
             }
 
             this.__standardizeEventObject(ev);
-            ev.preventDefault();
             domEvent.trigger(ev);
         }
 
