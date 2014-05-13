@@ -8,12 +8,6 @@
          */
         static config: IDomEventsConfig = {
             /**
-             * Whether or not to allow text selection when move events such as swipe or track 
-             * are currently active. If set to true, it may cause event misses due to the browser 
-             * not firing events like 'pointerup' due to the text selection. Defaults to false.
-             */
-            allowTextSelection: false,
-            /**
              * An object containing the different time intervals that govern the behavior of certain 
              * custom DOM events.
              */
@@ -67,15 +61,29 @@
                  */
                 minSwipeVelocity: 0.5
             },
-            defaultStyles: {
-                touchAction: 'none',
-                msTouchAction: 'none',
-                msUserSelect: 'none',
-                webkitUserDrag: 'none',
-                webkitUserSelect: 'none',
-                webkitTapHighlightColor: 'transparent',
-                webkitTouchCallout: 'none',
-                mozUserSelect: 'none'
+            /**
+             * The default CSS styles applied to elements listening for custom DOM events.
+             */
+            styleConfig: {
+                /**
+                 * The className that will be used to define the custom style.
+                 */
+                className: 'plat-gesture',
+                /**
+                 * An array of string styles in the format:
+                 * CSS identifier : value
+                 * (i.e. 'width : 100px')
+                 */
+                styles: [
+                    '-webkit-user-drag: none',
+                    '-webkit-tap-highlight-color: transparent',
+                    '-webkit-touch-callout: none',
+                    '-moz-user-select: none',
+                    '-webkit-user-select: none',
+                    '-ms-user-select: none',
+                    '-ms-touch-action: none',
+                    'touch-action: none'
+                ]
             }
         };
 
@@ -162,9 +170,7 @@
         private __hasMoved = false;
         private __hasSwiped = false;
         private __hasRelease = false;
-        private __noSelect = false;
         private __tapCount = 0;
-        private __moveEventCount = 0;
         private __touchCount = 0;
         private __tapTimeout: number;
         private __holdTimeout: number;
@@ -182,10 +188,11 @@
         private __pointers: IObject<IExtendedEvent> = {};
 
         /**
-         * Retrieve the type of touch events for this browser.
+         * Retrieve the type of touch events for this browser and create the default gesture style.
          */
         constructor() {
             this.__getTypes();
+            this.__appendGestureStyle();
         }
 
         /**
@@ -217,7 +224,7 @@
 
             if (mappingExists) {
                 this.__reverseMap[mappedType] = type;
-                this.__registerElement(element, type, false);
+                this.__registerElement(element, type);
                 mappedRemoveListener = this.__addMappedEvent(mappedType, useCapture);
             }
 
@@ -232,20 +239,15 @@
 
             var swipeGesture = gestures.swipe,
                 trackGesture = gestures.track,
-                removeSelect = false,
                 countType = type;
 
             if (type.indexOf(trackGesture) !== -1) {
                 countType = trackGesture;
-                removeSelect = !(this.__noSelect || DomEvents.config.allowTextSelection);
-                this.__moveEventCount++;
             } else if (type.indexOf(swipeGesture) !== -1) {
                 countType = swipeGesture;
-                removeSelect = !(this.__noSelect || DomEvents.config.allowTextSelection);
-                this.__moveEventCount++;
             }
 
-            this.__registerElement(element, type, removeSelect);
+            this.__registerElement(element, type);
             this._gestureCount[countType]++;
 
             return () => {
@@ -273,8 +275,6 @@
             this.__pointers = {};
             this.__reverseMap = {};
             this.__tapCount = 0;
-            this.__moveEventCount = 0;
-            this.__noSelect = false;
             this.__swipeOrigin = null;
             this.__lastMoveEvent = null;
             this.__lastTouchDown = null;
@@ -671,7 +671,7 @@
                 $document.removeEventListener(events[index], listener, false);
             }
         }
-        private __registerElement(element: Node, type: string, removeSelect: boolean) {
+        private __registerElement(element: Node, type: string) {
             var index = this._elements.indexOf(element),
                 domEvent: IDomEvent = acquire('$domEvent');
 
@@ -690,6 +690,10 @@
                 index = this._elements.length;
                 this._elements.push(element);
                 this._subscriptions.push(gesture);
+
+                if (!isUndefined((<HTMLElement>element).className)) {
+                    this.__addClass(<HTMLElement>element, 'plat-gesture');
+                }
             } else {
                 var subscription = this._subscriptions[index];
                 if (isUndefined(subscription[type])) {
@@ -697,12 +701,8 @@
                     subscription.gestureCount++;
                 }
             }
-
-            //if (removeSelect) {
-            //    this.__removeTextSelect();
-            //}
         }
-        private __unregisterElement(element: Node, type: string, returnSelect: boolean) {
+        private __unregisterElement(element: Node, type: string) {
             var elementIndex = this._elements.indexOf(element);
             if (elementIndex === -1) {
                 return;
@@ -716,11 +716,11 @@
             if (gestureIndicator.gestureCount === 0) {
                 this._subscriptions.splice(elementIndex, 1);
                 this.__removeElement(elementIndex);
-            }
 
-            //if (returnSelect) {
-            //    this.__returnTextSelect();
-            //}
+                if (!isUndefined((<HTMLElement>element).className)) {
+                    this.__removeClass(<HTMLElement>element, 'plat-gesture');
+                }
+            }
         }
         private __setTouch(ev: Event) {
             var $compat = this.$compat;
@@ -778,26 +778,13 @@
 
             if (type.indexOf(trackGesture) !== -1) {
                 countType = trackGesture;
-                this.__moveEventCount--;
             } else if (type.indexOf(swipeGesture) !== -1) {
                 countType = swipeGesture;
-                this.__moveEventCount--;
             }
 
-            this.__unregisterElement(element, type, (this.__moveEventCount <= 0 && !DomEvents.config.allowTextSelection));
+            this.__unregisterElement(element, type);
             this._gestureCount[countType]--;
         }
-        //private __removeTextSelect() {
-        //    this.$document.addEventListener('selectstart', this.preventDefault, false);
-        //    this.__noSelect = true;
-        //}
-        //private __returnTextSelect() {
-        //    this.$document.removeEventListener('selectstart', this.preventDefault, false);
-        //    this.__noSelect = false;
-        //}
-        //private preventDefault(ev: Event) {
-        //    ev.preventDefault();
-        //}
         private __removeElement(index: number) {
             var elements = this._elements;
             elements.splice(index, 1);
@@ -809,8 +796,22 @@
             }
         }
         private __standardizeEventObject(ev: IExtendedEvent) {
-            ev.offsetX = ev.offsetX || (<any>ev).layerX;
-            ev.offsetY = ev.offsetY || (<any>ev).layerY;
+            if (isUndefined(ev.offsetX)) {
+                var offset = this.__getOffset(ev);
+                ev.offsetX = offset.x;
+                ev.offsetY = offset.y;
+                return;
+            }
+
+            ev.offsetX = ev.offsetX;
+            ev.offsetY = ev.offsetY;
+        }
+        private __getOffset(ev: IExtendedEvent) {
+            var rect = (<any>ev.target).getBoundingClientRect();
+            return {
+                x: ev.clientX - rect.left,
+                y: ev.clientY - rect.top
+            };
         }
         private __clearHold() {
             if (!isNull(this.__holdTimeout)) {
@@ -865,6 +866,54 @@
         }
         private __isHorizontal(direction: string) {
             return direction === 'left' || direction === 'right';
+        }
+        private __appendGestureStyle() {
+            var $document = this.$document,
+                style = $document.createElement('style');
+
+            style.textContent = this.__createStyle();
+            $document.head.appendChild(style);
+        }
+        private __createStyle() {
+            var styleConfig = DomEvents.config.styleConfig,
+                styles = styleConfig.styles,
+                length = styles.length,
+                style = '.' + styleConfig.className + ' { ',
+                textContent = '';
+
+            for (var i = 0; i < length; ++i) {
+                textContent += styles[i] + '; ';
+            }
+
+            return style + textContent + ' } ';
+        }
+        private __addClass(element: HTMLElement, className: string) {
+            if (isUndefined(element.classList)) {
+                if (isEmpty(element.className)) {
+                    element.className = className;
+                    return;
+                }
+
+                element.className += ' ' + className;
+                return;
+            }
+
+            element.classList.add(className);
+        }
+        private __removeClass(element: HTMLElement, className: string) {
+            if (isUndefined(element.classList)) {
+                if (element.className === className) {
+                    element.className = '';
+                    return;
+                }
+
+                element.className
+                    .replace(new RegExp('\s' + className + '\s', 'g'), ' ')
+                    .replace(new RegExp('^' + className + '\s|\s' + className + '$', 'g'), '');
+                return;
+            }
+
+            element.classList.remove(className);
         }
     }
 
@@ -1046,81 +1095,11 @@
      * Describes an object to keep track of a single 
      * element's registered custom event types.
      */
-    export interface IEventSubscription {
+    export interface IEventSubscription extends IGestures<IDomEvent> {
         /**
          * The total registered gesture count for the associated element.
          */
         gestureCount: number;
-
-        /**
-         * The DomEvent handling a tap event.
-         */
-        tap?: IDomEvent;
-
-        /**
-         * The DomEvent handling a dbltap event.
-         */
-        dbltap?: IDomEvent;
-
-        /**
-         * The DomEvent handling a hold event.
-         */
-        hold?: IDomEvent;
-
-        /**
-         * The DomEvent handling a release event.
-         */
-        release?: IDomEvent;
-
-        /**
-         * The DomEvent handling a swipe event.
-         */
-        swipe?: IDomEvent;
-
-        /**
-         * The DomEvent handling a swipeleft event.
-         */
-        swipeleft?: IDomEvent;
-
-        /**
-         * The DomEvent handling a swiperight event.
-         */
-        swiperight?: IDomEvent;
-
-        /**
-         * The DomEvent handling a swipeup event.
-         */
-        swipeup?: IDomEvent;
-
-        /**
-         * The DomEvent handling a swipedown event.
-         */
-        swipedown?: IDomEvent;
-
-        /**
-         * The DomEvent handling a track event.
-         */
-        track?: IDomEvent;
-
-        /**
-         * The DomEvent handling a trackleft event.
-         */
-        trackleft?: IDomEvent;
-
-        /**
-         * The DomEvent handling a trackright event.
-         */
-        trackright?: IDomEvent;
-
-        /**
-         * The DomEvent handling a trackup event.
-         */
-        trackup?: IDomEvent;
-
-        /**
-         * The DomEvent handling a trackdown event.
-         */
-        trackdown?: IDomEvent;
     }
 
     /**
@@ -1131,27 +1110,27 @@
         /**
          * The string type|number of events associated with the tap event.
          */
-        tap: T;
+        tap?: T;
 
         /**
          * The string type|number of events associated with the dbltap event.
          */
-        dbltap: T;
+        dbltap?: T;
 
         /**
          * The string type|number of events associated with the hold event.
          */
-        hold: T;
+        hold?: T;
 
         /**
          * The string type|number of events associated with the release event.
          */
-        release: T;
+        release?: T;
 
         /**
          * The string type|number of events associated with the swipe event.
          */
-        swipe: T;
+        swipe?: T;
 
         /**
          * The string type|number of events associated with the swipeleft event.
@@ -1176,7 +1155,7 @@
         /**
          * The string type|number of events associated with the track event.
          */
-        track: T;
+        track?: T;
 
         /**
          * The string type|number of events associated with the trackleft event.
@@ -1302,16 +1281,26 @@
     }
 
     /**
+     * Describes an object used for creating a custom class for styling an element.
+     */
+    export interface IDefaultStyleConfig {
+        /**
+         * The className that will be used to define the custom style.
+         */
+        className: string;
+
+        /**
+         * An array of string styles in the format:
+         * CSS identifier : value
+         * (i.e. 'width : 100px')
+         */
+        styles: Array<string>;
+    }
+
+    /**
      * Describes a configuration object for all custom DOM events.
      */
     export interface IDomEventsConfig {
-        /**
-         * Whether or not to allow text selection when move events such as swipe or track 
-         * are currently active. If set to true, it may cause event misses due to the browser 
-         * not firing events like 'pointerup' due to the text selection. Defaults to false.
-         */
-        allowTextSelection: boolean;
-
         /**
          * An object containing the different time intervals that govern the behavior of certain 
          * custom DOM events.
@@ -1329,6 +1318,11 @@
          * custom DOM events.
          */
         velocities: IVelocities;
+
+        /**
+         * The default CSS styles applied to elements listening for custom DOM events.
+         */
+        styleConfig: IDefaultStyleConfig;
     }
 
     /**
