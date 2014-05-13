@@ -426,10 +426,11 @@
 
             this.__clearHold();
             this._inTouch = false;
+            var touchCount = this.__touchCount;
+            this.__touchCount = 0;
+            this.__pointers = {};
 
-            if (this.__touchCount > 1) {
-                this.__touchCount = 0;
-                this.__pointers = {};
+            if (touchCount > 1) {
                 return;
             }
 
