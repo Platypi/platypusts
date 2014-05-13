@@ -206,7 +206,8 @@
 
             if (mappingExists) {
                 this.__reverseMap[mappedType] = type;
-                mappedRemoveListener = this.__addMappedEvent(element, type, mappedType, useCapture);
+                this.__registerElement(element, type, false);
+                mappedRemoveListener = this.__addMappedEvent(mappedType, useCapture);
             }
 
             element.addEventListener(type, listener, useCapture);
@@ -281,10 +282,7 @@
                 return;
             }
 
-            if (isTouch) {
-                this._inTouch = true;
-            }
-
+            this._inTouch = isTouch;
             this.__hasMoved = false;
 
             this.__lastTouchDown = this.__swipeOrigin = {
@@ -575,7 +573,6 @@
 
             this.__standardizeEventObject(ev);
             ev.preventDefault();
-            ev.stopPropagation();
             domEvent.trigger(ev);
         }
 
@@ -726,11 +723,12 @@
                 }
             } while (!isNull(eventTarget = eventTarget.parentNode));
         }
-        private __addMappedEvent(element: Node, event: string, mappedEvent: string, useCapture?: boolean): IRemoveListener {
-            element.addEventListener(mappedEvent, this.__mappedEventListener, useCapture);
-            this.__registerElement(element, event, false);
+        private __addMappedEvent(mappedEvent: string, useCapture?: boolean): IRemoveListener {
+            var $document = this.$document;
+            $document.addEventListener(mappedEvent, this.__mappedEventListener, useCapture);
+
             return () => {
-                element.removeEventListener(mappedEvent, this.__mappedEventListener, useCapture);
+                $document.removeEventListener(mappedEvent, this.__mappedEventListener, useCapture);
             };
         }
         private __removeEventListener(element: Node, type: string, listener: IGestureListener, useCapture?: boolean) {
