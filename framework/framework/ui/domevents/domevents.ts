@@ -134,20 +134,20 @@
          * supported gestures.
          */
         _gestures: IGestures<string> = {
-            tap: 'tap',
-            dbltap: 'dbltap',
-            hold: 'hold',
-            release: 'release',
-            swipe: 'swipe',
-            swipeleft: 'swipeleft',
-            swiperight: 'swiperight',
-            swipeup: 'swipeup',
-            swipedown: 'swipedown',
-            track: 'track',
-            trackleft: 'trackleft',
-            trackright: 'trackright',
-            trackup: 'trackup',
-            trackdown: 'trackdown'
+            $tap: '$tap',
+            $dbltap: '$dbltap',
+            $hold: '$hold',
+            $release: '$release',
+            $swipe: '$swipe',
+            $swipeleft: '$swipeleft',
+            $swiperight: '$swiperight',
+            $swipeup: '$swipeup',
+            $swipedown: '$swipedown',
+            $track: '$track',
+            $trackleft: '$trackleft',
+            $trackright: '$trackright',
+            $trackup: '$trackup',
+            $trackdown: '$trackdown'
         };
 
         /**
@@ -155,12 +155,12 @@
          * events of each type.
          */
         _gestureCount: IGestures<number> = {
-            tap: 0,
-            dbltap: 0,
-            hold: 0,
-            release: 0,
-            swipe: 0,
-            track: 0
+            $tap: 0,
+            $dbltap: 0,
+            $hold: 0,
+            $release: 0,
+            $swipe: 0,
+            $track: 0
         };
 
         private __START = 'start';
@@ -237,8 +237,8 @@
                 };
             }
 
-            var swipeGesture = gestures.swipe,
-                trackGesture = gestures.track,
+            var swipeGesture = gestures.$swipe,
+                trackGesture = gestures.$track,
                 countType = type;
 
             if (type.indexOf(trackGesture) !== -1) {
@@ -308,12 +308,12 @@
             };
 
             var gestureCount = this._gestureCount,
-                noHolds = gestureCount.hold <= 0,
-                noRelease = gestureCount.release <= 0;
+                noHolds = gestureCount.$hold <= 0,
+                noRelease = gestureCount.$release <= 0;
 
             // check to see if we need to detect movement
-            if (gestureCount.tap > 0 || gestureCount.dbltap > 0 ||
-                gestureCount.track > 0 || gestureCount.swipe > 0) {
+            if (gestureCount.$tap > 0 || gestureCount.$dbltap > 0 ||
+                gestureCount.$track > 0 || gestureCount.$swipe > 0) {
                 this.__lastMoveEvent = null;
                 this.__detectMove = true;
                 this.__registerType(this.__MOVE);
@@ -335,14 +335,14 @@
                 }, holdInterval);
                 return;
             } else if (noRelease) {
-                domEvent = this.__findFirstSubscriber(<Node>ev.target, this._gestures.hold);
+                domEvent = this.__findFirstSubscriber(<Node>ev.target, this._gestures.$hold);
                 subscribeFn = () => {
                     domEvent.trigger(ev);
                     this.__holdTimeout = null;
                 };
             } else {
                 // has both hold and release events registered
-                domEvent = this.__findFirstSubscriber(<Node>ev.target, this._gestures.hold);
+                domEvent = this.__findFirstSubscriber(<Node>ev.target, this._gestures.$hold);
                 subscribeFn = () => {
                     domEvent.trigger(ev);
                     this.__hasRelease = true;
@@ -378,9 +378,9 @@
             this.__clearHold();
 
             var gestureCount = this._gestureCount,
-                noTracking = gestureCount.track <= 0,
-                noMoveEvents = gestureCount.swipe <= 0 && noTracking,
-                noTapEvents = gestureCount.dbltap <= 0 && gestureCount.tap <= 0;
+                noTracking = gestureCount.$track <= 0,
+                noMoveEvents = gestureCount.$swipe <= 0 && noTracking,
+                noTapEvents = gestureCount.$dbltap <= 0 && gestureCount.$tap <= 0;
 
             // return if no move events and no tap events are registred
             if (noMoveEvents && noTapEvents) {
@@ -503,12 +503,12 @@
         private __handleTap(ev: ITouchEvent) {
             this.__tapCount++;
 
-            if (this._gestureCount.tap <= 0) {
+            if (this._gestureCount.$tap <= 0) {
                 return;
             }
 
-            var events = this._gestures,
-                domEvent = this.__findFirstSubscriber(<Node>ev.target, events.tap);
+            var gestures = this._gestures,
+                domEvent = this.__findFirstSubscriber(<Node>ev.target, gestures.$tap);
 
             if (isNull(domEvent)) {
                 return;
@@ -540,11 +540,11 @@
                 this.__tapTimeout = null;
             }
 
-            if (this._gestureCount.dbltap <= 0) {
+            if (this._gestureCount.$dbltap <= 0) {
                 return;
             }
 
-            var domEvent = this.__findFirstSubscriber(<Node>ev.target, this._gestures.dbltap);
+            var domEvent = this.__findFirstSubscriber(<Node>ev.target, this._gestures.$dbltap);
             if (!isNull(domEvent)) {
                 domEvent.trigger(ev);
                 // set touch count to -1 to prevent repeated fire on sequential taps
@@ -552,7 +552,7 @@
             }
         }
         private __handleRelease(ev: ITouchEvent) {
-            var domEvent = this.__findFirstSubscriber(<Node>ev.target, this._gestures.release);
+            var domEvent = this.__findFirstSubscriber(<Node>ev.target, this._gestures.$release);
             if (!isNull(domEvent)) {
                 domEvent.trigger(ev);
             }
@@ -566,7 +566,7 @@
                 return;
             }
 
-            var swipeGesture = this._gestures.swipe,
+            var swipeGesture = this._gestures.$swipe,
                 direction = lastMove.direction,
                 velocity = lastMove.velocity,
                 swipeDirectionGesture = swipeGesture + direction,
@@ -586,7 +586,7 @@
             this.__lastMoveEvent = null;
         }
         private __handleTrack(ev: ITouchEvent) {
-            var trackGesture = this._gestures.track,
+            var trackGesture = this._gestures.$track,
                 velocity = ev.velocity,
                 direction = ev.direction,
                 trackDirectionGesture = trackGesture + direction,
@@ -603,10 +603,6 @@
             }
         }
         private __handleMappedEvent(ev: IExtendedEvent) {
-            if (isObject((<CustomEvent>ev).detail)) {
-                return;
-            }
-
             var mappedType = ev.type,
                 eventType = this.__reverseMap[mappedType],
                 domEvent = this.__findFirstSubscriber(<Node>ev.target, eventType);
@@ -626,15 +622,15 @@
                 touchEvents = $compat.mappedEvents;
 
             if ($compat.hasTouchEvents) {
-                this._startEvents = [touchEvents.touchstart, 'mousedown'];
-                this._moveEvents = [touchEvents.touchmove, 'mousemove'];
-                this._endEvents = [touchEvents.touchend, touchEvents.touchcancel, 'mouseup'];
+                this._startEvents = [touchEvents.$touchstart, 'mousedown'];
+                this._moveEvents = [touchEvents.$touchmove, 'mousemove'];
+                this._endEvents = [touchEvents.$touchend, touchEvents.$touchcancel, 'mouseup'];
                 return;
             }
 
-            this._startEvents = [touchEvents.touchstart];
-            this._moveEvents = [touchEvents.touchmove];
-            this._endEvents = [touchEvents.touchend, touchEvents.touchcancel];
+            this._startEvents = [touchEvents.$touchstart];
+            this._moveEvents = [touchEvents.$touchmove];
+            this._endEvents = [touchEvents.$touchend, touchEvents.$touchcancel];
         }
         private __registerTypes() {
             this.__registerType(this.__START);
@@ -794,8 +790,8 @@
 
             element.removeEventListener(type, listener, useCapture);
 
-            var swipeGesture = gestures.swipe,
-                trackGesture = gestures.track,
+            var swipeGesture = gestures.$swipe,
+                trackGesture = gestures.$track,
                 countType = type;
 
             if (type.indexOf(trackGesture) !== -1) {
@@ -1132,72 +1128,72 @@
         /**
          * The string type|number of events associated with the tap event.
          */
-        tap?: T;
+        $tap?: T;
 
         /**
          * The string type|number of events associated with the dbltap event.
          */
-        dbltap?: T;
+        $dbltap?: T;
 
         /**
          * The string type|number of events associated with the hold event.
          */
-        hold?: T;
+        $hold?: T;
 
         /**
          * The string type|number of events associated with the release event.
          */
-        release?: T;
+        $release?: T;
 
         /**
          * The string type|number of events associated with the swipe event.
          */
-        swipe?: T;
+        $swipe?: T;
 
         /**
          * The string type|number of events associated with the swipeleft event.
          */
-        swipeleft?: T;
+        $swipeleft?: T;
 
         /**
          * The string type|number of events associated with the swiperight event.
          */
-        swiperight?: T;
+        $swiperight?: T;
 
         /**
          * The string type|number of events associated with the swipeup event.
          */
-        swipeup?: T;
+        $swipeup?: T;
 
         /**
          * The string type|number of events associated with the swipedown event.
          */
-        swipedown?: T;
+        $swipedown?: T;
 
         /**
          * The string type|number of events associated with the track event.
          */
-        track?: T;
+        $track?: T;
 
         /**
          * The string type|number of events associated with the trackleft event.
          */
-        trackleft?: T;
+        $trackleft?: T;
 
         /**
          * The string type|number of events associated with the trackright event.
          */
-        trackright?: T;
+        $trackright?: T;
 
         /**
          * The string type|number of events associated with the trackup event.
          */
-        trackup?: T;
+        $trackup?: T;
 
         /**
          * The string type|number of events associated with the trackdown event.
          */
-        trackdown?: T;
+        $trackdown?: T;
     }
 
     /**

@@ -232,7 +232,7 @@ module plat.controls {
         /**
          * The event name.
          */
-        event: string = 'tap';
+        event: string = '$tap';
     }
 
     export class Blur extends SimpleEventControl {
@@ -274,7 +274,7 @@ module plat.controls {
         /**
          * The event name.
          */
-        event: string = 'dbltap';
+        event: string = '$dbltap';
     }
 
     export class Focus extends SimpleEventControl {
@@ -288,126 +288,126 @@ module plat.controls {
         /**
          * The event name.
          */
-        event: string = 'touchstart';
+        event: string = '$touchstart';
     }
 
     export class TouchEnd extends SimpleEventControl {
         /**
          * The event name.
          */
-        event: string = 'touchend';
+        event: string = '$touchend';
     }
 
     export class TouchMove extends SimpleEventControl {
         /**
          * The event name.
          */
-        event: string = 'touchmove';
+        event: string = '$touchmove';
     }
 
     export class TouchEnter extends SimpleEventControl {
         /**
          * The event name.
          */
-        event: string = 'touchenter';
+        event: string = '$touchenter';
     }
 
     export class TouchLeave extends SimpleEventControl {
         /**
          * The event name.
          */
-        event: string = 'touchleave';
+        event: string = '$touchleave';
     }
 
     export class TouchCancel extends SimpleEventControl {
         /**
          * The event name.
          */
-        event: string = 'touchcancel';
+        event: string = '$touchcancel';
     }
 
     export class Hold extends SimpleEventControl {
         /**
          * The event name.
          */
-        event: string = 'hold';
+        event: string = '$hold';
     }
 
     export class Release extends SimpleEventControl {
         /**
          * The event name.
          */
-        event: string = 'release';
+        event: string = '$release';
     }
 
     export class Swipe extends SimpleEventControl {
         /**
          * The event name.
          */
-        event: string = 'swipe';
+        event: string = '$swipe';
     }
 
     export class SwipeLeft extends SimpleEventControl {
         /**
          * The event name.
          */
-        event: string = 'swipeleft';
+        event: string = '$swipeleft';
     }
 
     export class SwipeRight extends SimpleEventControl {
         /**
          * The event name.
          */
-        event: string = 'swiperight';
+        event: string = '$swiperight';
     }
 
     export class SwipeUp extends SimpleEventControl {
         /**
          * The event name.
          */
-        event: string = 'swipeup';
+        event: string = '$swipeup';
     }
 
     export class SwipeDown extends SimpleEventControl {
         /**
          * The event name.
          */
-        event: string = 'swipedown';
+        event: string = '$swipedown';
     }
 
     export class Track extends SimpleEventControl {
         /**
          * The event name.
          */
-        event: string = 'track';
+        event: string = '$track';
     }
 
     export class TrackLeft extends SimpleEventControl {
         /**
          * The event name.
          */
-        event: string = 'trackleft';
+        event: string = '$trackleft';
     }
 
     export class TrackRight extends SimpleEventControl {
         /**
          * The event name.
          */
-        event: string = 'trackright';
+        event: string = '$trackright';
     }
 
     export class TrackUp extends SimpleEventControl {
         /**
          * The event name.
          */
-        event: string = 'trackup';
+        event: string = '$trackup';
     }
 
     export class TrackDown extends SimpleEventControl {
         /**
          * The event name.
          */
-        event: string = 'trackdown';
+        event: string = '$trackdown';
     }
 
     export class Submit extends SimpleEventControl {
