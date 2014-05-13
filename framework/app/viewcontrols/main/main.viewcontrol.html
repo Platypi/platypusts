@@ -3,4 +3,10 @@
     <div class="left-align">
         <a plat-href="{{href}}">Google</a>
     </div>
+
+    <table>
+        <tr plat-control="plat-foreach" plat-context="names">
+            <td>{{@context}}</td>
+        </tr>
+    </table>
 </div>
