@@ -366,7 +366,6 @@ module plat.async {
             isFunction($window.Promise.race) &&
             isFunction($window.Promise.resolve) &&
             isFunction($window.Promise.reject)) {
-            console.log('using native promise!');
             return $window.Promise;
         }
 
