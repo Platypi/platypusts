@@ -53,7 +53,11 @@ module plat.processing {
                 element.setAttribute('plat-control', name);
 
                 var replacementType = uiControl.replaceWith;
-                if (!isEmpty(replacementType) && replacementType.toLowerCase() !== nodeName) {
+                if (!isEmpty(replacementType) && (replacementType !== 'any' || nodeName === name) && replacementType.toLowerCase() !== nodeName) {
+                    if (replacementType === 'any') {
+                        replacementType = 'div';
+                    }
+
                     var replacement = ElementManager.$document.createElement(replacementType);
                     if (replacement.nodeType === Node.ELEMENT_NODE) {
                         element = ElementManager.$dom.replaceWith(element, <HTMLElement>replacement.cloneNode(true));
