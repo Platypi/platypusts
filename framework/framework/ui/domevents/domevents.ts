@@ -186,6 +186,7 @@
         private __mappedEventListener = this.__handleMappedEvent.bind(this);
         private __reverseMap = {};
         private __pointers: IObject<IExtendedEvent> = {};
+        private __touches: Array<IExtendedEvent> = [];
 
         /**
          * Retrieve the type of touch events for this browser and create the default gesture style.
@@ -262,19 +263,21 @@
             this.__unregisterTypes();
 
             this._gestureCount = {
-                tap: 0,
-                dbltap: 0,
-                hold: 0,
-                release: 0,
-                swipe: 0,
-                track: 0
+                $tap: 0,
+                $dbltap: 0,
+                $hold: 0,
+                $release: 0,
+                $swipe: 0,
+                $track: 0
             };
             this._isActive = false;
             this._elements = [];
             this._subscriptions = [];
+            this.__touches = [];
             this.__pointers = {};
             this.__reverseMap = {};
             this.__tapCount = 0;
+            this.__touchCount = 0;
             this.__swipeOrigin = null;
             this.__lastMoveEvent = null;
             this.__lastTouchDown = null;
@@ -289,6 +292,8 @@
         _onTouchStart(ev: ITouchEvent) {
             var eventType = ev.type.toLowerCase(),
                 isTouch = eventType.indexOf('mouse') === -1;
+
+            this.__touches = [];
 
             // return immediately if mouse event and currently in a touch or
             // if the touch count is greater than 1
@@ -444,6 +449,7 @@
 
             // return if the touch count was greater than 1
             if (touchCount > 1) {
+                this.__touches = [];
                 return;
             }
 
@@ -490,6 +496,7 @@
 
             this.__handleTap(ev);
 
+            this.__touches = [];
             this.__lastTouchUp = {
                 x: x,
                 y: y,
@@ -754,6 +761,9 @@
         }
         private __updatePointers(ev: IExtendedEvent) {
             this.__pointers[(<any>ev).pointerId] = ev;
+            if (this.__touches.indexOf(ev) === -1) {
+                this.__touches.push(ev);
+            }
             return Object.keys(this.__pointers).length;
         }
 
@@ -814,15 +824,16 @@
             }
         }
         private __standardizeEventObject(ev: IExtendedEvent) {
+            ev.touches = ev.touches || this.__touches;
+            ev.clientX = ev.clientX || ev.touches[0].clientX;
+            ev.clientY = ev.clientY || ev.touches[0].clientY;
+
             if (isUndefined(ev.offsetX)) {
                 var offset = this.__getOffset(ev);
                 ev.offsetX = offset.x;
                 ev.offsetY = offset.y;
                 return;
             }
-
-            ev.offsetX = ev.offsetX;
-            ev.offsetY = ev.offsetY;
         }
         private __getOffset(ev: IExtendedEvent) {
             var rect = (<any>ev.target).getBoundingClientRect();
@@ -1040,14 +1051,14 @@
          * physical screen or monitor.
          */
         screenY?: number;
-        
+
         /**
          * The x-coordinate of the event on the screen relative to the upper left corner of the 
          * fully rendered content area in the browser window. This value can be altered and/or affected by 
          * embedded scrollable pages when the scroll bar is moved.
          */
         pageX?: number;
-        
+
         /**
          * The y-coordinate of the event on the screen relative to the upper left corner of the 
          * fully rendered content area in the browser window. This value can be altered and/or affected by 
@@ -1076,6 +1087,12 @@
          * The potential velocity associated with the event.
          */
         velocity?: IVelocity;
+
+        /**
+         * An array containing all current touch points. The IExtendedEvents 
+         * may slightly differ depending on the browser implementation.
+         */
+        touches?: Array<IExtendedEvent>;
     }
 
     /**
