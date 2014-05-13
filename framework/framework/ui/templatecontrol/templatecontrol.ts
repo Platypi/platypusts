@@ -10,6 +10,7 @@ module plat.ui {
         static $templateCache: storage.ITemplateCache;
         static $parser: expressions.IParser;
         static $http: async.IHttp;
+        static $Promise: async.IPromiseStatic;
 
         /**
          * Evaluates an expression string with a given control and optional context.
@@ -339,9 +340,9 @@ module plat.ui {
          */
         static determineTemplate(control: ITemplateControl, templateUrl?: string): async.IPromise<DocumentFragment, any> {
             var template,
-                templateCache: storage.ITemplateCache = acquire('$templateCache'),
+                templateCache = TemplateControl.$templateCache,
                 dom = control.dom,
-                Promise: async.IPromiseStatic = acquire('$PromiseStatic');
+                Promise = TemplateControl.$Promise;
 
             if (!isNull(templateUrl)) {
                 // do nothing
@@ -840,7 +841,8 @@ module plat.ui {
         $ExceptionStatic,
         $templateCache,
         $parser,
-        $http) {
+        $http,
+        $PromiseStatic) {
             TemplateControl.$ResourcesStatic = $ResourcesStatic;
             TemplateControl.$BindableTemplatesStatic = $BindableTemplatesStatic;
             TemplateControl.$ManagerCacheStatic = $ManagerCacheStatic;
@@ -848,6 +850,7 @@ module plat.ui {
             TemplateControl.$templateCache = $templateCache;
             TemplateControl.$parser = $parser;
             TemplateControl.$http = $http;
+            TemplateControl.$Promise = $PromiseStatic;
         return TemplateControl;
     }
 
@@ -858,7 +861,8 @@ module plat.ui {
         '$ExceptionStatic',
         '$templateCache',
         '$parser',
-        '$http'
+        '$http',
+        '$PromiseStatic'
     ], register.injectableType.STATIC);
 
     /**
