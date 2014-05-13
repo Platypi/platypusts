@@ -312,6 +312,13 @@ module plat.controls {
         event: string = 'touchenter';
     }
 
+    export class TouchLeave extends SimpleEventControl {
+        /**
+         * The event name.
+         */
+        event: string = 'touchleave';
+    }
+
     export class TouchCancel extends SimpleEventControl {
         /**
          * The event name.
@@ -437,6 +444,7 @@ module plat.controls {
     register.control('plat-touchend', TouchEnd);
     register.control('plat-touchmove', TouchMove);
     register.control('plat-touchenter', TouchEnter);
+    register.control('plat-touchleave', TouchLeave);
     register.control('plat-touchcancel', TouchCancel);
     register.control('plat-hold', Hold);
     register.control('plat-release', Release);

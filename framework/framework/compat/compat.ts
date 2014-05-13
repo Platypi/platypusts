@@ -53,6 +53,18 @@
         hasTouchEvents: boolean;
 
         /**
+         * Whether or not the current browser has pointer events 
+         * like pointerdown, MSPointerMove, pointerup, etc.
+         */
+        hasPointerEvents: boolean;
+
+        /**
+         * Whether or not the current browser has touch events 
+         * like MSPointerDown, touchmove, MSPointerUp, etc.
+         */
+        hasMsPointerEvents: boolean;
+
+        /**
          * An object containing the correctly mapped touch events for the browser.
          */
         mappedEvents: IMappedEvents;
@@ -74,6 +86,8 @@
                 define = contextManager.defineGetter,
                 navigator = $window.navigator,
                 hasTouch = !isUndefined((<any>$window).ontouchstart),
+                hasPointer = !!navigator.pointerEnabled,
+                hasMsPointer = !!navigator.msPointerEnabled,
                 def = (<any>$window).define,
                 msA = (<any>$window).MSApp;
 
@@ -86,22 +100,26 @@
             define(this, 'getProto', isFunction(Object.getPrototypeOf));
             define(this, 'setProto', isFunction((<any>Object).setPrototypeOf));
             define(this, 'hasTouchEvents', hasTouch);
+            define(this, 'hasPointerEvents', hasPointer);
+            define(this, 'hasMsPointerEvents', hasMsPointer);
 
-            if (!!navigator.pointerEnabled) {
+            if (hasPointer) {
                 define(this, 'mappedEvents', {
                     touchstart: 'pointerdown',
                     touchend: 'pointerup',
                     touchmove: 'pointermove',
                     touchcancel: 'pointercancel',
-                    touchenter: 'pointerover'
+                    touchenter: 'pointerover',
+                    touchleave: 'pointerout'
                 });
-            } else if (!!navigator.msPointerEnabled) {
+            } else if (hasMsPointer) {
                 define(this, 'mappedEvents', {
                     touchstart: 'MSPointerDown',
                     touchend: 'MSPointerUp',
                     touchmove: 'MSPointerMove',
                     touchcancel: 'MSPointerCancel',
-                    touchenter: 'MSPointerOver'
+                    touchenter: 'MSPointerOver',
+                    touchleave: 'MSPointerOut'
                 });
             } else if (hasTouch) {
                 define(this, 'mappedEvents', {
@@ -109,7 +127,8 @@
                     touchend: 'touchend',
                     touchmove: 'touchmove',
                     touchcancel: 'touchcancel',
-                    touchenter: 'touchenter'
+                    touchenter: 'touchenter',
+                    touchleave: 'touchleave'
                 });
             } else {
                 define(this, 'mappedEvents', {
@@ -117,7 +136,8 @@
                     touchend: 'mouseup',
                     touchmove: 'mousemove',
                     touchcancel: null,
-                    touchenter: 'mouseenter'
+                    touchenter: 'mouseenter',
+                    touchleave: 'mouseleave'
                 });
             }
         }
@@ -148,6 +168,11 @@
          * An event type for touch enter (or 'over').
          */
         touchenter: string;
+
+        /**
+         * An event type for touch leave (or 'out').
+         */
+        touchleave: string;
 
         /**
          * An event type for touch cancel.
@@ -208,6 +233,18 @@
          * like touchstart, touchmove, touchend, etc.
          */
         hasTouchEvents: boolean;
+
+        /**
+         * Whether or not the current browser has pointer events 
+         * like pointerdown, MSPointerMove, pointerup, etc.
+         */
+        hasPointerEvents: boolean;
+
+        /**
+         * Whether or not the current browser has touch events 
+         * like MSPointerDown, touchmove, MSPointerUp, etc.
+         */
+        hasMsPointerEvents: boolean;
 
         /**
          * An object containing the correctly mapped touch events for the browser.

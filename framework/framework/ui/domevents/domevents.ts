@@ -66,10 +66,19 @@
                  * a swipe event.
                  */
                 minSwipeVelocity: 0.5
+            },
+            defaultStyles: {
+                touchAction: 'none',
+                msTouchAction: 'none',
+                msUserSelect: 'none',
+                webkitUserDrag: 'none',
+                webkitUserSelect: 'none',
+                webkitTapHighlightColor: 'transparent',
+                webkitTouchCallout: 'none',
+                mozUserSelect: 'none'
             }
         };
 
-        $window: Window = acquire('$window');
         $document: Document = acquire('$document');
         $compat: ICompat = acquire('$compat');
 
@@ -154,8 +163,9 @@
         private __hasSwiped = false;
         private __hasRelease = false;
         private __noSelect = false;
-        private __touchCount = 0;
+        private __tapCount = 0;
         private __moveEventCount = 0;
+        private __touchCount = 0;
         private __tapTimeout: number;
         private __holdTimeout: number;
         private __lastTouchDown: ITouchPoint;
@@ -169,6 +179,7 @@
         };
         private __mappedEventListener = this.__handleMappedEvent.bind(this);
         private __reverseMap = {};
+        private __pointers: IObject<IExtendedEvent> = {};
 
         /**
          * Retrieve the type of touch events for this browser.
@@ -256,11 +267,13 @@
                 swipe: 0,
                 track: 0
             };
-            this.__touchCount = 0;
-            this.__moveEventCount = 0;
+            this._isActive = false;
             this._elements = [];
             this._subscriptions = [];
-            this._isActive = false;
+            this.__pointers = {};
+            this.__reverseMap = {};
+            this.__tapCount = 0;
+            this.__moveEventCount = 0;
             this.__noSelect = false;
             this.__swipeOrigin = null;
             this.__lastMoveEvent = null;
@@ -278,7 +291,8 @@
                 isTouch = eventType.indexOf('mouse') === -1;
 
             // return immediately if mouse event and currently in a touch
-            if (this._inTouch && !isTouch) {
+            if ((this._inTouch && !isTouch) ||
+                ((this.__touchCount = isTouch ? this.__setTouch(ev) : 1) > 1)) {
                 return;
             }
 
@@ -412,6 +426,13 @@
 
             this.__clearHold();
             this._inTouch = false;
+
+            if (this.__touchCount > 1) {
+                this.__touchCount = 0;
+                this.__pointers = {};
+                return;
+            }
+
             this.__standardizeEventObject(ev);
 
             if (this.__detectMove) {
@@ -432,7 +453,7 @@
                 touchEnd = ev.timeStamp;
             
             if (this.__hasMoved || ((touchEnd - this.__lastTouchDown.timeStamp) > intervals.tapInterval)) {
-                this.__touchCount = 0;
+                this.__tapCount = 0;
                 return;
             }
 
@@ -440,12 +461,12 @@
                 x = ev.clientX,
                 y = ev.clientY;
 
-            if (this.__touchCount > 0 &&
+            if (this.__tapCount > 0 &&
                 this.__getDistance(x, lastTouchUp.x, y, lastTouchUp.y) <= config.distances.maxDblTapDistance &&
                 ((touchEnd - lastTouchUp.timeStamp) <= intervals.dblTapInterval)) {
                 this.__handleDbltap(ev);
             } else {
-                this.__touchCount = 0;
+                this.__tapCount = 0;
             }
 
             this.__handleTap(ev);
@@ -461,7 +482,7 @@
         // Gesture handling methods
 
         private __handleTap(ev: ITouchEvent) {
-            this.__touchCount++;
+            this.__tapCount++;
 
             if (this._gestureCount.tap <= 0) {
                 return;
@@ -487,13 +508,13 @@
             // dbltap zoom
             this.__tapTimeout = setTimeout(() => {
                 domEvent.trigger(ev);
-                this.__touchCount = 0;
+                this.__tapCount = 0;
                 this.__tapTimeout = null;
             }, DomEvents.config.intervals.dblTapZoomDelay);
             
         }
         private __handleDbltap(ev: ITouchEvent) {
-            this.__touchCount = 0;
+            this.__tapCount = 0;
 
             if (!isNull(this.__tapTimeout)) {
                 clearTimeout(this.__tapTimeout);
@@ -508,7 +529,7 @@
             if (!isNull(domEvent)) {
                 domEvent.trigger(ev);
                 // set touch count to -1 to prevent repeated fire on sequential taps
-                this.__touchCount = -1;
+                this.__tapCount = -1;
             }
         }
         private __handleRelease(ev: ITouchEvent) {
@@ -579,8 +600,7 @@
         // Touch type and element registration
 
         private __getTypes() {
-            var navigator = this.$window.navigator,
-                $compat = this.$compat,
+            var $compat = this.$compat,
                 touchEvents = $compat.mappedEvents;
 
             if ($compat.hasTouchEvents) {
@@ -678,9 +698,9 @@
                 }
             }
 
-            if (removeSelect) {
-                this.__removeTextSelect();
-            }
+            //if (removeSelect) {
+            //    this.__removeTextSelect();
+            //}
         }
         private __unregisterElement(element: Node, type: string, returnSelect: boolean) {
             var elementIndex = this._elements.indexOf(element);
@@ -698,9 +718,25 @@
                 this.__removeElement(elementIndex);
             }
 
-            if (returnSelect) {
-                this.__returnTextSelect();
+            //if (returnSelect) {
+            //    this.__returnTextSelect();
+            //}
+        }
+        private __setTouch(ev: Event) {
+            var $compat = this.$compat;
+            if ($compat.hasPointerEvents) {
+                (<any>ev.target).setPointerCapture((<any>ev).pointerId);
+                return this.__updatePointers(ev);
+            } else if ($compat.hasMsPointerEvents) {
+                (<any>ev.target).msSetPointerCapture((<any>ev).pointerId);
+                return this.__updatePointers(ev);
             }
+
+            return (<any>ev).touches.length;
+        }
+        private __updatePointers(ev: IExtendedEvent) {
+            this.__pointers[(<any>ev).pointerId] = ev;
+            return Object.keys(this.__pointers).length;
         }
 
         // Event and subscription handling
@@ -751,17 +787,17 @@
             this.__unregisterElement(element, type, (this.__moveEventCount <= 0 && !DomEvents.config.allowTextSelection));
             this._gestureCount[countType]--;
         }
-        private __removeTextSelect() {
-            this.$document.addEventListener('selectstart', this.preventDefault, false);
-            this.__noSelect = true;
-        }
-        private __returnTextSelect() {
-            this.$document.removeEventListener('selectstart', this.preventDefault, false);
-            this.__noSelect = false;
-        }
-        private preventDefault(ev: Event) {
-            ev.preventDefault();
-        }
+        //private __removeTextSelect() {
+        //    this.$document.addEventListener('selectstart', this.preventDefault, false);
+        //    this.__noSelect = true;
+        //}
+        //private __returnTextSelect() {
+        //    this.$document.removeEventListener('selectstart', this.preventDefault, false);
+        //    this.__noSelect = false;
+        //}
+        //private preventDefault(ev: Event) {
+        //    ev.preventDefault();
+        //}
         private __removeElement(index: number) {
             var elements = this._elements;
             elements.splice(index, 1);
@@ -915,14 +951,42 @@
      */
     export interface IExtendedEvent extends Event {
         /**
-         * The x-coordinate of the event on the screen.
+         * The x-coordinate of the event on the screen relative to the upper left corner of the 
+         * browser window. This value cannot be affected by scrolling.
          */
         clientX?: number;
 
         /**
-         * The y-coordinate of the event on the screen.
+         * The y-coordinate of the event on the screen relative to the upper left corner of the 
+         * browser window. This value cannot be affected by scrolling.
          */
         clientY?: number;
+
+        /**
+         * The x-coordinate of the event on the screen relative to the upper left corner of the 
+         * physical screen or monitor.
+         */
+        screenX?: number;
+
+        /**
+         * The y-coordinate of the event on the screen relative to the upper left corner of the 
+         * physical screen or monitor.
+         */
+        screenY?: number;
+        
+        /**
+         * The x-coordinate of the event on the screen relative to the upper left corner of the 
+         * fully rendered content area in the browser window. This value can be altered and/or affected by 
+         * embedded scrollable pages when the scroll bar is moved.
+         */
+        pageX?: number;
+        
+        /**
+         * The y-coordinate of the event on the screen relative to the upper left corner of the 
+         * fully rendered content area in the browser window. This value can be altered and/or affected by 
+         * embedded scrollable pages when the scroll bar is moved.
+         */
+        pageY?: number;
 
         /**
          * The x-coordinate of the event relative to the top-left corner of the 
