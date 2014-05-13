@@ -12,6 +12,7 @@
         $config: IBrowserConfig = acquire('$browser.config');
         $regex: expressions.IRegex = acquire('$regex');
         $window: Window = acquire('$window');
+        $dom: ui.IDom = acquire('$dom');
         private __currentUrl: string;
         private __lastUrl = this.$window.location.href;
         private __initializing = false;
@@ -53,10 +54,10 @@
                 if (config.routingType === config.routeType.STATE) {
                     this.url(config.baseUrl, true);
                 }
-                this.$window.addEventListener('popstate', changed, false);
+                this.$dom.addEventListener(this.$window, 'popstate', changed, false);
             }
 
-            this.$window.addEventListener('hashchange', changed, false);
+            this.$dom.addEventListener(this.$window, 'hashchange', changed, false);
 
             this.__initializing = false;
         }

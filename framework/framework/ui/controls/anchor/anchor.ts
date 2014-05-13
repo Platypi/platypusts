@@ -4,7 +4,7 @@
         element: HTMLAnchorElement;
         initialize() {
             if (isEmpty(this.element.href)) {
-                this.element.addEventListener('click', (ev: Event) => {
+                this.addEventListener(this.element, 'click', (ev: Event) => {
                     if (isEmpty(this.element.href)) {
                         ev.preventDefault();
                     }

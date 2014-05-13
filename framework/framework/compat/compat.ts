@@ -47,6 +47,17 @@
         setProto: boolean;
 
         /**
+         * Whether or not the current browser has touch events 
+         * like touchstart, touchmove, touchend, etc.
+         */
+        hasTouchEvents: boolean;
+
+        /**
+         * An object containing the correctly mapped touch events for the browser.
+         */
+        mappedEvents: IMappedEvents;
+
+        /**
          * Determines if the browser is modern enough to correctly 
          * run PlatypusTS.
          */
@@ -61,10 +72,12 @@
             var contextManager: observable.IContextManagerStatic = acquire('$ContextManagerStatic'),
                 $window: Window = acquire('$window'),
                 define = contextManager.defineGetter,
-                def = $window['define'],
-                msA = $window['MSApp'];
+                navigator = $window.navigator,
+                hasTouch = !isUndefined((<any>$window).ontouchstart),
+                def = (<any>$window).define,
+                msA = (<any>$window).MSApp;
 
-            define(this, 'cordova', !isNull($window['cordova']));
+            define(this, 'cordova', !isNull((<any>$window).cordova));
             define(this, 'pushState', !isNull($window.history.pushState));
             define(this, 'amd', isFunction(def) && !isNull(def.amd));
             define(this, 'msApp', isObject(msA) && isFunction(msA.execUnsafeLocalFunction));
@@ -72,10 +85,75 @@
             define(this, 'proto', isObject((<any>{}).__proto__));
             define(this, 'getProto', isFunction(Object.getPrototypeOf));
             define(this, 'setProto', isFunction((<any>Object).setPrototypeOf));
+            define(this, 'hasTouchEvents', hasTouch);
+
+            if (!!navigator.pointerEnabled) {
+                define(this, 'mappedEvents', {
+                    touchstart: 'pointerdown',
+                    touchend: 'pointerup',
+                    touchmove: 'pointermove',
+                    touchcancel: 'pointercancel',
+                    touchenter: 'pointerover'
+                });
+            } else if (!!navigator.msPointerEnabled) {
+                define(this, 'mappedEvents', {
+                    touchstart: 'MSPointerDown',
+                    touchend: 'MSPointerUp',
+                    touchmove: 'MSPointerMove',
+                    touchcancel: 'MSPointerCancel',
+                    touchenter: 'MSPointerOver'
+                });
+            } else if (hasTouch) {
+                define(this, 'mappedEvents', {
+                    touchstart: 'touchstart',
+                    touchend: 'touchend',
+                    touchmove: 'touchmove',
+                    touchcancel: 'touchcancel',
+                    touchenter: 'touchenter'
+                });
+            } else {
+                define(this, 'mappedEvents', {
+                    touchstart: 'mousedown',
+                    touchend: 'mouseup',
+                    touchmove: 'mousemove',
+                    touchcancel: null,
+                    touchenter: 'mouseenter'
+                });
+            }
         }
     }
 
     register.injectable('$compat', Compat);
+
+    /**
+     * Describes an object containing the correctly mapped touch events for the browser.
+     */
+    export interface IMappedEvents extends IObject<string> {
+        /**
+         * An event type for touch start.
+         */
+        touchstart: string;
+
+        /**
+         * An event type for touch end.
+         */
+        touchend: string;
+
+        /**
+         * An event type for touch move.
+         */
+        touchmove: string;
+
+        /**
+         * An event type for touch enter (or 'over').
+         */
+        touchenter: string;
+
+        /**
+         * An event type for touch cancel.
+         */
+        touchcancel: string;
+    }
 
     /**
      * An object containing boolean values signifying browser 
@@ -124,6 +202,17 @@
          * Signifies whether Object.prototype.setPrototypeOf exists.
          */
         setProto: boolean;
+
+        /**
+         * Whether or not the current browser has touch events 
+         * like touchstart, touchmove, touchend, etc.
+         */
+        hasTouchEvents: boolean;
+
+        /**
+         * An object containing the correctly mapped touch events for the browser.
+         */
+        mappedEvents: IMappedEvents;
 
         /**
          * Determines if the browser is modern enough to correctly 

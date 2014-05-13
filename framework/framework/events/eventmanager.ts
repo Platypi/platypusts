@@ -36,6 +36,7 @@ module plat.events {
         static $compat: ICompat;
         static $document: Document;
         static $window: Window;
+        static $dom: ui.IDom;
         static $ExceptionStatic: IExceptionStatic;
         private static __eventsListeners: IObject<IEventsListener> = {};
         private static __lifecycleEventListeners: Array<any> = [];
@@ -57,6 +58,7 @@ module plat.events {
                 length = lifecycleListeners.length,
                 compat = EventManager.$compat,
                 $document = EventManager.$document,
+                $dom = EventManager.$dom,
                 dispatch = LifecycleEvent.dispatch,
                 listener;
 
@@ -80,7 +82,7 @@ module plat.events {
                         })(event)
                     });
 
-                    $document.addEventListener(event, lifecycleListeners[i].value, false);
+                    this.$dom.addEventListener($document, event, lifecycleListeners[i].value, false);
                 }
 
                 lifecycleListeners.push({
@@ -90,7 +92,7 @@ module plat.events {
                     }
                 });
 
-                $document.addEventListener('pause', lifecycleListeners[lifecycleListeners.length - 1].value, false);
+                this.$dom.addEventListener($document, 'pause', lifecycleListeners[lifecycleListeners.length - 1].value, false);
 
                 lifecycleListeners.push({
                     name: 'deviceReady',
@@ -99,7 +101,7 @@ module plat.events {
                     }
                 });
 
-                $document.addEventListener('deviceReady', lifecycleListeners[lifecycleListeners.length - 1].value, false);
+                this.$dom.addEventListener($document, 'deviceReady', lifecycleListeners[lifecycleListeners.length - 1].value, false);
 
                 lifecycleListeners.push({
                     name: 'backbutton',
@@ -108,11 +110,11 @@ module plat.events {
                     }
                 });
 
-                $document.addEventListener('backbutton', lifecycleListeners[lifecycleListeners.length - 1].value, false);
+                this.$dom.addEventListener($document, 'backbutton', lifecycleListeners[lifecycleListeners.length - 1].value, false);
             } else if (compat.amd) {
                 return;
             } else {
-                EventManager.$window.addEventListener('load', () => {
+                this.$dom.addEventListener(EventManager.$window, 'load', () => {
                     dispatch('ready', EventManager);
                 });
             }
@@ -381,10 +383,11 @@ module plat.events {
     /**
      * The Type for referencing the '$EventManagerStatic' injectable as a dependency.
      */
-    export function EventManagerStatic($compat, $document, $window, $ExceptionStatic) {
+    export function EventManagerStatic($compat, $document, $window, $dom, $ExceptionStatic) {
         EventManager.$compat = $compat;
         EventManager.$document = $document;
         EventManager.$window = $window;
+        EventManager.$dom = $dom;
         EventManager.$ExceptionStatic = $ExceptionStatic;
         return EventManager;
     }
@@ -393,6 +396,7 @@ module plat.events {
         '$compat',
         '$document',
         '$window',
+        '$dom',
         '$ExceptionStatic'
     ], register.injectableType.STATIC);
 

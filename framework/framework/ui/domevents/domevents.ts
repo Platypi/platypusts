@@ -1,54 +1,122 @@
 ﻿module plat.ui {
     /**
-     * A class for managing dom event registration and handling.
+     * A class for managing DOM event registration and handling.
      */
     export class DomEvents implements IDomEvents {
-        $window: Window = acquire('$window');
-        $document: Document = acquire('$document');
-
-        hasTouch = ('ontouchstart' in this.$window);
-        config: IDomEventConfig = {
-            allowDblTapZoom: false,
+        /**
+         * A configuration object for all DOM events.
+         */
+        static config: IDomEventsConfig = {
+            /**
+             * Whether or not to allow text selection when move events such as swipe or track 
+             * are currently active. If set to true, it may cause event misses due to the browser 
+             * not firing events like 'pointerup' due to the text selection. Defaults to false.
+             */
             allowTextSelection: false,
+            /**
+             * An object containing the different time intervals that govern the behavior of certain 
+             * custom DOM events.
+             */
             intervals: {
-                tapInterval: 300,
+                /**
+                 * The max time in milliseconds a user can hold down on the screen 
+                 * for a tap event to be fired.
+                 */
+                tapInterval: 200,
+                /**
+                 * The max time in milliseconds a user can wait between consecutive 
+                 * taps for a dbltap event to be fired.
+                 */
+                dblTapInterval: 300,
+                /**
+                 * The time in milliseconds a user must hold down on the screen 
+                 * before a hold event is fired or a release event can be fired.
+                 */
                 holdInterval: 400,
-                dblTapInterval: 300
+                /**
+                 * The delay in milliseconds between the time a user taps to the time 
+                 * the tap event fires. Used in the case where a double-tap-to-zoom 
+                 * feature is required.
+                 */
+                dblTapZoomDelay: 0
             },
+            /**
+             * An object containing the different minimum/maximum distances that govern the behavior of certain 
+             * custom DOM events.
+             */
             distances: {
+                /**
+                 * The minimum distance a user must move after touch down to register 
+                 * it as a scroll instead of a tap.
+                 */
                 minScrollDistance: 5,
+                /**
+                 * The maximum distance between consecutive taps a user is allowed to 
+                 * register a dbltap event.
+                 */
                 maxDblTapDistance: 20
             },
+            /**
+             * An object containing the different minimum/maximum velocities that govern the behavior of certain 
+             * custom DOM events.
+             */
             velocities: {
-                swipeVelocity: 0.5
+                /**
+                 * The minimum velocity a user must move after touch down to register 
+                 * a swipe event.
+                 */
+                minSwipeVelocity: 0.5
             }
         };
 
-        _elements: Array<Node> = [];
-        _subscriptions: Array<IGestureIndicator> = [];
+        $window: Window = acquire('$window');
+        $document: Document = acquire('$document');
+        $compat: ICompat = acquire('$compat');
 
-        private __START = 'start';
-        private __MOVE = 'move';
-        private __END = 'end';
-        private __inTouch = false;
-        private __isReady = false;
-        private __detectMove = false;
-        private __hasMoved = false;
-        private __hasSwiped = false;
-        private __hasRelease = false;
-        private __noSelect = false;
-        private __touchCount = 0;
-        private __moveEventCount = 0;
-        private __tapTimeout: number;
-        private __holdTimeout: number;
-        private __lastTouchDown: ITouchPoint;
-        private __lastTouchUp: ITouchPoint;
-        private __swipeOrigin: ITouchPoint;
-        private __lastMoveEvent: ITouchEvent;
-        private __startEvents: Array<string>;
-        private __moveEvents: Array<string>;
-        private __endEvents: Array<string>;
-        private __gestures: IGestures = {
+        /**
+         * Whether or not the DomEvents are currently active. 
+         * They become active at least one element on the current 
+         * page is listening for a custom event.
+         */
+        _isActive = false;
+
+        /**
+         * Whether or not the user is currently touching the screen.
+         */
+        _inTouch = false;
+
+        /**
+         * The array of all elements currently registered for 
+         * DOM events.
+         */
+        _elements: Array<Node> = [];
+
+        /**
+         * An array of subscriptions that keep track of all of the 
+         * events registered on a particular element.
+         */
+        _subscriptions: Array<IEventSubscription> = [];
+
+        /**
+         * The touch start events defined by this browser.
+         */
+        _startEvents: Array<string>;
+
+        /**
+         * The touch move events defined by this browser.
+         */
+        _moveEvents: Array<string>;
+
+        /**
+         * The touch end events defined by this browser.
+         */
+        _endEvents: Array<string>;
+
+        /**
+         * An object containing the event types for all of the 
+         * supported gestures.
+         */
+        _gestures: IGestures<string> = {
             tap: 'tap',
             dbltap: 'dbltap',
             hold: 'hold',
@@ -64,7 +132,12 @@
             trackup: 'trackup',
             trackdown: 'trackdown'
         };
-        private __gestureCount: IGestures = {
+
+        /**
+         * An object containing the number of currently active 
+         * events of each type.
+         */
+        _gestureCount: IGestures<number> = {
             tap: 0,
             dbltap: 0,
             hold: 0,
@@ -72,25 +145,78 @@
             swipe: 0,
             track: 0
         };
+
+        private __START = 'start';
+        private __MOVE = 'move';
+        private __END = 'end';
+        private __detectMove = false;
+        private __hasMoved = false;
+        private __hasSwiped = false;
+        private __hasRelease = false;
+        private __noSelect = false;
+        private __touchCount = 0;
+        private __moveEventCount = 0;
+        private __tapTimeout: number;
+        private __holdTimeout: number;
+        private __lastTouchDown: ITouchPoint;
+        private __lastTouchUp: ITouchPoint;
+        private __swipeOrigin: ITouchPoint;
+        private __lastMoveEvent: ITouchEvent;
         private __listeners: IDocumentListeners = {
             start: this._onTouchStart.bind(this),
             move: this._onMove.bind(this),
             end: this._onTouchEnd.bind(this)
         };
+        private __mappedEventListener = this.__handleMappedEvent.bind(this);
+        private __reverseMap = {};
+
+        /**
+         * Retrieve the type of touch events for this browser.
+         */
         constructor() {
-            this.__determineTypes();
+            this.__getTypes();
         }
-        addEventListener(element: Node, type: string, listener: IGestureListener,
-            useCapture?: boolean, options?: IDomEventConfig) {
-            var gestures = this.__gestures;
-            if (!isUndefined(element['on' + type])) {
-                element.addEventListener(type, listener, useCapture);
-                return;
-            } else if (isUndefined(gestures[type])) {
-                return;
+
+        /**
+         * Add an event listener for the specified event type on the specified element. 
+         * 
+         * @param element The node listening for the event.
+         * @param type The type of event being listened to.
+         * @param listener The listener to be fired.
+         * @param useCapture Whether to fire the event on the capture or bubble phase of propagation.
+         * @return {IRemoveListener} A function to remove the added event listener.
+         */
+        addEventListener(element: Node, type: string, listener: IGestureListener, useCapture?: boolean): IRemoveListener;
+        /**
+         * Add an event listener for the specified event type on the specified element. 
+         * 
+         * @param element The window object.
+         * @param type The type of event being listened to.
+         * @param listener The listener to be fired.
+         * @param useCapture Whether to fire the event on the capture or bubble phase of propagation.
+         * @return {IRemoveListener} A function to remove the added event listener.
+         */
+        addEventListener(element: Window, type: string, listener: IGestureListener, useCapture?: boolean): IRemoveListener;
+        addEventListener(element: any, type: string, listener: IGestureListener, useCapture?: boolean): IRemoveListener {
+            var mappedGestures = this.$compat.mappedEvents,
+                mappedType = mappedGestures[type],
+                mappingExists = !isNull(mappedType),
+                mappedRemoveListener = noop,
+                gestures = this._gestures;
+
+            if (mappingExists) {
+                this.__reverseMap[mappedType] = type;
+                mappedRemoveListener = this.__addMappedEvent(element, type, mappedType, useCapture);
             }
 
             element.addEventListener(type, listener, useCapture);
+
+            if (!isUndefined(element['on' + type]) || isUndefined(gestures[type]) || mappingExists) {
+                return () => {
+                    mappedRemoveListener();
+                    element.removeEventListener(type, listener, useCapture);
+                };
+            }
 
             var swipeGesture = gestures.swipe,
                 trackGesture = gestures.track,
@@ -99,47 +225,29 @@
 
             if (type.indexOf(trackGesture) !== -1) {
                 countType = trackGesture;
-                removeSelect = !(this.__noSelect || this.config.allowTextSelection);
+                removeSelect = !(this.__noSelect || DomEvents.config.allowTextSelection);
                 this.__moveEventCount++;
             } else if (type.indexOf(swipeGesture) !== -1) {
                 countType = swipeGesture;
-                removeSelect = !(this.__noSelect || this.config.allowTextSelection);
+                removeSelect = !(this.__noSelect || DomEvents.config.allowTextSelection);
                 this.__moveEventCount++;
             }
 
-            this.__registerElement(element, type, listener, removeSelect);
-            this.__gestureCount[countType]++;
+            this.__registerElement(element, type, removeSelect);
+            this._gestureCount[countType]++;
+
+            return () => {
+                this.__removeEventListener(element, type, listener, useCapture);
+            };
         }
-        removeEventListener(element: Node, type: string, listener: IGestureListener, useCapture?: boolean) {
-            var gestures = this.__gestures;
-            if (!isUndefined(element['on' + type])) {
-                element.removeEventListener(type, listener, useCapture);
-                return;
-            } else if (isUndefined(gestures[type])) {
-                return;
-            }
 
-            element.removeEventListener(type, listener, useCapture);
-
-            var swipeGesture = gestures.swipe,
-                trackGesture = gestures.track,
-                countType = type;
-
-            if (type.indexOf(trackGesture) !== -1) {
-                countType = trackGesture;
-                this.__moveEventCount--;
-            } else if (type.indexOf(swipeGesture) !== -1) {
-                countType = swipeGesture;
-                this.__moveEventCount--;
-            }
-
-            this.__unregisterElement(element, type, listener, (this.__moveEventCount <= 0 && !this.config.allowTextSelection));
-            this.__gestureCount[countType]--;
-        }
+        /**
+         * Stops listening for touch events and resets the DomEvents instance.
+         */
         dispose() {
             this.__unregisterTypes();
 
-            this.__gestureCount = {
+            this._gestureCount = {
                 tap: 0,
                 dbltap: 0,
                 hold: 0,
@@ -151,7 +259,7 @@
             this.__moveEventCount = 0;
             this._elements = [];
             this._subscriptions = [];
-            this.__isReady = false;
+            this._isActive = false;
             this.__noSelect = false;
             this.__swipeOrigin = null;
             this.__lastMoveEvent = null;
@@ -159,22 +267,22 @@
             this.__lastTouchUp = null;
         }
 
+        /**
+         * A listener for touch/mouse start events.
+         * 
+         * @param ev The touch start event object.
+         */
         _onTouchStart(ev: ITouchEvent) {
-            var eventType = ev.type.toLowerCase();
+            var eventType = ev.type.toLowerCase(),
+                isTouch = eventType.indexOf('mouse') === -1;
 
             // return immediately if mouse event and currently in a touch
-            if (this.__inTouch && eventType.indexOf('mouse') !== -1) {
+            if (this._inTouch && !isTouch) {
                 return;
             }
 
-            if (eventType.indexOf('pointer') !== -1) {
-                // do pointer stuff
-                this.__inTouch = true;
-            } else if (eventType.indexOf('touch') !== -1) {
-                // do touch stuff
-                this.__inTouch = true;
-            } else {
-                // do mouse stuff
+            if (isTouch) {
+                this._inTouch = true;
             }
 
             this.__hasMoved = false;
@@ -186,7 +294,7 @@
                 timeStamp: ev.timeStamp
             };
 
-            var gestureCount = this.__gestureCount,
+            var gestureCount = this._gestureCount,
                 noHolds = gestureCount.hold <= 0,
                 noRelease = gestureCount.release <= 0;
 
@@ -201,46 +309,55 @@
                 return;
             }
 
-            var subscriber: IGestureIndicator,
+            this.__standardizeEventObject(ev);
+
+            var holdInterval = DomEvents.config.intervals.holdInterval,
+                domEvent: IDomEvent,
                 subscribeFn;
             if (noHolds) {
                 this.__holdTimeout = setTimeout(() => {
                     this.__hasRelease = true;
-                }, this.config.intervals.holdInterval);
-
+                }, holdInterval);
                 return;
             } else if (noRelease) {
-                subscriber = this.__findFirstSubscriber(<Node>ev.target, this.__gestures.hold);
+                domEvent = this.__findFirstSubscriber(<Node>ev.target, this._gestures.hold);
                 subscribeFn = () => {
-                    subscriber.hold.trigger(ev);
+                    domEvent.trigger(ev);
                     this.__holdTimeout = null;
                 };
-                
             } else {
-                // has both
-                subscriber = this.__findFirstSubscriber(<Node>ev.target, this.__gestures.hold);
+                // has both hold and release events registered
+                domEvent = this.__findFirstSubscriber(<Node>ev.target, this._gestures.hold);
                 subscribeFn = () => {
-                    subscriber.hold.trigger(ev);
+                    domEvent.trigger(ev);
                     this.__hasRelease = true;
                     this.__holdTimeout = null;
                 };
             }
 
-            if (!isNull(subscriber)) {
-                this.__holdTimeout = setTimeout(subscribeFn, this.config.intervals.holdInterval);
+            if (!isNull(domEvent)) {
+                this.__holdTimeout = setTimeout(subscribeFn, holdInterval);
             }
         }
 
+        /**
+         * A listener for touch/mouse move events.
+         * 
+         * @param ev The touch start event object.
+         */
         _onMove(ev: ITouchEvent) {
             // return immediately if mouse event and currently in a touch
-            if (!this.__detectMove || (this.__inTouch && ev.type.indexOf('mouse') !== -1)) {
+            if (!this.__detectMove || (this._inTouch && ev.type.indexOf('mouse') !== -1)) {
                 return;
             }
+
+            // call prevent default to try and avoid mouse events
+            ev.preventDefault();
 
             // clear hold
             this.__clearHold();
 
-            var gestureCount = this.__gestureCount,
+            var gestureCount = this._gestureCount,
                 noTracking = gestureCount.track <= 0,
                 noMoveEvents = gestureCount.swipe <= 0 && noTracking,
                 noTapEvents = gestureCount.dbltap <= 0 && gestureCount.tap <= 0;
@@ -249,7 +366,7 @@
                 return;
             }
 
-            var config = this.config,
+            var config = DomEvents.config,
                 swipeOrigin = this.__swipeOrigin,
                 x = ev.clientX,
                 y = ev.clientY,
@@ -265,6 +382,8 @@
                 return;
             }
 
+            this.__standardizeEventObject(ev);
+
             var lastMove = this.__lastMoveEvent,
                 direction = ev.direction = isNull(lastMove) ? this.__getDirection(x - lastX, y - lastY) :
                     this.__getDirection(x - lastMove.clientX, y - lastMove.clientY);
@@ -273,7 +392,7 @@
 
             var velocity = ev.velocity = this.__getVelocity(x - swipeOrigin.x, y - swipeOrigin.y, ev.timeStamp - swipeOrigin.timeStamp);
 
-            this.__hasSwiped = (this.__isHorizontal(direction) ? velocity.x : velocity.y) >= config.velocities.swipeVelocity;
+            this.__hasSwiped = (this.__isHorizontal(direction) ? velocity.x : velocity.y) >= config.velocities.minSwipeVelocity;
 
             if (!noTracking) {
                 this.__handleTrack(ev);
@@ -282,14 +401,20 @@
             this.__lastMoveEvent = ev;
         }
 
+        /**
+         * A listener for touch/mouse end events.
+         * 
+         * @param ev The touch start event object.
+         */
         _onTouchEnd(ev: ITouchEvent) {
             // return immediately if mouse event and currently in a touch
-            if (this.__inTouch && ev.type.indexOf('mouse') !== -1) {
+            if (this._inTouch && ev.type.indexOf('mouse') !== -1) {
                 return;
             }
 
             this.__clearHold();
-            this.__inTouch = false;
+            this._inTouch = false;
+            this.__standardizeEventObject(ev);
 
             if (this.__detectMove) {
                 this.__unregisterType(this.__MOVE);
@@ -304,7 +429,7 @@
                 this.__handleSwipe();
             }
 
-            var config = this.config,
+            var config = DomEvents.config,
                 intervals = config.intervals,
                 touchEnd = ev.timeStamp;
             
@@ -335,25 +460,25 @@
             };
         }
 
+        // Gesture handling methods
+
         private __handleTap(ev: ITouchEvent) {
             this.__touchCount++;
 
-            if (this.__gestureCount.tap <= 0) {
+            if (this._gestureCount.tap <= 0) {
                 return;
             }
 
-            var events = this.__gestures,
-                tapSubscriber = this.__findFirstSubscriber(<Node>ev.target, events.tap);
+            var events = this._gestures,
+                domEvent = this.__findFirstSubscriber(<Node>ev.target, events.tap);
 
-            if (isNull(tapSubscriber)) {
+            if (isNull(domEvent)) {
                 return;
             }
-
-            var domEvent = tapSubscriber.tap;
 
             // fire tap event immediately if no dbltap zoom
             // or a mouse is being used
-            if (!this.config.allowDblTapZoom ||
+            if (DomEvents.config.intervals.dblTapZoomDelay <= 0 ||
                 ev.pointerType === 'mouse' ||
                 ev.type.indexOf('mouse') !== -1) {
                 domEvent.trigger(ev);
@@ -366,7 +491,7 @@
                 domEvent.trigger(ev);
                 this.__touchCount = 0;
                 this.__tapTimeout = null;
-            }, this.config.intervals.dblTapInterval);
+            }, DomEvents.config.intervals.dblTapZoomDelay);
             
         }
         private __handleDbltap(ev: ITouchEvent) {
@@ -377,21 +502,21 @@
                 this.__tapTimeout = null;
             }
 
-            if (this.__gestureCount.dbltap <= 0) {
+            if (this._gestureCount.dbltap <= 0) {
                 return;
             }
 
-            var subscriber = this.__findFirstSubscriber(<Node>ev.target, this.__gestures.dbltap);
-            if (!isNull(subscriber)) {
-                subscriber.dbltap.trigger(ev);
+            var domEvent = this.__findFirstSubscriber(<Node>ev.target, this._gestures.dbltap);
+            if (!isNull(domEvent)) {
+                domEvent.trigger(ev);
                 // set touch count to -1 to prevent repeated fire on sequential taps
                 this.__touchCount = -1;
             }
         }
         private __handleRelease(ev: ITouchEvent) {
-            var subscriber = this.__findFirstSubscriber(<Node>ev.target, this.__gestures.release);
-            if (!isNull(subscriber)) {
-                subscriber.release.trigger(ev);
+            var domEvent = this.__findFirstSubscriber(<Node>ev.target, this._gestures.release);
+            if (!isNull(domEvent)) {
+                domEvent.trigger(ev);
             }
 
             this.__hasRelease = false;
@@ -403,90 +528,74 @@
                 return;
             }
 
-            var gestures = this.__gestures,
-                swipeGesture = gestures.swipe,
+            var swipeGesture = this._gestures.swipe,
                 direction = lastMove.direction,
                 velocity = lastMove.velocity,
                 swipeDirectionGesture = swipeGesture + direction,
-                eventTarget = <Node>this.__lastTouchDown.target,
-                swipeSubscriber = this.__findFirstSubscriber(eventTarget, swipeGesture),
-                swipeDirectionSubscriber = this.__findFirstSubscriber(eventTarget, gestures[swipeDirectionGesture]);
+                eventTarget = <Node>this.__swipeOrigin.target,
+                swipeDomEvent = this.__findFirstSubscriber(eventTarget, swipeGesture),
+                swipeDirectionDomEvent = this.__findFirstSubscriber(eventTarget, swipeDirectionGesture);
 
-            if (!isNull(swipeSubscriber)) {
-                swipeSubscriber.swipe.trigger(lastMove);
+            if (!isNull(swipeDomEvent)) {
+                swipeDomEvent.trigger(lastMove);
             }
 
-            if (!isNull(swipeDirectionSubscriber)) {
-                swipeDirectionSubscriber[swipeDirectionGesture].trigger(lastMove);
+            if (!isNull(swipeDirectionDomEvent)) {
+                swipeDirectionDomEvent.trigger(lastMove);
             }
 
             this.__hasSwiped = false;
             this.__lastMoveEvent = null;
         }
         private __handleTrack(ev: ITouchEvent) {
-            var gestures = this.__gestures,
-                trackGesture = gestures.track,
+            var trackGesture = this._gestures.track,
                 velocity = ev.velocity,
                 direction = ev.direction,
                 trackDirectionGesture = trackGesture + direction,
                 eventTarget = <Node>ev.target,
-                trackSubscriber = this.__findFirstSubscriber(eventTarget, trackGesture),
-                trackDirectionSubscriber = this.__findFirstSubscriber(eventTarget, gestures[trackDirectionGesture]);
+                trackDomEvent = this.__findFirstSubscriber(eventTarget, trackGesture),
+                trackDirectionDomEvent = this.__findFirstSubscriber(eventTarget, trackDirectionGesture);
 
-            if (!isNull(trackSubscriber)) {
-                trackSubscriber.track.trigger(ev);
+            if (!isNull(trackDomEvent)) {
+                trackDomEvent.trigger(ev);
             }
 
-            if (!isNull(trackDirectionSubscriber)) {
-                trackDirectionSubscriber[trackDirectionGesture].trigger(ev);
+            if (!isNull(trackDirectionDomEvent)) {
+                trackDirectionDomEvent.trigger(ev);
             }
         }
+        private __handleMappedEvent(ev: IExtendedEvent) {
+            var mappedType = ev.type,
+                eventType = this.__reverseMap[mappedType],
+                domEvent = this.__findFirstSubscriber(<Node>ev.target, eventType);
 
-        private __clearHold() {
-            if (!isNull(this.__holdTimeout)) {
-                clearTimeout(this.__holdTimeout);
-                this.__holdTimeout = null;
-            }
-        }
-
-        private __findFirstSubscriber(eventTarget: Node, type: string): IGestureIndicator {
-            var elements = this._elements,
-                gestures: IGestureIndicator,
-                index: number;
-
-            do {
-                if ((index = elements.indexOf(eventTarget)) !== -1) {
-                    gestures = this._subscriptions[index];
-                    if (isUndefined(gestures[type])) {
-                        continue;
-                    }
-
-                    return gestures;
-                }
-            } while (!isNull(eventTarget = eventTarget.parentNode));
-        }
-        private __determineTypes() {
-            var navigator = this.$window.navigator;
-            if (navigator.pointerEnabled) {
-                this.__startEvents = ['pointerdown'];
-                this.__moveEvents = ['pointermove'];
-                this.__endEvents = ['pointerup', 'pointercancel'];
-                return;
-            } else if (navigator.msPointerEnabled) {
-                this.__startEvents = ['MSPointerDown'];
-                this.__moveEvents = ['MSPointerMove'];
-                this.__endEvents = ['MSPointerUp', 'MSPointerCancel'];
-                return;
-            } else if (this.hasTouch) {
-                this.__startEvents = ['touchstart', 'mousedown'];
-                this.__moveEvents = ['touchmove', 'mousemove'];
-                this.__endEvents = ['touchend', 'touchcancel', 'mouseup'];
+            if (isNull(domEvent)) {
                 return;
             }
 
-            this.__startEvents = ['mousedown'];
-            this.__moveEvents = ['mousemove'];
-            this.__endEvents = ['mouseup'];
+            this.__standardizeEventObject(ev);
+            ev.preventDefault();
+            ev.stopPropagation();
+            domEvent.trigger(ev);
+        }
+
+        // Touch type and element registration
+
+        private __getTypes() {
+            var navigator = this.$window.navigator,
+                $compat = this.$compat,
+                touchEvents = $compat.mappedEvents;
+
+            if ($compat.hasTouchEvents) {
+                this._startEvents = [touchEvents.touchstart, 'mousedown'];
+                this._moveEvents = [touchEvents.touchmove, 'mousemove'];
+                this._endEvents = [touchEvents.touchend, touchEvents.touchcancel, 'mouseup'];
+                return;
+            }
+
+            this._startEvents = [touchEvents.touchstart];
+            this._moveEvents = [touchEvents.touchmove];
+            this._endEvents = [touchEvents.touchend, touchEvents.touchcancel];
         }
         private __registerTypes() {
             this.__registerType(this.__START);
@@ -504,13 +613,13 @@
 
             switch (event) {
                 case this.__START:
-                    events = this.__startEvents;
+                    events = this._startEvents;
                     break;
                 case this.__MOVE:
-                    events = this.__moveEvents;
+                    events = this._moveEvents;
                     break;
                 case this.__END:
-                    events = this.__endEvents;
+                    events = this._endEvents;
                     break;
                 default:
                     return;
@@ -528,13 +637,13 @@
 
             switch (event) {
                 case this.__START:
-                    events = this.__startEvents;
+                    events = this._startEvents;
                     break;
                 case this.__MOVE:
-                    events = this.__moveEvents;
+                    events = this._moveEvents;
                     break;
                 case this.__END:
-                    events = this.__endEvents;
+                    events = this._endEvents;
                     break;
                 default:
                     return;
@@ -545,39 +654,30 @@
                 $document.removeEventListener(events[index], listener, false);
             }
         }
-        private __removeTextSelect() {
-            this.$document.addEventListener('selectstart', this.preventDefault, false);
-            this.__noSelect = true;
-        }
-        private __returnTextSelect() {
-            this.$document.removeEventListener('selectstart', this.preventDefault, false);
-            this.__noSelect = false;
-        }
-        private preventDefault(ev: Event) {
-            ev.preventDefault();
-        }
-        private __registerElement(element: Node, type: string, listener: IGestureListener, removeSelect: boolean) {
+        private __registerElement(element: Node, type: string, removeSelect: boolean) {
             var index = this._elements.indexOf(element),
-                domEvent = <IDomEvent>new DomEvent(element, type, listener),
-                gesture = { gestureCount: 1 };
+                domEvent: IDomEvent = acquire('$domEvent');
 
-            gesture[type] = domEvent;
+            domEvent.initialize(element, type);
 
             // check if DomEvents is ready
-            if (!this.__isReady) {
+            if (!this._isActive) {
                 this.__registerTypes();
-                this.__isReady = true;
+                this._isActive = true;
             }
 
             if (index === -1) {
+                var gesture = { gestureCount: 1 };
+                gesture[type] = domEvent;
+
                 index = this._elements.length;
                 this._elements.push(element);
                 this._subscriptions.push(gesture);
             } else {
-                var gestureIndicator = this._subscriptions[index];
-                if (isUndefined(gestureIndicator[type])) {
-                    gestureIndicator[type] = domEvent;
-                    gestureIndicator.gestureCount++;
+                var subscription = this._subscriptions[index];
+                if (isUndefined(subscription[type])) {
+                    subscription[type] = domEvent;
+                    subscription.gestureCount++;
                 }
             }
 
@@ -585,7 +685,7 @@
                 this.__removeTextSelect();
             }
         }
-        private __unregisterElement(element: Node, type: string, listener: IGestureListener, returnSelect: boolean) {
+        private __unregisterElement(element: Node, type: string, returnSelect: boolean) {
             var elementIndex = this._elements.indexOf(element);
             if (elementIndex === -1) {
                 return;
@@ -605,6 +705,65 @@
                 this.__returnTextSelect();
             }
         }
+
+        // Event and subscription handling
+
+        private __findFirstSubscriber(eventTarget: Node, type: string): IDomEvent {
+            var elements = this._elements,
+                gestures: IEventSubscription,
+                domEvent: IDomEvent,
+                index: number;
+
+            do {
+                if ((index = elements.indexOf(eventTarget)) !== -1) {
+                    gestures = this._subscriptions[index];
+                    domEvent = gestures[type];
+                    if (isUndefined(domEvent)) {
+                        continue;
+                    }
+
+                    return domEvent;
+                }
+            } while (!isNull(eventTarget = eventTarget.parentNode));
+        }
+        private __addMappedEvent(element: Node, event: string, mappedEvent: string, useCapture?: boolean): IRemoveListener {
+            element.addEventListener(mappedEvent, this.__mappedEventListener, useCapture);
+            this.__registerElement(element, event, false);
+            return () => {
+                element.removeEventListener(mappedEvent, this.__mappedEventListener, useCapture);
+            };
+        }
+        private __removeEventListener(element: Node, type: string, listener: IGestureListener, useCapture?: boolean) {
+            var gestures = this._gestures;
+
+            element.removeEventListener(type, listener, useCapture);
+
+            var swipeGesture = gestures.swipe,
+                trackGesture = gestures.track,
+                countType = type;
+
+            if (type.indexOf(trackGesture) !== -1) {
+                countType = trackGesture;
+                this.__moveEventCount--;
+            } else if (type.indexOf(swipeGesture) !== -1) {
+                countType = swipeGesture;
+                this.__moveEventCount--;
+            }
+
+            this.__unregisterElement(element, type, (this.__moveEventCount <= 0 && !DomEvents.config.allowTextSelection));
+            this._gestureCount[countType]--;
+        }
+        private __removeTextSelect() {
+            this.$document.addEventListener('selectstart', this.preventDefault, false);
+            this.__noSelect = true;
+        }
+        private __returnTextSelect() {
+            this.$document.removeEventListener('selectstart', this.preventDefault, false);
+            this.__noSelect = false;
+        }
+        private preventDefault(ev: Event) {
+            ev.preventDefault();
+        }
         private __removeElement(index: number) {
             var elements = this._elements;
             elements.splice(index, 1);
@@ -612,9 +771,22 @@
             // check if no elements are left listening
             if (elements.length === 0) {
                 this.__unregisterTypes();
-                this.__isReady = false;
+                this._isActive = false;
             }
         }
+        private __standardizeEventObject(ev: IExtendedEvent) {
+            ev.offsetX = ev.offsetX || (<any>ev).layerX;
+            ev.offsetY = ev.offsetY || (<any>ev).layerY;
+        }
+        private __clearHold() {
+            if (!isNull(this.__holdTimeout)) {
+                clearTimeout(this.__holdTimeout);
+                this.__holdTimeout = null;
+            }
+        }
+
+        // Utility methods
+
         private __getDistance(x1: number, x2: number, y1: number, y2: number) {
             var x = Math.abs(x2 - x1),
                 y = Math.abs(y2 - y1);
@@ -664,9 +836,55 @@
 
     plat.register.injectable('$domEvents', DomEvents);
 
+    /**
+     * The Type for referencing the '$domEvents.config' injectable as a dependency.
+     */
+    export function DomEventsConfigStatic() {
+        return DomEvents.config;
+    }
+
+    register.injectable('$domEvents.config', DomEventsConfigStatic, null, register.injectableType.STATIC);
+
+    /**
+     * A class for managing of a single custom event.
+     */
     export class DomEvent implements IDomEvent {
         $document: Document = acquire('$document');
-        constructor(public element: Node, public event: string, public listener: IGestureListener) { }
+
+        /**
+         * The node or window object associated with this DomEvent.
+         */
+        element: any;
+
+        /**
+         * The type of event this DomEvent is managing.
+         */
+        event: string;
+
+        /**
+         * Initializes the element and event of the DomEvent object
+         * 
+         * @param The node associated with this DomEvent. 
+         * @param event The type of event this DomEvent is managing.
+         */
+        initialize(element: Node, event: string);
+        /**
+         * Initializes the element and event of the DomEvent object
+         * 
+         * @param The window object. 
+         * @param event The type of event this DomEvent is managing.
+         */
+        initialize(element: Window, event: string);
+        initialize(element: any, event: string) {
+            this.element = element;
+            this.event = event;
+        }
+
+        /**
+         * Triggers a custom event to bubble up to all elements in this branch of the DOM tree.
+         * 
+         * @param ev The event object to pass in as the custom event object's detail property.
+         */
         trigger(ev: ITouchEvent) {
             var event = <CustomEvent>this.$document.createEvent('CustomEvent');
             event.initCustomEvent(this.event, true, true, ev);
@@ -674,115 +892,450 @@
         }
     }
 
+    register.injectable('$domEvent', DomEvent, null, register.injectableType.MULTI);
+
+    /**
+     * Describes the touch event listeners for the document.
+     */
     interface IDocumentListeners extends IObject<EventListener> {
+        /**
+         * The touch start event.
+         */
         start: EventListener;
+        /**
+         * The touch end event.
+         */
         end: EventListener;
-        move?: EventListener;
+        /**
+         * The touch move event.
+         */
+        move: EventListener;
     }
 
-    export interface IDomEvent {
-        element: Node;
-        event: string;
-        listener: IGestureListener;
-        trigger(ev: ITouchEvent): void;
-    }
-
+    /**
+     * An extended event object potentially containing coordinate and movement information.
+     */
     export interface IExtendedEvent extends Event {
+        /**
+         * The x-coordinate of the event on the screen.
+         */
         clientX?: number;
+
+        /**
+         * The y-coordinate of the event on the screen.
+         */
         clientY?: number;
+
+        /**
+         * The x-coordinate of the event relative to the top-left corner of the 
+         * offsetParent element that fires the event.
+         */
+        offsetX?: number;
+
+        /**
+         * The y-coordinate of the event relative to the top-left corner of the 
+         * offsetParent element that fires the event.
+         */
+        offsetY?: number;
+
+        /**
+         * The potential direction associated with the event.
+         */
         direction?: string;
+
+        /**
+         * The potential velocity associated with the event.
+         */
         velocity?: IVelocity;
     }
 
+    /**
+     * An extended event object potentially containing coordinate and movement information as 
+     * well as pointer type for pointer events.
+     */
     export interface ITouchEvent extends IExtendedEvent {
+        /**
+         * The type of interaction associated with the touch event ('touch', 'pen', 'mouse', '')
+         */
         pointerType?: string;
     }
 
+    /**
+     * The type of event object passed into the listeners for our custom events.
+     */
     export interface IGestureEvent extends CustomEvent {
+        /**
+         * The detail object defined by the IExtendedEvent interface.
+         */
         detail: IExtendedEvent;
     }
 
+    /**
+     * The listener interface for our custom DOM events.
+     */
     export interface IGestureListener {
+        /**
+         * An EventListener with the argument as an IGestureEvent.
+         */
         (ev: IGestureEvent): void;
     }
 
-    export interface IGestureIndicator {
+    /**
+     * Describes an object to keep track of a single 
+     * element's registered custom event types.
+     */
+    export interface IEventSubscription {
+        /**
+         * The total registered gesture count for the associated element.
+         */
         gestureCount: number;
+
+        /**
+         * The DomEvent handling a tap event.
+         */
         tap?: IDomEvent;
+
+        /**
+         * The DomEvent handling a dbltap event.
+         */
         dbltap?: IDomEvent;
+
+        /**
+         * The DomEvent handling a hold event.
+         */
         hold?: IDomEvent;
+
+        /**
+         * The DomEvent handling a release event.
+         */
         release?: IDomEvent;
+
+        /**
+         * The DomEvent handling a swipe event.
+         */
         swipe?: IDomEvent;
+
+        /**
+         * The DomEvent handling a swipeleft event.
+         */
         swipeleft?: IDomEvent;
+
+        /**
+         * The DomEvent handling a swiperight event.
+         */
         swiperight?: IDomEvent;
+
+        /**
+         * The DomEvent handling a swipeup event.
+         */
         swipeup?: IDomEvent;
+
+        /**
+         * The DomEvent handling a swipedown event.
+         */
         swipedown?: IDomEvent;
+
+        /**
+         * The DomEvent handling a track event.
+         */
         track?: IDomEvent;
+
+        /**
+         * The DomEvent handling a trackleft event.
+         */
         trackleft?: IDomEvent;
+
+        /**
+         * The DomEvent handling a trackright event.
+         */
         trackright?: IDomEvent;
+
+        /**
+         * The DomEvent handling a trackup event.
+         */
         trackup?: IDomEvent;
+
+        /**
+         * The DomEvent handling a trackdown event.
+         */
         trackdown?: IDomEvent;
     }
 
-    export interface IGestures {
-        tap: any;
-        dbltap: any;
-        hold: any;
-        release: any;
-        swipe: any;
-        swipeleft?: any;
-        swiperight?: any;
-        swipeup?: any;
-        swipedown?: any;
-        track: any;
-        trackleft?: any;
-        trackright?: any;
-        trackup?: any;
-        trackdown?: any;
+    /**
+     * Describes an object containing information 
+     * regarding all our custom events.
+     */
+    export interface IGestures<T> {
+        /**
+         * The string type|number of events associated with the tap event.
+         */
+        tap: T;
+
+        /**
+         * The string type|number of events associated with the dbltap event.
+         */
+        dbltap: T;
+
+        /**
+         * The string type|number of events associated with the hold event.
+         */
+        hold: T;
+
+        /**
+         * The string type|number of events associated with the release event.
+         */
+        release: T;
+
+        /**
+         * The string type|number of events associated with the swipe event.
+         */
+        swipe: T;
+
+        /**
+         * The string type|number of events associated with the swipeleft event.
+         */
+        swipeleft?: T;
+
+        /**
+         * The string type|number of events associated with the swiperight event.
+         */
+        swiperight?: T;
+
+        /**
+         * The string type|number of events associated with the swipeup event.
+         */
+        swipeup?: T;
+
+        /**
+         * The string type|number of events associated with the swipedown event.
+         */
+        swipedown?: T;
+
+        /**
+         * The string type|number of events associated with the track event.
+         */
+        track: T;
+
+        /**
+         * The string type|number of events associated with the trackleft event.
+         */
+        trackleft?: T;
+
+        /**
+         * The string type|number of events associated with the trackright event.
+         */
+        trackright?: T;
+
+        /**
+         * The string type|number of events associated with the trackup event.
+         */
+        trackup?: T;
+
+        /**
+         * The string type|number of events associated with the trackdown event.
+         */
+        trackdown?: T;
     }
 
-    export interface IDomEventConfig {
-        allowDblTapZoom: boolean;
-        allowTextSelection: boolean;
-        intervals: IIntervals;
-        distances: IDistances;
-        velocities: IVelocities;
-    }
-
-    export interface IVelocity {
-        x: number;
-        y: number;
-    }
-
+    /**
+     * Describes an object containing information about a single point touched.
+     */
     export interface ITouchPoint {
+        /**
+         * The x-coordinate of the touch.
+         */
         x: number;
+
+        /**
+         * The y-coordinate of the touch
+         */
         y: number;
+
+        /**
+         * The touch target.
+         */
         target: EventTarget;
+
+        /**
+         * The time of the touch.
+         */
         timeStamp: number;
     }
 
-    export interface IIntervals {
-        tapInterval: number;
-        holdInterval: number;
-        dblTapInterval: number;
+    /**
+     * Describes an object containing a speed in both the horiztonal and vertical directions.
+     */
+    export interface IVelocity {
+        /**
+         * The horizontal speed.
+         */
+        x: number;
+
+        /**
+         * The vertical speed.
+         */
+        y: number;
     }
 
+    /**
+     * Describes an object containing time interval information that 
+     * governs the behavior of certain custom DOM events.
+     */
+    export interface IIntervals {
+        /**
+         * The max time in milliseconds a user can hold down on the screen 
+         * for a tap event to be fired. Defaults to 200 ms.
+         */
+        tapInterval: number;
+
+        /**
+         * The max time in milliseconds a user can wait between consecutive 
+         * taps for a dbltap event to be fired. Defaults to 300 ms.
+         */
+        dblTapInterval: number;
+
+        /**
+         * The time in milliseconds a user must hold down on the screen 
+         * before a hold event is fired or a release event can be fired. 
+         * Defaults to 400 ms.
+         */
+        holdInterval: number;
+
+        /**
+         * The delay in milliseconds between the time a user taps to the time 
+         * the tap event fires. Used in the case where a double-tap-to-zoom 
+         * feature is required. Defaults to 0 ms.
+         */
+        dblTapZoomDelay: number;
+    }
+
+    /**
+     * Describes an object containing distance information that 
+     * governs the behavior of certain custom DOM events.
+     */
     export interface IDistances {
+        /**
+         * The minimum distance a user must move after touch down to register 
+         * it as a scroll instead of a tap. Defaults to 5.
+         */
         minScrollDistance: number;
+
+        /**
+         * The maximum distance between consecutive taps a user is allowed to 
+         * register a dbltap event. Defaults to 20.
+         */
         maxDblTapDistance: number;
     }
 
+    /**
+     * Describes an object containing velocity information that 
+     * governs the behavior of certain custom DOM events.
+     */
     export interface IVelocities {
-        swipeVelocity: number;
+        /**
+         * The minimum velocity a user must move after touch down to register 
+         * a swipe event. Defaults to 0.5.
+         */
+        minSwipeVelocity: number;
     }
 
+    /**
+     * Describes a configuration object for all custom DOM events.
+     */
+    export interface IDomEventsConfig {
+        /**
+         * Whether or not to allow text selection when move events such as swipe or track 
+         * are currently active. If set to true, it may cause event misses due to the browser 
+         * not firing events like 'pointerup' due to the text selection. Defaults to false.
+         */
+        allowTextSelection: boolean;
+
+        /**
+         * An object containing the different time intervals that govern the behavior of certain 
+         * custom DOM events.
+         */
+        intervals: IIntervals;
+
+        /**
+         * An object containing the different minimum/maximum distances that govern the behavior of certain 
+         * custom DOM events.
+         */
+        distances: IDistances;
+
+        /**
+         * An object containing the different minimum/maximum velocities that govern the behavior of certain 
+         * custom DOM events.
+         */
+        velocities: IVelocities;
+    }
+
+    /**
+     * Describes an object used for managing a single custom event.
+     */
+    export interface IDomEvent {
+        /**
+         * The node or window object associated with this DomEvent object.
+         */
+        element: any;
+
+        /**
+         * The event type associated with this DomEvent.
+         */
+        event: string;
+        
+        /**
+         * Initializes the element and event of the DomEvent object
+         * 
+         * @param The node associated with this DomEvent. 
+         * @param event The type of event this DomEvent is managing.
+         */
+        initialize(element: Node, event: string);
+        /**
+         * Initializes the element and event of the DomEvent object
+         * 
+         * @param The window object. 
+         * @param event The type of event this DomEvent is managing.
+         */
+        initialize(element: Window, event: string);
+
+        /**
+         * Triggers a custom event to bubble up to all elements in this branch of the DOM tree.
+         * 
+         * @param ev The event object to pass in as the custom event object's detail property.
+         */
+        trigger(ev: ITouchEvent): void;
+    }
+
+    /**
+     * Describes an object for managing DOM event registration and handling.
+     */
     export interface IDomEvents {
-        hasTouch: boolean;
-        config: IDomEventConfig;
-        addEventListener: (element: Node, type: string, listener: IGestureListener,
-            useCapture?: boolean, options?: IDomEventConfig) => void;
-        removeEventListener: (element: Node, type: string, listener: IGestureListener,
-            useCapture?: boolean) => void;
+        /**
+         * Add an event listener for the specified event type on the specified element. 
+         * 
+         * @param element The node listening for the event.
+         * @param type The type of event being listened to.
+         * @param listener The listener to be fired.
+         * @param useCapture Whether to fire the event on the capture or bubble phase of propagation.
+         * @return {IRemoveListener} A function to remove the added event listener.
+         */
+        addEventListener(element: Node, type: string, listener: IGestureListener,
+            useCapture?: boolean): IRemoveListener;
+        /**
+         * Add an event listener for the specified event type on the specified element. 
+         * 
+         * @param element The window object.
+         * @param type The type of event being listened to.
+         * @param listener The listener to be fired.
+         * @param useCapture Whether to fire the event on the capture or bubble phase of propagation.
+         * @return {IRemoveListener} A function to remove the added event listener.
+         */
+        addEventListener(element: Window, type: string, listener: IGestureListener,
+            useCapture?: boolean): IRemoveListener;
+
+        /**
+         * Stops listening for touch events and resets the DomEvents instance.
+         */
         dispose(): void;
     }
 }
