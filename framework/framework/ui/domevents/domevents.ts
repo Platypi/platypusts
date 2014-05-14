@@ -174,6 +174,7 @@
         private __touchCount = 0;
         private __tapTimeout: number;
         private __holdTimeout: number;
+        private __cancelRegex = /cancel/i;
         private __pointerEndRegex = /up|cancel/i;
         private __lastTouchDown: ITouchPoint;
         private __lastTouchUp: ITouchPoint;
@@ -460,12 +461,20 @@
             // return if the touch count was greater than 0
             if (ev.touches.length > 0) {
                 return;
-            }
+            } 
 
             // if we were detecting move events, unregister them
             if (this.__detectMove) {
                 this.__unregisterType(this.__MOVE);
                 this.__detectMove = false;
+            }
+
+            // if event cancelled
+            if (this.__cancelRegex.test(ev.type)) {
+                this.__tapCount = 0;
+                this.__hasRelease = false;
+                this.__hasSwiped = false;
+                return;
             }
  
             if (this.__hasRelease) {
