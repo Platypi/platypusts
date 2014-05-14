@@ -179,15 +179,16 @@
         private __lastTouchUp: ITouchPoint;
         private __swipeOrigin: ITouchPoint;
         private __lastMoveEvent: IPointerEvent;
-        private __listeners: IDocumentListeners = {
-            start: this._onTouchStart.bind(this),
-            move: this._onMove.bind(this),
-            end: this._onTouchEnd.bind(this)
-        };
+        private __capturedTarget: Node;
         private __mappedEventListener = this.__handleMappedEvent.bind(this);
         private __reverseMap = {};
         private __pointerHash: IObject<IPointerEvent> = {};
         private __pointerEvents: Array<IPointerEvent> = [];
+        private __listeners: ICustomEventListener = {
+            start: this._onTouchStart.bind(this),
+            move: this._onMove.bind(this),
+            end: this._onTouchEnd.bind(this)
+        };
 
         /**
          * Retrieve the type of touch events for this browser and create the default gesture style.
@@ -283,6 +284,7 @@
             this.__lastMoveEvent = null;
             this.__lastTouchDown = null;
             this.__lastTouchUp = null;
+            this.__capturedTarget = null;
         }
 
         /**
@@ -291,7 +293,7 @@
          * @param ev The touch start event object.
          */
         _onTouchStart(ev: IPointerEvent) {
-            var isTouch = ev.type.indexOf('mouse') === -1;
+            var isTouch = ev.type !== 'mousedown';
 
             // return immediately if mouse event and currently in a touch or
             // if the touch count is greater than 1
@@ -301,6 +303,10 @@
 
             // call prevent default to try and avoid mouse events
             ev.preventDefault();
+            if (!isTouch) {
+                // set capture on doc for moz because mozilla is terrible
+                this.__setCapture(ev.currentTarget);
+            }
 
             this.__standardizeEventObject(ev);
 
@@ -377,7 +383,7 @@
             // if it is a mouse event and currently in a touch
             if (!this.__detectMove ||
                 this.__touchCount > 1 ||
-                (this._inTouch && ev.type.indexOf('mouse') !== -1)) {
+                (this._inTouch && ev.type === 'mousemove')) {
                 return;
             }
 
@@ -445,6 +451,8 @@
 
             this.__clearHold();
             this._inTouch = false;
+            // set any captured target back to null
+            this.__capturedTarget = null;
 
             this.__standardizeEventObject(ev);
 
@@ -521,8 +529,7 @@
             // fire tap event immediately if no dbltap zoom
             // or a mouse is being used
             if (DomEvents.config.intervals.dblTapZoomDelay <= 0 ||
-                ev.pointerType === 'mouse' ||
-                ev.type.indexOf('mouse') !== -1) {
+                ev.pointerType === 'mouse' || ev.type === 'mouseup') {
                 domEvent.trigger(ev);
                 return;
             }
@@ -594,7 +601,7 @@
                 velocity = ev.velocity,
                 direction = ev.direction,
                 trackDirectionGesture = trackGesture + direction,
-                eventTarget = <Node>ev.target,
+                eventTarget = this.__capturedTarget || <Node>ev.target,
                 trackDomEvent = this.__findFirstSubscriber(eventTarget, trackGesture),
                 trackDirectionDomEvent = this.__findFirstSubscriber(eventTarget, trackDirectionGesture);
 
@@ -746,10 +753,21 @@
             }
         }
         private __setTouchPoint(ev: IPointerEvent) {
-            var $compat = this.$compat;
+            var $compat = this.$compat,
+                noTouchEvents = !$compat.hasTouchEvents;
 
-            if (($compat.hasPointerEvents || $compat.hasMsPointerEvents) && !$compat.hasTouchEvents) {
+            if ($compat.hasPointerEvents) {
+                if (ev.type === 'pointerdown') {
+                    (<any>ev.target).setPointerCapture(ev.pointerId);
+                }
                 this.__updatePointers(ev, this.__pointerEndRegex.test(ev.type));
+            } else if ($compat.hasMsPointerEvents) {
+                if (ev.type === 'MSPointerDown') {
+                    (<any>ev.target).msSetPointerCapture(ev.pointerId);
+                }
+                this.__updatePointers(ev, this.__pointerEndRegex.test(ev.type));
+            } else if (!$compat.hasTouchEvents  && ev.type === 'mousedown') {
+                this.__setCapture(ev.target);
             }
         }
         private __updatePointers(ev: IPointerEvent, remove: boolean) {
@@ -770,6 +788,14 @@
                 }
 
                 this.__pointerHash[id] = ev;
+            }
+        }
+        private __setCapture(target: any) {
+            if (isFunction(target.setCapture)) {
+                target.setCapture();
+                return;
+            } else if (!isDocument(target)) {
+                this.__capturedTarget = target;
             }
         }
 
@@ -853,7 +879,15 @@
             }
         }
         private __getOffset(ev: IExtendedEvent) {
-            var rect = (<any>ev.target).getBoundingClientRect();
+            var target = (<any>ev.target);
+            if (isDocument(target)) {
+                return {
+                    x: ev.clientX,
+                    y: ev.clientY
+                };
+            }
+
+            var rect = target.getBoundingClientRect();
             return {
                 x: ev.clientX - rect.left,
                 y: ev.clientY - rect.top
@@ -1026,7 +1060,7 @@
     /**
      * Describes the touch event listeners for the document.
      */
-    interface IDocumentListeners extends IObject<EventListener> {
+    interface ICustomEventListener extends IObject<EventListener> {
         /**
          * The touch start event.
          */
