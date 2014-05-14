@@ -177,7 +177,7 @@
         private __lastTouchDown: ITouchPoint;
         private __lastTouchUp: ITouchPoint;
         private __swipeOrigin: ITouchPoint;
-        private __lastMoveEvent: ITouchEvent;
+        private __lastMoveEvent: IPointerEvent;
         private __listeners: IDocumentListeners = {
             start: this._onTouchStart.bind(this),
             move: this._onMove.bind(this),
@@ -185,8 +185,8 @@
         };
         private __mappedEventListener = this.__handleMappedEvent.bind(this);
         private __reverseMap = {};
-        private __pointers: IObject<IExtendedEvent> = {};
-        private __touches: Array<IExtendedEvent> = [];
+        private __pointerHash: IObject<IPointerEvent> = {};
+        private __pointerEvents: Array<IPointerEvent> = [];
 
         /**
          * Retrieve the type of touch events for this browser and create the default gesture style.
@@ -273,8 +273,8 @@
             this._isActive = false;
             this._elements = [];
             this._subscriptions = [];
-            this.__touches = [];
-            this.__pointers = {};
+            this.__pointerEvents = [];
+            this.__pointerHash = {};
             this.__reverseMap = {};
             this.__tapCount = 0;
             this.__touchCount = 0;
@@ -289,7 +289,7 @@
          * 
          * @param ev The touch start event object.
          */
-        _onTouchStart(ev: ITouchEvent) {
+        _onTouchStart(ev: IPointerEvent) {
             var eventType = ev.type.toLowerCase(),
                 isTouch = eventType.indexOf('mouse') === -1;
 
@@ -299,16 +299,14 @@
                 return;
             }
 
-            this.__touches = [];
+            this.__standardizeEventObject(ev);
 
-            if ((this.__touchCount = isTouch ? this.__setTouch(ev) : 1) > 1) {
+            if ((this.__touchCount = ev.touches.length) > 1) {
                 return;
             }
 
             this._inTouch = isTouch;
             this.__hasMoved = false;
-
-            this.__standardizeEventObject(ev);
 
             this.__lastTouchDown = this.__swipeOrigin = {
                 x: ev.clientX,
@@ -369,7 +367,7 @@
          * 
          * @param ev The touch start event object.
          */
-        _onMove(ev: ITouchEvent) {
+        _onMove(ev: IPointerEvent) {
             // return immediately if we should not be detecting move, 
             // if there are multiple touches present, or 
             // if it is a mouse event and currently in a touch
@@ -437,7 +435,7 @@
          * 
          * @param ev The touch start event object.
          */
-        _onTouchEnd(ev: ITouchEvent) {
+        _onTouchEnd(ev: IPointerEvent) {
             // return immediately if mouse event and currently in a touch
             if (this._inTouch && ev.type.indexOf('mouse') !== -1) {
                 return;
@@ -445,18 +443,14 @@
 
             this.__clearHold();
             this._inTouch = false;
-            var touchCount = this.__touchCount;
-            // reset touch count and pointer collection
-            this.__touchCount = 0;
-            this.__pointers = {};
 
-            // return if the touch count was greater than 1
-            if (touchCount > 1) {
-                this.__touches = [];
+            this.__standardizeEventObject(ev);
+
+            // return if the touch count was greater than 0
+            if (ev.touches.length > 0) {
                 return;
             }
 
-            this.__standardizeEventObject(ev);
 
             // if we were detecting move events, unregister them
             if (this.__detectMove) {
@@ -499,7 +493,6 @@
 
             this.__handleTap(ev);
 
-            this.__touches = [];
             this.__lastTouchUp = {
                 x: x,
                 y: y,
@@ -510,7 +503,7 @@
 
         // Gesture handling methods
 
-        private __handleTap(ev: ITouchEvent) {
+        private __handleTap(ev: IPointerEvent) {
             this.__tapCount++;
 
             if (this._gestureCount.$tap <= 0) {
@@ -542,7 +535,7 @@
             }, DomEvents.config.intervals.dblTapZoomDelay);
             
         }
-        private __handleDbltap(ev: ITouchEvent) {
+        private __handleDbltap(ev: IPointerEvent) {
             this.__tapCount = 0;
 
             if (!isNull(this.__tapTimeout)) {
@@ -561,7 +554,7 @@
                 this.__tapCount = -1;
             }
         }
-        private __handleRelease(ev: ITouchEvent) {
+        private __handleRelease(ev: IPointerEvent) {
             var domEvent = this.__findFirstSubscriber(<Node>ev.target, this._gestures.$release);
             if (!isNull(domEvent)) {
                 domEvent.trigger(ev);
@@ -595,7 +588,7 @@
             this.__hasSwiped = false;
             this.__lastMoveEvent = null;
         }
-        private __handleTrack(ev: ITouchEvent) {
+        private __handleTrack(ev: IPointerEvent) {
             var trackGesture = this._gestures.$track,
                 velocity = ev.velocity,
                 direction = ev.direction,
@@ -670,9 +663,13 @@
                     return;
             }
 
-            var index = events.length;
+            var index = events.length,
+                evt;
             while (index-- > 0) {
-                $document.addEventListener(events[index], listener, false);
+                evt = events[index];
+                if (!isNull(evt)) {
+                    $document.addEventListener(evt, listener, false);
+                }
             }
         }
         private __unregisterType(event: string) {
@@ -694,9 +691,13 @@
                     return;
             }
 
-            var index = events.length;
+            var index = events.length,
+                evt;
             while (index-- > 0) {
-                $document.removeEventListener(events[index], listener, false);
+                evt = events[index];
+                if (!isNull(evt)) {
+                    $document.removeEventListener(evt, listener, false);
+                }
             }
         }
         private __registerElement(element: Node, type: string) {
@@ -750,24 +751,44 @@
                 }
             }
         }
-        private __setTouch(ev: Event) {
-            var $compat = this.$compat;
-            if ($compat.hasPointerEvents) {
-                (<any>ev.target).setPointerCapture((<any>ev).pointerId);
-                return this.__updatePointers(ev);
-            } else if ($compat.hasMsPointerEvents) {
-                (<any>ev.target).msSetPointerCapture((<any>ev).pointerId);
-                return this.__updatePointers(ev);
-            }
+        private __setTouchPoint(ev: IPointerEvent) {
+            var $compat = this.$compat,
+                eventType = ev.type.toLowerCase(),
+                remove = eventType.indexOf('up') !== -1 || eventType.indexOf('cancel') !== -1;
 
-            return (<any>ev).touches.length;
-        }
-        private __updatePointers(ev: IExtendedEvent) {
-            this.__pointers[(<any>ev).pointerId] = ev;
-            if (this.__touches.indexOf(ev) === -1) {
-                this.__touches.push(ev);
+            if ($compat.hasPointerEvents) {
+                if (eventType.indexOf('down') !== -1) {
+                    (<any>ev.target).setPointerCapture(ev.pointerId);
+                }
+
+                this.__updatePointers(ev, remove);
+            } else if ($compat.hasMsPointerEvents) {
+                if (eventType.indexOf('down') !== -1) {
+                    (<any>ev.target).msSetPointerCapture(ev.pointerId);
+                }
+
+                this.__updatePointers(ev, remove);
             }
-            return Object.keys(this.__pointers).length;
+        }
+        private __updatePointers(ev: IPointerEvent, remove: boolean) {
+            var id = ev.pointerId,
+                pointer = this.__pointerHash[id];
+
+            if (remove) {
+                if (!isUndefined(pointer)) {
+                    this.__pointerEvents.splice(this.__pointerEvents.indexOf(pointer), 1);
+                    delete this.__pointerHash[id];
+                }
+            } else {
+                ev.identifier = ev.pointerId;
+                if (isUndefined(pointer)) {
+                    this.__pointerEvents.push(ev);
+                } else {
+                    this.__pointerEvents.splice(this.__pointerEvents.indexOf(pointer), 1);
+                }
+
+                this.__pointerHash[id] = ev;
+            }
         }
 
         // Event and subscription handling
@@ -827,9 +848,11 @@
             }
         }
         private __standardizeEventObject(ev: IExtendedEvent) {
-            ev.touches = ev.touches || this.__touches;
+            this.__setTouchPoint(ev);
 
-            var evtObj: IExtendedEvent;
+            ev.touches = ev.touches || this.__pointerEvents;
+
+            var evtObj = ev;
             if (isUndefined(ev.clientX)) {
                 if (ev.touches.length > 0) {
                     evtObj = ev.touches[0];
@@ -1010,7 +1033,7 @@
          * 
          * @param ev The event object to pass in as the custom event object's detail property.
          */
-        trigger(ev: ITouchEvent) {
+        trigger(ev: IPointerEvent) {
             var event = <CustomEvent>this.$document.createEvent('CustomEvent');
             event.initCustomEvent(this.event, true, true, ev);
             this.element.dispatchEvent(event);
@@ -1112,11 +1135,21 @@
      * An extended event object potentially containing coordinate and movement information as 
      * well as pointer type for pointer events.
      */
-    export interface ITouchEvent extends IExtendedEvent {
+    export interface IPointerEvent extends IExtendedEvent {
         /**
          * The type of interaction associated with the touch event ('touch', 'pen', 'mouse', '')
          */
         pointerType?: string;
+
+        /**
+         * A unique touch identifier.
+         */
+        pointerId?: number;
+
+        /**
+         * A unique touch identifier.
+         */
+        identifier?: number;
     }
 
     /**
@@ -1407,7 +1440,7 @@
          * 
          * @param ev The event object to pass in as the custom event object's detail property.
          */
-        trigger(ev: ITouchEvent): void;
+        trigger(ev: IPointerEvent): void;
     }
 
     /**
