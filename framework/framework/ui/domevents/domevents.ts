@@ -427,7 +427,9 @@
                 direction = ev.direction = isNull(lastMove) ? this.__getDirection(x - lastX, y - lastY) :
                     this.__getDirection(x - lastMove.clientX, y - lastMove.clientY);
 
-            this.__checkForOriginChanged(direction);
+            if (this.__checkForOriginChanged(direction)) {
+                ev.preventDefault();
+            }
 
             var velocity = ev.velocity = this.__getVelocity(x - swipeOrigin.x, y - swipeOrigin.y, ev.timeStamp - swipeOrigin.timeStamp);
             this.__hasSwiped = (this.__isHorizontal(direction) ? velocity.x : velocity.y) >= config.velocities.minSwipeVelocity;
@@ -621,10 +623,12 @@
                 trackDirectionDomEvent = this.__findFirstSubscriber(eventTarget, trackDirectionGesture);
 
             if (!isNull(trackDomEvent)) {
+                ev.preventDefault();
                 trackDomEvent.trigger(ev);
             }
 
             if (!isNull(trackDirectionDomEvent)) {
+                ev.preventDefault();
                 trackDirectionDomEvent.trigger(ev);
             }
         }
@@ -971,12 +975,12 @@
             var lastMove = this.__lastMoveEvent;
             if (isNull(lastMove)) {
                 this.__hasSwiped = false;
-                return;
+                return this.__checkForRegisteredSwipe(direction);
             }
 
             var swipeDirection = lastMove.direction;
             if (swipeDirection === direction) {
-                return;
+                return false;
             }
 
             this.__swipeOrigin = {
@@ -987,6 +991,16 @@
             };
 
             this.__hasSwiped = false;
+            return this.__checkForRegisteredSwipe(direction);
+        }
+        private __checkForRegisteredSwipe(direction: string) {
+            var swipeTarget = <Node>this.__swipeOrigin.target,
+                swipeGesture = this._gestures.$swipe,
+                swipeDirectionGesture = swipeGesture + direction,
+                domEventSwipe = this.__findFirstSubscriber(swipeTarget, swipeGesture),
+                domEventSwipeDirection = this.__findFirstSubscriber(swipeTarget, swipeDirectionGesture);
+
+            return !isNull(domEventSwipe) || !isNull(domEventSwipeDirection);
         }
         private __isHorizontal(direction: string) {
             return direction === 'left' || direction === 'right';
