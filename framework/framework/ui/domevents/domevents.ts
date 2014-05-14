@@ -387,9 +387,6 @@
                 return;
             }
 
-            // call prevent default to try and avoid mouse events
-            ev.preventDefault();
-
             // clear hold
             this.__clearHold();
 
