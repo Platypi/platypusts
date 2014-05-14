@@ -766,7 +766,7 @@
                     (<any>ev.target).msSetPointerCapture(ev.pointerId);
                 }
                 this.__updatePointers(ev, this.__pointerEndRegex.test(ev.type));
-            } else if (!$compat.hasTouchEvents  && ev.type === 'mousedown') {
+            } else if (ev.type === 'mousedown') {
                 this.__setCapture(ev.target);
             }
         }
