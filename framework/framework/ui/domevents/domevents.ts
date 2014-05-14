@@ -79,6 +79,7 @@
                     '-webkit-user-select: none',
                     '-webkit-user-drag: none',
                     '-webkit-tap-highlight-color: transparent',
+                    '-webkit-overflow-scrolling: touch',
                     '-webkit-touch-callout: none',
                     '-ms-user-select: none',
                     '-ms-touch-action: manipulation',
@@ -183,6 +184,7 @@
         private __capturedTarget: Node;
         private __mappedEventListener = this.__handleMappedEvent.bind(this);
         private __reverseMap = {};
+        private __swipeSubscribers: { master: IDomEvent; directional: IDomEvent };
         private __pointerHash: IObject<IPointerEvent> = {};
         private __pointerEvents: Array<IPointerEvent> = [];
         private __listeners: ICustomEventListener = {
@@ -220,16 +222,26 @@
          */
         addEventListener(element: Window, type: string, listener: IGestureListener, useCapture?: boolean): IRemoveListener;
         addEventListener(element: any, type: string, listener: IGestureListener, useCapture?: boolean): IRemoveListener {
-            var mappedGestures = this.$compat.mappedEvents,
+            var $compat = this.$compat,
+                mappedGestures = $compat.mappedEvents,
                 mappedType = mappedGestures[type],
                 mappingExists = !isNull(mappedType),
                 mappedRemoveListener = noop,
+                mappedTouchRemoveListener = noop,
                 gestures = this._gestures;
 
             if (mappingExists) {
                 this.__reverseMap[mappedType] = type;
                 this.__registerElement(element, type);
                 mappedRemoveListener = this.__addMappedEvent(mappedType, useCapture);
+                if ($compat.hasTouchEvents) {
+                    mappedType = mappedType
+                        .replace('touch', 'mouse')
+                        .replace('start', 'down')
+                        .replace('end', 'up');
+                    this.__reverseMap[mappedType] = type;
+                    mappedTouchRemoveListener = this.__addMappedEvent(mappedType, useCapture);
+                }
             }
 
             element.addEventListener(type, listener, useCapture);
@@ -237,6 +249,7 @@
             if (!isUndefined(element['on' + type]) || isUndefined(gestures[type]) || mappingExists) {
                 return () => {
                     mappedRemoveListener();
+                    mappedTouchRemoveListener();
                     element.removeEventListener(type, listener, useCapture);
                 };
             }
@@ -598,9 +611,9 @@
                 direction = lastMove.direction,
                 velocity = lastMove.velocity,
                 swipeDirectionGesture = swipeGesture + direction,
-                eventTarget = <Node>this.__swipeOrigin.target,
-                swipeDomEvent = this.__findFirstSubscriber(eventTarget, swipeGesture),
-                swipeDirectionDomEvent = this.__findFirstSubscriber(eventTarget, swipeDirectionGesture);
+                swipeSubscribers = this.__swipeSubscribers,
+                swipeDomEvent = swipeSubscribers.master,
+                swipeDirectionDomEvent = swipeSubscribers.directional;
 
             if (!isNull(swipeDomEvent)) {
                 swipeDomEvent.trigger(lastMove);
@@ -612,6 +625,7 @@
 
             this.__hasSwiped = false;
             this.__lastMoveEvent = null;
+            this.__swipeSubscribers = null;
         }
         private __handleTrack(ev: IPointerEvent) {
             var trackGesture = this._gestures.$track,
@@ -1000,6 +1014,11 @@
                 domEventSwipe = this.__findFirstSubscriber(swipeTarget, swipeGesture),
                 domEventSwipeDirection = this.__findFirstSubscriber(swipeTarget, swipeDirectionGesture);
 
+            this.__swipeSubscribers = {
+                master: domEventSwipe,
+                directional: domEventSwipeDirection
+            };
+
             return !isNull(domEventSwipe) || !isNull(domEventSwipeDirection);
         }
         private __isHorizontal(direction: string) {
@@ -1011,7 +1030,7 @@
                 style = $document.createElement('style');
 
             style.textContent = this.__createStyle();
-            head.insertBefore(style, head.firstElementChild);
+            head.insertBefore(style, head.firstElementChild || null);
         }
         private __createStyle() {
             var styleConfig = DomEvents.config.styleConfig,
