@@ -973,7 +973,6 @@ module plat.processing {
             if (!isNull(uiControl.resources)) {
                 uiControl.resources.add(controlNode.resourceElement);
             } else {
-                injectableInjectors;
                 var resources = ElementManager.$ResourcesStatic.getInstance();
                 resources.initialize(uiControl, controlNode.resourceElement);
                 uiControl.resources = resources;

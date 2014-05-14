@@ -340,7 +340,7 @@ module plat.ui {
         return node;
     }
 
-    function insertBefore(parent: Node, nodes: any, endNode?: Node) {
+    function insertBefore(parent: Node, nodes: any, endNode: Node = null) {
         if (isNull(parent)) {
             return;
         }

@@ -38,7 +38,16 @@ module plat.ui {
          * @param control The control whose bindableTemplates will be disposed.
          */
         static dispose(control: ITemplateControl) {
-            control.bindableTemplates.dispose();
+            if (isNull(control)) {
+                return;
+            }
+            var instance = control.bindableTemplates;
+
+            if (isNull(instance) || !isFunction(instance.dispose)) {
+                return;
+            }
+
+            instance.dispose();
         }
 
         /**
