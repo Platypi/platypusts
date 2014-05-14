@@ -828,14 +828,24 @@
         }
         private __standardizeEventObject(ev: IExtendedEvent) {
             ev.touches = ev.touches || this.__touches;
-            ev.clientX = ev.clientX || ev.touches[0].clientX;
-            ev.clientY = ev.clientY || ev.touches[0].clientY;
+
+            var evtObj: IExtendedEvent;
+            if (isUndefined(ev.clientX)) {
+                if (ev.touches.length > 0) {
+                    evtObj = ev.touches[0];
+                } else if (((<any>ev).changedTouches || []).length > 0) {
+                    evtObj = (<any>ev).changedTouches[0];
+                }
+                // shouldn't ever get to an else condition but may have to revisit this.
+
+                ev.clientX = evtObj.clientX;
+                ev.clientY = evtObj.clientY;
+            }
 
             if (isUndefined(ev.offsetX)) {
                 var offset = this.__getOffset(ev);
                 ev.offsetX = offset.x;
                 ev.offsetY = offset.y;
-                return;
             }
         }
         private __getOffset(ev: IExtendedEvent) {
