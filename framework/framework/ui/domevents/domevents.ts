@@ -302,9 +302,6 @@
                 return;
             }
 
-            // call prevent default to try and avoid mouse events
-            ev.preventDefault();
-
             if (!isTouch) {
                 // set capture on doc for moz because mozilla is terrible
                 this.__setCapture(ev.currentTarget);
@@ -389,10 +386,7 @@
                 return;
             }
 
-            // call prevent default to try and avoid mouse events
-            ev.preventDefault();
-
-            // clear hold
+            // clear hold event
             this.__clearHold();
 
             var gestureCount = this._gestureCount,
@@ -418,6 +412,10 @@
             // if minimum distance moved
             if (minMove) {
                 this.__hasMoved = true;
+            } else {
+                // cannot call ev.preventDefault up top due to Chrome cancelling touch based scrolling
+                // call prevent default here to try and avoid mouse events when min move hasnt occurred
+                ev.preventDefault();
             }
 
             // if no move events or no tracking events and the user hasn't moved the minimum swipe distance
@@ -451,6 +449,7 @@
             // call prevent default to try and avoid mouse events
             ev.preventDefault();
 
+            // clear hold event
             this.__clearHold();
             this._inTouch = false;
             // set any captured target back to null
@@ -477,10 +476,12 @@
                 return;
             }
  
+            // handle release events
             if (this.__hasRelease) {
                 this.__handleRelease(ev);
             }
 
+            // handle swipe events
             if (this.__hasSwiped) {
                 this.__handleSwipe();
             }
@@ -505,11 +506,13 @@
             if (this.__tapCount > 0 &&
                 this.__getDistance(x, lastTouchUp.x, y, lastTouchUp.y) <= config.distances.maxDblTapDistance &&
                 ((touchEnd - lastTouchUp.timeStamp) <= intervals.dblTapInterval)) {
+                // handle dbltap events
                 this.__handleDbltap(ev);
             } else {
                 this.__tapCount = 0;
             }
 
+            // handle tap events
             this.__handleTap(ev);
 
             this.__lastTouchUp = {
@@ -566,11 +569,13 @@
             }
 
             var domEvent = this.__findFirstSubscriber(<Node>ev.target, this._gestures.$dbltap);
-            if (!isNull(domEvent)) {
-                domEvent.trigger(ev);
-                // set touch count to -1 to prevent repeated fire on sequential taps
-                this.__tapCount = -1;
+            if (isNull(domEvent)) {
+                return;
             }
+
+            domEvent.trigger(ev);
+            // set touch count to -1 to prevent repeated fire on sequential taps
+            this.__tapCount = -1;
         }
         private __handleRelease(ev: IPointerEvent) {
             var domEvent = this.__findFirstSubscriber(<Node>ev.target, this._gestures.$release);
@@ -897,10 +902,16 @@
                 };
             }
 
-            var rect = target.getBoundingClientRect();
+            var x = target.offsetLeft,
+                y = target.offsetTop;
+            while (!isNull(target = target.offsetParent)) {
+                x += target.offsetLeft;
+                y += target.offsetTop;
+            }
+
             return {
-                x: ev.clientX - rect.left,
-                y: ev.clientY - rect.top
+                x: ev.clientX - x,
+                y: ev.clientY - y
             };
         }
         private __clearHold() {
