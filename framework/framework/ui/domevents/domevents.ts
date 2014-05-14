@@ -768,21 +768,44 @@
             }
         }
         private __setTouchPoint(ev: IPointerEvent) {
-            var $compat = this.$compat,
+            var eventType = ev.type,
+                $compat = this.$compat,
                 noTouchEvents = !$compat.hasTouchEvents;
 
             if ($compat.hasPointerEvents) {
-                if (ev.type === 'pointerdown') {
+                if (eventType === 'pointerdown') {
                     (<any>ev.target).setPointerCapture(ev.pointerId);
                 }
-                this.__updatePointers(ev, this.__pointerEndRegex.test(ev.type));
+
+                this.__updatePointers(ev, this.__pointerEndRegex.test(eventType));
             } else if ($compat.hasMsPointerEvents) {
-                if (ev.type === 'MSPointerDown') {
+                if (eventType === 'MSPointerDown') {
                     (<any>ev.target).msSetPointerCapture(ev.pointerId);
                 }
-                this.__updatePointers(ev, this.__pointerEndRegex.test(ev.type));
-            } else if (ev.type === 'mousedown') {
+
+                switch (<any>ev.pointerType) {
+                    case MSPointerEvent.MSPOINTER_TYPE_MOUSE:
+                        ev.pointerType = 'mouse';
+                        break;
+                    case MSPointerEvent.MSPOINTER_TYPE_PEN:
+                        ev.pointerType = 'pen';
+                        break;
+                    case MSPointerEvent.MSPOINTER_TYPE_TOUCH:
+                        ev.pointerType = 'touch';
+                        break;
+                }
+
+                this.__updatePointers(ev, this.__pointerEndRegex.test(eventType));
+            } else if (eventType === 'mousedown') {
+                ev.pointerType = 'mouse';
                 this.__setCapture(ev.target);
+            } else {
+                if (eventType.indexOf('mouse') !== -1) {
+                    ev.pointerType = 'mouse';
+                    return;
+                }
+
+                ev.pointerType = 'touch';
             }
         }
         private __updatePointers(ev: IPointerEvent, remove: boolean) {
