@@ -81,8 +81,8 @@
                     '-webkit-tap-highlight-color: transparent',
                     '-webkit-touch-callout: none',
                     '-ms-user-select: none',
-                    '-ms-touch-action: none',
-                    'touch-action: none'
+                    '-ms-touch-action: manipulation',
+                    'touch-action: manipulation'
                 ]
             }
         };
@@ -303,6 +303,7 @@
 
             // call prevent default to try and avoid mouse events
             ev.preventDefault();
+
             if (!isTouch) {
                 // set capture on doc for moz because mozilla is terrible
                 this.__setCapture(ev.currentTarget);
@@ -386,6 +387,9 @@
                 (this._inTouch && ev.type === 'mousemove')) {
                 return;
             }
+
+            // call prevent default to try and avoid mouse events
+            ev.preventDefault();
 
             // clear hold
             this.__clearHold();
