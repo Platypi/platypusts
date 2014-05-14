@@ -75,11 +75,11 @@
                  * (i.e. 'width : 100px')
                  */
                 styles: [
+                    '-moz-user-select: none',
+                    '-webkit-user-select: none',
                     '-webkit-user-drag: none',
                     '-webkit-tap-highlight-color: transparent',
                     '-webkit-touch-callout: none',
-                    '-moz-user-select: none',
-                    '-webkit-user-select: none',
                     '-ms-user-select: none',
                     '-ms-touch-action: none',
                     'touch-action: none'
@@ -174,6 +174,7 @@
         private __touchCount = 0;
         private __tapTimeout: number;
         private __holdTimeout: number;
+        private __pointerEndRegex = /up|cancel/i;
         private __lastTouchDown: ITouchPoint;
         private __lastTouchUp: ITouchPoint;
         private __swipeOrigin: ITouchPoint;
@@ -290,14 +291,16 @@
          * @param ev The touch start event object.
          */
         _onTouchStart(ev: IPointerEvent) {
-            var eventType = ev.type.toLowerCase(),
-                isTouch = eventType.indexOf('mouse') === -1;
+            var isTouch = ev.type.indexOf('mouse') === -1;
 
             // return immediately if mouse event and currently in a touch or
             // if the touch count is greater than 1
             if (this._inTouch && !isTouch) {
                 return;
             }
+
+            // call prevent default to try and avoid mouse events
+            ev.preventDefault();
 
             this.__standardizeEventObject(ev);
 
@@ -335,6 +338,7 @@
             var holdInterval = DomEvents.config.intervals.holdInterval,
                 domEvent: IDomEvent,
                 subscribeFn;
+
             if (noHolds) {
                 this.__holdTimeout = setTimeout(() => {
                     this.__hasRelease = true;
@@ -436,10 +440,8 @@
          * @param ev The touch start event object.
          */
         _onTouchEnd(ev: IPointerEvent) {
-            // return immediately if mouse event and currently in a touch
-            if (this._inTouch && ev.type.indexOf('mouse') !== -1) {
-                return;
-            }
+            // call prevent default to try and avoid mouse events
+            ev.preventDefault();
 
             this.__clearHold();
             this._inTouch = false;
@@ -450,7 +452,6 @@
             if (ev.touches.length > 0) {
                 return;
             }
-
 
             // if we were detecting move events, unregister them
             if (this.__detectMove) {
@@ -631,9 +632,10 @@
                 return;
             }
 
+            var cancelEvent = touchEvents.$touchcancel;
             this._startEvents = [touchEvents.$touchstart];
             this._moveEvents = [touchEvents.$touchmove];
-            this._endEvents = [touchEvents.$touchend, touchEvents.$touchcancel];
+            this._endEvents = isNull(cancelEvent) ? [touchEvents.$touchend] : [touchEvents.$touchend, cancelEvent];
         }
         private __registerTypes() {
             this.__registerType(this.__START);
@@ -663,13 +665,9 @@
                     return;
             }
 
-            var index = events.length,
-                evt;
+            var index = events.length;
             while (index-- > 0) {
-                evt = events[index];
-                if (!isNull(evt)) {
-                    $document.addEventListener(evt, listener, false);
-                }
+                $document.addEventListener(events[index], listener, false);
             }
         }
         private __unregisterType(event: string) {
@@ -691,13 +689,9 @@
                     return;
             }
 
-            var index = events.length,
-                evt;
+            var index = events.length;
             while (index-- > 0) {
-                evt = events[index];
-                if (!isNull(evt)) {
-                    $document.removeEventListener(evt, listener, false);
-                }
+                $document.removeEventListener(events[index], listener, false);
             }
         }
         private __registerElement(element: Node, type: string) {
@@ -752,22 +746,10 @@
             }
         }
         private __setTouchPoint(ev: IPointerEvent) {
-            var $compat = this.$compat,
-                eventType = ev.type.toLowerCase(),
-                remove = eventType.indexOf('up') !== -1 || eventType.indexOf('cancel') !== -1;
+            var $compat = this.$compat;
 
-            if ($compat.hasPointerEvents) {
-                if (eventType.indexOf('down') !== -1) {
-                    (<any>ev.target).setPointerCapture(ev.pointerId);
-                }
-
-                this.__updatePointers(ev, remove);
-            } else if ($compat.hasMsPointerEvents) {
-                if (eventType.indexOf('down') !== -1) {
-                    (<any>ev.target).msSetPointerCapture(ev.pointerId);
-                }
-
-                this.__updatePointers(ev, remove);
+            if (($compat.hasPointerEvents || $compat.hasMsPointerEvents) && !$compat.hasTouchEvents) {
+                this.__updatePointers(ev, this.__pointerEndRegex.test(ev.type));
             }
         }
         private __updatePointers(ev: IPointerEvent, remove: boolean) {
@@ -784,7 +766,7 @@
                 if (isUndefined(pointer)) {
                     this.__pointerEvents.push(ev);
                 } else {
-                    this.__pointerEvents.splice(this.__pointerEvents.indexOf(pointer), 1);
+                    this.__pointerEvents.splice(this.__pointerEvents.indexOf(pointer), 1, ev);
                 }
 
                 this.__pointerHash[id] = ev;
@@ -859,7 +841,6 @@
                 } else if (((<any>ev).changedTouches || []).length > 0) {
                     evtObj = (<any>ev).changedTouches[0];
                 }
-                // shouldn't ever get to an else condition but may have to revisit this.
 
                 ev.clientX = evtObj.clientX;
                 ev.clientY = evtObj.clientY;
