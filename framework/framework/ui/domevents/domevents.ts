@@ -993,10 +993,11 @@
         }
         private __appendGestureStyle() {
             var $document = this.$document,
+                head = $document.head,
                 style = $document.createElement('style');
 
             style.textContent = this.__createStyle();
-            $document.head.appendChild(style);
+            head.insertBefore(style, head.firstElementChild);
         }
         private __createStyle() {
             var styleConfig = DomEvents.config.styleConfig,
