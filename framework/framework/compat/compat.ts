@@ -105,39 +105,39 @@
 
             if (hasPointer) {
                 define(this, 'mappedEvents', {
-                    touchstart: 'pointerdown',
-                    touchend: 'pointerup',
-                    touchmove: 'pointermove',
-                    touchcancel: 'pointercancel',
-                    touchenter: 'pointerover',
-                    touchleave: 'pointerout'
+                    $touchstart: 'pointerdown',
+                    $touchend: 'pointerup',
+                    $touchmove: 'pointermove',
+                    $touchcancel: 'pointercancel',
+                    $touchenter: 'pointerover',
+                    $touchleave: 'pointerout'
                 });
             } else if (hasMsPointer) {
                 define(this, 'mappedEvents', {
-                    touchstart: 'MSPointerDown',
-                    touchend: 'MSPointerUp',
-                    touchmove: 'MSPointerMove',
-                    touchcancel: 'MSPointerCancel',
-                    touchenter: 'MSPointerOver',
-                    touchleave: 'MSPointerOut'
+                    $touchstart: 'MSPointerDown',
+                    $touchend: 'MSPointerUp',
+                    $touchmove: 'MSPointerMove',
+                    $touchcancel: 'MSPointerCancel',
+                    $touchenter: 'MSPointerOver',
+                    $touchleave: 'MSPointerOut'
                 });
             } else if (hasTouch) {
                 define(this, 'mappedEvents', {
-                    touchstart: 'touchstart',
-                    touchend: 'touchend',
-                    touchmove: 'touchmove',
-                    touchcancel: 'touchcancel',
-                    touchenter: 'touchenter',
-                    touchleave: 'touchleave'
+                    $touchstart: 'touchstart',
+                    $touchend: 'touchend',
+                    $touchmove: 'touchmove',
+                    $touchcancel: 'touchcancel',
+                    $touchenter: 'touchenter',
+                    $touchleave: 'touchleave'
                 });
             } else {
                 define(this, 'mappedEvents', {
-                    touchstart: 'mousedown',
-                    touchend: 'mouseup',
-                    touchmove: 'mousemove',
-                    touchcancel: null,
-                    touchenter: 'mouseenter',
-                    touchleave: 'mouseleave'
+                    $touchstart: 'mousedown',
+                    $touchend: 'mouseup',
+                    $touchmove: 'mousemove',
+                    $touchcancel: null,
+                    $touchenter: 'mouseenter',
+                    $touchleave: 'mouseleave'
                 });
             }
         }
@@ -152,32 +152,32 @@
         /**
          * An event type for touch start.
          */
-        touchstart: string;
+        $touchstart: string;
 
         /**
          * An event type for touch end.
          */
-        touchend: string;
+        $touchend: string;
 
         /**
          * An event type for touch move.
          */
-        touchmove: string;
+        $touchmove: string;
 
         /**
          * An event type for touch enter (or 'over').
          */
-        touchenter: string;
+        $touchenter: string;
 
         /**
          * An event type for touch leave (or 'out').
          */
-        touchleave: string;
+        $touchleave: string;
 
         /**
          * An event type for touch cancel.
          */
-        touchcancel: string;
+        $touchcancel: string;
     }
 
     /**
