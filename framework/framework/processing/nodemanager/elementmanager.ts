@@ -451,7 +451,7 @@ module plat.processing {
         static _cloneNodeMap(sourceMap: INodeMap, element: HTMLElement,
             parent: ui.ITemplateControl, newControl?: ui.ITemplateControl): INodeMap {
             var hasControl = sourceMap.hasControl,
-                nodeMap = {
+                nodeMap: INodeMap = {
                     attributes: sourceMap.attributes,
                     childContext: sourceMap.childContext,
                     nodes: [],
@@ -777,7 +777,7 @@ module plat.processing {
             var children = this.children,
                 child: INodeManager,
                 length = children.length,
-                promises = [];
+                promises: Array<async.IPromise<any, Error>> = [];
 
             return new this.$PromiseStatic<any, Error>((resolve, reject) => {
                 if (!isNull(this.templatePromise)) {
@@ -1115,7 +1115,6 @@ module plat.processing {
             $ManagerCacheStatic: storage.ICache<IElementManager>,
             $ResourcesStatic: ui.IResourcesStatic,
             $BindableTemplatesStatic: ui.IBindableTemplatesStatic) {
-        ElementManager.$dom = $dom;
         ElementManager.$document = $document;
         ElementManager.$ManagerCacheStatic = $ManagerCacheStatic;
         ElementManager.$ResourcesStatic = $ResourcesStatic;

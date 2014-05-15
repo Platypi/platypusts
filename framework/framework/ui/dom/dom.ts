@@ -190,7 +190,7 @@ module plat.ui {
          * @param startNode The starting node, which will not be removed.
          * @param endNode The ending node, which will not be removed.
          */
-        removeBetween(startNode: Node, endNode?: Node) {
+        removeBetween(startNode: Node, endNode?: Node): void {
             return removeBetween(startNode, endNode);
         }
 
@@ -203,7 +203,7 @@ module plat.ui {
          * @param startNode The first node to remove.
          * @param endNode The last node to remove.
          */
-        removeAll(startNode: Node, endNode?: Node) {
+        removeAll(startNode: Node, endNode?: Node): void {
             return removeAll(startNode, endNode);
         }
 
@@ -217,281 +217,16 @@ module plat.ui {
             return addClass(element, className);
         }
 
-        if (nullRoot) {
-            root = fragment;
-        }
-
-        var list;
-        if (isFunction(nodeList.push)) {
-            list = nodeList;
-        } else {
-            list = Array.prototype.slice.call(nodeList);
-        }
-
-        while (list.length > 0) {
-            fragment.insertBefore(list.shift(), null);
-        }
-
-        if (!(isFragment || nullRoot)) {
-            root.appendChild(fragment);
-        }
-
-        return root;
-    }
-
-    function clearNode(node: Node) {
-        var childNodes = Array.prototype.slice.call(node.childNodes);
-
-        while (childNodes.length > 0) {
-            node.removeChild(childNodes.pop());
-        }
-    }
-
-    function clearNodeBlock(nodeList: any, parent: Node) {
-        if (!isFunction(nodeList.push)) {
-            nodeList = Array.prototype.slice.call(nodeList);
-        }
-
-        if (!isNull(parent)) {
-            clearNodeBlockWithParent(nodeList, parent);
-            return;
-        }
-
-        var node: Node;
-
-        while (nodeList.length > 0) {
-            node = nodeList.pop();
-            parent = node.parentNode;
-
-            if (isNull(parent)) {
-                continue;
-            }
-
-            parent.removeChild(node);
-        }
-    }
-
-    function clearNodeBlockWithParent(nodeList: Array<Node>, parent: Node) {
-        while (nodeList.length > 0) {
-            parent.removeChild(nodeList.pop());
-        }
-    }
-
-    function stringToNode(html: string): Node {
-        var compat: ICompat = acquire('$compat'),
-            $document: Document = acquire('$document');
-
-        if (compat.pushState) {
-            return innerHtml($document.createElement('div'), html);
-        }
-
-        var nodeName = /<([\w:]+)/.exec(html);
-        var element: HTMLElement = $document.createElement('div');
-
-        if (isNull(nodeName)) {
-            element = innerHtml(element, html);
-            return element.removeChild(element.lastChild);
-        }
-
-        // string trim
-        html = html.replace(/^\s+|\s+$/g, '');
-
-        var mapTag = nodeName[1];
-
-        if (mapTag === 'body') {
-            element = innerHtml($document.createElement('html'), html);
-            return element.removeChild(element.lastChild);
-        }
-
-        var wrapper = innerHtmlWrappers[mapTag] || innerHtmlWrappers._default,
-            depth = wrapper[0],
-            parentStart = wrapper[1],
-            parentEnd = wrapper[2];
-
-        element = innerHtml(element, parentStart + html + parentEnd);
-
-        while (depth-- > 0) {
-            element = <HTMLElement>element.lastChild;
-        }
-
-        return element;
-    }
-
-    function setInnerHtml(node: Node, html: string) {
-        clearNode(node);
-
-        if (isEmpty(html)) {
-            return;
-        }
-
-        var element = stringToNode(html);
-
-        if (element.childNodes.length > 0) {
-            appendChildren(element.childNodes, node);
-        } else {
-            node.insertBefore(element, null);
-        }
-
-        return node;
-    }
-
-    function insertBefore(parent: Node, nodes: any, endNode: Node = null) {
-        if (isNull(parent)) {
-            return;
-        }
-
-        var fragment: DocumentFragment;
-
-        if (isNode(nodes)) {
-            fragment = nodes;
-
-            nodes = Array.prototype.slice.call(fragment.childNodes);
-            parent.insertBefore(fragment, endNode);
-
-            return nodes;
-        }
-
-        if (!isFunction(nodes.push)) {
-            nodes = Array.prototype.slice.call(nodes);
-        }
-
-        var $document = acquire('$document'),
-            length = nodes.length;
-
-        fragment = $document.createDocumentFragment();
-
-        for (var i = 0; i < length; ++i) {
-            fragment.insertBefore(nodes[i], null);
-        }
-
-        parent.insertBefore(fragment, endNode);
-
-        return nodes;
-    }
-
-    function replace(node: Node) {
-        var parent = node.parentNode,
-            nodes = insertBefore(parent, node.childNodes, node);
-
-        parent.removeChild(node);
-
-        return nodes;
-    }
-
-    function replaceWith(node: any, newNode: any) {
-        if (isNull(newNode)) {
-            return newNode;
-        }
-
-        if (node.nodeType === Node.ELEMENT_NODE) {
-            var attributes = node.attributes,
-                length = attributes.length,
-                attribute: Attr;
-
-            for (var i = 0; i < length; ++i) {
-                attribute = attributes[i];
-                newNode.setAttribute(attribute.name, attribute.value);
-            }
-        }
-
-        var parent = node.parentNode;
-
-        insertBefore(newNode, node.childNodes);
-        parent.replaceChild(newNode, node);
-
-        return newNode;
-    }
-
-    function serializeHtml(html?: string): DocumentFragment {
-        var $document = acquire('$document'),
-            templateElement = $document.createDocumentFragment();
-
-        if (!isEmpty(html)) {
-            setInnerHtml(templateElement, html);
-        }
-
-        return templateElement;
-    }
-
-    function removeBetween(startNode: Node, endNode?: Node) {
-        if (isNull(startNode)) {
-            return;
-        }
-
-        var currentNode = startNode.nextSibling,
-            parentNode = startNode.parentNode,
-            tempNode;
-
-        if (isNull(endNode)) {
-            endNode = null;
-        }
-
-        if (isNull(parentNode) || (!isNull(endNode) && endNode.parentNode !== parentNode)) {
-            return;
-        }
-
-        while (currentNode !== endNode) {
-            tempNode = currentNode.nextSibling;
-            parentNode.removeChild(currentNode);
-            currentNode = tempNode;
-        }
-    }
-
-    function removeAll(startNode: Node, endNode?: Node) {
-        if (isNull(startNode)) {
-            return;
-        }
-
-        removeBetween(startNode, endNode);
-
-        removeNode(startNode);
-        removeNode(endNode);
-    }
-
-    var __option = [1, '<select multiple="multiple">', '</select>'],
-        __table = [1, '<table>', '</table>'],
-        __tableData = [3, '<table><tbody><tr>', '</tr></tbody></table>'],
-        __svg = [1, '<svg xmlns="http://www.w3.org/2000/svg" version="1.1">', '</svg>'],
-        innerHtmlWrappers = {
-            option: __option,
-            optgroup: __option,
-            legend: [1, '<fieldset>', '</fieldset>'],
-            area: [1, '<map>', '</map>'],
-            param: [1, '<object>', '</object>'],
-            thead: __table,
-            tbody: __table,
-            tfoot: __table,
-            colgroup: __table,
-            caption: __table,
-            tr: [2, '<table><tbody>', '</tbody></table>'],
-            col: [2, '<table><tbody></tbody><colgroup>', '</colgroup></table>'],
-            td: __tableData,
-            th: __tableData,
-            text: __svg,
-            circle: __svg,
-            ellipse: __svg,
-            line: __svg,
-            path: __svg,
-            polygon: __svg,
-            polyline: __svg,
-            rect: __svg,
-            _default: [0, '', '']
-        };
-
-    /**
+        /**
          * Removes a class from the specified element
          * 
          * @param element The element from which the class name is being removed.
          * @param className The class name to remove from the element.
-     */
+         */
         removeClass(element: HTMLElement, className: string): void {
             return removeClass(element, className);
-    }
-
-    function removeNode(node: Node) {
-        if (isNull(node)) {
-            return;
         }
+    }
 
     register.injectable('$dom', Dom);
 

@@ -230,7 +230,7 @@
                 gestures = this._gestures;
 
             if (mappingExists) {
-                this.__reverseMap[mappedType] = type;
+                (<any>this.__reverseMap)[mappedType] = type;
                 this.__registerElement(element, type);
                 mappedRemoveListener = this.__addMappedEvent(mappedType, useCapture);
                 if ($compat.hasTouchEvents) {
@@ -238,14 +238,14 @@
                         .replace('touch', 'mouse')
                         .replace('start', 'down')
                         .replace('end', 'up');
-                    this.__reverseMap[mappedType] = type;
+                    (<any>this.__reverseMap)[mappedType] = type;
                     mappedTouchRemoveListener = this.__addMappedEvent(mappedType, useCapture);
                 }
             }
 
             element.addEventListener(type, listener, useCapture);
 
-            if (!isUndefined(element['on' + type]) || isUndefined(gestures[type]) || mappingExists) {
+            if (!isUndefined(element['on' + type]) || isUndefined((<any>gestures)[type]) || mappingExists) {
                 return () => {
                     mappedRemoveListener();
                     mappedTouchRemoveListener();
@@ -264,7 +264,7 @@
             }
 
             this.__registerElement(element, type);
-            this._gestureCount[countType]++;
+            (<any>this._gestureCount)[countType]++;
 
             return () => {
                 this.__removeEventListener(element, type, listener, useCapture);
@@ -274,7 +274,7 @@
         /**
          * Stops listening for touch events and resets the DomEvents instance.
          */
-        dispose() {
+        dispose(): void {
             this.__unregisterTypes();
 
             this._gestureCount = {
@@ -305,7 +305,7 @@
          * 
          * @param ev The touch start event object.
          */
-        _onTouchStart(ev: IPointerEvent) {
+        _onTouchStart(ev: IPointerEvent): void {
             var isTouch = ev.type !== 'mousedown';
 
             // return immediately if mouse event and currently in a touch or
@@ -354,7 +354,7 @@
 
             var holdInterval = DomEvents.config.intervals.holdInterval,
                 domEvent: IDomEvent,
-                subscribeFn;
+                subscribeFn: () => void;
 
             if (noHolds) {
                 this.__holdTimeout = setTimeout(() => {
@@ -388,7 +388,7 @@
          * 
          * @param ev The touch start event object.
          */
-        _onMove(ev: IPointerEvent) {
+        _onMove(ev: IPointerEvent): void {
             // return immediately if we should not be detecting move, 
             // if there are multiple touches present, or 
             // if it is a mouse event and currently in a touch
@@ -459,7 +459,7 @@
          * 
          * @param ev The touch start event object.
          */
-        _onTouchEnd(ev: IPointerEvent) {
+        _onTouchEnd(ev: IPointerEvent): void {
             // call prevent default to try and avoid mouse events
             ev.preventDefault();
 
@@ -539,7 +539,7 @@
 
         // Gesture handling methods
 
-        private __handleTap(ev: IPointerEvent) {
+        private __handleTap(ev: IPointerEvent): void {
             this.__tapCount++;
 
             if (this._gestureCount.$tap <= 0) {
@@ -570,7 +570,7 @@
             }, DomEvents.config.intervals.dblTapZoomDelay);
             
         }
-        private __handleDbltap(ev: IPointerEvent) {
+        private __handleDbltap(ev: IPointerEvent): void {
             this.__tapCount = 0;
 
             if (!isNull(this.__tapTimeout)) {
@@ -591,7 +591,7 @@
             // set touch count to -1 to prevent repeated fire on sequential taps
             this.__tapCount = -1;
         }
-        private __handleRelease(ev: IPointerEvent) {
+        private __handleRelease(ev: IPointerEvent): void {
             var domEvent = this.__findFirstSubscriber(<Node>ev.target, this._gestures.$release);
             if (!isNull(domEvent)) {
                 domEvent.trigger(ev);
@@ -599,7 +599,7 @@
 
             this.__hasRelease = false;
         }
-        private __handleSwipe() {
+        private __handleSwipe(): void {
             var lastMove = this.__lastMoveEvent;
             if (isNull(lastMove)) {
                 this.__hasSwiped = false;
@@ -626,7 +626,7 @@
             this.__lastMoveEvent = null;
             this.__swipeSubscribers = null;
         }
-        private __handleTrack(ev: IPointerEvent) {
+        private __handleTrack(ev: IPointerEvent): void {
             var trackGesture = this._gestures.$track,
                 velocity = ev.velocity,
                 direction = ev.direction,
@@ -645,9 +645,9 @@
                 trackDirectionDomEvent.trigger(ev);
             }
         }
-        private __handleMappedEvent(ev: IExtendedEvent) {
+        private __handleMappedEvent(ev: IExtendedEvent): void {
             var mappedType = ev.type,
-                eventType = this.__reverseMap[mappedType],
+                eventType = (<any>this.__reverseMap)[mappedType],
                 domEvent = this.__findFirstSubscriber(<Node>ev.target, eventType);
 
             if (isNull(domEvent)) {
@@ -660,7 +660,7 @@
 
         // Touch type and element registration
 
-        private __getTypes() {
+        private __getTypes(): void {
             var $compat = this.$compat,
                 touchEvents = $compat.mappedEvents;
 
@@ -676,16 +676,16 @@
             this._moveEvents = [touchEvents.$touchmove];
             this._endEvents = isNull(cancelEvent) ? [touchEvents.$touchend] : [touchEvents.$touchend, cancelEvent];
         }
-        private __registerTypes() {
+        private __registerTypes(): void {
             this.__registerType(this.__START);
             this.__registerType(this.__END);
         }
-        private __unregisterTypes() {
+        private __unregisterTypes(): void {
             this.__unregisterType(this.__START);
             this.__unregisterType(this.__MOVE);
             this.__unregisterType(this.__END);
         }
-        private __registerType(event: string) {
+        private __registerType(event: string): void {
             var events: Array<string>,
                 listener = this.__listeners[event],
                 $document = this.$document;
@@ -709,7 +709,7 @@
                 $document.addEventListener(events[index], listener, false);
             }
         }
-        private __unregisterType(event: string) {
+        private __unregisterType(event: string): void {
             var events: Array<string>,
                 listener = this.__listeners[event],
                 $document = this.$document;
@@ -733,7 +733,7 @@
                 $document.removeEventListener(events[index], listener, false);
             }
         }
-        private __registerElement(element: Node, type: string) {
+        private __registerElement(element: Node, type: string): void {
             var index = this._elements.indexOf(element),
                 domEvent: IDomEvent = acquire('$domEvent');
 
@@ -752,7 +752,7 @@
 
             if (index === -1) {
                 var gesture = { gestureCount: 1 };
-                gesture[type] = domEvent;
+                (<any>gesture)[type] = domEvent;
 
                 index = this._elements.length;
                 this._elements.push(element);
@@ -763,21 +763,21 @@
                 }
             } else {
                 var subscription = this._subscriptions[index];
-                if (isUndefined(subscription[type])) {
-                    subscription[type] = domEvent;
+                if (isUndefined((<any>subscription)[type])) {
+                    (<any>subscription)[type] = domEvent;
                     subscription.gestureCount++;
                 }
             }
         }
-        private __unregisterElement(element: Node, type: string) {
+        private __unregisterElement(element: Node, type: string): void {
             var elementIndex = this._elements.indexOf(element);
             if (elementIndex === -1) {
                 return;
             }
 
             var gestureIndicator = this._subscriptions[elementIndex];
-            gestureIndicator[type] = null;
-            delete gestureIndicator[type];
+            (<any>gestureIndicator)[type] = null;
+            delete (<any>gestureIndicator)[type];
             gestureIndicator.gestureCount--;
 
             if (gestureIndicator.gestureCount === 0) {
@@ -789,7 +789,7 @@
                 }
             }
         }
-        private __setTouchPoint(ev: IPointerEvent) {
+        private __setTouchPoint(ev: IPointerEvent): void {
             var eventType = ev.type,
                 $compat = this.$compat,
                 noTouchEvents = !$compat.hasTouchEvents;
@@ -830,7 +830,7 @@
                 ev.pointerType = 'touch';
             }
         }
-        private __updatePointers(ev: IPointerEvent, remove: boolean) {
+        private __updatePointers(ev: IPointerEvent, remove: boolean): void {
             var id = ev.pointerId,
                 pointer = this.__pointerHash[id];
 
@@ -850,7 +850,7 @@
                 this.__pointerHash[id] = ev;
             }
         }
-        private __setCapture(target: any) {
+        private __setCapture(target: any): void {
             if (isFunction(target.setCapture)) {
                 target.setCapture();
                 return;
@@ -870,7 +870,7 @@
             do {
                 if ((index = elements.indexOf(eventTarget)) !== -1) {
                     gestures = this._subscriptions[index];
-                    domEvent = gestures[type];
+                    domEvent = (<any>gestures)[type];
                     if (isUndefined(domEvent)) {
                         continue;
                     }
@@ -887,7 +887,7 @@
                 $document.removeEventListener(mappedEvent, this.__mappedEventListener, useCapture);
             };
         }
-        private __removeEventListener(element: Node, type: string, listener: IGestureListener, useCapture?: boolean) {
+        private __removeEventListener(element: Node, type: string, listener: IGestureListener, useCapture?: boolean): void {
             var gestures = this._gestures;
 
             element.removeEventListener(type, listener, useCapture);
@@ -903,9 +903,9 @@
             }
 
             this.__unregisterElement(element, type);
-            this._gestureCount[countType]--;
+            (<any>this._gestureCount)[countType]--;
         }
-        private __removeElement(index: number) {
+        private __removeElement(index: number): void {
             var elements = this._elements;
             elements.splice(index, 1);
 
@@ -915,7 +915,7 @@
                 this._isActive = false;
             }
         }
-        private __standardizeEventObject(ev: IExtendedEvent) {
+        private __standardizeEventObject(ev: IExtendedEvent): void {
             this.__setTouchPoint(ev);
 
             ev.touches = ev.touches || this.__pointerEvents;
@@ -938,7 +938,7 @@
                 ev.offsetY = offset.y;
             }
         }
-        private __getOffset(ev: IExtendedEvent) {
+        private __getOffset(ev: IExtendedEvent): IPoint {
             var target = (<any>ev.target);
             if (isDocument(target)) {
                 return {
@@ -968,7 +968,7 @@
 
         // Utility methods
 
-        private __getDistance(x1: number, x2: number, y1: number, y2: number) {
+        private __getDistance(x1: number, x2: number, y1: number, y2: number): number {
             var x = Math.abs(x2 - x1),
                 y = Math.abs(y2 - y1);
             return Math.sqrt((x * x) + (y * y));
@@ -979,7 +979,7 @@
                 y: Math.abs(dy / dt) || 0
             };
         }
-        private __getDirection(dx: number, dy: number) {
+        private __getDirection(dx: number, dy: number): string {
             var distanceX = Math.abs(dx),
                 distanceY = Math.abs(dy);
 
@@ -989,7 +989,7 @@
 
             return dx < 0 ? 'left' : 'right';
         }
-        private __checkForOriginChanged(direction: string) {
+        private __checkForOriginChanged(direction: string): boolean {
             var lastMove = this.__lastMoveEvent;
             if (isNull(lastMove)) {
                 this.__hasSwiped = false;
@@ -1011,7 +1011,7 @@
             this.__hasSwiped = false;
             return this.__checkForRegisteredSwipe(direction);
         }
-        private __checkForRegisteredSwipe(direction: string) {
+        private __checkForRegisteredSwipe(direction: string): boolean {
             var swipeTarget = <Node>this.__swipeOrigin.target,
                 swipeGesture = this._gestures.$swipe,
                 swipeDirectionGesture = swipeGesture + direction,
@@ -1025,10 +1025,10 @@
 
             return !isNull(domEventSwipe) || !isNull(domEventSwipeDirection);
         }
-        private __isHorizontal(direction: string) {
+        private __isHorizontal(direction: string): boolean {
             return direction === 'left' || direction === 'right';
         }
-        private __appendGestureStyle() {
+        private __appendGestureStyle(): void {
             var $document = this.$document,
                 head = $document.head,
                 style = $document.createElement('style');
@@ -1036,7 +1036,7 @@
             style.textContent = this.__createStyle();
             head.insertBefore(style, head.firstElementChild || null);
         }
-        private __createStyle() {
+        private __createStyle(): string {
             var styleConfig = DomEvents.config.styleConfig,
                 styles = styleConfig.styles,
                 length = styles.length,
@@ -1056,7 +1056,7 @@
     /**
      * The Type for referencing the '$domEvents.config' injectable as a dependency.
      */
-    export function DomEventsConfigStatic() {
+    export function DomEventsConfigStatic(): IDomEventsConfig {
         return DomEvents.config;
     }
 
@@ -1084,14 +1084,14 @@
          * @param The node associated with this DomEvent. 
          * @param event The type of event this DomEvent is managing.
          */
-        initialize(element: Node, event: string);
+        initialize(element: Node, event: string): void;
         /**
          * Initializes the element and event of the DomEvent object
          * 
          * @param The window object. 
          * @param event The type of event this DomEvent is managing.
          */
-        initialize(element: Window, event: string);
+        initialize(element: Window, event: string): void;
         initialize(element: any, event: string) {
             this.element = element;
             this.event = event;
@@ -1102,7 +1102,7 @@
          * 
          * @param ev The event object to pass in as the custom event object's detail property.
          */
-        trigger(ev: IPointerEvent) {
+        trigger(ev: IPointerEvent): void {
             var event = <CustomEvent>this.$document.createEvent('CustomEvent');
             event.initCustomEvent(this.event, true, true, ev);
             this.element.dispatchEvent(event);
@@ -1331,17 +1331,7 @@
     /**
      * Describes an object containing information about a single point touched.
      */
-    export interface ITouchPoint {
-        /**
-         * The x-coordinate of the touch.
-         */
-        x: number;
-
-        /**
-         * The y-coordinate of the touch
-         */
-        y: number;
-
+    export interface ITouchPoint extends IPoint {
         /**
          * The touch target.
          */
@@ -1354,9 +1344,24 @@
     }
 
     /**
+     * Describes an object containing x and y coordinates
+     */
+    export interface IPoint {
+        /**
+         * The x-coordinate.
+         */
+        x: number;
+        
+        /**
+         * The y-coordinate
+         */
+        y: number;
+    }
+
+    /**
      * Describes an object containing a speed in both the horiztonal and vertical directions.
      */
-    export interface IVelocity {
+    export interface IVelocity extends IPoint {
         /**
          * The horizontal speed.
          */
@@ -1495,14 +1500,14 @@
          * @param The node associated with this DomEvent. 
          * @param event The type of event this DomEvent is managing.
          */
-        initialize(element: Node, event: string);
+        initialize(element: Node, event: string): void;
         /**
          * Initializes the element and event of the DomEvent object
          * 
          * @param The window object. 
          * @param event The type of event this DomEvent is managing.
          */
-        initialize(element: Window, event: string);
+        initialize(element: Window, event: string): void;
 
         /**
          * Triggers a custom event to bubble up to all elements in this branch of the DOM tree.

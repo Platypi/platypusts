@@ -75,7 +75,7 @@ module plat.ui {
                 case 'function':
                     value = resource.value;
                     if (isString(value)) {
-                        value = control[value];
+                        value = (<any>control)[value];
                         if (isFunction(value)) {
                             resource.value = value.bind(control);
                         } else {;

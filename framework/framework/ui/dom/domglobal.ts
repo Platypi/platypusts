@@ -3,7 +3,7 @@
     __table = [1, '<table>', '</table>'],
     __tableData = [3, '<table><tbody><tr>', '</tr></tbody></table>'],
     __svg = [1, '<svg xmlns="http://www.w3.org/2000/svg" version="1.1">', '</svg>'],
-    __innerTableWrappers = {
+    __innerTableWrappers: plat.IObject<Array<any>> = {
         thead: __table,
         tbody: __table,
         tfoot: __table,
@@ -14,7 +14,7 @@
         td: __tableData,
         th: __tableData
     },
-    __innerHtmlWrappers = extend({}, __innerTableWrappers, {
+    __innerHtmlWrappers: plat.IObject<Array<any>> = extend({}, __innerTableWrappers, {
         option: __option,
         optgroup: __option,
         legend: [1, '<fieldset>', '</fieldset>'],
@@ -31,14 +31,14 @@
         _default: [0, '', '']
     });
 
-function appendChildren(nodeList: any, root?: Node) {
-    var fragment,
+function appendChildren(nodeList: any, root?: Node): Node {
+    var fragment: DocumentFragment,
         isFragment = isDocumentFragment(root),
         nullRoot = isNull(root),
         $document = plat.acquire('$document');
 
     if (isFragment) {
-        fragment = root;
+        fragment = <DocumentFragment>root;
     } else {
         fragment = $document.createDocumentFragment();
     }
@@ -47,7 +47,8 @@ function appendChildren(nodeList: any, root?: Node) {
         root = fragment;
     }
 
-    var list;
+    var list: Array<Node>;
+
     if (isFunction(nodeList.push)) {
         list = nodeList;
     } else {
@@ -65,7 +66,7 @@ function appendChildren(nodeList: any, root?: Node) {
     return root;
 }
 
-function clearNode(node: Node) {
+function clearNode(node: Node): void {
     var childNodes = Array.prototype.slice.call(node.childNodes);
 
     while (childNodes.length > 0) {
@@ -73,7 +74,7 @@ function clearNode(node: Node) {
     }
 }
 
-function clearNodeBlock(nodeList: any, parent: Node) {
+function clearNodeBlock(nodeList: any, parent: Node): void {
     if (!isFunction(nodeList.push)) {
         nodeList = Array.prototype.slice.call(nodeList);
     }
@@ -97,7 +98,7 @@ function clearNodeBlock(nodeList: any, parent: Node) {
     }
 }
 
-function clearNodeBlockWithParent(nodeList: Array<Node>, parent: Node) {
+function clearNodeBlockWithParent(nodeList: Array<Node>, parent: Node): void {
     while (nodeList.length > 0) {
         parent.removeChild(nodeList.pop());
     }
@@ -126,7 +127,7 @@ function stringToNode(html: string): Node {
         return element.removeChild(element.lastChild);
     }
 
-    var wrapper = __innerHtmlWrappers[mapTag] || __innerHtmlWrappers._default,
+    var wrapper = __innerHtmlWrappers[mapTag] || (<any>__innerHtmlWrappers)._default,
         depth = wrapper[0],
         parentStart = wrapper[1],
         parentEnd = wrapper[2];
@@ -140,7 +141,7 @@ function stringToNode(html: string): Node {
     return element;
 }
 
-function setInnerHtml(node: Node, html: string) {
+function setInnerHtml(node: Node, html: string): Node {
     clearNode(node);
 
     if (isEmpty(html)) {
@@ -158,7 +159,7 @@ function setInnerHtml(node: Node, html: string) {
     return node;
 }
 
-function insertBefore(parent: Node, nodes: any, endNode: Node = null) {
+function insertBefore(parent: Node, nodes: any, endNode: Node = null): Array<Node> {
     if (isNull(parent)) {
         return;
     }
@@ -192,7 +193,7 @@ function insertBefore(parent: Node, nodes: any, endNode: Node = null) {
     return nodes;
 }
 
-function replace(node: Node) {
+function replace(node: Node): Array<Node> {
     var parent = node.parentNode,
         nodes = insertBefore(parent, node.childNodes, node);
 
@@ -201,7 +202,7 @@ function replace(node: Node) {
     return nodes;
 }
 
-function replaceWith(node: any, newNode: any) {
+function replaceWith(node: any, newNode: any): HTMLElement {
     if (isNull(newNode)) {
         return newNode;
     }
@@ -236,14 +237,14 @@ function serializeHtml(html?: string): DocumentFragment {
     return templateElement;
 }
 
-function removeBetween(startNode: Node, endNode?: Node) {
+function removeBetween(startNode: Node, endNode?: Node): void {
     if (isNull(startNode)) {
         return;
     }
 
     var currentNode = startNode.nextSibling,
         parentNode = startNode.parentNode,
-        tempNode;
+        tempNode: Node;
 
     if (isNull(endNode)) {
         endNode = null;
@@ -260,7 +261,7 @@ function removeBetween(startNode: Node, endNode?: Node) {
     }
 }
 
-function removeAll(startNode: Node, endNode?: Node) {
+function removeAll(startNode: Node, endNode?: Node): void {
     if (isNull(startNode)) {
         return;
     }
@@ -275,8 +276,8 @@ function removeAll(startNode: Node, endNode?: Node) {
  * Safely sets innerHTML of an element. Uses MSApp.execUnsafeLocalFunction if 
  * available.
  */
-function innerHtml(element: HTMLElement, html: string) {
-    var compat = plat.acquire('$compat');
+function innerHtml(element: HTMLElement, html: string): HTMLElement {
+    var compat: plat.ICompat = plat.acquire('$compat');
 
     if (compat.msApp) {
         MSApp.execUnsafeLocalFunction(() => {
@@ -289,7 +290,7 @@ function innerHtml(element: HTMLElement, html: string) {
     return element;
 }
 
-function removeNode(node: Node) {
+function removeNode(node: Node): void {
     if (isNull(node)) {
         return;
     }
@@ -301,7 +302,7 @@ function removeNode(node: Node) {
     }
 }
 
-function addClass(element: HTMLElement, className: string) {
+function addClass(element: HTMLElement, className: string): void {
     if (isUndefined(element.classList)) {
         if (isEmpty(element.className)) {
             element.className = className;
@@ -315,7 +316,7 @@ function addClass(element: HTMLElement, className: string) {
     element.classList.add(className);
 }
 
-function removeClass(element: HTMLElement, className: string) {
+function removeClass(element: HTMLElement, className: string): void {
     if (isUndefined(element.classList)) {
         if (element.className === className) {
             element.className = '';
