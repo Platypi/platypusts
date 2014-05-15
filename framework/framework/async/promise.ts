@@ -434,9 +434,10 @@ module plat.async {
 
     var queue: Array<any> = [];
     function flush(): void {
-        var tuple = queue[i],
-            callback = tuple[0],
-            arg = tuple[1];
+        var tuple: Array<(response: any) => void>,
+            callback: (response: any) => void,
+            arg: any;
+
         for (var i = 0; i < queue.length; i++) {
             tuple = queue[i];
             callback = tuple[0];
