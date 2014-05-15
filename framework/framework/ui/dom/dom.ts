@@ -206,27 +206,22 @@ module plat.ui {
         removeAll(startNode: Node, endNode?: Node) {
             return removeAll(startNode, endNode);
         }
-    }
 
-    register.injectable('$dom', Dom);
-
-    function appendChildren(nodeList: any, root?: Node): Node {
-        var fragment: DocumentFragment,
-            isFragment = root instanceof DocumentFragment,
-            nullRoot = isNull(root),
-            $document = acquire('$document');
-
-        if (isFragment) {
-            fragment = <DocumentFragment>root;
-        } else {
-            fragment = $document.createDocumentFragment();
+        /**
+         * Adds a class to the specified element
+         * 
+         * @param element The element to which the class name is being added.
+         * @param className The class name to add to the element.
+         */
+        addClass(element: HTMLElement, className: string): void {
+            return addClass(element, className);
         }
 
         if (nullRoot) {
             root = fragment;
         }
 
-        var list: Array<Node>;
+        var list;
         if (isFunction(nodeList.push)) {
             list = nodeList;
         } else {
@@ -244,7 +239,7 @@ module plat.ui {
         return root;
     }
 
-    function clearNode(node: Node): void {
+    function clearNode(node: Node) {
         var childNodes = Array.prototype.slice.call(node.childNodes);
 
         while (childNodes.length > 0) {
@@ -252,7 +247,7 @@ module plat.ui {
         }
     }
 
-    function clearNodeBlock(nodeList: any, parent: Node): void {
+    function clearNodeBlock(nodeList: any, parent: Node) {
         if (!isFunction(nodeList.push)) {
             nodeList = Array.prototype.slice.call(nodeList);
         }
@@ -276,7 +271,7 @@ module plat.ui {
         }
     }
 
-    function clearNodeBlockWithParent(nodeList: Array<Node>, parent: Node): void {
+    function clearNodeBlockWithParent(nodeList: Array<Node>, parent: Node) {
         while (nodeList.length > 0) {
             parent.removeChild(nodeList.pop());
         }
@@ -308,7 +303,7 @@ module plat.ui {
             return element.removeChild(element.lastChild);
         }
 
-        var wrapper = innerHtmlWrappers[mapTag] || (<any>innerHtmlWrappers)._default,
+        var wrapper = innerHtmlWrappers[mapTag] || innerHtmlWrappers._default,
             depth = wrapper[0],
             parentStart = wrapper[1],
             parentEnd = wrapper[2];
@@ -418,14 +413,14 @@ module plat.ui {
         return templateElement;
     }
 
-    function removeBetween(startNode: Node, endNode?: Node): void {
+    function removeBetween(startNode: Node, endNode?: Node) {
         if (isNull(startNode)) {
             return;
         }
 
         var currentNode = startNode.nextSibling,
             parentNode = startNode.parentNode,
-            tempNode: Node;
+            tempNode;
 
         if (isNull(endNode)) {
             endNode = null;
@@ -442,7 +437,7 @@ module plat.ui {
         }
     }
 
-    function removeAll(startNode: Node, endNode?: Node): void {
+    function removeAll(startNode: Node, endNode?: Node) {
         if (isNull(startNode)) {
             return;
         }
@@ -457,7 +452,7 @@ module plat.ui {
         __table = [1, '<table>', '</table>'],
         __tableData = [3, '<table><tbody><tr>', '</tr></tbody></table>'],
         __svg = [1, '<svg xmlns="http://www.w3.org/2000/svg" version="1.1">', '</svg>'],
-        innerHtmlWrappers: IObject<Array<any>> = {
+        innerHtmlWrappers = {
             option: __option,
             optgroup: __option,
             legend: [1, '<fieldset>', '</fieldset>'],
@@ -484,34 +479,21 @@ module plat.ui {
         };
 
     /**
-     * Safely sets innerHTML of an element. Uses MSApp.execUnsafeLocalFunction if 
-     * available.
+         * Removes a class from the specified element
+         * 
+         * @param element The element from which the class name is being removed.
+         * @param className The class name to remove from the element.
      */
-    function innerHtml(element: HTMLElement, html: string): HTMLElement {
-        var compat = acquire('$compat');
-
-        if (compat.msApp) {
-            MSApp.execUnsafeLocalFunction(() => {
-                element.innerHTML = html;
-            });
-        } else {
-            element.innerHTML = html;
-        }
-
-        return element;
+        removeClass(element: HTMLElement, className: string): void {
+            return removeClass(element, className);
     }
 
-    function removeNode(node: Node): void {
+    function removeNode(node: Node) {
         if (isNull(node)) {
             return;
         }
 
-        var parentNode = node.parentNode;
-
-        if (!isNull(parentNode)) {
-            node.parentNode.removeChild(node);
-        }
-    }
+    register.injectable('$dom', Dom);
 
     /**
      * An object that deals with the creation, deletion, and modification 
@@ -682,5 +664,21 @@ module plat.ui {
          * @param endNode The last node to remove.
          */
         removeAll(startNode: Node, endNode?: Node): void;
+
+        /**
+         * Adds a class to the specified element
+         * 
+         * @param element The element to which the class name is being added.
+         * @param className The class name to add to the element.
+         */
+        addClass(element: HTMLElement, className: string): void;
+
+        /**
+         * Removes a class from the specified element
+         * 
+         * @param element The element from which the class name is being removed.
+         * @param className The class name to remove from the element.
+         */
+        removeClass(element: HTMLElement, className: string): void;
     }
 }
