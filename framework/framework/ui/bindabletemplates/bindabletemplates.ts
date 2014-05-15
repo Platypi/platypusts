@@ -72,7 +72,6 @@ module plat.ui {
         $TemplateControlStatic: ITemplateControlStatic = acquire('$TemplateControlStatic');
         $PromiseStatic: async.IPromiseStatic = acquire('$PromiseStatic');
         $ManagerCacheStatic: storage.ICache<processing.IElementManager> = acquire('$ManagerCacheStatic');
-        $dom: IDom = acquire('$dom');
         $ExceptionStatic: IExceptionStatic = acquire('$ExceptionStatic');
         $document: Document = acquire('$document');
         $ElementManagerStatic: processing.IElementManagerStatic = acquire('$ElementManagerStatic');
@@ -212,7 +211,7 @@ module plat.ui {
             if (isNode(template)) {
                 fragment.appendChild(template);
             } else if (isArrayLike(template)) {
-                this.$dom.appendChildren(template, fragment);
+                appendChildren(template, fragment);
             } else {
                 return;
             }

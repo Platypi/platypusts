@@ -4,7 +4,6 @@ module plat.processing {
      * element/template. Also provides methods for cloning an ElementManager.
      */
     export class ElementManager extends NodeManager implements IElementManager {
-        static $dom: ui.IDom;
         static $document: Document;
         static $ManagerCacheStatic: storage.ICache<IElementManager>;
         static $ResourcesStatic: ui.IResourcesStatic;
@@ -61,7 +60,7 @@ module plat.processing {
 
                     var replacement = ElementManager.$document.createElement(replacementType);
                     if (replacement.nodeType === Node.ELEMENT_NODE) {
-                        element = ElementManager.$dom.replaceWith(element, <HTMLElement>replacement.cloneNode(true));
+                        element = replaceWith(element, <HTMLElement>replacement.cloneNode(true));
                     }
                 }
             }
@@ -987,7 +986,7 @@ module plat.processing {
 
             if ((element.childNodes.length > 0) &&
                 (!isEmpty(uiControl.templateString) || !isEmpty(uiControl.templateUrl))) {
-                uiControl.innerTemplate = <DocumentFragment>ElementManager.$dom.appendChildren(element.childNodes);
+                uiControl.innerTemplate = <DocumentFragment>appendChildren(element.childNodes);
             }
 
             var replace = this.replace = (uiControl.replaceWith === null || uiControl.replaceWith === '');
@@ -1019,7 +1018,7 @@ module plat.processing {
 
             parentNode.insertBefore(startNode, element);
             parentNode.insertBefore(endNode, element.nextSibling);
-            control.elementNodes = ElementManager.$dom.replace(element);
+            control.elementNodes = replace(element);
 
             control.element = nodeMap.element = null;
         }
@@ -1048,9 +1047,9 @@ module plat.processing {
                 if (replaceElement) {
                     endNode = uiControl.endNode;
                     uiControl.elementNodes = Array.prototype.slice.call(template.childNodes);
-                    ElementManager.$dom.insertBefore(endNode.parentNode, template, endNode);
+                    insertBefore(endNode.parentNode, template, endNode);
                 } else {
-                    ElementManager.$dom.insertBefore(element, template, element.lastChild);
+                    insertBefore(element, template, element.lastChild);
                 }
             }
 
@@ -1112,12 +1111,10 @@ module plat.processing {
      * The Type for referencing the '$ElementManagerStatic' injectable as a dependency.
      */
     export function ElementManagerStatic(
-        $dom,
         $document,
         $ManagerCacheStatic,
         $ResourcesStatic,
         $BindableTemplatesStatic) {
-        ElementManager.$dom = $dom;
         ElementManager.$document = $document;
         ElementManager.$ManagerCacheStatic = $ManagerCacheStatic;
         ElementManager.$ResourcesStatic = $ResourcesStatic;
@@ -1126,7 +1123,6 @@ module plat.processing {
     }
 
     register.injectable('$ElementManagerStatic', ElementManagerStatic, [
-        '$dom',
         '$document',
         '$ManagerCacheStatic',
         '$ResourcesStatic',

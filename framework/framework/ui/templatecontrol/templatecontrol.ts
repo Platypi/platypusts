@@ -307,7 +307,7 @@ module plat.ui {
 
             if (control.replaceWith === null ||
             control.replaceWith === '' ||
-            element instanceof DocumentFragment) {
+            isDocumentFragment(element)) {
                 dom.removeAll(control.startNode, control.endNode);
                 control.elementNodes = control.startNode = control.endNode = null;
                 return;
