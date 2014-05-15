@@ -89,7 +89,7 @@
          * @param cancelable Whether or not the event can be canceled, preventing further navigation.
          */
         _sendEvent(name: string, target: any, type: string, parameter: any,
-            options: IBaseNavigationOptions, cancelable: boolean): events.INavigationEvent<any, any, IBaseNavigator> {
+            options: IBaseNavigationOptions, cancelable: boolean): events.INavigationEvent<any> {
             return this.$NavigationEventStatic.dispatch(name, this, {
                 target: target,
                 type: type,

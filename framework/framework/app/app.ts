@@ -224,7 +224,7 @@ module plat {
          * @param name='beforeNavigate' The name of the event, cooinciding with the beforeNavigate event.
          * @param listener The method called when the beforeNavigate event is fired.
          */
-        on(name: 'beforeNavigate', listener: (ev: events.INavigationEvent<any, any, navigation.IBaseNavigator>) => void): IRemoveListener;
+        on(name: 'beforeNavigate', listener: (ev: events.INavigationEvent<any>) => void): IRemoveListener;
         /**
          * Registers a listener for a navigating event. The listener will be called when a navigating 
          * event is propagating over the app. Any number of listeners can exist for a single event name. 
@@ -233,7 +233,7 @@ module plat {
          * @param name='navigating' The name of the event, cooinciding with the navigating event.
          * @param listener The method called when the navigating event is fired.
          */
-        on(name: 'navigating', listener: (ev: events.INavigationEvent<any, any, navigation.IBaseNavigator>) => void): IRemoveListener;
+        on(name: 'navigating', listener: (ev: events.INavigationEvent<any>) => void): IRemoveListener;
         /**
          * Registers a listener for a navigated event. The listener will be called when a navigated 
          * event is propagating over the app. Any number of listeners can exist for a single event name. 
@@ -243,16 +243,16 @@ module plat {
          * @param listener The method called when the navigated event is fired.
          */
         on(name: 'navigated',
-            listener: (ev: events.INavigationEvent<ui.IViewControl, any, navigation.IBaseNavigator>) => void): IRemoveListener;
+            listener: (ev: events.INavigationEvent<any>) => void): IRemoveListener;
         /**
-         * Registers a listener for a routeChange event. The listener will be called when a routeChange event 
+         * Registers a listener for a routeChanged event. The listener will be called when a routeChange event 
          * is propagating over the app. Any number of listeners can exist for a single event name.
          *
          * @param eventName='routeChange' This specifies that the listener is for a routeChange event.
          * @param listener The method called when the routeChange is fired. The route argument will contain 
          * a parsed route.
          */
-        on(name: 'routeChange', listener: (ev: events.INavigationEvent<any, any, web.IRouter>) => void): IRemoveListener;
+        on(name: 'routeChanged', listener: (ev: events.INavigationEvent<web.IRoute<any>>) => void): IRemoveListener;
         /**
          * Registers a listener for a NavigationEvent. The listener will be called when a NavigationEvent is 
          * propagating over the app. Any number of listeners can exist for a single event name.
@@ -260,7 +260,7 @@ module plat {
          * @param name The name of the event, cooinciding with the NavigationEvent name.
          * @param listener The method called when the NavigationEvent is fired.
          */
-        on(name: string, listener: (ev: events.INavigationEvent<any, any, any>) => void): IRemoveListener;
+        on(name: string, listener: (ev: events.INavigationEvent<any>) => void): IRemoveListener;
         /**
          * Registers a listener for a DispatchEvent. The listener will be called when a DispatchEvent is 
          * propagating over the app. Any number of listeners can exist for a single event name.
@@ -425,7 +425,7 @@ module plat {
          * @param listener The method called when the beforeNavigate event is fired.
          * @return {IRemoveListener} A method for removing the listener. 
          */
-        on(name: 'beforeNavigate', listener: (ev: events.INavigationEvent<any, any, navigation.IBaseNavigator>) => void): IRemoveListener;
+        on(name: 'beforeNavigate', listener: (ev: events.INavigationEvent<any>) => void): IRemoveListener;
         /**
          * Registers a listener for a navigating event. The listener will be called when a navigating 
          * event is propagating over the app. Any number of listeners can exist for a single event name. 
@@ -435,7 +435,7 @@ module plat {
          * @param listener The method called when the navigating event is fired.
          * @return {IRemoveListener} A method for removing the listener. 
          */
-        on(name: 'navigating', listener: (ev: events.INavigationEvent<any, any, navigation.IBaseNavigator>) => void): IRemoveListener;
+        on(name: 'navigating', listener: (ev: events.INavigationEvent<any>) => void): IRemoveListener;
         /**
          * Registers a listener for a navigated event. The listener will be called when a navigated 
          * event is propagating over the app. Any number of listeners can exist for a single event name. 
@@ -446,9 +446,9 @@ module plat {
          * @return {IRemoveListener} A method for removing the listener. 
          */
         on(name: 'navigated',
-            listener: (ev: events.INavigationEvent<ui.IViewControl, any, navigation.IBaseNavigator>) => void): IRemoveListener;
+            listener: (ev: events.INavigationEvent<any>) => void): IRemoveListener;
         /**
-         * Registers a listener for a routeChange event. The listener will be called when a routeChange event 
+         * Registers a listener for a routeChanged event. The listener will be called when a routeChange event 
          * is propagating over the app. Any number of listeners can exist for a single event name.
          *
          * @param eventName='routeChange' This specifies that the listener is for a routeChange event.
@@ -456,7 +456,7 @@ module plat {
          * a parsed route.
          * @return {IRemoveListener} A method for removing the listener.
          */
-        on(name: 'routeChange', listener: (ev: events.INavigationEvent<any, any, web.IRouter>) => void): IRemoveListener;
+        on(name: 'routeChanged', listener: (ev: events.INavigationEvent<web.IRoute<any>>) => void): IRemoveListener;
         /**
          * Registers a listener for a NavigationEvent. The listener will be called when a NavigationEvent is 
          * propagating over the app. Any number of listeners can exist for a single event name.
@@ -465,7 +465,7 @@ module plat {
          * @param listener The method called when the NavigationEvent is fired.
          * @return {IRemoveListener} A method for removing the listener.
          */
-        on(name: string, listener: (ev: events.INavigationEvent<any, any, any>) => void): IRemoveListener;
+        on(name: string, listener: (ev: events.INavigationEvent<any>) => void): IRemoveListener;
         /**
          * Registers a listener for a DispatchEvent. The listener will be called when a DispatchEvent is 
          * propagating over the app. Any number of listeners can exist for a single event name.

@@ -481,7 +481,7 @@ module plat.events {
          * @return {IRemoveListener} A method for removing the listener.
          */
         on(uid: string, eventName: 'beforeNavigate',
-            listener: (ev: INavigationEvent<any, any, navigation.IBaseNavigator>) => void, context?: any): IRemoveListener;
+            listener: (ev: INavigationEvent<any>) => void, context?: any): IRemoveListener;
         /**
          * Registers a listener for the navigating Event. The listener will be called when the navigating 
          * event is propagating over the given uid. Any number of listeners can exist for a single event name.
@@ -495,7 +495,7 @@ module plat.events {
          * @return {IRemoveListener} A method for removing the listener.
          */
         on(uid: string, eventName: 'navigating',
-            listener: (ev: INavigationEvent<any, any, navigation.IBaseNavigator>) => void, context?: any): IRemoveListener;
+            listener: (ev: INavigationEvent<any>) => void, context?: any): IRemoveListener;
         /**
          * Registers a listener for the navigated Event. The listener will be called when the navigated 
          * event is propagating over the given uid. Any number of listeners can exist for a single event name.
@@ -508,8 +508,7 @@ module plat.events {
          * @return {IRemoveListener} A method for removing the listener.
          */
         on(uid: string, eventName: 'navigated',
-            listener: (ev: INavigationEvent<ui.IViewControl, any,
-            navigation.IBaseNavigator>) => void, context?: any): IRemoveListener;
+            listener: (ev: INavigationEvent<any>) => void, context?: any): IRemoveListener;
         /**
          * Registers a listener for a NavigationEvent. The listener will be called when a NavigationEvent is
          * propagating over the given uid. Any number of listeners can exist for a single event name.
@@ -520,7 +519,7 @@ module plat.events {
          * @param context Optional context with which the listener will be bound.
          * @return {IRemoveListener} A method for removing the listener.
          */
-        on(uid: string, eventName: string, listener: (ev: INavigationEvent<any, any, navigation.IBaseNavigator>) => void,
+        on(uid: string, eventName: string, listener: (ev: INavigationEvent<any>) => void,
             context?: any): IRemoveListener;
         /**
          * Registers a listener for the ready AlmEvent. The ready event will be called when the app 

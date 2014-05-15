@@ -27,7 +27,7 @@ module plat.navigation {
                 key: string,
                 options = options || <IBaseNavigationOptions>{},
                 parameter = options.parameter,
-                event: events.INavigationEvent<any, any, IBaseNavigator>;
+                event: events.INavigationEvent<any>;
 
             event = this._sendEvent('beforeNavigate', Constructor, null, parameter, options, true);
 

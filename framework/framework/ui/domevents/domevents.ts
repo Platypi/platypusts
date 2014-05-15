@@ -474,7 +474,7 @@
             // return if the touch count was greater than 0
             if (ev.touches.length > 0) {
                 return;
-            } 
+            }
 
             // if we were detecting move events, unregister them
             if (this.__detectMove) {

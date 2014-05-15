@@ -2,8 +2,10 @@
     /**
      * A class used by the Navigator to dispatch Navigation events. Allows anyone to listen 
      * for navigation events and respond to them, even canceling them if necessary.
+     * 
+     * @generic P Corresponds to the type of event parameter.
      */
-    export class NavigationEvent<T, U, V> extends DispatchEvent implements INavigationEvent<T, U, V> {
+    export class NavigationEvent<P> extends DispatchEvent implements INavigationEvent<P> {
         static $EventManagerStatic: IEventManagerStatic;
         /**
          * Dispatches an event with the specified target type.
@@ -13,8 +15,8 @@
          * @param eventOptions An object implementing INavigationEvent, specifying what all event listeners
          * will be passed.
          */
-        static dispatch<T, U, V>(name: string, sender: V, eventOptions: INavigationEventOptions<T, U>): INavigationEvent<T, U, V> {
-            var event = new NavigationEvent<T, U, V>();
+        static dispatch<P>(name: string, sender: any, eventOptions: INavigationEventOptions<P>): INavigationEvent<P> {
+            var event = new NavigationEvent<P>();
 
             event.initialize(name, sender, null, eventOptions);
             NavigationEvent.$EventManagerStatic.sendEvent(event, []);
@@ -25,7 +27,7 @@
         /**
          * Navigation parameter, used to send objects from one view control to another.
          */
-        parameter: U;
+        parameter: P;
 
         /**
          * The INavigationOptions in use for the navigation.
@@ -35,7 +37,7 @@
         /**
          * The navigation event target. Its type depends on the type of Navigation event.
          */
-        target: T;
+        target: any;
 
         /**
          * Specifies the type of IViewControl for the Route Event.
@@ -62,7 +64,7 @@
          * 
          * @see EventManager.direction
          */
-        initialize(name: string, sender: V, direction?: string, eventOptions?: INavigationEventOptions<T, U>) {
+        initialize(name: string, sender: any, direction?: string, eventOptions?: INavigationEventOptions<P>) {
             super.initialize(name, sender, this.$EventManagerStatic.direction.DIRECT);
             this.parameter = eventOptions.parameter;
             this.options = eventOptions.options;
@@ -98,11 +100,11 @@
      * Describes options for an INavigationEvent. The generic parameter specifies the 
      * target type for the event.
      */
-    export interface INavigationEventOptions<T, U> {
+    export interface INavigationEventOptions<P> {
         /**
          * Navigation parameter, used to send objects from one view control to another.
          */
-        parameter: U;
+        parameter: P;
 
         /**
          * The INavigationOptions in use for the navigation.
@@ -112,7 +114,7 @@
         /**
          * The navigation event target. Its type depends on the type of Navigation event.
          */
-        target: T;
+        target: any;
 
         /**
          * Specifies the type of IViewControl for the Route Event.
@@ -129,11 +131,11 @@
     /**
      * Describes an object used by the Navigator to dispatch Navigation events.
      */
-    export interface INavigationEvent<T, U, V> extends IDispatchEvent {
+    export interface INavigationEvent<P> extends IDispatchEvent {
         /**
          * Navigation parameter, used to send objects from one view control to another.
          */
-        parameter: U;
+        parameter: P;
 
         /**
          * The INavigationOptions in use for the navigation.
@@ -143,7 +145,7 @@
         /**
          * The navigation event target. Its type depends on the type of Navigation event.
          */
-        target: T;
+        target: any;
 
         /**
          * Specifies the type of IViewControl for the Route Event.
@@ -153,7 +155,7 @@
         /**
          * The sender of the event.
          */
-        sender: V;
+        sender: any;
 
         /**
          * States whether or not this event is able to be canceled. Some navigation events can be 
@@ -180,7 +182,7 @@
          * 
          * @see EventManager.direction
          */
-        initialize(name: string, sender: V, direction?: 'direct', eventOptions?: INavigationEventOptions<T, U>);
+        initialize(name: string, sender: any, direction?: 'direct', eventOptions?: INavigationEventOptions<P>);
         /**
          * Initializes the event members.
          * 
@@ -190,7 +192,7 @@
          * 
          * @see EventManager.direction
          */
-        initialize(name: string, sender: V, direction?: string, eventOptions?: INavigationEventOptions<T, U>);
+        initialize(name: string, sender: any, direction?: string, eventOptions?: INavigationEventOptions<P>);
     }
 
     /**
@@ -199,12 +201,14 @@
     export interface INavigationEventStatic {
         /**
          * Dispatches an event with the specified target type.
+         * 
+         * @generic P Corresponds to the type of the event parameter.
          *
          * @param name The name of the event (e.g. 'beforeNavigate')
          * @param sender The object sending the event.
          * @param eventOptions An object implementing INavigationEvent, specifying what all event listeners
          * will be passed.
          */
-        dispatch<T, U, V>(name: string, sender: V, eventOptions: events.INavigationEventOptions<T, U>): INavigationEvent<T, U, V>;
+        dispatch<P>(name: string, sender: any, eventOptions: events.INavigationEventOptions<P>): INavigationEvent<P>;
     }
 }

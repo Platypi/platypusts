@@ -71,7 +71,7 @@
          * @param ev The INavigationEvent containing information regarding the ViewControl, the routing information, 
          * and the Router.
          */
-        _beforeRouteChange(ev: events.INavigationEvent<dependency.IInjector<ui.IViewControl>, web.IRoute<any>, web.IRouter>): void {
+        _beforeRouteChange(ev: events.INavigationEvent<web.IRoute<any>>): void {
             var event = this._sendEvent('beforeNavigate', ev.target, ev.type, ev.parameter, ev.options, true);
 
             if (event.canceled) {
@@ -85,7 +85,7 @@
          * @param ev The INavigationEvent containing information regarding the ViewControl, the routing infomration, 
          * and the Router.
          */
-        _onRouteChanged(ev: events.INavigationEvent<dependency.IInjector<ui.IViewControl>, web.IRoute<any>, web.IRouter>): void {
+        _onRouteChanged(ev: events.INavigationEvent<web.IRoute<any>>): void {
             var state = this.currentState || <IRouteNavigationState>{},
                 viewControl = state.control,
                 injector = ev.target;
