@@ -34,7 +34,7 @@ module plat.controls {
         /**
          * Kicks off finding and setting the listener.
          */
-        loaded() {
+        loaded(): void {
             if (isNull(this.element)) {
                 return;
             }
@@ -46,20 +46,20 @@ module plat.controls {
         /**
          * Disposes of the event listener.
          */
-        dispose() {
+        dispose(): void {
             this._listener = null;
         }
 
         /**
          * Sets the event listener.
          */
-        _setListener() {
+        _setListener(): void {
             var attr = this.attribute;
             if (isEmpty(this.event) || isEmpty(attr)) {
                 return;
             }
 
-            this._parseArgs(this.attributes[attr]);
+            this._parseArgs((<any>this.attributes)[attr]);
 
             if (isNull(this._expression)) {
                 return;
@@ -74,10 +74,10 @@ module plat.controls {
          * 
          * @param identifier the function identifer
          */
-        _findListener(identifier: string) {
-            var control: IControl = this,
+        _findListener(identifier: string): { control: ui.ITemplateControl; value: any; } {
+            var control: ui.ITemplateControl = <any>this,
                 expression = this.$parser.parse(identifier),
-                value;
+                value: any;
 
             while (!isNull(control)) {
                 value = expression.evaluate(control);
@@ -101,14 +101,14 @@ module plat.controls {
          * the evaluated arguments taking resources 
          * into account.
          */
-        _buildExpression() {
+        _buildExpression(): { fn: () => void; control: ui.ITemplateControl; args: Array<expressions.IParsedExpression>; } {
             var expression = this._expression.slice(0),
                 hasParent = !isNull(this.parent),
                 aliases = hasParent ? this.parent.getResources(this._aliases) : null,
                 listenerStr = expression.shift(),
-                listener,
-                control,
-                fn;
+                listener: { control: ui.ITemplateControl; value: any; },
+                control: ui.ITemplateControl,
+                fn: () => void;
 
             if (listenerStr[0] !== '@') {
                 listener = this._findListener(listenerStr);
@@ -116,7 +116,7 @@ module plat.controls {
                 if (isNull(listener)) {
                     return {
                         fn: noop,
-                        control: {},
+                        control: <ui.ITemplateControl>{},
                         args: []
                     };
                 }
@@ -129,7 +129,7 @@ module plat.controls {
             }
 
             var length = expression.length,
-                args = [],
+                args: Array<expressions.IParsedExpression> = [],
                 parser = this.$parser;
 
             for (var i = 0; i < length; ++i) {
@@ -148,7 +148,7 @@ module plat.controls {
          * 
          * @param ev The event object.
          */
-        _onEvent(ev: any) {
+        _onEvent(ev: any): void {
             var expression = this._buildExpression(),
                 fn = expression.fn,
                 control = expression.control,
@@ -168,12 +168,12 @@ module plat.controls {
          * 
          * @param arguments The array of arguments as strings.
          */
-        _findAliases(arguments: Array<string>) {
+        _findAliases(arguments: Array<string>): Array<string> {
             var length = arguments.length,
                 arg: string,
                 alias: string,
                 exec: RegExpExecArray,
-                aliases = {},
+                aliases: IObject<boolean> = {},
                 aliasRegex = this.$regex.aliasRegex;
 
             for (var i = 0; i < length; ++i) {
@@ -194,7 +194,7 @@ module plat.controls {
          * 
          * @param expression The expression to parse.
          */
-        _parseArgs(expression: string) {
+        _parseArgs(expression: string): void {
             var exec = this.$regex.argumentRegex.exec(expression),
                 haveArgs = !isNull(exec);
 
@@ -422,7 +422,7 @@ module plat.controls {
          * 
          * @param ev The event object.
          */
-        _onEvent(ev: Event) {
+        _onEvent(ev: Event): void {
             if (!this.element.hasAttribute('action')) {
                 ev.preventDefault();
             }

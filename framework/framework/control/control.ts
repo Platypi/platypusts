@@ -45,7 +45,7 @@ module plat {
          * @static
          * @param control The control to load.
          */
-        static load(control: IControl) {
+        static load(control: IControl): void {
             if (isNull(control)) {
                 return;
             }
@@ -62,7 +62,7 @@ module plat {
          * @static
          * @param control The Control to dispose.
          */
-        static dispose(control: IControl) {
+        static dispose(control: IControl): void {
             var ctrl = <any>control;
 
             if (isNull(ctrl)) {
@@ -92,7 +92,7 @@ module plat {
          * @static
          * @param control The control whose parent will be removed.
          */
-        static removeParent(control: IControl) {
+        static removeParent(control: IControl): void {
             if (isNull(control)) {
                 return;
             }
@@ -119,7 +119,7 @@ module plat {
          * @static
          * @param control The control having its event listeners removed.
          */
-        static removeEventListeners(control: IControl) {
+        static removeEventListeners(control: IControl): void {
             if (isNull(control)) {
                 return;
             }
@@ -147,7 +147,7 @@ module plat {
          * @param uid The uid of the control associated with the remove function.
          * @param listener The remove function to add.
          */
-        private static __addRemoveListener(uid: string, listener: IRemoveListener) {
+        private static __addRemoveListener(uid: string, listener: IRemoveListener): void {
             var removeListeners = Control.__eventListeners;
 
             if (isArray(removeListeners[uid])) {
@@ -158,7 +158,7 @@ module plat {
             removeListeners[uid] = [listener];
         }
 
-        private static __spliceRemoveListener(uid: string, listener: IRemoveListener) {
+        private static __spliceRemoveListener(uid: string, listener: IRemoveListener): void {
             var removeListeners = Control.__eventListeners,
                 controlListeners = removeListeners[uid];
 
@@ -172,12 +172,12 @@ module plat {
             }
         }
 
-        private static __getControls(control: IControl, method: string, key: string) {
+        private static __getControls(control: IControl, method: string, key: string): Array<IControl> {
             var controls: Array<IControl> = [],
                 root = Control.getRootControl(control),
-                child;
+                child: IControl;
 
-            if (!isNull(root) && root[method] === key) {
+            if (!isNull(root) && (<any>root)[method] === key) {
                 controls.push(root);
             }
 
@@ -193,15 +193,15 @@ module plat {
             while (queue.length > 0) {
                 child = queue.shift();
 
-                if (child[method] === key) {
+                if ((<any>child)[method] === key) {
                     controls.push(child);
                 }
 
-                if (isNull(child.controls)) {
+                if (isNull((<ui.ITemplateControl>child).controls)) {
                     continue;
                 }
 
-                queue = queue.concat(child.controls);
+                queue = queue.concat((<ui.ITemplateControl>child).controls);
             }
 
             return controls;
@@ -296,7 +296,7 @@ module plat {
          * 
          * @param name The string name with which to populate the returned controls array.
          */
-        getControlsByName(name: string) {
+        getControlsByName(name: string): Array<IControl> {
             return Control.__getControls(this, 'name', name);
         }
 
@@ -315,7 +315,7 @@ module plat {
          * @example this.getControlsByType<ui.controls.ForEach>(ui.controls.ForEach)
          */
         getControlsByType<T extends Control>(Constructor: new () => T): Array<T>;
-        getControlsByType(type: any): any {
+        getControlsByType(type: any) {
             if (isString(type)) {
                 return Control.__getControls(this, 'type', type);
             }
@@ -385,13 +385,13 @@ module plat {
                     <ui.TemplateControl>this.parent,
                 alias: string,
                 length = aliases.length,
-                resources = {},
+                resources: IObject<observable.IContextManager> = {},
                 ContextManager = Control.$ContextManagerStatic,
                 getManager = ContextManager.getManager,
                 TemplateControl = ui.TemplateControl,
                 findResource = TemplateControl.findResource,
                 evaluateExpression = TemplateControl.evaluateExpression,
-                i;
+                i: number;
 
             if (isNull(control)) {
                 return noop;
@@ -439,7 +439,7 @@ module plat {
             length = identifiers.length;
 
             var oldValue = evaluateExpression(parsedExpression, control),
-                listeners = [];
+                listeners: Array<IRemoveListener> = [];
 
             for (i = 0; i < length; ++i) {
                 identifier = identifiers[i];
@@ -470,7 +470,7 @@ module plat {
          * @param context An optional context with which to parse. If 
          * no context is specified, the control.context will be used.
          */
-        evaluateExpression(expression: string, context?: any);
+        evaluateExpression(expression: string, context?: any): any;
         /**
          * Evaluates a parsed expression, using the control.context.
          * 
@@ -478,8 +478,8 @@ module plat {
          * @param context An optional context with which to parse. If 
          * no context is specified, the control.context will be used.
          */
-        evaluateExpression(expression: expressions.IParsedExpression, context?: any);
-        evaluateExpression(expression: any, context?: any) {
+        evaluateExpression(expression: expressions.IParsedExpression, context?: any): any;
+        evaluateExpression(expression: any, context?: any): any {
             var TemplateControl = ui.TemplateControl;
             return TemplateControl.evaluateExpression(expression, this.parent, context);
         }
@@ -499,7 +499,7 @@ module plat {
          * 
          * @see events.eventDirection
          */
-        dispatchEvent(name: string, direction?: string, ...args: any[]);
+        dispatchEvent(name: string, direction?: string, ...args: any[]): void;
         /**
          * Creates a new DispatchEvent and propagates it to controls based on the 
          * provided direction mechanism. Controls in the propagation chain that registered
@@ -514,7 +514,7 @@ module plat {
          * 
          * @see events.eventDirection
          */
-        dispatchEvent(name: string, direction?: 'up', ...args: any[]);
+        dispatchEvent(name: string, direction?: 'up', ...args: any[]): void;
         /**
          * Creates a new DispatchEvent and propagates it to controls based on the 
          * provided direction mechanism. Controls in the propagation chain that registered
@@ -529,7 +529,7 @@ module plat {
          * 
          * @see events.eventDirection
          */
-        dispatchEvent(name: string, direction?: 'down', ...args: any[]);
+        dispatchEvent(name: string, direction?: 'down', ...args: any[]): void;
         /**
          * Creates a new DispatchEvent and propagates it to controls based on the 
          * provided direction mechanism. Controls in the propagation chain that registered
@@ -544,7 +544,7 @@ module plat {
          * 
          * @see events.eventDirection
          */
-        dispatchEvent(name: string, direction?: 'direct', ...args: any[]);
+        dispatchEvent(name: string, direction?: 'direct', ...args: any[]): void;
         dispatchEvent(name: string, direction?: string, ...args: any[]) {
             var manager = Control.$EventManagerStatic;
 
@@ -596,13 +596,15 @@ module plat {
          * The dispose event is called when a control is being removed from memory. A control should release 
          * all of the memory it is using, including DOM event and property listeners.
          */
-        dispose() { }
+        dispose(): void { }
     }
 
     /**
      * The Type for referencing the '$ControlStatic' injectable as a dependency.
      */
-    export function ControlStatic($ContextManagerStatic, $EventManagerStatic) {
+    export function ControlStatic(
+            $ContextManagerStatic: observable.IContextManagerStatic,
+            $EventManagerStatic: events.IEventManagerStatic) {
         Control.$ContextManagerStatic = $ContextManagerStatic;
         Control.$EventManagerStatic = $EventManagerStatic;
         return Control;
@@ -807,7 +809,7 @@ module plat {
          * @param context An optional context with which to parse. If 
          * no context is specified, the control.context will be used.
          */
-        evaluateExpression(expression: string, context?: any);
+        evaluateExpression(expression: string, context?: any): any;
         /**
          * Evaluates a parsed expression, using the control.context.
          * 
@@ -815,7 +817,7 @@ module plat {
          * @param context An optional context with which to parse. If 
          * no context is specified, the control.context will be used.
          */
-        evaluateExpression(expression: expressions.IParsedExpression, context?: any);
+        evaluateExpression(expression: expressions.IParsedExpression, context?: any): any;
 
         /**
          * Creates a new DispatchEvent and propagates it to controls based on the 
@@ -831,7 +833,7 @@ module plat {
          * 
          * @see events.eventDirection
          */
-        dispatchEvent(name: string, direction?: 'up', ...args: any[]);
+        dispatchEvent(name: string, direction?: 'up', ...args: any[]): void;
         /**
          * Creates a new DispatchEvent and propagates it to controls based on the 
          * provided direction mechanism. Controls in the propagation chain that registered
@@ -846,7 +848,7 @@ module plat {
          * 
          * @see events.eventDirection
          */
-        dispatchEvent(name: string, direction?: 'down', ...args: any[]);
+        dispatchEvent(name: string, direction?: 'down', ...args: any[]): void;
         /**
          * Creates a new DispatchEvent and propagates it to controls based on the 
          * provided direction mechanism. Controls in the propagation chain that registered
@@ -861,7 +863,7 @@ module plat {
          * 
          * @see events.eventDirection
          */
-        dispatchEvent(name: string, direction?: 'direct', ...args: any[]);
+        dispatchEvent(name: string, direction?: 'direct', ...args: any[]): void;
         /**
          * Creates a new DispatchEvent and propagates it to controls based on the 
          * provided direction mechanism. Controls in the propagation chain that registered
@@ -877,7 +879,7 @@ module plat {
          * 
          * @see events.eventDirection
          */
-        dispatchEvent(name: string, direction?: string, ...args: any[]);
+        dispatchEvent(name: string, direction?: string, ...args: any[]): void;
 
         /**
          * Registers a listener for a routeChange event. The listener will be called when a routeChange event 

@@ -41,22 +41,23 @@ module plat.async {
          */
         static all<T, U extends Error>(promises: Array<any>): IPromise<T, U> {
             if (!isArray(promises)) {
-                Promise.$Exception.fatal(new TypeError('You must pass an array to all.'), Promise.$Exception.PROMISE);
+                Promise.$ExceptionStatic.fatal(new TypeError('You must pass an array to all.'), Promise.$ExceptionStatic.PROMISE);
             }
 
             return new Promise<T, U>((resolve, reject) => {
-                var results = [], remaining = promises.length,
-                    promise;
+                var results: Array<any> = [],
+                    remaining = promises.length,
+                    promise: IPromise<any, any>;
 
                 if (remaining === 0) {
                     resolve(<any>[]);
                 }
 
-                function resolver(index) {
-                    return (value) => resolveAll(index, value);
+                function resolver(index: number) {
+                    return (value: any) => resolveAll(index, value);
                 }
 
-                function resolveAll(index, value) {
+                function resolveAll(index: number, value: any) {
                     results[index] = value;
                     if (--remaining === 0) {
                         resolve(<any>results);
@@ -99,11 +100,12 @@ module plat.async {
          */
         static race<T, U extends Error>(promises: Array<IPromise<T, U>>): IPromise<T, U> {
             if (!isArray(promises)) {
-                Promise.$Exception.fatal(new TypeError('You must pass an array to race.'), Promise.$Exception.PROMISE);
+                Promise.$ExceptionStatic.fatal(new TypeError('You must pass an array to race.'), Promise.$ExceptionStatic.PROMISE);
             }
 
             return new Promise<T, U>((resolve, reject) => {
-                var results = [], promise;
+                var results: Array<any> = [],
+                    promise: IPromise<T, U>;
 
                 for (var i = 0; i < promises.length; i++) {
                     promise = promises[i];
@@ -111,7 +113,7 @@ module plat.async {
                     if (promise && typeof promise.then === 'function') {
                         promise.then(resolve, reject);
                     } else {
-                        resolve(promise);
+                        resolve(<any>promise);
                     }
                 }
             });
@@ -141,10 +143,10 @@ module plat.async {
             });
         }
 
-        private static $Exception: IExceptionStatic;
+        private static $ExceptionStatic: IExceptionStatic;
 
         private static __invokeResolveFunction<T, U extends Error >(resolveFunction: IResolveFunction <T, U>,
-            promise: IPromise<T, U>) {
+            promise: IPromise<T, U>): void {
             function resolvePromise(value?: any) {
                 Promise.__resolve(promise, value);
             }
@@ -160,9 +162,12 @@ module plat.async {
             }
         }
 
-        private static __invokeCallback(settled: State, promise: any, callback: (response: any) => void, detail) {
+        private static __invokeCallback(settled: State, promise: any, callback: (response: any) => void, detail: any): void {
             var hasCallback = isFunction(callback),
-                value, error, succeeded, failed;
+                value: any,
+                error: Error,
+                succeeded: boolean,
+                failed: boolean;
 
             if (hasCallback) {
                 try {
@@ -190,10 +195,11 @@ module plat.async {
             }
         }
 
-        private static __publish(promise, settled) {
+        private static __publish(promise: Promise<any, any>, settled: State): void {
             var subscribers = promise.__subscribers,
                 detail = promise.__detail,
-                child, callback;
+                child: any,
+                callback: () => void;
 
             for (var i = 0; i < subscribers.length; i += 3) {
                 child = subscribers[i];
@@ -205,31 +211,35 @@ module plat.async {
             promise.__subscribers = null;
         }
 
-        private static __publishFulfillment(promise: any) {
+        private static __publishFulfillment(promise: any): void {
             Promise.__publish(promise, promise.__state = State.FULFILLED);
         }
 
-        private static __publishRejection(promise: any) {
+        private static __publishRejection(promise: any): void {
             Promise.__publish(promise, promise.__state = State.REJECTED);
         }
 
-        private static __reject<U>(promise: any, reason: any) {
-            if (promise.__state !== State.PENDING) { return; }
+        private static __reject<U>(promise: any, reason: any): void {
+            if (promise.__state !== State.PENDING) {
+                return;
+            }
             promise.__state = State.SEALED;
             promise.__detail = reason;
 
             Promise.config.async(Promise.__publishRejection, promise);
         }
 
-        private static __fulfill<T>(promise: any, value: any) {
-            if (promise.__state !== State.PENDING) { return; }
+        private static __fulfill<T>(promise: any, value: any): void {
+            if (promise.__state !== State.PENDING) {
+                return;
+            }
             promise.__state = State.SEALED;
             promise.__detail = value;
 
             Promise.config.async(Promise.__publishFulfillment, promise);
         }
 
-        private static __resolve<T, U extends Error>(promise: IPromise<T, U>, value: any) {
+        private static __resolve<T, U extends Error>(promise: IPromise<T, U>, value: any): void {
             if (promise === value) {
                 Promise.__fulfill(promise, value);
             } else if (!Promise.__handleThenable<T, U>(promise, value)) {
@@ -237,21 +247,21 @@ module plat.async {
             }
         }
 
-        private static __handleThenable<T, U extends Error>(promise: IPromise<any, any>, value: IPromise<any, any>) {
-            var then = null,
-                resolved;
+        private static __handleThenable<T, U extends Error>(promise: IPromise<any, any>, value: IPromise<any, any>): boolean {
+            var then: typeof Promise.prototype.then = null,
+                resolved: boolean;
 
             try {
                 if (promise === value) {
-                    Promise.$Exception.fatal(new TypeError('A promises callback cannot return that same promise.'),
-                        Promise.$Exception.PROMISE);
+                    Promise.$ExceptionStatic.fatal(new TypeError('A promises callback cannot return that same promise.'),
+                        Promise.$ExceptionStatic.PROMISE);
                 }
 
                 if (isObject(value) || isFunction(value)) {
                     then = value.then;
 
                     if (isFunction(then)) {
-                        then.call(value, (val) => {
+                        then.call(value, (val: any) => {
                             if (resolved) {
                                 return true;
                             }
@@ -262,7 +272,7 @@ module plat.async {
                             } else {
                                 Promise.__fulfill<T>(promise, val);
                             }
-                        }, (val) => {
+                        }, (val: any) => {
                             if (resolved) {
                                 return true;
                             }
@@ -285,8 +295,8 @@ module plat.async {
             return false;
         }
 
-        private static __subscribe(parent, child: IPromise<any, any>,
-            onFulfilled: (success: any) => any, onRejected?: (error: any) => any) {
+        private static __subscribe(parent: Promise<any, any>, child: IPromise<any, any>,
+            onFulfilled: (success: any) => any, onRejected?: (error: any) => any): void {
             var subscribers = parent.__subscribers;
             var length = subscribers.length;
 
@@ -302,15 +312,15 @@ module plat.async {
          */
         constructor(resolveFunction: IResolveFunction<T, U>) {
             if (!isFunction(resolveFunction)) {
-                Promise.$Exception.fatal(
+                Promise.$ExceptionStatic.fatal(
                     new TypeError('You must pass a resolver function as the first argument to the promise constructor'),
-                    Promise.$Exception.PROMISE);
+                    Promise.$ExceptionStatic.PROMISE);
             }
 
             if (!(this instanceof Promise)) {
-                Promise.$Exception.fatal(new TypeError('Failed to construct "Promise": ' +
+                Promise.$ExceptionStatic.fatal(new TypeError('Failed to construct "Promise": ' +
                     'Please use the "new" operator, this object constructor cannot be called as a function.'),
-                    Promise.$Exception.PROMISE);
+                    Promise.$ExceptionStatic.PROMISE);
             }
 
             this.__subscribers = [];
@@ -359,7 +369,7 @@ module plat.async {
     /**
      * The Type for referencing the '$PromiseStatic' injectable as a dependency.
      */
-    export function PromiseStatic($window, $Exception) {
+    export function PromiseStatic($window: any, $ExceptionStatic: IExceptionStatic): IPromiseStatic {
         if (!isNull($window.Promise) &&
             isFunction($window.Promise.all) &&
             isFunction($window.Promise.cast) &&
@@ -369,7 +379,7 @@ module plat.async {
             return $window.Promise;
         }
 
-        (<any>Promise).$Exception = $Exception;
+        (<any>Promise).$ExceptionStatic = $ExceptionStatic;
         return Promise;
     }
 
@@ -385,18 +395,17 @@ module plat.async {
         REJECTED = 2
     };
 
-
-    var browserGlobal: any = (typeof window !== 'undefined') ? window : {};
-    var BrowserMutationObserver = browserGlobal.MutationObserver || browserGlobal.WebKitMutationObserver;
+    var browserGlobal: any = (typeof window !== 'undefined') ? window : {},
+        BrowserMutationObserver = browserGlobal.MutationObserver || browserGlobal.WebKitMutationObserver;
 
     // node
-    function useNextTick() {
+    function useNextTick(): () => void {
         return () => {
             process.nextTick(flush);
         };
     }
     
-    function useMutationObserver() {
+    function useMutationObserver(): () => void {
         var observer = new BrowserMutationObserver(flush),
             $document = acquire('$document'),
             $window = acquire('$window'),
@@ -414,7 +423,7 @@ module plat.async {
         };
     }
 
-    function useSetTimeout() {
+    function useSetTimeout(): () => void {
         var global: any = global,
             local = (typeof global !== 'undefined') ? global : this;
 
@@ -423,18 +432,22 @@ module plat.async {
         };
     }
 
-    var queue = [];
-    function flush() {
+    var queue: Array<any> = [];
+    function flush(): void {
+        var tuple = queue[i],
+            callback = tuple[0],
+            arg = tuple[1];
         for (var i = 0; i < queue.length; i++) {
-            var tuple = queue[i];
-            var callback = tuple[0], arg = tuple[1];
+            tuple = queue[i];
+            callback = tuple[0];
+            arg = tuple[1];
             callback(arg);
         }
         queue = [];
     }
 
     var process: any = process,
-        scheduleFlush;
+        scheduleFlush: () => void;
 
     // Decide what async method to use to triggering processing of queued callbacks:
     if (typeof process !== 'undefined' && {}.toString.call(process) === '[object process]') {
@@ -460,7 +473,7 @@ module plat.async {
          * to assist with debugging. If a method in the constructor for a Promise throws an error, 
          * the promise will reject with the error.
          */
-        (resolve: (value?: T) => void, reject: (reason?: U) => void): void
+        (resolve: (value?: T) => void, reject: (reason?: U) => void): void;
     }
 
     /**

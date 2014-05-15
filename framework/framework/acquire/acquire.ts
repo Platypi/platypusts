@@ -45,7 +45,7 @@ module plat {
         }
 
         var length = deps.length,
-            output = [];
+            output: Array<any> = [];
 
         for (var i = 0; i < length; ++i) {
             output = deps[i].inject();

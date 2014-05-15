@@ -22,7 +22,7 @@ module plat.controls {
          * Sets the corresponding attribute {property} value and 
          * observes the attribute for changes.
          */
-        loaded() {
+        loaded(): void {
             if (isNull(this.element)) {
                 return;
             }
@@ -36,7 +36,7 @@ module plat.controls {
          * Resets the corresponding attribute {property} value upon 
          * a change of context.
          */
-        contextChanged() {
+        contextChanged(): void {
             if (isNull(this.element)) {
                 return;
             }
@@ -47,7 +47,7 @@ module plat.controls {
         /**
          * Stops listening to attribute changes.
          */
-        dispose() {
+        dispose(): void {
             if (isFunction(this.__removeListener)) {
                 this.__removeListener();
                 this.__removeListener = null;
@@ -58,8 +58,8 @@ module plat.controls {
          * The function for setting the corresponding 
          * attribute {property} value.
          */
-        setter() {
-            var expression = this.attributes[this.attribute];
+        setter(): void {
+            var expression = (<any>this.attributes)[this.attribute];
 
             if (isEmpty(expression)) {
                 return;
@@ -71,12 +71,12 @@ module plat.controls {
                 case 'null':
                 case '':
                     this.element.setAttribute(this.property, '');
-                    this.element[this.property] = false;
+                    (<any>this.element)[this.property] = false;
                     this.element.removeAttribute(this.property);
                     break;
                 default:
                     this.element.setAttribute(this.property, this.property);
-                    this.element[this.property] = true;
+                    (<any>this.element)[this.property] = true;
             }
         }
     }
@@ -125,7 +125,7 @@ module plat.controls {
          * Obtains the initial visibility of the item 
          * based on it's initial display.
          */
-        initialize() {
+        initialize(): void {
             var element = this.element;
 
             if (!isEmpty(element.style.display)) {
@@ -143,8 +143,8 @@ module plat.controls {
         /**
          * Evaluates boolean expression and sets the display.
          */
-        setter() {
-            var expression: string = this.attributes[this.attribute],
+        setter(): void {
+            var expression: string = (<any>this.attributes)[this.attribute],
                 style = this.element.style;
 
             switch (expression) {
@@ -164,8 +164,8 @@ module plat.controls {
         /**
          * Sets the evaluated styles on the element.
          */
-        setter() {
-            var expression: string = this.attributes[this.attribute];
+        setter(): void {
+            var expression: string = (<any>this.attributes)[this.attribute];
 
             if (isEmpty(expression)) {
                 return;
@@ -174,9 +174,9 @@ module plat.controls {
             var attributes = expression.split(';'),
                 elementStyle = this.element.style,
                 length = attributes.length,
-                splitStyles,
-                styleType,
-                styleValue;
+                splitStyles: Array<string>,
+                styleType: string,
+                styleValue: string;
 
             for (var i = 0; i < length; ++i) {
                 splitStyles = attributes[i].split(':');
@@ -184,8 +184,8 @@ module plat.controls {
                     styleType = camelCase(splitStyles[0].trim());
                     styleValue = splitStyles[1].trim();
 
-                    if (!isUndefined(elementStyle[styleType])) {
-                        elementStyle[styleType] = styleValue;
+                    if (!isUndefined((<any>elementStyle)[styleType])) {
+                        (<any>elementStyle)[styleType] = styleValue;
                     }
                 }
             }

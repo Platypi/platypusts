@@ -65,7 +65,7 @@ module plat.async {
 
             var isCrossDomain = options.isCrossDomain || false,
                 xDomain = false,
-                xhr;
+                xhr: XMLHttpRequest;
 
             // check if forced cross domain call or cors is not supported (IE9)
             if (isCrossDomain) {
@@ -105,13 +105,13 @@ module plat.async {
 
             return new AjaxPromise((resolve, reject) => {
                 var scriptTag = this.$document.createElement('script'),
-                    jsonpCallback = this.jsonpCallback || uniqueId('plat_callback'),
+                    jsonpCallback: string = this.jsonpCallback || uniqueId('plat_callback'),
                     jsonpIdentifier = options.jsonpIdentifier || 'callback';
 
                 scriptTag.src = url + '?' + jsonpIdentifier + '=' + jsonpCallback;
 
-                var oldValue = this.$window[jsonpCallback];
-                this.$window[jsonpCallback] = (response: any) => {
+                var oldValue = (<any>this.$window)[jsonpCallback];
+                (<any>this.$window)[jsonpCallback] = (response: any) => {
                     //clean up
                     if (isFunction(this.clearTimeout)) {
                         this.clearTimeout();
@@ -119,9 +119,9 @@ module plat.async {
 
                     this.$document.head.removeChild(scriptTag);
                     if (!isUndefined(oldValue)) {
-                        this.$window[jsonpCallback] = oldValue;
+                        (<any>this.$window)[jsonpCallback] = oldValue;
                     } else {
-                        delete this.$window[jsonpCallback];
+                        delete (<any>this.$window)[jsonpCallback];
                     }
 
                     //call callback
@@ -143,7 +143,7 @@ module plat.async {
                                 response: 'Request timed out in ' + timeout + 'ms for ' + url,
                                 status: 408 // Request Timeout
                             }));
-                            this.$window[jsonpCallback] = noop;
+                            (<any>this.$window)[jsonpCallback] = noop;
                         }, timeout - 1);
                     });
                 }
@@ -158,7 +158,7 @@ module plat.async {
          * return true in the case of a success and false in the case of 
          * an error.
          */
-        _xhrOnReadyStateChange(xhr: XMLHttpRequest) {
+        _xhrOnReadyStateChange(xhr: XMLHttpRequest): boolean {
             if (xhr.readyState === 4) {
                 var status = xhr.status,
                     response = xhr.response || xhr.responseText;
@@ -234,7 +234,7 @@ module plat.async {
                 var headers = options.headers,
                     keys = Object.keys(isObject(headers) ? headers : {}),
                     length = keys.length,
-                    key;
+                    key: string;
 
                 for (var i = 0; i < length; ++i) {
                     key = keys[i];
@@ -510,7 +510,7 @@ module plat.async {
             this.getAllResponseHeaders = response.getAllResponseHeaders;
             this.xhr = response.xhr;
         }
-        toString() {
+        toString(): string {
             var response = this.response,
                 responseText = response;
 
@@ -547,7 +547,7 @@ module plat.async {
         /**
          * A method to cancel the AJAX call associated with this AjaxPromise.
          */
-        cancel() {
+        cancel(): void {
             var http = this.__http,
                 xhr = http.xhr,
                 jsonpCallback = http.jsonpCallback;
@@ -560,7 +560,7 @@ module plat.async {
                 xhr.onreadystatechange = null;
                 xhr.abort();
             } else if (!isNull(jsonpCallback)) {
-                this.$window[jsonpCallback] = noop;
+                (<any>this.$window)[jsonpCallback] = noop;
             }
 
             (<any>this).__subscribers = [];
@@ -752,7 +752,7 @@ module plat.async {
     /**
      * The Type for referencing the '$http.config' injectable as a dependency.
      */
-    export function HttpConfigStatic() {
+    export function HttpConfigStatic(): IHttpConfigStatic {
         return Http.config;
     }
 

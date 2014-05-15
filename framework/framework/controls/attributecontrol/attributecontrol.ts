@@ -11,7 +11,7 @@ module plat.controls {
          * @static
          * @param control The AttributeControl to dispose.
          */
-        static dispose(control: IAttributeControl) {
+        static dispose(control: IAttributeControl): void {
             control.templateControl = null;
             delete control.templateControl;
 
@@ -38,7 +38,8 @@ module plat.controls {
     /**
      * The Type for referencing the '$AttributeControlStatic' injectable as a dependency.
      */
-    export function AttributeControlStatic($ControlStatic) {
+    export function AttributeControlStatic(
+            $ControlStatic: IControlStatic) {
         return AttributeControl;
     }
 

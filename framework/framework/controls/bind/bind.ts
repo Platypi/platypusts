@@ -53,20 +53,20 @@ module plat.controls {
          * Determines the type of HTMLElement being bound to 
          * and sets the necessary handlers.
          */
-        initialize() {
+        initialize(): void {
             this._determineType();
         }
 
         /**
          * Parses and watches the expression being bound to.
          */
-        loaded() {
+        loaded(): void {
             if (isNull(this.parent) || isNull(this.element)) {
                 return;
             }
 
             var attr = camelCase(this.type),
-                expression = this._expression = this.$parser.parse(this.attributes[attr]);
+                expression = this._expression = this.$parser.parse((<any>this.attributes)[attr]);
 
             var identifiers = this._expression.identifiers;
 
@@ -123,14 +123,14 @@ module plat.controls {
         /**
          * Re-observes the expression with the new context.
          */
-        contextChanged() {
+        contextChanged(): void {
             this._watchExpression();
         }
 
         /**
          * Removes all of the element's event listeners.
          */
-        dispose() {
+        dispose(): void {
             this._eventListener = null;
             this._postponedEventListener = null;
             this._addEventType = null;
@@ -140,9 +140,9 @@ module plat.controls {
          * Adds a text event as the event listener. 
          * Used for textarea and input[type=text].
          */
-        _addTextEventListener() {
+        _addTextEventListener(): void {
             var composing = false,
-                timeout;
+                timeout: IRemoveListener;
 
             this._eventListener = () => {
                 if (composing) {
@@ -189,7 +189,7 @@ module plat.controls {
          * Adds a change event as the event listener. 
          * Used for select, input[type=radio], and input[type=range].
          */
-        _addChangeEventListener() {
+        _addChangeEventListener(): void {
             this._eventListener = this._propertyChanged.bind(this);
             this._addEventListener('change');
         }
@@ -201,7 +201,7 @@ module plat.controls {
          * @param listener The event listener
          * @param postpone Whether or not to postpone the event listener
          */
-        _addEventListener(event: string, listener?: () => void, postpone?: boolean) {
+        _addEventListener(event: string, listener?: () => void, postpone?: boolean): void {
             var listener = listener ||
                 (!!postpone ? this._postponedEventListener : this._eventListener);
 
@@ -211,7 +211,7 @@ module plat.controls {
         /**
          * Getter for input[type=checkbox] and input[type=radio]
          */
-        _getChecked() {
+        _getChecked(): boolean {
             return (<HTMLInputElement>this.element).checked;
         }
 
@@ -219,7 +219,7 @@ module plat.controls {
          * Getter for input[type=text], input[type=range], 
          * textarea, and select.
          */
-        _getValue() {
+        _getValue(): string {
             return (<HTMLInputElement>this.element).value;
         }
 
@@ -229,7 +229,7 @@ module plat.controls {
          * 
          * @param newValue The new value to set
          */
-        _setText(newValue: any) {
+        _setText(newValue: any): void {
             if (isNull(newValue)) {
                 newValue = '';
             }
@@ -242,7 +242,7 @@ module plat.controls {
          * 
          * @param newValue The new value to set
          */
-        _setRange(newValue: any) {
+        _setRange(newValue: any): void {
             if (isEmpty(newValue)) {
                 newValue = 0;
             }
@@ -255,7 +255,7 @@ module plat.controls {
          * 
          * @param newValue The new value to set
          */
-        _setChecked(newValue: any) {
+        _setChecked(newValue: any): void {
             (<HTMLInputElement>this.element).checked = !(newValue === false);
         }
 
@@ -264,7 +264,7 @@ module plat.controls {
          * 
          * @param newValue The new value to set
          */
-        _setSelectedIndex(newValue: any) {
+        _setSelectedIndex(newValue: any): void {
             (<HTMLSelectElement>this.element).value = newValue;
         }
 
@@ -272,7 +272,7 @@ module plat.controls {
          * Determines the type of HTMLElement being bound to 
          * and sets the necessary handlers.
          */
-        _determineType() {
+        _determineType(): void {
             var element = this.element;
 
             if (isNull(element)) {
@@ -329,7 +329,7 @@ module plat.controls {
         /**
          * Observes the expression to bind to.
          */
-        _watchExpression() {
+        _watchExpression(): void {
             var expression = this._expression;
             this.observeExpression(expression, this._setter);
             this._setter(this.parent.evaluateExpression(expression));
@@ -339,7 +339,7 @@ module plat.controls {
          * Sets the context property being bound to when the 
          * element's property is changed.
          */
-        _propertyChanged() {
+        _propertyChanged(): void {
             if (isNull(this._contextExpression)) {
                 return;
             }
@@ -355,7 +355,7 @@ module plat.controls {
 
             context[property] = newValue;
         }
-        private __setValue(newValue: any) {
+        private __setValue(newValue: any): void {
             if ((<HTMLInputElement>this.element).value === newValue) {
                 return;
             }

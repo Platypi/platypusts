@@ -107,13 +107,13 @@ module plat.controls {
          * Checks if the IKeyboardEventInput is an expression object 
          * and sets the necessary listener.
          */
-        _setListener() {
+        _setListener(): void {
             var attr = this.attribute;
             if (isEmpty(this.event) || isEmpty(attr)) {
                 return;
             }
 
-            var expression = this.attributes[attr].trim();
+            var expression = (<any>this.attributes)[attr].trim();
             
             if (expression[0] === '{') {
                 var eventObject: IKeyboardEventInput = this.evaluateExpression(expression) ||
@@ -124,7 +124,7 @@ module plat.controls {
                 this._parseArgs(eventObject.method);
 
                 if (isNull(key) && isNull(keys)) {
-                    this.attributes[attr] = eventObject.method;
+                    (<any>this.attributes)[attr] = eventObject.method;
 
                     this._setKeyCodes();
                     super._setListener();
@@ -148,7 +148,7 @@ module plat.controls {
          * 
          * @param ev The keyboard event object.
          */
-        _onEvent(ev: KeyboardEvent) {
+        _onEvent(ev: KeyboardEvent): void {
             var keyCodes = this.keyCodes;
 
             if (isEmpty(keyCodes) || !isUndefined(keyCodes[ev.keyCode])) {
@@ -163,9 +163,9 @@ module plat.controls {
          * @param keys The array of defined keys to satisfy the 
          * key press condition.
          */
-        _setKeyCodes(keys: Array<string> = []) {
+        _setKeyCodes(keys: Array<string> = []): void {
             var length = keys.length,
-                key,
+                key: string,
                 keyCodes = this.keyCodes;
 
             if (!isArray(keyCodes)) {
@@ -175,7 +175,7 @@ module plat.controls {
             for (var i = 0; i < length; ++i) {
                 key = keys[i];
 
-                keyCodes[isNumber(key) ? key : KeyCodes[key]] = {};
+                keyCodes[isNumber(key) ? key : (<any>KeyCodes)[key]] = {};
             }
         }
     }
@@ -235,7 +235,7 @@ module plat.controls {
          * 
          * @param ev The keyboard event object.
          */
-        _onEvent(ev: KeyboardEvent) {
+        _onEvent(ev: KeyboardEvent): void {
             var keyCode = ev.keyCode;
 
             if ((keyCode >= 48 && keyCode <= 90) ||

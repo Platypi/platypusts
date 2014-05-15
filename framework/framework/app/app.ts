@@ -25,7 +25,7 @@ module plat {
         /**
          * A static method for initiating the app startup.
          */
-        static start() {
+        static start(): void {
             var $compat = App.$compat;
 
             if (!$compat.isCompatible) {
@@ -48,7 +48,7 @@ module plat {
          * A static methods called upon app registration. Primarily used 
          * to initiate a ready state in the case that amd is being used.
          */
-        static registerApp(app: any) {
+        static registerApp(app: any): void {
             if (!isNull(App.app) && isString(App.app.uid)) {
                 App.$EventManagerStatic.dispose(App.app.uid);
             }
@@ -72,7 +72,7 @@ module plat {
          * 
          * @param node The node at which DOM compilation begins.
          */
-        static load(node?: Node) {
+        static load(node?: Node): void {
             var $LifecycleEventStatic = App.$LifecycleEventStatic,
                 compiler = App.$compiler,
                 body = App.$document.body;
@@ -107,7 +107,7 @@ module plat {
          * loading the DOM falls back to the app developer. If it doesn't, the DOM is loaded from 
          * document.body.
          */
-        private static __ready(ev: events.ILifecycleEvent) {
+        private static __ready(ev: events.ILifecycleEvent): void {
             dependency.Injector.initialize();
 
             if (!isNull(App.app)) {
@@ -121,7 +121,7 @@ module plat {
             }
         }
 
-        private static __shutdown() {
+        private static __shutdown(): void {
             var app = (<any>navigator).app;
 
             if (!isNull(app) && isFunction(app.exitApp)) {
@@ -129,7 +129,7 @@ module plat {
             }
         }
 
-        private static __registerAppEvents(ev: events.ILifecycleEvent) {
+        private static __registerAppEvents(ev: events.ILifecycleEvent): void {
             var app = App.app;
 
             if (isFunction((<dependency.IInjector<any>>(<any>app)).inject)) {
@@ -166,42 +166,42 @@ module plat {
          * 
          * @param ev The ILifecycleEvent object.
          */
-        suspend(ev: events.ILifecycleEvent) { }
+        suspend(ev: events.ILifecycleEvent): void { }
 
         /**
          * Event fired when the app resumes from the suspended state.
          * 
          * @param ev The ILifecycleEvent object.
          */
-        resume(ev: events.ILifecycleEvent) { }
+        resume(ev: events.ILifecycleEvent): void { }
 
         /**
          * Event fired when an internal error occures.
          * 
          * @param ev The IErrorEvent object.
          */
-        error(ev: events.IErrorEvent<Error>) { }
+        error(ev: events.IErrorEvent<Error>): void { }
 
         /**
          * Event fired when the app is ready.
          * 
          * @param ev The ILifecycleEvent object.
          */
-        ready(ev: events.ILifecycleEvent) { }
+        ready(ev: events.ILifecycleEvent): void { }
 
         /**
          * Event fired when the app regains connectivity and is now in an online state.
          * 
          * @param ev The ILifecycleEvent object.
          */
-        online(ev: events.ILifecycleEvent) { }
+        online(ev: events.ILifecycleEvent): void { }
 
         /**
          * Event fired when the app loses connectivity and is now in an offline state.
          * 
          * @param ev The ILifecycleEvent object.
          */
-        offline(ev: events.ILifecycleEvent) { }
+        offline(ev: events.ILifecycleEvent): void { }
 
         /**
          * Creates a new DispatchEvent and propagates it to all listeners based on the 
@@ -212,7 +212,7 @@ module plat {
          * app.on() method.
          * @param ...args Any number of arguments to send to all the listeners.
          */
-        dispatchEvent(name: string, ...args: any[]) {
+        dispatchEvent(name: string, ...args: any[]): void {
             App.$EventManagerStatic.dispatch(name, this, App.$EventManagerStatic.direction.DIRECT, args);
         }
 
@@ -280,7 +280,7 @@ module plat {
          * 
          * @param node The node where at which DOM compilation begins.
          */
-        load(node?: Node) {
+        load(node?: Node): void {
             App.load(node);
         }
     }
@@ -414,7 +414,7 @@ module plat {
          * app.on() method.
          * @param ...args Any number of arguments to send to all the listeners.
          */
-        dispatchEvent(name: string, ...args: any[]);
+        dispatchEvent(name: string, ...args: any[]): void;
 
         /**
          * Registers a listener for a beforeNavigate event. The listener will be called when a beforeNavigate 
@@ -484,7 +484,7 @@ module plat {
          * 
          * @param node The node where at which DOM compilation begins.
          */
-        load(node?: Node);
+        load(node?: Node): void;
     }
 
     /**

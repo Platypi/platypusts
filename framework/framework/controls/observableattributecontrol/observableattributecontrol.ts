@@ -33,7 +33,7 @@
          * Sets the initial value of the property on 
          * the Template Control.
          */
-        initialize() {
+        initialize(): void {
             this.attribute = camelCase(this.type);
             this._boundAddListener = this._addListener.bind(this);
             this._setProperty(this._getValue());
@@ -42,7 +42,7 @@
         /**
          * Observes the property and resets the value.
          */
-        loaded() {
+        loaded(): void {
             this._observeProperty();
             this._setProperty(this._getValue());
         }
@@ -52,7 +52,7 @@
          * expression and removes references to the listeners 
          * defined by the Template Control.
          */
-        dispose() {
+        dispose(): void {
             if (isFunction(this._removeListener)) {
                 this._removeListener();
             }
@@ -66,7 +66,7 @@
          * @param value The new value of the evaluated expression.
          * @param oldValue The old value of the evaluated expression.
          */
-        _setProperty(value: any, oldValue?: any) {
+        _setProperty(value: any, oldValue?: any): void {
             var templateControl = this.templateControl;
 
             if (isNull(templateControl)) {
@@ -89,7 +89,7 @@
          * @param value The new value of the evaluated expression.
          * @param oldValue The old value of the evaluated expression.
          */
-        _callListeners(newValue: any, oldValue: any) {
+        _callListeners(newValue: any, oldValue: any): void {
             var listeners = this._listeners,
                 length = listeners.length,
                 templateControl = this.templateControl;
@@ -118,8 +118,8 @@
         /**
          * Evaluates the attribute's value.
          */
-        _getValue() {
-            var expression = this.attributes[this.attribute],
+        _getValue(): any {
+            var expression = (<any>this.attributes)[this.attribute],
                 templateControl = this.templateControl;
 
             if (isNull(templateControl)) {
@@ -132,8 +132,8 @@
         /**
          * Observes the attribute's value.
          */
-        _observeProperty() {
-            var expression = this.attributes[this.attribute],
+        _observeProperty(): void {
+            var expression = (<any>this.attributes)[this.attribute],
                 templateControl = this.templateControl,
                 parent = this.parent;
 

@@ -16,9 +16,9 @@ module plat.controls {
          * Finds the root control and defines the property specified by the 
          * attribute value as the INamedElement.
          */
-        initialize() {
+        initialize(): void {
             var attr = camelCase(this.type),
-                name = this.attributes[attr];
+                name = (<any>this.attributes)[attr];
 
             if (isEmpty(name)) {
                 return;
@@ -35,7 +35,7 @@ module plat.controls {
             }
 
             if (!isNull(rootControl)) {
-                if (!isNull(rootControl[name])) {
+                if (!isNull((<any>rootControl)[name])) {
                     this.$ExceptionStatic.warn('Multiple instances of plat-name = ' +
                         name + ' found, or root control already has property defined.', this.$ExceptionStatic.NAME);
                     return;
@@ -51,13 +51,13 @@ module plat.controls {
         /**
          * Removes the INamedElement from the root control.
          */
-        dispose() {
+        dispose(): void {
             var rootControl = this._rootControl,
                 name = this._label;
 
             if (!isNull(rootControl)) {
                 this.$ContextManagerStatic.defineProperty(rootControl, name, null, true, true);
-                delete rootControl[name];
+                delete (<any>rootControl)[name];
             }
         }
     }
