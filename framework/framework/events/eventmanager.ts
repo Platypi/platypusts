@@ -47,7 +47,7 @@ module plat.events {
          * 
          * @static
          */
-        static initialize() {
+        static initialize(): void {
             if (EventManager.__initialized) {
                 return;
             }
@@ -127,7 +127,7 @@ module plat.events {
          * @static
          * @param uid The uid for which the event listeners will be removed.
          */
-        static dispose(uid: string) {
+        static dispose(uid: string): void {
             EventManager.__eventsListeners[uid] = null;
             delete EventManager.__eventsListeners[uid];
         }
@@ -220,7 +220,7 @@ module plat.events {
          * @see EventManager.direction
          */
         static dispatch(name: string, sender: any, direction: 'direct', args?: Array<any>): void;
-        static dispatch(name: string, sender: any, direction: string, args?: Array<any>): void {
+        static dispatch(name: string, sender: any, direction: string, args?: Array<any>) {
             var event: IDispatchEvent = acquire('$dispatchEvent');
             event.initialize(name, sender, direction);
             EventManager.sendEvent(event, args);
@@ -231,7 +231,7 @@ module plat.events {
          * 
          * @param direction The direction of the event
          */
-        static hasDirection(direction: string) {
+        static hasDirection(direction: string): boolean {
             var dir = EventManager.direction;
 
             return (direction === dir.UP ||
@@ -245,7 +245,7 @@ module plat.events {
          * @param event The IDispatchEvent to send
          * @param args The arguments associated with the event
          */
-        static sendEvent(event: IDispatchEvent, args?: Array<any>) {
+        static sendEvent(event: IDispatchEvent, args?: Array<any>): void {
             var name = event.name,
                 direction = event.direction;
 
@@ -276,7 +276,7 @@ module plat.events {
          * @param event The event being dispatched.
          * @param args The arguments associated with the event.
          */
-        static _dispatchUp(event: IDispatchEvent, args: Array<any>) {
+        static _dispatchUp(event: IDispatchEvent, args: Array<any>): void {
             var name = event.name,
                 parent = event.sender;
 
@@ -295,7 +295,7 @@ module plat.events {
          * @param event The event being dispatched.
          * @param args The arguments associated with the event.
          */
-        static _dispatchDown(event: IDispatchEvent, args: Array<any>) {
+        static _dispatchDown(event: IDispatchEvent, args: Array<any>): void {
             var controls: Array<IControl> = [],
                 control: IControl,
                 name = event.name;
@@ -325,7 +325,7 @@ module plat.events {
          * @param event The event being dispatched.
          * @param args The arguments associated with the event.
          */
-        static _dispatchDirect(event: IDispatchEvent, args: Array<any>) {
+        static _dispatchDirect(event: IDispatchEvent, args: Array<any>): void {
             var uids = Object.keys(EventManager.__eventsListeners),
                 length = uids.length,
                 name = event.name,
@@ -346,7 +346,7 @@ module plat.events {
             }
         }
 
-        private static __executeEvent(uid: string, ev: IDispatchEvent, args: Array<any>) {
+        private static __executeEvent(uid: string, ev: IDispatchEvent, args: Array<any>): void {
             var eventsListener = EventManager.__eventsListeners[uid];
 
             if (isNull(eventsListener)) {
@@ -363,7 +363,7 @@ module plat.events {
         }
 
         private static __callListeners(context: any, ev: IDispatchEvent,
-            listeners: Array<(ev: IDispatchEvent, ...args: any[]) => void>, args: Array<any>) {
+            listeners: Array<(ev: IDispatchEvent, ...args: any[]) => void>, args: Array<any>): void {
             var name = ev.name,
                 length = listeners.length,
                 index = -1;

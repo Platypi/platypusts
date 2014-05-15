@@ -44,7 +44,7 @@ module plat.observable {
          * @param persist Whether or not the control's context needs to 
          * be persisted post-disposal or can be set to null.
          */
-        static dispose(control: IControl, persist?: boolean);
+        static dispose(control: IControl, persist?: boolean): void;
         static dispose(control: ui.ITemplateControl, persist?: boolean) {
             if (isNull(control)) {
                 return;
@@ -63,7 +63,11 @@ module plat.observable {
             }
 
             var keys = Object.keys(identifiers),
-                identifier, listeners: Array<IRemoveListener>, i, j, jLength;
+                identifier: string,
+                listeners: Array<IRemoveListener>,
+                i: number,
+                j: number,
+                jLength: number;
 
             while (keys.length > 0) {
                 identifier = keys.shift();
@@ -99,7 +103,7 @@ module plat.observable {
          * @param absoluteIdentifier The identifier used to locate the array.
          * @param uid The uid used to search for listeners.
          */
-        static removeArrayListeners(absoluteIdentifier: string, uid: string) {
+        static removeArrayListeners(absoluteIdentifier: string, uid: string): void {
             var listeners = ContextManager.observedArrayListeners[absoluteIdentifier];
 
             if (!isNull(listeners)) {
@@ -117,7 +121,7 @@ module plat.observable {
          * @param split The string array containing properties used to index into
          * the rootContext.
          */
-        static getContext(rootContext: any, split: Array<string>) {
+        static getContext(rootContext: any, split: Array<string>): any {
             split = split.slice(0);
             if (isNull(rootContext)) {
                 return null;
@@ -142,7 +146,7 @@ module plat.observable {
          * over in a loop)
          * @param configurable Whether or not the property is able to be reconfigured.
          */
-        static defineProperty(obj: any, key: string, value: any, enumerable?: boolean, configurable?: boolean) {
+        static defineProperty(obj: any, key: string, value: any, enumerable?: boolean, configurable?: boolean): void {
             Object.defineProperty(obj, key, {
                 value: value,
                 enumerable: !!enumerable,
@@ -161,7 +165,7 @@ module plat.observable {
          * over in a loop)
          * @param configurable Whether or not the property is able to be reconfigured.
          */
-        static defineGetter(obj: any, key: string, value: any, enumerable?: boolean, configurable?: boolean) {
+        static defineGetter(obj: any, key: string, value: any, enumerable?: boolean, configurable?: boolean): void {
             Object.defineProperty(obj, key, {
                 get: () => value,
                 enumerable: !!enumerable,
@@ -180,7 +184,7 @@ module plat.observable {
         static pushRemoveListener(identifier: string, uid: string, listener: IRemoveListener) {
             var controls = ContextManager.__controls,
                 control = controls[uid],
-                listeners;
+                listeners: Array<IRemoveListener>;
 
             if (isNull(control)) {
                 control = controls[uid] = {};
@@ -202,10 +206,11 @@ module plat.observable {
          * @param uids The set of uids for which to remove the specified identifier.
          * @param identifier The identifier to stop observing.
          */
-        static removeIdentifier(uids: Array<string>, identifier: string) {
+        static removeIdentifier(uids: Array<string>, identifier: string): void {
             var length = uids.length,
                 controls = ContextManager.__controls,
-                uid, identifiers;
+                uid: string,
+                identifiers: IObject<Array<IRemoveListener>>;
 
             for (var i = 0; i < length; ++i) {
                 uid = uids[i];
@@ -233,7 +238,7 @@ module plat.observable {
         $ExceptionStatic: IExceptionStatic = acquire('$ExceptionStatic');
         private __identifiers: IObject<Array<IListener>> = {};
         private __identifierHash: IObject<Array<string>> = {};
-        private __contextObjects = {};
+        private __contextObjects: IObject<any> = {};
         private __isArrayFunction: boolean = false;
         private __observedIdentifier: string;
 
@@ -244,7 +249,7 @@ module plat.observable {
          * @param split The string array containing properties used to index into
          * the context.
          */
-        getContext(split: Array<string>) {
+        getContext(split: Array<string>): void {
             var join = split.join('.'),
                 context = this.__contextObjects[join];
 
@@ -270,12 +275,11 @@ module plat.observable {
 
             var split = absoluteIdentifier.split('.'),
                 key = split.pop(),
-                path,
-                parsedExpression,
+                path: string,
                 context = this.context,
                 hasIdentifier = this._hasIdentifier(absoluteIdentifier),
                 hasObservableListener = !isNull(observableListener),
-                join;
+                join: string;
 
             if (split.length > 0) {
                 join = split.join('.');
@@ -354,9 +358,10 @@ module plat.observable {
          * @param oldArray The old array to stop observing.
          */
         observeArray(uid: string, listener: (ev: IArrayMethodInfo<any>) => void,
-            absoluteIdentifier: string, array: Array<any>, oldArray: Array<any>) {
+            absoluteIdentifier: string, array: Array<any>, oldArray: Array<any>): void {
             var length = arrayMethods.length,
-                method, i = 0,
+                method: string,
+                i = 0,
                 ContextManager = this.$ContextManagerStatic,
                 Compat = this.$compat,
                 proto = Compat.proto,
@@ -372,7 +377,7 @@ module plat.observable {
 
                     for (; i < length; ++i) {
                         method = arrayMethods[i];
-                        oldArray[method] = Array.prototype[method];
+                        (<any>oldArray)[method] = (<any>Array.prototype)[method];
                     }
                 }
             }
@@ -416,7 +421,7 @@ module plat.observable {
         /**
          * Disposes the memory retained by this ContextManager.
          */
-        dispose() {
+        dispose(): void {
             this.context = null;
             this.__identifiers = {};
             this.__identifierHash = {};
@@ -429,7 +434,7 @@ module plat.observable {
          * 
          * @param identifier The identifier being observed.
          */
-        _getImmediateContext(identifier: string) {
+        _getImmediateContext(identifier: string): any {
             if (isNull(this.__identifiers[identifier])) {
                 this.observe(identifier, null);
             }
@@ -460,9 +465,9 @@ module plat.observable {
          * @param newRootContext The new context.
          * @param oldRootContext The old context.
          */
-        _getValues(split: Array<string>, newRootContext: any, oldRootContext: any) {
+        _getValues(split: Array<string>, newRootContext: any, oldRootContext: any): { newValue: any; oldValue: any; } {
             var length = split.length,
-                property,
+                property: string,
                 doNew = true,
                 doOld = true;
 
@@ -488,7 +493,8 @@ module plat.observable {
 
             property = split[0];
 
-            var newValue, oldValue;
+            var newValue: any,
+                oldValue: any;
 
             if (!isNull(newRootContext)) {
                 newValue = newRootContext[property];
@@ -512,7 +518,7 @@ module plat.observable {
          * @param newValue The new value of the property.
          * @param oldValue The old value of the property.
          */
-        _notifyChildProperties(identifier: string, newValue: any, oldValue: any) {
+        _notifyChildProperties(identifier: string, newValue: any, oldValue: any): void {
             var mappings = this.__identifierHash[identifier];
 
             if (isNull(mappings)) {
@@ -520,15 +526,18 @@ module plat.observable {
             }
 
             var length = mappings.length,
-                binding,
-                property,
-                parentProperty,
-                split,
-                values = {},
-                value,
-                key,
+                binding: string,
+                property: string,
+                parentProperty: string,
+                split: Array<string>,
+                values: IObject<any> = {},
+                value: any,
+                key: string,
                 start = identifier.length + 1,
-                newParent, oldParent, newChild, oldChild;
+                newParent: any,
+                oldParent: any,
+                newChild: any,
+                oldChild: any;
 
             if (length === 0) {
                 this.__identifierHash[identifier] = null;
@@ -612,7 +621,7 @@ module plat.observable {
          * @param key The property key for the value on the immediateContext that's 
          * being observed.
          */
-        _define(identifier: string, immediateContext: any, key: string) {
+        _define(identifier: string, immediateContext: any, key: string): void {
             var value = immediateContext[key];
 
             if (isObject(value) || isArray(value)) {
@@ -628,29 +637,29 @@ module plat.observable {
          * @param absoluteIdentifier The full identifier path for the observed array.
          * @param method The array method being called.
          */
-        _overwriteArrayFunction(absoluteIdentifier: string, method: string) {
+        _overwriteArrayFunction(absoluteIdentifier: string, method: string): (...args: any[]) => any {
             var callbacks = this.$ContextManagerStatic.observedArrayListeners[absoluteIdentifier],
-                that = this;
+                _this = this;
 
             // We can't use a fat-arrow function here because we need the array context.
             return function observedArrayFn(...args: any[]) {
                 var oldArray = this.slice(0),
-                    returnValue;
+                    returnValue: any;
 
                 if (method.indexOf('shift') !== -1) {
-                    that.__isArrayFunction = true;
-                    returnValue = Array.prototype[method].apply(this, args);
-                    that.__isArrayFunction = false;
-                    that._notifyChildProperties(absoluteIdentifier, this, oldArray);
+                    _this.__isArrayFunction = true;
+                    returnValue = (<any>Array.prototype)[method].apply(this, args);
+                    _this.__isArrayFunction = false;
+                    _this._notifyChildProperties(absoluteIdentifier, this, oldArray);
                 } else {
-                    returnValue = Array.prototype[method].apply(this, args);
+                    returnValue = (<any>Array.prototype)[method].apply(this, args);
                 }
 
                 var keys = Object.keys(callbacks),
                     length = keys.length;
 
                 if (oldArray.length !== this.length) {
-                    that._execute(absoluteIdentifier + '.length', this.length, oldArray.length);
+                    _this._execute(absoluteIdentifier + '.length', this.length, oldArray.length);
                 }
 
                 for (var i = 0; i < length; ++i) {
@@ -673,7 +682,7 @@ module plat.observable {
          * @param identifier The identifier attached to the callbacks.
          * @param uid The uid to remove the callback from.
          */
-        _removeCallback(identifier: string, uid: string) {
+        _removeCallback(identifier: string, uid: string): void {
             var callbacks = this.__identifiers[identifier];
             if (isNull(callbacks)) {
                 return;
@@ -704,7 +713,7 @@ module plat.observable {
          * 
          * @param identifier The identifier being observed.
          */
-        _hasIdentifier(identifier: string) {
+        _hasIdentifier(identifier: string): boolean {
             return !isEmpty(this.__identifiers[identifier]);
         }
 
@@ -718,7 +727,7 @@ module plat.observable {
          * @param oldValue The old value on this context specified by 
          * the identifier.
          */
-        _execute(identifier: string, value: any, oldValue: any) {
+        _execute(identifier: string, value: any, oldValue: any): void {
             var observableListeners = this.__identifiers[identifier];
 
             this.__contextObjects[identifier] = value;
@@ -736,7 +745,7 @@ module plat.observable {
             }
         }
 
-        private __defineObject(identifier: string, immediateContext: any, key: string) {
+        private __defineObject(identifier: string, immediateContext: any, key: string): void {
             var value = immediateContext[key];
 
             Object.defineProperty(immediateContext, key, {
@@ -765,7 +774,7 @@ module plat.observable {
                 }
             });
         }
-        private __definePrimitive(identifier: string, immediateContext: any, key: string) {
+        private __definePrimitive(identifier: string, immediateContext: any, key: string): void {
             var value = immediateContext[key],
                 isDefined = !isNull(value);
 
@@ -809,7 +818,7 @@ module plat.observable {
                 }
             });
         }
-        private __add(identifier: string, observableListener: IListener) {
+        private __add(identifier: string, observableListener: IListener): void {
             var callbacks = this.__identifiers[identifier];
 
             if (isNull(callbacks)) {
@@ -825,7 +834,7 @@ module plat.observable {
         private __addHashValues(identifier: string) {
             var split = identifier.split('.'),
                 ident = '',
-                hashValue;
+                hashValue: Array<string>;
 
             ident = split.shift();
             hashValue = this.__identifierHash[ident];
@@ -856,7 +865,7 @@ module plat.observable {
     /**
      * The Type for referencing the '$ContextManagerStatic' injectable as a dependency.
      */
-    export function ContextManagerStatic() {
+    export function ContextManagerStatic(): IContextManagerStatic {
         return ContextManager;
     }
 
@@ -908,7 +917,7 @@ module plat.observable {
         /**
          * Disposes the memory for an IContextManager.
          */
-        dispose();
+        dispose(): void;
     }
 
     /**
@@ -992,8 +1001,7 @@ module plat.observable {
          * @param persist Whether or not the control's context needs to 
          * be persisted post-disposal or can be set to null.
          */
-        dispose(control: IControl, persist?: boolean);
-        dispose(control: ui.ITemplateControl, persist?: boolean): void;
+        dispose(control: IControl, persist?: boolean): void;
 
         /**
          * Removes all listeners for an Array associated with a given uid.
@@ -1013,7 +1021,7 @@ module plat.observable {
          * @param split The string array containing properties used to index into
          * the rootContext.
          */
-        getContext(rootContext: any, split: Array<string>);
+        getContext(rootContext: any, split: Array<string>): void;
 
         /**
          * Defines an object property with the associated value. Useful for unobserving objects.
@@ -1049,7 +1057,7 @@ module plat.observable {
          * @param uid The uid of the control observing the identifier.
          * @param listener The function for removing the observed property.
          */
-        pushRemoveListener(identifier: string, uid: string, listener: IRemoveListener);
+        pushRemoveListener(identifier: string, uid: string, listener: IRemoveListener): void;
 
         /**
          * Removes a specified identifier from being observed for a given set of control uids.
@@ -1058,7 +1066,7 @@ module plat.observable {
          * @param uids The set of uids for which to remove the specified identifier.
          * @param identifier The identifier to stop observing.
          */
-        removeIdentifier(uids: Array<string>, identifier: string);
+        removeIdentifier(uids: Array<string>, identifier: string): void;
     }
 }
 

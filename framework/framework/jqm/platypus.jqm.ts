@@ -1,33 +1,33 @@
 ﻿module plat.jqm {
     declare var $: any;
 
-    export class JqmListView extends ui.controls.ForEach {
+    export class JqmListView extends plat.ui.controls.ForEach {
         loaded() {
-            $(this.endNode.parentNode).listview();
+            $(this.element).listview();
             super.loaded();
         }
         _addItem(item: DocumentFragment) {
             super._addItem(item);
-            $(this.endNode.parentNode).listview('refresh');
+            $(this.element).listview('refresh');
         }
     }
 
-    register.control('jqm-listview', JqmListView);
+    plat.register.control('jqm-listview', JqmListView);
 
-    function disableJqmHashChange() {
+    function disableJqmHashChange(): void {
         $.mobile.pushStateEnabled = false;
         $.mobile.hashListeningEnabled = false;
         $.mobile.linkBindingEnabled = false;
     }
 
-    function setLoaderOptions() {
+    function setLoaderOptions(): void {
         $.mobile.loader.prototype.options.text = 'loading';
         $.mobile.loader.prototype.options.textVisible = true;
         $.mobile.loader.prototype.options.theme = 'a';
         $.mobile.loader.prototype.options.html = '';
     }
 
-    function removeBase() {
+    function removeBase(): void {
         // JQM adds a base tag for ajax navigation, we do not want this.
         var base = document.head.querySelector('base');
         if (base) {
@@ -41,32 +41,32 @@
         removeBase();
     });
 
-    function overwriteFunctions(fns) {
-        if (arguments.length > 1) {
-            overwriteFunctions.apply(this, Array.prototype.slice.call(arguments, 1));
+    function overwriteFunctions(...fns: Array<plat.IObject<any>>): void {
+        if (fns.length > 1) {
+            overwriteFunctions.apply(this, fns.slice(1));
         }
-        for (var key in fns) {
-            if (!fns.hasOwnProperty(key)) {
-                continue;
-            }
-            ((base, key) => {
+
+        var fnObj = fns[0],
+            keys = Object.keys(fnObj);
+
+        keys.forEach((key, index) => {
+            ((base: plat.IObject<any>, key: string) => {
                 var fn = base[key];
                 base[key] = function () {
                     return (<any>window).MSApp.execUnsafeLocalFunction(
                         fn.bind.apply(fn, [this].concat(Array.prototype.slice.call(arguments))));
                 };
-            }).call(this, fns[key], key);
-        }
+            }).call(this, fnObj[key], key);
+        });
     }
-    var compat: ICompat = acquire('$compat');
+    var compat: plat.ICompat = plat.acquire('$compat');
     if (compat.msApp) {
         overwriteFunctions({
             appendChild: Node.prototype,
             insertBefore: Node.prototype,
             append: $.prototype,
             html: $.prototype
-        });
-        overwriteFunctions({
+        }, {
             append: $.fn,
             html: $.fn
         });

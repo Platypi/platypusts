@@ -6,14 +6,14 @@
         /**
          * The regular expression for matching or removing all newline characters.
          */
-        get newLineRegex() {
+        get newLineRegex(): RegExp {
             return /\n|\r/g;
         }
 
         /**
          * The regular expression for finding markup in a string.
          */
-        get markupRegex() {
+        get markupRegex(): RegExp {
             return /{{[\S\s]*}}/;
         }
 
@@ -24,7 +24,7 @@
          *   // outputs ["('foo', 'bar', 'baz')", "'foo', 'bar', 'baz'"]
          *   exec("myFunction('foo', 'bar', 'baz')");
          */
-        get argumentRegex() {
+        get argumentRegex(): RegExp {
             return /\((.*)\)/;
         }
 
@@ -40,7 +40,7 @@
          *   // outputs null
          *   exec('@context');
          */
-        get aliasRegex() {
+        get aliasRegex(): RegExp {
             return /[^@\.\[\(]+(?=[\.\[\(])/;
         }
 
@@ -55,7 +55,7 @@
          *  // outputs ['(/foo)', '/foo']
          *  exec('(/foo))');
          */
-        get optionalRouteRegex() {
+        get optionalRouteRegex(): RegExp {
             return /\((.*?)\)/g;
         }
 
@@ -69,7 +69,7 @@
          *   // outputs [':foo']
          *   exec('(/:foo)/bar');
          */
-        get namedParameterRouteRegex() {
+        get namedParameterRouteRegex(): RegExp {
             return /(\(\?)?:\w+/g;
         }
 
@@ -80,7 +80,7 @@
          *   // outputs ['*bar']
          *   exec('/foo/*bar/baz')
          */
-        get wildcardRouteRegex() {
+        get wildcardRouteRegex(): RegExp {
             return /\*\w*/g;
         }
 
@@ -91,7 +91,7 @@
          *  // outputs ['?']
          *  exec('/foo/bar?query=baz');
          */
-        get escapeRouteRegex() {
+        get escapeRouteRegex(): RegExp {
             return /[\-{}\[\]+?.,\\\^$|#\s]/g;
         }
 
@@ -103,14 +103,14 @@
          *   // outputs ['/index.html']
          *   exec('http://localhost:8080/index.html');
          */
-        get initialUrlRegex() {
+        get initialUrlRegex(): RegExp {
             return /\/[^\/]*\.(?:html|htm)/;
         }
 
         /**
          * Finds a protocol delimeter in a string (i.e. ://)
          */
-        get protocolRegex() {
+        get protocolRegex(): RegExp {
             return /:\/\//;
         }
 
@@ -135,7 +135,7 @@
          *   // outputs [' W', ' ', 'W']
          *   exec('Hello World')
          */
-        get camelCaseRegex() {
+        get camelCaseRegex(): RegExp {
             return /([\-_\.\s])(\w+?)/g;
         }
 
@@ -144,21 +144,21 @@
          * not in string literals. Needs to be combined 
          * with string replace function using $1 argument.
          */
-        get whiteSpaceRegex() {
+        get whiteSpaceRegex(): RegExp {
             return /("[^"]*?"|'[^']*?')|[\s\r\n\t\v]/g;
         }
 
         /**
          * Finds all single and double quotes.
          */
-        get quotationRegex() {
+        get quotationRegex(): RegExp {
             return /'|"/g;
         }
 
         /**
          * Looks for any invalid variable syntax.
          */
-        get invalidVariableRegex() {
+        get invalidVariableRegex(): RegExp {
             return /[^a-zA-Z0-9@_$]/;
         }
     }

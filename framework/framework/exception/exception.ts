@@ -10,7 +10,7 @@ module plat {
          * @param message The message to be sent to the listeners.
          * @param type Denotes the type of fatal exception.
          */
-        static warn(message: string, type?: number) {
+        static warn(message: string, type?: number): void {
             raise(message, type, false);
         }
 
@@ -21,7 +21,7 @@ module plat {
          * @param error The Error to be sent to all the listeners.
          * @param type Denotes the type of fatal exception. 
          */
-        static fatal(error: Error, type?: number);
+        static fatal(error: Error, type?: number): void;
         /**
          * Method for sending a fatal message to all listeners. Will
          * throw an error.
@@ -29,7 +29,7 @@ module plat {
          * @param message The message to be sent to all the listeners.
          * @param type Denotes the type of fatal exception.
          */
-        static fatal(message: string, type?: number);
+        static fatal(message: string, type?: number): void;
         static fatal(message: any, type?: number) {
             raise(message, type, true);
         }
@@ -168,28 +168,28 @@ module plat {
     /**
      * The Type for referencing the '$ExceptionStatic' injectable as a dependency.
      */
-    export function ExceptionStatic() {
+    export function ExceptionStatic(): IExceptionStatic {
         return Exception;
     }
 
     register.injectable('$ExceptionStatic', ExceptionStatic, null, register.injectableType.STATIC);
 
-    function PlatException(message, name) {
+    function PlatException(message: string, name: string): void {
         this.message = message;
         this.name = name;
     }
 
-    function PlatError(message?: string) {
+    function PlatError(message?: string): void {
         this.message = message || '';
         this.name = 'PlatError';
     }
 
-    function setPrototypes(platError?: any) {
+    function setPrototypes(platError?: any): void {
         PlatError.prototype = platError || Error.prototype;
-        PlatException.prototype = new PlatError();
+        PlatException.prototype = new (<any>PlatError());
     }
 
-    function raise(message: any, type: number, isFatal?: boolean) {
+    function raise(message: any, type: number, isFatal?: boolean): void {
         var error: Error;
 
         if (message instanceof Error) {
@@ -197,7 +197,7 @@ module plat {
         } else if (PlatError.prototype !== Error.prototype) {
             setPrototypes();
         }
-        error = new PlatException(message, '');
+        error = new (<any>PlatException(message, ''));
         switch (type) {
             case Exception.PARSE:
                 error.name = 'ParsingError';
@@ -230,7 +230,7 @@ module plat {
                 error.name = 'CompatibilityError';
                 break;
             default:
-                error = new PlatError(message);
+                error = new (<any>PlatError(message));
                 break;
         }
 
@@ -243,7 +243,7 @@ module plat {
             error = Object.create(error);
 
             for (var i = 0; i < length; ++i) {
-                error[properties[i]] = message[properties[i]];
+                (<any>error)[properties[i]] = message[properties[i]];
             }
         }
         var ErrorEvent: events.IErrorEventStatic = acquire('$ErrorEventStatic');

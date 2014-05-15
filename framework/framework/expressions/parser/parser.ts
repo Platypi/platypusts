@@ -62,7 +62,6 @@ module plat.expressions {
 
                 //check if its an accessor
                 if (isAccessor(token)) {
-                    var obj;
                     switch (token) {
                         case '()':
                             useLocalContext = this.__handleFunction(i, args, useLocalContext);
@@ -137,7 +136,7 @@ module plat.expressions {
         }
 
         // PARSE CASES
-        private __convertPrimitive(index: number, token: string, args: number) {
+        private __convertPrimitive(index: number, token: string, args: number): string {
             var tokens = this._tokens,
                 tempIdentifiers = this.__tempIdentifiers;
 
@@ -170,7 +169,7 @@ module plat.expressions {
                 }
             }
         }
-        private __convertFunction(index: number, token: string, useLocalContext: boolean) {
+        private __convertFunction(index: number, token: string, useLocalContext: boolean): string {
             var tokens = this._tokens,
                 tempIdentifiers = this.__tempIdentifiers,
                 nextToken = this._peek(index);
@@ -204,15 +203,15 @@ module plat.expressions {
                 return '(initialContext = (' + this.__findInitialContext.toString() + ')(context,aliases,"' + token + '"))';
             }
         }
-        private __convertObject(args: number) {
+        private __convertObject(args: number): string {
             var identifiers = this.__identifiers,
                 tempIdentifiers = this.__tempIdentifiers,
                 codeArray = this.__codeArray,
                 j = 0,
-                key,
+                key: string,
                 codeStr = '{',
-                tempIdentifier,
-                temp;
+                tempIdentifier: string,
+                temp: string;
 
             while (j++ < args) {
                 temp = codeArray.pop();
@@ -231,14 +230,14 @@ module plat.expressions {
 
             return codeStr.replace(',', '') + '}';
         }
-        private __convertArrayLiteral(args: number) {
+        private __convertArrayLiteral(args: number): string {
             var identifiers = this.__identifiers,
                 tempIdentifiers = this.__tempIdentifiers,
                 codeArray = this.__codeArray,
                 j = 0,
                 tempStr = '',
                 codeStr = '[',
-                tempIdentifier;
+                tempIdentifier: string;
 
             while (j++ < args) {
                 tempStr = codeArray.pop() + ',' + tempStr;
@@ -257,7 +256,7 @@ module plat.expressions {
         }
 
         // ACCESSORS
-        private __handleFunction(index: number, args: number, useLocalContext: boolean) {
+        private __handleFunction(index: number, args: number, useLocalContext: boolean): boolean {
             var tokens = this._tokens,
                 identifiers = this.__identifiers,
                 tempIdentifiers = this.__tempIdentifiers,
@@ -267,10 +266,10 @@ module plat.expressions {
                 previousTokenIsFnName = (previousToken.args === -2),
                 grabFnName = previousTokenIsFnName || this._isValEqual(previousToken, '[].'),
                 tempStr = '',
-                tempIdentifier,
+                tempIdentifier: string,
                 fnName = '',
                 identifierFnName = '',
-                codeStr,
+                codeStr: string,
                 pushedIdentifier = false;
 
             if (grabFnName) {
@@ -345,7 +344,7 @@ module plat.expressions {
 
             return useLocalContext;
         }
-        private __indexIntoObject(index: number, useLocalContext: boolean) {
+        private __indexIntoObject(index: number, useLocalContext: boolean): boolean {
             var tokens = this._tokens,
                 identifiers = this.__identifiers,
                 tempIdentifiers = this.__tempIdentifiers,
@@ -358,7 +357,7 @@ module plat.expressions {
 
             var codeStr = codeArray.pop(),
                 previousToken = tokens[index - 1],
-                indexer,
+                indexer: number,
                 identifierIndexer = tempIdentifiers.pop(),
                 context = codeArray.pop();
 
@@ -384,13 +383,13 @@ module plat.expressions {
         }
 
         // OPERATORS
-        private __handleQuestion() {
+        private __handleQuestion(): void {
             var identifiers = this.__identifiers,
                 tempIdentifiers = this.__tempIdentifiers,
                 codeArray = this.__codeArray,
                 temp = codeArray.pop(),
                 codeStr = codeArray.pop() + '?' + temp,
-                tempIdentifier;
+                tempIdentifier: string;
 
             for (var i = 0; i < 2; i++) {
                 if (tempIdentifiers.length > 0) {
@@ -405,13 +404,13 @@ module plat.expressions {
 
             codeArray.push(codeStr);
         }
-        private __handleColon() {
+        private __handleColon(): void {
             var identifiers = this.__identifiers,
                 tempIdentifiers = this.__tempIdentifiers,
                 codeArray = this.__codeArray,
                 temp = codeArray.pop(),
                 codeStr = codeArray.pop() + ':' + temp,
-                tempIdentifier;
+                tempIdentifier: string;
 
             for (var i = 0; i < 2; i++) {
                 if (tempIdentifiers.length > 0) {
@@ -426,14 +425,14 @@ module plat.expressions {
 
             codeArray.push(codeStr);
         }
-        private __handleOperator(token: string, args: number) {
+        private __handleOperator(token: string, args: number): void {
             var identifiers = this.__identifiers,
                 tempIdentifiers = this.__tempIdentifiers,
                 codeArray = this.__codeArray,
                 j = 0,
                 tempStr = '',
                 codeStr = '(' + OPERATORS[token].fn.toString() + ')(context, aliases,',
-                tempIdentifier;
+                tempIdentifier: string;
 
 
             while (j++ < args) {
@@ -453,7 +452,7 @@ module plat.expressions {
         }
 
         // PRIVATE HELPER FUNCTIONS
-        private __findInitialContext(context: any, aliases: any, token: string, undefined?: any) {
+        private __findInitialContext(context: any, aliases: any, token: string, undefined?: any): any {
             if (token[0] === '@' && aliases !== null && typeof aliases === 'object') {
                 return aliases[token];
             } else if (context !== null && typeof context === 'object') {
@@ -461,7 +460,7 @@ module plat.expressions {
             }
             return context === null ? null : undefined;
         }
-        private __indexIntoContext(context: any, token: string, undefined?: any) {
+        private __indexIntoContext(context: any, token: string, undefined?: any): any {
             if (context !== null && typeof context === 'object') {
                 return context[token];
             }
@@ -474,17 +473,17 @@ module plat.expressions {
          * 
          * @param index The current index.
          */
-        _peek(index: number) {
+        _peek(index: number): IToken {
             return this._tokens[index + 1];
         }
 
         /**
          * Evaluate and remove the leftover identifiers.
          */
-        _popRemainingIdentifiers() {
+        _popRemainingIdentifiers(): void {
             var identifiers = this.__identifiers,
                 tempIdentifiers = this.__tempIdentifiers,
-                last;
+                last: string;
 
             while (tempIdentifiers.length > 0) {
                 last = tempIdentifiers.pop();
@@ -497,11 +496,11 @@ module plat.expressions {
         /**
          * Remove duplicate identifiers.
          */
-        _makeIdentifiersUnique() {
+        _makeIdentifiersUnique(): void {
             var identifiers = this.__identifiers,
-                uniqueIdentifiers = [],
-                uniqueIdentifierObject = {},
-                identifier;
+                uniqueIdentifiers: Array<string> = [],
+                uniqueIdentifierObject: IObject<boolean> = {},
+                identifier: string;
 
             while (identifiers.length > 0) {
                 identifier = identifiers.pop();
@@ -543,7 +542,7 @@ module plat.expressions {
         /**
          * Reset the parser's properties.
          */
-        _resetParser() {
+        _resetParser(): void {
             this._tokens = [];
             this.__codeArray = [];
             this.__identifiers = [];
@@ -557,7 +556,7 @@ module plat.expressions {
          * 
          * @param error The error message to throw
          */
-        _throwError(error: string) {
+        _throwError(error: string): void {
             this.$ExceptionStatic.fatal(error, this.$ExceptionStatic.PARSE);
         }
     }

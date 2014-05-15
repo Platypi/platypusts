@@ -12,7 +12,8 @@ module plat {
          * @return {async.IPromise<IGeolocationPosition, IGeolocationPositionError>} A promise,
          * resolving when the position is found, and rejecting in the event of a position error.
          */
-        getCurrentPosition(positionOptions?: IGeolocationPositionOptions) {
+        getCurrentPosition(positionOptions?: IGeolocationPositionOptions)
+                : async.IPromise<IGeolocationPosition, IGeolocationPositionError> {
             return new this.$PromiseStatic<IGeolocationPosition,
                 IGeolocationPositionError>((resolve, reject) => {
                     navigator.geolocation.getCurrentPosition(resolve, reject, positionOptions);

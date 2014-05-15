@@ -23,7 +23,7 @@ module plat.events {
          * 
          * @see EventManager
          */
-        initialize(name: string, sender: any, direction?: string);
+        initialize(name: string, sender: any, direction?: string): void;
         /**
          * @param name The name of the event.
          * @param sender The object that initiated the event.
@@ -31,7 +31,7 @@ module plat.events {
          * 
          * @see EventManager
          */
-        initialize(name: string, sender: any, direction?: 'up');
+        initialize(name: string, sender: any, direction?: 'up'): void;
         /**
          * @param name The name of the event.
          * @param sender The object that initiated the event.
@@ -39,7 +39,7 @@ module plat.events {
          * 
          * @see EventManager
          */
-        initialize(name: string, sender: any, direction?: 'down');
+        initialize(name: string, sender: any, direction?: 'down'): void;
         /**
          * @param name The name of the event.
          * @param sender The object that initiated the event.
@@ -47,7 +47,7 @@ module plat.events {
          * 
          * @see EventManager
          */
-        initialize(name: string, sender: any, direction?: 'direct');
+        initialize(name: string, sender: any, direction?: 'direct'): void;
         initialize(name: string, sender: any, direction?: string) {
             this.name = name;
             this.direction = direction || this.$EventManagerStatic.direction.DIRECT;
@@ -58,9 +58,9 @@ module plat.events {
          * Call this method to halt the propagation of an upward-moving event.
          * Other events cannot be stopped with this method.
          */
-        stopPropagation() {
+        stopPropagation(): void {
             if (this.direction === this.$EventManagerStatic.direction.UP) {
-                this.$EventManagerStatic.propagatingEvents[this.name] = false;
+                (<any>this.$EventManagerStatic.propagatingEvents)[this.name] = false;
             }
         }
     }
@@ -103,7 +103,7 @@ module plat.events {
          * 
          * @see EventManager
          */
-        initialize(name: string, sender: any, direction?: 'up');
+        initialize(name: string, sender: any, direction?: 'up'): void;
         /**
          * @param name The name of the event.
          * @param sender The object that initiated the event.
@@ -111,7 +111,7 @@ module plat.events {
          * 
          * @see EventManager
          */
-        initialize(name: string, sender: any, direction?: 'down');
+        initialize(name: string, sender: any, direction?: 'down'): void;
         /**
          * @param name The name of the event.
          * @param sender The object that initiated the event.
@@ -119,7 +119,7 @@ module plat.events {
          * 
          * @see EventManager
          */
-        initialize(name: string, sender: any, direction?: 'direct');
+        initialize(name: string, sender: any, direction?: 'direct'): void;
         /**
          * @param name The name of the event.
          * @param sender The object that initiated the event.
@@ -128,6 +128,6 @@ module plat.events {
          * 
          * @see EventManager
          */
-        initialize(name: string, sender: any, direction?: string);
+        initialize(name: string, sender: any, direction?: string): void;
     }
 }

@@ -31,7 +31,7 @@ module plat.expressions {
 
             this._input = input;
 
-            var char,
+            var char: string,
                 length = input.length,
                 ternary = 0,
                 ternaryFound = false,
@@ -112,8 +112,8 @@ module plat.expressions {
         }
 
         // ALPHANUMERIC CASE
-        private __handleAplhaNumeric(index: number, char: string) {
-            var functionArr = [],
+        private __handleAplhaNumeric(index: number, char: string): number {
+            var functionArr: Array<string> = [],
                 isNumberLike = this._isNumeric(char);
 
             functionArr.push(char);
@@ -130,8 +130,8 @@ module plat.expressions {
         }
 
         // DELIMITER FUNCTIONS
-        private __handlePeriod(index: number, char: string) {
-            var functionArr = [],
+        private __handlePeriod(index: number, char: string): number {
+            var functionArr: Array<string> = [],
                 outputQueue = this.__outputQueue,
                 operatorStack = this.__operatorStack,
                 topOutputLength = outputQueue.length - 1,
@@ -160,13 +160,13 @@ module plat.expressions {
 
             return index;
         }
-        private __handleLeftBrace(char: string) {
+        private __handleLeftBrace(char: string): void {
             this.__operatorStack.unshift({ val: char, args: 0 });
             this.__objArgCount.push(0);
             this.__lastColonChar.push(char);
             this.__lastCommaChar.push(char);
         }
-        private __handleRightBrace(char: string) {
+        private __handleRightBrace(char: string): void {
             var operatorStack = this.__operatorStack,
                 topOperator = operatorStack[0],
                 lastArgCount = this.__objArgCount.pop();
@@ -185,7 +185,7 @@ module plat.expressions {
                 this.__outputQueue.push({ val: '{}', args: lastArgCount });
             }
         }
-        private __handleLeftBracket(char: string) {
+        private __handleLeftBracket(char: string): void {
             var previousChar = this.__previousChar,
                 operatorStack = this.__operatorStack;
 
@@ -201,7 +201,7 @@ module plat.expressions {
             });
             this.__lastCommaChar.push(char);
         }
-        private __handleRightBracket(char: string) {
+        private __handleRightBracket(char: string): void {
             var operatorStack = this.__operatorStack,
                 topOperator = operatorStack[0],
                 lastArgCountObj = this.__argCount.pop(),
@@ -225,7 +225,7 @@ module plat.expressions {
                 outputQueue.push({ val: '[]', args: isEmptyArray ? -1 : lastArgCountObj.num + 1 });
             }
         }
-        private __handleLeftParenthesis(char: string) {
+        private __handleLeftParenthesis(char: string): void {
             var previousChar = this.__previousChar,
                 operatorStack = this.__operatorStack;
 
@@ -245,7 +245,7 @@ module plat.expressions {
             operatorStack.unshift({ val: char, args: 0 });
             this.__lastCommaChar.push(char);
         }
-        private __handleRightParenthesis(char: string) {
+        private __handleRightParenthesis(char: string): void {
             var operatorStack = this.__operatorStack,
                 topOperator = operatorStack[0],
                 localArgCountObj = this.__argCount.pop();
@@ -268,7 +268,7 @@ module plat.expressions {
                 }
             }
         }
-        private __handleComma(char: string) {
+        private __handleComma(char: string): void {
             var lastCommaArray = this.__lastCommaChar,
                 lastCommaArg = lastCommaArray[lastCommaArray.length - 1];
 
@@ -292,7 +292,7 @@ module plat.expressions {
                 this._popStackForVal(topOperator, lastCommaArg, 'Unexpected comma');
             }
         }
-        private __handleStringLiteral(index: number, char: string) {
+        private __handleStringLiteral(index: number, char: string): number {
             var str = this._lookAheadForDelimiter(char, char, index, true),
                 operatorStack = this.__operatorStack,
                 topOperator = operatorStack[0];
@@ -306,11 +306,11 @@ module plat.expressions {
         }
 
         // OPERATOR FUNCTIONS
-        private __handleQuestion(char: string) {
+        private __handleQuestion(char: string): void {
             this.__lastColonChar.push(char);
             this.__determinePrecedence(char);
         }
-        private __handleColon(char: string, ternary: number) {
+        private __handleColon(char: string, ternary: number): number {
             var lastColonCharArray = this.__lastColonChar,
                 lastColonCharacter = lastColonCharArray[lastColonCharArray.length - 1],
                 outputQueue = this.__outputQueue;
@@ -346,13 +346,13 @@ module plat.expressions {
 
             return ternary;
         }
-        private __handleOtherOperator(index: number, char: string) {
+        private __handleOtherOperator(index: number, char: string): number {
             var look = this._lookAheadForOperatorFn(char, index);
             this.__determinePrecedence(look.char);
 
             return look.index;
         }
-        private __popRemainingOperators() {
+        private __popRemainingOperators(): void {
             var outputQueue = this.__outputQueue,
                 operatorStack = this.__operatorStack;
 
@@ -366,7 +366,7 @@ module plat.expressions {
         }
 
         // PRIVATE HELPER FUNCTIONS
-        private __determineOperator(operator: any) {
+        private __determineOperator(operator: any): ITokenDetails {
             switch (operator) {
                 case '+':
                 case '-':
@@ -396,10 +396,9 @@ module plat.expressions {
                 operatorAssoc = operatorFn.associativity,
                 operatorStack = this.__operatorStack,
                 outputQueue = this.__outputQueue,
-                operatorObj,
-                firstArrayOperator,
-                firstArrayVal,
-                firstArrayObj;
+                firstArrayOperator: ITokenDetails,
+                firstArrayVal: any,
+                firstArrayObj: IToken;
 
             while (!determined) {
                 firstArrayObj = operatorStack[0];
@@ -473,7 +472,7 @@ module plat.expressions {
          * @return {number} The new index in the expression string
          */
         _lookAhead(index: number, isNumberLike: boolean, array: Array<string>): number {
-            var ch,
+            var ch: string,
                 input = this._input;
 
             while (++index) {
@@ -494,8 +493,8 @@ module plat.expressions {
          * @param index The current index in the expression string
          */
         _lookAheadForOperatorFn(char: string, index: number): ILookAheadResult {
-            var ch,
-                fn,
+            var ch: string,
+                fn: string,
                 input = this._input;
 
             while ((++index < input.length) && ch !== '') {
@@ -524,7 +523,7 @@ module plat.expressions {
          */
         _lookAheadForDelimiter(char: string, endChar: string,
             index: number, includeDelimiter?: boolean): ILookAheadResult {
-            var ch,
+            var ch: string,
                 input = this._input;
 
             while ((ch = input[++index]) !== endChar) {
@@ -546,7 +545,7 @@ module plat.expressions {
          * @param error The error to throw in the case that the expression 
          * is invalid.
          */
-        _popStackForVal(topOperator: any, char: string, error: string) {
+        _popStackForVal(topOperator: any, char: string, error: string): void {
             var outputQueue = this.__outputQueue,
                 operatorStack = this.__operatorStack;
 
@@ -588,7 +587,7 @@ module plat.expressions {
         /**
          * Reset the tokenizer's properties.
          */
-        _resetTokenizer() {
+        _resetTokenizer(): void {
             this._input = null;
             this.__previousChar = '';
             this.__outputQueue = [];
@@ -604,7 +603,7 @@ module plat.expressions {
          * 
          * @param error The error message to throw
          */
-        _throwError(error: string) {
+        _throwError(error: string): void {
             this.$ExceptionStatic.fatal(error + ' in {{' + this._input + '}}', this.$ExceptionStatic.PARSE);
         }
 

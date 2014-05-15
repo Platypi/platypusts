@@ -13,7 +13,7 @@
          * @param sender The sender of the event.
          * @param error The error that occurred, resulting in the event.
          */
-        static dispatch<T extends Error>(name: string, sender: any, error: T) {
+        static dispatch<T extends Error>(name: string, sender: any, error: T): void {
             var event = new ErrorEvent<T>();
 
             event.initialize(name, sender, null, error);
@@ -31,14 +31,14 @@
          * @param direction='direct' This is always a direct event
          * @param error The error that occurred, resulting in the event.
          */
-        initialize(name: string, sender: any, direction?: 'direct', error?: T);
+        initialize(name: string, sender: any, direction?: 'direct', error?: T): void;
         /**
          * @param name The name of the event.
          * @param sender The sender of the event.
          * @param direction This is always a direct event.
          * @param error The error that occurred, resulting in the event.
          */
-        initialize(name: string, sender: any, direction?: string, error?: T);
+        initialize(name: string, sender: any, direction?: string, error?: T): void;
         initialize(name: string, sender: any, direction?: string, error?: T) {
             super.initialize(name, sender, this.$EventManagerStatic.direction.DIRECT);
 
@@ -49,7 +49,7 @@
     /**
      * The Type for referencing the '$ErrorEventStatic' injectable as a dependency.
      */
-    export function ErrorEventStatic($EventManagerStatic) {
+    export function ErrorEventStatic($EventManagerStatic: IEventManagerStatic): IErrorEventStatic {
         ErrorEvent.$EventManagerStatic = $EventManagerStatic;
         return ErrorEvent;
     }
@@ -88,13 +88,13 @@
          * @param direction='direct' This is always a direct event
          * @param error The error that occurred, resulting in the event.
          */
-        initialize(name: string, sender: any, direction?: 'direct', error?: T);
+        initialize(name: string, sender: any, direction?: 'direct', error?: T): void;
         /**
          * @param name The name of the event.
          * @param sender The sender of the event.
          * @param direction This is always a direct event.
          * @param error The error that occurred, resulting in the event.
          */
-        initialize(name: string, sender: any, direction?: string, error?: T);
+        initialize(name: string, sender: any, direction?: string, error?: T): void;
     }
 }

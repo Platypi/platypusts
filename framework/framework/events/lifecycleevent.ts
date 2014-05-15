@@ -9,7 +9,7 @@
          * @param name The name of the event.
          * @param sender The sender of the event.
          */
-        static dispatch(name: string, sender: any) {
+        static dispatch(name: string, sender: any): void {
             var event = new LifecycleEvent();
 
             event.initialize(name, sender);
@@ -22,7 +22,7 @@
          * @param name The name of the event.
          * @param sender The sender of the event.
          */
-        initialize(name: string, sender: any) {
+        initialize(name: string, sender: any): void {
             super.initialize(name, sender, this.$EventManagerStatic.direction.DIRECT);
         }
     }
@@ -34,8 +34,7 @@
         return LifecycleEvent;
     }
 
-    register.injectable('$LifecycleEventStatic', LifecycleEventStatic,
-        null, register.injectableType.STATIC);
+    register.injectable('$LifecycleEventStatic', LifecycleEventStatic);
 
     /**
      * Defines an object that represents a Lifecycle Event

@@ -3,7 +3,7 @@
      * The Type for referencing the '$document' injectable as a dependency. 
      * Used so that the Window can be mocked.
      */
-    export function DocumentStatic(window: Window) {
+    export function DocumentStatic(window: Window): Document {
         return window.document;
     }
 

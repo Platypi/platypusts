@@ -38,7 +38,7 @@
          * 
          * @param baseport The baseport instance this navigator will be attached to.
          */
-        initialize(baseport: ui.controls.IBaseport) {
+        initialize(baseport: ui.controls.IBaseport): void {
             this.baseport = baseport;
         }
 
@@ -49,7 +49,7 @@
          * @param navigationParameter An optional navigation parameter to send to the next ui.IViewControl.
          * @param options Optional IBaseNavigationOptions used for navigation.
          */
-        navigate(navigationParameter: any, options: IBaseNavigationOptions) { }
+        navigate(navigationParameter: any, options: IBaseNavigationOptions): void { }
 
         /**
          * Called by the Viewport to make the Navigator aware of a successful navigation. The Navigator will
@@ -59,7 +59,7 @@
          * @param parameter The navigation parameter sent to the control.
          * @param options The INavigationOptions used during navigation.
          */
-        navigated(control: ui.IViewControl, parameter: any, options: IBaseNavigationOptions) {
+        navigated(control: ui.IViewControl, parameter: any, options: IBaseNavigationOptions): void {
             this.currentState = {
                 control: control
             };
@@ -76,7 +76,7 @@
          * 
          * @param options Optional backwards navigation options of type IBaseBackNavigationOptions.
          */
-        goBack(options?: IBaseBackNavigationOptions) { }
+        goBack(options?: IBaseBackNavigationOptions): void { }
 
         /**
          * Sends a NavigationEvent with the given parameters.  The 'sender' property of the event will be the 
@@ -89,7 +89,7 @@
          * @param cancelable Whether or not the event can be canceled, preventing further navigation.
          */
         _sendEvent(name: string, target: any, type: string, parameter: any,
-            options: IBaseNavigationOptions, cancelable: boolean) {
+            options: IBaseNavigationOptions, cancelable: boolean): events.INavigationEvent<any, any, IBaseNavigator> {
             return this.$NavigationEventStatic.dispatch(name, this, {
                 target: target,
                 type: type,

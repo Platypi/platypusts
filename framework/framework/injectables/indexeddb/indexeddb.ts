@@ -539,22 +539,22 @@ module plat {
                         resolve(new Cursor(this.result, that));
                     };
 
-                    request.onerror = (event) => {
+                    request.onerror = (event: ErrorEvent) => {
                         reject(new DatabaseError((<any>event.target).errorCode, 'Unknown error'));
                     };
                 });
             }
 
             private requestFn(fn: string, arg0?: any, arg1?: any) {
-                var request = this._store[fn](arg0, arg1),
+                var request = (<any>this._store)[fn](arg0, arg1),
                     that = this;
 
                 return new DatabaseEventResultPromise((resolve, reject) => {
-                    request.onsuccess = function requestSuccess(event) {
+                    request.onsuccess = function requestSuccess() {
                         resolve(this.result);
                     };
 
-                    request.onerror = (event) => {
+                    request.onerror = (event: Event) => {
                         reject(new DatabaseError((<any>event.target).errorCode, 'Unknown error'));
                     };
                 });
@@ -825,14 +825,14 @@ module plat {
             }
 
             private requestFn(fn: string, arg?: any) {
-                var request = this._index[fn](arg);
+                var request = (<any>this._index)[fn](arg);
 
                 return new DatabaseEventResultPromise((resolve, reject) => {
-                    request.onsuccess = function requestSuccess(event) {
+                    request.onsuccess = function requestSuccess() {
                         resolve(this.result);
                     };
 
-                    request.onerror = (event) => {
+                    request.onerror = (event: ErrorEvent) => {
                         reject(new DatabaseError((<any>event.target).errorCode, 'Unknown error'));
                     };
                 });

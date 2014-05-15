@@ -29,7 +29,7 @@
          * @param options Optional INavigationOptions for ignoring the current ui.IViewControl in the history as
          * well as specifying a new templateUrl for the next ui.IViewControl to use.
          */
-        navigate(path: string, options?: web.IRouteNavigationOptions) {
+        navigate(path: string, options?: web.IRouteNavigationOptions): void {
             this.$router.route(path, options);
         }
 
@@ -41,7 +41,7 @@
          * @param parameter The navigation parameter sent to the control.
          * @param options The INavigationOptions used during navigation.
          */
-        navigated(control: ui.IViewControl, parameter: web.IRoute<any>, options: web.IRouteNavigationOptions) {
+        navigated(control: ui.IViewControl, parameter: web.IRoute<any>, options: web.IRouteNavigationOptions): void {
             super.navigated(control, parameter, options);
             this.currentState.route = parameter;
         }
@@ -53,7 +53,7 @@
          * to customize navigation. Enables navigating back to a specified point in history as well
          * as specifying a new templateUrl to use at the next ui.IViewControl.
          */
-        goBack(options?: IBaseBackNavigationOptions) {
+        goBack(options?: IBaseBackNavigationOptions): void {
             options = options || {};
 
             this.__historyLength -= 2;
@@ -71,7 +71,7 @@
          * @param ev The INavigationEvent containing information regarding the ViewControl, the routing information, 
          * and the Router.
          */
-        _beforeRouteChange(ev: events.INavigationEvent<dependency.IInjector<ui.IViewControl>, web.IRoute<any>, web.IRouter>) {
+        _beforeRouteChange(ev: events.INavigationEvent<dependency.IInjector<ui.IViewControl>, web.IRoute<any>, web.IRouter>): void {
             var event = this._sendEvent('beforeNavigate', ev.target, ev.type, ev.parameter, ev.options, true);
 
             if (event.canceled) {
@@ -85,7 +85,7 @@
          * @param ev The INavigationEvent containing information regarding the ViewControl, the routing infomration, 
          * and the Router.
          */
-        _onRouteChanged(ev: events.INavigationEvent<dependency.IInjector<ui.IViewControl>, web.IRoute<any>, web.IRouter>) {
+        _onRouteChanged(ev: events.INavigationEvent<dependency.IInjector<ui.IViewControl>, web.IRoute<any>, web.IRouter>): void {
             var state = this.currentState || <IRouteNavigationState>{},
                 viewControl = state.control,
                 injector = ev.target;

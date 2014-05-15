@@ -13,7 +13,7 @@
          * @param eventOptions An object implementing INavigationEvent, specifying what all event listeners
          * will be passed.
          */
-        static dispatch<T, U, V>(name: string, sender: V, eventOptions: INavigationEventOptions<T, U>) {
+        static dispatch<T, U, V>(name: string, sender: V, eventOptions: INavigationEventOptions<T, U>): INavigationEvent<T, U, V> {
             var event = new NavigationEvent<T, U, V>();
 
             event.initialize(name, sender, null, eventOptions);
@@ -25,7 +25,7 @@
         /**
          * Navigation parameter, used to send objects from one view control to another.
          */
-        parameter: any;
+        parameter: U;
 
         /**
          * The INavigationOptions in use for the navigation.
@@ -77,7 +77,7 @@
             if (this.cancelable) {
                 this.canceled = true;
 
-                this.$EventManagerStatic.propagatingEvents[this.name] = false;
+                (<any>this.$EventManagerStatic.propagatingEvents)[this.name] = false;
             }
         }
     }
@@ -85,7 +85,7 @@
     /**
      * The Type for referencing the '$NavigationEventStatic' injectable as a dependency.
      */
-    export function NavigationEventStatic($EventManagerStatic) {
+    export function NavigationEventStatic($EventManagerStatic: IEventManagerStatic): INavigationEventStatic {
         NavigationEvent.$EventManagerStatic = $EventManagerStatic;
         return NavigationEvent;
     }

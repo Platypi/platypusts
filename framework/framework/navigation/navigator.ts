@@ -18,8 +18,8 @@ module plat.navigation {
          * for the Constructor and create a new instance of the control.
          * @param options Optional IBaseNavigationOptions used for Navigation.
          */
-        navigate(Constructor?: new (...args: any[]) => ui.IViewControl, options?: INavigationOptions);
-        navigate(injector?: dependency.IInjector<IControl>, options?: INavigationOptions);
+        navigate(Constructor?: new (...args: any[]) => ui.IViewControl, options?: INavigationOptions): void;
+        navigate(injector?: dependency.IInjector<IControl>, options?: INavigationOptions): void;
         navigate(Constructor?: any, options?: INavigationOptions) {
             var state = this.currentState || <IBaseNavigationState>{},
                 viewControl = state.control,
@@ -83,7 +83,7 @@ module plat.navigation {
          * to customize navigation. Enables navigating back to a specified point in history as well
          * as specifying a new templateUrl to use at the next ui.IViewControl.
          */
-        goBack(options?: IBackNavigationOptions) {
+        goBack(options?: IBackNavigationOptions): void {
             options = options || {};
 
             if (this.history.length === 0) {
@@ -152,7 +152,7 @@ module plat.navigation {
         /**
          * Clears the navigation history, disposing all the controls.
          */
-        clearHistory() {
+        clearHistory(): void {
             var history = this.history,
                 dispose = this.$ViewControlStatic.dispose;
 
@@ -167,7 +167,7 @@ module plat.navigation {
          * 
          * @param Constructor The view control constructor to search for in the history stack.
          */
-        _findInHistory(Constructor: new (...args: any[]) => ui.IViewControl) {
+        _findInHistory(Constructor: new (...args: any[]) => ui.IViewControl): number {
             var history = this.history,
                 length = history.length - 1,
                 index = -1,
@@ -190,7 +190,7 @@ module plat.navigation {
          * associated with length + 1 entries back in the history.  It disposes all the view controls 
          * encapsulated in the length.
          */
-        _goBackLength(length?: number) {
+        _goBackLength(length?: number): IBaseNavigationState {
             length = isNumber(length) ? length : 1;
 
             var last: IBaseNavigationState,
