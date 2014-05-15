@@ -4,6 +4,7 @@
         $ExceptionStatic: IExceptionStatic = acquire('$ExceptionStatic');
         $document: Document = acquire('$document');
         $ElementManagerStatic: processing.IElementManagerStatic = acquire('$ElementManagerStatic');
+
         constructor(public navigator: navigation.IBaseNavigator) {
             super();
         }
@@ -11,7 +12,7 @@
         /**
          * Clears the Baseport's innerHTML.
          */
-        setTemplate() {
+        setTemplate(): void {
             this.dom.clearNode(this.element);
         }
 
@@ -24,7 +25,7 @@
          * needed on load for the inherited form of 
          * navigation.
          */
-        loaded(navigationParameter?: any, options?: navigation.IBaseNavigationOptions) {
+        loaded(navigationParameter?: any, options?: navigation.IBaseNavigationOptions): void {
             var navigator = this.navigator;
             navigator.initialize(this);
             navigator.navigate(navigationParameter, options);
@@ -38,7 +39,7 @@
          * 
          * @param ev The navigation options
          */
-        navigateTo(ev: IBaseportNavigateToOptions) {
+        navigateTo(ev: IBaseportNavigateToOptions): void {
             var control = ev.target,
                 parameter = ev.parameter,
                 options = ev.options,
@@ -52,7 +53,7 @@
                 node = isEmpty(replaceType) ? this.$document.createElement('div') :
                     <HTMLElement>this.$document.createElement(replaceType),
                 attributes: IObject<string> = {},
-                nodeMap = {
+                nodeMap: processing.INodeMap = {
                     element: node,
                     attributes: attributes,
                     nodes: [],
@@ -89,7 +90,7 @@
          * @param fromControl The ViewControl being navigated 
          * away from.
          */
-        navigateFrom(fromControl: IViewControl) {
+        navigateFrom(fromControl: IViewControl): void {
             if (isNull(fromControl) || !isFunction(fromControl.navigatingFrom)) {
                 return;
             }

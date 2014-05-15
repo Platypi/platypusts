@@ -15,7 +15,7 @@
          * Looks for a defaultRoute and initializes the loading 
          * of the view.
          */
-        loaded() {
+        loaded(): void {
             var path = '',
                 options = this.options;
 

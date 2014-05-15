@@ -93,7 +93,7 @@ module plat.ui {
          * 
          * @return {Node} The same node passed in, with innerHTML set.
          */
-        setInnerHtml(node: Node, html: string) {
+        setInnerHtml(node: Node, html: string): Node {
             return setInnerHtml(node, html);
         }
 
@@ -126,7 +126,7 @@ module plat.ui {
          *
          * @return {Array<Node>} An Array copy of the fragment's childNodes.
          */
-        insertBefore(parent, fragment: DocumentFragment, endNode?: Node): Array<Node>;
+        insertBefore(parent: Node, fragment: DocumentFragment, endNode?: Node): Array<Node>;
         insertBefore(parent: Node, nodes: any, endNode?: Node) {
             return insertBefore(parent, nodes, endNode);
         }
@@ -210,14 +210,14 @@ module plat.ui {
 
     register.injectable('$dom', Dom);
 
-    function appendChildren(nodeList: any, root?: Node) {
-        var fragment,
+    function appendChildren(nodeList: any, root?: Node): Node {
+        var fragment: DocumentFragment,
             isFragment = root instanceof DocumentFragment,
             nullRoot = isNull(root),
             $document = acquire('$document');
 
         if (isFragment) {
-            fragment = root;
+            fragment = <DocumentFragment>root;
         } else {
             fragment = $document.createDocumentFragment();
         }
@@ -226,7 +226,7 @@ module plat.ui {
             root = fragment;
         }
 
-        var list;
+        var list: Array<Node>;
         if (isFunction(nodeList.push)) {
             list = nodeList;
         } else {
@@ -244,7 +244,7 @@ module plat.ui {
         return root;
     }
 
-    function clearNode(node: Node) {
+    function clearNode(node: Node): void {
         var childNodes = Array.prototype.slice.call(node.childNodes);
 
         while (childNodes.length > 0) {
@@ -252,7 +252,7 @@ module plat.ui {
         }
     }
 
-    function clearNodeBlock(nodeList: any, parent: Node) {
+    function clearNodeBlock(nodeList: any, parent: Node): void {
         if (!isFunction(nodeList.push)) {
             nodeList = Array.prototype.slice.call(nodeList);
         }
@@ -276,7 +276,7 @@ module plat.ui {
         }
     }
 
-    function clearNodeBlockWithParent(nodeList: Array<Node>, parent: Node) {
+    function clearNodeBlockWithParent(nodeList: Array<Node>, parent: Node): void {
         while (nodeList.length > 0) {
             parent.removeChild(nodeList.pop());
         }
@@ -308,7 +308,7 @@ module plat.ui {
             return element.removeChild(element.lastChild);
         }
 
-        var wrapper = innerHtmlWrappers[mapTag] || innerHtmlWrappers._default,
+        var wrapper = innerHtmlWrappers[mapTag] || (<any>innerHtmlWrappers)._default,
             depth = wrapper[0],
             parentStart = wrapper[1],
             parentEnd = wrapper[2];
@@ -418,14 +418,14 @@ module plat.ui {
         return templateElement;
     }
 
-    function removeBetween(startNode: Node, endNode?: Node) {
+    function removeBetween(startNode: Node, endNode?: Node): void {
         if (isNull(startNode)) {
             return;
         }
 
         var currentNode = startNode.nextSibling,
             parentNode = startNode.parentNode,
-            tempNode;
+            tempNode: Node;
 
         if (isNull(endNode)) {
             endNode = null;
@@ -442,7 +442,7 @@ module plat.ui {
         }
     }
 
-    function removeAll(startNode: Node, endNode?: Node) {
+    function removeAll(startNode: Node, endNode?: Node): void {
         if (isNull(startNode)) {
             return;
         }
@@ -457,7 +457,7 @@ module plat.ui {
         __table = [1, '<table>', '</table>'],
         __tableData = [3, '<table><tbody><tr>', '</tr></tbody></table>'],
         __svg = [1, '<svg xmlns="http://www.w3.org/2000/svg" version="1.1">', '</svg>'],
-        innerHtmlWrappers = {
+        innerHtmlWrappers: IObject<Array<any>> = {
             option: __option,
             optgroup: __option,
             legend: [1, '<fieldset>', '</fieldset>'],
@@ -487,7 +487,7 @@ module plat.ui {
      * Safely sets innerHTML of an element. Uses MSApp.execUnsafeLocalFunction if 
      * available.
      */
-    function innerHtml(element: HTMLElement, html: string) {
+    function innerHtml(element: HTMLElement, html: string): HTMLElement {
         var compat = acquire('$compat');
 
         if (compat.msApp) {
@@ -501,7 +501,7 @@ module plat.ui {
         return element;
     }
 
-    function removeNode(node: Node) {
+    function removeNode(node: Node): void {
         if (isNull(node)) {
             return;
         }
@@ -616,7 +616,7 @@ module plat.ui {
          *
          * @return {Array<Node>} An Array copy of the fragment's childNodes.
          */
-        insertBefore(parent, fragment: DocumentFragment, endNode?: Node): Array<Node>;
+        insertBefore(parent: Node, fragment: DocumentFragment, endNode?: Node): Array<Node>;
 
         /**
          * Takes the child nodes of the given node and places them above the node

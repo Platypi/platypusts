@@ -1,7 +1,7 @@
 ﻿var __nativeIsArray = !!Array.isArray,
-    __uids__ = {};
+    __uids__: plat.IObject<Array<string>> = {};
 
-function noop() { }
+function noop(): void { }
 
 function extend(destination: any, ...sources: any[]): any {
     if (isNull(destination)) {
@@ -14,7 +14,8 @@ function extend(destination: any, ...sources: any[]): any {
         destination = sources.shift();
     }
 
-    var keys, property;
+    var keys: Array<string>,
+        property: any;
 
     forEach(sources, (source, k) => {
         if (!(isObject(source) || isArray(source))) {
@@ -24,7 +25,7 @@ function extend(destination: any, ...sources: any[]): any {
         keys = Object.keys(source);
 
         forEach(keys, (key: string) => {
-            property = source[key];
+            property = (<any>source)[key];
             if (deep) {
                 if (isArray(property)) {
                     extend(deep, destination[key] || (destination[key] = []), property);
@@ -34,7 +35,7 @@ function extend(destination: any, ...sources: any[]): any {
                     return;
                 }
             }
-            destination[key] = source[key];
+            destination[key] = (<any>source)[key];
         });
     });
 
@@ -126,7 +127,7 @@ function isArrayLike(obj: any): boolean {
 }
 
 function filter<T>(obj: any, iterator: (value: T, key: any, obj: any) => boolean, context?: any): Array<T> {
-    var arr = [];
+    var arr: Array<T> = [];
     if (isNull(obj)) {
         return arr;
     }
@@ -147,7 +148,7 @@ function filter<T>(obj: any, iterator: (value: T, key: any, obj: any) => boolean
 function where(obj: any, properties: any): Array<any> {
     return filter(obj, (value)
         => !some(properties, (property, key)
-            => value[key] !== property));
+            => (<any>value)[key] !== property));
 }
 
 function forEach<T>(obj: any, iterator: (value: T, key: any, obj: any) => void, context?: any): any {
@@ -155,7 +156,10 @@ function forEach<T>(obj: any, iterator: (value: T, key: any, obj: any) => void, 
         return obj;
     }
 
-    var i, key, length;
+    var i: number,
+        key: string,
+        length: number;
+
     if (isFunction(obj.forEach)) {
         return obj.forEach(iterator, context);
     } else if (isArrayLike(obj)) {
@@ -175,7 +179,8 @@ function forEach<T>(obj: any, iterator: (value: T, key: any, obj: any) => void, 
 }
 
 function map<T, U>(obj: any, iterator: (value: T, key: any, obj: any) => U, context?: any): Array<U> {
-    var arr: any = [];
+    var arr: Array<U> = [];
+
     if (isNull(obj)) {
         return arr;
     }
@@ -192,7 +197,7 @@ function map<T, U>(obj: any, iterator: (value: T, key: any, obj: any) => U, cont
 }
 
 function pluck<T, U>(obj: any, key: string): Array<U> {
-    return map<T, U>(obj, (value) => value[key]);
+    return map<T, U>(obj, (value) => (<any>value)[key]);
 }
 
 function some<T>(obj: any, iterator: (value: T, key: any, obj: any) => boolean, context?: any): boolean {
@@ -200,7 +205,11 @@ function some<T>(obj: any, iterator: (value: T, key: any, obj: any) => boolean, 
         return false;
     }
 
-    var i, key, length, ret;
+    var i: number,
+        key: string,
+        length: number,
+        ret: boolean;
+
     if (isFunction(obj.some)) {
         return obj.some(iterator, context);
     } else if (isArrayLike(obj)) {
@@ -225,12 +234,12 @@ function some<T>(obj: any, iterator: (value: T, key: any, obj: any) => boolean, 
     return false;
 }
 
-function postpone(method: (...args: any[]) => void, args?: Array<any>, context?: any) {
+function postpone(method: (...args: any[]) => void, args?: Array<any>, context?: any): plat.IRemoveListener {
     return defer(method, 0, args, context);
 }
 
 
-function defer(method: (...args: any[]) => void, timeout: number, args?: Array<any>, context?: any) {
+function defer(method: (...args: any[]) => void, timeout: number, args?: Array<any>, context?: any): plat.IRemoveListener {
     function defer() {
         method.apply(context, args);
     }
@@ -242,7 +251,7 @@ function defer(method: (...args: any[]) => void, timeout: number, args?: Array<a
     };
 }
 
-function uniqueId(prefix?: string) {
+function uniqueId(prefix?: string): string {
     if (isNull(prefix)) {
         prefix = '';
     }
@@ -254,34 +263,34 @@ function uniqueId(prefix?: string) {
     }
 
     var index = puid.length,
-        char;
+        charCode: number;
 
     while (index--) {
-        char = puid[index].charCodeAt(0);
+        charCode = puid[index].charCodeAt(0);
         //'9'
-        if (char === 57) {
+        if (charCode === 57) {
             puid[index] = 'A';
             return join();
         }
 
         //'Z'
-        if (char === 90) {
+        if (charCode === 90) {
             puid[index] = 'a';
             return join();
         }
 
         //'z'
-        if (char === 122) {
+        if (charCode === 122) {
             puid[index] = '0';
         } else {
-            puid[index] = String.fromCharCode(char + 1);
+            puid[index] = String.fromCharCode(charCode + 1);
             return join();
         }
     }
 
     puid.unshift('0');
 
-    function join() {
+    function join(): string {
         return prefix + puid.join('');
     }
 
@@ -290,7 +299,7 @@ function uniqueId(prefix?: string) {
 
 var camelCaseRegex: RegExp;
 
-function camelCase(str: string) {
+function camelCase(str: string): string {
     if (!isString(str) || isEmpty(str)) {
         return str;
     }

@@ -11,7 +11,7 @@ module plat.ui {
          * @static
          * @param control The control to be detached.
          */
-        static detach(control: IViewControl) {
+        static detach(control: IViewControl): void {
             TemplateControl.detach(control);
         }
 
@@ -21,7 +21,7 @@ module plat.ui {
          * @static
          * @param control A control to dispose.
          */
-        static dispose(control: IViewControl) {
+        static dispose(control: IViewControl): void {
             TemplateControl.dispose(control);
         }
 
@@ -41,24 +41,26 @@ module plat.ui {
          * 
          * @param parameter A navigation parameter sent from the previous IViewControl.
          */
-        navigatedTo(parameter?: any) { }
+        navigatedTo(parameter?: any): void { }
 
         /**
          * This event is fired when this control is being navigated away from.
          */
-        navigatingFrom() { }
+        navigatingFrom(): void { }
 
         /**
          * A ViewControl is used in a controls.Viewport for simulated page navigation. The 
          * ViewControl has navigation events that are called when navigating to and from the control.
          */
-        constructor() { super(); }
+        constructor() {
+            super();
+        }
     }
 
     /**
      * The Type for referencing the '$ViewControlStatic' injectable as a dependency.
      */
-    export function ViewControlStatic() {
+    export function ViewControlStatic(): IViewControlStatic {
         return ViewControl;
     }
 

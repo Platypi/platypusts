@@ -16,7 +16,7 @@ module plat.ui.controls {
          * Checks for a defaultView, finds the ViewControl's injector, 
          * and initializes the loading of the view.
          */
-        loaded() {
+        loaded(): void {
             if (isNull(this.options)) {
                 this.$ExceptionStatic.warn('No defaultView specified in plat-options for plat-viewport.',
                     this.$ExceptionStatic.NAVIGATION);

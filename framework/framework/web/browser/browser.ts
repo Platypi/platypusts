@@ -16,6 +16,7 @@
         private __currentUrl: string;
         private __lastUrl = this.$window.location.href;
         private __initializing = false;
+
         constructor() {
             var ContextManager: observable.IContextManagerStatic = acquire('$ContextManagerStatic');
             ContextManager.defineGetter(this, 'uid', uniqueId('plat_'));
@@ -26,7 +27,7 @@
          * Initializes the Browser instance, trims the url, and 
          * adds events for popstate and hashchange.
          */
-        initialize() {
+        initialize(): void {
             var config = this.$config,
                 compat = this.$compat;
 
@@ -69,7 +70,7 @@
          * @param replace Whether or not to replace the current URL in 
          * the history.
          */
-        url(url?: string, replace?: boolean) {
+        url(url?: string, replace?: boolean): string {
             var location = this.$window.location;
 
             if (isString(url) && this.__lastUrl !== url) {
@@ -85,7 +86,7 @@
          * @param url The URL to associate with the new UrlUtils 
          * instance.
          */
-        urlUtils(url?: string) {
+        urlUtils(url?: string): IUrlUtils {
             url = url || this.url();
 
             var utils: IUrlUtils = acquire('$urlUtils'),
@@ -105,7 +106,7 @@
          * 
          * @param url The URL to check.
          */
-        isCrossDomain(url: string) {
+        isCrossDomain(url: string): boolean {
             if (!isString(url)) {
                 return false;
             }
@@ -123,7 +124,7 @@
          * The event to fire in the case of a URL change. It kicks 
          * off a 'urlChanged' direct event notification.
          */
-        _urlChanged() {
+        _urlChanged(): void {
             if (this.__initializing) {
                 return;
             }
@@ -152,7 +153,7 @@
          * @param replace Whether or not to replace the 
          * current URL in the history.
          */
-        _setUrl(url: string, replace?: boolean) {
+        _setUrl(url: string, replace?: boolean): void {
             url = this._formatUrl(url);
             if (this.$compat.pushState) {
                 if (replace) {
@@ -176,7 +177,7 @@
          * 
          * @param url The URL to format.
          */
-        _formatUrl(url: string) {
+        _formatUrl(url: string): string {
             var config = this.$config;
             if (config.routingType === config.routeType.HASH) {
                 var hasProtocol = url.indexOf(this.urlUtils().protocol) !== -1,
@@ -202,7 +203,7 @@
      */
     export class UrlUtils implements IUrlUtils {
         private static __urlUtilsElement: HTMLAnchorElement;
-        private static __getQuery(search: string) {
+        private static __getQuery(search: string): IObject<string> {
             if (isEmpty(search)) {
                 return <IObject<string>>{};
             }
@@ -210,7 +211,7 @@
             var split = search.split('&'),
                 query: IObject<string> = {},
                 length = split.length,
-                item,
+                item: Array<string>,
                 define = (<observable.IContextManagerStatic>acquire('$ContextManagerStatic')).defineGetter;
 
             for (var i = 0; i < length; ++i) {
@@ -227,7 +228,7 @@
          * 
          * @param url The initial URL passed into the Browser.
          */
-        private static __getBaseUrl(url: string) {
+        private static __getBaseUrl(url: string): string {
             var colon = url.substring(url.indexOf(':')),
                 next = colon.substring(colon.search(/\w+/));
 
@@ -320,7 +321,7 @@
          * 
          * @param url The input to associate with this instance of UrlUtils.
          */
-        initialize(url: string) {
+        initialize(url: string): void {
             url = url || '';
 
             var element = UrlUtils.__urlUtilsElement ||
@@ -354,7 +355,7 @@
             define(this, 'hostname', element.hostname, true, true);
             define(this, 'port', element.port, true, true);
 
-            var path;
+            var path: string;
 
             if (!isEmpty(this.$config.baseUrl)) {
                 path = url.replace(this.$config.baseUrl, '/');
@@ -372,7 +373,7 @@
          * Allows the UrlUtils instance to display its href property when the toString 
          * method is called.
          */
-        toString() {
+        toString(): string {
             return this.href;
         }
     }
@@ -450,7 +451,7 @@
          * 
          * @param url The input to associate with this IUrlUtils.
          */
-        initialize(url: string);
+        initialize(url: string): void;
 
         /**
          * toString function implementation.

@@ -49,12 +49,12 @@ module plat.ui {
          * @param control The control for which to create a resource.
          * @param resource The IResource used to set the value.
          */
-        static createResource(control: ITemplateControl, resource: IResource) {
+        static createResource(control: ITemplateControl, resource: IResource): IResource {
             if (isNull(resource)) {
                 return resource;
             }
 
-            var value;
+            var value: any;
 
             switch (resource.type.toLowerCase()) {
                 case 'injectable':
@@ -98,7 +98,7 @@ module plat.ui {
          * @static
          * @param control The control on which to add the resources.
          */
-        static addControlResources(control: ITemplateControl) {
+        static addControlResources(control: ITemplateControl): void {
             control.resources.add({
                 context: {
                     value: control.context,
@@ -130,7 +130,7 @@ module plat.ui {
                 aliases = Object.keys(resources),
                 controlResources = Resources.__controlResources,
                 length = aliases.length,
-                alias;
+                alias: string;
                 
             
             for (var i = 0; i < length; ++i) {
@@ -140,8 +140,8 @@ module plat.ui {
                     continue;
                 }
 
-                resourcesInstance[alias] = resources[alias] = Resources.createResource(control,
-                    resourcesInstance[alias]);
+                (<any>resourcesInstance)[alias] = resources[alias] = Resources.createResource(control,
+                    (<any>resourcesInstance)[alias]);
             }
             
             resourcesInstance.__bound = true;
@@ -157,7 +157,7 @@ module plat.ui {
          * @param persist Whether or not to persist a resource object post 
          * disposal or set it to null.
          */
-        static dispose(control: ITemplateControl, persist?: boolean) {
+        static dispose(control: ITemplateControl, persist?: boolean): void {
             var resources = <Resources>control.resources;
 
             if (isNull(resources)) {
@@ -172,7 +172,7 @@ module plat.ui {
 
             for (var i = 0; i < length; ++i) {
                 key = keys[i];
-                resource = resources[key];
+                resource = (<any>resources)[key];
 
                 if (!isNull(resource) && resource.type === 'observable') {
                     define(resources, key, persist ? deepExtend({}, resource) : null, true, true);
@@ -192,7 +192,7 @@ module plat.ui {
          * @return {IObject<IResource>} The resources created 
          * using element.
          */
-        static parseElement(element: HTMLElement) {
+        static parseElement(element: HTMLElement): IObject<IResource> {
             var slice = Array.prototype.slice,
                 whiteSpaceRegex = Resources.$regex.whiteSpaceRegex,
                 quotationRegex = Resources.$regex.quotationRegex,
@@ -242,7 +242,7 @@ module plat.ui {
          * 
          * @static
          */
-        static getInstance() {
+        static getInstance(): IResources {
             return new Resources();
         }
 
@@ -253,7 +253,7 @@ module plat.ui {
          * @param control The control in charge of the observable resource.
          * @param resource The resource to observe.
          */
-        static _observeResource(control: ITemplateControl, resource: IResource) {
+        static _observeResource(control: ITemplateControl, resource: IResource): void {
             var value = resource.value,
                 uid = control.uid,
                 removeListeners = Resources.__observableResourceRemoveListeners[uid];
@@ -282,7 +282,7 @@ module plat.ui {
          * @static
          * @param control The control whose listeners are being removed.
          */
-        static _removeListeners(control: ITemplateControl) {
+        static _removeListeners(control: ITemplateControl): void {
             if (isNull(control)) {
                 return;
             }
@@ -312,7 +312,7 @@ module plat.ui {
          * 
          * @param control The root IViewControl.
          */
-        private static __addRoot(control: IViewControl) {
+        private static __addRoot(control: IViewControl): void {
             control.resources.add({
                 root: {
                     value: control,
@@ -374,7 +374,7 @@ module plat.ui {
 
             for (var i = 0; i < length; ++i) {
                 key = keys[i];
-                this[key] = resources[key];
+                (<any>this)[key] = resources[key];
             }
         }
 
@@ -428,7 +428,7 @@ module plat.ui {
                 resource = resources[key];
                 resource.alias = key;
 
-                this[key] = this.__resources[key] = bound ? create(control, resource) : resource;
+                (<any>this)[key] = this.__resources[key] = bound ? create(control, resource) : resource;
             }
         }
     }
@@ -437,9 +437,9 @@ module plat.ui {
      * The Type for referencing the '$ResourcesStatic' injectable as a dependency.
      */
     export function ResourcesStatic(
-    $ContextManagerStatic,
-    $regex,
-    $ExceptionStatic) {
+            $ContextManagerStatic: observable.IContextManagerStatic,
+            $regex: expressions.IRegex,
+            $ExceptionStatic: IExceptionStatic): IResourcesStatic {
         Resources.$ContextManagerStatic = $ContextManagerStatic;
         Resources.$regex = $regex;
         Resources.$ExceptionStatic = $ExceptionStatic;
@@ -506,7 +506,7 @@ module plat.ui {
          *     }
          * });
          */
-        add(resources: IObject<IResource>);
+        add(resources: IObject<IResource>): void;
         /**
          * Used for programatically adding IResource objects.
          * 
@@ -526,19 +526,19 @@ module plat.ui {
          * @param control The control containing this Resources instance.
          * @param element An optional element used to create initial IResource objects.
          */
-        initialize(control: ITemplateControl, element?: HTMLElement);
+        initialize(control: ITemplateControl, element?: HTMLElement): void;
         /**
          * @param control The control containing this Resources instance.
          * @param resources An optional IObject<IResource> used to populate initial
          * IResource objects.
          */
-        initialize(control: ITemplateControl, resources?: IObject<IResource>);
+        initialize(control: ITemplateControl, resources?: IObject<IResource>): void;
         /**
          * @param control The control containing this Resources instance.
          * @param element An optional IResources object used to populate initial 
          * IResource objects.
          */
-        initialize(control: ITemplateControl, resources?: IResources);
+        initialize(control: ITemplateControl, resources?: IResources): void;
     }
 
     /**

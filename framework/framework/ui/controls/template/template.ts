@@ -36,7 +36,7 @@ module plat.ui.controls {
         /**
          * Initializes the creation of the template.
          */
-        initialize() {
+        initialize(): void {
             var templateControlCache = this.__templateControlCache,
                 id = this._id = this.options.value.id,
                 options = this.options.value;
@@ -61,7 +61,7 @@ module plat.ui.controls {
          * Decides if this is a template definition or 
          * a template instance.
          */
-        loaded() {
+        loaded(): void {
             if (!this.__isFirst) {
                 this._waitForTemplateControl(this.__templatePromise);
             }
@@ -70,7 +70,7 @@ module plat.ui.controls {
         /**
          * Removes the template from the template cache.
          */
-        dispose() {
+        dispose(): void {
             if (this.__isFirst) {
                 this.__templateControlCache.dispose();
             }
@@ -81,7 +81,7 @@ module plat.ui.controls {
          * creates the bindable template, and stores the template 
          * in a template cache for later use.
          */
-        _initializeTemplate() {
+        _initializeTemplate(): void {
             var id = this._id,
                 $document: Document = acquire('$document');
 
@@ -91,7 +91,7 @@ module plat.ui.controls {
 
             var parentNode = this.endNode.parentNode,
                 url = this._url,
-                template;
+                template: any;
 
             if (!isNull(url)) {
                 template = this.$templateCache.read(url);
@@ -103,9 +103,9 @@ module plat.ui.controls {
                 this.dom.appendChildren(this.elementNodes, template);
             }
 
-            var controlPromise;
+            var controlPromise: async.IPromise<ITemplateControl, Error>;
             if (isFunction(template.then)) {
-                controlPromise = template.catch((error) => {
+                controlPromise = template.catch((error: Error) => {
                     if (isNull(error)) {
                         return TemplateControl.determineTemplate(this, url);
                     }
@@ -131,7 +131,7 @@ module plat.ui.controls {
          * @param templatePromise The promise associated with the first 
          * instance of the template with this ID.
          */
-        _waitForTemplateControl(templatePromise: async.IPromise<Template, async.IAjaxError>) {
+        _waitForTemplateControl(templatePromise: async.IPromise<Template, async.IAjaxError>): void {
             templatePromise.then((templateControl: Template) => {
                 if (!(isNull(this._url) || (this._url === templateControl._url))) {
                     this.$ExceptionStatic.warn('The specified url: ' + this._url +
@@ -158,7 +158,7 @@ module plat.ui.controls {
          * Binds the template to the proper context and 
          * resolves the clone to be placed into the DOM.
          */
-        _instantiateTemplate() {
+        _instantiateTemplate(): async.IPromise<DocumentFragment, Error> {
             var bindableTemplates = this.bindableTemplates,
                 id = this._id;
 
@@ -169,7 +169,7 @@ module plat.ui.controls {
             });
         }
 
-        private __mapBindableTemplates(control: Template) {
+        private __mapBindableTemplates(control: Template): void {
             (<BindableTemplates>this.bindableTemplates)._cache =
                 (<BindableTemplates>control.bindableTemplates)._cache;
             this.bindableTemplates.templates = control.bindableTemplates.templates;

@@ -3,14 +3,14 @@ module plat.ui.controls {
         /**
          * Removes the innerHTML from the DOM and saves it.
          */
-        setTemplate() {
+        setTemplate(): void {
             this.innerTemplate = <DocumentFragment>this.dom.appendChildren(this.element.childNodes);
         }
 
         /**
          * Places the saved innerHTML back into the DOM.
          */
-        loaded() {
+        loaded(): void {
             this.element.appendChild(this.innerTemplate.cloneNode(true));
         }
     }

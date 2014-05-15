@@ -2,7 +2,7 @@
     class Anchor extends TemplateControl {
         replaceWith = 'a';
         element: HTMLAnchorElement;
-        initialize() {
+        initialize(): void {
             if (isEmpty(this.element.href)) {
                 this.addEventListener(this.element, 'click', (ev: Event) => {
                     if (isEmpty(this.element.href)) {

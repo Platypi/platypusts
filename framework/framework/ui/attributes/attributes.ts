@@ -20,7 +20,7 @@ module plat.ui {
          * @param control The control they'll be placed upon as a property.
          * @param attributes The attributes and their values present on the HTMLElement.
          */
-        initialize(control: IControl, attributes: IObject<string>) {
+        initialize(control: IControl, attributes: IObject<string>): void {
             this.__control = control;
 
             var keys = Object.keys(attributes),
@@ -32,7 +32,7 @@ module plat.ui {
 
             for (var i = 0; i < length; ++i) {
                 key = keys[i];
-                this[key] = attributes[key];
+                (<any>this)[key] = attributes[key];
                 attributeListeners[key] = [];
             }
         }
@@ -67,7 +67,7 @@ module plat.ui {
          * @param newValue The new value of the attribute.
          * @param oldValue The previous value of the attribute.
          */
-        attributeChanged(key: string, newValue: any, oldValue: any) {
+        attributeChanged(key: string, newValue: any, oldValue: any): void {
             var control = this.__control,
                 listeners = this.__listeners[camelCase(key)],
                 length = listeners.length;

@@ -6,7 +6,7 @@ module plat {
         /**
          * An empty method for quickly creating dummy objects.
          */
-        noop() { }
+        noop(): void { }
 
         /**
          * Allows you to extend the properties of an object with any number 
@@ -329,7 +329,7 @@ module plat {
          * @return {Array<U>} An array of 'plucked' values from obj.
          */
         pluck<T, U>(obj: any, key: string): Array<U> {
-            return map<T, U>(obj, function (value) { return value[key]; });
+            return map<T, U>(obj, (value) => (<any>value)[key]);
         }
 
         /**

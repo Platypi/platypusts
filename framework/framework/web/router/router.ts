@@ -45,6 +45,7 @@
         private __pathSlashRegex = /^\/|\/$/g;
         private __firstRoute = true;
         private __history: Array<string>;
+
         constructor() {
             var ContextManager: observable.IContextManagerStatic = acquire('$ContextManagerStatic');
             ContextManager.defineGetter(this, 'uid', uniqueId('plat_'));
@@ -68,7 +69,7 @@
          * @param routes An array of strings or RegExp expressions to associate with 
          * the control type.
          */
-        registerRoutes(type: string, routes: Array<any>) {
+        registerRoutes(type: string, routes: Array<any>): void {
             if (!isArray(routes)) {
                 return;
             }
@@ -89,7 +90,7 @@
          * @param options The IRouteNavigationOptions associated with this routing 
          * operation.
          */
-        route(path: string, options?: IRouteNavigationOptions) {
+        route(path: string, options?: IRouteNavigationOptions): void {
             options = options || <IRouteNavigationOptions>{};
 
             var replace = options.replace,
@@ -141,7 +142,7 @@
          * 
          * @param length The number of entries to go back in the history.
          */
-        goBack(length?: number) {
+        goBack(length?: number): void {
             this.$window.history.go(-length);
 
             if (this.__history && this.__history.length > 1) {
@@ -159,7 +160,7 @@
          * @param query The route query object if passed into the 
          * IRouteNavigationOptions.
          */
-        _buildRoute(routeParameter: string, query: IObject<string>) {
+        _buildRoute(routeParameter: string, query: IObject<string>): { route: string; match: IMatchedRoute; } {
             var queryStr = this._buildQueryString(query);
 
             if (!isString(routeParameter)) {
@@ -186,7 +187,7 @@
          * 
          * @param query The query object passed in.
          */
-        _buildQueryString(query: IObject<string>) {
+        _buildQueryString(query: IObject<string>): string {
             var queryStr: Array<string> = [];
 
             if (!isObject(query)) {
@@ -214,7 +215,7 @@
          * @param utils The IUrlUtils created for the invoked 
          * route function.
          */
-        _routeChanged(ev: events.IDispatchEvent, utils: web.IUrlUtils) {
+        _routeChanged(ev: events.IDispatchEvent, utils: web.IUrlUtils): void {
             var matchedRoute = this._match(utils);
 
             if (isNull(matchedRoute)) {
@@ -244,7 +245,7 @@
          * the type.
          * @param type The control type.
          */
-        _registerRoute(route: any, injector: dependency.IInjector<ui.IViewControl>, type: string) {
+        _registerRoute(route: any, injector: dependency.IInjector<ui.IViewControl>, type: string): void {
             var regexp = isRegExp(route),
                 routeParameters: IRouteMatcher;
 
@@ -293,7 +294,7 @@
                 wildcardRegex = regex.wildcardRouteRegex,
                 regexArgs = route.match(namedRegex),
                 wildcard = wildcardRegex.exec(route),
-                args = [];
+                args: Array<string> = [];
 
             route = route.replace(escapeRegex, '\\$')
                 .replace(optionalRegex, '(?:$1)?')
@@ -335,9 +336,9 @@
                 route: IRouteMatcher,
                 exec: RegExpExecArray,
                 args: Array<string>,
-                routeParams = {},
+                routeParams: IObject<string> = {},
                 path: string,
-                argsLength,
+                argsLength: number,
                 length = routes.length;
 
             if (isEmpty(url)) {
@@ -412,7 +413,7 @@
          * 
          * @param utils The IUrlUtils associated with this route function.
          */
-        _getUrlFragment(utils: web.IUrlUtils) {
+        _getUrlFragment(utils: web.IUrlUtils): string {
             return utils.pathname.replace(this.__pathSlashRegex, '');
         }
     }
@@ -516,7 +517,7 @@
          * @param routes An array of strings or RegExp expressions to associate with 
          * the control type.
          */
-        registerRoutes(type: string, routes: Array<any>);
+        registerRoutes(type: string, routes: Array<any>): void;
 
         /**
          * Formats a url path given the parameters and query string, then changes the 

@@ -15,7 +15,7 @@ module plat.ui.controls {
         /**
          * Creates a bindable template with its element nodes.
          */
-        setTemplate() {
+        setTemplate(): void {
             this.bindableTemplates.add('item', this.elementNodes);
         }
 
@@ -23,7 +23,7 @@ module plat.ui.controls {
          * Checks the options and initializes the 
          * evaluation.
          */
-        contextChanged() {
+        contextChanged(): void {
             var options = this.options.value;
 
             if (isEmpty(options)) {
@@ -38,7 +38,7 @@ module plat.ui.controls {
          * defined, kicks off the evaluation, and observes 
          * the options for changes.
          */
-        loaded() {
+        loaded(): void {
             if (isNull(this.options)) {
                 this.$ExceptionStatic.warn('No condition specified in plat-options for plat-if.');
                 this.options = {
@@ -55,7 +55,7 @@ module plat.ui.controls {
         /**
          * Stops listening to the options for changes.
          */
-        dispose() {
+        dispose(): void {
             if (isFunction(this.__removeListener)) {
                 this.__removeListener();
                 this.__removeListener = null;
@@ -67,7 +67,7 @@ module plat.ui.controls {
          * whether or not to add or remove 
          * the node from the DOM.
          */
-        setter(options: IIfOptions) {
+        setter(options: IIfOptions): void {
             var value = options.condition;
 
             if (value === this.__condition) {
@@ -90,7 +90,7 @@ module plat.ui.controls {
          * @param item The DocumentFragment consisting of 
          * the inner template of the node.
          */
-        _addItem(item: DocumentFragment) {
+        _addItem(item: DocumentFragment): void {
             var endNode = this.endNode;
             this.dom.insertBefore(endNode.parentNode, item, endNode);
         }
@@ -98,7 +98,7 @@ module plat.ui.controls {
         /**
          * Removes the node from the DOM.
          */
-        _removeItem() {
+        _removeItem(): void {
             postpone(() => {
                 Control.dispose(this.controls[0]);
             });

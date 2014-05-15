@@ -37,7 +37,7 @@ module plat.ui {
          * @static
          * @param control The control whose bindableTemplates will be disposed.
          */
-        static dispose(control: ITemplateControl) {
+        static dispose(control: ITemplateControl): void {
             if (isNull(control)) {
                 return;
             }
@@ -60,7 +60,7 @@ module plat.ui {
          * All created templates are DocumentFragments, allowing a ITemplateControl to
          * easily insert the template into the DOM (without iterating over childNodes).
          */
-        templates = {};
+        templates: IObject<DocumentFragment> = {};
 
         /**
          * A keyed cache of IElementManagers that represent the roots of compiled templates 
@@ -127,8 +127,7 @@ module plat.ui {
         bind(key: any, callback: IBindableTemplateCallback, relativeIdentifier?: any, resources?: IObject<IResource>): DocumentFragment {
             var template: any = this.templates[key],
                 control: ITemplateControl = this.control,
-                nodeMap: processing.INodeMap,
-                templatePromise;
+                nodeMap: processing.INodeMap;
 
             if (isNull(template)) {
                 this.$ExceptionStatic.fatal('Cannot bind template, no template stored with key: ' + key,
@@ -146,7 +145,7 @@ module plat.ui {
             if (isFunction(template.then)) {
                 template.then((result: DocumentFragment) => {
                     this._bindTemplate(key, <DocumentFragment>result.cloneNode(true), relativeIdentifier, resources, callback);
-                }).catch((error) => {
+                }).catch((error: any) => {
                     postpone(() => {
                         this.$ExceptionStatic.fatal(error, this.$ExceptionStatic.COMPILE);
                     });
@@ -206,8 +205,7 @@ module plat.ui {
                 return;
             }
 
-            var fragment = this.$document.createDocumentFragment(),
-                nodes;
+            var fragment = this.$document.createDocumentFragment();
 
             if (isNode(template)) {
                 fragment.appendChild(template);
@@ -225,7 +223,7 @@ module plat.ui {
         /**
          * Clears the memory being held by this BindableTemplates instance.
          */
-        dispose() {
+        dispose(): void {
             var dispose = this.$TemplateControlStatic.dispose,
                 compiledControls = this.__compiledControls,
                 length = compiledControls.length;
@@ -267,7 +265,7 @@ module plat.ui {
          * Clones the compiled IElementManager using the newly created 
          * INodeMap and binds and loads this control's IElementManager.
          */
-        _bindNodeMap(nodeMap: processing.INodeMap, key: string) {
+        _bindNodeMap(nodeMap: processing.INodeMap, key: string): async.IPromise<void, Error> {
             var manager = this._cache[key],
                 child = nodeMap.uiControlNode.control,
                 template = nodeMap.element;
@@ -282,7 +280,7 @@ module plat.ui {
          * Creates the template's compiled, bound control and INodeMap and initiates 
          * the compilation of the template.
          */
-        _compile(key: string, template: DocumentFragment) {
+        _compile(key: string, template: DocumentFragment): void {
             var control = this._createBoundControl(key, template),
                 nodeMap = this._createNodeMap(control, template);
 
@@ -297,11 +295,11 @@ module plat.ui {
          */
         _compileNodeMap(control: ITemplateControl, nodeMap: processing.INodeMap, key: string) {
             var manager = this.$ElementManagerStatic.getInstance(),
-                promises = [];
+                promises: Array<async.IPromise<void, Error>> = [];
 
             manager.isClone = true;
             manager.initialize(nodeMap, null);
-            promises.push(manager.setUiControlTemplate());
+            manager.setUiControlTemplate();
 
             this._cache[key] = manager;
 
@@ -309,8 +307,8 @@ module plat.ui {
 
             this.templates[key] = <any>this.$PromiseStatic.all<any, Error>(promises).then((results) => {
                 var element = nodeMap.element,
-                    startNode,
-                    endNode;
+                    startNode: Comment,
+                    endNode: Comment;
 
                 this.templates[key] = <DocumentFragment>nodeMap.element.cloneNode(true);
 
@@ -352,7 +350,7 @@ module plat.ui {
          * Creates a bound control for either a template being compiled or a template being bound.
          */
         _createBoundControl(key: string, template: DocumentFragment,
-            relativeIdentifier?: string, resources?: IObject<IResource>) {
+            relativeIdentifier?: string, resources?: IObject<IResource>): ITemplateControl {
             var $TemplateControlStatic = this.$TemplateControlStatic,
                 control = $TemplateControlStatic.getInstance(),
                 parent = this.control,
@@ -386,7 +384,7 @@ module plat.ui {
     /**
      * The Type for referencing the '$BindableTemplatesStatic' injectable as a dependency.
      */
-    export function BindableTemplatesStatic($TemplateControlStatic) {
+    export function BindableTemplatesStatic($TemplateControlStatic: ITemplateControlStatic) {
         return BindableTemplates;
     }
 

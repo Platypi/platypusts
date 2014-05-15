@@ -19,7 +19,7 @@ module plat.ui.controls {
          * Creates a bindable template with the elementNodes (innerHTML) 
          * specified for the ForEach.
          */
-        setTemplate() {
+        setTemplate(): void {
             this.bindableTemplates.add('item', this.element.childNodes);
         }
 
@@ -30,7 +30,7 @@ module plat.ui.controls {
          * @param newValue The new Array
          * @param oldValue The old Array
          */
-        contextChanged(newValue?: Array<any>, oldValue?: Array<any>) {
+        contextChanged(newValue?: Array<any>, oldValue?: Array<any>): void {
             if (isNull(this.__removeListener)) {
                 this._setListener();
             }
@@ -56,7 +56,7 @@ module plat.ui.controls {
         /**
          * Observes the array for changes and adds initial items to the DOM.
          */
-        loaded() {
+        loaded(): void {
             var context = this.context;
 
             if (!isArray(context)) {
@@ -71,7 +71,7 @@ module plat.ui.controls {
         /**
          * Removes the Array listener
          */
-        dispose() {
+        dispose(): void {
             if (isFunction(this.__removeListener)) {
                 this.__removeListener();
                 this.__removeListener = null;
@@ -87,14 +87,14 @@ module plat.ui.controls {
         /**
          * Adds an item to the ForEach's element.
          */
-        _addItem(item: DocumentFragment) {
+        _addItem(item: DocumentFragment): void {
             this.dom.insertBefore(this.element, item);
         }
 
         /**
          * Removes an item from the ForEach's element.
          */
-        _removeItem() {
+        _removeItem(): void {
             var controls = this.controls,
                 length = controls.length - 1;
 
@@ -105,7 +105,7 @@ module plat.ui.controls {
          * Updates the ForEach's children resource objects when 
          * the array changes.
          */
-        _updateResources() {
+        _updateResources(): void {
             var controls = this.controls,
                 length = controls.length;
 
@@ -117,7 +117,7 @@ module plat.ui.controls {
         /**
          * Sets a listener for the changes to the array.
          */
-        _setListener() {
+        _setListener(): void {
             this.__removeListener = this.observeArray(this, 'context', this._arrayChanged);
         }
 
@@ -126,8 +126,8 @@ module plat.ui.controls {
          * 
          * @param ev The IArrayMethodInfo
          */
-        _arrayChanged(ev: observable.IArrayMethodInfo<any>) {
-            if (isFunction(this['_' + ev.method])) {
+        _arrayChanged(ev: observable.IArrayMethodInfo<any>): void {
+            if (isFunction((<any>this)['_' + ev.method])) {
                 this._executeEvent(ev);
             }
         }
@@ -137,8 +137,8 @@ module plat.ui.controls {
          * 
          * @param ev The IArrayMethodInfo
          */
-        _executeEvent(ev: observable.IArrayMethodInfo<any>) {
-            this['_' + ev.method](ev);
+        _executeEvent(ev: observable.IArrayMethodInfo<any>): void {
+            (<any>this)['_' + ev.method](ev);
         }
 
         /**
@@ -148,7 +148,7 @@ module plat.ui.controls {
          * @param numberOfItems The number of items to add.
          * @param index The point in the array to start adding items.
          */
-        _addItems(numberOfItems: number, index: number) {
+        _addItems(numberOfItems: number, index: number): void {
             var bindableTemplates = this.bindableTemplates;
             
             for (var i = 0; i < numberOfItems; ++i, ++index) {
@@ -190,7 +190,7 @@ module plat.ui.controls {
          * 
          * @param numberOfItems The number of items to remove.
          */
-        _removeItems(numberOfItems: number) {
+        _removeItems(numberOfItems: number): void {
             for (var i = 0; i < numberOfItems; ++i) {
                 this._removeItem();
             }
@@ -205,7 +205,7 @@ module plat.ui.controls {
          * 
          * @param ev The IArrayMethodInfo
          */
-        _push(ev: observable.IArrayMethodInfo<any>) {
+        _push(ev: observable.IArrayMethodInfo<any>): void {
             this._addItems(ev.arguments.length, ev.oldArray.length);
         }
         
@@ -214,7 +214,7 @@ module plat.ui.controls {
          * 
          * @param ev The IArrayMethodInfo
          */
-        _pop(ev: observable.IArrayMethodInfo<any>) {
+        _pop(ev: observable.IArrayMethodInfo<any>): void {
             this._removeItems(1);
         }
         
@@ -223,7 +223,7 @@ module plat.ui.controls {
          * 
          * @param ev The IArrayMethodInfo
          */
-        _shift(ev: observable.IArrayMethodInfo<any>) {
+        _shift(ev: observable.IArrayMethodInfo<any>): void {
             this._removeItems(1);
         }
         
@@ -232,7 +232,7 @@ module plat.ui.controls {
          * 
          * @param ev The IArrayMethodInfo
          */
-        _splice(ev: observable.IArrayMethodInfo<any>) {
+        _splice(ev: observable.IArrayMethodInfo<any>): void {
             var oldLength = this.controls.length,
                 newLength = ev.newArray.length;
 
@@ -248,7 +248,7 @@ module plat.ui.controls {
          * 
          * @param ev The IArrayMethodInfo
          */
-        _unshift(ev: observable.IArrayMethodInfo<any>) {
+        _unshift(ev: observable.IArrayMethodInfo<any>): void {
             this._addItems(ev.arguments.length, ev.oldArray.length);
         }
         
@@ -257,7 +257,7 @@ module plat.ui.controls {
          * 
          * @param ev The IArrayMethodInfo
          */
-        _sort(ev: observable.IArrayMethodInfo<any>) {
+        _sort(ev: observable.IArrayMethodInfo<any>): void {
         }
         
         /**
@@ -265,7 +265,7 @@ module plat.ui.controls {
          * 
          * @param ev The IArrayMethodInfo
          */
-        _reverse(ev: observable.IArrayMethodInfo<any>) {
+        _reverse(ev: observable.IArrayMethodInfo<any>): void {
         }
     }
 

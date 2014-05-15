@@ -19,7 +19,7 @@ module plat.ui {
          * @param control The control used for evaluation context.
          * @param aliases An optional alias object containing resource alias values
          */
-        static evaluateExpression(expression: string, control?: ITemplateControl, aliases?: any);
+        static evaluateExpression(expression: string, control?: ITemplateControl, aliases?: any): any;
         /**
          * Evaluates a parsed expression with a given control and optional context.
          * 
@@ -27,7 +27,7 @@ module plat.ui {
          * @param control The control used for evaluation context.
          * @param aliases An optional alias object containing resource alias values
          */
-        static evaluateExpression(expression: expressions.IParsedExpression, control?: ITemplateControl, aliases?: any);
+        static evaluateExpression(expression: expressions.IParsedExpression, control?: ITemplateControl, aliases?: any): any;
         static evaluateExpression(expression: any, control?: ITemplateControl, aliases?: any) {
             if (isNull(expression)) {
                 return;
@@ -56,14 +56,17 @@ module plat.ui {
          * @param aliases An array of aliases to search for.
          * @param resources An optional resources object to extend, if no resources object is passed in a new one will be created.
          */
-        static getResources(control: ITemplateControl, aliases: Array<string>, resources?: any) {
+        static getResources(control: ITemplateControl, aliases: Array<string>, resources?: any): IObject<any> {
             if (isNull(control)) {
                 return {};
             }
 
             var length = aliases.length,
                 alias: string,
-                resourceObj,
+                resourceObj: {
+                    control: ITemplateControl;
+                    resource: IResource;
+                },
                 cache = TemplateControl.__resourceCache[control.uid];
 
             if (isNull(cache)) {
@@ -118,7 +121,7 @@ module plat.ui {
          * @param control The control on which to start searching for the resource alias.
          * @param alias The alias to search for.
          */
-        static findResource(control: ITemplateControl, alias: string) {
+        static findResource(control: ITemplateControl, alias: string): { resource: IResource; control: ITemplateControl; } {
             var resource: IResource;
 
             if (isNull(control) || !isString(alias) || isEmpty(alias)) {
@@ -132,18 +135,18 @@ module plat.ui {
             if (alias === 'rootContext') {
                 control = Control.getRootControl(control);
                 return {
-                    resource: control.resources[alias],
+                    resource: (<any>control.resources)[alias],
                     control: control
                 };
             } else if (alias === 'context' || alias === 'control') {
                 return {
-                    resource: control.resources[alias],
+                    resource: (<any>control.resources)[alias],
                     control: control
                 };
             }
 
             while (!isNull(control)) {
-                resource = control.resources[alias];
+                resource = (<any>control.resources)[alias];
                 if (!isNull(resource)) {
                     return {
                         resource: resource,
@@ -159,7 +162,7 @@ module plat.ui {
          * @static
          * @param control A control to dispose.
          */
-        static dispose(control: ITemplateControl) {
+        static dispose(control: ITemplateControl): void {
             if (isNull(control)) {
                 return;
             }
@@ -215,10 +218,10 @@ module plat.ui {
         static loadControl(control: ITemplateControl) {
             var children = control.controls,
                 length = children.length,
-                child;
+                child: ITemplateControl;
 
             for (var i = 0; i < length; ++i) {
-                child = children[i];
+                child = <ITemplateControl>children[i];
                 if (!isNull(child.controls)) {
                     TemplateControl.loadControl(child);
                 } else {
@@ -237,8 +240,8 @@ module plat.ui {
          * @param newValue The new value of the control's context.
          * @param oldValue The old value of the control's context.
          */
-        static contextChanged(control: IControl, newValue, oldValue);
-        static contextChanged(control: ITemplateControl, newValue, oldValue) {
+        static contextChanged(control: IControl, newValue: any, oldValue: any): void;
+        static contextChanged(control: ITemplateControl, newValue: any, oldValue: any) {
             control.context = newValue;
 
             TemplateControl.setContextResources(control);
@@ -254,7 +257,7 @@ module plat.ui {
          * 
          * @param control The control whose context resources will be set.
          */
-        static setContextResources(control: ITemplateControl) {
+        static setContextResources(control: ITemplateControl): void {
             var value = control.context;
 
             if (isNull(control.resources)) {
@@ -296,7 +299,7 @@ module plat.ui {
          * 
          * @param control The control whose element should be removed.
          */
-        static removeElement(control: ITemplateControl) {
+        static removeElement(control: ITemplateControl): void {
             if (isNull(control)) {
                 return;
             }
@@ -330,7 +333,7 @@ module plat.ui {
          * @param control The control on which to set the absoluteContextPath.
          * @param path The path to set on the control.
          */
-        static setAbsoluteContextPath(control: ITemplateControl, path: string) {
+        static setAbsoluteContextPath(control: ITemplateControl, path: string): void {
             Control.$ContextManagerStatic.defineGetter(control, 'absoluteContextPath', path, false, true);
         }
 
@@ -339,7 +342,7 @@ module plat.ui {
          * using the provided templateUrl, or serializing the control's templateString.
          */
         static determineTemplate(control: ITemplateControl, templateUrl?: string): async.IPromise<DocumentFragment, any> {
-            var template,
+            var template: any,
                 templateCache = TemplateControl.$templateCache,
                 dom = control.dom,
                 Promise = TemplateControl.$Promise;
@@ -370,27 +373,27 @@ module plat.ui {
             return Promise.cast<DocumentFragment, any>(template).catch((error) => {
                 if (isNull(error)) {
                     return templateCache.put(templateUrl, <any>ajax({ url: templateUrl }).then((success) => {
-                if (!isObject(success) || !isString(success.response)) {
-                    Exception.warn('No template found at ' + templateUrl, Exception.AJAX);
+                        if (!isObject(success) || !isString(success.response)) {
+                            Exception.warn('No template found at ' + templateUrl, Exception.AJAX);
                             return Promise.resolve(dom.serializeHtml());
-                }
+                        }
 
-                var templateString = success.response;
+                        var templateString = success.response;
 
-                if (isEmpty(templateString.trim())) {
+                        if (isEmpty(templateString.trim())) {
                             return Promise.resolve(dom.serializeHtml());
+                        }
+
+                        template = dom.serializeHtml(templateString);
+
+                        return templateCache.put(templateUrl, template);
+                    }, (error) => {
+                        postpone(() => {
+                            Exception.fatal('Failure to get template from ' + templateUrl + '.', Exception.TEMPLATE);
+                        });
+                        return error;
+                    }));
                 }
-
-                template = dom.serializeHtml(templateString);
-
-                return templateCache.put(templateUrl, template);
-            }, (error) => {
-                postpone(() => {
-                    Exception.fatal('Failure to get template from ' + templateUrl + '.', Exception.TEMPLATE);
-                });
-                return error;
-            }));
-        }
             }).catch((error) => {
                 postpone(() => {
                     Exception.fatal('Failure to get template from ' + templateUrl + '.', Exception.TEMPLATE);
@@ -405,7 +408,7 @@ module plat.ui {
          * @static
          * @param control The control to be detached.
          */
-        static detach(control: ITemplateControl) {
+        static detach(control: ITemplateControl): void {
             if (isNull(control) || isNull(control.controls)) {
                 return;
             }
@@ -439,7 +442,7 @@ module plat.ui {
          * 
          * @static
          */
-        static getInstance() {
+        static getInstance(): ITemplateControl {
             return new TemplateControl();
         }
 
@@ -596,14 +599,14 @@ module plat.ui {
         /**
          * This event is fired when a TemplateControl's context property is changed by an ancestor control.
          */
-        contextChanged() { }
+        contextChanged(): void { }
 
         /**
          * A method called for ITemplateControls to set their template. During this method a control should
          * ready its template for compilation. Whatever is in the control's element (or elementNodes if replaceWith
          * is implemented) after this method's execution will be compiled and appear on the DOM.
          */
-        setTemplate() { }
+        setTemplate(): void { }
 
         /**
          * Finds the identifier string associated with the given context object. The string returned
@@ -616,17 +619,17 @@ module plat.ui {
          *     this.getIdentifier(this.context.title);
          */
         getIdentifier(context: any): string {
-            var queue = [],
+            var queue: Array<{ context: any; identifier: string; }> = [],
                 dataContext = this.context,
                 found = false,
                 obj = {
                     context: dataContext,
                     identifier: ''
                 },
-                length,
-                keys,
-                key,
-                newObj;
+                length: number,
+                keys: Array<string>,
+                key: string,
+                newObj: any;
 
             if (dataContext === context) {
                 found = true;
@@ -671,7 +674,7 @@ module plat.ui {
          * 
          * @param context The object to locate on the root control's context.
          */
-        getAbsoluteIdentifier(context: any) {
+        getAbsoluteIdentifier(context: any): string {
             if (context === this.context) {
                 return this.absoluteContextPath;
             }
@@ -691,7 +694,7 @@ module plat.ui {
          * @param aliases An array of aliases to search for.
          * @param resources An optional resources object to extend, if no resources object is passed in a new one will be created.
          */
-        getResources(aliases: Array<string>, resources?: any) {
+        getResources(aliases: Array<string>, resources?: any): IObject<any> {
             return TemplateControl.getResources(this, aliases, resources);
         }
 
@@ -702,7 +705,7 @@ module plat.ui {
          * 
          * @param alias The alias to search for.
          */
-        findResource(alias: string) {
+        findResource(alias: string): { resource: IResource; control: ITemplateControl; } {
             return TemplateControl.findResource(this, alias);
         }
 
@@ -713,7 +716,7 @@ module plat.ui {
          * @param context An optional context with which to parse. If 
          * no context is specified, the control.context will be used.
          */
-        evaluateExpression(expression: string, context?: any);
+        evaluateExpression(expression: string, context?: any): any;
         /**
          * Evaluates a parsed expression, using the control.context.
          * 
@@ -721,7 +724,7 @@ module plat.ui {
          * @param context An optional context with which to parse. If 
          * no context is specified, the control.context will be used.
          */
-        evaluateExpression(expression: expressions.IParsedExpression, context?: any);
+        evaluateExpression(expression: expressions.IParsedExpression, context?: any): any;
         evaluateExpression(expression: any, context?: any) {
             return TemplateControl.evaluateExpression(expression, this, context);
         }
@@ -835,22 +838,22 @@ module plat.ui {
      * The Type for referencing the '$TemplateControlStatic' injectable as a dependency.
      */
     export function TemplateControlStatic(
-        $ResourcesStatic,
-        $BindableTemplatesStatic,
-        $ManagerCacheStatic,
-        $ExceptionStatic,
-        $templateCache,
-        $parser,
-        $http,
-        $PromiseStatic) {
-            TemplateControl.$ResourcesStatic = $ResourcesStatic;
-            TemplateControl.$BindableTemplatesStatic = $BindableTemplatesStatic;
-            TemplateControl.$ManagerCacheStatic = $ManagerCacheStatic;
-            TemplateControl.$ExceptionStatic = $ExceptionStatic;
-            TemplateControl.$templateCache = $templateCache;
-            TemplateControl.$parser = $parser;
-            TemplateControl.$http = $http;
-            TemplateControl.$Promise = $PromiseStatic;
+            $ResourcesStatic: IResourcesStatic,
+            $BindableTemplatesStatic: IBindableTemplatesStatic,
+            $ManagerCacheStatic: storage.ICache<processing.IElementManager>,
+            $ExceptionStatic: IExceptionStatic,
+            $templateCache: storage.ITemplateCache,
+            $parser: expressions.IParser,
+            $http: async.IHttp,
+            $PromiseStatic: async.IPromiseStatic) {
+        TemplateControl.$ResourcesStatic = $ResourcesStatic;
+        TemplateControl.$BindableTemplatesStatic = $BindableTemplatesStatic;
+        TemplateControl.$ManagerCacheStatic = $ManagerCacheStatic;
+        TemplateControl.$ExceptionStatic = $ExceptionStatic;
+        TemplateControl.$templateCache = $templateCache;
+        TemplateControl.$parser = $parser;
+        TemplateControl.$http = $http;
+        TemplateControl.$Promise = $PromiseStatic;
         return TemplateControl;
     }
 
@@ -876,7 +879,7 @@ module plat.ui {
          * @param control The control used for evaluation context.
          * @param aliases An optional alias object containing resource alias values
          */
-        evaluateExpression(expression: string, control?: ITemplateControl, aliases?: any);
+        evaluateExpression(expression: string, control?: ITemplateControl, aliases?: any): any;
         /**
          * Evaluates a parsed expression with a given control and optional context.
          *
@@ -884,7 +887,7 @@ module plat.ui {
          * @param control The control used for evaluation context.
          * @param aliases An optional alias object containing resource alias values
          */
-        evaluateExpression(expression: expressions.IParsedExpression, control?: ITemplateControl, aliases?: any);
+        evaluateExpression(expression: expressions.IParsedExpression, control?: ITemplateControl, aliases?: any): any;
 
         /**
          * Given a control and Array of aliases, finds the associated resources and builds a context object containing
@@ -894,7 +897,7 @@ module plat.ui {
          * @param aliases An array of aliases to search for.
          * @param resources An optional resources object to extend, if no resources object is passed in a new one will be created.
          */
-        getResources(control: ITemplateControl, aliases: Array<string>, resources?: any);
+        getResources(control: ITemplateControl, aliases: Array<string>, resources?: any): IObject<any>;
 
         /**
          * Starts at a control and searches up its parent chain for a particular resource alias.
@@ -927,7 +930,7 @@ module plat.ui {
          * @param newValue The new value of the control's context.
          * @param oldValue The old value of the control's context.
          */
-        contextChanged(control: IControl, newValue, oldValue);
+        contextChanged(control: IControl, newValue: any, oldValue: any): void;
 
         /**
          * Sets the 'context' resource value on a template control. If the control specifies
@@ -1157,7 +1160,7 @@ module plat.ui {
          * @param aliases An array of aliases to search for.
          * @param resources An optional resources object to extend, if no resources object is passed in a new one will be created.
          */
-        getResources(aliases: Array<string>, resources?: any);
+        getResources(aliases: Array<string>, resources?: any): IObject<any>;
 
         /**
          * Starts at a control and searches up its parent chain for a particular resource alias. 
@@ -1175,7 +1178,7 @@ module plat.ui {
          * @param context An optional context with which to parse. If 
          * no context is specified, the control.context will be used.
          */
-        evaluateExpression(expression: string, context?: any);
+        evaluateExpression(expression: string, context?: any): any;
         /**
          * Evaluates a parsed expression, using the control.context.
          * 
@@ -1183,7 +1186,7 @@ module plat.ui {
          * @param context An optional context with which to parse. If 
          * no context is specified, the control.context will be used.
          */
-        evaluateExpression(expression: expressions.IParsedExpression, context?: any);
+        evaluateExpression(expression: expressions.IParsedExpression, context?: any): any;
 
         /**
          * Allows an IControl to observe any property on its context and receive updates when
