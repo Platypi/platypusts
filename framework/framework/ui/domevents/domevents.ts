@@ -96,12 +96,12 @@
          * They become active at least one element on the current 
          * page is listening for a custom event.
          */
-        _isActive = false;
+        _isActive: boolean;
 
         /**
          * Whether or not the user is currently touching the screen.
          */
-        _inTouch = false;
+        _inTouch: boolean = false;
 
         /**
          * The array of all elements currently registered for 
@@ -198,7 +198,6 @@
          */
         constructor() {
             this.__getTypes();
-            this.__appendGestureStyle();
         }
 
         /**
@@ -743,6 +742,11 @@
             // check if DomEvents is ready
             if (!this._isActive) {
                 this.__registerTypes();
+
+                if (isNull(this._isActive)) {
+                    this.__appendGestureStyle();
+                }
+
                 this._isActive = true;
             }
 
