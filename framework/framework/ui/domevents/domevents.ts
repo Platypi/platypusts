@@ -755,7 +755,7 @@
                 this._subscriptions.push(gesture);
 
                 if (!isUndefined((<HTMLElement>element).className)) {
-                    this.__addClass(<HTMLElement>element, 'plat-gesture');
+                    addClass(<HTMLElement>element, 'plat-gesture');
                 }
             } else {
                 var subscription = this._subscriptions[index];
@@ -781,7 +781,7 @@
                 this.__removeElement(elementIndex);
 
                 if (!isUndefined((<HTMLElement>element).className)) {
-                    this.__removeClass(<HTMLElement>element, 'plat-gesture');
+                    removeClass(<HTMLElement>element, 'plat-gesture');
                 }
             }
         }
@@ -1044,34 +1044,6 @@
             }
 
             return style + textContent + ' } ';
-        }
-        private __addClass(element: HTMLElement, className: string) {
-            if (isUndefined(element.classList)) {
-                if (isEmpty(element.className)) {
-                    element.className = className;
-                    return;
-                }
-
-                element.className += ' ' + className;
-                return;
-            }
-
-            element.classList.add(className);
-        }
-        private __removeClass(element: HTMLElement, className: string) {
-            if (isUndefined(element.classList)) {
-                if (element.className === className) {
-                    element.className = '';
-                    return;
-                }
-
-                element.className
-                    .replace(new RegExp('\s' + className + '\s', 'g'), ' ')
-                    .replace(new RegExp('^' + className + '\s|\s' + className + '$', 'g'), '');
-                return;
-            }
-
-            element.classList.remove(className);
         }
     }
 

@@ -206,6 +206,26 @@ module plat.ui {
         removeAll(startNode: Node, endNode?: Node) {
             return removeAll(startNode, endNode);
         }
+
+        /**
+         * Adds a class to the specified element
+         * 
+         * @param element The element to which the class name is being added.
+         * @param className The class name to add to the element.
+         */
+        addClass(element: HTMLElement, className: string): void {
+            return addClass(element, className);
+        }
+
+        /**
+         * Removes a class from the specified element
+         * 
+         * @param element The element from which the class name is being removed.
+         * @param className The class name to remove from the element.
+         */
+        removeClass(element: HTMLElement, className: string): void {
+            return removeClass(element, className);
+        }
     }
 
     register.injectable('$dom', Dom);
@@ -379,5 +399,21 @@ module plat.ui {
          * @param endNode The last node to remove.
          */
         removeAll(startNode: Node, endNode?: Node): void;
+
+        /**
+         * Adds a class to the specified element
+         * 
+         * @param element The element to which the class name is being added.
+         * @param className The class name to add to the element.
+         */
+        addClass(element: HTMLElement, className: string): void;
+
+        /**
+         * Removes a class from the specified element
+         * 
+         * @param element The element from which the class name is being removed.
+         * @param className The class name to remove from the element.
+         */
+        removeClass(element: HTMLElement, className: string): void;
     }
 }

@@ -299,4 +299,33 @@ function removeNode(node: Node) {
     if (!isNull(parentNode)) {
         node.parentNode.removeChild(node);
     }
-} 
+}
+
+function addClass(element: HTMLElement, className: string) {
+    if (isUndefined(element.classList)) {
+        if (isEmpty(element.className)) {
+            element.className = className;
+            return;
+        }
+
+        element.className += ' ' + className;
+        return;
+    }
+
+    element.classList.add(className);
+}
+
+function removeClass(element: HTMLElement, className: string) {
+    if (isUndefined(element.classList)) {
+        if (element.className === className) {
+            element.className = '';
+            return;
+        }
+
+        element.className
+            .replace(new RegExp('^' + className + '\\s|\\s' + className + '$|\\s' + className + '|' + className + '\\s', 'g'), '');
+        return;
+    }
+
+    element.classList.remove(className);
+}
