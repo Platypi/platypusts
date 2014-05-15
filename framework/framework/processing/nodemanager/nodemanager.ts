@@ -27,13 +27,14 @@ module plat.processing {
          * @param expressions An IParsedExpression array to search for identifiers.
          * @return {Array<string>} An array of identifiers.
          */
-        static findUniqueIdentifiers(expressions: Array<expressions.IParsedExpression>) {
+        static findUniqueIdentifiers(expressions: Array<expressions.IParsedExpression>): Array<string> {
             var length = expressions.length,
-                uniqueIdentifierObject = {},
-                uniqueIdentifiers = [],
-                identifiers,
-                identifier,
-                j, jLength;
+                uniqueIdentifierObject: IObject<boolean> = {},
+                uniqueIdentifiers: Array<string> = [],
+                identifiers: Array<string>,
+                identifier: string,
+                j: number,
+                jLength: number;
 
             if (length === 1) {
                 return expressions[0].identifiers.slice(0);
@@ -61,7 +62,7 @@ module plat.processing {
          * @param text The text string in which to search for markup.
          * @return {Boolean} Indicates whether or not there is markup.
          */
-        static hasMarkup(text: string) {
+        static hasMarkup(text: string): boolean {
             return NodeManager.$regex.markupRegex.test(text);
         }
 
@@ -72,8 +73,8 @@ module plat.processing {
          * @param text The text string to parse.
          */
         static findMarkup(text: string): Array<expressions.IParsedExpression> {
-            var start,
-                end,
+            var start: number,
+                end: number,
                 regex = NodeManager.$regex,
                 newLineRegex = regex.newLineRegex,
                 text = text.replace(newLineRegex, ''),
@@ -81,7 +82,7 @@ module plat.processing {
                 startSymbol = NodeManager.startSymbol,
                 endSymbol = NodeManager.endSymbol,
                 wrapExpression = NodeManager._wrapExpression,
-                substring,
+                substring: string,
                 expression: expressions.IParsedExpression,
                 parser = NodeManager.$parser;
 
@@ -137,7 +138,7 @@ module plat.processing {
                 length = expressions.length,
                 resources = {},
                 expression: expressions.IParsedExpression,
-                value,
+                value: any,
                 evaluateExpression = NodeManager.$TemplateControlStatic.evaluateExpression;
 
             for (var i = 0; i < length; ++i) {
@@ -187,12 +188,18 @@ module plat.processing {
                     listener: listener,
                     uid: control.uid
                 },
-                resources = {},
-                resourceObj,
+                resources: IObject<{
+                    resource: ui.IResource;
+                    control: ui.ITemplateControl;
+                }>  = {},
+                resourceObj: {
+                    resource: ui.IResource;
+                    control: ui.ITemplateControl;
+                },
                 manager: observable.IContextManager,
-                split,
+                split: Array<string>,
                 alias: string,
-                absoluteIdentifier,
+                absoluteIdentifier: string,
                 identifier: string;
 
             for (var i = 0; i < length; ++i) {
@@ -285,7 +292,7 @@ module plat.processing {
          * INodeMap instead of an INode so we can treat all INodeManagers the same.
          * @param parent The parent ElementManager for this NodeManager.
          */
-        initialize(nodeMap: INodeMap, parent: IElementManager) {
+        initialize(nodeMap: INodeMap, parent: IElementManager): void {
             this.nodeMap = nodeMap;
             this.parent = parent;
 
@@ -298,7 +305,7 @@ module plat.processing {
         /**
          * Retrieves the parent control for this NodeManager.
          */
-        getParentControl() {
+        getParentControl(): ui.ITemplateControl {
             var parent = this.parent,
                 control: ui.ITemplateControl;
 
@@ -320,23 +327,25 @@ module plat.processing {
          * @param newNode The node used to clone this NodeManager.
          * @param parentManager The parent NodeManager for the clone.
          */
-        clone(newNode: Node, parentManager: IElementManager) { return 1; }
+        clone(newNode: Node, parentManager: IElementManager): number {
+            return 1;
+        }
 
         /**
          * The function used for data-binding a data context to the DOM.
          */
-        bind() { }
+        bind(): void { }
     }
 
     /**
      * The Type for referencing the '$NodeManagerStatic' injectable as a dependency.
      */
     export function NodeManagerStatic(
-        $regex,
-        $ContextManagerStatic,
-        $parser,
-        $ExceptionStatic,
-        $TemplateControlStatic) {
+            $regex: expressions.IRegex,
+            $ContextManagerStatic: observable.IContextManagerStatic,
+            $parser: expressions.IParser,
+            $ExceptionStatic: IExceptionStatic,
+            $TemplateControlStatic: ui.ITemplateControlStatic) {
         NodeManager.$regex = $regex;
         NodeManager.$ContextManagerStatic = $ContextManagerStatic;
         NodeManager.$parser = $parser;

@@ -7,6 +7,7 @@ module plat.storage {
     class TemplateCache extends Cache<any> implements ITemplateCache {
         $ExceptionStatic: IExceptionStatic = acquire('$ExceptionStatic');
         $Promise: async.IPromiseStatic = acquire('$PromiseStatic');
+
         constructor() {
             super('__templateCache');
         }
@@ -48,7 +49,7 @@ module plat.storage {
          * @return {T|async.IPromise<T, Error>} The value found at the associated key. 
          * Returns null for an ITemplateCache miss.
          */
-        read(key: string): async.IPromise<DocumentFragment, any>{
+        read(key: string): async.IPromise<DocumentFragment, any> {
             var promise: async.IPromise<DocumentFragment, any> = super.read(key);
 
             if (isNull(promise)) {

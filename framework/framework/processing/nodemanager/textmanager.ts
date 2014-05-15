@@ -11,7 +11,7 @@ module plat.processing {
          * @param node The Node used to find markup.
          * @param parent The parent ITemplateControl for the node.
          */
-        static create(node: Node, parent: IElementManager) {
+        static create(node: Node, parent: IElementManager): ITextManager {
             var value = node.nodeValue,
                 manager = new TextManager();
 
@@ -64,7 +64,7 @@ module plat.processing {
          * @param node The new text node to associate with the clone.
          * @param parent The parent IElementManager for the new clone.
          */
-        static _clone(sourceManager: INodeManager, node: Node, parent: IElementManager) {
+        static _clone(sourceManager: INodeManager, node: Node, parent: IElementManager): ITextManager {
             var map = sourceManager.nodeMap,
                 manager = new TextManager();
 
@@ -89,7 +89,7 @@ module plat.processing {
          * @param newNode The new node attached to the cloned TextManager.
          * @param parentManager The parent ElementManager for the clone.
          */
-        clone(newNode: Node, parentManager: IElementManager) {
+        clone(newNode: Node, parentManager: IElementManager): number {
             TextManager._clone(this, newNode, parentManager);
             return 1;
         }
@@ -97,7 +97,7 @@ module plat.processing {
         /**
          * The function used for data-binding a data context to the DOM.
          */
-        bind() {
+        bind(): void {
             var parent = this.getParentControl(),
                 node = this.nodeMap.nodes[0],
                 textNode = node.node,
@@ -118,9 +118,9 @@ module plat.processing {
          * @param expressions An array of parsed expressions used to build 
          * the node value.
          */
-        _setText(node: Node, control: ui.ITemplateControl, expressions: Array<expressions.IParsedExpression>) {
+        _setText(node: Node, control: ui.ITemplateControl, expressions: Array<expressions.IParsedExpression>): void {
             var control = control || <ui.ITemplateControl>{},
-                value;
+                value: any;
 
             value = NodeManager.build(expressions, control);
 
@@ -131,7 +131,7 @@ module plat.processing {
     /**
      * The Type for referencing the '$TextManagerStatic' injectable as a dependency.
      */
-    export function TextManagerStatic() {
+    export function TextManagerStatic(): ITextManagerStatic {
         return TextManager;
     }
 
@@ -152,7 +152,7 @@ module plat.processing {
         /**
          * The function used for data-binding a data context to the DOM.
          */
-        bind();
+        bind(): void;
     }
 
     /**

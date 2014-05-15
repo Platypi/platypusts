@@ -15,7 +15,7 @@ module plat.processing {
          * @param control The parent control for the given Node. The parent must implement ui.ITemplateControl
          * since only controls that implement ui.ITemplateControl can contain templates.
          */
-        compile(node: Node, control?: ui.ITemplateControl);
+        compile(node: Node, control?: ui.ITemplateControl): void;
         /**
          * Goes through the Node array, finding elements that contain controls as well as
          * text that contains markup.
@@ -24,7 +24,7 @@ module plat.processing {
          * @param control The parent control for the given Node array. The parent must implement ui.ITemplateControl
          * since only controls that implement ui.ITemplateControl are responsible for creating DOM.
          */
-        compile(nodes: Array<Node>, control?: ui.ITemplateControl);
+        compile(nodes: Array<Node>, control?: ui.ITemplateControl): void;
         /**
          * Goes through the NodeList, finding elements that contain controls as well as
          * text that contains markup.
@@ -33,12 +33,12 @@ module plat.processing {
          * @param control The parent control for the given NodeList. The parent must implement ui.ITemplateControl
          * since only controls that implement ui.ITemplateControl are responsible for creating DOM.
          */
-        compile(nodes: NodeList, control?: ui.ITemplateControl);
+        compile(nodes: NodeList, control?: ui.ITemplateControl): void;
         compile(node: any, control?: ui.ITemplateControl) {
             var childNodes = node.childNodes,
-                length,
-                newLength,
-                childNode,
+                length: number,
+                newLength: number,
+                childNode: Node,
                 hasControl = !isNull(control),
                 manager = <IElementManager>(hasControl ? this.$ManagerCacheStatic.read(control.uid) : null),
                 create = this.$ElementManagerStatic.create;
@@ -57,7 +57,7 @@ module plat.processing {
                 for (var i = 0; i < length; ++i) {
                     childNode = childNodes[i];
                     if (childNode.nodeType === Node.ELEMENT_NODE) {
-                        if (!isNull(create(childNode))) {
+                        if (!isNull(create(<HTMLElement>childNode))) {
                             this.compile(childNode);
                         }
                     }
@@ -78,11 +78,11 @@ module plat.processing {
          * @param nodes The NodeList to be compiled. 
          * @param manager The parent Element Manager for the given array of nodes.
          */
-        _compileNodes(nodes: Array<Node>, manager: IElementManager) {
+        _compileNodes(nodes: Array<Node>, manager: IElementManager): void {
             var length = nodes.length,
                 node: Node,
                 newManager: IElementManager,
-                newLength,
+                newLength: number,
                 create = this.$ElementManagerStatic.create,
                 commentCreate = this.$CommentManagerStatic.create,
                 textCreate = this.$TextManagerStatic.create;
@@ -124,7 +124,7 @@ module plat.processing {
          * @param control The parent control for the given Node. The parent must implement ui.ITemplateControl
          * since only controls that implement ui.ITemplateControl can contain templates.
          */
-        compile(node: Node, control?: ui.ITemplateControl);
+        compile(node: Node, control?: ui.ITemplateControl): void;
         /**
          * Goes through the Node array, finding elements that contain controls as well as
          * text that contains markup.
@@ -133,7 +133,7 @@ module plat.processing {
          * @param control The parent control for the given Node array. The parent must implement ui.ITemplateControl
          * since only controls that implement ui.ITemplateControl are responsible for creating DOM.
          */
-        compile(nodes: Array<Node>, control?: ui.ITemplateControl);
+        compile(nodes: Array<Node>, control?: ui.ITemplateControl): void;
         /**
          * Goes through the NodeList, finding elements that contain controls as well as
          * text that contains markup.

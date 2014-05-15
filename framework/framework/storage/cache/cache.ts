@@ -17,7 +17,7 @@ module plat.storage {
          * @param id The id of the new Cache.
          * @param options ICacheOptions for customizing the Cache.
          */
-        static create<T>(id: string, options?: ICacheOptions) {
+        static create<T>(id: string, options?: ICacheOptions): ICache<T> {
             var cache: ICache<T> = caches[id];
 
             if (cache === null || cache === undefined) {
@@ -44,7 +44,7 @@ module plat.storage {
          * 
          * @static
          */
-        static clear() {
+        static clear(): void {
             var keys = Object.keys(caches),
                 length = keys.length;
 
@@ -79,7 +79,7 @@ module plat.storage {
         /**
          * Method for accessing information about the cache.
          */
-        info() {
+        info(): ICacheInfo {
             return {
                 id: this.__id,
                 size: this.__size,
@@ -95,7 +95,7 @@ module plat.storage {
          * 
          * @return {T} The value inserted into the cache.
          */
-        put(key: string, value: T) {
+        put(key: string, value: T): T {
             var val = internalCaches[this.__id][key];
             internalCaches[this.__id][key] = value;
 
@@ -119,8 +119,8 @@ module plat.storage {
          * 
          * @return {T|undefined} The value found at the associated key. Returns undefined for a cache miss.
          */
-        read(key: string) {
-            return <T>internalCaches[this.__id][key];
+        read(key: string): T {
+            return internalCaches[this.__id][key];
         }
 
         /**
@@ -128,7 +128,7 @@ module plat.storage {
          * 
          * @param key The key to remove from the cache.
          */
-        remove(key: string) {
+        remove(key: string): void {
             internalCaches[this.__id][key] = null;
             delete internalCaches[this.__id][key];
             this.__size--;
@@ -137,7 +137,7 @@ module plat.storage {
         /**
          * Method for clearing the cache, removing all of its keys.
          */
-        clear() {
+        clear(): void {
             internalCaches[this.__id] = {};
             this.__size = 0;
         }
@@ -145,7 +145,7 @@ module plat.storage {
         /**
          * Method for removing this cache from the $CacheStatic.
          */
-        dispose() {
+        dispose(): void {
             this.clear();
             caches[this.__id] = null;
             delete caches[this.__id];
@@ -155,7 +155,7 @@ module plat.storage {
     /**
      * The Type for referencing the '$CacheStatic' injectable as a dependency.
      */
-    export function CacheStatic() {
+    export function CacheStatic(): ICacheStatic {
         return Cache;
     }
 
@@ -169,7 +169,7 @@ module plat.storage {
     /**
      * The Type for referencing the '$ManagerCacheStatic' injectable as a dependency.
      */
-    export function ManagerCacheStatic() {
+    export function ManagerCacheStatic(): typeof managerCache {
         return managerCache;
     }
 

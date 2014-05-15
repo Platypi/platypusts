@@ -11,7 +11,7 @@ module plat.processing {
          * @param node The Comment to associate with the new manager.
          * @param parent The parent IElementManager.
          */
-        static create(node: Node, parent: IElementManager) {
+        static create(node: Node, parent: IElementManager): ICommentManager {
             var manager = new CommentManager();
 
             manager.initialize({
@@ -19,6 +19,8 @@ module plat.processing {
                     node: node
                 }]
             }, parent);
+
+            return manager;
         }
 
         /**
@@ -33,7 +35,7 @@ module plat.processing {
          * manager.
          * @param parentManager The parent IElementManager for the new clone.
          */
-        clone(newNode: Node, parentManager: IElementManager) {
+        clone(newNode: Node, parentManager: IElementManager): number {
             CommentManager.create(newNode, parentManager);
             return 1;
         }
@@ -42,7 +44,7 @@ module plat.processing {
     /**
      * The Type for referencing the '$CommentManagerStatic' injectable as a dependency.
      */
-    export function CommentManagerStatic() {
+    export function CommentManagerStatic(): ICommentManagerStatic {
         return CommentManager;
     }
 

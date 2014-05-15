@@ -5,14 +5,14 @@ module plat.storage {
     export class BaseStorage implements IBaseStorage {
         constructor() {
             forEach((<Storage>(<any>this).__storage), (value, key) => {
-                this[key] = value;
+                (<any>this)[key] = value;
             });
         }
 
         /**
          * Returns the number of items in storage.
          */
-        get length() {
+        get length(): number {
             return (<Storage>(<any>this).__storage).length;
         }
 
@@ -41,7 +41,7 @@ module plat.storage {
          * @param index The index used to retrieve the associated key.
          * @return {string} The key at the given index.
          */
-        key(index: number) {
+        key(index: number): string {
             return (<Storage>(<any>this).__storage).key(index);
         }
 
@@ -51,7 +51,7 @@ module plat.storage {
          * 
          * @param key the Key of the item to remove from this.__storage.
          */
-        removeItem(key: string) {
+        removeItem(key: string): void {
             (<Storage>(<any>this).__storage).removeItem(key);
         }
 
@@ -61,9 +61,9 @@ module plat.storage {
          * @param key The key of the item to store in storage.
          * @param data The data to store in storage with the key.
          */
-        setItem(key: string, data: any) {
+        setItem(key: string, data: any): void {
             (<Storage>(<any>this).__storage).setItem(key, data);
-            this[key] = this.getItem(key);
+            (<any>this)[key] = this.getItem(key);
         }
     }
 
