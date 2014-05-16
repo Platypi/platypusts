@@ -9,15 +9,14 @@ module plat {
          * Attempts to acquire position information of the device.
          * 
          * @param positionOptions Optional IGeolocationPositionOptions for configuring the acquisition.
-         * @return {async.IPromise<IGeolocationPosition, IGeolocationPositionError>} A promise,
+         * @return {async.IThenable<IGeolocationPosition, IGeolocationPositionError>} A promise,
          * resolving when the position is found, and rejecting in the event of a position error.
          */
         getCurrentPosition(positionOptions?: IGeolocationPositionOptions)
-                : async.IPromise<IGeolocationPosition, IGeolocationPositionError> {
-            return new this.$PromiseStatic<IGeolocationPosition,
-                IGeolocationPositionError>((resolve, reject) => {
-                    navigator.geolocation.getCurrentPosition(resolve, reject, positionOptions);
-                });
+                : async.IThenable<IGeolocationPosition> {
+            return new this.$PromiseStatic<IGeolocationPosition>((resolve, reject) => {
+                navigator.geolocation.getCurrentPosition(resolve, reject, positionOptions);
+            });
         }
 
         /**
@@ -55,11 +54,11 @@ module plat {
          * Attempts to acquire position information of the device.
          * 
          * @param positionOptions Optional IGeolocationPositionOptions for configuring the acquisition.
-         * @return {async.IPromise<IGeolocationPosition, IGeolocationPositionError>} A promise,
+         * @return {async.IThenable<IGeolocationPosition, IGeolocationPositionError>} A promise,
          * resolving when the position is found, and rejecting in the event of a position error.
          */
         getCurrentPosition(positionOptions?: IGeolocationPositionOptions):
-            async.IPromise<IGeolocationPosition, IGeolocationPositionError>;
+            async.IThenable<IGeolocationPosition>;
 
         /**
          * An asynchronous operation for receiving notifications when a device location changes. Cannot return

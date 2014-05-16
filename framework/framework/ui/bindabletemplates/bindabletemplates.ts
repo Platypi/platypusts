@@ -264,7 +264,7 @@ module plat.ui {
          * Clones the compiled IElementManager using the newly created 
          * INodeMap and binds and loads this control's IElementManager.
          */
-        _bindNodeMap(nodeMap: processing.INodeMap, key: string): async.IPromise<void, Error> {
+        _bindNodeMap(nodeMap: processing.INodeMap, key: string): async.IThenable<void> {
             var manager = this._cache[key],
                 child = nodeMap.uiControlNode.control,
                 template = nodeMap.element;
@@ -294,7 +294,7 @@ module plat.ui {
          */
         _compileNodeMap(control: ITemplateControl, nodeMap: processing.INodeMap, key: string) {
             var manager = this.$ElementManagerStatic.getInstance(),
-                promises: Array<async.IPromise<void, Error>> = [];
+                promises: Array<async.IThenable<void>> = [];
 
             manager.isClone = true;
             manager.initialize(nodeMap, null);
@@ -304,7 +304,7 @@ module plat.ui {
 
             promises.push(manager.fulfillTemplate());
 
-            this.templates[key] = <any>this.$PromiseStatic.all<any, Error>(promises).then((results) => {
+            this.templates[key] = <any>this.$PromiseStatic.all<any>(promises).then((results) => {
                 var element = nodeMap.element,
                     startNode: Comment,
                     endNode: Comment;

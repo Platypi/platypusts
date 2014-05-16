@@ -341,7 +341,7 @@ module plat.ui {
          * Determines the template for a control by searching for a templateUrl, 
          * using the provided templateUrl, or serializing the control's templateString.
          */
-        static determineTemplate(control: ITemplateControl, templateUrl?: string): async.IPromise<DocumentFragment, any> {
+        static determineTemplate(control: ITemplateControl, templateUrl?: string): async.IThenable<DocumentFragment> {
             var template: any,
                 templateCache = TemplateControl.$templateCache,
                 dom = control.dom,
@@ -354,7 +354,7 @@ module plat.ui {
             } else if (!isNull(control.templateString)) {
                 var type = control.type;
 
-                return templateCache.read(type).catch((template) => {
+                return templateCache.read(type).catch((template: any) => {
                     if (isNull(template)) {
                         template = dom.serializeHtml(control.templateString);
                 }
@@ -370,9 +370,10 @@ module plat.ui {
             var ajax = TemplateControl.$http.ajax,
                 Exception = TemplateControl.$ExceptionStatic;
 
-            return Promise.cast<DocumentFragment, any>(template).catch((error) => {
+            return Promise.cast<DocumentFragment>(template).catch((error) => {
                 if (isNull(error)) {
-                    return templateCache.put(templateUrl, <any>ajax({ url: templateUrl }).then((success) => {
+                    return templateCache.put(templateUrl, ajax<string>({ url: templateUrl })
+                            .then<DocumentFragment>((success) => {
                         if (!isObject(success) || !isString(success.response)) {
                             Exception.warn('No template found at ' + templateUrl, Exception.AJAX);
                             return Promise.resolve(dom.serializeHtml());
@@ -961,7 +962,7 @@ module plat.ui {
          * Determines the template for a control by searching for a templateUrl, 
          * using the provided templateUrl, or serializing the control's templateString.
          */
-        determineTemplate(control: ITemplateControl, templateUrl?: string): async.IPromise<DocumentFragment, any>;
+        determineTemplate(control: ITemplateControl, templateUrl?: string): async.IThenable<DocumentFragment>;
 
         /**
          * Detaches a TemplateControl. Disposes its children, but does not dispose the TemplateControl.

@@ -2,10 +2,9 @@ module plat.async {
     /**
      * Adopted from the ES6 promise polyfill: https://github.com/jakearchibald/es6-promise
      * 
-     * Takes in 2 generic types corresponding to the fullfilled success and error types. 
-     * The error type (U) should extend Error in order to get proper stack tracing.
+     * Takes in a generic typs corresponding to the fullfilled success type. 
      */
-    export class Promise<T, U extends Error> implements IPromise<T, U> {
+    export class Promise<R> implements IThenable<R> {
         private __subscribers: Array<any>;
         private __state: State;
         private __detail: any;
@@ -19,7 +18,7 @@ module plat.async {
              * @param callback The callback to push to the queue.
              * @param arg The argument to pass to the callback.
              */
-            async: (callback: (arg?: IPromise<any, any>) => void, arg?: IPromise<any, any>) => {
+            async: (callback: (arg?: IThenable<any>) => void, arg?: IThenable<any>) => {
                 var length = queue.push([callback, arg]);
                 if (length === 1) {
                     scheduleFlush();
@@ -39,15 +38,15 @@ module plat.async {
          * @return {Promise<T, U>} A promise that fulfills when every promise in the array
          * has been fulfilled.
          */
-        static all<T, U extends Error>(promises: Array<any>): IPromise<T, U> {
+        static all<R>(promises: Array<Promise<R>>): IThenable<Array<R>> {
             if (!isArray(promises)) {
                 Promise.$ExceptionStatic.fatal(new TypeError('You must pass an array to all.'), Promise.$ExceptionStatic.PROMISE);
             }
 
-            return new Promise<T, U>((resolve, reject) => {
+            return new Promise<Array<R>>((resolve: (value?: Array<R>) => void, reject: (reason?: any) => void) => {
                 var results: Array<any> = [],
                     remaining = promises.length,
-                    promise: IPromise<any, any>;
+                    promise: Promise<any>;
 
                 if (remaining === 0) {
                     resolve(<any>[]);
@@ -82,12 +81,12 @@ module plat.async {
          * 
          * @param object The object to cast to a Promise.
          */
-        static cast<T, U extends Error>(object: T): IPromise<T, U> {
+        static cast<R>(object?: R): Promise<R> {
             if (isObject(object) && (<any>object).constructor === Promise) {
-                return <Promise<T, U>>(<any>object);
+                return <Promise<R>>(<any>object);
             }
 
-            return new Promise<T, U>((resolve) => resolve(object));
+            return new Promise<R>((resolve: (value: R) => any) => resolve(object));
         }
 
         /**
@@ -98,14 +97,14 @@ module plat.async {
          * @return {Promise<T, U>} A promise that fulfills/rejects when the first promise
          * in promises fulfills/rejects.
          */
-        static race<T, U extends Error>(promises: Array<IPromise<T, U>>): IPromise<T, U> {
+        static race<R>(promises: Array<Promise<R>>): IThenable<R> {
             if (!isArray(promises)) {
                 Promise.$ExceptionStatic.fatal(new TypeError('You must pass an array to race.'), Promise.$ExceptionStatic.PROMISE);
             }
 
-            return new Promise<T, U>((resolve, reject) => {
+            return new Promise<R>((resolve: (value: R) => any, reject: (error: any) => any) => {
                 var results: Array<any> = [],
-                    promise: IPromise<T, U>;
+                    promise: Promise<R>;
 
                 for (var i = 0; i < promises.length; i++) {
                     promise = promises[i];
@@ -125,8 +124,8 @@ module plat.async {
          * @param value The value to resolve.
          * @return {Promise<T, any>} A promise that resolves with value.
          */
-        static resolve<T>(value: T): IPromise<T, any> {
-            return new Promise<T, any>((resolve: (value: T) => any, reject: (reason: any) => any) => {
+        static resolve<R>(value?: R): IThenable<R> {
+            return new Promise<R>((resolve: (value: R) => any, reject: (reason: any) => any) => {
                 resolve(value);
             });
         }
@@ -137,18 +136,18 @@ module plat.async {
          * @param value The value to reject.
          * @return {Promise<void, U>} A promise that rejects with value.
          */
-        static reject<U extends Error>(reason: U): IPromise<void, U> {
-            return new Promise<void, U>((resolve: (value: any) => any, reject: (reason: U) => any) => {
-                reject(reason);
+        static reject(error?: any): IThenable<void> {
+            return new Promise<void>((resolve: (value: any) => any, reject: (error: any) => any) => {
+                reject(error);
             });
         }
 
         private static $ExceptionStatic: IExceptionStatic;
 
-        private static __invokeResolveFunction<T, U extends Error >(resolveFunction: IResolveFunction <T, U>,
-            promise: IPromise<T, U>): void {
+        private static __invokeResolveFunction<R>(resolveFunction: IResolveFunction<R>,
+            promise: Promise<R>): void {
             function resolvePromise(value?: any) {
-                Promise.__resolve(promise, value);
+                Promise.__resolve<R>(promise, value);
             }
 
             function rejectPromise(reason?: any) {
@@ -182,20 +181,20 @@ module plat.async {
                 succeeded = true;
             }
 
-            if (Promise.__handleThenable<any, any>(promise, value)) {
+            if (Promise.__handleThenable<any>(promise, value)) {
                 return;
             } else if (hasCallback && succeeded) {
-                Promise.__resolve<any, any>(promise, value);
+                Promise.__resolve<any>(promise, value);
             } else if (failed) {
-                Promise.__reject<any>(promise, error);
+                Promise.__reject(promise, error);
             } else if (settled === State.FULFILLED) {
-                Promise.__resolve<any, any>(promise, value);
+                Promise.__resolve<any>(promise, value);
             } else if (settled === State.REJECTED) {
-                Promise.__reject<any>(promise, value);
+                Promise.__reject(promise, value);
             }
         }
 
-        private static __publish(promise: Promise<any, any>, settled: State): void {
+        private static __publish(promise: Promise<any>, settled: State): void {
             var subscribers = promise.__subscribers,
                 detail = promise.__detail,
                 child: any,
@@ -219,7 +218,7 @@ module plat.async {
             Promise.__publish(promise, promise.__state = State.REJECTED);
         }
 
-        private static __reject<U>(promise: any, reason: any): void {
+        private static __reject(promise: any, reason: any): void {
             if (promise.__state !== State.PENDING) {
                 return;
             }
@@ -239,15 +238,15 @@ module plat.async {
             Promise.config.async(Promise.__publishFulfillment, promise);
         }
 
-        private static __resolve<T, U extends Error>(promise: IPromise<T, U>, value: any): void {
+        private static __resolve<R>(promise: Promise<R>, value: any): void {
             if (promise === value) {
                 Promise.__fulfill(promise, value);
-            } else if (!Promise.__handleThenable<T, U>(promise, value)) {
+            } else if (!Promise.__handleThenable<R>(promise, value)) {
                 Promise.__fulfill(promise, value);
             }
         }
 
-        private static __handleThenable<T, U extends Error>(promise: IPromise<any, any>, value: IPromise<any, any>): boolean {
+        private static __handleThenable<R>(promise: Promise<any>, value: Promise<any>): boolean {
             var then: typeof Promise.prototype.then = null,
                 resolved: boolean;
 
@@ -268,9 +267,9 @@ module plat.async {
                             resolved = true;
 
                             if (value !== val) {
-                                Promise.__resolve<T, U>(promise, val);
+                                Promise.__resolve<R>(promise, val);
                             } else {
-                                Promise.__fulfill<T>(promise, val);
+                                Promise.__fulfill<R>(promise, val);
                             }
                         }, (val: any) => {
                             if (resolved) {
@@ -278,7 +277,7 @@ module plat.async {
                             }
                             resolved = true;
 
-                            Promise.__reject<U>(promise, val);
+                            Promise.__reject(promise, val);
                         });
 
                         return true;
@@ -288,14 +287,14 @@ module plat.async {
                 if (resolved) {
                     return true;
                 }
-                Promise.__reject<U>(promise, error);
+                Promise.__reject(promise, error);
                 return true;
             }
 
             return false;
         }
 
-        private static __subscribe(parent: Promise<any, any>, child: IPromise<any, any>,
+        private static __subscribe(parent: Promise<any>, child: IThenable<any>,
             onFulfilled: (success: any) => any, onRejected?: (error: any) => any): void {
             var subscribers = parent.__subscribers;
             var length = subscribers.length;
@@ -310,7 +309,7 @@ module plat.async {
          * 
          * @param resolveFunction A IResolveFunction for fulfilling/rejecting the Promise.
          */
-        constructor(resolveFunction: IResolveFunction<T, U>) {
+        constructor(resolveFunction: IResolveFunction<R>) {
             if (!isFunction(resolveFunction)) {
                 Promise.$ExceptionStatic.fatal(
                     new TypeError('You must pass a resolver function as the first argument to the promise constructor'),
@@ -325,7 +324,7 @@ module plat.async {
 
             this.__subscribers = [];
 
-            Promise.__invokeResolveFunction<T, U>(resolveFunction, this);
+            Promise.__invokeResolveFunction<R>(resolveFunction, this);
         }
 
         /**
@@ -335,12 +334,39 @@ module plat.async {
          * onFulfilled method in the promise chain will be called.
          * @param onRejected A method called when/if the promise rejects. If undefined the next
          * onRejected method in the promise chain will be called.
-         * @return {Promise<T, U>} A Promise used for method chaining.
          */
-        then<TResult, TError>(onFulfilled: (success: T) => TResult, onRejected?: (error: U) => TError): IPromise<T, U> {
+        then<U>(onFulfilled: (success: R) => IThenable<U>, onRejected?: (error: any) => IThenable<U>): IThenable<U>;
+        /**
+         * Takes in two methods, called when/if the promise fulfills/rejects.
+         * 
+         * @param onFulfilled A method called when/if the promise fulills. If undefined the next
+         * onFulfilled method in the promise chain will be called.
+         * @param onRejected A method called when/if the promise rejects. If undefined the next
+         * onRejected method in the promise chain will be called.
+         */
+        then<U>(onFulfilled: (success: R) => IThenable<U>, onRejected?: (error: any) => U): IThenable<U>;
+        /**
+         * Takes in two methods, called when/if the promise fulfills/rejects.
+         * 
+         * @param onFulfilled A method called when/if the promise fulills. If undefined the next
+         * onFulfilled method in the promise chain will be called.
+         * @param onRejected A method called when/if the promise rejects. If undefined the next
+         * onRejected method in the promise chain will be called.
+         */
+        then<U>(onFulfilled: (success: R) => U, onRejected?: (error: any) => IThenable<U>): IThenable<U>;
+        /**
+         * Takes in two methods, called when/if the promise fulfills/rejects.
+         * 
+         * @param onFulfilled A method called when/if the promise fulills. If undefined the next
+         * onFulfilled method in the promise chain will be called.
+         * @param onRejected A method called when/if the promise rejects. If undefined the next
+         * onRejected method in the promise chain will be called.
+         */
+        then<U>(onFulfilled: (success: R) => U, onRejected?: (error: any) => U): IThenable<U>;
+        then<U>(onFulfilled: (success: R) => any, onRejected?: (error: any) => any): IThenable<U> {
             var promise = this;
-
-            var thenPromise = <IPromise<T, U>>new (<any>this).constructor(() => { }, this);
+            
+            var thenPromise = <IThenable<U>>new (<any>this).constructor(() => { }, this);
 
             if (this.__state) {
                 var callbacks = arguments;
@@ -359,28 +385,72 @@ module plat.async {
          * 
          * @param onRejected A method called when/if the promise rejects. If undefined the next
          * onRejected method in the promise chain will be called.
-         * @return {Promise<T, U>} A Promise used for method chaining.
          */
-        catch<TError>(onRejected: (error: U) => TError) {
+        catch<U>(onRejected: (error: any) => IThenable<U>): IThenable<U>;
+        /**
+         * A wrapper method for Promise.then(undefined, onRejected);
+         * 
+         * @param onRejected A method called when/if the promise rejects. If undefined the next
+         * onRejected method in the promise chain will be called.
+         */
+        catch<U>(onRejected: (error: any) => U): IThenable<U>;
+        catch<U>(onRejected: (error: any) => any): IThenable<U> {
             return this.then(null, onRejected);
         }
     }
 
-    /**
-     * The Type for referencing the '$PromiseStatic' injectable as a dependency.
-     */
-    export function PromiseStatic($window: any, $ExceptionStatic: IExceptionStatic): IPromiseStatic {
-        if (!isNull($window.Promise) &&
-            isFunction($window.Promise.all) &&
-            isFunction($window.Promise.cast) &&
-            isFunction($window.Promise.race) &&
-            isFunction($window.Promise.resolve) &&
-            isFunction($window.Promise.reject)) {
-            return $window.Promise;
-        }
+    export interface IThenable<R> {
+        /**
+         * Takes in two methods, called when/if the promise fulfills/rejects.
+         * 
+         * @param onFulfilled A method called when/if the promise fulills. If undefined the next
+         * onFulfilled method in the promise chain will be called.
+         * @param onRejected A method called when/if the promise rejects. If undefined the next
+         * onRejected method in the promise chain will be called.
+         */
+        then<U>(onFulfilled: (success: R) => IThenable<U>, onRejected?: (error: any) => IThenable<U>): IThenable<U>;
+        /**
+         * Takes in two methods, called when/if the promise fulfills/rejects.
+         * 
+         * @param onFulfilled A method called when/if the promise fulills. If undefined the next
+         * onFulfilled method in the promise chain will be called.
+         * @param onRejected A method called when/if the promise rejects. If undefined the next
+         * onRejected method in the promise chain will be called.
+         */
+        then<U>(onFulfilled: (success: R) => IThenable<U>, onRejected?: (error: any) => U): IThenable<U>;
+        /**
+         * Takes in two methods, called when/if the promise fulfills/rejects.
+         * 
+         * @param onFulfilled A method called when/if the promise fulills. If undefined the next
+         * onFulfilled method in the promise chain will be called.
+         * @param onRejected A method called when/if the promise rejects. If undefined the next
+         * onRejected method in the promise chain will be called.
+         */
+        then<U>(onFulfilled: (success: R) => U, onRejected?: (error: any) => IThenable<U>): IThenable<U>;
+        /**
+         * Takes in two methods, called when/if the promise fulfills/rejects.
+         * 
+         * @param onFulfilled A method called when/if the promise fulills. If undefined the next
+         * onFulfilled method in the promise chain will be called.
+         * @param onRejected A method called when/if the promise rejects. If undefined the next
+         * onRejected method in the promise chain will be called.
+         */
+        then<U>(onFulfilled: (success: R) => U, onRejected?: (error: any) => U): IThenable<U>;
 
-        (<any>Promise).$ExceptionStatic = $ExceptionStatic;
-        return Promise;
+        /**
+         * A wrapper method for Promise.then(undefined, onRejected);
+         * 
+         * @param onRejected A method called when/if the promise rejects. If undefined the next
+         * onRejected method in the promise chain will be called.
+         */
+        catch<U>(onRejected: (error: any) => IThenable<U>): IThenable<U>;
+        /**
+         * A wrapper method for Promise.then(undefined, onRejected);
+         * 
+         * @param onRejected A method called when/if the promise rejects. If undefined the next
+         * onRejected method in the promise chain will be called.
+         */
+        catch<U>(onRejected: (error: any) => U): IThenable<U>;
     }
 
     register.injectable('$PromiseStatic', PromiseStatic, [
@@ -463,7 +533,7 @@ module plat.async {
      * Describes a function passed into the constructor for a Promise. The function allows you to
      * resolve/reject the Promise.
      */
-    export interface IResolveFunction<T, U extends Error> {
+    export interface IResolveFunction<R> {
         /**
          * A function which allows you to resolve/reject a Promise.
          * 
@@ -474,33 +544,50 @@ module plat.async {
          * to assist with debugging. If a method in the constructor for a Promise throws an error, 
          * the promise will reject with the error.
          */
-        (resolve: (value?: T) => void, reject: (reason?: U) => void): void;
+        (resolve: (value?: R) => void, reject: (reason?: any) => void): void;
     }
 
     /**
-     * Describes an object that implements the ES6 Promise API
+     * The Type for referencing the '$PromiseStatic' injectable as a dependency.
      */
-    export interface IPromise<T, U extends Error> {
-        /**
-         * Takes in two methods, called when/if the promise fulfills/rejects.
-         * 
-         * @param onFulfilled A method called when/if the promise fulills. If undefined the next
-         * onFulfilled method in the promise chain will be called.
-         * @param onRejected A method called when/if the promise rejects. If undefined the next
-         * onRejected method in the promise chain will be called.
-         * @return {IPromise<T, U>} An IPromise used for method chaining.
-         */
-        then<TResult, TError>(onFulfilled: (success: T) => TResult, onRejected?: (error: U) => TError): IPromise<T, U>;
+    export function PromiseStatic($window: any, $ExceptionStatic: IExceptionStatic): IPromiseStatic {
+        if (!isNull($window.Promise) &&
+            isFunction($window.Promise.all) &&
+            isFunction($window.Promise.cast) &&
+            isFunction($window.Promise.race) &&
+            isFunction($window.Promise.resolve) &&
+            isFunction($window.Promise.reject)) {
+            return $window.Promise;
+        }
 
-        /**
-         * A wrapper method for Promise.then(undefined, onRejected);
-         * 
-         * @param onRejected A method called when/if the promise rejects. If undefined the next
-         * onRejected method in the promise chain will be called.
-         * @return {IPromise<T, U>} An IPromise used for method chaining.
-         */
-        catch<TError>(onRejected: (error: U) => TError): IPromise<T, U>;
+        (<any>Promise).$ExceptionStatic = $ExceptionStatic;
+        return Promise;
     }
+
+    ///**
+    // * Describes an object that implements the ES6 Promise API
+    // */
+    //export interface IThenable<T, U extends Error> {
+    //    /**
+    //     * Takes in two methods, called when/if the promise fulfills/rejects.
+    //     * 
+    //     * @param onFulfilled A method called when/if the promise fulills. If undefined the next
+    //     * onFulfilled method in the promise chain will be called.
+    //     * @param onRejected A method called when/if the promise rejects. If undefined the next
+    //     * onRejected method in the promise chain will be called.
+    //     * @return {IThenable<T, U>} An IPromise used for method chaining.
+    //     */
+    //    then<TResult, TError>(onFulfilled: (success: T) => TResult, onRejected?: (error: U) => TError): IThenable<T, U>;
+
+    //    /**
+    //     * A wrapper method for Promise.then(undefined, onRejected);
+    //     * 
+    //     * @param onRejected A method called when/if the promise rejects. If undefined the next
+    //     * onRejected method in the promise chain will be called.
+    //     * @return {IThenable<T, U>} An IPromise used for method chaining.
+    //     */
+    //    catch<TError>(onRejected: (error: U) => TError): IThenable<T, U>;
+    //}
 
     /**
      * The injectable reference for the ES6 Promise implementation.
@@ -513,7 +600,7 @@ module plat.async {
          * 
          * @param resolveFunction A IResolveFunction for fulfilling/rejecting the Promise.
          */
-        new <T, U extends Error>(resolveFunction: IResolveFunction<T, U>): IPromise<T, U>;
+        new <R>(resolveFunction: IResolveFunction<R>): IThenable<R>;
 
         /**
          * Returns a promise that fulfills when every item in the array is fulfilled.
@@ -524,44 +611,37 @@ module plat.async {
          * 
          * @param promises An array of promises, although every argument is potentially
          * cast to a promise meaning not every item in the array needs to be a promise.
-         * @return {Promise<T, U>} A promise that fulfills when every promise in the array
-         * has been fulfilled.
          */
-        all<T, U extends Error>(promises: Array<any>): IPromise<T, U>;
+        all<R>(promises: Array<IThenable<R>>): IThenable<Array<R>>;
 
         /**
          * Creates a promise that fulfills to the passed in object. If the
          * passed-in object is a promise it returns the promise.
          *
          * @param object The object to cast to a Promise.
-         * @return {Promise<T, U>}
          */
-        cast<T, U extends Error>(object: T): IPromise<T, U>;
+        cast<R>(object?: R): IThenable<R>;
 
         /**
          * Returns a promise that fulfills as soon as any of the promises fulfill,
          * or rejects as soon as any of the promises reject (whichever happens first).
          * 
          * @param promises An Array of promises to 'race'.
-         * @return {Promise<T, U>} A promise that fulfills/rejects when the first promise
-         * in promises fulfills/rejects.
          */
-        race<T, U extends Error>(promises: Array<IPromise<T, U>>): IPromise<T, U>;
+        race<R>(promises: Array<IThenable<R>>): IThenable<R>;
 
         /**
          * Returns a promise that resolves with the input value.
          * 
          * @param value The value to resolve.
-         * @return {Promise<T, any>} A promise that resolves with value.
          */
-        resolve<T>(value: T): IPromise<T, any>;
+        resolve<R>(value: R): IThenable<R>;
 
         /**
          * Returns a promise that rejects with the input value.
          * 
          * @param value The value to reject.
-         * @return {Promise<void, U>} A promise that rejects with value.
          */
-        reject<U extends Error>(reason: U): IPromise<void, U>;
+        reject(error: any): IThenable<void>;
     }
 }

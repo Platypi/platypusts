@@ -25,7 +25,7 @@ module plat.ui.controls {
          */
         _url: string;
         private __isFirst: boolean = false;
-        private __templatePromise: async.IPromise<Template, async.IAjaxError>;
+        private __templatePromise: async.IThenable<Template>;
         private __templateControlCache: storage.ICache<any>;
         constructor() {
             super();
@@ -47,7 +47,7 @@ module plat.ui.controls {
 
             this._url = options.url;
 
-            var templatePromise: async.IPromise<Template, Error> = this.__templateControlCache.read(id);
+            var templatePromise: async.IThenable<Template> = this.__templateControlCache.read(id);
             if (!isNull(templatePromise)) {
                 this.__templatePromise = templatePromise;
                 return;
@@ -103,7 +103,7 @@ module plat.ui.controls {
                 this.dom.appendChildren(this.elementNodes, template);
             }
 
-            var controlPromise: async.IPromise<ITemplateControl, Error>;
+            var controlPromise: async.IThenable<ITemplateControl>;
             if (isFunction(template.then)) {
                 controlPromise = template.catch((error: Error) => {
                     if (isNull(error)) {
@@ -131,7 +131,7 @@ module plat.ui.controls {
          * @param templatePromise The promise associated with the first 
          * instance of the template with this ID.
          */
-        _waitForTemplateControl(templatePromise: async.IPromise<Template, async.IAjaxError>): void {
+        _waitForTemplateControl(templatePromise: async.IThenable<Template>): void {
             templatePromise.then((templateControl: Template) => {
                 if (!(isNull(this._url) || (this._url === templateControl._url))) {
                     this.$ExceptionStatic.warn('The specified url: ' + this._url +
@@ -158,11 +158,11 @@ module plat.ui.controls {
          * Binds the template to the proper context and 
          * resolves the clone to be placed into the DOM.
          */
-        _instantiateTemplate(): async.IPromise<DocumentFragment, Error> {
+        _instantiateTemplate(): async.IThenable<DocumentFragment> {
             var bindableTemplates = this.bindableTemplates,
                 id = this._id;
 
-            return new this.$PromiseStatic<DocumentFragment, Error>((resolve, reject) => {
+            return new this.$PromiseStatic<DocumentFragment>((resolve, reject) => {
                 bindableTemplates.bind(id, (clone: DocumentFragment) => {
                     resolve(clone);
                 });

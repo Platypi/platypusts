@@ -843,26 +843,26 @@ module plat {
          * Describes a promise that fulfills with a Db instance and rejects 
          * in the case of an error.
          */
-        export interface IDatabasePromise extends async.IPromise<IDb, IDatabaseError> { }
+        export interface IDatabasePromise extends async.IThenable<IDb> { }
 
         /**
          * Describes a promise that fulfills with a Db instance and rejects 
          * in the case of an error.
          */
-        export class DatabasePromise extends async.Promise<IDb, IDatabaseError>
+        export class DatabasePromise extends async.Promise<IDb>
             implements IDatabasePromise { }
 
         /**
          * Describes a promise that fulfills with a result of any type and rejects 
          * in the case of an error.
          */
-        export interface IDatabaseEventResultPromise extends async.IPromise<any, IDatabaseError> { }
+        export interface IDatabaseEventResultPromise extends async.IThenable<any> { }
 
         /**
          * Describes a promise that fulfills with a result of any type and rejects 
          * in the case of an error.
          */
-        export class DatabaseEventResultPromise extends async.Promise<any, IDatabaseError>
+        export class DatabaseEventResultPromise extends async.Promise<any>
             implements IDatabaseEventResultPromise { }
 
         /**
@@ -1145,13 +1145,13 @@ module plat {
          * Describes a promise that fulfills with a injectables.ICursor and rejects with a 
          * injectables.IDatabaseError.
          */
-        export interface ICursorPromise extends async.IPromise<ICursor, IDatabaseError> { }
+        export interface ICursorPromise extends async.IThenable<ICursor> { }
 
         /**
          * Describes a promise that fulfills with a injectables.ICursor and rejects with a 
          * injectables.IDatabaseError.
          */
-        export class CursorPromise extends async.Promise<ICursor, IDatabaseError>
+        export class CursorPromise extends async.Promise<ICursor>
             implements ICursorPromise { }
 
         /**

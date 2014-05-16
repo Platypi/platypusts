@@ -152,7 +152,7 @@ module plat.ui.controls {
                     optgroup: any = groups[newGroup];
 
                 if (isNull(optgroup)) {
-                    optgroup = groups[newGroup] = <any>new this.$PromiseStatic<HTMLElement, Error>((resolve) => {
+                    optgroup = groups[newGroup] = <any>new this.$PromiseStatic<HTMLElement>((resolve) => {
                         this.bindableTemplates.bind('group', (groupClone: DocumentFragment) => {
                             optgroup = groups[newGroup] = <HTMLElement>groupClone.childNodes[1];
 
@@ -160,7 +160,7 @@ module plat.ui.controls {
                             element.appendChild(groupClone);
                             resolve(optgroup);
                         }, '' + index);
-                    }).catch((error) => {
+                    }).catch((error: any) => {
                         postpone(() => {
                             this.$Exception.warn(error.message);
                         });

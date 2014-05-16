@@ -498,12 +498,12 @@ module plat.processing {
          * In the event that a control hasOwnContext, we need a promise to fullfill 
          * when the control is loaded to avoid loading its parent control first.
          */
-        loadedPromise: async.IPromise<void, Error>;
+        loadedPromise: async.IThenable<void>;
 
         /**
          * A templatePromise set when a uiControl specifies a templateUrl.
          */
-        templatePromise: async.IPromise<DocumentFragment, async.IAjaxError>;
+        templatePromise: async.IThenable<void>;
 
         $ElementManagerStatic: IElementManagerStatic = acquire('$ElementManagerStatic');
         $PromiseStatic: async.IPromiseStatic = acquire('$PromiseStatic');
@@ -773,13 +773,13 @@ module plat.processing {
          * @return {async.IPromise} A promise, fulfilled when the template 
          * is complete.
          */
-        fulfillTemplate(): async.IPromise<any, Error> {
+        fulfillTemplate(): async.IThenable<any> {
             var children = this.children,
                 child: INodeManager,
                 length = children.length,
-                promises: Array<async.IPromise<any, Error>> = [];
+                promises: Array<async.IThenable<any>> = [];
 
-            return new this.$PromiseStatic<any, Error>((resolve, reject) => {
+            return new this.$PromiseStatic<any>((resolve, reject) => {
                 if (!isNull(this.templatePromise)) {
                     promises.push(this.templatePromise);
                 }
@@ -791,7 +791,7 @@ module plat.processing {
                     }
                 }
 
-                this.$PromiseStatic.all<any, Error>(promises).then(resolve, reject);
+                this.$PromiseStatic.all<any>(promises).then(resolve, reject);
             }).catch((error) => {
                 postpone(() => {
                     this.$ExceptionStatic.fatal(error, this.$ExceptionStatic.COMPILE);
@@ -802,11 +802,11 @@ module plat.processing {
         /**
          * Binds context to the DOM and loads controls.
          */
-        bindAndLoad(): async.IPromise<void, Error> {
+        bindAndLoad(): async.IThenable<void> {
             var children = this.children,
                 length = children.length,
                 child: INodeManager,
-                promises: Array<async.IPromise<void, Error>> = [];
+                promises: Array<async.IThenable<void>> = [];
 
             this.bind();
 
@@ -824,9 +824,9 @@ module plat.processing {
                 }
             }
 
-            return this.$PromiseStatic.all<void, Error>(promises).then(() => {
+            return this.$PromiseStatic.all<void>(promises).then(() => {
                 this.$ControlStatic.load(this.getUiControl());
-            }).catch((error) => {
+            }).catch((error: any) => {
                 postpone(() => {
                     this.$ExceptionStatic.fatal(error, this.$ExceptionStatic.BIND);
                 });
@@ -841,8 +841,8 @@ module plat.processing {
          * @param loadMethod The function to initiate the loading of the root control and its 
          * children.
          */
-        observeRootContext(root: ui.ITemplateControl, loadMethod: () => async.IPromise<void, Error>): void {
-            this.loadedPromise = new this.$PromiseStatic<void, Error>((resolve, reject) => {
+        observeRootContext(root: ui.ITemplateControl, loadMethod: () => async.IThenable<void>): void {
+            this.loadedPromise = new this.$PromiseStatic<void>((resolve, reject) => {
                 var contextManager: observable.IContextManager = this.$ContextManagerStatic.getManager(root);
 
                 var removeListener = contextManager.observe('context', {
@@ -929,8 +929,8 @@ module plat.processing {
         /**
          * Fulfills the template promise prior to binding and loading the control.
          */
-        _fulfillAndLoad(): async.IPromise<void, Error> {
-            return new this.$PromiseStatic<void, Error>((resolve, reject) => {
+        _fulfillAndLoad(): async.IThenable<void> {
+            return new this.$PromiseStatic<void>((resolve, reject) => {
                 this.fulfillTemplate().then(() => {
                     return this.bindAndLoad();
                 }).then(resolve);
@@ -1167,12 +1167,12 @@ module plat.processing {
          * In the event that a control hasOwnContext, we need a promise to fullfill 
          * when the control is loaded to avoid loading its parent control first.
          */
-        loadedPromise: async.IPromise<void, Error>;
+        loadedPromise: async.IThenable<void>;
 
         /**
          * A templatePromise set when a uiControl specifies a templateUrl.
          */
-        templatePromise: async.IPromise<DocumentFragment, async.IAjaxError>;
+        templatePromise: async.IThenable<void>;
 
         /**
          * Clones the IElementManager with a new node.
@@ -1204,7 +1204,7 @@ module plat.processing {
          * @param loadMethod The function to initiate the loading of the root control and its 
          * children.
          */
-        observeRootContext(root: ui.ITemplateControl, loadMethod: () => async.IPromise<void, Error>): void;
+        observeRootContext(root: ui.ITemplateControl, loadMethod: () => async.IThenable<void>): void;
 
         /**
          * Links the data context to the DOM (data-binding).
@@ -1231,12 +1231,12 @@ module plat.processing {
          * @return {async.IPromise} A promise, fulfilled when the template 
          * is complete.
          */
-        fulfillTemplate(): async.IPromise<any, Error>;
+        fulfillTemplate(): async.IThenable<any>;
 
         /**
          * Binds context to the DOM and loads controls.
          */
-        bindAndLoad(): async.IPromise<void, Error>;
+        bindAndLoad(): async.IThenable<void>;
     }
 
     /**

@@ -13,6 +13,9 @@ module app {
             ]
         };
         hello = true;
+        loaded() {
+            this.context;
+        }
     }
 
     plat.register.viewControl('viewcontrol', MainViewControl, undefined, ['/', ':test/page(/:baz)(/*path)']);
