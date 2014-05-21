@@ -750,6 +750,7 @@ module plat.observable {
 
             Object.defineProperty(immediateContext, key, {
                 configurable: true,
+                enumerable: true,
                 get: () => {
                     this.__observedIdentifier = identifier;
                     return value;
@@ -784,6 +785,7 @@ module plat.observable {
 
             Object.defineProperty(immediateContext, key, {
                 configurable: true,
+                enumerable: true,
                 get: () => {
                     this.__observedIdentifier = identifier;
                     return value;

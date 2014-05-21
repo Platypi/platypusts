@@ -10,10 +10,11 @@ module app {
                 'Jonathan',
                 'Paul',
                 'Will'
-            ]
+            ],
+            user: {}
         };
         hello = true;
-        loaded() {
+        submit() {
             this.context;
         }
     }
