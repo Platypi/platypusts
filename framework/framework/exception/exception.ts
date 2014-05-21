@@ -174,19 +174,21 @@ module plat {
 
     register.injectable('$ExceptionStatic', ExceptionStatic, null, register.injectableType.STATIC);
 
-    function PlatException(message: string, name: string): void {
-        this.message = message;
-        this.name = name;
+    class PlatException {
+        constructor(public message: string, public name: string) { }
     }
 
-    function PlatError(message?: string): void {
-        this.message = message || '';
-        this.name = 'PlatError';
+    class PlatError {
+        message: string;
+        name = 'PlatError';
+        constructor(message?: string) {
+            this.message = message || '';
+        }
     }
 
     function setPrototypes(platError?: any): void {
         PlatError.prototype = platError || Error.prototype;
-        PlatException.prototype = new (<any>PlatError());
+        PlatException.prototype = new PlatError();
     }
 
     function raise(message: any, type: number, isFatal?: boolean): void {
@@ -197,7 +199,7 @@ module plat {
         } else if (PlatError.prototype !== Error.prototype) {
             setPrototypes();
         }
-        error = new (<any>PlatException(message, ''));
+        error = new PlatException(message, '');
         switch (type) {
             case Exception.PARSE:
                 error.name = 'ParsingError';
@@ -230,7 +232,7 @@ module plat {
                 error.name = 'CompatibilityError';
                 break;
             default:
-                error = new (<any>PlatError(message));
+                error = new PlatError(message);
                 break;
         }
 

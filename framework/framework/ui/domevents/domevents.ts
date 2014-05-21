@@ -64,14 +64,16 @@
             /**
              * The default CSS styles applied to elements listening for custom DOM events.
              */
-            styleConfig: {
+            styleConfig: [{
                 /**
-                 * The className that will be used to define the custom style.
+                 * The className that will be used to define the custom style for 
+                 * allowing the best touch experience. This class is added to every 
+                 * element that registers for a custom DOM event (denoted by a prefixed '$').
                  */
                 className: 'plat-gesture',
                 /**
-                 * An array of string styles in the format:
-                 * CSS identifier : value
+                 * An array of string styles to be placed on an element to allow for the 
+                 * best touch experience. In the format 'CSS identifier: value'
                  * (i.e. 'width : 100px')
                  */
                 styles: [
@@ -85,7 +87,23 @@
                     '-ms-touch-action: manipulation',
                     'touch-action: manipulation'
                 ]
-            }
+            }, {
+                /**
+                 * The className that will be used to define the custom style for 
+                 * blocking touch action scrolling, zooming, etc on the element.
+                 */
+                className: 'plat-no-touch-action',
+                /**
+                 * An array of string styles that block touch action scrolling, zooming, etc. 
+                 * Primarily useful on elements such as a canvas.
+                 * In the format 'CSS identifier: value'
+                 * (i.e. 'width : 100px')
+                 */
+                styles: [
+                    '-ms-touch-action: none',
+                    'touch-action: none'
+                ]
+            }]
         };
 
         $document: Document = acquire('$document');
@@ -759,7 +777,7 @@
                 this._subscriptions.push(gesture);
 
                 if (!isUndefined((<HTMLElement>element).className)) {
-                    addClass(<HTMLElement>element, 'plat-gesture');
+                    addClass(<HTMLElement>element, DomEvents.config.styleConfig[0].className);
                 }
             } else {
                 var subscription = this._subscriptions[index];
@@ -785,7 +803,7 @@
                 this.__removeElement(elementIndex);
 
                 if (!isUndefined((<HTMLElement>element).className)) {
-                    removeClass(<HTMLElement>element, 'plat-gesture');
+                    removeClass(<HTMLElement>element, DomEvents.config.styleConfig[0].className);
                 }
             }
         }
@@ -1031,23 +1049,37 @@
         private __appendGestureStyle(): void {
             var $document = this.$document,
                 head = $document.head,
-                style = $document.createElement('style');
+                style = <HTMLStyleElement>$document.createElement('style');
 
+            style.type = 'text/css';
             style.textContent = this.__createStyle();
-            head.insertBefore(style, head.firstElementChild || null);
+            head.appendChild(style);
         }
         private __createStyle(): string {
-            var styleConfig = DomEvents.config.styleConfig,
-                styles = styleConfig.styles,
-                length = styles.length,
-                style = '.' + styleConfig.className + ' { ',
+            var styleClasses = DomEvents.config.styleConfig,
+                classLength = styleClasses.length,
+                styleClass: IDefaultStyle,
+                styles: Array<string>,
+                j: number,
+                styleLength: number,
+                style = '',
+                textContent: string;
+
+            for (var i = 0; i < classLength; ++i) {
+                styleClass = styleClasses[i];
+                styles = styleClass.styles || [];
+                styleLength = styles.length;
+                style += '.' + styleClass.className + ' {\n';
                 textContent = '';
 
-            for (var i = 0; i < length; ++i) {
-                textContent += styles[i] + '; ';
+                for (j = 0; j < styleLength; ++j) {
+                    textContent += styles[j] + ';\n';
+                }
+
+                style += textContent + '}\n';
             }
 
-            return style + textContent + ' } ';
+            return style;
         }
     }
 
@@ -1438,7 +1470,7 @@
     /**
      * Describes an object used for creating a custom class for styling an element.
      */
-    export interface IDefaultStyleConfig {
+    export interface IDefaultStyle {
         /**
          * The className that will be used to define the custom style.
          */
@@ -1477,7 +1509,7 @@
         /**
          * The default CSS styles applied to elements listening for custom DOM events.
          */
-        styleConfig: IDefaultStyleConfig;
+        styleConfig: Array<IDefaultStyle>;
     }
 
     /**
