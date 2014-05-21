@@ -54,6 +54,7 @@
   <ItemGroup>
     <TypeScriptCompile Include="framework\platypus.ts" />
     <TypeScriptCompile Include="karma.config.ts" />
+    <TypeScriptCompile Include="tests\storage\cache\cache.test.ts" />
     <TypeScriptCompile Include="tests\utils\utils.test.ts" />
   </ItemGroup>
   <ItemGroup>
@@ -62,7 +63,6 @@
   <ItemGroup>
     <Content Include="package.json" />
   </ItemGroup>
-  <ItemGroup />
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
     <TypeScriptModuleKind>commonjs</TypeScriptModuleKind>
   </PropertyGroup>
