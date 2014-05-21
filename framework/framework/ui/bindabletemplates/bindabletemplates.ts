@@ -122,8 +122,9 @@ module plat.ui {
          * in the DOM.
          */
         bind(key: string, callback: IBindableTemplateCallback, relativeIdentifier?: number,
-            resources?: IObject<IResource>): DocumentFragment;
-        bind(key: any, callback: IBindableTemplateCallback, relativeIdentifier?: any, resources?: IObject<IResource>): DocumentFragment {
+                resources?: IObject<IResource>): DocumentFragment;
+        bind(key: any, callback: IBindableTemplateCallback,
+                relativeIdentifier?: any, resources?: IObject<IResource>): DocumentFragment {
             var template: any = this.templates[key],
                 control: ITemplateControl = this.control,
                 nodeMap: processing.INodeMap;

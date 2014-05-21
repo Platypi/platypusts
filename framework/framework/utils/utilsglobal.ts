@@ -152,7 +152,7 @@ function where(obj: any, properties: any): Array<any> {
 }
 
 function forEach<T>(obj: any, iterator: (value: T, key: any, obj: any) => void, context?: any): any {
-    if (isNull(obj) || isFunction(obj)) {
+    if (isNull(obj) || !(isObject(obj) || isArrayLike(obj))) {
         return obj;
     }
 

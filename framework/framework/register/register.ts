@@ -35,7 +35,8 @@ module plat.register {
      * 
      * @return {register} The object that contains the register methods (for method chaining).
      */
-    function add(obj: dependency.IInjectorObject<any>, name: string, Type: any, dependencies?: Array<any>, type?: string): typeof register {
+    function add(obj: dependency.IInjectorObject<any>, name: string,
+            Type: any, dependencies?: Array<any>, type?: string): typeof register {
         var injector = obj[name] = new dependency.Injector<any>(name, Type, dependencies, type);
 
         if (type === injectableType.STATIC) {
