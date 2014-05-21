@@ -234,9 +234,10 @@ module plat.async {
                 var headers = options.headers,
                     keys = Object.keys(isObject(headers) ? headers : {}),
                     length = keys.length,
-                    key: string;
+                    key: string,
+                    i: number;
 
-                for (var i = 0; i < length; ++i) {
+                for (i = 0; i < length; ++i) {
                     key = keys[i];
                     xhr.setRequestHeader(key, options.headers[key]);
                 }
@@ -245,12 +246,25 @@ module plat.async {
                 if (isNull(data) || data === '') {
                     xhr.send();
                 } else {
-                    if (isObject(data)) {
-                        data = JSON.stringify(data);
+                    var transforms = options.transforms || [],
+                        contentType = options.contentType;
+
+                    length = transforms.length;
+
+                    if (length > 0) {
+                        for (i = 0; i < length; ++i) {
+                            data = transforms[i](data, xhr);
+                        }
+                    } else if (isObject(data)) {
+                        if (contentType && contentType.indexOf('x-www-form-urlencoded') !== -1) {
+                            data = this.__serializeFormData(data);
+                        } else {
+                            data = JSON.stringify(data);
+                        }
                     }
 
                     // Set the Content-Type header if data is being sent
-                    xhr.setRequestHeader('Content-Type', options.contentType);
+                    xhr.setRequestHeader('Content-Type', contentType);
                     xhr.send(data);
                 }
 
@@ -331,6 +345,22 @@ module plat.async {
                 getAllResponseHeaders: xhr.getAllResponseHeaders,
                 xhr: xhr
             };
+        }
+
+        private __serializeFormData(data: any): string {
+            var keys = Object.keys(data),
+                key: string,
+                val: any,
+                formBuffer: Array<string> = [],
+                formStr = '';
+
+            while (keys.length > 0) {
+                key = keys.pop();
+                val = data[key];
+                formBuffer.push(encodeURIComponent(key) + '=' + encodeURIComponent(isNull(val) ? '' : val));
+            }
+
+            return formBuffer.join('&').replace(/%20/g, '+');
         }
     }
 
@@ -456,6 +486,12 @@ module plat.async {
          * http://www.platyfi.com/data?callback=plat_callback00.
          */
         jsonpCallback?: string;
+
+        /**
+         * An array of data transform functions that fire in order and consecutively 
+         * pass the returned result from one function to the next.
+         */
+        transforms?: Array<(data: any, xhr: XMLHttpRequest) => any>;
     }
 
     /**
@@ -758,6 +794,7 @@ module plat.async {
             url: null,
             method: 'GET',
             responseType: '',
+            transforms: [],
             headers: {},
             withCredentials: false,
             timeout: null,
