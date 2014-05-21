@@ -689,7 +689,8 @@ module plat {
          * 
          * @return {register} The object that contains the register methods (for method chaining).
          */
-        function add(obj: dependency.IInjectorObject<any>, name: string, Type: any, dependencies?: Array<any>, type?: string): typeof register {
+        function add(obj: dependency.IInjectorObject<any>, name: string,
+                Type: any, dependencies?: Array<any>, type?: string): typeof register {
             var injector = obj[name] = new dependency.Injector<any>(name, Type, dependencies, type);
 
             if (type === injectableType.STATIC) {
@@ -14546,8 +14547,9 @@ module plat {
              * in the DOM.
              */
             bind(key: string, callback: IBindableTemplateCallback, relativeIdentifier?: number,
-                resources?: IObject<IResource>): DocumentFragment;
-            bind(key: any, callback: IBindableTemplateCallback, relativeIdentifier?: any, resources?: IObject<IResource>): DocumentFragment {
+                    resources?: IObject<IResource>): DocumentFragment;
+            bind(key: any, callback: IBindableTemplateCallback,
+                    relativeIdentifier?: any, resources?: IObject<IResource>): DocumentFragment {
                 var template: any = this.templates[key],
                     control: ITemplateControl = this.control,
                     nodeMap: processing.INodeMap;
