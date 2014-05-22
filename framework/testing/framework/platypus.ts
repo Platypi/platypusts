@@ -6,7 +6,7 @@
  * http://opensource.org/licenses/GPL-3.0 
  */
 module plat {
-    var __nativeIsArray = !!Array.isArray,
+    ﻿var __nativeIsArray = !!Array.isArray,
         __uids__: plat.IObject<Array<string>> = {};
     
     function noop(): void { }

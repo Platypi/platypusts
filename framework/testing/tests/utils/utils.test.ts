@@ -21,295 +21,295 @@ var toBeTests: Array<IUtilTest> = [
         expected: undefined
     },
     {
-        name: 'isObject - TRUE',
+        name: 'isObject and return true',
         fn: 'isObject',
         args: [{}],
         expected: true
     },
     {
-        name: 'isObject - FALSE',
+        name: 'isObject and return false',
         fn: 'isObject',
         args: ['not an object'],
         expected: false
     },
     {
-        name: 'isWindow - TRUE',
+        name: 'isWindow and return true',
         fn: 'isWindow',
         args: [window],
         expected: true
     },
     {
-        name: 'isWindow - FALSE',
+        name: 'isWindow and return false',
         fn: 'isWindow',
         args: [document],
         expected: false
     },
     {
-        name: 'isDocument - TRUE',
+        name: 'isDocument and return true',
         fn: 'isDocument',
         args: [document],
         expected: true
     },
     {
-        name: 'isDocument - FALSE',
+        name: 'isDocument and return false',
         fn: 'isDocument',
         args: [window],
         expected: false
     },
     {
-        name: 'isNode - TRUE',
+        name: 'isNode and return true',
         fn: 'isNode',
         args: [document.createElement('a').cloneNode()],
         expected: true
     },
     {
-        name: 'isNode - FALSE',
+        name: 'isNode and return false',
         fn: 'isNode',
         args: [window],
         expected: false
     },
     {
-        name: 'isString - TRUE',
+        name: 'isString and return true',
         fn: 'isString',
         args: ['this is a string'],
         expected: true
     },
     {
-        name: 'isString - FALSE',
+        name: 'isString and return false',
         fn: 'isString',
         args: [12345],
         expected: false
     },
     {
-        name: 'isEmpty String - TRUE',
+        name: 'isEmpty with a string and return true',
         fn: 'isEmpty',
         args: [''],
         expected: true
     },
     {
-        name: 'isEmpty String - FALSE',
+        name: 'isEmpty with a string and return false',
         fn: 'isEmpty',
         args: [' '],
         expected: false
     },
     {
-        name: 'isEmpty Null - TRUE',
+        name: 'isEmpty with null and return true',
         fn: 'isEmpty',
         args: [null],
         expected: true
     },
     {
-        name: 'isEmpty Array - TRUE',
+        name: 'isEmpty with an array and return true',
         fn: 'isEmpty',
         args: [[]],
         expected: true
     },
     {
-        name: 'isEmpty Array - FALSE',
+        name: 'isEmpty with an array and return false',
         fn: 'isEmpty',
         args: [['']],
         expected: false
     },
     {
-        name: 'isEmpty Number',
+        name: 'isEmpty with a number and return true',
         fn: 'isEmpty',
         args: [2],
         expected: false
     },
     {
-        name: 'isEmpty Object - TRUE',
+        name: 'isEmpty with an object and return true',
         fn: 'isEmpty',
         args: [{}],
         expected: true
     },
     {
-        name: 'isEmpty Object - FALSE',
+        name: 'isEmpty with an object and return false',
         fn: 'isEmpty',
         args: [{ foo: null }],
         expected: false
     },
     {
-        name: 'isBoolean true',
+        name: 'isBoolean with true',
         fn: 'isBoolean',
         args: [true],
         expected: true
     },
     {
-        name: 'isBoolean false',
+        name: 'isBoolean with false',
         fn: 'isBoolean',
         args: [false],
         expected: true
     },
     {
-        name: 'isBoolean Object',
+        name: 'isBoolean with an object',
         fn: 'isBoolean',
         args: [{}],
         expected: false
     },
     {
-        name: 'isNumber Number',
+        name: 'isNumber with a number',
         fn: 'isNumber',
         args: [2],
         expected: true
     },
     {
-        name: 'isNumber Array',
+        name: 'isNumber with an array',
         fn: 'isNumber',
         args: [[]],
         expected: false
     },
     {
-        name: 'isFunction Function',
+        name: 'isFunction with a function',
         fn: 'isFunction',
         args: [isTrue],
         expected: true
     },
     {
-        name: 'isFunction Object',
+        name: 'isFunction with an object',
         fn: 'isFunction',
         args: [{}],
         expected: false
     },
     {
-        name: 'isNull null',
+        name: 'isNull with null',
         fn: 'isNull',
         args: [null],
         expected: true
     },
     {
-        name: 'isNull undefined',
+        name: 'isNull with undefined',
         fn: 'isNull',
         args: [undefined],
         expected: true
     },
     {
-        name: 'isNull Object',
+        name: 'isNull with an object',
         fn: 'isNull',
         args: [{}],
         expected: false
     },
     {
-        name: 'isUndefined undefined',
+        name: 'isUndefined with undefined',
         fn: 'isUndefined',
         args: [undefined],
         expected: true
     },
     {
-        name: 'isUndefined null',
+        name: 'isUndefined with null',
         fn: 'isUndefined',
         args: [null],
         expected: false
     },
     {
-        name: 'isArray Array',
+        name: 'isArray with an array',
         fn: 'isArray',
         args: [[]],
         expected: true
     },
     {
-        name: 'isArray Object',
+        name: 'isArray with an object',
         fn: 'isArray',
         args: [{ length: 2 }],
         expected: false
     },
     {
-        name: 'isArray String',
+        name: 'isArray with a string',
         fn: 'isArray',
         args: ['not an array'],
         expected: false
     },
     {
-        name: 'isArrayLike Array',
+        name: 'isArrayLike with an array',
         fn: 'isArrayLike',
         args: [[]],
         expected: true
     },
     {
-        name: 'isArrayLike Object',
+        name: 'isArrayLike with an object',
         fn: 'isArrayLike',
         args: [{ notLength: 2 }],
         expected: false
     },
     {
-        name: 'isArrayLike Node',
+        name: 'isArrayLike with a node',
         fn: 'isArrayLike',
         args: [document.createElement('select')],
         expected: true
     },
     {
-        name: 'isArrayLike String',
+        name: 'isArrayLike with a string',
         fn: 'isArrayLike',
         args: ['not an array, but array like'],
         expected: true
     },
     {
-        name: 'isArrayLike null',
+        name: 'isArrayLike with null',
         fn: 'isArrayLike',
         args: [null],
         expected: false
     },
     {
-        name: 'isArrayLike window',
+        name: 'isArrayLike with the window',
         fn: 'isArrayLike',
         args: [window],
         expected: false
     },
     {
-        name: 'isArrayLike function',
+        name: 'isArrayLike with a function',
         fn: 'isArrayLike',
         args: [isTrue],
         expected: false
     },
     {
-        name: 'some null',
+        name: 'some with null',
         fn: 'some',
         args: [null, isTrue],
         expected: false
     },
     {
-        name: 'some Array - TRUE',
+        name: 'some with an array and return true',
         fn: 'some',
         args: [[true, false, true], isTrue],
         expected: true
     },
     {
-        name: 'some Array - FALSE',
+        name: 'some with an array and return false',
         fn: 'some',
         args: [[false, false, false], isTrue],
         expected: false
     },
     {
-        name: 'some Object - TRUE',
+        name: 'some with an object and return true',
         fn: 'some',
         args: [{ foo: true, bar: false, baz: true }, isTrue],
         expected: true
     },
     {
-        name: 'some Object - FALSE',
+        name: 'some with an object and return false',
         fn: 'some',
         args: [{ foo: false, bar: false, baz: false }, isTrue],
         expected: false
     },
     {
-        name: 'some String - True',
+        name: 'some with a string and return true',
         fn: 'some',
-        args: ['foo', function () { return true; }],
+        args: ['foo', () => true],
         expected: true
     },
     {
-        name: 'camelCase null',
+        name: 'camelCase with null',
         fn: 'camelCase',
         args: [null],
         expected: null
     },
     {
-        name: 'camelCase with capital',
+        name: 'camelCase with first letter capital',
         fn: 'camelCase',
         args: ['Foo bar'],
         expected: 'fooBar'
     },
     {
-        name: 'camelCase with both capital',
+        name: 'camelCase with both letters capital',
         fn: 'camelCase',
         args: ['Foo Bar'],
         expected: 'fooBar'
@@ -339,7 +339,7 @@ var toBeTests: Array<IUtilTest> = [
         expected: 'fooBar'
     },
     {
-        name: 'camelCase with string with spaces',
+        name: 'camelCase with string and spaces',
         fn: 'camelCase',
         args: ['foo bar'],
         expected: 'fooBar'
@@ -351,67 +351,67 @@ var toBeTests: Array<IUtilTest> = [
         expected: {}
     },
     {
-        name: 'filter null',
+        name: 'filter with null',
         fn: 'filter',
         args: [null, isTrue],
         expected: []
     },
     {
-        name: 'filter number',
+        name: 'filter with a number',
         fn: 'filter',
         args: [3, isTrue],
         expected: []
     },
     {
-        name: 'filter Array',
+        name: 'filter with an rray',
         fn: 'filter',
         args: [[true, false, true], isTrue],
         expected: [true, true]
     },
     {
-        name: 'filter Object',
+        name: 'filter with an object',
         fn: 'filter',
         args: [{ foo: true, bar: false, baz: true }, isTrue],
         expected: [true, true]
     },
     {
-        name: 'where Array',
+        name: 'where with an array',
         fn: 'where',
         args: [[{ foo: 'foo', bar: 'bar' }, { foo: 'bar', bar: 'foo' }], { foo: 'foo' }],
         expected: [{ foo: 'foo', bar: 'bar' }]
     },
     {
-        name: 'where Object',
+        name: 'where with an object',
         fn: 'where',
         args: [{ foo: { foo: 'foo', bar: 'bar' }, bar: { foo: 'bar', bar: 'foo' } }, { foo: 'foo' }],
         expected: [{ foo: 'foo', bar: 'bar' }]
     },
     {
-        name: 'map null',
+        name: 'map with null',
         fn: 'map',
         args: [null, isTrue],
         expected: []
     },
     {
-        name: 'map Object',
+        name: 'map with an object',
         fn: 'map',
         args: [{ foo: true, bar: false, baz: true }, isTrue],
         expected: [true, false, true]
     },
     {
-        name: 'map Array',
+        name: 'map with an array',
         fn: 'map',
         args: [[true, false, true], isTrue],
         expected: [true, false, true]
     },
     {
-        name: 'pluck Array',
+        name: 'pluck with an array',
         fn: 'pluck',
         args: [[{ foo: 'bar', bar: 'foo' }, { foo: 'foo', bar: 'bar' }], 'foo'],
         expected: ['bar', 'foo']
     },
     {
-        name: 'pluck Object',
+        name: 'pluck with an object',
         fn: 'pluck',
         args: [{ foo: { foo: 'bar', bar: 'foo' }, bar: { foo: 'foo', bar: 'bar' } }, 'foo'],
         expected: ['bar', 'foo']
@@ -429,20 +429,20 @@ describe('Utils Tests', () => {
     });
 
     toEqualTests.forEach((test) => {
-        it(test.name, () => {
+        it('should test ' + test.name, () => {
             var result = utils[test.fn].apply(utils, test.args);
             expect(result).toEqual(test.expected);
         });
     });
 
-    it('noop', () => {
+    it('should test noop', () => {
         var spy = spyOn(utils, 'noop');
 
         utils.noop();
         expect(spy.wasCalled).toBe(true);
     });
 
-    it('extend with 3 args', () => {
+    it('should test extend with 3 args', () => {
         var foo = { foo: 'foo' },
             bar = { foo: 'bar', bar: { name: 'bar' } },
             baz = utils.extend({ baz: 'baz' }, foo, bar);
@@ -451,7 +451,7 @@ describe('Utils Tests', () => {
         expect(baz.bar).toBe(bar.bar);
     });
 
-    it('deep extend', () => {
+    it('should test deep extend', () => {
         var foo = { foo: 'foo' },
             bar = { foo: 'bar', bar: { name: 'bar' } },
             baz = utils.deepExtend({ baz: 'baz' }, foo, bar);
@@ -461,7 +461,7 @@ describe('Utils Tests', () => {
         expect(baz.bar).toEqual(bar.bar);
     });
 
-    it('forEach Array', () => {
+    it('should test forEach with an array', () => {
         var spy = spyOn(utils, 'noop');
 
         utils.forEach([true, true, true], utils.noop);
@@ -469,7 +469,7 @@ describe('Utils Tests', () => {
         expect(spy.callCount).toBe(3);
     });
 
-    it('forEach Object', () => {
+    it('should test forEach with an object', () => {
         var spy = spyOn(utils, 'noop');
 
         utils.forEach({ foo: true, bar: true, baz: true }, utils.noop);
@@ -477,7 +477,7 @@ describe('Utils Tests', () => {
         expect(spy.callCount).toBe(3);
     });
 
-    it('forEach null', () => {
+    it('should test forEach with null', () => {
         var spy = spyOn(utils, 'noop');
 
         utils.forEach(null, utils.noop);
@@ -485,7 +485,7 @@ describe('Utils Tests', () => {
         expect(spy.wasCalled).toBe(false);
     });
 
-    it('forEach string', () => {
+    it('should test forEach with a string', () => {
         var spy = spyOn(utils, 'noop');
 
         utils.forEach('foo', utils.noop);
@@ -494,7 +494,7 @@ describe('Utils Tests', () => {
         expect(spy.mostRecentCall.args).toEqual(['o', 2, 'foo']);
     });
 
-    it('some String - FALSE', () => {
+    it('should test some with a string and return false', () => {
         var spy = spyOn(utils, 'noop');
 
         expect(utils.some('foo', <any>utils.noop)).toBe(false);
@@ -503,7 +503,7 @@ describe('Utils Tests', () => {
         expect(spy.mostRecentCall.args).toEqual(['o', 2, 'foo']);
     });
 
-    it('postpone', () => {
+    it('should test postpone', () => {
         var done = false,
             postArg: any;
 
@@ -523,7 +523,7 @@ describe('Utils Tests', () => {
         });
     });
 
-    it('defer', () => {
+    it('should test defer', () => {
         var done = false,
             postArg: any;
 
@@ -543,7 +543,7 @@ describe('Utils Tests', () => {
         });
     });
 
-    it('defer - CANCELLED', () => {
+    it('should test a cancelled defer', () => {
         var done = false,
             postArg: any;
 
@@ -566,13 +566,13 @@ describe('Utils Tests', () => {
         });
     });
 
-    it('uniqueId no prefix', () => {
+    it('should test uniqueId with no prefix', () => {
         var uid = utils.uniqueId();
 
         expect(uid.length).toBe(2);
     });
 
-    it('uniqueId no prefix', () => {
+    it('should test uniqueId with a prefix', () => {
         var rand = Math.random().toString() + '_',
             uid = utils.uniqueId(rand);
 
