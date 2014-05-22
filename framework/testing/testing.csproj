@@ -54,7 +54,8 @@
   <ItemGroup>
     <TypeScriptCompile Include="framework\platypus.ts" />
     <TypeScriptCompile Include="karma.config.ts" />
-    <TypeScriptCompile Include="tests\expressions\parser\parser.tests.ts" />
+    <TypeScriptCompile Include="tests\expressions\parser\parser.test.ts" />
+    <TypeScriptCompile Include="tests\expressions\tokenizer\tokenizer.test.ts" />
     <TypeScriptCompile Include="tests\storage\cache\cache.test.ts" />
     <TypeScriptCompile Include="tests\utils\utils.test.ts" />
   </ItemGroup>
