@@ -65,15 +65,14 @@ module plat.async {
             options.url = this.$browser.urlUtils(url).toString();
 
             var isCrossDomain = options.isCrossDomain || false,
-                xDomain = false,
-                xhr: XMLHttpRequest;
+                xDomain = false;
 
             // check if forced cross domain call or cors is not supported (IE9)
             if (isCrossDomain) {
                 xDomain = true;
             } else {
-                xhr = this.xhr = new XMLHttpRequest();
-                if (isUndefined(xhr.withCredentials)) {
+                this.xhr = new XMLHttpRequest();
+                if (isUndefined(this.xhr.withCredentials)) {
                     xDomain = this.$browser.isCrossDomain(url);
                 }
             }
@@ -84,7 +83,7 @@ module plat.async {
                 return this.executeJsonp();
             }
 
-            return this._sendXhrRequest(xhr);
+            return this._sendXhrRequest();
         }
 
         /**
@@ -159,12 +158,12 @@ module plat.async {
         /**
          * A wrapper for the XMLHttpRequest's onReadyStateChanged callback.
          *
-         * @param xhr The associated XMLHttpRequest
          * @return {bool} Waits for the readyState to be complete and then 
          * return true in the case of a success and false in the case of 
          * an error.
          */
-        _xhrOnReadyStateChange(xhr: XMLHttpRequest): boolean {
+        _xhrOnReadyStateChange(): boolean {
+            var xhr = this.xhr;
             if (xhr.readyState === 4) {
                 var status = xhr.status,
                     responseType = xhr.responseType;
@@ -197,19 +196,19 @@ module plat.async {
         /**
          * The function that initializes and sends the XMLHttpRequest.
          *
-         * @param {XMLHttpRequest} The associated XMLHttpRequest
          * @return {Promise<IAjaxResponse>} A promise that fulfills with the 
          * formatted IAjaxResponse and rejects if there is a problem with an 
          * IAjaxError.
          */
-        _sendXhrRequest(xhr: XMLHttpRequest): IAjaxPromise<any> {
-            var options = this.__options,
+        _sendXhrRequest(): IAjaxPromise<any> {
+            var xhr = this.xhr,
+                options = this.__options,
                 method = options.method,
                 url = options.url;
 
             return new AjaxPromise((resolve, reject) => {
                 xhr.onreadystatechange = () => {
-                    var success = this._xhrOnReadyStateChange(xhr);
+                    var success = this._xhrOnReadyStateChange();
 
                     if (isNull(success)) {
                         return;
@@ -243,43 +242,91 @@ module plat.async {
                 xhr.responseType = options.responseType;
                 xhr.withCredentials = options.withCredentials;
 
-                var data = options.data;
+                var mimeType = options.overrideMimeType,
+                    data = options.data;
+
+                if (isString(mimeType) && !isEmpty(mimeType)) {
+                    xhr.overrideMimeType(mimeType);
+                }
+
                 if (isNull(data) || data === '') {
-                    this.__setHeaders(options.headers, xhr);
+                    // no data exists so set headers and send request
+                    this.__setHeaders();
                     xhr.send();
                 } else {
-                    // Set the Content-Type header if data is being sent
-                    xhr.setRequestHeader('Content-Type', contentType);
-                    this.__setHeaders(options.headers, xhr);
-
                     var transforms = options.transforms || [],
-                        contentType = options.contentType;
+                        contentType = options.contentType,
+                        contentTypeExists = isString(contentType) && !isEmpty(contentType);
 
                     length = transforms.length;
 
                     if (length > 0) {
+                        // if data transforms defined, assume they're going to take care of 
+                        // any and all transformations.
                         for (var i = 0; i < length; ++i) {
                             data = transforms[i](data, xhr);
                         }
 
+                        // if contentType exists, assume they did not set it in 
+                        // their headers as well
+                        if (contentTypeExists) {
+                            xhr.setRequestHeader('Content-Type', contentType);
+                        }
+
+                        this.__setHeaders();
                         xhr.send(data);
                     } else if (isObject(data)) {
-                        if (contentType && contentType.indexOf('x-www-form-urlencoded') !== -1) {
-                            if (this.__fileSupported) {
-                                data = this.__appendFormData(data);
+                        // if isObject and contentType exists we want to transform the data
+                        if (contentTypeExists) {
+                            var contentTypeLower = contentType.toLowerCase();
+                            if (contentTypeLower.indexOf('x-www-form-urlencoded') !== -1) {
+                                // perform an encoded form transformation
+                                data = this.__serializeFormData();
+                                // set Content-Type header because we're assuming they didn't set it 
+                                // in their headers object
+                                xhr.setRequestHeader('Content-Type', contentType);
+                                this.__setHeaders();
                                 xhr.send(data);
+                            } else if (contentTypeLower.indexOf('multipart/form-data') !== -1) {
+                                // need to check if File is a supported object
+                                if (this.__fileSupported) {
+                                    // use FormData
+                                    data = this.__appendFormData();
+                                    // Do not set the Content-Type header due to modern browsers 
+                                    // setting special headers for multipart/form-data
+                                    this.__setHeaders();
+                                    xhr.send(data);
+                                } else {
+                                    // use iframe trick for older browsers (do not send a request)
+                                    // this case is the reason for this giant, terrible, nested if-else statement
+                                    this.__submitFramedFormData().then((response) => {
+                                        resolve(response);
+                                    }, () => {
+                                        this.xhr = null;
+                                    });
+                                }
                             } else {
-                                this.__submitFramedFormData(url, data).then((response) => {
-                                    resolve(response);
-                                }, () => {
-                                    this.xhr = null;
-                                });
+                                // assume stringification is possible
+                                data = JSON.stringify(data);
+                                // set Content-Type header because we're assuming they didn't set it 
+                                // in their headers object
+                                xhr.setRequestHeader('Content-Type', contentType);
+                                this.__setHeaders();
+                                xhr.send(data);
                             }
                         } else {
-                            data = JSON.stringify(data);
+                            // contentType does not exist so simply set defined headers and send raw data
+                            this.__setHeaders();
                             xhr.send(data);
                         }
                     } else {
+                        // if contentType exists set Content-Type header because we're assuming they didn't set it 
+                        // in their headers object
+                        if (contentTypeExists) {
+                            xhr.setRequestHeader('Content-Type', contentType);
+                        }
+
+                        this.__setHeaders();
                         xhr.send(data);
                     }
                 }
@@ -369,8 +416,10 @@ module plat.async {
             };
         }
 
-        private __setHeaders(headers: any, xhr: XMLHttpRequest) {
-            var keys = Object.keys(headers || {}),
+        private __setHeaders() {
+            var headers = this.__options.headers,
+                keys = Object.keys(headers || {}),
+                xhr = this.xhr,
                 length = keys.length,
                 key: string,
                 i: number;
@@ -380,8 +429,34 @@ module plat.async {
                 xhr.setRequestHeader(key, headers[key]);
             }
         }
-        private __appendFormData(data: any): FormData {
-            var formData = new FormData(),
+        private __serializeFormData(): string {
+            var data = this.__options.data,
+                keys = Object.keys(data),
+                key: string,
+                val: any,
+                formBuffer: Array<string> = [],
+                formStr = '';
+
+            while (keys.length > 0) {
+                key = keys.pop();
+                val = data[key];
+                if (isNull(val)) {
+                    val = '';
+                } else if (isObject(val)) {
+                    // may throw a fatal error but this is an invalid case
+                    var $exception: IExceptionStatic = acquire('$ExceptionStatic');
+                    $exception.warn('Invalid form entry with key "' + key + '" and value "' + val, $exception.AJAX);
+                    val = JSON.stringify(val);
+                }
+
+                formBuffer.push(encodeURIComponent(key) + '=' + encodeURIComponent(val));
+            }
+
+            return formBuffer.join('&').replace(/%20/g, '+');
+        }
+        private __appendFormData(): FormData {
+            var data = this.__options.data,
+                formData = new FormData(),
                 keys = Object.keys(data),
                 key: string,
                 val: any;
@@ -389,16 +464,29 @@ module plat.async {
             while (keys.length > 0) {
                 key = keys.pop();
                 val = data[key];
-
-                isObject(val) ?
-                formData.append(key, val, val.name || val.fileName || 'blob') :
-                formData.append(key, val);
+                if (isNull(val)) {
+                    formData.append(key, '');
+                } else if (isObject(val)) {
+                    if (isFile(val)) {
+                        formData.append(key, val, val.name || val.fileName || 'blob');
+                    } else {
+                        // may throw a fatal error but this is an invalid case
+                        var $exception: IExceptionStatic = acquire('$ExceptionStatic');
+                        $exception.warn('Invalid form entry with key "' + key + '" and value "' + val, $exception.AJAX);
+                        formData.append(key, JSON.stringify(val));
+                    }
+                } else {
+                    formData.append(key, val);
+                }
             }
 
             return formData;
         }
-        private __submitFramedFormData(url: string, data: any): IThenable<IAjaxResponse<any>> {
-            var $document = this.$document,
+        private __submitFramedFormData(): IThenable<IAjaxResponse<any>> {
+            var options = this.__options,
+                data = options.data,
+                url = options.url,
+                $document = this.$document,
                 Promise: IPromiseStatic = acquire('$PromiseStatic'),
                 form = $document.createElement('form'),
                 iframe = $document.createElement('iframe'),
@@ -424,10 +512,10 @@ module plat.async {
                 if (isNull(val)) {
                     input.value = '';
                 } else if (isObject(val)) {
-                    if (!(isUndefined(val.value) || isUndefined(val.name))) {
+                    if (isFile(val)) {
                         input.value = val.value;
                     } else {
-                        // may throw a fatal error but this is an invalid case anyway
+                        // may throw a fatal error but this is an invalid case
                         var $exception: IExceptionStatic = acquire('$ExceptionStatic');
                         $exception.warn('Invalid form entry with key "' + key + '" and value "' + val, $exception.AJAX);
                         input.value = JSON.stringify(val);
@@ -539,6 +627,11 @@ module plat.async {
          * 'application/json;charset=utf-8;'.
          */
         contentType?: string;
+
+        /**
+         * A string to override the MIME type returned by the server.
+         */
+        overrideMimeType?: string;
 
         /**
          * A key/value pair object where the key is a DOMString header key
@@ -844,6 +937,48 @@ module plat.async {
     }
 
     /**
+     * Describes an object that provides Content-Type mappings for Http POST requests.
+     */
+    export interface IHttpContentType {
+        /**
+         * Standard denotation for form encoded data. All objects are converted 
+         * to string key-value pairs.
+         */
+        ENCODEDFORM: string;
+
+        /**
+         * Standard denotation for JavaScript Object Notation (JSON).
+         */
+        JSON: string;
+
+        /**
+         * Standard denotation for a multi-part Webform. Associated with 
+         * an entype of 'multipart/form-data'.
+         */
+        MULTIPARTFORM: string;
+
+        /**
+         * Standard denotation for arbitrary binary data.
+         */
+        OCTETSTREAM: string;
+
+        /**
+         * Standard denotation for XML files.
+         */
+        XML: string;
+
+        /**
+         * Standard denotation for textual data.
+         */
+        PLAINTEXT: string;
+
+        /**
+         * Standard denotation for HTML.
+         */
+        HTML: string;
+    }
+
+    /**
      * Describes the interface for the Ajax injectable for making both 
      * XMLHttpRequests and JSONP requests.
      */
@@ -853,6 +988,11 @@ module plat.async {
          * XMLHttpRequestResponseTypes
          */
         responseType: IHttpResponseType;
+
+        /**
+         * Describes an object that provides Content-Type mappings for Http POST requests.
+         */
+        contentType: IHttpContentType;
 
         /**
          * A wrapper method for the Http class that creates and executes a new Http with
@@ -919,6 +1059,19 @@ module plat.async {
             DOCUMENT: 'document',
             JSON: 'json',
             TEXT: 'text'
+        };
+
+        /**
+         * Common HttpContentType mappings
+         */
+        contentType: IHttpContentType = {
+            ENCODEDFORM: 'application/x-www-form-urlencoded;charset=utf-8;',
+            JSON: 'application/json;charset=utf-8;',
+            MULTIPARTFORM: 'multipart/form-data',
+            OCTETSTREAM: 'application/octet-stream;charset=utf-8;',
+            XML: 'application/xml;charset=utf-8;',
+            PLAINTEXT: 'text/plain',
+            HTML: 'text/html'
         };
 
         /**

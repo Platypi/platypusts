@@ -66,6 +66,10 @@ function isDocumentFragment(obj: any): boolean {
     return !!(obj && (<Node>obj).nodeType === Node.DOCUMENT_FRAGMENT_NODE);
 }
 
+function isFile(obj: any): boolean {
+    return isObject(obj) && obj.toString() === '[object File]';
+}
+
 function isString(obj: any): boolean {
     return typeof obj === 'string';
 }
