@@ -159,7 +159,7 @@ module plat.async {
         /**
          * A wrapper for the XMLHttpRequest's onReadyStateChanged callback.
          *
-         * @param {XMLHttpRequest} The associated XMLHttpRequest
+         * @param xhr The associated XMLHttpRequest
          * @return {bool} Waits for the readyState to be complete and then 
          * return true in the case of a success and false in the case of 
          * an error.
@@ -167,9 +167,14 @@ module plat.async {
         _xhrOnReadyStateChange(xhr: XMLHttpRequest): boolean {
             if (xhr.readyState === 4) {
                 var status = xhr.status,
-                    response = xhr.response || xhr.responseText;
+                    responseType = xhr.responseType;
 
                 if (status === 0) {
+                    var response = xhr.response;
+                    if (isNull(response) && responseType === '' || responseType === 'text') {
+                        response = xhr.responseText;
+                    }
+
                     // file protocol issue **Needs to be tested more thoroughly**
                     // OK if response is not empty, Not Found otherwise
                     if (!isEmpty(response)) {
@@ -331,7 +336,13 @@ module plat.async {
          */
         _formatResponse(xhr: XMLHttpRequest, responseType: string, success: boolean): IAjaxResponse<any> {
             var status = xhr.status,
-                response = xhr.response || xhr.responseText;
+                response = xhr.response;
+
+            // need to do this instead of boolean short circuit because chrome doesn't like checking 
+            // responseText when the responseType is anything other than empty or 'text'
+            if (isNull(response) && (responseType === '' || responseType === 'text')) {
+                response = xhr.responseText;
+            }
 
             if (status === 0) {
                 // file protocol issue **Needs to be tested more thoroughly**
