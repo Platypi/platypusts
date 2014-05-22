@@ -801,11 +801,6 @@ module plat.observable {
                         return;
                     }
 
-                    if (isDefined) {
-                        this._execute(identifier, newValue, oldValue);
-                        return;
-                    }
-
                     if (isObject(value) || isArray(value)) {
                         var childPropertiesLength = this.__identifierHash[identifier].length;
                         this._execute(identifier, newValue, oldValue);
@@ -813,6 +808,8 @@ module plat.observable {
                         if (childPropertiesLength > 0) {
                             this._notifyChildProperties(identifier, newValue, oldValue);
                         }
+                    } else if (isDefined) {
+                        this._execute(identifier, newValue, oldValue);
                     } else {
                         this._execute(identifier, newValue, oldValue);
                         this.__definePrimitive(identifier, immediateContext, key);

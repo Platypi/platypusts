@@ -4,93 +4,93 @@ module tests.expressions.regex {
 
     var regex: plat.expressions.IRegex = plat.acquire(plat.expressions.Regex);
 
-    var regexs: Array<IRegexExecTest> = [
+    var regexs: Array<IRegexregexTest> = [
         {
-            name: 'NewLine Exec',
+            name: 'newLine regex',
             regex: regex.newLineRegex,
             input: 'test \n newline \r',
             replace: 'test  newline ',
             expected: ['\n']
         },
         {
-            name: 'Markup Exec',
+            name: 'markup regex',
             regex: regex.markupRegex,
             input: '{{test}} some {{markup}}',
             replace: '',
             expected: ['{{test}} some {{markup}}']
         },
         {
-            name: 'Argument Exec',
+            name: 'argument regex',
             regex: regex.argumentRegex,
             input: 'myFunction("foo", "bar", "baz")',
             replace: 'myFunction',
             expected: ['("foo", "bar", "baz")', '"foo", "bar", "baz"']
         },
         {
-            name: 'Nested Argument Exec',
+            name: 'nested argument regex',
             regex: regex.argumentRegex,
             input: 'myFunction("foo", bar(quux()), "baz")',
             replace: 'myFunction',
             expected: ['("foo", bar(quux()), "baz")', '"foo", bar(quux()), "baz"']
         },
         {
-            name: 'Alias Exec',
+            name: 'alias regex',
             regex: regex.aliasRegex,
             input: '@context.baz[bar](quux)',
             replace: '@.baz[bar](quux)',
             expected: ['context']
         },
         {
-            name: 'Alias Exec with multiple',
+            name: 'alias regex with multiple',
             regex: regex.aliasRegex,
             input: '@context.baz["@bar"](quux)',
             replace: '@.baz["@bar"](quux)',
             expected: ['context']
         },
         {
-            name: 'Optional Route Exec',
+            name: 'optional route regex',
             regex: regex.optionalRouteRegex,
             input: '(/foo)/bar(/quux)',
             replace: '/bar',
             expected: ['(/foo)', '/foo']
         },
         {
-            name: 'Named Parameter Route Exec',
+            name: 'named parameter Route regex',
             regex: regex.namedParameterRouteRegex,
             input: '(/:foo)/bar',
             replace: '(/)/bar',
             expected: [':foo', undefined]
         },
         {
-            name: 'Wild Card Route Exec',
+            name: 'wild card Route regex',
             regex: regex.wildcardRouteRegex,
             input: '/foo/*bar12/*baz',
             replace: '/foo//',
             expected: ['*bar12']
         },
         {
-            name: 'Escape Route Exec',
+            name: 'escape route regex',
             regex: regex.escapeRouteRegex,
             input: '/foo$bar/#baz?query=x',
             replace: '/foobar/bazquery=x',
             expected: ['$']
         },
         {
-            name: 'Camel Case Exec, spinal-case',
+            name: 'camel case regex, spinal-case',
             regex: regex.camelCaseRegex,
             input: 'my-not-camel-cased-word',
             replace: 'myotamelasedord',
             expected: ['-n', '-', 'n']
         },
         {
-            name: 'Camel Case Exec, dot.case',
+            name: 'camel case regex, dot.case',
             regex: regex.camelCaseRegex,
             input: 'my.not.camel.cased.word',
             replace: 'myotamelasedord',
             expected: ['.n', '.', 'n']
         },
         {
-            name: 'Camel Case Exec, snake_case',
+            name: 'camel case regex, snake_case',
             regex: regex.camelCaseRegex,
             input: 'my_not_camel_cased_word',
             replace: 'myotamelasedord',
@@ -114,7 +114,7 @@ module tests.expressions.regex {
         });
     });
 
-    interface IRegexExecTest {
+    interface IRegexregexTest {
         name: string;
         regex: RegExp;
         input: string;
