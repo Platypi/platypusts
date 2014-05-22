@@ -190,9 +190,8 @@ module plat.async {
                 } else {
                     return false;
                 }
-            } else {
-                // TODO: add progress for xhr if we choose to add progress to AjaxPromise
             }
+            // else {} TODO: add progress for xhr if we choose to add progress to AjaxPromise
         }
 
         /**
