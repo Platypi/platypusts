@@ -5,6 +5,7 @@ module plat {
      * class for all types of controls.
      */
     export class Control implements IControl {
+        static $parser: expressions.IParser;
         static $ContextManagerStatic: observable.IContextManagerStatic;
         static $EventManagerStatic: events.IEventManagerStatic;
 
@@ -377,8 +378,7 @@ module plat {
                 return noop;
             }
 
-            var parser: expressions.IParser = acquire('$parser'),
-                parsedExpression: expressions.IParsedExpression = isString(expression) ? parser.parse(expression) : expression,
+            var parsedExpression: expressions.IParsedExpression = isString(expression) ? Control.$parser.parse(expression) : expression,
                 aliases = parsedExpression.aliases,
                 control: ui.TemplateControl = !isNull((<ui.TemplateControl>this).resources) ?
                     <ui.TemplateControl>this :
@@ -603,14 +603,17 @@ module plat {
      * The Type for referencing the '$ControlStatic' injectable as a dependency.
      */
     export function ControlStatic(
+            $parser: expressions.IParser,
             $ContextManagerStatic: observable.IContextManagerStatic,
             $EventManagerStatic: events.IEventManagerStatic) {
+        Control.$parser = $parser;
         Control.$ContextManagerStatic = $ContextManagerStatic;
         Control.$EventManagerStatic = $EventManagerStatic;
         return Control;
     }
 
     register.injectable('$ControlStatic', ControlStatic, [
+        '$parser',
         '$ContextManagerStatic',
         '$EventManagerStatic'
     ], register.injectableType.STATIC);

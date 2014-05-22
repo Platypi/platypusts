@@ -49,6 +49,9 @@ module plat.controls {
          */
         _property: string;
 
+        private __fileSupported = (<ICompat>acquire('$compat')).fileSupported;
+        private __fileNameRegex = (<expressions.IRegex>acquire('$regex')).fileNameRegex;
+
         /**
          * Determines the type of HTMLElement being bound to 
          * and sets the necessary handlers.
@@ -68,7 +71,7 @@ module plat.controls {
             var attr = camelCase(this.type),
                 expression = this._expression = this.$parser.parse((<any>this.attributes)[attr]);
 
-            var identifiers = this._expression.identifiers;
+            var identifiers = expression.identifiers;
 
             if (identifiers.length !== 1) {
                 this.$ExceptionStatic.warn('Only 1 identifier allowed in a plat-bind expression');
@@ -224,6 +227,33 @@ module plat.controls {
         }
 
         /**
+         * Getter for input[type=file]. Creates a partial IFile 
+         * element if file is not supported.
+         */
+        _getFile(): IFile {
+            var element = <HTMLInputElement>this.element,
+                value = element.value;
+
+            if (this.__fileSupported && element.files.length > 0) {
+                var file = <IFile>element.files[0];
+                file.value = value;
+
+                return file;
+            }
+
+            return {
+                name: value.replace(this.__fileNameRegex, ''),
+                value: value,
+                lastModifiedDate: undefined,
+                type: undefined,
+                size: undefined,
+                msDetachStream: noop,
+                msClose: noop,
+                slice: () => <Blob>{ }
+            };
+        }
+
+        /**
          * Setter for textarea, input[type=text], 
          * and input[type=button]
          * 
@@ -301,6 +331,10 @@ module plat.controls {
                             this._getter = this._getValue;
                             this._setter = this._setRange;
                             break;
+                        case 'file':
+                            this._addEventType = this._addChangeEventListener;
+                            this._getter = this._getFile;
+                            break;
                         default:
                             this._addEventType = this._addTextEventListener;
                             this._getter = this._getValue;
@@ -330,7 +364,12 @@ module plat.controls {
          * Observes the expression to bind to.
          */
         _watchExpression(): void {
+            if (!isFunction(this._setter)) {
+                return;
+            }
+
             var expression = this._expression;
+
             this.observeExpression(expression, this._setter);
             this._setter(this.parent.evaluateExpression(expression));
         }
@@ -356,14 +395,19 @@ module plat.controls {
             context[property] = newValue;
         }
         private __setValue(newValue: any): void {
-            if ((<HTMLInputElement>this.element).value === newValue) {
+            var element = <HTMLInputElement>this.element;
+            if (element.value === newValue) {
                 return;
             }
 
-            (<HTMLInputElement>this.element).value = newValue;
+            element.value = newValue;
         }
     }
 
     register.control('plat-bind', Bind);
+
+    export interface IFile extends File {
+        value: string;
+    }
 }
 

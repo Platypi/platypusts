@@ -13,6 +13,11 @@
          * Signifies whether window.history.pushState is defined.
          */
         pushState: boolean;
+
+        /**
+         * Signifies whether the File API is supported.
+         */
+        fileSupported: boolean;
         
         /**
          * Signifies whether Require is present. If it is, we assume 
@@ -93,6 +98,7 @@
 
             define(this, 'cordova', !isNull((<any>$window).cordova));
             define(this, 'pushState', !isNull($window.history.pushState));
+            define(this, 'fileSupported', !(isUndefined((<any>$window).File) || isUndefined((<any>$window).FormData)));
             define(this, 'amd', isFunction(def) && !isNull(def.amd));
             define(this, 'msApp', isObject(msA) && isFunction(msA.execUnsafeLocalFunction));
             define(this, 'indexedDb', !isNull($window.indexedDB));
@@ -195,6 +201,11 @@
          * Signifies whether window.history.pushState is defined.
          */
         pushState: boolean;
+
+        /**
+         * Signifies whether the File API is supported.
+         */
+        fileSupported: boolean;
 
         /**
          * Signifies whether Require is present. If it is, we assume 

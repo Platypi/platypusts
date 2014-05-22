@@ -564,31 +564,6 @@ module plat.async {
         return Promise;
     }
 
-    ///**
-    // * Describes an object that implements the ES6 Promise API
-    // */
-    //export interface IThenable<T, U extends Error> {
-    //    /**
-    //     * Takes in two methods, called when/if the promise fulfills/rejects.
-    //     * 
-    //     * @param onFulfilled A method called when/if the promise fulills. If undefined the next
-    //     * onFulfilled method in the promise chain will be called.
-    //     * @param onRejected A method called when/if the promise rejects. If undefined the next
-    //     * onRejected method in the promise chain will be called.
-    //     * @return {IThenable<T, U>} An IPromise used for method chaining.
-    //     */
-    //    then<TResult, TError>(onFulfilled: (success: T) => TResult, onRejected?: (error: U) => TError): IThenable<T, U>;
-
-    //    /**
-    //     * A wrapper method for Promise.then(undefined, onRejected);
-    //     * 
-    //     * @param onRejected A method called when/if the promise rejects. If undefined the next
-    //     * onRejected method in the promise chain will be called.
-    //     * @return {IThenable<T, U>} An IPromise used for method chaining.
-    //     */
-    //    catch<TError>(onRejected: (error: U) => TError): IThenable<T, U>;
-    //}
-
     /**
      * The injectable reference for the ES6 Promise implementation.
      */

@@ -367,15 +367,13 @@ module plat.ui {
 
             template = templateCache.read(templateUrl);
 
-            var ajax = TemplateControl.$http.ajax,
-                Exception = TemplateControl.$ExceptionStatic;
-
             return Promise.cast<DocumentFragment>(template).catch((error) => {
                 if (isNull(error)) {
-                    return templateCache.put(templateUrl, ajax<string>({ url: templateUrl })
+                    return templateCache.put(templateUrl, TemplateControl.$http.ajax<string>({ url: templateUrl })
                             .then<DocumentFragment>((success) => {
                         if (!isObject(success) || !isString(success.response)) {
-                            Exception.warn('No template found at ' + templateUrl, Exception.AJAX);
+                            TemplateControl.$ExceptionStatic.warn('No template found at ' + templateUrl,
+                                TemplateControl.$ExceptionStatic.AJAX);
                             return Promise.resolve(dom.serializeHtml());
                         }
 
@@ -390,14 +388,16 @@ module plat.ui {
                         return templateCache.put(templateUrl, template);
                     }, (error) => {
                         postpone(() => {
-                            Exception.fatal('Failure to get template from ' + templateUrl + '.', Exception.TEMPLATE);
+                            TemplateControl.$ExceptionStatic.fatal('Failure to get template from ' + templateUrl + '.',
+                                TemplateControl.$ExceptionStatic.TEMPLATE);
                         });
                         return error;
                     }));
                 }
             }).catch((error) => {
                 postpone(() => {
-                    Exception.fatal('Failure to get template from ' + templateUrl + '.', Exception.TEMPLATE);
+                    TemplateControl.$ExceptionStatic.fatal('Failure to get template from ' + templateUrl + '.',
+                        TemplateControl.$ExceptionStatic.TEMPLATE);
                 });
                 return error;
             });

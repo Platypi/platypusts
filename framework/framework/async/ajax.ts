@@ -35,12 +35,13 @@ module plat.async {
          */
         $config: IHttpConfigStatic = acquire('$http.config');
 
+        private __fileSupported = (<ICompat>acquire('$compat')).fileSupported;
         private __options: IHttpConfigStatic;
 
         /**
-         * @param options The IAjaxOptions used to customize this Http.
+         * @param options The IHttpConfigStatic used to customize this HttpRequest.
          */
-        constructor(options?: IHttpConfigStatic) {
+        constructor(options: IHttpConfigStatic) {
             this.__options = extend({}, this.$config, options);
         }
 
@@ -102,26 +103,31 @@ module plat.async {
             }
 
             options.url = this.$browser.urlUtils(url).toString();
+            if (isNull(this.jsonpCallback)) {
+                this.jsonpCallback = options.jsonpCallback || uniqueId('plat_callback');
+            }
 
             return new AjaxPromise((resolve, reject) => {
-                var scriptTag = this.$document.createElement('script'),
-                    jsonpCallback: string = this.jsonpCallback || uniqueId('plat_callback'),
+                var $window = <any>this.$window,
+                    $document = this.$document,
+                    scriptTag = $document.createElement('script'),
+                    jsonpCallback = this.jsonpCallback,
                     jsonpIdentifier = options.jsonpIdentifier || 'callback';
 
                 scriptTag.src = url + '?' + jsonpIdentifier + '=' + jsonpCallback;
 
-                var oldValue = (<any>this.$window)[jsonpCallback];
-                (<any>this.$window)[jsonpCallback] = (response: any) => {
+                var oldValue = $window[jsonpCallback];
+                $window[jsonpCallback] = (response: any) => {
                     //clean up
                     if (isFunction(this.clearTimeout)) {
                         this.clearTimeout();
                     }
 
-                    this.$document.head.removeChild(scriptTag);
+                    $document.head.removeChild(scriptTag);
                     if (!isUndefined(oldValue)) {
-                        (<any>this.$window)[jsonpCallback] = oldValue;
+                        $window[jsonpCallback] = oldValue;
                     } else {
-                        delete (<any>this.$window)[jsonpCallback];
+                        delete $window[jsonpCallback];
                     }
 
                     //call callback
@@ -131,7 +137,7 @@ module plat.async {
                     });
                 };
 
-                this.$document.head.appendChild(scriptTag);
+                $document.head.appendChild(scriptTag);
 
                 var timeout = options.timeout;
                 if (isNumber(timeout) && timeout > 0) {
@@ -143,7 +149,7 @@ module plat.async {
                                 response: 'Request timed out in ' + timeout + 'ms for ' + url,
                                 status: 408 // Request Timeout
                             }));
-                            (<any>this.$window)[jsonpCallback] = noop;
+                            $window[jsonpCallback] = noop;
                         }, timeout - 1);
                     });
                 }
@@ -205,13 +211,15 @@ module plat.async {
                         return;
                     }
 
-                    var response = this._formatResponse(xhr);
+                    var response = this._formatResponse(xhr, options.responseType, success);
 
                     if (success) {
                         resolve(response);
                     } else {
                         reject(new AjaxError(response));
                     }
+
+                    this.xhr = options = null;
                 };
 
                 if (!isString(method)) {
@@ -231,41 +239,45 @@ module plat.async {
                 xhr.responseType = options.responseType;
                 xhr.withCredentials = options.withCredentials;
 
-                var headers = options.headers,
-                    keys = Object.keys(isObject(headers) ? headers : {}),
-                    length = keys.length,
-                    key: string,
-                    i: number;
-
-                for (i = 0; i < length; ++i) {
-                    key = keys[i];
-                    xhr.setRequestHeader(key, options.headers[key]);
-                }
-
                 var data = options.data;
                 if (isNull(data) || data === '') {
+                    this.__setHeaders(options.headers, xhr);
                     xhr.send();
                 } else {
+                    // Set the Content-Type header if data is being sent
+                    xhr.setRequestHeader('Content-Type', contentType);
+                    this.__setHeaders(options.headers, xhr);
+
                     var transforms = options.transforms || [],
                         contentType = options.contentType;
 
                     length = transforms.length;
 
                     if (length > 0) {
-                        for (i = 0; i < length; ++i) {
+                        for (var i = 0; i < length; ++i) {
                             data = transforms[i](data, xhr);
                         }
+
+                        xhr.send(data);
                     } else if (isObject(data)) {
                         if (contentType && contentType.indexOf('x-www-form-urlencoded') !== -1) {
-                            data = this.__serializeFormData(data);
+                            if (this.__fileSupported) {
+                                data = this.__appendFormData(data);
+                                xhr.send(data);
+                            } else {
+                                this.__submitFramedFormData(url, data).then((response) => {
+                                    resolve(response);
+                                }, () => {
+                                    this.xhr = null;
+                                });
+                            }
                         } else {
                             data = JSON.stringify(data);
+                            xhr.send(data);
                         }
+                    } else {
+                        xhr.send(data);
                     }
-
-                    // Set the Content-Type header if data is being sent
-                    xhr.setRequestHeader('Content-Type', contentType);
-                    xhr.send(data);
                 }
 
                 var timeout = options.timeout;
@@ -283,9 +295,9 @@ module plat.async {
 
                             xhr.onreadystatechange = null;
                             xhr.abort();
-                            xhr = null;
+                            this.xhr = null;
                         }, timeout - 1);
-                    }, null);
+                    });
                 }
             }, { __http: this });
         }
@@ -317,7 +329,7 @@ module plat.async {
          * @return {IAjaxResponse} The IAjaxResponse to be returned to 
          * the requester.
          */
-        _formatResponse(xhr: XMLHttpRequest, success?: boolean): IAjaxResponse<any> {
+        _formatResponse(xhr: XMLHttpRequest, responseType: string, success: boolean): IAjaxResponse<any> {
             var status = xhr.status,
                 response = xhr.response || xhr.responseText;
 
@@ -333,7 +345,7 @@ module plat.async {
                 this.clearTimeout();
             }
 
-            if (this.__options.responseType === 'json' && isString(response)) {
+            if (responseType === 'json' && isString(response)) {
                 try {
                     response = JSON.parse(response);
                 } catch (e) { }
@@ -347,20 +359,102 @@ module plat.async {
             };
         }
 
-        private __serializeFormData(data: any): string {
-            var keys = Object.keys(data),
+        private __setHeaders(headers: any, xhr: XMLHttpRequest) {
+            var keys = Object.keys(headers || {}),
+                length = keys.length,
                 key: string,
-                val: any,
-                formBuffer: Array<string> = [],
-                formStr = '';
+                i: number;
+
+            for (i = 0; i < length; ++i) {
+                key = keys[i];
+                xhr.setRequestHeader(key, headers[key]);
+            }
+        }
+        private __appendFormData(data: any): FormData {
+            var formData = new FormData(),
+                keys = Object.keys(data),
+                key: string,
+                val: any;
 
             while (keys.length > 0) {
                 key = keys.pop();
                 val = data[key];
-                formBuffer.push(encodeURIComponent(key) + '=' + encodeURIComponent(isNull(val) ? '' : val));
+
+                isObject(val) ?
+                formData.append(key, val, val.name || val.fileName || 'blob') :
+                formData.append(key, val);
             }
 
-            return formBuffer.join('&').replace(/%20/g, '+');
+            return formData;
+        }
+        private __submitFramedFormData(url: string, data: any): IThenable<IAjaxResponse<any>> {
+            var $document = this.$document,
+                Promise: IPromiseStatic = acquire('$PromiseStatic'),
+                form = $document.createElement('form'),
+                iframe = $document.createElement('iframe'),
+                iframeName = uniqueId('iframe_target'),
+                input: HTMLInputElement,
+                keys = Object.keys(data),
+                key: string,
+                val: any;
+
+            iframe.name = form.target = iframeName;
+            form.enctype = form.encoding = 'multipart/form-data';
+            form.action = url;
+            form.method = 'POST';
+            form.style.display = 'none';
+
+            while (keys.length > 0) {
+                key = keys.pop();
+                val = data[key];
+                input = $document.createElement('input');
+                input.type = 'hidden';
+                input.name = key;
+
+                if (isNull(val)) {
+                    input.value = '';
+                } else if (isObject(val)) {
+                    if (!(isUndefined(val.value) || isUndefined(val.name))) {
+                        input.value = val.value;
+                    } else {
+                        // may throw a fatal error but this is an invalid case anyway
+                        var $exception: IExceptionStatic = acquire('$ExceptionStatic');
+                        $exception.warn('Invalid form entry with key "' + key + '" and value "' + val, $exception.AJAX);
+                        input.value = JSON.stringify(val);
+                    }
+                } else {
+                    input.value = val;
+                }
+
+                form.insertBefore(input, null);
+            }
+
+            return new Promise<IAjaxResponse<any>>((resolve, reject) => {
+                iframe.onload = () => {
+                    var content = iframe.contentDocument.body.innerHTML;
+
+                    $document.body.removeChild(form);
+
+                    resolve({
+                        response: content,
+                        status: 200,
+                        getAllResponseHeaders: () => ''
+                    });
+
+                    this.xhr = iframe.onload = null;
+                };
+
+                this.xhr.abort = () => {
+                    iframe.onload = null;
+                    iframe.src = 'javascript:false;';
+                    $document.body.removeChild(form);
+                    reject();
+                };
+
+                form.insertBefore(iframe, null);
+                $document.body.insertBefore(form, null);
+                form.submit();
+            });
         }
     }
 
@@ -506,6 +600,7 @@ module plat.async {
          * a string.
          */
         response: R;
+
         /**
          * The XHR status. Resolves as 200 for JSONP.
          */
@@ -547,6 +642,7 @@ module plat.async {
             this.getAllResponseHeaders = response.getAllResponseHeaders;
             this.xhr = response.xhr;
         }
+
         toString(): string {
             var response = this.response,
                 responseText = response;
@@ -596,6 +692,7 @@ module plat.async {
             if (!isNull(xhr)) {
                 xhr.onreadystatechange = null;
                 xhr.abort();
+                http.xhr = null;
             } else if (!isNull(jsonpCallback)) {
                 (<any>this.$window)[jsonpCallback] = noop;
             }
