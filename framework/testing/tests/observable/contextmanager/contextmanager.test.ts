@@ -17,12 +17,8 @@ module tests.observable.contextManager {
                         }
                     },
                     arr: [{
-                        value: 'value1'
-                    }, {
-                            value: 'value2'
-                        }, {
-                            value: 'value3'
-                        }],
+                        value: 'value'
+                    }],
                     bool: false,
                     int: 1,
                     str: 'Hello'
@@ -128,6 +124,42 @@ module tests.observable.contextManager {
                 baz: 'foo',
                 bar: 'quux'
             };
+
+            expect(fooBar).toBe(true);
+            expect(fooBarBaz).toBe(true);
+        });
+
+        it('should test observe with an array', () => {
+            var fooBar = false,
+                fooBarBaz = false;
+
+            manager.observe('context.arr', {
+                uid: control.uid,
+                listener: (newValue, oldValue) => {
+                    fooBar = true;
+
+                    expect(oldValue).toEqual([{
+                        value: 'value'
+                    }]);
+                    expect(newValue).toEqual([{
+                        value: 'foo'
+                    }]);
+                }
+            });
+
+            var out = manager.observe('context.arr.0.value', {
+                uid: control.uid,
+                listener: (newValue, oldValue) => {
+                    fooBarBaz = true;
+
+                    expect(oldValue).toBe('value');
+                    expect(newValue).toBe('foo');
+                }
+            });
+
+            control.context.arr = [{
+                value: 'foo'
+            }];
 
             expect(fooBar).toBe(true);
             expect(fooBarBaz).toBe(true);

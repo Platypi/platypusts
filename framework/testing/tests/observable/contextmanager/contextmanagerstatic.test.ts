@@ -4,7 +4,7 @@ module tests.observable.contextManagerStatic {
     var ContextManager: plat.observable.IContextManagerStatic = plat.acquire(plat.observable.ContextManagerStatic);
 
     describe('ContextManagerStatic Tests', () => {
-        var control: plat.IControl,
+        var control: plat.ui.ITemplateControl,
             manager: plat.observable.IContextManager;
 
         beforeEach(() => {
@@ -204,6 +204,18 @@ module tests.observable.contextManagerStatic {
             ContextManager.removeIdentifier([control.uid], 'foo');
 
             expect(controls.test.foo).toBeUndefined();
+        });
+
+        it('should test createContext with an object', () => {
+            ContextManager.createContext(control, 'my.variable').greeting = 'Hello';
+
+            expect(control.context.my.variable.greeting).toBe('Hello');
+        });
+
+        it('should test createContext with an array', () => {
+            ContextManager.createContext(control, 'users.0').name = 'Will';
+
+            expect(control.context.users[0].name).toBe('Will');
         });
     });
 }
