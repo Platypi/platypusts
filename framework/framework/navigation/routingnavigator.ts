@@ -8,7 +8,6 @@
          * The routing information for the Routeport's current state.
          */
         currentState: IRouteNavigationState;
-        $browser: web.IBrowser = acquire('$browser');
         $router: web.IRouter = acquire('$router');
         $window: Window = acquire('$window');
         private __removeListeners: Array<IRemoveListener> = [];
