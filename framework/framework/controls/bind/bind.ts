@@ -374,4 +374,3 @@ module plat.controls {
 
     register.control('plat-bind', Bind);
 }
-
