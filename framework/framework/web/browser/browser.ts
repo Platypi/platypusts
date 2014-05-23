@@ -161,7 +161,10 @@
                 } else {
                     history.pushState(null, '', url);
                 }
-                this._urlChanged();
+
+                if (!this.__initializing) {
+                    this._urlChanged();
+                }
             } else {
                 this.__currentUrl = url;
                 if (replace) {
