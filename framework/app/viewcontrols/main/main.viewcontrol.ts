@@ -1,7 +1,7 @@
 module app {
     export class MainViewControl extends plat.ui.ViewControl {
         templateUrl = 'viewcontrols/main/main.viewcontrol.html';
-        context = {
+        context: any = {
             href: 'http://google.com',
             names: [
                 'Matt',
@@ -11,9 +11,21 @@ module app {
                 'Paul',
                 'Will'
             ],
-            user: {}
+            users: null
         };
         hello = true;
+
+        loaded() {
+            //this.context.user = {
+            //    name: 'will',
+            //    role: 'contributor'
+            //}
+
+            //setTimeout(() => {
+            //    this.context.user.name = 'matt';
+            //}, 1000);
+        }
+
         submit() {
             this.context;
         }

@@ -226,6 +226,43 @@ module plat.observable {
             }
         }
 
+        /**
+         * Ensures that an identifier path will exist on a given control. Will create 
+         * objects/arrays if necessary.
+         * 
+         * @param control The control on which to create the context.
+         * @param identifier The period-delimited identifier string used to create 
+         * the context path.
+         */
+        static createContext(control: ui.ITemplateControl, identifier: string) {
+            var split = identifier.split('.'),
+                property: string,
+                temp: any,
+                context = control.context;
+
+            if (isNull(context)) {
+                context = control.context = {};
+            }
+
+            while (split.length > 0) {
+                property = split.shift();
+
+                temp = context[property];
+
+                if (isNull(temp)) {
+                    if (!isNaN(Number(split[0]))) {
+                        temp = context[property] = [];
+                    } else {
+                        temp = context[property] = {};
+                    }
+                }
+
+                context = temp;
+            }
+
+            return context;
+        }
+
         private static __managers: IObject<IContextManager> = {};
         private static __controls: IObject<IObject<Array<IRemoveListener>>> = {};
 
@@ -290,9 +327,6 @@ module plat.observable {
             }
 
             if (!(isObject(context) || isArray(context))) {
-                this.$ExceptionStatic.warn('Trying to observe a child property of a primitive for identifier: ' +
-                    absoluteIdentifier, this.$ExceptionStatic.CONTEXT);
-
                 if (hasObservableListener) {
                     return this._addObservableListener(absoluteIdentifier, observableListener);
                 }
@@ -1066,6 +1100,17 @@ module plat.observable {
          * @param identifier The identifier to stop observing.
          */
         removeIdentifier(uids: Array<string>, identifier: string): void;
+
+        /**
+         * Ensures that an identifier path will exist on a given control. Will create
+         * objects/arrays if necessary.
+         *
+         * @static
+         * @param control The control on which to create the context.
+         * @param identifier The period-delimited identifier string used to create
+         * the context path.
+         */
+        createContext(control: ui.ITemplateControl, identifier: string): any;
     }
 }
 
