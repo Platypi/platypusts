@@ -9,4 +9,14 @@
             <td>{{@context}}</td>
         </tr>
     </table>
+
+    <form plat-submit="submit">
+        <select plat-bind="users[0].role">
+            <option>admin</option>
+            <option>contributor</option>
+            <option>visitor</option>
+        </select>
+        <input type="submit" />
+    </form>
+
 </div>

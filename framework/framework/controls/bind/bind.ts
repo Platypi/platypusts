@@ -8,6 +8,7 @@ module plat.controls {
         priority: number = 100;
         $parser: expressions.IParser = acquire('$parser');
         $ExceptionStatic: IExceptionStatic = acquire('$ExceptionStatic');
+        $ContextManagerStatic: observable.IContextManagerStatic = acquire('$ContextManagerStatic');
         /**
          * The function used to add the proper event based on the input type.
          */
@@ -295,6 +296,10 @@ module plat.controls {
          * @param newValue The new value to set
          */
         _setSelectedIndex(newValue: any): void {
+            if (isNull(newValue)) {
+                return;
+            }
+
             (<HTMLSelectElement>this.element).value = newValue;
         }
 
@@ -388,7 +393,10 @@ module plat.controls {
 
             var newValue = this._getter();
 
-            if (isNull(context) || context[property] === newValue) {
+            if (isNull(context)) {
+                context = this.$ContextManagerStatic.createContext(this.parent,
+                        this._contextExpression.identifiers[0]);
+            } else if(context[property] === newValue) {
                 return;
             }
 
@@ -410,4 +418,3 @@ module plat.controls {
         value: string;
     }
 }
-

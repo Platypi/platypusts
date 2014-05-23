@@ -1401,19 +1401,21 @@ module plat {
 
     register.injectable('$ExceptionStatic', ExceptionStatic, null, register.injectableType.STATIC);
 
-    function PlatException(message: string, name: string): void {
-        this.message = message;
-        this.name = name;
+    class PlatException {
+        constructor(public message: string, public name: string) { }
     }
 
-    function PlatError(message?: string): void {
-        this.message = message || '';
-        this.name = 'PlatError';
+    class PlatError {
+        message: string;
+        name = 'PlatError';
+        constructor(message?: string) {
+            this.message = message || '';
+        }
     }
 
     function setPrototypes(platError?: any): void {
         PlatError.prototype = platError || Error.prototype;
-        PlatException.prototype = new (<any>PlatError());
+        PlatException.prototype = new PlatError();
     }
 
     function raise(message: any, type: number, isFatal?: boolean): void {
@@ -1424,7 +1426,7 @@ module plat {
         } else if (PlatError.prototype !== Error.prototype) {
             setPrototypes();
         }
-        error = new (<any>PlatException(message, ''));
+        error = new PlatException(message, '');
         switch (type) {
             case Exception.PARSE:
                 error.name = 'ParsingError';
@@ -1457,7 +1459,7 @@ module plat {
                 error.name = 'CompatibilityError';
                 break;
             default:
-                error = new (<any>PlatError(message));
+                error = new PlatError(message);
                 break;
         }
 
@@ -6252,9 +6254,10 @@ module plat {
                     var headers = options.headers,
                         keys = Object.keys(isObject(headers) ? headers : {}),
                         length = keys.length,
-                        key: string;
+                        key: string,
+                        i: number;
 
-                    for (var i = 0; i < length; ++i) {
+                    for (i = 0; i < length; ++i) {
                         key = keys[i];
                         xhr.setRequestHeader(key, options.headers[key]);
                     }
@@ -6263,12 +6266,25 @@ module plat {
                     if (isNull(data) || data === '') {
                         xhr.send();
                     } else {
-                        if (isObject(data)) {
-                            data = JSON.stringify(data);
+                        var transforms = options.transforms || [],
+                            contentType = options.contentType;
+
+                        length = transforms.length;
+
+                        if (length > 0) {
+                            for (i = 0; i < length; ++i) {
+                                data = transforms[i](data, xhr);
+                            }
+                        } else if (isObject(data)) {
+                            if (contentType && contentType.indexOf('x-www-form-urlencoded') !== -1) {
+                                data = this.__serializeFormData(data);
+                            } else {
+                                data = JSON.stringify(data);
+                            }
                         }
 
                         // Set the Content-Type header if data is being sent
-                        xhr.setRequestHeader('Content-Type', options.contentType);
+                        xhr.setRequestHeader('Content-Type', contentType);
                         xhr.send(data);
                     }
 
@@ -6349,6 +6365,22 @@ module plat {
                     getAllResponseHeaders: xhr.getAllResponseHeaders,
                     xhr: xhr
                 };
+            }
+
+            private __serializeFormData(data: any): string {
+                var keys = Object.keys(data),
+                    key: string,
+                    val: any,
+                    formBuffer: Array<string> = [],
+                    formStr = '';
+
+                while (keys.length > 0) {
+                    key = keys.pop();
+                    val = data[key];
+                    formBuffer.push(encodeURIComponent(key) + '=' + encodeURIComponent(isNull(val) ? '' : val));
+                }
+
+                return formBuffer.join('&').replace(/%20/g, '+');
             }
         }
 
@@ -6474,6 +6506,12 @@ module plat {
              * http://www.platyfi.com/data?callback=plat_callback00.
              */
             jsonpCallback?: string;
+
+            /**
+             * An array of data transform functions that fire in order and consecutively 
+             * pass the returned result from one function to the next.
+             */
+            transforms?: Array<(data: any, xhr: XMLHttpRequest) => any>;
         }
 
         /**
@@ -6776,6 +6814,7 @@ module plat {
                 url: null,
                 method: 'GET',
                 responseType: '',
+                transforms: [],
                 headers: {},
                 withCredentials: false,
                 timeout: null,
@@ -8005,6 +8044,43 @@ module plat {
                 }
             }
 
+            /**
+             * Ensures that an identifier path will exist on a given control. Will create 
+             * objects/arrays if necessary.
+             * 
+             * @param control The control on which to create the context.
+             * @param identifier The period-delimited identifier string used to create 
+             * the context path.
+             */
+            static createContext(control: ui.ITemplateControl, identifier: string) {
+                var split = identifier.split('.'),
+                    property: string,
+                    temp: any,
+                    context = control.context;
+
+                if (isNull(context)) {
+                    context = control.context = {};
+                }
+
+                while (split.length > 0) {
+                    property = split.shift();
+
+                    temp = context[property];
+
+                    if (isNull(temp)) {
+                        if (!isNaN(Number(split[0]))) {
+                            temp = context[property] = [];
+                        } else {
+                            temp = context[property] = {};
+                        }
+                    }
+
+                    context = temp;
+                }
+
+                return context;
+            }
+
             private static __managers: IObject<IContextManager> = {};
             private static __controls: IObject<IObject<Array<IRemoveListener>>> = {};
 
@@ -8069,9 +8145,6 @@ module plat {
                 }
 
                 if (!(isObject(context) || isArray(context))) {
-                    this.$ExceptionStatic.warn('Trying to observe a child property of a primitive for identifier: ' +
-                        absoluteIdentifier, this.$ExceptionStatic.CONTEXT);
-
                     if (hasObservableListener) {
                         return this._addObservableListener(absoluteIdentifier, observableListener);
                     }
@@ -8529,6 +8602,7 @@ module plat {
 
                 Object.defineProperty(immediateContext, key, {
                     configurable: true,
+                    enumerable: true,
                     get: () => {
                         this.__observedIdentifier = identifier;
                         return value;
@@ -8563,6 +8637,7 @@ module plat {
 
                 Object.defineProperty(immediateContext, key, {
                     configurable: true,
+                    enumerable: true,
                     get: () => {
                         this.__observedIdentifier = identifier;
                         return value;
@@ -8578,11 +8653,6 @@ module plat {
                             return;
                         }
 
-                        if (isDefined) {
-                            this._execute(identifier, newValue, oldValue);
-                            return;
-                        }
-
                         if (isObject(value) || isArray(value)) {
                             var childPropertiesLength = this.__identifierHash[identifier].length;
                             this._execute(identifier, newValue, oldValue);
@@ -8590,6 +8660,8 @@ module plat {
                             if (childPropertiesLength > 0) {
                                 this._notifyChildProperties(identifier, newValue, oldValue);
                             }
+                        } else if (isDefined) {
+                            this._execute(identifier, newValue, oldValue);
                         } else {
                             this._execute(identifier, newValue, oldValue);
                             this.__definePrimitive(identifier, immediateContext, key);
@@ -8846,6 +8918,17 @@ module plat {
              * @param identifier The identifier to stop observing.
              */
             removeIdentifier(uids: Array<string>, identifier: string): void;
+
+            /**
+             * Ensures that an identifier path will exist on a given control. Will create
+             * objects/arrays if necessary.
+             *
+             * @static
+             * @param control The control on which to create the context.
+             * @param identifier The period-delimited identifier string used to create
+             * the context path.
+             */
+            createContext(control: ui.ITemplateControl, identifier: string): any;
         }
 
             /**
@@ -12123,6 +12206,7 @@ module plat {
             priority: number = 100;
             $parser: expressions.IParser = acquire('$parser');
             $ExceptionStatic: IExceptionStatic = acquire('$ExceptionStatic');
+            $ContextManagerStatic: observable.IContextManagerStatic = acquire('$ContextManagerStatic');
             /**
              * The function used to add the proper event based on the input type.
              */
@@ -12380,6 +12464,10 @@ module plat {
              * @param newValue The new value to set
              */
             _setSelectedIndex(newValue: any): void {
+                if (isNull(newValue)) {
+                    return;
+                }
+
                 (<HTMLSelectElement>this.element).value = newValue;
             }
 
@@ -12464,7 +12552,10 @@ module plat {
 
                 var newValue = this._getter();
 
-                if (isNull(context) || context[property] === newValue) {
+                if (isNull(context)) {
+                    context = this.$ContextManagerStatic.createContext(this.parent,
+                            this._contextExpression.identifiers[0]);
+                } else if(context[property] === newValue) {
                     return;
                 }
 
@@ -15767,14 +15858,16 @@ module plat {
                 /**
                  * The default CSS styles applied to elements listening for custom DOM events.
                  */
-                styleConfig: {
+                styleConfig: [{
                     /**
-                     * The className that will be used to define the custom style.
+                     * The className that will be used to define the custom style for 
+                     * allowing the best touch experience. This class is added to every 
+                     * element that registers for a custom DOM event (denoted by a prefixed '$').
                      */
                     className: 'plat-gesture',
                     /**
-                     * An array of string styles in the format:
-                     * CSS identifier : value
+                     * An array of string styles to be placed on an element to allow for the 
+                     * best touch experience. In the format 'CSS identifier: value'
                      * (i.e. 'width : 100px')
                      */
                     styles: [
@@ -15788,7 +15881,23 @@ module plat {
                         '-ms-touch-action: manipulation',
                         'touch-action: manipulation'
                     ]
-                }
+                }, {
+                    /**
+                     * The className that will be used to define the custom style for 
+                     * blocking touch action scrolling, zooming, etc on the element.
+                     */
+                    className: 'plat-no-touch-action',
+                    /**
+                     * An array of string styles that block touch action scrolling, zooming, etc. 
+                     * Primarily useful on elements such as a canvas.
+                     * In the format 'CSS identifier: value'
+                     * (i.e. 'width : 100px')
+                     */
+                    styles: [
+                        '-ms-touch-action: none',
+                        'touch-action: none'
+                    ]
+                }]
             };
 
             $document: Document = acquire('$document');
@@ -16462,7 +16571,7 @@ module plat {
                     this._subscriptions.push(gesture);
 
                     if (!isUndefined((<HTMLElement>element).className)) {
-                        addClass(<HTMLElement>element, 'plat-gesture');
+                        addClass(<HTMLElement>element, DomEvents.config.styleConfig[0].className);
                     }
                 } else {
                     var subscription = this._subscriptions[index];
@@ -16488,7 +16597,7 @@ module plat {
                     this.__removeElement(elementIndex);
 
                     if (!isUndefined((<HTMLElement>element).className)) {
-                        removeClass(<HTMLElement>element, 'plat-gesture');
+                        removeClass(<HTMLElement>element, DomEvents.config.styleConfig[0].className);
                     }
                 }
             }
@@ -16734,23 +16843,37 @@ module plat {
             private __appendGestureStyle(): void {
                 var $document = this.$document,
                     head = $document.head,
-                    style = $document.createElement('style');
+                    style = <HTMLStyleElement>$document.createElement('style');
 
+                style.type = 'text/css';
                 style.textContent = this.__createStyle();
-                head.insertBefore(style, head.firstElementChild || null);
+                head.appendChild(style);
             }
             private __createStyle(): string {
-                var styleConfig = DomEvents.config.styleConfig,
-                    styles = styleConfig.styles,
-                    length = styles.length,
-                    style = '.' + styleConfig.className + ' { ',
+                var styleClasses = DomEvents.config.styleConfig,
+                    classLength = styleClasses.length,
+                    styleClass: IDefaultStyle,
+                    styles: Array<string>,
+                    j: number,
+                    styleLength: number,
+                    style = '',
+                    textContent: string;
+
+                for (var i = 0; i < classLength; ++i) {
+                    styleClass = styleClasses[i];
+                    styles = styleClass.styles || [];
+                    styleLength = styles.length;
+                    style += '.' + styleClass.className + ' {\n';
                     textContent = '';
 
-                for (var i = 0; i < length; ++i) {
-                    textContent += styles[i] + '; ';
+                    for (j = 0; j < styleLength; ++j) {
+                        textContent += styles[j] + ';\n';
+                    }
+
+                    style += textContent + '}\n';
                 }
 
-                return style + textContent + ' } ';
+                return style;
             }
         }
 
@@ -17141,7 +17264,7 @@ module plat {
         /**
          * Describes an object used for creating a custom class for styling an element.
          */
-        export interface IDefaultStyleConfig {
+        export interface IDefaultStyle {
             /**
              * The className that will be used to define the custom style.
              */
@@ -17180,7 +17303,7 @@ module plat {
             /**
              * The default CSS styles applied to elements listening for custom DOM events.
              */
-            styleConfig: IDefaultStyleConfig;
+            styleConfig: Array<IDefaultStyle>;
         }
 
         /**
