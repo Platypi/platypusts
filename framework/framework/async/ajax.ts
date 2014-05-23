@@ -214,7 +214,7 @@ module plat.async {
                         return;
                     }
 
-                    var response = this._formatResponse(xhr, options.responseType, success);
+                    var response = this._formatResponse(options.responseType, success);
 
                     if (success) {
                         resolve(response);
@@ -239,7 +239,12 @@ module plat.async {
                     options.password
                     );
 
-                xhr.responseType = options.responseType;
+                var responseType = options.responseType;
+                if (!(this.__fileSupported || responseType === '' || responseType === 'text')) {
+                    responseType = '';
+                }
+
+                xhr.responseType = responseType;
                 xhr.withCredentials = options.withCredentials;
 
                 var mimeType = options.overrideMimeType,
@@ -255,10 +260,9 @@ module plat.async {
                     xhr.send();
                 } else {
                     var transforms = options.transforms || [],
+                        length = transforms.length,
                         contentType = options.contentType,
                         contentTypeExists = isString(contentType) && !isEmpty(contentType);
-
-                    length = transforms.length;
 
                     if (length > 0) {
                         // if data transforms defined, assume they're going to take care of 
@@ -375,18 +379,20 @@ module plat.async {
         /**
          * The function that formats the response from the XMLHttpRequest
          *
-         * @param {XMLHttpRequest} The associated XMLHttpRequest
-         * @param {bool} Signifies if the response was a success
+         * @param responseType The user designated responseType
+         * @param success Signifies if the response was a success
          * @return {IAjaxResponse} The IAjaxResponse to be returned to 
          * the requester.
          */
-        _formatResponse(xhr: XMLHttpRequest, responseType: string, success: boolean): IAjaxResponse<any> {
-            var status = xhr.status,
-                response = xhr.response;
+        _formatResponse(responseType: string, success: boolean): IAjaxResponse<any> {
+            var xhr = this.xhr,
+                status = xhr.status,
+                response = xhr.response,
+                xhrResponseType = xhr.responseType;
 
             // need to do this instead of boolean short circuit because chrome doesn't like checking 
             // responseText when the responseType is anything other than empty or 'text'
-            if (isNull(response) && (responseType === '' || responseType === 'text')) {
+            if (isNull(response) && (xhrResponseType === '' || xhrResponseType === 'text')) {
                 response = xhr.responseText;
             }
 
