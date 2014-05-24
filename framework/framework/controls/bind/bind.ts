@@ -357,7 +357,7 @@ module plat.controls {
             if (isNull(context)) {
                 context = this.$ContextManagerStatic.createContext(this.parent,
                         this._contextExpression.identifiers[0]);
-            } else if(context[property] === newValue) {
+            } else if (context[property] === newValue) {
                 return;
             }
 

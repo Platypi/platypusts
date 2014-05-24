@@ -100,10 +100,8 @@
 
             if (this.__firstRoute) {
                 this.__firstRoute = false;
-                if (!isEmpty(currentUtils.pathname) && currentUtils.pathname !== '/') {
-                    this._routeChanged(null, currentUtils);
-                    return;
-                }
+                this._routeChanged(null, currentUtils);
+                return;
             }
 
             var build = this._buildRoute(path, options.query);

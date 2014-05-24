@@ -791,7 +791,7 @@ module plat.processing {
                     }
                 }
 
-                this.$PromiseStatic.all<any>(promises).then(resolve, reject);
+                this.$PromiseStatic.all(promises).then(resolve, reject);
             }).catch((error) => {
                 postpone(() => {
                     this.$ExceptionStatic.fatal(error, this.$ExceptionStatic.COMPILE);
@@ -824,7 +824,7 @@ module plat.processing {
                 }
             }
 
-            return this.$PromiseStatic.all<void>(promises).then(() => {
+            return this.$PromiseStatic.all(promises).then(() => {
                 this.$ControlStatic.load(this.getUiControl());
             }).catch((error: any) => {
                 postpone(() => {
