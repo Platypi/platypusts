@@ -493,16 +493,16 @@ module plat.async {
                 data = options.data,
                 url = options.url,
                 $document = this.$document,
+                $body = $document.body,
                 Promise: IPromiseStatic = acquire('$PromiseStatic'),
                 form = $document.createElement('form'),
                 iframe = $document.createElement('iframe'),
                 iframeName = uniqueId('iframe_target'),
-                input: HTMLInputElement,
                 keys = Object.keys(data),
-                key: string,
-                val: any;
+                key: string;
 
             iframe.name = form.target = iframeName;
+            iframe.src = 'javascript:false;';
             form.enctype = form.encoding = 'multipart/form-data';
             form.action = url;
             form.method = 'POST';
@@ -510,34 +510,22 @@ module plat.async {
 
             while (keys.length > 0) {
                 key = keys.pop();
-                val = data[key];
-                input = $document.createElement('input');
-                input.type = 'hidden';
-                input.name = key;
-
-                if (isNull(val)) {
-                    input.value = '';
-                } else if (isObject(val)) {
-                    if (isFile(val)) {
-                        input.value = val.value;
-                    } else {
-                        // may throw a fatal error but this is an invalid case
-                        var $exception: IExceptionStatic = acquire('$ExceptionStatic');
-                        $exception.warn('Invalid form entry with key "' + key + '" and value "' + val, $exception.AJAX);
-                        input.value = JSON.stringify(val);
-                    }
-                } else {
-                    input.value = val;
-                }
-
-                form.insertBefore(input, null);
+                form.insertBefore(this.__createInput(key, data[key]), null);
             }
 
             return new Promise<IAjaxResponse<any>>((resolve, reject) => {
+                this.xhr.abort = () => {
+                    iframe.onload = null;
+                    $body.removeChild(form);
+                    $body.removeChild(iframe);
+                    reject();
+                };
+
                 iframe.onload = () => {
                     var content = iframe.contentDocument.body.innerHTML;
 
-                    $document.body.removeChild(form);
+                    $body.removeChild(form);
+                    $body.removeChild(iframe);
 
                     resolve({
                         response: content,
@@ -548,17 +536,70 @@ module plat.async {
                     this.xhr = iframe.onload = null;
                 };
 
-                this.xhr.abort = () => {
-                    iframe.onload = null;
-                    iframe.src = 'javascript:false;';
-                    $document.body.removeChild(form);
-                    reject();
-                };
-
-                form.insertBefore(iframe, null);
-                $document.body.insertBefore(form, null);
+                $body.insertBefore(form, null);
+                $body.insertBefore(iframe, null);
                 form.submit();
             });
+        }
+        private __createInput(key: string, val: any): HTMLInputElement {
+            var $document = this.$document,
+                input = <HTMLInputElement>$document.createElement('input');
+
+            input.type = 'hidden';
+            input.name = key;
+
+            if (isNull(val)) {
+                input.value = '';
+            } else if (isObject(val)) {
+                // check if val is an pseudo File
+                if (isFunction(val.slice) && !(isUndefined(val.name) || isUndefined(val.value))) {
+                    var fileList = $document.querySelectorAll('input[type="file"][name="' + key + '"]'),
+                        length = fileList.length;
+                    // if no inputs found, stringify the data
+                    if (length === 0) {
+                        var $exception: IExceptionStatic = acquire('$ExceptionStatic');
+                        $exception.warn('Could not find input[type="file"] with [name="' + key +
+                            '"]. Stringifying data instead.', $exception.AJAX);
+                        input.value = JSON.stringify(val);
+                    } else if (length === 1) {
+                        input = <HTMLInputElement>fileList[0];
+                        // swap nodes
+                        var clone = input.cloneNode(true);
+                        input.parentNode.insertBefore(clone, input);
+                    } else {
+                        // rare case but may have multiple forms with file inputs 
+                        // that have the same name
+                        var fileInput: HTMLInputElement;
+                        while (length-- > 0) {
+                            fileInput = <HTMLInputElement>fileList[length];
+                            if (fileInput.value === val.value) {
+                                input = fileInput;
+                                // swap nodes
+                                var inputClone = input.cloneNode(true);
+                                input.parentNode.insertBefore(inputClone, input);
+                                break;
+                            }
+                        }
+
+                        // could not find the right file
+                        if (length === -1) {
+                            var $exception: IExceptionStatic = acquire('$ExceptionStatic');
+                            $exception.warn('Could not find input[type="file"] with [name="' + key + '"] and [value="' +
+                                val.value + '"]. Stringifying data instead.', $exception.AJAX);
+                            input.value = JSON.stringify(val);
+                        }
+                    }
+                } else {
+                    // may throw a fatal error but this is an invalid case
+                    var $exception: IExceptionStatic = acquire('$ExceptionStatic');
+                    $exception.warn('Invalid form entry with key "' + key + '" and value "' + val, $exception.AJAX);
+                    input.value = JSON.stringify(val);
+                }
+            } else {
+                input.value = val;
+            }
+
+            return input;
         }
     }
 
