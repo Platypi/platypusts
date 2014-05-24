@@ -25,7 +25,7 @@ module plat.async {
                 }
             }
         };
-        
+
         /**
          * Returns a promise that fulfills when every item in the array is fulfilled.
          * Casts arguments to promises if necessary. The result argument of the 
@@ -35,15 +35,24 @@ module plat.async {
          * 
          * @param promises An array of promises, although every argument is potentially
          * cast to a promise meaning not every item in the array needs to be a promise.
-         * @return {Promise<T, U>} A promise that fulfills when every promise in the array
-         * has been fulfilled.
          */
-        static all<R>(promises: Array<Promise<R>>): IThenable<Array<R>> {
+        static all<R>(promises: Array<IThenable<R>>): IThenable<Array<R>>;
+        /**
+         * Returns a promise that fulfills when every item in the array is fulfilled.
+         * Casts arguments to promises if necessary. The result argument of the 
+         * returned promise is an array containing the fulfillment result arguments 
+         * in-order. The rejection argument is the rejection argument of the 
+         * first-rejected promise.
+         * 
+         * @param promises An array of objects, if an object is not a promise, it will be cast.
+         */
+        static all<R>(promises: Array<R>): IThenable<Array<R>>;
+        static all(promises: Array<any>): IThenable<Array<any>> {
             if (!isArray(promises)) {
                 Promise.$ExceptionStatic.fatal(new TypeError('You must pass an array to all.'), Promise.$ExceptionStatic.PROMISE);
             }
 
-            return new Promise<Array<R>>((resolve: (value?: Array<R>) => void, reject: (reason?: any) => void) => {
+            return new Promise<Array<any>>((resolve: (value?: Array<any>) => void, reject: (reason?: any) => void) => {
                 var results: Array<any> = [],
                     remaining = promises.length,
                     promise: Promise<any>;
@@ -94,17 +103,24 @@ module plat.async {
          * or rejects as soon as any of the promises reject (whichever happens first).
          * 
          * @param promises An Array of promises to 'race'.
-         * @return {Promise<T, U>} A promise that fulfills/rejects when the first promise
-         * in promises fulfills/rejects.
          */
-        static race<R>(promises: Array<Promise<R>>): IThenable<R> {
+        static race<R>(promises: Array<IThenable<R>>): IThenable<R>;
+        /**
+         * Returns a promise that fulfills as soon as any of the promises fulfill,
+         * or rejects as soon as any of the promises reject (whichever happens first).
+         * 
+         * @param promises An Array of anything to 'race'. Objects that aren't promises will
+         * be cast.
+         */
+        static race<R>(promises: Array<R>): IThenable<R>;
+        static race(promises: Array<any>): IThenable<any> {
             if (!isArray(promises)) {
                 Promise.$ExceptionStatic.fatal(new TypeError('You must pass an array to race.'), Promise.$ExceptionStatic.PROMISE);
             }
 
-            return new Promise<R>((resolve: (value: R) => any, reject: (error: any) => any) => {
+            return new Promise<any>((resolve: (value: any) => any, reject: (error: any) => any) => {
                 var results: Array<any> = [],
-                    promise: Promise<R>;
+                    promise: Promise<any>;
 
                 for (var i = 0; i < promises.length; i++) {
                     promise = promises[i];
@@ -122,7 +138,6 @@ module plat.async {
          * Returns a promise that resolves with the input value.
          * 
          * @param value The value to resolve.
-         * @return {Promise<T, any>} A promise that resolves with value.
          */
         static resolve<R>(value?: R): IThenable<R> {
             return new Promise<R>((resolve: (value: R) => any, reject: (reason: any) => any) => {
@@ -134,7 +149,6 @@ module plat.async {
          * Returns a promise that rejects with the input value.
          * 
          * @param value The value to reject.
-         * @return {Promise<void, U>} A promise that rejects with value.
          */
         static reject(error?: any): IThenable<void> {
             return new Promise<void>((resolve: (value: any) => any, reject: (error: any) => any) => {
@@ -579,15 +593,25 @@ module plat.async {
 
         /**
          * Returns a promise that fulfills when every item in the array is fulfilled.
-         * Casts arguments to promises if necessary. The result argument of the 
-         * returned promise is an array containing the fulfillment result arguments 
-         * in-order. The rejection argument is the rejection argument of the 
+         * Casts arguments to promises if necessary. The result argument of the
+         * returned promise is an array containing the fulfillment result arguments
+         * in-order. The rejection argument is the rejection argument of the
          * first-rejected promise.
-         * 
+         *
          * @param promises An array of promises, although every argument is potentially
          * cast to a promise meaning not every item in the array needs to be a promise.
          */
         all<R>(promises: Array<IThenable<R>>): IThenable<Array<R>>;
+        /**
+         * Returns a promise that fulfills when every item in the array is fulfilled.
+         * Casts arguments to promises if necessary. The result argument of the
+         * returned promise is an array containing the fulfillment result arguments
+         * in-order. The rejection argument is the rejection argument of the
+         * first-rejected promise.
+         *
+         * @param promises An array of objects, if an object is not a promise, it will be cast.
+         */
+        all<R>(promises: Array<R>): IThenable<Array<R>>;
 
         /**
          * Creates a promise that fulfills to the passed in object. If the
@@ -600,10 +624,18 @@ module plat.async {
         /**
          * Returns a promise that fulfills as soon as any of the promises fulfill,
          * or rejects as soon as any of the promises reject (whichever happens first).
-         * 
+         *
          * @param promises An Array of promises to 'race'.
          */
         race<R>(promises: Array<IThenable<R>>): IThenable<R>;
+        /**
+         * Returns a promise that fulfills as soon as any of the promises fulfill,
+         * or rejects as soon as any of the promises reject (whichever happens first).
+         *
+         * @param promises An Array of anything to 'race'. Objects that aren't promises will
+         * be cast.
+         */
+        race<R>(promises: Array<R>): IThenable<R>;
 
         /**
          * Returns a promise that resolves with the input value.

@@ -47,7 +47,6 @@
                 controlType = ev.type,
                 newControl = isFunction(control.inject);
 
-            //var node = this.$document.createElement(controlType),
             var injectedControl = newControl ? control.inject() : control,
                 replaceType = injectedControl.replaceWith,
                 node = isEmpty(replaceType) ? this.$document.createElement('div') :
