@@ -32,8 +32,8 @@ module plat {
     
             keys = Object.keys(source);
     
-            forEach(keys, (key: string) => {
-                property = (<any>source)[key];
+            forEach(keys, (key) => {
+                property = source[key];
                 if (deep) {
                     if (isArray(property)) {
                         extend(deep, destination[key] || (destination[key] = []), property);
@@ -43,7 +43,7 @@ module plat {
                         return;
                     }
                 }
-                destination[key] = (<any>source)[key];
+                destination[key] = source[key];
             });
         });
     
@@ -72,6 +72,10 @@ module plat {
     
     function isDocumentFragment(obj: any): boolean {
         return !!(obj && (<Node>obj).nodeType === Node.DOCUMENT_FRAGMENT_NODE);
+    }
+    
+    function isFile(obj: any): boolean {
+        return isObject(obj) && obj.toString() === '[object File]';
     }
     
     function isString(obj: any): boolean {
@@ -159,6 +163,8 @@ module plat {
                 => (<any>value)[key] !== property));
     }
     
+    function forEach<T>(array: Array <T>, iterator: (value: T, index: number, obj: any) => void, context?: any): Array < T>;
+    function forEach<T>(obj: any, iterator: (value: T, key: string, obj: any) => void, context?: any): any;
     function forEach<T>(obj: any, iterator: (value: T, key: any, obj: any) => void, context?: any): any {
         if (isNull(obj) || !(isObject(obj) || isArrayLike(obj))) {
             return obj;
@@ -1498,6 +1504,11 @@ module plat {
          * Signifies whether window.history.pushState is defined.
          */
         pushState: boolean;
+
+        /**
+         * Signifies whether the File API is supported.
+         */
+        fileSupported: boolean;
         
         /**
          * Signifies whether Require is present. If it is, we assume 
@@ -1578,6 +1589,7 @@ module plat {
 
             define(this, 'cordova', !isNull((<any>$window).cordova));
             define(this, 'pushState', !isNull($window.history.pushState));
+            define(this, 'fileSupported', !(isUndefined((<any>$window).File) || isUndefined((<any>$window).FormData)));
             define(this, 'amd', isFunction(def) && !isNull(def.amd));
             define(this, 'msApp', isObject(msA) && isFunction(msA.execUnsafeLocalFunction));
             define(this, 'indexedDb', !isNull($window.indexedDB));
@@ -1680,6 +1692,11 @@ module plat {
          * Signifies whether window.history.pushState is defined.
          */
         pushState: boolean;
+
+        /**
+         * Signifies whether the File API is supported.
+         */
+        fileSupported: boolean;
 
         /**
          * Signifies whether Require is present. If it is, we assume 
@@ -2549,18 +2566,9 @@ module plat {
          */
         export class Regex implements IRegex {
             /**
-             * The regular expression for matching or removing all newline characters.
-             */
-            get newLineRegex(): RegExp {
-                return /\n|\r/g;
-            }
-
-            /**
              * The regular expression for finding markup in a string.
              */
-            get markupRegex(): RegExp {
-                return /{{[\S\s]*}}/;
-            }
+            markupRegex: RegExp = /{{[\S\s]*}}/;
 
             /**
              * Finds the arguments in a method expression
@@ -2569,9 +2577,7 @@ module plat {
              *   // outputs ["('foo', 'bar', 'baz')", "'foo', 'bar', 'baz'"]
              *   exec("myFunction('foo', 'bar', 'baz')");
              */
-            get argumentRegex(): RegExp {
-                return /\((.*)\)/;
-            }
+            argumentRegex: RegExp = /\((.*)\)/;
 
             /**
              * Given a string, finds the root alias name if that string is an 
@@ -2585,8 +2591,38 @@ module plat {
              *   // outputs null
              *   exec('@context');
              */
-            get aliasRegex(): RegExp {
-                return /[^@\.\[\(]+(?=[\.\[\(])/;
+            aliasRegex: RegExp = /[^@\.\[\(]+(?=[\.\[\(])/;
+
+            /**
+             * Finds '/*.html' or '/*.htm' in a url. Useful for removing 
+             * the html file out of the url.
+             * 
+             * @example
+             *   // outputs ['/index.html']
+             *   exec('http://localhost:8080/index.html');
+             */
+            initialUrlRegex: RegExp = /\/[^\/]*\.(?:html|htm)/;
+
+            /**
+             * Finds a protocol delimeter in a string (i.e. ://)
+             */
+            protocolRegex: RegExp = /:\/\//;
+
+            /**
+             * Looks for any invalid variable syntax.
+             */
+            invalidVariableRegex: RegExp = /[^a-zA-Z0-9@_$]/;
+
+            /**
+             * Grabs the file name from a file path.
+             */
+            fileNameRegex: RegExp = /.*(?:\/|\\)/;
+
+            /**
+             * The regular expression for matching or removing all newline characters.
+             */
+            get newLineRegex(): RegExp {
+                return /\n|\r/g;
             }
 
             /**
@@ -2641,25 +2677,6 @@ module plat {
             }
 
             /**
-             * Finds '/*.html' or '/*.htm' in a url. Useful for removing 
-             * the html file out of the url.
-             * 
-             * @example
-             *   // outputs ['/index.html']
-             *   exec('http://localhost:8080/index.html');
-             */
-            get initialUrlRegex(): RegExp {
-                return /\/[^\/]*\.(?:html|htm)/;
-            }
-
-            /**
-             * Finds a protocol delimeter in a string (i.e. ://)
-             */
-            get protocolRegex(): RegExp {
-                return /:\/\//;
-            }
-
-            /**
              * Finds delimeters for spinal-case, snake_case, and dot.case. 
              * useful for converting to camelCase. Also can turn a string 
              * into camelCase with space as a delimeter.
@@ -2698,13 +2715,6 @@ module plat {
              */
             get quotationRegex(): RegExp {
                 return /'|"/g;
-            }
-
-            /**
-             * Looks for any invalid variable syntax.
-             */
-            get invalidVariableRegex(): RegExp {
-                return /[^a-zA-Z0-9@_$]/;
             }
         }
 
@@ -2844,6 +2854,11 @@ module plat {
              * Looks for any invalid variable syntax.
              */
             invalidVariableRegex: RegExp;
+
+            /**
+             * Grabs the file name from a file path.
+             */
+            fileNameRegex: RegExp;
         }
 
         /**
@@ -6063,12 +6078,13 @@ module plat {
              */
             $config: IHttpConfigStatic = acquire('$http.config');
 
+            private __fileSupported = (<ICompat>acquire('$compat')).fileSupported;
             private __options: IHttpConfigStatic;
 
             /**
-             * @param options The IAjaxOptions used to customize this Http.
+             * @param options The IHttpConfigStatic used to customize this HttpRequest.
              */
-            constructor(options?: IHttpConfigStatic) {
+            constructor(options: IHttpConfigStatic) {
                 this.__options = extend({}, this.$config, options);
             }
 
@@ -6092,15 +6108,14 @@ module plat {
                 options.url = this.$browser.urlUtils(url).toString();
 
                 var isCrossDomain = options.isCrossDomain || false,
-                    xDomain = false,
-                    xhr: XMLHttpRequest;
+                    xDomain = false;
 
                 // check if forced cross domain call or cors is not supported (IE9)
                 if (isCrossDomain) {
                     xDomain = true;
                 } else {
-                    xhr = this.xhr = new XMLHttpRequest();
-                    if (isUndefined(xhr.withCredentials)) {
+                    this.xhr = new XMLHttpRequest();
+                    if (isUndefined(this.xhr.withCredentials)) {
                         xDomain = this.$browser.isCrossDomain(url);
                     }
                 }
@@ -6111,7 +6126,7 @@ module plat {
                     return this.executeJsonp();
                 }
 
-                return this._sendXhrRequest(xhr);
+                return this._sendXhrRequest();
             }
 
             /**
@@ -6130,26 +6145,31 @@ module plat {
                 }
 
                 options.url = this.$browser.urlUtils(url).toString();
+                if (isNull(this.jsonpCallback)) {
+                    this.jsonpCallback = options.jsonpCallback || uniqueId('plat_callback');
+                }
 
                 return new AjaxPromise((resolve, reject) => {
-                    var scriptTag = this.$document.createElement('script'),
-                        jsonpCallback: string = this.jsonpCallback || uniqueId('plat_callback'),
+                    var $window = <any>this.$window,
+                        $document = this.$document,
+                        scriptTag = $document.createElement('script'),
+                        jsonpCallback = this.jsonpCallback,
                         jsonpIdentifier = options.jsonpIdentifier || 'callback';
 
                     scriptTag.src = url + '?' + jsonpIdentifier + '=' + jsonpCallback;
 
-                    var oldValue = (<any>this.$window)[jsonpCallback];
-                    (<any>this.$window)[jsonpCallback] = (response: any) => {
+                    var oldValue = $window[jsonpCallback];
+                    $window[jsonpCallback] = (response: any) => {
                         //clean up
                         if (isFunction(this.clearTimeout)) {
                             this.clearTimeout();
                         }
 
-                        this.$document.head.removeChild(scriptTag);
+                        $document.head.removeChild(scriptTag);
                         if (!isUndefined(oldValue)) {
-                            (<any>this.$window)[jsonpCallback] = oldValue;
+                            $window[jsonpCallback] = oldValue;
                         } else {
-                            delete (<any>this.$window)[jsonpCallback];
+                            delete $window[jsonpCallback];
                         }
 
                         //call callback
@@ -6159,7 +6179,7 @@ module plat {
                         });
                     };
 
-                    this.$document.head.appendChild(scriptTag);
+                    $document.head.appendChild(scriptTag);
 
                     var timeout = options.timeout;
                     if (isNumber(timeout) && timeout > 0) {
@@ -6171,7 +6191,7 @@ module plat {
                                     response: 'Request timed out in ' + timeout + 'ms for ' + url,
                                     status: 408 // Request Timeout
                                 }));
-                                (<any>this.$window)[jsonpCallback] = noop;
+                                $window[jsonpCallback] = noop;
                             }, timeout - 1);
                         });
                     }
@@ -6181,17 +6201,22 @@ module plat {
             /**
              * A wrapper for the XMLHttpRequest's onReadyStateChanged callback.
              *
-             * @param {XMLHttpRequest} The associated XMLHttpRequest
              * @return {bool} Waits for the readyState to be complete and then 
              * return true in the case of a success and false in the case of 
              * an error.
              */
-            _xhrOnReadyStateChange(xhr: XMLHttpRequest): boolean {
+            _xhrOnReadyStateChange(): boolean {
+                var xhr = this.xhr;
                 if (xhr.readyState === 4) {
                     var status = xhr.status,
-                        response = xhr.response || xhr.responseText;
+                        responseType = xhr.responseType;
 
                     if (status === 0) {
+                        var response = xhr.response;
+                        if (isNull(response) && responseType === '' || responseType === 'text') {
+                            response = xhr.responseText;
+                        }
+
                         // file protocol issue **Needs to be tested more thoroughly**
                         // OK if response is not empty, Not Found otherwise
                         if (!isEmpty(response)) {
@@ -6207,39 +6232,40 @@ module plat {
                     } else {
                         return false;
                     }
-                } else {
-                    // TODO: add progress for xhr if we choose to add progress to AjaxPromise
                 }
+                // else {} TODO: add progress for xhr if we choose to add progress to AjaxPromise
             }
 
             /**
              * The function that initializes and sends the XMLHttpRequest.
              *
-             * @param {XMLHttpRequest} The associated XMLHttpRequest
              * @return {Promise<IAjaxResponse>} A promise that fulfills with the 
              * formatted IAjaxResponse and rejects if there is a problem with an 
              * IAjaxError.
              */
-            _sendXhrRequest(xhr: XMLHttpRequest): IAjaxPromise<any> {
-                var options = this.__options,
+            _sendXhrRequest(): IAjaxPromise<any> {
+                var xhr = this.xhr,
+                    options = this.__options,
                     method = options.method,
                     url = options.url;
 
                 return new AjaxPromise((resolve, reject) => {
                     xhr.onreadystatechange = () => {
-                        var success = this._xhrOnReadyStateChange(xhr);
+                        var success = this._xhrOnReadyStateChange();
 
                         if (isNull(success)) {
                             return;
                         }
 
-                        var response = this._formatResponse(xhr);
+                        var response = this._formatResponse(options.responseType, success);
 
                         if (success) {
                             resolve(response);
                         } else {
                             reject(new AjaxError(response));
                         }
+
+                        this.xhr = options = null;
                     };
 
                     if (!isString(method)) {
@@ -6256,44 +6282,100 @@ module plat {
                         options.password
                         );
 
-                    xhr.responseType = options.responseType;
-                    xhr.withCredentials = options.withCredentials;
-
-                    var headers = options.headers,
-                        keys = Object.keys(isObject(headers) ? headers : {}),
-                        length = keys.length,
-                        key: string,
-                        i: number;
-
-                    for (i = 0; i < length; ++i) {
-                        key = keys[i];
-                        xhr.setRequestHeader(key, options.headers[key]);
+                    var responseType = options.responseType;
+                    if (!(this.__fileSupported || responseType === '' || responseType === 'text')) {
+                        responseType = '';
                     }
 
-                    var data = options.data;
+                    xhr.responseType = responseType;
+                    xhr.withCredentials = options.withCredentials;
+
+                    var mimeType = options.overrideMimeType,
+                        data = options.data;
+
+                    if (isString(mimeType) && !isEmpty(mimeType)) {
+                        xhr.overrideMimeType(mimeType);
+                    }
+
                     if (isNull(data) || data === '') {
+                        // no data exists so set headers and send request
+                        this.__setHeaders();
                         xhr.send();
                     } else {
                         var transforms = options.transforms || [],
-                            contentType = options.contentType;
-
-                        length = transforms.length;
+                            length = transforms.length,
+                            contentType = options.contentType,
+                            contentTypeExists = isString(contentType) && !isEmpty(contentType);
 
                         if (length > 0) {
-                            for (i = 0; i < length; ++i) {
+                            // if data transforms defined, assume they're going to take care of 
+                            // any and all transformations.
+                            for (var i = 0; i < length; ++i) {
                                 data = transforms[i](data, xhr);
                             }
-                        } else if (isObject(data)) {
-                            if (contentType && contentType.indexOf('x-www-form-urlencoded') !== -1) {
-                                data = this.__serializeFormData(data);
-                            } else {
-                                data = JSON.stringify(data);
-                            }
-                        }
 
-                        // Set the Content-Type header if data is being sent
-                        xhr.setRequestHeader('Content-Type', contentType);
-                        xhr.send(data);
+                            // if contentType exists, assume they did not set it in 
+                            // their headers as well
+                            if (contentTypeExists) {
+                                xhr.setRequestHeader('Content-Type', contentType);
+                            }
+
+                            this.__setHeaders();
+                            xhr.send(data);
+                        } else if (isObject(data)) {
+                            // if isObject and contentType exists we want to transform the data
+                            if (contentTypeExists) {
+                                var contentTypeLower = contentType.toLowerCase();
+                                if (contentTypeLower.indexOf('x-www-form-urlencoded') !== -1) {
+                                    // perform an encoded form transformation
+                                    data = this.__serializeFormData();
+                                    // set Content-Type header because we're assuming they didn't set it 
+                                    // in their headers object
+                                    xhr.setRequestHeader('Content-Type', contentType);
+                                    this.__setHeaders();
+                                    xhr.send(data);
+                                } else if (contentTypeLower.indexOf('multipart/form-data') !== -1) {
+                                    // need to check if File is a supported object
+                                    if (this.__fileSupported) {
+                                        // use FormData
+                                        data = this.__appendFormData();
+                                        // Do not set the Content-Type header due to modern browsers 
+                                        // setting special headers for multipart/form-data
+                                        this.__setHeaders();
+                                        xhr.send(data);
+                                    } else {
+                                        // use iframe trick for older browsers (do not send a request)
+                                        // this case is the reason for this giant, terrible, nested if-else statement
+                                        this.__submitFramedFormData().then((response) => {
+                                            resolve(response);
+                                        }, () => {
+                                            this.xhr = null;
+                                        });
+                                    }
+                                } else {
+                                    // assume stringification is possible
+                                    data = JSON.stringify(data);
+                                    // set Content-Type header because we're assuming they didn't set it 
+                                    // in their headers object
+                                    xhr.setRequestHeader('Content-Type', contentType);
+                                    this.__setHeaders();
+                                    xhr.send(data);
+                                }
+                            } else {
+                                // contentType does not exist so simply set defined headers and send raw data
+                                this.__setHeaders();
+                                xhr.send(data);
+                            }
+                        } else {
+                            // if contentType exists set Content-Type header because we're assuming they didn't set it 
+                            // in their headers object
+                            if (contentTypeExists) {
+                                xhr.setRequestHeader('Content-Type', contentType);
+                            }
+
+                            this.__setHeaders();
+                            xhr.send(data);
+                        }
                     }
 
                     var timeout = options.timeout;
@@ -6311,9 +6393,9 @@ module plat {
 
                                 xhr.onreadystatechange = null;
                                 xhr.abort();
-                                xhr = null;
+                                this.xhr = null;
                             }, timeout - 1);
-                        }, null);
+                        });
                     }
                 }, { __http: this });
             }
@@ -6340,14 +6422,22 @@ module plat {
             /**
              * The function that formats the response from the XMLHttpRequest
              *
-             * @param {XMLHttpRequest} The associated XMLHttpRequest
-             * @param {bool} Signifies if the response was a success
+             * @param responseType The user designated responseType
+             * @param success Signifies if the response was a success
              * @return {IAjaxResponse} The IAjaxResponse to be returned to 
              * the requester.
              */
-            _formatResponse(xhr: XMLHttpRequest, success?: boolean): IAjaxResponse<any> {
-                var status = xhr.status,
-                    response = xhr.response || xhr.responseText;
+            _formatResponse(responseType: string, success: boolean): IAjaxResponse<any> {
+                var xhr = this.xhr,
+                    status = xhr.status,
+                    response = xhr.response,
+                    xhrResponseType = xhr.responseType;
+
+                // need to do this instead of boolean short circuit because chrome doesn't like checking 
+                // responseText when the responseType is anything other than empty or 'text'
+                if (isNull(response) && (xhrResponseType === '' || xhrResponseType === 'text')) {
+                    response = xhr.responseText;
+                }
 
                 if (status === 0) {
                     // file protocol issue **Needs to be tested more thoroughly**
@@ -6361,7 +6451,7 @@ module plat {
                     this.clearTimeout();
                 }
 
-                if (this.__options.responseType === 'json' && isString(response)) {
+                if (responseType === 'json' && isString(response)) {
                     try {
                         response = JSON.parse(response);
                     } catch (e) { }
@@ -6375,8 +6465,22 @@ module plat {
                 };
             }
 
-            private __serializeFormData(data: any): string {
-                var keys = Object.keys(data),
+            private __setHeaders() {
+                var headers = this.__options.headers,
+                    keys = Object.keys(headers || {}),
+                    xhr = this.xhr,
+                    length = keys.length,
+                    key: string,
+                    i: number;
+
+                for (i = 0; i < length; ++i) {
+                    key = keys[i];
+                    xhr.setRequestHeader(key, headers[key]);
+                }
+            }
+            private __serializeFormData(): string {
+                var data = this.__options.data,
+                    keys = Object.keys(data),
                     key: string,
                     val: any,
                     formBuffer: Array<string> = [],
@@ -6385,10 +6489,160 @@ module plat {
                 while (keys.length > 0) {
                     key = keys.pop();
                     val = data[key];
-                    formBuffer.push(encodeURIComponent(key) + '=' + encodeURIComponent(isNull(val) ? '' : val));
+                    if (isNull(val)) {
+                        val = '';
+                    } else if (isObject(val)) {
+                        // may throw a fatal error but this is an invalid case
+                        var $exception: IExceptionStatic = acquire('$ExceptionStatic');
+                        $exception.warn('Invalid form entry with key "' + key + '" and value "' + val, $exception.AJAX);
+                        val = JSON.stringify(val);
+                    }
+
+                    formBuffer.push(encodeURIComponent(key) + '=' + encodeURIComponent(val));
                 }
 
                 return formBuffer.join('&').replace(/%20/g, '+');
+            }
+            private __appendFormData(): FormData {
+                var data = this.__options.data,
+                    formData = new FormData(),
+                    keys = Object.keys(data),
+                    key: string,
+                    val: any;
+
+                while (keys.length > 0) {
+                    key = keys.pop();
+                    val = data[key];
+                    if (isNull(val)) {
+                        formData.append(key, '');
+                    } else if (isObject(val)) {
+                        if (isFile(val)) {
+                            formData.append(key, val, val.name || val.fileName || 'blob');
+                        } else {
+                            // may throw a fatal error but this is an invalid case
+                            var $exception: IExceptionStatic = acquire('$ExceptionStatic');
+                            $exception.warn('Invalid form entry with key "' + key + '" and value "' + val, $exception.AJAX);
+                            formData.append(key, JSON.stringify(val));
+                        }
+                    } else {
+                        formData.append(key, val);
+                    }
+                }
+
+                return formData;
+            }
+            private __submitFramedFormData(): IThenable<IAjaxResponse<any>> {
+                var options = this.__options,
+                    data = options.data,
+                    url = options.url,
+                    $document = this.$document,
+                    $body = $document.body,
+                    Promise: IPromiseStatic = acquire('$PromiseStatic'),
+                    form = $document.createElement('form'),
+                    iframe = $document.createElement('iframe'),
+                    iframeName = uniqueId('iframe_target'),
+                    keys = Object.keys(data),
+                    key: string;
+
+                iframe.name = form.target = iframeName;
+                iframe.src = 'javascript:false;';
+                form.enctype = form.encoding = 'multipart/form-data';
+                form.action = url;
+                form.method = 'POST';
+                form.style.display = 'none';
+
+                while (keys.length > 0) {
+                    key = keys.pop();
+                    form.insertBefore(this.__createInput(key, data[key]), null);
+                }
+
+                return new Promise<IAjaxResponse<any>>((resolve, reject) => {
+                    this.xhr.abort = () => {
+                        iframe.onload = null;
+                        $body.removeChild(form);
+                        $body.removeChild(iframe);
+                        reject();
+                    };
+
+                    iframe.onload = () => {
+                        var content = iframe.contentDocument.body.innerHTML;
+
+                        $body.removeChild(form);
+                        $body.removeChild(iframe);
+
+                        resolve({
+                            response: content,
+                            status: 200,
+                            getAllResponseHeaders: () => ''
+                        });
+
+                        this.xhr = iframe.onload = null;
+                    };
+
+                    $body.insertBefore(form, null);
+                    $body.insertBefore(iframe, null);
+                    form.submit();
+                });
+            }
+            private __createInput(key: string, val: any): HTMLInputElement {
+                var $document = this.$document,
+                    input = <HTMLInputElement>$document.createElement('input');
+
+                input.type = 'hidden';
+                input.name = key;
+
+                if (isNull(val)) {
+                    input.value = '';
+                } else if (isObject(val)) {
+                    // check if val is an pseudo File
+                    if (isFunction(val.slice) && !(isUndefined(val.name) || isUndefined(val.value))) {
+                        var fileList = $document.querySelectorAll('input[type="file"][name="' + key + '"]'),
+                            length = fileList.length;
+                        // if no inputs found, stringify the data
+                        if (length === 0) {
+                            var $exception: IExceptionStatic = acquire('$ExceptionStatic');
+                            $exception.warn('Could not find input[type="file"] with [name="' + key +
+                                '"]. Stringifying data instead.', $exception.AJAX);
+                            input.value = JSON.stringify(val);
+                        } else if (length === 1) {
+                            input = <HTMLInputElement>fileList[0];
+                            // swap nodes
+                            var clone = input.cloneNode(true);
+                            input.parentNode.insertBefore(clone, input);
+                        } else {
+                            // rare case but may have multiple forms with file inputs 
+                            // that have the same name
+                            var fileInput: HTMLInputElement;
+                            while (length-- > 0) {
+                                fileInput = <HTMLInputElement>fileList[length];
+                                if (fileInput.value === val.value) {
+                                    input = fileInput;
+                                    // swap nodes
+                                    var inputClone = input.cloneNode(true);
+                                    input.parentNode.insertBefore(inputClone, input);
+                                    break;
+                                }
+                            }
+
+                            // could not find the right file
+                            if (length === -1) {
+                                var $exception: IExceptionStatic = acquire('$ExceptionStatic');
+                                $exception.warn('Could not find input[type="file"] with [name="' + key + '"] and [value="' +
+                                    val.value + '"]. Stringifying data instead.', $exception.AJAX);
+                                input.value = JSON.stringify(val);
+                            }
+                        }
+                    } else {
+                        // may throw a fatal error but this is an invalid case
+                        var $exception: IExceptionStatic = acquire('$ExceptionStatic');
+                        $exception.warn('Invalid form entry with key "' + key + '" and value "' + val, $exception.AJAX);
+                        input.value = JSON.stringify(val);
+                    }
+                } else {
+                    input.value = val;
+                }
+
+                return input;
             }
         }
 
@@ -6465,6 +6719,11 @@ module plat {
             contentType?: string;
 
             /**
+             * A string to override the MIME type returned by the server.
+             */
+            overrideMimeType?: string;
+
+            /**
              * A key/value pair object where the key is a DOMString header key
              * and the value is the DOMString header value.
              */
@@ -6534,6 +6793,7 @@ module plat {
              * a string.
              */
             response: R;
+
             /**
              * The XHR status. Resolves as 200 for JSONP.
              */
@@ -6575,6 +6835,7 @@ module plat {
                 this.getAllResponseHeaders = response.getAllResponseHeaders;
                 this.xhr = response.xhr;
             }
+
             toString(): string {
                 var response = this.response,
                     responseText = response;
@@ -6624,6 +6885,7 @@ module plat {
                 if (!isNull(xhr)) {
                     xhr.onreadystatechange = null;
                     xhr.abort();
+                    http.xhr = null;
                 } else if (!isNull(jsonpCallback)) {
                     (<any>this.$window)[jsonpCallback] = noop;
                 }
@@ -6765,6 +7027,48 @@ module plat {
         }
 
         /**
+         * Describes an object that provides Content-Type mappings for Http POST requests.
+         */
+        export interface IHttpContentType {
+            /**
+             * Standard denotation for form encoded data. All objects are converted 
+             * to string key-value pairs.
+             */
+            ENCODEDFORM: string;
+
+            /**
+             * Standard denotation for JavaScript Object Notation (JSON).
+             */
+            JSON: string;
+
+            /**
+             * Standard denotation for a multi-part Webform. Associated with 
+             * an entype of 'multipart/form-data'.
+             */
+            MULTIPARTFORM: string;
+
+            /**
+             * Standard denotation for arbitrary binary data.
+             */
+            OCTETSTREAM: string;
+
+            /**
+             * Standard denotation for XML files.
+             */
+            XML: string;
+
+            /**
+             * Standard denotation for textual data.
+             */
+            PLAINTEXT: string;
+
+            /**
+             * Standard denotation for HTML.
+             */
+            HTML: string;
+        }
+
+        /**
          * Describes the interface for the Ajax injectable for making both 
          * XMLHttpRequests and JSONP requests.
          */
@@ -6774,6 +7078,11 @@ module plat {
              * XMLHttpRequestResponseTypes
              */
             responseType: IHttpResponseType;
+
+            /**
+             * Describes an object that provides Content-Type mappings for Http POST requests.
+             */
+            contentType: IHttpContentType;
 
             /**
              * A wrapper method for the Http class that creates and executes a new Http with
@@ -6840,6 +7149,19 @@ module plat {
                 DOCUMENT: 'document',
                 JSON: 'json',
                 TEXT: 'text'
+            };
+
+            /**
+             * Common HttpContentType mappings
+             */
+            contentType: IHttpContentType = {
+                ENCODEDFORM: 'application/x-www-form-urlencoded;charset=utf-8;',
+                JSON: 'application/json;charset=utf-8;',
+                MULTIPARTFORM: 'multipart/form-data',
+                OCTETSTREAM: 'application/octet-stream;charset=utf-8;',
+                XML: 'application/xml;charset=utf-8;',
+                PLAINTEXT: 'text/plain',
+                HTML: 'text/html'
             };
 
             /**
@@ -7835,7 +8157,7 @@ module plat {
             /**
              * A set of functions to be fired when a particular observed array is mutated.
              */
-            static observedArrayListeners: IObject<IObject<(ev: IArrayMethodInfo<any>) => void>> = {};
+            static observedArrayListeners: IObject<IObject<Array<(ev: IArrayMethodInfo<any>) => void>>> = {};
         
             /**
              * Gets the ContextManager associated to the given control. If no 
@@ -8191,13 +8513,20 @@ module plat {
                 //check if value is defined and context manager hasn't seen this identifier
                 if (!hasIdentifier) {
                     if (isArray(context) && key === 'length') {
-                        this.observe(join, {
+                        var removeArrayObserve = this.observe(join, {
                             uid: observableListener.uid,
                             listener: (newValue: Array<any>, oldValue: Array<any>) => {
-                                this.observeArray(observableListener.uid, noop, join, newValue, oldValue);
+                                removeListener();
+                                removeListener = this.observeArray(observableListener.uid, noop, join, newValue, oldValue);
                             }
                         });
-                        this.observeArray(observableListener.uid, noop, join, context, null);
+
+                        var removeListener = this.observeArray(observableListener.uid, noop, join, context, null);
+
+                        removeCallback = () => {
+                            removeArrayObserve();
+                            removeListener();
+                        };
                     } else {
                         this._define(absoluteIdentifier, context, key);
                     }
@@ -8218,7 +8547,7 @@ module plat {
              * @param oldArray The old array to stop observing.
              */
             observeArray(uid: string, listener: (ev: IArrayMethodInfo<any>) => void,
-                absoluteIdentifier: string, array: Array<any>, oldArray: Array<any>): void {
+                absoluteIdentifier: string, array: Array<any>, oldArray: Array<any>): IRemoveListener {
                 var length = arrayMethods.length,
                     method: string,
                     i = 0,
@@ -8246,13 +8575,24 @@ module plat {
                     return;
                 }
 
-                var arrayCallbacks = ContextManager.observedArrayListeners[absoluteIdentifier];
+                var observedArrayCallbacks = ContextManager.observedArrayListeners[absoluteIdentifier];
 
-                if (isNull(arrayCallbacks)) {
-                    arrayCallbacks = ContextManager.observedArrayListeners[absoluteIdentifier] = {};
+                if (isNull(observedArrayCallbacks)) {
+                    observedArrayCallbacks = ContextManager.observedArrayListeners[absoluteIdentifier] = {};
                 }
 
-                arrayCallbacks[uid] = listener;
+                var arrayCallbacks = observedArrayCallbacks[uid];
+
+                if (isNull(arrayCallbacks)) {
+                    arrayCallbacks = observedArrayCallbacks[uid] = [];
+                }
+
+                var index = arrayCallbacks.length,
+                    removeListener = () => {
+                        arrayCallbacks.splice(index, 1);
+                    };
+
+                arrayCallbacks.push(listener);
 
                 if (proto) {
                     var obj = Object.create(Array.prototype);
@@ -8268,7 +8608,7 @@ module plat {
                         (<any>array).__proto__ = obj;
                     }
 
-                    return;
+                    return removeListener;
                 }
 
                 for (; i < length; ++i) {
@@ -8276,6 +8616,8 @@ module plat {
                     ContextManager.defineProperty(array, method,
                         this._overwriteArrayFunction(absoluteIdentifier, method), false, true);
                 }
+
+                return removeListener;
             }
 
             /**
@@ -8498,7 +8840,7 @@ module plat {
              * @param method The array method being called.
              */
             _overwriteArrayFunction(absoluteIdentifier: string, method: string): (...args: any[]) => any {
-                var callbacks = this.$ContextManagerStatic.observedArrayListeners[absoluteIdentifier],
+                var callbackObjects = this.$ContextManagerStatic.observedArrayListeners[absoluteIdentifier],
                     _this = this;
 
                 // We can't use a fat-arrow function here because we need the array context.
@@ -8515,21 +8857,28 @@ module plat {
                         returnValue = (<any>Array.prototype)[method].apply(this, args);
                     }
 
-                    var keys = Object.keys(callbacks),
-                        length = keys.length;
+                    var keys = Object.keys(callbackObjects),
+                        length = keys.length,
+                        callbacks: Array<(ev: IArrayMethodInfo<any>) => void>, 
+                        jLength: number;
 
-                    if (oldArray.length !== this.length) {
+                    if (oldArray.length !== this.length && method.indexOf('shift') === -1) {
                         _this._execute(absoluteIdentifier + '.length', this.length, oldArray.length);
                     }
 
                     for (var i = 0; i < length; ++i) {
-                        callbacks[keys[i]]({
-                            method: method,
-                            returnValue: returnValue,
-                            oldArray: oldArray,
-                            newArray: this,
-                            arguments: args
-                        });
+                        callbacks = callbackObjects[keys[i]];
+                        jLength = callbacks.length;
+
+                        for (var j = 0; j < jLength; ++j) {
+                            callbacks[j]({
+                                method: method,
+                                returnValue: returnValue,
+                                oldArray: oldArray,
+                                newArray: this,
+                                arguments: args
+                            });
+                        }
                     }
 
                     return returnValue;
@@ -8776,7 +9125,7 @@ module plat {
              * @param oldArray The old array to stop observing.
              */
             observeArray(uid: string, listener: (ev: IArrayMethodInfo<any>) => void,
-                absoluteIdentifier: string, array: Array<any>, oldArray: Array<any>): void;
+                absoluteIdentifier: string, array: Array<any>, oldArray: Array<any>): IRemoveListener;
 
             /**
              * Disposes the memory for an IContextManager.
@@ -8845,7 +9194,7 @@ module plat {
              * 
              * @static
              */
-            observedArrayListeners: IObject<IObject<(ev: IArrayMethodInfo<any>) => void>>;
+            observedArrayListeners: IObject<IObject<Array<(ev: IArrayMethodInfo<any>) => void>>>;
 
             /**
              * Gets the ContextManager associated to the given control. If no 
@@ -10183,6 +10532,7 @@ module plat {
      * class for all types of controls.
      */
     export class Control implements IControl {
+        static $parser: expressions.IParser;
         static $ContextManagerStatic: observable.IContextManagerStatic;
         static $EventManagerStatic: events.IEventManagerStatic;
 
@@ -10555,8 +10905,7 @@ module plat {
                 return noop;
             }
 
-            var parser: expressions.IParser = acquire('$parser'),
-                parsedExpression: expressions.IParsedExpression = isString(expression) ? parser.parse(expression) : expression,
+            var parsedExpression: expressions.IParsedExpression = isString(expression) ? Control.$parser.parse(expression) : expression,
                 aliases = parsedExpression.aliases,
                 control: ui.TemplateControl = !isNull((<ui.TemplateControl>this).resources) ?
                     <ui.TemplateControl>this :
@@ -10781,14 +11130,17 @@ module plat {
      * The Type for referencing the '$ControlStatic' injectable as a dependency.
      */
     export function ControlStatic(
+            $parser: expressions.IParser,
             $ContextManagerStatic: observable.IContextManagerStatic,
             $EventManagerStatic: events.IEventManagerStatic) {
+        Control.$parser = $parser;
         Control.$ContextManagerStatic = $ContextManagerStatic;
         Control.$EventManagerStatic = $EventManagerStatic;
         return Control;
     }
 
     register.injectable('$ControlStatic', ControlStatic, [
+        '$parser',
         '$ContextManagerStatic',
         '$EventManagerStatic'
     ], register.injectableType.STATIC);
@@ -12261,6 +12613,9 @@ module plat {
              */
             _property: string;
 
+            private __fileSupported = (<ICompat>acquire('$compat')).fileSupported;
+            private __fileNameRegex = (<expressions.IRegex>acquire('$regex')).fileNameRegex;
+
             /**
              * Determines the type of HTMLElement being bound to 
              * and sets the necessary handlers.
@@ -12280,7 +12635,7 @@ module plat {
                 var attr = camelCase(this.type),
                     expression = this._expression = this.$parser.parse((<any>this.attributes)[attr]);
 
-                var identifiers = this._expression.identifiers;
+                var identifiers = expression.identifiers;
 
                 if (identifiers.length !== 1) {
                     this.$ExceptionStatic.warn('Only 1 identifier allowed in a plat-bind expression');
@@ -12436,6 +12791,33 @@ module plat {
             }
 
             /**
+             * Getter for input[type=file]. Creates a partial IFile 
+             * element if file is not supported.
+             */
+            _getFile(): IFile {
+                var element = <HTMLInputElement>this.element,
+                    value = element.value;
+
+                if (this.__fileSupported && element.files.length > 0) {
+                    var file = <IFile>element.files[0];
+                    file.value = value;
+
+                    return file;
+                }
+
+                return {
+                    name: value.replace(this.__fileNameRegex, ''),
+                    value: value,
+                    lastModifiedDate: undefined,
+                    type: undefined,
+                    size: undefined,
+                    msDetachStream: noop,
+                    msClose: noop,
+                    slice: () => <Blob>{ }
+                };
+            }
+
+            /**
              * Setter for textarea, input[type=text], 
              * and input[type=button]
              * 
@@ -12517,6 +12899,10 @@ module plat {
                                 this._getter = this._getValue;
                                 this._setter = this._setRange;
                                 break;
+                            case 'file':
+                                this._addEventType = this._addChangeEventListener;
+                                this._getter = this._getFile;
+                                break;
                             default:
                                 this._addEventType = this._addTextEventListener;
                                 this._getter = this._getValue;
@@ -12546,7 +12932,12 @@ module plat {
              * Observes the expression to bind to.
              */
             _watchExpression(): void {
+                if (!isFunction(this._setter)) {
+                    return;
+                }
+
                 var expression = this._expression;
+
                 this.observeExpression(expression, this._setter);
                 this._setter(this.parent.evaluateExpression(expression));
             }
@@ -12575,15 +12966,20 @@ module plat {
                 context[property] = newValue;
             }
             private __setValue(newValue: any): void {
-                if ((<HTMLInputElement>this.element).value === newValue) {
+                var element = <HTMLInputElement>this.element;
+                if (element.value === newValue) {
                     return;
                 }
 
-                (<HTMLInputElement>this.element).value = newValue;
+                element.value = newValue;
             }
         }
 
         register.control('plat-bind', Bind);
+
+        export interface IFile extends File {
+            value: string;
+        }
 
         /**
          * An AttributeControl that deals with observing changes for a specified property.
@@ -13119,15 +13515,13 @@ module plat {
 
                 template = templateCache.read(templateUrl);
 
-                var ajax = TemplateControl.$http.ajax,
-                    Exception = TemplateControl.$ExceptionStatic;
-
                 return Promise.cast<DocumentFragment>(template).catch((error) => {
                     if (isNull(error)) {
-                        return templateCache.put(templateUrl, ajax<string>({ url: templateUrl })
+                        return templateCache.put(templateUrl, TemplateControl.$http.ajax<string>({ url: templateUrl })
                                 .then<DocumentFragment>((success) => {
                             if (!isObject(success) || !isString(success.response)) {
-                                Exception.warn('No template found at ' + templateUrl, Exception.AJAX);
+                                TemplateControl.$ExceptionStatic.warn('No template found at ' + templateUrl,
+                                    TemplateControl.$ExceptionStatic.AJAX);
                                 return Promise.resolve(dom.serializeHtml());
                             }
 
@@ -13142,14 +13536,16 @@ module plat {
                             return templateCache.put(templateUrl, template);
                         }, (error) => {
                             postpone(() => {
-                                Exception.fatal('Failure to get template from ' + templateUrl + '.', Exception.TEMPLATE);
+                                TemplateControl.$ExceptionStatic.fatal('Failure to get template from ' + templateUrl + '.',
+                                    TemplateControl.$ExceptionStatic.TEMPLATE);
                             });
                             return error;
                         }));
                     }
                 }).catch((error) => {
                     postpone(() => {
-                        Exception.fatal('Failure to get template from ' + templateUrl + '.', Exception.TEMPLATE);
+                        TemplateControl.$ExceptionStatic.fatal('Failure to get template from ' + templateUrl + '.',
+                            TemplateControl.$ExceptionStatic.TEMPLATE);
                     });
                     return error;
                 });
@@ -13573,15 +13969,17 @@ module plat {
                     uid = this.uid,
                     removeCallback = contextManager.observe(absoluteIdentifier, {
                         listener: (newValue: Array<any>, oldValue: Array<any>) => {
-                            contextManager.observeArray(this.uid, callback, absoluteIdentifier, newValue, oldValue);
+                            removeListener();
+                            removeListener = contextManager.observeArray(this.uid, callback, absoluteIdentifier, newValue, oldValue);
                         },
                         uid: uid
-                    });
-                contextManager.observeArray(this.uid, callback, absoluteIdentifier, array, null);
+                    }),
+                    removeListener = contextManager.observeArray(this.uid, callback, absoluteIdentifier, array, null);
 
                 // need to call callback if 
                 return () => {
                     ContextManager.removeArrayListeners(absoluteIdentifier, uid);
+                    removeListener();
                     removeCallback();
                 };
             }
@@ -15885,11 +16283,12 @@ module plat {
                      */
                     styles: [
                         '-moz-user-select: none',
+                        '-khtml-user-select: none',
+                        '-webkit-touch-callout: none',
                         '-webkit-user-select: none',
                         '-webkit-user-drag: none',
                         '-webkit-tap-highlight-color: transparent',
                         '-webkit-overflow-scrolling: touch',
-                        '-webkit-touch-callout: none',
                         '-ms-user-select: none',
                         '-ms-touch-action: manipulation',
                         'touch-action: manipulation'
@@ -16137,11 +16536,6 @@ module plat {
                 // if the touch count is greater than 1
                 if (this._inTouch && !isTouch) {
                     return;
-                }
-
-                if (!isTouch) {
-                    // set capture on doc for moz because mozilla is terrible
-                    this.__setCapture(ev.currentTarget);
                 }
 
                 this.__standardizeEventObject(ev);
@@ -16586,6 +16980,7 @@ module plat {
                     if (!isUndefined((<HTMLElement>element).className)) {
                         addClass(<HTMLElement>element, DomEvents.config.styleConfig[0].className);
                     }
+                    this.__removeSelections(element);
                 } else {
                     var subscription = this._subscriptions[index];
                     if (isUndefined((<any>subscription)[type])) {
@@ -16645,14 +17040,13 @@ module plat {
                     this.__updatePointers(ev, this.__pointerEndRegex.test(eventType));
                 } else if (eventType === 'mousedown') {
                     ev.pointerType = 'mouse';
-                    this.__setCapture(ev.target);
-                } else {
-                    if (eventType.indexOf('mouse') !== -1) {
-                        ev.pointerType = 'mouse';
-                        return;
+                    var target = <Node>ev.target;
+                    // capture the target if it's not the Document
+                    if (!isDocument(target)) {
+                        this.__capturedTarget = target;
                     }
-
-                    ev.pointerType = 'touch';
+                } else {
+                    ev.pointerType = eventType.indexOf('mouse') === -1 ? 'touch' : 'mouse';
                 }
             }
             private __updatePointers(ev: IPointerEvent, remove: boolean): void {
@@ -16673,14 +17067,6 @@ module plat {
                     }
 
                     this.__pointerHash[id] = ev;
-                }
-            }
-            private __setCapture(target: any): void {
-                if (isFunction(target.setCapture)) {
-                    target.setCapture();
-                    return;
-                } else if (!isDocument(target)) {
-                    this.__capturedTarget = target;
                 }
             }
 
@@ -16732,6 +17118,7 @@ module plat {
             }
             private __removeElement(index: number): void {
                 var elements = this._elements;
+                this.__returnSelections(elements[index]);
                 elements.splice(index, 1);
 
                 // check if no elements are left listening
@@ -16887,6 +17274,40 @@ module plat {
                 }
 
                 return style;
+            }
+            private __removeSelections(element: Node) {
+                if (isNull(element) || isNull(element.nodeName)) {
+                    return;
+                }
+
+                if (!isUndefined((<any>element).onselectstart)) {
+                    element.addEventListener('selectstart', this.__preventDefault, false);
+                }
+                if (!isUndefined((<any>element).ondragstart)) {
+                    element.addEventListener('dragstart', this.__preventDefault, false);
+                }
+            }
+            private __returnSelections(element: Node) {
+                if (isNull(element) || isNull(element.nodeName)) {
+                    return;
+                }
+
+                if (!isUndefined((<any>element).onselectstart)) {
+                    element.removeEventListener('selectstart', this.__preventDefault, false);
+                }
+                if (!isUndefined((<any>element).ondragstart)) {
+                    element.removeEventListener('dragstart', this.__preventDefault, false);
+                }
+            }
+            private __preventDefault(ev: Event) {
+                var nodeName = (<Node>ev.target).nodeName;
+
+                if (nodeName === 'input' || nodeName === 'textarea') {
+                    return true;
+                }
+
+                ev.preventDefault();
+                return false;
             }
         }
 

@@ -9,7 +9,7 @@ module plat.observable {
         /**
          * A set of functions to be fired when a particular observed array is mutated.
          */
-        static observedArrayListeners: IObject<IObject<(ev: IArrayMethodInfo<any>) => void>> = {};
+        static observedArrayListeners: IObject<IObject<Array<(ev: IArrayMethodInfo<any>) => void>>> = {};
         
         /**
          * Gets the ContextManager associated to the given control. If no 
@@ -365,13 +365,20 @@ module plat.observable {
             //check if value is defined and context manager hasn't seen this identifier
             if (!hasIdentifier) {
                 if (isArray(context) && key === 'length') {
-                    this.observe(join, {
+                    var removeArrayObserve = this.observe(join, {
                         uid: observableListener.uid,
                         listener: (newValue: Array<any>, oldValue: Array<any>) => {
-                            this.observeArray(observableListener.uid, noop, join, newValue, oldValue);
+                            removeListener();
+                            removeListener = this.observeArray(observableListener.uid, noop, join, newValue, oldValue);
                         }
                     });
-                    this.observeArray(observableListener.uid, noop, join, context, null);
+
+                    var removeListener = this.observeArray(observableListener.uid, noop, join, context, null);
+
+                    removeCallback = () => {
+                        removeArrayObserve();
+                        removeListener();
+                    };
                 } else {
                     this._define(absoluteIdentifier, context, key);
                 }
@@ -392,7 +399,7 @@ module plat.observable {
          * @param oldArray The old array to stop observing.
          */
         observeArray(uid: string, listener: (ev: IArrayMethodInfo<any>) => void,
-            absoluteIdentifier: string, array: Array<any>, oldArray: Array<any>): void {
+            absoluteIdentifier: string, array: Array<any>, oldArray: Array<any>): IRemoveListener {
             var length = arrayMethods.length,
                 method: string,
                 i = 0,
@@ -420,13 +427,24 @@ module plat.observable {
                 return;
             }
 
-            var arrayCallbacks = ContextManager.observedArrayListeners[absoluteIdentifier];
+            var observedArrayCallbacks = ContextManager.observedArrayListeners[absoluteIdentifier];
 
-            if (isNull(arrayCallbacks)) {
-                arrayCallbacks = ContextManager.observedArrayListeners[absoluteIdentifier] = {};
+            if (isNull(observedArrayCallbacks)) {
+                observedArrayCallbacks = ContextManager.observedArrayListeners[absoluteIdentifier] = {};
             }
 
-            arrayCallbacks[uid] = listener;
+            var arrayCallbacks = observedArrayCallbacks[uid];
+
+            if (isNull(arrayCallbacks)) {
+                arrayCallbacks = observedArrayCallbacks[uid] = [];
+            }
+
+            var index = arrayCallbacks.length,
+                removeListener = () => {
+                    arrayCallbacks.splice(index, 1);
+                };
+
+            arrayCallbacks.push(listener);
 
             if (proto) {
                 var obj = Object.create(Array.prototype);
@@ -442,7 +460,7 @@ module plat.observable {
                     (<any>array).__proto__ = obj;
                 }
 
-                return;
+                return removeListener;
             }
 
             for (; i < length; ++i) {
@@ -450,6 +468,8 @@ module plat.observable {
                 ContextManager.defineProperty(array, method,
                     this._overwriteArrayFunction(absoluteIdentifier, method), false, true);
             }
+
+            return removeListener;
         }
 
         /**
@@ -672,7 +692,7 @@ module plat.observable {
          * @param method The array method being called.
          */
         _overwriteArrayFunction(absoluteIdentifier: string, method: string): (...args: any[]) => any {
-            var callbacks = this.$ContextManagerStatic.observedArrayListeners[absoluteIdentifier],
+            var callbackObjects = this.$ContextManagerStatic.observedArrayListeners[absoluteIdentifier],
                 _this = this;
 
             // We can't use a fat-arrow function here because we need the array context.
@@ -689,21 +709,28 @@ module plat.observable {
                     returnValue = (<any>Array.prototype)[method].apply(this, args);
                 }
 
-                var keys = Object.keys(callbacks),
-                    length = keys.length;
+                var keys = Object.keys(callbackObjects),
+                    length = keys.length,
+                    callbacks: Array<(ev: IArrayMethodInfo<any>) => void>, 
+                    jLength: number;
 
-                if (oldArray.length !== this.length) {
+                if (oldArray.length !== this.length && method.indexOf('shift') === -1) {
                     _this._execute(absoluteIdentifier + '.length', this.length, oldArray.length);
                 }
 
                 for (var i = 0; i < length; ++i) {
-                    callbacks[keys[i]]({
-                        method: method,
-                        returnValue: returnValue,
-                        oldArray: oldArray,
-                        newArray: this,
-                        arguments: args
-                    });
+                    callbacks = callbackObjects[keys[i]];
+                    jLength = callbacks.length;
+
+                    for (var j = 0; j < jLength; ++j) {
+                        callbacks[j]({
+                            method: method,
+                            returnValue: returnValue,
+                            oldArray: oldArray,
+                            newArray: this,
+                            arguments: args
+                        });
+                    }
                 }
 
                 return returnValue;
@@ -950,7 +977,7 @@ module plat.observable {
          * @param oldArray The old array to stop observing.
          */
         observeArray(uid: string, listener: (ev: IArrayMethodInfo<any>) => void,
-            absoluteIdentifier: string, array: Array<any>, oldArray: Array<any>): void;
+            absoluteIdentifier: string, array: Array<any>, oldArray: Array<any>): IRemoveListener;
 
         /**
          * Disposes the memory for an IContextManager.
@@ -1019,7 +1046,7 @@ module plat.observable {
          * 
          * @static
          */
-        observedArrayListeners: IObject<IObject<(ev: IArrayMethodInfo<any>) => void>>;
+        observedArrayListeners: IObject<IObject<Array<(ev: IArrayMethodInfo<any>) => void>>>;
 
         /**
          * Gets the ContextManager associated to the given control. If no 

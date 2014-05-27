@@ -25,7 +25,7 @@ module tests.observable.contextManager {
                 }
             };
 
-            manager = ContextManager.getManager(control);
+            manager = <plat.observable.ContextManager>ContextManager.getManager(control);
         });
 
         afterEach(() => {
@@ -165,7 +165,105 @@ module tests.observable.contextManager {
             expect(fooBarBaz).toBe(true);
         });
 
-        it('should test observe with changing a value from primitive to object', () => {
+        it('should test observe with array length', () => {
+            var called = 0,
+                arr = control.context.arr = [];
+
+            manager.observe('context.arr.length', {
+                uid: control.uid,
+                listener: (newValue, oldValue) => {
+                    called++;
+                    if (called === 1) {
+                        expect(oldValue).toBe(0);
+                        expect(newValue).toBe(1);
+                    } else if (called === 2) {
+                        expect(oldValue).toBe(1);
+                        expect(newValue).toBe(2);
+                    } else if (called === 3) {
+                        expect(oldValue).toBe(2);
+                        expect(newValue).toBe(1);
+                    } else if (called === 4) {
+                        expect(oldValue).toBe(1);
+                        expect(newValue).toBe(0);
+                    }
+                }
+            });
+
+            arr = control.context.arr = [{
+                value: 'foo'
+            }];
+
+            arr.push({
+                value: 'bar'
+            });
+
+            arr.shift();
+            arr.shift();
+
+            expect(called).toBe(4);
+        });
+
+        it('should test observe with array length and observing twice', () => {
+            var called = 0,
+                called2 = 0,
+                arr = control.context.arr = [];
+
+            manager.observe('context.arr.length', {
+                uid: control.uid,
+                listener: (newValue, oldValue) => {
+                    called++;
+                    if (called === 1) {
+                        expect(oldValue).toBe(0);
+                        expect(newValue).toBe(1);
+                    } else if (called === 2) {
+                        expect(oldValue).toBe(1);
+                        expect(newValue).toBe(2);
+                    } else if (called === 3) {
+                        expect(oldValue).toBe(2);
+                        expect(newValue).toBe(1);
+                    } else if (called === 4) {
+                        expect(oldValue).toBe(1);
+                        expect(newValue).toBe(0);
+                    }
+                }
+            });
+
+            manager.observe('context.arr.length', {
+                uid: control.uid,
+                listener: (newValue, oldValue) => {
+                    called2++;
+                    if (called2 === 1) {
+                        expect(oldValue).toBe(0);
+                        expect(newValue).toBe(1);
+                    } else if (called2 === 2) {
+                        expect(oldValue).toBe(1);
+                        expect(newValue).toBe(2);
+                    } else if (called2 === 3) {
+                        expect(oldValue).toBe(2);
+                        expect(newValue).toBe(1);
+                    } else if (called2 === 4) {
+                        expect(oldValue).toBe(1);
+                        expect(newValue).toBe(0);
+                    }
+                }
+            });
+
+            arr = control.context.arr = [{
+                value: 'foo'
+            }];
+
+            arr.push({
+                value: 'bar'
+            });
+
+            arr.shift();
+            arr.shift();
+
+            expect(called).toBe(4);
+            expect(called2).toBe(4);
+        });
+
+        it('should test observe by changing a value from primitive to object', () => {
             var called = 0,
                 called2 = false;
 
@@ -215,7 +313,7 @@ module tests.observable.contextManager {
             expect(called2).toBe(true);
         });
 
-        it('should test observe with changing a value from object to primitive', () => {
+        it('should test observe by changing a value from object to primitive', () => {
             var called = 0,
                 called2 = false;
 
@@ -260,7 +358,7 @@ module tests.observable.contextManager {
             expect(called2).toBe(true);
         });
 
-        it('should test observe with changing a value from object to primitive and back to an object', () => {
+        it('should test observe by changing a value from object to primitive and back to an object', () => {
             var called = 0,
                 called2 = 0;
 

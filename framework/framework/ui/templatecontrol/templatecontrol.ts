@@ -821,15 +821,17 @@ module plat.ui {
                 uid = this.uid,
                 removeCallback = contextManager.observe(absoluteIdentifier, {
                     listener: (newValue: Array<any>, oldValue: Array<any>) => {
-                        contextManager.observeArray(this.uid, callback, absoluteIdentifier, newValue, oldValue);
+                        removeListener();
+                        removeListener = contextManager.observeArray(this.uid, callback, absoluteIdentifier, newValue, oldValue);
                     },
                     uid: uid
-                });
-            contextManager.observeArray(this.uid, callback, absoluteIdentifier, array, null);
+                }),
+                removeListener = contextManager.observeArray(this.uid, callback, absoluteIdentifier, array, null);
 
             // need to call callback if 
             return () => {
                 ContextManager.removeArrayListeners(absoluteIdentifier, uid);
+                removeListener();
                 removeCallback();
             };
         }

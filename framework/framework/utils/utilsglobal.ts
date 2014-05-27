@@ -24,8 +24,8 @@ function extend(destination: any, ...sources: any[]): any {
 
         keys = Object.keys(source);
 
-        forEach(keys, (key: string) => {
-            property = (<any>source)[key];
+        forEach(keys, (key) => {
+            property = source[key];
             if (deep) {
                 if (isArray(property)) {
                     extend(deep, destination[key] || (destination[key] = []), property);
@@ -35,7 +35,7 @@ function extend(destination: any, ...sources: any[]): any {
                     return;
                 }
             }
-            destination[key] = (<any>source)[key];
+            destination[key] = source[key];
         });
     });
 
@@ -155,6 +155,8 @@ function where(obj: any, properties: any): Array<any> {
             => (<any>value)[key] !== property));
 }
 
+function forEach<T>(array: Array <T>, iterator: (value: T, index: number, obj: any) => void, context?: any): Array < T>;
+function forEach<T>(obj: any, iterator: (value: T, key: string, obj: any) => void, context?: any): any;
 function forEach<T>(obj: any, iterator: (value: T, key: any, obj: any) => void, context?: any): any {
     if (isNull(obj) || !(isObject(obj) || isArrayLike(obj))) {
         return obj;
