@@ -78,11 +78,12 @@
                  */
                 styles: [
                     '-moz-user-select: none',
+                    '-khtml-user-select: none',
+                    '-webkit-touch-callout: none',
                     '-webkit-user-select: none',
                     '-webkit-user-drag: none',
                     '-webkit-tap-highlight-color: transparent',
                     '-webkit-overflow-scrolling: touch',
-                    '-webkit-touch-callout: none',
                     '-ms-user-select: none',
                     '-ms-touch-action: manipulation',
                     'touch-action: manipulation'
@@ -330,11 +331,6 @@
             // if the touch count is greater than 1
             if (this._inTouch && !isTouch) {
                 return;
-            }
-
-            if (!isTouch) {
-                // set capture on doc for moz because mozilla is terrible
-                this.__setCapture(ev.currentTarget);
             }
 
             this.__standardizeEventObject(ev);
@@ -779,6 +775,7 @@
                 if (!isUndefined((<HTMLElement>element).className)) {
                     addClass(<HTMLElement>element, DomEvents.config.styleConfig[0].className);
                 }
+                this.__removeSelections(element);
             } else {
                 var subscription = this._subscriptions[index];
                 if (isUndefined((<any>subscription)[type])) {
@@ -838,14 +835,13 @@
                 this.__updatePointers(ev, this.__pointerEndRegex.test(eventType));
             } else if (eventType === 'mousedown') {
                 ev.pointerType = 'mouse';
-                this.__setCapture(ev.target);
-            } else {
-                if (eventType.indexOf('mouse') !== -1) {
-                    ev.pointerType = 'mouse';
-                    return;
+                var target = <Node>ev.target;
+                // capture the target if it's not the Document
+                if (!isDocument(target)) {
+                    this.__capturedTarget = target;
                 }
-
-                ev.pointerType = 'touch';
+            } else {
+                ev.pointerType = eventType.indexOf('mouse') === -1 ? 'touch' : 'mouse';
             }
         }
         private __updatePointers(ev: IPointerEvent, remove: boolean): void {
@@ -866,14 +862,6 @@
                 }
 
                 this.__pointerHash[id] = ev;
-            }
-        }
-        private __setCapture(target: any): void {
-            if (isFunction(target.setCapture)) {
-                target.setCapture();
-                return;
-            } else if (!isDocument(target)) {
-                this.__capturedTarget = target;
             }
         }
 
@@ -925,6 +913,7 @@
         }
         private __removeElement(index: number): void {
             var elements = this._elements;
+            this.__returnSelections(elements[index]);
             elements.splice(index, 1);
 
             // check if no elements are left listening
@@ -1080,6 +1069,40 @@
             }
 
             return style;
+        }
+        private __removeSelections(element: Node) {
+            if (isNull(element) || isNull(element.nodeName)) {
+                return;
+            }
+
+            if (!isUndefined((<any>element).onselectstart)) {
+                element.addEventListener('selectstart', this.__preventDefault, false);
+            }
+            if (!isUndefined((<any>element).ondragstart)) {
+                element.addEventListener('dragstart', this.__preventDefault, false);
+            }
+        }
+        private __returnSelections(element: Node) {
+            if (isNull(element) || isNull(element.nodeName)) {
+                return;
+            }
+
+            if (!isUndefined((<any>element).onselectstart)) {
+                element.removeEventListener('selectstart', this.__preventDefault, false);
+            }
+            if (!isUndefined((<any>element).ondragstart)) {
+                element.removeEventListener('dragstart', this.__preventDefault, false);
+            }
+        }
+        private __preventDefault(ev: Event) {
+            var nodeName = (<Node>ev.target).nodeName;
+
+            if (nodeName === 'input' || nodeName === 'textarea') {
+                return true;
+            }
+
+            ev.preventDefault();
+            return false;
         }
     }
 

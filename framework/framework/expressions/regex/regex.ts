@@ -4,18 +4,9 @@
      */
     export class Regex implements IRegex {
         /**
-         * The regular expression for matching or removing all newline characters.
-         */
-        get newLineRegex(): RegExp {
-            return /\n|\r/g;
-        }
-
-        /**
          * The regular expression for finding markup in a string.
          */
-        get markupRegex(): RegExp {
-            return /{{[\S\s]*}}/;
-        }
+        markupRegex: RegExp = /{{[\S\s]*}}/;
 
         /**
          * Finds the arguments in a method expression
@@ -24,9 +15,7 @@
          *   // outputs ["('foo', 'bar', 'baz')", "'foo', 'bar', 'baz'"]
          *   exec("myFunction('foo', 'bar', 'baz')");
          */
-        get argumentRegex(): RegExp {
-            return /\((.*)\)/;
-        }
+        argumentRegex: RegExp = /\((.*)\)/;
 
         /**
          * Given a string, finds the root alias name if that string is an 
@@ -40,8 +29,38 @@
          *   // outputs null
          *   exec('@context');
          */
-        get aliasRegex(): RegExp {
-            return /[^@\.\[\(]+(?=[\.\[\(])/;
+        aliasRegex: RegExp = /[^@\.\[\(]+(?=[\.\[\(])/;
+
+        /**
+         * Finds '/*.html' or '/*.htm' in a url. Useful for removing 
+         * the html file out of the url.
+         * 
+         * @example
+         *   // outputs ['/index.html']
+         *   exec('http://localhost:8080/index.html');
+         */
+        initialUrlRegex: RegExp = /\/[^\/]*\.(?:html|htm)/;
+
+        /**
+         * Finds a protocol delimeter in a string (i.e. ://)
+         */
+        protocolRegex: RegExp = /:\/\//;
+
+        /**
+         * Looks for any invalid variable syntax.
+         */
+        invalidVariableRegex: RegExp = /[^a-zA-Z0-9@_$]/;
+
+        /**
+         * Grabs the file name from a file path.
+         */
+        fileNameRegex: RegExp = /.*(?:\/|\\)/;
+
+        /**
+         * The regular expression for matching or removing all newline characters.
+         */
+        get newLineRegex(): RegExp {
+            return /\n|\r/g;
         }
 
         /**
@@ -96,25 +115,6 @@
         }
 
         /**
-         * Finds '/*.html' or '/*.htm' in a url. Useful for removing 
-         * the html file out of the url.
-         * 
-         * @example
-         *   // outputs ['/index.html']
-         *   exec('http://localhost:8080/index.html');
-         */
-        get initialUrlRegex(): RegExp {
-            return /\/[^\/]*\.(?:html|htm)/;
-        }
-
-        /**
-         * Finds a protocol delimeter in a string (i.e. ://)
-         */
-        get protocolRegex(): RegExp {
-            return /:\/\//;
-        }
-
-        /**
          * Finds delimeters for spinal-case, snake_case, and dot.case. 
          * useful for converting to camelCase. Also can turn a string 
          * into camelCase with space as a delimeter.
@@ -153,13 +153,6 @@
          */
         get quotationRegex(): RegExp {
             return /'|"/g;
-        }
-
-        /**
-         * Looks for any invalid variable syntax.
-         */
-        get invalidVariableRegex(): RegExp {
-            return /[^a-zA-Z0-9@_$]/;
         }
     }
 
@@ -299,5 +292,10 @@
          * Looks for any invalid variable syntax.
          */
         invalidVariableRegex: RegExp;
+
+        /**
+         * Grabs the file name from a file path.
+         */
+        fileNameRegex: RegExp;
     }
 }

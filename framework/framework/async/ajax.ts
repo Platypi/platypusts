@@ -35,12 +35,13 @@ module plat.async {
          */
         $config: IHttpConfigStatic = acquire('$http.config');
 
+        private __fileSupported = (<ICompat>acquire('$compat')).fileSupported;
         private __options: IHttpConfigStatic;
 
         /**
-         * @param options The IAjaxOptions used to customize this Http.
+         * @param options The IHttpConfigStatic used to customize this HttpRequest.
          */
-        constructor(options?: IHttpConfigStatic) {
+        constructor(options: IHttpConfigStatic) {
             this.__options = extend({}, this.$config, options);
         }
 
@@ -64,15 +65,14 @@ module plat.async {
             options.url = this.$browser.urlUtils(url).toString();
 
             var isCrossDomain = options.isCrossDomain || false,
-                xDomain = false,
-                xhr: XMLHttpRequest;
+                xDomain = false;
 
             // check if forced cross domain call or cors is not supported (IE9)
             if (isCrossDomain) {
                 xDomain = true;
             } else {
-                xhr = this.xhr = new XMLHttpRequest();
-                if (isUndefined(xhr.withCredentials)) {
+                this.xhr = new XMLHttpRequest();
+                if (isUndefined(this.xhr.withCredentials)) {
                     xDomain = this.$browser.isCrossDomain(url);
                 }
             }
@@ -83,7 +83,7 @@ module plat.async {
                 return this.executeJsonp();
             }
 
-            return this._sendXhrRequest(xhr);
+            return this._sendXhrRequest();
         }
 
         /**
@@ -102,26 +102,31 @@ module plat.async {
             }
 
             options.url = this.$browser.urlUtils(url).toString();
+            if (isNull(this.jsonpCallback)) {
+                this.jsonpCallback = options.jsonpCallback || uniqueId('plat_callback');
+            }
 
             return new AjaxPromise((resolve, reject) => {
-                var scriptTag = this.$document.createElement('script'),
-                    jsonpCallback: string = this.jsonpCallback || uniqueId('plat_callback'),
+                var $window = <any>this.$window,
+                    $document = this.$document,
+                    scriptTag = $document.createElement('script'),
+                    jsonpCallback = this.jsonpCallback,
                     jsonpIdentifier = options.jsonpIdentifier || 'callback';
 
                 scriptTag.src = url + '?' + jsonpIdentifier + '=' + jsonpCallback;
 
-                var oldValue = (<any>this.$window)[jsonpCallback];
-                (<any>this.$window)[jsonpCallback] = (response: any) => {
+                var oldValue = $window[jsonpCallback];
+                $window[jsonpCallback] = (response: any) => {
                     //clean up
                     if (isFunction(this.clearTimeout)) {
                         this.clearTimeout();
                     }
 
-                    this.$document.head.removeChild(scriptTag);
+                    $document.head.removeChild(scriptTag);
                     if (!isUndefined(oldValue)) {
-                        (<any>this.$window)[jsonpCallback] = oldValue;
+                        $window[jsonpCallback] = oldValue;
                     } else {
-                        delete (<any>this.$window)[jsonpCallback];
+                        delete $window[jsonpCallback];
                     }
 
                     //call callback
@@ -131,7 +136,7 @@ module plat.async {
                     });
                 };
 
-                this.$document.head.appendChild(scriptTag);
+                $document.head.appendChild(scriptTag);
 
                 var timeout = options.timeout;
                 if (isNumber(timeout) && timeout > 0) {
@@ -143,7 +148,7 @@ module plat.async {
                                 response: 'Request timed out in ' + timeout + 'ms for ' + url,
                                 status: 408 // Request Timeout
                             }));
-                            (<any>this.$window)[jsonpCallback] = noop;
+                            $window[jsonpCallback] = noop;
                         }, timeout - 1);
                     });
                 }
@@ -153,17 +158,22 @@ module plat.async {
         /**
          * A wrapper for the XMLHttpRequest's onReadyStateChanged callback.
          *
-         * @param {XMLHttpRequest} The associated XMLHttpRequest
          * @return {bool} Waits for the readyState to be complete and then 
          * return true in the case of a success and false in the case of 
          * an error.
          */
-        _xhrOnReadyStateChange(xhr: XMLHttpRequest): boolean {
+        _xhrOnReadyStateChange(): boolean {
+            var xhr = this.xhr;
             if (xhr.readyState === 4) {
                 var status = xhr.status,
-                    response = xhr.response || xhr.responseText;
+                    responseType = xhr.responseType;
 
                 if (status === 0) {
+                    var response = xhr.response;
+                    if (isNull(response) && responseType === '' || responseType === 'text') {
+                        response = xhr.responseText;
+                    }
+
                     // file protocol issue **Needs to be tested more thoroughly**
                     // OK if response is not empty, Not Found otherwise
                     if (!isEmpty(response)) {
@@ -179,39 +189,40 @@ module plat.async {
                 } else {
                     return false;
                 }
-            } else {
-                // TODO: add progress for xhr if we choose to add progress to AjaxPromise
             }
+            // else {} TODO: add progress for xhr if we choose to add progress to AjaxPromise
         }
 
         /**
          * The function that initializes and sends the XMLHttpRequest.
          *
-         * @param {XMLHttpRequest} The associated XMLHttpRequest
          * @return {Promise<IAjaxResponse>} A promise that fulfills with the 
          * formatted IAjaxResponse and rejects if there is a problem with an 
          * IAjaxError.
          */
-        _sendXhrRequest(xhr: XMLHttpRequest): IAjaxPromise<any> {
-            var options = this.__options,
+        _sendXhrRequest(): IAjaxPromise<any> {
+            var xhr = this.xhr,
+                options = this.__options,
                 method = options.method,
                 url = options.url;
 
             return new AjaxPromise((resolve, reject) => {
                 xhr.onreadystatechange = () => {
-                    var success = this._xhrOnReadyStateChange(xhr);
+                    var success = this._xhrOnReadyStateChange();
 
                     if (isNull(success)) {
                         return;
                     }
 
-                    var response = this._formatResponse(xhr);
+                    var response = this._formatResponse(options.responseType, success);
 
                     if (success) {
                         resolve(response);
                     } else {
                         reject(new AjaxError(response));
                     }
+
+                    this.xhr = options = null;
                 };
 
                 if (!isString(method)) {
@@ -228,44 +239,100 @@ module plat.async {
                     options.password
                     );
 
-                xhr.responseType = options.responseType;
-                xhr.withCredentials = options.withCredentials;
-
-                var headers = options.headers,
-                    keys = Object.keys(isObject(headers) ? headers : {}),
-                    length = keys.length,
-                    key: string,
-                    i: number;
-
-                for (i = 0; i < length; ++i) {
-                    key = keys[i];
-                    xhr.setRequestHeader(key, options.headers[key]);
+                var responseType = options.responseType;
+                if (!(this.__fileSupported || responseType === '' || responseType === 'text')) {
+                    responseType = '';
                 }
 
-                var data = options.data;
+                xhr.responseType = responseType;
+                xhr.withCredentials = options.withCredentials;
+
+                var mimeType = options.overrideMimeType,
+                    data = options.data;
+
+                if (isString(mimeType) && !isEmpty(mimeType)) {
+                    xhr.overrideMimeType(mimeType);
+                }
+
                 if (isNull(data) || data === '') {
+                    // no data exists so set headers and send request
+                    this.__setHeaders();
                     xhr.send();
                 } else {
                     var transforms = options.transforms || [],
-                        contentType = options.contentType;
-
-                    length = transforms.length;
+                        length = transforms.length,
+                        contentType = options.contentType,
+                        contentTypeExists = isString(contentType) && !isEmpty(contentType);
 
                     if (length > 0) {
-                        for (i = 0; i < length; ++i) {
+                        // if data transforms defined, assume they're going to take care of 
+                        // any and all transformations.
+                        for (var i = 0; i < length; ++i) {
                             data = transforms[i](data, xhr);
                         }
-                    } else if (isObject(data)) {
-                        if (contentType && contentType.indexOf('x-www-form-urlencoded') !== -1) {
-                            data = this.__serializeFormData(data);
-                        } else {
-                            data = JSON.stringify(data);
-                        }
-                    }
 
-                    // Set the Content-Type header if data is being sent
-                    xhr.setRequestHeader('Content-Type', contentType);
-                    xhr.send(data);
+                        // if contentType exists, assume they did not set it in 
+                        // their headers as well
+                        if (contentTypeExists) {
+                            xhr.setRequestHeader('Content-Type', contentType);
+                        }
+
+                        this.__setHeaders();
+                        xhr.send(data);
+                    } else if (isObject(data)) {
+                        // if isObject and contentType exists we want to transform the data
+                        if (contentTypeExists) {
+                            var contentTypeLower = contentType.toLowerCase();
+                            if (contentTypeLower.indexOf('x-www-form-urlencoded') !== -1) {
+                                // perform an encoded form transformation
+                                data = this.__serializeFormData();
+                                // set Content-Type header because we're assuming they didn't set it 
+                                // in their headers object
+                                xhr.setRequestHeader('Content-Type', contentType);
+                                this.__setHeaders();
+                                xhr.send(data);
+                            } else if (contentTypeLower.indexOf('multipart/form-data') !== -1) {
+                                // need to check if File is a supported object
+                                if (this.__fileSupported) {
+                                    // use FormData
+                                    data = this.__appendFormData();
+                                    // Do not set the Content-Type header due to modern browsers 
+                                    // setting special headers for multipart/form-data
+                                    this.__setHeaders();
+                                    xhr.send(data);
+                                } else {
+                                    // use iframe trick for older browsers (do not send a request)
+                                    // this case is the reason for this giant, terrible, nested if-else statement
+                                    this.__submitFramedFormData().then((response) => {
+                                        resolve(response);
+                                    }, () => {
+                                        this.xhr = null;
+                                    });
+                                }
+                            } else {
+                                // assume stringification is possible
+                                data = JSON.stringify(data);
+                                // set Content-Type header because we're assuming they didn't set it 
+                                // in their headers object
+                                xhr.setRequestHeader('Content-Type', contentType);
+                                this.__setHeaders();
+                                xhr.send(data);
+                            }
+                        } else {
+                            // contentType does not exist so simply set defined headers and send raw data
+                            this.__setHeaders();
+                            xhr.send(data);
+                        }
+                    } else {
+                        // if contentType exists set Content-Type header because we're assuming they didn't set it 
+                        // in their headers object
+                        if (contentTypeExists) {
+                            xhr.setRequestHeader('Content-Type', contentType);
+                        }
+
+                        this.__setHeaders();
+                        xhr.send(data);
+                    }
                 }
 
                 var timeout = options.timeout;
@@ -283,9 +350,9 @@ module plat.async {
 
                             xhr.onreadystatechange = null;
                             xhr.abort();
-                            xhr = null;
+                            this.xhr = null;
                         }, timeout - 1);
-                    }, null);
+                    });
                 }
             }, { __http: this });
         }
@@ -312,14 +379,22 @@ module plat.async {
         /**
          * The function that formats the response from the XMLHttpRequest
          *
-         * @param {XMLHttpRequest} The associated XMLHttpRequest
-         * @param {bool} Signifies if the response was a success
+         * @param responseType The user designated responseType
+         * @param success Signifies if the response was a success
          * @return {IAjaxResponse} The IAjaxResponse to be returned to 
          * the requester.
          */
-        _formatResponse(xhr: XMLHttpRequest, success?: boolean): IAjaxResponse<any> {
-            var status = xhr.status,
-                response = xhr.response || xhr.responseText;
+        _formatResponse(responseType: string, success: boolean): IAjaxResponse<any> {
+            var xhr = this.xhr,
+                status = xhr.status,
+                response = xhr.response,
+                xhrResponseType = xhr.responseType;
+
+            // need to do this instead of boolean short circuit because chrome doesn't like checking 
+            // responseText when the responseType is anything other than empty or 'text'
+            if (isNull(response) && (xhrResponseType === '' || xhrResponseType === 'text')) {
+                response = xhr.responseText;
+            }
 
             if (status === 0) {
                 // file protocol issue **Needs to be tested more thoroughly**
@@ -333,7 +408,7 @@ module plat.async {
                 this.clearTimeout();
             }
 
-            if (this.__options.responseType === 'json' && isString(response)) {
+            if (responseType === 'json' && isString(response)) {
                 try {
                     response = JSON.parse(response);
                 } catch (e) { }
@@ -347,8 +422,22 @@ module plat.async {
             };
         }
 
-        private __serializeFormData(data: any): string {
-            var keys = Object.keys(data),
+        private __setHeaders() {
+            var headers = this.__options.headers,
+                keys = Object.keys(headers || {}),
+                xhr = this.xhr,
+                length = keys.length,
+                key: string,
+                i: number;
+
+            for (i = 0; i < length; ++i) {
+                key = keys[i];
+                xhr.setRequestHeader(key, headers[key]);
+            }
+        }
+        private __serializeFormData(): string {
+            var data = this.__options.data,
+                keys = Object.keys(data),
                 key: string,
                 val: any,
                 formBuffer: Array<string> = [],
@@ -357,10 +446,160 @@ module plat.async {
             while (keys.length > 0) {
                 key = keys.pop();
                 val = data[key];
-                formBuffer.push(encodeURIComponent(key) + '=' + encodeURIComponent(isNull(val) ? '' : val));
+                if (isNull(val)) {
+                    val = '';
+                } else if (isObject(val)) {
+                    // may throw a fatal error but this is an invalid case
+                    var $exception: IExceptionStatic = acquire('$ExceptionStatic');
+                    $exception.warn('Invalid form entry with key "' + key + '" and value "' + val, $exception.AJAX);
+                    val = JSON.stringify(val);
+                }
+
+                formBuffer.push(encodeURIComponent(key) + '=' + encodeURIComponent(val));
             }
 
             return formBuffer.join('&').replace(/%20/g, '+');
+        }
+        private __appendFormData(): FormData {
+            var data = this.__options.data,
+                formData = new FormData(),
+                keys = Object.keys(data),
+                key: string,
+                val: any;
+
+            while (keys.length > 0) {
+                key = keys.pop();
+                val = data[key];
+                if (isNull(val)) {
+                    formData.append(key, '');
+                } else if (isObject(val)) {
+                    if (isFile(val)) {
+                        formData.append(key, val, val.name || val.fileName || 'blob');
+                    } else {
+                        // may throw a fatal error but this is an invalid case
+                        var $exception: IExceptionStatic = acquire('$ExceptionStatic');
+                        $exception.warn('Invalid form entry with key "' + key + '" and value "' + val, $exception.AJAX);
+                        formData.append(key, JSON.stringify(val));
+                    }
+                } else {
+                    formData.append(key, val);
+                }
+            }
+
+            return formData;
+        }
+        private __submitFramedFormData(): IThenable<IAjaxResponse<any>> {
+            var options = this.__options,
+                data = options.data,
+                url = options.url,
+                $document = this.$document,
+                $body = $document.body,
+                Promise: IPromiseStatic = acquire('$PromiseStatic'),
+                form = $document.createElement('form'),
+                iframe = $document.createElement('iframe'),
+                iframeName = uniqueId('iframe_target'),
+                keys = Object.keys(data),
+                key: string;
+
+            iframe.name = form.target = iframeName;
+            iframe.src = 'javascript:false;';
+            form.enctype = form.encoding = 'multipart/form-data';
+            form.action = url;
+            form.method = 'POST';
+            form.style.display = 'none';
+
+            while (keys.length > 0) {
+                key = keys.pop();
+                form.insertBefore(this.__createInput(key, data[key]), null);
+            }
+
+            return new Promise<IAjaxResponse<any>>((resolve, reject) => {
+                this.xhr.abort = () => {
+                    iframe.onload = null;
+                    $body.removeChild(form);
+                    $body.removeChild(iframe);
+                    reject();
+                };
+
+                iframe.onload = () => {
+                    var content = iframe.contentDocument.body.innerHTML;
+
+                    $body.removeChild(form);
+                    $body.removeChild(iframe);
+
+                    resolve({
+                        response: content,
+                        status: 200,
+                        getAllResponseHeaders: () => ''
+                    });
+
+                    this.xhr = iframe.onload = null;
+                };
+
+                $body.insertBefore(form, null);
+                $body.insertBefore(iframe, null);
+                form.submit();
+            });
+        }
+        private __createInput(key: string, val: any): HTMLInputElement {
+            var $document = this.$document,
+                input = <HTMLInputElement>$document.createElement('input');
+
+            input.type = 'hidden';
+            input.name = key;
+
+            if (isNull(val)) {
+                input.value = '';
+            } else if (isObject(val)) {
+                // check if val is an pseudo File
+                if (isFunction(val.slice) && !(isUndefined(val.name) || isUndefined(val.value))) {
+                    var fileList = $document.querySelectorAll('input[type="file"][name="' + key + '"]'),
+                        length = fileList.length;
+                    // if no inputs found, stringify the data
+                    if (length === 0) {
+                        var $exception: IExceptionStatic = acquire('$ExceptionStatic');
+                        $exception.warn('Could not find input[type="file"] with [name="' + key +
+                            '"]. Stringifying data instead.', $exception.AJAX);
+                        input.value = JSON.stringify(val);
+                    } else if (length === 1) {
+                        input = <HTMLInputElement>fileList[0];
+                        // swap nodes
+                        var clone = input.cloneNode(true);
+                        input.parentNode.insertBefore(clone, input);
+                    } else {
+                        // rare case but may have multiple forms with file inputs 
+                        // that have the same name
+                        var fileInput: HTMLInputElement;
+                        while (length-- > 0) {
+                            fileInput = <HTMLInputElement>fileList[length];
+                            if (fileInput.value === val.value) {
+                                input = fileInput;
+                                // swap nodes
+                                var inputClone = input.cloneNode(true);
+                                input.parentNode.insertBefore(inputClone, input);
+                                break;
+                            }
+                        }
+
+                        // could not find the right file
+                        if (length === -1) {
+                            var $exception: IExceptionStatic = acquire('$ExceptionStatic');
+                            $exception.warn('Could not find input[type="file"] with [name="' + key + '"] and [value="' +
+                                val.value + '"]. Stringifying data instead.', $exception.AJAX);
+                            input.value = JSON.stringify(val);
+                        }
+                    }
+                } else {
+                    // may throw a fatal error but this is an invalid case
+                    var $exception: IExceptionStatic = acquire('$ExceptionStatic');
+                    $exception.warn('Invalid form entry with key "' + key + '" and value "' + val, $exception.AJAX);
+                    input.value = JSON.stringify(val);
+                }
+            } else {
+                input.value = val;
+            }
+
+            return input;
         }
     }
 
@@ -437,6 +676,11 @@ module plat.async {
         contentType?: string;
 
         /**
+         * A string to override the MIME type returned by the server.
+         */
+        overrideMimeType?: string;
+
+        /**
          * A key/value pair object where the key is a DOMString header key
          * and the value is the DOMString header value.
          */
@@ -506,6 +750,7 @@ module plat.async {
          * a string.
          */
         response: R;
+
         /**
          * The XHR status. Resolves as 200 for JSONP.
          */
@@ -547,6 +792,7 @@ module plat.async {
             this.getAllResponseHeaders = response.getAllResponseHeaders;
             this.xhr = response.xhr;
         }
+
         toString(): string {
             var response = this.response,
                 responseText = response;
@@ -596,6 +842,7 @@ module plat.async {
             if (!isNull(xhr)) {
                 xhr.onreadystatechange = null;
                 xhr.abort();
+                http.xhr = null;
             } else if (!isNull(jsonpCallback)) {
                 (<any>this.$window)[jsonpCallback] = noop;
             }
@@ -737,6 +984,48 @@ module plat.async {
     }
 
     /**
+     * Describes an object that provides Content-Type mappings for Http POST requests.
+     */
+    export interface IHttpContentType {
+        /**
+         * Standard denotation for form encoded data. All objects are converted 
+         * to string key-value pairs.
+         */
+        ENCODEDFORM: string;
+
+        /**
+         * Standard denotation for JavaScript Object Notation (JSON).
+         */
+        JSON: string;
+
+        /**
+         * Standard denotation for a multi-part Webform. Associated with 
+         * an entype of 'multipart/form-data'.
+         */
+        MULTIPARTFORM: string;
+
+        /**
+         * Standard denotation for arbitrary binary data.
+         */
+        OCTETSTREAM: string;
+
+        /**
+         * Standard denotation for XML files.
+         */
+        XML: string;
+
+        /**
+         * Standard denotation for textual data.
+         */
+        PLAINTEXT: string;
+
+        /**
+         * Standard denotation for HTML.
+         */
+        HTML: string;
+    }
+
+    /**
      * Describes the interface for the Ajax injectable for making both 
      * XMLHttpRequests and JSONP requests.
      */
@@ -746,6 +1035,11 @@ module plat.async {
          * XMLHttpRequestResponseTypes
          */
         responseType: IHttpResponseType;
+
+        /**
+         * Describes an object that provides Content-Type mappings for Http POST requests.
+         */
+        contentType: IHttpContentType;
 
         /**
          * A wrapper method for the Http class that creates and executes a new Http with
@@ -812,6 +1106,19 @@ module plat.async {
             DOCUMENT: 'document',
             JSON: 'json',
             TEXT: 'text'
+        };
+
+        /**
+         * Common HttpContentType mappings
+         */
+        contentType: IHttpContentType = {
+            ENCODEDFORM: 'application/x-www-form-urlencoded;charset=utf-8;',
+            JSON: 'application/json;charset=utf-8;',
+            MULTIPARTFORM: 'multipart/form-data',
+            OCTETSTREAM: 'application/octet-stream;charset=utf-8;',
+            XML: 'application/xml;charset=utf-8;',
+            PLAINTEXT: 'text/plain',
+            HTML: 'text/html'
         };
 
         /**
