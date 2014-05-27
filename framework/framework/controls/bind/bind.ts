@@ -317,7 +317,13 @@ module plat.controls {
             }
 
             if (isNull(newValue)) {
-                newValue = '';
+                var element = <HTMLInputElement>this.element;
+                if (isNull(element.value)) {
+                    newValue = '';
+                } else {
+                    this._propertyChanged();
+                    return;
+                }
             }
 
             this.__setValue(newValue);
@@ -334,7 +340,13 @@ module plat.controls {
             }
 
             if (isEmpty(newValue)) {
-                newValue = 0;
+                var element = <HTMLInputElement>this.element;
+                if (isEmpty(element.value)) {
+                    newValue = 0;
+                } else {
+                    this._propertyChanged();
+                    return;
+                }
             }
 
             this.__setValue(newValue);
@@ -348,9 +360,12 @@ module plat.controls {
         _setChecked(newValue: any): void {
             if (this.__isSelf) {
                 return;
+            } else if (!isBoolean(newValue)) {
+                this._propertyChanged();
+                return;
             }
 
-            (<HTMLInputElement>this.element).checked = !(newValue === false);
+            (<HTMLInputElement>this.element).checked = newValue;
         }
 
         /**
@@ -365,7 +380,11 @@ module plat.controls {
 
             var element = <HTMLSelectElement>this.element;
             if (isEmpty(newValue)) {
-                element.selectedIndex = -1;
+                if (isEmpty(element.value)) {
+                    element.selectedIndex = -1;
+                } else {
+                    this._propertyChanged();
+                }
                 return;
             } else if (element.value === newValue) {
                 return;
