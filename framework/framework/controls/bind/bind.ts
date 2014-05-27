@@ -52,6 +52,7 @@ module plat.controls {
 
         private __fileSupported = (<ICompat>acquire('$compat')).fileSupported;
         private __fileNameRegex = (<expressions.IRegex>acquire('$regex')).fileNameRegex;
+        private __isSelf = false;
 
         /**
          * Determines the type of HTMLElement being bound to 
@@ -228,7 +229,7 @@ module plat.controls {
         }
 
         /**
-         * Getter for input[type=file]. Creates a partial IFile 
+         * Getter for input[type="file"]. Creates a partial IFile 
          * element if file is not supported.
          */
         _getFile(): IFile {
@@ -236,15 +237,12 @@ module plat.controls {
                 value = element.value;
 
             if (this.__fileSupported && element.files.length > 0) {
-                var file = <IFile>element.files[0];
-                file.value = value;
-
-                return file;
+                return <IFile>element.files[0];
             }
 
             return {
                 name: value.replace(this.__fileNameRegex, ''),
-                value: value,
+                path: value,
                 lastModifiedDate: undefined,
                 type: undefined,
                 size: undefined,
@@ -255,14 +253,77 @@ module plat.controls {
         }
 
         /**
+         * Getter for input[type="file"]-multiple
+         */
+        _getFiles(): Array<IFile> {
+            var element = <HTMLInputElement>this.element;
+
+            if (this.__fileSupported) {
+                return Array.prototype.slice.call(element.files);
+            }
+
+            // this case should never be hit since ie9 does not support multi-file uploads, 
+            // but kept in here for now for consistency's sake
+            var filelist = element.value.split(/,|;/g),
+                length = filelist.length,
+                files: Array<IFile> = [],
+                fileValue: string;
+
+            for (var i = 0; i < length; ++i) {
+                fileValue = filelist[i];
+                files.push({
+                    name: fileValue.replace(this.__fileNameRegex, ''),
+                    path: fileValue,
+                    lastModifiedDate: undefined,
+                    type: undefined,
+                    size: undefined,
+                    msDetachStream: noop,
+                    msClose: noop,
+                    slice: () => <Blob>{}
+                });
+            }
+
+            return files;
+        }
+
+        /**
+         * Getter for select-multiple
+         */
+        _getSelectedValues(): Array<string> {
+            var options = (<HTMLSelectElement>this.element).options,
+                length = options.length,
+                option: HTMLOptionElement,
+                selectedValues: Array<string> = [];
+
+            for (var i = 0; i < length; ++i) {
+                option = options[i];
+                if (option.selected) {
+                    selectedValues.push(option.value);
+                }
+            }
+
+            return selectedValues;
+        }
+
+        /**
          * Setter for textarea, input[type=text], 
-         * and input[type=button]
+         * and input[type=button], and select
          * 
          * @param newValue The new value to set
          */
         _setText(newValue: any): void {
+            if (this.__isSelf) {
+                return;
+            }
+
             if (isNull(newValue)) {
-                newValue = '';
+                var element = <HTMLInputElement>this.element;
+                if (isNull(element.value)) {
+                    newValue = '';
+                } else {
+                    this._propertyChanged();
+                    return;
+                }
             }
 
             this.__setValue(newValue);
@@ -274,8 +335,18 @@ module plat.controls {
          * @param newValue The new value to set
          */
         _setRange(newValue: any): void {
+            if (this.__isSelf) {
+                return;
+            }
+
             if (isEmpty(newValue)) {
-                newValue = 0;
+                var element = <HTMLInputElement>this.element;
+                if (isEmpty(element.value)) {
+                    newValue = 0;
+                } else {
+                    this._propertyChanged();
+                    return;
+                }
             }
 
             this.__setValue(newValue);
@@ -287,7 +358,14 @@ module plat.controls {
          * @param newValue The new value to set
          */
         _setChecked(newValue: any): void {
-            (<HTMLInputElement>this.element).checked = !(newValue === false);
+            if (this.__isSelf) {
+                return;
+            } else if (!isBoolean(newValue)) {
+                this._propertyChanged();
+                return;
+            }
+
+            (<HTMLInputElement>this.element).checked = newValue;
         }
 
         /**
@@ -296,11 +374,75 @@ module plat.controls {
          * @param newValue The new value to set
          */
         _setSelectedIndex(newValue: any): void {
-            if (isNull(newValue)) {
+            if (this.__isSelf) {
                 return;
             }
 
-            (<HTMLSelectElement>this.element).value = newValue;
+            var element = <HTMLSelectElement>this.element;
+            if (isNull(newValue)) {
+                if (isEmpty(element.value)) {
+                    element.selectedIndex = -1;
+                }
+
+                this._propertyChanged();
+                return;
+            } else if (element.value === newValue) {
+                return;
+            } else if (newValue === '') {
+                element.selectedIndex = -1;
+                return;
+            }
+
+            element.value = newValue;
+            // check to make sure the user changed to a valid value
+            if (element.value !== newValue) {
+                element.selectedIndex = -1;
+            }
+        }
+
+        /**
+         * Setter for select-multiple
+         * 
+         * @param newValue The new value to set
+         */
+        _setSelectedIndices(newValue: any): void {
+            if (this.__isSelf) {
+                return;
+            }
+
+            var options = (<HTMLSelectElement>this.element).options,
+                length = options.length,
+                option: HTMLOptionElement;
+
+            if (isNull(newValue) || !isArray(newValue)) {
+                // unselects the options unless a match is found
+                while (length-- > 0) {
+                    option = options[length];
+                    // purposely doing a soft equality match
+                    if (option.value === '' + newValue) {
+                        option.selected = true;
+                        return;
+                    }
+
+                    option.selected = false;
+                }
+                return;
+            }
+
+            var value: any,
+                numberValue: number;
+            while (length-- > 0) {
+                option = options[length];
+                value = option.value,
+                numberValue = Number(value);
+
+                if (newValue.indexOf(value) !== -1 || (isNumber(numberValue) && newValue.indexOf(numberValue) !== -1)) {
+                    option.selected = true;
+                    continue;
+                }
+
+                option.selected = false;
+            }
         }
 
         /**
@@ -337,8 +479,9 @@ module plat.controls {
                             this._setter = this._setRange;
                             break;
                         case 'file':
+                            var multi = (<HTMLInputElement>element).multiple;
                             this._addEventType = this._addChangeEventListener;
-                            this._getter = this._getFile;
+                            this._getter = multi ? this._getFiles : this._getFile;
                             break;
                         default:
                             this._addEventType = this._addTextEventListener;
@@ -348,12 +491,19 @@ module plat.controls {
                     }
                     break;
                 case 'select':
-                    this._addEventType = this._addChangeEventListener;
-                    this._getter = this._getValue;
-                    this._setter = this._setSelectedIndex;
-                    var options = (<HTMLSelectElement>element).options,
+                    var multiple = (<HTMLSelectElement>element).multiple,
+                        options = (<HTMLSelectElement>element).options,
                         length = options.length,
                         option: HTMLSelectElement;
+
+                    this._addEventType = this._addChangeEventListener;
+                    if (multiple) {
+                        this._getter = this._getSelectedValues;
+                        this._setter = this._setSelectedIndices;
+                    } else {
+                        this._getter = this._getValue;
+                        this._setter = this._setSelectedIndex;
+                    }
 
                     for (var i = 0; i < length; ++i) {
                         option = options[i];
@@ -369,14 +519,28 @@ module plat.controls {
          * Observes the expression to bind to.
          */
         _watchExpression(): void {
+            var context = this.evaluateExpression(this._contextExpression);
+            if (isNull(context)) {
+                context = this.$ContextManagerStatic.createContext(this.parent,
+                    this._contextExpression.identifiers[0]);
+            }
+
             if (!isFunction(this._setter)) {
                 return;
+            } else if (this._setter === this._setSelectedIndices) {
+                var property = this._property;
+                if (isNull(context[property])) {
+                    context[property] = [];
+                }
+                this.observeArray(context, property, (arrayInfo: observable.IArrayMethodInfo<string>) => {
+                    this._setter(arrayInfo.newArray);
+                });
             }
 
             var expression = this._expression;
 
             this.observeExpression(expression, this._setter);
-            this._setter(this.parent.evaluateExpression(expression));
+            this._setter(this.evaluateExpression(expression));
         }
 
         /**
@@ -388,20 +552,21 @@ module plat.controls {
                 return;
             }
 
-            var context = this.parent.evaluateExpression(this._contextExpression),
+            var context = this.evaluateExpression(this._contextExpression),
                 property = this._property;
 
             var newValue = this._getter();
 
-            if (isNull(context)) {
-                context = this.$ContextManagerStatic.createContext(this.parent,
-                        this._contextExpression.identifiers[0]);
-            } else if (context[property] === newValue) {
+            if (context[property] === newValue) {
                 return;
             }
 
+            // set flag to let setter functions know we changed the property
+            this.__isSelf = true;
             context[property] = newValue;
+            this.__isSelf = false;
         }
+
         private __setValue(newValue: any): void {
             var element = <HTMLInputElement>this.element;
             if (element.value === newValue) {
@@ -414,7 +579,15 @@ module plat.controls {
 
     register.control('plat-bind', Bind);
 
+    /**
+     * A file interface for browsers that do not support the 
+     * File API.
+     */
     export interface IFile extends File {
-        value: string;
+        /**
+         * An absolute path to the file. The property is not added supported to 
+         * File types.
+         */
+        path?: string;
     }
 }

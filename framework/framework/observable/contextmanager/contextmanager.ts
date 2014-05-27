@@ -250,7 +250,7 @@ module plat.observable {
                 temp = context[property];
 
                 if (isNull(temp)) {
-                    if (!isNaN(Number(split[0]))) {
+                    if (isNumber(Number(split[0]))) {
                         temp = context[property] = [];
                     } else {
                         temp = context[property] = {};

@@ -356,6 +356,113 @@ module plat {
         }
 
         /**
+         * Allows a control to observe any property on its context and receive updates when
+         * the property is changed.
+         * 
+         * @param context The immediate parent object containing the property.
+         * @param property The property identifier to watch for changes.
+         * @param listener The method called when the property is changed. This method will have its 'this'
+         * context set to the control instance.
+         */
+        observe<T>(context: any, property: string, listener: (value: T, oldValue: any) => void): IRemoveListener;
+        /**
+         * Allows a control to observe any property on its context and receive updates when
+         * the property is changed.
+         * 
+         * @param context The immediate parent array containing the property.
+         * @param property The index to watch for changes.
+         * @param listener The method called when the property is changed. This method will have its 'this'
+         * context set to the control instance.
+         */
+        observe<T>(context: any, property: number, listener: (value: T, oldValue: T) => void): IRemoveListener;
+        observe(context: any, property: any, listener: (value: any, oldValue: any) => void): IRemoveListener {
+            if (isNull(context) || !context.hasOwnProperty(property)) {
+                return;
+            }
+
+            var control = isFunction((<any>this).getAbsoluteIdentifier) ? this : <IControl>this.parent,
+                absoluteIdentifier = (<ui.ITemplateControl>control).getAbsoluteIdentifier(context);
+
+            if (isNull(absoluteIdentifier)) {
+                return;
+            }
+
+            var contextManager = Control.$ContextManagerStatic.getManager(Control.getRootControl(this));
+
+            return contextManager.observe(absoluteIdentifier + '.' + property, {
+                listener: listener.bind(this),
+                uid: this.uid
+            });
+        }
+
+        /**
+         * Allows a control to observe an array and receive updates when certain array-changing methods are called.
+         * The methods watched are push, pop, shift, sort, splice, reverse, and unshift. This method does not watch
+         * every item in the array.
+         * 
+         * @param context The immediate parent object containing the array as a property.
+         * @param property The array property identifier to watch for changes.
+         * @param listener The method called when an array-changing method is called. This method will have its 'this'
+         * context set to the control instance.
+         */
+        observeArray<T>(context: any, property: string, listener: (ev: observable.IArrayMethodInfo<T>) => void): IRemoveListener;
+        /**
+         * Allows a control to observe an array and receive updates when certain array-changing methods are called.
+         * The methods watched are push, pop, shift, sort, splice, reverse, and unshift. This method does not watch
+         * every item in the array.
+         * 
+         * @param context The immediate parent array containing the array as a property.
+         * @param property The index on the parent array, specifying the array to watch for changes.
+         * @param listener The method called when an array-changing method is called. This method will have its 'this'
+         * context set to the control instance.
+         */
+        observeArray<T>(context: Array<T>, property: number, listener: (ev: observable.IArrayMethodInfo<T>) => void): IRemoveListener;
+        observeArray(context: any, property: any, listener: (ev: observable.IArrayMethodInfo<any>) => void): IRemoveListener {
+            if (isNull(context) || !context.hasOwnProperty(property)) {
+                return;
+            }
+
+            var array = context[property],
+                callback = listener.bind(this);
+
+            if (!isArray(array)) {
+                return;
+            }
+
+            var control = isFunction((<any>this).getAbsoluteIdentifier) ? this : <IControl>this.parent,
+                absoluteIdentifier = (<ui.ITemplateControl>control).getAbsoluteIdentifier(context),
+                ContextManager = Control.$ContextManagerStatic;
+
+            if (isNull(absoluteIdentifier)) {
+                if (property === 'context') {
+                    absoluteIdentifier = (<ui.ITemplateControl>control).absoluteContextPath;
+                } else {
+                    return;
+                }
+            } else {
+                absoluteIdentifier += '.' + property;
+            }
+
+            var contextManager = ContextManager.getManager(Control.getRootControl(this)),
+                uid = this.uid,
+                removeCallback = contextManager.observe(absoluteIdentifier, {
+                    listener: (newValue: Array<any>, oldValue: Array<any>) => {
+                        removeListener();
+                        removeListener = contextManager.observeArray(this.uid, callback, absoluteIdentifier, newValue, oldValue);
+                    },
+                    uid: uid
+                }),
+                removeListener = contextManager.observeArray(this.uid, callback, absoluteIdentifier, array, null);
+
+            // need to call callback if 
+            return () => {
+                ContextManager.removeArrayListeners(absoluteIdentifier, uid);
+                removeListener();
+                removeCallback();
+            };
+        }
+
+        /**
          * Parses an expression string and observes any associated identifiers. When an identifier
          * value changes, the listener will be called.
          * 
@@ -439,13 +546,14 @@ module plat {
             length = identifiers.length;
 
             var oldValue = evaluateExpression(parsedExpression, control),
-                listeners: Array<IRemoveListener> = [];
+                listeners: Array<IRemoveListener> = [],
+                uid = this.uid;
 
             for (i = 0; i < length; ++i) {
                 identifier = identifiers[i];
 
                 listeners.push(managers[identifier].observe(identifier, {
-                    uid: this.uid,
+                    uid: uid,
                     listener: () => {
                         var value = evaluateExpression(parsedExpression, control);
                         listener.call(this, value, oldValue);
@@ -787,6 +895,50 @@ module plat {
          * of event propagation.
          */
         addEventListener(element: Window, type: string, listener: ui.IGestureListener, useCapture?: boolean): IRemoveListener;
+
+        /**
+         * Allows an IControl to observe any property on its context and receive updates when
+         * the property is changed.
+         * 
+         * @param context The immediate parent object containing the property.
+         * @param property The property identifier to watch for changes.
+         * @param listener The method called when the property is changed. This method will have its 'this'
+         * context set to the control instance.
+         */
+        observe? <T>(context: any, property: string, listener: (value: T, oldValue: T) => void): IRemoveListener;
+        /**
+         * Allows an IControl to observe any property on its context and receive updates when
+         * the property is changed.
+         * 
+         * @param context The immediate parent array containing the property.
+         * @param property The index to watch for changes.
+         * @param listener The method called when the property is changed. This method will have its 'this'
+         * context set to the control instance.
+         */
+        observe? <T>(context: any, property: number, listener: (value: T, oldValue: T) => void): IRemoveListener;
+
+        /**
+         * Allows an IControl to observe an array and receive updates when certain array-changing methods are called.
+         * The methods watched are push, pop, shift, sort, splice, reverse, and unshift. This method does not watch
+         * every item in the array.
+         * 
+         * @param context The immediate parent object containing the array as a property.
+         * @param property The array property identifier to watch for changes.
+         * @param listener The method called when an array-changing method is called. This method will have its 'this'
+         * context set to the control instance.
+         */
+        observeArray? <T>(context: any, property: string, listener: (ev: observable.IArrayMethodInfo<T>) => void): IRemoveListener;
+        /**
+         * Allows an IControl to observe an array and receive updates when certain array-changing methods are called.
+         * The methods watched are push, pop, shift, sort, splice, reverse, and unshift. This method does not watch
+         * every item in the array.
+         * 
+         * @param context The immediate parent array containing the array as a property.
+         * @param property The index on the parent array, specifying the array to watch for changes.
+         * @param listener The method called when an array-changing method is called. This method will have its 'this'
+         * context set to the control instance.
+         */
+        observeArray? <T>(context: Array<T>, property: number, listener: (ev: observable.IArrayMethodInfo<T>) => void): IRemoveListener;
 
         /**
          * Parses an expression string and observes any associated identifiers. When an identifier
