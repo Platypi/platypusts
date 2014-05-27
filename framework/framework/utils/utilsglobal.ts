@@ -18,7 +18,7 @@ function extend(destination: any, ...sources: any[]): any {
         property: any;
 
     forEach(sources, (source, k) => {
-        if (!(isObject(source) || isArray(source))) {
+        if (!isObject(source)) {
             return;
         }
 

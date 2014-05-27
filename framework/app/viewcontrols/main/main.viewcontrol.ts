@@ -16,6 +16,7 @@ module app {
         hello = true;
 
         loaded() {
+            this.context;
             //this.context.user = {
             //    name: 'will',
             //    role: 'contributor'

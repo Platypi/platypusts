@@ -12,5 +12,8 @@
   },
   "scripts": {
     "test": "karma start karma.config.js"
+  },
+  "devDependencies": {
+    "karma-html-reporter": "^0.2.3"
   }
 }

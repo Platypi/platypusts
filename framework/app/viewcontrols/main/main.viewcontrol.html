@@ -1,22 +1,3 @@
-﻿<div class="href">
-    <div class="page-title">Href Test</div>
-    <div class="left-align">
-        <a plat-href="{{href}}">Google</a>
-    </div>
-
-    <table>
-        <tr plat-control="plat-foreach" plat-context="names">
-            <td>{{@context}}</td>
-        </tr>
-    </table>
-
-    <form plat-submit="submit">
-        <select plat-bind="users[0].role">
-            <option>admin</option>
-            <option>contributor</option>
-            <option>visitor</option>
-        </select>
-        <input type="submit" />
-    </form>
-
-</div>
+﻿<plat-foreach plat-context="names">
+    <div>{{@context}}</div>
+</plat-foreach>

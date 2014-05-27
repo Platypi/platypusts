@@ -5,7 +5,7 @@ module tests.observable.contextManager {
 
     describe('ContextManager Tests', () => {
         var control: plat.ui.ITemplateControl,
-            manager: plat.observable.IContextManager;
+            manager: plat.observable.ContextManager;
 
         beforeEach(() => {
             control = <any>{
@@ -169,7 +169,7 @@ module tests.observable.contextManager {
             var called = 0,
                 called2 = false;
 
-            var remove = manager.observe('context.int', {
+            manager.observe('context.int', {
                 uid: control.uid,
                 listener: (newValue, oldValue) => {
                     if (called === 0) {
@@ -213,6 +213,119 @@ module tests.observable.contextManager {
 
             expect(called).toBe(2);
             expect(called2).toBe(true);
+        });
+
+        it('should test observe with changing a value from object to primitive', () => {
+            var called = 0,
+                called2 = false;
+
+            manager.observe('context.foo', {
+                uid: control.uid,
+                listener: (newValue, oldValue) => {
+                    if (called === 0) {
+                        ++called;
+                        expect(oldValue).toEqual({
+                            bar: {
+                                baz: 'quux'
+                            }
+                        });
+
+                        expect(newValue).toEqual('foo');
+                        return;
+                    }
+
+                    ++called;
+                    expect(oldValue).toEqual('foo');
+
+                    expect(newValue).toEqual('bar');
+                }
+            });
+
+            manager.observe('context.foo.bar', {
+                uid: control.uid,
+                listener: (newValue, oldValue) => {
+                    called2 = true;
+                    expect(oldValue).toEqual({
+                        baz: 'quux'
+                    });
+                    expect(newValue).toBeUndefined();
+                }
+            });
+
+            control.context.foo = 'foo';
+            expect(called).toBe(1);
+            control.context.foo = 'bar';
+
+            expect(called).toBe(2);
+            expect(called2).toBe(true);
+        });
+
+        it('should test observe with changing a value from object to primitive and back to an object', () => {
+            var called = 0,
+                called2 = 0;
+
+            manager.observe('context.foo', {
+                uid: control.uid,
+                listener: (newValue, oldValue) => {
+                    ++called;
+                    if (called === 1) {
+                        expect(oldValue).toEqual({
+                            bar: {
+                                baz: 'quux'
+                            }
+                        });
+
+                        expect(newValue).toEqual('foo');
+                        return;
+                    } else if (called === 2) {
+                        expect(oldValue).toEqual('foo');
+                        expect(newValue).toEqual('bar');
+                        return;
+                    }
+
+                    expect(oldValue).toEqual('bar');
+                    expect(newValue).toEqual({
+                        bar: {
+                            baz: 'quux'
+                        }
+                    });
+                }
+            });
+
+            manager.observe('context.foo.bar', {
+                uid: control.uid,
+                listener: (newValue, oldValue) => {
+                    ++called2;
+                    if (called2 === 1) {
+                        expect(oldValue).toEqual({
+                            baz: 'quux'
+                        });
+                        expect(newValue).toBeUndefined();
+                        return;
+                    }
+
+                    expect(oldValue).toBeUndefined();
+                    expect(newValue).toEqual({
+                        baz: 'quux'
+                    });
+                }
+            });
+
+            control.context.foo = 'foo';
+            expect(called).toBe(1);
+            control.context.foo = 'bar';
+
+            expect(called).toBe(2);
+            expect(called2).toBe(1);
+
+            control.context.foo = {
+                bar: {
+                    baz: 'quux'
+                }
+            };
+
+            expect(called).toBe(3);
+            expect(called2).toBe(2);
         });
     });
 }

@@ -423,7 +423,7 @@ module tests.utils {
 
     describe('Utils Tests', () => {
         toBeTests.forEach((test) => {
-            it(test.name, () => {
+            it('should test ' + test.name, () => {
                 var result = utils[test.fn].apply(utils, test.args);
                 expect(result).toBe(test.expected);
             });

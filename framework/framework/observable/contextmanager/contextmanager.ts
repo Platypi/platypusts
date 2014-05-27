@@ -326,7 +326,7 @@ module plat.observable {
                 }
             }
 
-            if (!(isObject(context) || isArray(context))) {
+            if (!isObject(context)) {
                 if (hasObservableListener) {
                     return this._addObservableListener(absoluteIdentifier, observableListener);
                 }
@@ -658,7 +658,7 @@ module plat.observable {
         _define(identifier: string, immediateContext: any, key: string): void {
             var value = immediateContext[key];
 
-            if (isObject(value) || isArray(value)) {
+            if (isObject(value)) {
                 this.__defineObject(identifier, immediateContext, key);
             } else {
                 this.__definePrimitive(identifier, immediateContext, key);
@@ -806,6 +806,10 @@ module plat.observable {
                     if (childPropertiesLength > 0) {
                         this._notifyChildProperties(identifier, value, oldValue);
                     }
+
+                    if (!isObject(value)) {
+                        this.__definePrimitive(identifier, immediateContext, key);
+                    }
                 }
             });
         }
@@ -835,7 +839,7 @@ module plat.observable {
                         return;
                     }
 
-                    if (isObject(value) || isArray(value)) {
+                    if (isObject(value)) {
                         var childPropertiesLength = this.__identifierHash[identifier].length;
                         this._execute(identifier, newValue, oldValue);
                         this.__defineObject(identifier, immediateContext, key);
@@ -847,6 +851,7 @@ module plat.observable {
                     } else {
                         this._execute(identifier, newValue, oldValue);
                         this.__definePrimitive(identifier, immediateContext, key);
+                        isDefined = true;
                     }
                 }
             });
