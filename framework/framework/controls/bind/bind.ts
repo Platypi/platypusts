@@ -379,14 +379,17 @@ module plat.controls {
             }
 
             var element = <HTMLSelectElement>this.element;
-            if (isEmpty(newValue)) {
+            if (isNull(newValue)) {
                 if (isEmpty(element.value)) {
                     element.selectedIndex = -1;
-                } else {
-                    this._propertyChanged();
                 }
+
+                this._propertyChanged();
                 return;
             } else if (element.value === newValue) {
+                return;
+            } else if (newValue === '') {
+                element.selectedIndex = -1;
                 return;
             }
 
