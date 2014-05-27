@@ -422,7 +422,7 @@ module plat.async {
             };
         }
 
-        private __setHeaders() {
+        private __setHeaders(): void {
             var headers = this.__options.headers,
                 keys = Object.keys(headers || {}),
                 xhr = this.xhr,
@@ -543,6 +543,7 @@ module plat.async {
         }
         private __createInput(key: string, val: any): HTMLInputElement {
             var $document = this.$document,
+                $exception: IExceptionStatic,
                 input = <HTMLInputElement>$document.createElement('input');
 
             input.type = 'hidden';
@@ -552,12 +553,12 @@ module plat.async {
                 input.value = '';
             } else if (isObject(val)) {
                 // check if val is an pseudo File
-                if (isFunction(val.slice) && !(isUndefined(val.name) || isUndefined(val.value))) {
+                if (isFunction(val.slice) && !(isUndefined(val.name) || isUndefined(val.path))) {
                     var fileList = $document.querySelectorAll('input[type="file"][name="' + key + '"]'),
                         length = fileList.length;
                     // if no inputs found, stringify the data
                     if (length === 0) {
-                        var $exception: IExceptionStatic = acquire('$ExceptionStatic');
+                        $exception = acquire('$ExceptionStatic');
                         $exception.warn('Could not find input[type="file"] with [name="' + key +
                             '"]. Stringifying data instead.', $exception.AJAX);
                         input.value = JSON.stringify(val);
@@ -569,10 +570,11 @@ module plat.async {
                     } else {
                         // rare case but may have multiple forms with file inputs 
                         // that have the same name
-                        var fileInput: HTMLInputElement;
+                        var fileInput: HTMLInputElement,
+                            path = val.path;
                         while (length-- > 0) {
                             fileInput = <HTMLInputElement>fileList[length];
-                            if (fileInput.value === val.value) {
+                            if (fileInput.value === path) {
                                 input = fileInput;
                                 // swap nodes
                                 var inputClone = input.cloneNode(true);
@@ -583,15 +585,15 @@ module plat.async {
 
                         // could not find the right file
                         if (length === -1) {
-                            var $exception: IExceptionStatic = acquire('$ExceptionStatic');
+                            $exception = acquire('$ExceptionStatic');
                             $exception.warn('Could not find input[type="file"] with [name="' + key + '"] and [value="' +
-                                val.value + '"]. Stringifying data instead.', $exception.AJAX);
+                                val.path + '"]. Stringifying data instead.', $exception.AJAX);
                             input.value = JSON.stringify(val);
                         }
                     }
                 } else {
                     // may throw a fatal error but this is an invalid case
-                    var $exception: IExceptionStatic = acquire('$ExceptionStatic');
+                    $exception = acquire('$ExceptionStatic');
                     $exception.warn('Invalid form entry with key "' + key + '" and value "' + val, $exception.AJAX);
                     input.value = JSON.stringify(val);
                 }

@@ -966,7 +966,7 @@
                 y: ev.clientY - y
             };
         }
-        private __clearHold() {
+        private __clearHold(): void {
             if (!isNull(this.__holdTimeout)) {
                 clearTimeout(this.__holdTimeout);
                 this.__holdTimeout = null;
@@ -1070,7 +1070,7 @@
 
             return style;
         }
-        private __removeSelections(element: Node) {
+        private __removeSelections(element: Node): void {
             if (isNull(element) || isNull(element.nodeName)) {
                 return;
             }
@@ -1082,7 +1082,7 @@
                 element.addEventListener('dragstart', this.__preventDefault, false);
             }
         }
-        private __returnSelections(element: Node) {
+        private __returnSelections(element: Node): void {
             if (isNull(element) || isNull(element.nodeName)) {
                 return;
             }
@@ -1094,7 +1094,7 @@
                 element.removeEventListener('dragstart', this.__preventDefault, false);
             }
         }
-        private __preventDefault(ev: Event) {
+        private __preventDefault(ev: Event): boolean {
             var nodeName = (<Node>ev.target).nodeName;
 
             if (nodeName === 'input' || nodeName === 'textarea') {
