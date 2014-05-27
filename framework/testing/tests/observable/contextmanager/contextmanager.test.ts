@@ -425,5 +425,105 @@ module tests.observable.contextManager {
             expect(called).toBe(3);
             expect(called2).toBe(2);
         });
+
+        it('should test observe and calling the IRemoveListener', () => {
+            var called = false;
+
+            manager.observe('context.foo.bar.baz', {
+                uid: control.uid,
+                listener: () => {
+                    called = true;
+                }
+            })();
+
+            control.context.foo.bar.baz = 'foo';
+
+            expect(called).toBe(false);
+        });
+
+        it('should test observeArray', () => {
+            var called = 0,
+                oldArray,
+                arr: Array<any> = control.context.arr;
+
+            arr.push({
+                value: 'value1'
+            }, {
+                value: 'value2'
+            }, {
+                value: 'value3'
+            }, {
+                value: 'value4'
+            });
+
+            manager.observeArray(control.uid, (ev) => {
+                ++called;
+                switch (ev.method) {
+                    case 'push':
+                        expect(ev.arguments).toEqual([arr[arr.length - 2], arr[arr.length - 1]]);
+                        expect(ev.returnValue).toEqual(arr.length);
+                        break;
+                    case 'pop':
+                        expect(ev.arguments).toEqual([]);
+                        expect(ev.returnValue).toEqual(oldArray[oldArray.length - 1]);
+                        break;
+                    case 'shift':
+                        expect(ev.arguments).toEqual([]);
+                        expect(ev.returnValue).toEqual(oldArray[0]);
+                        break;
+                    case 'splice':
+                        expect(ev.arguments).toEqual([1, 1, [{ value: 'splice' }]]);
+                        expect(ev.returnValue).toEqual([oldArray[1]]);
+                        break;
+                    case 'unshift':
+                        expect(ev.arguments).toEqual([arr[0], arr[1]]);
+                        expect(ev.returnValue).toEqual(arr.length);
+                        break;
+                    case 'sort':
+                        expect(ev.arguments).toEqual([]);
+                        expect(ev.returnValue).toEqual(arr);
+                        break;
+                    case 'reverse':
+                        expect(ev.arguments).toEqual([]);
+                        expect(ev.returnValue).toEqual(arr);
+                        break;
+                }
+
+                //expect(ev.newArray).not.toEqual(oldArray);
+                expect(ev.newArray).toBe(arr);
+                expect(ev.oldArray).toEqual(oldArray);
+            }, 'context.arr', control.context.arr, null);
+
+            oldArray = arr.slice(0);
+            arr.push({
+                value: 'baz'
+            }, {
+                value: 'foo'
+            });
+
+            oldArray = arr.slice(0);
+            arr.pop();
+
+            oldArray = arr.slice(0);
+            arr.shift();            
+
+            oldArray = arr.slice(0);
+            arr.splice(1, 1, [{ value: 'splice' }]);
+
+            oldArray = arr.slice(0);
+            arr.unshift({
+                value: 'baz'
+            }, {
+                value: 'foo'
+            });
+
+            oldArray = arr.slice(0);
+            arr.sort();
+
+            oldArray = arr.slice(0);
+            arr.reverse();
+
+            expect(called).toBe(7);
+        });
     });
 }

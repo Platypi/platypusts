@@ -33,7 +33,7 @@ function cfg(config: any) {
         // - PhantomJS
         // - IE (only Windows)
         // CLI --browsers Chrome,Firefox,Safari
-        browsers: ['IE'],
+        browsers: ['IE', 'Chrome', 'Firefox'],
 
         // If browser does not capture in given timeout [ms], kill it
         // CLI --capture-timeout 5000
