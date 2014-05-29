@@ -375,13 +375,13 @@ module plat.observable {
             absoluteIdentifier: string, array: Array<any>, oldArray: Array<any>): IRemoveListener {
             var length = arrayMethods.length,
                 method: string,
-                i = 0,
+                i: number,
                 ContextManager = this.$ContextManagerStatic,
                 $compat = this.$Compat,
                 proto = $compat.proto,
                 setProto = $compat.setProto;
             
-            if (!isNull(oldArray)) {
+            if (isArray(oldArray)) {
                 if (setProto) {
                     (<any>Object).setPrototypeOf(oldArray, Object.create(Array.prototype));
                 } else if (proto) {
@@ -389,7 +389,7 @@ module plat.observable {
                 } else {
                     length = arrayMethods.length;
 
-                    for (; i < length; ++i) {
+                    for (i = 0; i < length; ++i) {
                         method = arrayMethods[i];
                         (<any>oldArray)[method] = (<any>Array.prototype)[method];
                     }
@@ -422,7 +422,7 @@ module plat.observable {
             if (proto) {
                 var obj = Object.create(Array.prototype);
 
-                for (; i < length; ++i) {
+                for (i = 0; i < length; ++i) {
                     method = arrayMethods[i];
                     obj[method] = this._overwriteArrayFunction(absoluteIdentifier, method);
                 }
@@ -436,7 +436,7 @@ module plat.observable {
                 return removeListener;
             }
 
-            for (; i < length; ++i) {
+            for (i = 0; i < length; ++i) {
                 method = arrayMethods[i];
                 ContextManager.defineProperty(array, method,
                     this._overwriteArrayFunction(absoluteIdentifier, method), false, true);
@@ -798,7 +798,9 @@ module plat.observable {
                         return;
                     }
 
-                    var childPropertiesLength = this.__identifierHash[identifier].length;
+                    var hash = this.__identifierHash[identifier],
+                        childPropertiesLength = isArray(hash) ? hash.length : 0;
+
                     this._execute(identifier, value, oldValue);
                     if (childPropertiesLength > 0) {
                         this._notifyChildProperties(identifier, value, oldValue);
@@ -906,7 +908,7 @@ module plat.observable {
 
     register.injectable('$ContextManagerStatic', IContextManagerStatic, null, register.STATIC);
 
-    /**
+        /**
      * The external interface for the '$ContextManagerStatic' injectable.
      */
     export interface IContextManagerStatic {

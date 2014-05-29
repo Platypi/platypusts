@@ -6465,7 +6465,7 @@ module plat {
                 };
             }
 
-            private __setHeaders() {
+            private __setHeaders(): void {
                 var headers = this.__options.headers,
                     keys = Object.keys(headers || {}),
                     xhr = this.xhr,
@@ -6586,6 +6586,7 @@ module plat {
             }
             private __createInput(key: string, val: any): HTMLInputElement {
                 var $document = this.$document,
+                    $exception: IExceptionStatic,
                     input = <HTMLInputElement>$document.createElement('input');
 
                 input.type = 'hidden';
@@ -6595,12 +6596,12 @@ module plat {
                     input.value = '';
                 } else if (isObject(val)) {
                     // check if val is an pseudo File
-                    if (isFunction(val.slice) && !(isUndefined(val.name) || isUndefined(val.value))) {
+                    if (isFunction(val.slice) && !(isUndefined(val.name) || isUndefined(val.path))) {
                         var fileList = $document.querySelectorAll('input[type="file"][name="' + key + '"]'),
                             length = fileList.length;
                         // if no inputs found, stringify the data
                         if (length === 0) {
-                            var $exception: IExceptionStatic = acquire('$ExceptionStatic');
+                            $exception = acquire('$ExceptionStatic');
                             $exception.warn('Could not find input[type="file"] with [name="' + key +
                                 '"]. Stringifying data instead.', $exception.AJAX);
                             input.value = JSON.stringify(val);
@@ -6612,10 +6613,11 @@ module plat {
                         } else {
                             // rare case but may have multiple forms with file inputs 
                             // that have the same name
-                            var fileInput: HTMLInputElement;
+                            var fileInput: HTMLInputElement,
+                                path = val.path;
                             while (length-- > 0) {
                                 fileInput = <HTMLInputElement>fileList[length];
-                                if (fileInput.value === val.value) {
+                                if (fileInput.value === path) {
                                     input = fileInput;
                                     // swap nodes
                                     var inputClone = input.cloneNode(true);
@@ -6626,15 +6628,15 @@ module plat {
 
                             // could not find the right file
                             if (length === -1) {
-                                var $exception: IExceptionStatic = acquire('$ExceptionStatic');
+                                $exception = acquire('$ExceptionStatic');
                                 $exception.warn('Could not find input[type="file"] with [name="' + key + '"] and [value="' +
-                                    val.value + '"]. Stringifying data instead.', $exception.AJAX);
+                                    val.path + '"]. Stringifying data instead.', $exception.AJAX);
                                 input.value = JSON.stringify(val);
                             }
                         }
                     } else {
                         // may throw a fatal error but this is an invalid case
-                        var $exception: IExceptionStatic = acquire('$ExceptionStatic');
+                        $exception = acquire('$ExceptionStatic');
                         $exception.warn('Invalid form entry with key "' + key + '" and value "' + val, $exception.AJAX);
                         input.value = JSON.stringify(val);
                     }
@@ -8398,7 +8400,7 @@ module plat {
                     temp = context[property];
 
                     if (isNull(temp)) {
-                        if (!isNaN(Number(split[0]))) {
+                        if (isNumber(Number(split[0]))) {
                             temp = context[property] = [];
                         } else {
                             temp = context[property] = {};
@@ -8550,13 +8552,13 @@ module plat {
                 absoluteIdentifier: string, array: Array<any>, oldArray: Array<any>): IRemoveListener {
                 var length = arrayMethods.length,
                     method: string,
-                    i = 0,
+                    i: number,
                     ContextManager = this.$ContextManagerStatic,
                     Compat = this.$compat,
                     proto = Compat.proto,
                     setProto = Compat.setProto;
-            
-                if (!isNull(oldArray)) {
+
+                if (isArray(oldArray)) {
                     if (setProto) {
                         (<any>Object).setPrototypeOf(oldArray, Object.create(Array.prototype));
                     } else if (proto) {
@@ -8564,7 +8566,7 @@ module plat {
                     } else {
                         length = arrayMethods.length;
 
-                        for (; i < length; ++i) {
+                        for (i = 0; i < length; ++i) {
                             method = arrayMethods[i];
                             (<any>oldArray)[method] = (<any>Array.prototype)[method];
                         }
@@ -8597,7 +8599,7 @@ module plat {
                 if (proto) {
                     var obj = Object.create(Array.prototype);
 
-                    for (; i < length; ++i) {
+                    for (i = 0; i < length; ++i) {
                         method = arrayMethods[i];
                         obj[method] = this._overwriteArrayFunction(absoluteIdentifier, method);
                     }
@@ -8611,7 +8613,7 @@ module plat {
                     return removeListener;
                 }
 
-                for (; i < length; ++i) {
+                for (i = 0; i < length; ++i) {
                     method = arrayMethods[i];
                     ContextManager.defineProperty(array, method,
                         this._overwriteArrayFunction(absoluteIdentifier, method), false, true);
@@ -8975,8 +8977,9 @@ module plat {
                         if (this.__isArrayFunction) {
                             return;
                         }
-
-                        var childPropertiesLength = this.__identifierHash[identifier].length;
+                    
+                        var hash = this.__identifierHash[identifier],
+                            childPropertiesLength = isArray(hash) ?  hash.length : 0;
                         this._execute(identifier, value, oldValue);
                         if (childPropertiesLength > 0) {
                             this._notifyChildProperties(identifier, value, oldValue);
@@ -10883,6 +10886,113 @@ module plat {
         }
 
         /**
+         * Allows a control to observe any property on its context and receive updates when
+         * the property is changed.
+         * 
+         * @param context The immediate parent object containing the property.
+         * @param property The property identifier to watch for changes.
+         * @param listener The method called when the property is changed. This method will have its 'this'
+         * context set to the control instance.
+         */
+        observe<T>(context: any, property: string, listener: (value: T, oldValue: any) => void): IRemoveListener;
+        /**
+         * Allows a control to observe any property on its context and receive updates when
+         * the property is changed.
+         * 
+         * @param context The immediate parent array containing the property.
+         * @param property The index to watch for changes.
+         * @param listener The method called when the property is changed. This method will have its 'this'
+         * context set to the control instance.
+         */
+        observe<T>(context: any, property: number, listener: (value: T, oldValue: T) => void): IRemoveListener;
+        observe(context: any, property: any, listener: (value: any, oldValue: any) => void): IRemoveListener {
+            if (isNull(context) || !context.hasOwnProperty(property)) {
+                return;
+            }
+
+            var control = isFunction((<any>this).getAbsoluteIdentifier) ? this : <IControl>this.parent,
+                absoluteIdentifier = (<ui.ITemplateControl>control).getAbsoluteIdentifier(context);
+
+            if (isNull(absoluteIdentifier)) {
+                return;
+            }
+
+            var contextManager = Control.$ContextManagerStatic.getManager(Control.getRootControl(this));
+
+            return contextManager.observe(absoluteIdentifier + '.' + property, {
+                listener: listener.bind(this),
+                uid: this.uid
+            });
+        }
+
+        /**
+         * Allows a control to observe an array and receive updates when certain array-changing methods are called.
+         * The methods watched are push, pop, shift, sort, splice, reverse, and unshift. This method does not watch
+         * every item in the array.
+         * 
+         * @param context The immediate parent object containing the array as a property.
+         * @param property The array property identifier to watch for changes.
+         * @param listener The method called when an array-changing method is called. This method will have its 'this'
+         * context set to the control instance.
+         */
+        observeArray<T>(context: any, property: string, listener: (ev: observable.IArrayMethodInfo<T>) => void): IRemoveListener;
+        /**
+         * Allows a control to observe an array and receive updates when certain array-changing methods are called.
+         * The methods watched are push, pop, shift, sort, splice, reverse, and unshift. This method does not watch
+         * every item in the array.
+         * 
+         * @param context The immediate parent array containing the array as a property.
+         * @param property The index on the parent array, specifying the array to watch for changes.
+         * @param listener The method called when an array-changing method is called. This method will have its 'this'
+         * context set to the control instance.
+         */
+        observeArray<T>(context: Array<T>, property: number, listener: (ev: observable.IArrayMethodInfo<T>) => void): IRemoveListener;
+        observeArray(context: any, property: any, listener: (ev: observable.IArrayMethodInfo<any>) => void): IRemoveListener {
+            if (isNull(context) || !context.hasOwnProperty(property)) {
+                return;
+            }
+
+            var array = context[property],
+                callback = listener.bind(this);
+
+            if (!isArray(array)) {
+                return;
+            }
+
+            var control = isFunction((<any>this).getAbsoluteIdentifier) ? this : <IControl>this.parent,
+                absoluteIdentifier = (<ui.ITemplateControl>control).getAbsoluteIdentifier(context),
+                ContextManager = Control.$ContextManagerStatic;
+
+            if (isNull(absoluteIdentifier)) {
+                if (property === 'context') {
+                    absoluteIdentifier = (<ui.ITemplateControl>control).absoluteContextPath;
+                } else {
+                    return;
+                }
+            } else {
+                absoluteIdentifier += '.' + property;
+            }
+
+            var contextManager = ContextManager.getManager(Control.getRootControl(this)),
+                uid = this.uid,
+                removeCallback = contextManager.observe(absoluteIdentifier, {
+                    listener: (newValue: Array<any>, oldValue: Array<any>) => {
+                        removeListener();
+                        removeListener = contextManager.observeArray(this.uid, callback, absoluteIdentifier, newValue, oldValue);
+                    },
+                    uid: uid
+                }),
+                removeListener = contextManager.observeArray(this.uid, callback, absoluteIdentifier, array, null);
+
+            // need to call callback if 
+            return () => {
+                ContextManager.removeArrayListeners(absoluteIdentifier, uid);
+                removeListener();
+                removeCallback();
+            };
+        }
+
+        /**
          * Parses an expression string and observes any associated identifiers. When an identifier
          * value changes, the listener will be called.
          * 
@@ -10966,13 +11076,14 @@ module plat {
             length = identifiers.length;
 
             var oldValue = evaluateExpression(parsedExpression, control),
-                listeners: Array<IRemoveListener> = [];
+                listeners: Array<IRemoveListener> = [],
+                uid = this.uid;
 
             for (i = 0; i < length; ++i) {
                 identifier = identifiers[i];
 
                 listeners.push(managers[identifier].observe(identifier, {
-                    uid: this.uid,
+                    uid: uid,
                     listener: () => {
                         var value = evaluateExpression(parsedExpression, control);
                         listener.call(this, value, oldValue);
@@ -11314,6 +11425,50 @@ module plat {
          * of event propagation.
          */
         addEventListener(element: Window, type: string, listener: ui.IGestureListener, useCapture?: boolean): IRemoveListener;
+
+        /**
+         * Allows an IControl to observe any property on its context and receive updates when
+         * the property is changed.
+         * 
+         * @param context The immediate parent object containing the property.
+         * @param property The property identifier to watch for changes.
+         * @param listener The method called when the property is changed. This method will have its 'this'
+         * context set to the control instance.
+         */
+        observe? <T>(context: any, property: string, listener: (value: T, oldValue: T) => void): IRemoveListener;
+        /**
+         * Allows an IControl to observe any property on its context and receive updates when
+         * the property is changed.
+         * 
+         * @param context The immediate parent array containing the property.
+         * @param property The index to watch for changes.
+         * @param listener The method called when the property is changed. This method will have its 'this'
+         * context set to the control instance.
+         */
+        observe? <T>(context: any, property: number, listener: (value: T, oldValue: T) => void): IRemoveListener;
+
+        /**
+         * Allows an IControl to observe an array and receive updates when certain array-changing methods are called.
+         * The methods watched are push, pop, shift, sort, splice, reverse, and unshift. This method does not watch
+         * every item in the array.
+         * 
+         * @param context The immediate parent object containing the array as a property.
+         * @param property The array property identifier to watch for changes.
+         * @param listener The method called when an array-changing method is called. This method will have its 'this'
+         * context set to the control instance.
+         */
+        observeArray? <T>(context: any, property: string, listener: (ev: observable.IArrayMethodInfo<T>) => void): IRemoveListener;
+        /**
+         * Allows an IControl to observe an array and receive updates when certain array-changing methods are called.
+         * The methods watched are push, pop, shift, sort, splice, reverse, and unshift. This method does not watch
+         * every item in the array.
+         * 
+         * @param context The immediate parent array containing the array as a property.
+         * @param property The index on the parent array, specifying the array to watch for changes.
+         * @param listener The method called when an array-changing method is called. This method will have its 'this'
+         * context set to the control instance.
+         */
+        observeArray? <T>(context: Array<T>, property: number, listener: (ev: observable.IArrayMethodInfo<T>) => void): IRemoveListener;
 
         /**
          * Parses an expression string and observes any associated identifiers. When an identifier
@@ -12615,6 +12770,7 @@ module plat {
 
             private __fileSupported = (<ICompat>acquire('$compat')).fileSupported;
             private __fileNameRegex = (<expressions.IRegex>acquire('$regex')).fileNameRegex;
+            private __isSelf = false;
 
             /**
              * Determines the type of HTMLElement being bound to 
@@ -12791,7 +12947,7 @@ module plat {
             }
 
             /**
-             * Getter for input[type=file]. Creates a partial IFile 
+             * Getter for input[type="file"]. Creates a partial IFile 
              * element if file is not supported.
              */
             _getFile(): IFile {
@@ -12799,15 +12955,12 @@ module plat {
                     value = element.value;
 
                 if (this.__fileSupported && element.files.length > 0) {
-                    var file = <IFile>element.files[0];
-                    file.value = value;
-
-                    return file;
+                    return <IFile>element.files[0];
                 }
 
                 return {
                     name: value.replace(this.__fileNameRegex, ''),
-                    value: value,
+                    path: value,
                     lastModifiedDate: undefined,
                     type: undefined,
                     size: undefined,
@@ -12818,14 +12971,77 @@ module plat {
             }
 
             /**
+             * Getter for input[type="file"]-multiple
+             */
+            _getFiles(): Array<IFile> {
+                var element = <HTMLInputElement>this.element;
+
+                if (this.__fileSupported) {
+                    return Array.prototype.slice.call(element.files);
+                }
+
+                // this case should never be hit since ie9 does not support multi-file uploads, 
+                // but kept in here for now for consistency's sake
+                var filelist = element.value.split(/,|;/g),
+                    length = filelist.length,
+                    files: Array<IFile> = [],
+                    fileValue: string;
+
+                for (var i = 0; i < length; ++i) {
+                    fileValue = filelist[i];
+                    files.push({
+                        name: fileValue.replace(this.__fileNameRegex, ''),
+                        path: fileValue,
+                        lastModifiedDate: undefined,
+                        type: undefined,
+                        size: undefined,
+                        msDetachStream: noop,
+                        msClose: noop,
+                        slice: () => <Blob>{}
+                    });
+                }
+
+                return files;
+            }
+
+            /**
+             * Getter for select-multiple
+             */
+            _getSelectedValues(): Array<string> {
+                var options = (<HTMLSelectElement>this.element).options,
+                    length = options.length,
+                    option: HTMLOptionElement,
+                    selectedValues: Array<string> = [];
+
+                for (var i = 0; i < length; ++i) {
+                    option = options[i];
+                    if (option.selected) {
+                        selectedValues.push(option.value);
+                    }
+                }
+
+                return selectedValues;
+            }
+
+            /**
              * Setter for textarea, input[type=text], 
-             * and input[type=button]
+             * and input[type=button], and select
              * 
              * @param newValue The new value to set
              */
             _setText(newValue: any): void {
+                if (this.__isSelf) {
+                    return;
+                }
+
                 if (isNull(newValue)) {
-                    newValue = '';
+                    var element = <HTMLInputElement>this.element;
+                    if (isNull(element.value)) {
+                        newValue = '';
+                    } else {
+                        this._propertyChanged();
+                        return;
+                    }
                 }
 
                 this.__setValue(newValue);
@@ -12837,8 +13053,18 @@ module plat {
              * @param newValue The new value to set
              */
             _setRange(newValue: any): void {
+                if (this.__isSelf) {
+                    return;
+                }
+
                 if (isEmpty(newValue)) {
-                    newValue = 0;
+                    var element = <HTMLInputElement>this.element;
+                    if (isEmpty(element.value)) {
+                        newValue = 0;
+                    } else {
+                        this._propertyChanged();
+                        return;
+                    }
                 }
 
                 this.__setValue(newValue);
@@ -12850,7 +13076,14 @@ module plat {
              * @param newValue The new value to set
              */
             _setChecked(newValue: any): void {
-                (<HTMLInputElement>this.element).checked = !(newValue === false);
+                if (this.__isSelf) {
+                    return;
+                } else if (!isBoolean(newValue)) {
+                    this._propertyChanged();
+                    return;
+                }
+
+                (<HTMLInputElement>this.element).checked = newValue;
             }
 
             /**
@@ -12859,11 +13092,75 @@ module plat {
              * @param newValue The new value to set
              */
             _setSelectedIndex(newValue: any): void {
-                if (isNull(newValue)) {
+                if (this.__isSelf) {
                     return;
                 }
 
-                (<HTMLSelectElement>this.element).value = newValue;
+                var element = <HTMLSelectElement>this.element;
+                if (isNull(newValue)) {
+                    if (isEmpty(element.value)) {
+                        element.selectedIndex = -1;
+                    }
+
+                    this._propertyChanged();
+                    return;
+                } else if (element.value === newValue) {
+                    return;
+                } else if (newValue === '') {
+                    element.selectedIndex = -1;
+                    return;
+                }
+
+                element.value = newValue;
+                // check to make sure the user changed to a valid value
+                if (element.value !== newValue) {
+                    element.selectedIndex = -1;
+                }
+            }
+
+            /**
+             * Setter for select-multiple
+             * 
+             * @param newValue The new value to set
+             */
+            _setSelectedIndices(newValue: any): void {
+                if (this.__isSelf) {
+                    return;
+                }
+
+                var options = (<HTMLSelectElement>this.element).options,
+                    length = options.length,
+                    option: HTMLOptionElement;
+
+                if (isNull(newValue) || !isArray(newValue)) {
+                    // unselects the options unless a match is found
+                    while (length-- > 0) {
+                        option = options[length];
+                        // purposely doing a soft equality match
+                        if (option.value === '' + newValue) {
+                            option.selected = true;
+                            return;
+                        }
+
+                        option.selected = false;
+                    }
+                    return;
+                }
+
+                var value: any,
+                    numberValue: number;
+                while (length-- > 0) {
+                    option = options[length];
+                    value = option.value,
+                    numberValue = Number(value);
+
+                    if (newValue.indexOf(value) !== -1 || (isNumber(numberValue) && newValue.indexOf(numberValue) !== -1)) {
+                        option.selected = true;
+                        continue;
+                    }
+
+                    option.selected = false;
+                }
             }
 
             /**
@@ -12900,8 +13197,9 @@ module plat {
                                 this._setter = this._setRange;
                                 break;
                             case 'file':
+                                var multi = (<HTMLInputElement>element).multiple;
                                 this._addEventType = this._addChangeEventListener;
-                                this._getter = this._getFile;
+                                this._getter = multi ? this._getFiles : this._getFile;
                                 break;
                             default:
                                 this._addEventType = this._addTextEventListener;
@@ -12911,12 +13209,19 @@ module plat {
                         }
                         break;
                     case 'select':
-                        this._addEventType = this._addChangeEventListener;
-                        this._getter = this._getValue;
-                        this._setter = this._setSelectedIndex;
-                        var options = (<HTMLSelectElement>element).options,
+                        var multiple = (<HTMLSelectElement>element).multiple,
+                            options = (<HTMLSelectElement>element).options,
                             length = options.length,
                             option: HTMLSelectElement;
+
+                        this._addEventType = this._addChangeEventListener;
+                        if (multiple) {
+                            this._getter = this._getSelectedValues;
+                            this._setter = this._setSelectedIndices;
+                        } else {
+                            this._getter = this._getValue;
+                            this._setter = this._setSelectedIndex;
+                        }
 
                         for (var i = 0; i < length; ++i) {
                             option = options[i];
@@ -12932,14 +13237,28 @@ module plat {
              * Observes the expression to bind to.
              */
             _watchExpression(): void {
+                var context = this.evaluateExpression(this._contextExpression);
+                if (isNull(context)) {
+                    context = this.$ContextManagerStatic.createContext(this.parent,
+                        this._contextExpression.identifiers[0]);
+                }
+
                 if (!isFunction(this._setter)) {
                     return;
+                } else if (this._setter === this._setSelectedIndices) {
+                    var property = this._property;
+                    if (isNull(context[property])) {
+                        context[property] = [];
+                    }
+                    this.observeArray(context, property, (arrayInfo: observable.IArrayMethodInfo<string>) => {
+                        this._setter(arrayInfo.newArray);
+                    });
                 }
 
                 var expression = this._expression;
 
                 this.observeExpression(expression, this._setter);
-                this._setter(this.parent.evaluateExpression(expression));
+                this._setter(this.evaluateExpression(expression));
             }
 
             /**
@@ -12951,20 +13270,21 @@ module plat {
                     return;
                 }
 
-                var context = this.parent.evaluateExpression(this._contextExpression),
+                var context = this.evaluateExpression(this._contextExpression),
                     property = this._property;
 
                 var newValue = this._getter();
 
-                if (isNull(context)) {
-                    context = this.$ContextManagerStatic.createContext(this.parent,
-                            this._contextExpression.identifiers[0]);
-                } else if (context[property] === newValue) {
+                if (context[property] === newValue) {
                     return;
                 }
 
+                // set flag to let setter functions know we changed the property
+                this.__isSelf = true;
                 context[property] = newValue;
+                this.__isSelf = false;
             }
+
             private __setValue(newValue: any): void {
                 var element = <HTMLInputElement>this.element;
                 if (element.value === newValue) {
@@ -12977,8 +13297,16 @@ module plat {
 
         register.control('plat-bind', Bind);
 
+        /**
+         * A file interface for browsers that do not support the 
+         * File API.
+         */
         export interface IFile extends File {
-            value: string;
+            /**
+             * An absolute path to the file. The property is not added supported to 
+             * File types.
+             */
+            path?: string;
         }
 
         /**
@@ -13877,113 +14205,7 @@ module plat {
             evaluateExpression(expression: any, context?: any) {
                 return TemplateControl.evaluateExpression(expression, this, context);
             }
-
-            /**
-             * Allows a control to observe any property on its context and receive updates when
-             * the property is changed.
-             * 
-             * @param context The immediate parent object containing the property.
-             * @param property The property identifier to watch for changes.
-             * @param listener The method called when the property is changed. This method will have its 'this'
-             * context set to the control instance.
-             */
-            observe<T>(context: any, property: string, listener: (value: T, oldValue: any) => void): IRemoveListener;
-            /**
-             * Allows a control to observe any property on its context and receive updates when
-             * the property is changed.
-             * 
-             * @param context The immediate parent array containing the property.
-             * @param property The index to watch for changes.
-             * @param listener The method called when the property is changed. This method will have its 'this'
-             * context set to the control instance.
-             */
-            observe<T>(context: any, property: number, listener: (value: T, oldValue: T) => void): IRemoveListener;
-            observe(context: any, property: any, listener: (value: any, oldValue: any) => void): IRemoveListener {
-                if (isNull(context) || !context.hasOwnProperty(property)) {
-                    return;
-                }
-
-                var control = !isFunction((<any>this).getAbsoluteIdentifier) ? this.parent : <ITemplateControl>this,
-                    absoluteIdentifier = control.getAbsoluteIdentifier(context);
-
-                if (isNull(absoluteIdentifier)) {
-                    return;
-                }
-
-                var contextManager = Control.$ContextManagerStatic.getManager(Control.getRootControl(this));
-                return contextManager.observe(absoluteIdentifier + '.' + property, {
-                    listener: listener.bind(this),
-                    uid: this.uid
-                });
-            }
-
-            /**
-             * Allows a control to observe an array and receive updates when certain array-changing methods are called.
-             * The methods watched are push, pop, shift, sort, splice, reverse, and unshift. This method does not watch
-             * every item in the array.
-             * 
-             * @param context The immediate parent object containing the array as a property.
-             * @param property The array property identifier to watch for changes.
-             * @param listener The method called when an array-changing method is called. This method will have its 'this'
-             * context set to the control instance.
-             */
-            observeArray<T>(context: any, property: string, listener: (ev: observable.IArrayMethodInfo<T>) => void): IRemoveListener;
-            /**
-             * Allows a control to observe an array and receive updates when certain array-changing methods are called.
-             * The methods watched are push, pop, shift, sort, splice, reverse, and unshift. This method does not watch
-             * every item in the array.
-             * 
-             * @param context The immediate parent array containing the array as a property.
-             * @param property The index on the parent array, specifying the array to watch for changes.
-             * @param listener The method called when an array-changing method is called. This method will have its 'this'
-             * context set to the control instance.
-             */
-            observeArray<T>(context: Array<T>, property: number, listener: (ev: observable.IArrayMethodInfo<T>) => void): IRemoveListener;
-            observeArray(context: any, property: any, listener: (ev: observable.IArrayMethodInfo<any>) => void): IRemoveListener {
-                if (isNull(context) || !context.hasOwnProperty(property)) {
-                    return;
-                }
-
-                var array = context[property],
-                    callback = listener.bind(this);
-
-                if (!isArray(array)) {
-                    return;
-                }
-
-                var control = !isFunction((<any>this).getAbsoluteIdentifier) ? this.parent : <ITemplateControl>this,
-                    absoluteIdentifier = control.getAbsoluteIdentifier(context),
-                    ContextManager = Control.$ContextManagerStatic;
-
-                if (isNull(absoluteIdentifier)) {
-                    if (property === 'context') {
-                        absoluteIdentifier = control.absoluteContextPath;
-                    } else {
-                        return;
                     }
-                } else {
-                    absoluteIdentifier += '.' + property;
-                }
-
-                var contextManager = ContextManager.getManager(Control.getRootControl(this)),
-                    uid = this.uid,
-                    removeCallback = contextManager.observe(absoluteIdentifier, {
-                        listener: (newValue: Array<any>, oldValue: Array<any>) => {
-                            removeListener();
-                            removeListener = contextManager.observeArray(this.uid, callback, absoluteIdentifier, newValue, oldValue);
-                        },
-                        uid: uid
-                    }),
-                    removeListener = contextManager.observeArray(this.uid, callback, absoluteIdentifier, array, null);
-
-                // need to call callback if 
-                return () => {
-                    ContextManager.removeArrayListeners(absoluteIdentifier, uid);
-                    removeListener();
-                    removeCallback();
-                };
-            }
-        }
 
         /**
          * The Type for referencing the '$TemplateControlStatic' injectable as a dependency.
@@ -14338,50 +14560,6 @@ module plat {
              * no context is specified, the control.context will be used.
              */
             evaluateExpression(expression: expressions.IParsedExpression, context?: any): any;
-
-            /**
-             * Allows an IControl to observe any property on its context and receive updates when
-             * the property is changed.
-             * 
-             * @param context The immediate parent object containing the property.
-             * @param property The property identifier to watch for changes.
-             * @param listener The method called when the property is changed. This method will have its 'this'
-             * context set to the control instance.
-             */
-            observe? <T>(context: any, property: string, listener: (value: T, oldValue: T) => void): IRemoveListener;
-            /**
-             * Allows an IControl to observe any property on its context and receive updates when
-             * the property is changed.
-             * 
-             * @param context The immediate parent array containing the property.
-             * @param property The index to watch for changes.
-             * @param listener The method called when the property is changed. This method will have its 'this'
-             * context set to the control instance.
-             */
-            observe? <T>(context: any, property: number, listener: (value: T, oldValue: T) => void): IRemoveListener;
-
-            /**
-             * Allows an IControl to observe an array and receive updates when certain array-changing methods are called.
-             * The methods watched are push, pop, shift, sort, splice, reverse, and unshift. This method does not watch
-             * every item in the array.
-             * 
-             * @param context The immediate parent object containing the array as a property.
-             * @param property The array property identifier to watch for changes.
-             * @param listener The method called when an array-changing method is called. This method will have its 'this'
-             * context set to the control instance.
-             */
-            observeArray? <T>(context: any, property: string, listener: (ev: observable.IArrayMethodInfo<T>) => void): IRemoveListener;
-            /**
-             * Allows an IControl to observe an array and receive updates when certain array-changing methods are called.
-             * The methods watched are push, pop, shift, sort, splice, reverse, and unshift. This method does not watch
-             * every item in the array.
-             * 
-             * @param context The immediate parent array containing the array as a property.
-             * @param property The index on the parent array, specifying the array to watch for changes.
-             * @param listener The method called when an array-changing method is called. This method will have its 'this'
-             * context set to the control instance.
-             */
-            observeArray? <T>(context: Array<T>, property: number, listener: (ev: observable.IArrayMethodInfo<T>) => void): IRemoveListener;
         }
 
         /**
@@ -17171,7 +17349,7 @@ module plat {
                     y: ev.clientY - y
                 };
             }
-            private __clearHold() {
+            private __clearHold(): void {
                 if (!isNull(this.__holdTimeout)) {
                     clearTimeout(this.__holdTimeout);
                     this.__holdTimeout = null;
@@ -17275,7 +17453,7 @@ module plat {
 
                 return style;
             }
-            private __removeSelections(element: Node) {
+            private __removeSelections(element: Node): void {
                 if (isNull(element) || isNull(element.nodeName)) {
                     return;
                 }
@@ -17287,7 +17465,7 @@ module plat {
                     element.addEventListener('dragstart', this.__preventDefault, false);
                 }
             }
-            private __returnSelections(element: Node) {
+            private __returnSelections(element: Node): void {
                 if (isNull(element) || isNull(element.nodeName)) {
                     return;
                 }
@@ -17299,7 +17477,7 @@ module plat {
                     element.removeEventListener('dragstart', this.__preventDefault, false);
                 }
             }
-            private __preventDefault(ev: Event) {
+            private __preventDefault(ev: Event): boolean {
                 var nodeName = (<Node>ev.target).nodeName;
 
                 if (nodeName === 'input' || nodeName === 'textarea') {

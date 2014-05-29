@@ -4,7 +4,7 @@ function cfg(config: any) {
         basePath: '',
         frameworks: ['jasmine'],
         files: [
-            'framework/*.js',
+            'framework/platypus.js',
             'tests/**/*.js'
         ],
 
@@ -33,7 +33,24 @@ function cfg(config: any) {
         // - PhantomJS
         // - IE (only Windows)
         // CLI --browsers Chrome,Firefox,Safari
-        browsers: ['IE', 'Chrome', 'Firefox'],
+        browsers: ['IE11', 'IE10', 'IE9'],
+
+        customLaunchers: {
+            IE11: {
+                base: 'IE',
+                flags: ['-private']
+            },
+            IE10: {
+                base: 'IE',
+                'x-ua-compatible': 'IE=EmulateIE10',
+                flags: ['-private']
+            },
+            IE9: {
+                base: 'IE',
+                'x-ua-compatible': 'IE=EmulateIE9',
+                flags: ['-private']
+            }
+        },
 
         // If browser does not capture in given timeout [ms], kill it
         // CLI --capture-timeout 5000
