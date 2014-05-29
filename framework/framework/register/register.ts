@@ -24,6 +24,39 @@ var staticInjectors: plat.dependency.IInjectorObject<plat.dependency.IInjector<a
 
 module plat.register {
     /**
+     * Static injectables will be injected before the application loads. This provides a way to create 
+     * a static constructor and load dependencies into static class properties.
+     */
+    export var STATIC = 'static';
+
+    /**
+     * Singleton injectables will contain a constructor. A Singleton injectable will be instantiated once and 
+     * used throughout the application lifetime. It will be instantiated when another component is injected 
+     * and lists it as a dependency.
+     */
+    export var SINGLETON = 'singleton';
+
+    /**
+     * Instance injectables will contain a constructor. An Instance injectable will be instantiated multiple times 
+     * throughout the application lifetime. It will be instantiated whenever another component is injected 
+     * and lists it as a dependency.
+     */
+    export var INSTANCE = 'instance';
+
+    /**
+     * Factory injectables will not contain a constructor but will instead contain a method for obtaining an 
+     * instance, such as getInstance() or create(). It will be injected before the application loads, similar to a Static 
+     * injectable.
+     */
+    export var FACTORY = 'factory';
+
+    /**
+     * Class injectables are essentially a direct reference to a class's constructor. It may contain both 
+     * static and instance methods as well as a constructor for creating a new instance.
+     */
+    export var CLASS = 'class';
+
+    /**
      * Generic function for creating an Injector and adding it to an IInjectorObject.
      * 
      * @param obj The IInjectorObject to which to add an Injector.
@@ -31,15 +64,15 @@ module plat.register {
      * @param Type The constructor or function definition for the Injector.
      * @param dependencies An array of strings representing the dependencies needed for the
      * injector.
-     * @param type The injectable type
+     * @param injectableType The injectable type
      * 
      * @return {register} The object that contains the register methods (for method chaining).
      */
     function add(obj: dependency.IInjectorObject<any>, name: string,
-            Type: any, dependencies?: Array<any>, type?: string): typeof register {
-        var injector = obj[name] = new dependency.Injector<any>(name, Type, dependencies, type);
+            Type: any, dependencies?: Array<any>, injectableType?: string): typeof register {
+        var injector = obj[name] = new dependency.Injector<any>(name, Type, dependencies, injectableType);
 
-        if (type === STATIC) {
+        if (injectableType === FACTORY || injectableType === STATIC || injectableType === CLASS) {
             staticInjectors[name] = injector;
         }
 
@@ -145,37 +178,4 @@ module plat.register {
     export function injectable(name: string, Type: any, dependencies?: Array<any>, injectableType?: string): typeof register {
         return add(injectableInjectors, name, Type, dependencies, injectableType || SINGLETON);
     }
-
-    /**
-     * Static injectables will be injected before the application loads. This provides a way to create 
-     * a static constructor and load dependencies into static class properties.
-     */
-    export var STATIC = 'static';
-
-    /**
-     * Singleton injectables will contain a constructor. A Singleton injectable will be instantiated once and 
-     * used throughout the application lifetime. It will be instantiated when another component is injected 
-     * and lists it as a dependency.
-     */
-    export var SINGLETON = 'singleton';
-
-    /**
-     * Instance injectables will contain a constructor. An Instance injectable will be instantiated multiple times 
-     * throughout the application lifetime. It will be instantiated whenever another component is injected 
-     * and lists it as a dependency.
-     */
-    export var INSTANCE = 'instance';
-
-    /**
-     * Factory injectables will not contain a constructor but will instead contain a method for obtaining an 
-     * instance, such as getInstance() or create(). It will be injected before the application loads, similar to a Static 
-     * injectable.
-     */
-    export var FACTORY = 'factory';
-
-    /**
-     * Class injectables are essentially a direct reference to a class's constructor. It may contain both 
-     * static and instance methods as well as a constructor for creating a new instance.
-     */
-    export var CLASS = 'class';
 }
