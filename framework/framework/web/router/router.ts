@@ -84,7 +84,7 @@
                 route: string,
                 match: IMatchedRoute,
                 $browser = this.$Browser,
-                currentUtils = $browser.urlUtils();
+                currentUtils: IUrlUtilsInstance = $browser.urlUtils();
 
             if (this.__firstRoute) {
                 this.__firstRoute = false;

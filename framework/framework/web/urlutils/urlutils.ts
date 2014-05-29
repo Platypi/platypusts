@@ -214,4 +214,4 @@
          */
         toString(): string;
     }
-} 
+}

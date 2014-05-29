@@ -34,7 +34,7 @@
 function appendChildren(nodeList: any, root?: Node): Node {
     var isFragment = isDocumentFragment(root),
         nullRoot = isNull(root),
-        fragment: DocumentFragment = isFragment ? 
+        fragment: DocumentFragment = isFragment ?
         <DocumentFragment>root :
         (plat.acquire('$Document')).createDocumentFragment();
 
