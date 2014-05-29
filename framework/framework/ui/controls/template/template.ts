@@ -1,9 +1,8 @@
 module plat.ui.controls {
     export class Template extends TemplateControl {
-        $Promise: async.IPromise = acquire('$Promise');
-        $TemplateCache: storage.ITemplateCache = acquire('$TemplateCache');
-        $ExceptionStatic: IExceptionStatic = acquire('$ExceptionStatic');
-        $Document: Document = acquire('$Document');
+        $Promise: async.IPromise = acquire(__Promise);
+        $TemplateCache: storage.ITemplateCache = acquire(__TemplateCache);
+        $Document: Document = acquire(__Document);
 
         /**
          * Removes the <plat-template> node from the DOM
@@ -31,7 +30,7 @@ module plat.ui.controls {
         private __templateControlCache: storage.ICache<any>;
         constructor() {
             super();
-            var $cacheFactory: storage.ICacheFactory = acquire('$CacheFactory');
+            var $cacheFactory: storage.ICacheFactory = acquire(__CacheFactory);
             this.__templateControlCache = $cacheFactory.create<any>('__templateControlCache');
         }
 
@@ -133,12 +132,14 @@ module plat.ui.controls {
          * instance of the template with this ID.
          */
         _waitForTemplateControl(templatePromise: async.IThenable<Template>): void {
+            var $exception: IExceptionStatic;
             templatePromise.then((templateControl: Template) => {
                 if (!(isNull(this._url) || (this._url === templateControl._url))) {
-                    this.$ExceptionStatic.warn('The specified url: ' + this._url +
+                    $exception = acquire(__ExceptionStatic);
+                    $exception.warn('The specified url: ' + this._url +
                         ' does not match the original plat-template with id: ' +
                         '"' + this._id + '". The original url will be loaded.',
-                        this.$ExceptionStatic.TEMPLATE);
+                        $exception.TEMPLATE);
                 }
 
                 this.__mapBindableTemplates(templateControl);
@@ -149,8 +150,9 @@ module plat.ui.controls {
                 });
             }).catch((error) => {
                 postpone(() => {
-                    this.$ExceptionStatic.warn('Problem resolving plat-template url: ' +
-                        error.response, this.$ExceptionStatic.TEMPLATE);
+                    $exception = acquire(__ExceptionStatic);
+                    $exception.warn('Problem resolving plat-template url: ' +
+                        error.response, $exception.TEMPLATE);
                 });
             });
         }
@@ -194,5 +196,5 @@ module plat.ui.controls {
         url: string;
     }
 
-    register.control('plat-template', Template);
+    register.control(__Template, Template);
 }

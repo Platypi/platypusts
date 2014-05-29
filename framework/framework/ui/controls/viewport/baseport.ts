@@ -1,9 +1,8 @@
 ﻿module plat.ui.controls {
     export class Baseport extends TemplateControl implements IBaseport {
-        $ManagerCache: storage.ICache<processing.IElementManager> = acquire('$ManagerCache');
-        $ExceptionStatic: IExceptionStatic = acquire('$ExceptionStatic');
-        $Document: Document = acquire('$Document');
-        $ElementManagerFactory: processing.IElementManagerFactory = acquire('$ElementManagerFactory');
+        $ManagerCache: storage.ICache<processing.IElementManager> = acquire(__ManagerCache);
+        $Document: Document = acquire(__Document);
+        $ElementManagerFactory: processing.IElementManagerFactory = acquire(__ElementManagerFactory);
 
         constructor(public navigator: navigation.IBaseNavigator) {
             super();

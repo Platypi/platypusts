@@ -4,8 +4,8 @@
      * Routeport, thus only allowing one RoutingNavigator per app.
      */
     export class RoutingNavigator extends BaseNavigator implements IRoutingNavigator {
-        $Router: web.IRouter = acquire('$Router');
-        $Window: Window = acquire('$Window');
+        $Router: web.IRouter = acquire(__Router);
+        $Window: Window = acquire(__Window);
 
         /**
          * The routing information for the Routeport's current state.
@@ -89,7 +89,7 @@
         return new RoutingNavigator();
     }
 
-    register.injectable('$RoutingNavigator', IRoutingNavigator);
+    register.injectable(__RoutingNavigator, IRoutingNavigator);
 
     /**
      * Defines the methods that a Navigator must implement if it chooses to utilize 

@@ -126,7 +126,7 @@ module plat.processing {
         return TextManager;
     }
 
-    register.injectable('$TextManagerFactory', ITextManagerFactory, null, register.FACTORY);
+    register.injectable(__TextManagerFactory, ITextManagerFactory, null, register.FACTORY);
 
     /**
      * Creates and manages a class for dealing with Text nodes.

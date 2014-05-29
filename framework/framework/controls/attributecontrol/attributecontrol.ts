@@ -38,11 +38,10 @@ module plat.controls {
         return AttributeControl;
     }
 
-    register.injectable('$AttributeControlFactory', IAttributeControlFactory,
-        null, register.FACTORY);
+    register.injectable(__AttributeControlFactory, IAttributeControlFactory, null, register.FACTORY);
 
     /**
-     * The external interface for the '$AttributeControlFactory' injectable.
+     * Creates and manages instances of IAttributeControl.
      */
     export interface IAttributeControlFactory {
         /**

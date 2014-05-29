@@ -223,7 +223,7 @@ module plat {
         parent: ui.ITemplateControl;
         element: HTMLElement;
         attributes: ui.IAttributesInstance;
-        dom: ui.IDom = acquire('$Dom');
+        dom: ui.IDom = acquire(__Dom);
 
         /**
          * The constructor for a control. Any injectables specified during control registration will be
@@ -232,7 +232,7 @@ module plat {
          */
         constructor() {
             var ContextManager: observable.IContextManagerStatic = Control.$ContextManagerStatic ||
-                acquire('$ContextManagerStatic');
+                acquire(__ContextManagerStatic);
             ContextManager.defineGetter(this, 'uid', uniqueId('plat_'));
         }
 
@@ -483,14 +483,14 @@ module plat {
         return Control;
     }
 
-    register.injectable('$ControlFactory', IControlFactory, [
-        '$Parser',
-        '$ContextManagerStatic',
-        '$EventManagerStatic'
+    register.injectable(__ControlFactory, IControlFactory, [
+        __Parser,
+        __ContextManagerStatic,
+        __EventManagerStatic
     ], register.FACTORY);
 
     /**
-     * The external interface for the '$ControlFactory' injectable.
+     * Creates and manages instances of IControl.
      */
     export interface IControlFactory {
         /**

@@ -131,7 +131,7 @@ module plat {
         return new Utils();
     }
 
-    register.injectable('$Utils', IUtils);
+    register.injectable(__Utils, IUtils);
 
     /**
      * An object defining common utilities and helper functions.

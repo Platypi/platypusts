@@ -50,7 +50,8 @@ module plat.navigation {
             }
 
             if (isNull(injector)) {
-                this.$ExceptionStatic.fatal('Attempting to navigate to unregistered view control.', this.$ExceptionStatic.NAVIGATION);
+                var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                $exception.fatal('Attempting to navigate to unregistered view control.', $exception.NAVIGATION);
             }
 
             if (!isNull(viewControl)) {
@@ -85,27 +86,28 @@ module plat.navigation {
                 return;
             }
 
+            var $exception: IExceptionStatic;
             if (!isNull(Constructor)) {
                 var index = this._findInHistory(Constructor);
 
                 if (index > -1) {
                     length = this.history.length - index;
                 } else {
-                    this.$ExceptionStatic.warn('Cannot find ViewControl in navigation history.', this.$ExceptionStatic.NAVIGATION);
+                    $exception = acquire(__ExceptionStatic);
+                    $exception.warn('Cannot find ViewControl in navigation history.', $exception.NAVIGATION);
                     return;
                 }
             }
 
             if (!isNumber(length) || length > this.history.length) {
-                this.$ExceptionStatic.warn('Not enough views in the navigation history in order to navigate back.',
-                    this.$ExceptionStatic.NAVIGATION);
+                $exception = acquire(__ExceptionStatic);
+                $exception.warn('Not enough views in the navigation history in order to navigate back.',
+                    $exception.NAVIGATION);
                 return;
             }
 
-            var ViewControl: ui.IViewControlFactory = acquire('$ViewControlStatic');
-
             this.baseport.navigateFrom(viewControl);
-            ViewControl.dispose(viewControl);
+            this.$ViewControlFactory.dispose(viewControl);
 
             var last: IBaseNavigationState = this._goBackLength(length);
 
@@ -190,7 +192,7 @@ module plat.navigation {
         return new Navigator();
     }
 
-    register.injectable('$Navigator', INavigator, null, register.INSTANCE);
+    register.injectable(__Navigator, INavigator, null, register.INSTANCE);
 
     /**
      * An object implementing INavigator allows ui.IViewControls to implement methods 

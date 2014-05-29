@@ -50,13 +50,12 @@ module plat.ui {
             instance.dispose();
         }
 
-        $ResourcesFactory: IResourcesFactory = acquire('$ResourcesFactory');
-        $TemplateControlFactory: ITemplateControlFactory = acquire('$TemplateControlFactory');
-        $Promise: async.IPromise = acquire('$Promise');
-        $ManagerCache: storage.ICache<processing.IElementManager> = acquire('$ManagerCache');
-        $ExceptionStatic: IExceptionStatic = acquire('$ExceptionStatic');
-        $Document: Document = acquire('$Document');
-        $ElementManagerFactory: processing.IElementManagerFactory = acquire('$ElementManagerFactory');
+        $ResourcesFactory: IResourcesFactory = acquire(__ResourcesFactory);
+        $TemplateControlFactory: ITemplateControlFactory = acquire(__TemplateControlFactory);
+        $Promise: async.IPromise = acquire(__Promise);
+        $ManagerCache: storage.ICache<processing.IElementManager> = acquire(__ManagerCache);
+        $Document: Document = acquire(__Document);
+        $ElementManagerFactory: processing.IElementManagerFactory = acquire(__ElementManagerFactory);
 
         control: ITemplateControl;
         templates: IObject<DocumentFragment> = {};
@@ -77,18 +76,21 @@ module plat.ui {
                 relativeIdentifier?: any, resources?: IObject<IResource>): DocumentFragment {
             var template: any = this.templates[key],
                 control: ITemplateControl = this.control,
-                nodeMap: processing.INodeMap;
+                nodeMap: processing.INodeMap,
+                $exception: IExceptionStatic;
 
             if (isNull(template)) {
-                this.$ExceptionStatic.fatal('Cannot bind template, no template stored with key: ' + key,
-                    this.$ExceptionStatic.TEMPLATE);
+                $exception = acquire(__ExceptionStatic);
+                $exception.fatal('Cannot bind template, no template stored with key: ' + key,
+                    $exception.TEMPLATE);
                 return;
             }
 
             if (!(isNull(relativeIdentifier) || isNumber(relativeIdentifier) || isString(relativeIdentifier))) {
-                this.$ExceptionStatic.warn('Cannot bind template with relativeIdentifier: ' +
+                $exception = acquire(__ExceptionStatic);
+                $exception.warn('Cannot bind template with relativeIdentifier: ' +
                     relativeIdentifier +
-                    '. Identifier must be either a string or number', this.$ExceptionStatic.BIND);
+                    '. Identifier must be either a string or number', $exception.BIND);
                 return;
             }
 
@@ -97,7 +99,8 @@ module plat.ui {
                     this._bindTemplate(key, <DocumentFragment>result.cloneNode(true), relativeIdentifier, resources, callback);
                 }).catch((error: any) => {
                     postpone(() => {
-                        this.$ExceptionStatic.fatal(error, this.$ExceptionStatic.COMPILE);
+                        $exception = acquire(__ExceptionStatic);
+                        $exception.fatal(error, $exception.COMPILE);
                     });
                 });
                 return;
@@ -105,7 +108,7 @@ module plat.ui {
             this._bindTemplate(key, <DocumentFragment>template.cloneNode(true), relativeIdentifier, resources, callback);
         }
 
-        add(key: string, template: HTMLElement): void;
+        add(key: string, template: Element): void;
         add(key: string, template: Array<Node>): void;
         add(key: string, template: NodeList): void;
         add(key: string, template: DocumentFragment): void;
@@ -169,7 +172,8 @@ module plat.ui {
                 callback.call(this.control, template);
             }).catch((error) => {
                 postpone(() => {
-                    this.$ExceptionStatic.fatal(error, this.$ExceptionStatic.BIND);
+                    var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                    $exception.fatal(error, $exception.BIND);
                 });
             });
         }
@@ -234,7 +238,8 @@ module plat.ui {
                 return this.templates[key];
             }).catch((error) => {
                 postpone(() => {
-                    this.$ExceptionStatic.fatal(error, this.$ExceptionStatic.COMPILE);
+                    var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                    $exception.fatal(error, $exception.COMPILE);
                 });
             });
 
@@ -244,8 +249,7 @@ module plat.ui {
         /**
          * Creates an INodeMap for either a template being compiled or a template being bound.
          */
-        _createNodeMap(uiControl: ITemplateControl, template: Node,
-            childContext?: string): processing.INodeMap {
+        _createNodeMap(uiControl: ITemplateControl, template: Node, childContext?: string): processing.INodeMap {
             return {
                 element: <HTMLElement>template,
                 attributes: {},
@@ -299,7 +303,7 @@ module plat.ui {
         return BindableTemplates;
     }
 
-    register.injectable('$BindableTemplatesFactory', IBindableTemplatesFactory, null, register.FACTORY);
+    register.injectable(__BindableTemplatesFactory, IBindableTemplatesFactory, null, register.FACTORY);
 
     /**
      * The external interface for the '$BindableTemplatesFactory' injectable.
@@ -390,9 +394,9 @@ module plat.ui {
          * and it will be transformed into a DocumentFragment.
          * 
          * @param key The key used to store the template.
-         * @param template An HTMLElement represending the template DOM.
+         * @param template An Element represending the template DOM.
          */
-        add(key: string, template: HTMLElement): void;
+        add(key: string, template: Element): void;
         /**
          * Adds a template to this object. The template will be stored with the key,
          * and it will be transformed into a DocumentFragment.

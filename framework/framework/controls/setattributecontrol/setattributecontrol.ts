@@ -131,7 +131,7 @@ module plat.controls {
             if (!isEmpty(element.style.display)) {
                 this.__initialDisplay = element.style.display;
             } else {
-                var $window = acquire('$Window');
+                var $window = acquire(__Window);
                 this.__initialDisplay = $window.getComputedStyle(element).display;
             }
 
@@ -192,10 +192,10 @@ module plat.controls {
         }
     }
 
-    register.control('plat-checked', Checked);
-    register.control('plat-disabled', Disabled);
-    register.control('plat-selected', Selected);
-    register.control('plat-readonly', ReadOnly);
-    register.control('plat-visible', Visible);
-    register.control('plat-style', Style);
+    register.control(__Checked, Checked);
+    register.control(__Disabled, Disabled);
+    register.control(__Selected, Selected);
+    register.control(__ReadOnly, ReadOnly);
+    register.control(__Visible, Visible);
+    register.control(__Style, Style);
 }

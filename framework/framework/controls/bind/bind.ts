@@ -1,14 +1,15 @@
 module plat.controls {
     export class Bind extends AttributeControl {
+        $Parser: expressions.IParser = acquire(__Parser);
+        $ContextManagerStatic: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
+
         /**
          * The priority of Bind is set high to take precede 
          * other controls that may be listening to the same 
          * event.
          */
         priority: number = 100;
-        $Parser: expressions.IParser = acquire('$Parser');
-        $ExceptionStatic: IExceptionStatic = acquire('$ExceptionStatic');
-        $ContextManagerStatic: observable.IContextManagerStatic = acquire('$ContextManagerStatic');
+
         /**
          * The function used to add the proper event based on the input type.
          */
@@ -50,12 +51,12 @@ module plat.controls {
          */
         _property: string;
 
-        private __fileSupported = (<ICompat>acquire('$Compat')).fileSupported;
-        private __fileNameRegex = (<expressions.IRegex>acquire('$Regex')).fileNameRegex;
+        private __fileSupported = (<ICompat>acquire(__Compat)).fileSupported;
+        private __fileNameRegex = (<expressions.IRegex>acquire(__Regex)).fileNameRegex;
         private __isSelf = false;
 
         /**
-         * Determines the type of HTMLElement being bound to 
+         * Determines the type of Element being bound to 
          * and sets the necessary handlers.
          */
         initialize(): void {
@@ -76,7 +77,8 @@ module plat.controls {
             var identifiers = expression.identifiers;
 
             if (identifiers.length !== 1) {
-                this.$ExceptionStatic.warn('Only 1 identifier allowed in a plat-bind expression');
+                var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                $exception.warn('Only 1 identifier allowed in a plat-bind expression', $exception.BIND);
                 this._contextExpression = null;
                 return;
             }
@@ -446,7 +448,7 @@ module plat.controls {
         }
 
         /**
-         * Determines the type of HTMLElement being bound to 
+         * Determines the type of Element being bound to 
          * and sets the necessary handlers.
          */
         _determineType(): void {
@@ -577,7 +579,7 @@ module plat.controls {
         }
     }
 
-    register.control('plat-bind', Bind);
+    register.control(__Bind, Bind);
 
     /**
      * A file interface for browsers that do not support the 

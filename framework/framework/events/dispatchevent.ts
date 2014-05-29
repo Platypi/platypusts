@@ -1,6 +1,6 @@
 module plat.events {
     export class DispatchEvent implements IDispatchEventInstance {
-        $EventManagerStatic: IEventManagerStatic = acquire('$EventManagerStatic');
+        $EventManagerStatic: IEventManagerStatic = acquire(__EventManagerStatic);
 
         sender: any;
         name: string;
@@ -30,7 +30,7 @@ module plat.events {
         return new DispatchEvent();
     }
 
-    register.injectable('$DispatchEventInstance', IDispatchEventInstance, null, register.INSTANCE);
+    register.injectable(__DispatchEventInstance, IDispatchEventInstance, null, register.INSTANCE);
 
     /**
      * Describes an event that propagates through a control tree. 

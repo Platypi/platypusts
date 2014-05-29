@@ -91,9 +91,9 @@ module plat.dependency {
             } else if (isString(dependency)) {
                 return dependency;
             } else if (dependency === window) {
-                return '$Window';
+                return __Window;
             } else if (dependency === window.document) {
-                return '$Document';
+                return __Document;
             }
 
             var injectors = injectableInjectors,
@@ -210,7 +210,7 @@ module plat.dependency {
                     '. Are you using a static injectable Type?');
             }
 
-            if (name === '$AppStatic') {
+            if (name === __AppStatic) {
                 var App: IAppStatic = <IAppStatic>(<any>this).inject();
                 App.start();
             }

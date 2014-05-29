@@ -4,15 +4,13 @@ module plat.expressions {
      * finding all its tokens (i.e. delimiters, operators, etc).
      */
     export class Tokenizer implements ITokenizer {
-        $ExceptionStatic: IExceptionStatic = acquire('$ExceptionStatic');
-
         /**
          * The input string to tokenize.
          */
         _input: string;
 
         private __previousChar: string = '';
-        private __variableRegex = (<expressions.IRegex>acquire('$Regex')).invalidVariableRegex;
+        private __variableRegex = (<expressions.IRegex>acquire(__Regex)).invalidVariableRegex;
         private __outputQueue: Array<IToken> = [];
         private __operatorStack: Array<IToken> = [];
         private __argCount: Array<any> = [];
@@ -600,7 +598,8 @@ module plat.expressions {
          * @param error The error message to throw
          */
         _throwError(error: string): void {
-            this.$ExceptionStatic.fatal(error + ' in {{' + this._input + '}}', this.$ExceptionStatic.PARSE);
+            var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+            $exception.fatal(error + ' in {{' + this._input + '}}', $exception.PARSE);
         }
 
         /**
@@ -671,7 +670,7 @@ module plat.expressions {
         return new Tokenizer();
     }
 
-    register.injectable('$Tokenizer', ITokenizer);
+    register.injectable(__Tokenizer, ITokenizer);
 
     /**
      * Describes an object used to find tokens for an expression and create ITokens.

@@ -15,5 +15,5 @@ module plat.ui.controls {
         }
     }
 
-    register.control('plat-ignore', Ignore);
+    register.control(__Ignore, Ignore);
 }

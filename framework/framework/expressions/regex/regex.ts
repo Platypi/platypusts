@@ -51,7 +51,7 @@
         return new Regex();
     }
 
-    register.injectable('$Regex', IRegex);
+    register.injectable(__Regex, IRegex);
 
     /**
      * An object containing commonly used regular expressions.

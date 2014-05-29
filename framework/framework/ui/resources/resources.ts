@@ -40,7 +40,6 @@ module plat.ui {
     export class Resources implements IResources {
         static $ContextManagerStatic: observable.IContextManagerStatic;
         static $Regex: expressions.IRegex;
-        static $ExceptionStatic: IExceptionStatic;
 
         /**
          * Populates an IResource value if necessary, and adds it to the given 
@@ -79,10 +78,11 @@ module plat.ui {
                         value = (<any>control)[value];
                         if (isFunction(value)) {
                             resource.value = value.bind(control);
-                        } else {;
-                            Resources.$ExceptionStatic.warn('Attempted to create a "function" ' +
+                        } else {
+                            var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                            $exception.warn('Attempted to create a "function" ' +
                                 'type Resource with a function not found on your control.',
-                                Resources.$ExceptionStatic.BIND);
+                                $exception.BIND);
                             resource.value = noop;
                         }
                     }
@@ -184,7 +184,7 @@ module plat.ui {
         }
         
         /**
-         * Parses a resources HTMLElement and creates 
+         * Parses a resources Element and creates 
          * an IObject<IResource> with its element children.
          * 
          * @static
@@ -193,8 +193,9 @@ module plat.ui {
          * @return {IObject<IResource>} The resources created 
          * using element.
          */
-        static parseElement(element: HTMLElement): IObject<IResource> {
-            var slice = Array.prototype.slice,
+        static parseElement(element: Element): IObject<IResource> {
+            var children: Array<Element> = Array.prototype.slice.call((<HTMLElement>element).children),
+                child: Element,
                 $regex = Resources.$Regex,
                 whiteSpaceRegex = $regex.whiteSpaceRegex,
                 quotationRegex = $regex.quotationRegex,
@@ -203,8 +204,6 @@ module plat.ui {
                 types = Resources.__resourceTypes,
                 attrs: NamedNodeMap,
                 attr: Attr,
-                children = slice.call(element.children),
-                child: HTMLElement,
                 nodeName: string,
                 text: string;
 
@@ -333,7 +332,7 @@ module plat.ui {
         private __bound: boolean = false;
         private __controlInstance: ITemplateControl;
 
-        initialize(control: ITemplateControl, element?: HTMLElement): void;
+        initialize(control: ITemplateControl, element?: Element): void;
         initialize(control: ITemplateControl, resources?: IObject<IResource>): void;
         initialize(control: ITemplateControl, resources?: IResources): void;
         initialize(controlInstance: ITemplateControl, resources?: any) {
@@ -361,7 +360,7 @@ module plat.ui {
         }
 
         add(resources: IObject<IResource>): void;
-        add(element: HTMLElement): void;
+        add(element: Element): void;
         add(resources: any) {
             if (isNull(resources)) {
                 return;
@@ -392,18 +391,15 @@ module plat.ui {
      */
     export function IResourcesFactory(
         $ContextManagerStatic: observable.IContextManagerStatic,
-        $Regex: expressions.IRegex,
-        $ExceptionStatic: IExceptionStatic): IResourcesFactory {
+        $Regex: expressions.IRegex): IResourcesFactory {
             Resources.$ContextManagerStatic = $ContextManagerStatic;
             Resources.$Regex = $Regex;
-            Resources.$ExceptionStatic = $ExceptionStatic;
             return Resources;
     }
 
-    register.injectable('$ResourcesFactory', IResourcesFactory, [
-        '$ContextManagerStatic',
-        '$Regex',
-        '$ExceptionStatic'
+    register.injectable(__ResourcesFactory, IResourcesFactory, [
+        __ContextManagerStatic,
+        __Regex
     ], register.FACTORY);
 
     /**
@@ -452,7 +448,7 @@ module plat.ui {
         dispose(control: ITemplateControl, persist?: boolean): void;
 
         /**
-         * Parses a resources HTMLElement and creates
+         * Parses a resources Element and creates
          * an IObject<IResource> with its element children.
          *
          * @static
@@ -461,7 +457,7 @@ module plat.ui {
          * @return {IObject<IResource>} The resources created
          * using element.
          */
-        parseElement(element: HTMLElement): IObject<IResource>;
+        parseElement(element: Element): IObject<IResource>;
 
         /**
          * Returns a new instance of IResources
@@ -529,7 +525,7 @@ module plat.ui {
         /**
          * Used for programatically adding IResource objects.
          * 
-         * @param element An HTMLElement containing resource element children.
+         * @param element An Element containing resource element children.
          * 
          * @example
          *     <plat-resources>
@@ -539,13 +535,13 @@ module plat.ui {
          * 
          * The resource type is specified by the element name.
          */
-        add(element: HTMLElement): void;
+        add(element: Element): void;
 
         /**
          * @param control The control containing this Resources instance.
          * @param element An optional element used to create initial IResource objects.
          */
-        initialize(control: ITemplateControl, element?: HTMLElement): void;
+        initialize(control: ITemplateControl, element?: Element): void;
         /**
          * @param control The control containing this Resources instance.
          * @param resources An optional IObject<IResource> used to populate initial

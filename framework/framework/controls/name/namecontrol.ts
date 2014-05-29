@@ -1,7 +1,7 @@
 module plat.controls {
     export class Name extends AttributeControl {
-        $ContextManagerStatic: observable.IContextManagerStatic = acquire('$ContextManagerStatic');
-        $ExceptionStatic: IExceptionStatic = acquire('$ExceptionStatic');
+        $ContextManagerStatic: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
+
         /**
          * The root control that will have the INamedElement set as a property.
          */
@@ -56,14 +56,14 @@ module plat.controls {
         }
     }
 
-    register.control('plat-name', Name);
+    register.control(__Name, Name);
 
     /**
      * Defines the object added to a root control when an HTML element has 
      * a plat-name attribute. If the element corresponds to a registered 
      * control, the control will be included in the object.
      */
-    export interface INamedElement<T extends HTMLElement, U> {
+    export interface INamedElement<T extends Element, U> {
         /**
          * The element on which the plat-name is specified.
          */

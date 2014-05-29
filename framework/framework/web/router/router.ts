@@ -4,14 +4,13 @@
      * to and from IViewControls within the Routeport.
      */
     export class Router implements IRouter {
-        $Browser: IBrowser = acquire('$Browser');
-        $BrowserConfig: IBrowserConfig = acquire('$BrowserConfig');
-        $EventManagerStatic: events.IEventManagerStatic = acquire('$EventManagerStatic');
-        $NavigationEventStatic: events.INavigationEventStatic = acquire('$NavigationEventStatic');
-        $Compat: ICompat = acquire('$Compat');
-        $ExceptionStatic: IExceptionStatic = acquire('$ExceptionStatic');
-        $Regex: expressions.IRegex = acquire('$Regex');
-        $Window: Window = acquire('$Window');
+        $Browser: IBrowser = acquire(__Browser);
+        $BrowserConfig: IBrowserConfig = acquire(__BrowserConfig);
+        $EventManagerStatic: events.IEventManagerStatic = acquire(__EventManagerStatic);
+        $NavigationEventStatic: events.INavigationEventStatic = acquire(__NavigationEventStatic);
+        $Compat: ICompat = acquire(__Compat);
+        $Regex: expressions.IRegex = acquire(__Regex);
+        $Window: Window = acquire(__Window);
 
         uid: string;
 
@@ -49,7 +48,7 @@
          * Assigns a uid and subscribes to the 'urlChanged' event.
          */
         constructor() {
-            var ContextManager: observable.IContextManagerStatic = acquire('$ContextManagerStatic');
+            var ContextManager: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
             ContextManager.defineGetter(this, 'uid', uniqueId('plat_'));
 
             this._removeListener = this.$EventManagerStatic.on(this.uid, 'urlChanged', this._routeChanged, this);
@@ -95,7 +94,8 @@
             var build = this._buildRoute(path, options.query);
 
             if (isNull(build)) {
-                this.$ExceptionStatic.warn('Route: ' + path + ' is not a matched route.', this.$ExceptionStatic.NAVIGATION);
+                var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                $exception.warn('Route: ' + path + ' is not a matched route.', $exception.NAVIGATION);
                 return;
             }
 
@@ -200,8 +200,9 @@
             var matchedRoute = this._match(utils);
 
             if (isNull(matchedRoute)) {
-                this.$ExceptionStatic.warn('Could not match route: ' + utils.pathname,
-                    this.$ExceptionStatic.NAVIGATION);
+                var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                $exception.warn('Could not match route: ' + utils.pathname,
+                    $exception.NAVIGATION);
                 return;
             }
 
@@ -406,7 +407,7 @@
         return new Router();
     }
 
-    register.injectable('$Router', IRouter);
+    register.injectable(__Router, IRouter);
 
     /**
      * Describes the object that handles route registration and navigation 

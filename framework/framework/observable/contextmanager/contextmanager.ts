@@ -266,9 +266,7 @@ module plat.observable {
         private static __managers: IObject<IContextManager> = {};
         private static __controls: IObject<IObject<Array<IRemoveListener>>> = {};
 
-        $ContextManagerStatic: IContextManagerStatic = acquire('$ContextManagerStatic');
-        $Compat: ICompat = acquire('$Compat');
-        $ExceptionStatic: IExceptionStatic = acquire('$ExceptionStatic');
+        $Compat: ICompat = acquire(__Compat);
 
         context: any;
 
@@ -283,7 +281,7 @@ module plat.observable {
                 context = this.__contextObjects[join];
 
             if (isNull(this.__contextObjects[join])) {
-                context = this.__contextObjects[join] = this.$ContextManagerStatic.getContext(this.context, split);
+                context = this.__contextObjects[join] = ContextManager.getContext(this.context, split);
             }
 
             return context;
@@ -376,7 +374,6 @@ module plat.observable {
             var length = arrayMethods.length,
                 method: string,
                 i: number,
-                ContextManager = this.$ContextManagerStatic,
                 $compat = this.$Compat,
                 proto = $compat.proto,
                 setProto = $compat.setProto;
@@ -624,8 +621,7 @@ module plat.observable {
         _addObservableListener(absoluteIdentifier: string,
             observableListener: IListener): IRemoveListener {
             var uid = observableListener.uid,
-                contextManagerCallback = this._removeCallback.bind(this),
-                ContextManager = this.$ContextManagerStatic;
+                contextManagerCallback = this._removeCallback.bind(this);
 
             this.__add(absoluteIdentifier, observableListener);
 
@@ -662,7 +658,7 @@ module plat.observable {
          * @param method The array method being called.
          */
         _overwriteArrayFunction(absoluteIdentifier: string, method: string): (...args: any[]) => any {
-            var callbackObjects = this.$ContextManagerStatic.observedArrayListeners[absoluteIdentifier],
+            var callbackObjects = ContextManager.observedArrayListeners[absoluteIdentifier],
                 _this = this;
 
             // We can't use a fat-arrow function here because we need the array context.
@@ -906,7 +902,7 @@ module plat.observable {
         return ContextManager;
     }
 
-    register.injectable('$ContextManagerStatic', IContextManagerStatic, null, register.STATIC);
+    register.injectable(__ContextManagerStatic, IContextManagerStatic, null, register.STATIC);
 
         /**
      * The external interface for the '$ContextManagerStatic' injectable.

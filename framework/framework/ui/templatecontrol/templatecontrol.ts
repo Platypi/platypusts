@@ -7,7 +7,6 @@ module plat.ui {
         static $ResourcesFactory: IResourcesFactory;
         static $BindableTemplatesFactory: IBindableTemplatesFactory;
         static $ManagerCache: storage.ICache<processing.IElementManager>;
-        static $ExceptionStatic: IExceptionStatic;
         static $TemplateCache: storage.ITemplateCache;
         static $Parser: expressions.IParser;
         static $Http: async.IHttp;
@@ -102,8 +101,8 @@ module plat.ui {
                 }
 
                 if (isNull(resourceObj)) {
-                    var Exception = TemplateControl.$ExceptionStatic;
-                    Exception.warn('Attempting to use a resource that is not defined.', Exception.CONTEXT);
+                    var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                    $exception.warn('Attempting to use a resource that is not defined.', $exception.CONTEXT);
                     continue;
                 }
 
@@ -368,13 +367,14 @@ module plat.ui {
 
             template = templateCache.read(templateUrl);
 
+            var $exception: IExceptionStatic;
             return Promise.cast<DocumentFragment>(template).catch((error) => {
                 if (isNull(error)) {
                     return templateCache.put(templateUrl, TemplateControl.$Http.ajax<string>({ url: templateUrl })
                             .then<DocumentFragment>((success) => {
                         if (!isObject(success) || !isString(success.response)) {
-                            TemplateControl.$ExceptionStatic.warn('No template found at ' + templateUrl,
-                                TemplateControl.$ExceptionStatic.AJAX);
+                            $exception = acquire(__ExceptionStatic);
+                            $exception.warn('No template found at ' + templateUrl, $exception.AJAX);
                             return Promise.resolve(dom.serializeHtml());
                         }
 
@@ -389,16 +389,18 @@ module plat.ui {
                         return templateCache.put(templateUrl, template);
                     }, (error) => {
                         postpone(() => {
-                            TemplateControl.$ExceptionStatic.fatal('Failure to get template from ' + templateUrl + '.',
-                                TemplateControl.$ExceptionStatic.TEMPLATE);
+                            $exception = acquire(__ExceptionStatic);
+                            $exception.fatal('Failure to get template from ' + templateUrl + '.',
+                                $exception.TEMPLATE);
                         });
                         return error;
                     }));
                 }
             }).catch((error) => {
                 postpone(() => {
-                    TemplateControl.$ExceptionStatic.fatal('Failure to get template from ' + templateUrl + '.',
-                        TemplateControl.$ExceptionStatic.TEMPLATE);
+                    $exception = acquire(__ExceptionStatic);
+                    $exception.fatal('Failure to get template from ' + templateUrl + '.',
+                        $exception.TEMPLATE);
                 });
                 return error;
             });
@@ -554,7 +556,6 @@ module plat.ui {
         $ResourcesFactory: IResourcesFactory,
         $BindableTemplatesFactory: IBindableTemplatesFactory,
         $ManagerCache: storage.ICache<processing.IElementManager>,
-        $ExceptionStatic: IExceptionStatic,
         $TemplateCache: storage.ITemplateCache,
         $Parser: expressions.IParser,
         $Http: async.IHttp,
@@ -562,7 +563,6 @@ module plat.ui {
             TemplateControl.$ResourcesFactory = $ResourcesFactory;
             TemplateControl.$BindableTemplatesFactory = $BindableTemplatesFactory;
             TemplateControl.$ManagerCache = $ManagerCache;
-            TemplateControl.$ExceptionStatic = $ExceptionStatic;
             TemplateControl.$TemplateCache = $TemplateCache;
             TemplateControl.$Parser = $Parser;
             TemplateControl.$Http = $Http;
@@ -570,15 +570,14 @@ module plat.ui {
             return TemplateControl;
     }
 
-    register.injectable('$TemplateControlFactory', ITemplateControlFactory, [
-        '$ResourcesFactory',
-        '$BindableTemplatesFactory',
-        '$ManagerCache',
-        '$ExceptionStatic',
-        '$TemplateCache',
-        '$Parser',
-        '$Http',
-        '$Promise'
+    register.injectable(__TemplateControlFactory, ITemplateControlFactory, [
+        __ResourcesFactory,
+        __BindableTemplatesFactory,
+        __ManagerCache,
+        __TemplateCache,
+        __Parser,
+        __Http,
+        __Promise
     ], register.FACTORY);
 
     /**

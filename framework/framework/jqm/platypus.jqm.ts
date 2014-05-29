@@ -59,6 +59,7 @@
             }).call(this, fnObj[key], key);
         });
     }
+
     var $compat: plat.ICompat = plat.acquire('$Compat');
     if ($compat.msApp) {
         overwriteFunctions({

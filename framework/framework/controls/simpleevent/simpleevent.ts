@@ -3,6 +3,9 @@ module plat.controls {
      * An AttributeControl that binds to a specified DOM event handler.
      */
     export class SimpleEventControl extends AttributeControl implements ISimpleEventControl {
+        $Parser: expressions.IParser = acquire(__Parser);
+        $Regex: expressions.IRegex = acquire(__Regex);
+
         /**
          * The event name.
          */
@@ -27,9 +30,6 @@ module plat.controls {
          * An array of the aliases used in the expression.
          */
         _aliases: Array<string> = [];
-        $Parser: expressions.IParser = acquire('$Parser');
-        $Regex: expressions.IRegex = acquire('$Regex');
-        $ExceptionStatic: IExceptionStatic = acquire('$ExceptionStatic');
 
         /**
          * Kicks off finding and setting the listener.
@@ -155,8 +155,9 @@ module plat.controls {
                 args = expression.args;
 
             if (!isFunction(fn)) {
-                this.$ExceptionStatic.warn('Cannot find registered event method ' +
-                    this._expression[0] + ' for control: ' + this.type);
+                var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                $exception.warn('Cannot find registered event method ' +
+                    this._expression[0] + ' for control: ' + this.type, $exception.BIND);
                 return;
             }
 
@@ -305,20 +306,6 @@ module plat.controls {
         event: string = '$touchmove';
     }
 
-    export class TouchEnter extends SimpleEventControl {
-        /**
-         * The event name.
-         */
-        event: string = '$touchenter';
-    }
-
-    export class TouchLeave extends SimpleEventControl {
-        /**
-         * The event name.
-         */
-        event: string = '$touchleave';
-    }
-
     export class TouchCancel extends SimpleEventControl {
         /**
          * The event name.
@@ -431,31 +418,29 @@ module plat.controls {
         }
     }
 
-    register.control('plat-tap', Tap);
-    register.control('plat-blur', Blur);
-    register.control('plat-change', Change);
-    register.control('plat-copy', Copy);
-    register.control('plat-cut', Cut);
-    register.control('plat-paste', Paste);
-    register.control('plat-dbltap', DblTap);
-    register.control('plat-focus', Focus);
-    register.control('plat-submit', Submit);
-    register.control('plat-touchstart', TouchStart);
-    register.control('plat-touchend', TouchEnd);
-    register.control('plat-touchmove', TouchMove);
-    register.control('plat-touchenter', TouchEnter);
-    register.control('plat-touchleave', TouchLeave);
-    register.control('plat-touchcancel', TouchCancel);
-    register.control('plat-hold', Hold);
-    register.control('plat-release', Release);
-    register.control('plat-swipe', Swipe);
-    register.control('plat-swipeleft', SwipeLeft);
-    register.control('plat-swiperight', SwipeRight);
-    register.control('plat-swipeup', SwipeUp);
-    register.control('plat-swipedown', SwipeDown);
-    register.control('plat-track', Track);
-    register.control('plat-trackleft', TrackLeft);
-    register.control('plat-trackright', TrackRight);
-    register.control('plat-trackup', TrackUp);
-    register.control('plat-trackdown', TrackDown);
+    register.control(__Tap, Tap);
+    register.control(__Blur, Blur);
+    register.control(__Change, Change);
+    register.control(__Copy, Copy);
+    register.control(__Cut, Cut);
+    register.control(__Paste, Paste);
+    register.control(__DblTap, DblTap);
+    register.control(__Focus, Focus);
+    register.control(__Submit, Submit);
+    register.control(__TouchStart, TouchStart);
+    register.control(__TouchEnd, TouchEnd);
+    register.control(__TouchMove, TouchMove);
+    register.control(__TouchCancel, TouchCancel);
+    register.control(__Hold, Hold);
+    register.control(__Release, Release);
+    register.control(__Swipe, Swipe);
+    register.control(__SwipeLeft, SwipeLeft);
+    register.control(__SwipeRight, SwipeRight);
+    register.control(__SwipeUp, SwipeUp);
+    register.control(__SwipeDown, SwipeDown);
+    register.control(__Track, Track);
+    register.control(__TrackLeft, TrackLeft);
+    register.control(__TrackRight, TrackRight);
+    register.control(__TrackUp, TrackUp);
+    register.control(__TrackDown, TrackDown);
 }

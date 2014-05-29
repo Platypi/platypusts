@@ -4,7 +4,7 @@ module plat.ui {
      * of DOM.
      */
     export class Dom implements IDom {
-        $DomEvents: ui.IDomEvents = acquire('$DomEvents');
+        $DomEvents: ui.IDomEvents = acquire(__DomEvents);
 
         addEventListener(element: Node, type: string, listener: ui.IGestureListener, useCapture?: boolean): IRemoveListener;
         addEventListener(element: Window, type: string, listener: ui.IGestureListener, useCapture?: boolean): IRemoveListener;
@@ -43,9 +43,10 @@ module plat.ui {
             return replace(node);
         }
 
-        replaceWith(element: HTMLElement, newElement: HTMLElement): HTMLElement;
+        replaceWith(node: Node, newElement: HTMLElement): HTMLElement;
+        replaceWith(node: Node, newElement: Element): Element;
         replaceWith(node: Node, newNode: Node): Node;
-        replaceWith(node: any, newNode: any) {
+        replaceWith(node: any, newNode: any): any {
             return replaceWith(node, newNode);
         }
 
@@ -61,12 +62,12 @@ module plat.ui {
             return removeAll(startNode, endNode);
         }
 
-        addClass(element: HTMLElement, className: string): void {
-            return addClass(element, className);
+        addClass(element: Element, className: string): void {
+            return addClass(<HTMLElement>element, className);
         }
 
-        removeClass(element: HTMLElement, className: string): void {
-            return removeClass(element, className);
+        removeClass(element: Element, className: string): void {
+            return removeClass(<HTMLElement>element, className);
         }
     }
 
@@ -77,7 +78,7 @@ module plat.ui {
         return new Dom();
     }
 
-    register.injectable('$Dom', IDom);
+    register.injectable(__Dom, IDom);
 
     /**
      * An object that deals with the creation, deletion, and modification 
@@ -142,7 +143,7 @@ module plat.ui {
         clearNodeBlock(nodeList: NodeList, parent?: Node): void;
 
         /**
-         * Sets the innerHTML of a Node. Can take in a Node rather than an HTMLElement
+         * Sets the innerHTML of a Node. Can take in a Node rather than an Element
          * because it does not use innerHTML on the passed-in Node (it appends its
          * childNodes).
          *
@@ -199,13 +200,24 @@ module plat.ui {
          * Takes the childNodes of the given element and appends them to the newElement.
          * Then replaces the element in its parent's tree with the newElement.
          *
-         * @param element The HTMLElement to remove from its parent.
+         * @param node The Node to remove from its parent.
          * @param newElement The HTMLElement populate with childNodes and add to the
-         * elemnent's parent.
+         * element's parent.
          * 
          * @return {HTMLElement} The replaced element (newElement).
          */
-        replaceWith(element: HTMLElement, newElement: HTMLElement): HTMLElement;
+        replaceWith(node: Node, newElement: HTMLElement): HTMLElement;
+        /**
+         * Takes the childNodes of the given element and appends them to the newElement.
+         * Then replaces the element in its parent's tree with the newElement.
+         *
+         * @param node The Node to remove from its parent.
+         * @param newElement The Element populate with childNodes and add to the
+         * element's parent.
+         * 
+         * @return {Element} The replaced element (newElement).
+         */
+        replaceWith(node: Node, newElement: Element): Element;
         /**
          * Takes the childNodes of the given Node and appends them to the newNode.
          * Then replaces the Node in its parent's tree with the newNode.
@@ -255,7 +267,7 @@ module plat.ui {
          * @param element The element to which the class name is being added.
          * @param className The class name to add to the element.
          */
-        addClass(element: HTMLElement, className: string): void;
+        addClass(element: Element, className: string): void;
 
         /**
          * Removes a class from the specified element
@@ -263,6 +275,6 @@ module plat.ui {
          * @param element The element from which the class name is being removed.
          * @param className The class name to remove from the element.
          */
-        removeClass(element: HTMLElement, className: string): void;
+        removeClass(element: Element, className: string): void;
     }
 }

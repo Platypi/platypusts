@@ -33,6 +33,6 @@ module plat.controls {
         property: string = 'src';
     }
 
-    register.control('plat-href', Href);
-    register.control('plat-src', Src);
+    register.control(__Href, Href);
+    register.control(__Src, Src);
 }

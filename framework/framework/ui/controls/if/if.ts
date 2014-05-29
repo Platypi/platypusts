@@ -9,7 +9,7 @@ module plat.ui.controls {
          * The evaluated plat-options object.
          */
         options: observable.IObservableProperty<IIfOptions>;
-        $ExceptionStatic: IExceptionStatic = acquire('$ExceptionStatic');
+
         private __removeListener: IRemoveListener;
         private __condition: boolean;
         /**
@@ -40,7 +40,9 @@ module plat.ui.controls {
          */
         loaded(): void {
             if (isNull(this.options)) {
-                this.$ExceptionStatic.warn('No condition specified in plat-options for plat-if.');
+                var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                $exception.warn('No condition specified in plat-options for plat-if.', $exception.BIND);
+
                 this.options = {
                     value: {
                         condition: true
@@ -125,5 +127,5 @@ module plat.ui.controls {
         condition: boolean;
     }
 
-    register.control('plat-if', If);
+    register.control(__If, If);
 }
