@@ -24,57 +24,21 @@
             return event;
         }
 
-        /**
-         * Navigation parameter, used to send objects from one view control to another.
-         */
         parameter: P;
-
-        /**
-         * The INavigationOptions in use for the navigation.
-         */
         options: navigation.IBaseNavigationOptions;
-
-        /**
-         * The navigation event target. Its type depends on the type of Navigation event.
-         */
         target: any;
-
-        /**
-         * Specifies the type of IViewControl for the Route Event.
-         */
         type: string;
-
-        /**
-         * States whether or not this event is able to be canceled. Some navigation events can be 
-         * canceled, preventing further navigation.
-         */
         cancelable: boolean = true;
-
-        /**
-         * States whether or not this event has been canceled.
-         */
         canceled: boolean = false;
 
-        /**
-         * Initializes the event members.
-         * 
-         * @param name The name of the event.
-         * @param sender The object that initiated the event.
-         * @param direction This will always be a direct event no matter what is sent in.
-         * 
-         * @see EventManager.direction
-         */
         initialize(name: string, sender: any, direction?: string, eventOptions?: INavigationEventOptions<P>) {
-            super.initialize(name, sender, this.$EventManagerStatic.direction.DIRECT);
+            super.initialize(name, sender, this.$EventManagerStatic.DIRECT);
             this.parameter = eventOptions.parameter;
             this.options = eventOptions.options;
             this.target = eventOptions.target;
             this.type = eventOptions.type;
         }
 
-        /**
-         * If the event is cancelable (ev.cancelable), calling this method will cancel the event.
-         */
         cancel() {
             if (this.cancelable) {
                 this.canceled = true;
@@ -87,14 +51,31 @@
     /**
      * The Type for referencing the '$NavigationEventStatic' injectable as a dependency.
      */
-    export function NavigationEventStatic($EventManagerStatic: IEventManagerStatic): INavigationEventStatic {
+    export function INavigationEventStatic($EventManagerStatic: IEventManagerStatic): INavigationEventStatic {
         NavigationEvent.$EventManagerStatic = $EventManagerStatic;
         return NavigationEvent;
     }
 
-    register.injectable('$NavigationEventStatic', NavigationEventStatic, [
+    register.injectable('$NavigationEventStatic', INavigationEventStatic, [
         '$EventManagerStatic'
-    ], register.injectableType.STATIC);
+    ], register.STATIC);
+
+    /**
+     * The intended external interface for the '$NavigationEventStatic' injectable.
+     */
+    export interface INavigationEventStatic {
+        /**
+         * Dispatches an event with the specified target type.
+         * 
+         * @generic P Corresponds to the type of the event parameter.
+         *
+         * @param name The name of the event (e.g. 'beforeNavigate')
+         * @param sender The object sending the event.
+         * @param eventOptions An object implementing INavigationEvent, specifying what all event listeners
+         * will be passed.
+         */
+        dispatch<P>(name: string, sender: any, eventOptions: events.INavigationEventOptions<P>): INavigationEvent<P>;
+    }
 
     /**
      * Describes options for an INavigationEvent. The generic parameter specifies the 
@@ -131,7 +112,7 @@
     /**
      * Describes an object used by the Navigator to dispatch Navigation events.
      */
-    export interface INavigationEvent<P> extends IDispatchEvent {
+    export interface INavigationEvent<P> extends IDispatchEventInstance {
         /**
          * Navigation parameter, used to send objects from one view control to another.
          */
@@ -193,22 +174,5 @@
          * @see EventManager.direction
          */
         initialize(name: string, sender: any, direction?: string, eventOptions?: INavigationEventOptions<P>);
-    }
-
-    /**
-     * The intended external interface for the '$NavigationEventStatic' injectable.
-     */
-    export interface INavigationEventStatic {
-        /**
-         * Dispatches an event with the specified target type.
-         * 
-         * @generic P Corresponds to the type of the event parameter.
-         *
-         * @param name The name of the event (e.g. 'beforeNavigate')
-         * @param sender The object sending the event.
-         * @param eventOptions An object implementing INavigationEvent, specifying what all event listeners
-         * will be passed.
-         */
-        dispatch<P>(name: string, sender: any, eventOptions: events.INavigationEventOptions<P>): INavigationEvent<P>;
     }
 }

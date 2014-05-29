@@ -3,7 +3,7 @@ module plat {
      * Provides methods for interacting with geolocation services on a device.
      */
     export class Geolocation implements IGeolocation {
-        $PromiseStatic: async.IPromiseStatic = acquire('$PromiseStatic');
+        $Promise: async.IPromise = acquire('$Promise');
 
         /**
          * Attempts to acquire position information of the device.
@@ -14,7 +14,7 @@ module plat {
          */
         getCurrentPosition(positionOptions?: IGeolocationPositionOptions)
                 : async.IThenable<IGeolocationPosition> {
-            return new this.$PromiseStatic<IGeolocationPosition>((resolve, reject) => {
+            return new this.$Promise<IGeolocationPosition>((resolve, reject) => {
                 navigator.geolocation.getCurrentPosition(resolve, reject, positionOptions);
             });
         }

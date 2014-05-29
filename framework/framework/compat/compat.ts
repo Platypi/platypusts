@@ -3,83 +3,22 @@
      * A class for checking browser compatibility issues.
      */
     export class Compat implements ICompat {
-        /**
-         * Signifies whether or not Cordova is defined. If it is, 
-         * we hook up ALM events to Cordova's functions.
-         */
         cordova: boolean;
-
-        /**
-         * Signifies whether window.history.pushState is defined.
-         */
         pushState: boolean;
-
-        /**
-         * Signifies whether the File API is supported.
-         */
         fileSupported: boolean;
-        
-        /**
-         * Signifies whether Require is present. If it is, we assume 
-         * it is going to be used and leave the loading of the app up 
-         * to the developer.
-         */
         amd: boolean;
-        
-        /**
-         * Signifies whether we are in the contet of a Windows 8 app.
-         */
         msApp: boolean;
-        
-        /**
-         * Signifies whether indexedDB exists on the window.
-         */
         indexedDb: boolean;
-
-        /**
-         * Signifies whether Object.prototype.__proto__ exists.
-         */
         proto: boolean;
-
-        /**
-         * Signifies whether Object.prototype.getPrototypeOf exists.
-         */
         getProto: boolean;
-
-        /**
-         * Signifies whether Object.prototype.setPrototypeOf exists.
-         */
         setProto: boolean;
-
-        /**
-         * Whether or not the current browser has touch events 
-         * like touchstart, touchmove, touchend, etc.
-         */
         hasTouchEvents: boolean;
-
-        /**
-         * Whether or not the current browser has pointer events 
-         * like pointerdown, MSPointerMove, pointerup, etc.
-         */
         hasPointerEvents: boolean;
-
-        /**
-         * Whether or not the current browser has touch events 
-         * like MSPointerDown, touchmove, MSPointerUp, etc.
-         */
         hasMsPointerEvents: boolean;
-
-        /**
-         * An object containing the correctly mapped touch events for the browser.
-         */
         mappedEvents: IMappedEvents;
 
-        /**
-         * Determines if the browser is modern enough to correctly 
-         * run PlatypusTS.
-         */
         get isCompatible() {
-            var $document = acquire('$document');
+            var $document = acquire('$Document');
 
             return isFunction(Object.defineProperty) &&
                 isFunction($document.querySelector);
@@ -87,7 +26,7 @@
 
         constructor() {
             var contextManager: observable.IContextManagerStatic = acquire('$ContextManagerStatic'),
-                $window: Window = acquire('$window'),
+                $window: Window = acquire('$Window'),
                 define = contextManager.defineGetter,
                 navigator = $window.navigator,
                 hasTouch = !isUndefined((<any>$window).ontouchstart),
@@ -149,7 +88,14 @@
         }
     }
 
-    register.injectable('$compat', Compat);
+    /**
+     * The Type for referencing the '$Compat' injectable as a dependency.
+     */
+    export function ICompat(): ICompat {
+        return new Compat();
+    }
+
+    register.injectable('$Compat', ICompat);
 
     /**
      * Describes an object containing the correctly mapped touch events for the browser.

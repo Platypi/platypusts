@@ -3,12 +3,13 @@ module plat.expressions {
      * Parses javascript expression strings and creates IParsedExpressions.
      */
     export class Parser implements IParser {
+        $Tokenizer: ITokenizer = acquire('$Tokenizer');
+        $ExceptionStatic: IExceptionStatic = acquire('$ExceptionStatic');
+
         /**
          * A single expression's token representation created by the Tokenizer.
          */
         _tokens: Array<IToken> = [];
-        $tokenizer: ITokenizer = acquire('$tokenizer');
-        $ExceptionStatic: IExceptionStatic = acquire('$ExceptionStatic');
         private __cache: IObject<IParsedExpression> = {};
         private __codeArray: Array<string> = [];
         private __identifiers: Array<string> = [];
@@ -16,18 +17,13 @@ module plat.expressions {
         private __aliases: Array<string> = [];
         private __uniqueAliases: IObject<boolean> = {};
 
-        /**
-         * Parses a string representation of a javascript expression and turns it
-         * into an IParsedExpression.
-         * 
-         * @param input The string representation of a javascript expression.
-         */
         parse(input: string): IParsedExpression {
             var parsedObject = this.__cache[input];
             if (!isNull(parsedObject)) {
                 return parsedObject;
             }
-            this._tokens = this.$tokenizer.createTokens(input);
+
+            this._tokens = this.$Tokenizer.createTokens(input);
 
             parsedObject = this._evaluate(input);
 
@@ -561,7 +557,28 @@ module plat.expressions {
         }
     }
 
-    register.injectable('$parser', Parser);
+    /**
+     * The Type for referencing the '$Parser' injectable as a dependency.
+     */
+    export function IParser(): IParser {
+        return new Parser();
+    }
+
+    register.injectable('$Parser', IParser);
+
+    /**
+     * Describes an object that can parse an expression string and turn it into an
+     * IParsedExpression. The intended external interface for the '$Parser' 
+     * injectable.
+     */
+    export interface IParser {
+        /**
+         * Takes in an expression string and outputs an IParsedExpression.
+         * 
+         * @param input An expression string to parse.
+         */
+        parse(expression: string): IParsedExpression;
+    }
 
     /**
      * Describes an object that is the result of parsing an expression string. Provides a
@@ -597,19 +614,5 @@ module plat.expressions {
          * for this expression. Typically this is added to a clone of the IParsedExpression.
          */
         oneTime?: boolean;
-    }
-
-    /**
-     * Describes an object that can parse an expression string and turn it into an
-     * IParsedExpression. The intended external interface for the '$parser' 
-     * injectable.
-     */
-    export interface IParser {
-        /**
-         * Takes in an expression string and outputs an IParsedExpression.
-         * 
-         * @param input An expression string to parse.
-         */
-        parse(expression: string): IParsedExpression;
     }
 }

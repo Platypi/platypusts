@@ -15,20 +15,18 @@ module plat {
      * as well as error handling.
      */
     export class App implements IApp {
-        static $compat: ICompat;
+        static $Compat: ICompat;
         static $ExceptionStatic: IExceptionStatic;
         static $EventManagerStatic: events.IEventManagerStatic;
-        static $document: Document;
-        static $compiler: processing.ICompiler;
+        static $Document: Document;
+        static $Compiler: processing.ICompiler;
         static $LifecycleEventStatic: events.ILifecycleEventStatic;
 
         /**
          * A static method for initiating the app startup.
          */
         static start(): void {
-            var $compat = App.$compat;
-
-            if (!$compat.isCompatible) {
+            if (!App.$Compat.isCompatible) {
                 var $ExceptionStatic = App.$ExceptionStatic;
 
                 $ExceptionStatic.fatal('PlatypusTS only supports modern browsers where ' +
@@ -54,9 +52,8 @@ module plat {
             }
 
             App.app = app;
-            var $compat = App.$compat;
 
-            if ($compat.amd) {
+            if (App.$Compat.amd) {
                 var $LifecycleEventStatic = App.$LifecycleEventStatic,
                     dispatch = $LifecycleEventStatic.dispatch;
 
@@ -74,25 +71,25 @@ module plat {
          */
         static load(node?: Node): void {
             var $LifecycleEventStatic = App.$LifecycleEventStatic,
-                compiler = App.$compiler,
-                body = App.$document.body;
+                $compiler = App.$Compiler,
+                body = App.$Document.body;
 
             $LifecycleEventStatic.dispatch('beforeLoad', App);
 
 
             if (isNull(node)) {
                 body.setAttribute('plat-hide', '');
-                compiler.compile(body);
+                $compiler.compile(body);
                 body.removeAttribute('plat-hide');
                 return;
             }
 
             if (isFunction((<HTMLElement>node).setAttribute)) {
                 (<HTMLElement>node).setAttribute('plat-hide', '');
-                compiler.compile(node);
+                $compiler.compile(node);
                 (<HTMLElement>node).removeAttribute('plat-hide');
             } else {
-                compiler.compile(node);
+                $compiler.compile(node);
             }
         }
 
@@ -114,9 +111,7 @@ module plat {
                 App.__registerAppEvents(ev);
             }
 
-            var compat = App.$compat;
-
-            if (!compat.amd) {
+            if (!App.$Compat.amd) {
                 App.load();
             }
         }
@@ -147,9 +142,6 @@ module plat {
             }
         }
 
-        /**
-         * A unique id, created during instantiation.
-         */
         uid: string;
 
         /**
@@ -161,129 +153,75 @@ module plat {
             ContextManager.defineGetter(this, 'uid', uniqueId('plat_'));
         }
 
-        /**
-         * Event fired when the app is suspended.
-         * 
-         * @param ev The ILifecycleEvent object.
-         */
         suspend(ev: events.ILifecycleEvent): void { }
 
-        /**
-         * Event fired when the app resumes from the suspended state.
-         * 
-         * @param ev The ILifecycleEvent object.
-         */
         resume(ev: events.ILifecycleEvent): void { }
 
-        /**
-         * Event fired when an internal error occures.
-         * 
-         * @param ev The IErrorEvent object.
-         */
         error(ev: events.IErrorEvent<Error>): void { }
 
-        /**
-         * Event fired when the app is ready.
-         * 
-         * @param ev The ILifecycleEvent object.
-         */
         ready(ev: events.ILifecycleEvent): void { }
 
-        /**
-         * Event fired when the app regains connectivity and is now in an online state.
-         * 
-         * @param ev The ILifecycleEvent object.
-         */
         online(ev: events.ILifecycleEvent): void { }
 
-        /**
-         * Event fired when the app loses connectivity and is now in an offline state.
-         * 
-         * @param ev The ILifecycleEvent object.
-         */
         offline(ev: events.ILifecycleEvent): void { }
 
-        /**
-         * Creates a new DispatchEvent and propagates it to all listeners based on the 
-         * events.EventManager.DIRECT method. Propagation will always start with the sender, 
-         * so the sender can both produce and consume the same event.
-         * 
-         * @param name The name of the event to send, cooincides with the name used in the
-         * app.on() method.
-         * @param ...args Any number of arguments to send to all the listeners.
-         */
         dispatchEvent(name: string, ...args: any[]): void {
-            App.$EventManagerStatic.dispatch(name, this, App.$EventManagerStatic.direction.DIRECT, args);
+            App.$EventManagerStatic.dispatch(name, this, App.$EventManagerStatic.DIRECT, args);
         }
 
-        /**
-         * Registers a listener for a beforeNavigate event. The listener will be called when a beforeNavigate 
-         * event is propagating over the app. Any number of listeners can exist for a single event name. 
-         * This event is cancelable using the ev.cancel() method, and thereby preventing the navigation.
-         * 
-         * @param name='beforeNavigate' The name of the event, cooinciding with the beforeNavigate event.
-         * @param listener The method called when the beforeNavigate event is fired.
-         */
         on(name: 'beforeNavigate', listener: (ev: events.INavigationEvent<any>) => void): IRemoveListener;
-        /**
-         * Registers a listener for a navigating event. The listener will be called when a navigating 
-         * event is propagating over the app. Any number of listeners can exist for a single event name. 
-         * This event is cancelable using the ev.cancel() method, and thereby preventing the navigation.
-         * 
-         * @param name='navigating' The name of the event, cooinciding with the navigating event.
-         * @param listener The method called when the navigating event is fired.
-         */
         on(name: 'navigating', listener: (ev: events.INavigationEvent<any>) => void): IRemoveListener;
-        /**
-         * Registers a listener for a navigated event. The listener will be called when a navigated 
-         * event is propagating over the app. Any number of listeners can exist for a single event name. 
-         * This event is not cancelable.
-         * 
-         * @param name='navigated' The name of the event, cooinciding with the navigated event.
-         * @param listener The method called when the navigated event is fired.
-         */
         on(name: 'navigated',
             listener: (ev: events.INavigationEvent<any>) => void): IRemoveListener;
-        /**
-         * Registers a listener for a routeChanged event. The listener will be called when a routeChange event 
-         * is propagating over the app. Any number of listeners can exist for a single event name.
-         *
-         * @param eventName='routeChange' This specifies that the listener is for a routeChange event.
-         * @param listener The method called when the routeChange is fired. The route argument will contain 
-         * a parsed route.
-         */
         on(name: 'routeChanged', listener: (ev: events.INavigationEvent<web.IRoute<any>>) => void): IRemoveListener;
-        /**
-         * Registers a listener for a NavigationEvent. The listener will be called when a NavigationEvent is 
-         * propagating over the app. Any number of listeners can exist for a single event name.
-         * 
-         * @param name The name of the event, cooinciding with the NavigationEvent name.
-         * @param listener The method called when the NavigationEvent is fired.
-         */
         on(name: string, listener: (ev: events.INavigationEvent<any>) => void): IRemoveListener;
-        /**
-         * Registers a listener for a DispatchEvent. The listener will be called when a DispatchEvent is 
-         * propagating over the app. Any number of listeners can exist for a single event name.
-         * 
-         * @param name The name of the event, cooinciding with the DispatchEvent name.
-         * @param listener The method called when the DispatchEvent is fired.
-         */
-        on(name: string, listener: (ev: events.IDispatchEvent, ...args: any[]) => void): IRemoveListener {
+        on(name: string, listener: (ev: events.IDispatchEventInstance, ...args: any[]) => void): IRemoveListener {
             return App.$EventManagerStatic.on(this.uid, name, listener, this);
         }
 
-        /**
-         * Kicks off compilation of the DOM from the specified node. If no node is specified, 
-         * the default start node is document.body. This method should be called from the app when 
-         * using module loaders. If a module loader is in use, the app will delay loading until 
-         * this method is called.
-         * 
-         * @param node The node where at which DOM compilation begins.
-         */
         load(node?: Node): void {
             App.load(node);
         }
     }
+
+    /**
+     * The Type for referencing the '$AppStatic' injectable as a dependency.
+     */
+    export function IAppStatic(
+        $Compat: ICompat,
+        $ExceptionStatic: IExceptionStatic,
+        $EventManagerStatic: events.IEventManagerStatic,
+        $Document: Document,
+        $Compiler: processing.ICompiler,
+        $LifecycleEventStatic: events.ILifecycleEventStatic): IAppStatic {
+            App.$Compat = $Compat;
+            App.$ExceptionStatic = $ExceptionStatic;
+            App.$EventManagerStatic = $EventManagerStatic;
+            App.$Document = $Document;
+            App.$Compiler = $Compiler;
+            App.$LifecycleEventStatic = $LifecycleEventStatic;
+            return App;
+    }
+
+    register.injectable('$AppStatic', IAppStatic, [
+        '$Compat',
+        '$ExceptionStatic',
+        '$EventManagerStatic',
+        '$Document',
+        '$Compiler',
+        '$LifecycleEventStatic'
+    ], register.STATIC);
+
+    /**
+     * The Type for referencing the '$App' injectable as a dependency.
+     */
+    export function IApp($AppStatic: IAppStatic): IApp {
+        return $AppStatic.app;
+    }
+
+    register.injectable('$App', IApp, [
+        '$AppStatic'
+    ], register.INSTANCE);
 
     /**
      * The external interface for the '$AppStatic' interface.
@@ -313,45 +251,6 @@ module plat {
          */
         app: IApp;
     }
-
-    /**
-     * The Type for referencing the '$AppStatic' injectable as a dependency.
-     */
-    export function AppStatic(
-        $compat: ICompat,
-        $ExceptionStatic: IExceptionStatic,
-        $EventManagerStatic: events.IEventManagerStatic,
-        $document: Document,
-        $compiler: processing.ICompiler,
-        $LifecycleEventStatic: events.ILifecycleEventStatic) {
-            App.$compat = $compat;
-            App.$ExceptionStatic = $ExceptionStatic;
-            App.$EventManagerStatic = $EventManagerStatic;
-            App.$document = $document;
-            App.$compiler = $compiler;
-            App.$LifecycleEventStatic = $LifecycleEventStatic;
-            return App;
-    }
-
-    register.injectable('$AppStatic', AppStatic, [
-        '$compat',
-        '$ExceptionStatic',
-        '$EventManagerStatic',
-        '$document',
-        '$compiler',
-        '$LifecycleEventStatic'
-    ], register.injectableType.STATIC);
-
-    /**
-     * The Type for referencing the '$app' injectable as a dependency.
-     */
-    export function AppInstance($AppStatic: IAppStatic) {
-        return $AppStatic.app;
-    }
-
-    register.injectable('$app', AppInstance, [
-        '$AppStatic'
-    ], register.injectableType.MULTI);
 
     /**
      * An object implementing IApp implements the methods called by the framework to support 
@@ -474,7 +373,7 @@ module plat {
          * @param listener The method called when the DispatchEvent is fired.
          * @return {IRemoveListener} A method for removing the listener.
          */
-        on(name: string, listener: (ev: events.IDispatchEvent, ...args: any[]) => void): IRemoveListener;
+        on(name: string, listener: (ev: events.IDispatchEventInstance, ...args: any[]) => void): IRemoveListener;
 
         /**
          * Kicks off compilation of the DOM from the specified node. If no node is specified, 

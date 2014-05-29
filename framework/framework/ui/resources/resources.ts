@@ -16,7 +16,7 @@ module plat.ui {
      * @example 
      * <custom-control>
      *     <plat-resources>
-     *         <injectable alias="Cache">$CacheStatic</injectable>
+     *         <injectable alias="Cache">$CacheFactory</injectable>
      *         <observable alias="testObj">
      *              { 
      *                  foo: 'foo', 
@@ -39,8 +39,9 @@ module plat.ui {
      */
     export class Resources implements IResources {
         static $ContextManagerStatic: observable.IContextManagerStatic;
-        static $regex: expressions.IRegex;
+        static $Regex: expressions.IRegex;
         static $ExceptionStatic: IExceptionStatic;
+
         /**
          * Populates an IResource value if necessary, and adds it to the given 
          * control's resources.
@@ -49,7 +50,7 @@ module plat.ui {
          * @param control The control for which to create a resource.
          * @param resource The IResource used to set the value.
          */
-        static createResource(control: ITemplateControl, resource: IResource): IResource {
+        static create(control: ITemplateControl, resource: IResource): IResource {
             if (isNull(resource)) {
                 return resource;
             }
@@ -140,7 +141,7 @@ module plat.ui {
                     continue;
                 }
 
-                (<any>resourcesInstance)[alias] = resources[alias] = Resources.createResource(control,
+                (<any>resourcesInstance)[alias] = resources[alias] = Resources.create(control,
                     (<any>resourcesInstance)[alias]);
             }
             
@@ -194,8 +195,9 @@ module plat.ui {
          */
         static parseElement(element: HTMLElement): IObject<IResource> {
             var slice = Array.prototype.slice,
-                whiteSpaceRegex = Resources.$regex.whiteSpaceRegex,
-                quotationRegex = Resources.$regex.quotationRegex,
+                $regex = Resources.$Regex,
+                whiteSpaceRegex = $regex.whiteSpaceRegex,
+                quotationRegex = $regex.quotationRegex,
                 resources: IObject<IResource> = {},
                 resource: IResource,
                 types = Resources.__resourceTypes,
@@ -331,28 +333,8 @@ module plat.ui {
         private __bound: boolean = false;
         private __controlInstance: ITemplateControl;
 
-        /**
-         * Initializes the control's Resources instance.
-         * 
-         * @param control The control containing this Resources instance.
-         * @param element An optional element used to create initial IResource objects.
-         */
         initialize(control: ITemplateControl, element?: HTMLElement): void;
-        /**
-         * Initializes the control's Resources instance.
-         * 
-         * @param control The control containing this Resources instance.
-         * @param resources An optional IObject<IResource> used to populate initial
-         * IResource objects.
-         */
         initialize(control: ITemplateControl, resources?: IObject<IResource>): void;
-        /**
-         * Initializes the control's Resources instance.
-         * 
-         * @param control The control containing this Resources instance.
-         * @param element An optional IResources object used to populate initial 
-         * IResource objects.
-         */
         initialize(control: ITemplateControl, resources?: IResources): void;
         initialize(controlInstance: ITemplateControl, resources?: any) {
             this.__controlInstance = controlInstance;
@@ -378,35 +360,7 @@ module plat.ui {
             }
         }
 
-        /**
-         * Used for programatically adding IResource objects.
-         * 
-         * @param resources An IObject<IResource> used to add 
-         * resources, keyed by their alias.
-         * 
-         * @example control.resources.add({
-         *     myAlias: {
-         *         type: 'observable',
-         *         value: { 
-         *             hello: 'Hello World!'
-         *         } 
-         *     }
-         * });
-         */
         add(resources: IObject<IResource>): void;
-        /**
-         * Used for programatically adding IResource objects.
-         * 
-         * @param element An HTMLElement containing resource element children.
-         * 
-         * @example
-         *     <plat-resources>
-         *         <injectable alias="Cache">$CacheStatic</injectable>
-         *         <observable alias="testObj">{ foo: 'foo', bar: 'bar', baz: 2 }</observable>
-         *     </plat-resources>
-         * 
-         * The resource type is specified by the element name.
-         */
         add(element: HTMLElement): void;
         add(resources: any) {
             if (isNull(resources)) {
@@ -421,7 +375,7 @@ module plat.ui {
                 control = this.__controlInstance,
                 bound = this.__bound,
                 key: string,
-                create = Resources.createResource;
+                create = Resources.create;
 
             for (var i = 0; i < length; ++i) {
                 key = keys[i];
@@ -434,23 +388,88 @@ module plat.ui {
     }
 
     /**
-     * The Type for referencing the '$ResourcesStatic' injectable as a dependency.
+     * The Type for referencing the '$ResourcesFactory' injectable as a dependency.
      */
-    export function ResourcesStatic(
-            $ContextManagerStatic: observable.IContextManagerStatic,
-            $regex: expressions.IRegex,
-            $ExceptionStatic: IExceptionStatic): IResourcesStatic {
-        Resources.$ContextManagerStatic = $ContextManagerStatic;
-        Resources.$regex = $regex;
-        Resources.$ExceptionStatic = $ExceptionStatic;
-        return Resources;
+    export function IResourcesFactory(
+        $ContextManagerStatic: observable.IContextManagerStatic,
+        $Regex: expressions.IRegex,
+        $ExceptionStatic: IExceptionStatic): IResourcesFactory {
+            Resources.$ContextManagerStatic = $ContextManagerStatic;
+            Resources.$Regex = $Regex;
+            Resources.$ExceptionStatic = $ExceptionStatic;
+            return Resources;
     }
 
-    register.injectable('$ResourcesStatic', ResourcesStatic, [
+    register.injectable('$ResourcesFactory', IResourcesFactory, [
         '$ContextManagerStatic',
-        '$regex',
+        '$Regex',
         '$ExceptionStatic'
-    ], register.injectableType.STATIC);
+    ], register.FACTORY);
+
+    /**
+     * Creates and manages IResources for TemplateControls.
+     */
+    export interface IResourcesFactory {
+        /**
+         * Populates an IResource value if necessary, and adds it to the given
+         * control's resources.
+         *
+         * @static
+         * @param control The control for which to create a resource.
+         * @param resource The IResource used to set the value.
+         */
+        create(control: ITemplateControl, resource: IResource): IResource;
+
+        /**
+         * Adds resource aliases for '@control' and '@context'. The resources are
+         * aliases for the control instance and the control.context.
+         *
+         * @static
+         * @param control The control on which to add the resources.
+         */
+        addControlResources(control: ITemplateControl): void;
+
+        /**
+         * Binds the resources in a resource instance. This involves injecting
+         * the injectable resources, creating object/observable resources, and
+         * binding functions to the associated control's instance.
+         *
+         * @static
+         * @param resourcesInstance The instance of the IResources object.
+         */
+        bindResources(resourcesInstance: IResources): void;
+
+        /**
+         * Disposes a resource instance, removing its reference
+         * from a control and breaking references to all resource
+         * objects.
+         * 
+         * @static
+         * @param control The control whose resources will be disposed.
+         * @param persist Whether or not to persist a resource object post 
+         * disposal or set it to null.
+         */
+        dispose(control: ITemplateControl, persist?: boolean): void;
+
+        /**
+         * Parses a resources HTMLElement and creates
+         * an IObject<IResource> with its element children.
+         *
+         * @static
+         * @param element The resources element to parse.
+         * 
+         * @return {IObject<IResource>} The resources created
+         * using element.
+         */
+        parseElement(element: HTMLElement): IObject<IResource>;
+
+        /**
+         * Returns a new instance of IResources
+         * 
+         * @static
+         */
+        getInstance(): IResources;
+    }
 
     /**
      * Resources are used for providing aliases to use in markup expressions. They 
@@ -469,7 +488,7 @@ module plat.ui {
      * @example 
      * <custom-control>
      *     <plat-resources>
-     *         <injectable alias="Cache">$CacheStatic</injectable>
+     *         <injectable alias="Cache">$CacheFactory</injectable>
      *         <observable alias="testObj">
      *              { 
      *                  foo: 'foo', 
@@ -514,7 +533,7 @@ module plat.ui {
          * 
          * @example
          *     <plat-resources>
-         *         <injectable alias="Cache">$CacheStatic</injectable>
+         *         <injectable alias="Cache">$CacheFactory</injectable>
          *         <observable alias="testObj">{ foo: 'foo', bar: 'bar', baz: 2 }</observable>
          *     </plat-resources>
          * 
@@ -568,70 +587,5 @@ module plat.ui {
          * The initial value prior to it being observed.
          */
         initialValue?: any;
-    }
-
-    /**
-     * The external interface for the '$ResourcesStatic' injectable.
-     */
-    export interface IResourcesStatic {
-        /**
-         * Populates an IResource value if necessary, and adds it to the given
-         * control's resources.
-         *
-         * @static
-         * @param control The control for which to create a resource.
-         * @param resource The IResource used to set the value.
-         */
-        createResource(control: ITemplateControl, resource: IResource): IResource;
-
-        /**
-         * Adds resource aliases for '@control' and '@context'. The resources are
-         * aliases for the control instance and the control.context.
-         *
-         * @static
-         * @param control The control on which to add the resources.
-         */
-        addControlResources(control: ITemplateControl): void;
-
-        /**
-         * Binds the resources in a resource instance. This involves injecting
-         * the injectable resources, creating object/observable resources, and
-         * binding functions to the associated control's instance.
-         *
-         * @static
-         * @param resourcesInstance The instance of the IResources object.
-         */
-        bindResources(resourcesInstance: IResources): void;
-
-        /**
-         * Disposes a resource instance, removing its reference
-         * from a control and breaking references to all resource
-         * objects.
-         * 
-         * @static
-         * @param control The control whose resources will be disposed.
-         * @param persist Whether or not to persist a resource object post 
-         * disposal or set it to null.
-         */
-        dispose(control: ITemplateControl, persist?: boolean): void;
-
-        /**
-         * Parses a resources HTMLElement and creates
-         * an IObject<IResource> with its element children.
-         *
-         * @static
-         * @param element The resources element to parse.
-         * 
-         * @return {IObject<IResource>} The resources created
-         * using element.
-         */
-        parseElement(element: HTMLElement): IObject<IResource>;
-
-        /**
-         * Returns a new instance of IResources
-         * 
-         * @static
-         */
-        getInstance(): IResources;
     }
 }

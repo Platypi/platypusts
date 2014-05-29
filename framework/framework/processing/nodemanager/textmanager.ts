@@ -83,20 +83,11 @@ module plat.processing {
          */
         type: string = 'text';
 
-        /**
-         * Clones this TextManager with a new node.
-         * 
-         * @param newNode The new node attached to the cloned TextManager.
-         * @param parentManager The parent ElementManager for the clone.
-         */
         clone(newNode: Node, parentManager: IElementManager): number {
             TextManager._clone(this, newNode, parentManager);
             return 1;
         }
 
-        /**
-         * The function used for data-binding a data context to the DOM.
-         */
         bind(): void {
             var parent = this.getParentControl(),
                 node = this.nodeMap.nodes[0],
@@ -129,13 +120,28 @@ module plat.processing {
     }
 
     /**
-     * The Type for referencing the '$TextManagerStatic' injectable as a dependency.
+     * The Type for referencing the '$TextManagerFactory' injectable as a dependency.
      */
-    export function TextManagerStatic(): ITextManagerStatic {
+    export function ITextManagerFactory(): ITextManagerFactory {
         return TextManager;
     }
 
-    register.injectable('$TextManagerStatic', TextManagerStatic, null, register.injectableType.STATIC);
+    register.injectable('$TextManagerFactory', ITextManagerFactory, null, register.FACTORY);
+
+    /**
+     * Creates and manages a class for dealing with Text nodes.
+     */
+    export interface ITextManagerFactory {
+        /**
+         * Determines if a text node has markup, and creates a TextManager if it does.
+         * A TextManager or empty TextManager will be added to the managers array.
+         * 
+         * @static
+         * @param node The Node used to find markup.
+         * @param parent The parent ui.ITemplateControl for the node.
+         */
+        create(node: Node, parent?: IElementManager): ITextManager;
+    }
 
     /**
      * An object responsible for initializing and data-binding values to text nodes.
@@ -153,20 +159,5 @@ module plat.processing {
          * The function used for data-binding a data context to the DOM.
          */
         bind(): void;
-    }
-
-    /**
-     * The external interface for the '$TextManagerStatic' injectable.
-     */
-    export interface ITextManagerStatic {
-        /**
-         * Determines if a text node has markup, and creates a TextManager if it does.
-         * A TextManager or empty TextManager will be added to the managers array.
-         * 
-         * @static
-         * @param node The Node used to find markup.
-         * @param parent The parent ui.ITemplateControl for the node.
-         */
-        create(node: Node, parent?: IElementManager): ITextManager;
     }
 }

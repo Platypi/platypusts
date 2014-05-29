@@ -3,6 +3,8 @@
      * An AttributeControl that deals with observing changes for a specified property.
      */
     export class ObservableAttributeControl extends AttributeControl implements IObservableAttributeControl {
+        $ContextManagerStatic: observable.IContextManagerStatic = acquire('$ContextManagerStatic');
+
         /**
          * The property to set on the associated template control.
          */
@@ -73,13 +75,10 @@
                 return;
             }
 
-            var property = <observable.IObservableProperty<any>>{
-                    value: value,
-                    observe: this._boundAddListener
-                },
-                ContextManager: observable.IContextManagerStatic = acquire('$ContextManagerStatic');
-
-            ContextManager.defineGetter(templateControl, this.property, property, true, true);
+            this.$ContextManagerStatic.defineGetter(templateControl, this.property, <observable.IObservableProperty<any>>{
+                value: value,
+                observe: this._boundAddListener
+            }, true, true);
             this._callListeners(value, oldValue);
         }
 

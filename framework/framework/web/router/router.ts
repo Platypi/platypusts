@@ -4,9 +4,15 @@
      * to and from IViewControls within the Routeport.
      */
     export class Router implements IRouter {
-        /**
-         * A unique string identifier.
-         */
+        $Browser: IBrowser = acquire('$Browser');
+        $BrowserConfig: IBrowserConfig = acquire('$BrowserConfig');
+        $EventManagerStatic: events.IEventManagerStatic = acquire('$EventManagerStatic');
+        $NavigationEventStatic: events.INavigationEventStatic = acquire('$NavigationEventStatic');
+        $Compat: ICompat = acquire('$Compat');
+        $ExceptionStatic: IExceptionStatic = acquire('$ExceptionStatic');
+        $Regex: expressions.IRegex = acquire('$Regex');
+        $Window: Window = acquire('$Window');
+
         uid: string;
 
         /**
@@ -32,43 +38,32 @@
          * defaultRoute is not specified in its plat-options.
          */
         _baseRoute: IMatchedRoute;
-        $browser: IBrowser = acquire('$browser');
-        $browserConfig: IBrowserConfig = acquire('$browser.config');
-        $EventManagerStatic: events.IEventManagerStatic = acquire('$EventManagerStatic');
-        $NavigationEventStatic: events.INavigationEventStatic = acquire('$NavigationEventStatic');
-        $compat: ICompat = acquire('$compat');
-        $ExceptionStatic: IExceptionStatic = acquire('$ExceptionStatic');
-        $regex: expressions.IRegex = acquire('$regex');
-        $window: Window = acquire('$window');
-        private __escapeRegex = this.$regex.escapeRouteRegex;
-        private __optionalRegex = this.$regex.optionalRouteRegex;
+
+        private __escapeRegex = this.$Regex.escapeRouteRegex;
+        private __optionalRegex = this.$Regex.optionalRouteRegex;
         private __pathSlashRegex = /^\/|\/$/g;
         private __firstRoute = true;
         private __history: Array<string>;
 
+        /**
+         * Assigns a uid and subscribes to the 'urlChanged' event.
+         */
         constructor() {
             var ContextManager: observable.IContextManagerStatic = acquire('$ContextManagerStatic');
             ContextManager.defineGetter(this, 'uid', uniqueId('plat_'));
 
             this._removeListener = this.$EventManagerStatic.on(this.uid, 'urlChanged', this._routeChanged, this);
-            var config = this.$browserConfig;
-            if (config.routingType === config.routeType.NONE) {
-                config.routingType = config.routeType.HASH;
-                config.hashPrefix = config.hashPrefix || '';
+            var $browserConfig = this.$BrowserConfig;
+            if ($browserConfig.routingType === $browserConfig.NONE) {
+                $browserConfig.routingType = $browserConfig.HASH;
+                $browserConfig.hashPrefix = $browserConfig.hashPrefix || '';
             }
 
-            if (this.$compat.msApp) {
+            if (this.$Compat.msApp) {
                 this.__history = [];
             }
         }
 
-        /**
-         * Registers route strings/RegExp and associates them with a control type.
-         * 
-         * @param type The control type with which to associate the routes.
-         * @param routes An array of strings or RegExp expressions to associate with 
-         * the control type.
-         */
         registerRoutes(type: string, routes: Array<any>): void {
             if (!isArray(routes)) {
                 return;
@@ -82,21 +77,14 @@
             }
         }
 
-        /**
-         * Formats a url path given the parameters and query string, then changes the 
-         * url to that path.
-         * 
-         * @param path The route to match with a registered ViewControl.
-         * @param options The IRouteNavigationOptions associated with this routing 
-         * operation.
-         */
         route(path: string, options?: IRouteNavigationOptions): void {
             options = options || <IRouteNavigationOptions>{};
 
             var replace = options.replace,
                 route: string,
                 match: IMatchedRoute,
-                currentUtils = this.$browser.urlUtils();
+                $browser = this.$Browser,
+                currentUtils = $browser.urlUtils();
 
             if (this.__firstRoute) {
                 this.__firstRoute = false;
@@ -126,27 +114,22 @@
                 return;
             }
 
-            var nextUtils = this.$browser.urlUtils(route);
+            var nextUtils = $browser.urlUtils(route);
 
             if (currentUtils.href === nextUtils.href) {
                 replace = true;
             }
 
-            this.$browser.url(route, replace);
+            $browser.url(route, replace);
         }
 
-        /**
-         * Navigates back in the history.
-         * 
-         * @param length The number of entries to go back in the history.
-         */
         goBack(length?: number): void {
-            this.$window.history.go(-length);
+            this.$Window.history.go(-length);
 
             if (this.__history && this.__history.length > 1) {
                 var historyLength = this.__history.length;
                 this.__history = this.__history.slice(0, historyLength - length);
-                this.$browser.url(this.__history.pop() || '');
+                this.$Browser.url(this.__history.pop() || '');
             }
         }
 
@@ -166,7 +149,7 @@
             }
 
             var route = routeParameter + queryStr,
-                utils = this.$browser.urlUtils(route),
+                utils = this.$Browser.urlUtils(route),
                 match = this._match(utils);
 
             if (isNull(match)) {
@@ -213,7 +196,7 @@
          * @param utils The IUrlUtils created for the invoked 
          * route function.
          */
-        _routeChanged(ev: events.IDispatchEvent, utils: web.IUrlUtils): void {
+        _routeChanged(ev: events.IDispatchEventInstance, utils: web.IUrlUtilsInstance): void {
             var matchedRoute = this._match(utils);
 
             if (isNull(matchedRoute)) {
@@ -285,11 +268,11 @@
          * @param route The route to parse.
          */
         _getRouteParameters(route: string): IRouteMatcher {
-            var regex = this.$regex,
-                namedRegex = regex.namedParameterRouteRegex,
+            var $regex = this.$Regex,
+                namedRegex = $regex.namedParameterRouteRegex,
                 escapeRegex = this.__escapeRegex,
                 optionalRegex = this.__optionalRegex,
-                wildcardRegex = regex.wildcardRouteRegex,
+                wildcardRegex = $regex.wildcardRouteRegex,
                 regexArgs = route.match(namedRegex),
                 wildcard = wildcardRegex.exec(route),
                 args: Array<string> = [];
@@ -328,7 +311,7 @@
          * Matches a route to a registered route using the 
          * registered route's regular expression.
          */
-        _match(utils: web.IUrlUtils): IMatchedRoute {
+        _match(utils: web.IUrlUtilsInstance): IMatchedRoute {
             var routes = this._routes,
                 url = this._getUrlFragment(utils),
                 route: IRouteMatcher,
@@ -411,12 +394,55 @@
          * 
          * @param utils The IUrlUtils associated with this route function.
          */
-        _getUrlFragment(utils: web.IUrlUtils): string {
+        _getUrlFragment(utils: web.IUrlUtilsInstance): string {
             return utils.pathname.replace(this.__pathSlashRegex, '');
         }
     }
 
-    register.injectable('$router', Router);
+    /**
+     * The Type for referencing the '$Router' injectable as a dependency.
+     */
+    export function IRouter(): IRouter {
+        return new Router();
+    }
+
+    register.injectable('$Router', IRouter);
+
+    /**
+     * Describes the object that handles route registration and navigation 
+     * to and from IViewControls within the Routeport.
+     */
+    export interface IRouter {
+        /**
+         * A unique string identifier.
+         */
+        uid: string;
+
+        /**
+         * Registers route strings/RegExp and associates them with a control type.
+         * 
+         * @param type The control type with which to associate the routes.
+         * @param routes An array of strings or RegExp expressions to associate with 
+         * the control type.
+         */
+        registerRoutes(type: string, routes: Array<any>): void;
+
+        /**
+         * Formats a url path given the parameters and query string, then changes the 
+         * url to that path.
+         * 
+         * @param path The route path to navigate to.
+         * @param options The IRouteNavigationOptions included with this route.
+         */
+        route(path: string, options?: web.IRouteNavigationOptions): void;
+
+        /**
+         * Navigates back in the history.
+         * 
+         * @param length The number of entries to go back in the history.
+         */
+        goBack(length?: number): void;
+    }
 
     /**
      * Options that you can submit to the router in order
@@ -501,37 +527,6 @@
          * An object containing query string key/value pairs.
          */
         query?: IObject<string>;
-    }
-
-    /**
-     * Describes the object that handles route registration and navigation 
-     * to and from IViewControls within the Routeport.
-     */
-    export interface IRouter {
-        /**
-         * Registers route strings/RegExp and associates them with a control type.
-         * 
-         * @param type The control type with which to associate the routes.
-         * @param routes An array of strings or RegExp expressions to associate with 
-         * the control type.
-         */
-        registerRoutes(type: string, routes: Array<any>): void;
-
-        /**
-         * Formats a url path given the parameters and query string, then changes the 
-         * url to that path.
-         * 
-         * @param path The route path to navigate to.
-         * @param options The IRouteNavigationOptions included with this route.
-         */
-        route(path: string, options?: web.IRouteNavigationOptions): void;
-
-        /**
-         * Navigates back in the history.
-         * 
-         * @param length The number of entries to go back in the history.
-         */
-        goBack(length?: number): void;
     }
 }
 

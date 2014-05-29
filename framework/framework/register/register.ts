@@ -39,7 +39,7 @@ module plat.register {
             Type: any, dependencies?: Array<any>, type?: string): typeof register {
         var injector = obj[name] = new dependency.Injector<any>(name, Type, dependencies, type);
 
-        if (type === injectableType.STATIC) {
+        if (type === STATIC) {
             staticInjectors[name] = injector;
         }
 
@@ -100,8 +100,8 @@ module plat.register {
         var ret = add(viewControlInjectors, name, Type, dependencies);
 
         if (isArray(routes)) {
-            var router: web.IRouter = acquire('$router');
-            router.registerRoutes(name, routes);
+            var $Router: web.IRouter = acquire('$Router');
+            $Router.registerRoutes(name, routes);
         }
 
         return ret;
@@ -118,10 +118,8 @@ module plat.register {
      * @param injectableType Specifies the type of injectable, either register.injectableType.SINGLE or 
      * register.injectableType.MULTI (defaults to register.injectableType.SINGLE).
      * 
-     * @see register.injectableType
-     * 
-     * @example register.injectable('$CacheStatic', [plat.expressions.Parser], Cache);
-     * @example register.injectable('database', MyDatabase, null, register.injectableType.MULTI);
+     * @example register.injectable('$CacheFactory', [plat.expressions.Parser], Cache);
+     * @example register.injectable('database', MyDatabase, null, register.INSTANCE);
      */
     export function injectable(name: string, Type: new (...args: any[]) => void,
         dependencies?: Array<any>, injectableType?: string): typeof register;
@@ -136,42 +134,48 @@ module plat.register {
      * @param injectableType Specifies the type of injectable, either register.injectableType.SINGLE or 
      * register.injectableType.MULTI (defaults to register.injectableType.SINGLE).
      * 
-     * @see register.injectableType
-     * 
      * @return {register} The object that contains the register methods (for method chaining).
      * 
-     * @example register.injectable('$CacheStatic', [plat.expressions.Parser], 
+     * @example register.injectable('$CacheFactory', [plat.expressions.Parser], 
      *  export function(parser? plat.expressions.IParser) { return { ... }; });
-     * @example register.injectable('database', export function() { return new Database(); }, null, register.injectableType.MULTI);
+     * @example register.injectable('database', export function() { return new Database(); }, null, register.INSTANCE);
      */
     export function injectable(name: string, method: (...args: any[]) => any,
         dependencies?: Array<any>, injectableType?: string): typeof register;
     export function injectable(name: string, Type: any, dependencies?: Array<any>, injectableType?: string): typeof register {
-        return add(injectableInjectors, name, Type, dependencies, injectableType || register.injectableType.SINGLE);
+        return add(injectableInjectors, name, Type, dependencies, injectableType || SINGLETON);
     }
 
     /**
-     * Defines the different types of injectables.
+     * Static injectables will be injected before the application loads. This provides a way to create 
+     * a static constructor and load dependencies into static class properties.
      */
-    export var injectableType = {
-        /**
-         * Static injectables will be injected before the application loads. This provides a way to create 
-         * a static constructor and load dependencies into static class properties.
-         */
-        STATIC: 'static',
+    export var STATIC = 'static';
 
-        /**
-         * Single injectables will contain a constructor. A single injectable will be instantiated once and 
-         * used throughout the application lifetime. It will be instantiated when another component is injected 
-         * and lists it as a dependency.
-         */
-        SINGLE: 'single',
+    /**
+     * Singleton injectables will contain a constructor. A Singleton injectable will be instantiated once and 
+     * used throughout the application lifetime. It will be instantiated when another component is injected 
+     * and lists it as a dependency.
+     */
+    export var SINGLETON = 'singleton';
 
-        /**
-         * Multi injectables will contain a constructor. A multi injectable will be instantiated multiple times 
-         * throughout the application lifetime. It will be instantiated whenever another component is injected 
-         * and lists it as a dependency.
-         */
-        MULTI: 'multi'
-    };
+    /**
+     * Instance injectables will contain a constructor. An Instance injectable will be instantiated multiple times 
+     * throughout the application lifetime. It will be instantiated whenever another component is injected 
+     * and lists it as a dependency.
+     */
+    export var INSTANCE = 'instance';
+
+    /**
+     * Factory injectables will not contain a constructor but will instead contain a method for obtaining an 
+     * instance, such as getInstance() or create(). It will be injected before the application loads, similar to a Static 
+     * injectable.
+     */
+    export var FACTORY = 'factory';
+
+    /**
+     * Class injectables are essentially a direct reference to a class's constructor. It may contain both 
+     * static and instance methods as well as a constructor for creating a new instance.
+     */
+    export var CLASS = 'class';
 }

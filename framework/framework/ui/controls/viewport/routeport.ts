@@ -40,5 +40,5 @@
         defaultRoute: string;
     }
 
-    register.control('plat-routeport', Routeport, ['$routingNavigator']);
+    register.control('plat-routeport', Routeport, ['$RoutingNavigator']);
 }

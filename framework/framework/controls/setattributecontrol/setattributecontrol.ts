@@ -131,7 +131,7 @@ module plat.controls {
             if (!isEmpty(element.style.display)) {
                 this.__initialDisplay = element.style.display;
             } else {
-                var $window = acquire('$window');
+                var $window = acquire('$Window');
                 this.__initialDisplay = $window.getComputedStyle(element).display;
             }
 

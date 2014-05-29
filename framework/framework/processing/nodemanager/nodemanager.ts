@@ -3,11 +3,11 @@ module plat.processing {
      * A NodeManager is responsible for data binding a data context to a Node.
      */
     export class NodeManager implements INodeManager {
-        static $regex: expressions.IRegex;
+        static $Regex: expressions.IRegex;
         static $ContextManagerStatic: observable.IContextManagerStatic;
-        static $parser: expressions.IParser;
+        static $Parser: expressions.IParser;
         static $ExceptionStatic: IExceptionStatic;
-        static $TemplateControlStatic: ui.ITemplateControlStatic;
+        static $TemplateControlFactory: ui.ITemplateControlFactory;
         /**
          * The start markup notation.
          */
@@ -63,7 +63,7 @@ module plat.processing {
          * @return {Boolean} Indicates whether or not there is markup.
          */
         static hasMarkup(text: string): boolean {
-            return NodeManager.$regex.markupRegex.test(text);
+            return NodeManager.$Regex.markupRegex.test(text);
         }
 
         /**
@@ -75,16 +75,14 @@ module plat.processing {
         static findMarkup(text: string): Array<expressions.IParsedExpression> {
             var start: number,
                 end: number,
-                regex = NodeManager.$regex,
-                newLineRegex = regex.newLineRegex,
-                text = text.replace(newLineRegex, ''),
+                text = text.replace(NodeManager.$Regex.newLineRegex, ''),
                 parsedExpressions: Array<expressions.IParsedExpression> = [],
                 startSymbol = NodeManager.startSymbol,
                 endSymbol = NodeManager.endSymbol,
                 wrapExpression = NodeManager._wrapExpression,
                 substring: string,
                 expression: expressions.IParsedExpression,
-                parser = NodeManager.$parser;
+                $parser = NodeManager.$Parser;
 
             while ((start = text.indexOf(startSymbol)) !== -1 && (end = text.indexOf(endSymbol)) !== -1) {
                 if (start !== 0) {
@@ -99,7 +97,7 @@ module plat.processing {
                 //check for one-time databinding
                 if (substring[0] === '=') {
                     substring = substring.substr(1).trim();
-                    expression = parser.parse(substring);
+                    expression = $parser.parse(substring);
                     expression = {
                         expression: expression.expression,
                         evaluate: expression.evaluate,
@@ -109,7 +107,7 @@ module plat.processing {
                     };
                     parsedExpressions.push(expression);
                 } else {
-                    parsedExpressions.push(parser.parse(substring.trim()));
+                    parsedExpressions.push($parser.parse(substring.trim()));
                 }
 
                 text = text.substr(end);
@@ -139,7 +137,7 @@ module plat.processing {
                 resources = {},
                 expression: expressions.IParsedExpression,
                 value: any,
-                evaluateExpression = NodeManager.$TemplateControlStatic.evaluateExpression;
+                evaluateExpression = NodeManager.$TemplateControlFactory.evaluateExpression;
 
             for (var i = 0; i < length; ++i) {
                 expression = expressions[i];
@@ -262,36 +260,11 @@ module plat.processing {
             };
         }
 
-        /**
-         * Specifies the type of NodeManager.
-         */
         type: string;
-
-        /**
-         * Lets us know when an ElementManager is a cloned manager, or the compiled 
-         * manager from BindableTemplates. We do not want to bindAndLoad compiled 
-         * managers that are clones.
-         */
         isClone: boolean = false;
-
-        /**
-         * The INodeMap associated with this NodeManager. We have to use an 
-         * INodeMap instead of an INode so we can treat all INodeManagers the same.
-         */
         nodeMap: INodeMap;
-
-        /**
-         * The parent ElementManager for this NodeManager.
-         */
         parent: IElementManager;
 
-        /**
-         * Initiailzes this ElementManger instance.
-         * 
-         * @param nodeMap The INodeMap associated with this NodeManager. We have to use an 
-         * INodeMap instead of an INode so we can treat all INodeManagers the same.
-         * @param parent The parent ElementManager for this NodeManager.
-         */
         initialize(nodeMap: INodeMap, parent: IElementManager): void {
             this.nodeMap = nodeMap;
             this.parent = parent;
@@ -302,9 +275,6 @@ module plat.processing {
             }
         }
 
-        /**
-         * Retrieves the parent control for this NodeManager.
-         */
         getParentControl(): ui.ITemplateControl {
             var parent = this.parent,
                 control: ui.ITemplateControl;
@@ -321,46 +291,102 @@ module plat.processing {
             return control;
         }
 
-        /**
-         * Clones this NodeManager with the new node.
-         * 
-         * @param newNode The node used to clone this NodeManager.
-         * @param parentManager The parent NodeManager for the clone.
-         */
         clone(newNode: Node, parentManager: IElementManager): number {
             return 1;
         }
 
-        /**
-         * The function used for data-binding a data context to the DOM.
-         */
         bind(): void { }
     }
 
     /**
      * The Type for referencing the '$NodeManagerStatic' injectable as a dependency.
      */
-    export function NodeManagerStatic(
-            $regex: expressions.IRegex,
-            $ContextManagerStatic: observable.IContextManagerStatic,
-            $parser: expressions.IParser,
-            $ExceptionStatic: IExceptionStatic,
-            $TemplateControlStatic: ui.ITemplateControlStatic) {
-        NodeManager.$regex = $regex;
-        NodeManager.$ContextManagerStatic = $ContextManagerStatic;
-        NodeManager.$parser = $parser;
-        NodeManager.$ExceptionStatic = $ExceptionStatic;
-        NodeManager.$TemplateControlStatic = $TemplateControlStatic;
-        return NodeManager;
+    export function INodeManagerStatic(
+        $Regex: expressions.IRegex,
+        $ContextManagerStatic: observable.IContextManagerStatic,
+        $Parser: expressions.IParser,
+        $ExceptionStatic: IExceptionStatic,
+        $TemplateControlFactory: ui.ITemplateControlFactory): INodeManagerStatic {
+            NodeManager.$Regex = $Regex;
+            NodeManager.$ContextManagerStatic = $ContextManagerStatic;
+            NodeManager.$Parser = $Parser;
+            NodeManager.$ExceptionStatic = $ExceptionStatic;
+            NodeManager.$TemplateControlFactory = $TemplateControlFactory;
+            return NodeManager;
     }
 
-    register.injectable('$NodeManagerStatic', NodeManagerStatic, [
-        '$regex',
+    register.injectable('$NodeManagerStatic', INodeManagerStatic, [
+        '$Regex',
         '$ContextManagerStatic',
-        '$parser',
+        '$Parser',
         '$ExceptionStatic',
-        '$TemplateControlStatic'
-    ], register.injectableType.STATIC);
+        '$TemplateControlFactory'
+    ], register.STATIC);
+
+    /**
+     * The external interface for the '$NodeManagerStatic' injectable.
+     */
+    export interface INodeManagerStatic {
+        /**
+         * The start markup notation.
+         */
+        startSymbol: string;
+
+        /**
+         * The end markup notation.
+         */
+        endSymbol: string;
+
+        /**
+         * Given an IParsedExpression array, creates an array of unique identifers
+         * to use with binding. This allows us to avoid creating multiple listeners
+         * for the identifier and node.
+         *
+         * @static
+         * @param expressions An IParsedExpression array to search for identifiers.
+         * @return {Array<string>} An array of identifiers.
+         */
+        findUniqueIdentifiers(expressions: Array<expressions.IParsedExpression>): Array<string>;
+
+        /**
+         * Determines if a string has the markup notation.
+         *
+         * @param text The text string in which to search for markup.
+         * @return {Boolean} Indicates whether or not there is markup.
+         */
+        hasMarkup(text: string): boolean;
+
+        /**
+         * Given a string, finds markup in the string and creates an IParsedExpression array.
+         *
+         * @static
+         * @param text The text string to parse.
+         * @return {Array<IParsedExpression>}
+         */
+        findMarkup(text: string): Array<expressions.IParsedExpression>;
+
+        /**
+         * Takes in data context and an IParsedExpression array and outputs a string of the evaluated
+         * expressions.
+         *
+         * @static
+         * @param expressions The IParsedExpression array to evaluate.
+         * @param control The IControl used to parse the expressions.
+         * @return {string} The evaluated expressions.
+         */
+        build(expressions: Array<expressions.IParsedExpression>, control?: ui.ITemplateControl): string;
+
+        /**
+         * Registers a listener to be notified of a change in any associated identifier.
+         *
+         * @static
+         * @param identifiers An Array of identifiers to observe.
+         * @param control The control associated to the identifiers.
+         * @param listener The listener to call when any identifier property changes.
+         */
+        observeIdentifiers(identifiers: Array<string>,
+            control: ui.ITemplateControl, listener: (...args: Array<any>) => void): void;
+    }
 
     /**
      * Describes an object that takes a Node and provides a way to data-bind to that node.
@@ -496,75 +522,5 @@ module plat.processing {
          * The INode for the UIControl, if one was found for the HTMLElement.
          */
         uiControlNode?: IUiControlNode;
-    }
-
-    /**
-     * The external interface for the '$NodeManagerStatic' injectable.
-     */
-    export interface INodeManagerStatic {
-        /**
-         * The start markup notation.
-         */
-        startSymbol: string;
-
-        /**
-         * The end markup notation.
-         */
-        endSymbol: string;
-
-        /**
-         * The regular expression for finding markup in a string.
-         */
-        markupRegex: RegExp;
-
-        /**
-         * Given an IParsedExpression array, creates an array of unique identifers
-         * to use with binding. This allows us to avoid creating multiple listeners
-         * for the identifier and node.
-         *
-         * @static
-         * @param expressions An IParsedExpression array to search for identifiers.
-         * @return {Array<string>} An array of identifiers.
-         */
-        findUniqueIdentifiers(expressions: Array<expressions.IParsedExpression>): Array<string>;
-
-        /**
-         * Determines if a string has the markup notation.
-         *
-         * @param text The text string in which to search for markup.
-         * @return {Boolean} Indicates whether or not there is markup.
-         */
-        hasMarkup(text: string): boolean;
-
-        /**
-         * Given a string, finds markup in the string and creates an IParsedExpression array.
-         *
-         * @static
-         * @param text The text string to parse.
-         * @return {Array<IParsedExpression>}
-         */
-        findMarkup(text: string): Array<expressions.IParsedExpression>;
-
-        /**
-         * Takes in data context and an IParsedExpression array and outputs a string of the evaluated
-         * expressions.
-         *
-         * @static
-         * @param expressions The IParsedExpression array to evaluate.
-         * @param control The IControl used to parse the expressions.
-         * @return {string} The evaluated expressions.
-         */
-        build(expressions: Array<expressions.IParsedExpression>, control?: ui.ITemplateControl): string;
-
-        /**
-         * Registers a listener to be notified of a change in any associated identifier.
-         *
-         * @static
-         * @param identifiers An Array of identifiers to observe.
-         * @param control The control associated to the identifiers.
-         * @param listener The listener to call when any identifier property changes.
-         */
-        observeIdentifiers(identifiers: Array<string>,
-            control: ui.ITemplateControl, listener: (...args: Array<any>) => void): void;
     }
 }

@@ -50,16 +50,15 @@ module plat.ui {
             instance.dispose();
         }
 
-        /**
-         * The control using this BindableTemplates instance.
-         */
-        control: ITemplateControl;
+        $ResourcesFactory: IResourcesFactory = acquire('$ResourcesFactory');
+        $TemplateControlFactory: ITemplateControlFactory = acquire('$TemplateControlFactory');
+        $Promise: async.IPromise = acquire('$Promise');
+        $ManagerCache: storage.ICache<processing.IElementManager> = acquire('$ManagerCache');
+        $ExceptionStatic: IExceptionStatic = acquire('$ExceptionStatic');
+        $Document: Document = acquire('$Document');
+        $ElementManagerFactory: processing.IElementManagerFactory = acquire('$ElementManagerFactory');
 
-        /**
-         * Stores the compiled templates for this object, ready to be bound to a data context. 
-         * All created templates are DocumentFragments, allowing a ITemplateControl to
-         * easily insert the template into the DOM (without iterating over childNodes).
-         */
+        control: ITemplateControl;
         templates: IObject<DocumentFragment> = {};
 
         /**
@@ -68,59 +67,10 @@ module plat.ui {
          */
         _cache: IObject<processing.IElementManager> = {};
 
-        $ResourcesStatic: IResourcesStatic = acquire('$ResourcesStatic');
-        $TemplateControlStatic: ITemplateControlStatic = acquire('$TemplateControlStatic');
-        $PromiseStatic: async.IPromiseStatic = acquire('$PromiseStatic');
-        $ManagerCacheStatic: storage.ICache<processing.IElementManager> = acquire('$ManagerCacheStatic');
-        $ExceptionStatic: IExceptionStatic = acquire('$ExceptionStatic');
-        $document: Document = acquire('$document');
-        $ElementManagerStatic: processing.IElementManagerStatic = acquire('$ElementManagerStatic');
-
         private __compiledControls: Array<ITemplateControl> = [];
 
-        /**
-         * Provides a way for ITemplateControls to bind a template to a data context. Useful 
-         * for narrowing data context without needing another ITemplateControl. In addition, 
-         * this object provides a performance increase because it will only compile the template once.
-         * This object is also useful when a ITemplateControl expects multiple configuration
-         * templates in its innerHTML. It can separate those templates and reuse them accordingly.
-         */
-        constructor() { }
-
-        /**
-         * Method for linking a new template to a data context and returning a clone of the template, 
-         * with all new IControls created if the template contains controls. It is not necessary
-         * to specify a data context.
-         * 
-         * @param key The key used to retrieve the template.
-         * @param callback The callback associated with binding the template to the specified data
-         * context. 
-         * @param relativeIdentifier The identifier string relative to this control's context
-         * (e.g. 'foo.bar.baz' would signify the object this.context.foo.bar.baz). This is the 
-         * most efficient way of specifying context, else the framework has to search for the 
-         * object.
-         * @param resources An object used as the resources for any top-level 
-         * controls created in the template.
-         * @return {DocumentFragment} A clone of the template, fully reconstructed and ready to put
-         * in the DOM.
-         */
         bind(key: string, callback: IBindableTemplateCallback, relativeIdentifier?: string,
             resources?: IObject<IResource>): DocumentFragment;
-        /**
-         * Method for linking a new template to a data context and returning a clone of the template, 
-         * with all new IControls created if the template contains controls. It is not necessary
-         * to specify a data context.
-         * 
-         * @param key The key used to retrieve the template.
-         * @param callback The callback associated with binding the template to the specified data
-         * context. 
-         * @param relativeIdentifier The identifier number relative to this control's context. Only 
-         * necessary when context is an array.
-         * @param resources An object used as the resources for any top-level 
-         * controls created in the template.
-         * @return {DocumentFragment} A clone of the template, fully reconstructed and ready to put
-         * in the DOM.
-         */
         bind(key: string, callback: IBindableTemplateCallback, relativeIdentifier?: number,
                 resources?: IObject<IResource>): DocumentFragment;
         bind(key: any, callback: IBindableTemplateCallback,
@@ -155,44 +105,10 @@ module plat.ui {
             this._bindTemplate(key, <DocumentFragment>template.cloneNode(true), relativeIdentifier, resources, callback);
         }
 
-        /**
-         * Adds a template to this object. The template will be stored with the key,
-         * and it will be transformed into a DocumentFragment.
-         * 
-         * @param key The key used to store the template.
-         * @param template An HTMLElement represending the template DOM.
-         */
         add(key: string, template: HTMLElement): void;
-        /**
-         * Adds a template to this object. The template will be stored with the key,
-         * and it will be transformed into a DocumentFragment.
-         * 
-         * @param key The key used to store the template.
-         * @param template A Node array represending the template DOM.
-         */
         add(key: string, template: Array<Node>): void;
-        /**
-         * Adds a template to this object. The template will be stored with the key,
-         * and it will be transformed into a DocumentFragment.
-         * 
-         * @param key The key used to store the template.
-         * @param template A NodeList represending the template DOM.
-         */
         add(key: string, template: NodeList): void;
-        /**
-         * Adds a template to this object. The template will be stored with the key.
-         * 
-         * @param key The key used to store the template.
-         * @param template A DocumentFragment represending the template DOM.
-         */
         add(key: string, template: DocumentFragment): void;
-        /**
-         * Adds a template to this object. The template will be stored with the key,
-         * and it will be transformed into a DocumentFragment.
-         * 
-         * @param key The key used to store the template.
-         * @param template A Node represending the template DOM.
-         */
         add(key: string, template: Node): void;
         add(key: string, template: any) {
             if (isNull(template)) {
@@ -205,7 +121,7 @@ module plat.ui {
                 return;
             }
 
-            var fragment = this.$document.createDocumentFragment();
+            var fragment = this.$Document.createDocumentFragment();
 
             if (isNode(template)) {
                 fragment.appendChild(template);
@@ -220,11 +136,8 @@ module plat.ui {
             this._compile(key, fragment);
         }
 
-        /**
-         * Clears the memory being held by this BindableTemplates instance.
-         */
         dispose(): void {
-            var dispose = this.$TemplateControlStatic.dispose,
+            var dispose = this.$TemplateControlFactory.dispose,
                 compiledControls = this.__compiledControls,
                 length = compiledControls.length;
 
@@ -248,9 +161,9 @@ module plat.ui {
                 nodeMap = this._createNodeMap(control, template, context);
 
             this._bindNodeMap(nodeMap, key).then(() => {
-                control.startNode = template.insertBefore(this.$document.createComment(control.type + ': start node'),
+                control.startNode = template.insertBefore(this.$Document.createComment(control.type + ': start node'),
                     template.firstChild);
-                control.endNode = template.insertBefore(this.$document.createComment(control.type + ': end node'),
+                control.endNode = template.insertBefore(this.$Document.createComment(control.type + ': end node'),
                     null);
 
                 callback.call(this.control, template);
@@ -268,12 +181,13 @@ module plat.ui {
         _bindNodeMap(nodeMap: processing.INodeMap, key: string): async.IThenable<void> {
             var manager = this._cache[key],
                 child = nodeMap.uiControlNode.control,
-                template = nodeMap.element;
+                template = nodeMap.element,
+                $managerCache = this.$ManagerCache;
 
             this.control.controls.push(child);
 
-            manager.clone(template, this.$ManagerCacheStatic.read(this.control.uid), nodeMap);
-            return (this.$ManagerCacheStatic.read(child.uid)).bindAndLoad();
+            manager.clone(template, $managerCache.read(this.control.uid), nodeMap);
+            return ($managerCache.read(child.uid)).bindAndLoad();
         }
         
         /**
@@ -294,7 +208,7 @@ module plat.ui {
          * any asynchronous url templates within the template being compiled.
          */
         _compileNodeMap(control: ITemplateControl, nodeMap: processing.INodeMap, key: string) {
-            var manager = this.$ElementManagerStatic.getInstance(),
+            var manager = this.$ElementManagerFactory.getInstance(),
                 promises: Array<async.IThenable<void>> = [];
 
             manager.isClone = true;
@@ -305,15 +219,15 @@ module plat.ui {
 
             promises.push(manager.fulfillTemplate());
 
-            this.templates[key] = <any>this.$PromiseStatic.all<any>(promises).then((results) => {
+            this.templates[key] = <any>this.$Promise.all<any>(promises).then((results) => {
                 var element = nodeMap.element,
                     startNode: Comment,
                     endNode: Comment;
 
                 this.templates[key] = <DocumentFragment>nodeMap.element.cloneNode(true);
 
-                startNode = control.startNode = this.$document.createComment(control.type + ': start node');
-                endNode = control.endNode = this.$document.createComment(control.type + ': end node');
+                startNode = control.startNode = this.$Document.createComment(control.type + ': start node');
+                endNode = control.endNode = this.$Document.createComment(control.type + ': end node');
                 element.insertBefore(startNode, element.firstChild);
                 element.insertBefore(endNode, null);
 
@@ -351,26 +265,23 @@ module plat.ui {
          */
         _createBoundControl(key: string, template: DocumentFragment,
             relativeIdentifier?: string, resources?: IObject<IResource>): ITemplateControl {
-            var $TemplateControlStatic = this.$TemplateControlStatic,
-                control = $TemplateControlStatic.getInstance(),
+            var $TemplateControlFactory = this.$TemplateControlFactory,
+                control = $TemplateControlFactory.getInstance(),
+                $ResourcesFactory = this.$ResourcesFactory,
                 parent = this.control,
                 hasRelativeIdentifier = !isEmpty(relativeIdentifier),
-                absoluteContextPath: string;
-
-            if (hasRelativeIdentifier) {
-                absoluteContextPath = parent.absoluteContextPath + '.' + relativeIdentifier;
-            } else {
+                absoluteContextPath: string = hasRelativeIdentifier ?
+                parent.absoluteContextPath + '.' + relativeIdentifier :
                 absoluteContextPath = parent.absoluteContextPath;
-            }
 
-            $TemplateControlStatic.setAbsoluteContextPath(control, absoluteContextPath);
+            $TemplateControlFactory.setAbsoluteContextPath(control, absoluteContextPath);
 
-            var _resources = this.$ResourcesStatic.getInstance();
+            var _resources = $ResourcesFactory.getInstance();
 
             _resources.initialize(control, resources);
 
             control.resources = _resources;
-            this.$ResourcesStatic.addControlResources(control);
+            $ResourcesFactory.addControlResources(control);
 
             control.parent = parent;
             control.controls = [];
@@ -382,13 +293,38 @@ module plat.ui {
     }
 
     /**
-     * The Type for referencing the '$BindableTemplatesStatic' injectable as a dependency.
+     * The Type for referencing the '$BindableTemplatesFactory' injectable as a dependency.
      */
-    export function BindableTemplatesStatic($TemplateControlStatic: ITemplateControlStatic) {
+    export function IBindableTemplatesFactory(): IBindableTemplatesFactory {
         return BindableTemplates;
     }
 
-    register.injectable('$BindableTemplatesStatic', BindableTemplatesStatic, null, register.injectableType.STATIC);
+    register.injectable('$BindableTemplatesFactory', IBindableTemplatesFactory, null, register.FACTORY);
+
+    /**
+     * The external interface for the '$BindableTemplatesFactory' injectable.
+     */
+    export interface IBindableTemplatesFactory {
+        /**
+         * Creates a new instance of BindableTemplates and returns it. If a BindableTemplates is
+         * passed in, it will use the properties on the original BindableTemplates.
+         *
+         * @static
+         * @param control The ITemplateControl containing the new BindableTemplate object, used for data context
+         * inheritance for templates.
+         * @param originalBindableTemplates An optional IBindableTemplates object to copy.
+         * @return {BindableTemplates} The newly instantiated BindableTemplates object.
+         */
+        create(control: ITemplateControl, original?: IBindableTemplates): IBindableTemplates;
+
+        /**
+         * Clears the memory being held by control's bindableTemplates.
+         * 
+         * @static
+         * @param control The control whose bindableTemplates will be disposed.
+         */
+        dispose(control: ITemplateControl): void;
+    }
 
     /**
      * Describes an object which provides a way for ITemplateControls to bind a template 
@@ -508,30 +444,5 @@ module plat.ui {
          * @param clone The bound clone of the specified template.
          */
         (clone: DocumentFragment): void;
-    }
-
-    /**
-     * The external interface for the '$BindableTemplatesStatic' injectable.
-     */
-    export interface IBindableTemplatesStatic {
-        /**
-         * Creates a new instance of BindableTemplates and returns it. If a BindableTemplates is
-         * passed in, it will use the properties on the original BindableTemplates.
-         *
-         * @static
-         * @param control The ITemplateControl containing the new BindableTemplate object, used for data context
-         * inheritance for templates.
-         * @param originalBindableTemplates An optional IBindableTemplates object to copy.
-         * @return {BindableTemplates} The newly instantiated BindableTemplates object.
-         */
-        create(control: ITemplateControl, original?: IBindableTemplates): IBindableTemplates;
-
-        /**
-         * Clears the memory being held by control's bindableTemplates.
-         * 
-         * @static
-         * @param control The control whose bindableTemplates will be disposed.
-         */
-        dispose(control: ITemplateControl): void;
     }
 }

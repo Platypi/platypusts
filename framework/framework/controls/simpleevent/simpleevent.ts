@@ -27,8 +27,8 @@ module plat.controls {
          * An array of the aliases used in the expression.
          */
         _aliases: Array<string> = [];
-        $parser: expressions.IParser = acquire('$parser');
-        $regex: expressions.IRegex = acquire('$regex');
+        $Parser: expressions.IParser = acquire('$Parser');
+        $Regex: expressions.IRegex = acquire('$Regex');
         $ExceptionStatic: IExceptionStatic = acquire('$ExceptionStatic');
 
         /**
@@ -76,7 +76,7 @@ module plat.controls {
          */
         _findListener(identifier: string): { control: ui.ITemplateControl; value: any; } {
             var control: ui.ITemplateControl = <any>this,
-                expression = this.$parser.parse(identifier),
+                expression = this.$Parser.parse(identifier),
                 value: any;
 
             while (!isNull(control)) {
@@ -130,10 +130,10 @@ module plat.controls {
 
             var length = expression.length,
                 args: Array<expressions.IParsedExpression> = [],
-                parser = this.$parser;
+                $parser = this.$Parser;
 
             for (var i = 0; i < length; ++i) {
-                args.push(parser.parse(expression[i]).evaluate(hasParent ? this.parent.context : null, aliases));
+                args.push($parser.parse(expression[i]).evaluate(hasParent ? this.parent.context : null, aliases));
             }
 
             return {
@@ -174,13 +174,13 @@ module plat.controls {
                 alias: string,
                 exec: RegExpExecArray,
                 aliases: IObject<boolean> = {},
-                aliasRegex = this.$regex.aliasRegex;
+                $regex = this.$Regex;
 
             for (var i = 0; i < length; ++i) {
                 arg = arguments[i].trim();
 
                 if (arg[0] === '@') {
-                    exec = aliasRegex.exec(arg);
+                    exec = $regex.aliasRegex.exec(arg);
                     aliases[!isNull(exec) ? exec[0] : arg.substr(1)] = true;
                 }
             }
@@ -195,7 +195,7 @@ module plat.controls {
          * @param expression The expression to parse.
          */
         _parseArgs(expression: string): void {
-            var exec = this.$regex.argumentRegex.exec(expression),
+            var exec = this.$Regex.argumentRegex.exec(expression),
                 haveArgs = !isNull(exec);
 
             if (isEmpty(expression)) {

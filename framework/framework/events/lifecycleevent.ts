@@ -23,31 +23,18 @@
          * @param sender The sender of the event.
          */
         initialize(name: string, sender: any): void {
-            super.initialize(name, sender, this.$EventManagerStatic.direction.DIRECT);
+            super.initialize(name, sender, this.$EventManagerStatic.DIRECT);
         }
     }
 
     /**
      * The Type for referencing the '$LifecycleEventStatic' injectable as a dependency.
      */
-    export function LifecycleEventStatic() {
+    export function ILifecycleEventStatic(): ILifecycleEventStatic {
         return LifecycleEvent;
     }
 
-    register.injectable('$LifecycleEventStatic', LifecycleEventStatic);
-
-    /**
-     * Defines an object that represents a Lifecycle Event
-     */
-    export interface ILifecycleEvent extends IDispatchEvent {
-        /**
-         * Initializes the lifecycle event.
-         * 
-         * @param name The name of the event.
-         * @param sender The sender of the event.
-         */
-        initialize(name: string, sender: any): void;
-    }
+    register.injectable('$LifecycleEventStatic', ILifecycleEventStatic, null, register.STATIC);
 
     /**
      * The intended external interface for the '$LifecycleEventStatic' injectable.
@@ -60,5 +47,18 @@
          * @param sender The sender of the event.
          */
         dispatch(name: string, sender: any): void;
+    }
+
+    /**
+     * Defines an object that represents a Lifecycle Event
+     */
+    export interface ILifecycleEvent extends IDispatchEventInstance {
+        /**
+         * Initializes the lifecycle event.
+         * 
+         * @param name The name of the event.
+         * @param sender The sender of the event.
+         */
+        initialize(name: string, sender: any): void;
     }
 }

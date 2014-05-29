@@ -26,51 +26,35 @@ module plat.ui {
         }
 
         /**
-         * Indicates whether or not this control defines its own context.
+         * Returns a new instance of ViewControl.
+         * 
+         * @static
          */
-        hasOwnContext: boolean = true;
+        static getInstance(): IViewControl {
+            return new ViewControl();
+        }
 
-        /**
-         * Specifies the navigator for this control. Used for navigating to other IViewControls
-         * in a controls.Viewport.
-         */
+        hasOwnContext: boolean = true;
         navigator: navigation.IBaseNavigator;
 
-        /**
-         * This event is fired when this control has been navigated to.
-         * 
-         * @param parameter A navigation parameter sent from the previous IViewControl.
-         */
         navigatedTo(parameter?: any): void { }
 
-        /**
-         * This event is fired when this control is being navigated away from.
-         */
         navigatingFrom(): void { }
-
-        /**
-         * A ViewControl is used in a controls.Viewport for simulated page navigation. The 
-         * ViewControl has navigation events that are called when navigating to and from the control.
-         */
-        constructor() {
-            super();
-        }
     }
 
     /**
-     * The Type for referencing the '$ViewControlStatic' injectable as a dependency.
+     * The Type for referencing the '$ViewControlFactory' injectable as a dependency.
      */
-    export function ViewControlStatic(): IViewControlStatic {
+    export function IViewControlFactory(): IViewControlFactory {
         return ViewControl;
     }
 
-    register.injectable('$ViewControlStatic', ViewControlStatic,
-        null, register.injectableType.STATIC);
+    register.injectable('$ViewControlFactory', IViewControlFactory, null, register.FACTORY);
 
     /**
-     * The external interface for the '$ViewControlStatic' injectable.
+     * Creates and manages IViewControls.
      */
-    export interface IViewControlStatic {
+    export interface IViewControlFactory {
         /**
          * Detaches a ViewControl. Disposes its children, but does not dispose the ViewControl.
          * Useful for the Navigator when storing the ViewControl in history.
@@ -89,9 +73,11 @@ module plat.ui {
         dispose(control: IViewControl): void;
 
         /**
-         * Create a new empty IViewControl
+         * Returns a new instance of an IViewControl.
+         *
+         * @static
          */
-        new (): IViewControl;
+        getInstance(): IViewControl;
     }
 
     /**

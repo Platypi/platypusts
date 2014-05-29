@@ -6,7 +6,7 @@ module plat.controls {
          * event.
          */
         priority: number = 100;
-        $parser: expressions.IParser = acquire('$parser');
+        $Parser: expressions.IParser = acquire('$Parser');
         $ExceptionStatic: IExceptionStatic = acquire('$ExceptionStatic');
         $ContextManagerStatic: observable.IContextManagerStatic = acquire('$ContextManagerStatic');
         /**
@@ -50,8 +50,8 @@ module plat.controls {
          */
         _property: string;
 
-        private __fileSupported = (<ICompat>acquire('$compat')).fileSupported;
-        private __fileNameRegex = (<expressions.IRegex>acquire('$regex')).fileNameRegex;
+        private __fileSupported = (<ICompat>acquire('$Compat')).fileSupported;
+        private __fileNameRegex = (<expressions.IRegex>acquire('$Regex')).fileNameRegex;
         private __isSelf = false;
 
         /**
@@ -71,7 +71,7 @@ module plat.controls {
             }
 
             var attr = camelCase(this.type),
-                expression = this._expression = this.$parser.parse((<any>this.attributes)[attr]);
+                expression = this._expression = this.$Parser.parse((<any>this.attributes)[attr]);
 
             var identifiers = expression.identifiers;
 
@@ -86,7 +86,7 @@ module plat.controls {
             this._property = split.pop();
 
             if (split.length > 0) {
-                this._contextExpression = this.$parser.parse(split.join('.'));
+                this._contextExpression = this.$Parser.parse(split.join('.'));
             } else if (expression.aliases.length > 0) {
                 var alias = expression.aliases[0],
                     resourceObj = this.parent.findResource(alias);

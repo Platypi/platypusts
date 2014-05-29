@@ -48,5 +48,5 @@ module plat.ui.controls {
         defaultView: string;
     }
 
-    register.control('plat-viewport', Viewport, ['$navigator']);
+    register.control('plat-viewport', Viewport, ['$Navigator']);
 }

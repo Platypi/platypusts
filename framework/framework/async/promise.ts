@@ -341,41 +341,9 @@ module plat.async {
             Promise.__invokeResolveFunction<R>(resolveFunction, this);
         }
 
-        /**
-         * Takes in two methods, called when/if the promise fulfills/rejects.
-         * 
-         * @param onFulfilled A method called when/if the promise fulills. If undefined the next
-         * onFulfilled method in the promise chain will be called.
-         * @param onRejected A method called when/if the promise rejects. If undefined the next
-         * onRejected method in the promise chain will be called.
-         */
         then<U>(onFulfilled: (success: R) => IThenable<U>, onRejected?: (error: any) => IThenable<U>): IThenable<U>;
-        /**
-         * Takes in two methods, called when/if the promise fulfills/rejects.
-         * 
-         * @param onFulfilled A method called when/if the promise fulills. If undefined the next
-         * onFulfilled method in the promise chain will be called.
-         * @param onRejected A method called when/if the promise rejects. If undefined the next
-         * onRejected method in the promise chain will be called.
-         */
         then<U>(onFulfilled: (success: R) => IThenable<U>, onRejected?: (error: any) => U): IThenable<U>;
-        /**
-         * Takes in two methods, called when/if the promise fulfills/rejects.
-         * 
-         * @param onFulfilled A method called when/if the promise fulills. If undefined the next
-         * onFulfilled method in the promise chain will be called.
-         * @param onRejected A method called when/if the promise rejects. If undefined the next
-         * onRejected method in the promise chain will be called.
-         */
         then<U>(onFulfilled: (success: R) => U, onRejected?: (error: any) => IThenable<U>): IThenable<U>;
-        /**
-         * Takes in two methods, called when/if the promise fulfills/rejects.
-         * 
-         * @param onFulfilled A method called when/if the promise fulills. If undefined the next
-         * onFulfilled method in the promise chain will be called.
-         * @param onRejected A method called when/if the promise rejects. If undefined the next
-         * onRejected method in the promise chain will be called.
-         */
         then<U>(onFulfilled: (success: R) => U, onRejected?: (error: any) => U): IThenable<U>;
         then<U>(onFulfilled: (success: R) => any, onRejected?: (error: any) => any): IThenable<U> {
             var promise = this;
@@ -394,19 +362,7 @@ module plat.async {
             return thenPromise;
         }
 
-        /**
-         * A wrapper method for Promise.then(undefined, onRejected);
-         * 
-         * @param onRejected A method called when/if the promise rejects. If undefined the next
-         * onRejected method in the promise chain will be called.
-         */
         catch<U>(onRejected: (error: any) => IThenable<U>): IThenable<U>;
-        /**
-         * A wrapper method for Promise.then(undefined, onRejected);
-         * 
-         * @param onRejected A method called when/if the promise rejects. If undefined the next
-         * onRejected method in the promise chain will be called.
-         */
         catch<U>(onRejected: (error: any) => U): IThenable<U>;
         catch<U>(onRejected: (error: any) => any): IThenable<U> {
             return this.then(null, onRejected);
@@ -467,11 +423,6 @@ module plat.async {
         catch<U>(onRejected: (error: any) => U): IThenable<U>;
     }
 
-    register.injectable('$PromiseStatic', PromiseStatic, [
-        '$window',
-        '$ExceptionStatic'
-    ], register.injectableType.STATIC);
-
     enum State {
         PENDING = <any>(void 0),
         SEALED = 0,
@@ -491,8 +442,8 @@ module plat.async {
     
     function useMutationObserver(): () => void {
         var observer = new BrowserMutationObserver(flush),
-            $document = acquire('$document'),
-            $window = acquire('$window'),
+            $document = acquire('$Document'),
+            $window = acquire('$Window'),
             element = $document.createElement('div');
 
         observer.observe(element, { attributes: true });
@@ -562,26 +513,31 @@ module plat.async {
     }
 
     /**
-     * The Type for referencing the '$PromiseStatic' injectable as a dependency.
+     * The Type for referencing the '$Promise' injectable as a dependency.
      */
-    export function PromiseStatic($window: any, $ExceptionStatic: IExceptionStatic): IPromiseStatic {
-        if (!isNull($window.Promise) &&
-            isFunction($window.Promise.all) &&
-            isFunction($window.Promise.cast) &&
-            isFunction($window.Promise.race) &&
-            isFunction($window.Promise.resolve) &&
-            isFunction($window.Promise.reject)) {
-            return $window.Promise;
+    export function IPromise($Window: any, $ExceptionStatic: IExceptionStatic): IPromise {
+        if (!isNull($Window.Promise) &&
+            isFunction($Window.Promise.all) &&
+            isFunction($Window.Promise.cast) &&
+            isFunction($Window.Promise.race) &&
+            isFunction($Window.Promise.resolve) &&
+            isFunction($Window.Promise.reject)) {
+            return $Window.Promise;
         }
 
         (<any>Promise).$ExceptionStatic = $ExceptionStatic;
         return Promise;
     }
 
+    register.injectable('$Promise', IPromise, [
+        '$Window',
+        '$ExceptionStatic'
+    ], register.CLASS);
+
     /**
      * The injectable reference for the ES6 Promise implementation.
      */
-    export interface IPromiseStatic {
+    export interface IPromise {
         /**
          * An ES6 implementation of the Promise API. Useful for asynchronous programming.
          * Takes in 2 generic types corresponding to the fullfilled success and error types. 

@@ -1,9 +1,9 @@
 ﻿module plat.ui.controls {
     export class Baseport extends TemplateControl implements IBaseport {
-        $ManagerCacheStatic: storage.ICache<processing.IElementManager> = acquire('$ManagerCacheStatic');
+        $ManagerCache: storage.ICache<processing.IElementManager> = acquire('$ManagerCache');
         $ExceptionStatic: IExceptionStatic = acquire('$ExceptionStatic');
-        $document: Document = acquire('$document');
-        $ElementManagerStatic: processing.IElementManagerStatic = acquire('$ElementManagerStatic');
+        $Document: Document = acquire('$Document');
+        $ElementManagerFactory: processing.IElementManagerFactory = acquire('$ElementManagerFactory');
 
         constructor(public navigator: navigation.IBaseNavigator) {
             super();
@@ -49,8 +49,8 @@
 
             var injectedControl = newControl ? control.inject() : control,
                 replaceType = injectedControl.replaceWith,
-                node = isEmpty(replaceType) ? this.$document.createElement('div') :
-                    <HTMLElement>this.$document.createElement(replaceType),
+                node = isEmpty(replaceType) ? this.$Document.createElement('div') :
+                    <HTMLElement>this.$Document.createElement(replaceType),
                 attributes: IObject<string> = {},
                 nodeMap: processing.INodeMap = {
                     element: node,
@@ -68,10 +68,10 @@
             node.setAttribute('plat-control', controlType);
             element.appendChild(node);
 
-            var viewportManager = this.$ManagerCacheStatic.read(this.uid);
+            var viewportManager = this.$ManagerCache.read(this.uid);
             viewportManager.children = [];
 
-            var manager = this.$ElementManagerStatic.getInstance();
+            var manager = this.$ElementManagerFactory.getInstance();
 
             manager.initialize(nodeMap, viewportManager, !newControl);
 

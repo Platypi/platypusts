@@ -32,16 +32,11 @@
     });
 
 function appendChildren(nodeList: any, root?: Node): Node {
-    var fragment: DocumentFragment,
-        isFragment = isDocumentFragment(root),
+    var isFragment = isDocumentFragment(root),
         nullRoot = isNull(root),
-        $document = plat.acquire('$document');
-
-    if (isFragment) {
-        fragment = <DocumentFragment>root;
-    } else {
-        fragment = $document.createDocumentFragment();
-    }
+        fragment: DocumentFragment = isFragment ? 
+        <DocumentFragment>root :
+        (plat.acquire('$Document')).createDocumentFragment();
 
     if (nullRoot) {
         root = fragment;
@@ -105,8 +100,8 @@ function clearNodeBlockWithParent(nodeList: Array<Node>, parent: Node): void {
 }
 
 function stringToNode(html: string): Node {
-    var compat: plat.ICompat = plat.acquire('$compat'),
-        $document: Document = plat.acquire('$document'),
+    var $compat: plat.ICompat = plat.acquire('$Compat'),
+        $document: Document = plat.acquire('$Document'),
         nodeName = __nodeNameRegex.exec(html),
         element: HTMLElement = $document.createElement('div');
 
@@ -120,7 +115,7 @@ function stringToNode(html: string): Node {
 
     var mapTag = nodeName[1];
 
-    if (compat.pushState && isUndefined(__innerTableWrappers[mapTag])) {
+    if ($compat.pushState && isUndefined(__innerTableWrappers[mapTag])) {
         return innerHtml(element, html);
     } else if (mapTag === 'body') {
         element = innerHtml($document.createElement('html'), html);
@@ -179,7 +174,7 @@ function insertBefore(parent: Node, nodes: any, endNode: Node = null): Array<Nod
         nodes = Array.prototype.slice.call(nodes);
     }
 
-    var $document = plat.acquire('$document'),
+    var $document = plat.acquire('$Document'),
         length = nodes.length;
 
     fragment = $document.createDocumentFragment();
@@ -227,7 +222,7 @@ function replaceWith(node: any, newNode: any): HTMLElement {
 }
 
 function serializeHtml(html?: string): DocumentFragment {
-    var $document = plat.acquire('$document'),
+    var $document = plat.acquire('$Document'),
         templateElement = $document.createDocumentFragment();
 
     if (!isEmpty(html)) {
@@ -277,9 +272,9 @@ function removeAll(startNode: Node, endNode?: Node): void {
  * available.
  */
 function innerHtml(element: HTMLElement, html: string): HTMLElement {
-    var compat: plat.ICompat = plat.acquire('$compat');
+    var $compat: plat.ICompat = plat.acquire('$Compat');
 
-    if (compat.msApp) {
+    if ($compat.msApp) {
         MSApp.execUnsafeLocalFunction(() => {
             element.innerHTML = html;
         });

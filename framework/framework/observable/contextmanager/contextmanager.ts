@@ -266,26 +266,18 @@ module plat.observable {
         private static __managers: IObject<IContextManager> = {};
         private static __controls: IObject<IObject<Array<IRemoveListener>>> = {};
 
-        /**
-         * The context being managed by this ContextManger instance.
-         */
-        context: any;
         $ContextManagerStatic: IContextManagerStatic = acquire('$ContextManagerStatic');
-        $compat: ICompat = acquire('$compat');
+        $Compat: ICompat = acquire('$Compat');
         $ExceptionStatic: IExceptionStatic = acquire('$ExceptionStatic');
+
+        context: any;
+
         private __identifiers: IObject<Array<IListener>> = {};
         private __identifierHash: IObject<Array<string>> = {};
         private __contextObjects: IObject<any> = {};
         private __isArrayFunction: boolean = false;
         private __observedIdentifier: string;
 
-        /**
-         * Safely retrieves the local context for this ContextManager given an Array of
-         * property strings.
-         * 
-         * @param split The string array containing properties used to index into
-         * the context.
-         */
         getContext(split: Array<string>): void {
             var join = split.join('.'),
                 context = this.__contextObjects[join];
@@ -297,14 +289,6 @@ module plat.observable {
             return context;
         }
 
-        /**
-         * Given a period-delimited identifier, observes an object and calls the given listener when the 
-         * object changes.
-         * 
-         * @param absoluteIdentifier The period-delimited identifier noting the property to be observed.
-         * @param observableListener An object implmenting IObservableListener. The listener will be 
-         * notified of object changes.
-         */
         observe(absoluteIdentifier: string, observableListener: IListener): IRemoveListener {
             if (isEmpty(absoluteIdentifier)) {
                 return;
@@ -387,26 +371,15 @@ module plat.observable {
             return removeCallback;
         }
 
-        /**
-         * Observes an array and calls the listener when certain functions are called on 
-         * that array. The watched functions are push, pop, shift, splice, unshift, sort, 
-         * and reverse.
-         * 
-         * @param uid The uid of the object observing the array.
-         * @param listener The callback for when an observed Array function has been called.
-         * @param absoluteIdentifier The identifier from the root context used to find the array.
-         * @param array The array to be observed.
-         * @param oldArray The old array to stop observing.
-         */
         observeArray(uid: string, listener: (ev: IArrayMethodInfo<any>) => void,
             absoluteIdentifier: string, array: Array<any>, oldArray: Array<any>): IRemoveListener {
             var length = arrayMethods.length,
                 method: string,
                 i = 0,
                 ContextManager = this.$ContextManagerStatic,
-                Compat = this.$compat,
-                proto = Compat.proto,
-                setProto = Compat.setProto;
+                $compat = this.$Compat,
+                proto = $compat.proto,
+                setProto = $compat.setProto;
             
             if (!isNull(oldArray)) {
                 if (setProto) {
@@ -472,9 +445,6 @@ module plat.observable {
             return removeListener;
         }
 
-        /**
-         * Disposes the memory retained by this ContextManager.
-         */
         dispose(): void {
             this.context = null;
             this.__identifiers = {};
@@ -930,112 +900,11 @@ module plat.observable {
     /**
      * The Type for referencing the '$ContextManagerStatic' injectable as a dependency.
      */
-    export function ContextManagerStatic(): IContextManagerStatic {
+    export function IContextManagerStatic(): IContextManagerStatic {
         return ContextManager;
     }
 
-    register.injectable('$ContextManagerStatic', ContextManagerStatic,
-        null, register.injectableType.STATIC);
-
-    /**
-     * Describes an object that manages observing properties on any object.
-     */
-    export interface IContextManager {
-        /**
-         * The context to be managed.
-         */
-        context: any;
-
-        /**
-         * Safely retrieves the local context for this ContextManager given an Array of
-         * property strings.
-         * 
-         * @param split The string array containing properties used to index into
-         * the context.
-         */
-        getContext(split: Array<string>): any;
-
-        /**
-         * Given a period-delimited identifier, observes an object and calls the given listener when the 
-         * object changes.
-         * 
-         * @param absoluteIdentifier The period-delimited identifier noting the property to be observed.
-         * @param observableListener An object implmenting IObservableListener. The listener will be 
-         * notified of object changes.
-         */
-        observe(identifier: string, observableListener: IListener): IRemoveListener;
-
-        /**
-         * Observes an array and calls the listener when certain functions are called on 
-         * that array. The watched functions are push, pop, shift, splice, unshift, sort, 
-         * and reverse.
-         * 
-         * @param uid The uid of the object observing the array.
-         * @param listener The callback for when an observed Array function has been called.
-         * @param absoluteIdentifier The identifier from the root context used to find the array.
-         * @param array The array to be observed.
-         * @param oldArray The old array to stop observing.
-         */
-        observeArray(uid: string, listener: (ev: IArrayMethodInfo<any>) => void,
-            absoluteIdentifier: string, array: Array<any>, oldArray: Array<any>): IRemoveListener;
-
-        /**
-         * Disposes the memory for an IContextManager.
-         */
-        dispose(): void;
-    }
-
-    /**
-     * An object specifying a listener callback function and a unique id to use to manage the
-     * listener.
-     */
-    export interface IListener {
-        /**
-         * A listener method called when the object it is observing is changed.
-         * 
-         * @param value The new value of the object.
-         * @param oldValue The previous value of the object.
-         */
-        listener(value: any, oldValue: any): void;
-
-        /**
-         * A unique id used to manage the listener.
-         */
-        uid: string;
-    }
-
-    /**
-     * An object for Array method info. Takes a 
-     * generic type to denote the type of array it uses.
-     */
-    export interface IArrayMethodInfo<T> {
-        /**
-         * The method name that was called. Possible values are:
-         * 'push', 'pop', 'reverse', 'shift', 'sort', 'splice', 
-         * and 'unshift'
-         */
-        method: string;
-
-        /**
-         * The value returned from the called function.
-         */
-        returnValue: any;
-
-        /**
-         * The previous value of the array.
-         */
-        oldArray: Array<T>;
-
-        /**
-         * The new value of the array.
-         */
-        newArray: Array<T>;
-
-        /**
-         * The arguments passed into the array function.
-         */
-        arguments: Array<any>;
-    }
+    register.injectable('$ContextManagerStatic', IContextManagerStatic, null, register.STATIC);
 
     /**
      * The external interface for the '$ContextManagerStatic' injectable.
@@ -1143,6 +1012,106 @@ module plat.observable {
          * the context path.
          */
         createContext(control: ui.ITemplateControl, identifier: string): any;
+    }
+
+    /**
+     * Describes an object that manages observing properties on any object.
+     */
+    export interface IContextManager {
+        /**
+         * The context to be managed.
+         */
+        context: any;
+
+        /**
+         * Safely retrieves the local context for this ContextManager given an Array of
+         * property strings.
+         * 
+         * @param split The string array containing properties used to index into
+         * the context.
+         */
+        getContext(split: Array<string>): any;
+
+        /**
+         * Given a period-delimited identifier, observes an object and calls the given listener when the 
+         * object changes.
+         * 
+         * @param absoluteIdentifier The period-delimited identifier noting the property to be observed.
+         * @param observableListener An object implmenting IObservableListener. The listener will be 
+         * notified of object changes.
+         */
+        observe(identifier: string, observableListener: IListener): IRemoveListener;
+
+        /**
+         * Observes an array and calls the listener when certain functions are called on 
+         * that array. The watched functions are push, pop, shift, splice, unshift, sort, 
+         * and reverse.
+         * 
+         * @param uid The uid of the object observing the array.
+         * @param listener The callback for when an observed Array function has been called.
+         * @param absoluteIdentifier The identifier from the root context used to find the array.
+         * @param array The array to be observed.
+         * @param oldArray The old array to stop observing.
+         */
+        observeArray(uid: string, listener: (ev: IArrayMethodInfo<any>) => void,
+            absoluteIdentifier: string, array: Array<any>, oldArray: Array<any>): IRemoveListener;
+
+        /**
+         * Disposes the memory for an IContextManager.
+         */
+        dispose(): void;
+    }
+
+    /**
+     * An object specifying a listener callback function and a unique id to use to manage the
+     * listener.
+     */
+    export interface IListener {
+        /**
+         * A listener method called when the object it is observing is changed.
+         * 
+         * @param value The new value of the object.
+         * @param oldValue The previous value of the object.
+         */
+        listener(value: any, oldValue: any): void;
+
+        /**
+         * A unique id used to manage the listener.
+         */
+        uid: string;
+    }
+
+    /**
+     * An object for Array method info. Takes a 
+     * generic type to denote the type of array it uses.
+     */
+    export interface IArrayMethodInfo<T> {
+        /**
+         * The method name that was called. Possible values are:
+         * 'push', 'pop', 'reverse', 'shift', 'sort', 'splice', 
+         * and 'unshift'
+         */
+        method: string;
+
+        /**
+         * The value returned from the called function.
+         */
+        returnValue: any;
+
+        /**
+         * The previous value of the array.
+         */
+        oldArray: Array<T>;
+
+        /**
+         * The new value of the array.
+         */
+        newArray: Array<T>;
+
+        /**
+         * The arguments passed into the array function.
+         */
+        arguments: Array<any>;
     }
 }
 

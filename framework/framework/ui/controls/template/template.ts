@@ -1,5 +1,10 @@
 module plat.ui.controls {
     export class Template extends TemplateControl {
+        $Promise: async.IPromise = acquire('$Promise');
+        $TemplateCache: storage.ITemplateCache = acquire('$TemplateCache');
+        $ExceptionStatic: IExceptionStatic = acquire('$ExceptionStatic');
+        $Document: Document = acquire('$Document');
+
         /**
          * Removes the <plat-template> node from the DOM
          */
@@ -9,9 +14,6 @@ module plat.ui.controls {
          * The evaluated plat-options object.
          */
         options: observable.IObservableProperty<ITemplateOptions>;
-        $PromiseStatic: async.IPromiseStatic = acquire('$PromiseStatic');
-        $templateCache: storage.ITemplateCache = acquire('$templateCache');
-        $ExceptionStatic: IExceptionStatic = acquire('$ExceptionStatic');
 
         /**
          * The unique ID used to reference a particular 
@@ -29,8 +31,8 @@ module plat.ui.controls {
         private __templateControlCache: storage.ICache<any>;
         constructor() {
             super();
-            var Cache: storage.ICacheStatic = acquire('$CacheStatic');
-            this.__templateControlCache = Cache.create<any>('__templateControlCache');
+            var $cacheFactory: storage.ICacheFactory = acquire('$CacheFactory');
+            this.__templateControlCache = $cacheFactory.create<any>('__templateControlCache');
         }
 
         /**
@@ -82,8 +84,7 @@ module plat.ui.controls {
          * in a template cache for later use.
          */
         _initializeTemplate(): void {
-            var id = this._id,
-                $document: Document = acquire('$document');
+            var id = this._id;
 
             if (isNull(id)) {
                 return;
@@ -94,12 +95,12 @@ module plat.ui.controls {
                 template: any;
 
             if (!isNull(url)) {
-                template = this.$templateCache.read(url);
+                template = this.$TemplateCache.read(url);
                 //determineTemplate sets the templateUrl so we need to reset it back to null
                 this.templateUrl = null;
                 this.dom.clearNodeBlock(this.elementNodes, parentNode);
             } else {
-                template = $document.createDocumentFragment();
+                template = this.$Document.createDocumentFragment();
                 this.dom.appendChildren(this.elementNodes, template);
             }
 
@@ -117,7 +118,7 @@ module plat.ui.controls {
             } else {
                 this.bindableTemplates.add(id, template.cloneNode(true));
 
-                controlPromise = this.$PromiseStatic.resolve(this);
+                controlPromise = this.$Promise.resolve(this);
             }
 
             this.__templateControlCache.put(id, controlPromise);
@@ -162,7 +163,7 @@ module plat.ui.controls {
             var bindableTemplates = this.bindableTemplates,
                 id = this._id;
 
-            return new this.$PromiseStatic<DocumentFragment>((resolve, reject) => {
+            return new this.$Promise<DocumentFragment>((resolve, reject) => {
                 bindableTemplates.bind(id, (clone: DocumentFragment) => {
                     resolve(clone);
                 });

@@ -3,163 +3,58 @@
      * A class for keeping track of commonly used regular expressions.
      */
     export class Regex implements IRegex {
-        /**
-         * The regular expression for finding markup in a string.
-         */
         markupRegex: RegExp = /{{[\S\s]*}}/;
-
-        /**
-         * Finds the arguments in a method expression
-         * 
-         * @example 
-         *   // outputs ["('foo', 'bar', 'baz')", "'foo', 'bar', 'baz'"]
-         *   exec("myFunction('foo', 'bar', 'baz')");
-         */
         argumentRegex: RegExp = /\((.*)\)/;
-
-        /**
-         * Given a string, finds the root alias name if that string is an 
-         * alias path.
-         * 
-         * @example
-         *   // outputs ['context']
-         *   exec('@context.foo');
-         * 
-         * @example
-         *   // outputs null
-         *   exec('@context');
-         */
         aliasRegex: RegExp = /[^@\.\[\(]+(?=[\.\[\(])/;
-
-        /**
-         * Finds '/*.html' or '/*.htm' in a url. Useful for removing 
-         * the html file out of the url.
-         * 
-         * @example
-         *   // outputs ['/index.html']
-         *   exec('http://localhost:8080/index.html');
-         */
         initialUrlRegex: RegExp = /\/[^\/]*\.(?:html|htm)/;
-
-        /**
-         * Finds a protocol delimeter in a string (i.e. ://)
-         */
         protocolRegex: RegExp = /:\/\//;
-
-        /**
-         * Looks for any invalid variable syntax.
-         */
         invalidVariableRegex: RegExp = /[^a-zA-Z0-9@_$]/;
-
-        /**
-         * Grabs the file name from a file path.
-         */
         fileNameRegex: RegExp = /.*(?:\/|\\)/;
 
-        /**
-         * The regular expression for matching or removing all newline characters.
-         */
         get newLineRegex(): RegExp {
             return /\n|\r/g;
         }
 
-        /**
-         * Finds optional parameters in a route string.
-         * 
-         * @example
-         *   // outputs ['(/foo)', '/foo']
-         *   exec('(/foo)/bar');
-         * 
-         * @example
-         *  // outputs ['(/foo)', '/foo']
-         *  exec('(/foo))');
-         */
         get optionalRouteRegex(): RegExp {
             return /\((.*?)\)/g;
         }
 
-        /**
-         * Finds named parameters in a route string.
-         * 
-         * @example
-         *   // outputs [':foo']
-         *   exec('/:foo/bar')
-         * 
-         *   // outputs [':foo']
-         *   exec('(/:foo)/bar');
-         */
         get namedParameterRouteRegex(): RegExp {
             return /(\(\?)?:\w+/g;
         }
 
-        /**
-         * Finds an alphanumeric wildcard match in a route string.
-         * 
-         * @example
-         *   // outputs ['*bar']
-         *   exec('/foo/*bar/baz')
-         */
         get wildcardRouteRegex(): RegExp {
             return /\*\w*/g;
         }
 
-        /**
-         * Finds invalid characters in a route string.
-         * 
-         * @example
-         *  // outputs ['?']
-         *  exec('/foo/bar?query=baz');
-         */
         get escapeRouteRegex(): RegExp {
             return /[\-{}\[\]+?.,\\\^$|#\s]/g;
         }
 
-        /**
-         * Finds delimeters for spinal-case, snake_case, and dot.case. 
-         * useful for converting to camelCase. Also can turn a string 
-         * into camelCase with space as a delimeter.
-         * 
-         * @example
-         *   // outputs ['-o', '-', 'o']
-         *   exec('plat-options')
-         * 
-         * @example
-         *   // outputs ['.c', '.', 'c']
-         *   exec('plat.config')
-         * 
-         * @example
-         *   // outputs ['_v', '_', 'v']
-         *   exec('plat_var')
-         * 
-         * @example
-         *   // outputs [' W', ' ', 'W']
-         *   exec('Hello World')
-         */
         get camelCaseRegex(): RegExp {
             return /([\-_\.\s])(\w+?)/g;
         }
 
-        /**
-         * Finds all whitespace and newline characters 
-         * not in string literals. Needs to be combined 
-         * with string replace function using $1 argument.
-         */
         get whiteSpaceRegex(): RegExp {
             return /("[^"]*?"|'[^']*?')|[\s\r\n\t\v]/g;
         }
 
-        /**
-         * Finds all single and double quotes.
-         */
         get quotationRegex(): RegExp {
             return /'|"/g;
         }
     }
 
-    register.injectable('$regex', Regex);
+    /**
+     * The Type for referencing the '$Regex' injectable as a dependency.
+     */
+    export function IRegex(): IRegex {
+        return new Regex();
+    }
+
+    register.injectable('$Regex', IRegex);
 
     /**
-     * The intended external interface for the ‘$regex’ injectable.
+     * An object containing commonly used regular expressions.
      */
     export interface IRegex {
         /**

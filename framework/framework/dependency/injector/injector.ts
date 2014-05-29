@@ -91,9 +91,9 @@ module plat.dependency {
             } else if (isString(dependency)) {
                 return dependency;
             } else if (dependency === window) {
-                return '$window';
+                return '$Window';
             } else if (dependency === window.document) {
-                return '$document';
+                return '$Document';
             }
 
             var injectors = injectableInjectors,
@@ -137,9 +137,9 @@ module plat.dependency {
             } else if (isString(Constructor)) {
                 return injectableInjectors[Constructor];
             } else if (Constructor === window) {
-                return (<any>injectableInjectors).$window;
+                return (<any>injectableInjectors).$Window;
             } else if (Constructor === window.document) {
-                return (<any>injectableInjectors).$document;
+                return (<any>injectableInjectors).$Document;
             }
 
             var injectors = injectableInjectors,
@@ -223,7 +223,8 @@ module plat.dependency {
          * as a SINGLE type it will only inject that injectable once.
          */
         inject(): T {
-            var toInject: any = [];
+            var toInject: any = [],
+                type = this.type;
 
             this.__dependencies = Injector.getDependencies(this.__dependencies);
 
@@ -236,9 +237,10 @@ module plat.dependency {
                 toInject.push(dependencies[i].inject());
             }
 
-            injectable = <T>Injector.__construct(this.Constructor, toInject, this.type);
+            injectable = <T>Injector.__construct(this.Constructor, toInject, type);
 
-            if (this.type === register.injectableType.SINGLE || this.type === register.injectableType.STATIC) {
+            if (type === register.SINGLETON || type === register.FACTORY ||
+                type === register.STATIC || type === register.CLASS) {
                 this._wrapInjector(injectable);
             }
 
@@ -250,9 +252,10 @@ module plat.dependency {
          * SINGLE or STATIC type so that it does not re-instantiate.
          */
         _wrapInjector(value: any): IInjector<any> {
-            return injectableInjectors[this.name] = <IInjector<any>>{
+            var name = this.name;
+            return injectableInjectors[name] = <IInjector<any>>{
                 type: this.type,
-                name: this.name,
+                name: name,
                 __dependencies: this.__dependencies,
                 Constructor: this.Constructor,
                 inject: () => <T>value

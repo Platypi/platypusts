@@ -107,8 +107,8 @@
             }]
         };
 
-        $document: Document = acquire('$document');
-        $compat: ICompat = acquire('$compat');
+        $Document: Document = acquire('$Document');
+        $Compat: ICompat = acquire('$Compat');
 
         /**
          * Whether or not the DomEvents are currently active. 
@@ -203,7 +203,7 @@
         private __capturedTarget: Node;
         private __mappedEventListener = this.__handleMappedEvent.bind(this);
         private __reverseMap = {};
-        private __swipeSubscribers: { master: IDomEvent; directional: IDomEvent };
+        private __swipeSubscribers: { master: IDomEventInstance; directional: IDomEventInstance };
         private __pointerHash: IObject<IPointerEvent> = {};
         private __pointerEvents: Array<IPointerEvent> = [];
         private __listeners: ICustomEventListener = {
@@ -219,28 +219,10 @@
             this.__getTypes();
         }
 
-        /**
-         * Add an event listener for the specified event type on the specified element. 
-         * 
-         * @param element The node listening for the event.
-         * @param type The type of event being listened to.
-         * @param listener The listener to be fired.
-         * @param useCapture Whether to fire the event on the capture or bubble phase of propagation.
-         * @return {IRemoveListener} A function to remove the added event listener.
-         */
         addEventListener(element: Node, type: string, listener: IGestureListener, useCapture?: boolean): IRemoveListener;
-        /**
-         * Add an event listener for the specified event type on the specified element. 
-         * 
-         * @param element The window object.
-         * @param type The type of event being listened to.
-         * @param listener The listener to be fired.
-         * @param useCapture Whether to fire the event on the capture or bubble phase of propagation.
-         * @return {IRemoveListener} A function to remove the added event listener.
-         */
         addEventListener(element: Window, type: string, listener: IGestureListener, useCapture?: boolean): IRemoveListener;
         addEventListener(element: any, type: string, listener: IGestureListener, useCapture?: boolean): IRemoveListener {
-            var $compat = this.$compat,
+            var $compat = this.$Compat,
                 mappedGestures = $compat.mappedEvents,
                 mappedType = mappedGestures[type],
                 mappingExists = !isNull(mappedType),
@@ -290,9 +272,6 @@
             };
         }
 
-        /**
-         * Stops listening for touch events and resets the DomEvents instance.
-         */
         dispose(): void {
             this.__unregisterTypes();
 
@@ -367,7 +346,7 @@
             }
 
             var holdInterval = DomEvents.config.intervals.holdInterval,
-                domEvent: IDomEvent,
+                domEvent: IDomEventInstance,
                 subscribeFn: () => void;
 
             if (noHolds) {
@@ -675,7 +654,7 @@
         // Touch type and element registration
 
         private __getTypes(): void {
-            var $compat = this.$compat,
+            var $compat = this.$Compat,
                 touchEvents = $compat.mappedEvents;
 
             if ($compat.hasTouchEvents) {
@@ -702,7 +681,7 @@
         private __registerType(event: string): void {
             var events: Array<string>,
                 listener = this.__listeners[event],
-                $document = this.$document;
+                $document = this.$Document;
 
             switch (event) {
                 case this.__START:
@@ -726,7 +705,7 @@
         private __unregisterType(event: string): void {
             var events: Array<string>,
                 listener = this.__listeners[event],
-                $document = this.$document;
+                $document = this.$Document;
 
             switch (event) {
                 case this.__START:
@@ -749,9 +728,9 @@
         }
         private __registerElement(element: Node, type: string): void {
             var index = this._elements.indexOf(element),
-                domEvent: IDomEvent = acquire('$domEvent');
+                $domEvent: IDomEventInstance = acquire('$DomEventInstance');
 
-            domEvent.initialize(element, type);
+            $domEvent.initialize(element, type);
 
             // check if DomEvents is ready
             if (!this._isActive) {
@@ -766,7 +745,7 @@
 
             if (index === -1) {
                 var gesture = { gestureCount: 1 };
-                (<any>gesture)[type] = domEvent;
+                (<any>gesture)[type] = $domEvent;
 
                 index = this._elements.length;
                 this._elements.push(element);
@@ -779,7 +758,7 @@
             } else {
                 var subscription = this._subscriptions[index];
                 if (isUndefined((<any>subscription)[type])) {
-                    (<any>subscription)[type] = domEvent;
+                    (<any>subscription)[type] = $domEvent;
                     subscription.gestureCount++;
                 }
             }
@@ -806,7 +785,7 @@
         }
         private __setTouchPoint(ev: IPointerEvent): void {
             var eventType = ev.type,
-                $compat = this.$compat,
+                $compat = this.$Compat,
                 noTouchEvents = !$compat.hasTouchEvents;
 
             if ($compat.hasPointerEvents) {
@@ -867,10 +846,10 @@
 
         // Event and subscription handling
 
-        private __findFirstSubscriber(eventTarget: Node, type: string): IDomEvent {
+        private __findFirstSubscriber(eventTarget: Node, type: string): IDomEventInstance {
             var elements = this._elements,
                 gestures: IEventSubscription,
-                domEvent: IDomEvent,
+                domEvent: IDomEventInstance,
                 index: number;
 
             do {
@@ -886,7 +865,7 @@
             } while (!isNull(eventTarget = eventTarget.parentNode));
         }
         private __addMappedEvent(mappedEvent: string, useCapture?: boolean): IRemoveListener {
-            var $document = this.$document;
+            var $document = this.$Document;
             $document.addEventListener(mappedEvent, this.__mappedEventListener, useCapture);
 
             return () => {
@@ -1036,7 +1015,7 @@
             return direction === 'left' || direction === 'right';
         }
         private __appendGestureStyle(): void {
-            var $document = this.$document,
+            var $document = this.$Document,
                 head = $document.head,
                 style = <HTMLStyleElement>$document.createElement('style');
 
@@ -1106,22 +1085,62 @@
         }
     }
 
-    plat.register.injectable('$domEvents', DomEvents);
+    /**
+     * The Type for referencing the '$DomEvents' injectable as a dependency.
+     */
+    export function IDomEvents(): IDomEvents {
+        return new DomEvents();
+    }
+
+    plat.register.injectable('$DomEvents', IDomEvents);
 
     /**
-     * The Type for referencing the '$domEvents.config' injectable as a dependency.
+     * Describes an object for managing DOM event registration and handling.
      */
-    export function DomEventsConfigStatic(): IDomEventsConfig {
+    export interface IDomEvents {
+        /**
+         * Add an event listener for the specified event type on the specified element. 
+         * 
+         * @param element The node listening for the event.
+         * @param type The type of event being listened to.
+         * @param listener The listener to be fired.
+         * @param useCapture Whether to fire the event on the capture or bubble phase of propagation.
+         * @return {IRemoveListener} A function to remove the added event listener.
+         */
+        addEventListener(element: Node, type: string, listener: IGestureListener,
+            useCapture?: boolean): IRemoveListener;
+        /**
+         * Add an event listener for the specified event type on the specified element. 
+         * 
+         * @param element The window object.
+         * @param type The type of event being listened to.
+         * @param listener The listener to be fired.
+         * @param useCapture Whether to fire the event on the capture or bubble phase of propagation.
+         * @return {IRemoveListener} A function to remove the added event listener.
+         */
+        addEventListener(element: Window, type: string, listener: IGestureListener,
+            useCapture?: boolean): IRemoveListener;
+
+        /**
+         * Stops listening for touch events and resets the DomEvents instance.
+         */
+        dispose(): void;
+    }
+
+    /**
+     * The Type for referencing the '$DomEventsConfig' injectable as a dependency.
+     */
+    export function IDomEventsConfig(): IDomEventsConfig {
         return DomEvents.config;
     }
 
-    register.injectable('$domEvents.config', DomEventsConfigStatic, null, register.injectableType.STATIC);
+    register.injectable('$DomEventsConfig', IDomEventsConfig);
 
     /**
      * A class for managing of a single custom event.
      */
-    export class DomEvent implements IDomEvent {
-        $document: Document = acquire('$document');
+    export class DomEvent implements IDomEventInstance {
+        $Document: Document = acquire('$Document');
 
         /**
          * The node or window object associated with this DomEvent.
@@ -1158,13 +1177,57 @@
          * @param ev The event object to pass in as the custom event object's detail property.
          */
         trigger(ev: IPointerEvent): void {
-            var event = <CustomEvent>this.$document.createEvent('CustomEvent');
+            var event = <CustomEvent>this.$Document.createEvent('CustomEvent');
             event.initCustomEvent(this.event, true, true, ev);
             this.element.dispatchEvent(event);
         }
     }
 
-    register.injectable('$domEvent', DomEvent, null, register.injectableType.MULTI);
+    /**
+     * The Type for referencing the '$DomEventInstance' injectable as a dependency.
+     */
+    export function IDomEventInstance(): IDomEventInstance {
+        return new DomEvent();
+    }
+
+    register.injectable('$DomEventInstance', IDomEventInstance, null, register.INSTANCE);
+
+    /**
+     * Describes an object used for managing a single custom event.
+     */
+    export interface IDomEventInstance {
+        /**
+         * The node or window object associated with this DomEvent object.
+         */
+        element: any;
+
+        /**
+         * The event type associated with this DomEvent.
+         */
+        event: string;
+
+        /**
+         * Initializes the element and event of the DomEvent object
+         * 
+         * @param The node associated with this DomEvent. 
+         * @param event The type of event this DomEvent is managing.
+         */
+        initialize(element: Node, event: string): void;
+        /**
+         * Initializes the element and event of the DomEvent object
+         * 
+         * @param The window object. 
+         * @param event The type of event this DomEvent is managing.
+         */
+        initialize(element: Window, event: string): void;
+
+        /**
+         * Triggers a custom event to bubble up to all elements in this branch of the DOM tree.
+         * 
+         * @param ev The event object to pass in as the custom event object's detail property.
+         */
+        trigger(ev: IPointerEvent): void;
+    }
 
     /**
      * Describes the touch event listeners for the document.
@@ -1300,7 +1363,7 @@
      * Describes an object to keep track of a single 
      * element's registered custom event types.
      */
-    export interface IEventSubscription extends IGestures<IDomEvent> {
+    export interface IEventSubscription extends IGestures<IDomEventInstance> {
         /**
          * The total registered gesture count for the associated element.
          */
@@ -1533,75 +1596,5 @@
          * The default CSS styles applied to elements listening for custom DOM events.
          */
         styleConfig: Array<IDefaultStyle>;
-    }
-
-    /**
-     * Describes an object used for managing a single custom event.
-     */
-    export interface IDomEvent {
-        /**
-         * The node or window object associated with this DomEvent object.
-         */
-        element: any;
-
-        /**
-         * The event type associated with this DomEvent.
-         */
-        event: string;
-        
-        /**
-         * Initializes the element and event of the DomEvent object
-         * 
-         * @param The node associated with this DomEvent. 
-         * @param event The type of event this DomEvent is managing.
-         */
-        initialize(element: Node, event: string): void;
-        /**
-         * Initializes the element and event of the DomEvent object
-         * 
-         * @param The window object. 
-         * @param event The type of event this DomEvent is managing.
-         */
-        initialize(element: Window, event: string): void;
-
-        /**
-         * Triggers a custom event to bubble up to all elements in this branch of the DOM tree.
-         * 
-         * @param ev The event object to pass in as the custom event object's detail property.
-         */
-        trigger(ev: IPointerEvent): void;
-    }
-
-    /**
-     * Describes an object for managing DOM event registration and handling.
-     */
-    export interface IDomEvents {
-        /**
-         * Add an event listener for the specified event type on the specified element. 
-         * 
-         * @param element The node listening for the event.
-         * @param type The type of event being listened to.
-         * @param listener The listener to be fired.
-         * @param useCapture Whether to fire the event on the capture or bubble phase of propagation.
-         * @return {IRemoveListener} A function to remove the added event listener.
-         */
-        addEventListener(element: Node, type: string, listener: IGestureListener,
-            useCapture?: boolean): IRemoveListener;
-        /**
-         * Add an event listener for the specified event type on the specified element. 
-         * 
-         * @param element The window object.
-         * @param type The type of event being listened to.
-         * @param listener The listener to be fired.
-         * @param useCapture Whether to fire the event on the capture or bubble phase of propagation.
-         * @return {IRemoveListener} A function to remove the added event listener.
-         */
-        addEventListener(element: Window, type: string, listener: IGestureListener,
-            useCapture?: boolean): IRemoveListener;
-
-        /**
-         * Stops listening for touch events and resets the DomEvents instance.
-         */
-        dispose(): void;
     }
 }

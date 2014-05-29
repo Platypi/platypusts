@@ -5,12 +5,14 @@ module plat.expressions {
      */
     export class Tokenizer implements ITokenizer {
         $ExceptionStatic: IExceptionStatic = acquire('$ExceptionStatic');
+
         /**
          * The input string to tokenize.
          */
         _input: string;
+
         private __previousChar: string = '';
-        private __variableRegex = (<expressions.IRegex>acquire('$regex')).invalidVariableRegex;
+        private __variableRegex = (<expressions.IRegex>acquire('$Regex')).invalidVariableRegex;
         private __outputQueue: Array<IToken> = [];
         private __operatorStack: Array<IToken> = [];
         private __argCount: Array<any> = [];
@@ -18,12 +20,6 @@ module plat.expressions {
         private __lastColonChar: Array<string> = [];
         private __lastCommaChar: Array<string> = [];
 
-        /**
-         * Creates an IToken array for the Tokenizer's input string. 
-         * The IToken array contains all the tokens for the input string.
-         * 
-         * @param input The expression string to tokenize.
-         */
         createTokens(input: string): Array<IToken> {
             if (isNull(input)) {
                 return [];
@@ -669,6 +665,27 @@ module plat.expressions {
     }
 
     /**
+     * The Type for referencing the '$Tokenizer' injectable as a dependency.
+     */
+    export function ITokenizer(): ITokenizer {
+        return new Tokenizer();
+    }
+
+    register.injectable('$Tokenizer', ITokenizer);
+
+    /**
+     * Describes an object used to find tokens for an expression and create ITokens.
+     */
+    export interface ITokenizer {
+        /**
+         * Takes in an expression string and outputs ITokens.
+         * 
+         * @param input The expression string to tokenize.
+         */
+        createTokens(input: string): Array<IToken>;
+    }
+
+    /**
      * Describes a token in an expression.
      */
     export interface IToken {
@@ -729,18 +746,4 @@ module plat.expressions {
          */
         index: number;
     }
-
-    /**
-     * Describes an object used to find tokens for an expression and create ITokens.
-     */
-    export interface ITokenizer {
-        /**
-         * Takes in an expression string and outputs ITokens.
-         * 
-         * @param input The expression string to tokenize.
-         */
-        createTokens(input: string): Array<IToken>;
-    }
-
-    register.injectable('$tokenizer', Tokenizer);
 }

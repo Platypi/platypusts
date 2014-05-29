@@ -1,5 +1,9 @@
 module plat.ui.controls {
     export class Select extends TemplateControl {
+        $Promise: async.IPromise = acquire('$Promise');
+        $Exception: IExceptionStatic = acquire('$ExceptionStatic');
+        $Document: Document = acquire('$Document');
+
         /**
          * Replaces the <plat-select> node with 
          * a <select> node.
@@ -21,8 +25,7 @@ module plat.ui.controls {
          * The evaluated plat-options object.
          */
         options: observable.IObservableProperty<ISelectOptions>;
-        $PromiseStatic: async.IPromiseStatic = acquire('$PromiseStatic');
-        $Exception: IExceptionStatic = acquire('$ExceptionStatic');
+
         private __removeListener: IRemoveListener;
         private __isGrouped: boolean = false;
         private __group: string;
@@ -34,7 +37,7 @@ module plat.ui.controls {
         setTemplate(): void {
             var element = this.element,
                 firstElementChild = element.firstElementChild,
-                $document: Document = acquire('$document');
+                $document = this.$Document;
 
             if (!isNull(firstElementChild) && firstElementChild.nodeName.toLowerCase() === 'option') {
                 this.__defaultOption = <HTMLOptionElement>firstElementChild.cloneNode(true);
@@ -152,7 +155,7 @@ module plat.ui.controls {
                     optgroup: any = groups[newGroup];
 
                 if (isNull(optgroup)) {
-                    optgroup = groups[newGroup] = <any>new this.$PromiseStatic<HTMLElement>((resolve) => {
+                    optgroup = groups[newGroup] = <any>new this.$Promise<HTMLElement>((resolve) => {
                         this.bindableTemplates.bind('group', (groupClone: DocumentFragment) => {
                             optgroup = groups[newGroup] = <HTMLElement>groupClone.childNodes[1];
 

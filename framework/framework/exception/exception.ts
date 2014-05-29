@@ -86,6 +86,15 @@ module plat {
     }
 
     /**
+     * The Type for referencing the '$ExceptionStatic' injectable as a dependency.
+     */
+    export function IExceptionStatic(): IExceptionStatic {
+        return Exception;
+    }
+
+    register.injectable('$ExceptionStatic', IExceptionStatic, null, register.STATIC);
+
+    /**
      * The intended external interface for the '$ExceptionStatic' injectable.
      */
     export interface IExceptionStatic {
@@ -164,15 +173,6 @@ module plat {
          */
         PROMISE: number;
     }
-
-    /**
-     * The Type for referencing the '$ExceptionStatic' injectable as a dependency.
-     */
-    export function ExceptionStatic(): IExceptionStatic {
-        return Exception;
-    }
-
-    register.injectable('$ExceptionStatic', ExceptionStatic, null, register.injectableType.STATIC);
 
     class PlatException {
         constructor(public message: string, public name: string) { }

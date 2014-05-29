@@ -21,39 +21,30 @@ module plat.async {
         /**
          * The plat.IBrowser injectable instance
          */
-        $browser: web.IBrowser = acquire('$browser');
+        $Browser: web.IBrowser = acquire('$Browser');
         /**
          * The injectable instance of type Window
          */
-        $window: Window = acquire('$window');
+        $Window: Window = acquire('$Window');
         /**
          * The injectable instance of type Document
          */
-        $document: Document = acquire('$document');
+        $Document: Document = acquire('$Document');
         /**
          * The configuration for an HTTP Request
          */
-        $config: IHttpConfigStatic = acquire('$http.config');
+        $config: IHttpConfig = acquire('$HttpConfig');
 
-        private __fileSupported = (<ICompat>acquire('$compat')).fileSupported;
-        private __options: IHttpConfigStatic;
+        private __fileSupported = (<ICompat>acquire('$Compat')).fileSupported;
+        private __options: IHttpConfig;
 
         /**
          * @param options The IHttpConfigStatic used to customize this HttpRequest.
          */
-        constructor(options: IHttpConfigStatic) {
+        constructor(options: IHttpConfig) {
             this.__options = extend({}, this.$config, options);
         }
 
-        /**
-         * Performs either the XmlHttpRequest or the JSONP callback and returns an AjaxPromise. 
-         * The Promise is fulfilled or rejected when either the XmlHttpRequest returns or the 
-         * JSONP callback is fired.
-         *
-         * @return {AjaxPromise} A promise that fulfills/rejects
-         * when either the XmlHttpRequest returns (Response statuses >= 200 and < 300 are a success.
-         * Other response statuses are failures) or the JSONP callback is fired.
-         */
         execute<R>(): IAjaxPromise<R> {
             var options = this.__options,
                 url = options.url;
@@ -62,7 +53,7 @@ module plat.async {
                 return this._invalidOptions();
             }
 
-            options.url = this.$browser.urlUtils(url).toString();
+            options.url = this.$Browser.urlUtils(url).toString();
 
             var isCrossDomain = options.isCrossDomain || false,
                 xDomain = false;
@@ -73,7 +64,7 @@ module plat.async {
             } else {
                 this.xhr = new XMLHttpRequest();
                 if (isUndefined(this.xhr.withCredentials)) {
-                    xDomain = this.$browser.isCrossDomain(url);
+                    xDomain = this.$Browser.isCrossDomain(url);
                 }
             }
 
@@ -86,13 +77,6 @@ module plat.async {
             return this._sendXhrRequest();
         }
 
-        /**
-         * Adds the script tag and processes the callback for the JSONP and returns a 
-         * Promise. The Promise is fulfilled or rejected when the JSONP callback is called.
-         *
-         * @return {Promise<IAjaxResponse>} A promise that fulfills with the 
-         * JSONP callback and rejects if there is a problem.
-         */
         executeJsonp<R>(): IAjaxPromise<R> {
             var options = this.__options,
                 url = options.url;
@@ -101,14 +85,14 @@ module plat.async {
                 return this._invalidOptions();
             }
 
-            options.url = this.$browser.urlUtils(url).toString();
+            options.url = this.$Browser.urlUtils(url).toString();
             if (isNull(this.jsonpCallback)) {
                 this.jsonpCallback = options.jsonpCallback || uniqueId('plat_callback');
             }
 
             return new AjaxPromise((resolve, reject) => {
-                var $window = <any>this.$window,
-                    $document = this.$document,
+                var $window = <any>this.$Window,
+                    $document = this.$Document,
                     scriptTag = $document.createElement('script'),
                     jsonpCallback = this.jsonpCallback,
                     jsonpIdentifier = options.jsonpIdentifier || 'callback';
@@ -492,9 +476,9 @@ module plat.async {
             var options = this.__options,
                 data = options.data,
                 url = options.url,
-                $document = this.$document,
+                $document = this.$Document,
                 $body = $document.body,
-                Promise: IPromiseStatic = acquire('$PromiseStatic'),
+                Promise: IPromise = acquire('$Promise'),
                 form = $document.createElement('form'),
                 iframe = $document.createElement('iframe'),
                 iframeName = uniqueId('iframe_target'),
@@ -542,7 +526,7 @@ module plat.async {
             });
         }
         private __createInput(key: string, val: any): HTMLInputElement {
-            var $document = this.$document,
+            var $document = this.$Document,
                 $exception: IExceptionStatic,
                 input = <HTMLInputElement>$document.createElement('input');
 
@@ -634,7 +618,7 @@ module plat.async {
     /**
      * Describes an object which contains Ajax configuration properties.
      */
-    export interface IHttpConfigStatic extends IJsonpConfigStatic {
+    export interface IHttpConfig extends IJsonpConfig {
         /**
          * The HTTP method type of XmlHttpRequest such as 'GET', 'POST', 'PUT', 
          * 'DELETE', etc. Ignored for non-HTTP urls. Defaults to 'GET'.
@@ -710,7 +694,7 @@ module plat.async {
     /**
      * Describes an object which contains JSONP configuration properties.
      */
-    export interface IJsonpConfigStatic {
+    export interface IJsonpConfig {
         /**
          * The url for the JSONP callback 
          * (without the ?{callback}={callback_name} parameter in the url)
@@ -818,9 +802,8 @@ module plat.async {
     /**
      * Describes a type of Promise that fulfills with an IAjaxResponse and can be optionally canceled.
      */
-    export class AjaxPromise<R> extends Promise<IAjaxResponse<R>>
-        implements IAjaxPromise<R> {
-        $window: Window = acquire('$window');
+    export class AjaxPromise<R> extends Promise<IAjaxResponse<R>> implements IAjaxPromise<R> {
+        $Window: Window = acquire('$Window');
         private __http: HttpRequest;
         constructor(resolveFunction: IAjaxResolveFunction<R>, promise?: any) {
             super(resolveFunction);
@@ -846,7 +829,7 @@ module plat.async {
                 xhr.abort();
                 http.xhr = null;
             } else if (!isNull(jsonpCallback)) {
-                (<any>this.$window)[jsonpCallback] = noop;
+                (<any>this.$Window)[jsonpCallback] = noop;
             }
 
             (<any>this).__subscribers = [];
@@ -993,7 +976,7 @@ module plat.async {
          * Standard denotation for form encoded data. All objects are converted 
          * to string key-value pairs.
          */
-        ENCODEDFORM: string;
+        ENCODED_FORM: string;
 
         /**
          * Standard denotation for JavaScript Object Notation (JSON).
@@ -1004,12 +987,12 @@ module plat.async {
          * Standard denotation for a multi-part Webform. Associated with 
          * an entype of 'multipart/form-data'.
          */
-        MULTIPARTFORM: string;
+        MULTIPART_FORM: string;
 
         /**
          * Standard denotation for arbitrary binary data.
          */
-        OCTETSTREAM: string;
+        OCTET_STREAM: string;
 
         /**
          * Standard denotation for XML files.
@@ -1019,13 +1002,104 @@ module plat.async {
         /**
          * Standard denotation for textual data.
          */
-        PLAINTEXT: string;
+        PLAIN_TEXT: string;
 
         /**
          * Standard denotation for HTML.
          */
         HTML: string;
     }
+
+    /**
+     * The instantiated class of the injectable for making 
+     * AJAX requests.
+     */
+    export class Http implements IHttp {
+        /**
+         * Default Http config
+         */
+        static config: IHttpConfig = {
+            url: null,
+            method: 'GET',
+            responseType: '',
+            transforms: [],
+            headers: {},
+            withCredentials: false,
+            timeout: null,
+            jsonpIdentifier: 'callback',
+            contentType: 'application/json;charset=utf-8;'
+        };
+
+        /**
+         * HttpResponseType mapping
+         */
+        responseType: IHttpResponseType = {
+            DEFAULT: '',
+            ARRAYBUFFER: 'arraybuffer',
+            BLOB: 'blob',
+            DOCUMENT: 'document',
+            JSON: 'json',
+            TEXT: 'text'
+        };
+
+        /**
+         * Common HttpContentType mappings
+         */
+        contentType: IHttpContentType = {
+            ENCODED_FORM: 'application/x-www-form-urlencoded;charset=utf-8;',
+            JSON: 'application/json;charset=utf-8;',
+            MULTIPART_FORM: 'multipart/form-data;',
+            OCTET_STREAM: 'application/octet-stream;charset=utf-8;',
+            XML: 'application/xml;charset=utf-8;',
+            PLAIN_TEXT: 'text/plain;',
+            HTML: 'text/html;'
+        };
+
+        /**
+         * A wrapper method for the Http class that creates and executes a new Http with
+         * the specified IAjaxOptions. This function will check if 
+         * XMLHttpRequest level 2 is present, and will default to JSONP if it isn't and 
+         * the request is cross-domain.
+         * 
+         * @param options The IAjaxOptions for either the XMLHttpRequest 
+         * or the JSONP callback.
+         */
+        ajax<R>(options: IHttpConfig): IAjaxPromise<R> {
+            return new HttpRequest(options).execute<R>();
+        }
+
+        /**
+         * A direct method to force a cross-domain JSONP request.
+         * 
+         * @param options The IJsonpOptions 
+         */
+        jsonp<R>(options: IJsonpConfig): IAjaxPromise<R> {
+            return new HttpRequest(options).executeJsonp<R>();
+        }
+
+        /**
+         * Makes an ajax request, specifying responseType: 
+         * responseType.JSON.
+         * 
+         * @param options The IAjaxOptions for either the XMLHttpRequest 
+         * or the JSONP callback.
+         * @return {AjaxPromise} A promise, when fulfilled or rejected, 
+         * will return an IAjaxResponse object, with the response being a parsed 
+         * JSON object (assuming valid JSON).
+         */
+        json<R>(options: IHttpConfig): IAjaxPromise<R> {
+            return new HttpRequest(extend({}, options, { responseType: 'json' })).execute<R>();
+        }
+    }
+
+    /**
+     * The Type for referencing the '$Http' injectable as a dependency.
+     */
+    export function IHttp(): IHttp {
+        return new Http();
+    }
+
+    register.injectable('$Http', IHttp);
 
     /**
      * Describes the interface for the Ajax injectable for making both 
@@ -1054,7 +1128,7 @@ module plat.async {
          * @return {AjaxPromise} A promise, when fulfilled
          * or rejected, will return an IAjaxResponse object.
          */
-        ajax<R>(options: IHttpConfigStatic): IAjaxPromise<R>;
+        ajax<R>(options: IHttpConfig): IAjaxPromise<R>;
 
         /**
          * A direct method to force a cross-domain JSONP request.
@@ -1063,7 +1137,7 @@ module plat.async {
          * @return {AjaxPromise} A promise, when fulfilled
          * or rejected, will return an IAjaxResponse object.
          */
-        jsonp? <R>(options: IJsonpConfigStatic): IAjaxPromise<R>;
+        jsonp? <R>(options: IJsonpConfig): IAjaxPromise<R>;
 
         /**
          * Makes an ajax request, specifying responseType: 
@@ -1075,99 +1149,15 @@ module plat.async {
          * will return an IAjaxResponse object, with the response being a parsed 
          * JSON object (assuming valid JSON).
          */
-        json? <R>(options: IHttpConfigStatic): IAjaxPromise<R>;
+        json? <R>(options: IHttpConfig): IAjaxPromise<R>;
     }
 
     /**
-     * The instantiated class of the injectable for making 
-     * AJAX requests.
+     * The Type for referencing the '$HttpConfig' injectable as a dependency.
      */
-    export class Http implements IHttp {
-        /**
-         * Default Http config
-         */
-        static config: IHttpConfigStatic = {
-            url: null,
-            method: 'GET',
-            responseType: '',
-            transforms: [],
-            headers: {},
-            withCredentials: false,
-            timeout: null,
-            jsonpIdentifier: 'callback',
-            contentType: 'application/json;charset=utf-8;'
-        };
-
-        /**
-         * HttpResponseType mapping
-         */
-        responseType: IHttpResponseType = {
-            DEFAULT: '',
-            ARRAYBUFFER: 'arraybuffer',
-            BLOB: 'blob',
-            DOCUMENT: 'document',
-            JSON: 'json',
-            TEXT: 'text'
-        };
-
-        /**
-         * Common HttpContentType mappings
-         */
-        contentType: IHttpContentType = {
-            ENCODEDFORM: 'application/x-www-form-urlencoded;charset=utf-8;',
-            JSON: 'application/json;charset=utf-8;',
-            MULTIPARTFORM: 'multipart/form-data',
-            OCTETSTREAM: 'application/octet-stream;charset=utf-8;',
-            XML: 'application/xml;charset=utf-8;',
-            PLAINTEXT: 'text/plain',
-            HTML: 'text/html'
-        };
-
-        /**
-         * A wrapper method for the Http class that creates and executes a new Http with
-         * the specified IAjaxOptions. This function will check if 
-         * XMLHttpRequest level 2 is present, and will default to JSONP if it isn't and 
-         * the request is cross-domain.
-         * 
-         * @param options The IAjaxOptions for either the XMLHttpRequest 
-         * or the JSONP callback.
-         */
-        ajax<R>(options: IHttpConfigStatic): IAjaxPromise<R> {
-            return new HttpRequest(options).execute<R>();
-        }
-
-        /**
-         * A direct method to force a cross-domain JSONP request.
-         * 
-         * @param options The IJsonpOptions 
-         */
-        jsonp<R>(options: IJsonpConfigStatic): IAjaxPromise<R> {
-            return new HttpRequest(options).executeJsonp<R>();
-        }
-
-        /**
-         * Makes an ajax request, specifying responseType: 
-         * responseType.JSON.
-         * 
-         * @param options The IAjaxOptions for either the XMLHttpRequest 
-         * or the JSONP callback.
-         * @return {AjaxPromise} A promise, when fulfilled or rejected, 
-         * will return an IAjaxResponse object, with the response being a parsed 
-         * JSON object (assuming valid JSON).
-         */
-        json<R>(options: IHttpConfigStatic): IAjaxPromise<R> {
-            return new HttpRequest(extend({}, options, { responseType: 'json' })).execute<R>();
-        }
-    }
-
-    register.injectable('$http', Http);
-
-    /**
-     * The Type for referencing the '$http.config' injectable as a dependency.
-     */
-    export function HttpConfigStatic(): IHttpConfigStatic {
+    export function IHttpConfig(): IHttpConfig {
         return Http.config;
     }
 
-    register.injectable('$http.config', HttpConfigStatic, null, register.injectableType.STATIC);
+    register.injectable('$HttpConfig', IHttpConfig);
 }

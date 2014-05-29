@@ -5,19 +5,8 @@ module plat.navigation {
      * coexist in one app.
      */
     export class Navigator extends BaseNavigator implements INavigator {
-        /**
-         * Contains the navigation history stack.
-         */
         history: Array<IBaseNavigationState> = [];
 
-        /**
-         * Allows a ui.IViewControl to navigate to another ui.IViewControl. Also allows for
-         * navigation parameters to be sent to the new ui.IViewControl.
-         * 
-         * @param Constructor The Constructor for the new ui.IViewControl. The Navigator will find the injector 
-         * for the Constructor and create a new instance of the control.
-         * @param options Optional IBaseNavigationOptions used for Navigation.
-         */
         navigate(Constructor?: new (...args: any[]) => ui.IViewControl, options?: INavigationOptions): void;
         navigate(injector?: dependency.IInjector<IControl>, options?: INavigationOptions): void;
         navigate(Constructor?: any, options?: INavigationOptions) {
@@ -35,7 +24,7 @@ module plat.navigation {
                 return;
             }
 
-            this.$ViewControlStatic.detach(viewControl);
+            this.$ViewControlFactory.detach(viewControl);
 
             if (isObject(parameter)) {
                 parameter = deepExtend({}, parameter);
@@ -76,18 +65,11 @@ module plat.navigation {
             this.baseport.navigateTo(event);
         }
 
-        /**
-         * Returns to the last visited ui.IViewControl.
-         * 
-         * @param options Optional IBackNavigationOptions allowing the ui.IViewControl
-         * to customize navigation. Enables navigating back to a specified point in history as well
-         * as specifying a new templateUrl to use at the next ui.IViewControl.
-         */
         goBack(options?: IBackNavigationOptions): void {
             options = options || {};
 
             if (this.history.length === 0) {
-                this.$EventManagerStatic.dispatch('shutdown', this, this.$EventManagerStatic.direction.DIRECT);
+                this.$EventManagerStatic.dispatch('shutdown', this, this.$EventManagerStatic.DIRECT);
             }
 
             var viewControl = this.currentState.control,
@@ -120,7 +102,7 @@ module plat.navigation {
                 return;
             }
 
-            var ViewControl: ui.IViewControlStatic = acquire('$ViewControlStatic');
+            var ViewControl: ui.IViewControlFactory = acquire('$ViewControlStatic');
 
             this.baseport.navigateFrom(viewControl);
             ViewControl.dispose(viewControl);
@@ -141,20 +123,13 @@ module plat.navigation {
             this.baseport.navigateTo(event);
         }
 
-        /**
-         * Lets the caller know if there are ui.IViewControls in the history, meaning the caller
-         * is safe to perform a backward navigation.
-         */
         canGoBack(): boolean {
             return this.history.length > 0;
         }
 
-        /**
-         * Clears the navigation history, disposing all the controls.
-         */
         clearHistory(): void {
             var history = this.history,
-                dispose = this.$ViewControlStatic.dispose;
+                dispose = this.$ViewControlFactory.dispose;
 
             while (history.length > 0) {
                 dispose(history.pop().control);
@@ -194,7 +169,7 @@ module plat.navigation {
             length = isNumber(length) ? length : 1;
 
             var last: IBaseNavigationState,
-                dispose = this.$ViewControlStatic.dispose;
+                dispose = this.$ViewControlFactory.dispose;
 
             while (length-- > 0) {
                 if (!isNull(last) && !isNull(last.control)) {
@@ -208,35 +183,14 @@ module plat.navigation {
         }
     }
 
-    register.injectable('$navigator', Navigator, null, register.injectableType.MULTI);
-
     /**
-     * Options that you can submit to the Navigator in order
-     * to customize navigation.
+     * The Type for referencing the '$Navigator' injectable as a dependency.
      */
-    export interface INavigationOptions extends IBaseNavigationOptions {
-        /**
-         * An optional parameter to send to the next ui.IViewControl.
-         */
-        parameter?: any;
+    export function INavigator(): INavigator {
+        return new Navigator();
     }
 
-    /**
-     * Options that you can submit to the Navigator during a backward
-     * navigation in order to customize the navigation.
-     */
-    export interface IBackNavigationOptions extends IBaseBackNavigationOptions {
-        /**
-         * An optional parameter to send to the next ui.IViewControl.
-         */
-        parameter?: any;
-        /**
-         * A ui.IViewControl Constructor that the Navigator will
-         * use to navigate. The Navigator will search for an instance 
-         * of the ui.IViewControl in its history and navigate to it.
-         */
-        ViewControl?: new (...args: any[]) => ui.IViewControl;
-    }
+    register.injectable('$Navigator', INavigator, null, register.INSTANCE);
 
     /**
      * An object implementing INavigator allows ui.IViewControls to implement methods 
@@ -278,6 +232,34 @@ module plat.navigation {
          * Clears the navigation history, disposing all the controls.
          */
         clearHistory(): void;
+    }
+
+    /**
+     * Options that you can submit to the Navigator in order
+     * to customize navigation.
+     */
+    export interface INavigationOptions extends IBaseNavigationOptions {
+        /**
+         * An optional parameter to send to the next ui.IViewControl.
+         */
+        parameter?: any;
+    }
+
+    /**
+     * Options that you can submit to the Navigator during a backward
+     * navigation in order to customize the navigation.
+     */
+    export interface IBackNavigationOptions extends IBaseBackNavigationOptions {
+        /**
+         * An optional parameter to send to the next ui.IViewControl.
+         */
+        parameter?: any;
+        /**
+         * A ui.IViewControl Constructor that the Navigator will
+         * use to navigate. The Navigator will search for an instance 
+         * of the ui.IViewControl in its history and navigate to it.
+         */
+        ViewControl?: new (...args: any[]) => ui.IViewControl;
     }
 }
 

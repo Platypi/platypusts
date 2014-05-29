@@ -59,8 +59,8 @@
             }).call(this, fnObj[key], key);
         });
     }
-    var compat: plat.ICompat = plat.acquire('$compat');
-    if (compat.msApp) {
+    var $compat: plat.ICompat = plat.acquire('$Compat');
+    if ($compat.msApp) {
         overwriteFunctions({
             appendChild: Node.prototype,
             insertBefore: Node.prototype,

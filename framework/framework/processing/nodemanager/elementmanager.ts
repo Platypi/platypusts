@@ -4,10 +4,10 @@ module plat.processing {
      * element/template. Also provides methods for cloning an ElementManager.
      */
     export class ElementManager extends NodeManager implements IElementManager {
-        static $document: Document;
-        static $ManagerCacheStatic: storage.ICache<IElementManager>;
-        static $ResourcesStatic: ui.IResourcesStatic;
-        static $BindableTemplatesStatic: ui.IBindableTemplatesStatic;
+        static $Document: Document;
+        static $ManagerCache: storage.ICache<IElementManager>;
+        static $ResourcesFactory: ui.IResourcesFactory;
+        static $BindableTemplatesFactory: ui.IBindableTemplatesFactory;
 
         /**
          * Determines if the associated HTMLElement has controls that need to be instantiated or Attr nodes
@@ -58,7 +58,7 @@ module plat.processing {
                         replacementType = 'div';
                     }
 
-                    var replacement = ElementManager.$document.createElement(replacementType);
+                    var replacement = ElementManager.$Document.createElement(replacementType);
                     if (replacement.nodeType === Node.ELEMENT_NODE) {
                         element = replaceWith(element, <HTMLElement>replacement.cloneNode(true));
                     }
@@ -124,8 +124,7 @@ module plat.processing {
                     parent.getParentControl(), newControl);
             }
 
-            var manager = new ElementManager(),
-                cache = ElementManager.$ManagerCacheStatic;
+            var manager = new ElementManager();
 
             manager.nodeMap = nodeMap;
             manager.parent = parent;
@@ -144,7 +143,7 @@ module plat.processing {
             }
 
             if (!isNull(newControl)) {
-                cache.put(newControl.uid, manager);
+                ElementManager.$ManagerCache.put(newControl.uid, manager);
             }
 
             return manager;
@@ -166,8 +165,8 @@ module plat.processing {
 
             var uiControl = uiControlNode.control,
                 newUiControl = <ui.ITemplateControl>uiControlNode.injector.inject(),
-                resources = ElementManager.$ResourcesStatic.getInstance(),
-                attributes: ui.IAttributes = acquire('$attributes');
+                resources = ElementManager.$ResourcesFactory.getInstance(),
+                attributes: ui.IAttributesInstance = acquire('$AttributesInstance');
 
             newUiControl.parent = parent;
             parent.controls.push(newUiControl);
@@ -179,14 +178,14 @@ module plat.processing {
             resources.initialize(newUiControl, uiControl.resources);
             newUiControl.resources = resources;
 
-            ElementManager.$ResourcesStatic.addControlResources(newUiControl);
+            ElementManager.$ResourcesFactory.addControlResources(newUiControl);
 
             if (!isNull(uiControl.innerTemplate)) {
                 newUiControl.innerTemplate = <DocumentFragment>uiControl.innerTemplate.cloneNode(true);
             }
 
             newUiControl.type = uiControl.type;
-            newUiControl.bindableTemplates = ElementManager.$BindableTemplatesStatic.create(newUiControl, uiControl.bindableTemplates);
+            newUiControl.bindableTemplates = ElementManager.$BindableTemplatesFactory.create(newUiControl, uiControl.bindableTemplates);
             newUiControl.replaceWith = uiControl.replaceWith;
 
             return newUiControl;
@@ -216,7 +215,7 @@ module plat.processing {
 
             var attributes = elementExists ? element.attributes : null,
                 attrs = nodeMap.attributes,
-                newAttributes: ui.IAttributes,
+                newAttributes: ui.IAttributesInstance,
                 node: INode,
                 injector: dependency.IInjector<IControl>,
                 control: controls.IAttributeControl,
@@ -237,7 +236,7 @@ module plat.processing {
                     control.parent = parent;
                     control.element = element;
 
-                    newAttributes = acquire('$attributes');
+                    newAttributes = acquire('$AttributesInstance');
                     newAttributes.initialize(control, attrs);
                     control.attributes = newAttributes;
 
@@ -333,7 +332,7 @@ module plat.processing {
                 hasMarkupFn = NodeManager.hasMarkup,
                 findMarkup = NodeManager.findMarkup,
                 findUniqueIdentifiers = NodeManager.findUniqueIdentifiers,
-                parser = NodeManager.$parser,
+                $parser = NodeManager.$Parser,
                 build = NodeManager.build,
                 expressions: Array<expressions.IParsedExpression>,
                 hasControl = false,
@@ -351,7 +350,7 @@ module plat.processing {
                 uniqueIdentifiers = [];
 
                 if (name === 'plat-context') {
-                    childContext = parser.parse(value);
+                    childContext = $parser.parse(value);
                     if (childContext.identifiers.length !== 1) {
                         var Exception: IExceptionStatic = acquire('$ExceptionStatic');
                         Exception.warn('Incorrect plat-context: ' +
@@ -467,6 +466,16 @@ module plat.processing {
             return nodeMap;
         }
 
+        $ElementManagerFactory: IElementManagerFactory = acquire('$ElementManagerFactory');
+        $Promise: async.IPromise = acquire('$Promise');
+        $Compiler: ICompiler = acquire('$Compiler');
+        $NodeManagerStatic: INodeManagerStatic = acquire('$NodeManagerStatic');
+        $ContextManagerStatic: observable.IContextManagerStatic = acquire('$ContextManagerStatic');
+        $CommentManagerFactory: ICommentManagerFactory = acquire('$CommentManagerFactory');
+        $ExceptionStatic: IExceptionStatic = acquire('$ExceptionStatic');
+        $ControlFactory: IControlFactory = acquire('$ControlFactory');
+        $TemplateControlFactory: ui.ITemplateControlFactory = acquire('$TemplateControlFactory');
+
         /**
          * The child managers for this manager.
          */
@@ -505,16 +514,6 @@ module plat.processing {
          */
         templatePromise: async.IThenable<void>;
 
-        $ElementManagerStatic: IElementManagerStatic = acquire('$ElementManagerStatic');
-        $PromiseStatic: async.IPromiseStatic = acquire('$PromiseStatic');
-        $compiler: ICompiler = acquire('$compiler');
-        $NodeManagerStatic: INodeManagerStatic = acquire('$NodeManagerStatic');
-        $ContextManagerStatic: observable.IContextManagerStatic = acquire('$ContextManagerStatic');
-        $CommentManagerStatic: ICommentManagerStatic = acquire('$CommentManagerStatic');
-        $ExceptionStatic: IExceptionStatic = acquire('$ExceptionStatic');
-        $ControlStatic: IControlStatic = acquire('$ControlStatic');
-        $TemplateControlStatic: ui.ITemplateControlStatic = acquire('$TemplateControlStatic');
-
         /**
          * Clones this ElementManager with a new node.
          * 
@@ -532,7 +531,7 @@ module plat.processing {
                 startNodeManager: INodeManager,
                 endNodeManager: INodeManager,
                 parentControl = parentManager.getUiControl() || parentManager.getParentControl(),
-                ElementManager = this.$ElementManagerStatic;
+                ElementManager = this.$ElementManagerFactory;
 
             if (!newControlExists) {
                 // create new control
@@ -627,7 +626,7 @@ module plat.processing {
             }
 
             if (hasAttributeControl) {
-                this.$ElementManagerStatic.createAttributeControls(nodeMap, parentControl, control);
+                this.$ElementManagerFactory.createAttributeControls(nodeMap, parentControl, control);
             }
 
             if (!dontInitialize && hasUiControl && isFunction(control.initialize)) {
@@ -659,13 +658,14 @@ module plat.processing {
                 uiControl = controlNode.control;
                 controls.push(uiControl);
 
-                var childContext = nodeMap.childContext;
+                var childContext = nodeMap.childContext,
+                    $TemplateControlFactory = this.$TemplateControlFactory;
 
                 if (!isNull(childContext)) {
                     if (childContext[0] === '@') {
                         var split = childContext.split('.'),
                             alias = split.shift().substr(1),
-                            resourceObj = this.$TemplateControlStatic.findResource(uiControl, alias);
+                            resourceObj = $TemplateControlFactory.findResource(uiControl, alias);
 
                         if (!isNull(resourceObj)) {
                             if (resourceObj.resource.type === 'observable') {
@@ -683,7 +683,7 @@ module plat.processing {
                     }
                 }
 
-                uiControl.root = this.$ControlStatic.getRootControl(uiControl) || uiControl;
+                uiControl.root = this.$ControlFactory.getRootControl(uiControl) || uiControl;
 
                 contextManager = getManager(uiControl.root);
 
@@ -693,14 +693,14 @@ module plat.processing {
                     absoluteContextPath = 'context';
                 }
 
-                this.$TemplateControlStatic.setAbsoluteContextPath(uiControl, absoluteContextPath);
-                this.$TemplateControlStatic.setContextResources(uiControl);
-                ElementManager.$ResourcesStatic.bindResources(uiControl.resources);
+                $TemplateControlFactory.setAbsoluteContextPath(uiControl, absoluteContextPath);
+                $TemplateControlFactory.setContextResources(uiControl);
+                ElementManager.$ResourcesFactory.bindResources(uiControl.resources);
 
                 contextManager.observe(uiControl.absoluteContextPath, {
                     uid: uiControl.uid,
                     listener: (newValue, oldValue) => {
-                        this.$TemplateControlStatic.contextChanged(uiControl, newValue, oldValue);
+                        $TemplateControlFactory.contextChanged(uiControl, newValue, oldValue);
                     }
                 });
 
@@ -730,7 +730,7 @@ module plat.processing {
             if (!isNull(controlNode)) {
                 control = controlNode.control;
 
-                this.templatePromise = this.$TemplateControlStatic.determineTemplate(control, templateUrl).then((template) => {
+                this.templatePromise = this.$TemplateControlFactory.determineTemplate(control, templateUrl).then((template) => {
                     this.templatePromise = null;
                     this._initializeControl(control, <DocumentFragment>template.cloneNode(true));
                 }, (error) => {
@@ -779,7 +779,7 @@ module plat.processing {
                 length = children.length,
                 promises: Array<async.IThenable<any>> = [];
 
-            return new this.$PromiseStatic<any>((resolve, reject) => {
+            return new this.$Promise<any>((resolve, reject) => {
                 if (!isNull(this.templatePromise)) {
                     promises.push(this.templatePromise);
                 }
@@ -791,7 +791,7 @@ module plat.processing {
                     }
                 }
 
-                this.$PromiseStatic.all(promises).then(resolve, reject);
+                this.$Promise.all(promises).then(resolve, reject);
             }).catch((error) => {
                 postpone(() => {
                     this.$ExceptionStatic.fatal(error, this.$ExceptionStatic.COMPILE);
@@ -824,8 +824,8 @@ module plat.processing {
                 }
             }
 
-            return this.$PromiseStatic.all(promises).then(() => {
-                this.$ControlStatic.load(this.getUiControl());
+            return this.$Promise.all(promises).then(() => {
+                this.$ControlFactory.load(this.getUiControl());
             }).catch((error: any) => {
                 postpone(() => {
                     this.$ExceptionStatic.fatal(error, this.$ExceptionStatic.BIND);
@@ -842,7 +842,7 @@ module plat.processing {
          * children.
          */
         observeRootContext(root: ui.ITemplateControl, loadMethod: () => async.IThenable<void>): void {
-            this.loadedPromise = new this.$PromiseStatic<void>((resolve, reject) => {
+            this.loadedPromise = new this.$Promise<void>((resolve, reject) => {
                 var contextManager: observable.IContextManager = this.$ContextManagerStatic.getManager(root);
 
                 var removeListener = contextManager.observe('context', {
@@ -915,7 +915,7 @@ module plat.processing {
             templateControl: ui.ITemplateControl): void {
             var length = controls.length,
                 control: controls.IAttributeControl,
-                load = this.$ControlStatic.load,
+                load = this.$ControlFactory.load,
                 i = isNull(templateControl) ? 0 : 1;
 
             for (; i < length; ++i) {
@@ -930,7 +930,7 @@ module plat.processing {
          * Fulfills the template promise prior to binding and loading the control.
          */
         _fulfillAndLoad(): async.IThenable<void> {
-            return new this.$PromiseStatic<void>((resolve, reject) => {
+            return new this.$Promise<void>((resolve, reject) => {
                 this.fulfillTemplate().then(() => {
                     return this.bindAndLoad();
                 }).then(resolve);
@@ -953,9 +953,9 @@ module plat.processing {
                 hasParent = !isNull(parent),
                 element = nodeMap.element,
                 attributes = nodeMap.attributes,
-                newAttributes: ui.IAttributes = acquire('$attributes');
+                newAttributes: ui.IAttributesInstance = acquire('$AttributesInstance');
 
-            ElementManager.$ManagerCacheStatic.put(uiControl.uid, this);
+            ElementManager.$ManagerCache.put(uiControl.uid, this);
 
             if (hasParent && uiControl.parent !== parent) {
                 parent.controls.push(uiControl);
@@ -973,16 +973,16 @@ module plat.processing {
             if (!isNull(uiControl.resources)) {
                 uiControl.resources.add(controlNode.resourceElement);
             } else {
-                var resources = ElementManager.$ResourcesStatic.getInstance();
+                var resources = ElementManager.$ResourcesFactory.getInstance();
                 resources.initialize(uiControl, controlNode.resourceElement);
                 uiControl.resources = resources;
             }
 
-            ElementManager.$ResourcesStatic.addControlResources(uiControl);
+            ElementManager.$ResourcesFactory.addControlResources(uiControl);
             uiControl.type = controlNode.nodeName;
             uiControl.uid = uiControl.uid || uniqueId('plat_');
             uiControl.bindableTemplates = uiControl.bindableTemplates ||
-                ElementManager.$BindableTemplatesStatic.create(uiControl);
+                ElementManager.$BindableTemplatesFactory.create(uiControl);
 
             if ((element.childNodes.length > 0) &&
                 (!isEmpty(uiControl.templateString) || !isEmpty(uiControl.templateUrl))) {
@@ -1006,12 +1006,12 @@ module plat.processing {
         _replaceElement(control: ui.ITemplateControl, nodeMap: INodeMap): void {
             var element = nodeMap.element,
                 parentNode = element.parentNode,
-                $document = ElementManager.$document,
+                $document = ElementManager.$Document,
                 controlType = control.type,
                 controlUid = control.uid,
                 startNode = control.startNode = $document.createComment(controlType + ' ' + controlUid + ': start node'),
                 endNode = control.endNode = $document.createComment(controlType + ' ' + controlUid + ': end node'),
-                create = this.$CommentManagerStatic.create;
+                create = this.$CommentManagerFactory.create;
 
             create(startNode, this);
             create(endNode, this);
@@ -1038,10 +1038,10 @@ module plat.processing {
                 endNode: Node;
 
             if (!isNull(template)) {
-                var resourceElement = this.$ElementManagerStatic.locateResources(template);
+                var resourceElement = this.$ElementManagerFactory.locateResources(template);
 
                 if (!isNull(resourceElement)) {
-                    uiControl.resources.add(ElementManager.$ResourcesStatic.parseElement(resourceElement));
+                    uiControl.resources.add(ElementManager.$ResourcesFactory.parseElement(resourceElement));
                 }
 
                 if (replaceElement) {
@@ -1058,7 +1058,7 @@ module plat.processing {
             }
 
             if (replaceElement) {
-                this.$compiler.compile(uiControl.elementNodes, uiControl);
+                this.$Compiler.compile(uiControl.elementNodes, uiControl);
                 var startNode = uiControl.startNode,
                     parentNode = startNode.parentNode,
                     childNodes: Array<Node> = Array.prototype.slice.call(parentNode.childNodes);
@@ -1068,7 +1068,7 @@ module plat.processing {
                 uiControl.elementNodes = childNodes.slice(childNodes.indexOf(startNode) + 1, childNodes.indexOf(endNode));
                 this.replaceNodeLength = uiControl.elementNodes.length + 2;
             } else {
-                this.$compiler.compile(element, uiControl);
+                this.$Compiler.compile(element, uiControl);
             }
 
             if (hasOwnContext && !this.isClone) {
@@ -1091,11 +1091,11 @@ module plat.processing {
                 key = camelCase(node.nodeName),
                 attribute = <Attr>node.node,
                 value = this.$NodeManagerStatic.build(node.expressions, parent),
-                attributes: ui.Attributes,
+                attributes: ui.IAttributesInstance,
                 oldValue: any;
 
             for (var i = 0; i < length; ++i) {
-                attributes = <ui.Attributes>controls[i].attributes;
+                attributes = controls[i].attributes;
                 oldValue = (<any>attributes)[key];
                 (<any>attributes)[key] = value;
                 attributes.attributeChanged(key, value, oldValue);
@@ -1108,26 +1108,95 @@ module plat.processing {
     }
 
     /**
-     * The Type for referencing the '$ElementManagerStatic' injectable as a dependency.
+     * The Type for referencing the '$ElementManagerFactory' injectable as a dependency.
      */
-    export function ElementManagerStatic(
-            $document: Document,
-            $ManagerCacheStatic: storage.ICache<IElementManager>,
-            $ResourcesStatic: ui.IResourcesStatic,
-            $BindableTemplatesStatic: ui.IBindableTemplatesStatic) {
-        ElementManager.$document = $document;
-        ElementManager.$ManagerCacheStatic = $ManagerCacheStatic;
-        ElementManager.$ResourcesStatic = $ResourcesStatic;
-        ElementManager.$BindableTemplatesStatic = $BindableTemplatesStatic;
-        return ElementManager;
+    export function IElementManagerFactory(
+        $Document: Document,
+        $ManagerCache: storage.ICache<IElementManager>,
+        $ResourcesFactory: ui.IResourcesFactory,
+        $BindableTemplatesFactory: ui.IBindableTemplatesFactory): IElementManagerFactory {
+            ElementManager.$Document = $Document;
+            ElementManager.$ManagerCache = $ManagerCache;
+            ElementManager.$ResourcesFactory = $ResourcesFactory;
+            ElementManager.$BindableTemplatesFactory = $BindableTemplatesFactory;
+            return ElementManager;
     }
 
-    register.injectable('$ElementManagerStatic', ElementManagerStatic, [
-        '$document',
-        '$ManagerCacheStatic',
-        '$ResourcesStatic',
-        '$BindableTemplatesStatic'
-    ], register.injectableType.STATIC);
+    register.injectable('$ElementManagerFactory', IElementManagerFactory, [
+        '$Document',
+        '$ManagerCache',
+        '$ResourcesFactory',
+        '$BindableTemplatesFactory'
+    ], register.FACTORY);
+
+    /**
+     * Creates and manages a class for dealing with Element nodes.
+     */
+    export interface IElementManagerFactory {
+        /**
+         * Determines if the associated HTMLElement has controls that need to be instantiated or Attr nodes
+         * containing text markup. If controls exist or markup is found a new ElementManager will be created,
+         * else an empty INodeManager will be added to the Array of INodeManagers.
+         *
+         * @static
+         * @param element The HTMLElement to use to identifier markup and controls.
+         * @param parent The parent ui.ITemplateControl used for context inheritance.
+         */
+        create(element: HTMLElement, parent?: IElementManager): IElementManager;
+
+        /**
+         * Creates new nodes for an INodeMap corresponding to the element associated with the nodeMap or
+         * the passed-in element.
+         *
+         * @static
+         * @param nodeMap The nodeMap to populate with attribute nodes.
+         * @param parent The parent control for the new attribute controls.
+         * @param templateControl The TemplateControl linked to these AttributeControls if 
+         * one exists.
+         * @param newElement An optional element to use for attributes (used in cloning).
+         * @param isClone Whether or not these controls are clones.
+         */
+        createAttributeControls(nodeMap: INodeMap, parent: ui.ITemplateControl,
+            templateControl?: ui.ITemplateControl, newElement?: HTMLElement, isClone?: boolean): Array<INode>;
+
+        /**
+         * Clones a UI Control with a new nodeMap.
+         *
+         * @static
+         * @param sourceMap The source INodeMap used to clone the UI Control
+         * @param parent The parent control of the clone.
+         */
+        cloneUiControl(sourceMap: INodeMap, parent: ui.ITemplateControl): ui.ITemplateControl;
+
+        /**
+         * Clones an ElementManager with a new element.
+         *
+         * @static
+         * @param sourceManager The original IElementManager.
+         * @param parent The parent IElementManager for the new clone.
+         * @param element The new element to associate with the clone.
+         * @param newControl An optional control to associate with the clone.
+         * @param nodeMap The nodeMap used to clone this ElementManager.
+         */
+        clone(sourceManager: IElementManager, parent: IElementManager,
+            element: HTMLElement, newControl?: ui.ITemplateControl, nodeMap?: INodeMap): IElementManager;
+
+        /**
+         * Looks through the HTMLElement's child nodes to try and find any
+         * defined Resources in a <plat-resources> tags.
+         *
+         * @static
+         * @param node The node who may have Resources as a child node.
+         */
+        locateResources(node: Node): HTMLElement;
+
+        /**
+         * Returns a new instance of an IElementManager
+         * 
+         * @static
+         */
+        getInstance(): IElementManager;
+    }
 
     /**
      * An ElementManager is responsible for initializing and data-binding controls associated to an HTMLElement.
@@ -1237,75 +1306,6 @@ module plat.processing {
          * Binds context to the DOM and loads controls.
          */
         bindAndLoad(): async.IThenable<void>;
-    }
-
-    /**
-     * The external interface for the '$ElementManagerStatic' injectable.
-     */
-    export interface IElementManagerStatic {
-        /**
-         * Determines if the associated HTMLElement has controls that need to be instantiated or Attr nodes
-         * containing text markup. If controls exist or markup is found a new ElementManager will be created,
-         * else an empty INodeManager will be added to the Array of INodeManagers.
-         *
-         * @static
-         * @param element The HTMLElement to use to identifier markup and controls.
-         * @param parent The parent ui.ITemplateControl used for context inheritance.
-         */
-        create(element: HTMLElement, parent?: IElementManager): IElementManager;
-
-        /**
-         * Creates new nodes for an INodeMap corresponding to the element associated with the nodeMap or
-         * the passed-in element.
-         *
-         * @static
-         * @param nodeMap The nodeMap to populate with attribute nodes.
-         * @param parent The parent control for the new attribute controls.
-         * @param templateControl The TemplateControl linked to these AttributeControls if 
-         * one exists.
-         * @param newElement An optional element to use for attributes (used in cloning).
-         * @param isClone Whether or not these controls are clones.
-         */
-        createAttributeControls(nodeMap: INodeMap, parent: ui.ITemplateControl,
-            templateControl?: ui.ITemplateControl, newElement?: HTMLElement, isClone?: boolean): Array<INode>;
-
-        /**
-         * Clones a UI Control with a new nodeMap.
-         *
-         * @static
-         * @param sourceMap The source INodeMap used to clone the UI Control
-         * @param parent The parent control of the clone.
-         */
-        cloneUiControl(sourceMap: INodeMap, parent: ui.ITemplateControl): ui.ITemplateControl;
-
-        /**
-         * Clones an ElementManager with a new element.
-         *
-         * @static
-         * @param sourceManager The original IElementManager.
-         * @param parent The parent IElementManager for the new clone.
-         * @param element The new element to associate with the clone.
-         * @param newControl An optional control to associate with the clone.
-         * @param nodeMap The nodeMap used to clone this ElementManager.
-         */
-        clone(sourceManager: IElementManager, parent: IElementManager,
-            element: HTMLElement, newControl?: ui.ITemplateControl, nodeMap?: INodeMap): IElementManager;
-
-        /**
-         * Looks through the HTMLElement's child nodes to try and find any
-         * defined Resources in a <plat-resources> tags.
-         *
-         * @static
-         * @param node The node who may have Resources as a child node.
-         */
-        locateResources(node: Node): HTMLElement;
-
-        /**
-         * Returns a new instance of an IElementManager
-         * 
-         * @static
-         */
-        getInstance(): IElementManager;
     }
 }
 
