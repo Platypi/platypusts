@@ -47,6 +47,15 @@ module plat {
     }
 
     /**
+     * The Type for referencing the '$Geolocation' injectable as a dependency.
+     */
+    export function IGeolocation(): IGeolocation {
+        return new Geolocation();
+    }
+
+    register.injectable('$Geolocation', IGeolocation);
+
+    /**
      * Describes an object which provides methods to interact with geolocation services on a device.
      */
     export interface IGeolocation {
@@ -207,6 +216,4 @@ module plat {
          */
         maximumAge?: number;
     }
-
-    register.injectable('$geolocation', Geolocation);
 }

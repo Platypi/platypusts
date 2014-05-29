@@ -193,8 +193,8 @@ module plat.dependency {
          * associated constructor.
          * @param Constructor The constructor method for the component requiring the dependency 
          * injection.
-         * @param type The type of injector, used for injectables specifying a register.injectableType of 
-         * STATIC, SINGLE, or MULTI. The default is SINGLE.
+         * @param type The type of injector, used for injectables specifying a injectableType of 
+         * STATIC, SINGLETON, FACTORY, INSTANCE, or CLASS. The default is SINGLETON.
          */
         constructor(public name: string, public Constructor: new () => T, dependencies?: Array<any>, public type?: string) {
             var deps = this.__dependencies = Injector.convertDependencies(dependencies),

@@ -77,7 +77,7 @@ module plat.ui {
         return new Dom();
     }
 
-    register.injectable('$Dom', Dom);
+    register.injectable('$Dom', IDom);
 
     /**
      * An object that deals with the creation, deletion, and modification 

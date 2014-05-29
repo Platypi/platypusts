@@ -102,7 +102,7 @@ module plat.register {
      * @param Type The constructor for the IControl.
      * @param dependencies An array of strings representing the dependencies needed for the IControl injector.
      * 
-     * @example register.control('plat-tap', Tap, [plat.expressions.Parser]);
+     * @example register.control('my-tap', MyTap, [plat.expressions.IParser]);
      */
     export function control(name: string, Type: new (...args: any[]) => IControl, dependencies?: Array<any>): typeof register {
         if (isString(name)) {
@@ -148,10 +148,10 @@ module plat.register {
      * @param dependencies An array of strings representing the dependencies needed for the injectable's injector.
      * @param Type The constructor for the injectable. The injectable will only be instantiated once during the application
      * lifetime.
-     * @param injectableType Specifies the type of injectable, either register.injectableType.SINGLE or 
-     * register.injectableType.MULTI (defaults to register.injectableType.SINGLE).
+     * @param injectableType Specifies the type of injectable, either register.SINGLETON, 
+     * register.STATIC, register.INSTANCE, register.FACTORY, register.CLASS (defaults to register.SINGLETON).
      * 
-     * @example register.injectable('$CacheFactory', [plat.expressions.Parser], Cache);
+     * @example register.injectable('$CacheFactory', [plat.expressions.IParser], Cache);
      * @example register.injectable('database', MyDatabase, null, register.INSTANCE);
      */
     export function injectable(name: string, Type: new (...args: any[]) => void,
@@ -164,14 +164,14 @@ module plat.register {
      * @param dependencies An array of strings representing the dependencies needed for the injectable's injector.
      * @param Type The constructor for the injectable. The injectable will only be instantiated once during the application
      * lifetime.
-     * @param injectableType Specifies the type of injectable, either register.injectableType.SINGLE or 
-     * register.injectableType.MULTI (defaults to register.injectableType.SINGLE).
+     * @param injectableType Specifies the type of injectable, either register.SINGLETON, 
+     * register.STATIC, register.INSTANCE, register.FACTORY, register.CLASS (defaults to register.SINGLETON).
      * 
      * @return {register} The object that contains the register methods (for method chaining).
      * 
-     * @example register.injectable('$CacheFactory', [plat.expressions.Parser], 
-     *  export function(parser? plat.expressions.IParser) { return { ... }; });
-     * @example register.injectable('database', export function() { return new Database(); }, null, register.INSTANCE);
+     * @example register.injectable('$CacheFactory', [plat.expressions.IParser], 
+     *  function(parser: plat.expressions.IParser) { return { ... }; });
+     * @example register.injectable('database', function() { return new Database(); }, null, register.INSTANCE);
      */
     export function injectable(name: string, method: (...args: any[]) => any,
         dependencies?: Array<any>, injectableType?: string): typeof register;
