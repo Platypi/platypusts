@@ -35,12 +35,6 @@ module plat.controls {
             }
 
             if (!isNull(rootControl)) {
-                if (!isNull((<any>rootControl)[name])) {
-                    this.$ExceptionStatic.warn('Multiple instances of plat-name = ' +
-                        name + ' found, or root control already has property defined.', this.$ExceptionStatic.NAME);
-                    return;
-                }
-
                 define(rootControl, name, {
                     element: this.element,
                     control: templateControl

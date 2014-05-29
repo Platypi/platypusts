@@ -241,7 +241,11 @@ module plat.processing {
                     control.attributes = newAttributes;
 
                     control.type = nodeName;
-                    control.uid = control.uid || uniqueId('plat_');
+
+                    if (!isString(control.uid)) {
+                        control.uid = uniqueId('plat_');
+                    }
+
                     control.templateControl = templateControl;
                 }
 
@@ -980,7 +984,11 @@ module plat.processing {
 
             ElementManager.$ResourcesFactory.addControlResources(uiControl);
             uiControl.type = controlNode.nodeName;
-            uiControl.uid = uiControl.uid || uniqueId('plat_');
+
+            if (!isString(uiControl.uid)) {
+                uiControl.uid = uniqueId('plat_');
+            }
+
             uiControl.bindableTemplates = uiControl.bindableTemplates ||
                 ElementManager.$BindableTemplatesFactory.create(uiControl);
 
