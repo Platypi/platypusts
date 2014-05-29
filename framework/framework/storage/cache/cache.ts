@@ -130,7 +130,7 @@ module plat.storage {
         return Cache;
     }
 
-    register.injectable('$CacheFactory', ICacheFactory, null, register.FACTORY);
+    register.injectable(__CacheFactory, ICacheFactory, null, register.FACTORY);
 
     /**
      * Used to manage all the defined caches for the current application session.
@@ -223,7 +223,7 @@ module plat.storage {
         return managerCache;
     }
 
-    register.injectable('$ManagerCache', IManagerCache);
+    register.injectable(__ManagerCache, IManagerCache);
 
     /**
      * Options for a cache.

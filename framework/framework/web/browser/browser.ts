@@ -12,11 +12,11 @@
             baseUrl: ''
         };
 
-        $EventManagerStatic: events.IEventManagerStatic = acquire('$EventManagerStatic');
-        $Compat: ICompat = acquire('$Compat');
-        $Regex: expressions.IRegex = acquire('$Regex');
-        $Window: Window = acquire('$Window');
-        $Dom: ui.IDom = acquire('$Dom');
+        $EventManagerStatic: events.IEventManagerStatic = acquire(__EventManagerStatic);
+        $Compat: ICompat = acquire(__Compat);
+        $Regex: expressions.IRegex = acquire(__Regex);
+        $Window: Window = acquire(__Window);
+        $Dom: ui.IDom = acquire(__Dom);
 
         uid: string;
 
@@ -25,7 +25,7 @@
         private __initializing = false;
 
         constructor() {
-            var ContextManager: observable.IContextManagerStatic = acquire('$ContextManagerStatic');
+            var ContextManager: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
             ContextManager.defineGetter(this, 'uid', uniqueId('plat_'));
             this.$EventManagerStatic.on(this.uid, 'beforeLoad', this.initialize, this);
         }
@@ -49,7 +49,7 @@
                 $window = this.$Window;
 
             if (isEmpty($config.baseUrl)) {
-                acquire('$UrlUtilsInstance');
+                acquire(__UrlUtilsInstance);
             }
 
             if (trimmedUrl !== url) {
@@ -82,7 +82,7 @@
         urlUtils(url?: string): IUrlUtilsInstance {
             url = url || this.url();
 
-            var $urlUtils: IUrlUtilsInstance = acquire('$UrlUtilsInstance'),
+            var $urlUtils: IUrlUtilsInstance = acquire(__UrlUtilsInstance),
                 $config = Browser.config;
 
             if ($config.routingType === $config.HASH) {
@@ -193,7 +193,7 @@
         return new Browser();
     }
 
-    register.injectable('$Browser', IBrowser);
+    register.injectable(__Browser, IBrowser);
 
     /**
      * Defines an object that handles interaction with the browser.
@@ -240,7 +240,7 @@
         return Browser.config;
     }
 
-    register.injectable('$BrowserConfig', IBrowserConfig);
+    register.injectable(__BrowserConfig, IBrowserConfig);
 
     /**
      * Specifies configuration properties for the IBrowser 

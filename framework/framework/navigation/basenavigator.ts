@@ -3,11 +3,10 @@
      * A class that defines the base Navigation properties and methods.
      */
     export class BaseNavigator implements IBaseNavigator {
-        $EventManagerStatic: events.IEventManagerStatic = acquire('$EventManagerStatic');
-        $NavigationEventStatic: events.INavigationEventStatic = acquire('$NavigationEventStatic');
-        $ExceptionStatic: IExceptionStatic = acquire('$ExceptionStatic');
-        $ViewControlFactory: ui.IViewControlFactory = acquire('$ViewControlFactory');
-        $ContextManagerStatic: observable.IContextManagerStatic = acquire('$ContextManagerStatic');
+        $EventManagerStatic: events.IEventManagerStatic = acquire(__EventManagerStatic);
+        $NavigationEventStatic: events.INavigationEventStatic = acquire(__NavigationEventStatic);
+        $ViewControlFactory: ui.IViewControlFactory = acquire(__ViewControlFactory);
+        $ContextManagerStatic: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
 
         uid: string;
         baseport: ui.controls.IBaseport;

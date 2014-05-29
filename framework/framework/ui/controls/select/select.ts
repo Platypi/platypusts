@@ -1,8 +1,7 @@
 module plat.ui.controls {
     export class Select extends TemplateControl {
-        $Promise: async.IPromise = acquire('$Promise');
-        $Exception: IExceptionStatic = acquire('$ExceptionStatic');
-        $Document: Document = acquire('$Document');
+        $Promise: async.IPromise = acquire(__Promise);
+        $Document: Document = acquire(__Document);
 
         /**
          * Replaces the <plat-select> node with 
@@ -19,7 +18,7 @@ module plat.ui.controls {
          * An object that keeps track of unique 
          * optgroups.
          */
-        groups: IObject<HTMLElement> = {};
+        groups: IObject<Element> = {};
 
         /**
          * The evaluated plat-options object.
@@ -155,9 +154,9 @@ module plat.ui.controls {
                     optgroup: any = groups[newGroup];
 
                 if (isNull(optgroup)) {
-                    optgroup = groups[newGroup] = <any>new this.$Promise<HTMLElement>((resolve) => {
+                    optgroup = groups[newGroup] = <any>new this.$Promise<Element>((resolve) => {
                         this.bindableTemplates.bind('group', (groupClone: DocumentFragment) => {
-                            optgroup = groups[newGroup] = <HTMLElement>groupClone.childNodes[1];
+                            optgroup = groups[newGroup] = <Element>groupClone.childNodes[1];
 
                             optgroup.appendChild(optionClone);
                             element.appendChild(groupClone);
@@ -165,12 +164,13 @@ module plat.ui.controls {
                         }, '' + index);
                     }).catch((error: any) => {
                         postpone(() => {
-                            this.$Exception.warn(error.message);
+                            var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                            $exception.warn(error.message, $exception.BIND);
                         });
                     });
                     return;
                 } else if (isFunction(optgroup.then)) {
-                    optgroup.then((group: HTMLElement) => {
+                    optgroup.then((group: Element) => {
                         group.appendChild(optionClone);
                         return group;
                     });
@@ -190,7 +190,7 @@ module plat.ui.controls {
          * @param parent The element whose child 
          * will be removed.
          */
-        _removeItem(parent: HTMLElement): void {
+        _removeItem(parent: Element): void {
             parent.removeChild(parent.lastElementChild);
         }
 
@@ -372,5 +372,5 @@ module plat.ui.controls {
         textContent: string;
     }
 
-    register.control('plat-select', Select);
+    register.control(__Select, Select);
 }

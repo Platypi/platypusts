@@ -11,7 +11,6 @@ module plat.events {
         static $Document: Document;
         static $Window: Window;
         static $Dom: ui.IDom;
-        static $ExceptionStatic: IExceptionStatic;
 
         /**
          * An upward-moving event will start at the sender and move 
@@ -218,7 +217,7 @@ module plat.events {
          */
         static dispatch(name: string, sender: any, direction: 'direct', args?: Array<any>): void;
         static dispatch(name: string, sender: any, direction: string, args?: Array<any>) {
-            var $dispatchEvent: IDispatchEventInstance = acquire('$DispatchEventInstance');
+            var $dispatchEvent: IDispatchEventInstance = acquire(__DispatchEventInstance);
             $dispatchEvent.initialize(name, sender, direction);
             EventManager.sendEvent($dispatchEvent, args);
         }
@@ -369,7 +368,8 @@ module plat.events {
                 try {
                     listeners[index].apply(context, args);
                 } catch (e) {
-                    EventManager.$ExceptionStatic.warn(e, Exception.EVENT);
+                    var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                    $exception.warn(e, $exception.EVENT);
                 }
             }
         }
@@ -382,22 +382,19 @@ module plat.events {
         $Compat: ICompat,
         $Document: Document,
         $Window: Window,
-        $Dom: ui.IDom,
-        $ExceptionStatic: IExceptionStatic): IEventManagerStatic {
+        $Dom: ui.IDom): IEventManagerStatic {
             EventManager.$Compat = $Compat;
             EventManager.$Document = $Document;
             EventManager.$Window = $Window;
             EventManager.$Dom = $Dom;
-            EventManager.$ExceptionStatic = $ExceptionStatic;
             return EventManager;
     }
 
-    register.injectable('$EventManagerStatic', IEventManagerStatic, [
-        '$Compat',
-        '$Document',
-        '$Window',
-        '$Dom',
-        '$ExceptionStatic'
+    register.injectable(__EventManagerStatic, IEventManagerStatic, [
+        __Compat,
+        __Document,
+        __Window,
+        __Dom
     ], register.STATIC);
 
     /**

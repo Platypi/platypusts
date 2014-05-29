@@ -92,7 +92,7 @@ module plat {
         return Exception;
     }
 
-    register.injectable('$ExceptionStatic', IExceptionStatic, null, register.STATIC);
+    register.injectable(__ExceptionStatic, IExceptionStatic, null, register.STATIC);
 
     /**
      * The intended external interface for the '$ExceptionStatic' injectable.
@@ -248,7 +248,8 @@ module plat {
                 (<any>error)[properties[i]] = message[properties[i]];
             }
         }
-        var ErrorEvent: events.IErrorEventStatic = acquire('$ErrorEventStatic');
+
+        var ErrorEvent: events.IErrorEventStatic = acquire(__ErrorEventStatic);
 
         ErrorEvent.dispatch('error', Exception, error);
 

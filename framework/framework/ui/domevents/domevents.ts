@@ -107,8 +107,8 @@
             }]
         };
 
-        $Document: Document = acquire('$Document');
-        $Compat: ICompat = acquire('$Compat');
+        $Document: Document = acquire(__Document);
+        $Compat: ICompat = acquire(__Compat);
 
         /**
          * Whether or not the DomEvents are currently active. 
@@ -728,7 +728,7 @@
         }
         private __registerElement(element: Node, type: string): void {
             var index = this._elements.indexOf(element),
-                $domEvent: IDomEventInstance = acquire('$DomEventInstance');
+                $domEvent: IDomEventInstance = acquire(__DomEventInstance);
 
             $domEvent.initialize(element, type);
 
@@ -1092,7 +1092,7 @@
         return new DomEvents();
     }
 
-    plat.register.injectable('$DomEvents', IDomEvents);
+    plat.register.injectable(__DomEvents, IDomEvents);
 
     /**
      * Describes an object for managing DOM event registration and handling.
@@ -1134,13 +1134,13 @@
         return DomEvents.config;
     }
 
-    register.injectable('$DomEventsConfig', IDomEventsConfig);
+    register.injectable(__DomEventsConfig, IDomEventsConfig);
 
     /**
      * A class for managing of a single custom event.
      */
     export class DomEvent implements IDomEventInstance {
-        $Document: Document = acquire('$Document');
+        $Document: Document = acquire(__Document);
 
         /**
          * The node or window object associated with this DomEvent.
@@ -1190,7 +1190,7 @@
         return new DomEvent();
     }
 
-    register.injectable('$DomEventInstance', IDomEventInstance, null, register.INSTANCE);
+    register.injectable(__DomEventInstance, IDomEventInstance, null, register.INSTANCE);
 
     /**
      * Describes an object used for managing a single custom event.

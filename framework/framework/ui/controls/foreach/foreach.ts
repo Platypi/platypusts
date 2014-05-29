@@ -380,5 +380,5 @@ module plat.ui.controls {
         _reverse(ev: observable.IArrayMethodInfo<any>): void;
     }
 
-    register.control('plat-foreach', ForEach);
+    register.control(__ForEach, ForEach);
 }

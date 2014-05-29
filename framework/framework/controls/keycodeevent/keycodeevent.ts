@@ -253,7 +253,7 @@ module plat.controls {
         event: string = 'keyup';
     }
 
-    register.control('plat-keydown', KeyDown);
-    register.control('plat-keypress', KeyPress);
-    register.control('plat-keyup', KeyUp);
+    register.control(__KeyDown, KeyDown);
+    register.control(__KeyPress, KeyPress);
+    register.control(__KeyUp, KeyUp);
 }

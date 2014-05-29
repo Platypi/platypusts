@@ -3,8 +3,7 @@ module plat.expressions {
      * Parses javascript expression strings and creates IParsedExpressions.
      */
     export class Parser implements IParser {
-        $Tokenizer: ITokenizer = acquire('$Tokenizer');
-        $ExceptionStatic: IExceptionStatic = acquire('$ExceptionStatic');
+        $Tokenizer: ITokenizer = acquire(__Tokenizer);
 
         /**
          * A single expression's token representation created by the Tokenizer.
@@ -553,7 +552,8 @@ module plat.expressions {
          * @param error The error message to throw
          */
         _throwError(error: string): void {
-            this.$ExceptionStatic.fatal(error, this.$ExceptionStatic.PARSE);
+            var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+            $exception.fatal(error, $exception.PARSE);
         }
     }
 
@@ -564,7 +564,7 @@ module plat.expressions {
         return new Parser();
     }
 
-    register.injectable('$Parser', IParser);
+    register.injectable(__Parser, IParser);
 
     /**
      * Describes an object that can parse an expression string and turn it into an

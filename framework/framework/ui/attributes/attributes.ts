@@ -1,6 +1,6 @@
 module plat.ui {
     /**
-     * The class that stores the information about an HTMLElement's attribute NamedNodeMap.
+     * The class that stores the information about an Element's attribute NamedNodeMap.
      * Methods are implemented to allow you to observe for changes on an attribute.
      * 
      * Attributes for this object are converted from dash-notation to camelCase notation.
@@ -67,17 +67,17 @@ module plat.ui {
         return new Attributes();
     }
 
-    register.injectable('$AttributesInstance', IAttributesInstance, null, register.INSTANCE);
+    register.injectable(__AttributesInstance, IAttributesInstance, null, register.INSTANCE);
 
     /**
-     * Describes an object that stores the information about an HTMLElement's attribute NamedNodeMap.
+     * Describes an object that stores the information about an Element's attribute NamedNodeMap.
      * Methods are implemented to allow you to observe for changes on an attribute.
      * 
      * Attributes for this object are converted from dash-notation to camelCase notation.
      */
     export interface IAttributesInstance {
         /**
-         * Stores the information about an HTMLElement's attribute NamedNodeMap, and allows a control to observe 
+         * Stores the information about an Element's attribute NamedNodeMap, and allows a control to observe 
          * for changes on an attribute. The interface takes in a generic type, allowing ITemplateControls 
          * to specify an interface for their plat-options.
          * 

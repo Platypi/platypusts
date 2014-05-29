@@ -7,5 +7,5 @@
         return window;
     }
 
-    register.injectable('$Window', IWindow);
+    register.injectable(__Window, IWindow);
 }

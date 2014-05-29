@@ -3,7 +3,7 @@ module plat.storage {
      * A class used to wrap local storage into an injectable.
      */
     export class LocalStorage extends BaseStorage implements ILocalStorage {
-        private __storage: Storage = (<Window>acquire('$Window')).localStorage;
+        private __storage: Storage = (<Window>acquire(__Window)).localStorage;
     }
 
     /**
@@ -13,7 +13,7 @@ module plat.storage {
         return new LocalStorage();
     }
 
-    register.injectable('$LocalStorage', ILocalStorage);
+    register.injectable(__LocalStorage, ILocalStorage);
 
     /**
      * Describes an object used to wrap local storage into an injectable.

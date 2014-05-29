@@ -3,10 +3,10 @@ module plat.processing {
      * Responsible for iterating through the DOM and collecting controls.
      */
     export class Compiler implements ICompiler {
-        $ElementManagerFactory: IElementManagerFactory = acquire('$ElementManagerFactory');
-        $TextManagerFactory: ITextManagerFactory = acquire('$TextManagerFactory');
-        $CommentManagerFactory: ICommentManagerFactory = acquire('$CommentManagerFactory');
-        $ManagerCache: storage.ICache<INodeManager> = acquire('$ManagerCache');
+        $ElementManagerFactory: IElementManagerFactory = acquire(__ElementManagerFactory);
+        $TextManagerFactory: ITextManagerFactory = acquire(__TextManagerFactory);
+        $CommentManagerFactory: ICommentManagerFactory = acquire(__CommentManagerFactory);
+        $ManagerCache: storage.ICache<INodeManager> = acquire(__ManagerCache);
 
         compile(node: Node, control?: ui.ITemplateControl): void;
         compile(nodes: Array<Node>, control?: ui.ITemplateControl): void;
@@ -34,7 +34,7 @@ module plat.processing {
                 for (var i = 0; i < length; ++i) {
                     childNode = childNodes[i];
                     if (childNode.nodeType === Node.ELEMENT_NODE) {
-                        if (!isNull(create(<HTMLElement>childNode))) {
+                        if (!isNull(create(<Element>childNode))) {
                             this.compile(childNode);
                         }
                     }
@@ -68,7 +68,7 @@ module plat.processing {
                 node = nodes[i];
                 switch (node.nodeType) {
                     case Node.ELEMENT_NODE:
-                        newManager = create(<HTMLElement>node, manager);
+                        newManager = create(<Element>node, manager);
                         if (!isNull(newManager)) {
                             this._compileNodes(Array.prototype.slice.call(node.childNodes), newManager);
                         }
@@ -94,7 +94,7 @@ module plat.processing {
         return new Compiler();
     }
 
-    register.injectable('$Compiler', ICompiler);
+    register.injectable(__Compiler, ICompiler);
 
     /**
      * Describes an object that iterates through the DOM and collects controls.

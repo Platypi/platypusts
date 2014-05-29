@@ -3,7 +3,7 @@ module plat.storage {
      * A class for wrapping SessionStorage as an injectable.
      */
     export class SessionStorage extends BaseStorage implements ISessionStorage {
-        private __storage: Storage = (<Window>acquire('$Window')).sessionStorage;
+        private __storage: Storage = (<Window>acquire(__Window)).sessionStorage;
     }
 
     /**
@@ -13,7 +13,7 @@ module plat.storage {
         return new SessionStorage();
     }
 
-    register.injectable('$SessionStorage', ISessionStorage);
+    register.injectable(__SessionStorage, ISessionStorage);
 
     /**
      * Describes an object used to wrap session storage into an injectable.

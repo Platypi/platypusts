@@ -13,5 +13,5 @@
         }
     }
 
-    register.control('a', Anchor);
+    register.control(__Anchor, Anchor);
 }

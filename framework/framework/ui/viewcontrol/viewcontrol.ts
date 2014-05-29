@@ -49,7 +49,7 @@ module plat.ui {
         return ViewControl;
     }
 
-    register.injectable('$ViewControlFactory', IViewControlFactory, null, register.FACTORY);
+    register.injectable(__ViewControlFactory, IViewControlFactory, null, register.FACTORY);
 
     /**
      * Creates and manages IViewControls.

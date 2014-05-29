@@ -159,24 +159,24 @@ var OPERATORS: plat.IObject<plat.expressions.ITokenDetails> = {
         fn: (context: any, aliases: any,
             a: (context: any, aliases: any) => any,
             b: (context: any, aliases: any) => any): void => {
-            var Exception: plat.IExceptionStatic = plat.acquire('$ExceptionStatic');
-            Exception.fatal('Assignment operators are not supported', Exception.PARSE);
+            var $exception: plat.IExceptionStatic = plat.acquire(__ExceptionStatic);
+            $exception.fatal('Assignment operators are not supported', $exception.PARSE);
         }
     },
     '++': {
         precedence: 3, associativity: '',
         fn: (context: any, aliases: any,
             a: (context: any, aliases: any) => any): void => {
-            var Exception: plat.IExceptionStatic = plat.acquire('$ExceptionStatic');
-            Exception.fatal('Assignment operators are not supported', Exception.PARSE);
+            var $exception: plat.IExceptionStatic = plat.acquire(__ExceptionStatic);
+            $exception.fatal('Assignment operators are not supported', $exception.PARSE);
         }
     },
     '--': {
         precedence: 3, associativity: '',
         fn: (context: any, aliases: any,
             a: (context: any, aliases: any) => any): void => {
-            var Exception: plat.IExceptionStatic = plat.acquire('$ExceptionStatic');
-            Exception.fatal('Assignment operators are not supported', Exception.PARSE);
+            var $exception: plat.IExceptionStatic = plat.acquire(__ExceptionStatic);
+            $exception.fatal('Assignment operators are not supported', $exception.PARSE);
         }
     },
     '+=': {
@@ -184,8 +184,8 @@ var OPERATORS: plat.IObject<plat.expressions.ITokenDetails> = {
         fn: (context: any, aliases: any,
             a: (context: any, aliases: any) => any,
             b: (context: any, aliases: any) => any): void => {
-            var Exception: plat.IExceptionStatic = plat.acquire('$ExceptionStatic');
-            Exception.fatal('Assignment operators are not supported', Exception.PARSE);
+            var $exception: plat.IExceptionStatic = plat.acquire(__ExceptionStatic);
+            $exception.fatal('Assignment operators are not supported', $exception.PARSE);
         }
     },
     '-=': {
@@ -193,8 +193,8 @@ var OPERATORS: plat.IObject<plat.expressions.ITokenDetails> = {
         fn: (context: any, aliases: any,
             a: (context: any, aliases: any) => any,
             b: (context: any, aliases: any) => any): void => {
-            var Exception: plat.IExceptionStatic = plat.acquire('$ExceptionStatic');
-            Exception.fatal('Assignment operators are not supported', Exception.PARSE);
+            var $exception: plat.IExceptionStatic = plat.acquire(__ExceptionStatic);
+            $exception.fatal('Assignment operators are not supported', $exception.PARSE);
         }
     },
     '*=': {
@@ -202,8 +202,8 @@ var OPERATORS: plat.IObject<plat.expressions.ITokenDetails> = {
         fn: (context: any, aliases: any,
             a: (context: any, aliases: any) => any,
             b: (context: any, aliases: any) => any): void => {
-            var Exception: plat.IExceptionStatic = plat.acquire('$ExceptionStatic');
-            Exception.fatal('Assignment operators are not supported', Exception.PARSE);
+            var $exception: plat.IExceptionStatic = plat.acquire(__ExceptionStatic);
+            $exception.fatal('Assignment operators are not supported', $exception.PARSE);
         }
     },
     '/=': {
@@ -211,8 +211,8 @@ var OPERATORS: plat.IObject<plat.expressions.ITokenDetails> = {
         fn: (context: any, aliases: any,
             a: (context: any, aliases: any) => any,
             b: (context: any, aliases: any) => any): void => {
-            var Exception: plat.IExceptionStatic = plat.acquire('$ExceptionStatic');
-            Exception.fatal('Assignment operators are not supported', Exception.PARSE);
+            var $exception: plat.IExceptionStatic = plat.acquire(__ExceptionStatic);
+            $exception.fatal('Assignment operators are not supported', $exception.PARSE);
         }
     },
     '%=': {
@@ -220,8 +220,8 @@ var OPERATORS: plat.IObject<plat.expressions.ITokenDetails> = {
         fn: (context: any, aliases: any,
             a: (context: any, aliases: any) => any,
             b: (context: any, aliases: any) => any): void => {
-            var Exception: plat.IExceptionStatic = plat.acquire('$ExceptionStatic');
-            Exception.fatal('Assignment operators are not supported', Exception.PARSE);
+            var $exception: plat.IExceptionStatic = plat.acquire(__ExceptionStatic);
+            $exception.fatal('Assignment operators are not supported', $exception.PARSE);
         }
     },
     '.': {

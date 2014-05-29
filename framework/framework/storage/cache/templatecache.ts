@@ -5,8 +5,7 @@ module plat.storage {
      * also clone the template when you retrieve it.
      */
     class TemplateCache extends Cache<any> implements ITemplateCache {
-        $ExceptionStatic: IExceptionStatic = acquire('$ExceptionStatic');
-        $Promise: async.IPromise = acquire('$Promise');
+        $Promise: async.IPromise = acquire(__Promise);
 
         constructor() {
             super('__templateCache');
@@ -38,7 +37,8 @@ module plat.storage {
             promise.then<DocumentFragment>((node) => {
                 return this.put(key, node);
             }).catch((error) => {
-                this.$ExceptionStatic.warn('Error retrieving template from promise.', this.$ExceptionStatic.TEMPLATE);
+                var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                $exception.warn('Error retrieving template from promise.', $exception.TEMPLATE);
             });
 
             return promise;
@@ -52,7 +52,7 @@ module plat.storage {
         return new TemplateCache();
     }
 
-    register.injectable('$TemplateCache', ITemplateCache);
+    register.injectable(__TemplateCache, ITemplateCache);
 
     /**
      * Interface for TemplateCache, used to manage all templates. Returns a unique template 

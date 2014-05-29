@@ -3,7 +3,7 @@
      * An AttributeControl that deals with observing changes for a specified property.
      */
     export class ObservableAttributeControl extends AttributeControl implements IObservableAttributeControl {
-        $ContextManagerStatic: observable.IContextManagerStatic = acquire('$ContextManagerStatic');
+        $ContextManagerStatic: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
 
         /**
          * The property to set on the associated template control.
@@ -153,4 +153,13 @@
          */
         property: string;
     }
+
+    export class Options extends ObservableAttributeControl {
+        /**
+         * The property to set on the associated template control.
+         */
+        property: string = 'options';
+    }
+
+    register.control(__Options, Options);
 }

@@ -21,21 +21,21 @@ module plat.async {
         /**
          * The plat.IBrowser injectable instance
          */
-        $Browser: web.IBrowser = acquire('$Browser');
+        $Browser: web.IBrowser = acquire(__Browser);
         /**
          * The injectable instance of type Window
          */
-        $Window: Window = acquire('$Window');
+        $Window: Window = acquire(__Window);
         /**
          * The injectable instance of type Document
          */
-        $Document: Document = acquire('$Document');
+        $Document: Document = acquire(__Document);
         /**
          * The configuration for an HTTP Request
          */
-        $config: IHttpConfig = acquire('$HttpConfig');
+        $config: IHttpConfig = acquire(__HttpConfig);
 
-        private __fileSupported = (<ICompat>acquire('$Compat')).fileSupported;
+        private __fileSupported = (<ICompat>acquire(__Compat)).fileSupported;
         private __options: IHttpConfig;
 
         /**
@@ -210,7 +210,7 @@ module plat.async {
                 };
 
                 if (!isString(method)) {
-                    var Exception: IExceptionStatic = acquire('$ExceptionStatic');
+                    var Exception: IExceptionStatic = acquire(__ExceptionStatic);
                     Exception.warn('AjaxOptions method was not of type string. Defaulting to "GET".', Exception.AJAX);
                     method = 'GET';
                 }
@@ -349,7 +349,7 @@ module plat.async {
          */
         _invalidOptions(): IAjaxPromise<any> {
             return new AjaxPromise((resolve, reject) => {
-                var exceptionFactory: IExceptionStatic = acquire('$ExceptionStatic');
+                var exceptionFactory: IExceptionStatic = acquire(__ExceptionStatic);
                 exceptionFactory.warn('Attempting a request without specifying a url', exceptionFactory.AJAX);
                 reject(new AjaxError({
                     response: 'Attempting a request without specifying a url',
@@ -434,7 +434,7 @@ module plat.async {
                     val = '';
                 } else if (isObject(val)) {
                     // may throw a fatal error but this is an invalid case
-                    var $exception: IExceptionStatic = acquire('$ExceptionStatic');
+                    var $exception: IExceptionStatic = acquire(__ExceptionStatic);
                     $exception.warn('Invalid form entry with key "' + key + '" and value "' + val, $exception.AJAX);
                     val = JSON.stringify(val);
                 }
@@ -461,7 +461,7 @@ module plat.async {
                         formData.append(key, val, val.name || val.fileName || 'blob');
                     } else {
                         // may throw a fatal error but this is an invalid case
-                        var $exception: IExceptionStatic = acquire('$ExceptionStatic');
+                        var $exception: IExceptionStatic = acquire(__ExceptionStatic);
                         $exception.warn('Invalid form entry with key "' + key + '" and value "' + val, $exception.AJAX);
                         formData.append(key, JSON.stringify(val));
                     }
@@ -478,7 +478,7 @@ module plat.async {
                 url = options.url,
                 $document = this.$Document,
                 $body = $document.body,
-                Promise: IPromise = acquire('$Promise'),
+                Promise: IPromise = acquire(__Promise),
                 form = $document.createElement('form'),
                 iframe = $document.createElement('iframe'),
                 iframeName = uniqueId('iframe_target'),
@@ -542,7 +542,7 @@ module plat.async {
                         length = fileList.length;
                     // if no inputs found, stringify the data
                     if (length === 0) {
-                        $exception = acquire('$ExceptionStatic');
+                        $exception = acquire(__ExceptionStatic);
                         $exception.warn('Could not find input[type="file"] with [name="' + key +
                             '"]. Stringifying data instead.', $exception.AJAX);
                         input.value = JSON.stringify(val);
@@ -569,7 +569,7 @@ module plat.async {
 
                         // could not find the right file
                         if (length === -1) {
-                            $exception = acquire('$ExceptionStatic');
+                            $exception = acquire(__ExceptionStatic);
                             $exception.warn('Could not find input[type="file"] with [name="' + key + '"] and [value="' +
                                 val.path + '"]. Stringifying data instead.', $exception.AJAX);
                             input.value = JSON.stringify(val);
@@ -577,7 +577,7 @@ module plat.async {
                     }
                 } else {
                     // may throw a fatal error but this is an invalid case
-                    $exception = acquire('$ExceptionStatic');
+                    $exception = acquire(__ExceptionStatic);
                     $exception.warn('Invalid form entry with key "' + key + '" and value "' + val, $exception.AJAX);
                     input.value = JSON.stringify(val);
                 }
@@ -803,7 +803,7 @@ module plat.async {
      * Describes a type of Promise that fulfills with an IAjaxResponse and can be optionally canceled.
      */
     export class AjaxPromise<R> extends Promise<IAjaxResponse<R>> implements IAjaxPromise<R> {
-        $Window: Window = acquire('$Window');
+        $Window: Window = acquire(__Window);
         private __http: HttpRequest;
         constructor(resolveFunction: IAjaxResolveFunction<R>, promise?: any) {
             super(resolveFunction);
@@ -1099,7 +1099,7 @@ module plat.async {
         return new Http();
     }
 
-    register.injectable('$Http', IHttp);
+    register.injectable(__Http, IHttp);
 
     /**
      * Describes the interface for the Ajax injectable for making both 
@@ -1159,5 +1159,5 @@ module plat.async {
         return Http.config;
     }
 
-    register.injectable('$HttpConfig', IHttpConfig);
+    register.injectable(__HttpConfig, IHttpConfig);
 }

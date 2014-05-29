@@ -16,7 +16,6 @@ module plat {
      */
     export class App implements IApp {
         static $Compat: ICompat;
-        static $ExceptionStatic: IExceptionStatic;
         static $EventManagerStatic: events.IEventManagerStatic;
         static $Document: Document;
         static $Compiler: processing.ICompiler;
@@ -27,10 +26,9 @@ module plat {
          */
         static start(): void {
             if (!App.$Compat.isCompatible) {
-                var $ExceptionStatic = App.$ExceptionStatic;
-
-                $ExceptionStatic.fatal('PlatypusTS only supports modern browsers where ' +
-                    'Object.defineProperty is defined', $ExceptionStatic.COMPAT);
+                var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                $exception.fatal('PlatypusTS only supports modern browsers where ' +
+                    'Object.defineProperty is defined', $exception.COMPAT);
                 return;
             }
 
@@ -84,10 +82,10 @@ module plat {
                 return;
             }
 
-            if (isFunction((<HTMLElement>node).setAttribute)) {
-                (<HTMLElement>node).setAttribute('plat-hide', '');
+            if (isFunction((<Element>node).setAttribute)) {
+                (<Element>node).setAttribute('plat-hide', '');
                 $compiler.compile(node);
-                (<HTMLElement>node).removeAttribute('plat-hide');
+                (<Element>node).removeAttribute('plat-hide');
             } else {
                 $compiler.compile(node);
             }
@@ -149,7 +147,7 @@ module plat {
          * as well as error handling and navigation events.
          */
         constructor() {
-            var ContextManager: observable.IContextManagerStatic = acquire('$ContextManagerStatic');
+            var ContextManager: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
             ContextManager.defineGetter(this, 'uid', uniqueId('plat_'));
         }
 
@@ -189,13 +187,11 @@ module plat {
      */
     export function IAppStatic(
         $Compat: ICompat,
-        $ExceptionStatic: IExceptionStatic,
         $EventManagerStatic: events.IEventManagerStatic,
         $Document: Document,
         $Compiler: processing.ICompiler,
         $LifecycleEventStatic: events.ILifecycleEventStatic): IAppStatic {
             App.$Compat = $Compat;
-            App.$ExceptionStatic = $ExceptionStatic;
             App.$EventManagerStatic = $EventManagerStatic;
             App.$Document = $Document;
             App.$Compiler = $Compiler;
@@ -203,13 +199,12 @@ module plat {
             return App;
     }
 
-    register.injectable('$AppStatic', IAppStatic, [
-        '$Compat',
-        '$ExceptionStatic',
-        '$EventManagerStatic',
-        '$Document',
-        '$Compiler',
-        '$LifecycleEventStatic'
+    register.injectable(__AppStatic, IAppStatic, [
+        __Compat,
+        __EventManagerStatic,
+        __Document,
+        __Compiler,
+        __LifecycleEventStatic
     ], register.STATIC);
 
     /**
@@ -219,9 +214,7 @@ module plat {
         return $AppStatic.app;
     }
 
-    register.injectable('$App', IApp, [
-        '$AppStatic'
-    ], register.INSTANCE);
+    register.injectable(__App, IApp, [__AppStatic], register.INSTANCE);
 
     /**
      * The external interface for the '$AppStatic' interface.

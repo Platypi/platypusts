@@ -56,9 +56,7 @@
         return NavigationEvent;
     }
 
-    register.injectable('$NavigationEventStatic', INavigationEventStatic, [
-        '$EventManagerStatic'
-    ], register.STATIC);
+    register.injectable(__NavigationEventStatic, INavigationEventStatic, [__EventManagerStatic], register.STATIC);
 
     /**
      * The intended external interface for the '$NavigationEventStatic' injectable.

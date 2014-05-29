@@ -6,7 +6,6 @@ module plat.processing {
         static $Regex: expressions.IRegex;
         static $ContextManagerStatic: observable.IContextManagerStatic;
         static $Parser: expressions.IParser;
-        static $ExceptionStatic: IExceptionStatic;
         static $TemplateControlFactory: ui.ITemplateControlFactory;
         /**
          * The start markup notation.
@@ -152,8 +151,9 @@ module plat.processing {
                             e.description = 'Cannot stringify object: ' + e.description;
                         }
                         e.message = 'Cannot stringify object: ' + e.message;
-;
-                        NodeManager.$ExceptionStatic.warn(e, Exception.PARSE);
+
+                        var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                        $exception.warn(e, $exception.PARSE);
                     }
                 } else if (!isNull(value)) {
                     text += value;
@@ -178,8 +178,8 @@ module plat.processing {
         static observeIdentifiers(identifiers: Array<string>, control: ui.ITemplateControl,
             listener: (...args: Array<any>) => void) {
             var length = identifiers.length,
-                ContextManager = NodeManager.$ContextManagerStatic,
-                contextManager = ContextManager.getManager(Control.getRootControl(control)),
+                $contextManager = NodeManager.$ContextManagerStatic,
+                rootManager = $contextManager.getManager(Control.getRootControl(control)),
                 absoluteContextPath = control.absoluteContextPath,
                 context = control.context,
                 observableCallback = {
@@ -220,7 +220,7 @@ module plat.processing {
                     }
 
                     if (!isNull(resourceObj) && !isNull(resourceObj.resource) && resourceObj.resource.type === 'observable') {
-                        manager = ContextManager.getManager(resources[alias].control);
+                        manager = $contextManager.getManager(resources[alias].control);
                         absoluteIdentifier = 'resources.' + alias + '.value' + absoluteIdentifier;
                     } else {
                         continue;
@@ -229,13 +229,13 @@ module plat.processing {
                     // Look on the control.context
                     split = identifier.split('.');
 
-                    if (!isNull(ContextManager.getContext(context, split))) {
-                        manager = contextManager;
+                    if (!isNull($contextManager.getContext(context, split))) {
+                        manager = rootManager;
                         absoluteIdentifier = absoluteContextPath + '.' + identifier;
-                    } else if (!isNull(ContextManager.getContext(control, split))) {
+                    } else if (!isNull($contextManager.getContext(control, split))) {
                         manager = null;
                     } else {
-                        manager = contextManager;
+                        manager = rootManager;
                         absoluteIdentifier = absoluteContextPath + '.' + identifier;
                     }
                 }
@@ -305,22 +305,19 @@ module plat.processing {
         $Regex: expressions.IRegex,
         $ContextManagerStatic: observable.IContextManagerStatic,
         $Parser: expressions.IParser,
-        $ExceptionStatic: IExceptionStatic,
         $TemplateControlFactory: ui.ITemplateControlFactory): INodeManagerStatic {
             NodeManager.$Regex = $Regex;
             NodeManager.$ContextManagerStatic = $ContextManagerStatic;
             NodeManager.$Parser = $Parser;
-            NodeManager.$ExceptionStatic = $ExceptionStatic;
             NodeManager.$TemplateControlFactory = $TemplateControlFactory;
             return NodeManager;
     }
 
-    register.injectable('$NodeManagerStatic', INodeManagerStatic, [
-        '$Regex',
-        '$ContextManagerStatic',
-        '$Parser',
-        '$ExceptionStatic',
-        '$TemplateControlFactory'
+    register.injectable(__NodeManagerStatic, INodeManagerStatic, [
+        __Regex,
+        __ContextManagerStatic,
+        __Parser,
+        __TemplateControlFactory
     ], register.STATIC);
 
     /**
@@ -472,11 +469,11 @@ module plat.processing {
 
 
     /**
-     * Defines the interface for a compiled HTMLElement.
+     * Defines the interface for a compiled Element.
      */
     export interface IUiControlNode extends INode {
         /**
-         * The control associated with the HTMLElement, if one exists.
+         * The control associated with the Element, if one exists.
          */
         control: ui.ITemplateControl;
 
@@ -489,17 +486,17 @@ module plat.processing {
 
 
     /**
-     * Describes a compiled HTMLElement with all 
+     * Describes a compiled Element with all 
      * associated nodes contained within its tag.
      */
     export interface INodeMap {
         /**
-         * The HTMLElement that is compiled.
+         * The Element that is compiled.
          */
         element?: HTMLElement;
 
         /**
-         * The compiled attribute Nodes for the HTMLElement
+         * The compiled attribute Nodes for the Element.
          */
         nodes: Array<INode>;
 
@@ -514,12 +511,12 @@ module plat.processing {
         childContext?: string;
 
         /**
-         * Indicates whether or not a IControl was found on the HTMLElement.
+         * Indicates whether or not a IControl was found on the Element.
          */
         hasControl?: boolean;
 
         /**
-         * The INode for the UIControl, if one was found for the HTMLElement.
+         * The INode for the UIControl, if one was found for the Element.
          */
         uiControlNode?: IUiControlNode;
     }

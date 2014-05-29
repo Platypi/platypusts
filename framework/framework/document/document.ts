@@ -7,5 +7,5 @@
         return $Window.document;
     }
 
-    register.injectable('$Document', IDocument, ['$Window']);
+    register.injectable(__Document, IDocument, [__Window]);
 }

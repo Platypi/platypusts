@@ -21,5 +21,5 @@ module plat.ui.controls {
         }
     }
 
-    register.control('plat-html', Html);
+    register.control(__Html, Html);
 }

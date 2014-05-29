@@ -3,6 +3,8 @@
      * A class for checking browser compatibility issues.
      */
     export class Compat implements ICompat {
+        $document = acquire(__Document);
+
         cordova: boolean;
         pushState: boolean;
         fileSupported: boolean;
@@ -18,17 +20,16 @@
         mappedEvents: IMappedEvents;
 
         get isCompatible() {
-            var $document = acquire('$Document');
-
             return isFunction(Object.defineProperty) &&
-                isFunction($document.querySelector);
+                isFunction(this.$document.querySelector);
         }
 
         constructor() {
-            var contextManager: observable.IContextManagerStatic = acquire('$ContextManagerStatic'),
-                $window: Window = acquire('$Window'),
-                define = contextManager.defineGetter,
+            var $contextManager: observable.IContextManagerStatic = acquire(__ContextManagerStatic),
+                $window: Window = acquire(__Window),
+                define = $contextManager.defineGetter,
                 navigator = $window.navigator,
+                history = $window.history,
                 hasTouch = !isUndefined((<any>$window).ontouchstart),
                 hasPointer = !!navigator.pointerEnabled,
                 hasMsPointer = !!navigator.msPointerEnabled,
@@ -36,7 +37,7 @@
                 msA = (<any>$window).MSApp;
 
             define(this, 'cordova', !isNull((<any>$window).cordova));
-            define(this, 'pushState', !isNull($window.history.pushState));
+            define(this, 'pushState', !(isNull(history) || isNull(history.pushState)));
             define(this, 'fileSupported', !(isUndefined((<any>$window).File) || isUndefined((<any>$window).FormData)));
             define(this, 'amd', isFunction(def) && !isNull(def.amd));
             define(this, 'msApp', isObject(msA) && isFunction(msA.execUnsafeLocalFunction));
@@ -53,36 +54,28 @@
                     $touchstart: 'pointerdown',
                     $touchend: 'pointerup',
                     $touchmove: 'pointermove',
-                    $touchcancel: 'pointercancel',
-                    $touchenter: 'pointerover',
-                    $touchleave: 'pointerout'
+                    $touchcancel: 'pointercancel'
                 });
             } else if (hasMsPointer) {
                 define(this, 'mappedEvents', {
                     $touchstart: 'MSPointerDown',
                     $touchend: 'MSPointerUp',
                     $touchmove: 'MSPointerMove',
-                    $touchcancel: 'MSPointerCancel',
-                    $touchenter: 'MSPointerOver',
-                    $touchleave: 'MSPointerOut'
+                    $touchcancel: 'MSPointerCancel'
                 });
             } else if (hasTouch) {
                 define(this, 'mappedEvents', {
                     $touchstart: 'touchstart',
                     $touchend: 'touchend',
                     $touchmove: 'touchmove',
-                    $touchcancel: 'touchcancel',
-                    $touchenter: 'touchenter',
-                    $touchleave: 'touchleave'
+                    $touchcancel: 'touchcancel'
                 });
             } else {
                 define(this, 'mappedEvents', {
                     $touchstart: 'mousedown',
                     $touchend: 'mouseup',
                     $touchmove: 'mousemove',
-                    $touchcancel: null,
-                    $touchenter: 'mouseenter',
-                    $touchleave: 'mouseleave'
+                    $touchcancel: null
                 });
             }
         }
@@ -95,7 +88,7 @@
         return new Compat();
     }
 
-    register.injectable('$Compat', ICompat);
+    register.injectable(__Compat, ICompat);
 
     /**
      * Describes an object containing the correctly mapped touch events for the browser.
@@ -115,16 +108,6 @@
          * An event type for touch move.
          */
         $touchmove: string;
-
-        /**
-         * An event type for touch enter (or 'over').
-         */
-        $touchenter: string;
-
-        /**
-         * An event type for touch leave (or 'out').
-         */
-        $touchleave: string;
 
         /**
          * An event type for touch cancel.

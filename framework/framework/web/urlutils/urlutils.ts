@@ -14,7 +14,7 @@
                 query: IObject<string> = {},
                 length = split.length,
                 item: Array<string>,
-                define = (<observable.IContextManagerStatic>acquire('$ContextManagerStatic')).defineGetter;
+                define = (<observable.IContextManagerStatic>acquire(__ContextManagerStatic)).defineGetter;
 
             for (var i = 0; i < length; ++i) {
                 item = split[i].split('=');
@@ -37,12 +37,12 @@
             return url.substring(0, url.indexOf('/', url.indexOf(next))) + '/';
         }
 
-        $ContextManagerStatic: observable.IContextManagerStatic = acquire('$ContextManagerStatic');
-        $Document: Document = acquire('$Document');
-        $Window: Window = acquire('$Window');
-        $Compat: ICompat = acquire('$Compat');
-        $Regex: expressions.IRegex = acquire('$Regex');
-        $BrowserConfig: IBrowserConfig = acquire('$BrowserConfig');
+        $ContextManagerStatic: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
+        $Document: Document = acquire(__Document);
+        $Window: Window = acquire(__Window);
+        $Compat: ICompat = acquire(__Compat);
+        $Regex: expressions.IRegex = acquire(__Regex);
+        $BrowserConfig: IBrowserConfig = acquire(__BrowserConfig);
 
         href: string;
         protocol: string;
@@ -134,7 +134,7 @@
         return new UrlUtils();
     }
 
-    register.injectable('$UrlUtilsInstance', IUrlUtilsInstance, null, register.INSTANCE);
+    register.injectable(__UrlUtilsInstance, IUrlUtilsInstance, null, register.INSTANCE);
 
     /**
      * Defines an object that deals with obtaining detailed information about an 

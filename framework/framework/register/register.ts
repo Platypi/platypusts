@@ -89,8 +89,10 @@ module plat.register {
      * @param dependencies An array of strings representing the dependencies needed for the app injector.
      */
     export function app(name: string, Type: new (...args: any[]) => IApp, dependencies?: Array<any>): typeof register {
-        var app = new dependency.Injector<IApp>(name, Type, dependencies);
-        (<IAppStatic>acquire('$AppStatic')).registerApp(app);
+        var app = new dependency.Injector<IApp>(name, Type, dependencies),
+            $appStatic: IAppStatic = acquire(__AppStatic);
+
+        $appStatic.registerApp(app);
         return register;
     }
 
@@ -133,7 +135,7 @@ module plat.register {
         var ret = add(viewControlInjectors, name, Type, dependencies);
 
         if (isArray(routes)) {
-            var $Router: web.IRouter = acquire('$Router');
+            var $Router: web.IRouter = acquire(__Router);
             $Router.registerRoutes(name, routes);
         }
 

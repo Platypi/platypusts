@@ -49,7 +49,8 @@ module plat.async {
         static all<R>(promises: Array<R>): IThenable<Array<R>>;
         static all(promises: Array<any>): IThenable<Array<any>> {
             if (!isArray(promises)) {
-                Promise.$ExceptionStatic.fatal(new TypeError('You must pass an array to all.'), Promise.$ExceptionStatic.PROMISE);
+                var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                $exception.fatal(new TypeError('You must pass an array to all.'), $exception.PROMISE);
             }
 
             return new Promise<Array<any>>((resolve: (value?: Array<any>) => void, reject: (reason?: any) => void) => {
@@ -115,7 +116,8 @@ module plat.async {
         static race<R>(promises: Array<R>): IThenable<R>;
         static race(promises: Array<any>): IThenable<any> {
             if (!isArray(promises)) {
-                Promise.$ExceptionStatic.fatal(new TypeError('You must pass an array to race.'), Promise.$ExceptionStatic.PROMISE);
+                var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                $exception.fatal(new TypeError('You must pass an array to race.'), $exception.PROMISE);
             }
 
             return new Promise<any>((resolve: (value: any) => any, reject: (error: any) => any) => {
@@ -155,8 +157,6 @@ module plat.async {
                 reject(error);
             });
         }
-
-        private static $ExceptionStatic: IExceptionStatic;
 
         private static __invokeResolveFunction<R>(resolveFunction: IResolveFunction<R>,
             promise: Promise<R>): void {
@@ -266,8 +266,9 @@ module plat.async {
 
             try {
                 if (promise === value) {
-                    Promise.$ExceptionStatic.fatal(new TypeError('A promises callback cannot return that same promise.'),
-                        Promise.$ExceptionStatic.PROMISE);
+                    var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                    $exception.fatal(new TypeError('A promises callback cannot return that same promise.'),
+                        $exception.PROMISE);
                 }
 
                 if (isObject(value) || isFunction(value)) {
@@ -324,16 +325,18 @@ module plat.async {
          * @param resolveFunction A IResolveFunction for fulfilling/rejecting the Promise.
          */
         constructor(resolveFunction: IResolveFunction<R>) {
+            var $exception: IExceptionStatic;
             if (!isFunction(resolveFunction)) {
-                Promise.$ExceptionStatic.fatal(
-                    new TypeError('You must pass a resolver function as the first argument to the promise constructor'),
-                    Promise.$ExceptionStatic.PROMISE);
+                $exception = acquire(__ExceptionStatic);
+                $exception.fatal(new TypeError('You must pass a resolver function as the first argument to the promise constructor'),
+                    $exception.PROMISE);
             }
 
             if (!(this instanceof Promise)) {
-                Promise.$ExceptionStatic.fatal(new TypeError('Failed to construct "Promise": ' +
+                $exception = acquire(__ExceptionStatic);
+                $exception.fatal(new TypeError('Failed to construct "Promise": ' +
                     'Please use the "new" operator, this object constructor cannot be called as a function.'),
-                    Promise.$ExceptionStatic.PROMISE);
+                    $exception.PROMISE);
             }
 
             this.__subscribers = [];
@@ -442,8 +445,8 @@ module plat.async {
     
     function useMutationObserver(): () => void {
         var observer = new BrowserMutationObserver(flush),
-            $document = acquire('$Document'),
-            $window = acquire('$Window'),
+            $document = acquire(__Document),
+            $window = acquire(__Window),
             element = $document.createElement('div');
 
         observer.observe(element, { attributes: true });
@@ -515,7 +518,7 @@ module plat.async {
     /**
      * The Type for referencing the '$Promise' injectable as a dependency.
      */
-    export function IPromise($Window: any, $ExceptionStatic: IExceptionStatic): IPromise {
+    export function IPromise($Window: any): IPromise {
         if (!isNull($Window.Promise) &&
             isFunction($Window.Promise.all) &&
             isFunction($Window.Promise.cast) &&
@@ -524,15 +527,10 @@ module plat.async {
             isFunction($Window.Promise.reject)) {
             return $Window.Promise;
         }
-
-        (<any>Promise).$ExceptionStatic = $ExceptionStatic;
         return Promise;
     }
 
-    register.injectable('$Promise', IPromise, [
-        '$Window',
-        '$ExceptionStatic'
-    ], register.CLASS);
+    register.injectable(__Promise, IPromise, [__Window], register.CLASS);
 
     /**
      * The injectable reference for the ES6 Promise implementation.

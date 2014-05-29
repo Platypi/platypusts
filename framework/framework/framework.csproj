@@ -28,7 +28,6 @@
     <TypeScriptCompile Include="controls\keycodeevent\keycodeevent.ts" />
     <TypeScriptCompile Include="controls\name\namecontrol.ts" />
     <TypeScriptCompile Include="controls\observableattributecontrol\observableattributecontrol.ts" />
-    <TypeScriptCompile Include="controls\options\options.ts" />
     <TypeScriptCompile Include="controls\setattributecontrol\setattributecontrol.ts" />
     <TypeScriptCompile Include="controls\simpleevent\simpleevent.ts" />
     <TypeScriptCompile Include="control\control.ts" />
@@ -56,6 +55,7 @@
     <TypeScriptCompile Include="processing\nodemanager\elementmanager.ts" />
     <TypeScriptCompile Include="processing\nodemanager\nodemanager.ts" />
     <TypeScriptCompile Include="processing\nodemanager\textmanager.ts" />
+    <TypeScriptCompile Include="references\references.ts" />
     <TypeScriptCompile Include="register\register.ts" />
     <TypeScriptCompile Include="storage\basestorage.ts" />
     <TypeScriptCompile Include="storage\cache\cache.ts" />

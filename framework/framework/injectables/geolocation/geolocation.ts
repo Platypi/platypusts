@@ -3,7 +3,7 @@ module plat {
      * Provides methods for interacting with geolocation services on a device.
      */
     export class Geolocation implements IGeolocation {
-        $Promise: async.IPromise = acquire('$Promise');
+        $Promise: async.IPromise = acquire(__Promise);
 
         /**
          * Attempts to acquire position information of the device.
@@ -53,7 +53,7 @@ module plat {
         return new Geolocation();
     }
 
-    register.injectable('$Geolocation', IGeolocation);
+    register.injectable(__Geolocation, IGeolocation);
 
     /**
      * Describes an object which provides methods to interact with geolocation services on a device.

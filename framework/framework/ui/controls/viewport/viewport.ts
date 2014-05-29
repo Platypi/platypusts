@@ -17,9 +17,11 @@ module plat.ui.controls {
          * and initializes the loading of the view.
          */
         loaded(): void {
+            var $exception: IExceptionStatic;
             if (isNull(this.options)) {
-                this.$ExceptionStatic.warn('No defaultView specified in plat-options for plat-viewport.',
-                    this.$ExceptionStatic.NAVIGATION);
+                $exception = acquire(__ExceptionStatic);
+                $exception.warn('No defaultView specified in plat-options for plat-viewport.',
+                    $exception.NAVIGATION);
                 return;
             }
 
@@ -28,8 +30,9 @@ module plat.ui.controls {
                 injector = viewControlInjectors[controlType];
 
             if (isNull(injector)) {
-                this.$ExceptionStatic.fatal('The defaultView ' + controlType + ' is not a registered view control.',
-                    this.$ExceptionStatic.NAVIGATION);
+                $exception = acquire(__ExceptionStatic);
+                $exception.fatal('The defaultView ' + controlType + ' is not a registered view control.',
+                    $exception.NAVIGATION);
                 return;
             }
 
@@ -48,5 +51,5 @@ module plat.ui.controls {
         defaultView: string;
     }
 
-    register.control('plat-viewport', Viewport, ['$Navigator']);
+    register.control(__Viewport, Viewport, [__Navigator]);
 }
