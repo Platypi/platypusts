@@ -1,7 +1,7 @@
 ﻿/// <reference path="../../../typings/tsd.d.ts" />
 
 module tests.observable.contextManager {
-    var ContextManager: plat.observable.IContextManagerStatic = plat.acquire(plat.observable.ContextManagerStatic);
+    var ContextManager: plat.observable.IContextManagerStatic = plat.acquire(plat.observable.IContextManagerStatic);
 
     describe('ContextManager Tests', () => {
         var control: plat.ui.ITemplateControl,
@@ -506,7 +506,7 @@ module tests.observable.contextManager {
             arr.pop();
 
             oldArray = arr.slice(0);
-            arr.shift();            
+            arr.shift();
 
             oldArray = arr.slice(0);
             arr.splice(1, 1, ['splice']);

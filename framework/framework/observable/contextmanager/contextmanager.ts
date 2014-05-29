@@ -677,7 +677,7 @@ module plat.observable {
 
                 var keys = Object.keys(callbackObjects),
                     length = keys.length,
-                    callbacks: Array<(ev: IArrayMethodInfo<any>) => void>, 
+                    callbacks: Array<(ev: IArrayMethodInfo<any>) => void>,
                     jLength: number;
 
                 if (oldArray.length !== this.length && method.indexOf('shift') === -1) {
