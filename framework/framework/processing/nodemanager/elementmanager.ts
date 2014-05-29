@@ -710,9 +710,9 @@ module plat.processing {
 
         fulfillTemplate(): async.IThenable<any> {
                 if (!isNull(this.templatePromise)) {
-                return this.templatePromise.then(() => {
-                    return this._fulfillChildTemplates();
-                });
+                    return this.templatePromise.then(() => {
+                        return this._fulfillChildTemplates();
+                    });
                 }
 
             return this._fulfillChildTemplates();
@@ -751,22 +751,21 @@ module plat.processing {
         }
 
         observeRootContext(root: ui.ITemplateControl, loadMethod: () => async.IThenable<void>): void {
+            if (!isNull(root.context)) {
+                this.loadedPromise = loadMethod.call(this);
+                return;
+            }
+
             this.loadedPromise = new this.$Promise<void>((resolve, reject) => {
                 var contextManager: observable.IContextManager = this.$ContextManagerStatic.getManager(root);
 
                 var removeListener = contextManager.observe('context', {
                     listener: () => {
                         removeListener();
-
                         loadMethod.call(this).then(resolve);
                     },
                     uid: root.uid
                 });
-
-                if (!isNull(root.context)) {
-                    removeListener();
-                    loadMethod.call(this).then(resolve);
-                }
             }).catch((error) => {
                 postpone(() => {
                     var $exception: IExceptionStatic = acquire(__ExceptionStatic);
@@ -840,10 +839,8 @@ module plat.processing {
          * Fulfills the template promise prior to binding and loading the control.
          */
         _fulfillAndLoad(): async.IThenable<void> {
-            return new this.$Promise<void>((resolve, reject) => {
-                this.fulfillTemplate().then(() => {
-                    return this.bindAndLoad();
-                }).then(resolve);
+            return this.fulfillTemplate().then(() => {
+                return this.bindAndLoad();
             }).catch((error) => {
                 postpone(() => {
                     var $exception: IExceptionStatic = acquire(__ExceptionStatic);

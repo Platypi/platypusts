@@ -143,11 +143,10 @@ module plat.ui.controls {
                 }
 
                 this.__mapBindableTemplates(templateControl);
-
+                return this._instantiateTemplate();
+            }).then((clone) => {
                 var endNode = this.endNode;
-                this._instantiateTemplate().then((clone) => {
-                    this.dom.insertBefore(endNode.parentNode, clone, endNode);
-                });
+                this.dom.insertBefore(endNode.parentNode, clone, endNode);
             }).catch((error) => {
                 postpone(() => {
                     $exception = acquire(__ExceptionStatic);
