@@ -778,29 +778,13 @@ module plat.processing {
          * is complete.
          */
         fulfillTemplate(): async.IThenable<any> {
-            var children = this.children,
-                child: INodeManager,
-                length = children.length,
-                promises: Array<async.IThenable<any>> = [];
-
-            return new this.$Promise<any>((resolve, reject) => {
-                if (!isNull(this.templatePromise)) {
-                    promises.push(this.templatePromise);
-                }
-
-                for (var i = 0; i < length; ++i) {
-                    child = children[i];
-                    if (!isUndefined((<IElementManager>child).children)) {
-                        promises.push((<IElementManager>child).fulfillTemplate());
-                    }
-                }
-
-                this.$Promise.all(promises).then(resolve, reject);
-            }).catch((error) => {
-                postpone(() => {
-                    this.$ExceptionStatic.fatal(error, this.$ExceptionStatic.COMPILE);
+            if (!isNull(this.templatePromise)) {
+                return this.templatePromise.then(() => {
+                    return this._fulfillChildTemplates();
                 });
-            });
+            }
+
+            return this._fulfillChildTemplates();
         }
 
         /**
@@ -1112,6 +1096,29 @@ module plat.processing {
             if (!this.replace) {
                 attribute.value = value;
             }
+        }
+
+        /**
+         * Runs through all the children of this manager and calls fulfillTemplate.
+         */
+        _fulfillChildTemplates() {
+            var children = this.children,
+                child: INodeManager,
+                length = children.length,
+                promises: Array<async.IThenable<any>> = [];
+
+            for (var i = 0; i < length; ++i) {
+                child = children[i];
+                if (!isUndefined((<IElementManager>child).children)) {
+                    promises.push((<IElementManager>child).fulfillTemplate());
+                }
+            }
+
+            return this.$Promise.all(promises).catch((error) => {
+                postpone(() => {
+                    this.$ExceptionStatic.fatal(error, this.$ExceptionStatic.COMPILE);
+                });
+            });
         }
     }
 

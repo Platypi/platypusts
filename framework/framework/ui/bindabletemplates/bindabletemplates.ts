@@ -219,7 +219,7 @@ module plat.ui {
 
             promises.push(manager.fulfillTemplate());
 
-            this.templates[key] = <any>this.$Promise.all<any>(promises).then((results) => {
+            this.templates[key] = <any>this.$Promise.all(promises).then((results) => {
                 var element = nodeMap.element,
                     startNode: Comment,
                     endNode: Comment;
@@ -237,8 +237,6 @@ module plat.ui {
                     this.$ExceptionStatic.fatal(error, this.$ExceptionStatic.COMPILE);
                 });
             });
-
-            return this.templates[key];
         }
 
         /**

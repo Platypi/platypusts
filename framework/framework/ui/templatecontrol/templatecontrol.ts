@@ -370,31 +370,24 @@ module plat.ui {
 
             return Promise.cast<DocumentFragment>(template).catch((error) => {
                 if (isNull(error)) {
-                    return templateCache.put(templateUrl, TemplateControl.$Http.ajax<string>({ url: templateUrl })
-                            .then<DocumentFragment>((success) => {
-                        if (!isObject(success) || !isString(success.response)) {
-                            TemplateControl.$ExceptionStatic.warn('No template found at ' + templateUrl,
-                                TemplateControl.$ExceptionStatic.AJAX);
-                            return Promise.resolve(dom.serializeHtml());
-                        }
-
-                        var templateString = success.response;
-
-                        if (isEmpty(templateString.trim())) {
-                            return Promise.resolve(dom.serializeHtml());
-                        }
-
-                        template = dom.serializeHtml(templateString);
-
-                        return templateCache.put(templateUrl, template);
-                    }, (error) => {
-                        postpone(() => {
-                            TemplateControl.$ExceptionStatic.fatal('Failure to get template from ' + templateUrl + '.',
-                                TemplateControl.$ExceptionStatic.TEMPLATE);
-                        });
-                        return error;
-                    }));
+                    return TemplateControl.$Http.ajax<string>({ url: templateUrl });
                 }
+            }).then<DocumentFragment>((success) => {
+                if (!isObject(success) || !isString(success.response)) {
+                    TemplateControl.$ExceptionStatic.warn('No template found at ' + templateUrl,
+                        TemplateControl.$ExceptionStatic.AJAX);
+                    return Promise.resolve(dom.serializeHtml());
+                }
+
+                var templateString = success.response;
+
+                if (isEmpty(templateString.trim())) {
+                    return Promise.resolve(dom.serializeHtml());
+                }
+
+                template = dom.serializeHtml(templateString);
+
+                return templateCache.put(templateUrl, template);
             }).catch((error) => {
                 postpone(() => {
                     TemplateControl.$ExceptionStatic.fatal('Failure to get template from ' + templateUrl + '.',
