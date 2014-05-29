@@ -441,22 +441,17 @@ module tests.observable.contextManager {
             expect(called).toBe(false);
         });
 
-        it('should test observeArray', () => {
+        it('should test observeArray with all overwritten array methods called.', () => {
             var called = 0,
                 oldArray,
-                arr: Array<any> = control.context.arr;
-
-            arr.push({
-                value: 'value1'
-            }, {
-                value: 'value2'
-            }, {
-                value: 'value3'
-            }, {
-                value: 'value4'
-            });
-
-            manager.observeArray(control.uid, (ev) => {
+                arr: Array<any> = control.context.arr = [
+                    'a',
+                    'b',
+                    'c',
+                    'd'
+                ];
+            
+            function listener(ev: plat.observable.IArrayMethodInfo<any>) {
                 ++called;
                 switch (ev.method) {
                     case 'push':
@@ -472,7 +467,7 @@ module tests.observable.contextManager {
                         expect(ev.returnValue).toEqual(oldArray[0]);
                         break;
                     case 'splice':
-                        expect(ev.arguments).toEqual([1, 1, [{ value: 'splice' }]]);
+                        expect(ev.arguments).toEqual([1, 1, ['splice']]);
                         expect(ev.returnValue).toEqual([oldArray[1]]);
                         break;
                     case 'unshift':
@@ -489,17 +484,23 @@ module tests.observable.contextManager {
                         break;
                 }
 
-                //expect(ev.newArray).not.toEqual(oldArray);
+                expect(ev.newArray).not.toEqual(oldArray);
                 expect(ev.newArray).toBe(arr);
                 expect(ev.oldArray).toEqual(oldArray);
-            }, 'context.arr', control.context.arr, null);
+            }
+
+            manager.observe('context.arr', {
+                uid: control.uid,
+                listener: (newValue: any, oldValue: any) => {
+                    remove();
+                    remove = manager.observeArray(control.uid, listener, 'context.arr', newValue, oldValue);
+                }
+            });
+
+            var remove = manager.observeArray(control.uid, listener, 'context.arr', control.context.arr, null);
 
             oldArray = arr.slice(0);
-            arr.push({
-                value: 'baz'
-            }, {
-                value: 'foo'
-            });
+            arr.push('e', 'f');
 
             oldArray = arr.slice(0);
             arr.pop();
@@ -508,14 +509,17 @@ module tests.observable.contextManager {
             arr.shift();            
 
             oldArray = arr.slice(0);
-            arr.splice(1, 1, [{ value: 'splice' }]);
+            arr.splice(1, 1, ['splice']);
+
+            arr = control.context.arr = [
+                'a',
+                'b',
+                'c',
+                'd'
+            ];
 
             oldArray = arr.slice(0);
-            arr.unshift({
-                value: 'baz'
-            }, {
-                value: 'foo'
-            });
+            arr.unshift('g', 'h');
 
             oldArray = arr.slice(0);
             arr.sort();
@@ -524,6 +528,15 @@ module tests.observable.contextManager {
             arr.reverse();
 
             expect(called).toBe(7);
+        });
+
+        it('should test dispose', () => {
+            manager.dispose();
+
+            expect((<any>manager).context).toBeNull();
+            expect((<any>manager).__identifiers).toEqual({});
+            expect((<any>manager).__identifierHash).toEqual({});
+            expect((<any>manager).__contextObjects).toEqual({});
         });
     });
 }

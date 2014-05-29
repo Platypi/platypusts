@@ -402,13 +402,13 @@ module plat.observable {
             absoluteIdentifier: string, array: Array<any>, oldArray: Array<any>): IRemoveListener {
             var length = arrayMethods.length,
                 method: string,
-                i = 0,
+                i: number,
                 ContextManager = this.$ContextManagerStatic,
                 Compat = this.$compat,
                 proto = Compat.proto,
                 setProto = Compat.setProto;
-            
-            if (!isNull(oldArray)) {
+
+            if (isArray(oldArray)) {
                 if (setProto) {
                     (<any>Object).setPrototypeOf(oldArray, Object.create(Array.prototype));
                 } else if (proto) {
@@ -416,7 +416,7 @@ module plat.observable {
                 } else {
                     length = arrayMethods.length;
 
-                    for (; i < length; ++i) {
+                    for (i = 0; i < length; ++i) {
                         method = arrayMethods[i];
                         (<any>oldArray)[method] = (<any>Array.prototype)[method];
                     }
@@ -449,7 +449,7 @@ module plat.observable {
             if (proto) {
                 var obj = Object.create(Array.prototype);
 
-                for (; i < length; ++i) {
+                for (i = 0; i < length; ++i) {
                     method = arrayMethods[i];
                     obj[method] = this._overwriteArrayFunction(absoluteIdentifier, method);
                 }
@@ -463,7 +463,7 @@ module plat.observable {
                 return removeListener;
             }
 
-            for (; i < length; ++i) {
+            for (i = 0; i < length; ++i) {
                 method = arrayMethods[i];
                 ContextManager.defineProperty(array, method,
                     this._overwriteArrayFunction(absoluteIdentifier, method), false, true);
@@ -827,8 +827,10 @@ module plat.observable {
                     if (this.__isArrayFunction) {
                         return;
                     }
+                    
+                    var hash = this.__identifierHash[identifier],
+                        childPropertiesLength = isArray(hash) ? hash.length : 0;
 
-                    var childPropertiesLength = this.__identifierHash[identifier].length;
                     this._execute(identifier, value, oldValue);
                     if (childPropertiesLength > 0) {
                         this._notifyChildProperties(identifier, value, oldValue);
