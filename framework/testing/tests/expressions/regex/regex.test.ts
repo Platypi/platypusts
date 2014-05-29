@@ -1,10 +1,8 @@
 ﻿/// <reference path="../../../typings/tsd.d.ts" />
 
 module tests.expressions.regex {
-
-    var regex: plat.expressions.IRegex = plat.acquire(plat.expressions.Regex);
-
-    var regexs: Array<IRegexregexTest> = [
+    var regex: plat.expressions.IRegex = plat.acquire(plat.expressions.IRegex),
+        regexs: Array<IRegexregexTest> = [
         {
             name: 'newLine regex',
             regex: regex.newLineRegex,

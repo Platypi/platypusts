@@ -1,7 +1,7 @@
 ﻿/// <reference path="../../../typings/tsd.d.ts" />
 
 module tests.observable.contextManagerStatic {
-    var ContextManager: plat.observable.IContextManagerStatic = plat.acquire(plat.observable.ContextManagerStatic);
+    var ContextManager: plat.observable.IContextManagerStatic = plat.acquire(plat.observable.IContextManagerStatic);
 
     describe('ContextManagerStatic Tests', () => {
         var control: plat.ui.ITemplateControl,
@@ -64,7 +64,7 @@ module tests.observable.contextManagerStatic {
 
             var arrayListeners = ContextManager.observedArrayListeners = {
                 foo: {
-                    test: () => { }
+                    test: [() => { }]
                 }
             };
 
@@ -76,7 +76,7 @@ module tests.observable.contextManagerStatic {
         it('should test removeArrayListeners', () => {
             var arrayListeners = ContextManager.observedArrayListeners = {
                 foo: {
-                    test: () => { }
+                    test: [() => { }]
                 }
             };
 

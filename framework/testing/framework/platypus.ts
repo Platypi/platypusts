@@ -6,6 +6,111 @@
  * http://opensource.org/licenses/GPL-3.0 
  */
 module plat {
+    ﻿/**
+     * Injectables
+     */
+    var __AppStatic = '$AppStatic',
+        __App = '$App',
+        __Http = '$Http',
+        __HttpConfig = '$HttpConfig',
+        __Promise = '$Promise',
+        __Compat = '$Compat',
+        __ControlFactory = '$ControlFactory',
+        __AttributeControlFactory = '$AttributeControlFactory',
+        __Document = '$Document',
+        __DispatchEventInstance = '$DispatchEventInstance',
+        __ErrorEventStatic = '$ErrorEventStatic',
+        __EventManagerStatic = '$EventManagerStatic',
+        __LifecycleEventStatic = '$LifecycleEventStatic',
+        __NavigationEventStatic = '$NavigationEventStatic',
+        __ExceptionStatic = '$ExceptionStatic',
+        __Parser = '$Parser',
+        __Regex = '$Regex',
+        __Tokenizer = '$Tokenizer',
+        __Navigator = '$Navigator',
+        __RoutingNavigator = '$RoutingNavigator',
+        __ContextManagerStatic = '$ContextManagerStatic',
+        __Compiler = '$Compiler',
+        __CommentManagerFactory = '$CommentManagerFactory',
+        __ElementManagerFactory = '$ElementManagerFactory',
+        __NodeManagerStatic = '$NodeManagerStatic',
+        __TextManagerFactory = '$TextManagerFactory',
+        __CacheFactory = '$CacheFactory',
+        __ManagerCache = '$ManagerCache',
+        __TemplateCache = '$TemplateCache',
+        __AttributesInstance = '$AttributesInstance',
+        __BindableTemplatesFactory = '$BindableTemplatesFactory',
+        __Dom = '$Dom',
+        __DomEvents = '$DomEvents',
+        __DomEventsConfig = '$DomEventsConfig',
+        __DomEventInstance = '$DomEventInstance',
+        __ResourcesFactory = '$ResourcesFactory',
+        __TemplateControlFactory = '$TemplateControlFactory',
+        __ViewControlFactory = '$ViewControlFactory',
+        __Utils = '$Utils',
+        __Browser = '$Browser',
+        __BrowserConfig = '$BrowserConfig',
+        __Router = '$Router',
+        __UrlUtilsInstance = '$UrlUtilsInstance',
+        __Window = '$Window',
+        __LocalStorage = '$LocalStorage',
+        __SessionStorage = '$SessionStorage',
+        __Geolocation = '$Geolocation';
+    
+    /**
+     * Controls
+     */
+    var __Plat = 'plat-',
+        __Bind = __Plat + 'bind',
+        __Href = __Plat + 'href',
+        __Src = __Plat + 'src',
+        __KeyDown = __Plat + 'keydown',
+        __KeyPress = __Plat + 'keypress',
+        __KeyUp = __Plat + 'keyup',
+        __Name = __Plat + 'name',
+        __Options = __Plat + 'options',
+        __Checked = __Plat + 'checked',
+        __Disabled = __Plat + 'disabled',
+        __Selected = __Plat + 'selected',
+        __ReadOnly = __Plat + 'readonly',
+        __Visible = __Plat + 'visible',
+        __Style = __Plat + 'style',
+        __Tap = __Plat + 'tap',
+        __Blur = __Plat + 'blur',
+        __Change = __Plat + 'change',
+        __Copy = __Plat + 'copy',
+        __Cut = __Plat + 'cut',
+        __Paste = __Plat + 'paste',
+        __DblTap = __Plat + 'dbltap',
+        __Focus = __Plat + 'focus',
+        __Submit = __Plat + 'submit',
+        __TouchStart = __Plat + 'touchstart',
+        __TouchEnd = __Plat + 'touchend',
+        __TouchMove = __Plat + 'touchmove',
+        __TouchEnter = __Plat + 'touchenter',
+        __TouchCancel = __Plat + 'touchcancel',
+        __Hold = __Plat + 'hold',
+        __Release = __Plat + 'release',
+        __Swipe = __Plat + 'swipe',
+        __SwipeLeft = __Plat + 'swipeleft',
+        __SwipeRight = __Plat + 'swiperight',
+        __SwipeUp = __Plat + 'swipeup',
+        __SwipeDown = __Plat + 'swipedown',
+        __Track = __Plat + 'track',
+        __TrackLeft = __Plat + 'trackleft',
+        __TrackRight = __Plat + 'trackright',
+        __TrackUp = __Plat + 'trackup',
+        __TrackDown = __Plat + 'trackdown',
+        __Anchor = 'a',
+        __ForEach = __Plat + 'foreach',
+        __Html = __Plat + 'html',
+        __If = __Plat + 'if',
+        __Ignore = __Plat + 'ignore',
+        __Select = __Plat + 'select',
+        __Template = __Plat + 'template',
+        __Routeport = __Plat + 'routeport',
+        __Viewport = __Plat + 'viewport';
+    
     ﻿var __nativeIsArray = !!Array.isArray,
         __uids__: plat.IObject<Array<string>> = {};
     
@@ -318,7 +423,7 @@ module plat {
         }
     
         str = str.charAt(0).toLowerCase() + str.substr(1);
-        camelCaseRegex = camelCaseRegex || (<plat.expressions.IRegex>plat.acquire('$regex')).camelCaseRegex;
+        camelCaseRegex = camelCaseRegex || (<plat.expressions.IRegex>plat.acquire(__Regex)).camelCaseRegex;
     
         return str.replace(camelCaseRegex,
             (match: string, delimiter?: string, char?: string, index?: number)
@@ -359,16 +464,11 @@ module plat {
         });
     
     function appendChildren(nodeList: any, root?: Node): Node {
-        var fragment: DocumentFragment,
-            isFragment = isDocumentFragment(root),
+        var isFragment = isDocumentFragment(root),
             nullRoot = isNull(root),
-            $document = plat.acquire('$document');
-    
-        if (isFragment) {
-            fragment = <DocumentFragment>root;
-        } else {
-            fragment = $document.createDocumentFragment();
-        }
+            fragment: DocumentFragment = isFragment ?
+            <DocumentFragment>root :
+            (plat.acquire(__Document)).createDocumentFragment();
     
         if (nullRoot) {
             root = fragment;
@@ -432,10 +532,10 @@ module plat {
     }
     
     function stringToNode(html: string): Node {
-        var compat: plat.ICompat = plat.acquire('$compat'),
-            $document: Document = plat.acquire('$document'),
+        var $compat: plat.ICompat = plat.acquire(__Compat),
+            $document: Document = plat.acquire(__Document),
             nodeName = __nodeNameRegex.exec(html),
-            element: HTMLElement = $document.createElement('div');
+            element = <HTMLElement>$document.createElement('div');
     
         if (isNull(nodeName)) {
             element = innerHtml(element, html);
@@ -447,7 +547,7 @@ module plat {
     
         var mapTag = nodeName[1];
     
-        if (compat.pushState && isUndefined(__innerTableWrappers[mapTag])) {
+        if ($compat.pushState && isUndefined(__innerTableWrappers[mapTag])) {
             return innerHtml(element, html);
         } else if (mapTag === 'body') {
             element = innerHtml($document.createElement('html'), html);
@@ -506,7 +606,7 @@ module plat {
             nodes = Array.prototype.slice.call(nodes);
         }
     
-        var $document = plat.acquire('$document'),
+        var $document = plat.acquire(__Document),
             length = nodes.length;
     
         fragment = $document.createDocumentFragment();
@@ -529,7 +629,10 @@ module plat {
         return nodes;
     }
     
-    function replaceWith(node: any, newNode: any): HTMLElement {
+    function replaceWith(node: Node, newNode: HTMLElement): HTMLElement;
+    function replaceWith(node: Node, newNode: Element): Element;
+    function replaceWith(node: Node, newNode: Node): Node;
+    function replaceWith(node: any, newNode: any): any {
         if (isNull(newNode)) {
             return newNode;
         }
@@ -554,7 +657,7 @@ module plat {
     }
     
     function serializeHtml(html?: string): DocumentFragment {
-        var $document = plat.acquire('$document'),
+        var $document = plat.acquire(__Document),
             templateElement = $document.createDocumentFragment();
     
         if (!isEmpty(html)) {
@@ -604,9 +707,9 @@ module plat {
      * available.
      */
     function innerHtml(element: HTMLElement, html: string): HTMLElement {
-        var compat: plat.ICompat = plat.acquire('$compat');
+        var $compat: plat.ICompat = plat.acquire(__Compat);
     
-        if (compat.msApp) {
+        if ($compat.msApp) {
             MSApp.execUnsafeLocalFunction(() => {
                 element.innerHTML = html;
             });
@@ -684,6 +787,39 @@ module plat {
     
     export module register {
         /**
+         * Static injectables will be injected before the application loads. This provides a way to create 
+         * a static constructor and load dependencies into static class properties.
+         */
+        export var STATIC = 'static';
+
+        /**
+         * Singleton injectables will contain a constructor. A Singleton injectable will be instantiated once and 
+         * used throughout the application lifetime. It will be instantiated when another component is injected 
+         * and lists it as a dependency.
+         */
+        export var SINGLETON = 'singleton';
+
+        /**
+         * Instance injectables will contain a constructor. An Instance injectable will be instantiated multiple times 
+         * throughout the application lifetime. It will be instantiated whenever another component is injected 
+         * and lists it as a dependency.
+         */
+        export var INSTANCE = 'instance';
+
+        /**
+         * Factory injectables will not contain a constructor but will instead contain a method for obtaining an 
+         * instance, such as getInstance() or create(). It will be injected before the application loads, similar to a Static 
+         * injectable.
+         */
+        export var FACTORY = 'factory';
+
+        /**
+         * Class injectables are essentially a direct reference to a class's constructor. It may contain both 
+         * static and instance methods as well as a constructor for creating a new instance.
+         */
+        export var CLASS = 'class';
+
+        /**
          * Generic function for creating an Injector and adding it to an IInjectorObject.
          * 
          * @param obj The IInjectorObject to which to add an Injector.
@@ -691,15 +827,15 @@ module plat {
          * @param Type The constructor or function definition for the Injector.
          * @param dependencies An array of strings representing the dependencies needed for the
          * injector.
-         * @param type The injectable type
+         * @param injectableType The injectable type
          * 
          * @return {register} The object that contains the register methods (for method chaining).
          */
         function add(obj: dependency.IInjectorObject<any>, name: string,
-                Type: any, dependencies?: Array<any>, type?: string): typeof register {
-            var injector = obj[name] = new dependency.Injector<any>(name, Type, dependencies, type);
+                Type: any, dependencies?: Array<any>, injectableType?: string): typeof register {
+            var injector = obj[name] = new dependency.Injector<any>(name, Type, dependencies, injectableType);
 
-            if (type === injectableType.STATIC) {
+            if (injectableType === FACTORY || injectableType === STATIC || injectableType === CLASS) {
                 staticInjectors[name] = injector;
             }
 
@@ -716,8 +852,10 @@ module plat {
          * @param dependencies An array of strings representing the dependencies needed for the app injector.
          */
         export function app(name: string, Type: new (...args: any[]) => IApp, dependencies?: Array<any>): typeof register {
-            var app = new dependency.Injector<IApp>(name, Type, dependencies);
-            (<IAppStatic>acquire('$AppStatic')).registerApp(app);
+            var app = new dependency.Injector<IApp>(name, Type, dependencies),
+                $appStatic: IAppStatic = acquire(__AppStatic);
+
+            $appStatic.registerApp(app);
             return register;
         }
 
@@ -729,7 +867,7 @@ module plat {
          * @param Type The constructor for the IControl.
          * @param dependencies An array of strings representing the dependencies needed for the IControl injector.
          * 
-         * @example register.control('plat-tap', Tap, [plat.expressions.Parser]);
+         * @example register.control('my-tap', MyTap, [plat.expressions.IParser]);
          */
         export function control(name: string, Type: new (...args: any[]) => IControl, dependencies?: Array<any>): typeof register {
             if (isString(name)) {
@@ -760,8 +898,8 @@ module plat {
             var ret = add(viewControlInjectors, name, Type, dependencies);
 
             if (isArray(routes)) {
-                var router: web.IRouter = acquire('$router');
-                router.registerRoutes(name, routes);
+                var $Router: web.IRouter = acquire(__Router);
+                $Router.registerRoutes(name, routes);
             }
 
             return ret;
@@ -775,13 +913,11 @@ module plat {
          * @param dependencies An array of strings representing the dependencies needed for the injectable's injector.
          * @param Type The constructor for the injectable. The injectable will only be instantiated once during the application
          * lifetime.
-         * @param injectableType Specifies the type of injectable, either register.injectableType.SINGLE or 
-         * register.injectableType.MULTI (defaults to register.injectableType.SINGLE).
+         * @param injectableType Specifies the type of injectable, either register.SINGLETON, 
+         * register.STATIC, register.INSTANCE, register.FACTORY, register.CLASS (defaults to register.SINGLETON).
          * 
-         * @see register.injectableType
-         * 
-         * @example register.injectable('$CacheStatic', [plat.expressions.Parser], Cache);
-         * @example register.injectable('database', MyDatabase, null, register.injectableType.MULTI);
+         * @example register.injectable('$CacheFactory', [plat.expressions.IParser], Cache);
+         * @example register.injectable('database', MyDatabase, null, register.INSTANCE);
          */
         export function injectable(name: string, Type: new (...args: any[]) => void,
             dependencies?: Array<any>, injectableType?: string): typeof register;
@@ -793,47 +929,20 @@ module plat {
          * @param dependencies An array of strings representing the dependencies needed for the injectable's injector.
          * @param Type The constructor for the injectable. The injectable will only be instantiated once during the application
          * lifetime.
-         * @param injectableType Specifies the type of injectable, either register.injectableType.SINGLE or 
-         * register.injectableType.MULTI (defaults to register.injectableType.SINGLE).
-         * 
-         * @see register.injectableType
+         * @param injectableType Specifies the type of injectable, either register.SINGLETON, 
+         * register.STATIC, register.INSTANCE, register.FACTORY, register.CLASS (defaults to register.SINGLETON).
          * 
          * @return {register} The object that contains the register methods (for method chaining).
          * 
-         * @example register.injectable('$CacheStatic', [plat.expressions.Parser], 
-         *  export function(parser? plat.expressions.IParser) { return { ... }; });
-         * @example register.injectable('database', export function() { return new Database(); }, null, register.injectableType.MULTI);
+         * @example register.injectable('$CacheFactory', [plat.expressions.IParser], 
+         *  function(parser: plat.expressions.IParser) { return { ... }; });
+         * @example register.injectable('database', function() { return new Database(); }, null, register.INSTANCE);
          */
         export function injectable(name: string, method: (...args: any[]) => any,
             dependencies?: Array<any>, injectableType?: string): typeof register;
         export function injectable(name: string, Type: any, dependencies?: Array<any>, injectableType?: string): typeof register {
-            return add(injectableInjectors, name, Type, dependencies, injectableType || register.injectableType.SINGLE);
+            return add(injectableInjectors, name, Type, dependencies, injectableType || SINGLETON);
         }
-
-        /**
-         * Defines the different types of injectables.
-         */
-        export var injectableType = {
-            /**
-             * Static injectables will be injected before the application loads. This provides a way to create 
-             * a static constructor and load dependencies into static class properties.
-             */
-            STATIC: 'static',
-
-            /**
-             * Single injectables will contain a constructor. A single injectable will be instantiated once and 
-             * used throughout the application lifetime. It will be instantiated when another component is injected 
-             * and lists it as a dependency.
-             */
-            SINGLE: 'single',
-
-            /**
-             * Multi injectables will contain a constructor. A multi injectable will be instantiated multiple times 
-             * throughout the application lifetime. It will be instantiated whenever another component is injected 
-             * and lists it as a dependency.
-             */
-            MULTI: 'multi'
-        };
     }
     export module dependency {
         /**
@@ -928,9 +1037,9 @@ module plat {
                 } else if (isString(dependency)) {
                     return dependency;
                 } else if (dependency === window) {
-                    return '$window';
+                    return __Window;
                 } else if (dependency === window.document) {
-                    return '$document';
+                    return __Document;
                 }
 
                 var injectors = injectableInjectors,
@@ -974,9 +1083,9 @@ module plat {
                 } else if (isString(Constructor)) {
                     return injectableInjectors[Constructor];
                 } else if (Constructor === window) {
-                    return (<any>injectableInjectors).$window;
+                    return (<any>injectableInjectors).$Window;
                 } else if (Constructor === window.document) {
-                    return (<any>injectableInjectors).$document;
+                    return (<any>injectableInjectors).$Document;
                 }
 
                 var injectors = injectableInjectors,
@@ -1030,8 +1139,8 @@ module plat {
              * associated constructor.
              * @param Constructor The constructor method for the component requiring the dependency 
              * injection.
-             * @param type The type of injector, used for injectables specifying a register.injectableType of 
-             * STATIC, SINGLE, or MULTI. The default is SINGLE.
+             * @param type The type of injector, used for injectables specifying a injectableType of 
+             * STATIC, SINGLETON, FACTORY, INSTANCE, or CLASS. The default is SINGLETON.
              */
             constructor(public name: string, public Constructor: new () => T, dependencies?: Array<any>, public type?: string) {
                 var deps = this.__dependencies = Injector.convertDependencies(dependencies),
@@ -1047,7 +1156,7 @@ module plat {
                         '. Are you using a static injectable Type?');
                 }
 
-                if (name === '$AppStatic') {
+                if (name === __AppStatic) {
                     var App: IAppStatic = <IAppStatic>(<any>this).inject();
                     App.start();
                 }
@@ -1060,7 +1169,8 @@ module plat {
              * as a SINGLE type it will only inject that injectable once.
              */
             inject(): T {
-                var toInject: any = [];
+                var toInject: any = [],
+                    type = this.type;
 
                 this.__dependencies = Injector.getDependencies(this.__dependencies);
 
@@ -1073,9 +1183,10 @@ module plat {
                     toInject.push(dependencies[i].inject());
                 }
 
-                injectable = <T>Injector.__construct(this.Constructor, toInject, this.type);
+                injectable = <T>Injector.__construct(this.Constructor, toInject, type);
 
-                if (this.type === register.injectableType.SINGLE || this.type === register.injectableType.STATIC) {
+                if (type === register.SINGLETON || type === register.FACTORY ||
+                    type === register.STATIC || type === register.CLASS) {
                     this._wrapInjector(injectable);
                 }
 
@@ -1087,9 +1198,10 @@ module plat {
              * SINGLE or STATIC type so that it does not re-instantiate.
              */
             _wrapInjector(value: any): IInjector<any> {
-                return injectableInjectors[this.name] = <IInjector<any>>{
+                var name = this.name;
+                return injectableInjectors[name] = <IInjector<any>>{
                     type: this.type,
-                    name: this.name,
+                    name: name,
                     __dependencies: this.__dependencies,
                     Constructor: this.Constructor,
                     inject: () => <T>value
@@ -1319,6 +1431,15 @@ module plat {
     }
 
     /**
+     * The Type for referencing the '$ExceptionStatic' injectable as a dependency.
+     */
+    export function IExceptionStatic(): IExceptionStatic {
+        return Exception;
+    }
+
+    register.injectable(__ExceptionStatic, IExceptionStatic, null, register.STATIC);
+
+    /**
      * The intended external interface for the '$ExceptionStatic' injectable.
      */
     export interface IExceptionStatic {
@@ -1398,15 +1519,6 @@ module plat {
         PROMISE: number;
     }
 
-    /**
-     * The Type for referencing the '$ExceptionStatic' injectable as a dependency.
-     */
-    export function ExceptionStatic(): IExceptionStatic {
-        return Exception;
-    }
-
-    register.injectable('$ExceptionStatic', ExceptionStatic, null, register.injectableType.STATIC);
-
     class PlatException {
         constructor(public message: string, public name: string) { }
     }
@@ -1481,7 +1593,8 @@ module plat {
                 (<any>error)[properties[i]] = message[properties[i]];
             }
         }
-        var ErrorEvent: events.IErrorEventStatic = acquire('$ErrorEventStatic');
+
+        var ErrorEvent: events.IErrorEventStatic = acquire(__ErrorEventStatic);
 
         ErrorEvent.dispatch('error', Exception, error);
 
@@ -1494,93 +1607,33 @@ module plat {
      * A class for checking browser compatibility issues.
      */
     export class Compat implements ICompat {
-        /**
-         * Signifies whether or not Cordova is defined. If it is, 
-         * we hook up ALM events to Cordova's functions.
-         */
+        $document = acquire(__Document);
+
         cordova: boolean;
-
-        /**
-         * Signifies whether window.history.pushState is defined.
-         */
         pushState: boolean;
-
-        /**
-         * Signifies whether the File API is supported.
-         */
         fileSupported: boolean;
-        
-        /**
-         * Signifies whether Require is present. If it is, we assume 
-         * it is going to be used and leave the loading of the app up 
-         * to the developer.
-         */
         amd: boolean;
-        
-        /**
-         * Signifies whether we are in the contet of a Windows 8 app.
-         */
         msApp: boolean;
-        
-        /**
-         * Signifies whether indexedDB exists on the window.
-         */
         indexedDb: boolean;
-
-        /**
-         * Signifies whether Object.prototype.__proto__ exists.
-         */
         proto: boolean;
-
-        /**
-         * Signifies whether Object.prototype.getPrototypeOf exists.
-         */
         getProto: boolean;
-
-        /**
-         * Signifies whether Object.prototype.setPrototypeOf exists.
-         */
         setProto: boolean;
-
-        /**
-         * Whether or not the current browser has touch events 
-         * like touchstart, touchmove, touchend, etc.
-         */
         hasTouchEvents: boolean;
-
-        /**
-         * Whether or not the current browser has pointer events 
-         * like pointerdown, MSPointerMove, pointerup, etc.
-         */
         hasPointerEvents: boolean;
-
-        /**
-         * Whether or not the current browser has touch events 
-         * like MSPointerDown, touchmove, MSPointerUp, etc.
-         */
         hasMsPointerEvents: boolean;
-
-        /**
-         * An object containing the correctly mapped touch events for the browser.
-         */
         mappedEvents: IMappedEvents;
 
-        /**
-         * Determines if the browser is modern enough to correctly 
-         * run PlatypusTS.
-         */
         get isCompatible() {
-            var $document = acquire('$document');
-
             return isFunction(Object.defineProperty) &&
-                isFunction($document.querySelector);
+                isFunction(this.$document.querySelector);
         }
 
         constructor() {
-            var contextManager: observable.IContextManagerStatic = acquire('$ContextManagerStatic'),
-                $window: Window = acquire('$window'),
-                define = contextManager.defineGetter,
+            var $contextManager: observable.IContextManagerStatic = acquire(__ContextManagerStatic),
+                $window: Window = acquire(__Window),
+                define = $contextManager.defineGetter,
                 navigator = $window.navigator,
+                history = $window.history,
                 hasTouch = !isUndefined((<any>$window).ontouchstart),
                 hasPointer = !!navigator.pointerEnabled,
                 hasMsPointer = !!navigator.msPointerEnabled,
@@ -1588,7 +1641,7 @@ module plat {
                 msA = (<any>$window).MSApp;
 
             define(this, 'cordova', !isNull((<any>$window).cordova));
-            define(this, 'pushState', !isNull($window.history.pushState));
+            define(this, 'pushState', !(isNull(history) || isNull(history.pushState)));
             define(this, 'fileSupported', !(isUndefined((<any>$window).File) || isUndefined((<any>$window).FormData)));
             define(this, 'amd', isFunction(def) && !isNull(def.amd));
             define(this, 'msApp', isObject(msA) && isFunction(msA.execUnsafeLocalFunction));
@@ -1605,42 +1658,41 @@ module plat {
                     $touchstart: 'pointerdown',
                     $touchend: 'pointerup',
                     $touchmove: 'pointermove',
-                    $touchcancel: 'pointercancel',
-                    $touchenter: 'pointerover',
-                    $touchleave: 'pointerout'
+                    $touchcancel: 'pointercancel'
                 });
             } else if (hasMsPointer) {
                 define(this, 'mappedEvents', {
                     $touchstart: 'MSPointerDown',
                     $touchend: 'MSPointerUp',
                     $touchmove: 'MSPointerMove',
-                    $touchcancel: 'MSPointerCancel',
-                    $touchenter: 'MSPointerOver',
-                    $touchleave: 'MSPointerOut'
+                    $touchcancel: 'MSPointerCancel'
                 });
             } else if (hasTouch) {
                 define(this, 'mappedEvents', {
                     $touchstart: 'touchstart',
                     $touchend: 'touchend',
                     $touchmove: 'touchmove',
-                    $touchcancel: 'touchcancel',
-                    $touchenter: 'touchenter',
-                    $touchleave: 'touchleave'
+                    $touchcancel: 'touchcancel'
                 });
             } else {
                 define(this, 'mappedEvents', {
                     $touchstart: 'mousedown',
                     $touchend: 'mouseup',
                     $touchmove: 'mousemove',
-                    $touchcancel: null,
-                    $touchenter: 'mouseenter',
-                    $touchleave: 'mouseleave'
+                    $touchcancel: null
                 });
             }
         }
     }
 
-    register.injectable('$compat', Compat);
+    /**
+     * The Type for referencing the '$Compat' injectable as a dependency.
+     */
+    export function ICompat(): ICompat {
+        return new Compat();
+    }
+
+    register.injectable(__Compat, ICompat);
 
     /**
      * Describes an object containing the correctly mapped touch events for the browser.
@@ -1660,16 +1712,6 @@ module plat {
          * An event type for touch move.
          */
         $touchmove: string;
-
-        /**
-         * An event type for touch enter (or 'over').
-         */
-        $touchenter: string;
-
-        /**
-         * An event type for touch leave (or 'out').
-         */
-        $touchleave: string;
 
         /**
          * An event type for touch cancel.
@@ -1764,420 +1806,135 @@ module plat {
      * An extensible class defining common utilities and helper functions.
      */
     export class Utils implements IUtils {
-        /**
-         * An empty method for quickly creating dummy objects.
-         */
         noop(): void { }
 
-        /**
-         * Allows you to extend the properties of an object with any number 
-         * of other objects. If objects share properties, the last object in the
-         * arguments will take precedence. This method is only a shallow copy of
-         * all the source objects to the destination object.
-         * 
-         * @param destination The destination object to extend.
-         * @param ...sources[] Any number of objects with which to extend the 
-         * destination object.
-         * 
-         * @return {any} The extended destination object.
-         */
         extend(destination: any, ...sources: any[]): any {
             return extend.apply(null, [destination].concat(sources));
         }
 
-        /**
-         * Allows you to extend the properties of an object with any number 
-         * of other objects. If objects share properties, the last object in the
-         * arguments will take precedence. This method is a deep copy of
-         * all the source objects to the destination object.
-         * 
-         * @param destination The destination object to extend.
-         * @param ...sources[] Any number of objects with which to extend the 
-         * destination object.
-         * 
-         * @return {any} The extended destination object.
-         */
         deepExtend(destination: any, ...sources: any[]): any {
             return extend.apply(null, [true, destination].concat(sources));
         }
 
-        /**
-         * Takes in anything and determines if it is a type of Object.
-         * 
-         * @param obj Anything.
-         * 
-         * @return {boolean} True if obj is an object, false otherwise.
-         */
         isObject(obj: any): boolean {
             return isObject(obj);
         }
 
-        /**
-         * Takes in anything and determines if it is a window object.
-         * 
-         * @param obj Anything.
-         * 
-         * @return {boolean} True if obj is the window, false otherwise.
-         */
         isWindow(obj: any): boolean {
             return isWindow(obj);
         }
 
-        /**
-         * Takes in anything and determines if it is a document object.
-         * 
-         * @param obj Anything.
-         * 
-         * @return {boolean} True if obj is the document, false otherwise.
-         */
         isDocument(obj: any): boolean {
             return isDocument(obj);
         }
 
-        /**
-         * Takes in anything and determines if it is a Node.
-         * 
-         * @param obj Anything.
-         * 
-         * @return {boolean} True if obj is a Node, false otherwise.
-         */
         isNode(obj: any): boolean {
             return isNode(obj);
         }
 
-        /**
-         * Takes in anything and determines if it is a DocumentFragment.
-         * 
-         * @param obj Anything.
-         * 
-         * @return {boolean} True if obj is a DocumentFragment, false otherwise.
-         */
         isDocumentFragment(obj: any): boolean {
             return isDocumentFragment(obj);
         }
 
-        /**
-         * Takes in anything and determines if it is a string.
-         * 
-         * @param obj Anything.
-         * 
-         * @return {boolean} True if obj is a string, false otherwise.
-         */
         isString(obj: any): boolean {
             return isString(obj);
         }
 
-        /**
-         * Takes in anything and determines if it is a RegExp object.
-         * 
-         * @param obj Anything.
-         * 
-         * @return {boolean} True if obj is a RegExp object, false otherwise.
-         */
         isRegExp(obj: any): boolean {
             return isRegExp(obj);
         }
 
-        /**
-         * Takes in anything and determines if it is empty. Useful for
-         * checking for empty strings, arrays, or objects without keys.
-         * 
-         * @param obj Anything.
-         * 
-         * @return {boolean} True if the object isEmpty (or null/undefined), 
-         * false otherwise.
-         */
         isEmpty(obj: any): boolean {
             return isEmpty(obj);
         }
 
-        /**
-         * Takes in anything and determines if it is a boolean.
-         * 
-         * @param obj Anything.
-         * 
-         * @return {boolean} True if obj is a boolean, false otherwise.
-         */
         isBoolean(obj: any): boolean {
             return isBoolean(obj);
         }
 
-        /**
-         * Takes in anything and determines if it is a number.
-         * 
-         * @param obj Anything.
-         * 
-         * @return {boolean} True if obj is a number, false otherwise.
-         */
         isNumber(obj: any): boolean {
             return isNumber(obj);
         }
 
-        /**
-         * Takes in anything and determines if it is a function.
-         * 
-         * @param obj Anything.
-         * 
-         * @return {boolean} True if obj is a function, false otherwise.
-         */
         isFunction(obj: any): boolean {
             return isFunction(obj);
         }
 
-        /**
-         * Takes in anything and determines if it is null or undefined.
-         * 
-         * @param obj Anything.
-         * 
-         * @return {boolean} True if obj is null or undefined, false otherwise.
-         */
         isNull(obj: any): boolean {
             return isNull(obj);
         }
 
-        /**
-         * Takes in anything and determines if it is undefined.
-         * 
-         * @param obj Anything.
-         * 
-         * @return {boolean} True if obj is undefined, false otherwise.
-         */
         isUndefined(obj: any): boolean {
             return isUndefined(obj);
         }
 
-        /**
-         * Takes in anything and determines if it is an Array.
-         * 
-         * @param obj Anything.
-         * 
-         * @return {boolean} True if obj is an Array, false otherwise.
-         */
         isArray(obj: any): boolean {
             return isArray(obj);
         }
 
-        /**
-         * Takes in anything and determines if it has array-like qualities.
-         * 
-         * @param obj Anything.
-         * 
-         * @return {boolean} True if obj has array-like qualities (i.e. it is an
-         * Array, string, arguments, or NodeList), false otherwise.
-         */
         isArrayLike(obj: any): boolean {
             return isArrayLike(obj);
         }
 
-        /**
-         * Takes in an array and a function to evaluate the properties in the array.
-         * Returns a filtered array of objects resulting from evaluating the function.
-         * 
-         * @param array The Array to filter.
-         * @param iterator The iterator function to call with array's properties. Returns true if the property
-         * should be kept, false otherwise.
-         * @param context Optional context with which to call the iterator.
-         * 
-         * @return {Array<T>} An array of objects which evaluated to true with the iterator.
-         */
         filter<T>(array: Array<T>, iterator: (value: T, key: any, obj: any) => boolean, context?: any): Array<T>;
-        /**
-         * Takes in an object/array and a function to evaluate the properties in the object/array.
-         * Returns a filtered array of objects resulting from evaluating the function.
-         * 
-         * @param obj The object to filter.
-         * @param iterator The iterator function to call with obj's properties. Returns true if the property
-         * should be kept, false otherwise.
-         * @param context Optional context with which to call the iterator.
-         * 
-         * @return {Array<T>} An array of objects which evaluated to true with the iterator.
-         */
         filter<T>(obj: any, iterator: (value: T, key: any, obj: any) => boolean, context?: any): Array<T>;
         filter<T>(obj: any, iterator: (value: T, key: any, obj: any) => boolean, context?: any): Array<T> {
             return filter(obj, iterator, context);
         }
 
-        /**
-         * Takes in a list and object containing key/value pairs to search for in the list.
-         * 
-         * @param array The list used for searching for properties.
-         * @param properties An object containing key/value pairs to match with obj's values.
-         * 
-         * @return {Array<T>} The matched values in obj.
-         * 
-         * @example where([{foo: 'foo', bar: 'bar'}, {foo: 'bar', bar: 'foo'}], {foo: 'foo'});
-         * //returns [{foo: 'bar', bar: 'bar'}]
-         */
         where<T>(array: Array<T>, properties: any): Array<T>;
-        /**
-         * Takes in a list and object containing key/value pairs to search for on the obj.
-         * 
-         * @param obj The list used for searching for properties.
-         * @param properties An object containing key/value pairs to match with obj's values.
-         * 
-         * @return {Array<T>} The matched values in obj.
-         * 
-         * @example where([{foo: 'foo', bar: 'bar'}, {foo: 'bar', bar: 'foo'}], {foo: 'foo'});
-         * //returns [{foo: 'bar', bar: 'bar'}]
-         */
         where<T>(obj: any, properties: any): Array<T>;
         where(obj: any, properties: any): Array<any> {
             return where(obj, properties);
         }
 
-        /**
-         * Takes in an Array and a function to iterate over. Calls the iterator function with every property
-         * in the Array, then returns the object.
-         * 
-         * @param obj An Array.
-         * @param iterator A method that takes in a value, index, and the object.
-         * @param context An optional context to bind to the iterator.
-         * 
-         * @return {Array<T>} The array.
-         */
         forEach<T>(array: Array<T>, iterator: (value: T, index: number, obj: any) => void, context?: any): Array<T>;
-        /**
-         * Takes in an object and a function to iterate over. Calls the iterator function with every property
-         * in the object, then returns the object. If the object is Array-like (e.g. a String), it will be treated as though 
-         * it is an Array.
-         * 
-         * @param obj An object.
-         * @param iterator A method that takes in a value, key, and the object.
-         * @param context An optional context to bind to the iterator.
-         * 
-         * @return {IObject<T>} The object.
-         */
         forEach<T>(obj: any, iterator: (value: T, key: string, obj: any) => void, context?: any): any;
         forEach<T>(obj: any, iterator: (value: T, key: any, obj: any) => void, context?: any): any {
             return forEach(obj, iterator, context);
         }
 
-        /**
-         * Takes in an object and an iterator function. Calls the iterator with all the values in the object. The 
-         * iterator can transform the object and return it. The returned values will be pushed to an Array and 
-         * returned.
-         * 
-         * @param array An Array.
-         * @param iterator The transformation function.
-         * @param context An optional context to bind to the iterator.
-         * 
-         * @return {Array<U>} The accumulated transformed values from the iterator.
-         */
         map<T, U>(array: Array<T>, iterator: (value: T, index: number, obj: any) => U, context?: any): Array<U>;
-        /**
-         * Takes in an object and an iterator function. Calls the iterator with all the values in the object. The 
-         * iterator can transform the object and return it. The returned values will be pushed to an Array and 
-         * returned.
-         * 
-         * @param obj An object/array.
-         * @param iterator The transformation function.
-         * @param context An optional context to bind to the iterator.
-         * 
-         * @return {Array<U>} The accumulated transformed values from the iterator.
-         */
         map<T, U>(obj: any, iterator: (value: T, key: string, obj: any) => U, context?: any): Array<U>;
         map<T, U>(obj: any, iterator: (value: T, key: any, obj: any) => U, context?: any): Array<U> {
             return map<T, U>(obj, iterator, context);
         }
 
-        /**
-         * Takes in an object and a property to extract from all of the object's values. Returns an array of
-         * the 'plucked' values.
-         * 
-         * @param obj An object.
-         * @param key The property to 'pluck' from each value in obj.
-         * 
-         * @return {Array<U>} An array of 'plucked' values from obj.
-         */
         pluck<T, U>(obj: any, key: string): Array<U> {
             return map<T, U>(obj, (value) => (<any>value)[key]);
         }
 
-        /**
-         * Takes in an array and an iterator. Evaluates all the values in the array with the iterator.
-         * Returns true if any of the iterators return true, otherwise returns false.
-         * 
-         * @param array An array.
-         * @param iterator A method with which to evaluate all the values in obj.
-         * @param context An optional context to bind to the iterator.
-         * 
-         * @return {boolean} True if any calls to iterator return true, false otherwise.
-         */
         some<T>(array: Array<T>, iterator: (value: T, index: number, obj: any) => boolean, context?: any): boolean;
-        /**
-         * Takes in an object and an iterator. Evaluates all the values in the object with the iterator.
-         * Returns true if any of the iterators return true, otherwise returns false. If the object is Array-like 
-         * (e.g. a String), it will be treated as though it is an Array.
-         * 
-         * @param obj An object.
-         * @param iterator A method with which to evaluate all the values in obj.
-         * @param context An optional context to bind to the iterator.
-         * 
-         * @return {boolean} True if any calls to iterator return true, false otherwise.
-         */
         some<T>(obj: any, iterator: (value: T, key: string, obj: any) => boolean, context?: any): boolean;
         some<T>(obj: any, iterator: (value: T, key: any, obj: any) => boolean, context?: any): boolean {
             return some<T>(obj, iterator, context);
         }
 
-        /**
-         * Takes in a method and array of arguments to pass to that method. Delays calling the method until 
-         * after the current call stack is clear. Equivalent to a setTimeout with a timeout of 0.
-         * 
-         * @param method The method to call.
-         * @param args The arguments to apply to the method.
-         * @param context An optional context to bind to the method.
-         * 
-         * @return {() => void} A function that will clear the timeout when called.
-         */
         postpone(method: (...args: any[]) => void, args?: Array<any>, context?: any) {
             return defer(method, 0, args, context);
         }
 
-        /**
-         * Takes in a method and array of arguments to pass to that method. Delays calling the method until 
-         * after the current call stack is clear. Equivalent to a setTimeout with a timeout of 0.
-         * 
-         * @param method The method to call.
-         * @param timeout The time (in milliseconds) to delay before calling the provided method
-         * @param args The arguments to apply to the method.
-         * @param context An optional context to bind to the method.
-         * 
-         * @return {() => void} A function that will clear the timeout when called.
-         */
         defer(method: (...args: any[]) => void, timeout: number, args?: Array<any>, context?: any) {
             return defer(method, timeout, args, context);
         }
 
-        /**
-         * Takes in a prefix and returns a unique identifier string with the prefix preprended. If no prefix
-         * is specified, none will be prepended.
-         * 
-         * @param prefix A string prefix to prepend tothe unique ID.
-         * 
-         * @return {string} The prefix-prepended unique id.
-         */
         uniqueId(prefix?: string) {
             return uniqueId(prefix);
         }
 
-        /**
-         * Takes in a spinal-case, dot.case, or snake_case string and returns 
-         * a camelCase string. Also can turn a string into camelCase with space 
-         * as a delimeter.
-         * 
-         * @param str The spinal-case, dot.case, or snake_case string
-         * 
-         * @return {string} The camelCase string
-         * 
-         * @example camelCase('plat-options'); // returns 'platOptions'
-         */
         camelCase(str: string) {
             return camelCase(str);
         }
     }
 
-    register.injectable('$utils', Utils);
+    /**
+     * The Type for referencing the '$Utils' injectable as a dependency.
+     */
+    export function IUtils(): IUtils {
+        return new Utils();
+    }
+
+    register.injectable(__Utils, IUtils);
 
     /**
      * An object defining common utilities and helper functions.
@@ -2538,190 +2295,82 @@ module plat {
     }
 
     /**
-     * The Type for referencing the '$window' injectable as a dependency. 
+     * The Type for referencing the '$Window' injectable as a dependency. 
      * Used so that the Window can be mocked.
      */
-    export function WindowStatic(): Window {
+    export function IWindow(): Window {
         return window;
     }
 
-    register.injectable('$window', WindowStatic,
-        null, register.injectableType.STATIC);
+    register.injectable(__Window, IWindow);
 
     /**
-     * The Type for referencing the '$document' injectable as a dependency. 
+     * The Type for referencing the '$Document' injectable as a dependency. 
      * Used so that the Window can be mocked.
      */
-    export function DocumentStatic(window: Window): Document {
-        return window.document;
+    export function IDocument($Window: Window): Document {
+        return $Window.document;
     }
 
-    register.injectable('$document', DocumentStatic, [
-        '$window'
-    ], register.injectableType.STATIC);
+    register.injectable(__Document, IDocument, [__Window]);
 
     export module expressions {
         /**
          * A class for keeping track of commonly used regular expressions.
          */
         export class Regex implements IRegex {
-            /**
-             * The regular expression for finding markup in a string.
-             */
             markupRegex: RegExp = /{{[\S\s]*}}/;
-
-            /**
-             * Finds the arguments in a method expression
-             * 
-             * @example 
-             *   // outputs ["('foo', 'bar', 'baz')", "'foo', 'bar', 'baz'"]
-             *   exec("myFunction('foo', 'bar', 'baz')");
-             */
             argumentRegex: RegExp = /\((.*)\)/;
-
-            /**
-             * Given a string, finds the root alias name if that string is an 
-             * alias path.
-             * 
-             * @example
-             *   // outputs ['context']
-             *   exec('@context.foo');
-             * 
-             * @example
-             *   // outputs null
-             *   exec('@context');
-             */
             aliasRegex: RegExp = /[^@\.\[\(]+(?=[\.\[\(])/;
-
-            /**
-             * Finds '/*.html' or '/*.htm' in a url. Useful for removing 
-             * the html file out of the url.
-             * 
-             * @example
-             *   // outputs ['/index.html']
-             *   exec('http://localhost:8080/index.html');
-             */
             initialUrlRegex: RegExp = /\/[^\/]*\.(?:html|htm)/;
-
-            /**
-             * Finds a protocol delimeter in a string (i.e. ://)
-             */
             protocolRegex: RegExp = /:\/\//;
-
-            /**
-             * Looks for any invalid variable syntax.
-             */
             invalidVariableRegex: RegExp = /[^a-zA-Z0-9@_$]/;
-
-            /**
-             * Grabs the file name from a file path.
-             */
             fileNameRegex: RegExp = /.*(?:\/|\\)/;
 
-            /**
-             * The regular expression for matching or removing all newline characters.
-             */
             get newLineRegex(): RegExp {
                 return /\n|\r/g;
             }
 
-            /**
-             * Finds optional parameters in a route string.
-             * 
-             * @example
-             *   // outputs ['(/foo)', '/foo']
-             *   exec('(/foo)/bar');
-             * 
-             * @example
-             *  // outputs ['(/foo)', '/foo']
-             *  exec('(/foo))');
-             */
             get optionalRouteRegex(): RegExp {
                 return /\((.*?)\)/g;
             }
 
-            /**
-             * Finds named parameters in a route string.
-             * 
-             * @example
-             *   // outputs [':foo']
-             *   exec('/:foo/bar')
-             * 
-             *   // outputs [':foo']
-             *   exec('(/:foo)/bar');
-             */
             get namedParameterRouteRegex(): RegExp {
                 return /(\(\?)?:\w+/g;
             }
 
-            /**
-             * Finds an alphanumeric wildcard match in a route string.
-             * 
-             * @example
-             *   // outputs ['*bar']
-             *   exec('/foo/*bar/baz')
-             */
             get wildcardRouteRegex(): RegExp {
                 return /\*\w*/g;
             }
 
-            /**
-             * Finds invalid characters in a route string.
-             * 
-             * @example
-             *  // outputs ['?']
-             *  exec('/foo/bar?query=baz');
-             */
             get escapeRouteRegex(): RegExp {
                 return /[\-{}\[\]+?.,\\\^$|#\s]/g;
             }
 
-            /**
-             * Finds delimeters for spinal-case, snake_case, and dot.case. 
-             * useful for converting to camelCase. Also can turn a string 
-             * into camelCase with space as a delimeter.
-             * 
-             * @example
-             *   // outputs ['-o', '-', 'o']
-             *   exec('plat-options')
-             * 
-             * @example
-             *   // outputs ['.c', '.', 'c']
-             *   exec('plat.config')
-             * 
-             * @example
-             *   // outputs ['_v', '_', 'v']
-             *   exec('plat_var')
-             * 
-             * @example
-             *   // outputs [' W', ' ', 'W']
-             *   exec('Hello World')
-             */
             get camelCaseRegex(): RegExp {
                 return /([\-_\.\s])(\w+?)/g;
             }
 
-            /**
-             * Finds all whitespace and newline characters 
-             * not in string literals. Needs to be combined 
-             * with string replace function using $1 argument.
-             */
             get whiteSpaceRegex(): RegExp {
                 return /("[^"]*?"|'[^']*?')|[\s\r\n\t\v]/g;
             }
 
-            /**
-             * Finds all single and double quotes.
-             */
             get quotationRegex(): RegExp {
                 return /'|"/g;
             }
         }
 
-        register.injectable('$regex', Regex);
+        /**
+         * The Type for referencing the '$Regex' injectable as a dependency.
+         */
+        export function IRegex(): IRegex {
+            return new Regex();
+        }
+
+        register.injectable(__Regex, IRegex);
 
         /**
-         * The intended external interface for the ‘$regex’ injectable.
+         * An object containing commonly used regular expressions.
          */
         export interface IRegex {
             /**
@@ -2866,13 +2515,13 @@ module plat {
          * finding all its tokens (i.e. delimiters, operators, etc).
          */
         export class Tokenizer implements ITokenizer {
-            $ExceptionStatic: IExceptionStatic = acquire('$ExceptionStatic');
             /**
              * The input string to tokenize.
              */
             _input: string;
+
             private __previousChar: string = '';
-            private __variableRegex = (<expressions.IRegex>acquire('$regex')).invalidVariableRegex;
+            private __variableRegex = (<expressions.IRegex>acquire(__Regex)).invalidVariableRegex;
             private __outputQueue: Array<IToken> = [];
             private __operatorStack: Array<IToken> = [];
             private __argCount: Array<any> = [];
@@ -2880,12 +2529,6 @@ module plat {
             private __lastColonChar: Array<string> = [];
             private __lastCommaChar: Array<string> = [];
 
-            /**
-             * Creates an IToken array for the Tokenizer's input string. 
-             * The IToken array contains all the tokens for the input string.
-             * 
-             * @param input The expression string to tokenize.
-             */
             createTokens(input: string): Array<IToken> {
                 if (isNull(input)) {
                     return [];
@@ -3466,7 +3109,8 @@ module plat {
              * @param error The error message to throw
              */
             _throwError(error: string): void {
-                this.$ExceptionStatic.fatal(error + ' in {{' + this._input + '}}', this.$ExceptionStatic.PARSE);
+                var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                $exception.fatal(error + ' in {{' + this._input + '}}', $exception.PARSE);
             }
 
             /**
@@ -3528,6 +3172,27 @@ module plat {
             _isStringValidVariable(input: string): boolean {
                 return !this.__variableRegex.test(input);
             }
+        }
+
+        /**
+         * The Type for referencing the '$Tokenizer' injectable as a dependency.
+         */
+        export function ITokenizer(): ITokenizer {
+            return new Tokenizer();
+        }
+
+        register.injectable(__Tokenizer, ITokenizer);
+
+        /**
+         * Describes an object used to find tokens for an expression and create ITokens.
+         */
+        export interface ITokenizer {
+            /**
+             * Takes in an expression string and outputs ITokens.
+             * 
+             * @param input The expression string to tokenize.
+             */
+            createTokens(input: string): Array<IToken>;
         }
 
         /**
@@ -3593,29 +3258,15 @@ module plat {
         }
 
         /**
-         * Describes an object used to find tokens for an expression and create ITokens.
-         */
-        export interface ITokenizer {
-            /**
-             * Takes in an expression string and outputs ITokens.
-             * 
-             * @param input The expression string to tokenize.
-             */
-            createTokens(input: string): Array<IToken>;
-        }
-
-        register.injectable('$tokenizer', Tokenizer);
-
-        /**
          * Parses javascript expression strings and creates IParsedExpressions.
          */
         export class Parser implements IParser {
+            $Tokenizer: ITokenizer = acquire(__Tokenizer);
+
             /**
              * A single expression's token representation created by the Tokenizer.
              */
             _tokens: Array<IToken> = [];
-            $tokenizer: ITokenizer = acquire('$tokenizer');
-            $ExceptionStatic: IExceptionStatic = acquire('$ExceptionStatic');
             private __cache: IObject<IParsedExpression> = {};
             private __codeArray: Array<string> = [];
             private __identifiers: Array<string> = [];
@@ -3623,18 +3274,13 @@ module plat {
             private __aliases: Array<string> = [];
             private __uniqueAliases: IObject<boolean> = {};
 
-            /**
-             * Parses a string representation of a javascript expression and turns it
-             * into an IParsedExpression.
-             * 
-             * @param input The string representation of a javascript expression.
-             */
             parse(input: string): IParsedExpression {
                 var parsedObject = this.__cache[input];
                 if (!isNull(parsedObject)) {
                     return parsedObject;
                 }
-                this._tokens = this.$tokenizer.createTokens(input);
+
+                this._tokens = this.$Tokenizer.createTokens(input);
 
                 parsedObject = this._evaluate(input);
 
@@ -4163,11 +3809,33 @@ module plat {
              * @param error The error message to throw
              */
             _throwError(error: string): void {
-                this.$ExceptionStatic.fatal(error, this.$ExceptionStatic.PARSE);
+                var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                $exception.fatal(error, $exception.PARSE);
             }
         }
 
-        register.injectable('$parser', Parser);
+        /**
+         * The Type for referencing the '$Parser' injectable as a dependency.
+         */
+        export function IParser(): IParser {
+            return new Parser();
+        }
+
+        register.injectable(__Parser, IParser);
+
+        /**
+         * Describes an object that can parse an expression string and turn it into an
+         * IParsedExpression. The intended external interface for the '$Parser' 
+         * injectable.
+         */
+        export interface IParser {
+            /**
+             * Takes in an expression string and outputs an IParsedExpression.
+             * 
+             * @param input An expression string to parse.
+             */
+            parse(expression: string): IParsedExpression;
+        }
 
         /**
          * Describes an object that is the result of parsing an expression string. Provides a
@@ -4204,95 +3872,80 @@ module plat {
              */
             oneTime?: boolean;
         }
-
-        /**
-         * Describes an object that can parse an expression string and turn it into an
-         * IParsedExpression. The intended external interface for the '$parser' 
-         * injectable.
-         */
-        export interface IParser {
-            /**
-             * Takes in an expression string and outputs an IParsedExpression.
-             * 
-             * @param input An expression string to parse.
-             */
-            parse(expression: string): IParsedExpression;
-        }
     }
     export module web {
         /**
          * The class that handles all interaction with the browser.
          */
         export class Browser implements IBrowser {
-            /**
-             * A unique string identifier.
-             */
+            static config: IBrowserConfig = {
+                NONE: 'none',
+                HASH: 'hash',
+                STATE: 'state',
+                routingType: 'none',
+                hashPrefix: '',
+                baseUrl: ''
+            };
+
+            $EventManagerStatic: events.IEventManagerStatic = acquire(__EventManagerStatic);
+            $Compat: ICompat = acquire(__Compat);
+            $Regex: expressions.IRegex = acquire(__Regex);
+            $Window: Window = acquire(__Window);
+            $Dom: ui.IDom = acquire(__Dom);
+
             uid: string;
-            $EventManagerStatic: events.IEventManagerStatic = acquire('$EventManagerStatic');
-            $compat: ICompat = acquire('$compat');
-            $config: IBrowserConfig = acquire('$browser.config');
-            $regex: expressions.IRegex = acquire('$regex');
-            $window: Window = acquire('$window');
-            $dom: ui.IDom = acquire('$dom');
+
             private __currentUrl: string;
-            private __lastUrl = this.$window.location.href;
+            private __lastUrl = this.$Window.location.href;
             private __initializing = false;
 
             constructor() {
-                var ContextManager: observable.IContextManagerStatic = acquire('$ContextManagerStatic');
+                var ContextManager: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
                 ContextManager.defineGetter(this, 'uid', uniqueId('plat_'));
                 this.$EventManagerStatic.on(this.uid, 'beforeLoad', this.initialize, this);
             }
 
-            /**
-             * Initializes the Browser instance, trims the url, and 
-             * adds events for popstate and hashchange.
-             */
             initialize(): void {
-                var config = this.$config,
-                    compat = this.$compat;
+                var $config = Browser.config,
+                    $compat = this.$Compat;
 
                 this.$EventManagerStatic.dispose(this.uid);
 
-                if (config.routingType === config.routeType.NONE) {
+                if ($config.routingType === $config.NONE) {
                     return;
                 }
 
                 this.__initializing = true;
 
                 var url = this.url(),
-                    trimmedUrl = url.replace(this.$regex.initialUrlRegex, '/'),
-                    changed = this._urlChanged.bind(this);
+                    trimmedUrl = url.replace(this.$Regex.initialUrlRegex, '/'),
+                    changed = this._urlChanged.bind(this),
+                    $dom = this.$Dom,
+                    $window = this.$Window;
 
-                if (isEmpty(config.baseUrl)) {
-                    acquire('$urlUtils');
+                if (isEmpty($config.baseUrl)) {
+                    acquire(__UrlUtilsInstance);
                 }
 
                 if (trimmedUrl !== url) {
                     this.url(trimmedUrl, true);
                 }
 
-                if (compat.pushState) {
-                    if (config.routingType === config.routeType.STATE) {
-                        this.url(config.baseUrl, true);
+                if ($compat.pushState) {
+                    if ($config.routingType === $config.STATE) {
+                        this.url($config.baseUrl, true);
                     }
-                    this.$dom.addEventListener(this.$window, 'popstate', changed, false);
+
+                    $dom.addEventListener($window, 'popstate', changed, false);
                 }
 
-                this.$dom.addEventListener(this.$window, 'hashchange', changed, false);
+                $dom.addEventListener($window, 'hashchange', changed, false);
 
                 this.__initializing = false;
             }
 
-            /**
-             * Sets or gets the current $window.location
-             * 
-             * @param url The URL to set the location to.
-             * @param replace Whether or not to replace the current URL in 
-             * the history.
-             */
             url(url?: string, replace?: boolean): string {
-                var location = this.$window.location;
+                var location = this.$Window.location;
 
                 if (isString(url) && this.__lastUrl !== url) {
                     this.__lastUrl = url;
@@ -4301,32 +3954,21 @@ module plat {
                 return this.__currentUrl || location.href;
             }
 
-            /**
-             * Creates a new IUrlUtils object
-             * 
-             * @param url The URL to associate with the new UrlUtils 
-             * instance.
-             */
-            urlUtils(url?: string): IUrlUtils {
+            urlUtils(url?: string): IUrlUtilsInstance {
                 url = url || this.url();
 
-                var utils: IUrlUtils = acquire('$urlUtils'),
-                    config = this.$config;
+                var $urlUtils: IUrlUtilsInstance = acquire(__UrlUtilsInstance),
+                    $config = Browser.config;
 
-                if (config.routingType === config.routeType.HASH) {
-                    url = url.replace(new RegExp('#' + (config.hashPrefix || '') + '/?'), '');
+                if ($config.routingType === $config.HASH) {
+                    url = url.replace(new RegExp('#' + ($config.hashPrefix || '') + '/?'), '');
                 }
 
-                utils.initialize(url);
+                $urlUtils.initialize(url);
 
-                return utils;
+                return $urlUtils;
             }
 
-            /**
-             * Checks to see if the requested URL is cross domain.
-             * 
-             * @param url The URL to check.
-             */
             isCrossDomain(url: string): boolean {
                 if (!isString(url)) {
                     return false;
@@ -4359,10 +4001,10 @@ module plat {
 
                 this.__lastUrl = url;
 
-                var manager = this.$EventManagerStatic;
-                manager.dispatch('urlChanged',
+                var $manager = this.$EventManagerStatic;
+                $manager.dispatch('urlChanged',
                     this,
-                    manager.direction.DIRECT,
+                    $manager.DIRECT,
                     [this.urlUtils()]);
             }
 
@@ -4376,7 +4018,7 @@ module plat {
              */
             _setUrl(url: string, replace?: boolean): void {
                 url = this._formatUrl(url);
-                if (this.$compat.pushState) {
+                if (this.$Compat.pushState) {
                     if (replace) {
                         history.replaceState(null, '', url);
                     } else {
@@ -4402,10 +4044,10 @@ module plat {
              * @param url The URL to format.
              */
             _formatUrl(url: string): string {
-                var config = this.$config;
-                if (config.routingType === config.routeType.HASH) {
+                var $config = Browser.config;
+                if ($config.routingType === $config.HASH) {
                     var hasProtocol = url.indexOf(this.urlUtils().protocol) !== -1,
-                        prefix = this.$config.hashPrefix || '',
+                        prefix = $config.hashPrefix || '',
                         hashRegex = new RegExp('#' + prefix + '|#/');
 
                     if (hasProtocol && !hashRegex.test(url)) {
@@ -4419,13 +4061,127 @@ module plat {
             }
         }
 
-        register.injectable('$browser', Browser);
+        /**
+         * The Type for referencing the '$Browser' injectable as a dependency.
+         */
+        export function IBrowser(): IBrowser {
+            return new Browser();
+        }
+
+        register.injectable(__Browser, IBrowser);
+
+        /**
+         * Defines an object that handles interaction with the browser.
+         */
+        export interface IBrowser {
+            /**
+             * A unique string identifier.
+             */
+            uid: string;
+
+            /**
+             * Initializes the Browser instance, trims the url, and 
+             * adds events for popstate and hashchange.
+             */
+            initialize(): void;
+
+            /**
+             * Sets or gets the current $Window.location
+             * 
+             * @param url The URL to set the location to.
+             * @param replace Whether or not to replace the current URL in 
+             * the history.
+             */
+            url(url?: string, replace?: boolean): string;
+
+            /**
+             * Creates a new IUrlUtils object
+             * 
+             * @param url The URL to associate with the new UrlUtils 
+             * instance.
+             */
+            urlUtils(url?: string): IUrlUtilsInstance;
+
+            /**
+             * Checks to see if the requested URL is cross domain.
+             */
+            isCrossDomain(url: string): boolean;
+        }
+
+        /**
+         * The Type for referencing the '$BrowserConfig' injectable as a dependency.
+         */
+        export function IBrowserConfig(): IBrowserConfig {
+            return Browser.config;
+        }
+
+        register.injectable(__BrowserConfig, IBrowserConfig);
+
+        /**
+         * Specifies configuration properties for the IBrowser 
+         * injectable.
+         */
+        export interface IBrowserConfig {
+            /**
+             * Specifies that the application will not be doing 
+             * url-based routing.
+             */
+            NONE: string;
+
+            /**
+             * Specifies that the application wants to use hash-based 
+             * routing.
+             */
+            HASH: string;
+
+            /**
+             * Specifies that the application wants to use the HTML5 
+             * popstate method for managing routing. If the browser 
+             * does not support HTML5 popstate events, hash routing 
+             * will be used instead.
+             * 
+             * Note: In 'state' mode, the web server must be configured to 
+             * route every url to the root url.
+             */
+            STATE: string;
+
+            /**
+             * Allows you to define how your app will route. There are
+             * three modes, 'none', 'hash', and 'state'. 
+             * 
+             * In 'none' mode, the application will not be responding to 
+             * url changes.
+             * 
+             * In 'hash' mode, the application will use a hash prefix and 
+             * all navigation will be managed with hash changes.
+             * 
+             * In 'state' mode, the application will use the 'popstate' 
+             * event and will be able to manage routes. The web server 
+             * must be configured to route every url to the root url if 
+             * using 'state' mode.
+             * 
+             * The default mode is NONE
+             */
+            routingType: string;
+
+            /**
+             * If routingType is set to 'hash', this value will be 
+             * appended to the '#' at the beginning of every route. The 
+             * default prefix is '!', meaning each path will be '#!/<path>'.
+             */
+            hashPrefix: string;
+
+            /**
+             * Specifies the base url used to normalize url routing.
+             */
+            baseUrl: string;
+        }
 
         /**
          * A class that deals with obtaining detailed information about an 
          * associated URL.
          */
-        export class UrlUtils implements IUrlUtils {
+        export class UrlUtils implements IUrlUtilsInstance {
             private static __urlUtilsElement: HTMLAnchorElement;
             private static __getQuery(search: string): IObject<string> {
                 if (isEmpty(search)) {
@@ -4436,7 +4192,7 @@ module plat {
                     query: IObject<string> = {},
                     length = split.length,
                     item: Array<string>,
-                    define = (<observable.IContextManagerStatic>acquire('$ContextManagerStatic')).defineGetter;
+                    define = (<observable.IContextManagerStatic>acquire(__ContextManagerStatic)).defineGetter;
 
                 for (var i = 0; i < length; ++i) {
                     item = split[i].split('=');
@@ -4459,97 +4215,48 @@ module plat {
                 return url.substring(0, url.indexOf('/', url.indexOf(next))) + '/';
             }
 
-            /**
-             * The whole associated URL.
-             */
+            $ContextManagerStatic: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
+            $Document: Document = acquire(__Document);
+            $Window: Window = acquire(__Window);
+            $Compat: ICompat = acquire(__Compat);
+            $Regex: expressions.IRegex = acquire(__Regex);
+            $BrowserConfig: IBrowserConfig = acquire(__BrowserConfig);
+
             href: string;
-
-            /**
-             * The protocol scheme of the URL, including the final ':' of the associated URL.
-             */
             protocol: string;
-
-            /**
-             * The hostname and port of the associated URL.
-             */
             host: string;
-
-            /**
-             * The domain of the associated uRL.
-             */
             hostname: string;
-
-            /**
-             * The port number of the associated URL.
-             */
             port: string;
-
-            /**
-             * The additional path value in the associated URL preceded by a '/'.
-             */
             pathname: string;
-
-            /**
-             * A '?' followed by the included parameters in the associated URL.
-             */
             search: string;
-
-            /**
-             * A '#' followed by the included hash fragments in the associated URL.
-             */
             hash: string;
-
-            /**
-             * The username specified before the domain name in the associated URL.
-             */
             username: string;
-
-            /**
-             * The password specified before the domain name in the associated URL.
-             */
             password: string;
-
-            /**
-             * The origin of the associated URL (its protocol, domain, and port).
-             */
             origin: string;
+            query: IObject<string>;
 
             /**
-             * An object containing keyed query arguments from the associated URL.
+             * Handle the initial URL and get the base URL if necessary.
              */
-            query: IObject<string>;
-            $ContextManagerStatic: observable.IContextManagerStatic = acquire('$ContextManagerStatic');
-            $document: Document = acquire('$document');
-            $window: Window = acquire('$window');
-            $compat: ICompat = acquire('$compat');
-            $regex: expressions.IRegex = acquire('$regex');
-            $config: IBrowserConfig = acquire('$browser.config');
-
             constructor() {
-                var config = this.$config;
-                if (isEmpty(config.baseUrl)) {
-                    var url = this.$window.location.href,
-                        trimmedUrl = url.replace(this.$regex.initialUrlRegex, '/');
+                var $config = this.$BrowserConfig;
+                if (isEmpty($config.baseUrl)) {
+                    var url = this.$Window.location.href,
+                        trimmedUrl = url.replace(this.$Regex.initialUrlRegex, '/');
 
-                    if (config.routingType === config.routeType.HASH) {
-                        config.baseUrl = trimmedUrl.replace(/#.*/, '');
+                    if ($config.routingType === $config.HASH) {
+                        $config.baseUrl = trimmedUrl.replace(/#.*/, '');
                     } else {
-                        config.baseUrl = UrlUtils.__getBaseUrl(trimmedUrl);
+                        $config.baseUrl = UrlUtils.__getBaseUrl(trimmedUrl);
                     }
                 }
             }
 
-            /**
-             * Initiializes this instance of the UrlUtils and defines its properties using 
-             * the input url.
-             * 
-             * @param url The input to associate with this instance of UrlUtils.
-             */
             initialize(url: string): void {
                 url = url || '';
 
                 var element = UrlUtils.__urlUtilsElement ||
-                    (UrlUtils.__urlUtilsElement = this.$document.createElement('a')),
+                    (UrlUtils.__urlUtilsElement = this.$Document.createElement('a')),
                     define = this.$ContextManagerStatic.defineGetter;
 
                 // always make local urls relative to start page.
@@ -4581,34 +4288,37 @@ module plat {
 
                 var path: string;
 
-                if (!isEmpty(this.$config.baseUrl)) {
-                    path = url.replace(this.$config.baseUrl, '/');
+                if (!isEmpty(this.$BrowserConfig.baseUrl)) {
+                    path = url.replace(this.$BrowserConfig.baseUrl, '/');
                 } else {
                     path = (element.pathname.charAt(0) === '/')
-                        ? element.pathname
-                        : '/' + element.pathname;
+                    ? element.pathname
+                    : '/' + element.pathname;
                 }
 
                 define(this, 'pathname', path, true, true);
                 define(this, 'query', UrlUtils.__getQuery(this.search), true, true);
             }
 
-            /**
-             * Allows the UrlUtils instance to display its href property when the toString 
-             * method is called.
-             */
             toString(): string {
                 return this.href;
             }
         }
 
-        register.injectable('$urlUtils', UrlUtils, null, register.injectableType.MULTI);
+        /**
+         * The Type for referencing the '$UrlUtilsInstance' injectable as a dependency.
+         */
+        export function IUrlUtilsInstance(): IUrlUtilsInstance {
+            return new UrlUtils();
+        }
+
+        register.injectable(__UrlUtilsInstance, IUrlUtilsInstance, null, register.INSTANCE);
 
         /**
          * Defines an object that deals with obtaining detailed information about an 
          * associated URL.
          */
-        export interface IUrlUtils {
+        export interface IUrlUtilsInstance {
             /**
              * The whole associated URL.
              */
@@ -4684,183 +4394,18 @@ module plat {
         }
 
         /**
-         * Defines an object that handles interaction with the browser.
-         */
-        export interface IBrowser {
-            /**
-             * Initializes the Browser instance, trims the url, and 
-             * adds events for popstate and hashchange.
-             */
-            initialize(): void;
-
-            /**
-             * Checks to see if the requested URL is cross domain.
-             */
-            isCrossDomain(url: string): boolean;
-
-            /**
-             * Sets or gets the current $window.location
-             * 
-             * @param url The URL to set the location to.
-             * @param replace Whether or not to replace the current URL in 
-             * the history.
-             */
-            url(url?: string, replace?: boolean): string;
-
-            /**
-             * Creates a new IUrlUtils object
-             * 
-             * @param url The URL to associate with the new UrlUtils 
-             * instance.
-             */
-            urlUtils(url?: string): IUrlUtils;
-        }
-
-        /**
-         * Specifies configuration properties for the Browser 
-         * injectable.
-         */
-        export class BrowserConfig implements IBrowserConfig {
-            /**
-             * Contains the constants for use with routingType.
-             */
-            routeType: IRouteType = {
-                /**
-                 * Specifies that the application will not be doing 
-                 * url-based routing.
-                 */
-                NONE: 'none',
-
-                /**
-                 * Specifies that the application wants to use hash-based 
-                 * routing.
-                 */
-                HASH: 'hash',
-
-                /**
-                 * Specifies that the application wants to use the HTML5 
-                 * popstate method for managing routing. If the browser 
-                 * does not support HTML5 popstate events, hash routing 
-                 * will be used instead.
-                 * 
-                 * Note: In 'state' mode, the web server must be configured to 
-                 * route every url to the root url.
-                 */
-                STATE: 'state'
-            };
-
-            /**
-             * Allows you to define how your app will route. There are
-             * three modes, 'none', 'hash', and 'state'. 
-             * 
-             * In 'none' mode, the application will not be responding to 
-             * url changes.
-             * 
-             * In 'hash' mode, the application will use a hash prefix and 
-             * all navigation will be managed with hash changes.
-             * 
-             * In 'state' mode, the application will use the 'popstate' 
-             * event and will be able to manage routes. The web server 
-             * must be configured to route every url to the root url if 
-             * using 'state' mode.
-             * 
-             * The default mode is 'none'
-             */
-            routingType = this.routeType.NONE;
-
-            /**
-             * If routingType is set to 'hash', this value will be 
-             * appended to the '#' at the beginning of every route. The 
-             * default prefix is '', meaning each path will be '#/<path>'.
-             */
-            hashPrefix = '';
-
-            /**
-             * Specifies the base url used to normalize url routing.
-             */
-            baseUrl = '';
-        }
-
-        register.injectable('$browser.config', BrowserConfig);
-
-        /**
-         * Contains the constants for use with routingType.
-         */
-        export interface IRouteType {
-            /**
-             * Specifies that the application will not be doing 
-             * url-based routing.
-             */
-            NONE: string;
-
-            /**
-             * Specifies that the application wants to use hash-based 
-             * routing.
-             */
-            HASH: string;
-
-            /**
-             * Specifies that the application wants to use the HTML5 
-             * popstate method for managing routing. If the browser 
-             * does not support HTML5 popstate events, hash routing 
-             * will be used instead.
-             * 
-             * Note: In 'state' mode, the web server must be configured to 
-             * route every url to the root url.
-             */
-            STATE: string;
-        }
-
-        /**
-         * Specifies configuration properties for the IBrowser 
-         * injectable.
-         */
-        export interface IBrowserConfig {
-            /**
-             * Contains the constants for use with routingType.
-             */
-            routeType: IRouteType;
-
-            /**
-             * Allows you to define how your app will route. There are
-             * three modes, 'none', 'hash', and 'state'. 
-             * 
-             * In 'none' mode, the application will not be responding to 
-             * url changes.
-             * 
-             * In 'hash' mode, the application will use a hash prefix and 
-             * all navigation will be managed with hash changes.
-             * 
-             * In 'state' mode, the application will use the 'popstate' 
-             * event and will be able to manage routes. The web server 
-             * must be configured to route every url to the root url if 
-             * using 'state' mode.
-             * 
-             * The default mode is 'none'
-             */
-            routingType: string;
-
-            /**
-             * If routingType is set to 'hash', this value will be 
-             * appended to the '#' at the beginning of every route. The 
-             * default prefix is '!', meaning each path will be '#!/<path>'.
-             */
-            hashPrefix: string;
-
-            /**
-             * Specifies the base url used to normalize url routing.
-             */
-            baseUrl: string;
-        }
-
-        /**
          * The class that handles route registration and navigation 
          * to and from IViewControls within the Routeport.
          */
         export class Router implements IRouter {
-            /**
-             * A unique string identifier.
-             */
+            $Browser: IBrowser = acquire(__Browser);
+            $BrowserConfig: IBrowserConfig = acquire(__BrowserConfig);
+            $EventManagerStatic: events.IEventManagerStatic = acquire(__EventManagerStatic);
+            $NavigationEventStatic: events.INavigationEventStatic = acquire(__NavigationEventStatic);
+            $Compat: ICompat = acquire(__Compat);
+            $Regex: expressions.IRegex = acquire(__Regex);
+            $Window: Window = acquire(__Window);
+
             uid: string;
 
             /**
@@ -4886,43 +4431,32 @@ module plat {
              * defaultRoute is not specified in its plat-options.
              */
             _baseRoute: IMatchedRoute;
-            $browser: IBrowser = acquire('$browser');
-            $browserConfig: IBrowserConfig = acquire('$browser.config');
-            $EventManagerStatic: events.IEventManagerStatic = acquire('$EventManagerStatic');
-            $NavigationEventStatic: events.INavigationEventStatic = acquire('$NavigationEventStatic');
-            $compat: ICompat = acquire('$compat');
-            $ExceptionStatic: IExceptionStatic = acquire('$ExceptionStatic');
-            $regex: expressions.IRegex = acquire('$regex');
-            $window: Window = acquire('$window');
-            private __escapeRegex = this.$regex.escapeRouteRegex;
-            private __optionalRegex = this.$regex.optionalRouteRegex;
+
+            private __escapeRegex = this.$Regex.escapeRouteRegex;
+            private __optionalRegex = this.$Regex.optionalRouteRegex;
             private __pathSlashRegex = /^\/|\/$/g;
             private __firstRoute = true;
             private __history: Array<string>;
 
+            /**
+             * Assigns a uid and subscribes to the 'urlChanged' event.
+             */
             constructor() {
-                var ContextManager: observable.IContextManagerStatic = acquire('$ContextManagerStatic');
+                var ContextManager: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
                 ContextManager.defineGetter(this, 'uid', uniqueId('plat_'));
 
                 this._removeListener = this.$EventManagerStatic.on(this.uid, 'urlChanged', this._routeChanged, this);
-                var config = this.$browserConfig;
-                if (config.routingType === config.routeType.NONE) {
-                    config.routingType = config.routeType.HASH;
-                    config.hashPrefix = config.hashPrefix || '';
+                var $browserConfig = this.$BrowserConfig;
+                if ($browserConfig.routingType === $browserConfig.NONE) {
+                    $browserConfig.routingType = $browserConfig.HASH;
+                    $browserConfig.hashPrefix = $browserConfig.hashPrefix || '';
                 }
 
-                if (this.$compat.msApp) {
+                if (this.$Compat.msApp) {
                     this.__history = [];
                 }
             }
 
-            /**
-             * Registers route strings/RegExp and associates them with a control type.
-             * 
-             * @param type The control type with which to associate the routes.
-             * @param routes An array of strings or RegExp expressions to associate with 
-             * the control type.
-             */
             registerRoutes(type: string, routes: Array<any>): void {
                 if (!isArray(routes)) {
                     return;
@@ -4936,21 +4470,14 @@ module plat {
                 }
             }
 
-            /**
-             * Formats a url path given the parameters and query string, then changes the 
-             * url to that path.
-             * 
-             * @param path The route to match with a registered ViewControl.
-             * @param options The IRouteNavigationOptions associated with this routing 
-             * operation.
-             */
             route(path: string, options?: IRouteNavigationOptions): void {
                 options = options || <IRouteNavigationOptions>{};
 
                 var replace = options.replace,
                     route: string,
                     match: IMatchedRoute,
-                    currentUtils = this.$browser.urlUtils();
+                    $browser = this.$Browser,
+                    currentUtils: IUrlUtilsInstance = $browser.urlUtils();
 
                 if (this.__firstRoute) {
                     this.__firstRoute = false;
@@ -4961,7 +4488,8 @@ module plat {
                 var build = this._buildRoute(path, options.query);
 
                 if (isNull(build)) {
-                    this.$ExceptionStatic.warn('Route: ' + path + ' is not a matched route.', this.$ExceptionStatic.NAVIGATION);
+                    var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                    $exception.warn('Route: ' + path + ' is not a matched route.', $exception.NAVIGATION);
                     return;
                 }
 
@@ -4980,27 +4508,22 @@ module plat {
                     return;
                 }
 
-                var nextUtils = this.$browser.urlUtils(route);
+                var nextUtils = $browser.urlUtils(route);
 
                 if (currentUtils.href === nextUtils.href) {
                     replace = true;
                 }
 
-                this.$browser.url(route, replace);
+                $browser.url(route, replace);
             }
 
-            /**
-             * Navigates back in the history.
-             * 
-             * @param length The number of entries to go back in the history.
-             */
             goBack(length?: number): void {
-                this.$window.history.go(-length);
+                this.$Window.history.go(-length);
 
                 if (this.__history && this.__history.length > 1) {
                     var historyLength = this.__history.length;
                     this.__history = this.__history.slice(0, historyLength - length);
-                    this.$browser.url(this.__history.pop() || '');
+                    this.$Browser.url(this.__history.pop() || '');
                 }
             }
 
@@ -5020,7 +4543,7 @@ module plat {
                 }
 
                 var route = routeParameter + queryStr,
-                    utils = this.$browser.urlUtils(route),
+                    utils = this.$Browser.urlUtils(route),
                     match = this._match(utils);
 
                 if (isNull(match)) {
@@ -5067,12 +4590,13 @@ module plat {
              * @param utils The IUrlUtils created for the invoked 
              * route function.
              */
-            _routeChanged(ev: events.IDispatchEvent, utils: web.IUrlUtils): void {
+            _routeChanged(ev: events.IDispatchEventInstance, utils: web.IUrlUtilsInstance): void {
                 var matchedRoute = this._match(utils);
 
                 if (isNull(matchedRoute)) {
-                    this.$ExceptionStatic.warn('Could not match route: ' + utils.pathname,
-                        this.$ExceptionStatic.NAVIGATION);
+                    var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                    $exception.warn('Could not match route: ' + utils.pathname,
+                        $exception.NAVIGATION);
                     return;
                 }
 
@@ -5139,11 +4663,11 @@ module plat {
              * @param route The route to parse.
              */
             _getRouteParameters(route: string): IRouteMatcher {
-                var regex = this.$regex,
-                    namedRegex = regex.namedParameterRouteRegex,
+                var $regex = this.$Regex,
+                    namedRegex = $regex.namedParameterRouteRegex,
                     escapeRegex = this.__escapeRegex,
                     optionalRegex = this.__optionalRegex,
-                    wildcardRegex = regex.wildcardRouteRegex,
+                    wildcardRegex = $regex.wildcardRouteRegex,
                     regexArgs = route.match(namedRegex),
                     wildcard = wildcardRegex.exec(route),
                     args: Array<string> = [];
@@ -5182,7 +4706,7 @@ module plat {
              * Matches a route to a registered route using the 
              * registered route's regular expression.
              */
-            _match(utils: web.IUrlUtils): IMatchedRoute {
+            _match(utils: web.IUrlUtilsInstance): IMatchedRoute {
                 var routes = this._routes,
                     url = this._getUrlFragment(utils),
                     route: IRouteMatcher,
@@ -5265,12 +4789,55 @@ module plat {
              * 
              * @param utils The IUrlUtils associated with this route function.
              */
-            _getUrlFragment(utils: web.IUrlUtils): string {
+            _getUrlFragment(utils: web.IUrlUtilsInstance): string {
                 return utils.pathname.replace(this.__pathSlashRegex, '');
             }
         }
 
-        register.injectable('$router', Router);
+        /**
+         * The Type for referencing the '$Router' injectable as a dependency.
+         */
+        export function IRouter(): IRouter {
+            return new Router();
+        }
+
+        register.injectable(__Router, IRouter);
+
+        /**
+         * Describes the object that handles route registration and navigation 
+         * to and from IViewControls within the Routeport.
+         */
+        export interface IRouter {
+            /**
+             * A unique string identifier.
+             */
+            uid: string;
+
+            /**
+             * Registers route strings/RegExp and associates them with a control type.
+             * 
+             * @param type The control type with which to associate the routes.
+             * @param routes An array of strings or RegExp expressions to associate with 
+             * the control type.
+             */
+            registerRoutes(type: string, routes: Array<any>): void;
+
+            /**
+             * Formats a url path given the parameters and query string, then changes the 
+             * url to that path.
+             * 
+             * @param path The route path to navigate to.
+             * @param options The IRouteNavigationOptions included with this route.
+             */
+            route(path: string, options?: web.IRouteNavigationOptions): void;
+
+            /**
+             * Navigates back in the history.
+             * 
+             * @param length The number of entries to go back in the history.
+             */
+            goBack(length?: number): void;
+        }
 
         /**
          * Options that you can submit to the router in order
@@ -5356,37 +4923,6 @@ module plat {
              */
             query?: IObject<string>;
         }
-
-        /**
-         * Describes the object that handles route registration and navigation 
-         * to and from IViewControls within the Routeport.
-         */
-        export interface IRouter {
-            /**
-             * Registers route strings/RegExp and associates them with a control type.
-             * 
-             * @param type The control type with which to associate the routes.
-             * @param routes An array of strings or RegExp expressions to associate with 
-             * the control type.
-             */
-            registerRoutes(type: string, routes: Array<any>): void;
-
-            /**
-             * Formats a url path given the parameters and query string, then changes the 
-             * url to that path.
-             * 
-             * @param path The route path to navigate to.
-             * @param options The IRouteNavigationOptions included with this route.
-             */
-            route(path: string, options?: web.IRouteNavigationOptions): void;
-
-            /**
-             * Navigates back in the history.
-             * 
-             * @param length The number of entries to go back in the history.
-             */
-            goBack(length?: number): void;
-        }
     }
     export module async {
         /**
@@ -5439,7 +4975,8 @@ module plat {
             static all<R>(promises: Array<R>): IThenable<Array<R>>;
             static all(promises: Array<any>): IThenable<Array<any>> {
                 if (!isArray(promises)) {
-                    Promise.$ExceptionStatic.fatal(new TypeError('You must pass an array to all.'), Promise.$ExceptionStatic.PROMISE);
+                    var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                    $exception.fatal(new TypeError('You must pass an array to all.'), $exception.PROMISE);
                 }
 
                 return new Promise<Array<any>>((resolve: (value?: Array<any>) => void, reject: (reason?: any) => void) => {
@@ -5505,7 +5042,8 @@ module plat {
             static race<R>(promises: Array<R>): IThenable<R>;
             static race(promises: Array<any>): IThenable<any> {
                 if (!isArray(promises)) {
-                    Promise.$ExceptionStatic.fatal(new TypeError('You must pass an array to race.'), Promise.$ExceptionStatic.PROMISE);
+                    var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                    $exception.fatal(new TypeError('You must pass an array to race.'), $exception.PROMISE);
                 }
 
                 return new Promise<any>((resolve: (value: any) => any, reject: (error: any) => any) => {
@@ -5545,8 +5083,6 @@ module plat {
                     reject(error);
                 });
             }
-
-            private static $ExceptionStatic: IExceptionStatic;
 
             private static __invokeResolveFunction<R>(resolveFunction: IResolveFunction<R>,
                 promise: Promise<R>): void {
@@ -5656,8 +5192,9 @@ module plat {
 
                 try {
                     if (promise === value) {
-                        Promise.$ExceptionStatic.fatal(new TypeError('A promises callback cannot return that same promise.'),
-                            Promise.$ExceptionStatic.PROMISE);
+                        var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                        $exception.fatal(new TypeError('A promises callback cannot return that same promise.'),
+                            $exception.PROMISE);
                     }
 
                     if (isObject(value) || isFunction(value)) {
@@ -5714,16 +5251,18 @@ module plat {
              * @param resolveFunction A IResolveFunction for fulfilling/rejecting the Promise.
              */
             constructor(resolveFunction: IResolveFunction<R>) {
+                var $exception: IExceptionStatic;
                 if (!isFunction(resolveFunction)) {
-                    Promise.$ExceptionStatic.fatal(
-                        new TypeError('You must pass a resolver function as the first argument to the promise constructor'),
-                        Promise.$ExceptionStatic.PROMISE);
+                    $exception = acquire(__ExceptionStatic);
+                    $exception.fatal(new TypeError('You must pass a resolver function as the first argument to the promise constructor'),
+                        $exception.PROMISE);
                 }
 
                 if (!(this instanceof Promise)) {
-                    Promise.$ExceptionStatic.fatal(new TypeError('Failed to construct "Promise": ' +
+                    $exception = acquire(__ExceptionStatic);
+                    $exception.fatal(new TypeError('Failed to construct "Promise": ' +
                         'Please use the "new" operator, this object constructor cannot be called as a function.'),
-                        Promise.$ExceptionStatic.PROMISE);
+                        $exception.PROMISE);
                 }
 
                 this.__subscribers = [];
@@ -5731,41 +5270,9 @@ module plat {
                 Promise.__invokeResolveFunction<R>(resolveFunction, this);
             }
 
-            /**
-             * Takes in two methods, called when/if the promise fulfills/rejects.
-             * 
-             * @param onFulfilled A method called when/if the promise fulills. If undefined the next
-             * onFulfilled method in the promise chain will be called.
-             * @param onRejected A method called when/if the promise rejects. If undefined the next
-             * onRejected method in the promise chain will be called.
-             */
             then<U>(onFulfilled: (success: R) => IThenable<U>, onRejected?: (error: any) => IThenable<U>): IThenable<U>;
-            /**
-             * Takes in two methods, called when/if the promise fulfills/rejects.
-             * 
-             * @param onFulfilled A method called when/if the promise fulills. If undefined the next
-             * onFulfilled method in the promise chain will be called.
-             * @param onRejected A method called when/if the promise rejects. If undefined the next
-             * onRejected method in the promise chain will be called.
-             */
             then<U>(onFulfilled: (success: R) => IThenable<U>, onRejected?: (error: any) => U): IThenable<U>;
-            /**
-             * Takes in two methods, called when/if the promise fulfills/rejects.
-             * 
-             * @param onFulfilled A method called when/if the promise fulills. If undefined the next
-             * onFulfilled method in the promise chain will be called.
-             * @param onRejected A method called when/if the promise rejects. If undefined the next
-             * onRejected method in the promise chain will be called.
-             */
             then<U>(onFulfilled: (success: R) => U, onRejected?: (error: any) => IThenable<U>): IThenable<U>;
-            /**
-             * Takes in two methods, called when/if the promise fulfills/rejects.
-             * 
-             * @param onFulfilled A method called when/if the promise fulills. If undefined the next
-             * onFulfilled method in the promise chain will be called.
-             * @param onRejected A method called when/if the promise rejects. If undefined the next
-             * onRejected method in the promise chain will be called.
-             */
             then<U>(onFulfilled: (success: R) => U, onRejected?: (error: any) => U): IThenable<U>;
             then<U>(onFulfilled: (success: R) => any, onRejected?: (error: any) => any): IThenable<U> {
                 var promise = this;
@@ -5784,19 +5291,7 @@ module plat {
                 return thenPromise;
             }
 
-            /**
-             * A wrapper method for Promise.then(undefined, onRejected);
-             * 
-             * @param onRejected A method called when/if the promise rejects. If undefined the next
-             * onRejected method in the promise chain will be called.
-             */
             catch<U>(onRejected: (error: any) => IThenable<U>): IThenable<U>;
-            /**
-             * A wrapper method for Promise.then(undefined, onRejected);
-             * 
-             * @param onRejected A method called when/if the promise rejects. If undefined the next
-             * onRejected method in the promise chain will be called.
-             */
             catch<U>(onRejected: (error: any) => U): IThenable<U>;
             catch<U>(onRejected: (error: any) => any): IThenable<U> {
                 return this.then(null, onRejected);
@@ -5857,11 +5352,6 @@ module plat {
             catch<U>(onRejected: (error: any) => U): IThenable<U>;
         }
 
-        register.injectable('$PromiseStatic', PromiseStatic, [
-            '$window',
-            '$ExceptionStatic'
-        ], register.injectableType.STATIC);
-
         enum State {
             PENDING = <any>(void 0),
             SEALED = 0,
@@ -5881,8 +5371,8 @@ module plat {
     
         function useMutationObserver(): () => void {
             var observer = new BrowserMutationObserver(flush),
-                $document = acquire('$document'),
-                $window = acquire('$window'),
+                $document = acquire(__Document),
+                $window = acquire(__Window),
                 element = $document.createElement('div');
 
             observer.observe(element, { attributes: true });
@@ -5952,26 +5442,26 @@ module plat {
         }
 
         /**
-         * The Type for referencing the '$PromiseStatic' injectable as a dependency.
+         * The Type for referencing the '$Promise' injectable as a dependency.
          */
-        export function PromiseStatic($window: any, $ExceptionStatic: IExceptionStatic): IPromiseStatic {
-            if (!isNull($window.Promise) &&
-                isFunction($window.Promise.all) &&
-                isFunction($window.Promise.cast) &&
-                isFunction($window.Promise.race) &&
-                isFunction($window.Promise.resolve) &&
-                isFunction($window.Promise.reject)) {
-                return $window.Promise;
+        export function IPromise($Window: any): IPromise {
+            if (!isNull($Window.Promise) &&
+                isFunction($Window.Promise.all) &&
+                isFunction($Window.Promise.cast) &&
+                isFunction($Window.Promise.race) &&
+                isFunction($Window.Promise.resolve) &&
+                isFunction($Window.Promise.reject)) {
+                return $Window.Promise;
             }
-
-            (<any>Promise).$ExceptionStatic = $ExceptionStatic;
             return Promise;
         }
+
+        register.injectable(__Promise, IPromise, [__Window], register.CLASS);
 
         /**
          * The injectable reference for the ES6 Promise implementation.
          */
-        export interface IPromiseStatic {
+        export interface IPromise {
             /**
              * An ES6 implementation of the Promise API. Useful for asynchronous programming.
              * Takes in 2 generic types corresponding to the fullfilled success and error types. 
@@ -6064,39 +5554,30 @@ module plat {
             /**
              * The plat.IBrowser injectable instance
              */
-            $browser: web.IBrowser = acquire('$browser');
+            $Browser: web.IBrowser = acquire(__Browser);
             /**
              * The injectable instance of type Window
              */
-            $window: Window = acquire('$window');
+            $Window: Window = acquire(__Window);
             /**
              * The injectable instance of type Document
              */
-            $document: Document = acquire('$document');
+            $Document: Document = acquire(__Document);
             /**
              * The configuration for an HTTP Request
              */
-            $config: IHttpConfigStatic = acquire('$http.config');
+            $config: IHttpConfig = acquire(__HttpConfig);
 
-            private __fileSupported = (<ICompat>acquire('$compat')).fileSupported;
-            private __options: IHttpConfigStatic;
+            private __fileSupported = (<ICompat>acquire(__Compat)).fileSupported;
+            private __options: IHttpConfig;
 
             /**
              * @param options The IHttpConfigStatic used to customize this HttpRequest.
              */
-            constructor(options: IHttpConfigStatic) {
+            constructor(options: IHttpConfig) {
                 this.__options = extend({}, this.$config, options);
             }
 
-            /**
-             * Performs either the XmlHttpRequest or the JSONP callback and returns an AjaxPromise. 
-             * The Promise is fulfilled or rejected when either the XmlHttpRequest returns or the 
-             * JSONP callback is fired.
-             *
-             * @return {AjaxPromise} A promise that fulfills/rejects
-             * when either the XmlHttpRequest returns (Response statuses >= 200 and < 300 are a success.
-             * Other response statuses are failures) or the JSONP callback is fired.
-             */
             execute<R>(): IAjaxPromise<R> {
                 var options = this.__options,
                     url = options.url;
@@ -6105,7 +5586,7 @@ module plat {
                     return this._invalidOptions();
                 }
 
-                options.url = this.$browser.urlUtils(url).toString();
+                options.url = this.$Browser.urlUtils(url).toString();
 
                 var isCrossDomain = options.isCrossDomain || false,
                     xDomain = false;
@@ -6116,7 +5597,7 @@ module plat {
                 } else {
                     this.xhr = new XMLHttpRequest();
                     if (isUndefined(this.xhr.withCredentials)) {
-                        xDomain = this.$browser.isCrossDomain(url);
+                        xDomain = this.$Browser.isCrossDomain(url);
                     }
                 }
 
@@ -6129,13 +5610,6 @@ module plat {
                 return this._sendXhrRequest();
             }
 
-            /**
-             * Adds the script tag and processes the callback for the JSONP and returns a 
-             * Promise. The Promise is fulfilled or rejected when the JSONP callback is called.
-             *
-             * @return {Promise<IAjaxResponse>} A promise that fulfills with the 
-             * JSONP callback and rejects if there is a problem.
-             */
             executeJsonp<R>(): IAjaxPromise<R> {
                 var options = this.__options,
                     url = options.url;
@@ -6144,14 +5618,14 @@ module plat {
                     return this._invalidOptions();
                 }
 
-                options.url = this.$browser.urlUtils(url).toString();
+                options.url = this.$Browser.urlUtils(url).toString();
                 if (isNull(this.jsonpCallback)) {
                     this.jsonpCallback = options.jsonpCallback || uniqueId('plat_callback');
                 }
 
                 return new AjaxPromise((resolve, reject) => {
-                    var $window = <any>this.$window,
-                        $document = this.$document,
+                    var $window = <any>this.$Window,
+                        $document = this.$Document,
                         scriptTag = $document.createElement('script'),
                         jsonpCallback = this.jsonpCallback,
                         jsonpIdentifier = options.jsonpIdentifier || 'callback';
@@ -6269,7 +5743,7 @@ module plat {
                     };
 
                     if (!isString(method)) {
-                        var Exception: IExceptionStatic = acquire('$ExceptionStatic');
+                        var Exception: IExceptionStatic = acquire(__ExceptionStatic);
                         Exception.warn('AjaxOptions method was not of type string. Defaulting to "GET".', Exception.AJAX);
                         method = 'GET';
                     }
@@ -6408,7 +5882,7 @@ module plat {
              */
             _invalidOptions(): IAjaxPromise<any> {
                 return new AjaxPromise((resolve, reject) => {
-                    var exceptionFactory: IExceptionStatic = acquire('$ExceptionStatic');
+                    var exceptionFactory: IExceptionStatic = acquire(__ExceptionStatic);
                     exceptionFactory.warn('Attempting a request without specifying a url', exceptionFactory.AJAX);
                     reject(new AjaxError({
                         response: 'Attempting a request without specifying a url',
@@ -6493,7 +5967,7 @@ module plat {
                         val = '';
                     } else if (isObject(val)) {
                         // may throw a fatal error but this is an invalid case
-                        var $exception: IExceptionStatic = acquire('$ExceptionStatic');
+                        var $exception: IExceptionStatic = acquire(__ExceptionStatic);
                         $exception.warn('Invalid form entry with key "' + key + '" and value "' + val, $exception.AJAX);
                         val = JSON.stringify(val);
                     }
@@ -6520,7 +5994,7 @@ module plat {
                             formData.append(key, val, val.name || val.fileName || 'blob');
                         } else {
                             // may throw a fatal error but this is an invalid case
-                            var $exception: IExceptionStatic = acquire('$ExceptionStatic');
+                            var $exception: IExceptionStatic = acquire(__ExceptionStatic);
                             $exception.warn('Invalid form entry with key "' + key + '" and value "' + val, $exception.AJAX);
                             formData.append(key, JSON.stringify(val));
                         }
@@ -6535,9 +6009,9 @@ module plat {
                 var options = this.__options,
                     data = options.data,
                     url = options.url,
-                    $document = this.$document,
+                    $document = this.$Document,
                     $body = $document.body,
-                    Promise: IPromiseStatic = acquire('$PromiseStatic'),
+                    Promise: IPromise = acquire(__Promise),
                     form = $document.createElement('form'),
                     iframe = $document.createElement('iframe'),
                     iframeName = uniqueId('iframe_target'),
@@ -6585,7 +6059,7 @@ module plat {
                 });
             }
             private __createInput(key: string, val: any): HTMLInputElement {
-                var $document = this.$document,
+                var $document = this.$Document,
                     $exception: IExceptionStatic,
                     input = <HTMLInputElement>$document.createElement('input');
 
@@ -6601,7 +6075,7 @@ module plat {
                             length = fileList.length;
                         // if no inputs found, stringify the data
                         if (length === 0) {
-                            $exception = acquire('$ExceptionStatic');
+                            $exception = acquire(__ExceptionStatic);
                             $exception.warn('Could not find input[type="file"] with [name="' + key +
                                 '"]. Stringifying data instead.', $exception.AJAX);
                             input.value = JSON.stringify(val);
@@ -6628,7 +6102,7 @@ module plat {
 
                             // could not find the right file
                             if (length === -1) {
-                                $exception = acquire('$ExceptionStatic');
+                                $exception = acquire(__ExceptionStatic);
                                 $exception.warn('Could not find input[type="file"] with [name="' + key + '"] and [value="' +
                                     val.path + '"]. Stringifying data instead.', $exception.AJAX);
                                 input.value = JSON.stringify(val);
@@ -6636,7 +6110,7 @@ module plat {
                         }
                     } else {
                         // may throw a fatal error but this is an invalid case
-                        $exception = acquire('$ExceptionStatic');
+                        $exception = acquire(__ExceptionStatic);
                         $exception.warn('Invalid form entry with key "' + key + '" and value "' + val, $exception.AJAX);
                         input.value = JSON.stringify(val);
                     }
@@ -6677,7 +6151,7 @@ module plat {
         /**
          * Describes an object which contains Ajax configuration properties.
          */
-        export interface IHttpConfigStatic extends IJsonpConfigStatic {
+        export interface IHttpConfig extends IJsonpConfig {
             /**
              * The HTTP method type of XmlHttpRequest such as 'GET', 'POST', 'PUT', 
              * 'DELETE', etc. Ignored for non-HTTP urls. Defaults to 'GET'.
@@ -6753,7 +6227,7 @@ module plat {
         /**
          * Describes an object which contains JSONP configuration properties.
          */
-        export interface IJsonpConfigStatic {
+        export interface IJsonpConfig {
             /**
              * The url for the JSONP callback 
              * (without the ?{callback}={callback_name} parameter in the url)
@@ -6861,9 +6335,8 @@ module plat {
         /**
          * Describes a type of Promise that fulfills with an IAjaxResponse and can be optionally canceled.
          */
-        export class AjaxPromise<R> extends Promise<IAjaxResponse<R>>
-            implements IAjaxPromise<R> {
-            $window: Window = acquire('$window');
+        export class AjaxPromise<R> extends Promise<IAjaxResponse<R>> implements IAjaxPromise<R> {
+            $Window: Window = acquire(__Window);
             private __http: HttpRequest;
             constructor(resolveFunction: IAjaxResolveFunction<R>, promise?: any) {
                 super(resolveFunction);
@@ -6889,7 +6362,7 @@ module plat {
                     xhr.abort();
                     http.xhr = null;
                 } else if (!isNull(jsonpCallback)) {
-                    (<any>this.$window)[jsonpCallback] = noop;
+                    (<any>this.$Window)[jsonpCallback] = noop;
                 }
 
                 (<any>this).__subscribers = [];
@@ -7036,7 +6509,7 @@ module plat {
              * Standard denotation for form encoded data. All objects are converted 
              * to string key-value pairs.
              */
-            ENCODEDFORM: string;
+            ENCODED_FORM: string;
 
             /**
              * Standard denotation for JavaScript Object Notation (JSON).
@@ -7047,12 +6520,12 @@ module plat {
              * Standard denotation for a multi-part Webform. Associated with 
              * an entype of 'multipart/form-data'.
              */
-            MULTIPARTFORM: string;
+            MULTIPART_FORM: string;
 
             /**
              * Standard denotation for arbitrary binary data.
              */
-            OCTETSTREAM: string;
+            OCTET_STREAM: string;
 
             /**
              * Standard denotation for XML files.
@@ -7062,13 +6535,104 @@ module plat {
             /**
              * Standard denotation for textual data.
              */
-            PLAINTEXT: string;
+            PLAIN_TEXT: string;
 
             /**
              * Standard denotation for HTML.
              */
             HTML: string;
         }
+
+        /**
+         * The instantiated class of the injectable for making 
+         * AJAX requests.
+         */
+        export class Http implements IHttp {
+            /**
+             * Default Http config
+             */
+            static config: IHttpConfig = {
+                url: null,
+                method: 'GET',
+                responseType: '',
+                transforms: [],
+                headers: {},
+                withCredentials: false,
+                timeout: null,
+                jsonpIdentifier: 'callback',
+                contentType: 'application/json;charset=utf-8;'
+            };
+
+            /**
+             * HttpResponseType mapping
+             */
+            responseType: IHttpResponseType = {
+                DEFAULT: '',
+                ARRAYBUFFER: 'arraybuffer',
+                BLOB: 'blob',
+                DOCUMENT: 'document',
+                JSON: 'json',
+                TEXT: 'text'
+            };
+
+            /**
+             * Common HttpContentType mappings
+             */
+            contentType: IHttpContentType = {
+                ENCODED_FORM: 'application/x-www-form-urlencoded;charset=utf-8;',
+                JSON: 'application/json;charset=utf-8;',
+                MULTIPART_FORM: 'multipart/form-data;',
+                OCTET_STREAM: 'application/octet-stream;charset=utf-8;',
+                XML: 'application/xml;charset=utf-8;',
+                PLAIN_TEXT: 'text/plain;',
+                HTML: 'text/html;'
+            };
+
+            /**
+             * A wrapper method for the Http class that creates and executes a new Http with
+             * the specified IAjaxOptions. This function will check if 
+             * XMLHttpRequest level 2 is present, and will default to JSONP if it isn't and 
+             * the request is cross-domain.
+             * 
+             * @param options The IAjaxOptions for either the XMLHttpRequest 
+             * or the JSONP callback.
+             */
+            ajax<R>(options: IHttpConfig): IAjaxPromise<R> {
+                return new HttpRequest(options).execute<R>();
+            }
+
+            /**
+             * A direct method to force a cross-domain JSONP request.
+             * 
+             * @param options The IJsonpOptions 
+             */
+            jsonp<R>(options: IJsonpConfig): IAjaxPromise<R> {
+                return new HttpRequest(options).executeJsonp<R>();
+            }
+
+            /**
+             * Makes an ajax request, specifying responseType: 
+             * responseType.JSON.
+             * 
+             * @param options The IAjaxOptions for either the XMLHttpRequest 
+             * or the JSONP callback.
+             * @return {AjaxPromise} A promise, when fulfilled or rejected, 
+             * will return an IAjaxResponse object, with the response being a parsed 
+             * JSON object (assuming valid JSON).
+             */
+            json<R>(options: IHttpConfig): IAjaxPromise<R> {
+                return new HttpRequest(extend({}, options, { responseType: 'json' })).execute<R>();
+            }
+        }
+
+        /**
+         * The Type for referencing the '$Http' injectable as a dependency.
+         */
+        export function IHttp(): IHttp {
+            return new Http();
+        }
+
+        register.injectable(__Http, IHttp);
 
         /**
          * Describes the interface for the Ajax injectable for making both 
@@ -7097,7 +6661,7 @@ module plat {
              * @return {AjaxPromise} A promise, when fulfilled
              * or rejected, will return an IAjaxResponse object.
              */
-            ajax<R>(options: IHttpConfigStatic): IAjaxPromise<R>;
+            ajax<R>(options: IHttpConfig): IAjaxPromise<R>;
 
             /**
              * A direct method to force a cross-domain JSONP request.
@@ -7106,7 +6670,7 @@ module plat {
              * @return {AjaxPromise} A promise, when fulfilled
              * or rejected, will return an IAjaxResponse object.
              */
-            jsonp? <R>(options: IJsonpConfigStatic): IAjaxPromise<R>;
+            jsonp? <R>(options: IJsonpConfig): IAjaxPromise<R>;
 
             /**
              * Makes an ajax request, specifying responseType: 
@@ -7118,108 +6682,24 @@ module plat {
              * will return an IAjaxResponse object, with the response being a parsed 
              * JSON object (assuming valid JSON).
              */
-            json? <R>(options: IHttpConfigStatic): IAjaxPromise<R>;
+            json? <R>(options: IHttpConfig): IAjaxPromise<R>;
         }
 
         /**
-         * The instantiated class of the injectable for making 
-         * AJAX requests.
+         * The Type for referencing the '$HttpConfig' injectable as a dependency.
          */
-        export class Http implements IHttp {
-            /**
-             * Default Http config
-             */
-            static config: IHttpConfigStatic = {
-                url: null,
-                method: 'GET',
-                responseType: '',
-                transforms: [],
-                headers: {},
-                withCredentials: false,
-                timeout: null,
-                jsonpIdentifier: 'callback',
-                contentType: 'application/json;charset=utf-8;'
-            };
-
-            /**
-             * HttpResponseType mapping
-             */
-            responseType: IHttpResponseType = {
-                DEFAULT: '',
-                ARRAYBUFFER: 'arraybuffer',
-                BLOB: 'blob',
-                DOCUMENT: 'document',
-                JSON: 'json',
-                TEXT: 'text'
-            };
-
-            /**
-             * Common HttpContentType mappings
-             */
-            contentType: IHttpContentType = {
-                ENCODEDFORM: 'application/x-www-form-urlencoded;charset=utf-8;',
-                JSON: 'application/json;charset=utf-8;',
-                MULTIPARTFORM: 'multipart/form-data',
-                OCTETSTREAM: 'application/octet-stream;charset=utf-8;',
-                XML: 'application/xml;charset=utf-8;',
-                PLAINTEXT: 'text/plain',
-                HTML: 'text/html'
-            };
-
-            /**
-             * A wrapper method for the Http class that creates and executes a new Http with
-             * the specified IAjaxOptions. This function will check if 
-             * XMLHttpRequest level 2 is present, and will default to JSONP if it isn't and 
-             * the request is cross-domain.
-             * 
-             * @param options The IAjaxOptions for either the XMLHttpRequest 
-             * or the JSONP callback.
-             */
-            ajax<R>(options: IHttpConfigStatic): IAjaxPromise<R> {
-                return new HttpRequest(options).execute<R>();
-            }
-
-            /**
-             * A direct method to force a cross-domain JSONP request.
-             * 
-             * @param options The IJsonpOptions 
-             */
-            jsonp<R>(options: IJsonpConfigStatic): IAjaxPromise<R> {
-                return new HttpRequest(options).executeJsonp<R>();
-            }
-
-            /**
-             * Makes an ajax request, specifying responseType: 
-             * responseType.JSON.
-             * 
-             * @param options The IAjaxOptions for either the XMLHttpRequest 
-             * or the JSONP callback.
-             * @return {AjaxPromise} A promise, when fulfilled or rejected, 
-             * will return an IAjaxResponse object, with the response being a parsed 
-             * JSON object (assuming valid JSON).
-             */
-            json<R>(options: IHttpConfigStatic): IAjaxPromise<R> {
-                return new HttpRequest(extend({}, options, { responseType: 'json' })).execute<R>();
-            }
-        }
-
-        register.injectable('$http', Http);
-
-        /**
-         * The Type for referencing the '$http.config' injectable as a dependency.
-         */
-        export function HttpConfigStatic(): IHttpConfigStatic {
+        export function IHttpConfig(): IHttpConfig {
             return Http.config;
         }
 
-        register.injectable('$http.config', HttpConfigStatic, null, register.injectableType.STATIC);
+        register.injectable(__HttpConfig, IHttpConfig);
     }
     export module storage {
         var caches: IObject<Cache<any>> = {};
         var internalCaches: any = {};
 
         /**
-         * A Cache class, for use with the $CacheStatic injectable. Used for storing objects.
+         * A Cache class, for use with the $CacheFactory injectable. Used for storing objects.
          * Takes in a generic type corresponding to the type of objects it contains.
          * 
          */
@@ -7227,7 +6707,7 @@ module plat {
             /**
              * Method for creating a new Cache. Takes a generic type to denote the
              * type of objects stored in the new Cache.  If the Cache already exists
-             * in the $CacheStatic, a new Cache will not be created.
+             * in the $CacheFactory, a new Cache will not be created.
              * 
              * @static
              * @param id The id of the new Cache.
@@ -7236,7 +6716,7 @@ module plat {
             static create<T>(id: string, options?: ICacheOptions): ICache<T> {
                 var cache: ICache<T> = caches[id];
 
-                if (cache === null || cache === undefined) {
+                if (isNull(cache)) {
                     cache = caches[id] = new Cache<T>(id, options);
                 }
 
@@ -7244,7 +6724,7 @@ module plat {
             }
 
             /**
-             * Gets a cache out of the $CacheStatic if it exists.
+             * Gets a cache out of the $CacheFactory if it exists.
              * 
              * @static
              * @param id The identifier used to search for the cache.
@@ -7283,7 +6763,7 @@ module plat {
                 this.__id = id;
                 this.__options = options;
 
-                if (options === null || options === undefined) {
+                if (isNull(options)) {
                     this.__options = {
                         timeout: 0
                     };
@@ -7292,9 +6772,6 @@ module plat {
                 internalCaches[id] = {};
             }
 
-            /**
-             * Method for accessing information about the cache.
-             */
             info(): ICacheInfo {
                 return {
                     id: this.__id,
@@ -7303,14 +6780,6 @@ module plat {
                 };
             }
 
-            /**
-             * Method for inserting an object into the cache.
-             * 
-             * @param key The key to use for storage/retrieval of the object.
-             * @param value The value to store with the associated key.
-             * 
-             * @return {T} The value inserted into the cache.
-             */
             put(key: string, value: T): T {
                 var val = internalCaches[this.__id][key];
                 internalCaches[this.__id][key] = value;
@@ -7328,39 +6797,21 @@ module plat {
                 return value;
             }
 
-            /**
-             * Method for retrieving an object from the cache.
-             * 
-             * @param key The key to search for in the cache.
-             * 
-             * @return {T|undefined} The value found at the associated key. Returns undefined for a cache miss.
-             */
             read(key: string): T {
                 return internalCaches[this.__id][key];
             }
 
-            /**
-             * Method for removing an object from the cache.
-             * 
-             * @param key The key to remove from the cache.
-             */
             remove(key: string): void {
                 internalCaches[this.__id][key] = null;
                 delete internalCaches[this.__id][key];
                 this.__size--;
             }
 
-            /**
-             * Method for clearing the cache, removing all of its keys.
-             */
             clear(): void {
                 internalCaches[this.__id] = {};
                 this.__size = 0;
             }
 
-            /**
-             * Method for removing this cache from the $CacheStatic.
-             */
             dispose(): void {
                 this.clear();
                 caches[this.__id] = null;
@@ -7369,62 +6820,43 @@ module plat {
         }
 
         /**
-         * The Type for referencing the '$CacheStatic' injectable as a dependency.
+         * The Type for referencing the '$CacheFactory' injectable as a dependency.
          */
-        export function CacheStatic(): ICacheStatic {
+        export function ICacheFactory(): ICacheFactory {
             return Cache;
         }
 
-        register.injectable('$CacheStatic', CacheStatic, null, register.injectableType.STATIC);
+        register.injectable(__CacheFactory, ICacheFactory, null, register.FACTORY);
 
         /**
-         * A cache for persisting NodeManager trees.
+         * Used to manage all the defined caches for the current application session.
          */
-        var managerCache = Cache.create<processing.INodeManager>('__managerCache');
-
-        /**
-         * The Type for referencing the '$ManagerCacheStatic' injectable as a dependency.
-         */
-        export function ManagerCacheStatic(): typeof managerCache {
-            return managerCache;
-        }
-
-        register.injectable('$ManagerCacheStatic', ManagerCacheStatic, null, register.injectableType.STATIC);
-
-        /**
-         * Options for a cache.
-         */
-        export interface ICacheOptions {
+        export interface ICacheFactory {
             /**
-             * Specifies a timeout for a cache value. When a value 
-             * is put in the cache, it will be valid for the given
-             * period of time (in milliseconds). After the timeout 
-             * is reached, the value will automatically be removed
-             * from the cache.
+             * Method for creating a new ICache. Takes a generic type to denote the
+             * type of objects stored in the new ICache.  If the ICache already exists
+             * in the ICacheStatic, a new ICache will not be created.
+             * 
+             * @param id The id of the new ICache.
+             * @param options ICacheOptions for customizing the ICache.
+             * 
+             * @return {ICache} The newly created ICache object.
              */
-            timeout?: number;
-        }
-
-        /**
-         * Contains information about an ICache.
-         */
-        export interface ICacheInfo {
-            /**
-             * A unique id for the ICache object, used to 
-             * retrieve the ICache out of the $CacheStatic.
-             */
-            id: string;
+            create<T>(id: string, options?: ICacheOptions): ICache<T>;
 
             /**
-             * Represents the number of items in the ICache.
+             * Gets a cache out of the ICacheStatic if it exists.
+             * 
+             * @param id The identifier used to search for the cache.
+             * 
+             * @returns {ICache|undefined}
              */
-            size: number;
+            fetch<T>(id: string): ICache<T>;
 
             /**
-             * Represents the ICacheOptions that the ICache is
-             * using.
+             * Clears the ICacheStatic and all of its caches.
              */
-            options: ICacheOptions;
+            clear(): void;
         }
 
         /**
@@ -7470,41 +6902,59 @@ module plat {
             clear(): void;
 
             /**
-             * Method for removing an ICache from the $CacheStatic.
+             * Method for removing an ICache from the $CacheFactory.
              */
             dispose(): void;
         }
 
         /**
-         * External interface for the '$CacheStatic' injectable. CacheStatic is used to manage all 
-         * the caches for the application.
+         * A cache for persisting NodeManager trees.
          */
-        export interface ICacheStatic {
+        var managerCache = Cache.create<processing.INodeManager>('__managerCache');
+
+        /**
+         * The Type for referencing the '$ManagerCache' injectable as a dependency.
+         */
+        export function IManagerCache(): typeof managerCache {
+            return managerCache;
+        }
+
+        register.injectable(__ManagerCache, IManagerCache);
+
+        /**
+         * Options for a cache.
+         */
+        export interface ICacheOptions {
             /**
-             * Method for creating a new ICache. Takes a generic type to denote the
-             * type of objects stored in the new ICache.  If the ICache already exists
-             * in the ICacheStatic, a new ICache will not be created.
-             * 
-             * @param id The id of the new ICache.
-             * @param options ICacheOptions for customizing the ICache.
-             * 
-             * @return {ICache} The newly created ICache object.
+             * Specifies a timeout for a cache value. When a value 
+             * is put in the cache, it will be valid for the given
+             * period of time (in milliseconds). After the timeout 
+             * is reached, the value will automatically be removed
+             * from the cache.
              */
-            create<T>(id: string, options?: ICacheOptions): ICache<T>;
+            timeout?: number;
+        }
+
+        /**
+         * Contains information about an ICache.
+         */
+        export interface ICacheInfo {
+            /**
+             * A unique id for the ICache object, used to 
+             * retrieve the ICache out of the $CacheFactory.
+             */
+            id: string;
 
             /**
-             * Gets a cache out of the ICacheStatic if it exists.
-             * 
-             * @param id The identifier used to search for the cache.
-             * 
-             * @returns {ICache|undefined}
+             * Represents the number of items in the ICache.
              */
-            fetch<T>(id: string): ICache<T>;
+            size: number;
 
             /**
-             * Clears the ICacheStatic and all of its caches.
+             * Represents the ICacheOptions that the ICache is
+             * using.
              */
-            clear(): void;
+            options: ICacheOptions;
         }
 
         /**
@@ -7513,26 +6963,13 @@ module plat {
          * also clone the template when you retrieve it.
          */
         class TemplateCache extends Cache<any> implements ITemplateCache {
-            $ExceptionStatic: IExceptionStatic = acquire('$ExceptionStatic');
-            $Promise: async.IPromiseStatic = acquire('$PromiseStatic');
+            $Promise: async.IPromise = acquire(__Promise);
 
             constructor() {
                 super('__templateCache');
             }
 
-            /**
-             * Stores a Node in the cache as a DocumentFragment.
-             * 
-             * @param key The key used to store the value.
-             * @param value The Node.
-             */
             put(key: string, value: Node): async.IThenable<DocumentFragment>;
-            /**
-             * Stores a Promise in the cache.
-             * 
-             * @param key The key used to store the value.
-             * @param value The Promise.
-             */
             put(key: string, value: async.IThenable<Node>): async.IThenable<DocumentFragment>;
             put(key: string, value: any): async.IThenable<DocumentFragment> {
                 super.put(key, this.$Promise.resolve<DocumentFragment>(value));
@@ -7548,15 +6985,6 @@ module plat {
                 return this.$Promise.resolve<DocumentFragment>(value);
             }
 
-            /**
-             * Method for retrieving a Node from a TemplateCache. If a Node 
-             * is found in the cache, it will be cloned.
-             * 
-             * @param key The key to search for in a TemplateCache.
-             * 
-             * @return {T|async.IThenable<T, Error>} The value found at the associated key. 
-             * Returns null for an ITemplateCache miss.
-             */
             read(key: string): async.IThenable<DocumentFragment> {
                 var promise: async.IThenable<DocumentFragment> = super.read(key);
 
@@ -7567,14 +6995,22 @@ module plat {
                 promise.then<DocumentFragment>((node) => {
                     return this.put(key, node);
                 }).catch((error) => {
-                    this.$ExceptionStatic.warn('Error retrieving template from promise.', this.$ExceptionStatic.TEMPLATE);
+                    var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                    $exception.warn('Error retrieving template from promise.', $exception.TEMPLATE);
                 });
 
                 return promise;
             }
         }
 
-        register.injectable('$templateCache', TemplateCache);
+        /**
+         * The Type for referencing the '$TemplateCache' injectable as a dependency.
+         */
+        export function ITemplateCache(): ITemplateCache {
+            return new TemplateCache();
+        }
+
+        register.injectable(__TemplateCache, ITemplateCache);
 
         /**
          * Interface for TemplateCache, used to manage all templates. Returns a unique template 
@@ -7615,58 +7051,26 @@ module plat {
                 });
             }
 
-            /**
-             * Returns the number of items in storage.
-             */
             get length(): number {
                 return (<Storage>(<any>this).__storage).length;
             }
 
-            /**
-             * Clears storage, deleting all of its keys.
-             */
             clear() {
                 (<Storage>(<any>this).__storage).clear();
             }
 
-            /**
-             * Gets an item out of local storage with the assigned key.
-             * 
-             * @param key The key of the item to retrieve from storage.
-             * @return {T} The item retrieved from storage.
-             */
             getItem<T>(key: string): T {
                 return (<Storage>(<any>this).__storage).getItem(key);
             }
 
-            /**
-             * Allows for iterating over storage keys with an index. When
-             * called with an index, it will return the key at that index in 
-             * storage.
-             * 
-             * @param index The index used to retrieve the associated key.
-             * @return {string} The key at the given index.
-             */
             key(index: number): string {
                 return (<Storage>(<any>this).__storage).key(index);
             }
 
-            /**
-             * Searches in this.__storage for an item and removes it if it 
-             * exists.
-             * 
-             * @param key the Key of the item to remove from this.__storage.
-             */
             removeItem(key: string): void {
                 (<Storage>(<any>this).__storage).removeItem(key);
             }
 
-            /**
-             * Adds data to storage with the designated key.
-             * 
-             * @param key The key of the item to store in storage.
-             * @param data The data to store in storage with the key.
-             */
             setItem(key: string, data: any): void {
                 (<Storage>(<any>this).__storage).setItem(key, data);
                 (<any>this)[key] = this.getItem(key);
@@ -7726,10 +7130,17 @@ module plat {
          * A class used to wrap local storage into an injectable.
          */
         export class LocalStorage extends BaseStorage implements ILocalStorage {
-            private __storage: Storage = (<Window>acquire('$window')).localStorage;
+            private __storage: Storage = (<Window>acquire(__Window)).localStorage;
         }
 
-        register.injectable('$localStorage', LocalStorage);
+        /**
+         * The Type for referencing the '$LocalStorage' injectable as a dependency.
+         */
+        export function ILocalStorage(): ILocalStorage {
+            return new LocalStorage();
+        }
+
+        register.injectable(__LocalStorage, ILocalStorage);
 
         /**
          * Describes an object used to wrap local storage into an injectable.
@@ -7784,10 +7195,17 @@ module plat {
          * A class for wrapping SessionStorage as an injectable.
          */
         export class SessionStorage extends BaseStorage implements ISessionStorage {
-            private __storage: Storage = (<Window>acquire('$window')).sessionStorage;
+            private __storage: Storage = (<Window>acquire(__Window)).sessionStorage;
         }
 
-        register.injectable('$sessionStorage', SessionStorage);
+        /**
+         * The Type for referencing the '$SessionStorage' injectable as a dependency.
+         */
+        export function ISessionStorage(): ISessionStorage {
+            return new SessionStorage();
+        }
+
+        register.injectable(__SessionStorage, ISessionStorage);
 
         /**
          * Describes an object used to wrap session storage into an injectable.
@@ -7999,24 +7417,24 @@ module plat {
             fn: (context: any, aliases: any,
                 a: (context: any, aliases: any) => any,
                 b: (context: any, aliases: any) => any): void => {
-                var Exception: plat.IExceptionStatic = plat.acquire('$ExceptionStatic');
-                Exception.fatal('Assignment operators are not supported', Exception.PARSE);
+                var $exception: plat.IExceptionStatic = plat.acquire(__ExceptionStatic);
+                $exception.fatal('Assignment operators are not supported', $exception.PARSE);
             }
         },
         '++': {
             precedence: 3, associativity: '',
             fn: (context: any, aliases: any,
                 a: (context: any, aliases: any) => any): void => {
-                var Exception: plat.IExceptionStatic = plat.acquire('$ExceptionStatic');
-                Exception.fatal('Assignment operators are not supported', Exception.PARSE);
+                var $exception: plat.IExceptionStatic = plat.acquire(__ExceptionStatic);
+                $exception.fatal('Assignment operators are not supported', $exception.PARSE);
             }
         },
         '--': {
             precedence: 3, associativity: '',
             fn: (context: any, aliases: any,
                 a: (context: any, aliases: any) => any): void => {
-                var Exception: plat.IExceptionStatic = plat.acquire('$ExceptionStatic');
-                Exception.fatal('Assignment operators are not supported', Exception.PARSE);
+                var $exception: plat.IExceptionStatic = plat.acquire(__ExceptionStatic);
+                $exception.fatal('Assignment operators are not supported', $exception.PARSE);
             }
         },
         '+=': {
@@ -8024,8 +7442,8 @@ module plat {
             fn: (context: any, aliases: any,
                 a: (context: any, aliases: any) => any,
                 b: (context: any, aliases: any) => any): void => {
-                var Exception: plat.IExceptionStatic = plat.acquire('$ExceptionStatic');
-                Exception.fatal('Assignment operators are not supported', Exception.PARSE);
+                var $exception: plat.IExceptionStatic = plat.acquire(__ExceptionStatic);
+                $exception.fatal('Assignment operators are not supported', $exception.PARSE);
             }
         },
         '-=': {
@@ -8033,8 +7451,8 @@ module plat {
             fn: (context: any, aliases: any,
                 a: (context: any, aliases: any) => any,
                 b: (context: any, aliases: any) => any): void => {
-                var Exception: plat.IExceptionStatic = plat.acquire('$ExceptionStatic');
-                Exception.fatal('Assignment operators are not supported', Exception.PARSE);
+                var $exception: plat.IExceptionStatic = plat.acquire(__ExceptionStatic);
+                $exception.fatal('Assignment operators are not supported', $exception.PARSE);
             }
         },
         '*=': {
@@ -8042,8 +7460,8 @@ module plat {
             fn: (context: any, aliases: any,
                 a: (context: any, aliases: any) => any,
                 b: (context: any, aliases: any) => any): void => {
-                var Exception: plat.IExceptionStatic = plat.acquire('$ExceptionStatic');
-                Exception.fatal('Assignment operators are not supported', Exception.PARSE);
+                var $exception: plat.IExceptionStatic = plat.acquire(__ExceptionStatic);
+                $exception.fatal('Assignment operators are not supported', $exception.PARSE);
             }
         },
         '/=': {
@@ -8051,8 +7469,8 @@ module plat {
             fn: (context: any, aliases: any,
                 a: (context: any, aliases: any) => any,
                 b: (context: any, aliases: any) => any): void => {
-                var Exception: plat.IExceptionStatic = plat.acquire('$ExceptionStatic');
-                Exception.fatal('Assignment operators are not supported', Exception.PARSE);
+                var $exception: plat.IExceptionStatic = plat.acquire(__ExceptionStatic);
+                $exception.fatal('Assignment operators are not supported', $exception.PARSE);
             }
         },
         '%=': {
@@ -8060,8 +7478,8 @@ module plat {
             fn: (context: any, aliases: any,
                 a: (context: any, aliases: any) => any,
                 b: (context: any, aliases: any) => any): void => {
-                var Exception: plat.IExceptionStatic = plat.acquire('$ExceptionStatic');
-                Exception.fatal('Assignment operators are not supported', Exception.PARSE);
+                var $exception: plat.IExceptionStatic = plat.acquire(__ExceptionStatic);
+                $exception.fatal('Assignment operators are not supported', $exception.PARSE);
             }
         },
         '.': {
@@ -8416,45 +7834,27 @@ module plat {
             private static __managers: IObject<IContextManager> = {};
             private static __controls: IObject<IObject<Array<IRemoveListener>>> = {};
 
-            /**
-             * The context being managed by this ContextManger instance.
-             */
+            $Compat: ICompat = acquire(__Compat);
+
             context: any;
-            $ContextManagerStatic: IContextManagerStatic = acquire('$ContextManagerStatic');
-            $compat: ICompat = acquire('$compat');
-            $ExceptionStatic: IExceptionStatic = acquire('$ExceptionStatic');
+
             private __identifiers: IObject<Array<IListener>> = {};
             private __identifierHash: IObject<Array<string>> = {};
             private __contextObjects: IObject<any> = {};
             private __isArrayFunction: boolean = false;
             private __observedIdentifier: string;
 
-            /**
-             * Safely retrieves the local context for this ContextManager given an Array of
-             * property strings.
-             * 
-             * @param split The string array containing properties used to index into
-             * the context.
-             */
             getContext(split: Array<string>): void {
                 var join = split.join('.'),
                     context = this.__contextObjects[join];
 
                 if (isNull(this.__contextObjects[join])) {
-                    context = this.__contextObjects[join] = this.$ContextManagerStatic.getContext(this.context, split);
+                    context = this.__contextObjects[join] = ContextManager.getContext(this.context, split);
                 }
 
                 return context;
             }
 
-            /**
-             * Given a period-delimited identifier, observes an object and calls the given listener when the 
-             * object changes.
-             * 
-             * @param absoluteIdentifier The period-delimited identifier noting the property to be observed.
-             * @param observableListener An object implmenting IObservableListener. The listener will be 
-             * notified of object changes.
-             */
             observe(absoluteIdentifier: string, observableListener: IListener): IRemoveListener {
                 if (isEmpty(absoluteIdentifier)) {
                     return;
@@ -8537,27 +7937,15 @@ module plat {
                 return removeCallback;
             }
 
-            /**
-             * Observes an array and calls the listener when certain functions are called on 
-             * that array. The watched functions are push, pop, shift, splice, unshift, sort, 
-             * and reverse.
-             * 
-             * @param uid The uid of the object observing the array.
-             * @param listener The callback for when an observed Array function has been called.
-             * @param absoluteIdentifier The identifier from the root context used to find the array.
-             * @param array The array to be observed.
-             * @param oldArray The old array to stop observing.
-             */
             observeArray(uid: string, listener: (ev: IArrayMethodInfo<any>) => void,
                 absoluteIdentifier: string, array: Array<any>, oldArray: Array<any>): IRemoveListener {
                 var length = arrayMethods.length,
                     method: string,
                     i: number,
-                    ContextManager = this.$ContextManagerStatic,
-                    Compat = this.$compat,
-                    proto = Compat.proto,
-                    setProto = Compat.setProto;
-
+                    $compat = this.$Compat,
+                    proto = $compat.proto,
+                    setProto = $compat.setProto;
+            
                 if (isArray(oldArray)) {
                     if (setProto) {
                         (<any>Object).setPrototypeOf(oldArray, Object.create(Array.prototype));
@@ -8622,9 +8010,6 @@ module plat {
                 return removeListener;
             }
 
-            /**
-             * Disposes the memory retained by this ContextManager.
-             */
             dispose(): void {
                 this.context = null;
                 this.__identifiers = {};
@@ -8804,8 +8189,7 @@ module plat {
             _addObservableListener(absoluteIdentifier: string,
                 observableListener: IListener): IRemoveListener {
                 var uid = observableListener.uid,
-                    contextManagerCallback = this._removeCallback.bind(this),
-                    ContextManager = this.$ContextManagerStatic;
+                    contextManagerCallback = this._removeCallback.bind(this);
 
                 this.__add(absoluteIdentifier, observableListener);
 
@@ -8842,7 +8226,7 @@ module plat {
              * @param method The array method being called.
              */
             _overwriteArrayFunction(absoluteIdentifier: string, method: string): (...args: any[]) => any {
-                var callbackObjects = this.$ContextManagerStatic.observedArrayListeners[absoluteIdentifier],
+                var callbackObjects = ContextManager.observedArrayListeners[absoluteIdentifier],
                     _this = this;
 
                 // We can't use a fat-arrow function here because we need the array context.
@@ -8861,7 +8245,7 @@ module plat {
 
                     var keys = Object.keys(callbackObjects),
                         length = keys.length,
-                        callbacks: Array<(ev: IArrayMethodInfo<any>) => void>, 
+                        callbacks: Array<(ev: IArrayMethodInfo<any>) => void>,
                         jLength: number;
 
                     if (oldArray.length !== this.length && method.indexOf('shift') === -1) {
@@ -8977,9 +8361,10 @@ module plat {
                         if (this.__isArrayFunction) {
                             return;
                         }
-                    
+
                         var hash = this.__identifierHash[identifier],
-                            childPropertiesLength = isArray(hash) ?  hash.length : 0;
+                            childPropertiesLength = isArray(hash) ? hash.length : 0;
+
                         this._execute(identifier, value, oldValue);
                         if (childPropertiesLength > 0) {
                             this._notifyChildProperties(identifier, value, oldValue);
@@ -9081,114 +8466,13 @@ module plat {
         /**
          * The Type for referencing the '$ContextManagerStatic' injectable as a dependency.
          */
-        export function ContextManagerStatic(): IContextManagerStatic {
+        export function IContextManagerStatic(): IContextManagerStatic {
             return ContextManager;
         }
 
-        register.injectable('$ContextManagerStatic', ContextManagerStatic,
-            null, register.injectableType.STATIC);
-
-        /**
-         * Describes an object that manages observing properties on any object.
-         */
-        export interface IContextManager {
-            /**
-             * The context to be managed.
-             */
-            context: any;
+        register.injectable(__ContextManagerStatic, IContextManagerStatic, null, register.STATIC);
 
             /**
-             * Safely retrieves the local context for this ContextManager given an Array of
-             * property strings.
-             * 
-             * @param split The string array containing properties used to index into
-             * the context.
-             */
-            getContext(split: Array<string>): any;
-
-            /**
-             * Given a period-delimited identifier, observes an object and calls the given listener when the 
-             * object changes.
-             * 
-             * @param absoluteIdentifier The period-delimited identifier noting the property to be observed.
-             * @param observableListener An object implmenting IObservableListener. The listener will be 
-             * notified of object changes.
-             */
-            observe(identifier: string, observableListener: IListener): IRemoveListener;
-
-            /**
-             * Observes an array and calls the listener when certain functions are called on 
-             * that array. The watched functions are push, pop, shift, splice, unshift, sort, 
-             * and reverse.
-             * 
-             * @param uid The uid of the object observing the array.
-             * @param listener The callback for when an observed Array function has been called.
-             * @param absoluteIdentifier The identifier from the root context used to find the array.
-             * @param array The array to be observed.
-             * @param oldArray The old array to stop observing.
-             */
-            observeArray(uid: string, listener: (ev: IArrayMethodInfo<any>) => void,
-                absoluteIdentifier: string, array: Array<any>, oldArray: Array<any>): IRemoveListener;
-
-            /**
-             * Disposes the memory for an IContextManager.
-             */
-            dispose(): void;
-        }
-
-        /**
-         * An object specifying a listener callback function and a unique id to use to manage the
-         * listener.
-         */
-        export interface IListener {
-            /**
-             * A listener method called when the object it is observing is changed.
-             * 
-             * @param value The new value of the object.
-             * @param oldValue The previous value of the object.
-             */
-            listener(value: any, oldValue: any): void;
-
-            /**
-             * A unique id used to manage the listener.
-             */
-            uid: string;
-        }
-
-        /**
-         * An object for Array method info. Takes a 
-         * generic type to denote the type of array it uses.
-         */
-        export interface IArrayMethodInfo<T> {
-            /**
-             * The method name that was called. Possible values are:
-             * 'push', 'pop', 'reverse', 'shift', 'sort', 'splice', 
-             * and 'unshift'
-             */
-            method: string;
-
-            /**
-             * The value returned from the called function.
-             */
-            returnValue: any;
-
-            /**
-             * The previous value of the array.
-             */
-            oldArray: Array<T>;
-
-            /**
-             * The new value of the array.
-             */
-            newArray: Array<T>;
-
-            /**
-             * The arguments passed into the array function.
-             */
-            arguments: Array<any>;
-        }
-
-        /**
          * The external interface for the '$ContextManagerStatic' injectable.
          */
         export interface IContextManagerStatic {
@@ -9296,6 +8580,106 @@ module plat {
             createContext(control: ui.ITemplateControl, identifier: string): any;
         }
 
+        /**
+         * Describes an object that manages observing properties on any object.
+         */
+        export interface IContextManager {
+            /**
+             * The context to be managed.
+             */
+            context: any;
+
+            /**
+             * Safely retrieves the local context for this ContextManager given an Array of
+             * property strings.
+             * 
+             * @param split The string array containing properties used to index into
+             * the context.
+             */
+            getContext(split: Array<string>): any;
+
+            /**
+             * Given a period-delimited identifier, observes an object and calls the given listener when the 
+             * object changes.
+             * 
+             * @param absoluteIdentifier The period-delimited identifier noting the property to be observed.
+             * @param observableListener An object implmenting IObservableListener. The listener will be 
+             * notified of object changes.
+             */
+            observe(identifier: string, observableListener: IListener): IRemoveListener;
+
+            /**
+             * Observes an array and calls the listener when certain functions are called on 
+             * that array. The watched functions are push, pop, shift, splice, unshift, sort, 
+             * and reverse.
+             * 
+             * @param uid The uid of the object observing the array.
+             * @param listener The callback for when an observed Array function has been called.
+             * @param absoluteIdentifier The identifier from the root context used to find the array.
+             * @param array The array to be observed.
+             * @param oldArray The old array to stop observing.
+             */
+            observeArray(uid: string, listener: (ev: IArrayMethodInfo<any>) => void,
+                absoluteIdentifier: string, array: Array<any>, oldArray: Array<any>): IRemoveListener;
+
+            /**
+             * Disposes the memory for an IContextManager.
+             */
+            dispose(): void;
+        }
+
+        /**
+         * An object specifying a listener callback function and a unique id to use to manage the
+         * listener.
+         */
+        export interface IListener {
+            /**
+             * A listener method called when the object it is observing is changed.
+             * 
+             * @param value The new value of the object.
+             * @param oldValue The previous value of the object.
+             */
+            listener(value: any, oldValue: any): void;
+
+            /**
+             * A unique id used to manage the listener.
+             */
+            uid: string;
+        }
+
+        /**
+         * An object for Array method info. Takes a 
+         * generic type to denote the type of array it uses.
+         */
+        export interface IArrayMethodInfo<T> {
+            /**
+             * The method name that was called. Possible values are:
+             * 'push', 'pop', 'reverse', 'shift', 'sort', 'splice', 
+             * and 'unshift'
+             */
+            method: string;
+
+            /**
+             * The value returned from the called function.
+             */
+            returnValue: any;
+
+            /**
+             * The previous value of the array.
+             */
+            oldArray: Array<T>;
+
+            /**
+             * The new value of the array.
+             */
+            newArray: Array<T>;
+
+            /**
+             * The arguments passed into the array function.
+             */
+            arguments: Array<any>;
+        }
+
             /**
              * Defines the object added to a template control when its element 
              * has an attribute control that extends controls.ObservableAttributeControl.
@@ -9327,73 +8711,38 @@ module plat {
             }
     }
     export module events {
-        export class DispatchEvent implements IDispatchEvent {
-            $EventManagerStatic: IEventManagerStatic = acquire('$EventManagerStatic');
-            /**
-             * The object that initiated the event.
-             */
+        export class DispatchEvent implements IDispatchEventInstance {
+            $EventManagerStatic: IEventManagerStatic = acquire(__EventManagerStatic);
+
             sender: any;
-
-            /**
-             * The name of the event.
-             */
             name: string;
-
-            /**
-             * The event direction this object is using for propagation.
-             */
             direction: string;
         
-            /**
-             * @param name The name of the event.
-             * @param sender The object that initiated the event.
-             * @param direction The event direction this object is using for propagation.
-             * 
-             * @see EventManager
-             */
             initialize(name: string, sender: any, direction?: string): void;
-            /**
-             * @param name The name of the event.
-             * @param sender The object that initiated the event.
-             * @param direction='up' Equivalent to EventManager.UP.
-             * 
-             * @see EventManager
-             */
             initialize(name: string, sender: any, direction?: 'up'): void;
-            /**
-             * @param name The name of the event.
-             * @param sender The object that initiated the event.
-             * @param direction='down' Equivalent to EventManager.DOWN.
-             * 
-             * @see EventManager
-             */
             initialize(name: string, sender: any, direction?: 'down'): void;
-            /**
-             * @param name The name of the event.
-             * @param sender The object that initiated the event.
-             * @param direction='direct' Equivalent to EventManager.DIRECT.
-             * 
-             * @see EventManager
-             */
             initialize(name: string, sender: any, direction?: 'direct'): void;
             initialize(name: string, sender: any, direction?: string) {
                 this.name = name;
-                this.direction = direction || this.$EventManagerStatic.direction.DIRECT;
+                this.direction = direction || this.$EventManagerStatic.DIRECT;
                 this.sender = sender;
             }
 
-            /**
-             * Call this method to halt the propagation of an upward-moving event.
-             * Other events cannot be stopped with this method.
-             */
             stopPropagation(): void {
-                if (this.direction === this.$EventManagerStatic.direction.UP) {
+                if (this.direction === this.$EventManagerStatic.UP) {
                     (<any>this.$EventManagerStatic.propagatingEvents)[this.name] = false;
                 }
             }
         }
 
-        register.injectable('$dispatchEvent', DispatchEvent, null, register.injectableType.MULTI);
+        /**
+         * The Type for referencing the '$DispatchEventInstance' injectable as a dependency.
+         */
+        export function IDispatchEventInstance(): IDispatchEventInstance {
+            return new DispatchEvent();
+        }
+
+        register.injectable(__DispatchEventInstance, IDispatchEventInstance, null, register.INSTANCE);
 
         /**
          * Describes an event that propagates through a control tree. 
@@ -9402,7 +8751,7 @@ module plat {
          * handling the event it will be logged to the app using exception.warn. Errors will 
          * not stop propagation of the event.
          */
-        export interface IDispatchEvent {
+        export interface IDispatchEventInstance {
             /**
              * The object that initiated the event.
              */
@@ -9483,31 +8832,18 @@ module plat {
              * @param sender The sender of the event.
              */
             initialize(name: string, sender: any): void {
-                super.initialize(name, sender, this.$EventManagerStatic.direction.DIRECT);
+                super.initialize(name, sender, this.$EventManagerStatic.DIRECT);
             }
         }
 
         /**
          * The Type for referencing the '$LifecycleEventStatic' injectable as a dependency.
          */
-        export function LifecycleEventStatic() {
+        export function ILifecycleEventStatic(): ILifecycleEventStatic {
             return LifecycleEvent;
         }
 
-        register.injectable('$LifecycleEventStatic', LifecycleEventStatic);
-
-        /**
-         * Defines an object that represents a Lifecycle Event
-         */
-        export interface ILifecycleEvent extends IDispatchEvent {
-            /**
-             * Initializes the lifecycle event.
-             * 
-             * @param name The name of the event.
-             * @param sender The sender of the event.
-             */
-            initialize(name: string, sender: any): void;
-        }
+        register.injectable(__LifecycleEventStatic, ILifecycleEventStatic, null, register.STATIC);
 
         /**
          * The intended external interface for the '$LifecycleEventStatic' injectable.
@@ -9523,6 +8859,19 @@ module plat {
         }
 
         /**
+         * Defines an object that represents a Lifecycle Event
+         */
+        export interface ILifecycleEvent extends IDispatchEventInstance {
+            /**
+             * Initializes the lifecycle event.
+             * 
+             * @param name The name of the event.
+             * @param sender The sender of the event.
+             */
+            initialize(name: string, sender: any): void;
+        }
+
+        /**
          * Event object for a control dispatch event. Contains information about the type of event.
          * Propagation of the event always starts at the sender, allowing a control to both 
          * initialize and consume an event. If a consumer of an event throws an error while 
@@ -9530,37 +8879,33 @@ module plat {
          * not stop propagation of the event.
          */
         export class EventManager {
+            static $Compat: ICompat;
+            static $Document: Document;
+            static $Window: Window;
+            static $Dom: ui.IDom;
+
             /**
-             * Contains the constants for specifying event direction.
+             * An upward-moving event will start at the sender and move 
+             * up the parent chain.
              */
-            static direction: IDirection = {
-                /**
-                 * An upward-moving event will start at the sender and move 
-                 * up the parent chain.
-                 */
-                UP: 'up',
+            static UP = 'up';
 
-                /**
-                 * A downward-moving event will start at the sender and move 
-                 * to its children and beyond.
-                 */
-                DOWN: 'down',
+            /**
+             * A downward-moving event will start at the sender and move 
+             * to its children and beyond.
+             */
+            static DOWN = 'down';
 
-                /**
-                 * Goes through all listeners for an event name, ignoring order.
-                 */
-                DIRECT: 'direct'
-            };
+            /**
+             * Goes through all listeners for an event name, ignoring order.
+             */
+            static DIRECT = 'direct';
 
             /**
              * Keeps track of which events are currently propagating.
              */
             static propagatingEvents: IObject<boolean> = {};
-            static $compat: ICompat;
-            static $document: Document;
-            static $window: Window;
-            static $dom: ui.IDom;
-            static $ExceptionStatic: IExceptionStatic;
+
             private static __eventsListeners: IObject<IEventsListener> = {};
             private static __lifecycleEventListeners: Array<{ name: string; value: () => void; }> = [];
             private static __initialized = false;
@@ -9579,9 +8924,9 @@ module plat {
 
                 var lifecycleListeners = EventManager.__lifecycleEventListeners,
                     length = lifecycleListeners.length,
-                    compat = EventManager.$compat,
-                    $document = EventManager.$document,
-                    $dom = EventManager.$dom,
+                    $compat = EventManager.$Compat,
+                    $document = EventManager.$Document,
+                    $dom = EventManager.$Dom,
                     dispatch = LifecycleEvent.dispatch,
                     listener: { name: string; value: () => void; };
 
@@ -9590,7 +8935,7 @@ module plat {
                     $document.removeEventListener(listener.name, listener.value, false);
                 }
 
-                if (compat.cordova) {
+                if ($compat.cordova) {
                     var eventNames = ['resume', 'online', 'offline'],
                         event: string;
 
@@ -9605,7 +8950,7 @@ module plat {
                             })(event)
                         });
 
-                        this.$dom.addEventListener($document, event, lifecycleListeners[i].value, false);
+                        $dom.addEventListener($document, event, lifecycleListeners[i].value, false);
                     }
 
                     lifecycleListeners.push({
@@ -9615,7 +8960,7 @@ module plat {
                         }
                     });
 
-                    this.$dom.addEventListener($document, 'pause', lifecycleListeners[lifecycleListeners.length - 1].value, false);
+                    $dom.addEventListener($document, 'pause', lifecycleListeners[lifecycleListeners.length - 1].value, false);
 
                     lifecycleListeners.push({
                         name: 'deviceReady',
@@ -9624,7 +8969,7 @@ module plat {
                         }
                     });
 
-                    this.$dom.addEventListener($document, 'deviceReady', lifecycleListeners[lifecycleListeners.length - 1].value, false);
+                    $dom.addEventListener($document, 'deviceReady', lifecycleListeners[lifecycleListeners.length - 1].value, false);
 
                     lifecycleListeners.push({
                         name: 'backbutton',
@@ -9633,11 +8978,11 @@ module plat {
                         }
                     });
 
-                    this.$dom.addEventListener($document, 'backbutton', lifecycleListeners[lifecycleListeners.length - 1].value, false);
-                } else if (compat.amd) {
+                    $dom.addEventListener($document, 'backbutton', lifecycleListeners[lifecycleListeners.length - 1].value, false);
+                } else if ($compat.amd) {
                     return;
                 } else {
-                    this.$dom.addEventListener(EventManager.$window, 'load', () => {
+                    $dom.addEventListener(EventManager.$Window, 'load', () => {
                         dispatch('ready', EventManager);
                     });
                 }
@@ -9665,7 +9010,7 @@ module plat {
              * @param listener The method called when the DispatchEvent is fired.
              * @return {IRemoveListener} A method for removing the listener.
              */
-            static on(uid: string, eventName: string, listener: (ev: IDispatchEvent, ...args: any[]) => void,
+            static on(uid: string, eventName: string, listener: (ev: IDispatchEventInstance, ...args: any[]) => void,
                 context?: any): IRemoveListener {
                 var eventsListener = EventManager.__eventsListeners[uid];
 
@@ -9744,9 +9089,9 @@ module plat {
              */
             static dispatch(name: string, sender: any, direction: 'direct', args?: Array<any>): void;
             static dispatch(name: string, sender: any, direction: string, args?: Array<any>) {
-                var event: IDispatchEvent = acquire('$dispatchEvent');
-                event.initialize(name, sender, direction);
-                EventManager.sendEvent(event, args);
+                var $dispatchEvent: IDispatchEventInstance = acquire(__DispatchEventInstance);
+                $dispatchEvent.initialize(name, sender, direction);
+                EventManager.sendEvent($dispatchEvent, args);
             }
 
             /**
@@ -9755,11 +9100,9 @@ module plat {
              * @param direction The direction of the event
              */
             static hasDirection(direction: string): boolean {
-                var dir = EventManager.direction;
-
-                return (direction === dir.UP ||
-                    direction === dir.DOWN ||
-                    direction === dir.DIRECT);
+                return (direction === EventManager.UP ||
+                    direction === EventManager.DOWN ||
+                    direction === EventManager.DIRECT);
             }
 
             /**
@@ -9768,7 +9111,7 @@ module plat {
              * @param event The IDispatchEvent to send
              * @param args The arguments associated with the event
              */
-            static sendEvent(event: IDispatchEvent, args?: Array<any>): void {
+            static sendEvent(event: IDispatchEventInstance, args?: Array<any>): void {
                 var name = event.name,
                     direction = event.direction;
 
@@ -9778,13 +9121,13 @@ module plat {
                 args = args || [];
 
                 switch (direction) {
-                    case EventManager.direction.UP:
+                    case EventManager.UP:
                         EventManager._dispatchUp(event, args);
                         break;
-                    case EventManager.direction.DOWN:
+                    case EventManager.DOWN:
                         EventManager._dispatchDown(event, args);
                         break;
-                    case EventManager.direction.DIRECT:
+                    case EventManager.DIRECT:
                         EventManager._dispatchDirect(event, args);
                         break;
                 }
@@ -9799,7 +9142,7 @@ module plat {
              * @param event The event being dispatched.
              * @param args The arguments associated with the event.
              */
-            static _dispatchUp(event: IDispatchEvent, args: Array<any>): void {
+            static _dispatchUp(event: IDispatchEventInstance, args: Array<any>): void {
                 var name = event.name,
                     parent = event.sender;
 
@@ -9818,7 +9161,7 @@ module plat {
              * @param event The event being dispatched.
              * @param args The arguments associated with the event.
              */
-            static _dispatchDown(event: IDispatchEvent, args: Array<any>): void {
+            static _dispatchDown(event: IDispatchEventInstance, args: Array<any>): void {
                 var controls: Array<IControl> = [],
                     control: IControl,
                     name = event.name;
@@ -9848,7 +9191,7 @@ module plat {
              * @param event The event being dispatched.
              * @param args The arguments associated with the event.
              */
-            static _dispatchDirect(event: IDispatchEvent, args: Array<any>): void {
+            static _dispatchDirect(event: IDispatchEventInstance, args: Array<any>): void {
                 var uids = Object.keys(EventManager.__eventsListeners),
                     length = uids.length,
                     name = event.name,
@@ -9869,7 +9212,7 @@ module plat {
                 }
             }
 
-            private static __executeEvent(uid: string, ev: IDispatchEvent, args: Array<any>): void {
+            private static __executeEvent(uid: string, ev: IDispatchEventInstance, args: Array<any>): void {
                 var eventsListener = EventManager.__eventsListeners[uid];
 
                 if (isNull(eventsListener)) {
@@ -9885,8 +9228,8 @@ module plat {
                 EventManager.__callListeners(context, ev, listeners, args);
             }
 
-            private static __callListeners(context: any, ev: IDispatchEvent,
-                listeners: Array<(ev: IDispatchEvent, ...args: any[]) => void>, args: Array<any>): void {
+            private static __callListeners(context: any, ev: IDispatchEventInstance,
+                listeners: Array<(ev: IDispatchEventInstance, ...args: any[]) => void>, args: Array<any>): void {
                 var name = ev.name,
                     length = listeners.length,
                     index = -1;
@@ -9897,7 +9240,8 @@ module plat {
                     try {
                         listeners[index].apply(context, args);
                     } catch (e) {
-                        EventManager.$ExceptionStatic.warn(e, Exception.EVENT);
+                        var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                        $exception.warn(e, $exception.EVENT);
                     }
                 }
             }
@@ -9906,46 +9250,33 @@ module plat {
         /**
          * The Type for referencing the '$EventManagerStatic' injectable as a dependency.
          */
-        export function EventManagerStatic(
-                $compat: ICompat,
-                $document: Document,
-                $window: Window,
-                $dom: ui.IDom,
-                $ExceptionStatic: IExceptionStatic) {
-            EventManager.$compat = $compat;
-            EventManager.$document = $document;
-            EventManager.$window = $window;
-            EventManager.$dom = $dom;
-            EventManager.$ExceptionStatic = $ExceptionStatic;
-            return EventManager;
+        export function IEventManagerStatic(
+            $Compat: ICompat,
+            $Document: Document,
+            $Window: Window,
+            $Dom: ui.IDom): IEventManagerStatic {
+                EventManager.$Compat = $Compat;
+                EventManager.$Document = $Document;
+                EventManager.$Window = $Window;
+                EventManager.$Dom = $Dom;
+                return EventManager;
         }
 
-        register.injectable('$EventManagerStatic', EventManagerStatic, [
-            '$compat',
-            '$document',
-            '$window',
-            '$dom',
-            '$ExceptionStatic'
-        ], register.injectableType.STATIC);
+        register.injectable(__EventManagerStatic, IEventManagerStatic, [
+            __Compat,
+            __Document,
+            __Window,
+            __Dom
+        ], register.STATIC);
 
         /**
-         * Describes an object that contains event listeners.
+         * Event object for a control dispatch event. Contains information about the type of event.
+         * Propagation of the event always starts at the sender, allowing a control to both 
+         * initialize and consume an event. If a consumer of an event throws an error while 
+         * handling the event it will be logged to the app using exception.warn. Errors will 
+         * not stop propagation of the event.
          */
-        interface IEventsListener {
-            /**
-             * An IObject of listener arrays, keyed by event name.
-             */
-            listeners: IObject<Array<(ev: IDispatchEvent, ...args: any[]) => void>>;
-            /**
-             * The context with which to call each event listener.
-             */
-            context: any;
-        }
-
-        /**
-         * Contains the constants for specifying event direction.
-         */
-        export interface IDirection {
+        export interface IEventManagerStatic {
             /**
              * An upward-moving event will start at the sender and move 
              * up the parent chain.
@@ -9962,16 +9293,6 @@ module plat {
              * Goes through all listeners for an event name, ignoring order.
              */
             DIRECT: string;
-        }
-
-        /**
-         * An object for managing control events.
-         */
-        export interface IEventManagerStatic {
-            /**
-             * Contains the constants for specifying event direction.
-             */
-            direction: IDirection;
 
             /**
              * Keeps track of which events are currently propagating.
@@ -10150,7 +9471,7 @@ module plat {
              * @param context Optional context with which the listener will be bound.
              * @return {IRemoveListener} A method for removing the listener.
              */
-            on(uid: string, eventName: string, listener: (ev: IDispatchEvent, ...args: any[]) => void,
+            on(uid: string, eventName: string, listener: (ev: IDispatchEventInstance, ...args: any[]) => void,
                 context?: any): IRemoveListener;
 
             /**
@@ -10214,7 +9535,21 @@ module plat {
             /**
              * Determines the appropriate direction and dispatches the event accordingly.
              */
-            sendEvent(event: IDispatchEvent, args?: Array<any>): void;
+            sendEvent(event: IDispatchEventInstance, args?: Array<any>): void;
+        }
+
+        /**
+         * Describes an object that contains event listeners.
+         */
+        interface IEventsListener {
+            /**
+             * An IObject of listener arrays, keyed by event name.
+             */
+            listeners: IObject<Array<(ev: IDispatchEventInstance, ...args: any[]) => void>>;
+            /**
+             * The context with which to call each event listener.
+             */
+            context: any;
         }
 
         /**
@@ -10242,57 +9577,21 @@ module plat {
                 return event;
             }
 
-            /**
-             * Navigation parameter, used to send objects from one view control to another.
-             */
             parameter: P;
-
-            /**
-             * The INavigationOptions in use for the navigation.
-             */
             options: navigation.IBaseNavigationOptions;
-
-            /**
-             * The navigation event target. Its type depends on the type of Navigation event.
-             */
             target: any;
-
-            /**
-             * Specifies the type of IViewControl for the Route Event.
-             */
             type: string;
-
-            /**
-             * States whether or not this event is able to be canceled. Some navigation events can be 
-             * canceled, preventing further navigation.
-             */
             cancelable: boolean = true;
-
-            /**
-             * States whether or not this event has been canceled.
-             */
             canceled: boolean = false;
 
-            /**
-             * Initializes the event members.
-             * 
-             * @param name The name of the event.
-             * @param sender The object that initiated the event.
-             * @param direction This will always be a direct event no matter what is sent in.
-             * 
-             * @see EventManager.direction
-             */
             initialize(name: string, sender: any, direction?: string, eventOptions?: INavigationEventOptions<P>) {
-                super.initialize(name, sender, this.$EventManagerStatic.direction.DIRECT);
+                super.initialize(name, sender, this.$EventManagerStatic.DIRECT);
                 this.parameter = eventOptions.parameter;
                 this.options = eventOptions.options;
                 this.target = eventOptions.target;
                 this.type = eventOptions.type;
             }
 
-            /**
-             * If the event is cancelable (ev.cancelable), calling this method will cancel the event.
-             */
             cancel() {
                 if (this.cancelable) {
                     this.canceled = true;
@@ -10305,14 +9604,29 @@ module plat {
         /**
          * The Type for referencing the '$NavigationEventStatic' injectable as a dependency.
          */
-        export function NavigationEventStatic($EventManagerStatic: IEventManagerStatic): INavigationEventStatic {
+        export function INavigationEventStatic($EventManagerStatic: IEventManagerStatic): INavigationEventStatic {
             NavigationEvent.$EventManagerStatic = $EventManagerStatic;
             return NavigationEvent;
         }
 
-        register.injectable('$NavigationEventStatic', NavigationEventStatic, [
-            '$EventManagerStatic'
-        ], register.injectableType.STATIC);
+        register.injectable(__NavigationEventStatic, INavigationEventStatic, [__EventManagerStatic], register.STATIC);
+
+        /**
+         * The intended external interface for the '$NavigationEventStatic' injectable.
+         */
+        export interface INavigationEventStatic {
+            /**
+             * Dispatches an event with the specified target type.
+             * 
+             * @generic P Corresponds to the type of the event parameter.
+             *
+             * @param name The name of the event (e.g. 'beforeNavigate')
+             * @param sender The object sending the event.
+             * @param eventOptions An object implementing INavigationEvent, specifying what all event listeners
+             * will be passed.
+             */
+            dispatch<P>(name: string, sender: any, eventOptions: events.INavigationEventOptions<P>): INavigationEvent<P>;
+        }
 
         /**
          * Describes options for an INavigationEvent. The generic parameter specifies the 
@@ -10349,7 +9663,7 @@ module plat {
         /**
          * Describes an object used by the Navigator to dispatch Navigation events.
          */
-        export interface INavigationEvent<P> extends IDispatchEvent {
+        export interface INavigationEvent<P> extends IDispatchEventInstance {
             /**
              * Navigation parameter, used to send objects from one view control to another.
              */
@@ -10414,29 +9728,13 @@ module plat {
         }
 
         /**
-         * The intended external interface for the '$NavigationEventStatic' injectable.
-         */
-        export interface INavigationEventStatic {
-            /**
-             * Dispatches an event with the specified target type.
-             * 
-             * @generic P Corresponds to the type of the event parameter.
-             *
-             * @param name The name of the event (e.g. 'beforeNavigate')
-             * @param sender The object sending the event.
-             * @param eventOptions An object implementing INavigationEvent, specifying what all event listeners
-             * will be passed.
-             */
-            dispatch<P>(name: string, sender: any, eventOptions: events.INavigationEventOptions<P>): INavigationEvent<P>;
-        }
-
-        /**
          * Represents an internal Error Event. This is used for any 
          * internal errors (both fatal and warnings). All error events are 
          * direct events.
          */
         export class ErrorEvent<E extends Error> extends DispatchEvent implements IErrorEvent<E> {
             static $EventManagerStatic: IEventManagerStatic;
+
             /**
              * Creates a new ErrorEvent and fires it.
              * 
@@ -10451,27 +9749,12 @@ module plat {
                 ErrorEvent.$EventManagerStatic.sendEvent(event);
             }
 
-            /**
-             * The error being dispatched.
-             */
             error: E;
 
-            /**
-             * @param name The name of the event.
-             * @param sender The sender of the event.
-             * @param direction='direct' This is always a direct event
-             * @param error The error that occurred, resulting in the event.
-             */
             initialize(name: string, sender: any, direction?: 'direct', error?: E): void;
-            /**
-             * @param name The name of the event.
-             * @param sender The sender of the event.
-             * @param direction This is always a direct event.
-             * @param error The error that occurred, resulting in the event.
-             */
             initialize(name: string, sender: any, direction?: string, error?: E): void;
             initialize(name: string, sender: any, direction?: string, error?: E) {
-                super.initialize(name, sender, this.$EventManagerStatic.direction.DIRECT);
+                super.initialize(name, sender, this.$EventManagerStatic.DIRECT);
 
                 this.error = error;
             }
@@ -10480,14 +9763,12 @@ module plat {
         /**
          * The Type for referencing the '$ErrorEventStatic' injectable as a dependency.
          */
-        export function ErrorEventStatic($EventManagerStatic: IEventManagerStatic): IErrorEventStatic {
+        export function IErrorEventStatic($EventManagerStatic: IEventManagerStatic): IErrorEventStatic {
             ErrorEvent.$EventManagerStatic = $EventManagerStatic;
             return ErrorEvent;
         }
 
-        register.injectable('$ErrorEventStatic', ErrorEventStatic, [
-            '$EventManagerStatic'
-        ], register.injectableType.STATIC);
+        register.injectable(__ErrorEventStatic, IErrorEventStatic, [__EventManagerStatic], register.STATIC);
     
         /**
          * The intended external interface for the $ErrorEventStatic injectable.
@@ -10507,7 +9788,7 @@ module plat {
          * Defines an object that represents an Error Event. This is used for any 
          * internal errors (both fatal and warnings).
          */
-        export interface IErrorEvent<E extends Error> extends IDispatchEvent {
+        export interface IErrorEvent<E extends Error> extends IDispatchEventInstance {
             /**
              * The error being dispatched.
              */
@@ -10535,7 +9816,7 @@ module plat {
      * class for all types of controls.
      */
     export class Control implements IControl {
-        static $parser: expressions.IParser;
+        static $Parser: expressions.IParser;
         static $ContextManagerStatic: observable.IContextManagerStatic;
         static $EventManagerStatic: events.IEventManagerStatic;
 
@@ -10671,6 +9952,15 @@ module plat {
         }
 
         /**
+         * Returns a new instance of Control.
+         * 
+         * @static
+         */
+        static getInstance(): IControl {
+            return new Control();
+        }
+
+        /**
          * Adds a function to remove an event listener for the control specified 
          * by its uid.
          * 
@@ -10738,62 +10028,13 @@ module plat {
             return controls;
         }
 
-        /**
-         * A read-only unique id, created during instantiation and found on every control.
-         */
         uid: string;
-
-        /**
-         * The name of a control. This can be set using 'plat-name' in the DOM markup.
-         * When a control is given a name using 'plat-name' the root control will be able to
-         * access the control as a INamedElement<T extends HTMLElement, U extends ui.ITemplateControl> 
-         * interface on the parent. In addition, named controls can be retrieved using the 
-         * getControlsByName method on every control instance.
-         * 
-         * @see {@link Control.getControlsByName}
-         */
         name: string;
-
-        /**
-         * The type of a control. The type is created when a control is registered.
-         * 
-         * @example register.control('my-control', MyControl) // All MyControl instances will have type 'my-control'
-         */
         type: string;
-
-        /**
-         * The parent control that created this control. If this control does not implement ui.IViewControl
-         * then it will inherit its context from the parent, or from plat-context when specified.
-         */
         parent: ui.ITemplateControl;
-
-        /**
-         * The HTMLElement that represents this control. Should only be modified by controls that implement 
-         * ui.ITemplateControl. During initialize the control should populate this element with what it wishes
-         * to render to the user. 
-         * 
-         * When there is innerHTML in the element prior to instantiating the control:
-         *     The element will include the innerHTML
-         * When the control implements templateString or templateUrl:
-         *     The serialized DOM will be auto-generated and included in the element. Any
-         *     innerHTML will be stored in the innerTemplate property on the control.
-         *    
-         * After a control is initialized its element will be compiled.
-         */
         element: HTMLElement;
-
-        /**
-         * The attributes object representing all the attributes for a control's element. All attributes are 
-         * converted from dash notation to camelCase.
-         * 
-         * @see {@link ui.Attributes}
-         */
-        attributes: ui.IAttributes;
-
-        /**
-         * Contains DOM helper methods for manipulating this control's element.
-         */
-        dom: ui.IDom = acquire('$dom');
+        attributes: ui.IAttributesInstance;
+        dom: ui.IDom = acquire(__Dom);
 
         /**
          * The constructor for a control. Any injectables specified during control registration will be
@@ -10802,49 +10043,19 @@ module plat {
          */
         constructor() {
             var ContextManager: observable.IContextManagerStatic = Control.$ContextManagerStatic ||
-                acquire('$ContextManagerStatic');
+                acquire(__ContextManagerStatic);
             ContextManager.defineGetter(this, 'uid', uniqueId('plat_'));
         }
 
-        /**
-         * The initialize event method for a control. In this method a control should initialize all the necessary 
-         * variables. This method is typically only necessary for view controls. If a control does not implement 
-         * ui.IViewControl then it is not safe to access, observe, or modify the context property in this method.
-         * A view control should call services/set context in this method in order to fire the loaded event. No control 
-         * will be loaded until the view control has specified a context.
-         */
         initialize() { }
 
-        /**
-         * The loaded event method for a control. This event is fired after a control has been loaded,
-         * meaning all of its children have also been loaded and initial DOM has been created and populated. It is now 
-         * safe for all controls to access, observe, and modify the context property.
-         */
         loaded() { }
 
-        /**
-         * Retrieves all the controls with the specified name.
-         * 
-         * @param name The string name with which to populate the returned controls array.
-         */
         getControlsByName(name: string): Array<IControl> {
             return Control.__getControls(this, 'name', name);
         }
 
-        /**
-         * Retrieves all the controls of the specified type.
-         * 
-         * @param type The type used to find controls (e.g. 'plat-foreach')
-         * @return {Array<IControl>}
-         */
         getControlsByType<T extends Control>(type: string): Array<T>;
-        /**
-         * Retrieves all the controls of the specified type.
-         * 
-         * @param Constructor The constructor used to find controls.
-         * 
-         * @example this.getControlsByType<ui.controls.ForEach>(ui.controls.ForEach)
-         */
         getControlsByType<T extends Control>(Constructor: new () => T): Array<T>;
         getControlsByType(type: any) {
             if (isString(type)) {
@@ -10853,25 +10064,7 @@ module plat {
             return Control.__getControls(this, 'constructor', type);
         }
 
-        /**
-         * Adds an event listener of the specified type to the specified element.
-         * 
-         * @param element The element to add the event listener to.
-         * @param type The type of event to listen to.
-         * @param listener The listener to fire when the event occurs.
-         * @param useCapture Whether to fire the event on the capture or the bubble phase 
-         * of event propagation.
-         */
         addEventListener(element: Node, type: string, listener: ui.IGestureListener, useCapture?: boolean): IRemoveListener;
-        /**
-         * Adds an event listener of the specified type to the specified element.
-         * 
-         * @param element The window object.
-         * @param type The type of event to listen to.
-         * @param listener The listener to fire when the event occurs.
-         * @param useCapture Whether to fire the event on the capture or the bubble phase 
-         * of event propagation.
-         */
         addEventListener(element: Window, type: string, listener: ui.IGestureListener, useCapture?: boolean): IRemoveListener;
         addEventListener(element: any, type: string, listener: ui.IGestureListener, useCapture?: boolean): IRemoveListener {
             var removeListener = this.dom.addEventListener(element, type, listener, useCapture),
@@ -10885,25 +10078,7 @@ module plat {
             };
         }
 
-        /**
-         * Allows a control to observe any property on its context and receive updates when
-         * the property is changed.
-         * 
-         * @param context The immediate parent object containing the property.
-         * @param property The property identifier to watch for changes.
-         * @param listener The method called when the property is changed. This method will have its 'this'
-         * context set to the control instance.
-         */
         observe<T>(context: any, property: string, listener: (value: T, oldValue: any) => void): IRemoveListener;
-        /**
-         * Allows a control to observe any property on its context and receive updates when
-         * the property is changed.
-         * 
-         * @param context The immediate parent array containing the property.
-         * @param property The index to watch for changes.
-         * @param listener The method called when the property is changed. This method will have its 'this'
-         * context set to the control instance.
-         */
         observe<T>(context: any, property: number, listener: (value: T, oldValue: T) => void): IRemoveListener;
         observe(context: any, property: any, listener: (value: any, oldValue: any) => void): IRemoveListener {
             if (isNull(context) || !context.hasOwnProperty(property)) {
@@ -10925,27 +10100,7 @@ module plat {
             });
         }
 
-        /**
-         * Allows a control to observe an array and receive updates when certain array-changing methods are called.
-         * The methods watched are push, pop, shift, sort, splice, reverse, and unshift. This method does not watch
-         * every item in the array.
-         * 
-         * @param context The immediate parent object containing the array as a property.
-         * @param property The array property identifier to watch for changes.
-         * @param listener The method called when an array-changing method is called. This method will have its 'this'
-         * context set to the control instance.
-         */
         observeArray<T>(context: any, property: string, listener: (ev: observable.IArrayMethodInfo<T>) => void): IRemoveListener;
-        /**
-         * Allows a control to observe an array and receive updates when certain array-changing methods are called.
-         * The methods watched are push, pop, shift, sort, splice, reverse, and unshift. This method does not watch
-         * every item in the array.
-         * 
-         * @param context The immediate parent array containing the array as a property.
-         * @param property The index on the parent array, specifying the array to watch for changes.
-         * @param listener The method called when an array-changing method is called. This method will have its 'this'
-         * context set to the control instance.
-         */
         observeArray<T>(context: Array<T>, property: number, listener: (ev: observable.IArrayMethodInfo<T>) => void): IRemoveListener;
         observeArray(context: any, property: any, listener: (ev: observable.IArrayMethodInfo<any>) => void): IRemoveListener {
             if (isNull(context) || !context.hasOwnProperty(property)) {
@@ -10992,21 +10147,7 @@ module plat {
             };
         }
 
-        /**
-         * Parses an expression string and observes any associated identifiers. When an identifier
-         * value changes, the listener will be called.
-         * 
-         * @param expression The expression string to watch for changes.
-         * @param listener The listener to call when the expression identifer values change.
-         */
         observeExpression(expression: string, listener: (value: any, oldValue: any) => void): IRemoveListener;
-        /**
-         * Uses a parsed expression to observe any associated identifiers. When an identifier
-         * value changes, the listener will be called.
-         * 
-         * @param expression The IParsedExpression to watch for changes.
-         * @param listener The listener to call when the expression identifer values change.
-         */
         observeExpression(expression: expressions.IParsedExpression, listener: (value: any, oldValue: any) => void): IRemoveListener;
         observeExpression(expression: any, listener: (value: any, oldValue: any) => void): IRemoveListener {
             if (isNull(expression)) {
@@ -11015,7 +10156,7 @@ module plat {
                 return noop;
             }
 
-            var parsedExpression: expressions.IParsedExpression = isString(expression) ? Control.$parser.parse(expression) : expression,
+            var parsedExpression: expressions.IParsedExpression = isString(expression) ? Control.$Parser.parse(expression) : expression,
                 aliases = parsedExpression.aliases,
                 control: ui.TemplateControl = !isNull((<ui.TemplateControl>this).resources) ?
                     <ui.TemplateControl>this :
@@ -11101,87 +10242,16 @@ module plat {
             };
         }
 
-        /**
-         * Evaluates an expression string, using the control.context.
-         * 
-         * @param expression The expression string to evaluate.
-         * @param context An optional context with which to parse. If 
-         * no context is specified, the control.context will be used.
-         */
         evaluateExpression(expression: string, context?: any): any;
-        /**
-         * Evaluates a parsed expression, using the control.context.
-         * 
-         * @param expression The IParsedExpression to evaluate.
-         * @param context An optional context with which to parse. If 
-         * no context is specified, the control.context will be used.
-         */
         evaluateExpression(expression: expressions.IParsedExpression, context?: any): any;
         evaluateExpression(expression: any, context?: any): any {
             var TemplateControl = ui.TemplateControl;
             return TemplateControl.evaluateExpression(expression, this.parent, context);
         }
 
-        /**
-         * Creates a new DispatchEvent and propagates it to controls based on the 
-         * provided direction mechanism. Controls in the propagation chain that registered
-         * the event using the control.on() method will receive the event. Propagation will
-         * always start with the sender, so the sender can both produce and consume the same
-         * event.
-         * 
-         * @param name The name of the event to send, cooincides with the name used in the
-         * control.on() method.
-         * @param direction An optional events.eventDirection to propagate the event, defaults to
-         * events.EventManager.UP.
-         * @param ...args Any number of arguments to send to all the listeners.
-         * 
-         * @see events.eventDirection
-         */
         dispatchEvent(name: string, direction?: string, ...args: any[]): void;
-        /**
-         * Creates a new DispatchEvent and propagates it to controls based on the 
-         * provided direction mechanism. Controls in the propagation chain that registered
-         * the event using the control.on() method will receive the event. Propagation will
-         * always start with the sender, so the sender can both produce and consume the same
-         * event.
-         * 
-         * @param name The name of the event to send, cooincides with the name used in the
-         * control.on() method.
-         * @param direction='up' Equivalent to events.EventManager.UP
-         * @param ...args Any number of arguments to send to all the listeners.
-         * 
-         * @see events.eventDirection
-         */
         dispatchEvent(name: string, direction?: 'up', ...args: any[]): void;
-        /**
-         * Creates a new DispatchEvent and propagates it to controls based on the 
-         * provided direction mechanism. Controls in the propagation chain that registered
-         * the event using the control.on() method will receive the event. Propagation will
-         * always start with the sender, so the sender can both produce and consume the same
-         * event.
-         * 
-         * @param name The name of the event to send, cooincides with the name used in the
-         * control.on() method.
-         * @param direction='down' Equivalent to events.EventManager.DOWN
-         * @param ...args Any number of arguments to send to all the listeners.
-         * 
-         * @see events.eventDirection
-         */
         dispatchEvent(name: string, direction?: 'down', ...args: any[]): void;
-        /**
-         * Creates a new DispatchEvent and propagates it to controls based on the 
-         * provided direction mechanism. Controls in the propagation chain that registered
-         * the event using the control.on() method will receive the event. Propagation will
-         * always start with the sender, so the sender can both produce and consume the same
-         * event.
-         * 
-         * @param name The name of the event to send, cooincides with the name used in the
-         * control.on() method.
-         * @param direction='direct' Equivalent to events.EventManager.DIRECT
-         * @param ...args Any number of arguments to send to all the listeners.
-         * 
-         * @see events.eventDirection
-         */
         dispatchEvent(name: string, direction?: 'direct', ...args: any[]): void;
         dispatchEvent(name: string, direction?: string, ...args: any[]) {
             var manager = Control.$EventManagerStatic;
@@ -11190,7 +10260,7 @@ module plat {
                 if (!isUndefined(direction)) {
                     args.unshift(direction);
                 }
-                direction = manager.direction.UP;
+                direction = manager.UP;
             }
             var sender: any = this;
 
@@ -11201,65 +10271,39 @@ module plat {
             manager.dispatch(name, sender, direction, args);
         }
 
-        /**
-         * Registers a listener for a DispatchEvent. The listener will be called when a DispatchEvent is 
-         * propagating over the control. Any number of listeners can exist for a single event name.
-         * 
-         * @param name The name of the event, cooinciding with the DispatchEvent name.
-         * @param listener The method called when the DispatchEvent is fired.
-         */
-        on(name: string, listener: (ev: events.IDispatchEvent, ...args: any[]) => void): IRemoveListener;
-        /**
-         * Registers a listener for a routeChange event. The listener will be called when a routeChange event 
-         * is propagating over the control. Any number of listeners can exist for a single event name.
-         *
-         * @param eventName='routeChange' This specifies that the listener is for a routeChange event.
-         * @param listener The method called when the routeChange is fired. The route argument will contain 
-         * a parsed route.
-         */
-        on(name: 'routeChange', listener: (ev: events.IDispatchEvent, route: web.IRoute<any>) => void): IRemoveListener;
-        /**
-         * Registers a listener for a DispatchEvent. The listener will be called when a DispatchEvent is 
-         * propagating over the control. Any number of listeners can exist for a single event name.
-         * 
-         * @param name The name of the event, cooinciding with the DispatchEvent name.
-         * @param listener The method called when the DispatchEvent is fired.
-         */
-        on(name: string, listener: (ev: events.IDispatchEvent, ...args: any[]) => void): IRemoveListener {
+        on(name: string, listener: (ev: events.IDispatchEventInstance, ...args: any[]) => void): IRemoveListener;
+        on(name: 'routeChange', listener: (ev: events.IDispatchEventInstance, route: web.IRoute<any>) => void): IRemoveListener;
+        on(name: string, listener: (ev: events.IDispatchEventInstance, ...args: any[]) => void): IRemoveListener {
             var manager = Control.$EventManagerStatic;
             return manager.on(this.uid, name, listener, this);
         }
 
-        /**
-         * The dispose event is called when a control is being removed from memory. A control should release 
-         * all of the memory it is using, including DOM event and property listeners.
-         */
         dispose(): void { }
     }
 
     /**
-     * The Type for referencing the '$ControlStatic' injectable as a dependency.
+     * The Type for referencing the '$ControlFactory' injectable as a dependency.
      */
-    export function ControlStatic(
-            $parser: expressions.IParser,
+    export function IControlFactory(
+            $Parser: expressions.IParser,
             $ContextManagerStatic: observable.IContextManagerStatic,
-            $EventManagerStatic: events.IEventManagerStatic) {
-        Control.$parser = $parser;
+            $EventManagerStatic: events.IEventManagerStatic): IControlFactory {
+        Control.$Parser = $Parser;
         Control.$ContextManagerStatic = $ContextManagerStatic;
         Control.$EventManagerStatic = $EventManagerStatic;
         return Control;
     }
 
-    register.injectable('$ControlStatic', ControlStatic, [
-        '$parser',
-        '$ContextManagerStatic',
-        '$EventManagerStatic'
-    ], register.injectableType.STATIC);
+    register.injectable(__ControlFactory, IControlFactory, [
+        __Parser,
+        __ContextManagerStatic,
+        __EventManagerStatic
+    ], register.FACTORY);
 
     /**
-     * The external interface for the '$ControlStatic' injectable.
+     * Creates and manages instances of IControl.
      */
-    export interface IControlStatic {
+    export interface IControlFactory {
         /**
          * Finds the ancestor control for the given control that contains the root
          * context.
@@ -11306,9 +10350,11 @@ module plat {
         removeEventListeners(control: IControl): void;
 
         /**
-         * Create a new empty IControl
+         * Returns a new instance of an IControl.
+         *
+         * @static
          */
-        new (): IControl;
+        getInstance(): IControl;
     }
 
     /**
@@ -11358,7 +10404,7 @@ module plat {
          * 
          * @see {@link ui.Attributes}
          */
-        attributes?: ui.IAttributes;
+        attributes?: ui.IAttributesInstance;
 
         /**
          * Contains DOM helper methods for manipulating this control's element.
@@ -11574,7 +10620,7 @@ module plat {
          * @param listener The method called when the routeChange is fired. The route argument will contain 
          * a parsed route.
          */
-        on(name: 'routeChange', listener: (ev: events.IDispatchEvent, route: web.IRoute<any>) => void): IRemoveListener;
+        on(name: 'routeChange', listener: (ev: events.IDispatchEventInstance, route: web.IRoute<any>) => void): IRemoveListener;
         /**
          * Registers a listener for a DispatchEvent. The listener will be called when a DispatchEvent is 
          * propagating over the control. Any number of listeners can exist for a single event name.
@@ -11582,7 +10628,7 @@ module plat {
          * @param name The name of the event, cooinciding with the DispatchEvent name.
          * @param listener The method called when the DispatchEvent is fired.
          */
-        on(name: string, listener: (ev: events.IDispatchEvent, ...args: any[]) => void): IRemoveListener;
+        on(name: string, listener: (ev: events.IDispatchEventInstance, ...args: any[]) => void): IRemoveListener;
 
         /**
          * The dispose event is called when a control is being removed from memory. A control should release 
@@ -11612,32 +10658,47 @@ module plat {
             }
 
             /**
-             * Specifies the ITemplateControl associated with this
-             * control's element. Can be null if no ITemplateControl
-             * exists.
+             * Returns a new instance of AttributeControl.
+             * 
+             * @static
              */
-            templateControl: ui.ITemplateControl = null;
+            static getInstance(): IAttributeControl {
+                return new AttributeControl();
+            }
 
-            /**
-             * Specifies the priority of the attribute. The purpose of 
-             * this is so that controls like plat-bind can have a higher 
-             * priority than plat-tap. The plat-bind will be initialized 
-             * and loaded before plat-tap, meaning it has the first chance 
-             * to respond to events.
-             */
+            templateControl: ui.ITemplateControl = null;
             priority = 0;
         }
 
         /**
-         * The Type for referencing the '$AttributeControlStatic' injectable as a dependency.
+         * The Type for referencing the '$AttributeControlFactory' injectable as a dependency.
          */
-        export function AttributeControlStatic(
-                $ControlStatic: IControlStatic) {
+        export function IAttributeControlFactory(): IAttributeControlFactory {
             return AttributeControl;
         }
 
-        register.injectable('$AttributeControlStatic', AttributeControlStatic,
-            null, register.injectableType.STATIC);
+        register.injectable(__AttributeControlFactory, IAttributeControlFactory, null, register.FACTORY);
+
+        /**
+         * Creates and manages instances of IAttributeControl.
+         */
+        export interface IAttributeControlFactory {
+            /**
+             * Method for disposing an attribute control. Removes any
+             * necessary objects from the control.
+             *
+             * @static
+             * @param control The AttributeControl to dispose.
+             */
+            dispose(control: IAttributeControl): void;
+
+            /**
+             * Returns a new instance of an IAttributeControl.
+             *
+             * @static
+             */
+            getInstance(): IAttributeControl;
+        }
 
         /**
          * An object describing a type of control that can be used as an attribute but will 
@@ -11661,28 +10722,9 @@ module plat {
             priority: number;
         }
 
-        /**
-         * The external interface for the '$AttributeControlStatic' injectable.
-         */
-        export interface IAttributeControlStatic {
-            /**
-             * Method for disposing an attribute control. Removes any
-             * necessary objects from the control.
-             *
-             * @static
-             * @param control The AttributeControl to dispose.
-             */
-            dispose(control: IAttributeControl): void;
-
-            /**
-             * Create a new empty IAttributeControl
-             */
-            new (): IAttributeControl;
-        }
-
         export class Name extends AttributeControl {
-            $ContextManagerStatic: observable.IContextManagerStatic = acquire('$ContextManagerStatic');
-            $ExceptionStatic: IExceptionStatic = acquire('$ExceptionStatic');
+            $ContextManagerStatic: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
+
             /**
              * The root control that will have the INamedElement set as a property.
              */
@@ -11716,12 +10758,6 @@ module plat {
                 }
 
                 if (!isNull(rootControl)) {
-                    if (!isNull((<any>rootControl)[name])) {
-                        this.$ExceptionStatic.warn('Multiple instances of plat-name = ' +
-                            name + ' found, or root control already has property defined.', this.$ExceptionStatic.NAME);
-                        return;
-                    }
-
                     define(rootControl, name, {
                         element: this.element,
                         control: templateControl
@@ -11743,14 +10779,14 @@ module plat {
             }
         }
 
-        register.control('plat-name', Name);
+        register.control(__Name, Name);
 
         /**
          * Defines the object added to a root control when an HTML element has 
          * a plat-name attribute. If the element corresponds to a registered 
          * control, the control will be included in the object.
          */
-        export interface INamedElement<T extends HTMLElement, U> {
+        export interface INamedElement<T extends Element, U> {
             /**
              * The element on which the plat-name is specified.
              */
@@ -11767,6 +10803,9 @@ module plat {
          * An AttributeControl that binds to a specified DOM event handler.
          */
         export class SimpleEventControl extends AttributeControl implements ISimpleEventControl {
+            $Parser: expressions.IParser = acquire(__Parser);
+            $Regex: expressions.IRegex = acquire(__Regex);
+
             /**
              * The event name.
              */
@@ -11791,9 +10830,6 @@ module plat {
              * An array of the aliases used in the expression.
              */
             _aliases: Array<string> = [];
-            $parser: expressions.IParser = acquire('$parser');
-            $regex: expressions.IRegex = acquire('$regex');
-            $ExceptionStatic: IExceptionStatic = acquire('$ExceptionStatic');
 
             /**
              * Kicks off finding and setting the listener.
@@ -11840,7 +10876,7 @@ module plat {
              */
             _findListener(identifier: string): { control: ui.ITemplateControl; value: any; } {
                 var control: ui.ITemplateControl = <any>this,
-                    expression = this.$parser.parse(identifier),
+                    expression = this.$Parser.parse(identifier),
                     value: any;
 
                 while (!isNull(control)) {
@@ -11894,10 +10930,10 @@ module plat {
 
                 var length = expression.length,
                     args: Array<expressions.IParsedExpression> = [],
-                    parser = this.$parser;
+                    $parser = this.$Parser;
 
                 for (var i = 0; i < length; ++i) {
-                    args.push(parser.parse(expression[i]).evaluate(hasParent ? this.parent.context : null, aliases));
+                    args.push($parser.parse(expression[i]).evaluate(hasParent ? this.parent.context : null, aliases));
                 }
 
                 return {
@@ -11919,8 +10955,9 @@ module plat {
                     args = expression.args;
 
                 if (!isFunction(fn)) {
-                    this.$ExceptionStatic.warn('Cannot find registered event method ' +
-                        this._expression[0] + ' for control: ' + this.type);
+                    var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                    $exception.warn('Cannot find registered event method ' +
+                        this._expression[0] + ' for control: ' + this.type, $exception.BIND);
                     return;
                 }
 
@@ -11938,13 +10975,13 @@ module plat {
                     alias: string,
                     exec: RegExpExecArray,
                     aliases: IObject<boolean> = {},
-                    aliasRegex = this.$regex.aliasRegex;
+                    $regex = this.$Regex;
 
                 for (var i = 0; i < length; ++i) {
                     arg = arguments[i].trim();
 
                     if (arg[0] === '@') {
-                        exec = aliasRegex.exec(arg);
+                        exec = $regex.aliasRegex.exec(arg);
                         aliases[!isNull(exec) ? exec[0] : arg.substr(1)] = true;
                     }
                 }
@@ -11959,7 +10996,7 @@ module plat {
              * @param expression The expression to parse.
              */
             _parseArgs(expression: string): void {
-                var exec = this.$regex.argumentRegex.exec(expression),
+                var exec = this.$Regex.argumentRegex.exec(expression),
                     haveArgs = !isNull(exec);
 
                 if (isEmpty(expression)) {
@@ -12067,20 +11104,6 @@ module plat {
              * The event name.
              */
             event: string = '$touchmove';
-        }
-
-        export class TouchEnter extends SimpleEventControl {
-            /**
-             * The event name.
-             */
-            event: string = '$touchenter';
-        }
-
-        export class TouchLeave extends SimpleEventControl {
-            /**
-             * The event name.
-             */
-            event: string = '$touchleave';
         }
 
         export class TouchCancel extends SimpleEventControl {
@@ -12195,33 +11218,31 @@ module plat {
             }
         }
 
-        register.control('plat-tap', Tap);
-        register.control('plat-blur', Blur);
-        register.control('plat-change', Change);
-        register.control('plat-copy', Copy);
-        register.control('plat-cut', Cut);
-        register.control('plat-paste', Paste);
-        register.control('plat-dbltap', DblTap);
-        register.control('plat-focus', Focus);
-        register.control('plat-submit', Submit);
-        register.control('plat-touchstart', TouchStart);
-        register.control('plat-touchend', TouchEnd);
-        register.control('plat-touchmove', TouchMove);
-        register.control('plat-touchenter', TouchEnter);
-        register.control('plat-touchleave', TouchLeave);
-        register.control('plat-touchcancel', TouchCancel);
-        register.control('plat-hold', Hold);
-        register.control('plat-release', Release);
-        register.control('plat-swipe', Swipe);
-        register.control('plat-swipeleft', SwipeLeft);
-        register.control('plat-swiperight', SwipeRight);
-        register.control('plat-swipeup', SwipeUp);
-        register.control('plat-swipedown', SwipeDown);
-        register.control('plat-track', Track);
-        register.control('plat-trackleft', TrackLeft);
-        register.control('plat-trackright', TrackRight);
-        register.control('plat-trackup', TrackUp);
-        register.control('plat-trackdown', TrackDown);
+        register.control(__Tap, Tap);
+        register.control(__Blur, Blur);
+        register.control(__Change, Change);
+        register.control(__Copy, Copy);
+        register.control(__Cut, Cut);
+        register.control(__Paste, Paste);
+        register.control(__DblTap, DblTap);
+        register.control(__Focus, Focus);
+        register.control(__Submit, Submit);
+        register.control(__TouchStart, TouchStart);
+        register.control(__TouchEnd, TouchEnd);
+        register.control(__TouchMove, TouchMove);
+        register.control(__TouchCancel, TouchCancel);
+        register.control(__Hold, Hold);
+        register.control(__Release, Release);
+        register.control(__Swipe, Swipe);
+        register.control(__SwipeLeft, SwipeLeft);
+        register.control(__SwipeRight, SwipeRight);
+        register.control(__SwipeUp, SwipeUp);
+        register.control(__SwipeDown, SwipeDown);
+        register.control(__Track, Track);
+        register.control(__TrackLeft, TrackLeft);
+        register.control(__TrackRight, TrackRight);
+        register.control(__TrackUp, TrackUp);
+        register.control(__TrackDown, TrackDown);
 
         // Keyboard events
         export var KeyCodes = {
@@ -12477,9 +11498,9 @@ module plat {
             event: string = 'keyup';
         }
 
-        register.control('plat-keydown', KeyDown);
-        register.control('plat-keypress', KeyPress);
-        register.control('plat-keyup', KeyUp);
+        register.control(__KeyDown, KeyDown);
+        register.control(__KeyPress, KeyPress);
+        register.control(__KeyUp, KeyUp);
 
         /**
          * An AttributeControl that deals with binding to a specified property on its element.
@@ -12612,7 +11633,7 @@ module plat {
                 if (!isEmpty(element.style.display)) {
                     this.__initialDisplay = element.style.display;
                 } else {
-                    var $window = acquire('$window');
+                    var $window = acquire(__Window);
                     this.__initialDisplay = $window.getComputedStyle(element).display;
                 }
 
@@ -12673,12 +11694,12 @@ module plat {
             }
         }
 
-        register.control('plat-checked', Checked);
-        register.control('plat-disabled', Disabled);
-        register.control('plat-selected', Selected);
-        register.control('plat-readonly', ReadOnly);
-        register.control('plat-visible', Visible);
-        register.control('plat-style', Style);
+        register.control(__Checked, Checked);
+        register.control(__Disabled, Disabled);
+        register.control(__Selected, Selected);
+        register.control(__ReadOnly, ReadOnly);
+        register.control(__Visible, Visible);
+        register.control(__Style, Style);
 
         export class ElementPropertyControl extends SetAttributeControl {
             /**
@@ -12714,19 +11735,20 @@ module plat {
             property: string = 'src';
         }
 
-        register.control('plat-href', Href);
-        register.control('plat-src', Src);
+        register.control(__Href, Href);
+        register.control(__Src, Src);
 
         export class Bind extends AttributeControl {
+            $Parser: expressions.IParser = acquire(__Parser);
+            $ContextManagerStatic: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
+
             /**
              * The priority of Bind is set high to take precede 
              * other controls that may be listening to the same 
              * event.
              */
             priority: number = 100;
-            $parser: expressions.IParser = acquire('$parser');
-            $ExceptionStatic: IExceptionStatic = acquire('$ExceptionStatic');
-            $ContextManagerStatic: observable.IContextManagerStatic = acquire('$ContextManagerStatic');
+
             /**
              * The function used to add the proper event based on the input type.
              */
@@ -12768,12 +11790,12 @@ module plat {
              */
             _property: string;
 
-            private __fileSupported = (<ICompat>acquire('$compat')).fileSupported;
-            private __fileNameRegex = (<expressions.IRegex>acquire('$regex')).fileNameRegex;
+            private __fileSupported = (<ICompat>acquire(__Compat)).fileSupported;
+            private __fileNameRegex = (<expressions.IRegex>acquire(__Regex)).fileNameRegex;
             private __isSelf = false;
 
             /**
-             * Determines the type of HTMLElement being bound to 
+             * Determines the type of Element being bound to 
              * and sets the necessary handlers.
              */
             initialize(): void {
@@ -12789,12 +11811,13 @@ module plat {
                 }
 
                 var attr = camelCase(this.type),
-                    expression = this._expression = this.$parser.parse((<any>this.attributes)[attr]);
+                    expression = this._expression = this.$Parser.parse((<any>this.attributes)[attr]);
 
                 var identifiers = expression.identifiers;
 
                 if (identifiers.length !== 1) {
-                    this.$ExceptionStatic.warn('Only 1 identifier allowed in a plat-bind expression');
+                    var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                    $exception.warn('Only 1 identifier allowed in a plat-bind expression', $exception.BIND);
                     this._contextExpression = null;
                     return;
                 }
@@ -12804,7 +11827,7 @@ module plat {
                 this._property = split.pop();
 
                 if (split.length > 0) {
-                    this._contextExpression = this.$parser.parse(split.join('.'));
+                    this._contextExpression = this.$Parser.parse(split.join('.'));
                 } else if (expression.aliases.length > 0) {
                     var alias = expression.aliases[0],
                         resourceObj = this.parent.findResource(alias);
@@ -13164,7 +12187,7 @@ module plat {
             }
 
             /**
-             * Determines the type of HTMLElement being bound to 
+             * Determines the type of Element being bound to 
              * and sets the necessary handlers.
              */
             _determineType(): void {
@@ -13295,7 +12318,7 @@ module plat {
             }
         }
 
-        register.control('plat-bind', Bind);
+        register.control(__Bind, Bind);
 
         /**
          * A file interface for browsers that do not support the 
@@ -13313,6 +12336,8 @@ module plat {
          * An AttributeControl that deals with observing changes for a specified property.
          */
         export class ObservableAttributeControl extends AttributeControl implements IObservableAttributeControl {
+            $ContextManagerStatic: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
+
             /**
              * The property to set on the associated template control.
              */
@@ -13383,13 +12408,10 @@ module plat {
                     return;
                 }
 
-                var property = <observable.IObservableProperty<any>>{
-                        value: value,
-                        observe: this._boundAddListener
-                    },
-                    ContextManager: observable.IContextManagerStatic = acquire('$ContextManagerStatic');
-
-                ContextManager.defineGetter(templateControl, this.property, property, true, true);
+                this.$ContextManagerStatic.defineGetter(templateControl, this.property, <observable.IObservableProperty<any>>{
+                    value: value,
+                    observe: this._boundAddListener
+                }, true, true);
                 this._callListeners(value, oldValue);
             }
 
@@ -13472,21 +12494,21 @@ module plat {
             property: string = 'options';
         }
 
-        register.control('plat-options', Options);
+        register.control(__Options, Options);
     }
     export module ui {
         /**
-         * A control class which provides properties and methods for managing its body HTML.
+         * TemplateControls are the base control for any UIControl. They provide properties for the control to use
+         * to manage its body HTML.
          */
         export class TemplateControl extends Control implements ITemplateControl {
-            static $ResourcesStatic: IResourcesStatic;
-            static $BindableTemplatesStatic: IBindableTemplatesStatic;
-            static $ManagerCacheStatic: storage.ICache<processing.IElementManager>;
-            static $ExceptionStatic: IExceptionStatic;
-            static $templateCache: storage.ITemplateCache;
-            static $parser: expressions.IParser;
-            static $http: async.IHttp;
-            static $Promise: async.IPromiseStatic;
+            static $ResourcesFactory: IResourcesFactory;
+            static $BindableTemplatesFactory: IBindableTemplatesFactory;
+            static $ManagerCache: storage.ICache<processing.IElementManager>;
+            static $TemplateCache: storage.ITemplateCache;
+            static $Parser: expressions.IParser;
+            static $Http: async.IHttp;
+            static $Promise: async.IPromise;
 
             /**
              * Evaluates an expression string with a given control and optional context.
@@ -13499,7 +12521,7 @@ module plat {
             /**
              * Evaluates a parsed expression with a given control and optional context.
              * 
-             * @param expression An IParsedExpression created using the '$parser' injectable.
+             * @param expression An IParsedExpression created using the plat.expressions.IParser injectable.
              * @param control The control used for evaluation context.
              * @param aliases An optional alias object containing resource alias values
              */
@@ -13511,7 +12533,7 @@ module plat {
                     return;
                 }
 
-                expression = isString(expression) ? TemplateControl.$parser.parse(expression) : expression;
+                expression = isString(expression) ? TemplateControl.$Parser.parse(expression) : expression;
 
                 if (isNull(control)) {
                     return expression.evaluate(null, aliases);
@@ -13577,8 +12599,8 @@ module plat {
                     }
 
                     if (isNull(resourceObj)) {
-                        var Exception = TemplateControl.$ExceptionStatic;
-                        Exception.warn('Attempting to use a resource that is not defined.', Exception.CONTEXT);
+                        var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                        $exception.warn('Attempting to use a resource that is not defined.', $exception.CONTEXT);
                         continue;
                     }
 
@@ -13664,8 +12686,8 @@ module plat {
                 Control.removeEventListeners(control);
                 TemplateControl.removeElement(control);
 
-                TemplateControl.$ResourcesStatic.dispose(control);
-                TemplateControl.$BindableTemplatesStatic.dispose(control);
+                TemplateControl.$ResourcesFactory.dispose(control);
+                TemplateControl.$BindableTemplatesFactory.dispose(control);
 
                 TemplateControl.__resourceCache[control.uid] = null;
                 delete TemplateControl.__resourceCache[control.uid];
@@ -13673,7 +12695,7 @@ module plat {
                 ContextManager.dispose(control);
                 events.EventManager.dispose(control.uid);
 
-                TemplateControl.$ManagerCacheStatic.remove(uid);
+                TemplateControl.$ManagerCache.remove(uid);
                 Control.removeParent(control);
 
                 define(control, 'context', null, true, true);
@@ -13737,7 +12759,7 @@ module plat {
                 var value = control.context;
 
                 if (isNull(control.resources)) {
-                    control.resources = TemplateControl.$ResourcesStatic.getInstance();
+                    control.resources = TemplateControl.$ResourcesFactory.getInstance();
                     control.resources.initialize(control);
                 }
 
@@ -13819,7 +12841,7 @@ module plat {
              */
             static determineTemplate(control: ITemplateControl, templateUrl?: string): async.IThenable<DocumentFragment> {
                 var template: any,
-                    templateCache = TemplateControl.$templateCache,
+                    templateCache = TemplateControl.$TemplateCache,
                     dom = control.dom,
                     Promise = TemplateControl.$Promise;
 
@@ -13843,13 +12865,15 @@ module plat {
 
                 template = templateCache.read(templateUrl);
 
+                var $exception: IExceptionStatic;
                 return Promise.cast<DocumentFragment>(template).catch((error) => {
                     if (isNull(error)) {
-                        return templateCache.put(templateUrl, TemplateControl.$http.ajax<string>({ url: templateUrl })
-                                .then<DocumentFragment>((success) => {
+                        return TemplateControl.$Http.ajax<string>({ url: templateUrl });
+                    }
+                }).then<DocumentFragment>((success) => {
                             if (!isObject(success) || !isString(success.response)) {
-                                TemplateControl.$ExceptionStatic.warn('No template found at ' + templateUrl,
-                                    TemplateControl.$ExceptionStatic.AJAX);
+                                $exception = acquire(__ExceptionStatic);
+                                $exception.warn('No template found at ' + templateUrl, $exception.AJAX);
                                 return Promise.resolve(dom.serializeHtml());
                             }
 
@@ -13862,18 +12886,11 @@ module plat {
                             template = dom.serializeHtml(templateString);
 
                             return templateCache.put(templateUrl, template);
-                        }, (error) => {
-                            postpone(() => {
-                                TemplateControl.$ExceptionStatic.fatal('Failure to get template from ' + templateUrl + '.',
-                                    TemplateControl.$ExceptionStatic.TEMPLATE);
-                            });
-                            return error;
-                        }));
-                    }
                 }).catch((error) => {
                     postpone(() => {
-                        TemplateControl.$ExceptionStatic.fatal('Failure to get template from ' + templateUrl + '.',
-                            TemplateControl.$ExceptionStatic.TEMPLATE);
+                        $exception = acquire(__ExceptionStatic);
+                        $exception.fatal('Failure to get template from ' + templateUrl + '.',
+                            $exception.TEMPLATE);
                     });
                     return error;
                 });
@@ -13899,7 +12916,7 @@ module plat {
 
                 TemplateControl.removeElement(control);
 
-                TemplateControl.$ResourcesStatic.dispose(control, true);
+                TemplateControl.$ResourcesFactory.dispose(control, true);
 
                 TemplateControl.__resourceCache[control.uid] = null;
                 delete TemplateControl.__resourceCache[control.uid];
@@ -13907,7 +12924,7 @@ module plat {
                 Control.$ContextManagerStatic.dispose(control, true);
                 events.EventManager.dispose(control.uid);
 
-                TemplateControl.$ManagerCacheStatic.remove(control.uid);
+                TemplateControl.$ManagerCache.remove(control.uid);
                 Control.removeParent(control);
 
                 control.controls = [];
@@ -13925,176 +12942,25 @@ module plat {
 
             private static __resourceCache: any = {};
 
-            /**
-             * Specifies the absolute path from where the context was created to this control's context.
-             * Used by the ContextManager for maintaining context parity.
-             * 
-             * @example 'context.childContextProperty.grandChildContextProperty'
-             */
             absoluteContextPath: string = null;
-
-            /**
-             * The inherited singleton object used for data-binding. A control that implements IViewControl will 
-             * create the context object for all of its children. Any properties bound in the DOM markup will be
-             * initialized to NULL automatically. If a control does not implement IViewControl it cannot
-             * directly modify the context property, and it should only modify child properties off of context.
-             */
             context: any = null;
-
-            /**
-             * Resources are used for providing aliases to use in markup expressions. They 
-             * are particularly useful when trying to access properties outside of the 
-             * current context, as well as reassigning context at any point in an app.
-             * 
-             * By default, every control has a resource for '@control' and '@context'.
-             * IViewControl objects also have a resource for '@root' and '@rootContext', which is a reference
-             * to their root control and root context.
-             * 
-             * Resources can be created in HTML, or through the exposed control.resources 
-             * object. If specified in HTML, they must be the first element child of the 
-             * control upon which the resources will be placed. IViewControls that use a 
-             * templateUrl can have resources as their first element in the templateUrl.
-             * 
-             * @example
-             * <custom-control>
-             *     <plat-resources>
-             *         <injectable alias="Cache">$CacheStatic</injectable>
-             *         <observable alias="testObj">
-             *              { 
-             *                  foo: 'foo', 
-             *                  bar: 'bar', 
-             *                  baz: 2 
-             *              }
-             *         </observable>
-             *     </plat-resources>
-             * </custom-control>
-             * 
-             * In the above example, the resources can be accessed by using '@Cache' and '@testObj'.
-             * The type of resource is denoted by the element name.
-             * 
-             * Only resources of type 'observable' will have data binding. The types of resources are:
-             * function, injectable, observable, and object. Resources of type 'function' will have their
-             * associated function context bound to the control that contains the resource.
-             * 
-             * When an alias is found in a markup expression, the framework will search up the control chain 
-             * to find the alias on a control's resources. This first matching alias will be used.
-             */
             resources: IResources;
-        
-            /**
-             * Indicates whether or not this control defines its own context. Controls that implement 
-             * IViewControl will automatically implement this flag as true.
-             */
             hasOwnContext: boolean = false;
-
-            /**
-             * A string representing the DOM template for this control. If this property is
-             * defined on a ITemplateControl then DOM will be created and put in the 
-             * control's element prior to calling the 'setTemplate' method.
-             */
             templateString: string;
-
-            /**
-             * A url containing a string representing the DOM template for this control. If this property is
-             * defined on a ITemplateControl then DOM will be created and put in the 
-             * control's element prior to calling the 'setTemplate' method. This property takes 
-             * precedence over templateString. In the event that both are defined, templateString
-             * will be ignored.
-             */
             templateUrl: string;
-
-            /**
-             * A DocumentFragment representing the innerHTML that existed when this control was instantiated.
-             * This property will only contain the innerHTML when either a templateString or templateUrl is
-             * defined.
-             */
             innerTemplate: DocumentFragment;
-
-            /**
-             * A IBindableTemplates object used for binding a data context to a template. This is an
-             * advanced function of a ITemplateControl.
-             * 
-             * @see IBindableTemplates
-             */
             bindableTemplates: IBindableTemplates;
-
-            /**
-             * An array of child controls. Any controls created by this control can be found in this array. The controls in
-             * this array will have reference to this control in their parent property.
-             */
             controls: Array<IControl>;
-
-            /**
-             * A Node array for managing the ITemplateControl's childNodes in the event that this control
-             * replaces its element. This property will only be useful for a ITemplateControl that implements
-             * replaceWith = null.
-             */
             elementNodes: Array<Node>;
-
-            /**
-             * The first node in the ITemplateControl's body. This property will be a Comment node when the
-             * control implements replaceWith = null, otherwise it will be null. This property allows a ITemplateControl
-             * to add nodes to its body in the event that it replaces its element.
-             * 
-             * @example this.startNode.parentNode.insertBefore(node, this.startNode.nextSibling);
-             */
             startNode: Node;
-
-            /**
-             * The last node in the ITemplateControl's body. This property will be a Comment node when the
-             * control implements replaceWith = null, otherwise it will be null. This property allows a ITemplateControl
-             * to add nodes to its body in the event that it replaces its element.
-             * 
-             * @example this.endNode.parentNode.insertBefore(node, this.endNode);
-             */
             endNode: Node;
-
-            /**
-             * Allows a ITemplateControl to either swap its element with another element (e.g. plat-select), or
-             * replace its element altogether. If null or empty string, the element will be removed from the DOM, and the 
-             * childNodes of the element will be in its place. In addition, when the element is placed an endNode Comment
-             * is created, and the childNodes are added to the elementNodes property on the control. The replaceWith 
-             * property can be any property that works with document.createElement(). If the control's element had 
-             * attributes (as well as attribute IControls), those attributes will be carried to the swapped element.
-             */
             replaceWith = 'div';
-
-            /**
-             * Set to the root ancestor control from which this control inherits its context. This value
-             * can be equal to this control.
-             */
             root: ITemplateControl;
 
-            /**
-             * TemplateControls are the base control for any UIControl. They provide properties for the control to use
-             * to manage its body HTML.
-             */
-            constructor() {
-                super();
-            }
-
-            /**
-             * This event is fired when a TemplateControl's context property is changed by an ancestor control.
-             */
             contextChanged(): void { }
 
-            /**
-             * A method called for ITemplateControls to set their template. During this method a control should
-             * ready its template for compilation. Whatever is in the control's element (or elementNodes if replaceWith
-             * is implemented) after this method's execution will be compiled and appear on the DOM.
-             */
             setTemplate(): void { }
 
-            /**
-             * Finds the identifier string associated with the given context object. The string returned
-             * is the path from a control's context.
-             * 
-             * @param context The object to locate on the control's context.
-             * 
-             * @example 
-             *     // returns 'title'
-             *     this.getIdentifier(this.context.title);
-             */
             getIdentifier(context: any): string {
                 var queue: Array<{ context: any; identifier: string; }> = [],
                     dataContext = this.context,
@@ -14145,12 +13011,6 @@ module plat {
                 return obj.identifier;
             }
 
-            /**
-             * Finds the absolute identifier string associated with the given context object. The string returned
-             * is the path from a control's root ancestor's context.
-             * 
-             * @param context The object to locate on the root control's context.
-             */
             getAbsoluteIdentifier(context: any): string {
                 if (context === this.context) {
                     return this.absoluteContextPath;
@@ -14164,87 +13024,56 @@ module plat {
                 return this.absoluteContextPath + '.' + localIdentifier;
             }
 
-            /**
-             * Finds the associated resources and builds a context object containing
-             * the values. Returns the object.
-             * 
-             * @param aliases An array of aliases to search for.
-             * @param resources An optional resources object to extend, if no resources object is passed in a new one will be created.
-             */
             getResources(aliases: Array<string>, resources?: any): IObject<any> {
                 return TemplateControl.getResources(this, aliases, resources);
             }
 
-            /**
-             * Starts at a control and searches up its parent chain for a particular resource alias. 
-             * If the resource is found, it will be returned along with the control instance on which
-             * the resource was found.
-             * 
-             * @param alias The alias to search for.
-             */
             findResource(alias: string): { resource: IResource; control: ITemplateControl; } {
                 return TemplateControl.findResource(this, alias);
             }
 
-            /**
-             * Evaluates an expression string, using the control.context.
-             * 
-             * @param expression The expression string to evaluate.
-             * @param context An optional context with which to parse. If 
-             * no context is specified, the control.context will be used.
-             */
             evaluateExpression(expression: string, context?: any): any;
-            /**
-             * Evaluates a parsed expression, using the control.context.
-             * 
-             * @param expression The IParsedExpression to evaluate.
-             * @param context An optional context with which to parse. If 
-             * no context is specified, the control.context will be used.
-             */
             evaluateExpression(expression: expressions.IParsedExpression, context?: any): any;
             evaluateExpression(expression: any, context?: any) {
                 return TemplateControl.evaluateExpression(expression, this, context);
             }
-                    }
-
-        /**
-         * The Type for referencing the '$TemplateControlStatic' injectable as a dependency.
-         */
-        export function TemplateControlStatic(
-                $ResourcesStatic: IResourcesStatic,
-                $BindableTemplatesStatic: IBindableTemplatesStatic,
-                $ManagerCacheStatic: storage.ICache<processing.IElementManager>,
-                $ExceptionStatic: IExceptionStatic,
-                $templateCache: storage.ITemplateCache,
-                $parser: expressions.IParser,
-                $http: async.IHttp,
-                $PromiseStatic: async.IPromiseStatic) {
-            TemplateControl.$ResourcesStatic = $ResourcesStatic;
-            TemplateControl.$BindableTemplatesStatic = $BindableTemplatesStatic;
-            TemplateControl.$ManagerCacheStatic = $ManagerCacheStatic;
-            TemplateControl.$ExceptionStatic = $ExceptionStatic;
-            TemplateControl.$templateCache = $templateCache;
-            TemplateControl.$parser = $parser;
-            TemplateControl.$http = $http;
-            TemplateControl.$Promise = $PromiseStatic;
-            return TemplateControl;
         }
 
-        register.injectable('$TemplateControlStatic', TemplateControlStatic, [
-            '$ResourcesStatic',
-            '$BindableTemplatesStatic',
-            '$ManagerCacheStatic',
-            '$ExceptionStatic',
-            '$templateCache',
-            '$parser',
-            '$http',
-            '$PromiseStatic'
-        ], register.injectableType.STATIC);
+        /**
+         * The Type for referencing the '$TemplateControlFactory' injectable as a dependency.
+         */
+        export function ITemplateControlFactory(
+            $ResourcesFactory: IResourcesFactory,
+            $BindableTemplatesFactory: IBindableTemplatesFactory,
+            $ManagerCache: storage.ICache<processing.IElementManager>,
+            $TemplateCache: storage.ITemplateCache,
+            $Parser: expressions.IParser,
+            $Http: async.IHttp,
+            $Promise: async.IPromise): ITemplateControlFactory {
+                TemplateControl.$ResourcesFactory = $ResourcesFactory;
+                TemplateControl.$BindableTemplatesFactory = $BindableTemplatesFactory;
+                TemplateControl.$ManagerCache = $ManagerCache;
+                TemplateControl.$TemplateCache = $TemplateCache;
+                TemplateControl.$Parser = $Parser;
+                TemplateControl.$Http = $Http;
+                TemplateControl.$Promise = $Promise;
+                return TemplateControl;
+        }
+
+        register.injectable(__TemplateControlFactory, ITemplateControlFactory, [
+            __ResourcesFactory,
+            __BindableTemplatesFactory,
+            __ManagerCache,
+            __TemplateCache,
+            __Parser,
+            __Http,
+            __Promise
+        ], register.FACTORY);
 
         /**
-         * The external interface for the '$TemplateControlStatic' injectable.
+         * Creates and manages ITemplateControls.
          */
-        export interface ITemplateControlStatic {
+        export interface ITemplateControlFactory {
             /**
              * Evaluates an expression string with a given control and optional context.
              *
@@ -14256,7 +13085,7 @@ module plat {
             /**
              * Evaluates a parsed expression with a given control and optional context.
              *
-             * @param expression An IParsedExpression created using the '$parser' injectable.
+             * @param expression An IParsedExpression created using the plat.expressions.IParser injectable.
              * @param control The control used for evaluation context.
              * @param aliases An optional alias object containing resource alias values
              */
@@ -14377,7 +13206,7 @@ module plat {
              * @example
              * <custom-control>
              *     <plat-resources>
-             *         <injectable alias="Cache">$CacheStatic</injectable>
+             *         <injectable alias="Cache">$CacheFactory</injectable>
              *         <observable alias="testObj">
              *              { 
              *                  foo: 'foo', 
@@ -14589,51 +13418,35 @@ module plat {
             }
 
             /**
-             * Indicates whether or not this control defines its own context.
+             * Returns a new instance of ViewControl.
+             * 
+             * @static
              */
-            hasOwnContext: boolean = true;
+            static getInstance(): IViewControl {
+                return new ViewControl();
+            }
 
-            /**
-             * Specifies the navigator for this control. Used for navigating to other IViewControls
-             * in a controls.Viewport.
-             */
+            hasOwnContext: boolean = true;
             navigator: navigation.IBaseNavigator;
 
-            /**
-             * This event is fired when this control has been navigated to.
-             * 
-             * @param parameter A navigation parameter sent from the previous IViewControl.
-             */
             navigatedTo(parameter?: any): void { }
 
-            /**
-             * This event is fired when this control is being navigated away from.
-             */
             navigatingFrom(): void { }
-
-            /**
-             * A ViewControl is used in a controls.Viewport for simulated page navigation. The 
-             * ViewControl has navigation events that are called when navigating to and from the control.
-             */
-            constructor() {
-                super();
-            }
         }
 
         /**
-         * The Type for referencing the '$ViewControlStatic' injectable as a dependency.
+         * The Type for referencing the '$ViewControlFactory' injectable as a dependency.
          */
-        export function ViewControlStatic(): IViewControlStatic {
+        export function IViewControlFactory(): IViewControlFactory {
             return ViewControl;
         }
 
-        register.injectable('$ViewControlStatic', ViewControlStatic,
-            null, register.injectableType.STATIC);
+        register.injectable(__ViewControlFactory, IViewControlFactory, null, register.FACTORY);
 
         /**
-         * The external interface for the '$ViewControlStatic' injectable.
+         * Creates and manages IViewControls.
          */
-        export interface IViewControlStatic {
+        export interface IViewControlFactory {
             /**
              * Detaches a ViewControl. Disposes its children, but does not dispose the ViewControl.
              * Useful for the Navigator when storing the ViewControl in history.
@@ -14652,9 +13465,11 @@ module plat {
             dispose(control: IViewControl): void;
 
             /**
-             * Create a new empty IViewControl
+             * Returns a new instance of an IViewControl.
+             *
+             * @static
              */
-            new (): IViewControl;
+            getInstance(): IViewControl;
         }
 
         /**
@@ -14691,231 +13506,81 @@ module plat {
          * of DOM.
          */
         export class Dom implements IDom {
-            $domEvents: ui.IDomEvents = acquire('$domEvents');
+            $DomEvents: ui.IDomEvents = acquire(__DomEvents);
 
-            /**
-             * Adds an event listener of the specified type to the specified element.
-             * 
-             * @param element The element to add the event listener to.
-             * @param type The type of event to listen to.
-             * @param listener The listener to fire when the event occurs.
-             * @param useCapture Whether to fire the event on the capture or the bubble phase 
-             * of event propagation.
-             */
             addEventListener(element: Node, type: string, listener: ui.IGestureListener, useCapture?: boolean): IRemoveListener;
-            /**
-             * Adds an event listener of the specified type to the specified element.
-             * 
-             * @param element The window object.
-             * @param type The type of event to listen to.
-             * @param listener The listener to fire when the event occurs.
-             * @param useCapture Whether to fire the event on the capture or the bubble phase 
-             * of event propagation.
-             */
             addEventListener(element: Window, type: string, listener: ui.IGestureListener, useCapture?: boolean): IRemoveListener;
             addEventListener(element: any, type: string, listener: ui.IGestureListener, useCapture?: boolean) {
-                return this.$domEvents.addEventListener(element, type, listener, useCapture);
+                return this.$DomEvents.addEventListener(element, type, listener, useCapture);
             }
 
-            /**
-             * Takes a Node Array and either adds it to the passed in Node,
-             * or creates a DocumentFragment and adds the NodeList to the
-             * Fragment.
-             * 
-             * @param nodeList A Node Array to be appended to the root/DocumentFragment
-             * @param root An optional Node to append the nodeList.
-             * 
-             * @return {Node} The root Node or a DocumentFragment.
-             */
             appendChildren(nodeList: Array<Node>, root?: Node): Node;
-            /**
-             * Takes a NodeList and either adds it to the passed in Node,
-             * or creates a DocumentFragment and adds the NodeList to the
-             * Fragment.
-             * 
-             * @param nodeList A NodeList to be appended to the root/DocumentFragment
-             * @param root An optional Node to append the nodeList.
-             * 
-             * @return {Node} The root Node or a DocumentFragment.
-             */
             appendChildren(nodeList: NodeList, root?: Node): Node;
             appendChildren(nodeList: any, root?: Node) {
                 return appendChildren(nodeList, root);
             }
 
-            /**
-             * Clears a DOM Node by removing all of its childNodes.
-             * 
-             * @param node The DOM Node to clear.
-             */
             clearNode(node: Node) {
                 return clearNode(node);
             }
 
-            /**
-             * Removes all the Nodes in the Array from the parent Node.
-             * 
-             * @param nodeList The Node Array to remove from the parent Node.
-             * @param parent The parent Node used to remove the nodeList.
-             */
             clearNodeBlock(nodeList: Array<Node>, parent?: Node): void;
-            /**
-             * Removes all the Nodes in the NodeList from the parent Node.
-             * 
-             * @param nodeList The NodeList to remove from the parent Node.
-             * @param parent The parent Node used to remove the nodeList.
-             */
             clearNodeBlock(nodeList: NodeList, parent?: Node): void;
             clearNodeBlock(nodeList: any, parent?: Node) {
                 return clearNodeBlock(nodeList, parent);
             }
 
-            /**
-             * Sets the innerHTML of a Node. Can take in a Node rather than an HTMLElement
-             * because it does not use innerHTML on the passed-in Node (it appends its 
-             * childNodes).
-             * 
-             * @param node The Node to set innerHTML.
-             * @param html HTML string to be put inside the node.
-             * 
-             * @return {Node} The same node passed in, with innerHTML set.
-             */
             setInnerHtml(node: Node, html: string): Node {
                 return setInnerHtml(node, html);
             }
 
-            /**
-             * Inserts a list of Nodes before the designated end Node.
-             * 
-             * @param parent The parent node into which to insert nodes.
-             * @param nodes The Node Array to insert into the parent.
-             * @param endNode An optional endNode to use to insert nodes.
-             * 
-             * @return {Array<Node>} An Array copy of nodes.
-             */
             insertBefore(parent: Node, nodes: Array<Node>, endNode?: Node): Array<Node>;
-            /**
-             * Inserts a list of Nodes before the designated end Node.
-             * 
-             * @param parent The parent node into which to insert nodes.
-             * @param nodes The NodeList to insert into the parent.
-             * @param endNode An optional endNode to use to insert nodes.
-             * 
-             * @return {Array<Node>} An Array copy of nodes.
-             */
             insertBefore(parent: Node, nodes: NodeList, endNode?: Node): Array<Node>;
-            /**
-             * Inserts a list of Nodes before the designated end Node.
-             *
-             * @param parent The parent node into which to insert nodes.
-             * @param fragment The DocumentFragment to insert into the parent.
-             * @param endNode An optional endNode to use to insert the fragment.
-             *
-             * @return {Array<Node>} An Array copy of the fragment's childNodes.
-             */
             insertBefore(parent: Node, fragment: DocumentFragment, endNode?: Node): Array<Node>;
             insertBefore(parent: Node, nodes: any, endNode?: Node) {
                 return insertBefore(parent, nodes, endNode);
             }
 
-            /**
-             * Takes the child nodes of the given node and places them above the node
-             * in the DOM. Then removes the given node.
-             * 
-             * @param node The Node to replace.
-             * 
-             * @return {Array<Node>} A Node Array that represents the childNodes of the
-             * given node.
-             */
             replace(node: Node): Array<Node> {
                 return replace(node);
             }
 
-            /**
-             * Takes the childNodes of the given element and appends them to the newElement.
-             * Then replaces the element in its parent's tree with the newElement.
-             * 
-             * @param element The HTMLElement to remove from its parent.
-             * @param newElement The HTMLElement populate with childNodes and add to the 
-             * elemnent's parent.
-             * 
-             * @return {HTMLElement} The replaced element (newElement).
-             */
-            replaceWith(element: HTMLElement, newElement: HTMLElement): HTMLElement;
-            /**
-             * Takes the childNodes of the given Node and appends them to the newNode.
-             * Then replaces the Node in its parent's tree with the newNode.
-             * 
-             * @param node The Node to remove from its parent.
-             * @param newElement The Node populate with childNodes and add to the 
-             * node's parent.
-             * 
-             * @return {Node} The replaced Node (newNode).
-             */
+            replaceWith(node: Node, newElement: HTMLElement): HTMLElement;
+            replaceWith(node: Node, newElement: Element): Element;
             replaceWith(node: Node, newNode: Node): Node;
-            replaceWith(node: any, newNode: any) {
+            replaceWith(node: any, newNode: any): any {
                 return replaceWith(node, newNode);
             }
 
-            /**
-             * Takes in a string representing innerHTML and returns a DocumentFragment
-             * containing the serialized DOM.
-             * 
-             * @param html The DOM string.
-             * 
-             * @return {DocumentFragment} The serialized DOM.
-             */
             serializeHtml(html: string): DocumentFragment {
                 return serializeHtml(html);
             }
 
-            /**
-             * Takes in a startNode and endNode, each having the same parentNode. 
-             * Removes every node in between the startNode.  If endNode is not specified, 
-             * DOM will be removed until the end of the parentNode's children.
-             * 
-             * @param startNode The starting node, which will not be removed.
-             * @param endNode The ending node, which will not be removed.
-             */
             removeBetween(startNode: Node, endNode?: Node): void {
                 return removeBetween(startNode, endNode);
             }
 
-            /**
-             * Takes in a startNode and endNode, each having the same parentNode. 
-             * Removes every node in between the startNode and endNode as well as 
-             * the startNode and the endNode.  If endNode is not specified, DOM 
-             * will be removed until the end of the parentNode's children.
-             * 
-             * @param startNode The first node to remove.
-             * @param endNode The last node to remove.
-             */
             removeAll(startNode: Node, endNode?: Node): void {
                 return removeAll(startNode, endNode);
             }
 
-            /**
-             * Adds a class to the specified element
-             * 
-             * @param element The element to which the class name is being added.
-             * @param className The class name to add to the element.
-             */
-            addClass(element: HTMLElement, className: string): void {
-                return addClass(element, className);
+            addClass(element: Element, className: string): void {
+                return addClass(<HTMLElement>element, className);
             }
 
-            /**
-             * Removes a class from the specified element
-             * 
-             * @param element The element from which the class name is being removed.
-             * @param className The class name to remove from the element.
-             */
-            removeClass(element: HTMLElement, className: string): void {
-                return removeClass(element, className);
+            removeClass(element: Element, className: string): void {
+                return removeClass(<HTMLElement>element, className);
             }
         }
 
-        register.injectable('$dom', Dom);
+        /**
+         * The Type for referencing the '$Dom' injectable as a dependency.
+         */
+        export function IDom(): IDom {
+            return new Dom();
+        }
+
+        register.injectable(__Dom, IDom);
 
         /**
          * An object that deals with the creation, deletion, and modification 
@@ -14980,7 +13645,7 @@ module plat {
             clearNodeBlock(nodeList: NodeList, parent?: Node): void;
 
             /**
-             * Sets the innerHTML of a Node. Can take in a Node rather than an HTMLElement
+             * Sets the innerHTML of a Node. Can take in a Node rather than an Element
              * because it does not use innerHTML on the passed-in Node (it appends its
              * childNodes).
              *
@@ -15037,13 +13702,24 @@ module plat {
              * Takes the childNodes of the given element and appends them to the newElement.
              * Then replaces the element in its parent's tree with the newElement.
              *
-             * @param element The HTMLElement to remove from its parent.
+             * @param node The Node to remove from its parent.
              * @param newElement The HTMLElement populate with childNodes and add to the
-             * elemnent's parent.
+             * element's parent.
              * 
              * @return {HTMLElement} The replaced element (newElement).
              */
-            replaceWith(element: HTMLElement, newElement: HTMLElement): HTMLElement;
+            replaceWith(node: Node, newElement: HTMLElement): HTMLElement;
+            /**
+             * Takes the childNodes of the given element and appends them to the newElement.
+             * Then replaces the element in its parent's tree with the newElement.
+             *
+             * @param node The Node to remove from its parent.
+             * @param newElement The Element populate with childNodes and add to the
+             * element's parent.
+             * 
+             * @return {Element} The replaced element (newElement).
+             */
+            replaceWith(node: Node, newElement: Element): Element;
             /**
              * Takes the childNodes of the given Node and appends them to the newNode.
              * Then replaces the Node in its parent's tree with the newNode.
@@ -15093,7 +13769,7 @@ module plat {
              * @param element The element to which the class name is being added.
              * @param className The class name to add to the element.
              */
-            addClass(element: HTMLElement, className: string): void;
+            addClass(element: Element, className: string): void;
 
             /**
              * Removes a class from the specified element
@@ -15101,7 +13777,7 @@ module plat {
              * @param element The element from which the class name is being removed.
              * @param className The class name to remove from the element.
              */
-            removeClass(element: HTMLElement, className: string): void;
+            removeClass(element: Element, className: string): void;
         }
 
         /**
@@ -15155,16 +13831,14 @@ module plat {
                 instance.dispose();
             }
 
-            /**
-             * The control using this BindableTemplates instance.
-             */
-            control: ITemplateControl;
+            $ResourcesFactory: IResourcesFactory = acquire(__ResourcesFactory);
+            $TemplateControlFactory: ITemplateControlFactory = acquire(__TemplateControlFactory);
+            $Promise: async.IPromise = acquire(__Promise);
+            $ManagerCache: storage.ICache<processing.IElementManager> = acquire(__ManagerCache);
+            $Document: Document = acquire(__Document);
+            $ElementManagerFactory: processing.IElementManagerFactory = acquire(__ElementManagerFactory);
 
-            /**
-             * Stores the compiled templates for this object, ready to be bound to a data context. 
-             * All created templates are DocumentFragments, allowing a ITemplateControl to
-             * easily insert the template into the DOM (without iterating over childNodes).
-             */
+            control: ITemplateControl;
             templates: IObject<DocumentFragment> = {};
 
             /**
@@ -15173,77 +13847,31 @@ module plat {
              */
             _cache: IObject<processing.IElementManager> = {};
 
-            $ResourcesStatic: IResourcesStatic = acquire('$ResourcesStatic');
-            $TemplateControlStatic: ITemplateControlStatic = acquire('$TemplateControlStatic');
-            $PromiseStatic: async.IPromiseStatic = acquire('$PromiseStatic');
-            $ManagerCacheStatic: storage.ICache<processing.IElementManager> = acquire('$ManagerCacheStatic');
-            $ExceptionStatic: IExceptionStatic = acquire('$ExceptionStatic');
-            $document: Document = acquire('$document');
-            $ElementManagerStatic: processing.IElementManagerStatic = acquire('$ElementManagerStatic');
-
             private __compiledControls: Array<ITemplateControl> = [];
 
-            /**
-             * Provides a way for ITemplateControls to bind a template to a data context. Useful 
-             * for narrowing data context without needing another ITemplateControl. In addition, 
-             * this object provides a performance increase because it will only compile the template once.
-             * This object is also useful when a ITemplateControl expects multiple configuration
-             * templates in its innerHTML. It can separate those templates and reuse them accordingly.
-             */
-            constructor() { }
-
-            /**
-             * Method for linking a new template to a data context and returning a clone of the template, 
-             * with all new IControls created if the template contains controls. It is not necessary
-             * to specify a data context.
-             * 
-             * @param key The key used to retrieve the template.
-             * @param callback The callback associated with binding the template to the specified data
-             * context. 
-             * @param relativeIdentifier The identifier string relative to this control's context
-             * (e.g. 'foo.bar.baz' would signify the object this.context.foo.bar.baz). This is the 
-             * most efficient way of specifying context, else the framework has to search for the 
-             * object.
-             * @param resources An object used as the resources for any top-level 
-             * controls created in the template.
-             * @return {DocumentFragment} A clone of the template, fully reconstructed and ready to put
-             * in the DOM.
-             */
             bind(key: string, callback: IBindableTemplateCallback, relativeIdentifier?: string,
                 resources?: IObject<IResource>): DocumentFragment;
-            /**
-             * Method for linking a new template to a data context and returning a clone of the template, 
-             * with all new IControls created if the template contains controls. It is not necessary
-             * to specify a data context.
-             * 
-             * @param key The key used to retrieve the template.
-             * @param callback The callback associated with binding the template to the specified data
-             * context. 
-             * @param relativeIdentifier The identifier number relative to this control's context. Only 
-             * necessary when context is an array.
-             * @param resources An object used as the resources for any top-level 
-             * controls created in the template.
-             * @return {DocumentFragment} A clone of the template, fully reconstructed and ready to put
-             * in the DOM.
-             */
             bind(key: string, callback: IBindableTemplateCallback, relativeIdentifier?: number,
                     resources?: IObject<IResource>): DocumentFragment;
             bind(key: any, callback: IBindableTemplateCallback,
                     relativeIdentifier?: any, resources?: IObject<IResource>): DocumentFragment {
                 var template: any = this.templates[key],
                     control: ITemplateControl = this.control,
-                    nodeMap: processing.INodeMap;
+                    nodeMap: processing.INodeMap,
+                    $exception: IExceptionStatic;
 
                 if (isNull(template)) {
-                    this.$ExceptionStatic.fatal('Cannot bind template, no template stored with key: ' + key,
-                        this.$ExceptionStatic.TEMPLATE);
+                    $exception = acquire(__ExceptionStatic);
+                    $exception.fatal('Cannot bind template, no template stored with key: ' + key,
+                        $exception.TEMPLATE);
                     return;
                 }
 
                 if (!(isNull(relativeIdentifier) || isNumber(relativeIdentifier) || isString(relativeIdentifier))) {
-                    this.$ExceptionStatic.warn('Cannot bind template with relativeIdentifier: ' +
+                    $exception = acquire(__ExceptionStatic);
+                    $exception.warn('Cannot bind template with relativeIdentifier: ' +
                         relativeIdentifier +
-                        '. Identifier must be either a string or number', this.$ExceptionStatic.BIND);
+                        '. Identifier must be either a string or number', $exception.BIND);
                     return;
                 }
 
@@ -15252,7 +13880,8 @@ module plat {
                         this._bindTemplate(key, <DocumentFragment>result.cloneNode(true), relativeIdentifier, resources, callback);
                     }).catch((error: any) => {
                         postpone(() => {
-                            this.$ExceptionStatic.fatal(error, this.$ExceptionStatic.COMPILE);
+                            $exception = acquire(__ExceptionStatic);
+                            $exception.fatal(error, $exception.COMPILE);
                         });
                     });
                     return;
@@ -15260,44 +13889,10 @@ module plat {
                 this._bindTemplate(key, <DocumentFragment>template.cloneNode(true), relativeIdentifier, resources, callback);
             }
 
-            /**
-             * Adds a template to this object. The template will be stored with the key,
-             * and it will be transformed into a DocumentFragment.
-             * 
-             * @param key The key used to store the template.
-             * @param template An HTMLElement represending the template DOM.
-             */
-            add(key: string, template: HTMLElement): void;
-            /**
-             * Adds a template to this object. The template will be stored with the key,
-             * and it will be transformed into a DocumentFragment.
-             * 
-             * @param key The key used to store the template.
-             * @param template A Node array represending the template DOM.
-             */
+            add(key: string, template: Element): void;
             add(key: string, template: Array<Node>): void;
-            /**
-             * Adds a template to this object. The template will be stored with the key,
-             * and it will be transformed into a DocumentFragment.
-             * 
-             * @param key The key used to store the template.
-             * @param template A NodeList represending the template DOM.
-             */
             add(key: string, template: NodeList): void;
-            /**
-             * Adds a template to this object. The template will be stored with the key.
-             * 
-             * @param key The key used to store the template.
-             * @param template A DocumentFragment represending the template DOM.
-             */
             add(key: string, template: DocumentFragment): void;
-            /**
-             * Adds a template to this object. The template will be stored with the key,
-             * and it will be transformed into a DocumentFragment.
-             * 
-             * @param key The key used to store the template.
-             * @param template A Node represending the template DOM.
-             */
             add(key: string, template: Node): void;
             add(key: string, template: any) {
                 if (isNull(template)) {
@@ -15310,7 +13905,7 @@ module plat {
                     return;
                 }
 
-                var fragment = this.$document.createDocumentFragment();
+                var fragment = this.$Document.createDocumentFragment();
 
                 if (isNode(template)) {
                     fragment.appendChild(template);
@@ -15325,11 +13920,8 @@ module plat {
                 this._compile(key, fragment);
             }
 
-            /**
-             * Clears the memory being held by this BindableTemplates instance.
-             */
             dispose(): void {
-                var dispose = this.$TemplateControlStatic.dispose,
+                var dispose = this.$TemplateControlFactory.dispose,
                     compiledControls = this.__compiledControls,
                     length = compiledControls.length;
 
@@ -15353,15 +13945,16 @@ module plat {
                     nodeMap = this._createNodeMap(control, template, context);
 
                 this._bindNodeMap(nodeMap, key).then(() => {
-                    control.startNode = template.insertBefore(this.$document.createComment(control.type + ': start node'),
+                    control.startNode = template.insertBefore(this.$Document.createComment(control.type + ': start node'),
                         template.firstChild);
-                    control.endNode = template.insertBefore(this.$document.createComment(control.type + ': end node'),
+                    control.endNode = template.insertBefore(this.$Document.createComment(control.type + ': end node'),
                         null);
 
                     callback.call(this.control, template);
                 }).catch((error) => {
                     postpone(() => {
-                        this.$ExceptionStatic.fatal(error, this.$ExceptionStatic.BIND);
+                        var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                        $exception.fatal(error, $exception.BIND);
                     });
                 });
             }
@@ -15373,12 +13966,13 @@ module plat {
             _bindNodeMap(nodeMap: processing.INodeMap, key: string): async.IThenable<void> {
                 var manager = this._cache[key],
                     child = nodeMap.uiControlNode.control,
-                    template = nodeMap.element;
+                    template = nodeMap.element,
+                    $managerCache = this.$ManagerCache;
 
                 this.control.controls.push(child);
 
-                manager.clone(template, this.$ManagerCacheStatic.read(this.control.uid), nodeMap);
-                return (this.$ManagerCacheStatic.read(child.uid)).bindAndLoad();
+                manager.clone(template, $managerCache.read(this.control.uid), nodeMap);
+                return ($managerCache.read(child.uid)).bindAndLoad();
             }
         
             /**
@@ -15399,7 +13993,7 @@ module plat {
              * any asynchronous url templates within the template being compiled.
              */
             _compileNodeMap(control: ITemplateControl, nodeMap: processing.INodeMap, key: string) {
-                var manager = this.$ElementManagerStatic.getInstance(),
+                var manager = this.$ElementManagerFactory.getInstance(),
                     promises: Array<async.IThenable<void>> = [];
 
                 manager.isClone = true;
@@ -15410,33 +14004,31 @@ module plat {
 
                 promises.push(manager.fulfillTemplate());
 
-                this.templates[key] = <any>this.$PromiseStatic.all<any>(promises).then((results) => {
+                this.templates[key] = <any>this.$Promise.all(promises).then((results) => {
                     var element = nodeMap.element,
                         startNode: Comment,
                         endNode: Comment;
 
                     this.templates[key] = <DocumentFragment>nodeMap.element.cloneNode(true);
 
-                    startNode = control.startNode = this.$document.createComment(control.type + ': start node');
-                    endNode = control.endNode = this.$document.createComment(control.type + ': end node');
+                    startNode = control.startNode = this.$Document.createComment(control.type + ': start node');
+                    endNode = control.endNode = this.$Document.createComment(control.type + ': end node');
                     element.insertBefore(startNode, element.firstChild);
                     element.insertBefore(endNode, null);
 
                     return this.templates[key];
                 }).catch((error) => {
                     postpone(() => {
-                        this.$ExceptionStatic.fatal(error, this.$ExceptionStatic.COMPILE);
+                        var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                        $exception.fatal(error, $exception.COMPILE);
                     });
                 });
-
-                return this.templates[key];
             }
 
             /**
              * Creates an INodeMap for either a template being compiled or a template being bound.
              */
-            _createNodeMap(uiControl: ITemplateControl, template: Node,
-                childContext?: string): processing.INodeMap {
+            _createNodeMap(uiControl: ITemplateControl, template: Node, childContext?: string): processing.INodeMap {
                 return {
                     element: <HTMLElement>template,
                     attributes: {},
@@ -15456,26 +14048,23 @@ module plat {
              */
             _createBoundControl(key: string, template: DocumentFragment,
                 relativeIdentifier?: string, resources?: IObject<IResource>): ITemplateControl {
-                var $TemplateControlStatic = this.$TemplateControlStatic,
-                    control = $TemplateControlStatic.getInstance(),
+                var $TemplateControlFactory = this.$TemplateControlFactory,
+                    control = $TemplateControlFactory.getInstance(),
+                    $ResourcesFactory = this.$ResourcesFactory,
                     parent = this.control,
                     hasRelativeIdentifier = !isEmpty(relativeIdentifier),
-                    absoluteContextPath: string;
-
-                if (hasRelativeIdentifier) {
-                    absoluteContextPath = parent.absoluteContextPath + '.' + relativeIdentifier;
-                } else {
+                    absoluteContextPath: string = hasRelativeIdentifier ?
+                    parent.absoluteContextPath + '.' + relativeIdentifier :
                     absoluteContextPath = parent.absoluteContextPath;
-                }
 
-                $TemplateControlStatic.setAbsoluteContextPath(control, absoluteContextPath);
+                $TemplateControlFactory.setAbsoluteContextPath(control, absoluteContextPath);
 
-                var _resources = this.$ResourcesStatic.getInstance();
+                var _resources = $ResourcesFactory.getInstance();
 
                 _resources.initialize(control, resources);
 
                 control.resources = _resources;
-                this.$ResourcesStatic.addControlResources(control);
+                $ResourcesFactory.addControlResources(control);
 
                 control.parent = parent;
                 control.controls = [];
@@ -15487,13 +14076,38 @@ module plat {
         }
 
         /**
-         * The Type for referencing the '$BindableTemplatesStatic' injectable as a dependency.
+         * The Type for referencing the '$BindableTemplatesFactory' injectable as a dependency.
          */
-        export function BindableTemplatesStatic($TemplateControlStatic: ITemplateControlStatic) {
+        export function IBindableTemplatesFactory(): IBindableTemplatesFactory {
             return BindableTemplates;
         }
 
-        register.injectable('$BindableTemplatesStatic', BindableTemplatesStatic, null, register.injectableType.STATIC);
+        register.injectable(__BindableTemplatesFactory, IBindableTemplatesFactory, null, register.FACTORY);
+
+        /**
+         * The external interface for the '$BindableTemplatesFactory' injectable.
+         */
+        export interface IBindableTemplatesFactory {
+            /**
+             * Creates a new instance of BindableTemplates and returns it. If a BindableTemplates is
+             * passed in, it will use the properties on the original BindableTemplates.
+             *
+             * @static
+             * @param control The ITemplateControl containing the new BindableTemplate object, used for data context
+             * inheritance for templates.
+             * @param originalBindableTemplates An optional IBindableTemplates object to copy.
+             * @return {BindableTemplates} The newly instantiated BindableTemplates object.
+             */
+            create(control: ITemplateControl, original?: IBindableTemplates): IBindableTemplates;
+
+            /**
+             * Clears the memory being held by control's bindableTemplates.
+             * 
+             * @static
+             * @param control The control whose bindableTemplates will be disposed.
+             */
+            dispose(control: ITemplateControl): void;
+        }
 
         /**
          * Describes an object which provides a way for ITemplateControls to bind a template 
@@ -15559,9 +14173,9 @@ module plat {
              * and it will be transformed into a DocumentFragment.
              * 
              * @param key The key used to store the template.
-             * @param template An HTMLElement represending the template DOM.
+             * @param template An Element represending the template DOM.
              */
-            add(key: string, template: HTMLElement): void;
+            add(key: string, template: Element): void;
             /**
              * Adds a template to this object. The template will be stored with the key,
              * and it will be transformed into a DocumentFragment.
@@ -15616,51 +14230,15 @@ module plat {
         }
 
         /**
-         * The external interface for the '$BindableTemplatesStatic' injectable.
-         */
-        export interface IBindableTemplatesStatic {
-            /**
-             * Creates a new instance of BindableTemplates and returns it. If a BindableTemplates is
-             * passed in, it will use the properties on the original BindableTemplates.
-             *
-             * @static
-             * @param control The ITemplateControl containing the new BindableTemplate object, used for data context
-             * inheritance for templates.
-             * @param originalBindableTemplates An optional IBindableTemplates object to copy.
-             * @return {BindableTemplates} The newly instantiated BindableTemplates object.
-             */
-            create(control: ITemplateControl, original?: IBindableTemplates): IBindableTemplates;
-
-            /**
-             * Clears the memory being held by control's bindableTemplates.
-             * 
-             * @static
-             * @param control The control whose bindableTemplates will be disposed.
-             */
-            dispose(control: ITemplateControl): void;
-        }
-
-        /**
-         * The class that stores the information about an HTMLElement's attribute NamedNodeMap.
+         * The class that stores the information about an Element's attribute NamedNodeMap.
          * Methods are implemented to allow you to observe for changes on an attribute.
          * 
          * Attributes for this object are converted from dash-notation to camelCase notation.
          */
-        export class Attributes implements IAttributes {
+        export class Attributes implements IAttributesInstance {
             private __listeners: IObject<Array<(newValue: any, oldValue: any) => void>> = {};
             private __control: IControl;
 
-            /**
-             * Stores the information about an HTMLElement's attribute NamedNodeMap, and allows a control to observe 
-             * for changes on an attribute. The interface takes in a generic type, allowing ITemplateControls 
-             * to specify an interface for their plat-options.
-             * 
-             * Attributes for this object are converted from dash-notation to camelCase notation. 'plat-options' are 
-             * parsed and stored as an object on this object, all other attributes are stored with their string values.
-             * 
-             * @param control The control they'll be placed upon as a property.
-             * @param attributes The attributes and their values present on the HTMLElement.
-             */
             initialize(control: IControl, attributes: IObject<string>): void {
                 this.__control = control;
 
@@ -15678,13 +14256,6 @@ module plat {
                 }
             }
 
-            /**
-             * Provides a way to observe an attribute for changes.
-             * 
-             * @param key The attribute to observe for changes (e.g. 'platOptions').
-             * @param listener The listener function to be called when the attribute changes. The
-             * 'this' context of the listener will be scoped to the control instance.
-             */
             observe(key: string, listener: (newValue: any, oldValue: any) => void): IRemoveListener {
                 var listeners = this.__listeners[camelCase(key)];
 
@@ -15719,17 +14290,24 @@ module plat {
             }
         }
 
-        register.injectable('$attributes', Attributes, null, register.injectableType.MULTI);
+        /**
+         * The Type for referencing the '$Attributes' injectable as a dependency.
+         */
+        export function IAttributesInstance(): IAttributesInstance {
+            return new Attributes();
+        }
+
+        register.injectable(__AttributesInstance, IAttributesInstance, null, register.INSTANCE);
 
         /**
-         * Describes an object that stores the information about an HTMLElement's attribute NamedNodeMap.
+         * Describes an object that stores the information about an Element's attribute NamedNodeMap.
          * Methods are implemented to allow you to observe for changes on an attribute.
          * 
          * Attributes for this object are converted from dash-notation to camelCase notation.
          */
-        export interface IAttributes {
+        export interface IAttributesInstance {
             /**
-             * Stores the information about an HTMLElement's attribute NamedNodeMap, and allows a control to observe 
+             * Stores the information about an Element's attribute NamedNodeMap, and allows a control to observe 
              * for changes on an attribute. The interface takes in a generic type, allowing ITemplateControls 
              * to specify an interface for their plat-options.
              * 
@@ -15745,6 +14323,15 @@ module plat {
              * @param listener The listener function to be called when the attribute changes.
              */
             observe(key: string, listener: (newValue: any, oldValue: any) => void): IRemoveListener;
+
+            /**
+             * Used to show an attribute has been changed and forces listeners to be fired.
+             * 
+             * @param key The attribute being observed for changes (e.g. 'platOptions').
+             * @param newValue The new value of the attribute.
+             * @param oldValue The previous value of the attribute.
+             */
+            attributeChanged(key: string, newValue: any, oldValue: any): void;
         }
 
         /**
@@ -15764,7 +14351,7 @@ module plat {
          * @example 
          * <custom-control>
          *     <plat-resources>
-         *         <injectable alias="Cache">$CacheStatic</injectable>
+         *         <injectable alias="Cache">$CacheFactory</injectable>
          *         <observable alias="testObj">
          *              { 
          *                  foo: 'foo', 
@@ -15787,8 +14374,8 @@ module plat {
          */
         export class Resources implements IResources {
             static $ContextManagerStatic: observable.IContextManagerStatic;
-            static $regex: expressions.IRegex;
-            static $ExceptionStatic: IExceptionStatic;
+            static $Regex: expressions.IRegex;
+
             /**
              * Populates an IResource value if necessary, and adds it to the given 
              * control's resources.
@@ -15797,7 +14384,7 @@ module plat {
              * @param control The control for which to create a resource.
              * @param resource The IResource used to set the value.
              */
-            static createResource(control: ITemplateControl, resource: IResource): IResource {
+            static create(control: ITemplateControl, resource: IResource): IResource {
                 if (isNull(resource)) {
                     return resource;
                 }
@@ -15826,10 +14413,11 @@ module plat {
                             value = (<any>control)[value];
                             if (isFunction(value)) {
                                 resource.value = value.bind(control);
-                            } else {;
-                                Resources.$ExceptionStatic.warn('Attempted to create a "function" ' +
+                            } else {
+                                var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                                $exception.warn('Attempted to create a "function" ' +
                                     'type Resource with a function not found on your control.',
-                                    Resources.$ExceptionStatic.BIND);
+                                    $exception.BIND);
                                 resource.value = noop;
                             }
                         }
@@ -15887,7 +14475,7 @@ module plat {
                         continue;
                     }
 
-                    (<any>resourcesInstance)[alias] = resources[alias] = Resources.createResource(control,
+                    (<any>resourcesInstance)[alias] = resources[alias] = Resources.create(control,
                         (<any>resourcesInstance)[alias]);
                 }
             
@@ -15930,7 +14518,7 @@ module plat {
             }
         
             /**
-             * Parses a resources HTMLElement and creates 
+             * Parses a resources Element and creates 
              * an IObject<IResource> with its element children.
              * 
              * @static
@@ -15939,17 +14527,17 @@ module plat {
              * @return {IObject<IResource>} The resources created 
              * using element.
              */
-            static parseElement(element: HTMLElement): IObject<IResource> {
-                var slice = Array.prototype.slice,
-                    whiteSpaceRegex = Resources.$regex.whiteSpaceRegex,
-                    quotationRegex = Resources.$regex.quotationRegex,
+            static parseElement(element: Element): IObject<IResource> {
+                var children: Array<Element> = Array.prototype.slice.call((<HTMLElement>element).children),
+                    child: Element,
+                    $regex = Resources.$Regex,
+                    whiteSpaceRegex = $regex.whiteSpaceRegex,
+                    quotationRegex = $regex.quotationRegex,
                     resources: IObject<IResource> = {},
                     resource: IResource,
                     types = Resources.__resourceTypes,
                     attrs: NamedNodeMap,
                     attr: Attr,
-                    children = slice.call(element.children),
-                    child: HTMLElement,
                     nodeName: string,
                     text: string;
 
@@ -16078,28 +14666,8 @@ module plat {
             private __bound: boolean = false;
             private __controlInstance: ITemplateControl;
 
-            /**
-             * Initializes the control's Resources instance.
-             * 
-             * @param control The control containing this Resources instance.
-             * @param element An optional element used to create initial IResource objects.
-             */
-            initialize(control: ITemplateControl, element?: HTMLElement): void;
-            /**
-             * Initializes the control's Resources instance.
-             * 
-             * @param control The control containing this Resources instance.
-             * @param resources An optional IObject<IResource> used to populate initial
-             * IResource objects.
-             */
+            initialize(control: ITemplateControl, element?: Element): void;
             initialize(control: ITemplateControl, resources?: IObject<IResource>): void;
-            /**
-             * Initializes the control's Resources instance.
-             * 
-             * @param control The control containing this Resources instance.
-             * @param element An optional IResources object used to populate initial 
-             * IResource objects.
-             */
             initialize(control: ITemplateControl, resources?: IResources): void;
             initialize(controlInstance: ITemplateControl, resources?: any) {
                 this.__controlInstance = controlInstance;
@@ -16125,36 +14693,8 @@ module plat {
                 }
             }
 
-            /**
-             * Used for programatically adding IResource objects.
-             * 
-             * @param resources An IObject<IResource> used to add 
-             * resources, keyed by their alias.
-             * 
-             * @example control.resources.add({
-             *     myAlias: {
-             *         type: 'observable',
-             *         value: { 
-             *             hello: 'Hello World!'
-             *         } 
-             *     }
-             * });
-             */
             add(resources: IObject<IResource>): void;
-            /**
-             * Used for programatically adding IResource objects.
-             * 
-             * @param element An HTMLElement containing resource element children.
-             * 
-             * @example
-             *     <plat-resources>
-             *         <injectable alias="Cache">$CacheStatic</injectable>
-             *         <observable alias="testObj">{ foo: 'foo', bar: 'bar', baz: 2 }</observable>
-             *     </plat-resources>
-             * 
-             * The resource type is specified by the element name.
-             */
-            add(element: HTMLElement): void;
+            add(element: Element): void;
             add(resources: any) {
                 if (isNull(resources)) {
                     return;
@@ -16168,7 +14708,7 @@ module plat {
                     control = this.__controlInstance,
                     bound = this.__bound,
                     key: string,
-                    create = Resources.createResource;
+                    create = Resources.create;
 
                 for (var i = 0; i < length; ++i) {
                     key = keys[i];
@@ -16181,23 +14721,85 @@ module plat {
         }
 
         /**
-         * The Type for referencing the '$ResourcesStatic' injectable as a dependency.
+         * The Type for referencing the '$ResourcesFactory' injectable as a dependency.
          */
-        export function ResourcesStatic(
-                $ContextManagerStatic: observable.IContextManagerStatic,
-                $regex: expressions.IRegex,
-                $ExceptionStatic: IExceptionStatic): IResourcesStatic {
-            Resources.$ContextManagerStatic = $ContextManagerStatic;
-            Resources.$regex = $regex;
-            Resources.$ExceptionStatic = $ExceptionStatic;
-            return Resources;
+        export function IResourcesFactory(
+            $ContextManagerStatic: observable.IContextManagerStatic,
+            $Regex: expressions.IRegex): IResourcesFactory {
+                Resources.$ContextManagerStatic = $ContextManagerStatic;
+                Resources.$Regex = $Regex;
+                return Resources;
         }
 
-        register.injectable('$ResourcesStatic', ResourcesStatic, [
-            '$ContextManagerStatic',
-            '$regex',
-            '$ExceptionStatic'
-        ], register.injectableType.STATIC);
+        register.injectable(__ResourcesFactory, IResourcesFactory, [
+            __ContextManagerStatic,
+            __Regex
+        ], register.FACTORY);
+
+        /**
+         * Creates and manages IResources for TemplateControls.
+         */
+        export interface IResourcesFactory {
+            /**
+             * Populates an IResource value if necessary, and adds it to the given
+             * control's resources.
+             *
+             * @static
+             * @param control The control for which to create a resource.
+             * @param resource The IResource used to set the value.
+             */
+            create(control: ITemplateControl, resource: IResource): IResource;
+
+            /**
+             * Adds resource aliases for '@control' and '@context'. The resources are
+             * aliases for the control instance and the control.context.
+             *
+             * @static
+             * @param control The control on which to add the resources.
+             */
+            addControlResources(control: ITemplateControl): void;
+
+            /**
+             * Binds the resources in a resource instance. This involves injecting
+             * the injectable resources, creating object/observable resources, and
+             * binding functions to the associated control's instance.
+             *
+             * @static
+             * @param resourcesInstance The instance of the IResources object.
+             */
+            bindResources(resourcesInstance: IResources): void;
+
+            /**
+             * Disposes a resource instance, removing its reference
+             * from a control and breaking references to all resource
+             * objects.
+             * 
+             * @static
+             * @param control The control whose resources will be disposed.
+             * @param persist Whether or not to persist a resource object post 
+             * disposal or set it to null.
+             */
+            dispose(control: ITemplateControl, persist?: boolean): void;
+
+            /**
+             * Parses a resources Element and creates
+             * an IObject<IResource> with its element children.
+             *
+             * @static
+             * @param element The resources element to parse.
+             * 
+             * @return {IObject<IResource>} The resources created
+             * using element.
+             */
+            parseElement(element: Element): IObject<IResource>;
+
+            /**
+             * Returns a new instance of IResources
+             * 
+             * @static
+             */
+            getInstance(): IResources;
+        }
 
         /**
          * Resources are used for providing aliases to use in markup expressions. They 
@@ -16216,7 +14818,7 @@ module plat {
          * @example 
          * <custom-control>
          *     <plat-resources>
-         *         <injectable alias="Cache">$CacheStatic</injectable>
+         *         <injectable alias="Cache">$CacheFactory</injectable>
          *         <observable alias="testObj">
          *              { 
          *                  foo: 'foo', 
@@ -16257,23 +14859,23 @@ module plat {
             /**
              * Used for programatically adding IResource objects.
              * 
-             * @param element An HTMLElement containing resource element children.
+             * @param element An Element containing resource element children.
              * 
              * @example
              *     <plat-resources>
-             *         <injectable alias="Cache">$CacheStatic</injectable>
+             *         <injectable alias="Cache">$CacheFactory</injectable>
              *         <observable alias="testObj">{ foo: 'foo', bar: 'bar', baz: 2 }</observable>
              *     </plat-resources>
              * 
              * The resource type is specified by the element name.
              */
-            add(element: HTMLElement): void;
+            add(element: Element): void;
 
             /**
              * @param control The control containing this Resources instance.
              * @param element An optional element used to create initial IResource objects.
              */
-            initialize(control: ITemplateControl, element?: HTMLElement): void;
+            initialize(control: ITemplateControl, element?: Element): void;
             /**
              * @param control The control containing this Resources instance.
              * @param resources An optional IObject<IResource> used to populate initial
@@ -16315,71 +14917,6 @@ module plat {
              * The initial value prior to it being observed.
              */
             initialValue?: any;
-        }
-
-        /**
-         * The external interface for the '$ResourcesStatic' injectable.
-         */
-        export interface IResourcesStatic {
-            /**
-             * Populates an IResource value if necessary, and adds it to the given
-             * control's resources.
-             *
-             * @static
-             * @param control The control for which to create a resource.
-             * @param resource The IResource used to set the value.
-             */
-            createResource(control: ITemplateControl, resource: IResource): IResource;
-
-            /**
-             * Adds resource aliases for '@control' and '@context'. The resources are
-             * aliases for the control instance and the control.context.
-             *
-             * @static
-             * @param control The control on which to add the resources.
-             */
-            addControlResources(control: ITemplateControl): void;
-
-            /**
-             * Binds the resources in a resource instance. This involves injecting
-             * the injectable resources, creating object/observable resources, and
-             * binding functions to the associated control's instance.
-             *
-             * @static
-             * @param resourcesInstance The instance of the IResources object.
-             */
-            bindResources(resourcesInstance: IResources): void;
-
-            /**
-             * Disposes a resource instance, removing its reference
-             * from a control and breaking references to all resource
-             * objects.
-             * 
-             * @static
-             * @param control The control whose resources will be disposed.
-             * @param persist Whether or not to persist a resource object post 
-             * disposal or set it to null.
-             */
-            dispose(control: ITemplateControl, persist?: boolean): void;
-
-            /**
-             * Parses a resources HTMLElement and creates
-             * an IObject<IResource> with its element children.
-             *
-             * @static
-             * @param element The resources element to parse.
-             * 
-             * @return {IObject<IResource>} The resources created
-             * using element.
-             */
-            parseElement(element: HTMLElement): IObject<IResource>;
-
-            /**
-             * Returns a new instance of IResources
-             * 
-             * @static
-             */
-            getInstance(): IResources;
         }
 
         /**
@@ -16490,8 +15027,8 @@ module plat {
                 }]
             };
 
-            $document: Document = acquire('$document');
-            $compat: ICompat = acquire('$compat');
+            $Document: Document = acquire(__Document);
+            $Compat: ICompat = acquire(__Compat);
 
             /**
              * Whether or not the DomEvents are currently active. 
@@ -16586,7 +15123,7 @@ module plat {
             private __capturedTarget: Node;
             private __mappedEventListener = this.__handleMappedEvent.bind(this);
             private __reverseMap = {};
-            private __swipeSubscribers: { master: IDomEvent; directional: IDomEvent };
+            private __swipeSubscribers: { master: IDomEventInstance; directional: IDomEventInstance };
             private __pointerHash: IObject<IPointerEvent> = {};
             private __pointerEvents: Array<IPointerEvent> = [];
             private __listeners: ICustomEventListener = {
@@ -16602,28 +15139,10 @@ module plat {
                 this.__getTypes();
             }
 
-            /**
-             * Add an event listener for the specified event type on the specified element. 
-             * 
-             * @param element The node listening for the event.
-             * @param type The type of event being listened to.
-             * @param listener The listener to be fired.
-             * @param useCapture Whether to fire the event on the capture or bubble phase of propagation.
-             * @return {IRemoveListener} A function to remove the added event listener.
-             */
             addEventListener(element: Node, type: string, listener: IGestureListener, useCapture?: boolean): IRemoveListener;
-            /**
-             * Add an event listener for the specified event type on the specified element. 
-             * 
-             * @param element The window object.
-             * @param type The type of event being listened to.
-             * @param listener The listener to be fired.
-             * @param useCapture Whether to fire the event on the capture or bubble phase of propagation.
-             * @return {IRemoveListener} A function to remove the added event listener.
-             */
             addEventListener(element: Window, type: string, listener: IGestureListener, useCapture?: boolean): IRemoveListener;
             addEventListener(element: any, type: string, listener: IGestureListener, useCapture?: boolean): IRemoveListener {
-                var $compat = this.$compat,
+                var $compat = this.$Compat,
                     mappedGestures = $compat.mappedEvents,
                     mappedType = mappedGestures[type],
                     mappingExists = !isNull(mappedType),
@@ -16673,9 +15192,6 @@ module plat {
                 };
             }
 
-            /**
-             * Stops listening for touch events and resets the DomEvents instance.
-             */
             dispose(): void {
                 this.__unregisterTypes();
 
@@ -16750,7 +15266,7 @@ module plat {
                 }
 
                 var holdInterval = DomEvents.config.intervals.holdInterval,
-                    domEvent: IDomEvent,
+                    domEvent: IDomEventInstance,
                     subscribeFn: () => void;
 
                 if (noHolds) {
@@ -17058,7 +15574,7 @@ module plat {
             // Touch type and element registration
 
             private __getTypes(): void {
-                var $compat = this.$compat,
+                var $compat = this.$Compat,
                     touchEvents = $compat.mappedEvents;
 
                 if ($compat.hasTouchEvents) {
@@ -17085,7 +15601,7 @@ module plat {
             private __registerType(event: string): void {
                 var events: Array<string>,
                     listener = this.__listeners[event],
-                    $document = this.$document;
+                    $document = this.$Document;
 
                 switch (event) {
                     case this.__START:
@@ -17109,7 +15625,7 @@ module plat {
             private __unregisterType(event: string): void {
                 var events: Array<string>,
                     listener = this.__listeners[event],
-                    $document = this.$document;
+                    $document = this.$Document;
 
                 switch (event) {
                     case this.__START:
@@ -17132,9 +15648,9 @@ module plat {
             }
             private __registerElement(element: Node, type: string): void {
                 var index = this._elements.indexOf(element),
-                    domEvent: IDomEvent = acquire('$domEvent');
+                    $domEvent: IDomEventInstance = acquire(__DomEventInstance);
 
-                domEvent.initialize(element, type);
+                $domEvent.initialize(element, type);
 
                 // check if DomEvents is ready
                 if (!this._isActive) {
@@ -17149,7 +15665,7 @@ module plat {
 
                 if (index === -1) {
                     var gesture = { gestureCount: 1 };
-                    (<any>gesture)[type] = domEvent;
+                    (<any>gesture)[type] = $domEvent;
 
                     index = this._elements.length;
                     this._elements.push(element);
@@ -17162,7 +15678,7 @@ module plat {
                 } else {
                     var subscription = this._subscriptions[index];
                     if (isUndefined((<any>subscription)[type])) {
-                        (<any>subscription)[type] = domEvent;
+                        (<any>subscription)[type] = $domEvent;
                         subscription.gestureCount++;
                     }
                 }
@@ -17189,7 +15705,7 @@ module plat {
             }
             private __setTouchPoint(ev: IPointerEvent): void {
                 var eventType = ev.type,
-                    $compat = this.$compat,
+                    $compat = this.$Compat,
                     noTouchEvents = !$compat.hasTouchEvents;
 
                 if ($compat.hasPointerEvents) {
@@ -17250,10 +15766,10 @@ module plat {
 
             // Event and subscription handling
 
-            private __findFirstSubscriber(eventTarget: Node, type: string): IDomEvent {
+            private __findFirstSubscriber(eventTarget: Node, type: string): IDomEventInstance {
                 var elements = this._elements,
                     gestures: IEventSubscription,
-                    domEvent: IDomEvent,
+                    domEvent: IDomEventInstance,
                     index: number;
 
                 do {
@@ -17269,7 +15785,7 @@ module plat {
                 } while (!isNull(eventTarget = eventTarget.parentNode));
             }
             private __addMappedEvent(mappedEvent: string, useCapture?: boolean): IRemoveListener {
-                var $document = this.$document;
+                var $document = this.$Document;
                 $document.addEventListener(mappedEvent, this.__mappedEventListener, useCapture);
 
                 return () => {
@@ -17419,7 +15935,7 @@ module plat {
                 return direction === 'left' || direction === 'right';
             }
             private __appendGestureStyle(): void {
-                var $document = this.$document,
+                var $document = this.$Document,
                     head = $document.head,
                     style = <HTMLStyleElement>$document.createElement('style');
 
@@ -17489,22 +16005,62 @@ module plat {
             }
         }
 
-        plat.register.injectable('$domEvents', DomEvents);
+        /**
+         * The Type for referencing the '$DomEvents' injectable as a dependency.
+         */
+        export function IDomEvents(): IDomEvents {
+            return new DomEvents();
+        }
+
+        plat.register.injectable(__DomEvents, IDomEvents);
 
         /**
-         * The Type for referencing the '$domEvents.config' injectable as a dependency.
+         * Describes an object for managing DOM event registration and handling.
          */
-        export function DomEventsConfigStatic(): IDomEventsConfig {
+        export interface IDomEvents {
+            /**
+             * Add an event listener for the specified event type on the specified element. 
+             * 
+             * @param element The node listening for the event.
+             * @param type The type of event being listened to.
+             * @param listener The listener to be fired.
+             * @param useCapture Whether to fire the event on the capture or bubble phase of propagation.
+             * @return {IRemoveListener} A function to remove the added event listener.
+             */
+            addEventListener(element: Node, type: string, listener: IGestureListener,
+                useCapture?: boolean): IRemoveListener;
+            /**
+             * Add an event listener for the specified event type on the specified element. 
+             * 
+             * @param element The window object.
+             * @param type The type of event being listened to.
+             * @param listener The listener to be fired.
+             * @param useCapture Whether to fire the event on the capture or bubble phase of propagation.
+             * @return {IRemoveListener} A function to remove the added event listener.
+             */
+            addEventListener(element: Window, type: string, listener: IGestureListener,
+                useCapture?: boolean): IRemoveListener;
+
+            /**
+             * Stops listening for touch events and resets the DomEvents instance.
+             */
+            dispose(): void;
+        }
+
+        /**
+         * The Type for referencing the '$DomEventsConfig' injectable as a dependency.
+         */
+        export function IDomEventsConfig(): IDomEventsConfig {
             return DomEvents.config;
         }
 
-        register.injectable('$domEvents.config', DomEventsConfigStatic, null, register.injectableType.STATIC);
+        register.injectable(__DomEventsConfig, IDomEventsConfig);
 
         /**
          * A class for managing of a single custom event.
          */
-        export class DomEvent implements IDomEvent {
-            $document: Document = acquire('$document');
+        export class DomEvent implements IDomEventInstance {
+            $Document: Document = acquire(__Document);
 
             /**
              * The node or window object associated with this DomEvent.
@@ -17541,13 +16097,57 @@ module plat {
              * @param ev The event object to pass in as the custom event object's detail property.
              */
             trigger(ev: IPointerEvent): void {
-                var event = <CustomEvent>this.$document.createEvent('CustomEvent');
+                var event = <CustomEvent>this.$Document.createEvent('CustomEvent');
                 event.initCustomEvent(this.event, true, true, ev);
                 this.element.dispatchEvent(event);
             }
         }
 
-        register.injectable('$domEvent', DomEvent, null, register.injectableType.MULTI);
+        /**
+         * The Type for referencing the '$DomEventInstance' injectable as a dependency.
+         */
+        export function IDomEventInstance(): IDomEventInstance {
+            return new DomEvent();
+        }
+
+        register.injectable(__DomEventInstance, IDomEventInstance, null, register.INSTANCE);
+
+        /**
+         * Describes an object used for managing a single custom event.
+         */
+        export interface IDomEventInstance {
+            /**
+             * The node or window object associated with this DomEvent object.
+             */
+            element: any;
+
+            /**
+             * The event type associated with this DomEvent.
+             */
+            event: string;
+
+            /**
+             * Initializes the element and event of the DomEvent object
+             * 
+             * @param The node associated with this DomEvent. 
+             * @param event The type of event this DomEvent is managing.
+             */
+            initialize(element: Node, event: string): void;
+            /**
+             * Initializes the element and event of the DomEvent object
+             * 
+             * @param The window object. 
+             * @param event The type of event this DomEvent is managing.
+             */
+            initialize(element: Window, event: string): void;
+
+            /**
+             * Triggers a custom event to bubble up to all elements in this branch of the DOM tree.
+             * 
+             * @param ev The event object to pass in as the custom event object's detail property.
+             */
+            trigger(ev: IPointerEvent): void;
+        }
 
         /**
          * Describes the touch event listeners for the document.
@@ -17683,7 +16283,7 @@ module plat {
          * Describes an object to keep track of a single 
          * element's registered custom event types.
          */
-        export interface IEventSubscription extends IGestures<IDomEvent> {
+        export interface IEventSubscription extends IGestures<IDomEventInstance> {
             /**
              * The total registered gesture count for the associated element.
              */
@@ -17918,82 +16518,11 @@ module plat {
             styleConfig: Array<IDefaultStyle>;
         }
 
-        /**
-         * Describes an object used for managing a single custom event.
-         */
-        export interface IDomEvent {
-            /**
-             * The node or window object associated with this DomEvent object.
-             */
-            element: any;
-
-            /**
-             * The event type associated with this DomEvent.
-             */
-            event: string;
-        
-            /**
-             * Initializes the element and event of the DomEvent object
-             * 
-             * @param The node associated with this DomEvent. 
-             * @param event The type of event this DomEvent is managing.
-             */
-            initialize(element: Node, event: string): void;
-            /**
-             * Initializes the element and event of the DomEvent object
-             * 
-             * @param The window object. 
-             * @param event The type of event this DomEvent is managing.
-             */
-            initialize(element: Window, event: string): void;
-
-            /**
-             * Triggers a custom event to bubble up to all elements in this branch of the DOM tree.
-             * 
-             * @param ev The event object to pass in as the custom event object's detail property.
-             */
-            trigger(ev: IPointerEvent): void;
-        }
-
-        /**
-         * Describes an object for managing DOM event registration and handling.
-         */
-        export interface IDomEvents {
-            /**
-             * Add an event listener for the specified event type on the specified element. 
-             * 
-             * @param element The node listening for the event.
-             * @param type The type of event being listened to.
-             * @param listener The listener to be fired.
-             * @param useCapture Whether to fire the event on the capture or bubble phase of propagation.
-             * @return {IRemoveListener} A function to remove the added event listener.
-             */
-            addEventListener(element: Node, type: string, listener: IGestureListener,
-                useCapture?: boolean): IRemoveListener;
-            /**
-             * Add an event listener for the specified event type on the specified element. 
-             * 
-             * @param element The window object.
-             * @param type The type of event being listened to.
-             * @param listener The listener to be fired.
-             * @param useCapture Whether to fire the event on the capture or bubble phase of propagation.
-             * @return {IRemoveListener} A function to remove the added event listener.
-             */
-            addEventListener(element: Window, type: string, listener: IGestureListener,
-                useCapture?: boolean): IRemoveListener;
-
-            /**
-             * Stops listening for touch events and resets the DomEvents instance.
-             */
-            dispose(): void;
-        }
-
         export module controls {
             export class Baseport extends TemplateControl implements IBaseport {
-                $ManagerCacheStatic: storage.ICache<processing.IElementManager> = acquire('$ManagerCacheStatic');
-                $ExceptionStatic: IExceptionStatic = acquire('$ExceptionStatic');
-                $document: Document = acquire('$document');
-                $ElementManagerStatic: processing.IElementManagerStatic = acquire('$ElementManagerStatic');
+                $ManagerCache: storage.ICache<processing.IElementManager> = acquire(__ManagerCache);
+                $Document: Document = acquire(__Document);
+                $ElementManagerFactory: processing.IElementManagerFactory = acquire(__ElementManagerFactory);
 
                 constructor(public navigator: navigation.IBaseNavigator) {
                     super();
@@ -18039,8 +16568,8 @@ module plat {
 
                     var injectedControl = newControl ? control.inject() : control,
                         replaceType = injectedControl.replaceWith,
-                        node = isEmpty(replaceType) ? this.$document.createElement('div') :
-                            <HTMLElement>this.$document.createElement(replaceType),
+                        node = isEmpty(replaceType) ? this.$Document.createElement('div') :
+                            <HTMLElement>this.$Document.createElement(replaceType),
                         attributes: IObject<string> = {},
                         nodeMap: processing.INodeMap = {
                             element: node,
@@ -18058,10 +16587,10 @@ module plat {
                     node.setAttribute('plat-control', controlType);
                     element.appendChild(node);
 
-                    var viewportManager = this.$ManagerCacheStatic.read(this.uid);
+                    var viewportManager = this.$ManagerCache.read(this.uid);
                     viewportManager.children = [];
 
-                    var manager = this.$ElementManagerStatic.getInstance();
+                    var manager = this.$ElementManagerFactory.getInstance();
 
                     manager.initialize(nodeMap, viewportManager, !newControl);
 
@@ -18160,9 +16689,11 @@ module plat {
                  * and initializes the loading of the view.
                  */
                 loaded(): void {
+                    var $exception: IExceptionStatic;
                     if (isNull(this.options)) {
-                        this.$ExceptionStatic.warn('No defaultView specified in plat-options for plat-viewport.',
-                            this.$ExceptionStatic.NAVIGATION);
+                        $exception = acquire(__ExceptionStatic);
+                        $exception.warn('No defaultView specified in plat-options for plat-viewport.',
+                            $exception.NAVIGATION);
                         return;
                     }
 
@@ -18171,8 +16702,9 @@ module plat {
                         injector = viewControlInjectors[controlType];
 
                     if (isNull(injector)) {
-                        this.$ExceptionStatic.fatal('The defaultView ' + controlType + ' is not a registered view control.',
-                            this.$ExceptionStatic.NAVIGATION);
+                        $exception = acquire(__ExceptionStatic);
+                        $exception.fatal('The defaultView ' + controlType + ' is not a registered view control.',
+                            $exception.NAVIGATION);
                         return;
                     }
 
@@ -18191,7 +16723,7 @@ module plat {
                 defaultView: string;
             }
 
-            register.control('plat-viewport', Viewport, ['$navigator']);
+            register.control(__Viewport, Viewport, [__Navigator]);
 
             class Routeport extends Baseport {
                 /**
@@ -18234,9 +16766,13 @@ module plat {
                 defaultRoute: string;
             }
 
-            register.control('plat-routeport', Routeport, ['$routingNavigator']);
+            register.control(__Routeport, Routeport, [__RoutingNavigator]);
 
             export class Template extends TemplateControl {
+                $Promise: async.IPromise = acquire(__Promise);
+                $TemplateCache: storage.ITemplateCache = acquire(__TemplateCache);
+                $Document: Document = acquire(__Document);
+
                 /**
                  * Removes the <plat-template> node from the DOM
                  */
@@ -18246,9 +16782,6 @@ module plat {
                  * The evaluated plat-options object.
                  */
                 options: observable.IObservableProperty<ITemplateOptions>;
-                $PromiseStatic: async.IPromiseStatic = acquire('$PromiseStatic');
-                $templateCache: storage.ITemplateCache = acquire('$templateCache');
-                $ExceptionStatic: IExceptionStatic = acquire('$ExceptionStatic');
 
                 /**
                  * The unique ID used to reference a particular 
@@ -18266,8 +16799,8 @@ module plat {
                 private __templateControlCache: storage.ICache<any>;
                 constructor() {
                     super();
-                    var Cache: storage.ICacheStatic = acquire('$CacheStatic');
-                    this.__templateControlCache = Cache.create<any>('__templateControlCache');
+                    var $cacheFactory: storage.ICacheFactory = acquire(__CacheFactory);
+                    this.__templateControlCache = $cacheFactory.create<any>('__templateControlCache');
                 }
 
                 /**
@@ -18319,8 +16852,7 @@ module plat {
                  * in a template cache for later use.
                  */
                 _initializeTemplate(): void {
-                    var id = this._id,
-                        $document: Document = acquire('$document');
+                    var id = this._id;
 
                     if (isNull(id)) {
                         return;
@@ -18331,12 +16863,12 @@ module plat {
                         template: any;
 
                     if (!isNull(url)) {
-                        template = this.$templateCache.read(url);
+                        template = this.$TemplateCache.read(url);
                         //determineTemplate sets the templateUrl so we need to reset it back to null
                         this.templateUrl = null;
                         this.dom.clearNodeBlock(this.elementNodes, parentNode);
                     } else {
-                        template = $document.createDocumentFragment();
+                        template = this.$Document.createDocumentFragment();
                         this.dom.appendChildren(this.elementNodes, template);
                     }
 
@@ -18354,7 +16886,7 @@ module plat {
                     } else {
                         this.bindableTemplates.add(id, template.cloneNode(true));
 
-                        controlPromise = this.$PromiseStatic.resolve(this);
+                        controlPromise = this.$Promise.resolve(this);
                     }
 
                     this.__templateControlCache.put(id, controlPromise);
@@ -18369,12 +16901,14 @@ module plat {
                  * instance of the template with this ID.
                  */
                 _waitForTemplateControl(templatePromise: async.IThenable<Template>): void {
+                    var $exception: IExceptionStatic;
                     templatePromise.then((templateControl: Template) => {
                         if (!(isNull(this._url) || (this._url === templateControl._url))) {
-                            this.$ExceptionStatic.warn('The specified url: ' + this._url +
+                            $exception = acquire(__ExceptionStatic);
+                            $exception.warn('The specified url: ' + this._url +
                                 ' does not match the original plat-template with id: ' +
                                 '"' + this._id + '". The original url will be loaded.',
-                                this.$ExceptionStatic.TEMPLATE);
+                                $exception.TEMPLATE);
                         }
 
                         this.__mapBindableTemplates(templateControl);
@@ -18385,8 +16919,9 @@ module plat {
                         });
                     }).catch((error) => {
                         postpone(() => {
-                            this.$ExceptionStatic.warn('Problem resolving plat-template url: ' +
-                                error.response, this.$ExceptionStatic.TEMPLATE);
+                            $exception = acquire(__ExceptionStatic);
+                            $exception.warn('Problem resolving plat-template url: ' +
+                                error.response, $exception.TEMPLATE);
                         });
                     });
                 }
@@ -18399,7 +16934,7 @@ module plat {
                     var bindableTemplates = this.bindableTemplates,
                         id = this._id;
 
-                    return new this.$PromiseStatic<DocumentFragment>((resolve, reject) => {
+                    return new this.$Promise<DocumentFragment>((resolve, reject) => {
                         bindableTemplates.bind(id, (clone: DocumentFragment) => {
                             resolve(clone);
                         });
@@ -18430,7 +16965,7 @@ module plat {
                 url: string;
             }
 
-            register.control('plat-template', Template);
+            register.control(__Template, Template);
 
             export class Ignore extends TemplateControl {
                 /**
@@ -18448,7 +16983,7 @@ module plat {
                 }
             }
 
-            register.control('plat-ignore', Ignore);
+            register.control(__Ignore, Ignore);
 
             export class ForEach extends TemplateControl {
                 /**
@@ -18831,7 +17366,7 @@ module plat {
                 _reverse(ev: observable.IArrayMethodInfo<any>): void;
             }
 
-            register.control('plat-foreach', ForEach);
+            register.control(__ForEach, ForEach);
 
             export class Html extends TemplateControl {
                 /**
@@ -18855,9 +17390,12 @@ module plat {
                 }
             }
 
-            register.control('plat-html', Html);
+            register.control(__Html, Html);
 
             export class Select extends TemplateControl {
+                $Promise: async.IPromise = acquire(__Promise);
+                $Document: Document = acquire(__Document);
+
                 /**
                  * Replaces the <plat-select> node with 
                  * a <select> node.
@@ -18873,14 +17411,13 @@ module plat {
                  * An object that keeps track of unique 
                  * optgroups.
                  */
-                groups: IObject<HTMLElement> = {};
+                groups: IObject<Element> = {};
 
                 /**
                  * The evaluated plat-options object.
                  */
                 options: observable.IObservableProperty<ISelectOptions>;
-                $PromiseStatic: async.IPromiseStatic = acquire('$PromiseStatic');
-                $Exception: IExceptionStatic = acquire('$ExceptionStatic');
+
                 private __removeListener: IRemoveListener;
                 private __isGrouped: boolean = false;
                 private __group: string;
@@ -18892,7 +17429,7 @@ module plat {
                 setTemplate(): void {
                     var element = this.element,
                         firstElementChild = element.firstElementChild,
-                        $document: Document = acquire('$document');
+                        $document = this.$Document;
 
                     if (!isNull(firstElementChild) && firstElementChild.nodeName.toLowerCase() === 'option') {
                         this.__defaultOption = <HTMLOptionElement>firstElementChild.cloneNode(true);
@@ -19010,9 +17547,9 @@ module plat {
                             optgroup: any = groups[newGroup];
 
                         if (isNull(optgroup)) {
-                            optgroup = groups[newGroup] = <any>new this.$PromiseStatic<HTMLElement>((resolve) => {
+                            optgroup = groups[newGroup] = <any>new this.$Promise<Element>((resolve) => {
                                 this.bindableTemplates.bind('group', (groupClone: DocumentFragment) => {
-                                    optgroup = groups[newGroup] = <HTMLElement>groupClone.childNodes[1];
+                                    optgroup = groups[newGroup] = <Element>groupClone.childNodes[1];
 
                                     optgroup.appendChild(optionClone);
                                     element.appendChild(groupClone);
@@ -19020,12 +17557,13 @@ module plat {
                                 }, '' + index);
                             }).catch((error: any) => {
                                 postpone(() => {
-                                    this.$Exception.warn(error.message);
+                                    var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                                    $exception.warn(error.message, $exception.BIND);
                                 });
                             });
                             return;
                         } else if (isFunction(optgroup.then)) {
-                            optgroup.then((group: HTMLElement) => {
+                            optgroup.then((group: Element) => {
                                 group.appendChild(optionClone);
                                 return group;
                             });
@@ -19045,7 +17583,7 @@ module plat {
                  * @param parent The element whose child 
                  * will be removed.
                  */
-                _removeItem(parent: HTMLElement): void {
+                _removeItem(parent: Element): void {
                     parent.removeChild(parent.lastElementChild);
                 }
 
@@ -19227,7 +17765,7 @@ module plat {
                 textContent: string;
             }
 
-            register.control('plat-select', Select);
+            register.control(__Select, Select);
 
             export class If extends TemplateControl implements IIf {
                 /**
@@ -19239,7 +17777,7 @@ module plat {
                  * The evaluated plat-options object.
                  */
                 options: observable.IObservableProperty<IIfOptions>;
-                $ExceptionStatic: IExceptionStatic = acquire('$ExceptionStatic');
+
                 private __removeListener: IRemoveListener;
                 private __condition: boolean;
                 /**
@@ -19270,7 +17808,9 @@ module plat {
                  */
                 loaded(): void {
                     if (isNull(this.options)) {
-                        this.$ExceptionStatic.warn('No condition specified in plat-options for plat-if.');
+                        var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                        $exception.warn('No condition specified in plat-options for plat-if.', $exception.BIND);
+
                         this.options = {
                             value: {
                                 condition: true
@@ -19355,7 +17895,7 @@ module plat {
                 condition: boolean;
             }
 
-            register.control('plat-if', If);
+            register.control(__If, If);
 
             class Anchor extends TemplateControl {
                 replaceWith = 'a';
@@ -19371,7 +17911,7 @@ module plat {
                 }
             }
 
-            register.control('a', Anchor);
+            register.control(__Anchor, Anchor);
         }
     }
     export module processing {
@@ -19379,36 +17919,13 @@ module plat {
          * Responsible for iterating through the DOM and collecting controls.
          */
         export class Compiler implements ICompiler {
-            $ElementManagerStatic: IElementManagerStatic = acquire('$ElementManagerStatic');
-            $TextManagerStatic: ITextManagerStatic = acquire('$TextManagerStatic');
-            $CommentManagerStatic: ICommentManagerStatic = acquire('$CommentManagerStatic');
-            $ManagerCacheStatic: storage.ICache<INodeManager> = acquire('$ManagerCacheStatic');
-            /**
-             * Goes through the childNodes of the given Node, finding elements that contain controls as well as
-             * text that contains markup.
-             * 
-             * @param node The node whose childNodes are going to be compiled.
-             * @param control The parent control for the given Node. The parent must implement ui.ITemplateControl
-             * since only controls that implement ui.ITemplateControl can contain templates.
-             */
+            $ElementManagerFactory: IElementManagerFactory = acquire(__ElementManagerFactory);
+            $TextManagerFactory: ITextManagerFactory = acquire(__TextManagerFactory);
+            $CommentManagerFactory: ICommentManagerFactory = acquire(__CommentManagerFactory);
+            $ManagerCache: storage.ICache<INodeManager> = acquire(__ManagerCache);
+
             compile(node: Node, control?: ui.ITemplateControl): void;
-            /**
-             * Goes through the Node array, finding elements that contain controls as well as
-             * text that contains markup.
-             * 
-             * @param nodes The Node array to be compiled.
-             * @param control The parent control for the given Node array. The parent must implement ui.ITemplateControl
-             * since only controls that implement ui.ITemplateControl are responsible for creating DOM.
-             */
             compile(nodes: Array<Node>, control?: ui.ITemplateControl): void;
-            /**
-             * Goes through the NodeList, finding elements that contain controls as well as
-             * text that contains markup.
-             * 
-             * @param nodes The NodeList to be compiled. 
-             * @param control The parent control for the given NodeList. The parent must implement ui.ITemplateControl
-             * since only controls that implement ui.ITemplateControl are responsible for creating DOM.
-             */
             compile(nodes: NodeList, control?: ui.ITemplateControl): void;
             compile(node: any, control?: ui.ITemplateControl) {
                 var childNodes = node.childNodes,
@@ -19416,8 +17933,8 @@ module plat {
                     newLength: number,
                     childNode: Node,
                     hasControl = !isNull(control),
-                    manager = <IElementManager>(hasControl ? this.$ManagerCacheStatic.read(control.uid) : null),
-                    create = this.$ElementManagerStatic.create;
+                    manager = <IElementManager>(hasControl ? this.$ManagerCache.read(control.uid) : null),
+                    create = this.$ElementManagerFactory.create;
 
                 if (!isUndefined(childNodes)) {
                     childNodes = Array.prototype.slice.call(childNodes);
@@ -19433,7 +17950,7 @@ module plat {
                     for (var i = 0; i < length; ++i) {
                         childNode = childNodes[i];
                         if (childNode.nodeType === Node.ELEMENT_NODE) {
-                            if (!isNull(create(<HTMLElement>childNode))) {
+                            if (!isNull(create(<Element>childNode))) {
                                 this.compile(childNode);
                             }
                         }
@@ -19459,15 +17976,15 @@ module plat {
                     node: Node,
                     newManager: IElementManager,
                     newLength: number,
-                    create = this.$ElementManagerStatic.create,
-                    commentCreate = this.$CommentManagerStatic.create,
-                    textCreate = this.$TextManagerStatic.create;
+                    create = this.$ElementManagerFactory.create,
+                    commentCreate = this.$CommentManagerFactory.create,
+                    textCreate = this.$TextManagerFactory.create;
 
                 for (var i = 0; i < length; ++i) {
                     node = nodes[i];
                     switch (node.nodeType) {
                         case Node.ELEMENT_NODE:
-                            newManager = create(<HTMLElement>node, manager);
+                            newManager = create(<Element>node, manager);
                             if (!isNull(newManager)) {
                                 this._compileNodes(Array.prototype.slice.call(node.childNodes), newManager);
                             }
@@ -19486,7 +18003,14 @@ module plat {
             }
         }
 
-        register.injectable('$compiler', Compiler);
+        /**
+         * The Type for referencing the '$Compiler' injectable as a dependency.
+         */
+        export function ICompiler(): ICompiler {
+            return new Compiler();
+        }
+
+        register.injectable(__Compiler, ICompiler);
 
         /**
          * Describes an object that iterates through the DOM and collects controls.
@@ -19525,11 +18049,10 @@ module plat {
          * A NodeManager is responsible for data binding a data context to a Node.
          */
         export class NodeManager implements INodeManager {
-            static $regex: expressions.IRegex;
+            static $Regex: expressions.IRegex;
             static $ContextManagerStatic: observable.IContextManagerStatic;
-            static $parser: expressions.IParser;
-            static $ExceptionStatic: IExceptionStatic;
-            static $TemplateControlStatic: ui.ITemplateControlStatic;
+            static $Parser: expressions.IParser;
+            static $TemplateControlFactory: ui.ITemplateControlFactory;
             /**
              * The start markup notation.
              */
@@ -19585,7 +18108,7 @@ module plat {
              * @return {Boolean} Indicates whether or not there is markup.
              */
             static hasMarkup(text: string): boolean {
-                return NodeManager.$regex.markupRegex.test(text);
+                return NodeManager.$Regex.markupRegex.test(text);
             }
 
             /**
@@ -19597,16 +18120,14 @@ module plat {
             static findMarkup(text: string): Array<expressions.IParsedExpression> {
                 var start: number,
                     end: number,
-                    regex = NodeManager.$regex,
-                    newLineRegex = regex.newLineRegex,
-                    text = text.replace(newLineRegex, ''),
+                    text = text.replace(NodeManager.$Regex.newLineRegex, ''),
                     parsedExpressions: Array<expressions.IParsedExpression> = [],
                     startSymbol = NodeManager.startSymbol,
                     endSymbol = NodeManager.endSymbol,
                     wrapExpression = NodeManager._wrapExpression,
                     substring: string,
                     expression: expressions.IParsedExpression,
-                    parser = NodeManager.$parser;
+                    $parser = NodeManager.$Parser;
 
                 while ((start = text.indexOf(startSymbol)) !== -1 && (end = text.indexOf(endSymbol)) !== -1) {
                     if (start !== 0) {
@@ -19621,7 +18142,7 @@ module plat {
                     //check for one-time databinding
                     if (substring[0] === '=') {
                         substring = substring.substr(1).trim();
-                        expression = parser.parse(substring);
+                        expression = $parser.parse(substring);
                         expression = {
                             expression: expression.expression,
                             evaluate: expression.evaluate,
@@ -19631,7 +18152,7 @@ module plat {
                         };
                         parsedExpressions.push(expression);
                     } else {
-                        parsedExpressions.push(parser.parse(substring.trim()));
+                        parsedExpressions.push($parser.parse(substring.trim()));
                     }
 
                     text = text.substr(end);
@@ -19661,7 +18182,7 @@ module plat {
                     resources = {},
                     expression: expressions.IParsedExpression,
                     value: any,
-                    evaluateExpression = NodeManager.$TemplateControlStatic.evaluateExpression;
+                    evaluateExpression = NodeManager.$TemplateControlFactory.evaluateExpression;
 
                 for (var i = 0; i < length; ++i) {
                     expression = expressions[i];
@@ -19676,8 +18197,9 @@ module plat {
                                 e.description = 'Cannot stringify object: ' + e.description;
                             }
                             e.message = 'Cannot stringify object: ' + e.message;
-    ;
-                            NodeManager.$ExceptionStatic.warn(e, Exception.PARSE);
+
+                            var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                            $exception.warn(e, $exception.PARSE);
                         }
                     } else if (!isNull(value)) {
                         text += value;
@@ -19702,8 +18224,8 @@ module plat {
             static observeIdentifiers(identifiers: Array<string>, control: ui.ITemplateControl,
                 listener: (...args: Array<any>) => void) {
                 var length = identifiers.length,
-                    ContextManager = NodeManager.$ContextManagerStatic,
-                    contextManager = ContextManager.getManager(Control.getRootControl(control)),
+                    $contextManager = NodeManager.$ContextManagerStatic,
+                    rootManager = $contextManager.getManager(Control.getRootControl(control)),
                     absoluteContextPath = control.absoluteContextPath,
                     context = control.context,
                     observableCallback = {
@@ -19744,7 +18266,7 @@ module plat {
                         }
 
                         if (!isNull(resourceObj) && !isNull(resourceObj.resource) && resourceObj.resource.type === 'observable') {
-                            manager = ContextManager.getManager(resources[alias].control);
+                            manager = $contextManager.getManager(resources[alias].control);
                             absoluteIdentifier = 'resources.' + alias + '.value' + absoluteIdentifier;
                         } else {
                             continue;
@@ -19753,13 +18275,13 @@ module plat {
                         // Look on the control.context
                         split = identifier.split('.');
 
-                        if (!isNull(ContextManager.getContext(context, split))) {
-                            manager = contextManager;
+                        if (!isNull($contextManager.getContext(context, split))) {
+                            manager = rootManager;
                             absoluteIdentifier = absoluteContextPath + '.' + identifier;
-                        } else if (!isNull(ContextManager.getContext(control, split))) {
+                        } else if (!isNull($contextManager.getContext(control, split))) {
                             manager = null;
                         } else {
-                            manager = contextManager;
+                            manager = rootManager;
                             absoluteIdentifier = absoluteContextPath + '.' + identifier;
                         }
                     }
@@ -19784,36 +18306,11 @@ module plat {
                 };
             }
 
-            /**
-             * Specifies the type of NodeManager.
-             */
             type: string;
-
-            /**
-             * Lets us know when an ElementManager is a cloned manager, or the compiled 
-             * manager from BindableTemplates. We do not want to bindAndLoad compiled 
-             * managers that are clones.
-             */
             isClone: boolean = false;
-
-            /**
-             * The INodeMap associated with this NodeManager. We have to use an 
-             * INodeMap instead of an INode so we can treat all INodeManagers the same.
-             */
             nodeMap: INodeMap;
-
-            /**
-             * The parent ElementManager for this NodeManager.
-             */
             parent: IElementManager;
 
-            /**
-             * Initiailzes this ElementManger instance.
-             * 
-             * @param nodeMap The INodeMap associated with this NodeManager. We have to use an 
-             * INodeMap instead of an INode so we can treat all INodeManagers the same.
-             * @param parent The parent ElementManager for this NodeManager.
-             */
             initialize(nodeMap: INodeMap, parent: IElementManager): void {
                 this.nodeMap = nodeMap;
                 this.parent = parent;
@@ -19824,9 +18321,6 @@ module plat {
                 }
             }
 
-            /**
-             * Retrieves the parent control for this NodeManager.
-             */
             getParentControl(): ui.ITemplateControl {
                 var parent = this.parent,
                     control: ui.ITemplateControl;
@@ -19843,46 +18337,99 @@ module plat {
                 return control;
             }
 
-            /**
-             * Clones this NodeManager with the new node.
-             * 
-             * @param newNode The node used to clone this NodeManager.
-             * @param parentManager The parent NodeManager for the clone.
-             */
             clone(newNode: Node, parentManager: IElementManager): number {
                 return 1;
             }
 
-            /**
-             * The function used for data-binding a data context to the DOM.
-             */
             bind(): void { }
         }
 
         /**
          * The Type for referencing the '$NodeManagerStatic' injectable as a dependency.
          */
-        export function NodeManagerStatic(
-                $regex: expressions.IRegex,
-                $ContextManagerStatic: observable.IContextManagerStatic,
-                $parser: expressions.IParser,
-                $ExceptionStatic: IExceptionStatic,
-                $TemplateControlStatic: ui.ITemplateControlStatic) {
-            NodeManager.$regex = $regex;
-            NodeManager.$ContextManagerStatic = $ContextManagerStatic;
-            NodeManager.$parser = $parser;
-            NodeManager.$ExceptionStatic = $ExceptionStatic;
-            NodeManager.$TemplateControlStatic = $TemplateControlStatic;
-            return NodeManager;
+        export function INodeManagerStatic(
+            $Regex: expressions.IRegex,
+            $ContextManagerStatic: observable.IContextManagerStatic,
+            $Parser: expressions.IParser,
+            $TemplateControlFactory: ui.ITemplateControlFactory): INodeManagerStatic {
+                NodeManager.$Regex = $Regex;
+                NodeManager.$ContextManagerStatic = $ContextManagerStatic;
+                NodeManager.$Parser = $Parser;
+                NodeManager.$TemplateControlFactory = $TemplateControlFactory;
+                return NodeManager;
         }
 
-        register.injectable('$NodeManagerStatic', NodeManagerStatic, [
-            '$regex',
-            '$ContextManagerStatic',
-            '$parser',
-            '$ExceptionStatic',
-            '$TemplateControlStatic'
-        ], register.injectableType.STATIC);
+        register.injectable(__NodeManagerStatic, INodeManagerStatic, [
+            __Regex,
+            __ContextManagerStatic,
+            __Parser,
+            __TemplateControlFactory
+        ], register.STATIC);
+
+        /**
+         * The external interface for the '$NodeManagerStatic' injectable.
+         */
+        export interface INodeManagerStatic {
+            /**
+             * The start markup notation.
+             */
+            startSymbol: string;
+
+            /**
+             * The end markup notation.
+             */
+            endSymbol: string;
+
+            /**
+             * Given an IParsedExpression array, creates an array of unique identifers
+             * to use with binding. This allows us to avoid creating multiple listeners
+             * for the identifier and node.
+             *
+             * @static
+             * @param expressions An IParsedExpression array to search for identifiers.
+             * @return {Array<string>} An array of identifiers.
+             */
+            findUniqueIdentifiers(expressions: Array<expressions.IParsedExpression>): Array<string>;
+
+            /**
+             * Determines if a string has the markup notation.
+             *
+             * @param text The text string in which to search for markup.
+             * @return {Boolean} Indicates whether or not there is markup.
+             */
+            hasMarkup(text: string): boolean;
+
+            /**
+             * Given a string, finds markup in the string and creates an IParsedExpression array.
+             *
+             * @static
+             * @param text The text string to parse.
+             * @return {Array<IParsedExpression>}
+             */
+            findMarkup(text: string): Array<expressions.IParsedExpression>;
+
+            /**
+             * Takes in data context and an IParsedExpression array and outputs a string of the evaluated
+             * expressions.
+             *
+             * @static
+             * @param expressions The IParsedExpression array to evaluate.
+             * @param control The IControl used to parse the expressions.
+             * @return {string} The evaluated expressions.
+             */
+            build(expressions: Array<expressions.IParsedExpression>, control?: ui.ITemplateControl): string;
+
+            /**
+             * Registers a listener to be notified of a change in any associated identifier.
+             *
+             * @static
+             * @param identifiers An Array of identifiers to observe.
+             * @param control The control associated to the identifiers.
+             * @param listener The listener to call when any identifier property changes.
+             */
+            observeIdentifiers(identifiers: Array<string>,
+                control: ui.ITemplateControl, listener: (...args: Array<any>) => void): void;
+        }
 
         /**
          * Describes an object that takes a Node and provides a way to data-bind to that node.
@@ -19967,11 +18514,11 @@ module plat {
         }
 
         /**
-         * Defines the interface for a compiled HTMLElement.
+         * Defines the interface for a compiled Element.
          */
         export interface IUiControlNode extends INode {
             /**
-             * The control associated with the HTMLElement, if one exists.
+             * The control associated with the Element, if one exists.
              */
             control: ui.ITemplateControl;
 
@@ -19983,17 +18530,17 @@ module plat {
         }
 
         /**
-         * Describes a compiled HTMLElement with all 
+         * Describes a compiled Element with all 
          * associated nodes contained within its tag.
          */
         export interface INodeMap {
             /**
-             * The HTMLElement that is compiled.
+             * The Element that is compiled.
              */
             element?: HTMLElement;
 
             /**
-             * The compiled attribute Nodes for the HTMLElement
+             * The compiled attribute Nodes for the Element.
              */
             nodes: Array<INode>;
 
@@ -20008,84 +18555,14 @@ module plat {
             childContext?: string;
 
             /**
-             * Indicates whether or not a IControl was found on the HTMLElement.
+             * Indicates whether or not a IControl was found on the Element.
              */
             hasControl?: boolean;
 
             /**
-             * The INode for the UIControl, if one was found for the HTMLElement.
+             * The INode for the UIControl, if one was found for the Element.
              */
             uiControlNode?: IUiControlNode;
-        }
-
-        /**
-         * The external interface for the '$NodeManagerStatic' injectable.
-         */
-        export interface INodeManagerStatic {
-            /**
-             * The start markup notation.
-             */
-            startSymbol: string;
-
-            /**
-             * The end markup notation.
-             */
-            endSymbol: string;
-
-            /**
-             * The regular expression for finding markup in a string.
-             */
-            markupRegex: RegExp;
-
-            /**
-             * Given an IParsedExpression array, creates an array of unique identifers
-             * to use with binding. This allows us to avoid creating multiple listeners
-             * for the identifier and node.
-             *
-             * @static
-             * @param expressions An IParsedExpression array to search for identifiers.
-             * @return {Array<string>} An array of identifiers.
-             */
-            findUniqueIdentifiers(expressions: Array<expressions.IParsedExpression>): Array<string>;
-
-            /**
-             * Determines if a string has the markup notation.
-             *
-             * @param text The text string in which to search for markup.
-             * @return {Boolean} Indicates whether or not there is markup.
-             */
-            hasMarkup(text: string): boolean;
-
-            /**
-             * Given a string, finds markup in the string and creates an IParsedExpression array.
-             *
-             * @static
-             * @param text The text string to parse.
-             * @return {Array<IParsedExpression>}
-             */
-            findMarkup(text: string): Array<expressions.IParsedExpression>;
-
-            /**
-             * Takes in data context and an IParsedExpression array and outputs a string of the evaluated
-             * expressions.
-             *
-             * @static
-             * @param expressions The IParsedExpression array to evaluate.
-             * @param control The IControl used to parse the expressions.
-             * @return {string} The evaluated expressions.
-             */
-            build(expressions: Array<expressions.IParsedExpression>, control?: ui.ITemplateControl): string;
-
-            /**
-             * Registers a listener to be notified of a change in any associated identifier.
-             *
-             * @static
-             * @param identifiers An Array of identifiers to observe.
-             * @param control The control associated to the identifiers.
-             * @param listener The listener to call when any identifier property changes.
-             */
-            observeIdentifiers(identifiers: Array<string>,
-                control: ui.ITemplateControl, listener: (...args: Array<any>) => void): void;
         }
 
         /**
@@ -20093,21 +18570,21 @@ module plat {
          * element/template. Also provides methods for cloning an ElementManager.
          */
         export class ElementManager extends NodeManager implements IElementManager {
-            static $document: Document;
-            static $ManagerCacheStatic: storage.ICache<IElementManager>;
-            static $ResourcesStatic: ui.IResourcesStatic;
-            static $BindableTemplatesStatic: ui.IBindableTemplatesStatic;
+            static $Document: Document;
+            static $ManagerCache: storage.ICache<IElementManager>;
+            static $ResourcesFactory: ui.IResourcesFactory;
+            static $BindableTemplatesFactory: ui.IBindableTemplatesFactory;
 
             /**
-             * Determines if the associated HTMLElement has controls that need to be instantiated or Attr nodes
+             * Determines if the associated Element has controls that need to be instantiated or Attr nodes
              * containing text markup. If controls exist or markup is found a new ElementManager will be created,
              * else an empty INodeManager will be added to the Array of INodeManagers.
              *  
              * @static
-             * @param element The HTMLElement to use to identifier markup and controls.
+             * @param element The Element to use to identifier markup and controls.
              * @param parent The parent ui.ITemplateControl used for context inheritance.
              */
-            static create(element: HTMLElement, parent?: IElementManager): IElementManager {
+            static create(element: Element, parent?: IElementManager): IElementManager {
                 var name = element.nodeName.toLowerCase(),
                     nodeName = name,
                     injector = controlInjectors[name] || viewControlInjectors[name],
@@ -20147,7 +18624,7 @@ module plat {
                             replacementType = 'div';
                         }
 
-                        var replacement = ElementManager.$document.createElement(replacementType);
+                        var replacement = ElementManager.$Document.createElement(replacementType);
                         if (replacement.nodeType === Node.ELEMENT_NODE) {
                             element = replaceWith(element, <HTMLElement>replacement.cloneNode(true));
                         }
@@ -20158,7 +18635,7 @@ module plat {
                     elementMap = ElementManager._collectAttributes(attributes),
                     manager = new ElementManager();
 
-                elementMap.element = element;
+                elementMap.element = <HTMLElement>element;
                 elementMap.uiControlNode = uiControlNode;
 
                 manager.initialize(elementMap, parent);
@@ -20174,7 +18651,7 @@ module plat {
             }
 
             /**
-             * Looks through the HTMLElement's child nodes to try and find any 
+             * Looks through the Node's child nodes to try and find any 
              * defined Resources in a <plat-resources> tags.
              * 
              * @param node The node who may have Resources as a child node.
@@ -20206,15 +18683,14 @@ module plat {
              * @param nodeMap The nodeMap used to clone this ElementManager.
              */
             static clone(sourceManager: IElementManager, parent: IElementManager,
-                element: HTMLElement, newControl?: ui.ITemplateControl, nodeMap?: INodeMap): IElementManager {
+                element: Element, newControl?: ui.ITemplateControl, nodeMap?: INodeMap): IElementManager {
 
                 if (isNull(nodeMap)) {
                     nodeMap = ElementManager._cloneNodeMap(sourceManager.nodeMap, element, parent.getUiControl() ||
                         parent.getParentControl(), newControl);
                 }
 
-                var manager = new ElementManager(),
-                    cache = ElementManager.$ManagerCacheStatic;
+                var manager = new ElementManager();
 
                 manager.nodeMap = nodeMap;
                 manager.parent = parent;
@@ -20233,7 +18709,7 @@ module plat {
                 }
 
                 if (!isNull(newControl)) {
-                    cache.put(newControl.uid, manager);
+                    ElementManager.$ManagerCache.put(newControl.uid, manager);
                 }
 
                 return manager;
@@ -20255,8 +18731,8 @@ module plat {
 
                 var uiControl = uiControlNode.control,
                     newUiControl = <ui.ITemplateControl>uiControlNode.injector.inject(),
-                    resources = ElementManager.$ResourcesStatic.getInstance(),
-                    attributes: ui.IAttributes = acquire('$attributes');
+                    resources = ElementManager.$ResourcesFactory.getInstance(),
+                    attributes: ui.IAttributesInstance = acquire(__AttributesInstance);
 
                 newUiControl.parent = parent;
                 parent.controls.push(newUiControl);
@@ -20268,14 +18744,14 @@ module plat {
                 resources.initialize(newUiControl, uiControl.resources);
                 newUiControl.resources = resources;
 
-                ElementManager.$ResourcesStatic.addControlResources(newUiControl);
+                ElementManager.$ResourcesFactory.addControlResources(newUiControl);
 
                 if (!isNull(uiControl.innerTemplate)) {
                     newUiControl.innerTemplate = <DocumentFragment>uiControl.innerTemplate.cloneNode(true);
                 }
 
                 newUiControl.type = uiControl.type;
-                newUiControl.bindableTemplates = ElementManager.$BindableTemplatesStatic.create(newUiControl, uiControl.bindableTemplates);
+                newUiControl.bindableTemplates = ElementManager.$BindableTemplatesFactory.create(newUiControl, uiControl.bindableTemplates);
                 newUiControl.replaceWith = uiControl.replaceWith;
 
                 return newUiControl;
@@ -20294,7 +18770,7 @@ module plat {
              * @param isClone Whether or not these controls are clones.
              */
             static createAttributeControls(nodeMap: INodeMap, parent: ui.ITemplateControl,
-                templateControl?: ui.ITemplateControl, newElement?: HTMLElement, isClone?: boolean): Array<INode> {
+                templateControl?: ui.ITemplateControl, newElement?: Element, isClone?: boolean): Array<INode> {
                 var nodes = nodeMap.nodes,
                     element = isClone ? newElement : nodeMap.element,
                     elementExists = !isNull(element);
@@ -20305,7 +18781,7 @@ module plat {
 
                 var attributes = elementExists ? element.attributes : null,
                     attrs = nodeMap.attributes,
-                    newAttributes: ui.IAttributes,
+                    newAttributes: ui.IAttributesInstance,
                     node: INode,
                     injector: dependency.IInjector<IControl>,
                     control: controls.IAttributeControl,
@@ -20324,14 +18800,18 @@ module plat {
                         control = <controls.IAttributeControl>injector.inject();
                         node.control = control;
                         control.parent = parent;
-                        control.element = element;
+                        control.element = <HTMLElement>element;
 
-                        newAttributes = acquire('$attributes');
+                        newAttributes = acquire(__AttributesInstance);
                         newAttributes.initialize(control, attrs);
                         control.attributes = newAttributes;
 
                         control.type = nodeName;
-                        control.uid = control.uid || uniqueId('plat_');
+
+                        if (!isString(control.uid)) {
+                            control.uid = uniqueId('plat_');
+                        }
+
                         control.templateControl = templateControl;
                     }
 
@@ -20422,7 +18902,7 @@ module plat {
                     hasMarkupFn = NodeManager.hasMarkup,
                     findMarkup = NodeManager.findMarkup,
                     findUniqueIdentifiers = NodeManager.findUniqueIdentifiers,
-                    parser = NodeManager.$parser,
+                    $parser = NodeManager.$Parser,
                     build = NodeManager.build,
                     expressions: Array<expressions.IParsedExpression>,
                     hasControl = false,
@@ -20440,11 +18920,11 @@ module plat {
                     uniqueIdentifiers = [];
 
                     if (name === 'plat-context') {
-                        childContext = parser.parse(value);
+                        childContext = $parser.parse(value);
                         if (childContext.identifiers.length !== 1) {
-                            var Exception: IExceptionStatic = acquire('$ExceptionStatic');
-                            Exception.warn('Incorrect plat-context: ' +
-                                value + ', must contain a single identifier.', Exception.COMPILE);
+                            var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                            $exception.warn('Incorrect plat-context: ' +
+                                value + ', must contain a single identifier.', $exception.COMPILE);
                         }
                         childIdentifier = childContext.identifiers[0];
                     } else if (name !== 'plat-control') {
@@ -20533,18 +19013,18 @@ module plat {
              * 
              * @static
              * @param sourceMap The original INodeMap.
-             * @param element The new HTMLElement used for cloning.
+             * @param element The new Element used for cloning.
              * @param newControl An optional new control to associate with the element.
              * @return {INodeMap} The cloned INodeMap.
              */
-            static _cloneNodeMap(sourceMap: INodeMap, element: HTMLElement,
+            static _cloneNodeMap(sourceMap: INodeMap, element: Element,
                 parent: ui.ITemplateControl, newControl?: ui.ITemplateControl): INodeMap {
                 var hasControl = sourceMap.hasControl,
                     nodeMap: INodeMap = {
                         attributes: sourceMap.attributes,
                         childContext: sourceMap.childContext,
                         nodes: [],
-                        element: element,
+                        element: <HTMLElement>element,
                         uiControlNode: !isNull(sourceMap.uiControlNode) ?
                         <IUiControlNode>ElementManager._cloneNode(sourceMap.uiControlNode, element, newControl) : null,
                         hasControl: hasControl
@@ -20556,61 +19036,21 @@ module plat {
                 return nodeMap;
             }
 
-            /**
-             * The child managers for this manager.
-             */
+            $Promise: async.IPromise = acquire(__Promise);
+            $Compiler: ICompiler = acquire(__Compiler);
+            $ContextManagerStatic: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
+            $CommentManagerFactory: ICommentManagerFactory = acquire(__CommentManagerFactory);
+            $ControlFactory: IControlFactory = acquire(__ControlFactory);
+            $TemplateControlFactory: ui.ITemplateControlFactory = acquire(__TemplateControlFactory);
+
             children: Array<INodeManager> = [];
-
-            /**
-             * The type of INodeManager.
-             */
             type: string = 'element';
-
-            /**
-             * Specifies whether or not this manager has a uiControl which has 
-             * replaceWith set to null or empty string.
-             */
             replace: boolean = false;
-
-            /**
-             * The length of a replaced control, indicates the number of nodes to slice 
-             * out of the parent's childNodes.
-             */
             replaceNodeLength: number;
-
-            /**
-             * Indicates whether the control for this manager hasOwnContext.
-             */
             hasOwnContext: boolean = false;
-
-            /**
-             * In the event that a control hasOwnContext, we need a promise to fullfill 
-             * when the control is loaded to avoid loading its parent control first.
-             */
             loadedPromise: async.IThenable<void>;
-
-            /**
-             * A templatePromise set when a uiControl specifies a templateUrl.
-             */
             templatePromise: async.IThenable<void>;
 
-            $ElementManagerStatic: IElementManagerStatic = acquire('$ElementManagerStatic');
-            $PromiseStatic: async.IPromiseStatic = acquire('$PromiseStatic');
-            $compiler: ICompiler = acquire('$compiler');
-            $NodeManagerStatic: INodeManagerStatic = acquire('$NodeManagerStatic');
-            $ContextManagerStatic: observable.IContextManagerStatic = acquire('$ContextManagerStatic');
-            $CommentManagerStatic: ICommentManagerStatic = acquire('$CommentManagerStatic');
-            $ExceptionStatic: IExceptionStatic = acquire('$ExceptionStatic');
-            $ControlStatic: IControlStatic = acquire('$ControlStatic');
-            $TemplateControlStatic: ui.ITemplateControlStatic = acquire('$TemplateControlStatic');
-
-            /**
-             * Clones this ElementManager with a new node.
-             * 
-             * @param newNode The new element used to clone the ElementManager.
-             * @param parentManager The parent for the clone.
-             * @param nodeMap An optional INodeMap to clone a ui control if needed.
-             */
             clone(newNode: Node, parentManager: IElementManager, nodeMap?: INodeMap): number {
                 var childNodes: Array<Node>,
                     clonedManager: IElementManager,
@@ -20620,8 +19060,7 @@ module plat {
                     newControlExists = !isNull(newControl),
                     startNodeManager: INodeManager,
                     endNodeManager: INodeManager,
-                    parentControl = parentManager.getUiControl() || parentManager.getParentControl(),
-                    ElementManager = this.$ElementManagerStatic;
+                    parentControl = parentManager.getUiControl() || parentManager.getParentControl();
 
                 if (!newControlExists) {
                     // create new control
@@ -20652,7 +19091,7 @@ module plat {
                     }
                 } else {
                     childNodes = Array.prototype.slice.call(newNode.childNodes);
-                    clonedManager = ElementManager.clone(this, parentManager, <HTMLElement>newNode, newControl, nodeMap);
+                    clonedManager = ElementManager.clone(this, parentManager, <Element>newNode, newControl, nodeMap);
                     nodeMap = clonedManager.nodeMap;
 
                     if (newControlExists) {
@@ -20688,17 +19127,6 @@ module plat {
                 return 1;
             }
 
-            /**
-             * Initializes all the controls associated to the ElementManager's nodeMap. 
-             * The INodeManager array must be passed in because if this ElementManager is 
-             * used for transclusion, it can't rely on one INodeManager array.
-             * 
-             * @param parent The parent IElementManager.
-    	     * @param dontInitialize Specifies whether or not the initialize method should 
-    	     * be called for a control.
-             * @param dontInitialize Specifies whether or not the initialize method should 
-             * be called for a control.
-             */
             initialize(nodeMap: INodeMap, parent: IElementManager, dontInitialize?: boolean): void {
                 super.initialize(nodeMap, parent);
 
@@ -20716,7 +19144,7 @@ module plat {
                 }
 
                 if (hasAttributeControl) {
-                    this.$ElementManagerStatic.createAttributeControls(nodeMap, parentControl, control);
+                    ElementManager.createAttributeControls(nodeMap, parentControl, control);
                 }
 
                 if (!dontInitialize && hasUiControl && isFunction(control.initialize)) {
@@ -20724,9 +19152,6 @@ module plat {
                 }
             }
 
-            /**
-             * Links the data context to the DOM (data-binding).
-             */
             bind(): void {
                 var nodeMap = this.nodeMap,
                     parent = this.getParentControl(),
@@ -20748,13 +19173,14 @@ module plat {
                     uiControl = controlNode.control;
                     controls.push(uiControl);
 
-                    var childContext = nodeMap.childContext;
+                    var childContext = nodeMap.childContext,
+                        $TemplateControlFactory = this.$TemplateControlFactory;
 
                     if (!isNull(childContext)) {
                         if (childContext[0] === '@') {
                             var split = childContext.split('.'),
                                 alias = split.shift().substr(1),
-                                resourceObj = this.$TemplateControlStatic.findResource(uiControl, alias);
+                                resourceObj = $TemplateControlFactory.findResource(uiControl, alias);
 
                             if (!isNull(resourceObj)) {
                                 if (resourceObj.resource.type === 'observable') {
@@ -20763,8 +19189,9 @@ module plat {
                                     contextManager = getManager(resourceObj.control);
                                     uiControl.root = resourceObj.control;
                                 } else {
-                                    this.$ExceptionStatic.warn('Only resources of type observable can be set as context.',
-                                        this.$ExceptionStatic.CONTEXT);
+                                    var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                                    $exception.warn('Only resources of type observable can be set as context.',
+                                        $exception.CONTEXT);
                                 }
                             }
                         } else {
@@ -20772,7 +19199,7 @@ module plat {
                         }
                     }
 
-                    uiControl.root = this.$ControlStatic.getRootControl(uiControl) || uiControl;
+                    uiControl.root = this.$ControlFactory.getRootControl(uiControl) || uiControl;
 
                     contextManager = getManager(uiControl.root);
 
@@ -20782,14 +19209,14 @@ module plat {
                         absoluteContextPath = 'context';
                     }
 
-                    this.$TemplateControlStatic.setAbsoluteContextPath(uiControl, absoluteContextPath);
-                    this.$TemplateControlStatic.setContextResources(uiControl);
-                    ElementManager.$ResourcesStatic.bindResources(uiControl.resources);
+                    $TemplateControlFactory.setAbsoluteContextPath(uiControl, absoluteContextPath);
+                    $TemplateControlFactory.setContextResources(uiControl);
+                    ElementManager.$ResourcesFactory.bindResources(uiControl.resources);
 
                     contextManager.observe(uiControl.absoluteContextPath, {
                         uid: uiControl.uid,
                         listener: (newValue, oldValue) => {
-                            this.$TemplateControlStatic.contextChanged(uiControl, newValue, oldValue);
+                            $TemplateControlFactory.contextChanged(uiControl, newValue, oldValue);
                         }
                     });
 
@@ -20805,12 +19232,6 @@ module plat {
                 this._loadAttributeControls(<Array<controls.IAttributeControl>>controls, uiControl);
             }
 
-            /**
-             * Sets the template for an ElementManager by calling its associated UI Control's
-             * setTemplate method.
-             * 
-             * @param templateUrl An optional templateUrl used to override the control's template.
-             */
             setUiControlTemplate(templateUrl?: string): void {
                 var nodeMap = this.nodeMap,
                     controlNode = nodeMap.uiControlNode,
@@ -20819,7 +19240,7 @@ module plat {
                 if (!isNull(controlNode)) {
                     control = controlNode.control;
 
-                    this.templatePromise = this.$TemplateControlStatic.determineTemplate(control, templateUrl).then((template) => {
+                    this.templatePromise = this.$TemplateControlFactory.determineTemplate(control, templateUrl).then((template) => {
                         this.templatePromise = null;
                         this._initializeControl(control, <DocumentFragment>template.cloneNode(true));
                     }, (error) => {
@@ -20828,7 +19249,8 @@ module plat {
                             this._initializeControl(control, error);
                         } else {
                             postpone(() => {
-                                this.$ExceptionStatic.fatal(error, this.$ExceptionStatic.COMPILE);
+                                var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                                $exception.fatal(error, $exception.COMPILE);
                             });
                         }
                     });
@@ -20843,9 +19265,6 @@ module plat {
                 this.bindAndLoad();
             }
 
-            /**
-             * Retrieves the UI control instance for this ElementManager.
-             */
             getUiControl(): ui.ITemplateControl {
                 var uiControlNode = this.nodeMap.uiControlNode;
                 if (isNull(uiControlNode)) {
@@ -20855,42 +19274,16 @@ module plat {
                 return uiControlNode.control;
             }
 
-            /**
-             * Fullfills any template template promises and finishes the compile phase
-             * for the template associated to this ElementManager.
-             * 
-             * @return {async.IPromise} A promise, fulfilled when the template 
-             * is complete.
-             */
             fulfillTemplate(): async.IThenable<any> {
-                var children = this.children,
-                    child: INodeManager,
-                    length = children.length,
-                    promises: Array<async.IThenable<any>> = [];
-
-                return new this.$PromiseStatic<any>((resolve, reject) => {
                     if (!isNull(this.templatePromise)) {
-                        promises.push(this.templatePromise);
-                    }
-
-                    for (var i = 0; i < length; ++i) {
-                        child = children[i];
-                        if (!isUndefined((<IElementManager>child).children)) {
-                            promises.push((<IElementManager>child).fulfillTemplate());
-                        }
-                    }
-
-                    this.$PromiseStatic.all(promises).then(resolve, reject);
-                }).catch((error) => {
-                    postpone(() => {
-                        this.$ExceptionStatic.fatal(error, this.$ExceptionStatic.COMPILE);
+                    return this.templatePromise.then(() => {
+                        return this._fulfillChildTemplates();
                     });
-                });
+                    }
+
+                return this._fulfillChildTemplates();
             }
 
-            /**
-             * Binds context to the DOM and loads controls.
-             */
             bindAndLoad(): async.IThenable<void> {
                 var children = this.children,
                     length = children.length,
@@ -20913,25 +19306,18 @@ module plat {
                     }
                 }
 
-                return this.$PromiseStatic.all(promises).then(() => {
-                    this.$ControlStatic.load(this.getUiControl());
+                return this.$Promise.all(promises).then(() => {
+                    this.$ControlFactory.load(this.getUiControl());
                 }).catch((error: any) => {
                     postpone(() => {
-                        this.$ExceptionStatic.fatal(error, this.$ExceptionStatic.BIND);
+                        var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                        $exception.fatal(error, $exception.BIND);
                     });
                 });
             }
 
-            /**
-             * Observes the root context for controls that specify their own context, and initiates 
-             * a load upon a successful set of the context.
-             * 
-             * @param root The ITemplateControl specifying its own context.
-             * @param loadMethod The function to initiate the loading of the root control and its 
-             * children.
-             */
             observeRootContext(root: ui.ITemplateControl, loadMethod: () => async.IThenable<void>): void {
-                this.loadedPromise = new this.$PromiseStatic<void>((resolve, reject) => {
+                this.loadedPromise = new this.$Promise<void>((resolve, reject) => {
                     var contextManager: observable.IContextManager = this.$ContextManagerStatic.getManager(root);
 
                     var removeListener = contextManager.observe('context', {
@@ -20949,7 +19335,8 @@ module plat {
                     }
                 }).catch((error) => {
                     postpone(() => {
-                        this.$ExceptionStatic.fatal(error, this.$ExceptionStatic.BIND);
+                        var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                        $exception.fatal(error, $exception.BIND);
                     });
                 });
             }
@@ -21004,7 +19391,7 @@ module plat {
                 templateControl: ui.ITemplateControl): void {
                 var length = controls.length,
                     control: controls.IAttributeControl,
-                    load = this.$ControlStatic.load,
+                    load = this.$ControlFactory.load,
                     i = isNull(templateControl) ? 0 : 1;
 
                 for (; i < length; ++i) {
@@ -21019,13 +19406,14 @@ module plat {
              * Fulfills the template promise prior to binding and loading the control.
              */
             _fulfillAndLoad(): async.IThenable<void> {
-                return new this.$PromiseStatic<void>((resolve, reject) => {
+                return new this.$Promise<void>((resolve, reject) => {
                     this.fulfillTemplate().then(() => {
                         return this.bindAndLoad();
                     }).then(resolve);
                 }).catch((error) => {
                     postpone(() => {
-                        this.$ExceptionStatic.fatal(error, this.$ExceptionStatic.BIND);
+                        var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                        $exception.fatal(error, $exception.BIND);
                     });
                 });
             }
@@ -21038,13 +19426,13 @@ module plat {
                 var nodeMap = this.nodeMap,
                     parent = this.getParentControl(),
                     controlNode = nodeMap.uiControlNode,
-                    uiControl = <ui.ITemplateControl>controlNode.control,
+                    uiControl = controlNode.control,
                     hasParent = !isNull(parent),
                     element = nodeMap.element,
                     attributes = nodeMap.attributes,
-                    newAttributes: ui.IAttributes = acquire('$attributes');
+                    newAttributes: ui.IAttributesInstance = acquire(__AttributesInstance);
 
-                ElementManager.$ManagerCacheStatic.put(uiControl.uid, this);
+                ElementManager.$ManagerCache.put(uiControl.uid, this);
 
                 if (hasParent && uiControl.parent !== parent) {
                     parent.controls.push(uiControl);
@@ -21062,16 +19450,20 @@ module plat {
                 if (!isNull(uiControl.resources)) {
                     uiControl.resources.add(controlNode.resourceElement);
                 } else {
-                    var resources = ElementManager.$ResourcesStatic.getInstance();
+                    var resources = ElementManager.$ResourcesFactory.getInstance();
                     resources.initialize(uiControl, controlNode.resourceElement);
                     uiControl.resources = resources;
                 }
 
-                ElementManager.$ResourcesStatic.addControlResources(uiControl);
+                ElementManager.$ResourcesFactory.addControlResources(uiControl);
                 uiControl.type = controlNode.nodeName;
-                uiControl.uid = uiControl.uid || uniqueId('plat_');
+
+                if (!isString(uiControl.uid)) {
+                    uiControl.uid = uniqueId('plat_');
+                }
+
                 uiControl.bindableTemplates = uiControl.bindableTemplates ||
-                    ElementManager.$BindableTemplatesStatic.create(uiControl);
+                    ElementManager.$BindableTemplatesFactory.create(uiControl);
 
                 if ((element.childNodes.length > 0) &&
                     (!isEmpty(uiControl.templateString) || !isEmpty(uiControl.templateUrl))) {
@@ -21095,12 +19487,12 @@ module plat {
             _replaceElement(control: ui.ITemplateControl, nodeMap: INodeMap): void {
                 var element = nodeMap.element,
                     parentNode = element.parentNode,
-                    $document = ElementManager.$document,
+                    $document = ElementManager.$Document,
                     controlType = control.type,
                     controlUid = control.uid,
                     startNode = control.startNode = $document.createComment(controlType + ' ' + controlUid + ': start node'),
                     endNode = control.endNode = $document.createComment(controlType + ' ' + controlUid + ': end node'),
-                    create = this.$CommentManagerStatic.create;
+                    create = this.$CommentManagerFactory.create;
 
                 create(startNode, this);
                 create(endNode, this);
@@ -21127,10 +19519,10 @@ module plat {
                     endNode: Node;
 
                 if (!isNull(template)) {
-                    var resourceElement = this.$ElementManagerStatic.locateResources(template);
+                    var resourceElement = ElementManager.locateResources(template);
 
                     if (!isNull(resourceElement)) {
-                        uiControl.resources.add(ElementManager.$ResourcesStatic.parseElement(resourceElement));
+                        uiControl.resources.add(ElementManager.$ResourcesFactory.parseElement(resourceElement));
                     }
 
                     if (replaceElement) {
@@ -21147,7 +19539,7 @@ module plat {
                 }
 
                 if (replaceElement) {
-                    this.$compiler.compile(uiControl.elementNodes, uiControl);
+                    this.$Compiler.compile(uiControl.elementNodes, uiControl);
                     var startNode = uiControl.startNode,
                         parentNode = startNode.parentNode,
                         childNodes: Array<Node> = Array.prototype.slice.call(parentNode.childNodes);
@@ -21157,7 +19549,7 @@ module plat {
                     uiControl.elementNodes = childNodes.slice(childNodes.indexOf(startNode) + 1, childNodes.indexOf(endNode));
                     this.replaceNodeLength = uiControl.elementNodes.length + 2;
                 } else {
-                    this.$compiler.compile(element, uiControl);
+                    this.$Compiler.compile(element, uiControl);
                 }
 
                 if (hasOwnContext && !this.isClone) {
@@ -21179,12 +19571,12 @@ module plat {
                 var length = controls.length,
                     key = camelCase(node.nodeName),
                     attribute = <Attr>node.node,
-                    value = this.$NodeManagerStatic.build(node.expressions, parent),
-                    attributes: ui.Attributes,
+                    value = NodeManager.build(node.expressions, parent),
+                    attributes: ui.IAttributesInstance,
                     oldValue: any;
 
                 for (var i = 0; i < length; ++i) {
-                    attributes = <ui.Attributes>controls[i].attributes;
+                    attributes = controls[i].attributes;
                     oldValue = (<any>attributes)[key];
                     (<any>attributes)[key] = value;
                     attributes.attributeChanged(key, value, oldValue);
@@ -21194,32 +19586,125 @@ module plat {
                     attribute.value = value;
                 }
             }
+
+            /**
+             * Runs through all the children of this manager and calls fulfillTemplate.
+             */
+            _fulfillChildTemplates() {
+                var children = this.children,
+                    child: INodeManager,
+                    length = children.length,
+                    promises: Array<async.IThenable<any>> = [];
+
+                for (var i = 0; i < length; ++i) {
+                    child = children[i];
+                    if (!isUndefined((<IElementManager>child).children)) {
+                        promises.push((<IElementManager>child).fulfillTemplate());
+                    }
+                }
+
+                return this.$Promise.all(promises).catch((error) => {
+                    postpone(() => {
+                        var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                        $exception.fatal(error, $exception.COMPILE);
+                    });
+                });
+            }
         }
 
         /**
-         * The Type for referencing the '$ElementManagerStatic' injectable as a dependency.
+         * The Type for referencing the '$ElementManagerFactory' injectable as a dependency.
          */
-        export function ElementManagerStatic(
-                $document: Document,
-                $ManagerCacheStatic: storage.ICache<IElementManager>,
-                $ResourcesStatic: ui.IResourcesStatic,
-                $BindableTemplatesStatic: ui.IBindableTemplatesStatic) {
-            ElementManager.$document = $document;
-            ElementManager.$ManagerCacheStatic = $ManagerCacheStatic;
-            ElementManager.$ResourcesStatic = $ResourcesStatic;
-            ElementManager.$BindableTemplatesStatic = $BindableTemplatesStatic;
-            return ElementManager;
+        export function IElementManagerFactory(
+            $Document: Document,
+            $ManagerCache: storage.ICache<IElementManager>,
+            $ResourcesFactory: ui.IResourcesFactory,
+            $BindableTemplatesFactory: ui.IBindableTemplatesFactory): IElementManagerFactory {
+                ElementManager.$Document = $Document;
+                ElementManager.$ManagerCache = $ManagerCache;
+                ElementManager.$ResourcesFactory = $ResourcesFactory;
+                ElementManager.$BindableTemplatesFactory = $BindableTemplatesFactory;
+                return ElementManager;
         }
 
-        register.injectable('$ElementManagerStatic', ElementManagerStatic, [
-            '$document',
-            '$ManagerCacheStatic',
-            '$ResourcesStatic',
-            '$BindableTemplatesStatic'
-        ], register.injectableType.STATIC);
+        register.injectable(__ElementManagerFactory, IElementManagerFactory, [
+            __Document,
+            __ManagerCache,
+            __ResourcesFactory,
+            __BindableTemplatesFactory
+        ], register.FACTORY);
 
         /**
-         * An ElementManager is responsible for initializing and data-binding controls associated to an HTMLElement.
+         * Creates and manages a class for dealing with Element nodes.
+         */
+        export interface IElementManagerFactory {
+            /**
+             * Determines if the associated Element has controls that need to be instantiated or Attr nodes
+             * containing text markup. If controls exist or markup is found a new ElementManager will be created,
+             * else an empty INodeManager will be added to the Array of INodeManagers.
+             *
+             * @static
+             * @param element The Element to use to identifier markup and controls.
+             * @param parent The parent ui.ITemplateControl used for context inheritance.
+             */
+            create(element: Element, parent?: IElementManager): IElementManager;
+
+            /**
+             * Creates new nodes for an INodeMap corresponding to the element associated with the nodeMap or
+             * the passed-in element.
+             *
+             * @static
+             * @param nodeMap The nodeMap to populate with attribute nodes.
+             * @param parent The parent control for the new attribute controls.
+             * @param templateControl The TemplateControl linked to these AttributeControls if 
+             * one exists.
+             * @param newElement An optional element to use for attributes (used in cloning).
+             * @param isClone Whether or not these controls are clones.
+             */
+            createAttributeControls(nodeMap: INodeMap, parent: ui.ITemplateControl,
+                templateControl?: ui.ITemplateControl, newElement?: Element, isClone?: boolean): Array<INode>;
+
+            /**
+             * Clones a UI Control with a new nodeMap.
+             *
+             * @static
+             * @param sourceMap The source INodeMap used to clone the UI Control
+             * @param parent The parent control of the clone.
+             */
+            cloneUiControl(sourceMap: INodeMap, parent: ui.ITemplateControl): ui.ITemplateControl;
+
+            /**
+             * Clones an ElementManager with a new element.
+             *
+             * @static
+             * @param sourceManager The original IElementManager.
+             * @param parent The parent IElementManager for the new clone.
+             * @param element The new element to associate with the clone.
+             * @param newControl An optional control to associate with the clone.
+             * @param nodeMap The nodeMap used to clone this ElementManager.
+             */
+            clone(sourceManager: IElementManager, parent: IElementManager,
+                element: Element, newControl?: ui.ITemplateControl, nodeMap?: INodeMap): IElementManager;
+
+            /**
+             * Looks through the Node's child nodes to try and find any
+             * defined Resources in a <plat-resources> tags.
+             *
+             * @static
+             * @param node The node who may have Resources as a child node.
+             */
+            locateResources(node: Node): HTMLElement;
+
+            /**
+             * Returns a new instance of an IElementManager
+             * 
+             * @static
+             */
+            getInstance(): IElementManager;
+        }
+
+        /**
+         * An ElementManager is responsible for initializing and data-binding controls associated to an Element.
          * 
          */
         export interface IElementManager extends INodeManager {
@@ -21329,75 +19814,6 @@ module plat {
         }
 
         /**
-         * The external interface for the '$ElementManagerStatic' injectable.
-         */
-        export interface IElementManagerStatic {
-            /**
-             * Determines if the associated HTMLElement has controls that need to be instantiated or Attr nodes
-             * containing text markup. If controls exist or markup is found a new ElementManager will be created,
-             * else an empty INodeManager will be added to the Array of INodeManagers.
-             *
-             * @static
-             * @param element The HTMLElement to use to identifier markup and controls.
-             * @param parent The parent ui.ITemplateControl used for context inheritance.
-             */
-            create(element: HTMLElement, parent?: IElementManager): IElementManager;
-
-            /**
-             * Creates new nodes for an INodeMap corresponding to the element associated with the nodeMap or
-             * the passed-in element.
-             *
-             * @static
-             * @param nodeMap The nodeMap to populate with attribute nodes.
-             * @param parent The parent control for the new attribute controls.
-             * @param templateControl The TemplateControl linked to these AttributeControls if 
-             * one exists.
-             * @param newElement An optional element to use for attributes (used in cloning).
-             * @param isClone Whether or not these controls are clones.
-             */
-            createAttributeControls(nodeMap: INodeMap, parent: ui.ITemplateControl,
-                templateControl?: ui.ITemplateControl, newElement?: HTMLElement, isClone?: boolean): Array<INode>;
-
-            /**
-             * Clones a UI Control with a new nodeMap.
-             *
-             * @static
-             * @param sourceMap The source INodeMap used to clone the UI Control
-             * @param parent The parent control of the clone.
-             */
-            cloneUiControl(sourceMap: INodeMap, parent: ui.ITemplateControl): ui.ITemplateControl;
-
-            /**
-             * Clones an ElementManager with a new element.
-             *
-             * @static
-             * @param sourceManager The original IElementManager.
-             * @param parent The parent IElementManager for the new clone.
-             * @param element The new element to associate with the clone.
-             * @param newControl An optional control to associate with the clone.
-             * @param nodeMap The nodeMap used to clone this ElementManager.
-             */
-            clone(sourceManager: IElementManager, parent: IElementManager,
-                element: HTMLElement, newControl?: ui.ITemplateControl, nodeMap?: INodeMap): IElementManager;
-
-            /**
-             * Looks through the HTMLElement's child nodes to try and find any
-             * defined Resources in a <plat-resources> tags.
-             *
-             * @static
-             * @param node The node who may have Resources as a child node.
-             */
-            locateResources(node: Node): HTMLElement;
-
-            /**
-             * Returns a new instance of an IElementManager
-             * 
-             * @static
-             */
-            getInstance(): IElementManager;
-        }
-
-        /**
          * The class responsible for initializing and data-binding values to text nodes.
          */
         export class TextManager extends NodeManager implements ITextManager {
@@ -21481,20 +19897,11 @@ module plat {
              */
             type: string = 'text';
 
-            /**
-             * Clones this TextManager with a new node.
-             * 
-             * @param newNode The new node attached to the cloned TextManager.
-             * @param parentManager The parent ElementManager for the clone.
-             */
             clone(newNode: Node, parentManager: IElementManager): number {
                 TextManager._clone(this, newNode, parentManager);
                 return 1;
             }
 
-            /**
-             * The function used for data-binding a data context to the DOM.
-             */
             bind(): void {
                 var parent = this.getParentControl(),
                     node = this.nodeMap.nodes[0],
@@ -21527,13 +19934,28 @@ module plat {
         }
 
         /**
-         * The Type for referencing the '$TextManagerStatic' injectable as a dependency.
+         * The Type for referencing the '$TextManagerFactory' injectable as a dependency.
          */
-        export function TextManagerStatic(): ITextManagerStatic {
+        export function ITextManagerFactory(): ITextManagerFactory {
             return TextManager;
         }
 
-        register.injectable('$TextManagerStatic', TextManagerStatic, null, register.injectableType.STATIC);
+        register.injectable(__TextManagerFactory, ITextManagerFactory, null, register.FACTORY);
+
+        /**
+         * Creates and manages a class for dealing with Text nodes.
+         */
+        export interface ITextManagerFactory {
+            /**
+             * Determines if a text node has markup, and creates a TextManager if it does.
+             * A TextManager or empty TextManager will be added to the managers array.
+             * 
+             * @static
+             * @param node The Node used to find markup.
+             * @param parent The parent ui.ITemplateControl for the node.
+             */
+            create(node: Node, parent?: IElementManager): ITextManager;
+        }
 
         /**
          * An object responsible for initializing and data-binding values to text nodes.
@@ -21551,21 +19973,6 @@ module plat {
              * The function used for data-binding a data context to the DOM.
              */
             bind(): void;
-        }
-
-        /**
-         * The external interface for the '$TextManagerStatic' injectable.
-         */
-        export interface ITextManagerStatic {
-            /**
-             * Determines if a text node has markup, and creates a TextManager if it does.
-             * A TextManager or empty TextManager will be added to the managers array.
-             * 
-             * @static
-             * @param node The Node used to find markup.
-             * @param parent The parent ui.ITemplateControl for the node.
-             */
-            create(node: Node, parent?: IElementManager): ITextManager;
         }
 
         /**
@@ -21597,13 +20004,6 @@ module plat {
              */
             type: string = 'comment';
 
-            /**
-             * A method for cloning this CommentManager.
-             * 
-             * @param newNode The new Comment node to associate with the cloned
-             * manager.
-             * @param parentManager The parent IElementManager for the new clone.
-             */
             clone(newNode: Node, parentManager: IElementManager): number {
                 CommentManager.create(newNode, parentManager);
                 return 1;
@@ -21611,14 +20011,27 @@ module plat {
         }
 
         /**
-         * The Type for referencing the '$CommentManagerStatic' injectable as a dependency.
+         * The Type for referencing the '$CommentManagerFactory' injectable as a dependency.
          */
-        export function CommentManagerStatic(): ICommentManagerStatic {
+        export function ICommentManagerFactory(): ICommentManagerFactory {
             return CommentManager;
         }
 
-        register.injectable('$CommentManagerStatic', CommentManagerStatic,
-            null, register.injectableType.STATIC);
+        register.injectable(__CommentManagerFactory, ICommentManagerFactory, null, register.FACTORY);
+
+        /**
+         * Creates and manages a class for dealing with Comment nodes.
+         */
+        export interface ICommentManagerFactory {
+            /**
+             * Creates a new CommentManager for the given Comment node.
+             *
+             * @static
+             * @param node The Comment to associate with the new manager.
+             * @param parent The parent IElementManager.
+             */
+            create(node: Node, parent: IElementManager): ICommentManager;
+        }
 
         /**
          * An object used to manage Comment nodes.
@@ -21633,82 +20046,35 @@ module plat {
              */
             clone(newNode: Node, parentManager: IElementManager): number;
         }
-
-        /**
-         * The external interface for the '$CommentManagerStatic' injectable.
-         */
-        export interface ICommentManagerStatic {
-            /**
-             * Creates a new CommentManager for the given Comment node.
-             *
-             * @static
-             * @param node The Comment to associate with the new manager.
-             * @param parent The parent IElementManager.
-             */
-            create(node: Node, parent: IElementManager): ICommentManager;
-        }
     }
     export module navigation {
         /**
          * A class that defines the base Navigation properties and methods.
          */
         export class BaseNavigator implements IBaseNavigator {
-            /**
-             * A unique identifier used to identify this navigator.
-             */
+            $EventManagerStatic: events.IEventManagerStatic = acquire(__EventManagerStatic);
+            $NavigationEventStatic: events.INavigationEventStatic = acquire(__NavigationEventStatic);
+            $ViewControlFactory: ui.IViewControlFactory = acquire(__ViewControlFactory);
+            $ContextManagerStatic: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
+
             uid: string;
-
-            /**
-             * Every navigator will have a viewport with which to communicate and 
-             * facilitate navigation.
-             */
             baseport: ui.controls.IBaseport;
-
-            /**
-             * Specifies the current state of navigation. This state should contain 
-             * enough information for it to be pushed onto the history stack when 
-             * necessary.
-             */
             currentState: IBaseNavigationState;
 
-            $EventManagerStatic: events.IEventManagerStatic = acquire('$EventManagerStatic');
-            $NavigationEventStatic: events.INavigationEventStatic = acquire('$NavigationEventStatic');
-            $ExceptionStatic: IExceptionStatic = acquire('$ExceptionStatic');
-            $ViewControlStatic: ui.IViewControlStatic = acquire('$ViewControlStatic');
-            $ContextManagerStatic: observable.IContextManagerStatic = acquire('$ContextManagerStatic');
-
+            /**
+             * Define unique id and subscribe to the 'goBack' event
+             */
             constructor() {
                 this.$ContextManagerStatic.defineGetter(this, 'uid', uniqueId('plat_'));
                 this.$EventManagerStatic.on(this.uid, 'goBack', this.goBack, this);
             }
 
-            /**
-             * Initializes a Navigator. The viewport will call this method and pass itself in so 
-             * the navigator can store it and use it to facilitate navigation.
-             * 
-             * @param baseport The baseport instance this navigator will be attached to.
-             */
             initialize(baseport: ui.controls.IBaseport): void {
                 this.baseport = baseport;
             }
 
-            /**
-             * Allows a ui.IViewControl to navigate to another ui.IViewControl. Also allows for
-             * navigation parameters to be sent to the new ui.IViewControl.
-             * 
-             * @param navigationParameter An optional navigation parameter to send to the next ui.IViewControl.
-             * @param options Optional IBaseNavigationOptions used for navigation.
-             */
             navigate(navigationParameter: any, options: IBaseNavigationOptions): void { }
 
-            /**
-             * Called by the Viewport to make the Navigator aware of a successful navigation. The Navigator will
-             * in-turn call the app.navigated event.
-             * 
-             * @param control The ui.IViewControl to which the navigation occurred.
-             * @param parameter The navigation parameter sent to the control.
-             * @param options The INavigationOptions used during navigation.
-             */
             navigated(control: ui.IViewControl, parameter: any, options: IBaseNavigationOptions): void {
                 this.currentState = {
                     control: control
@@ -21720,12 +20086,6 @@ module plat {
                 this._sendEvent('navigated', control, control.type, parameter, options, false);
             }
 
-            /**
-             * Every navigator must implement this method, defining what happens when a view 
-             * control wants to go back.
-             * 
-             * @param options Optional backwards navigation options of type IBaseBackNavigationOptions.
-             */
             goBack(options?: IBaseBackNavigationOptions): void { }
 
             /**
@@ -21748,40 +20108,6 @@ module plat {
                     cancelable: cancelable
                 });
             }
-        }
-
-        /**
-         * Options that you can submit to the navigator in order
-         * to customize navigation.
-         */
-        export interface IBaseNavigationOptions {
-            /**
-             * Allows a ui.IViewControl to leave itself out of the 
-             * navigation history.
-             */
-            replace?: boolean;
-        }
-
-        /**
-         * Options that you can submit to the navigator during a backward
-         * navigation in order to customize the navigation.
-         */
-        export interface IBaseBackNavigationOptions {
-            /**
-             * Lets the Navigator know to navigate back a specific length 
-             * in history.
-             */
-            length?: number;
-        }
-
-        /**
-         * Defines the base interface needing to be implemented in the history.
-         */
-        export interface IBaseNavigationState {
-            /**
-             * The view control associated with a history entry.
-             */
-            control: ui.IViewControl;
         }
 
         /**
@@ -21843,24 +20169,47 @@ module plat {
         }
 
         /**
+         * Options that you can submit to the navigator in order
+         * to customize navigation.
+         */
+        export interface IBaseNavigationOptions {
+            /**
+             * Allows a ui.IViewControl to leave itself out of the 
+             * navigation history.
+             */
+            replace?: boolean;
+        }
+
+        /**
+         * Options that you can submit to the navigator during a backward
+         * navigation in order to customize the navigation.
+         */
+        export interface IBaseBackNavigationOptions {
+            /**
+             * Lets the Navigator know to navigate back a specific length 
+             * in history.
+             */
+            length?: number;
+        }
+
+        /**
+         * Defines the base interface needing to be implemented in the history.
+         */
+        export interface IBaseNavigationState {
+            /**
+             * The view control associated with a history entry.
+             */
+            control: ui.IViewControl;
+        }
+
+        /**
          * The Navigator class allows ui.IViewControls to navigate within a Viewport.
          * Every Viewport has its own Navigator instance, allowing multiple navigators to 
          * coexist in one app.
          */
         export class Navigator extends BaseNavigator implements INavigator {
-            /**
-             * Contains the navigation history stack.
-             */
             history: Array<IBaseNavigationState> = [];
 
-            /**
-             * Allows a ui.IViewControl to navigate to another ui.IViewControl. Also allows for
-             * navigation parameters to be sent to the new ui.IViewControl.
-             * 
-             * @param Constructor The Constructor for the new ui.IViewControl. The Navigator will find the injector 
-             * for the Constructor and create a new instance of the control.
-             * @param options Optional IBaseNavigationOptions used for Navigation.
-             */
             navigate(Constructor?: new (...args: any[]) => ui.IViewControl, options?: INavigationOptions): void;
             navigate(injector?: dependency.IInjector<IControl>, options?: INavigationOptions): void;
             navigate(Constructor?: any, options?: INavigationOptions) {
@@ -21878,7 +20227,7 @@ module plat {
                     return;
                 }
 
-                this.$ViewControlStatic.detach(viewControl);
+                this.$ViewControlFactory.detach(viewControl);
 
                 if (isObject(parameter)) {
                     parameter = deepExtend({}, parameter);
@@ -21904,7 +20253,8 @@ module plat {
                 }
 
                 if (isNull(injector)) {
-                    this.$ExceptionStatic.fatal('Attempting to navigate to unregistered view control.', this.$ExceptionStatic.NAVIGATION);
+                    var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                    $exception.fatal('Attempting to navigate to unregistered view control.', $exception.NAVIGATION);
                 }
 
                 if (!isNull(viewControl)) {
@@ -21919,18 +20269,11 @@ module plat {
                 this.baseport.navigateTo(event);
             }
 
-            /**
-             * Returns to the last visited ui.IViewControl.
-             * 
-             * @param options Optional IBackNavigationOptions allowing the ui.IViewControl
-             * to customize navigation. Enables navigating back to a specified point in history as well
-             * as specifying a new templateUrl to use at the next ui.IViewControl.
-             */
             goBack(options?: IBackNavigationOptions): void {
                 options = options || {};
 
                 if (this.history.length === 0) {
-                    this.$EventManagerStatic.dispatch('shutdown', this, this.$EventManagerStatic.direction.DIRECT);
+                    this.$EventManagerStatic.dispatch('shutdown', this, this.$EventManagerStatic.DIRECT);
                 }
 
                 var viewControl = this.currentState.control,
@@ -21946,27 +20289,28 @@ module plat {
                     return;
                 }
 
+                var $exception: IExceptionStatic;
                 if (!isNull(Constructor)) {
                     var index = this._findInHistory(Constructor);
 
                     if (index > -1) {
                         length = this.history.length - index;
                     } else {
-                        this.$ExceptionStatic.warn('Cannot find ViewControl in navigation history.', this.$ExceptionStatic.NAVIGATION);
+                        $exception = acquire(__ExceptionStatic);
+                        $exception.warn('Cannot find ViewControl in navigation history.', $exception.NAVIGATION);
                         return;
                     }
                 }
 
                 if (!isNumber(length) || length > this.history.length) {
-                    this.$ExceptionStatic.warn('Not enough views in the navigation history in order to navigate back.',
-                        this.$ExceptionStatic.NAVIGATION);
+                    $exception = acquire(__ExceptionStatic);
+                    $exception.warn('Not enough views in the navigation history in order to navigate back.',
+                        $exception.NAVIGATION);
                     return;
                 }
 
-                var ViewControl: ui.IViewControlStatic = acquire('$ViewControlStatic');
-
                 this.baseport.navigateFrom(viewControl);
-                ViewControl.dispose(viewControl);
+                this.$ViewControlFactory.dispose(viewControl);
 
                 var last: IBaseNavigationState = this._goBackLength(length);
 
@@ -21984,20 +20328,13 @@ module plat {
                 this.baseport.navigateTo(event);
             }
 
-            /**
-             * Lets the caller know if there are ui.IViewControls in the history, meaning the caller
-             * is safe to perform a backward navigation.
-             */
             canGoBack(): boolean {
                 return this.history.length > 0;
             }
 
-            /**
-             * Clears the navigation history, disposing all the controls.
-             */
             clearHistory(): void {
                 var history = this.history,
-                    dispose = this.$ViewControlStatic.dispose;
+                    dispose = this.$ViewControlFactory.dispose;
 
                 while (history.length > 0) {
                     dispose(history.pop().control);
@@ -22037,7 +20374,7 @@ module plat {
                 length = isNumber(length) ? length : 1;
 
                 var last: IBaseNavigationState,
-                    dispose = this.$ViewControlStatic.dispose;
+                    dispose = this.$ViewControlFactory.dispose;
 
                 while (length-- > 0) {
                     if (!isNull(last) && !isNull(last.control)) {
@@ -22051,35 +20388,14 @@ module plat {
             }
         }
 
-        register.injectable('$navigator', Navigator, null, register.injectableType.MULTI);
-
         /**
-         * Options that you can submit to the Navigator in order
-         * to customize navigation.
+         * The Type for referencing the '$Navigator' injectable as a dependency.
          */
-        export interface INavigationOptions extends IBaseNavigationOptions {
-            /**
-             * An optional parameter to send to the next ui.IViewControl.
-             */
-            parameter?: any;
+        export function INavigator(): INavigator {
+            return new Navigator();
         }
 
-        /**
-         * Options that you can submit to the Navigator during a backward
-         * navigation in order to customize the navigation.
-         */
-        export interface IBackNavigationOptions extends IBaseBackNavigationOptions {
-            /**
-             * An optional parameter to send to the next ui.IViewControl.
-             */
-            parameter?: any;
-            /**
-             * A ui.IViewControl Constructor that the Navigator will
-             * use to navigate. The Navigator will search for an instance 
-             * of the ui.IViewControl in its history and navigate to it.
-             */
-            ViewControl?: new (...args: any[]) => ui.IViewControl;
-        }
+        register.injectable(__Navigator, INavigator, null, register.INSTANCE);
 
         /**
          * An object implementing INavigator allows ui.IViewControls to implement methods 
@@ -22124,19 +20440,52 @@ module plat {
         }
 
         /**
+         * Options that you can submit to the Navigator in order
+         * to customize navigation.
+         */
+        export interface INavigationOptions extends IBaseNavigationOptions {
+            /**
+             * An optional parameter to send to the next ui.IViewControl.
+             */
+            parameter?: any;
+        }
+
+        /**
+         * Options that you can submit to the Navigator during a backward
+         * navigation in order to customize the navigation.
+         */
+        export interface IBackNavigationOptions extends IBaseBackNavigationOptions {
+            /**
+             * An optional parameter to send to the next ui.IViewControl.
+             */
+            parameter?: any;
+            /**
+             * A ui.IViewControl Constructor that the Navigator will
+             * use to navigate. The Navigator will search for an instance 
+             * of the ui.IViewControl in its history and navigate to it.
+             */
+            ViewControl?: new (...args: any[]) => ui.IViewControl;
+        }
+
+        /**
          * A Navigator class that utilizes routing capabilities. It is associated with a 
          * Routeport, thus only allowing one RoutingNavigator per app.
          */
         export class RoutingNavigator extends BaseNavigator implements IRoutingNavigator {
+            $Router: web.IRouter = acquire(__Router);
+            $Window: Window = acquire(__Window);
+
             /**
              * The routing information for the Routeport's current state.
              */
             currentState: IRouteNavigationState;
-            $router: web.IRouter = acquire('$router');
-            $window: Window = acquire('$window');
+
             private __removeListeners: Array<IRemoveListener> = [];
             private __historyLength = 0;
 
+            /**
+             * Subscribe to 'routeChanged' and 'beforeRouteChange' events
+             */
             constructor() {
                 super();
 
@@ -22144,48 +20493,25 @@ module plat {
                 this.__removeListeners.push(this.$EventManagerStatic.on(this.uid, 'beforeRouteChange', this._beforeRouteChange, this));
             }
 
-            /**
-             * Allows a ui.IViewControl to navigate to another ui.IViewControl. Also allows for
-             * navigation parameters to be sent to the new ui.IViewControl.
-             * 
-             * @param path The url path to navigate to.
-             * @param options Optional INavigationOptions for ignoring the current ui.IViewControl in the history as
-             * well as specifying a new templateUrl for the next ui.IViewControl to use.
-             */
             navigate(path: string, options?: web.IRouteNavigationOptions): void {
-                this.$router.route(path, options);
+                this.$Router.route(path, options);
             }
 
-            /**
-             * Called by the Viewport to make the Navigator aware of a successful navigation. The Navigator will
-             * in-turn call the app.navigated event.
-             * 
-             * @param control The ui.IViewControl to which the navigation occurred.
-             * @param parameter The navigation parameter sent to the control.
-             * @param options The INavigationOptions used during navigation.
-             */
             navigated(control: ui.IViewControl, parameter: web.IRoute<any>, options: web.IRouteNavigationOptions): void {
                 super.navigated(control, parameter, options);
                 this.currentState.route = parameter;
             }
 
-            /**
-             * Returns to the last visited ui.IViewControl based on the previous route.
-             * 
-             * @param options Optional IBackNavigationOptions allowing the ui.IViewControl
-             * to customize navigation. Enables navigating back to a specified point in history as well
-             * as specifying a new templateUrl to use at the next ui.IViewControl.
-             */
             goBack(options?: IBaseBackNavigationOptions): void {
                 options = options || {};
 
                 this.__historyLength -= 2;
 
                 if (this.__historyLength < 0) {
-                    this.$EventManagerStatic.dispatch('shutdown', this, this.$EventManagerStatic.direction.DIRECT);
+                    this.$EventManagerStatic.dispatch('shutdown', this, this.$EventManagerStatic.DIRECT);
                 }
 
-                this.$router.goBack((isNumber(options.length) ? options.length : 1));
+                this.$Router.goBack((isNumber(options.length) ? options.length : 1));
             }
 
             /**
@@ -22219,23 +20545,20 @@ module plat {
 
                 this.__historyLength++;
                 this.baseport.navigateFrom(viewControl);
-                this.$ViewControlStatic.dispose(viewControl);
+                this.$ViewControlFactory.dispose(viewControl);
                 this.baseport.navigateTo(ev);
             }
         }
 
-        register.injectable('$routingNavigator', RoutingNavigator);
-
         /**
-         * Defines the route type interface implemented for current state and last state.
+         * The Type for referencing the '$RoutingNavigator' injectable as a dependency.
          */
-        export interface IRouteNavigationState extends IBaseNavigationState {
-            /**
-             * The associated route information.
-             */
-            route: web.IRoute<any>;
+        export function IRoutingNavigator(): IRoutingNavigator {
+            return new RoutingNavigator();
         }
-    
+
+        register.injectable(__RoutingNavigator, IRoutingNavigator);
+
         /**
          * Defines the methods that a Navigator must implement if it chooses to utilize 
          * routing capabilities.
@@ -22252,6 +20575,16 @@ module plat {
             navigate(path: string, options?: web.IRouteNavigationOptions): void;
 
             /**
+             * Called by the Viewport to make the Navigator aware of a successful navigation. The Navigator will
+             * in-turn call the app.navigated event.
+             * 
+             * @param control The ui.IViewControl to which the navigation occurred.
+             * @param parameter The navigation parameter sent to the control.
+             * @param options The INavigationOptions used during navigation.
+             */
+            navigated(control: ui.IViewControl, parameter: web.IRoute<any>, options: web.IRouteNavigationOptions): void;
+
+            /**
              * Returns to the last visited ui.IViewControl.
              * 
              * @param options Optional IBackNavigationOptions allowing the ui.IViewControl
@@ -22259,6 +20592,16 @@ module plat {
              * as specifying a new templateUrl to use at the next ui.IViewControl.
              */
             goBack(options?: IBaseBackNavigationOptions): void;
+        }
+
+        /**
+         * Defines the route type interface implemented for current state and last state.
+         */
+        export interface IRouteNavigationState extends IBaseNavigationState {
+            /**
+             * The associated route information.
+             */
+            route: web.IRoute<any>;
         }
     }
     /**
@@ -22277,24 +20620,20 @@ module plat {
      * as well as error handling.
      */
     export class App implements IApp {
-        static $compat: ICompat;
-        static $ExceptionStatic: IExceptionStatic;
+        static $Compat: ICompat;
         static $EventManagerStatic: events.IEventManagerStatic;
-        static $document: Document;
-        static $compiler: processing.ICompiler;
+        static $Document: Document;
+        static $Compiler: processing.ICompiler;
         static $LifecycleEventStatic: events.ILifecycleEventStatic;
 
         /**
          * A static method for initiating the app startup.
          */
         static start(): void {
-            var $compat = App.$compat;
-
-            if (!$compat.isCompatible) {
-                var $ExceptionStatic = App.$ExceptionStatic;
-
-                $ExceptionStatic.fatal('PlatypusTS only supports modern browsers where ' +
-                    'Object.defineProperty is defined', $ExceptionStatic.COMPAT);
+            if (!App.$Compat.isCompatible) {
+                var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                $exception.fatal('PlatypusTS only supports modern browsers where ' +
+                    'Object.defineProperty is defined', $exception.COMPAT);
                 return;
             }
 
@@ -22316,9 +20655,8 @@ module plat {
             }
 
             App.app = app;
-            var $compat = App.$compat;
 
-            if ($compat.amd) {
+            if (App.$Compat.amd) {
                 var $LifecycleEventStatic = App.$LifecycleEventStatic,
                     dispatch = $LifecycleEventStatic.dispatch;
 
@@ -22336,24 +20674,24 @@ module plat {
          */
         static load(node?: Node): void {
             var $LifecycleEventStatic = App.$LifecycleEventStatic,
-                compiler = App.$compiler,
-                body = App.$document.body;
+                $compiler = App.$Compiler,
+                body = App.$Document.body;
 
             $LifecycleEventStatic.dispatch('beforeLoad', App);
 
             if (isNull(node)) {
                 body.setAttribute('plat-hide', '');
-                compiler.compile(body);
+                $compiler.compile(body);
                 body.removeAttribute('plat-hide');
                 return;
             }
 
-            if (isFunction((<HTMLElement>node).setAttribute)) {
-                (<HTMLElement>node).setAttribute('plat-hide', '');
-                compiler.compile(node);
-                (<HTMLElement>node).removeAttribute('plat-hide');
+            if (isFunction((<Element>node).setAttribute)) {
+                (<Element>node).setAttribute('plat-hide', '');
+                $compiler.compile(node);
+                (<Element>node).removeAttribute('plat-hide');
             } else {
-                compiler.compile(node);
+                $compiler.compile(node);
             }
         }
 
@@ -22375,9 +20713,7 @@ module plat {
                 App.__registerAppEvents(ev);
             }
 
-            var compat = App.$compat;
-
-            if (!compat.amd) {
+            if (!App.$Compat.amd) {
                 App.load();
             }
         }
@@ -22408,9 +20744,6 @@ module plat {
             }
         }
 
-        /**
-         * A unique id, created during instantiation.
-         */
         uid: string;
 
         /**
@@ -22418,133 +20751,74 @@ module plat {
          * as well as error handling and navigation events.
          */
         constructor() {
-            var ContextManager: observable.IContextManagerStatic = acquire('$ContextManagerStatic');
+            var ContextManager: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
             ContextManager.defineGetter(this, 'uid', uniqueId('plat_'));
         }
 
-        /**
-         * Event fired when the app is suspended.
-         * 
-         * @param ev The ILifecycleEvent object.
-         */
         suspend(ev: events.ILifecycleEvent): void { }
 
-        /**
-         * Event fired when the app resumes from the suspended state.
-         * 
-         * @param ev The ILifecycleEvent object.
-         */
         resume(ev: events.ILifecycleEvent): void { }
 
-        /**
-         * Event fired when an internal error occures.
-         * 
-         * @param ev The IErrorEvent object.
-         */
         error(ev: events.IErrorEvent<Error>): void { }
 
-        /**
-         * Event fired when the app is ready.
-         * 
-         * @param ev The ILifecycleEvent object.
-         */
         ready(ev: events.ILifecycleEvent): void { }
 
-        /**
-         * Event fired when the app regains connectivity and is now in an online state.
-         * 
-         * @param ev The ILifecycleEvent object.
-         */
         online(ev: events.ILifecycleEvent): void { }
 
-        /**
-         * Event fired when the app loses connectivity and is now in an offline state.
-         * 
-         * @param ev The ILifecycleEvent object.
-         */
         offline(ev: events.ILifecycleEvent): void { }
 
-        /**
-         * Creates a new DispatchEvent and propagates it to all listeners based on the 
-         * events.EventManager.DIRECT method. Propagation will always start with the sender, 
-         * so the sender can both produce and consume the same event.
-         * 
-         * @param name The name of the event to send, cooincides with the name used in the
-         * app.on() method.
-         * @param ...args Any number of arguments to send to all the listeners.
-         */
         dispatchEvent(name: string, ...args: any[]): void {
-            App.$EventManagerStatic.dispatch(name, this, App.$EventManagerStatic.direction.DIRECT, args);
+            App.$EventManagerStatic.dispatch(name, this, App.$EventManagerStatic.DIRECT, args);
         }
 
-        /**
-         * Registers a listener for a beforeNavigate event. The listener will be called when a beforeNavigate 
-         * event is propagating over the app. Any number of listeners can exist for a single event name. 
-         * This event is cancelable using the ev.cancel() method, and thereby preventing the navigation.
-         * 
-         * @param name='beforeNavigate' The name of the event, cooinciding with the beforeNavigate event.
-         * @param listener The method called when the beforeNavigate event is fired.
-         */
         on(name: 'beforeNavigate', listener: (ev: events.INavigationEvent<any>) => void): IRemoveListener;
-        /**
-         * Registers a listener for a navigating event. The listener will be called when a navigating 
-         * event is propagating over the app. Any number of listeners can exist for a single event name. 
-         * This event is cancelable using the ev.cancel() method, and thereby preventing the navigation.
-         * 
-         * @param name='navigating' The name of the event, cooinciding with the navigating event.
-         * @param listener The method called when the navigating event is fired.
-         */
         on(name: 'navigating', listener: (ev: events.INavigationEvent<any>) => void): IRemoveListener;
-        /**
-         * Registers a listener for a navigated event. The listener will be called when a navigated 
-         * event is propagating over the app. Any number of listeners can exist for a single event name. 
-         * This event is not cancelable.
-         * 
-         * @param name='navigated' The name of the event, cooinciding with the navigated event.
-         * @param listener The method called when the navigated event is fired.
-         */
         on(name: 'navigated',
             listener: (ev: events.INavigationEvent<any>) => void): IRemoveListener;
-        /**
-         * Registers a listener for a routeChanged event. The listener will be called when a routeChange event 
-         * is propagating over the app. Any number of listeners can exist for a single event name.
-         *
-         * @param eventName='routeChange' This specifies that the listener is for a routeChange event.
-         * @param listener The method called when the routeChange is fired. The route argument will contain 
-         * a parsed route.
-         */
         on(name: 'routeChanged', listener: (ev: events.INavigationEvent<web.IRoute<any>>) => void): IRemoveListener;
-        /**
-         * Registers a listener for a NavigationEvent. The listener will be called when a NavigationEvent is 
-         * propagating over the app. Any number of listeners can exist for a single event name.
-         * 
-         * @param name The name of the event, cooinciding with the NavigationEvent name.
-         * @param listener The method called when the NavigationEvent is fired.
-         */
         on(name: string, listener: (ev: events.INavigationEvent<any>) => void): IRemoveListener;
-        /**
-         * Registers a listener for a DispatchEvent. The listener will be called when a DispatchEvent is 
-         * propagating over the app. Any number of listeners can exist for a single event name.
-         * 
-         * @param name The name of the event, cooinciding with the DispatchEvent name.
-         * @param listener The method called when the DispatchEvent is fired.
-         */
-        on(name: string, listener: (ev: events.IDispatchEvent, ...args: any[]) => void): IRemoveListener {
+        on(name: string, listener: (ev: events.IDispatchEventInstance, ...args: any[]) => void): IRemoveListener {
             return App.$EventManagerStatic.on(this.uid, name, listener, this);
         }
 
-        /**
-         * Kicks off compilation of the DOM from the specified node. If no node is specified, 
-         * the default start node is document.body. This method should be called from the app when 
-         * using module loaders. If a module loader is in use, the app will delay loading until 
-         * this method is called.
-         * 
-         * @param node The node where at which DOM compilation begins.
-         */
         load(node?: Node): void {
             App.load(node);
         }
     }
+
+    /**
+     * The Type for referencing the '$AppStatic' injectable as a dependency.
+     */
+    export function IAppStatic(
+        $Compat: ICompat,
+        $EventManagerStatic: events.IEventManagerStatic,
+        $Document: Document,
+        $Compiler: processing.ICompiler,
+        $LifecycleEventStatic: events.ILifecycleEventStatic): IAppStatic {
+            App.$Compat = $Compat;
+            App.$EventManagerStatic = $EventManagerStatic;
+            App.$Document = $Document;
+            App.$Compiler = $Compiler;
+            App.$LifecycleEventStatic = $LifecycleEventStatic;
+            return App;
+    }
+
+    register.injectable(__AppStatic, IAppStatic, [
+        __Compat,
+        __EventManagerStatic,
+        __Document,
+        __Compiler,
+        __LifecycleEventStatic
+    ], register.STATIC);
+
+    /**
+     * The Type for referencing the '$App' injectable as a dependency.
+     */
+    export function IApp($AppStatic: IAppStatic): IApp {
+        return $AppStatic.app;
+    }
+
+    register.injectable(__App, IApp, [__AppStatic], register.INSTANCE);
 
     /**
      * The external interface for the '$AppStatic' interface.
@@ -22574,45 +20848,6 @@ module plat {
          */
         app: IApp;
     }
-
-    /**
-     * The Type for referencing the '$AppStatic' injectable as a dependency.
-     */
-    export function AppStatic(
-        $compat: ICompat,
-        $ExceptionStatic: IExceptionStatic,
-        $EventManagerStatic: events.IEventManagerStatic,
-        $document: Document,
-        $compiler: processing.ICompiler,
-        $LifecycleEventStatic: events.ILifecycleEventStatic) {
-            App.$compat = $compat;
-            App.$ExceptionStatic = $ExceptionStatic;
-            App.$EventManagerStatic = $EventManagerStatic;
-            App.$document = $document;
-            App.$compiler = $compiler;
-            App.$LifecycleEventStatic = $LifecycleEventStatic;
-            return App;
-    }
-
-    register.injectable('$AppStatic', AppStatic, [
-        '$compat',
-        '$ExceptionStatic',
-        '$EventManagerStatic',
-        '$document',
-        '$compiler',
-        '$LifecycleEventStatic'
-    ], register.injectableType.STATIC);
-
-    /**
-     * The Type for referencing the '$app' injectable as a dependency.
-     */
-    export function AppInstance($AppStatic: IAppStatic) {
-        return $AppStatic.app;
-    }
-
-    register.injectable('$app', AppInstance, [
-        '$AppStatic'
-    ], register.injectableType.MULTI);
 
     /**
      * An object implementing IApp implements the methods called by the framework to support 
@@ -22735,7 +20970,7 @@ module plat {
          * @param listener The method called when the DispatchEvent is fired.
          * @return {IRemoveListener} A method for removing the listener.
          */
-        on(name: string, listener: (ev: events.IDispatchEvent, ...args: any[]) => void): IRemoveListener;
+        on(name: string, listener: (ev: events.IDispatchEventInstance, ...args: any[]) => void): IRemoveListener;
 
         /**
          * Kicks off compilation of the DOM from the specified node. If no node is specified, 

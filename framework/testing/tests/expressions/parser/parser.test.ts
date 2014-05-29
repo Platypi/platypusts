@@ -1,6 +1,7 @@
 ﻿/// <reference path="../../../typings/tsd.d.ts" />
 module tests.expressions.parser {
-    var context = {
+    var parser: plat.expressions.IParser = plat.acquire(plat.expressions.IParser),
+        context = {
         title: 'Parser',
         fooFn: function (arg0, arg1) {
             return arg0 + arg1;
@@ -480,8 +481,6 @@ module tests.expressions.parser {
         }
 
     ];
-
-    var parser: plat.expressions.IParser = plat.acquire(plat.expressions.Parser);
 
     describe('Parser Tests', () => {
         tests.forEach((test) => {
