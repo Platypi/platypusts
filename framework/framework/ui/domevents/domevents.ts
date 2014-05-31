@@ -1088,9 +1088,7 @@
     /**
      * The Type for referencing the '$DomEvents' injectable as a dependency.
      */
-    export function IDomEvents(): IDomEvents {
-        return new DomEvents();
-    }
+    export var IDomEvents = DomEvents;
 
     plat.register.injectable(__DomEvents, IDomEvents);
 
@@ -1186,9 +1184,7 @@
     /**
      * The Type for referencing the '$DomEventInstance' injectable as a dependency.
      */
-    export function IDomEventInstance(): IDomEventInstance {
-        return new DomEvent();
-    }
+    export var IDomEventInstance = DomEvent;
 
     register.injectable(__DomEventInstance, IDomEventInstance, null, register.INSTANCE);
 

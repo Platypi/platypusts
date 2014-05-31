@@ -49,9 +49,7 @@ module plat {
     /**
      * The Type for referencing the '$Geolocation' injectable as a dependency.
      */
-    export function IGeolocation(): IGeolocation {
-        return new Geolocation();
-    }
+    export var IGeolocation = Geolocation;
 
     register.injectable(__Geolocation, IGeolocation);
 

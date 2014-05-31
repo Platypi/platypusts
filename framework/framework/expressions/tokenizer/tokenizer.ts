@@ -666,9 +666,7 @@ module plat.expressions {
     /**
      * The Type for referencing the '$Tokenizer' injectable as a dependency.
      */
-    export function ITokenizer(): ITokenizer {
-        return new Tokenizer();
-    }
+    export var ITokenizer = Tokenizer;
 
     register.injectable(__Tokenizer, ITokenizer);
 

@@ -1095,9 +1095,7 @@ module plat.async {
     /**
      * The Type for referencing the '$Http' injectable as a dependency.
      */
-    export function IHttp(): IHttp {
-        return new Http();
-    }
+    export var IHttp = Http;
 
     register.injectable(__Http, IHttp);
 

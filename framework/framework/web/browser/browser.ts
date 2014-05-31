@@ -189,9 +189,7 @@
     /**
      * The Type for referencing the '$Browser' injectable as a dependency.
      */
-    export function IBrowser(): IBrowser {
-        return new Browser();
-    }
+    export var IBrowser = Browser;
 
     register.injectable(__Browser, IBrowser);
 
