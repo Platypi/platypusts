@@ -22,6 +22,16 @@ var injectableInjectors: plat.dependency.IInjectorObject<plat.dependency.IInject
  */
 var staticInjectors: plat.dependency.IInjectorObject<plat.dependency.IInjector<any>> = {};
 
+/**
+ * An IInjectorObject of animations. Can be either CSS or JS implementations.
+ */
+var animationInjectors: plat.dependency.IInjectorObject<plat.ui.IAnimationInstance> = {};
+
+/**
+ * An IInjectorObject of animations. Should only contain JS implementations.
+ */
+var jsAnimationInjectors: plat.dependency.IInjectorObject<plat.ui.IAnimationInstance> = {};
+
 module plat.register {
     /**
      * Static injectables will be injected before the application loads. This provides a way to create 
@@ -156,7 +166,7 @@ module plat.register {
      * @example register.injectable('$CacheFactory', [plat.expressions.IParser], Cache);
      * @example register.injectable('database', MyDatabase, null, register.INSTANCE);
      */
-    export function injectable(name: string, Type: new (...args: any[]) => void,
+    export function injectable(name: string, Type: new (...args: any[]) => any,
         dependencies?: Array<any>, injectableType?: string): typeof register;
     /**
      * Registers an injectable with the framework. Injectables are objects that can be used for dependency injection into other objects.
@@ -179,5 +189,34 @@ module plat.register {
         dependencies?: Array<any>, injectableType?: string): typeof register;
     export function injectable(name: string, Type: any, dependencies?: Array<any>, injectableType?: string): typeof register {
         return add(injectableInjectors, name, Type, dependencies, injectableType || SINGLETON);
+    }
+
+    /**
+     * Adds an animation denoted by its name. Can be either a CSS or JS implementation, but will only be instantiated in 
+     * modern browsers that support animations. If you wish to also support legacy browsers, make sure to register a 
+     * JS implementation of the animation with plat.register.jsAnimation.
+     * 
+     * @param name The unique idenitifer of the animation.
+     * @param Type The constructor for the custom animation.
+     * @param dependencies Any dependencies that need to be injected into the animation at 
+     * instantiation.
+     */
+    export function animation(name: string, Type: new (...args: any[]) => plat.ui.IAnimationInstance,
+        dependencies?: Array<any>): typeof register {
+        return add(animationInjectors, name, Type, dependencies, register.INSTANCE);
+    }
+
+    /**
+     * Adds a JS animation denoted by its name. Intended to be used when JS animation implementations for legacy browsers 
+     * is desired.
+     * 
+     * @param name The unique idenitifer of the JS animation.
+     * @param Type The constructor for the custom JS animation.
+     * @param dependencies Any dependencies that need to be injected into the JS animation at 
+     * instantiation.
+     */
+    export function jsAnimation(name: string, Type: new (...args: any[]) => plat.ui.IAnimationInstance,
+        dependencies?: Array<any>): typeof register {
+        return add(jsAnimationInjectors, name, Type, dependencies, register.INSTANCE);
     }
 }
