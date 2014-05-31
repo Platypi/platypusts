@@ -53,12 +53,11 @@
         private __resolve: () => void;
         private __reject: () => void;
         private __animationEvents: IAnimationEvents = (<ICompat>acquire(__Compat)).animationEvents;
-        private __removeListeners: Array<IRemoveListener> = [];
+        private __subscriptions: Array<() => void> = [];
 
         start(): void { }
 
         end(): void {
-            this._dispose();
             if (isFunction(this.__resolve)) {
                 this.__resolve();
             }
@@ -70,35 +69,19 @@
             }
         }
 
-        //animationStart(listener: () => void): IRemoveListener {
-        //    return this.__addEventListener(this.__animationEvents.$animationStart, listener);
-        //}
-
-        //transitionStart(listener: () => void): IRemoveListener {
-        //    return this.__addEventListener(this.__animationEvents.$transitionStart, listener);
-        //}
-
-        //animationEnd(listener: () => void): IRemoveListener {
-        //    return this.__addEventListener(this.__animationEvents.$animationEnd, listener);
-        //}
-
-        //transitionEnd(listener: () => void): IRemoveListener {
-        //    return this.__addEventListener(this.__animationEvents.$transitionEnd, listener);
-        //}
-
-        animationStart(listener?: () => void): async.IThenable<void> {
+        animationStart(listener?: () => void): IAnimationInstance {
             return this.__addEventListener(this.__animationEvents.$animationStart, listener);
         }
 
-        transitionStart(listener?: () => void): plat.async.IThenable<void> {
+        transitionStart(listener?: () => void): IAnimationInstance {
             return this.__addEventListener(this.__animationEvents.$transitionStart, listener);
         }
 
-        animationEnd(listener?: () => void): plat.async.IThenable<void> {
+        animationEnd(listener?: () => void): IAnimationInstance {
             return this.__addEventListener(this.__animationEvents.$animationEnd, listener);
         }
 
-        transitionEnd(listener?: () => void): plat.async.IThenable<void> {
+        transitionEnd(listener?: () => void): IAnimationInstance {
             return this.__addEventListener(this.__animationEvents.$transitionEnd, listener);
         }
         
@@ -117,61 +100,28 @@
             this.__reject = reject;
         }
 
-        /**
-         * Stops listening to all events and removes the listeners.
-         */
-        _dispose() {
-            var listeners = this.__removeListeners,
-                length = listeners.length;
+        private __addEventListener(event: string, listener: () => void): IAnimationInstance {
+            var subscriptions = this.__subscriptions,
+                subscription = () => {
+                    var removeListener = this.dom.addEventListener(this.element, event, () => {
+                        removeListener();
+                        listener();
+                        subscriptions.shift();
+                        if (subscriptions.length === 0) {
+                            return;
+                        }
+                        subscriptions[0]();
+                    }, false);
+                };
 
-            while (length-- > 0) {
-                listeners[length]();
+            subscriptions.push(subscription);
+
+            if (subscriptions.length === 1) {
+                subscriptions[0]();
             }
 
-            this.__removeListeners = [];
+            return this;
         }
-
-        private __addEventListener(event: string, listener?: () => void) {
-            var then = (ret?: any) => {
-                if (isFunction(listener)) {
-                    ret = listener();
-                    listener = null;
-                    if (!isNull(ret) && isFunction((<any>ret).then)) {
-                        return ret;
-                    }
-                }
-
-                if (isNull(ret)) {
-                    return this.__addEventListener(event).then(then);
-                }
-
-                return true;
-            }
-
-            var promise = new this.$Promise<any>((resolve, reject) => {
-                var remove = this.dom.addEventListener(this.element, event, () => {
-                    remove();
-                    resolve();
-                }, false);
-            });
-
-            if (listener) {
-                return promise.then(then);
-            }
-
-            return promise;
-        }
-
-        //private __addEventListener(event: string, listener: () => void) {
-        //    var removeListener = this.dom.addEventListener(this.element, event, () => {
-        //        listener();
-        //    }, false);
-        //    this.__removeListeners.push(removeListener);
-        //    return () => {
-        //        this.__removeListeners.splice(this.__removeListeners.indexOf(removeListener), 1);
-        //        removeListener();
-        //    };
-        //}
     }
 
     /**
@@ -212,31 +162,27 @@
          * 
          * @param listener The function to call when the animation begins.
          */
-        //animationStart(listener: () => void): IRemoveListener;
-        animationStart(listener: () => void): async.IThenable<void>;
+        animationStart(listener: () => void): IAnimationInstance;
 
         /**
          * A function to listen to the start of a transition event.
          * 
          * @param listener The function to call when the transition begins.
          */
-        //transitionStart(listener: () => void): IRemoveListener;
-        transitionStart(listener: () => void): async.IThenable<void>;
+        transitionStart(listener: () => void): IAnimationInstance;
 
         /**
          * A function to listen to the end of an animation event.
          * 
          * @param listener The function to call when the animation ends.
          */
-        //animationEnd(listener: () => void): IRemoveListener;
-        animationEnd(listener: () => void): async.IThenable<void>;
+        animationEnd(listener: () => void): IAnimationInstance;
 
         /**
          * A function to listen to the end of a transition event.
          * 
          * @param listener The function to call when the transition ends.
          */
-        //transitionEnd(listener: () => void): IRemoveListener;
-        transitionEnd(listener: () => void): async.IThenable<void>;
+        transitionEnd(listener: () => void): IAnimationInstance;
     }
 }

@@ -6,6 +6,10 @@
     border-bottom-width: 1px;
 }
 
+.hide {
+    opacity: 0;
+}
+
 .test-animation {
     animation-duration: 1s;
     -webkit-animation-duration: 1s;

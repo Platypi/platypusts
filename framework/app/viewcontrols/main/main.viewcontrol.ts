@@ -18,15 +18,6 @@ module app {
 
         loaded() {
             this.animator.animate(this.element, 'fade');
-            this.context;
-            //this.context.user = {
-            //    name: 'will',
-            //    role: 'contributor'
-            //}
-
-            //setTimeout(() => {
-            //    this.context.user.name = 'matt';
-            //}, 1000);
         }
 
         submit() {
@@ -38,26 +29,28 @@ module app {
 
     class MyAnimation extends plat.ui.Animation {
         start() {
+            this.dom.toggleClass(this.element, 'hide');
             this.dom.toggleClass(this.element, 'test-animation');
 
             this.animationEnd(() => {
-                console.log('1');
+                this.dom.toggleClass(this.element, 'hide');
                 this.dom.toggleClass(this.element, 'test-animation');
                 this.dom.toggleClass(this.element, 're-animation');
-            }).then(() => {
-                console.log('2');
-                this.dom.toggleClass(this.element, 're-animation');
-                this.dom.toggleClass(this.element, 'test-animation');
-            }).then(() => {
-                console.log('3');
+            }).animationEnd(() => {
+                this.dom.toggleClass(this.element, 'hide');
                 this.dom.toggleClass(this.element, 'test-animation');
                 this.dom.toggleClass(this.element, 're-animation');
-            }).then(() => {
-                console.log('4');
+            }).animationEnd(() => {
+                this.dom.toggleClass(this.element, 'hide');
+                this.dom.toggleClass(this.element, 'test-animation');
                 this.dom.toggleClass(this.element, 're-animation');
-                return true;
+            }).animationEnd(() => {
+                this.dom.toggleClass(this.element, 'hide');
+                this.dom.toggleClass(this.element, 'test-animation');
+                this.dom.toggleClass(this.element, 're-animation');
+            }).animationEnd(() => {
+                this.dom.toggleClass(this.element, 'hide');
             });
-
         }
     }
 
