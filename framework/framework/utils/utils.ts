@@ -127,9 +127,7 @@ module plat {
     /**
      * The Type for referencing the '$Utils' injectable as a dependency.
      */
-    export function IUtils(): IUtils {
-        return new Utils();
-    }
+    export var IUtils = Utils;
 
     register.injectable(__Utils, IUtils);
 

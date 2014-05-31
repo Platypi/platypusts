@@ -90,9 +90,7 @@ module plat.processing {
     /**
      * The Type for referencing the '$Compiler' injectable as a dependency.
      */
-    export function ICompiler(): ICompiler {
-        return new Compiler();
-    }
+    export var ICompiler = Compiler;
 
     register.injectable(__Compiler, ICompiler);
 

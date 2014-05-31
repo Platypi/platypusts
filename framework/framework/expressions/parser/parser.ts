@@ -560,9 +560,7 @@ module plat.expressions {
     /**
      * The Type for referencing the '$Parser' injectable as a dependency.
      */
-    export function IParser(): IParser {
-        return new Parser();
-    }
+    export var IParser = Parser;
 
     register.injectable(__Parser, IParser);
 

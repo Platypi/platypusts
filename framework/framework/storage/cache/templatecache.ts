@@ -4,7 +4,7 @@ module plat.storage {
      * clone a template when you put it in the cache. It will
      * also clone the template when you retrieve it.
      */
-    class TemplateCache extends Cache<any> implements ITemplateCache {
+    export class TemplateCache extends Cache<any> implements ITemplateCache {
         $Promise: async.IPromise = acquire(__Promise);
 
         constructor() {
@@ -48,9 +48,7 @@ module plat.storage {
     /**
      * The Type for referencing the '$TemplateCache' injectable as a dependency.
      */
-    export function ITemplateCache(): ITemplateCache {
-        return new TemplateCache();
-    }
+    export var ITemplateCache = TemplateCache;
 
     register.injectable(__TemplateCache, ITemplateCache);
 
