@@ -373,21 +373,23 @@ module plat.ui {
                     return TemplateControl.$Http.ajax<string>({ url: templateUrl });
                 }
             }).then<DocumentFragment>((success) => {
-                        if (!isObject(success) || !isString(success.response)) {
-                            $exception = acquire(__ExceptionStatic);
-                            $exception.warn('No template found at ' + templateUrl, $exception.AJAX);
-                            return Promise.resolve(dom.serializeHtml());
-                        }
+                if (isDocumentFragment(success)) {
+                    return Promise.resolve(<DocumentFragment>(<any>success));
+                } else if (!isObject(success) || !isString(success.response)) {
+                    $exception = acquire(__ExceptionStatic);
+                    $exception.warn('No template found at ' + templateUrl, $exception.AJAX);
+                    return Promise.resolve(dom.serializeHtml());
+                }
 
-                        var templateString = success.response;
+                var templateString = success.response;
 
-                        if (isEmpty(templateString.trim())) {
-                            return Promise.resolve(dom.serializeHtml());
-                        }
+                if (isEmpty(templateString.trim())) {
+                    return Promise.resolve(dom.serializeHtml());
+                }
 
-                        template = dom.serializeHtml(templateString);
+                template = dom.serializeHtml(templateString);
 
-                        return templateCache.put(templateUrl, template);
+                return templateCache.put(templateUrl, template);
             }).catch((error) => {
                 postpone(() => {
                     $exception = acquire(__ExceptionStatic);

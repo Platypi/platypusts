@@ -620,17 +620,18 @@ module plat.observable {
          */
         _addObservableListener(absoluteIdentifier: string,
             observableListener: IListener): IRemoveListener {
-            var uid = observableListener.uid,
-                contextManagerCallback = this._removeCallback.bind(this);
+            var uid = observableListener.uid;
 
             this.__add(absoluteIdentifier, observableListener);
 
-            ContextManager.pushRemoveListener(absoluteIdentifier, uid, contextManagerCallback);
-
-            return () => {
+            var remove = () => {
                 ContextManager.removeIdentifier([uid], absoluteIdentifier);
-                contextManagerCallback(absoluteIdentifier, uid);
+                this._removeCallback(absoluteIdentifier, uid);
             };
+
+            ContextManager.pushRemoveListener(absoluteIdentifier, uid, remove);
+
+            return remove;
         }
 
         /**

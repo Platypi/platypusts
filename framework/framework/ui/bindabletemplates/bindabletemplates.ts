@@ -159,7 +159,7 @@ module plat.ui {
          * the binding of the INodeMap for a cloned template.
          */
         _bindTemplate(key: string, template: DocumentFragment, context: string,
-            resources: IObject<IResource>, callback: IBindableTemplateCallback) {
+            resources: IObject<IResource>, callback: IBindableTemplateCallback): void {
             var control = this._createBoundControl(key, template, context, resources),
                 nodeMap = this._createNodeMap(control, template, context);
 
