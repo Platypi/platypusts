@@ -321,10 +321,33 @@ function removeClass(element: HTMLElement, className: string): void {
             return;
         }
 
-        element.className
+        element.className = element.className
             .replace(new RegExp('^' + className + '\\s|\\s' + className + '$|\\s' + className + '|' + className + '\\s', 'g'), '');
         return;
     }
 
     element.classList.remove(className);
+}
+
+function toggleClass(element: HTMLElement, className: string): void {
+    if (isUndefined(element.classList)) {
+        var name = element.className;
+        if (name === '') {
+            element.className = className;
+        } else if (name === className) {
+            element.className = '';
+            return;
+        }
+
+        var classNameRegex = new RegExp('^' + className + '\\s|\\s' + className + '$|\\s' + className + '|' + className + '\\s', 'g');
+        if (classNameRegex.test(name)) {
+            element.className = name.replace(classNameRegex, '');
+            return;
+        }
+
+        element.className += ' ' + className;
+        return;
+    }
+
+    element.classList.toggle(className);
 }

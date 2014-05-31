@@ -6,11 +6,18 @@
     border-bottom-width: 1px;
 }
 
-div[plat-viewcontrol] {
-    animation-duration: 3s;
-    -webkit-animation-duration: 3s;
+.test-animation {
+    animation-duration: 1s;
+    -webkit-animation-duration: 1s;
     animation-name: animate;
     -webkit-animation-name: animate;
+}
+
+.re-animation {
+    animation-duration: 1s;
+    -webkit-animation-duration: 1s;
+    animation-name: re-animate;
+    -webkit-animation-name: re-animate;
 }
 
 @-webkit-keyframes animate {
@@ -28,5 +35,24 @@ div[plat-viewcontrol] {
     }
     to {
         opacity: 1;
+    }
+}
+
+
+@-webkit-keyframes re-animate {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes re-animate {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
     }
 }

@@ -69,6 +69,10 @@ module plat.ui {
         removeClass(element: Element, className: string): void {
             return removeClass(<HTMLElement>element, className);
         }
+
+        toggleClass(element: Element, className: string): void {
+            return toggleClass(<HTMLElement>element, className);
+        }
     }
 
     /**
@@ -274,5 +278,13 @@ module plat.ui {
          * @param className The class name to remove from the element.
          */
         removeClass(element: Element, className: string): void;
+
+        /**
+         * Toggles a class from the specified element
+         * 
+         * @param element The element on which the class name is being toggled.
+         * @param className The class name to toggle on the element.
+         */
+        toggleClass(element: Element, className: string): void;
     }
 }
