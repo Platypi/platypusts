@@ -8188,17 +8188,18 @@ module plat {
              */
             _addObservableListener(absoluteIdentifier: string,
                 observableListener: IListener): IRemoveListener {
-                var uid = observableListener.uid,
-                    contextManagerCallback = this._removeCallback.bind(this);
+                var uid = observableListener.uid;
 
                 this.__add(absoluteIdentifier, observableListener);
 
-                ContextManager.pushRemoveListener(absoluteIdentifier, uid, contextManagerCallback);
-
-                return () => {
+                var remove = () => {
                     ContextManager.removeIdentifier([uid], absoluteIdentifier);
-                    contextManagerCallback(absoluteIdentifier, uid);
+                    this._removeCallback(absoluteIdentifier, uid);
                 };
+
+                ContextManager.pushRemoveListener(absoluteIdentifier, uid, remove);
+
+                return remove;
             }
 
             /**
@@ -11568,19 +11569,25 @@ module plat {
                     return;
                 }
 
-                switch (expression) {
-                    case 'false':
-                    case '0':
-                    case 'null':
-                    case '':
-                        this.element.setAttribute(this.property, '');
-                        (<any>this.element)[this.property] = false;
-                        this.element.removeAttribute(this.property);
-                        break;
-                    default:
-                        this.element.setAttribute(this.property, this.property);
-                        (<any>this.element)[this.property] = true;
-                }
+                postpone(() => {
+                    if (!isNode(this.element)) {
+                        return;
+                    }
+
+                    switch (expression) {
+                        case 'false':
+                        case '0':
+                        case 'null':
+                        case '':
+                            this.element.setAttribute(this.property, '');
+                            (<any>this.element)[this.property] = false;
+                            this.element.removeAttribute(this.property);
+                            break;
+                        default:
+                            this.element.setAttribute(this.property, this.property);
+                            (<any>this.element)[this.property] = true;
+                    }
+                });
             }
         }
 
@@ -12260,10 +12267,12 @@ module plat {
              * Observes the expression to bind to.
              */
             _watchExpression(): void {
-                var context = this.evaluateExpression(this._contextExpression);
-                if (isNull(context)) {
+                var contextExpression = this._contextExpression,
+                    context = this.evaluateExpression(contextExpression);
+
+                if (isNull(context) && contextExpression.identifiers.length > 0) {
                     context = this.$ContextManagerStatic.createContext(this.parent,
-                        this._contextExpression.identifiers[0]);
+                        contextExpression.identifiers[0]);
                 }
 
                 if (!isFunction(this._setter)) {
@@ -12298,7 +12307,7 @@ module plat {
 
                 var newValue = this._getter();
 
-                if (context[property] === newValue) {
+                if (isNull(context) || context[property] === newValue) {
                     return;
                 }
 
@@ -12871,21 +12880,23 @@ module plat {
                         return TemplateControl.$Http.ajax<string>({ url: templateUrl });
                     }
                 }).then<DocumentFragment>((success) => {
-                            if (!isObject(success) || !isString(success.response)) {
-                                $exception = acquire(__ExceptionStatic);
-                                $exception.warn('No template found at ' + templateUrl, $exception.AJAX);
-                                return Promise.resolve(dom.serializeHtml());
-                            }
+                    if (isDocumentFragment(success)) {
+                        return Promise.resolve(<DocumentFragment>(<any>success));
+                    } else if (!isObject(success) || !isString(success.response)) {
+                        $exception = acquire(__ExceptionStatic);
+                        $exception.warn('No template found at ' + templateUrl, $exception.AJAX);
+                        return Promise.resolve(dom.serializeHtml());
+                    }
 
-                            var templateString = success.response;
+                    var templateString = success.response;
 
-                            if (isEmpty(templateString.trim())) {
-                                return Promise.resolve(dom.serializeHtml());
-                            }
+                    if (isEmpty(templateString.trim())) {
+                        return Promise.resolve(dom.serializeHtml());
+                    }
 
-                            template = dom.serializeHtml(templateString);
+                    template = dom.serializeHtml(templateString);
 
-                            return templateCache.put(templateUrl, template);
+                    return templateCache.put(templateUrl, template);
                 }).catch((error) => {
                     postpone(() => {
                         $exception = acquire(__ExceptionStatic);
@@ -13940,7 +13951,7 @@ module plat {
              * the binding of the INodeMap for a cloned template.
              */
             _bindTemplate(key: string, template: DocumentFragment, context: string,
-                resources: IObject<IResource>, callback: IBindableTemplateCallback) {
+                resources: IObject<IResource>, callback: IBindableTemplateCallback): void {
                 var control = this._createBoundControl(key, template, context, resources),
                     nodeMap = this._createNodeMap(control, template, context);
 
@@ -16912,11 +16923,10 @@ module plat {
                         }
 
                         this.__mapBindableTemplates(templateControl);
-
+                        return this._instantiateTemplate();
+                    }).then((clone) => {
                         var endNode = this.endNode;
-                        this._instantiateTemplate().then((clone) => {
-                            this.dom.insertBefore(endNode.parentNode, clone, endNode);
-                        });
+                        this.dom.insertBefore(endNode.parentNode, clone, endNode);
                     }).catch((error) => {
                         postpone(() => {
                             $exception = acquire(__ExceptionStatic);
@@ -19276,9 +19286,9 @@ module plat {
 
             fulfillTemplate(): async.IThenable<any> {
                     if (!isNull(this.templatePromise)) {
-                    return this.templatePromise.then(() => {
-                        return this._fulfillChildTemplates();
-                    });
+                        return this.templatePromise.then(() => {
+                            return this._fulfillChildTemplates();
+                        });
                     }
 
                 return this._fulfillChildTemplates();
@@ -19317,22 +19327,21 @@ module plat {
             }
 
             observeRootContext(root: ui.ITemplateControl, loadMethod: () => async.IThenable<void>): void {
+                if (!isNull(root.context)) {
+                    this.loadedPromise = loadMethod.call(this);
+                    return;
+                }
+
                 this.loadedPromise = new this.$Promise<void>((resolve, reject) => {
                     var contextManager: observable.IContextManager = this.$ContextManagerStatic.getManager(root);
 
                     var removeListener = contextManager.observe('context', {
                         listener: () => {
                             removeListener();
-
                             loadMethod.call(this).then(resolve);
                         },
                         uid: root.uid
                     });
-
-                    if (!isNull(root.context)) {
-                        removeListener();
-                        loadMethod.call(this).then(resolve);
-                    }
                 }).catch((error) => {
                     postpone(() => {
                         var $exception: IExceptionStatic = acquire(__ExceptionStatic);
@@ -19406,10 +19415,8 @@ module plat {
              * Fulfills the template promise prior to binding and loading the control.
              */
             _fulfillAndLoad(): async.IThenable<void> {
-                return new this.$Promise<void>((resolve, reject) => {
-                    this.fulfillTemplate().then(() => {
-                        return this.bindAndLoad();
-                    }).then(resolve);
+                return this.fulfillTemplate().then(() => {
+                    return this.bindAndLoad();
                 }).catch((error) => {
                     postpone(() => {
                         var $exception: IExceptionStatic = acquire(__ExceptionStatic);
