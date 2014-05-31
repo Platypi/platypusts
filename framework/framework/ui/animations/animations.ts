@@ -30,9 +30,7 @@
     /**
      * The Type for referencing the '$Animator' injectable as a dependency.
      */
-    export function IAnimator() {
-        return new Animator();
-    }
+    export var IAnimator = Animator;
 
     register.injectable('$Animator', IAnimator);
 
@@ -131,9 +129,7 @@
     /**
      * The Type for referencing the '$AnimationInstance' injectable as a dependency.
      */
-    export function IAnimationInstance() {
-        return new Animation();
-    }
+    export var IAnimationInstance = Animation;
 
     register.injectable('$AnimationInstance', IAnimationInstance, null, register.INSTANCE);
 
