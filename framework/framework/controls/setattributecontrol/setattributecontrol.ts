@@ -65,19 +65,25 @@ module plat.controls {
                 return;
             }
 
-            switch (expression) {
-                case 'false':
-                case '0':
-                case 'null':
-                case '':
-                    this.element.setAttribute(this.property, '');
-                    (<any>this.element)[this.property] = false;
-                    this.element.removeAttribute(this.property);
-                    break;
-                default:
-                    this.element.setAttribute(this.property, this.property);
-                    (<any>this.element)[this.property] = true;
-            }
+            postpone(() => {
+                if (!isNode(this.element)) {
+                    return;
+                }
+
+                switch (expression) {
+                    case 'false':
+                    case '0':
+                    case 'null':
+                    case '':
+                        this.element.setAttribute(this.property, '');
+                        (<any>this.element)[this.property] = false;
+                        this.element.removeAttribute(this.property);
+                        break;
+                    default:
+                        this.element.setAttribute(this.property, this.property);
+                        (<any>this.element)[this.property] = true;
+                }
+            });
         }
     }
 

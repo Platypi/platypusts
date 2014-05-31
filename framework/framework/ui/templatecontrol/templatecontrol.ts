@@ -373,7 +373,9 @@ module plat.ui {
                     return TemplateControl.$Http.ajax<string>({ url: templateUrl });
                 }
             }).then<DocumentFragment>((success) => {
-                if (!isObject(success) || !isString(success.response)) {
+                if (isDocumentFragment(success)) {
+                    return Promise.resolve(<DocumentFragment>(<any>success));
+                } else if (!isObject(success) || !isString(success.response)) {
                     $exception = acquire(__ExceptionStatic);
                     $exception.warn('No template found at ' + templateUrl, $exception.AJAX);
                     return Promise.resolve(dom.serializeHtml());

@@ -521,10 +521,12 @@ module plat.controls {
          * Observes the expression to bind to.
          */
         _watchExpression(): void {
-            var context = this.evaluateExpression(this._contextExpression);
-            if (isNull(context)) {
+            var contextExpression = this._contextExpression,
+                context = this.evaluateExpression(contextExpression);
+
+            if (isNull(context) && contextExpression.identifiers.length > 0) {
                 context = this.$ContextManagerStatic.createContext(this.parent,
-                    this._contextExpression.identifiers[0]);
+                    contextExpression.identifiers[0]);
             }
 
             if (!isFunction(this._setter)) {
@@ -559,7 +561,7 @@ module plat.controls {
 
             var newValue = this._getter();
 
-            if (context[property] === newValue) {
+            if (isNull(context) || context[property] === newValue) {
                 return;
             }
 
