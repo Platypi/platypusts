@@ -29,27 +29,20 @@ module app {
 
     class MyAnimation extends plat.ui.Animation {
         start() {
-            this.dom.toggleClass(this.element, 'hide');
             this.dom.toggleClass(this.element, 'test-animation');
 
             this.animationEnd(() => {
-                this.dom.toggleClass(this.element, 'hide');
                 this.dom.toggleClass(this.element, 'test-animation');
                 this.dom.toggleClass(this.element, 're-animation');
             }).animationEnd(() => {
-                this.dom.toggleClass(this.element, 'hide');
                 this.dom.toggleClass(this.element, 'test-animation');
                 this.dom.toggleClass(this.element, 're-animation');
             }).animationEnd(() => {
-                this.dom.toggleClass(this.element, 'hide');
                 this.dom.toggleClass(this.element, 'test-animation');
                 this.dom.toggleClass(this.element, 're-animation');
             }).animationEnd(() => {
-                this.dom.toggleClass(this.element, 'hide');
                 this.dom.toggleClass(this.element, 'test-animation');
                 this.dom.toggleClass(this.element, 're-animation');
-            }).animationEnd(() => {
-                this.dom.toggleClass(this.element, 'hide');
             });
         }
     }

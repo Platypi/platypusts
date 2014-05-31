@@ -11,23 +11,38 @@
 }
 
 .test-animation {
-    animation-duration: 1s;
     -webkit-animation-duration: 1s;
-    animation-name: animate;
+    -moz-animation-duration: 1s;
+    -o-animation-duration: 1s;
+    animation-duration: 1s;
+    -moz-animation-name: animate;
+    -o-animation-name: animate;
     -webkit-animation-name: animate;
+    animation-name: animate;
+    -o-animation-fill-mode: forwards;
+    -webkit-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
 }
 
 .re-animation {
-    animation-duration: 1s;
     -webkit-animation-duration: 1s;
-    animation-name: re-animate;
+    -moz-animation-duration: 1s;
+    -o-animation-duration: 1s;
+    animation-duration: 1s;
     -webkit-animation-name: re-animate;
+    -moz-animation-name: re-animate;
+    -o-animation-name: re-animate;
+    animation-name: re-animate;
+    -o-animation-fill-mode: forwards;
+    -webkit-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
 }
 
 @-webkit-keyframes animate {
     from {
         opacity: 0;
     }
+
     to {
         opacity: 1;
     }
@@ -37,6 +52,7 @@
     from {
         opacity: 0;
     }
+
     to {
         opacity: 1;
     }
@@ -47,6 +63,7 @@
     from {
         opacity: 1;
     }
+
     to {
         opacity: 0;
     }
@@ -56,6 +73,7 @@
     from {
         opacity: 1;
     }
+
     to {
         opacity: 0;
     }

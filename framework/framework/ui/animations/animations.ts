@@ -1,29 +1,25 @@
 ﻿module plat.ui {
     export class Animator implements IAnimator {
         $Compat: ICompat = acquire(__Compat);
-        $Promise: async.IPromise = acquire(__Promise);
 
         animate(element: Element, key: string): async.IThenable<void>;
         animate(element: any, key: string): async.IThenable<void> {
-            return new this.$Promise<void>((resolve, reject) => {
-                var animation = animationInjectors[key],
-                    jsAnimation = jsAnimationInjectors[key],
-                    animationSupported = this.$Compat.supportsAnimations,
-                    animationInstance: IAnimationInstance;
+            var animation = animationInjectors[key],
+                jsAnimation = jsAnimationInjectors[key],
+                animationSupported = this.$Compat.supportsAnimations,
+                animationInstance: IAnimationInstance;
 
-                if (!animationSupported || isUndefined(animation)) {
-                    if (isUndefined(jsAnimation)) {
-                        return;
-                    }
-
-                    animationInstance = jsAnimation.inject();
-                } else {
-                    animationInstance = animation.inject();
+            if (!animationSupported || isUndefined(animation)) {
+                if (isUndefined(jsAnimation)) {
+                    return;
                 }
 
-                (<Animation>animationInstance)._initialize(element, resolve, reject);
-                animationInstance.start();
-            });
+                animationInstance = jsAnimation.inject();
+            } else {
+                animationInstance = animation.inject();
+            }
+
+            return (<Animation>animationInstance)._init(element);
         }
     }
 
@@ -53,7 +49,9 @@
         private __resolve: () => void;
         private __reject: () => void;
         private __animationEvents: IAnimationEvents = (<ICompat>acquire(__Compat)).animationEvents;
-        private __subscriptions: Array<() => void> = [];
+        private __subscribers: Array<() => void> = [];
+
+        initialize(): void { }
 
         start(): void { }
 
@@ -61,12 +59,18 @@
             if (isFunction(this.__resolve)) {
                 this.__resolve();
             }
+            this.dispose();
         }
 
         cancel(): void {
             if (isFunction(this.__reject)) {
                 this.__reject();
             }
+            this.dispose();
+        }
+
+        dispose(): void {
+            this.__subscribers = [];
         }
 
         animationStart(listener?: () => void): IAnimationInstance {
@@ -90,34 +94,43 @@
          * to resolve when finished.
          * 
          * @param element The element on which the animation will occur.
-         * @param key The unique key for this animation.
-         * @param resolve The resolve function to be called when the animation is finished.
-         * @param reject The reject function to be called if the animation is cancelled.
          */
-        _initialize(element: Element, resolve: () => void, reject: () => void): void {
+        _init(element: Element): async.IThenable<void> {
             this.element = <HTMLElement>element;
-            this.__resolve = resolve;
-            this.__reject = reject;
+
+            return new this.$Promise<void>((resolve, reject) => {
+                this.__resolve = resolve;
+                this.__reject = reject;
+                this.initialize();
+                this.start();
+            });
         }
 
         private __addEventListener(event: string, listener: () => void): IAnimationInstance {
-            var subscriptions = this.__subscriptions,
-                subscription = () => {
+            var subscribers = this.__subscribers,
+                subscriber = () => {
                     var removeListener = this.dom.addEventListener(this.element, event, () => {
                         removeListener();
-                        listener();
-                        subscriptions.shift();
-                        if (subscriptions.length === 0) {
+
+                        if (subscribers.length === 0) {
                             return;
                         }
-                        subscriptions[0]();
+
+                        listener();
+                        subscribers.shift();
+
+                        if (subscribers.length === 0) {
+                            return;
+                        }
+
+                        subscribers[0]();
                     }, false);
                 };
 
-            subscriptions.push(subscription);
+            subscribers.push(subscriber);
 
-            if (subscriptions.length === 1) {
-                subscriptions[0]();
+            if (subscribers.length === 1) {
+                subscriber();
             }
 
             return this;
@@ -138,6 +151,11 @@
         element: HTMLElement;
 
         /**
+         * A function for initializing the animation or any of its properties before start.
+         */
+        initialize(): void;
+
+        /**
          * Contains DOM helper methods for manipulating this control's element.
          */
         dom: IDom;
@@ -151,6 +169,12 @@
          * A function to be called when the animation is over.
          */
         end(): void;
+
+        /**
+         * A function for reverting any modifications or changes that may have been made as a 
+         * result of this animation.
+         */
+        dispose(): void;
 
         /**
          * A function to be called to let it be known the animation is being cancelled.
