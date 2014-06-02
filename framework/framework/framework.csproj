@@ -90,6 +90,12 @@
     <TypeScriptCompile Include="window\window.ts" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="css\mixins.css">
+      <DependentUpon>mixins.less</DependentUpon>
+    </Content>
+    <Content Include="css\mixins.min.css">
+      <DependentUpon>mixins.css</DependentUpon>
+    </Content>
     <Content Include="css\platypus.css">
       <DependentUpon>platypus.less</DependentUpon>
     </Content>
@@ -97,6 +103,18 @@
     <Content Include="css\platypus.min.css">
       <DependentUpon>platypus.css</DependentUpon>
     </Content>
+    <Content Include="css\variables.css">
+      <DependentUpon>variables.less</DependentUpon>
+    </Content>
+    <Content Include="css\variables.min.css">
+      <DependentUpon>variables.css</DependentUpon>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="css\mixins.less" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="css\variables.less" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
