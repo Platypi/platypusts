@@ -1,12 +1,12 @@
 /**
- * PlatypusTS v0.0.1.8 (http://getplatypi.com) 
+ * PlatypusTS v0.0.1.9 (http://getplatypi.com) 
  * Copyright 2014 Platypi, LLC. All rights reserved. 
  * 
  * PlatypusTS is licensed under the GPL-3.0 found at  
  * http://opensource.org/licenses/GPL-3.0 
  */
 module plat {
-    ﻿/**
+    /**
      * Injectables
      */
     var __AppStatic = '$AppStatic',
@@ -111,7 +111,7 @@ module plat {
         __Routeport = __Plat + 'routeport',
         __Viewport = __Plat + 'viewport';
     
-    ﻿var __nativeIsArray = !!Array.isArray,
+    var __nativeIsArray = !!Array.isArray,
         __uids__: plat.IObject<Array<string>> = {};
     
     function noop(): void { }
@@ -430,7 +430,7 @@ module plat {
                 => index ? char.toUpperCase() : char);
     }
     
-    ﻿var __nodeNameRegex = /<([\w:]+)/,
+    var __nodeNameRegex = /<([\w:]+)/,
         __option = [1, '<select multiple="multiple">', '</select>'],
         __table = [1, '<table>', '</table>'],
         __tableData = [3, '<table><tbody><tr>', '</tr></tbody></table>'],
@@ -1292,10 +1292,10 @@ module plat {
             output: Array<any> = [];
 
         for (var i = 0; i < length; ++i) {
-            output = deps[i].inject();
+            output.push(deps[i].inject());
         }
 
-        if (array) {
+        if (!array) {
             return output[0];
         }
 
@@ -1688,9 +1688,7 @@ module plat {
     /**
      * The Type for referencing the '$Compat' injectable as a dependency.
      */
-    export function ICompat(): ICompat {
-        return new Compat();
-    }
+    export var ICompat = Compat;
 
     register.injectable(__Compat, ICompat);
 
@@ -1930,9 +1928,7 @@ module plat {
     /**
      * The Type for referencing the '$Utils' injectable as a dependency.
      */
-    export function IUtils(): IUtils {
-        return new Utils();
-    }
+    export var IUtils = Utils;
 
     register.injectable(__Utils, IUtils);
 
@@ -2298,21 +2294,21 @@ module plat {
      * The Type for referencing the '$Window' injectable as a dependency. 
      * Used so that the Window can be mocked.
      */
-    export function IWindow(): Window {
+    export function Window(): Window {
         return window;
     }
 
-    register.injectable(__Window, IWindow);
+    register.injectable(__Window, Window);
 
     /**
      * The Type for referencing the '$Document' injectable as a dependency. 
      * Used so that the Window can be mocked.
      */
-    export function IDocument($Window: Window): Document {
+    export function Document($Window: Window): Document {
         return $Window.document;
     }
 
-    register.injectable(__Document, IDocument, [__Window]);
+    register.injectable(__Document, Document, [__Window]);
 
     export module expressions {
         /**
@@ -2363,9 +2359,7 @@ module plat {
         /**
          * The Type for referencing the '$Regex' injectable as a dependency.
          */
-        export function IRegex(): IRegex {
-            return new Regex();
-        }
+        export var IRegex = Regex;
 
         register.injectable(__Regex, IRegex);
 
@@ -3177,9 +3171,7 @@ module plat {
         /**
          * The Type for referencing the '$Tokenizer' injectable as a dependency.
          */
-        export function ITokenizer(): ITokenizer {
-            return new Tokenizer();
-        }
+        export var ITokenizer = Tokenizer;
 
         register.injectable(__Tokenizer, ITokenizer);
 
@@ -3817,9 +3809,7 @@ module plat {
         /**
          * The Type for referencing the '$Parser' injectable as a dependency.
          */
-        export function IParser(): IParser {
-            return new Parser();
-        }
+        export var IParser = Parser;
 
         register.injectable(__Parser, IParser);
 
@@ -4064,9 +4054,7 @@ module plat {
         /**
          * The Type for referencing the '$Browser' injectable as a dependency.
          */
-        export function IBrowser(): IBrowser {
-            return new Browser();
-        }
+        export var IBrowser = Browser;
 
         register.injectable(__Browser, IBrowser);
 
@@ -4308,9 +4296,7 @@ module plat {
         /**
          * The Type for referencing the '$UrlUtilsInstance' injectable as a dependency.
          */
-        export function IUrlUtilsInstance(): IUrlUtilsInstance {
-            return new UrlUtils();
-        }
+        export var IUrlUtilsInstance = UrlUtils;
 
         register.injectable(__UrlUtilsInstance, IUrlUtilsInstance, null, register.INSTANCE);
 
@@ -4797,9 +4783,7 @@ module plat {
         /**
          * The Type for referencing the '$Router' injectable as a dependency.
          */
-        export function IRouter(): IRouter {
-            return new Router();
-        }
+        export var IRouter = Router;
 
         register.injectable(__Router, IRouter);
 
@@ -6628,9 +6612,7 @@ module plat {
         /**
          * The Type for referencing the '$Http' injectable as a dependency.
          */
-        export function IHttp(): IHttp {
-            return new Http();
-        }
+        export var IHttp = Http;
 
         register.injectable(__Http, IHttp);
 
@@ -6962,7 +6944,7 @@ module plat {
          * clone a template when you put it in the cache. It will
          * also clone the template when you retrieve it.
          */
-        class TemplateCache extends Cache<any> implements ITemplateCache {
+        export class TemplateCache extends Cache<any> implements ITemplateCache {
             $Promise: async.IPromise = acquire(__Promise);
 
             constructor() {
@@ -7006,9 +6988,7 @@ module plat {
         /**
          * The Type for referencing the '$TemplateCache' injectable as a dependency.
          */
-        export function ITemplateCache(): ITemplateCache {
-            return new TemplateCache();
-        }
+        export var ITemplateCache = TemplateCache;
 
         register.injectable(__TemplateCache, ITemplateCache);
 
@@ -7136,9 +7116,7 @@ module plat {
         /**
          * The Type for referencing the '$LocalStorage' injectable as a dependency.
          */
-        export function ILocalStorage(): ILocalStorage {
-            return new LocalStorage();
-        }
+        export var ILocalStorage = LocalStorage;
 
         register.injectable(__LocalStorage, ILocalStorage);
 
@@ -7201,9 +7179,7 @@ module plat {
         /**
          * The Type for referencing the '$SessionStorage' injectable as a dependency.
          */
-        export function ISessionStorage(): ISessionStorage {
-            return new SessionStorage();
-        }
+        export var ISessionStorage = SessionStorage;
 
         register.injectable(__SessionStorage, ISessionStorage);
 
@@ -8188,17 +8164,18 @@ module plat {
              */
             _addObservableListener(absoluteIdentifier: string,
                 observableListener: IListener): IRemoveListener {
-                var uid = observableListener.uid,
-                    contextManagerCallback = this._removeCallback.bind(this);
+                var uid = observableListener.uid;
 
                 this.__add(absoluteIdentifier, observableListener);
 
-                ContextManager.pushRemoveListener(absoluteIdentifier, uid, contextManagerCallback);
-
-                return () => {
+                var remove = () => {
                     ContextManager.removeIdentifier([uid], absoluteIdentifier);
-                    contextManagerCallback(absoluteIdentifier, uid);
+                    this._removeCallback(absoluteIdentifier, uid);
                 };
+
+                ContextManager.pushRemoveListener(absoluteIdentifier, uid, remove);
+
+                return remove;
             }
 
             /**
@@ -8738,9 +8715,7 @@ module plat {
         /**
          * The Type for referencing the '$DispatchEventInstance' injectable as a dependency.
          */
-        export function IDispatchEventInstance(): IDispatchEventInstance {
-            return new DispatchEvent();
-        }
+        export var IDispatchEventInstance = DispatchEvent;
 
         register.injectable(__DispatchEventInstance, IDispatchEventInstance, null, register.INSTANCE);
 
@@ -11568,19 +11543,25 @@ module plat {
                     return;
                 }
 
-                switch (expression) {
-                    case 'false':
-                    case '0':
-                    case 'null':
-                    case '':
-                        this.element.setAttribute(this.property, '');
-                        (<any>this.element)[this.property] = false;
-                        this.element.removeAttribute(this.property);
-                        break;
-                    default:
-                        this.element.setAttribute(this.property, this.property);
-                        (<any>this.element)[this.property] = true;
-                }
+                postpone(() => {
+                    if (!isNode(this.element)) {
+                        return;
+                    }
+
+                    switch (expression) {
+                        case 'false':
+                        case '0':
+                        case 'null':
+                        case '':
+                            this.element.setAttribute(this.property, '');
+                            (<any>this.element)[this.property] = false;
+                            this.element.removeAttribute(this.property);
+                            break;
+                        default:
+                            this.element.setAttribute(this.property, this.property);
+                            (<any>this.element)[this.property] = true;
+                    }
+                });
             }
         }
 
@@ -12260,10 +12241,12 @@ module plat {
              * Observes the expression to bind to.
              */
             _watchExpression(): void {
-                var context = this.evaluateExpression(this._contextExpression);
-                if (isNull(context)) {
+                var contextExpression = this._contextExpression,
+                    context = this.evaluateExpression(contextExpression);
+
+                if (isNull(context) && contextExpression.identifiers.length > 0) {
                     context = this.$ContextManagerStatic.createContext(this.parent,
-                        this._contextExpression.identifiers[0]);
+                        contextExpression.identifiers[0]);
                 }
 
                 if (!isFunction(this._setter)) {
@@ -12298,7 +12281,7 @@ module plat {
 
                 var newValue = this._getter();
 
-                if (context[property] === newValue) {
+                if (isNull(context) || context[property] === newValue) {
                     return;
                 }
 
@@ -12871,21 +12854,23 @@ module plat {
                         return TemplateControl.$Http.ajax<string>({ url: templateUrl });
                     }
                 }).then<DocumentFragment>((success) => {
-                            if (!isObject(success) || !isString(success.response)) {
-                                $exception = acquire(__ExceptionStatic);
-                                $exception.warn('No template found at ' + templateUrl, $exception.AJAX);
-                                return Promise.resolve(dom.serializeHtml());
-                            }
+                    if (isDocumentFragment(success)) {
+                        return Promise.resolve(<DocumentFragment>(<any>success));
+                    } else if (!isObject(success) || !isString(success.response)) {
+                        $exception = acquire(__ExceptionStatic);
+                        $exception.warn('No template found at ' + templateUrl, $exception.AJAX);
+                        return Promise.resolve(dom.serializeHtml());
+                    }
 
-                            var templateString = success.response;
+                    var templateString = success.response;
 
-                            if (isEmpty(templateString.trim())) {
-                                return Promise.resolve(dom.serializeHtml());
-                            }
+                    if (isEmpty(templateString.trim())) {
+                        return Promise.resolve(dom.serializeHtml());
+                    }
 
-                            template = dom.serializeHtml(templateString);
+                    template = dom.serializeHtml(templateString);
 
-                            return templateCache.put(templateUrl, template);
+                    return templateCache.put(templateUrl, template);
                 }).catch((error) => {
                     postpone(() => {
                         $exception = acquire(__ExceptionStatic);
@@ -13576,9 +13561,7 @@ module plat {
         /**
          * The Type for referencing the '$Dom' injectable as a dependency.
          */
-        export function IDom(): IDom {
-            return new Dom();
-        }
+        export var IDom = Dom;
 
         register.injectable(__Dom, IDom);
 
@@ -13940,7 +13923,7 @@ module plat {
              * the binding of the INodeMap for a cloned template.
              */
             _bindTemplate(key: string, template: DocumentFragment, context: string,
-                resources: IObject<IResource>, callback: IBindableTemplateCallback) {
+                resources: IObject<IResource>, callback: IBindableTemplateCallback): void {
                 var control = this._createBoundControl(key, template, context, resources),
                     nodeMap = this._createNodeMap(control, template, context);
 
@@ -14293,9 +14276,7 @@ module plat {
         /**
          * The Type for referencing the '$Attributes' injectable as a dependency.
          */
-        export function IAttributesInstance(): IAttributesInstance {
-            return new Attributes();
-        }
+        export var IAttributesInstance = Attributes;
 
         register.injectable(__AttributesInstance, IAttributesInstance, null, register.INSTANCE);
 
@@ -16008,9 +15989,7 @@ module plat {
         /**
          * The Type for referencing the '$DomEvents' injectable as a dependency.
          */
-        export function IDomEvents(): IDomEvents {
-            return new DomEvents();
-        }
+        export var IDomEvents = DomEvents;
 
         plat.register.injectable(__DomEvents, IDomEvents);
 
@@ -16106,9 +16085,7 @@ module plat {
         /**
          * The Type for referencing the '$DomEventInstance' injectable as a dependency.
          */
-        export function IDomEventInstance(): IDomEventInstance {
-            return new DomEvent();
-        }
+        export var IDomEventInstance = DomEvent;
 
         register.injectable(__DomEventInstance, IDomEventInstance, null, register.INSTANCE);
 
@@ -16912,11 +16889,10 @@ module plat {
                         }
 
                         this.__mapBindableTemplates(templateControl);
-
+                        return this._instantiateTemplate();
+                    }).then((clone) => {
                         var endNode = this.endNode;
-                        this._instantiateTemplate().then((clone) => {
-                            this.dom.insertBefore(endNode.parentNode, clone, endNode);
-                        });
+                        this.dom.insertBefore(endNode.parentNode, clone, endNode);
                     }).catch((error) => {
                         postpone(() => {
                             $exception = acquire(__ExceptionStatic);
@@ -18006,9 +17982,7 @@ module plat {
         /**
          * The Type for referencing the '$Compiler' injectable as a dependency.
          */
-        export function ICompiler(): ICompiler {
-            return new Compiler();
-        }
+        export var ICompiler = Compiler;
 
         register.injectable(__Compiler, ICompiler);
 
@@ -19276,9 +19250,9 @@ module plat {
 
             fulfillTemplate(): async.IThenable<any> {
                     if (!isNull(this.templatePromise)) {
-                    return this.templatePromise.then(() => {
-                        return this._fulfillChildTemplates();
-                    });
+                        return this.templatePromise.then(() => {
+                            return this._fulfillChildTemplates();
+                        });
                     }
 
                 return this._fulfillChildTemplates();
@@ -19317,22 +19291,21 @@ module plat {
             }
 
             observeRootContext(root: ui.ITemplateControl, loadMethod: () => async.IThenable<void>): void {
+                if (!isNull(root.context)) {
+                    this.loadedPromise = loadMethod.call(this);
+                    return;
+                }
+
                 this.loadedPromise = new this.$Promise<void>((resolve, reject) => {
                     var contextManager: observable.IContextManager = this.$ContextManagerStatic.getManager(root);
 
                     var removeListener = contextManager.observe('context', {
                         listener: () => {
                             removeListener();
-
                             loadMethod.call(this).then(resolve);
                         },
                         uid: root.uid
                     });
-
-                    if (!isNull(root.context)) {
-                        removeListener();
-                        loadMethod.call(this).then(resolve);
-                    }
                 }).catch((error) => {
                     postpone(() => {
                         var $exception: IExceptionStatic = acquire(__ExceptionStatic);
@@ -19406,10 +19379,8 @@ module plat {
              * Fulfills the template promise prior to binding and loading the control.
              */
             _fulfillAndLoad(): async.IThenable<void> {
-                return new this.$Promise<void>((resolve, reject) => {
-                    this.fulfillTemplate().then(() => {
-                        return this.bindAndLoad();
-                    }).then(resolve);
+                return this.fulfillTemplate().then(() => {
+                    return this.bindAndLoad();
                 }).catch((error) => {
                     postpone(() => {
                         var $exception: IExceptionStatic = acquire(__ExceptionStatic);
@@ -20391,9 +20362,7 @@ module plat {
         /**
          * The Type for referencing the '$Navigator' injectable as a dependency.
          */
-        export function INavigator(): INavigator {
-            return new Navigator();
-        }
+        export var INavigator = Navigator;
 
         register.injectable(__Navigator, INavigator, null, register.INSTANCE);
 
@@ -20553,9 +20522,7 @@ module plat {
         /**
          * The Type for referencing the '$RoutingNavigator' injectable as a dependency.
          */
-        export function IRoutingNavigator(): IRoutingNavigator {
-            return new RoutingNavigator();
-        }
+        export var IRoutingNavigator = RoutingNavigator;
 
         register.injectable(__RoutingNavigator, IRoutingNavigator);
 
