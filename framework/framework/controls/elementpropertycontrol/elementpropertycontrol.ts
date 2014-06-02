@@ -20,16 +20,10 @@ module plat.controls {
     }
 
     export class Href extends ElementPropertyControl {
-        /**
-         * The corresponding attribute to set on the element.
-         */
         property: string = 'href';
     }
 
     export class Src extends ElementPropertyControl {
-        /**
-         * The corresponding attribute to set on the element.
-         */
         property: string = 'src';
     }
 

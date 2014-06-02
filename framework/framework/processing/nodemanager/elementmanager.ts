@@ -657,7 +657,7 @@ module plat.processing {
                 if (!replace) {
                     var element = uiControl.element;
                     if (!isNull(element) && isFunction(element.removeAttribute)) {
-                        element.removeAttribute('plat-hide');
+                        element.removeAttribute(__Hide);
                     }
                 }
             }
@@ -870,7 +870,7 @@ module plat.processing {
                 uiControl.parent = parent;
             }
             if (isFunction(element.setAttribute)) {
-                element.setAttribute('plat-hide', '');
+                element.setAttribute(__Hide, '');
             }
             uiControl.element = element;
             uiControl.controls = [];

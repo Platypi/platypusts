@@ -3,14 +3,7 @@ module plat.controls {
      * An AttributeControl that deals with binding to a specified property on its element.
      */
     export class SetAttributeControl extends AttributeControl implements ISetAttributeControl {
-        /**
-         * The corresponding attribute to set on the element.
-         */
         property: string;
-
-        /**
-         * The camel-cased name of the control as it appears as an attribute.
-         */
         attribute: string;
 
         /**

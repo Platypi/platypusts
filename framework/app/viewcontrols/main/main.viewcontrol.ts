@@ -14,10 +14,8 @@ module app {
             users: null
         };
         hello = true;
-        constructor(private animator: plat.ui.IAnimator) { super(); }
 
         loaded() {
-            this.animator.animate(this.element, 'fade');
         }
 
         submit() {
@@ -25,27 +23,5 @@ module app {
         }
     }
 
-    plat.register.viewControl('viewcontrol', MainViewControl, [plat.ui.IAnimator], ['/', ':test/page(/:baz)(/*path)']);
-
-    class MyAnimation extends plat.ui.Animation {
-        start() {
-            this.dom.toggleClass(this.element, 'test-animation');
-
-            this.animationEnd(() => {
-                this.dom.toggleClass(this.element, 'test-animation');
-                this.dom.toggleClass(this.element, 're-animation');
-            }).animationEnd(() => {
-                this.dom.toggleClass(this.element, 'test-animation');
-                this.dom.toggleClass(this.element, 're-animation');
-            }).animationEnd(() => {
-                this.dom.toggleClass(this.element, 'test-animation');
-                this.dom.toggleClass(this.element, 're-animation');
-            }).animationEnd(() => {
-                this.dom.toggleClass(this.element, 'test-animation');
-                this.dom.toggleClass(this.element, 're-animation');
-            });
-        }
-    }
-
-    plat.register.animation('fade', MyAnimation);
+    plat.register.viewControl('viewcontrol', MainViewControl, null, ['/', ':test/page(/:baz)(/*path)']);
 }

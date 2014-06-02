@@ -30,6 +30,8 @@ var __AppStatic = '$AppStatic',
     __CacheFactory = '$CacheFactory',
     __ManagerCache = '$ManagerCache',
     __TemplateCache = '$TemplateCache',
+    __Animator = '$Animator',
+    __AnimationInstance = '$AnimationInstance',
     __AttributesInstance = '$AttributesInstance',
     __BindableTemplatesFactory = '$BindableTemplatesFactory',
     __Dom = '$Dom',
@@ -102,3 +104,13 @@ var __Plat = 'plat-',
     __Template = __Plat + 'template',
     __Routeport = __Plat + 'routeport',
     __Viewport = __Plat + 'viewport';
+
+/**
+ * Animations
+ */
+var __Hide = __Plat + 'hide',
+    __Enter = __Plat + 'enter',
+    __Leave = __Plat + 'leave',
+    __Move = __Plat + 'move',
+    __FadeIn = __Plat + 'fadein',
+    __FadeOut = __Plat + 'fadeout';

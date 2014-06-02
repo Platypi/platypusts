@@ -3,7 +3,12 @@
         $ManagerCache: storage.ICache<processing.IElementManager> = acquire(__ManagerCache);
         $Document: Document = acquire(__Document);
         $ElementManagerFactory: processing.IElementManagerFactory = acquire(__ElementManagerFactory);
+        $Animator: IAnimator = acquire(__Animator);
+        $Promise: async.IPromise = acquire(__Promise);
 
+        /**
+         * @param navigator The navigator used for navigating between pages.
+         */
         constructor(public navigator: navigation.IBaseNavigator) {
             super();
         }
@@ -28,6 +33,13 @@
             var navigator = this.navigator;
             navigator.initialize(this);
             navigator.navigate(navigationParameter, options);
+        }
+
+        /**
+         * Clean up any memory being held.
+         */
+        dispose() {
+            this.navigator.dispose();
         }
 
         /**
@@ -67,6 +79,8 @@
             node.setAttribute('plat-control', controlType);
             element.appendChild(node);
 
+            this.$Animator.animate(this.element, __Enter);
+
             var viewportManager = this.$ManagerCache.read(this.uid);
             viewportManager.children = [];
 
@@ -88,39 +102,14 @@
          * @param fromControl The ViewControl being navigated 
          * away from.
          */
-        navigateFrom(fromControl: IViewControl): void {
+        navigateFrom(fromControl: IViewControl): async.IThenable<void> {
             if (isNull(fromControl) || !isFunction(fromControl.navigatingFrom)) {
-                return;
+                return this.$Promise.resolve<void>(null);
             }
 
             fromControl.navigatingFrom();
+            return this.$Animator.animate(this.element, __Leave);
         }
-    }
-
-    /**
-     * Navigation options for a Baseport and all 
-     * controls that inherit from Baseport.
-     */
-    export interface IBaseportNavigateToOptions {
-        /**
-         * Either a view control or an injector for a view control.
-         */
-        target: any;
-
-        /**
-         * The navigation parameter.
-         */
-        parameter: any;
-
-        /**
-         * The options used for navigation.
-         */
-        options: navigation.IBaseNavigationOptions;
-
-        /**
-         * The type of view control to navigate to.
-         */
-        type: string;
     }
 
     export interface IBaseport extends ITemplateControl {
@@ -148,6 +137,32 @@
          * @param fromControl The ViewControl being navigated 
          * away from.
          */
-        navigateFrom(fromControl: IViewControl): void;
+        navigateFrom(fromControl: IViewControl): async.IThenable<void>;
+    }
+
+    /**
+     * Navigation options for a Baseport and all 
+     * controls that inherit from Baseport.
+     */
+    export interface IBaseportNavigateToOptions {
+        /**
+         * Either a view control or an injector for a view control.
+         */
+        target: any;
+
+        /**
+         * The navigation parameter.
+         */
+        parameter: any;
+
+        /**
+         * The options used for navigation.
+         */
+        options: navigation.IBaseNavigationOptions;
+
+        /**
+         * The type of view control to navigate to.
+         */
+        type: string;
     }
 }

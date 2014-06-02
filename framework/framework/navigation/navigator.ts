@@ -24,8 +24,6 @@ module plat.navigation {
                 return;
             }
 
-            this.$ViewControlFactory.detach(viewControl);
-
             if (isObject(parameter)) {
                 parameter = deepExtend({}, parameter);
             }
@@ -54,15 +52,23 @@ module plat.navigation {
                 $exception.fatal('Attempting to navigate to unregistered view control.', $exception.NAVIGATION);
             }
 
-            if (!isNull(viewControl)) {
-                this.baseport.navigateFrom(viewControl);
-                if (!options.replace) {
-                    this.history.push({ control: viewControl });
-                }
-            }
-
             event.target = injector;
             event.type = key;
+
+            if (!isNull(viewControl)) {
+                this.baseport.navigateFrom(viewControl).then(() => {
+                    this.$ViewControlFactory.detach(viewControl);
+
+                    if (!options.replace) {
+                        this.history.push({ control: viewControl });
+                    }
+
+                    this.baseport.navigateTo(event);
+                });
+
+                return;
+            }
+
             this.baseport.navigateTo(event);
         }
 
@@ -106,23 +112,24 @@ module plat.navigation {
                 return;
             }
 
-            this.baseport.navigateFrom(viewControl);
-            this.$ViewControlFactory.dispose(viewControl);
+            this.baseport.navigateFrom(viewControl).then(() => {
+                this.$ViewControlFactory.dispose(viewControl);
 
-            var last: IBaseNavigationState = this._goBackLength(length);
+                var last: IBaseNavigationState = this._goBackLength(length);
 
-            if (isNull(last)) {
-                return;
-            }
+                if (isNull(last)) {
+                    return;
+                }
 
-            viewControl = last.control;
+                viewControl = last.control;
 
-            this.currentState = last;
+                this.currentState = last;
 
-            event.target = viewControl;
-            event.type = viewControl.type;
+                event.target = viewControl;
+                event.type = viewControl.type;
 
-            this.baseport.navigateTo(event);
+                this.baseport.navigateTo(event);
+            });
         }
 
         canGoBack(): boolean {

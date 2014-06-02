@@ -6,12 +6,13 @@
         animate(element: any, key: string): async.IThenable<void> {
             var animation = animationInjectors[key],
                 jsAnimation = jsAnimationInjectors[key],
-                animationSupported = this.$Compat.supportsAnimations,
+                animationSupported = this.$Compat.animationSupported,
                 animationInstance: IAnimationInstance;
 
             if (!animationSupported || isUndefined(animation)) {
                 if (isUndefined(jsAnimation)) {
-                    return;
+                    var $Promise: async.IPromise = acquire(__Promise);
+                    return $Promise.resolve<void>(null);
                 }
 
                 animationInstance = jsAnimation.inject();
@@ -42,13 +43,14 @@
 
     export class Animation implements IAnimationInstance {
         $Promise: async.IPromise = acquire(__Promise);
+        $Compat: ICompat = acquire(__Compat);
 
         element: HTMLElement;
         dom: IDom = acquire(__Dom);
 
         private __resolve: () => void;
         private __reject: () => void;
-        private __animationEvents: IAnimationEvents = (<ICompat>acquire(__Compat)).animationEvents;
+        private __animationEvents: IAnimationEvents = this.$Compat.animationEvents;
         private __subscribers: Array<() => void> = [];
 
         initialize(): void { }

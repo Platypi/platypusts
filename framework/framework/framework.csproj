@@ -63,6 +63,7 @@
     <TypeScriptCompile Include="storage\localstorage.ts" />
     <TypeScriptCompile Include="storage\sessionstorage.ts" />
     <TypeScriptCompile Include="ui\animations\animations.ts" />
+    <TypeScriptCompile Include="ui\animations\simpleanimation\simpleanimation.ts" />
     <TypeScriptCompile Include="ui\attributes\attributes.ts" />
     <TypeScriptCompile Include="ui\bindabletemplates\bindabletemplates.ts" />
     <TypeScriptCompile Include="ui\controls\anchor\anchor.ts" />
@@ -87,6 +88,15 @@
     <TypeScriptCompile Include="web\router\router.ts" />
     <TypeScriptCompile Include="web\urlutils\urlutils.ts" />
     <TypeScriptCompile Include="window\window.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="css\platypus.css">
+      <DependentUpon>platypus.less</DependentUpon>
+    </Content>
+    <Content Include="css\platypus.less" />
+    <Content Include="css\platypus.min.css">
+      <DependentUpon>platypus.css</DependentUpon>
+    </Content>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

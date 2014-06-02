@@ -1,16 +1,5 @@
 module plat {
     /**
-     * We need to add [plat-hide] as a css property so we can use it to temporarily 
-     * hide elements.
-     */
-    if (isDocument(document)) {
-        var style = <HTMLStyleElement>document.createElement('style');
-
-        style.textContent = '[plat-hide] { display: none; }';
-        document.head.appendChild(style);
-    }
-
-    /**
      * Class for every app. This class contains hooks for Application Lifecycle Events 
      * as well as error handling.
      */
@@ -31,6 +20,8 @@ module plat {
                     'Object.defineProperty is defined', $exception.COMPAT);
                 return;
             }
+
+            App.__addPlatCss();
 
             var $EventManagerStatic = App.$EventManagerStatic;
 
@@ -76,16 +67,16 @@ module plat {
 
 
             if (isNull(node)) {
-                body.setAttribute('plat-hide', '');
+                body.setAttribute(__Hide, '');
                 $compiler.compile(body);
-                body.removeAttribute('plat-hide');
+                body.removeAttribute(__Hide);
                 return;
             }
 
             if (isFunction((<Element>node).setAttribute)) {
-                (<Element>node).setAttribute('plat-hide', '');
+                (<Element>node).setAttribute(__Hide, '');
                 $compiler.compile(node);
-                (<Element>node).removeAttribute('plat-hide');
+                (<Element>node).removeAttribute(__Hide);
             } else {
                 $compiler.compile(node);
             }
@@ -138,6 +129,25 @@ module plat {
             if (isFunction(app.ready)) {
                 app.ready(ev);
             }
+        }
+        
+        /**
+         * We need to add [plat-hide] as a css property if platypus.css doesn't exist so we can use it to temporarily 
+         * hide elements.
+         */
+        private static __addPlatCss(): void {
+            var $document = App.$Document;
+            if (App.$Compat.platCss) {
+                return;
+            } else if (!isNull($document.styleSheets) && $document.styleSheets.length > 0) {
+                (<CSSStyleSheet>$document.styleSheets[0]).insertRule('[plat-hide] { display: none; }', 0);
+                return;
+            } 
+
+            var style = <HTMLStyleElement>document.createElement('style');
+
+            style.textContent = '[plat-hide] { display: none; }';
+            document.head.appendChild(style);
         }
 
         uid: string;

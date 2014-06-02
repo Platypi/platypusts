@@ -1,0 +1,79 @@
+﻿[plat-hide] {
+  display: none;
+}
+.plat-fadein,
+.plat-enter {
+  -o-animation-duration: 0.5s;
+  -moz-animation-duration: 0.5s;
+  -webkit-animation-duration: 0.5s;
+  animation-duration: 0.5s;
+  -o-animation-name: fadeIn;
+  -moz-animation-name: fadeIn;
+  -webkit-animation-name: fadeIn;
+  animation-name: fadeIn;
+  -o-animation-fill-mode: forwards;
+  -webkit-animation-fill-mode: forwards;
+  animation-fill-mode: forwards;
+}
+.plat-fadeout,
+.plat-leave {
+  -o-animation-duration: 0.5s;
+  -moz-animation-duration: 0.5s;
+  -webkit-animation-duration: 0.5s;
+  animation-duration: 0.5s;
+  -o-animation-name: fadeOut;
+  -moz-animation-name: fadeOut;
+  -webkit-animation-name: fadeOut;
+  animation-name: fadeOut;
+  -o-animation-fill-mode: forwards;
+  -webkit-animation-fill-mode: forwards;
+  animation-fill-mode: forwards;
+}
+@-moz-keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@-webkit-keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@-moz-keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+@-webkit-keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}

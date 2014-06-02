@@ -19,7 +19,8 @@
         hasTouchEvents: boolean;
         hasPointerEvents: boolean;
         hasMsPointerEvents: boolean;
-        supportsAnimations: boolean;
+        animationSupported: boolean;
+        platCss: boolean;
         mappedEvents: IMappedEvents;
         animationEvents: IAnimationEvents;
 
@@ -30,6 +31,7 @@
             this.__defineBooleans();
             this.__defineMappedEvents();
             this.__defineAnimationEvents();
+            this.__findCss();
         }
 
         private __defineBooleans() {
@@ -107,7 +109,7 @@
                 }
             }
 
-            this.supportsAnimations = index > -1;
+            this.animationSupported = index > -1;
             this.animationEvents = prefix === 'webkit' ? {
                 $animationStart: prefix + 'AnimationStart',
                 $animationEnd: prefix + 'AnimationEnd',
@@ -119,6 +121,37 @@
                 $transitionStart: prefix + 'transitionstart',
                 $transitionEnd: prefix + 'transitionend'
             };
+        }
+
+        private __findCss() {
+            var $document = this.$Document,
+                styleSheets = $document.styleSheets;
+
+            if (isNull(styleSheets)) {
+                this.platCss = false;
+                return;
+            }
+
+            var length = styleSheets.length,
+                styleSheet: CSSStyleSheet,
+                rules: CSSRuleList,
+                j: number, jLength: number;
+
+            for (var i = 0; i < length; ++i) {
+                styleSheet = <CSSStyleSheet>styleSheets[i];
+                rules = styleSheet.cssRules;
+                jLength = (<CSSRuleList>(rules || [])).length;
+                for (j = 0; j < jLength; ++j) {
+                    if (rules[j].cssText.indexOf('[' + __Hide + ']') !== -1) {
+                        this.platCss = true;
+                        return;
+                    }
+                }
+            }
+
+            var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+            $exception.warn('platypus.css was not found prior to platypus.js. If you intend to use ' +
+                'platypus.css, please move it before platypus.js inside your head or body declaration');
         }
     }
 
@@ -209,7 +242,12 @@
         /**
          * Whether or not the browser supports animations.
          */
-        supportsAnimations: boolean;
+        animationSupported: boolean;
+
+        /**
+         * Whether the platypus.css file was included or not.
+         */
+        platCss: boolean;
 
         /**
          * An object containing the correctly mapped touch events for the browser.
