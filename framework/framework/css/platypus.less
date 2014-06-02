@@ -1,9 +1,25 @@
 ﻿@import 'variables.less';
 @import 'mixins.less';
 
+// Common
+
 [plat-hide] {
     display: none;
 }
+
+// Gestures
+
+.plat-gesture {
+    .misc-webkit-touch();
+    .user-select();
+    .touch-action();
+}
+
+.plat-no-touch-action {
+    .touch-action(none);
+}
+
+// Animations
 
 .plat-fadein,
 .plat-enter {
@@ -17,7 +33,7 @@
 .plat-fadeout,
 .plat-leave {
     .animation-name(@fadeOut);
-    .animation-duration(500ms);
+    .animation-duration(100ms);
     .animation-fill-mode(forwards);
 }
 

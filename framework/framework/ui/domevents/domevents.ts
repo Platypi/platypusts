@@ -62,7 +62,9 @@
                 minSwipeVelocity: 0.5
             },
             /**
-             * The default CSS styles applied to elements listening for custom DOM events.
+             * The default CSS styles applied to elements listening for custom DOM events. If using 
+             * platypus.css, you must overwrite the styles in platypus.css or create your own and 
+             * change the classNames in the config.
              */
             styleConfig: [{
                 /**
@@ -1015,8 +1017,16 @@
             return direction === 'left' || direction === 'right';
         }
         private __appendGestureStyle(): void {
-            var $document = this.$Document,
-                head = $document.head,
+            var $document = this.$Document;
+            
+            if (this.$Compat.platCss) {
+                return;
+            } else if (!isNull($document.styleSheets) && $document.styleSheets.length > 0) {
+                (<CSSStyleSheet>$document.styleSheets[0]).insertRule(this.__createStyle(), 0);
+                return;
+            }
+
+            var head = $document.head,
                 style = <HTMLStyleElement>$document.createElement('style');
 
             style.type = 'text/css';
