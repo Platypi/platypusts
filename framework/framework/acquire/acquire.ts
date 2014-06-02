@@ -48,10 +48,10 @@ module plat {
             output: Array<any> = [];
 
         for (var i = 0; i < length; ++i) {
-            output = deps[i].inject();
+            output.push(deps[i].inject());
         }
 
-        if (array) {
+        if (!array) {
             return output[0];
         }
 

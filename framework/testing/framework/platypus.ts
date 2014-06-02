@@ -1,12 +1,12 @@
 /**
- * PlatypusTS v0.0.1.8 (http://getplatypi.com) 
+ * PlatypusTS v0.0.1.9 (http://getplatypi.com) 
  * Copyright 2014 Platypi, LLC. All rights reserved. 
  * 
  * PlatypusTS is licensed under the GPL-3.0 found at  
  * http://opensource.org/licenses/GPL-3.0 
  */
 module plat {
-    ﻿/**
+    /**
      * Injectables
      */
     var __AppStatic = '$AppStatic',
@@ -111,7 +111,7 @@ module plat {
         __Routeport = __Plat + 'routeport',
         __Viewport = __Plat + 'viewport';
     
-    ﻿var __nativeIsArray = !!Array.isArray,
+    var __nativeIsArray = !!Array.isArray,
         __uids__: plat.IObject<Array<string>> = {};
     
     function noop(): void { }
@@ -430,7 +430,7 @@ module plat {
                 => index ? char.toUpperCase() : char);
     }
     
-    ﻿var __nodeNameRegex = /<([\w:]+)/,
+    var __nodeNameRegex = /<([\w:]+)/,
         __option = [1, '<select multiple="multiple">', '</select>'],
         __table = [1, '<table>', '</table>'],
         __tableData = [3, '<table><tbody><tr>', '</tr></tbody></table>'],
@@ -1292,10 +1292,10 @@ module plat {
             output: Array<any> = [];
 
         for (var i = 0; i < length; ++i) {
-            output = deps[i].inject();
+            output.push(deps[i].inject());
         }
 
-        if (array) {
+        if (!array) {
             return output[0];
         }
 
@@ -1688,9 +1688,7 @@ module plat {
     /**
      * The Type for referencing the '$Compat' injectable as a dependency.
      */
-    export function ICompat(): ICompat {
-        return new Compat();
-    }
+    export var ICompat = Compat;
 
     register.injectable(__Compat, ICompat);
 
@@ -1930,9 +1928,7 @@ module plat {
     /**
      * The Type for referencing the '$Utils' injectable as a dependency.
      */
-    export function IUtils(): IUtils {
-        return new Utils();
-    }
+    export var IUtils = Utils;
 
     register.injectable(__Utils, IUtils);
 
@@ -2298,21 +2294,21 @@ module plat {
      * The Type for referencing the '$Window' injectable as a dependency. 
      * Used so that the Window can be mocked.
      */
-    export function IWindow(): Window {
+    export function Window(): Window {
         return window;
     }
 
-    register.injectable(__Window, IWindow);
+    register.injectable(__Window, Window);
 
     /**
      * The Type for referencing the '$Document' injectable as a dependency. 
      * Used so that the Window can be mocked.
      */
-    export function IDocument($Window: Window): Document {
+    export function Document($Window: Window): Document {
         return $Window.document;
     }
 
-    register.injectable(__Document, IDocument, [__Window]);
+    register.injectable(__Document, Document, [__Window]);
 
     export module expressions {
         /**
@@ -2363,9 +2359,7 @@ module plat {
         /**
          * The Type for referencing the '$Regex' injectable as a dependency.
          */
-        export function IRegex(): IRegex {
-            return new Regex();
-        }
+        export var IRegex = Regex;
 
         register.injectable(__Regex, IRegex);
 
@@ -3177,9 +3171,7 @@ module plat {
         /**
          * The Type for referencing the '$Tokenizer' injectable as a dependency.
          */
-        export function ITokenizer(): ITokenizer {
-            return new Tokenizer();
-        }
+        export var ITokenizer = Tokenizer;
 
         register.injectable(__Tokenizer, ITokenizer);
 
@@ -3817,9 +3809,7 @@ module plat {
         /**
          * The Type for referencing the '$Parser' injectable as a dependency.
          */
-        export function IParser(): IParser {
-            return new Parser();
-        }
+        export var IParser = Parser;
 
         register.injectable(__Parser, IParser);
 
@@ -4064,9 +4054,7 @@ module plat {
         /**
          * The Type for referencing the '$Browser' injectable as a dependency.
          */
-        export function IBrowser(): IBrowser {
-            return new Browser();
-        }
+        export var IBrowser = Browser;
 
         register.injectable(__Browser, IBrowser);
 
@@ -4308,9 +4296,7 @@ module plat {
         /**
          * The Type for referencing the '$UrlUtilsInstance' injectable as a dependency.
          */
-        export function IUrlUtilsInstance(): IUrlUtilsInstance {
-            return new UrlUtils();
-        }
+        export var IUrlUtilsInstance = UrlUtils;
 
         register.injectable(__UrlUtilsInstance, IUrlUtilsInstance, null, register.INSTANCE);
 
@@ -4797,9 +4783,7 @@ module plat {
         /**
          * The Type for referencing the '$Router' injectable as a dependency.
          */
-        export function IRouter(): IRouter {
-            return new Router();
-        }
+        export var IRouter = Router;
 
         register.injectable(__Router, IRouter);
 
@@ -6628,9 +6612,7 @@ module plat {
         /**
          * The Type for referencing the '$Http' injectable as a dependency.
          */
-        export function IHttp(): IHttp {
-            return new Http();
-        }
+        export var IHttp = Http;
 
         register.injectable(__Http, IHttp);
 
@@ -6962,7 +6944,7 @@ module plat {
          * clone a template when you put it in the cache. It will
          * also clone the template when you retrieve it.
          */
-        class TemplateCache extends Cache<any> implements ITemplateCache {
+        export class TemplateCache extends Cache<any> implements ITemplateCache {
             $Promise: async.IPromise = acquire(__Promise);
 
             constructor() {
@@ -7006,9 +6988,7 @@ module plat {
         /**
          * The Type for referencing the '$TemplateCache' injectable as a dependency.
          */
-        export function ITemplateCache(): ITemplateCache {
-            return new TemplateCache();
-        }
+        export var ITemplateCache = TemplateCache;
 
         register.injectable(__TemplateCache, ITemplateCache);
 
@@ -7136,9 +7116,7 @@ module plat {
         /**
          * The Type for referencing the '$LocalStorage' injectable as a dependency.
          */
-        export function ILocalStorage(): ILocalStorage {
-            return new LocalStorage();
-        }
+        export var ILocalStorage = LocalStorage;
 
         register.injectable(__LocalStorage, ILocalStorage);
 
@@ -7201,9 +7179,7 @@ module plat {
         /**
          * The Type for referencing the '$SessionStorage' injectable as a dependency.
          */
-        export function ISessionStorage(): ISessionStorage {
-            return new SessionStorage();
-        }
+        export var ISessionStorage = SessionStorage;
 
         register.injectable(__SessionStorage, ISessionStorage);
 
@@ -8739,9 +8715,7 @@ module plat {
         /**
          * The Type for referencing the '$DispatchEventInstance' injectable as a dependency.
          */
-        export function IDispatchEventInstance(): IDispatchEventInstance {
-            return new DispatchEvent();
-        }
+        export var IDispatchEventInstance = DispatchEvent;
 
         register.injectable(__DispatchEventInstance, IDispatchEventInstance, null, register.INSTANCE);
 
@@ -13587,9 +13561,7 @@ module plat {
         /**
          * The Type for referencing the '$Dom' injectable as a dependency.
          */
-        export function IDom(): IDom {
-            return new Dom();
-        }
+        export var IDom = Dom;
 
         register.injectable(__Dom, IDom);
 
@@ -14304,9 +14276,7 @@ module plat {
         /**
          * The Type for referencing the '$Attributes' injectable as a dependency.
          */
-        export function IAttributesInstance(): IAttributesInstance {
-            return new Attributes();
-        }
+        export var IAttributesInstance = Attributes;
 
         register.injectable(__AttributesInstance, IAttributesInstance, null, register.INSTANCE);
 
@@ -16019,9 +15989,7 @@ module plat {
         /**
          * The Type for referencing the '$DomEvents' injectable as a dependency.
          */
-        export function IDomEvents(): IDomEvents {
-            return new DomEvents();
-        }
+        export var IDomEvents = DomEvents;
 
         plat.register.injectable(__DomEvents, IDomEvents);
 
@@ -16117,9 +16085,7 @@ module plat {
         /**
          * The Type for referencing the '$DomEventInstance' injectable as a dependency.
          */
-        export function IDomEventInstance(): IDomEventInstance {
-            return new DomEvent();
-        }
+        export var IDomEventInstance = DomEvent;
 
         register.injectable(__DomEventInstance, IDomEventInstance, null, register.INSTANCE);
 
@@ -18016,9 +17982,7 @@ module plat {
         /**
          * The Type for referencing the '$Compiler' injectable as a dependency.
          */
-        export function ICompiler(): ICompiler {
-            return new Compiler();
-        }
+        export var ICompiler = Compiler;
 
         register.injectable(__Compiler, ICompiler);
 
@@ -20398,9 +20362,7 @@ module plat {
         /**
          * The Type for referencing the '$Navigator' injectable as a dependency.
          */
-        export function INavigator(): INavigator {
-            return new Navigator();
-        }
+        export var INavigator = Navigator;
 
         register.injectable(__Navigator, INavigator, null, register.INSTANCE);
 
@@ -20560,9 +20522,7 @@ module plat {
         /**
          * The Type for referencing the '$RoutingNavigator' injectable as a dependency.
          */
-        export function IRoutingNavigator(): IRoutingNavigator {
-            return new RoutingNavigator();
-        }
+        export var IRoutingNavigator = RoutingNavigator;
 
         register.injectable(__RoutingNavigator, IRoutingNavigator);
 
