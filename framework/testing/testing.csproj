@@ -57,6 +57,7 @@
     <TypeScriptCompile Include="tests\acquire\acquire.test.ts" />
     <TypeScriptCompile Include="tests\app\app.test.ts" />
     <TypeScriptCompile Include="tests\app\appstatic.test.ts" />
+    <TypeScriptCompile Include="tests\async\promise.test.ts" />
     <TypeScriptCompile Include="tests\expressions\parser\parser.test.ts" />
     <TypeScriptCompile Include="tests\expressions\regex\regex.test.ts" />
     <TypeScriptCompile Include="tests\expressions\tokenizer\tokenizer.test.ts" />
