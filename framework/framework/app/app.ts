@@ -74,7 +74,6 @@ module plat {
 
             $LifecycleEventStatic.dispatch('beforeLoad', App);
 
-
             if (isNull(node)) {
                 body.setAttribute('plat-hide', '');
                 $compiler.compile(body);
