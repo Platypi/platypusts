@@ -159,3 +159,6 @@ $RECYCLE.BIN/
 *.js
 *.js.map
 typings/*
+
+# Framework CSS
+*framework*.css

@@ -1,0 +1,139 @@
+﻿@import 'mixins';
+
+// Custom Animations
+
+#KeyFrames {
+    .keyFrames(@name) {
+        @-webkit-keyframes @name {
+            .frames(@webkit);
+        }
+
+        @-moz-keyframes @name {
+            .frames(@moz);
+        }               
+
+        @keyframes @name {
+            .frames(@vanilla);
+        }
+    }
+}
+
+#Animations {
+    .fade(@name: @fadeOut; @direction: out) {
+        #KeyFrames > .keyFrames(@name);
+        .frames(@prefix) {
+            & when (@direction = in) {
+                from {
+                    opacity: 0;
+                }
+                to {
+                    opacity: 1;
+                }
+            }
+            & when (@direction = out) {
+                from {
+                    opacity: 1;
+                }
+                to {
+                    opacity: 0;
+                }
+            }
+        }
+    }
+
+    .slide(@name: @slideIn; @direction: in; @from: right) {
+        #KeyFrames > .keyFrames(@name);
+        .frames(@prefix) {
+            & when (@direction = in) {
+                & when (@from = left) {
+                    from {
+                        left: -100%;
+                    }
+                }
+                & when (@from = right) {
+                    from {
+                        left: 100%;
+                    }
+                }
+                to {
+                    left: 0%;
+                }
+            }
+            & when (@direction = out) {
+                from {
+                    left: 0%;
+                }
+                & when (@from = left) {
+                    to {
+                        left: -100%;
+                    }
+                }
+                & when (@from = right) {
+                    to {
+                        left: 100%;
+                    }
+                }
+            }
+        }
+    }
+
+    .slideAndFade(@name: @slideInFadeIn; @direction: in; @from-to: right) {
+        #KeyFrames > .keyFrames(@name);
+        .frames(@prefix) {
+            & when (@direction = in) {
+                & when (@from-to = left) {
+                    0% {
+                        left: -100%;
+                        opacity: 0;
+                    }
+                }
+                & when (@from-to = right) {
+                    0% {
+                        left: 100%;
+                        opacity: 0;
+                    }
+                }
+                25% {
+                    opacity: 0.1;
+                }
+                50% {
+                    opacity: 0.2;
+                }
+                75% {
+                    opacity: 0.3;
+                }
+                100% {
+                    left: 0%;
+                    opacity: 1;
+                }
+            }
+            & when (@direction = out) {
+                0% {
+                    left: 0%;
+                    opacity: 1;
+                }
+                25% {
+                    opacity: 0.3;
+                }
+                50% {
+                    opacity: 0.2;
+                }
+                75% {
+                    opacity: 0.1;
+                }
+                & when (@from-to = left) {
+                    100% {
+                        left: -100%;
+                        opacity: 0;
+                    }
+                }
+                & when (@from-to = right) {
+                    100% {
+                        left: 100%;
+                        opacity: 0;
+                    }
+                }
+            }
+        }
+    }
+}

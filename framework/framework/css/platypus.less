@@ -1,5 +1,4 @@
-﻿@import 'variables.less';
-@import 'mixins.less';
+﻿@import 'animations';
 
 // Common
 
@@ -21,20 +20,54 @@
 
 // Animations
 
-.plat-fadein,
 .plat-enter {
+    position: absolute;
+    .animation-name(@slideInFadeIn);
+    .animation-duration(750ms);
+    .animation-fill-mode(forwards);
+}
+
+#Animations > .slideAndFade();
+
+.plat-leave {
+    position: absolute;
+    .animation-name(@slideOutFadeOut);
+    .animation-duration(500ms);
+    .animation-fill-mode(forwards);
+}
+
+#Animations > .slideAndFade(@slideOutFadeOut; out; left);
+
+.plat-slidein {
+    position: absolute;
+    .animation-name(@slideIn);
+    .animation-duration(250ms);
+    .animation-fill-mode(forwards);
+}
+
+#Animations > .slide();
+
+.plat-slideout {
+    position: absolute;
+    .animation-name(@slideOut);
+    .animation-duration(200ms);
+    .animation-fill-mode(forwards);
+}
+
+#Animations > .slide(@slideOut, out, left);
+
+.plat-fadein {
     .animation-name(@fadeIn);
     .animation-duration(500ms);
     .animation-fill-mode(forwards);
 }
 
-.fade(@fadeIn);
+#Animations > .fade(@fadeIn, in);
 
-.plat-fadeout,
-.plat-leave {
+.plat-fadeout {
     .animation-name(@fadeOut);
     .animation-duration(100ms);
     .animation-fill-mode(forwards);
 }
 
-.fade(@fadeOut, 1, 0);
+#Animations > .fade();
