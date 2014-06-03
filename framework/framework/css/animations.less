@@ -47,30 +47,24 @@
             & when (@direction = in) {
                 & when (@from = left) {
                     from {
-                        left: -100%;
+                        padding-left: -100%;
                     }
                 }
                 & when (@from = right) {
                     from {
-                        left: 100%;
+                        padding-left: 100%;
                     }
-                }
-                to {
-                    left: 0%;
                 }
             }
             & when (@direction = out) {
-                from {
-                    left: 0%;
-                }
                 & when (@from = left) {
                     to {
-                        left: -100%;
+                        padding-left: -100%;
                     }
                 }
                 & when (@from = right) {
                     to {
-                        left: 100%;
+                        padding-left: 100%;
                     }
                 }
             }
@@ -83,13 +77,13 @@
             & when (@direction = in) {
                 & when (@from-to = left) {
                     0% {
-                        left: -100%;
+                        padding-left: -100%;
                         opacity: 0;
                     }
                 }
                 & when (@from-to = right) {
                     0% {
-                        left: 100%;
+                        padding-left: 100%;
                         opacity: 0;
                     }
                 }
@@ -103,13 +97,11 @@
                     opacity: 0.3;
                 }
                 100% {
-                    left: 0%;
                     opacity: 1;
                 }
             }
             & when (@direction = out) {
                 0% {
-                    left: 0%;
                     opacity: 1;
                 }
                 25% {
@@ -123,13 +115,13 @@
                 }
                 & when (@from-to = left) {
                     100% {
-                        left: -100%;
+                        padding-left: -100%;
                         opacity: 0;
                     }
                 }
                 & when (@from-to = right) {
                     100% {
-                        left: 100%;
+                        padding-left: 100%;
                         opacity: 0;
                     }
                 }
