@@ -708,7 +708,7 @@ module plat.processing {
             return uiControlNode.control;
         }
 
-        fulfillTemplate(): async.IThenable<any> {
+        fulfillTemplate(): async.IThenable<void> {
                 if (!isNull(this.templatePromise)) {
                     return this.templatePromise.then(() => {
                         return this._fulfillChildTemplates();
@@ -1021,11 +1021,11 @@ module plat.processing {
         /**
          * Runs through all the children of this manager and calls fulfillTemplate.
          */
-        _fulfillChildTemplates() {
+        _fulfillChildTemplates(): async.IThenable<void> {
             var children = this.children,
                 child: INodeManager,
                 length = children.length,
-                promises: Array<async.IThenable<any>> = [];
+                promises: Array<async.IThenable<void>> = [];
 
             for (var i = 0; i < length; ++i) {
                 child = children[i];
@@ -1232,11 +1232,8 @@ module plat.processing {
         /**
          * Fullfills any template template promises and finishes the compile phase
          * for the template associated to this ElementManager.
-         * 
-         * @return {async.IPromise} A promise, fulfilled when the template 
-         * is complete.
          */
-        fulfillTemplate(): async.IThenable<any>;
+        fulfillTemplate(): async.IThenable<void>;
 
         /**
          * Binds context to the DOM and loads controls.

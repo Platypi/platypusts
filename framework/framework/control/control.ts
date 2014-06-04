@@ -590,8 +590,6 @@ module plat {
         /**
          * The attributes object representing all the attributes for an IControl's element. All attributes are 
          * converted from dash notation to camelCase.
-         * 
-         * @see {@link ui.Attributes}
          */
         attributes?: ui.IAttributesInstance;
 

@@ -15,6 +15,7 @@ module plat.ui {
         /**
          * Evaluates an expression string with a given control and optional context.
          * 
+         * @static
          * @param expression The expression string (e.g. 'foo + foo').
          * @param control The control used for evaluation context.
          * @param aliases An optional alias object containing resource alias values
@@ -23,6 +24,7 @@ module plat.ui {
         /**
          * Evaluates a parsed expression with a given control and optional context.
          * 
+         * @static
          * @param expression An IParsedExpression created using the plat.expressions.IParser injectable.
          * @param control The control used for evaluation context.
          * @param aliases An optional alias object containing resource alias values
@@ -52,6 +54,7 @@ module plat.ui {
          * Given a control and Array of aliases, finds the associated resources and builds a context object containing
          * the values. Returns the object.
          * 
+         * @static
          * @param control The control used as the starting point for finding resources.
          * @param aliases An array of aliases to search for.
          * @param resources An optional resources object to extend, if no resources object is passed in a new one will be created.
@@ -118,6 +121,7 @@ module plat.ui {
          * If the resource is found, it will be returned along with the control instance on which
          * the resource was found.
          * 
+         * @static
          * @param control The control on which to start searching for the resource alias.
          * @param alias The alias to search for.
          */
@@ -159,6 +163,7 @@ module plat.ui {
 
         /**
          * Recursively disposes a control and its children.
+         * 
          * @static
          * @param control A control to dispose.
          */
@@ -236,6 +241,7 @@ module plat.ui {
          * Notifies a control that its context has been changed by 
          * calling the control.contextChanged method if it exists.
          * 
+         * @static
          * @param control The control whose context changed.
          * @param newValue The new value of the control's context.
          * @param oldValue The old value of the control's context.
@@ -255,6 +261,7 @@ module plat.ui {
          * Sets the 'context' resource value on a template control. If the control specifies
          * hasOwnContext, the 'rootContext' resource value will be set.
          * 
+         * @static
          * @param control The control whose context resources will be set.
          */
         static setContextResources(control: ITemplateControl): void {
@@ -297,6 +304,7 @@ module plat.ui {
          * control implements replaceWith=null, All of its nodes between its 
          * startNode and endNode (inclusive) will be removed.
          * 
+         * @static
          * @param control The control whose element should be removed.
          */
         static removeElement(control: ITemplateControl): void {
@@ -330,6 +338,7 @@ module plat.ui {
         /**
          * Sets the absoluteContextPath read-only property on a control.
          * 
+         * @static
          * @param control The control on which to set the absoluteContextPath.
          * @param path The path to set on the control.
          */
@@ -340,6 +349,10 @@ module plat.ui {
         /**
          * Determines the template for a control by searching for a templateUrl, 
          * using the provided templateUrl, or serializing the control's templateString.
+         * 
+         * @static
+         * @param control The control whose template is being determined.
+         * @param templateUrl The potential templateUrl to use to grab the template.
          */
         static determineTemplate(control: ITemplateControl, templateUrl?: string): async.IThenable<DocumentFragment> {
             var template: any,
@@ -581,6 +594,7 @@ module plat.ui {
         /**
          * Evaluates an expression string with a given control and optional context.
          *
+         * @static
          * @param expression The expression string (e.g. 'foo + foo').
          * @param control The control used for evaluation context.
          * @param aliases An optional alias object containing resource alias values
@@ -589,6 +603,7 @@ module plat.ui {
         /**
          * Evaluates a parsed expression with a given control and optional context.
          *
+         * @static
          * @param expression An IParsedExpression created using the plat.expressions.IParser injectable.
          * @param control The control used for evaluation context.
          * @param aliases An optional alias object containing resource alias values
@@ -599,6 +614,7 @@ module plat.ui {
          * Given a control and Array of aliases, finds the associated resources and builds a context object containing
          * the values. Returns the object.
          *
+         * @static
          * @param control The control used as the starting point for finding resources.
          * @param aliases An array of aliases to search for.
          * @param resources An optional resources object to extend, if no resources object is passed in a new one will be created.
@@ -610,6 +626,7 @@ module plat.ui {
          * If the resource is found, it will be returned along with the control instance on which
          * the resource was found.
          *
+         * @static
          * @param control The control on which to start searching for the resource alias.
          * @param alias The alias to search for.
          */
@@ -617,6 +634,8 @@ module plat.ui {
 
         /**
          * Recursively disposes a control and its children.
+         * 
+         * @static
          * @param control A control to dispose.
          */
         dispose(control: ITemplateControl): void;
@@ -624,6 +643,7 @@ module plat.ui {
         /**
          * Loads the control tree depth first (visit children, then visit self).
          *
+         * @static
          * @param control The control serving as the root control to load.
          */
         loadControl(control: ITemplateControl): void;
@@ -632,6 +652,7 @@ module plat.ui {
          * Notifies a control that its context has been changed by
          * calling the control.contextChanged method if it exists.
          *
+         * @static
          * @param control The control whose context changed.
          * @param newValue The new value of the control's context.
          * @param oldValue The old value of the control's context.
@@ -642,6 +663,7 @@ module plat.ui {
          * Sets the 'context' resource value on a template control. If the control specifies
          * hasOwnContext, the 'rootContext' resource value will be set.
          *
+         * @static
          * @param control The control whose context resources will be set.
          */
         setContextResources(control: ITemplateControl): void;
@@ -651,6 +673,7 @@ module plat.ui {
          * control implements replaceWith=null, All of its nodes between its
          * startNode and endNode (inclusive) will be removed.
          *
+         * @static
          * @param control The control whose element should be removed.
          */
         removeElement(control: ITemplateControl): void;
@@ -658,6 +681,7 @@ module plat.ui {
         /**
          * Sets the absoluteContextPath read-only property on a control.
          * 
+         * @static
          * @param control The control on which to set the absoluteContextPath.
          * @param path The path to set on the control.
          */
@@ -666,12 +690,17 @@ module plat.ui {
         /**
          * Determines the template for a control by searching for a templateUrl, 
          * using the provided templateUrl, or serializing the control's templateString.
+         * 
+         * @static
+         * @param control The control whose template is being determined.
+         * @param templateUrl The potential templateUrl to use to grab the template.
          */
         determineTemplate(control: ITemplateControl, templateUrl?: string): async.IThenable<DocumentFragment>;
 
         /**
          * Detaches a TemplateControl. Disposes its children, but does not dispose the TemplateControl.
          *
+         * @static
          * @param control The control to be detached.
          */
         detach(control: ITemplateControl): void;

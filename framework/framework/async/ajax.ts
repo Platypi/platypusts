@@ -685,6 +685,12 @@ module plat.async {
         data?: any;
 
         /**
+         * An array of data transform functions that fire in order and consecutively 
+         * pass the returned result from one function to the next.
+         */
+        transforms?: Array<(data: any, xhr: XMLHttpRequest) => any>;
+
+        /**
          * Forces a JSONP, cross-domain request when set to true.
          * The default is false.
          */
@@ -697,7 +703,8 @@ module plat.async {
     export interface IJsonpConfig {
         /**
          * The url for the JSONP callback 
-         * (without the ?{callback}={callback_name} parameter in the url)
+         * (without the ?{callback}={callback_name} parameter in the url) 
+         * or for the XmlHttpRequest.
          */
         url: string;
 
@@ -716,12 +723,6 @@ module plat.async {
          * http://www.platyfi.com/data?callback=plat_callback00.
          */
         jsonpCallback?: string;
-
-        /**
-         * An array of data transform functions that fire in order and consecutively 
-         * pass the returned result from one function to the next.
-         */
-        transforms?: Array<(data: any, xhr: XMLHttpRequest) => any>;
     }
 
     /**
@@ -812,9 +813,6 @@ module plat.async {
             }
         }
 
-        /**
-         * A method to cancel the AJAX call associated with this AjaxPromise.
-         */
         cancel(): void {
             var http = this.__http,
                 xhr = http.xhr,
@@ -835,44 +833,12 @@ module plat.async {
             (<any>this).__subscribers = [];
         }
 
-        /**
-         * Takes in two methods, called when/if the promise fulfills/rejects.
-         * 
-         * @param onFulfilled A method called when/if the promise fulills. If undefined the next
-         * onFulfilled method in the promise chain will be called.
-         * @param onRejected A method called when/if the promise rejects. If undefined the next
-         * onRejected method in the promise chain will be called.
-         */
         then<U>(onFulfilled: (success: IAjaxResponse<R>) => U,
             onRejected?: (error: IAjaxError) => any): IThenable<U>;
-        /**
-         * Takes in two methods, called when/if the promise fulfills/rejects.
-         * 
-         * @param onFulfilled A method called when/if the promise fulills. If undefined the next
-         * onFulfilled method in the promise chain will be called.
-         * @param onRejected A method called when/if the promise rejects. If undefined the next
-         * onRejected method in the promise chain will be called.
-         */
         then<U>(onFulfilled: (success: IAjaxResponse<R>) => IThenable<U>,
             onRejected?: (error: IAjaxError) => IThenable<U>): IThenable<U>;
-        /**
-         * Takes in two methods, called when/if the promise fulfills/rejects.
-         * 
-         * @param onFulfilled A method called when/if the promise fulills. If undefined the next
-         * onFulfilled method in the promise chain will be called.
-         * @param onRejected A method called when/if the promise rejects. If undefined the next
-         * onRejected method in the promise chain will be called.
-         */
         then<U>(onFulfilled: (success: IAjaxResponse<R>) => IThenable<U>,
             onRejected?: (error: IAjaxError) => any): IThenable<U>;
-        /**
-         * Takes in two methods, called when/if the promise fulfills/rejects.
-         * 
-         * @param onFulfilled A method called when/if the promise fulills. If undefined the next
-         * onFulfilled method in the promise chain will be called.
-         * @param onRejected A method called when/if the promise rejects. If undefined the next
-         * onRejected method in the promise chain will be called.
-         */
         then<U>(onFulfilled: (success: IAjaxResponse<R>) => U,
             onRejected?: (error: IAjaxError) => IThenable<U>): IThenable<U>;
         then<U>(onFulfilled: (success: IAjaxResponse<R>) => U,

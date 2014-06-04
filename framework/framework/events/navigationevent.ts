@@ -76,38 +76,6 @@
     }
 
     /**
-     * Describes options for an INavigationEvent. The generic parameter specifies the 
-     * target type for the event.
-     */
-    export interface INavigationEventOptions<P> {
-        /**
-         * Navigation parameter, used to send objects from one view control to another.
-         */
-        parameter: P;
-
-        /**
-         * The INavigationOptions in use for the navigation.
-         */
-        options: navigation.IBaseNavigationOptions;
-
-        /**
-         * The navigation event target. Its type depends on the type of Navigation event.
-         */
-        target: any;
-
-        /**
-         * Specifies the type of IViewControl for the Route Event.
-         */
-        type: string;
-
-        /**
-         * States whether or not this event is able to be canceled. Some navigation events can be 
-         * canceled, preventing further navigation.
-         */
-        cancelable?: boolean;
-    }
-
-    /**
      * Describes an object used by the Navigator to dispatch Navigation events.
      */
     export interface INavigationEvent<P> extends IDispatchEventInstance {
@@ -172,5 +140,37 @@
          * @see EventManager.direction
          */
         initialize(name: string, sender: any, direction?: string, eventOptions?: INavigationEventOptions<P>);
+    }
+
+    /**
+     * Describes options for an INavigationEvent. The generic parameter specifies the 
+     * target type for the event.
+     */
+    export interface INavigationEventOptions<P> {
+        /**
+         * Navigation parameter, used to send objects from one view control to another.
+         */
+        parameter: P;
+
+        /**
+         * The INavigationOptions in use for the navigation.
+         */
+        options: navigation.IBaseNavigationOptions;
+
+        /**
+         * The navigation event target. Its type depends on the type of Navigation event.
+         */
+        target: any;
+
+        /**
+         * Specifies the type of IViewControl for the Route Event.
+         */
+        type: string;
+
+        /**
+         * States whether or not this event is able to be canceled. Some navigation events can be 
+         * canceled, preventing further navigation.
+         */
+        cancelable?: boolean;
     }
 }

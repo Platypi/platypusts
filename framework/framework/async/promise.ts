@@ -372,6 +372,10 @@ module plat.async {
         }
     }
 
+    /**
+     * Describes a chaining function that fulfills when the previous link is complete and is 
+     * able to be caught in the case of an error.
+     */
     export interface IThenable<R> {
         /**
          * Takes in two methods, called when/if the promise fulfills/rejects.
