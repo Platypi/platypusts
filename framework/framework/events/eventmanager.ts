@@ -379,10 +379,10 @@ module plat.events {
      * The Type for referencing the '$EventManagerStatic' injectable as a dependency.
      */
     export function IEventManagerStatic(
-        $Compat: ICompat,
-        $Document: Document,
-        $Window: Window,
-        $Dom: ui.IDom): IEventManagerStatic {
+        $Compat?: ICompat,
+        $Document?: Document,
+        $Window?: Window,
+        $Dom?: ui.IDom): IEventManagerStatic {
             EventManager.$Compat = $Compat;
             EventManager.$Document = $Document;
             EventManager.$Window = $Window;

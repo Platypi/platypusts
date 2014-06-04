@@ -518,7 +518,7 @@ module plat.async {
     /**
      * The Type for referencing the '$Promise' injectable as a dependency.
      */
-    export function IPromise($Window: any): IPromise {
+    export function IPromise($Window?: any): IPromise {
         if (!isNull($Window.Promise) &&
             isFunction($Window.Promise.all) &&
             isFunction($Window.Promise.cast) &&
