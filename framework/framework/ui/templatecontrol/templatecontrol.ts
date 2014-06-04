@@ -124,7 +124,7 @@ module plat.ui {
         static findResource(control: ITemplateControl, alias: string): { resource: IResource; control: ITemplateControl; } {
             var resource: IResource;
 
-            if (isNull(control) || !isString(alias) || isEmpty(alias)) {
+            if (isNull(control) || isNull(control.resources) || !isString(alias) || isEmpty(alias)) {
                 return null;
             }
 

@@ -62,5 +62,71 @@
             remove = control.observeArray({ foo: [] }, 'foo', () => { });
             expect(typeof remove).toEqual('function');
         });
+
+        it('should test observeExpression', () => {
+            var remove = control.observeExpression(null, () => { });
+
+            expect(typeof remove).toEqual('function');
+
+            remove();
+            remove = null;
+            control.parent = <any>{};
+            
+            remove = control.observeExpression('foo.bar', () => { });
+            expect(typeof remove).toEqual('function');
+
+            remove();
+            remove = null;
+            control.parent = <any>{
+                absoluteContextPath: 'context'
+            };
+
+            remove = control.observeExpression('foo.bar', () => { });
+            expect(typeof remove).toEqual('function');
+            remove();
+        });
+
+        it('should test evaluateExpression', () => {
+            var two = control.evaluateExpression('1 + 1');
+
+            expect(two).toBe(2);
+
+            var four = control.evaluateExpression('2 + @two', { '@two': two });
+
+            expect(four).toBe(4);
+
+            control.parent = <any>{
+                uid: 'foo',
+                context: {
+                    two: 2
+                }
+            };
+
+            var six = control.evaluateExpression('2 + @two + two', { '@two': two });
+
+            expect(six).toBe(6);
+
+            control.parent.resources = <any>{
+                four: {
+                    value: 4
+                }
+            };
+
+            var eight = control.evaluateExpression('@two + two + @four', { '@two': two });
+
+            expect(eight).toBe(8);
+        });
+
+        it('should test on and dispatchEvent', () => {
+            var val: number;
+
+            control.on('foo', (ev, value: number) => {
+                val = value;
+            });
+
+            control.dispatchEvent('foo', 'up', 2);
+
+            expect(val).toBe(2);
+        });
     });
 }

@@ -308,7 +308,7 @@ module plat {
                 return noop;
             }
 
-            var control = isFunction((<ui.ITemplateControl>(<any>control)).getAbsoluteIdentifier) ? this : <IControl>this.parent;
+            var control = isFunction((<ui.ITemplateControl>(<any>this)).getAbsoluteIdentifier) ? this : <IControl>this.parent;
 
             if (isNull(control) || !isFunction((<ui.ITemplateControl>(<any>control)).getAbsoluteIdentifier)) {
                 return noop;
@@ -370,7 +370,7 @@ module plat {
                 evaluateExpression = TemplateControl.evaluateExpression,
                 i: number;
 
-            if (isNull(control)) {
+            if (isNull(control) || !isString(control.absoluteContextPath)) {
                 return noop;
             }
 
@@ -431,7 +431,7 @@ module plat {
                     }
                 }));
             }
-
+            
             return () => {
                 var length = listeners.length;
 
@@ -441,11 +441,11 @@ module plat {
             };
         }
 
-        evaluateExpression(expression: string, context?: any): any;
-        evaluateExpression(expression: expressions.IParsedExpression, context?: any): any;
-        evaluateExpression(expression: any, context?: any): any {
+        evaluateExpression(expression: string, aliases?: any): any;
+        evaluateExpression(expression: expressions.IParsedExpression, aliases?: any): any;
+        evaluateExpression(expression: any, aliases?: any): any {
             var TemplateControl = ui.TemplateControl;
-            return TemplateControl.evaluateExpression(expression, this.parent, context);
+            return TemplateControl.evaluateExpression(expression, this.parent, aliases);
         }
 
         dispatchEvent(name: string, direction?: string, ...args: any[]): void;
@@ -470,8 +470,6 @@ module plat {
             manager.dispatch(name, sender, direction, args);
         }
 
-        on(name: string, listener: (ev: events.IDispatchEventInstance, ...args: any[]) => void): IRemoveListener;
-        on(name: 'routeChange', listener: (ev: events.IDispatchEventInstance, route: web.IRoute<any>) => void): IRemoveListener;
         on(name: string, listener: (ev: events.IDispatchEventInstance, ...args: any[]) => void): IRemoveListener {
             var manager = Control.$EventManagerStatic;
             return manager.on(this.uid, name, listener, this);
@@ -811,15 +809,6 @@ module plat {
          */
         dispatchEvent(name: string, direction?: string, ...args: any[]): void;
 
-        /**
-         * Registers a listener for a routeChange event. The listener will be called when a routeChange event 
-         * is propagating over the control. Any number of listeners can exist for a single event name.
-         *
-         * @param eventName='routeChange' This specifies that the listener is for a routeChange event.
-         * @param listener The method called when the routeChange is fired. The route argument will contain 
-         * a parsed route.
-         */
-        on(name: 'routeChange', listener: (ev: events.IDispatchEventInstance, route: web.IRoute<any>) => void): IRemoveListener;
         /**
          * Registers a listener for a DispatchEvent. The listener will be called when a DispatchEvent is 
          * propagating over the control. Any number of listeners can exist for a single event name.

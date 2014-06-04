@@ -10060,13 +10060,13 @@ module plat {
                 return noop;
             }
 
-            var control = isFunction((<any>this).getAbsoluteIdentifier) ? this : <IControl>this.parent;
+            var control = isFunction((<ui.ITemplateControl>(<any>this)).getAbsoluteIdentifier) ? this : <IControl>this.parent;
 
-            if (isNull(control) || !isFunction((<ui.ITemplateControl>control).getAbsoluteIdentifier)) {
+            if (isNull(control) || !isFunction((<ui.ITemplateControl>(<any>control)).getAbsoluteIdentifier)) {
                 return noop;
             }
 
-            var absoluteIdentifier = (<ui.ITemplateControl>control).getAbsoluteIdentifier(context);
+            var absoluteIdentifier = (<ui.ITemplateControl>(<any>control)).getAbsoluteIdentifier(context);
 
             if (isNull(absoluteIdentifier)) {
                 return noop;
@@ -10094,18 +10094,18 @@ module plat {
                 return noop;
             }
 
-            var control = isFunction((<any>this).getAbsoluteIdentifier) ? this : <IControl>this.parent;
+            var control = isFunction((<ui.ITemplateControl>(<any>this)).getAbsoluteIdentifier) ? this : <IControl>this.parent;
 
-            if (isNull(control) || !isFunction((<ui.ITemplateControl>control).getAbsoluteIdentifier)) {
+            if (isNull(control) || !isFunction((<ui.ITemplateControl>(<any>control)).getAbsoluteIdentifier)) {
                 return noop;
             }
 
-            var absoluteIdentifier = (<ui.ITemplateControl>control).getAbsoluteIdentifier(context),
+            var absoluteIdentifier = (<ui.ITemplateControl>(<any>control)).getAbsoluteIdentifier(context),
                 ContextManager = Control.$ContextManagerStatic;
 
             if (isNull(absoluteIdentifier)) {
                 if (property === 'context') {
-                    absoluteIdentifier = (<ui.ITemplateControl>control).absoluteContextPath;
+                    absoluteIdentifier = (<ui.ITemplateControl>(<any>control)).absoluteContextPath;
                 } else {
                     return noop;
                 }
@@ -10143,8 +10143,8 @@ module plat {
 
             var parsedExpression: expressions.IParsedExpression = isString(expression) ? Control.$Parser.parse(expression) : expression,
                 aliases = parsedExpression.aliases,
-                control: ui.TemplateControl = !isNull((<ui.TemplateControl>this).resources) ?
-                    <ui.TemplateControl>this :
+                control: ui.TemplateControl = !isNull((<ui.TemplateControl>(<any>this)).resources) ?
+                    <ui.TemplateControl>(<any>this) :
                     <ui.TemplateControl>this.parent,
                 alias: string,
                 length = aliases.length,
@@ -10156,7 +10156,7 @@ module plat {
                 evaluateExpression = TemplateControl.evaluateExpression,
                 i: number;
 
-            if (isNull(control)) {
+            if (isNull(control) || !isString(control.absoluteContextPath)) {
                 return noop;
             }
 
@@ -10217,7 +10217,7 @@ module plat {
                     }
                 }));
             }
-
+            
             return () => {
                 var length = listeners.length;
 
@@ -10227,11 +10227,11 @@ module plat {
             };
         }
 
-        evaluateExpression(expression: string, context?: any): any;
-        evaluateExpression(expression: expressions.IParsedExpression, context?: any): any;
-        evaluateExpression(expression: any, context?: any): any {
+        evaluateExpression(expression: string, aliases?: any): any;
+        evaluateExpression(expression: expressions.IParsedExpression, aliases?: any): any;
+        evaluateExpression(expression: any, aliases?: any): any {
             var TemplateControl = ui.TemplateControl;
-            return TemplateControl.evaluateExpression(expression, this.parent, context);
+            return TemplateControl.evaluateExpression(expression, this.parent, aliases);
         }
 
         dispatchEvent(name: string, direction?: string, ...args: any[]): void;
@@ -12615,7 +12615,7 @@ module plat {
             static findResource(control: ITemplateControl, alias: string): { resource: IResource; control: ITemplateControl; } {
                 var resource: IResource;
 
-                if (isNull(control) || !isString(alias) || isEmpty(alias)) {
+                if (isNull(control) || isNull(control.resources) || !isString(alias) || isEmpty(alias)) {
                     return null;
                 }
 
