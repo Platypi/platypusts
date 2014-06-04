@@ -9,6 +9,13 @@ module plat {
     /**
      * Returns the requested injectable dependency.
      * 
+     * @param dependency The dependency Type to return.
+     * @param {any} The requested dependency.
+     */
+    export function acquire(dependency: Function): any;
+    /**
+     * Returns the requested injectable dependency.
+     * 
      * @param dependency An array of Types specifying the injectable dependencies.
      * @return {Array<any>} The dependencies, in the order they were requested.
      */
@@ -70,6 +77,13 @@ module plat {
          * @param {T} The requested dependency.
          */
         <T>(dependency: () => T): T;
+        /**
+         * Returns the requested injectable dependency.
+         * 
+         * @param dependency The dependency Type to return.
+         * @param {any} The requested dependency.
+         */
+        (dependency: Function): any;
         /**
          * Returns the requested injectable dependency.
          * 
