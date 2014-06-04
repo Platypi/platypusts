@@ -4,7 +4,7 @@ module plat.navigation {
      * Every Viewport has its own Navigator instance, allowing multiple navigators to 
      * coexist in one app.
      */
-    export class Navigator extends BaseNavigator implements INavigator {
+    export class Navigator extends BaseNavigator implements INavigatorInstance {
         history: Array<IBaseNavigationState> = [];
 
         navigate(Constructor?: new (...args: any[]) => ui.IViewControl, options?: INavigationOptions): void;
@@ -188,15 +188,15 @@ module plat.navigation {
     /**
      * The Type for referencing the '$Navigator' injectable as a dependency.
      */
-    export var INavigator = Navigator;
+    export var INavigatorInstance = Navigator;
 
-    register.injectable(__Navigator, INavigator, null, register.INSTANCE);
+    register.injectable(__NavigatorInstance, INavigatorInstance, null, register.INSTANCE);
 
     /**
      * An object implementing INavigator allows ui.IViewControls to implement methods 
      * used to navigate within a Viewport.
      */
-    export interface INavigator extends IBaseNavigator {
+    export interface INavigatorInstance extends IBaseNavigator {
         /**
          * Contains the navigation history stack for the associated Viewport.
          */
