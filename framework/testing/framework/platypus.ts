@@ -10057,14 +10057,19 @@ module plat {
         observe<T>(context: any, property: number, listener: (value: T, oldValue: T) => void): IRemoveListener;
         observe(context: any, property: any, listener: (value: any, oldValue: any) => void): IRemoveListener {
             if (isNull(context) || !context.hasOwnProperty(property)) {
-                return;
+                return noop;
             }
 
-            var control = isFunction((<any>this).getAbsoluteIdentifier) ? this : <IControl>this.parent,
-                absoluteIdentifier = (<ui.ITemplateControl>control).getAbsoluteIdentifier(context);
+            var control = isFunction((<any>this).getAbsoluteIdentifier) ? this : <IControl>this.parent;
+
+            if (isNull(control) || !isFunction((<ui.ITemplateControl>control).getAbsoluteIdentifier)) {
+                return noop;
+            }
+
+            var absoluteIdentifier = (<ui.ITemplateControl>control).getAbsoluteIdentifier(context);
 
             if (isNull(absoluteIdentifier)) {
-                return;
+                return noop;
             }
 
             var contextManager = Control.$ContextManagerStatic.getManager(Control.getRootControl(this));
@@ -10079,25 +10084,30 @@ module plat {
         observeArray<T>(context: Array<T>, property: number, listener: (ev: observable.IArrayMethodInfo<T>) => void): IRemoveListener;
         observeArray(context: any, property: any, listener: (ev: observable.IArrayMethodInfo<any>) => void): IRemoveListener {
             if (isNull(context) || !context.hasOwnProperty(property)) {
-                return;
+                return noop;
             }
 
             var array = context[property],
                 callback = listener.bind(this);
 
             if (!isArray(array)) {
-                return;
+                return noop;
             }
 
-            var control = isFunction((<any>this).getAbsoluteIdentifier) ? this : <IControl>this.parent,
-                absoluteIdentifier = (<ui.ITemplateControl>control).getAbsoluteIdentifier(context),
+            var control = isFunction((<any>this).getAbsoluteIdentifier) ? this : <IControl>this.parent;
+
+            if (isNull(control) || !isFunction((<ui.ITemplateControl>control).getAbsoluteIdentifier)) {
+                return noop;
+            }
+
+            var absoluteIdentifier = (<ui.ITemplateControl>control).getAbsoluteIdentifier(context),
                 ContextManager = Control.$ContextManagerStatic;
 
             if (isNull(absoluteIdentifier)) {
                 if (property === 'context') {
                     absoluteIdentifier = (<ui.ITemplateControl>control).absoluteContextPath;
                 } else {
-                    return;
+                    return noop;
                 }
             } else {
                 absoluteIdentifier += '.' + property;
