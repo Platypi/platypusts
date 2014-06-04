@@ -482,9 +482,9 @@ module plat {
      * The Type for referencing the '$ControlFactory' injectable as a dependency.
      */
     export function IControlFactory(
-            $Parser: expressions.IParser,
-            $ContextManagerStatic: observable.IContextManagerStatic,
-            $EventManagerStatic: events.IEventManagerStatic): IControlFactory {
+            $Parser?: expressions.IParser,
+            $ContextManagerStatic?: observable.IContextManagerStatic,
+            $EventManagerStatic?: events.IEventManagerStatic): IControlFactory {
         Control.$Parser = $Parser;
         Control.$ContextManagerStatic = $ContextManagerStatic;
         Control.$EventManagerStatic = $EventManagerStatic;

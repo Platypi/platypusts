@@ -302,10 +302,10 @@ module plat.processing {
      * The Type for referencing the '$NodeManagerStatic' injectable as a dependency.
      */
     export function INodeManagerStatic(
-        $Regex: expressions.IRegex,
-        $ContextManagerStatic: observable.IContextManagerStatic,
-        $Parser: expressions.IParser,
-        $TemplateControlFactory: ui.ITemplateControlFactory): INodeManagerStatic {
+        $Regex?: expressions.IRegex,
+        $ContextManagerStatic?: observable.IContextManagerStatic,
+        $Parser?: expressions.IParser,
+        $TemplateControlFactory?: ui.ITemplateControlFactory): INodeManagerStatic {
             NodeManager.$Regex = $Regex;
             NodeManager.$ContextManagerStatic = $ContextManagerStatic;
             NodeManager.$Parser = $Parser;

@@ -185,11 +185,11 @@ module plat {
      * The Type for referencing the '$AppStatic' injectable as a dependency.
      */
     export function IAppStatic(
-        $Compat: ICompat,
-        $EventManagerStatic: events.IEventManagerStatic,
-        $Document: Document,
-        $Compiler: processing.ICompiler,
-        $LifecycleEventStatic: events.ILifecycleEventStatic): IAppStatic {
+        $Compat?: ICompat,
+        $EventManagerStatic?: events.IEventManagerStatic,
+        $Document?: Document,
+        $Compiler?: processing.ICompiler,
+        $LifecycleEventStatic?: events.ILifecycleEventStatic): IAppStatic {
             App.$Compat = $Compat;
             App.$EventManagerStatic = $EventManagerStatic;
             App.$Document = $Document;
@@ -209,7 +209,7 @@ module plat {
     /**
      * The Type for referencing the '$App' injectable as a dependency.
      */
-    export function IApp($AppStatic: IAppStatic): IApp {
+    export function IApp($AppStatic?: IAppStatic): IApp {
         return $AppStatic.app;
     }
 

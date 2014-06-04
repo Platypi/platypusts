@@ -35,7 +35,7 @@
     /**
      * The Type for referencing the '$ErrorEventStatic' injectable as a dependency.
      */
-    export function IErrorEventStatic($EventManagerStatic: IEventManagerStatic): IErrorEventStatic {
+    export function IErrorEventStatic($EventManagerStatic?: IEventManagerStatic): IErrorEventStatic {
         ErrorEvent.$EventManagerStatic = $EventManagerStatic;
         return ErrorEvent;
     }
