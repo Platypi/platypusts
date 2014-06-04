@@ -9,7 +9,7 @@
             }
 
             this.dom.addClass(this.element, this.className);
-            this.animationEnd(() => {
+            this.animationEnd((ev: Event) => {
                 this.dom.removeClass(this.element, this.className);
                 this.end();
             });
@@ -23,6 +23,10 @@
         className: string;
     }
 
+    export class FadeIn extends SimpleCssAnimation {
+        className = __FadeIn;
+    }
+
     register.animation(__FadeIn, FadeIn);
 
     export class FadeOut extends SimpleCssAnimation {
@@ -30,10 +34,6 @@
     }
 
     register.animation(__FadeOut, FadeOut);
-
-    export class FadeIn extends SimpleCssAnimation {
-        className = __FadeIn;
-    }
 
     export class Enter extends SimpleCssAnimation {
         className = __Enter;

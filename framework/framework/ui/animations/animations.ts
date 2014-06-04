@@ -4,6 +4,11 @@
 
         animate(element: Element, key: string): async.IThenable<void>;
         animate(element: any, key: string): async.IThenable<void> {
+            if (!isNode(element) || element.nodeType !== Node.ELEMENT_NODE) {
+                var $Promise: async.IPromise = acquire(__Promise);
+                return $Promise.resolve<void>(null);
+            }
+
             var animation = animationInjectors[key],
                 jsAnimation = jsAnimationInjectors[key],
                 animationSupported = this.$Compat.animationSupported,
@@ -75,19 +80,19 @@
             this.__subscribers = [];
         }
 
-        animationStart(listener?: () => void): IAnimationInstance {
+        animationStart(listener: EventListener): IAnimationInstance {
             return this.__addEventListener(this.__animationEvents.$animationStart, listener);
         }
 
-        transitionStart(listener?: () => void): IAnimationInstance {
+        transitionStart(listener: EventListener): IAnimationInstance {
             return this.__addEventListener(this.__animationEvents.$transitionStart, listener);
         }
 
-        animationEnd(listener?: () => void): IAnimationInstance {
+        animationEnd(listener: EventListener): IAnimationInstance {
             return this.__addEventListener(this.__animationEvents.$animationEnd, listener);
         }
 
-        transitionEnd(listener?: () => void): IAnimationInstance {
+        transitionEnd(listener: EventListener): IAnimationInstance {
             return this.__addEventListener(this.__animationEvents.$transitionEnd, listener);
         }
         
@@ -108,17 +113,17 @@
             });
         }
 
-        private __addEventListener(event: string, listener: () => void): IAnimationInstance {
+        private __addEventListener(event: string, listener: (ev?: Event) => void): IAnimationInstance {
             var subscribers = this.__subscribers,
                 subscriber = () => {
-                    var removeListener = this.dom.addEventListener(this.element, event, () => {
+                    var removeListener = this.dom.addEventListener(this.element, event, (ev: Event) => {
                         removeListener();
 
                         if (subscribers.length === 0) {
                             return;
                         }
 
-                        listener();
+                        listener(ev);
                         subscribers.shift();
 
                         if (subscribers.length === 0) {
@@ -188,27 +193,27 @@
          * 
          * @param listener The function to call when the animation begins.
          */
-        animationStart(listener: () => void): IAnimationInstance;
+        animationStart(listener: EventListener): IAnimationInstance;
 
         /**
          * A function to listen to the start of a transition event.
          * 
          * @param listener The function to call when the transition begins.
          */
-        transitionStart(listener: () => void): IAnimationInstance;
+        transitionStart(listener: EventListener): IAnimationInstance;
 
         /**
          * A function to listen to the end of an animation event.
          * 
          * @param listener The function to call when the animation ends.
          */
-        animationEnd(listener: () => void): IAnimationInstance;
+        animationEnd(listener: EventListener): IAnimationInstance;
 
         /**
          * A function to listen to the end of a transition event.
          * 
          * @param listener The function to call when the transition ends.
          */
-        transitionEnd(listener: () => void): IAnimationInstance;
+        transitionEnd(listener: EventListener): IAnimationInstance;
     }
 }
