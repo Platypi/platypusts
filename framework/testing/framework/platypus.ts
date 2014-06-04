@@ -1643,7 +1643,7 @@ module plat {
             define(this, 'cordova', !isNull((<any>$window).cordova));
             define(this, 'pushState', !(isNull(history) || isNull(history.pushState)));
             define(this, 'fileSupported', !(isUndefined((<any>$window).File) || isUndefined((<any>$window).FormData)));
-            define(this, 'amd', isFunction(def) && !isNull(def.amd));
+            define(this, 'amd', isFunction(def) && !isNull(def.amd), true, true);
             define(this, 'msApp', isObject(msA) && isFunction(msA.execUnsafeLocalFunction));
             define(this, 'indexedDb', !isNull($window.indexedDB));
             define(this, 'proto', isObject((<any>{}).__proto__));

@@ -10,7 +10,7 @@ module plat.ui.controls {
          * Constructors or their registered names for navigation 
          * from one to another.
          */
-        navigator: navigation.INavigator;
+        navigator: navigation.INavigatorInstance;
 
         /**
          * Checks for a defaultView, finds the ViewControl's injector, 
@@ -51,5 +51,5 @@ module plat.ui.controls {
         defaultView: string;
     }
 
-    register.control(__Viewport, Viewport, [__Navigator]);
+    register.control(__Viewport, Viewport, [__NavigatorInstance]);
 }

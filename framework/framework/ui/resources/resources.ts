@@ -390,8 +390,8 @@ module plat.ui {
      * The Type for referencing the '$ResourcesFactory' injectable as a dependency.
      */
     export function IResourcesFactory(
-        $ContextManagerStatic: observable.IContextManagerStatic,
-        $Regex: expressions.IRegex): IResourcesFactory {
+        $ContextManagerStatic?: observable.IContextManagerStatic,
+        $Regex?: expressions.IRegex): IResourcesFactory {
             Resources.$ContextManagerStatic = $ContextManagerStatic;
             Resources.$Regex = $Regex;
             return Resources;

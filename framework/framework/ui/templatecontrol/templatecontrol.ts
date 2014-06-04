@@ -560,13 +560,13 @@ module plat.ui {
      * The Type for referencing the '$TemplateControlFactory' injectable as a dependency.
      */
     export function ITemplateControlFactory(
-        $ResourcesFactory: IResourcesFactory,
-        $BindableTemplatesFactory: IBindableTemplatesFactory,
-        $ManagerCache: storage.ICache<processing.IElementManager>,
-        $TemplateCache: storage.ITemplateCache,
-        $Parser: expressions.IParser,
-        $Http: async.IHttp,
-        $Promise: async.IPromise): ITemplateControlFactory {
+        $ResourcesFactory?: IResourcesFactory,
+        $BindableTemplatesFactory?: IBindableTemplatesFactory,
+        $ManagerCache?: storage.ICache<processing.IElementManager>,
+        $TemplateCache?: storage.ITemplateCache,
+        $Parser?: expressions.IParser,
+        $Http?: async.IHttp,
+        $Promise?: async.IPromise): ITemplateControlFactory {
             TemplateControl.$ResourcesFactory = $ResourcesFactory;
             TemplateControl.$BindableTemplatesFactory = $BindableTemplatesFactory;
             TemplateControl.$ManagerCache = $ManagerCache;

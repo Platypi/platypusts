@@ -51,7 +51,7 @@
     /**
      * The Type for referencing the '$NavigationEventStatic' injectable as a dependency.
      */
-    export function INavigationEventStatic($EventManagerStatic: IEventManagerStatic): INavigationEventStatic {
+    export function INavigationEventStatic($EventManagerStatic?: IEventManagerStatic): INavigationEventStatic {
         NavigationEvent.$EventManagerStatic = $EventManagerStatic;
         return NavigationEvent;
     }

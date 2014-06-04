@@ -1,6 +1,6 @@
 ﻿/// <reference path="../../typings/tsd.d.ts" />
 
-module tests.expressions.acquire {
+module tests.acquire {
     var utils: plat.IUtils = plat.acquire(plat.IUtils);
 
     function instanceOf(Constructor: new () => void) {

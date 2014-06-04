@@ -1047,10 +1047,10 @@ module plat.processing {
      * The Type for referencing the '$ElementManagerFactory' injectable as a dependency.
      */
     export function IElementManagerFactory(
-        $Document: Document,
-        $ManagerCache: storage.ICache<IElementManager>,
-        $ResourcesFactory: ui.IResourcesFactory,
-        $BindableTemplatesFactory: ui.IBindableTemplatesFactory): IElementManagerFactory {
+        $Document?: Document,
+        $ManagerCache?: storage.ICache<IElementManager>,
+        $ResourcesFactory?: ui.IResourcesFactory,
+        $BindableTemplatesFactory?: ui.IBindableTemplatesFactory): IElementManagerFactory {
             ElementManager.$Document = $Document;
             ElementManager.$ManagerCache = $ManagerCache;
             ElementManager.$ResourcesFactory = $ResourcesFactory;

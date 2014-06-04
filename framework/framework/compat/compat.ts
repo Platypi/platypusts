@@ -106,8 +106,8 @@
                 if (!isUndefined(div.style[key])) {
                     prefix = animations[key];
                     break;
-                }
             }
+        }
 
             this.animationSupported = index > -1;
             this.animationEvents = prefix === 'webkit' ? {
@@ -121,7 +121,7 @@
                 $transitionStart: prefix + 'transitionstart',
                 $transitionEnd: prefix + 'transitionend'
             };
-        }
+    }
 
         private __findCss() {
             var $document = this.$Document,
@@ -155,9 +155,9 @@
         }
     }
 
-    /**
+        /**
      * The Type for referencing the '$Compat' injectable as a dependency.
-     */
+         */
     export var ICompat = Compat;
 
     register.injectable(__Compat, ICompat);
@@ -260,7 +260,7 @@
         animationEvents: IAnimationEvents;
     }
 
-    /**
+        /**
      * Describes an object containing the correctly mapped touch events for the browser.
      */
     export interface IMappedEvents extends IObject<string> {

@@ -87,8 +87,10 @@
 
             if (this.__firstRoute) {
                 this.__firstRoute = false;
-                this._routeChanged(null, currentUtils);
-                return;
+                if (isEmpty(path)) {
+                    this._routeChanged(null, currentUtils);
+                    return;
+                }
             }
 
             var build = this._buildRoute(path, options.query);
