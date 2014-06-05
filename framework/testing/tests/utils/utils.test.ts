@@ -8,7 +8,7 @@ module tests.utils {
         expected: any;
     }
 
-    var utils: plat.IUtils = plat.acquire(plat.IUtils);
+    var utils = plat.acquire(plat.IUtils);
 
     function isTrue(obj) {
         return obj === true;

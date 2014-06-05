@@ -1,7 +1,7 @@
 ﻿/// <reference path="../../typings/tsd.d.ts" />
 
 module tests.appStatic {
-    var $AppStatic: plat.IAppStatic = plat.acquire(plat.IAppStatic),
+    var $AppStatic = plat.acquire(plat.IAppStatic),
         app: plat.App;
 
     class App extends plat.App { }
@@ -9,7 +9,7 @@ module tests.appStatic {
     describe('AppStatic Tests', () => {
         beforeEach(() => {
             plat.register.app('app', App);
-            app = plat.acquire(plat.IApp).inject();
+            app = (<any>plat.acquire(plat.IApp)).inject();
         });
 
         it('should test App start and fail', () => {
@@ -64,13 +64,13 @@ module tests.appStatic {
 
             expect(evSpy).not.toHaveBeenCalled();
 
-            app = $AppStatic.app = plat.acquire(plat.IApp).inject();
+            app = $AppStatic.app = (<any>plat.acquire(plat.IApp)).inject();
 
             $AppStatic.registerApp(new plat.dependency.Injector('app', App));
 
             expect(evSpy).toHaveBeenCalledWith(app.uid);
 
-            app = plat.acquire(plat.IApp).inject();
+            app = (<any>plat.acquire(plat.IApp)).inject();
 
             expect($AppStatic.app).toEqual(new plat.dependency.Injector('app', App));
             expect(appSpy).not.toHaveBeenCalled();

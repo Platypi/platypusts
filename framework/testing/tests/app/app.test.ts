@@ -23,17 +23,17 @@ module tests.app {
         }
     }
 
-    var $AppStatic: plat.IAppStatic = plat.acquire(plat.IAppStatic),
-        $EventManagerStatic: plat.events.IEventManagerStatic = plat.acquire(plat.events.IEventManagerStatic),
-        $LifecycleEventStatic: plat.events.ILifecycleEventStatic = plat.acquire(plat.events.ILifecycleEventStatic),
-        compat: plat.ICompat = plat.acquire(plat.ICompat),
+    var $AppStatic = plat.acquire(plat.IAppStatic),
+        $EventManagerStatic = plat.acquire(plat.events.IEventManagerStatic),
+        $LifecycleEventStatic = plat.acquire(plat.events.ILifecycleEventStatic),
+        compat = plat.acquire(plat.ICompat),
         app: App;
 
     describe('App Tests', () => {
         beforeEach(() => {
             plat.register.app('app', App);
             (<any>$AppStatic).__registerAppEvents();
-            app = plat.acquire(plat.IApp);
+            app = <App>plat.acquire(plat.IApp);
             called = false;
         });
 

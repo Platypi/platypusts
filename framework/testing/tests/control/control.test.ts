@@ -1,5 +1,5 @@
 ﻿module tests.control {
-    var ControlFactory: plat.IControlFactory = plat.acquire(plat.IControlFactory),
+    var ControlFactory = plat.acquire(plat.IControlFactory),
         control: plat.IControl;
 
     ddescribe('Control Tests', () => {

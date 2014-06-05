@@ -1,7 +1,7 @@
 ﻿/// <reference path="../../../typings/tsd.d.ts" />
 
 module tests.storage.cache {
-    var Cache: plat.storage.ICacheFactory = plat.acquire(plat.storage.ICacheFactory),
+    var Cache = plat.acquire(plat.storage.ICacheFactory),
         id = 'testCache';
 
     describe('Cache Tests', () => {

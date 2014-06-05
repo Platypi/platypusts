@@ -1,7 +1,7 @@
 ﻿/// <reference path="../../../typings/tsd.d.ts" />
 
 module tests.expressions.tokenizer {
-    var tokenizer: plat.expressions.ITokenizer = plat.acquire(plat.expressions.ITokenizer),
+    var tokenizer = plat.acquire(plat.expressions.ITokenizer),
         tests: Array<ITokenTest> = [{
             name: 'Mathematical Operations',
             expression: '5 * 3 + (12 - 5) * 10 / 2',
