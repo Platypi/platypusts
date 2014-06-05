@@ -156,7 +156,7 @@
     }
 
     /**
- * The Type for referencing the '$Compat' injectable as a dependency.
+     * The Type for referencing the '$Compat' injectable as a dependency.
      */
     export function ICompat(): ICompat {
         return new Compat();
@@ -263,8 +263,8 @@
     }
 
     /**
- * Describes an object containing the correctly mapped touch events for the browser.
- */
+     * Describes an object containing the correctly mapped touch events for the browser.
+     */
     export interface IMappedEvents extends IObject<string> {
         /**
          * An event type for touch start.
