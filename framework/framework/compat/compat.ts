@@ -91,8 +91,6 @@
         private __defineAnimationEvents() {
             var div = this.$Document.createElement('div'),
                 animations: IObject<string> = {
-                    OAnimation: 'o',
-                    MozAnimation: '',
                     WebkitAnimation: 'webkit',
                     animation: ''
                 },
@@ -106,22 +104,26 @@
                 if (!isUndefined(div.style[key])) {
                     prefix = animations[key];
                     break;
-    }
+                }
             }
 
             this.animationSupported = index > -1;
-            this.animationEvents = prefix === 'webkit' ? {
+            this.animationEvents = prefix === '' ? {
+                $animation: 'animation',
+                $animationStart: 'animationstart',
+                $animationEnd: 'animationend',
+                $transition: 'transition',
+                $transitionStart: 'transitionstart',
+                $transitionEnd: 'transitionend'
+            } : {
+                $animation: prefix + 'Animation',
                 $animationStart: prefix + 'AnimationStart',
                 $animationEnd: prefix + 'AnimationEnd',
+                $transition: prefix + 'Transition',
                 $transitionStart: prefix + 'TransitionStart',
                 $transitionEnd: prefix + 'TransitionEnd'
-            } : {
-                $animationStart: prefix + 'animationstart',
-                $animationEnd: prefix + 'animationend',
-                $transitionStart: prefix + 'transitionstart',
-                $transitionEnd: prefix + 'transitionend'
             };
-    }
+        }
 
         private __findCss() {
             var $document = this.$Document,
@@ -149,9 +151,7 @@
                 }
             }
 
-            var $exception: IExceptionStatic = acquire(__ExceptionStatic);
-            $exception.warn('platypus.css was not found prior to platypus.js. If you intend to use ' +
-                'platypus.css, please move it before platypus.js inside your head or body declaration');
+            this.platCss = false;
         }
     }
 
@@ -292,6 +292,11 @@
      */
     export interface IAnimationEvents extends IObject<string> {
         /**
+         * The animation identifier.
+         */
+        $animation: string;
+
+        /**
          * The animation start event.
          */
         $animationStart: string;
@@ -300,6 +305,11 @@
          * The animation end event.
          */
         $animationEnd: string;
+
+        /**
+         * The transition identifier.
+         */
+        $transition: string;
 
         /**
          * The transition start event.

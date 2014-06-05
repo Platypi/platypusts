@@ -63,7 +63,7 @@
     .animation(@name; @duration; @function; @delay; @count; @direction; @mode; @webMozList);
 }
 .animation(@name; @duration: 200ms; @function: ease; @delay: 0s; @count: 1; @direction: normal; @mode: none; @vendorList: @webMozList) when (default()) {
-    .vendor-loop(animation; @arguments; @vendorList);
+    .vendor-loop(animation; @name @duration @function @delay @count @direction @mode; @vendorList);
 }
 
 .animation-delay(@delay) {

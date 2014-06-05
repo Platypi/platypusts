@@ -1463,9 +1463,9 @@
     }
 
     /**
-     * Describes an object containing a speed in both the horiztonal and vertical directions.
+     * Describes an object containing a speed in both the horizontal and vertical directions.
      */
-    export interface IVelocity extends IPoint {
+    export interface IVelocity {
         /**
          * The horizontal speed.
          */
@@ -1540,7 +1540,8 @@
     }
 
     /**
-     * Describes an object used for creating a custom class for styling an element.
+     * Describes an object used for creating a custom class for styling an element 
+     * listening for a custom DOM event.
      */
     export interface IDefaultStyle {
         /**

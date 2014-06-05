@@ -1,16 +1,28 @@
 ﻿module plat.ui.animations {
     export class SimpleCssAnimation extends Animation implements ISimpleCssAnimation {
+        $Window: Window = acquire(__Window);
+
         className: string;
 
         start() {
-            if (!this.$Compat.platCss) {
+            var $compat = this.$Compat,
+                $dom = this.dom,
+                animationId = $compat.animationEvents.$animation,
+                element = this.element,
+                className = this.className;
+
+            $dom.addClass(element, className);
+
+            var computedStyle = this.$Window.getComputedStyle(element);
+            if (computedStyle[<any>(animationId + 'Name')] === 'none' ||
+                computedStyle[<any>(animationId + 'PlayState')] === 'paused') {
+                $dom.removeClass(element, className);
                 this.end();
                 return;
             }
 
-            this.dom.addClass(this.element, this.className);
             this.animationEnd((ev: Event) => {
-                this.dom.removeClass(this.element, this.className);
+                $dom.removeClass(element, className);
                 this.end();
             });
         }
