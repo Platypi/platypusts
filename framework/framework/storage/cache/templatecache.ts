@@ -50,7 +50,7 @@ module plat.storage {
      */
     export function ITemplateCache(): ITemplateCache { 
         return new TemplateCache()
-    };
+    }
 
     register.injectable(__TemplateCache, ITemplateCache);
 
