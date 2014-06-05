@@ -9,7 +9,9 @@ module plat.storage {
     /**
      * The Type for referencing the '$LocalStorage' injectable as a dependency.
      */
-    export var ILocalStorage = LocalStorage;
+    export function ILocalStorage(): ILocalStorage {
+        return new LocalStorage();
+    }
 
     register.injectable(__LocalStorage, ILocalStorage);
 

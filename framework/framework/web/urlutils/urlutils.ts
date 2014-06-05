@@ -130,7 +130,9 @@
     /**
      * The Type for referencing the '$UrlUtilsInstance' injectable as a dependency.
      */
-    export var IUrlUtilsInstance = UrlUtils;
+    export function IUrlUtilsInstance(): IUrlUtilsInstance {
+        return new UrlUtils();
+    }
 
     register.injectable(__UrlUtilsInstance, IUrlUtilsInstance, null, register.INSTANCE);
 
