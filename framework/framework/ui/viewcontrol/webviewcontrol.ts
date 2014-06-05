@@ -30,17 +30,17 @@
         /**
          * The title of the page, corresponds to the textContent of the title element in the HTML head.
          */
-        title: string;
+        title?: string;
 
         /**
          * Specifies the navigator for this control. Used for navigating to other IWebViewControls
          * in a routeport.
          */
-        navigator: plat.navigation.IRoutingNavigator;
+        navigator?: plat.navigation.IRoutingNavigator;
 
         /**
          * Allows the IWebViewControl set its title programmatically and have it reflect in the browser title.
          */
-        setTitle(title: string): void;
+        setTitle? (title: string): void;
     }
 }

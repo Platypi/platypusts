@@ -243,9 +243,6 @@ module plat {
 
         loaded() { }
 
-        /**
-         * {@link module:plat.IControl.getControlsByName}
-         */
         getControlsByName(name: string): Array<IControl> {
             return Control.__getControls(this, 'name', name);
         }
@@ -662,7 +659,7 @@ module plat {
          * @param useCapture Whether to fire the event on the capture or the bubble phase 
          * of event propagation.
          */
-        addEventListener(element: Node, type: string, listener: ui.IGestureListener, useCapture?: boolean): IRemoveListener;
+        addEventListener? (element: Node, type: string, listener: ui.IGestureListener, useCapture?: boolean): IRemoveListener;
         /**
          * Adds an event listener of the specified type to the specified element. Removal of the 
          * event is handled automatically upon disposal.
@@ -673,7 +670,7 @@ module plat {
          * @param useCapture Whether to fire the event on the capture or the bubble phase 
          * of event propagation.
          */
-        addEventListener(element: Window, type: string, listener: ui.IGestureListener, useCapture?: boolean): IRemoveListener;
+        addEventListener? (element: Window, type: string, listener: ui.IGestureListener, useCapture?: boolean): IRemoveListener;
 
         /**
          * Allows an IControl to observe any property on its context and receive updates when
@@ -726,7 +723,7 @@ module plat {
          * @param expression The expression string to watch for changes.
          * @param listener The listener to call when the expression identifer values change.
          */
-        observeExpression(expression: string, listener: (value: any, oldValue: any) => void): IRemoveListener;
+        observeExpression? (expression: string, listener: (value: any, oldValue: any) => void): IRemoveListener;
         /**
          * Uses a parsed expression to observe any associated identifiers. When an identifier
          * value changes, the listener will be called.
@@ -734,7 +731,7 @@ module plat {
          * @param expression The IParsedExpression to watch for changes.
          * @param listener The listener to call when the expression identifer values change.
          */
-        observeExpression(expression: expressions.IParsedExpression, listener: (value: any, oldValue: any) => void): IRemoveListener;
+        observeExpression? (expression: expressions.IParsedExpression, listener: (value: any, oldValue: any) => void): IRemoveListener;
 
         /**
          * Evaluates an expression string, using the control.context.
@@ -743,7 +740,7 @@ module plat {
          * @param context An optional context with which to parse. If 
          * no context is specified, the control.context will be used.
          */
-        evaluateExpression(expression: string, context?: any): any;
+        evaluateExpression? (expression: string, context?: any): any;
         /**
          * Evaluates a parsed expression, using the control.context.
          * 
@@ -751,7 +748,7 @@ module plat {
          * @param context An optional context with which to parse. If 
          * no context is specified, the control.context will be used.
          */
-        evaluateExpression(expression: expressions.IParsedExpression, context?: any): any;
+        evaluateExpression? (expression: expressions.IParsedExpression, context?: any): any;
 
         /**
          * Creates a new DispatchEvent and propagates it to controls based on the 
@@ -767,7 +764,7 @@ module plat {
          * 
          * @see events.eventDirection
          */
-        dispatchEvent(name: string, direction?: 'up', ...args: any[]): void;
+        dispatchEvent? (name: string, direction?: 'up', ...args: any[]): void;
         /**
          * Creates a new DispatchEvent and propagates it to controls based on the 
          * provided direction mechanism. Controls in the propagation chain that registered
@@ -782,7 +779,7 @@ module plat {
          * 
          * @see events.eventDirection
          */
-        dispatchEvent(name: string, direction?: 'down', ...args: any[]): void;
+        dispatchEvent? (name: string, direction?: 'down', ...args: any[]): void;
         /**
          * Creates a new DispatchEvent and propagates it to controls based on the 
          * provided direction mechanism. Controls in the propagation chain that registered
@@ -797,7 +794,7 @@ module plat {
          * 
          * @see events.eventDirection
          */
-        dispatchEvent(name: string, direction?: 'direct', ...args: any[]): void;
+        dispatchEvent? (name: string, direction?: 'direct', ...args: any[]): void;
         /**
          * Creates a new DispatchEvent and propagates it to controls based on the 
          * provided direction mechanism. Controls in the propagation chain that registered
@@ -813,7 +810,7 @@ module plat {
          * 
          * @see events.eventDirection
          */
-        dispatchEvent(name: string, direction?: string, ...args: any[]): void;
+        dispatchEvent? (name: string, direction?: string, ...args: any[]): void;
 
         /**
          * Registers a listener for a DispatchEvent. The listener will be called when a DispatchEvent is 
@@ -822,7 +819,7 @@ module plat {
          * @param name The name of the event, cooinciding with the DispatchEvent name.
          * @param listener The method called when the DispatchEvent is fired.
          */
-        on(name: string, listener: (ev: events.IDispatchEventInstance, ...args: any[]) => void): IRemoveListener;
+        on? (name: string, listener: (ev: events.IDispatchEventInstance, ...args: any[]) => void): IRemoveListener;
 
         /**
          * The dispose event is called when a control is being removed from memory. A control should release 

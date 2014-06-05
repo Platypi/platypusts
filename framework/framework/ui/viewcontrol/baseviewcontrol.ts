@@ -88,13 +88,13 @@
         /**
          * Specifies that this control will have its own context, and it should not inherit a context.
          */
-        hasOwnContext: boolean;
+        hasOwnContext?: boolean;
 
         /**
          * Specifies the navigator for this control. Used for navigating to other IViewControls
          * in a controls.Viewport.
          */
-        navigator: navigation.IBaseNavigator;
+        navigator?: navigation.IBaseNavigator;
 
         /**
          * This event is fired when this control has been navigated to.

@@ -16,6 +16,6 @@ module plat.ui {
          * Specifies the navigator for this control. Used for navigating to other IViewControls
          * in a viewport.
          */
-        navigator: navigation.INavigatorInstance;
+        navigator?: navigation.INavigatorInstance;
     }
 }
