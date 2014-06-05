@@ -139,7 +139,7 @@
          * Builds a valid route with a valid query string to use for navigation.
          * 
          * @param routeParameter The route portion of the navigation path. Used to 
-         * match with a registered ViewControl.
+         * match with a registered WebViewControl.
          * @param query The route query object if passed into the 
          * IRouteNavigationOptions.
          */
@@ -222,14 +222,14 @@
         }
 
         /**
-         * Registers a ViewControl's route.
+         * Registers a WebViewControl's route.
          * 
          * @param route Can be either a string or RegExp.
-         * @param injector The injector for the ViewControl defined by 
+         * @param injector The injector for the WebViewControl defined by 
          * the type.
          * @param type The control type.
          */
-        _registerRoute(route: any, injector: dependency.IInjector<ui.IViewControl>, type: string): void {
+        _registerRoute(route: any, injector: dependency.IInjector<ui.IBaseViewControl>, type: string): void {
             var regexp = isRegExp(route),
                 routeParameters: IRouteMatcher;
 
@@ -413,7 +413,7 @@
 
     /**
      * Describes the object that handles route registration and navigation 
-     * to and from IViewControls within the Routeport.
+     * to and from IWebViewControls within the Routeport.
      */
     export interface IRouter {
         /**
@@ -465,12 +465,12 @@
      */
     export interface IRouteMatcher {
         /**
-         * The IViewControl injector.
+         * The IBaseViewControl injector.
          */
-        injector?: dependency.IInjector<ui.IViewControl>;
+        injector?: dependency.IInjector<ui.IBaseViewControl>;
 
         /**
-         * The type of IViewControl
+         * The type of IBaseViewControl
          */
         type?: string;
 
@@ -494,10 +494,10 @@
         /**
          * The associated view control injector for the route.
          */
-        injector: dependency.IInjector<ui.IViewControl>;
+        injector: dependency.IInjector<ui.IBaseViewControl>;
 
         /**
-         * The type of IViewControl
+         * The type of IBaseViewControl
          */
         type: string;
 

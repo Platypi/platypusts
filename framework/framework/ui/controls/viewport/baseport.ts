@@ -148,6 +148,6 @@
          * @param fromControl The ViewControl being navigated 
          * away from.
          */
-        navigateFrom(fromControl: IViewControl): void;
+        navigateFrom(fromControl: IBaseViewControl): void;
     }
 }

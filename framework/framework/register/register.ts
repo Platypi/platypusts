@@ -5,10 +5,10 @@
 var controlInjectors: plat.dependency.IInjectorObject<plat.IControl> = {};
 
 /**
- * An IInjectorObject of plat.ui.IViewControls. Contains all the registered
+ * An IInjectorObject of plat.ui.IBaseViewControls. Contains all the registered
  * view controls for an application.
  */
-var viewControlInjectors: plat.dependency.IInjectorObject<plat.ui.IViewControl> = {};
+var viewControlInjectors: plat.dependency.IInjectorObject<plat.ui.IBaseViewControl> = {};
 
 /**
  * An IInjectorObject of objects. Contains all the registered
@@ -126,7 +126,11 @@ module plat.register {
      * 
      * @example register.viewControl('my-view-control', MyViewControl, null, ['customers/:customer(/:ordernumber)']);
      */
-    export function viewControl(name: string, Type: new (...args: any[]) => ui.IViewControl,
+    export function viewControl<T>(name: string, Type: new (...args: any[]) => ui.IBaseViewControl,
+        dependencies?: Array<any>): typeof register
+    export function viewControl<T>(name: string, Type: new (...args: any[]) => ui.IWebViewControl,
+        dependencies?: Array<any>, routes?: Array<any>): typeof register
+    export function viewControl<T>(name: string, Type: new (...args: any[]) => ui.IBaseViewControl,
         dependencies?: Array<any>, routes?: Array<any>): typeof register {
         if (isString(name)) {
             name = name.toLowerCase();

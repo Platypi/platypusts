@@ -79,7 +79,9 @@
     <TypeScriptCompile Include="ui\dom\domglobal.ts" />
     <TypeScriptCompile Include="ui\resources\resources.ts" />
     <TypeScriptCompile Include="ui\templatecontrol\templatecontrol.ts" />
+    <TypeScriptCompile Include="ui\viewcontrol\baseviewcontrol.ts" />
     <TypeScriptCompile Include="ui\viewcontrol\viewcontrol.ts" />
+    <TypeScriptCompile Include="ui\viewcontrol\webviewcontrol.ts" />
     <TypeScriptCompile Include="utils\utils.ts" />
     <TypeScriptCompile Include="utils\utilsglobal.ts" />
     <TypeScriptCompile Include="web\browser\browser.ts" />

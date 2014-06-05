@@ -29,7 +29,7 @@
             this.$Router.route(path, options);
         }
 
-        navigated(control: ui.IViewControl, parameter: web.IRoute<any>, options: web.IRouteNavigationOptions): void {
+        navigated(control: ui.IBaseViewControl, parameter: web.IRoute<any>, options: web.IRouteNavigationOptions): void {
             super.navigated(control, parameter, options);
             this.currentState.route = parameter;
         }
@@ -77,7 +77,7 @@
 
             this.__historyLength++;
             this.baseport.navigateFrom(viewControl);
-            this.$ViewControlFactory.dispose(viewControl);
+            this.$BaseViewControlFactory.dispose(viewControl);
             this.baseport.navigateTo(ev);
         }
     }
@@ -97,12 +97,12 @@
      */
     export interface IRoutingNavigator extends IBaseNavigator {
         /**
-         * Allows a ui.IViewControl to navigate to another ui.IViewControl. Also allows for
-         * navigation parameters to be sent to the new ui.IViewControl.
+         * Allows a ui.IBaseViewControl to navigate to another ui.IBaseViewControl. Also allows for
+         * navigation parameters to be sent to the new ui.IBaseViewControl.
          * 
          * @param path The url path to navigate to.
-         * @param options Optional INavigationOptions for ignoring the current ui.IViewControl in the history as
-         * well as specifying a new templateUrl for the next ui.IViewControl to use.
+         * @param options Optional INavigationOptions for ignoring the current ui.IBaseViewControl in the history as
+         * well as specifying a new templateUrl for the next ui.IBaseViewControl to use.
          */
         navigate(path: string, options?: web.IRouteNavigationOptions): void;
 
@@ -110,18 +110,18 @@
          * Called by the Viewport to make the Navigator aware of a successful navigation. The Navigator will
          * in-turn call the app.navigated event.
          * 
-         * @param control The ui.IViewControl to which the navigation occurred.
+         * @param control The ui.IBaseViewControl to which the navigation occurred.
          * @param parameter The navigation parameter sent to the control.
          * @param options The INavigationOptions used during navigation.
          */
-        navigated(control: ui.IViewControl, parameter: web.IRoute<any>, options: web.IRouteNavigationOptions): void;
+        navigated(control: ui.IBaseViewControl, parameter: web.IRoute<any>, options: web.IRouteNavigationOptions): void;
 
         /**
-         * Returns to the last visited ui.IViewControl.
+         * Returns to the last visited ui.IBaseViewControl.
          * 
-         * @param options Optional IBackNavigationOptions allowing the ui.IViewControl
+         * @param options Optional IBackNavigationOptions allowing the ui.IBaseViewControl
          * to customize navigation. Enables navigating back to a specified point in history as well
-         * as specifying a new templateUrl to use at the next ui.IViewControl.
+         * as specifying a new templateUrl to use at the next ui.IBaseViewControl.
          */
         goBack(options?: IBaseBackNavigationOptions): void;
     }

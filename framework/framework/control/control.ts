@@ -1,3 +1,6 @@
+/**
+ * @module plat
+ */
 module plat {
     /**
      * Used for facilitating data and DOM manipulation. Contains lifecycle events 
@@ -240,6 +243,9 @@ module plat {
 
         loaded() { }
 
+        /**
+         * {@link module:plat.IControl.getControlsByName}
+         */
         getControlsByName(name: string): Array<IControl> {
             return Control.__getControls(this, 'name', name);
         }
@@ -575,7 +581,7 @@ module plat {
         type?: string;
 
         /**
-         * The parent control that created this control. If this control does not implement ui.IViewControl
+         * The parent control that created this control. If this control does not implement ui.IBaseViewControl
          * then it will inherit its context from the parent.
          */
         parent?: ui.ITemplateControl;
@@ -611,7 +617,7 @@ module plat {
         /**
          * The initialize event method for a control. In this method a control should initialize all the necessary 
          * variables. This method is typically only necessary for view controls. If a control does not implement 
-         * ui.IViewControl then it is not safe to access, observe, or modify the context property in this method.
+         * ui.IBaseViewControl then it is not safe to access, observe, or modify the context property in this method.
          * A view control should call services/set context in this method in order to fire the loaded event. No control 
          * will be loaded until the view control has specified a context.
          */
