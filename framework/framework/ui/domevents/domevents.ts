@@ -122,7 +122,7 @@
         /**
          * Whether or not the user is currently touching the screen.
          */
-        _inTouch: boolean = false;
+        _inTouch: boolean;
 
         /**
          * The array of all elements currently registered for 
@@ -308,10 +308,11 @@
         _onTouchStart(ev: IPointerEvent): void {
             var isTouch = ev.type !== 'mousedown';
 
-            // return immediately if mouse event and currently in a touch or
-            // if the touch count is greater than 1
-            if (this._inTouch && !isTouch) {
+            // return immediately if mouse event and currently in a touch
+            if (!!this._inTouch && !isTouch) {
                 return;
+            } else if (isTouch) {
+                this._inTouch = isTouch;
             }
 
             this.__standardizeEventObject(ev);
@@ -320,7 +321,6 @@
                 return;
             }
 
-            this._inTouch = isTouch;
             this.__hasMoved = false;
 
             this.__lastTouchDown = this.__swipeOrigin = {
@@ -389,7 +389,7 @@
             // if it is a mouse event and currently in a touch
             if (!this.__detectMove ||
                 this.__touchCount > 1 ||
-                (this._inTouch && ev.type === 'mousemove')) {
+                (!!this._inTouch && ev.type === 'mousemove')) {
                 return;
             }
 
@@ -456,11 +456,15 @@
          */
         _onTouchEnd(ev: IPointerEvent): void {
             // call prevent default to try and avoid mouse events
-            ev.preventDefault();
+            if (ev.type !== 'mouseup') {
+                this._inTouch = false;
+                ev.preventDefault();
+            } else if (!isUndefined(this._inTouch)) {
+                return;
+            }
 
             // clear hold event
             this.__clearHold();
-            this._inTouch = false;
             // set any captured target back to null
             this.__capturedTarget = null;
 

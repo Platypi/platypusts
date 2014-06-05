@@ -854,7 +854,7 @@ module plat.ui {
          * Set to the root ancestor control from which this control inherits its context. This value
          * can be equal to this control.
          */
-        root: ITemplateControl;
+        root?: ITemplateControl;
 
         /**
          * A method called for ITemplateControls to set their template. During this method a control should
@@ -895,7 +895,7 @@ module plat.ui {
          * @param aliases An array of aliases to search for.
          * @param resources An optional resources object to extend, if no resources object is passed in a new one will be created.
          */
-        getResources(aliases: Array<string>, resources?: any): IObject<any>;
+        getResources? (aliases: Array<string>, resources?: any): IObject<any>;
 
         /**
          * Starts at a control and searches up its parent chain for a particular resource alias. 
@@ -904,7 +904,7 @@ module plat.ui {
          * 
          * @param alias The alias to search for.
          */
-        findResource(alias: string): { resource: IResource; control: ITemplateControl; };
+        findResource? (alias: string): { resource: IResource; control: ITemplateControl; };
 
         /**
          * Evaluates an expression string, using the control.context.
@@ -913,7 +913,7 @@ module plat.ui {
          * @param context An optional context with which to parse. If 
          * no context is specified, the control.context will be used.
          */
-        evaluateExpression(expression: string, context?: any): any;
+        evaluateExpression? (expression: string, context?: any): any;
         /**
          * Evaluates a parsed expression, using the control.context.
          * 
@@ -921,6 +921,6 @@ module plat.ui {
          * @param context An optional context with which to parse. If 
          * no context is specified, the control.context will be used.
          */
-        evaluateExpression(expression: expressions.IParsedExpression, context?: any): any;
+        evaluateExpression? (expression: expressions.IParsedExpression, context?: any): any;
     }
 }

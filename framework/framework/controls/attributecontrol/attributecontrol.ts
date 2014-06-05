@@ -71,7 +71,7 @@ module plat.controls {
          * control's element. Can be null if no ITemplateControl
          * exists.
          */
-        templateControl: ui.ITemplateControl;
+        templateControl?: ui.ITemplateControl;
 
         /**
          * Specifies the priority of the attribute. The purpose of 
@@ -80,6 +80,6 @@ module plat.controls {
          * and loaded before plat-tap, meaning it has the first chance 
          * to respond to events.
          */
-        priority: number;
+        priority?: number;
     }
 }

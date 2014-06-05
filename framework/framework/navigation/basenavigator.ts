@@ -5,7 +5,7 @@
     export class BaseNavigator implements IBaseNavigator {
         $EventManagerStatic: events.IEventManagerStatic = acquire(__EventManagerStatic);
         $NavigationEventStatic: events.INavigationEventStatic = acquire(__NavigationEventStatic);
-        $ViewControlFactory: ui.IViewControlFactory = acquire(__ViewControlFactory);
+        $BaseViewControlFactory: ui.IBaseViewControlFactory = acquire(__BaseViewControlFactory);
         $ContextManagerStatic: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
 
         uid: string;
@@ -26,7 +26,7 @@
 
         navigate(navigationParameter: any, options: IBaseNavigationOptions): void { }
 
-        navigated(control: ui.IViewControl, parameter: any, options: IBaseNavigationOptions): void {
+        navigated(control: ui.IBaseViewControl, parameter: any, options: IBaseNavigationOptions): void {
             this.currentState = {
                 control: control
             };
@@ -95,10 +95,10 @@
         initialize(baseport: ui.controls.IBaseport): void;
 
         /**
-         * Allows a ui.IViewControl to navigate to another ui.IViewControl. Also allows for
-         * navigation parameters to be sent to the new ui.IViewControl.
+         * Allows a ui.IBaseViewControl to navigate to another ui.IBaseViewControl. Also allows for
+         * navigation parameters to be sent to the new ui.IBaseViewControl.
          * 
-         * @param navigationParameter An optional navigation parameter to send to the next ui.IViewControl.
+         * @param navigationParameter An optional navigation parameter to send to the next ui.IBaseViewControl.
          * @param options Optional IBaseNavigationOptions used for navigation.
          */
         navigate(navigationParameter: any, options?: IBaseNavigationOptions): void;
@@ -107,11 +107,11 @@
          * Called by the Viewport to make the Navigator aware of a successful navigation. The Navigator will
          * in-turn call the app.navigated event.
          * 
-         * @param control The ui.IViewControl to which the navigation occurred.
+         * @param control The ui.IBaseViewControl to which the navigation occurred.
          * @param parameter The navigation parameter sent to the control.
          * @param options The INavigationOptions used during navigation.
          */
-        navigated(control: ui.IViewControl, parameter: any, options: IBaseNavigationOptions): void;
+        navigated(control: ui.IBaseViewControl, parameter: any, options: IBaseNavigationOptions): void;
 
         /**
          * Every navigator must implement this method, defining what happens when a view 
@@ -133,7 +133,7 @@
      */
     export interface IBaseNavigationOptions {
         /**
-         * Allows a ui.IViewControl to leave itself out of the 
+         * Allows a ui.IBaseViewControl to leave itself out of the 
          * navigation history.
          */
         replace?: boolean;
@@ -158,6 +158,6 @@
         /**
          * The view control associated with a history entry.
          */
-        control: ui.IViewControl;
+        control: ui.IBaseViewControl;
     }
 }

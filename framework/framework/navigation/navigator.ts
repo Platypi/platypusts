@@ -8,7 +8,7 @@ module plat.navigation {
         history: Array<IBaseNavigationState> = [];
 
         navigate(Constructor?: new (...args: any[]) => ui.IViewControl, options?: INavigationOptions): void;
-        navigate(injector?: dependency.IInjector<IControl>, options?: INavigationOptions): void;
+        navigate(injector?: dependency.IInjector<ui.IViewControl>, options?: INavigationOptions): void;
         navigate(Constructor?: any, options?: INavigationOptions) {
             var state = this.currentState || <IBaseNavigationState>{},
                 viewControl = state.control,
@@ -23,6 +23,8 @@ module plat.navigation {
             if (event.canceled) {
                 return;
             }
+
+            this.$BaseViewControlFactory.detach(viewControl);
 
             if (isObject(parameter)) {
                 parameter = deepExtend({}, parameter);
@@ -39,7 +41,7 @@ module plat.navigation {
 
                 while (keys.length > 0) {
                     key = keys.pop();
-                    control = viewControlInjectors[key];
+                    control = <any>viewControlInjectors[key];
                     if (control.Constructor === Constructor) {
                         injector = control;
                         break;
@@ -59,9 +61,9 @@ module plat.navigation {
                 this.baseport.navigateFrom(viewControl).then(() => {
                     this.$ViewControlFactory.detach(viewControl);
 
-                    if (!options.replace) {
-                        this.history.push({ control: viewControl });
-                    }
+                if (!options.replace) {
+                    this.history.push({ control: viewControl });
+                }
 
                     this.baseport.navigateTo(event);
                 });
@@ -113,22 +115,22 @@ module plat.navigation {
             }
 
             this.baseport.navigateFrom(viewControl).then(() => {
-                this.$ViewControlFactory.dispose(viewControl);
+                this.$BaseViewControlFactory.dispose(viewControl);
 
-                var last: IBaseNavigationState = this._goBackLength(length);
+            var last: IBaseNavigationState = this._goBackLength(length);
 
-                if (isNull(last)) {
-                    return;
-                }
+            if (isNull(last)) {
+                return;
+            }
 
-                viewControl = last.control;
+            viewControl = last.control;
 
-                this.currentState = last;
+            this.currentState = last;
 
-                event.target = viewControl;
-                event.type = viewControl.type;
+            event.target = viewControl;
+            event.type = viewControl.type;
 
-                this.baseport.navigateTo(event);
+            this.baseport.navigateTo(event);
             });
         }
 
@@ -138,7 +140,7 @@ module plat.navigation {
 
         clearHistory(): void {
             var history = this.history,
-                dispose = this.$ViewControlFactory.dispose;
+                dispose = this.$BaseViewControlFactory.dispose;
 
             while (history.length > 0) {
                 dispose(history.pop().control);
@@ -178,7 +180,7 @@ module plat.navigation {
             length = isNumber(length) ? length : 1;
 
             var last: IBaseNavigationState,
-                dispose = this.$ViewControlFactory.dispose;
+                dispose = this.$BaseViewControlFactory.dispose;
 
             while (length-- > 0) {
                 if (!isNull(last) && !isNull(last.control)) {
@@ -220,7 +222,7 @@ module plat.navigation {
          * @param options Optional IBaseNavigationOptions used for Navigation.
          */
         navigate(Constructor?: new (...args: any[]) => ui.IViewControl, options?: INavigationOptions): void;
-        navigate(injector?: dependency.IInjector<IControl>, options?: INavigationOptions): void;
+        navigate(injector?: dependency.IInjector<ui.IViewControl>, options?: INavigationOptions): void;
 
         /**
          * Returns to the last visited ui.IViewControl.

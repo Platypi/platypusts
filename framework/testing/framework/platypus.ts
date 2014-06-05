@@ -768,10 +768,10 @@ module plat {
     var controlInjectors: plat.dependency.IInjectorObject<plat.IControl> = {};
     
     /**
-     * An IInjectorObject of plat.ui.IViewControls. Contains all the registered
+     * An IInjectorObject of plat.ui.IBaseViewControls. Contains all the registered
      * view controls for an application.
      */
-    var viewControlInjectors: plat.dependency.IInjectorObject<plat.ui.IViewControl> = {};
+    var viewControlInjectors: plat.dependency.IInjectorObject<plat.ui.IBaseViewControl> = {};
     
     /**
      * An IInjectorObject of objects. Contains all the registered
@@ -889,7 +889,7 @@ module plat {
          * 
          * @example register.viewControl('my-view-control', MyViewControl, null, ['customers/:customer(/:ordernumber)']);
          */
-        export function viewControl(name: string, Type: new (...args: any[]) => ui.IViewControl,
+        export function viewControl(name: string, Type: new (...args: any[]) => ui.IBaseViewControl,
             dependencies?: Array<any>, routes?: Array<any>): typeof register {
             if (isString(name)) {
                 name = name.toLowerCase();
@@ -4637,7 +4637,7 @@ module plat {
              * the type.
              * @param type The control type.
              */
-            _registerRoute(route: any, injector: dependency.IInjector<ui.IViewControl>, type: string): void {
+            _registerRoute(route: any, injector: dependency.IInjector<ui.IBaseViewControl>, type: string): void {
                 var regexp = isRegExp(route),
                     routeParameters: IRouteMatcher;
 
@@ -4875,7 +4875,7 @@ module plat {
             /**
              * The IViewControl injector.
              */
-            injector?: dependency.IInjector<ui.IViewControl>;
+            injector?: dependency.IInjector<ui.IBaseViewControl>;
 
             /**
              * The type of IViewControl
@@ -4902,7 +4902,7 @@ module plat {
             /**
              * The associated view control injector for the route.
              */
-            injector: dependency.IInjector<ui.IViewControl>;
+            injector: dependency.IInjector<ui.IBaseViewControl>;
 
             /**
              * The type of IViewControl
@@ -10403,7 +10403,7 @@ module plat {
         type?: string;
 
         /**
-         * The parent control that created this control. If this control does not implement ui.IViewControl
+         * The parent control that created this control. If this control does not implement ui.IBaseViewControl
          * then it will inherit its context from the parent.
          */
         parent?: ui.ITemplateControl;
@@ -10439,7 +10439,7 @@ module plat {
         /**
          * The initialize event method for a control. In this method a control should initialize all the necessary 
          * variables. This method is typically only necessary for view controls. If a control does not implement 
-         * ui.IViewControl then it is not safe to access, observe, or modify the context property in this method.
+         * ui.IBaseViewControl then it is not safe to access, observe, or modify the context property in this method.
          * A view control should call services/set context in this method in order to fire the loaded event. No control 
          * will be loaded until the view control has specified a context.
          */
@@ -20052,7 +20052,7 @@ module plat {
         export class BaseNavigator implements IBaseNavigator {
             $EventManagerStatic: events.IEventManagerStatic = acquire(__EventManagerStatic);
             $NavigationEventStatic: events.INavigationEventStatic = acquire(__NavigationEventStatic);
-            $ViewControlFactory: ui.IViewControlFactory = acquire(__ViewControlFactory);
+            $ViewControlFactory: ui.IBaseViewControlFactory = acquire(__ViewControlFactory);
             $ContextManagerStatic: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
 
             uid: string;
@@ -20073,7 +20073,7 @@ module plat {
 
             navigate(navigationParameter: any, options: IBaseNavigationOptions): void { }
 
-            navigated(control: ui.IViewControl, parameter: any, options: IBaseNavigationOptions): void {
+            navigated(control: ui.IBaseViewControl, parameter: any, options: IBaseNavigationOptions): void {
                 this.currentState = {
                     control: control
                 };
@@ -20139,10 +20139,10 @@ module plat {
             initialize(baseport: ui.controls.IBaseport): void;
 
             /**
-             * Allows a ui.IViewControl to navigate to another ui.IViewControl. Also allows for
-             * navigation parameters to be sent to the new ui.IViewControl.
+             * Allows a ui.IBaseViewControl to navigate to another ui.IBaseViewControl. Also allows for
+             * navigation parameters to be sent to the new ui.IBaseViewControl.
              * 
-             * @param navigationParameter An optional navigation parameter to send to the next ui.IViewControl.
+             * @param navigationParameter An optional navigation parameter to send to the next ui.IBaseViewControl.
              * @param options Optional IBaseNavigationOptions used for navigation.
              */
             navigate(navigationParameter: any, options?: IBaseNavigationOptions): void;
@@ -20151,11 +20151,11 @@ module plat {
              * Called by the Viewport to make the Navigator aware of a successful navigation. The Navigator will
              * in-turn call the app.navigated event.
              * 
-             * @param control The ui.IViewControl to which the navigation occurred.
+             * @param control The ui.IBaseViewControl to which the navigation occurred.
              * @param parameter The navigation parameter sent to the control.
              * @param options The INavigationOptions used during navigation.
              */
-            navigated(control: ui.IViewControl, parameter: any, options: IBaseNavigationOptions): void;
+            navigated(control: ui.IBaseViewControl, parameter: any, options: IBaseNavigationOptions): void;
 
             /**
              * Every navigator must implement this method, defining what happens when a view 
@@ -20172,7 +20172,7 @@ module plat {
          */
         export interface IBaseNavigationOptions {
             /**
-             * Allows a ui.IViewControl to leave itself out of the 
+             * Allows a ui.IBaseViewControl to leave itself out of the 
              * navigation history.
              */
             replace?: boolean;
@@ -20197,23 +20197,23 @@ module plat {
             /**
              * The view control associated with a history entry.
              */
-            control: ui.IViewControl;
+            control: ui.IBaseViewControl;
         }
 
         /**
-         * The Navigator class allows ui.IViewControls to navigate within a Viewport.
+         * The Navigator class allows ui.IBaseViewControls to navigate within a Viewport.
          * Every Viewport has its own Navigator instance, allowing multiple navigators to 
          * coexist in one app.
          */
         export class Navigator extends BaseNavigator implements INavigatorInstance {
             history: Array<IBaseNavigationState> = [];
 
-            navigate(Constructor?: new (...args: any[]) => ui.IViewControl, options?: INavigationOptions): void;
+            navigate(Constructor?: new (...args: any[]) => ui.IBaseViewControl, options?: INavigationOptions): void;
             navigate(injector?: dependency.IInjector<IControl>, options?: INavigationOptions): void;
             navigate(Constructor?: any, options?: INavigationOptions) {
                 var state = this.currentState || <IBaseNavigationState>{},
                     viewControl = state.control,
-                    injector: dependency.IInjector<ui.IViewControl>,
+                    injector: dependency.IInjector<ui.IBaseViewControl>,
                     key: string,
                     options = options || <IBaseNavigationOptions>{},
                     parameter = options.parameter,
@@ -20238,7 +20238,7 @@ module plat {
                     key = (<dependency.IInjector<any>>Constructor).name;
                 } else {
                     var keys = Object.keys(viewControlInjectors),
-                        control: dependency.IInjector<ui.IViewControl>;
+                        control: dependency.IInjector<ui.IBaseViewControl>;
 
                     while (keys.length > 0) {
                         key = keys.pop();
@@ -20345,7 +20345,7 @@ module plat {
              * 
              * @param Constructor The view control constructor to search for in the history stack.
              */
-            _findInHistory(Constructor: new (...args: any[]) => ui.IViewControl): number {
+            _findInHistory(Constructor: new (...args: any[]) => ui.IBaseViewControl): number {
                 var history = this.history,
                     length = history.length - 1,
                     index = -1,
@@ -20396,7 +20396,7 @@ module plat {
         register.injectable(__NavigatorInstance, INavigatorInstance, null, register.INSTANCE);
 
         /**
-         * An object implementing INavigator allows ui.IViewControls to implement methods 
+         * An object implementing INavigator allows ui.IBaseViewControls to implement methods 
          * used to navigate within a Viewport.
          */
         export interface INavigatorInstance extends IBaseNavigator {
@@ -20406,27 +20406,27 @@ module plat {
             history: Array<IBaseNavigationState>;
 
             /**
-             * Allows a ui.IViewControl to navigate to another ui.IViewControl. Also allows for
-             * navigation parameters to be sent to the new ui.IViewControl.
+             * Allows a ui.IBaseViewControl to navigate to another ui.IBaseViewControl. Also allows for
+             * navigation parameters to be sent to the new ui.IBaseViewControl.
              * 
-             * @param Constructor The Constructor for the new ui.IViewControl. The Navigator will find the injector 
+             * @param Constructor The Constructor for the new ui.IBaseViewControl. The Navigator will find the injector 
              * for the Constructor and create a new instance of the control.
              * @param options Optional IBaseNavigationOptions used for Navigation.
              */
-            navigate(Constructor?: new (...args: any[]) => ui.IViewControl, options?: INavigationOptions): void;
+            navigate(Constructor?: new (...args: any[]) => ui.IBaseViewControl, options?: INavigationOptions): void;
             navigate(injector?: dependency.IInjector<IControl>, options?: INavigationOptions): void;
 
             /**
-             * Returns to the last visited ui.IViewControl.
+             * Returns to the last visited ui.IBaseViewControl.
              * 
-             * @param options Optional IBackNavigationOptions allowing the ui.IViewControl
+             * @param options Optional IBackNavigationOptions allowing the ui.IBaseViewControl
              * to customize navigation. Enables navigating back to a specified point in history as well
-             * as specifying a new templateUrl to use at the next ui.IViewControl.
+             * as specifying a new templateUrl to use at the next ui.IBaseViewControl.
              */
             goBack(options?: IBackNavigationOptions): void;
 
             /**
-             * Lets the caller know if there are ui.IViewControls in the history, meaning the caller
+             * Lets the caller know if there are ui.IBaseViewControls in the history, meaning the caller
              * is safe to perform a backward navigation.
              */
             canGoBack(): boolean;
@@ -20443,7 +20443,7 @@ module plat {
          */
         export interface INavigationOptions extends IBaseNavigationOptions {
             /**
-             * An optional parameter to send to the next ui.IViewControl.
+             * An optional parameter to send to the next ui.IBaseViewControl.
              */
             parameter?: any;
         }
@@ -20454,15 +20454,15 @@ module plat {
          */
         export interface IBackNavigationOptions extends IBaseBackNavigationOptions {
             /**
-             * An optional parameter to send to the next ui.IViewControl.
+             * An optional parameter to send to the next ui.IBaseViewControl.
              */
             parameter?: any;
             /**
-             * A ui.IViewControl Constructor that the Navigator will
+             * A ui.IBaseViewControl Constructor that the Navigator will
              * use to navigate. The Navigator will search for an instance 
-             * of the ui.IViewControl in its history and navigate to it.
+             * of the ui.IBaseViewControl in its history and navigate to it.
              */
-            ViewControl?: new (...args: any[]) => ui.IViewControl;
+            ViewControl?: new (...args: any[]) => ui.IBaseViewControl;
         }
 
         /**
@@ -20495,7 +20495,7 @@ module plat {
                 this.$Router.route(path, options);
             }
 
-            navigated(control: ui.IViewControl, parameter: web.IRoute<any>, options: web.IRouteNavigationOptions): void {
+            navigated(control: ui.IBaseViewControl, parameter: web.IRoute<any>, options: web.IRouteNavigationOptions): void {
                 super.navigated(control, parameter, options);
                 this.currentState.route = parameter;
             }
@@ -20563,12 +20563,12 @@ module plat {
          */
         export interface IRoutingNavigator extends IBaseNavigator {
             /**
-             * Allows a ui.IViewControl to navigate to another ui.IViewControl. Also allows for
-             * navigation parameters to be sent to the new ui.IViewControl.
+             * Allows a ui.IBaseViewControl to navigate to another ui.IBaseViewControl. Also allows for
+             * navigation parameters to be sent to the new ui.IBaseViewControl.
              * 
              * @param path The url path to navigate to.
-             * @param options Optional INavigationOptions for ignoring the current ui.IViewControl in the history as
-             * well as specifying a new templateUrl for the next ui.IViewControl to use.
+             * @param options Optional INavigationOptions for ignoring the current ui.IBaseViewControl in the history as
+             * well as specifying a new templateUrl for the next ui.IBaseViewControl to use.
              */
             navigate(path: string, options?: web.IRouteNavigationOptions): void;
 
@@ -20576,18 +20576,18 @@ module plat {
              * Called by the Viewport to make the Navigator aware of a successful navigation. The Navigator will
              * in-turn call the app.navigated event.
              * 
-             * @param control The ui.IViewControl to which the navigation occurred.
+             * @param control The ui.IBaseViewControl to which the navigation occurred.
              * @param parameter The navigation parameter sent to the control.
              * @param options The INavigationOptions used during navigation.
              */
-            navigated(control: ui.IViewControl, parameter: web.IRoute<any>, options: web.IRouteNavigationOptions): void;
+            navigated(control: ui.IBaseViewControl, parameter: web.IRoute<any>, options: web.IRouteNavigationOptions): void;
 
             /**
-             * Returns to the last visited ui.IViewControl.
+             * Returns to the last visited ui.IBaseViewControl.
              * 
-             * @param options Optional IBackNavigationOptions allowing the ui.IViewControl
+             * @param options Optional IBackNavigationOptions allowing the ui.IBaseViewControl
              * to customize navigation. Enables navigating back to a specified point in history as well
-             * as specifying a new templateUrl to use at the next ui.IViewControl.
+             * as specifying a new templateUrl to use at the next ui.IBaseViewControl.
              */
             goBack(options?: IBaseBackNavigationOptions): void;
         }

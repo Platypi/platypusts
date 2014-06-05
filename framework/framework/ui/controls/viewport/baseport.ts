@@ -102,7 +102,7 @@
          * @param fromControl The ViewControl being navigated 
          * away from.
          */
-        navigateFrom(fromControl: IViewControl): async.IThenable<void> {
+        navigateFrom(fromControl: IBaseViewControl): async.IThenable<void> {
             if (isNull(fromControl) || !isFunction(fromControl.navigatingFrom)) {
                 return this.$Promise.resolve<void>(null);
             }
@@ -137,7 +137,7 @@
          * @param fromControl The ViewControl being navigated 
          * away from.
          */
-        navigateFrom(fromControl: IViewControl): async.IThenable<void>;
+        navigateFrom(fromControl: IBaseViewControl): async.IThenable<void>;
     }
 
     /**

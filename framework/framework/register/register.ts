@@ -5,10 +5,10 @@
 var controlInjectors: plat.dependency.IInjectorObject<plat.IControl> = {};
 
 /**
- * An IInjectorObject of plat.ui.IViewControls. Contains all the registered
+ * An IInjectorObject of plat.ui.IBaseViewControls. Contains all the registered
  * view controls for an application.
  */
-var viewControlInjectors: plat.dependency.IInjectorObject<plat.ui.IViewControl> = {};
+var viewControlInjectors: plat.dependency.IInjectorObject<plat.ui.IBaseViewControl> = {};
 
 /**
  * An IInjectorObject of objects. Contains all the registered
@@ -125,18 +125,33 @@ module plat.register {
     }
 
     /**
-     * Registers a ViewControl with the framework. The framework will instantiate the IControl when needed. The 
+     * Registers a ViewControl with the framework. The framework will instantiate the control when needed. The 
      * dependencies array corresponds to injectables that will be passed into the Constructor of the control.
      * 
      * @param name The control type, corresponding to the HTML notation for creating a new IViewControl. Used for navigation 
      * to the specified ViewControl.
      * @param Type The constructor for the IViewControl.
      * @param dependencies An optional array of strings representing the dependencies needed for the IViewControl injector.
-     * @param routes Optional route strings (or regular expressions) used for matching a URL to the registered IViewControl.
+     * 
+     * @example register.viewControl('my-view-control', MyViewControl);
+     */
+    export function viewControl<T>(name: string, Type: new (...args: any[]) => ui.IBaseViewControl,
+        dependencies?: Array<any>): typeof register;
+    /**
+     * Registers a WebViewControl with the framework. The framework will instantiate the control when needed. The 
+     * dependencies array corresponds to injectables that will be passed into the Constructor of the control.
+     * 
+     * @param name The control type, corresponding to the HTML notation for creating a new IWebViewControl. Used for navigation 
+     * to the specified WebViewControl.
+     * @param Type The constructor for the IWebViewControl.
+     * @param dependencies An optional array of strings representing the dependencies needed for the IWebViewControl injector.
+     * @param routes Optional route strings (or regular expressions) used for matching a URL to the registered IWebViewControl.
      * 
      * @example register.viewControl('my-view-control', MyViewControl, null, ['customers/:customer(/:ordernumber)']);
      */
-    export function viewControl(name: string, Type: new (...args: any[]) => ui.IViewControl,
+    export function viewControl<T>(name: string, Type: new (...args: any[]) => ui.IWebViewControl,
+        dependencies?: Array<any>, routes?: Array<any>): typeof register;
+    export function viewControl<T>(name: string, Type: new (...args: any[]) => ui.IBaseViewControl,
         dependencies?: Array<any>, routes?: Array<any>): typeof register {
         if (isString(name)) {
             name = name.toLowerCase();
