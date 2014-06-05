@@ -70,11 +70,13 @@ module plat {
         static load(node?: Node): void {
             var $LifecycleEventStatic = App.$LifecycleEventStatic,
                 $compiler = App.$Compiler,
-                body = App.$Document.body;
+                body = App.$Document.body,
+                head = App.$Document.head;
 
             $LifecycleEventStatic.dispatch('beforeLoad', App);
 
             if (isNull(node)) {
+                $compiler.compile(head);
                 body.setAttribute('plat-hide', '');
                 $compiler.compile(body);
                 body.removeAttribute('plat-hide');
