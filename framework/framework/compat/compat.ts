@@ -106,8 +106,8 @@
                 if (!isUndefined(div.style[key])) {
                     prefix = animations[key];
                     break;
+    }
             }
-        }
 
             this.animationSupported = index > -1;
             this.animationEvents = prefix === 'webkit' ? {
@@ -262,7 +262,7 @@
         animationEvents: IAnimationEvents;
     }
 
-        /**
+    /**
      * Describes an object containing the correctly mapped touch events for the browser.
      */
     export interface IMappedEvents extends IObject<string> {
