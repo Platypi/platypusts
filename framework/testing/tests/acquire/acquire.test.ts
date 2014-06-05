@@ -252,7 +252,7 @@ module tests.acquire {
             var deps = plat.acquire(utils.pluck(dependencies, 'name'));
 
             deps.forEach((dep, index) => {
-                dependencies[index].compare(dep)
+                dependencies[index].compare(dep);
             });
         });
     });

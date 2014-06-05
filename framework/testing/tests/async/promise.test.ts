@@ -1,5 +1,5 @@
 ﻿module tests.async.promise {
-    var Promise: plat.async.IPromise = plat.acquire(plat.async.IPromise);
+    var Promise = plat.acquire(plat.async.IPromise);
 
     describe('Promise Tests', () => {
         it('should test all', () => {
