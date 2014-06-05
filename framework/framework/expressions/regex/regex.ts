@@ -47,7 +47,9 @@
     /**
      * The Type for referencing the '$Regex' injectable as a dependency.
      */
-    export var IRegex = Regex;
+    export function IRegex(): IRegex {
+        return new Regex();
+    }
 
     register.injectable(__Regex, IRegex);
 

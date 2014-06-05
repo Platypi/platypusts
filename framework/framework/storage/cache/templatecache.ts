@@ -48,7 +48,9 @@ module plat.storage {
     /**
      * The Type for referencing the '$TemplateCache' injectable as a dependency.
      */
-    export var ITemplateCache = TemplateCache;
+    export function ITemplateCache(): ITemplateCache { 
+        return new TemplateCache()
+    }
 
     register.injectable(__TemplateCache, ITemplateCache);
 

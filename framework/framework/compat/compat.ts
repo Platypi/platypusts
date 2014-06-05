@@ -158,7 +158,9 @@
         /**
      * The Type for referencing the '$Compat' injectable as a dependency.
          */
-    export var ICompat = Compat;
+    export function ICompat(): ICompat {
+        return new Compat();
+    }
 
     register.injectable(__Compat, ICompat);
 

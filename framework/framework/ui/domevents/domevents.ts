@@ -1098,7 +1098,9 @@
     /**
      * The Type for referencing the '$DomEvents' injectable as a dependency.
      */
-    export var IDomEvents = DomEvents;
+    export function IDomEvents(): DomEvents {
+        return new DomEvents();
+    }
 
     plat.register.injectable(__DomEvents, IDomEvents);
 
@@ -1150,40 +1152,16 @@
     export class DomEvent implements IDomEventInstance {
         $Document: Document = acquire(__Document);
 
-        /**
-         * The node or window object associated with this DomEvent.
-         */
         element: any;
-
-        /**
-         * The type of event this DomEvent is managing.
-         */
         event: string;
 
-        /**
-         * Initializes the element and event of the DomEvent object
-         * 
-         * @param The node associated with this DomEvent. 
-         * @param event The type of event this DomEvent is managing.
-         */
         initialize(element: Node, event: string): void;
-        /**
-         * Initializes the element and event of the DomEvent object
-         * 
-         * @param The window object. 
-         * @param event The type of event this DomEvent is managing.
-         */
         initialize(element: Window, event: string): void;
         initialize(element: any, event: string) {
             this.element = element;
             this.event = event;
         }
 
-        /**
-         * Triggers a custom event to bubble up to all elements in this branch of the DOM tree.
-         * 
-         * @param ev The event object to pass in as the custom event object's detail property.
-         */
         trigger(ev: IPointerEvent): void {
             var event = <CustomEvent>this.$Document.createEvent('CustomEvent');
             event.initCustomEvent(this.event, true, true, ev);
@@ -1194,7 +1172,9 @@
     /**
      * The Type for referencing the '$DomEventInstance' injectable as a dependency.
      */
-    export var IDomEventInstance = DomEvent;
+    export function IDomEventInstance(): IDomEventInstance {
+        return new DomEvent();
+    }
 
     register.injectable(__DomEventInstance, IDomEventInstance, null, register.INSTANCE);
 

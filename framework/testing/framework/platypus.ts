@@ -27,7 +27,7 @@ module plat {
         __Parser = '$Parser',
         __Regex = '$Regex',
         __Tokenizer = '$Tokenizer',
-        __Navigator = '$Navigator',
+        __NavigatorInstance = '$NavigatorInstance',
         __RoutingNavigator = '$RoutingNavigator',
         __ContextManagerStatic = '$ContextManagerStatic',
         __Compiler = '$Compiler',
@@ -1247,6 +1247,13 @@ module plat {
      * Returns the requested injectable dependency.
      * 
      * @param dependency The dependency Type to return.
+     * @param {T} The requested dependency.
+     */
+    export function acquire<T>(dependency: () => T): T;
+    /**
+     * Returns the requested injectable dependency.
+     * 
+     * @param dependency The dependency Type to return.
      * @param {any} The requested dependency.
      */
     export function acquire(dependency: Function): any;
@@ -1307,6 +1314,13 @@ module plat {
      * as an array in the order they were specified.
      */
     export interface IAcquire {
+        /**
+         * Returns the requested injectable dependency.
+         * 
+         * @param dependency The dependency Type to return.
+         * @param {T} The requested dependency.
+         */
+        <T>(dependency: () => T): T;
         /**
          * Returns the requested injectable dependency.
          * 
@@ -1688,7 +1702,9 @@ module plat {
     /**
      * The Type for referencing the '$Compat' injectable as a dependency.
      */
-    export var ICompat = Compat;
+    export function ICompat(): ICompat {
+        return new Compat();
+    }
 
     register.injectable(__Compat, ICompat);
 
@@ -1928,7 +1944,9 @@ module plat {
     /**
      * The Type for referencing the '$Utils' injectable as a dependency.
      */
-    export var IUtils = Utils;
+    export function IUtils(): IUtils {
+        return new Utils();
+    }
 
     register.injectable(__Utils, IUtils);
 
@@ -2359,7 +2377,9 @@ module plat {
         /**
          * The Type for referencing the '$Regex' injectable as a dependency.
          */
-        export var IRegex = Regex;
+        export function IRegex(): IRegex {
+            return new Regex();
+        }
 
         register.injectable(__Regex, IRegex);
 
@@ -3171,7 +3191,9 @@ module plat {
         /**
          * The Type for referencing the '$Tokenizer' injectable as a dependency.
          */
-        export var ITokenizer = Tokenizer;
+        export function ITokenizer(): ITokenizer {
+            return new Tokenizer();
+        }
 
         register.injectable(__Tokenizer, ITokenizer);
 
@@ -3809,7 +3831,9 @@ module plat {
         /**
          * The Type for referencing the '$Parser' injectable as a dependency.
          */
-        export var IParser = Parser;
+        export function IParser(): IParser {
+            return new Parser();
+        }
 
         register.injectable(__Parser, IParser);
 
@@ -4054,7 +4078,9 @@ module plat {
         /**
          * The Type for referencing the '$Browser' injectable as a dependency.
          */
-        export var IBrowser = Browser;
+        export function IBrowser(): IBrowser {
+            return new Browser();
+        }
 
         register.injectable(__Browser, IBrowser);
 
@@ -4296,7 +4322,9 @@ module plat {
         /**
          * The Type for referencing the '$UrlUtilsInstance' injectable as a dependency.
          */
-        export var IUrlUtilsInstance = UrlUtils;
+        export function IUrlUtilsInstance(): IUrlUtilsInstance {
+            return new UrlUtils();
+        }
 
         register.injectable(__UrlUtilsInstance, IUrlUtilsInstance, null, register.INSTANCE);
 
@@ -4467,8 +4495,10 @@ module plat {
 
                 if (this.__firstRoute) {
                     this.__firstRoute = false;
-                    this._routeChanged(null, currentUtils);
-                    return;
+                    if (isEmpty(path)) {
+                        this._routeChanged(null, currentUtils);
+                        return;
+                    }
                 }
 
                 var build = this._buildRoute(path, options.query);
@@ -4783,7 +4813,9 @@ module plat {
         /**
          * The Type for referencing the '$Router' injectable as a dependency.
          */
-        export var IRouter = Router;
+        export function IRouter(): IRouter {
+            return new Router();
+        }
 
         register.injectable(__Router, IRouter);
 
@@ -5428,7 +5460,7 @@ module plat {
         /**
          * The Type for referencing the '$Promise' injectable as a dependency.
          */
-        export function IPromise($Window: any): IPromise {
+        export function IPromise($Window?: any): IPromise {
             if (!isNull($Window.Promise) &&
                 isFunction($Window.Promise.all) &&
                 isFunction($Window.Promise.cast) &&
@@ -6612,7 +6644,9 @@ module plat {
         /**
          * The Type for referencing the '$Http' injectable as a dependency.
          */
-        export var IHttp = Http;
+        export function IHttp(): IHttp {
+            return new Http();
+        }
 
         register.injectable(__Http, IHttp);
 
@@ -6988,7 +7022,9 @@ module plat {
         /**
          * The Type for referencing the '$TemplateCache' injectable as a dependency.
          */
-        export var ITemplateCache = TemplateCache;
+        export function ITemplateCache(): ITemplateCache { 
+            return new TemplateCache()
+        };
 
         register.injectable(__TemplateCache, ITemplateCache);
 
@@ -7116,7 +7152,9 @@ module plat {
         /**
          * The Type for referencing the '$LocalStorage' injectable as a dependency.
          */
-        export var ILocalStorage = LocalStorage;
+        export function ILocalStorage(): ILocalStorage {
+            return new LocalStorage();
+        }
 
         register.injectable(__LocalStorage, ILocalStorage);
 
@@ -7179,7 +7217,9 @@ module plat {
         /**
          * The Type for referencing the '$SessionStorage' injectable as a dependency.
          */
-        export var ISessionStorage = SessionStorage;
+        export function ISessionStorage(): ISessionStorage {
+            return new SessionStorage();
+        }
 
         register.injectable(__SessionStorage, ISessionStorage);
 
@@ -8715,7 +8755,9 @@ module plat {
         /**
          * The Type for referencing the '$DispatchEventInstance' injectable as a dependency.
          */
-        export var IDispatchEventInstance = DispatchEvent;
+        export function IDispatchEventInstance(): IDispatchEventInstance {
+            return new DispatchEvent();
+        }
 
         register.injectable(__DispatchEventInstance, IDispatchEventInstance, null, register.INSTANCE);
 
@@ -9226,10 +9268,10 @@ module plat {
          * The Type for referencing the '$EventManagerStatic' injectable as a dependency.
          */
         export function IEventManagerStatic(
-            $Compat: ICompat,
-            $Document: Document,
-            $Window: Window,
-            $Dom: ui.IDom): IEventManagerStatic {
+            $Compat?: ICompat,
+            $Document?: Document,
+            $Window?: Window,
+            $Dom?: ui.IDom): IEventManagerStatic {
                 EventManager.$Compat = $Compat;
                 EventManager.$Document = $Document;
                 EventManager.$Window = $Window;
@@ -9579,7 +9621,7 @@ module plat {
         /**
          * The Type for referencing the '$NavigationEventStatic' injectable as a dependency.
          */
-        export function INavigationEventStatic($EventManagerStatic: IEventManagerStatic): INavigationEventStatic {
+        export function INavigationEventStatic($EventManagerStatic?: IEventManagerStatic): INavigationEventStatic {
             NavigationEvent.$EventManagerStatic = $EventManagerStatic;
             return NavigationEvent;
         }
@@ -9738,7 +9780,7 @@ module plat {
         /**
          * The Type for referencing the '$ErrorEventStatic' injectable as a dependency.
          */
-        export function IErrorEventStatic($EventManagerStatic: IEventManagerStatic): IErrorEventStatic {
+        export function IErrorEventStatic($EventManagerStatic?: IEventManagerStatic): IErrorEventStatic {
             ErrorEvent.$EventManagerStatic = $EventManagerStatic;
             return ErrorEvent;
         }
@@ -10057,14 +10099,19 @@ module plat {
         observe<T>(context: any, property: number, listener: (value: T, oldValue: T) => void): IRemoveListener;
         observe(context: any, property: any, listener: (value: any, oldValue: any) => void): IRemoveListener {
             if (isNull(context) || !context.hasOwnProperty(property)) {
-                return;
+                return noop;
             }
 
-            var control = isFunction((<any>this).getAbsoluteIdentifier) ? this : <IControl>this.parent,
-                absoluteIdentifier = (<ui.ITemplateControl>control).getAbsoluteIdentifier(context);
+            var control = isFunction((<ui.ITemplateControl>(<any>this)).getAbsoluteIdentifier) ? this : <IControl>this.parent;
+
+            if (isNull(control) || !isFunction((<ui.ITemplateControl>(<any>control)).getAbsoluteIdentifier)) {
+                return noop;
+            }
+
+            var absoluteIdentifier = (<ui.ITemplateControl>(<any>control)).getAbsoluteIdentifier(context);
 
             if (isNull(absoluteIdentifier)) {
-                return;
+                return noop;
             }
 
             var contextManager = Control.$ContextManagerStatic.getManager(Control.getRootControl(this));
@@ -10079,25 +10126,30 @@ module plat {
         observeArray<T>(context: Array<T>, property: number, listener: (ev: observable.IArrayMethodInfo<T>) => void): IRemoveListener;
         observeArray(context: any, property: any, listener: (ev: observable.IArrayMethodInfo<any>) => void): IRemoveListener {
             if (isNull(context) || !context.hasOwnProperty(property)) {
-                return;
+                return noop;
             }
 
             var array = context[property],
                 callback = listener.bind(this);
 
             if (!isArray(array)) {
-                return;
+                return noop;
             }
 
-            var control = isFunction((<any>this).getAbsoluteIdentifier) ? this : <IControl>this.parent,
-                absoluteIdentifier = (<ui.ITemplateControl>control).getAbsoluteIdentifier(context),
+            var control = isFunction((<ui.ITemplateControl>(<any>this)).getAbsoluteIdentifier) ? this : <IControl>this.parent;
+
+            if (isNull(control) || !isFunction((<ui.ITemplateControl>(<any>control)).getAbsoluteIdentifier)) {
+                return noop;
+            }
+
+            var absoluteIdentifier = (<ui.ITemplateControl>(<any>control)).getAbsoluteIdentifier(context),
                 ContextManager = Control.$ContextManagerStatic;
 
             if (isNull(absoluteIdentifier)) {
                 if (property === 'context') {
-                    absoluteIdentifier = (<ui.ITemplateControl>control).absoluteContextPath;
+                    absoluteIdentifier = (<ui.ITemplateControl>(<any>control)).absoluteContextPath;
                 } else {
-                    return;
+                    return noop;
                 }
             } else {
                 absoluteIdentifier += '.' + property;
@@ -10133,8 +10185,8 @@ module plat {
 
             var parsedExpression: expressions.IParsedExpression = isString(expression) ? Control.$Parser.parse(expression) : expression,
                 aliases = parsedExpression.aliases,
-                control: ui.TemplateControl = !isNull((<ui.TemplateControl>this).resources) ?
-                    <ui.TemplateControl>this :
+                control: ui.TemplateControl = !isNull((<ui.TemplateControl>(<any>this)).resources) ?
+                    <ui.TemplateControl>(<any>this) :
                     <ui.TemplateControl>this.parent,
                 alias: string,
                 length = aliases.length,
@@ -10146,7 +10198,7 @@ module plat {
                 evaluateExpression = TemplateControl.evaluateExpression,
                 i: number;
 
-            if (isNull(control)) {
+            if (isNull(control) || !isString(control.absoluteContextPath)) {
                 return noop;
             }
 
@@ -10207,7 +10259,7 @@ module plat {
                     }
                 }));
             }
-
+            
             return () => {
                 var length = listeners.length;
 
@@ -10217,11 +10269,11 @@ module plat {
             };
         }
 
-        evaluateExpression(expression: string, context?: any): any;
-        evaluateExpression(expression: expressions.IParsedExpression, context?: any): any;
-        evaluateExpression(expression: any, context?: any): any {
+        evaluateExpression(expression: string, aliases?: any): any;
+        evaluateExpression(expression: expressions.IParsedExpression, aliases?: any): any;
+        evaluateExpression(expression: any, aliases?: any): any {
             var TemplateControl = ui.TemplateControl;
-            return TemplateControl.evaluateExpression(expression, this.parent, context);
+            return TemplateControl.evaluateExpression(expression, this.parent, aliases);
         }
 
         dispatchEvent(name: string, direction?: string, ...args: any[]): void;
@@ -10246,8 +10298,6 @@ module plat {
             manager.dispatch(name, sender, direction, args);
         }
 
-        on(name: string, listener: (ev: events.IDispatchEventInstance, ...args: any[]) => void): IRemoveListener;
-        on(name: 'routeChange', listener: (ev: events.IDispatchEventInstance, route: web.IRoute<any>) => void): IRemoveListener;
         on(name: string, listener: (ev: events.IDispatchEventInstance, ...args: any[]) => void): IRemoveListener {
             var manager = Control.$EventManagerStatic;
             return manager.on(this.uid, name, listener, this);
@@ -10260,9 +10310,9 @@ module plat {
      * The Type for referencing the '$ControlFactory' injectable as a dependency.
      */
     export function IControlFactory(
-            $Parser: expressions.IParser,
-            $ContextManagerStatic: observable.IContextManagerStatic,
-            $EventManagerStatic: events.IEventManagerStatic): IControlFactory {
+            $Parser?: expressions.IParser,
+            $ContextManagerStatic?: observable.IContextManagerStatic,
+            $EventManagerStatic?: events.IEventManagerStatic): IControlFactory {
         Control.$Parser = $Parser;
         Control.$ContextManagerStatic = $ContextManagerStatic;
         Control.$EventManagerStatic = $EventManagerStatic;
@@ -10587,15 +10637,6 @@ module plat {
          */
         dispatchEvent(name: string, direction?: string, ...args: any[]): void;
 
-        /**
-         * Registers a listener for a routeChange event. The listener will be called when a routeChange event 
-         * is propagating over the control. Any number of listeners can exist for a single event name.
-         *
-         * @param eventName='routeChange' This specifies that the listener is for a routeChange event.
-         * @param listener The method called when the routeChange is fired. The route argument will contain 
-         * a parsed route.
-         */
-        on(name: 'routeChange', listener: (ev: events.IDispatchEventInstance, route: web.IRoute<any>) => void): IRemoveListener;
         /**
          * Registers a listener for a DispatchEvent. The listener will be called when a DispatchEvent is 
          * propagating over the control. Any number of listeners can exist for a single event name.
@@ -12605,7 +12646,7 @@ module plat {
             static findResource(control: ITemplateControl, alias: string): { resource: IResource; control: ITemplateControl; } {
                 var resource: IResource;
 
-                if (isNull(control) || !isString(alias) || isEmpty(alias)) {
+                if (isNull(control) || isNull(control.resources) || !isString(alias) || isEmpty(alias)) {
                     return null;
                 }
 
@@ -13028,13 +13069,13 @@ module plat {
          * The Type for referencing the '$TemplateControlFactory' injectable as a dependency.
          */
         export function ITemplateControlFactory(
-            $ResourcesFactory: IResourcesFactory,
-            $BindableTemplatesFactory: IBindableTemplatesFactory,
-            $ManagerCache: storage.ICache<processing.IElementManager>,
-            $TemplateCache: storage.ITemplateCache,
-            $Parser: expressions.IParser,
-            $Http: async.IHttp,
-            $Promise: async.IPromise): ITemplateControlFactory {
+            $ResourcesFactory?: IResourcesFactory,
+            $BindableTemplatesFactory?: IBindableTemplatesFactory,
+            $ManagerCache?: storage.ICache<processing.IElementManager>,
+            $TemplateCache?: storage.ITemplateCache,
+            $Parser?: expressions.IParser,
+            $Http?: async.IHttp,
+            $Promise?: async.IPromise): ITemplateControlFactory {
                 TemplateControl.$ResourcesFactory = $ResourcesFactory;
                 TemplateControl.$BindableTemplatesFactory = $BindableTemplatesFactory;
                 TemplateControl.$ManagerCache = $ManagerCache;
@@ -13561,7 +13602,9 @@ module plat {
         /**
          * The Type for referencing the '$Dom' injectable as a dependency.
          */
-        export var IDom = Dom;
+        export function IDom(): IDom {
+            return new Dom();
+        }
 
         register.injectable(__Dom, IDom);
 
@@ -14276,7 +14319,9 @@ module plat {
         /**
          * The Type for referencing the '$Attributes' injectable as a dependency.
          */
-        export var IAttributesInstance = Attributes;
+        export function IAttributesInstance(): IAttributesInstance {
+            return new Attributes();
+        }
 
         register.injectable(__AttributesInstance, IAttributesInstance, null, register.INSTANCE);
 
@@ -14705,8 +14750,8 @@ module plat {
          * The Type for referencing the '$ResourcesFactory' injectable as a dependency.
          */
         export function IResourcesFactory(
-            $ContextManagerStatic: observable.IContextManagerStatic,
-            $Regex: expressions.IRegex): IResourcesFactory {
+            $ContextManagerStatic?: observable.IContextManagerStatic,
+            $Regex?: expressions.IRegex): IResourcesFactory {
                 Resources.$ContextManagerStatic = $ContextManagerStatic;
                 Resources.$Regex = $Regex;
                 return Resources;
@@ -15989,7 +16034,9 @@ module plat {
         /**
          * The Type for referencing the '$DomEvents' injectable as a dependency.
          */
-        export var IDomEvents = DomEvents;
+        export function IDomEvents(): DomEvents {
+            return new DomEvents();
+        }
 
         plat.register.injectable(__DomEvents, IDomEvents);
 
@@ -16041,40 +16088,16 @@ module plat {
         export class DomEvent implements IDomEventInstance {
             $Document: Document = acquire(__Document);
 
-            /**
-             * The node or window object associated with this DomEvent.
-             */
             element: any;
-
-            /**
-             * The type of event this DomEvent is managing.
-             */
             event: string;
 
-            /**
-             * Initializes the element and event of the DomEvent object
-             * 
-             * @param The node associated with this DomEvent. 
-             * @param event The type of event this DomEvent is managing.
-             */
             initialize(element: Node, event: string): void;
-            /**
-             * Initializes the element and event of the DomEvent object
-             * 
-             * @param The window object. 
-             * @param event The type of event this DomEvent is managing.
-             */
             initialize(element: Window, event: string): void;
             initialize(element: any, event: string) {
                 this.element = element;
                 this.event = event;
             }
 
-            /**
-             * Triggers a custom event to bubble up to all elements in this branch of the DOM tree.
-             * 
-             * @param ev The event object to pass in as the custom event object's detail property.
-             */
             trigger(ev: IPointerEvent): void {
                 var event = <CustomEvent>this.$Document.createEvent('CustomEvent');
                 event.initCustomEvent(this.event, true, true, ev);
@@ -16085,7 +16108,9 @@ module plat {
         /**
          * The Type for referencing the '$DomEventInstance' injectable as a dependency.
          */
-        export var IDomEventInstance = DomEvent;
+        export function IDomEventInstance(): IDomEventInstance {
+            return new DomEvent();
+        }
 
         register.injectable(__DomEventInstance, IDomEventInstance, null, register.INSTANCE);
 
@@ -16659,7 +16684,7 @@ module plat {
                  * Constructors or their registered names for navigation 
                  * from one to another.
                  */
-                navigator: navigation.INavigator;
+                navigator: navigation.INavigatorInstance;
 
                 /**
                  * Checks for a defaultView, finds the ViewControl's injector, 
@@ -16700,7 +16725,7 @@ module plat {
                 defaultView: string;
             }
 
-            register.control(__Viewport, Viewport, [__Navigator]);
+            register.control(__Viewport, Viewport, [__NavigatorInstance]);
 
             class Routeport extends Baseport {
                 /**
@@ -17982,7 +18007,9 @@ module plat {
         /**
          * The Type for referencing the '$Compiler' injectable as a dependency.
          */
-        export var ICompiler = Compiler;
+        export function ICompiler(): ICompiler {
+            return new Compiler();
+        }
 
         register.injectable(__Compiler, ICompiler);
 
@@ -18322,10 +18349,10 @@ module plat {
          * The Type for referencing the '$NodeManagerStatic' injectable as a dependency.
          */
         export function INodeManagerStatic(
-            $Regex: expressions.IRegex,
-            $ContextManagerStatic: observable.IContextManagerStatic,
-            $Parser: expressions.IParser,
-            $TemplateControlFactory: ui.ITemplateControlFactory): INodeManagerStatic {
+            $Regex?: expressions.IRegex,
+            $ContextManagerStatic?: observable.IContextManagerStatic,
+            $Parser?: expressions.IParser,
+            $TemplateControlFactory?: ui.ITemplateControlFactory): INodeManagerStatic {
                 NodeManager.$Regex = $Regex;
                 NodeManager.$ContextManagerStatic = $ContextManagerStatic;
                 NodeManager.$Parser = $Parser;
@@ -19587,10 +19614,10 @@ module plat {
          * The Type for referencing the '$ElementManagerFactory' injectable as a dependency.
          */
         export function IElementManagerFactory(
-            $Document: Document,
-            $ManagerCache: storage.ICache<IElementManager>,
-            $ResourcesFactory: ui.IResourcesFactory,
-            $BindableTemplatesFactory: ui.IBindableTemplatesFactory): IElementManagerFactory {
+            $Document?: Document,
+            $ManagerCache?: storage.ICache<IElementManager>,
+            $ResourcesFactory?: ui.IResourcesFactory,
+            $BindableTemplatesFactory?: ui.IBindableTemplatesFactory): IElementManagerFactory {
                 ElementManager.$Document = $Document;
                 ElementManager.$ManagerCache = $ManagerCache;
                 ElementManager.$ResourcesFactory = $ResourcesFactory;
@@ -20178,7 +20205,7 @@ module plat {
          * Every Viewport has its own Navigator instance, allowing multiple navigators to 
          * coexist in one app.
          */
-        export class Navigator extends BaseNavigator implements INavigator {
+        export class Navigator extends BaseNavigator implements INavigatorInstance {
             history: Array<IBaseNavigationState> = [];
 
             navigate(Constructor?: new (...args: any[]) => ui.IViewControl, options?: INavigationOptions): void;
@@ -20362,15 +20389,17 @@ module plat {
         /**
          * The Type for referencing the '$Navigator' injectable as a dependency.
          */
-        export var INavigator = Navigator;
+        export function INavigatorInstance(): INavigatorInstance {
+            return new Navigator();
+        }
 
-        register.injectable(__Navigator, INavigator, null, register.INSTANCE);
+        register.injectable(__NavigatorInstance, INavigatorInstance, null, register.INSTANCE);
 
         /**
          * An object implementing INavigator allows ui.IViewControls to implement methods 
          * used to navigate within a Viewport.
          */
-        export interface INavigator extends IBaseNavigator {
+        export interface INavigatorInstance extends IBaseNavigator {
             /**
              * Contains the navigation history stack for the associated Viewport.
              */
@@ -20522,7 +20551,9 @@ module plat {
         /**
          * The Type for referencing the '$RoutingNavigator' injectable as a dependency.
          */
-        export var IRoutingNavigator = RoutingNavigator;
+        export function IRoutingNavigator(): IRoutingNavigator {
+            return new RoutingNavigator();
+        }
 
         register.injectable(__RoutingNavigator, IRoutingNavigator);
 
@@ -20757,11 +20788,11 @@ module plat {
      * The Type for referencing the '$AppStatic' injectable as a dependency.
      */
     export function IAppStatic(
-        $Compat: ICompat,
-        $EventManagerStatic: events.IEventManagerStatic,
-        $Document: Document,
-        $Compiler: processing.ICompiler,
-        $LifecycleEventStatic: events.ILifecycleEventStatic): IAppStatic {
+        $Compat?: ICompat,
+        $EventManagerStatic?: events.IEventManagerStatic,
+        $Document?: Document,
+        $Compiler?: processing.ICompiler,
+        $LifecycleEventStatic?: events.ILifecycleEventStatic): IAppStatic {
             App.$Compat = $Compat;
             App.$EventManagerStatic = $EventManagerStatic;
             App.$Document = $Document;
@@ -20781,7 +20812,7 @@ module plat {
     /**
      * The Type for referencing the '$App' injectable as a dependency.
      */
-    export function IApp($AppStatic: IAppStatic): IApp {
+    export function IApp($AppStatic?: IAppStatic): IApp {
         return $AppStatic.app;
     }
 

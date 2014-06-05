@@ -195,7 +195,9 @@ module plat.navigation {
     /**
      * The Type for referencing the '$Navigator' injectable as a dependency.
      */
-    export var INavigatorInstance = Navigator;
+    export function INavigatorInstance(): INavigatorInstance {
+        return new Navigator();
+    }
 
     register.injectable(__NavigatorInstance, INavigatorInstance, null, register.INSTANCE);
 

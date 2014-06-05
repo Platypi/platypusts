@@ -405,7 +405,9 @@
     /**
      * The Type for referencing the '$Router' injectable as a dependency.
      */
-    export var IRouter = Router;
+    export function IRouter(): IRouter {
+        return new Router();
+    }
 
     register.injectable(__Router, IRouter);
 
