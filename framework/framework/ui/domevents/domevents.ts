@@ -1088,11 +1088,11 @@
     /**
      * The Type for referencing the '$DomEvents' injectable as a dependency.
      */
-    export function IDomEvents(): DomEvents {
+    export function IDomEvents(): IDomEvents {
         return new DomEvents();
     }
 
-    plat.register.injectable(__DomEvents, IDomEvents);
+    register.injectable(__DomEvents, IDomEvents);
 
     /**
      * Describes an object for managing DOM event registration and handling.
