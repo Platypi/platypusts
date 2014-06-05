@@ -3,8 +3,10 @@
      * A class for checking browser compatibility issues.
      */
     export class Compat implements ICompat {
-        $document = acquire(__Document);
+        $Window: Window = acquire(__Window);
+        $Document: Document = acquire(__Document);
 
+        isCompatible: boolean;
         cordova: boolean;
         pushState: boolean;
         fileSupported: boolean;
@@ -17,67 +19,139 @@
         hasTouchEvents: boolean;
         hasPointerEvents: boolean;
         hasMsPointerEvents: boolean;
+        animationSupported: boolean;
+        platCss: boolean;
         mappedEvents: IMappedEvents;
+        animationEvents: IAnimationEvents;
 
-        get isCompatible() {
-            return isFunction(Object.defineProperty) &&
-                isFunction(this.$document.querySelector);
+        /**
+         * Define everything
+         */
+        constructor() {
+            this.__defineBooleans();
+            this.__defineMappedEvents();
+            this.__defineAnimationEvents();
+            this.__findCss();
         }
 
-        constructor() {
-            var $contextManager: observable.IContextManagerStatic = acquire(__ContextManagerStatic),
-                $window: Window = acquire(__Window),
-                define = $contextManager.defineGetter,
+        private __defineBooleans() {
+            var $window = this.$Window,
                 navigator = $window.navigator,
                 history = $window.history,
-                hasTouch = !isUndefined((<any>$window).ontouchstart),
-                hasPointer = !!navigator.pointerEnabled,
-                hasMsPointer = !!navigator.msPointerEnabled,
                 def = (<any>$window).define,
                 msA = (<any>$window).MSApp;
 
-            define(this, 'cordova', !isNull((<any>$window).cordova));
-            define(this, 'pushState', !(isNull(history) || isNull(history.pushState)));
-            define(this, 'fileSupported', !(isUndefined((<any>$window).File) || isUndefined((<any>$window).FormData)));
-            define(this, 'amd', isFunction(def) && !isNull(def.amd), true, true);
-            define(this, 'msApp', isObject(msA) && isFunction(msA.execUnsafeLocalFunction));
-            define(this, 'indexedDb', !isNull($window.indexedDB));
-            define(this, 'proto', isObject((<any>{}).__proto__));
-            define(this, 'getProto', isFunction(Object.getPrototypeOf));
-            define(this, 'setProto', isFunction((<any>Object).setPrototypeOf));
-            define(this, 'hasTouchEvents', hasTouch);
-            define(this, 'hasPointerEvents', hasPointer);
-            define(this, 'hasMsPointerEvents', hasMsPointer);
+            this.isCompatible = isFunction(Object.defineProperty) && isFunction(this.$Document.querySelector);
+            this.cordova = !isNull((<any>$window).cordova);
+            this.pushState = !(isNull(history) || isNull(history.pushState));
+            this.fileSupported = !(isUndefined((<any>$window).File) || isUndefined((<any>$window).FormData));
+            this.amd = isFunction(def) && !isNull(def.amd);
+            this.msApp = isObject(msA) && isFunction(msA.execUnsafeLocalFunction);
+            this.indexedDb = !isNull($window.indexedDB);
+            this.proto = isObject((<any>{}).__proto__);
+            this.getProto = isFunction(Object.getPrototypeOf);
+            this.setProto = isFunction((<any>Object).setPrototypeOf);
+            this.hasTouchEvents = !isUndefined((<any>$window).ontouchstart);
+            this.hasPointerEvents = !!navigator.pointerEnabled;
+            this.hasMsPointerEvents = !!navigator.msPointerEnabled;
+        }
 
-            if (hasPointer) {
-                define(this, 'mappedEvents', {
-                    $touchstart: 'pointerdown',
-                    $touchend: 'pointerup',
-                    $touchmove: 'pointermove',
-                    $touchcancel: 'pointercancel'
-                });
-            } else if (hasMsPointer) {
-                define(this, 'mappedEvents', {
-                    $touchstart: 'MSPointerDown',
-                    $touchend: 'MSPointerUp',
-                    $touchmove: 'MSPointerMove',
-                    $touchcancel: 'MSPointerCancel'
-                });
-            } else if (hasTouch) {
-                define(this, 'mappedEvents', {
-                    $touchstart: 'touchstart',
-                    $touchend: 'touchend',
-                    $touchmove: 'touchmove',
-                    $touchcancel: 'touchcancel'
-                });
+        private __defineMappedEvents() {
+            if (this.hasPointerEvents) {
+                this.mappedEvents = {
+                    $touchStart: 'pointerdown',
+                    $touchEnd: 'pointerup',
+                    $touchMove: 'pointermove',
+                    $touchCancel: 'pointercancel'
+                };
+            } else if (this.hasMsPointerEvents) {
+                this.mappedEvents = {
+                    $touchStart: 'MSPointerDown',
+                    $touchEnd: 'MSPointerUp',
+                    $touchMove: 'MSPointerMove',
+                    $touchCancel: 'MSPointerCancel'
+                };
+            } else if (this.hasTouchEvents) {
+                this.mappedEvents = {
+                    $touchStart: 'touchstart',
+                    $touchEnd: 'touchend',
+                    $touchMove: 'touchmove',
+                    $touchCancel: 'touchcancel'
+                };
             } else {
-                define(this, 'mappedEvents', {
-                    $touchstart: 'mousedown',
-                    $touchend: 'mouseup',
-                    $touchmove: 'mousemove',
-                    $touchcancel: null
-                });
+                this.mappedEvents = {
+                    $touchStart: 'mousedown',
+                    $touchEnd: 'mouseup',
+                    $touchMove: 'mousemove',
+                    $touchCancel: null
+                };
             }
+        }
+
+        private __defineAnimationEvents() {
+            var div = this.$Document.createElement('div'),
+                animations: IObject<string> = {
+                    OAnimation: 'o',
+                    MozAnimation: '',
+                    WebkitAnimation: 'webkit',
+                    animation: ''
+                },
+                keys = Object.keys(animations),
+                index = keys.length,
+                prefix = '',
+                key: any;
+
+            while (index-- > 0) {
+                key = keys[index];
+                if (!isUndefined(div.style[key])) {
+                    prefix = animations[key];
+                    break;
+                }
+            }
+
+            this.animationSupported = index > -1;
+            this.animationEvents = prefix === 'webkit' ? {
+                $animationStart: prefix + 'AnimationStart',
+                $animationEnd: prefix + 'AnimationEnd',
+                $transitionStart: prefix + 'TransitionStart',
+                $transitionEnd: prefix + 'TransitionEnd'
+            } : {
+                $animationStart: prefix + 'animationstart',
+                $animationEnd: prefix + 'animationend',
+                $transitionStart: prefix + 'transitionstart',
+                $transitionEnd: prefix + 'transitionend'
+            };
+        }
+
+        private __findCss() {
+            var $document = this.$Document,
+                styleSheets = $document.styleSheets;
+
+            if (isNull(styleSheets)) {
+                this.platCss = false;
+                return;
+            }
+
+            var length = styleSheets.length,
+                styleSheet: CSSStyleSheet,
+                rules: CSSRuleList,
+                j: number, jLength: number;
+
+            for (var i = 0; i < length; ++i) {
+                styleSheet = <CSSStyleSheet>styleSheets[i];
+                rules = styleSheet.cssRules;
+                jLength = (<CSSRuleList>(rules || [])).length;
+                for (j = 0; j < jLength; ++j) {
+                    if (rules[j].cssText.indexOf('[' + __Hide + ']') !== -1) {
+                        this.platCss = true;
+                        return;
+                    }
+                }
+            }
+
+            var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+            $exception.warn('platypus.css was not found prior to platypus.js. If you intend to use ' +
+                'platypus.css, please move it before platypus.js inside your head or body declaration');
         }
     }
 
@@ -91,35 +165,16 @@
     register.injectable(__Compat, ICompat);
 
     /**
-     * Describes an object containing the correctly mapped touch events for the browser.
-     */
-    export interface IMappedEvents extends IObject<string> {
-        /**
-         * An event type for touch start.
-         */
-        $touchstart: string;
-
-        /**
-         * An event type for touch end.
-         */
-        $touchend: string;
-
-        /**
-         * An event type for touch move.
-         */
-        $touchmove: string;
-
-        /**
-         * An event type for touch cancel.
-         */
-        $touchcancel: string;
-    }
-
-    /**
      * An object containing boolean values signifying browser 
      * and/or platform compatibilities.
      */
     export interface ICompat {
+        /**
+         * Determines if the browser is modern enough to correctly 
+         * run PlatypusTS.
+         */
+        isCompatible: boolean;
+
         /**
          * Signifies whether or not Cordova is defined. If it is, 
          * we hook up ALM events to Cordova's functions.
@@ -187,14 +242,73 @@
         hasMsPointerEvents: boolean;
 
         /**
+         * Whether or not the browser supports animations.
+         */
+        animationSupported: boolean;
+
+        /**
+         * Whether the platypus.css file was included or not.
+         */
+        platCss: boolean;
+
+        /**
          * An object containing the correctly mapped touch events for the browser.
          */
         mappedEvents: IMappedEvents;
 
         /**
-         * Determines if the browser is modern enough to correctly 
-         * run PlatypusTS.
+         * An object containing the properly prefixed animation events.
          */
-        isCompatible: boolean;
+        animationEvents: IAnimationEvents;
+    }
+
+    /**
+     * Describes an object containing the correctly mapped touch events for the browser.
+     */
+    export interface IMappedEvents extends IObject<string> {
+        /**
+         * An event type for touch start.
+         */
+        $touchStart: string;
+
+        /**
+         * An event type for touch end.
+         */
+        $touchEnd: string;
+
+        /**
+         * An event type for touch move.
+         */
+        $touchMove: string;
+
+        /**
+         * An event type for touch cancel.
+         */
+        $touchCancel: string;
+    }
+
+    /**
+     * Describes an object containing the properly prefixed animation events.
+     */
+    export interface IAnimationEvents extends IObject<string> {
+        /**
+         * The animation start event.
+         */
+        $animationStart: string;
+
+        /**
+         * The animation end event.
+         */
+        $animationEnd: string;
+
+        /**
+         * The transition start event.
+         */
+        $transitionStart: string;
+
+        /**
+         * The transition end event.
+         */
+        $transitionEnd: string;
     }
 }

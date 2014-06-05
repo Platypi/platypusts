@@ -658,16 +658,16 @@
                 touchEvents = $compat.mappedEvents;
 
             if ($compat.hasTouchEvents) {
-                this._startEvents = [touchEvents.$touchstart, 'mousedown'];
-                this._moveEvents = [touchEvents.$touchmove, 'mousemove'];
-                this._endEvents = [touchEvents.$touchend, touchEvents.$touchcancel, 'mouseup'];
+                this._startEvents = [touchEvents.$touchStart, 'mousedown'];
+                this._moveEvents = [touchEvents.$touchMove, 'mousemove'];
+                this._endEvents = [touchEvents.$touchEnd, touchEvents.$touchCancel, 'mouseup'];
                 return;
             }
 
-            var cancelEvent = touchEvents.$touchcancel;
-            this._startEvents = [touchEvents.$touchstart];
-            this._moveEvents = [touchEvents.$touchmove];
-            this._endEvents = isNull(cancelEvent) ? [touchEvents.$touchend] : [touchEvents.$touchend, cancelEvent];
+            var cancelEvent = touchEvents.$touchCancel;
+            this._startEvents = [touchEvents.$touchStart];
+            this._moveEvents = [touchEvents.$touchMove];
+            this._endEvents = isNull(cancelEvent) ? [touchEvents.$touchEnd] : [touchEvents.$touchEnd, cancelEvent];
         }
         private __registerTypes(): void {
             this.__registerType(this.__START);
@@ -1088,11 +1088,11 @@
     /**
      * The Type for referencing the '$DomEvents' injectable as a dependency.
      */
-    export function IDomEvents(): DomEvents {
+    export function IDomEvents(): IDomEvents {
         return new DomEvents();
     }
 
-    plat.register.injectable(__DomEvents, IDomEvents);
+    register.injectable(__DomEvents, IDomEvents);
 
     /**
      * Describes an object for managing DOM event registration and handling.
