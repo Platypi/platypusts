@@ -63,7 +63,9 @@ module plat.ui {
     /**
      * The Type for referencing the '$Attributes' injectable as a dependency.
      */
-    export var IAttributesInstance = Attributes;
+    export function IAttributesInstance(): IAttributesInstance {
+        return new Attributes();
+    }
 
     register.injectable(__AttributesInstance, IAttributesInstance, null, register.INSTANCE);
 

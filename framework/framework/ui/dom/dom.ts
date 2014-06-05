@@ -74,7 +74,9 @@ module plat.ui {
     /**
      * The Type for referencing the '$Dom' injectable as a dependency.
      */
-    export var IDom = Dom;
+    export function IDom(): IDom {
+        return new Dom();
+    }
 
     register.injectable(__Dom, IDom);
 

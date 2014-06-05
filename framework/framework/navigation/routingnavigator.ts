@@ -85,7 +85,9 @@
     /**
      * The Type for referencing the '$RoutingNavigator' injectable as a dependency.
      */
-    export var IRoutingNavigator = RoutingNavigator;
+    export function IRoutingNavigator(): IRoutingNavigator {
+        return new RoutingNavigator();
+    }
 
     register.injectable(__RoutingNavigator, IRoutingNavigator);
 

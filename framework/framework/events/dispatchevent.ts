@@ -26,7 +26,9 @@ module plat.events {
     /**
      * The Type for referencing the '$DispatchEventInstance' injectable as a dependency.
      */
-    export var IDispatchEventInstance = DispatchEvent;
+    export function IDispatchEventInstance(): IDispatchEventInstance {
+        return new DispatchEvent();
+    }
 
     register.injectable(__DispatchEventInstance, IDispatchEventInstance, null, register.INSTANCE);
 
