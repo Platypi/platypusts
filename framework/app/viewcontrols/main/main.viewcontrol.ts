@@ -1,8 +1,8 @@
 module app {
-    export class MainViewControl extends plat.ui.ViewControl {
+    export class MainViewControl extends plat.ui.WebViewControl {
+        title = 'Main';
         templateUrl = 'viewcontrols/main/main.viewcontrol.html';
-        context: any = {
-            href: 'http://google.com',
+        context = {
             names: [
                 'Matt',
                 'M@',
@@ -10,18 +10,16 @@ module app {
                 'Jonathan',
                 'Paul',
                 'Will'
-            ],
-            users: null
+            ]
         };
-        hello = true;
-
-        loaded() {
+        navigatedTo(route: plat.web.IRoute<any>) {
+            if (route.path.length === 0) {
+                return;
         }
 
-        submit() {
-            this.context;
+            this.title = route.path.replace(/\//g, ' ');
         }
     }
 
-    plat.register.viewControl('viewcontrol', MainViewControl, null, ['/', ':test/page(/:baz)(/*path)']);
+    plat.register.viewControl('viewcontrol', MainViewControl, undefined, ['']);
 }

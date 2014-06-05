@@ -308,11 +308,11 @@
         _onTouchStart(ev: IPointerEvent): void {
             var isTouch = ev.type !== 'mousedown';
 
-            // return immediately if mouse event and currently in a touch
-            if (!!this._inTouch && !isTouch) {
+            if (isTouch) {
+                this._inTouch = true;
+            } else if (this._inTouch === true) {
+                // return immediately if mouse event and currently in a touch
                 return;
-            } else if (isTouch) {
-                this._inTouch = isTouch;
             }
 
             this.__standardizeEventObject(ev);
@@ -389,7 +389,7 @@
             // if it is a mouse event and currently in a touch
             if (!this.__detectMove ||
                 this.__touchCount > 1 ||
-                (!!this._inTouch && ev.type === 'mousemove')) {
+                (this._inTouch === true && ev.type === 'mousemove')) {
                 return;
             }
 

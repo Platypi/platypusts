@@ -59,7 +59,7 @@ module plat.navigation {
 
             if (!isNull(viewControl)) {
                 this.baseport.navigateFrom(viewControl).then(() => {
-                    this.$ViewControlFactory.detach(viewControl);
+                    this.$BaseViewControlFactory.detach(viewControl);
 
                 if (!options.replace) {
                     this.history.push({ control: viewControl });
@@ -117,20 +117,20 @@ module plat.navigation {
             this.baseport.navigateFrom(viewControl).then(() => {
                 this.$BaseViewControlFactory.dispose(viewControl);
 
-            var last: IBaseNavigationState = this._goBackLength(length);
+                var last: IBaseNavigationState = this._goBackLength(length);
 
-            if (isNull(last)) {
-                return;
-            }
+                if (isNull(last)) {
+                    return;
+                }
 
-            viewControl = last.control;
+                viewControl = last.control;
 
-            this.currentState = last;
+                this.currentState = last;
 
-            event.target = viewControl;
-            event.type = viewControl.type;
+                event.target = viewControl;
+                event.type = viewControl.type;
 
-            this.baseport.navigateTo(event);
+                this.baseport.navigateTo(event);
             });
         }
 
