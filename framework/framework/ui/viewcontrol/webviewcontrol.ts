@@ -7,6 +7,10 @@
     export class WebViewControl extends BaseViewControl {
         static titleElement = plat.acquire(plat.Document).head.querySelector('title');
 
+        static setTitle(title: string) {
+            WebViewControl.titleElement.textContent = title.replace(/\//g, ' ');
+        }
+
         title = '';
 
         navigator: plat.navigation.IRoutingNavigator;
@@ -17,12 +21,14 @@
                 if (this.title.length === 0) {
                     return;
                 }
-                WebViewControl.titleElement.textContent = this.title.replace(/\//g, ' ');
+
+                WebViewControl.setTitle(this.title);
             });
         }
 
         setTitle(title: string) {
             this.title = title;
+            WebViewControl.setTitle(this.title);
         }
     }
 
