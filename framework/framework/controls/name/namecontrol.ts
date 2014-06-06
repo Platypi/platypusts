@@ -62,16 +62,16 @@ module plat.controls {
      * a plat-name attribute. If the element corresponds to a registered 
      * control, the control will be included in the object.
      */
-    export interface INamedElement<T extends Element, U> {
+    export interface INamedElement<E extends Element, C> {
         /**
          * The element on which the plat-name is specified.
          */
-        element: T;
+        element: E;
 
         /**
          * The template control on the associated element, if one 
          * exists.
          */
-        control?: U;
+        control?: C;
     }
 }
