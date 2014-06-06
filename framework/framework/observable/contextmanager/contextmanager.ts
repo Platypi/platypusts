@@ -58,7 +58,6 @@ module plat.observable {
 
             if (!isNull(manager)) {
                 manager.dispose();
-                managers[uid] = null;
                 delete managers[uid];
             }
 
@@ -88,7 +87,6 @@ module plat.observable {
                 remove(keys[i], uid);
             }
 
-            controls[uid] = null;
             delete controls[uid];
 
             if (!isNull(control.context)) {
@@ -107,7 +105,6 @@ module plat.observable {
             var listeners = ContextManager.observedArrayListeners[absoluteIdentifier];
 
             if (!isNull(listeners)) {
-                listeners[uid] = null;
                 delete listeners[uid];
             }
         }
@@ -221,7 +218,6 @@ module plat.observable {
                     continue;
                 }
 
-                identifiers[identifier] = null;
                 delete identifiers[identifier];
             }
         }
@@ -561,7 +557,6 @@ module plat.observable {
                 oldChild: any;
 
             if (length === 0) {
-                this.__identifierHash[identifier] = null;
                 delete this.__identifierHash[identifier];
                 return;
             }
@@ -728,9 +723,7 @@ module plat.observable {
             }
 
             if (isEmpty(this.__identifiers[identifier])) {
-                this.__identifierHash[identifier] = null;
                 delete this.__identifierHash[identifier];
-                this.__contextObjects[identifier] = null;
                 delete this.__contextObjects[identifier];
             }
         }

@@ -4,7 +4,7 @@
 
         className: string;
 
-        start() {
+        start(): void {
             var $compat = this.$Compat,
                 $dom = this.dom,
                 animationId = $compat.animationEvents.$animation,
@@ -21,10 +21,15 @@
                 return;
             }
 
-            this.animationEnd((ev: Event) => {
+            this.animationEnd(() => {
                 $dom.removeClass(element, className);
                 this.end();
             });
+        }
+
+        cancel(): void {
+            this.dom.removeClass(this.element, this.className);
+            super.cancel();
         }
     }
 

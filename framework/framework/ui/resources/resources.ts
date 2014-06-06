@@ -299,7 +299,6 @@ module plat.ui {
                 }
             }
 
-            Resources.__observableResourceRemoveListeners[uid] = null;
             delete Resources.__observableResourceRemoveListeners[uid];
         }
 

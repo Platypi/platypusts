@@ -3,6 +3,11 @@
         $Compat: ICompat = acquire(__Compat);
         $Promise: async.IPromise = acquire(__Promise);
 
+        /**
+         * All elements currently being animated.
+         */
+        _elements: IObject<IRemoveListener> = {};
+
         private __cssWarning = false;
 
         /**
@@ -12,7 +17,7 @@
          * @param key The identifier specifying the type of animation.
          */
         animate(element: Element, key: string): async.IThenable<void> {
-            if (!isNode(element) || element.nodeType !== Node.ELEMENT_NODE) {
+            if (!isNode(element) || element.nodeType !== Node.ELEMENT_NODE || this.__parentIsAnimating(element)) {
                 return this.$Promise.resolve<void>(null);
             }
 
@@ -39,7 +44,76 @@
                 animationInstance = animation.inject();
             }
 
-            return (<Animation>animationInstance)._init(element);
+            var id = this.__setAnimationId(element, animationInstance);
+            this.__stopChildAnimations(element, id);
+
+            return (<Animation>animationInstance)._init(element).then(() => {
+                this._elements[id]();
+            });
+        }
+
+        private __parentIsAnimating(element: Node): boolean {
+            while (!isDocument(element = element.parentNode) && element.nodeType === Node.ELEMENT_NODE) {
+                if (hasClass(<HTMLElement>element, __Animating)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private __setAnimationId(element: Node, animationInstance: IAnimationInstance): string {
+            var elements = this._elements,
+                plat = (<ICustomElement>element).__plat,
+                id: string;
+
+            if (isUndefined(plat)) {
+                (<ICustomElement>element).__plat = plat = {};
+            }
+
+            if (isUndefined(plat.animation)) {
+                plat.animation = id = uniqueId('animation_');
+            } else {
+                id = plat.animation;
+            }
+
+            if (isFunction(elements[id])) {
+                elements[id]();
+            } else {
+                addClass(<HTMLElement>element, __Animating);
+                elements[id] = () => {
+                    animationInstance.cancel();
+                    removeClass(<HTMLElement>element, __Animating);
+                    delete elements[id];
+                    delete plat.animation;
+                    if (isEmpty(plat)) {
+                        delete (<ICustomElement>element).__plat;
+                    }
+                };
+            }
+
+            return id;
+        }
+
+        private __stopChildAnimations(element: Element, id: string): void {
+            var elements = this._elements,
+                animatedElements = Array.prototype.slice.call(element.querySelectorAll('.' + __Animating)),
+                length = animatedElements.length,
+                animatedElement: ICustomElement,
+                plat: ICustomElementProperty;
+
+            while (length-- > 0) {
+                animatedElement = animatedElements[length];
+                plat = animatedElement.__plat;
+                if (isUndefined(plat) || isUndefined(plat.animation)) {
+                    continue;
+                }
+
+                id = plat.animation;
+                if (isFunction(elements[id])) {
+                    elements[id]();
+                }
+            }
         }
     }
 
@@ -70,7 +144,6 @@
         dom: IDom = acquire(__Dom);
 
         private __resolve: () => void;
-        private __reject: () => void;
         private __animationEvents: IAnimationEvents = this.$Compat.animationEvents;
         private __subscribers: Array<() => void> = [];
 
@@ -98,10 +171,7 @@
          * A function to be called to let it be known the animation is being cancelled.
          */
         cancel(): void {
-            if (isFunction(this.__reject)) {
-                this.__reject();
-            }
-            this.dispose();
+            this.end();
         }
 
         /**
@@ -117,7 +187,7 @@
          * 
          * @param listener The function to call when the animation begins.
          */
-        animationStart(listener: EventListener): IAnimationInstance {
+        animationStart(listener: () => void): IAnimationInstance {
             return this.__addEventListener(this.__animationEvents.$animationStart, listener);
         }
         
@@ -126,7 +196,7 @@
          * 
          * @param listener The function to call when the transition begins.
          */
-        transitionStart(listener: EventListener): IAnimationInstance {
+        transitionStart(listener: () => void): IAnimationInstance {
             return this.__addEventListener(this.__animationEvents.$transitionStart, listener);
         }
         
@@ -135,7 +205,7 @@
          * 
          * @param listener The function to call when the animation ends.
          */
-        animationEnd(listener: EventListener): IAnimationInstance {
+        animationEnd(listener: () => void): IAnimationInstance {
             return this.__addEventListener(this.__animationEvents.$animationEnd, listener);
         }
         
@@ -144,7 +214,7 @@
          * 
          * @param listener The function to call when the transition ends.
          */
-        transitionEnd(listener: EventListener): IAnimationInstance {
+        transitionEnd(listener: () => void): IAnimationInstance {
             return this.__addEventListener(this.__animationEvents.$transitionEnd, listener);
         }
         
@@ -157,15 +227,14 @@
         _init(element: Element): async.IThenable<void> {
             this.element = <HTMLElement>element;
 
-            return new this.$Promise<void>((resolve, reject) => {
+            return new this.$Promise<void>((resolve) => {
                 this.__resolve = resolve;
-                this.__reject = reject;
                 this.initialize();
                 this.start();
             });
         }
 
-        private __addEventListener(event: string, listener: (ev?: Event) => void): IAnimationInstance {
+        private __addEventListener(event: string, listener: () => void): IAnimationInstance {
             var subscribers = this.__subscribers,
                 subscriber = () => {
                     var removeListener = this.dom.addEventListener(this.element, event, (ev: Event) => {
@@ -175,7 +244,7 @@
                             return;
                         }
 
-                        listener(ev);
+                        listener.call(this);
                         subscribers.shift();
 
                         if (subscribers.length === 0) {
@@ -247,27 +316,27 @@
          * 
          * @param listener The function to call when the animation begins.
          */
-        animationStart(listener: EventListener): IAnimationInstance;
+        animationStart(listener: () => void): IAnimationInstance;
 
         /**
          * A function to listen to the start of a transition event.
          * 
          * @param listener The function to call when the transition begins.
          */
-        transitionStart(listener: EventListener): IAnimationInstance;
+        transitionStart(listener: () => void): IAnimationInstance;
 
         /**
          * A function to listen to the end of an animation event.
          * 
          * @param listener The function to call when the animation ends.
          */
-        animationEnd(listener: EventListener): IAnimationInstance;
+        animationEnd(listener: () => void): IAnimationInstance;
 
         /**
          * A function to listen to the end of a transition event.
          * 
          * @param listener The function to call when the transition ends.
          */
-        transitionEnd(listener: EventListener): IAnimationInstance;
+        transitionEnd(listener: () => void): IAnimationInstance;
     }
 }

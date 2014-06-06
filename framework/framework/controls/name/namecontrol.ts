@@ -50,7 +50,6 @@ module plat.controls {
                 name = this._label;
 
             if (!isNull(rootControl)) {
-                this.$ContextManagerStatic.defineProperty(rootControl, name, null, true, true);
                 delete (<any>rootControl)[name];
             }
         }

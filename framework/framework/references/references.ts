@@ -109,6 +109,7 @@ var __Plat = 'plat-',
  * Animations
  */
 var __Hide = __Plat + 'hide',
+    __Animating = __Plat + 'animating',
     __Enter = __Plat + 'enter',
     __Leave = __Plat + 'leave',
     __Move = __Plat + 'move',

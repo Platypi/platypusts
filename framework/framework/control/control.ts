@@ -138,7 +138,6 @@ module plat {
                     listeners[index]();
                 }
 
-                removeListeners[uid] = null;
                 delete removeListeners[uid];
             }
         }

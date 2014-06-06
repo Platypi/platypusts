@@ -351,3 +351,18 @@ function toggleClass(element: HTMLElement, className: string): void {
 
     element.classList.toggle(className);
 }
+
+function hasClass(element: HTMLElement, className: string): boolean {
+    if (isUndefined(element.classList)) {
+        var name = element.className;
+        if (name === '') {
+            return false;
+        } else if (name === className) {
+            return true;
+        }
+
+        return new RegExp('^' + className + '\\s|\\s' + className + '$|\\s' + className + '|' + className + '\\s', 'g').test(name);
+    }
+
+    return element.classList.contains(className);
+}

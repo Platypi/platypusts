@@ -1,5 +1,7 @@
 module plat.ui.controls {
     export class ForEach extends TemplateControl {
+        $Animator: IAnimator = acquire(__Animator);
+
         /**
          * The required context is an Array.
          */
@@ -88,7 +90,12 @@ module plat.ui.controls {
          * Adds an item to the ForEach's element.
          */
         _addItem(item: DocumentFragment): void {
+            var childNodes = Array.prototype.slice.call(item.childNodes),
+                length = childNodes.length;
             this.dom.insertBefore(this.element, item);
+            for (var i = 0; i < length; ++i) {
+                this.$Animator.animate(childNodes[i], __Enter);
+            }
         }
 
         /**

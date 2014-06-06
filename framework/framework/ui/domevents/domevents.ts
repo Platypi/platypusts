@@ -125,16 +125,10 @@
         _inTouch: boolean;
 
         /**
-         * The array of all elements currently registered for 
-         * DOM events.
-         */
-        _elements: Array<Node> = [];
-
-        /**
          * An array of subscriptions that keep track of all of the 
          * events registered on a particular element.
          */
-        _subscriptions: Array<IEventSubscription> = [];
+        _subscribers: IObject<IEventSubscriber> = {};
 
         /**
          * The touch start events defined by this browser.
@@ -202,7 +196,7 @@
         private __lastTouchUp: ITouchPoint;
         private __swipeOrigin: ITouchPoint;
         private __lastMoveEvent: IPointerEvent;
-        private __capturedTarget: Node;
+        private __capturedTarget: ICustomElement;
         private __mappedEventListener = this.__handleMappedEvent.bind(this);
         private __reverseMap = {};
         private __swipeSubscribers: { master: IDomEventInstance; directional: IDomEventInstance };
@@ -286,8 +280,7 @@
                 $track: 0
             };
             this._isActive = false;
-            this._elements = [];
-            this._subscriptions = [];
+            this._subscribers = {};
             this.__pointerEvents = [];
             this.__pointerHash = {};
             this.__reverseMap = {};
@@ -357,14 +350,14 @@
                 }, holdInterval);
                 return;
             } else if (noRelease) {
-                domEvent = this.__findFirstSubscriber(<Node>ev.target, this._gestures.$hold);
+                domEvent = this.__findFirstSubscriber(<ICustomElement>ev.target, this._gestures.$hold);
                 subscribeFn = () => {
                     domEvent.trigger(ev);
                     this.__holdTimeout = null;
                 };
             } else {
                 // has both hold and release events registered
-                domEvent = this.__findFirstSubscriber(<Node>ev.target, this._gestures.$hold);
+                domEvent = this.__findFirstSubscriber(<ICustomElement>ev.target, this._gestures.$hold);
                 subscribeFn = () => {
                     domEvent.trigger(ev);
                     this.__hasRelease = true;
@@ -546,7 +539,7 @@
             }
 
             var gestures = this._gestures,
-                domEvent = this.__findFirstSubscriber(<Node>ev.target, gestures.$tap);
+                domEvent = this.__findFirstSubscriber(<ICustomElement>ev.target, gestures.$tap);
 
             if (isNull(domEvent)) {
                 return;
@@ -581,7 +574,7 @@
                 return;
             }
 
-            var domEvent = this.__findFirstSubscriber(<Node>ev.target, this._gestures.$dbltap);
+            var domEvent = this.__findFirstSubscriber(<ICustomElement>ev.target, this._gestures.$dbltap);
             if (isNull(domEvent)) {
                 return;
             }
@@ -591,7 +584,7 @@
             this.__tapCount = -1;
         }
         private __handleRelease(ev: IPointerEvent): void {
-            var domEvent = this.__findFirstSubscriber(<Node>ev.target, this._gestures.$release);
+            var domEvent = this.__findFirstSubscriber(<ICustomElement>ev.target, this._gestures.$release);
             if (!isNull(domEvent)) {
                 domEvent.trigger(ev);
             }
@@ -630,7 +623,7 @@
                 velocity = ev.velocity,
                 direction = ev.direction,
                 trackDirectionGesture = trackGesture + direction,
-                eventTarget = this.__capturedTarget || <Node>ev.target,
+                eventTarget = this.__capturedTarget || <ICustomElement>ev.target,
                 trackDomEvent = this.__findFirstSubscriber(eventTarget, trackGesture),
                 trackDirectionDomEvent = this.__findFirstSubscriber(eventTarget, trackDirectionGesture);
 
@@ -647,7 +640,7 @@
         private __handleMappedEvent(ev: IExtendedEvent): void {
             var mappedType = ev.type,
                 eventType = (<any>this.__reverseMap)[mappedType],
-                domEvent = this.__findFirstSubscriber(<Node>ev.target, eventType);
+                domEvent = this.__findFirstSubscriber(<ICustomElement>ev.target, eventType);
 
             if (isNull(domEvent)) {
                 return;
@@ -664,16 +657,16 @@
                 touchEvents = $compat.mappedEvents;
 
             if ($compat.hasTouchEvents) {
-                this._startEvents = [touchEvents.$touchStart, 'mousedown'];
-                this._moveEvents = [touchEvents.$touchMove, 'mousemove'];
-                this._endEvents = [touchEvents.$touchEnd, touchEvents.$touchCancel, 'mouseup'];
+                this._startEvents = [touchEvents.$touchstart, 'mousedown'];
+                this._moveEvents = [touchEvents.$touchmove, 'mousemove'];
+                this._endEvents = [touchEvents.$touchend, touchEvents.$touchcancel, 'mouseup'];
                 return;
             }
 
-            var cancelEvent = touchEvents.$touchCancel;
-            this._startEvents = [touchEvents.$touchStart];
-            this._moveEvents = [touchEvents.$touchMove];
-            this._endEvents = isNull(cancelEvent) ? [touchEvents.$touchEnd] : [touchEvents.$touchEnd, cancelEvent];
+            var cancelEvent = touchEvents.$touchcancel;
+            this._startEvents = [touchEvents.$touchstart];
+            this._moveEvents = [touchEvents.$touchmove];
+            this._endEvents = isNull(cancelEvent) ? [touchEvents.$touchend] : [touchEvents.$touchend, cancelEvent];
         }
         private __registerTypes(): void {
             this.__registerType(this.__START);
@@ -732,9 +725,20 @@
                 $document.removeEventListener(events[index], listener, false);
             }
         }
-        private __registerElement(element: Node, type: string): void {
-            var index = this._elements.indexOf(element),
-                $domEvent: IDomEventInstance = acquire(__DomEventInstance);
+        private __registerElement(element: ICustomElement, type: string): void {
+            var id: string,
+                plat = element.__plat;
+            if (isNull(plat)) {
+                id = uniqueId('domEvent_');
+                element.__plat = plat = {
+                    domEvent: id
+                };
+            } else if (isNull(plat.domEvent)) {
+                id = uniqueId('domEvent_');
+                plat.domEvent = id;
+            }
+
+            var $domEvent: IDomEventInstance = acquire(__DomEventInstance);
 
             $domEvent.initialize(element, type);
 
@@ -749,44 +753,39 @@
                 this._isActive = true;
             }
 
-            if (index === -1) {
+            if (isNull(id)) {
+                var subscription = this._subscribers[plat.domEvent];
+                if (isUndefined((<any>subscription)[type])) {
+                    (<any>subscription)[type] = $domEvent;
+                    subscription.gestureCount++;
+                }
+            } else {
                 var gesture = { gestureCount: 1 };
                 (<any>gesture)[type] = $domEvent;
-
-                index = this._elements.length;
-                this._elements.push(element);
-                this._subscriptions.push(gesture);
+                this._subscribers[id] = gesture;
 
                 if (!isUndefined((<HTMLElement>element).className)) {
                     addClass(<HTMLElement>element, DomEvents.config.styleConfig[0].className);
                 }
                 this.__removeSelections(element);
-            } else {
-                var subscription = this._subscriptions[index];
-                if (isUndefined((<any>subscription)[type])) {
-                    (<any>subscription)[type] = $domEvent;
-                    subscription.gestureCount++;
-                }
             }
         }
-        private __unregisterElement(element: Node, type: string): void {
-            var elementIndex = this._elements.indexOf(element);
-            if (elementIndex === -1) {
+        private __unregisterElement(element: ICustomElement, type: string): void {
+            var id: string,
+                plat = element.__plat;
+            if (isNull(plat) || isNull(plat.domEvent)) {
                 return;
             }
 
-            var gestureIndicator = this._subscriptions[elementIndex];
-            (<any>gestureIndicator)[type] = null;
-            delete (<any>gestureIndicator)[type];
-            gestureIndicator.gestureCount--;
+            var domEventId = plat.domEvent,
+                eventSubscriber = this._subscribers[domEventId];
 
-            if (gestureIndicator.gestureCount === 0) {
-                this._subscriptions.splice(elementIndex, 1);
-                this.__removeElement(elementIndex);
+            delete (<any>eventSubscriber)[type];
+            eventSubscriber.gestureCount--;
 
-                if (!isUndefined((<HTMLElement>element).className)) {
-                    removeClass(<HTMLElement>element, DomEvents.config.styleConfig[0].className);
-                }
+            if (eventSubscriber.gestureCount === 0) {
+                delete this._subscribers[domEventId];
+                this.__removeElement(element);
             }
         }
         private __setTouchPoint(ev: IPointerEvent): void {
@@ -820,10 +819,9 @@
                 this.__updatePointers(ev, this.__pointerEndRegex.test(eventType));
             } else if (eventType === 'mousedown') {
                 ev.pointerType = 'mouse';
-                var target = <Node>ev.target;
                 // capture the target if it's not the Document
-                if (!isDocument(target)) {
-                    this.__capturedTarget = target;
+                if (isNull(this.__capturedTarget) && !isDocument(ev.target)) {
+                    this.__capturedTarget = <ICustomElement>ev.target;;
                 }
             } else {
                 ev.pointerType = eventType.indexOf('mouse') === -1 ? 'touch' : 'mouse';
@@ -852,23 +850,25 @@
 
         // Event and subscription handling
 
-        private __findFirstSubscriber(eventTarget: Node, type: string): IDomEventInstance {
-            var elements = this._elements,
-                gestures: IEventSubscription,
-                domEvent: IDomEventInstance,
-                index: number;
+        private __findFirstSubscriber(eventTarget: ICustomElement, type: string): IDomEventInstance {
+            var plat: ICustomElementProperty,
+                subscriber: IEventSubscriber,
+                domEvent: IDomEventInstance;
 
             do {
-                if ((index = elements.indexOf(eventTarget)) !== -1) {
-                    gestures = this._subscriptions[index];
-                    domEvent = (<any>gestures)[type];
-                    if (isUndefined(domEvent)) {
-                        continue;
-                    }
-
-                    return domEvent;
+                plat = eventTarget.__plat;
+                if (isUndefined(plat) || isUndefined(plat.domEvent)) {
+                    continue;
                 }
-            } while (!isNull(eventTarget = eventTarget.parentNode));
+
+                subscriber = this._subscribers[plat.domEvent];
+                domEvent = (<any>subscriber)[type];
+                if (isUndefined(domEvent)) {
+                    continue;
+                }
+
+                return domEvent;
+            } while (!isNull(eventTarget = <ICustomElement>eventTarget.parentNode));
         }
         private __addMappedEvent(mappedEvent: string, useCapture?: boolean): IRemoveListener {
             var $document = this.$Document;
@@ -878,7 +878,7 @@
                 $document.removeEventListener(mappedEvent, this.__mappedEventListener, useCapture);
             };
         }
-        private __removeEventListener(element: Node, type: string, listener: IGestureListener, useCapture?: boolean): void {
+        private __removeEventListener(element: ICustomElement, type: string, listener: IGestureListener, useCapture?: boolean): void {
             var gestures = this._gestures;
 
             element.removeEventListener(type, listener, useCapture);
@@ -896,13 +896,21 @@
             this.__unregisterElement(element, type);
             (<any>this._gestureCount)[countType]--;
         }
-        private __removeElement(index: number): void {
-            var elements = this._elements;
-            this.__returnSelections(elements[index]);
-            elements.splice(index, 1);
+        private __removeElement(element: ICustomElement): void {
+            this.__returnSelections(element);
+
+            if (!isUndefined(element.className)) {
+                removeClass(element, DomEvents.config.styleConfig[0].className);
+            }
+
+            var plat = element.__plat;
+            delete plat.domEvent;
+            if (isEmpty(plat)) {
+                delete element.__plat;
+            }
 
             // check if no elements are left listening
-            if (elements.length === 0) {
+            if (isEmpty(this._subscribers)) {
                 this.__unregisterTypes();
                 this._isActive = false;
             }
@@ -924,14 +932,18 @@
                 ev.clientY = evtObj.clientY;
             }
 
-            if (isUndefined(ev.offsetX)) {
-                var offset = this.__getOffset(ev);
-                ev.offsetX = offset.x;
-                ev.offsetY = offset.y;
+            if (isUndefined(ev.offsetX) || !isNull(this.__capturedTarget)) {
+                ev.offset = this.__getOffset(ev);
+                return;
             }
+
+            ev.offset = {
+                x: ev.offsetX,
+                y: ev.offsetY
+            };
         }
         private __getOffset(ev: IExtendedEvent): IPoint {
-            var target = (<any>ev.target);
+            var target = this.__capturedTarget || <any>ev.target;
             if (isDocument(target)) {
                 return {
                     x: ev.clientX,
@@ -947,8 +959,8 @@
             }
 
             return {
-                x: ev.clientX - x,
-                y: ev.clientY - y
+                x: (ev.clientX - x),
+                y: (ev.clientY - y)
             };
         }
         private __clearHold(): void {
@@ -1004,7 +1016,7 @@
             return this.__checkForRegisteredSwipe(direction);
         }
         private __checkForRegisteredSwipe(direction: string): boolean {
-            var swipeTarget = <Node>this.__swipeOrigin.target,
+            var swipeTarget = <ICustomElement>this.__swipeOrigin.target,
                 swipeGesture = this._gestures.$swipe,
                 swipeDirectionGesture = swipeGesture + direction,
                 domEventSwipe = this.__findFirstSubscriber(swipeTarget, swipeGesture),
@@ -1021,45 +1033,48 @@
             return direction === 'left' || direction === 'right';
         }
         private __appendGestureStyle(): void {
-            var $document = this.$Document;
+            var $document = this.$Document,
+                styleClasses: Array<IDefaultStyle>,
+                classLength: number;
             
             if (this.$Compat.platCss) {
                 return;
             } else if (!isNull($document.styleSheets) && $document.styleSheets.length > 0) {
-                (<CSSStyleSheet>$document.styleSheets[0]).insertRule(this.__createStyle(), 0);
+                var styleSheet = <CSSStyleSheet>$document.styleSheets[0];
+                styleClasses = DomEvents.config.styleConfig,
+                classLength = styleClasses.length;
+                while (classLength-- > 0) {
+                    styleSheet.insertRule(this.__createStyle(styleClasses[classLength]), 0);
+                }
                 return;
             }
 
             var head = $document.head,
-                style = <HTMLStyleElement>$document.createElement('style');
-
-            style.type = 'text/css';
-            style.textContent = this.__createStyle();
-            head.appendChild(style);
-        }
-        private __createStyle(): string {
-            var styleClasses = DomEvents.config.styleConfig,
-                classLength = styleClasses.length,
-                styleClass: IDefaultStyle,
-                styles: Array<string>,
-                j: number,
-                styleLength: number,
-                style = '',
-                textContent: string;
-
-            for (var i = 0; i < classLength; ++i) {
-                styleClass = styleClasses[i];
-                styles = styleClass.styles || [];
-                styleLength = styles.length;
-                style += '.' + styleClass.className + ' {\n';
+                style = <HTMLStyleElement>$document.createElement('style'),
                 textContent = '';
 
-                for (j = 0; j < styleLength; ++j) {
-                    textContent += styles[j] + ';\n';
+            style.type = 'text/css';
+            styleClasses = DomEvents.config.styleConfig,
+            classLength = styleClasses.length;
+            while (classLength-- > 0) {
+                textContent = this.__createStyle(styleClasses[classLength]) + textContent;
+            }
+            style.textContent = textContent;
+            head.appendChild(style);
+        }
+        private __createStyle(styleClass: IDefaultStyle): string {
+            var styles: Array<string> = styleClass.styles || [],
+                styleLength = styles.length,
+                style = '.' + styleClass.className + ' { ',
+                textContent = '';
+
+                styleLength = styles.length;
+
+                for (var j = 0; j < styleLength; ++j) {
+                    textContent += styles[j] + ';';
                 }
 
-                style += textContent + '}\n';
-            }
+                style += textContent + ' } ';
 
             return style;
         }
@@ -1167,9 +1182,27 @@
         }
 
         trigger(ev: IPointerEvent): void {
-            var event = <CustomEvent>this.$Document.createEvent('CustomEvent');
-            event.initCustomEvent(this.event, true, true, ev);
-            this.element.dispatchEvent(event);
+            var customEv = <CustomEvent>this.$Document.createEvent('CustomEvent');
+            this.__extendEventObject(customEv, ev);
+            customEv.initCustomEvent(this.event, true, true, 0);
+            this.element.dispatchEvent(customEv);
+        }
+
+        private __extendEventObject(customEv: IGestureEvent, ev: IPointerEvent) {
+            // not using extend function because this gets called so often for certain events.
+            customEv.clientX = ev.clientX;
+            customEv.clientY = ev.clientY;
+            customEv.offsetX = ev.offset.x;
+            customEv.offsetY = ev.offset.y;
+            customEv.direction = ev.direction;
+            customEv.touches = ev.touches;
+            customEv.velocity = ev.velocity;
+            customEv.identifier = ev.identifier;
+            customEv.pointerType = ev.pointerType;
+            customEv.screenX = ev.screenX;
+            customEv.screenY = ev.screenY;
+            customEv.pageX = ev.pageX;
+            customEv.pageY = ev.pageY;
         }
     }
 
@@ -1292,6 +1325,12 @@
         offsetY?: number;
 
         /**
+         * The x and y-coordinates of the event as an object relative to the top-left corner of the 
+         * offsetParent element that fires the event.
+         */
+        offset: IPoint;
+
+        /**
          * The potential direction associated with the event.
          */
         direction?: string;
@@ -1334,9 +1373,80 @@
      */
     export interface IGestureEvent extends CustomEvent {
         /**
-         * The detail object defined by the IExtendedEvent interface.
+         * The x-coordinate of the event on the screen relative to the upper left corner of the 
+         * browser window. This value cannot be affected by scrolling.
          */
-        detail: IExtendedEvent;
+        clientX?: number;
+
+        /**
+         * The y-coordinate of the event on the screen relative to the upper left corner of the 
+         * browser window. This value cannot be affected by scrolling.
+         */
+        clientY?: number;
+
+        /**
+         * The x-coordinate of the event on the screen relative to the upper left corner of the 
+         * physical screen or monitor.
+         */
+        screenX?: number;
+
+        /**
+         * The y-coordinate of the event on the screen relative to the upper left corner of the 
+         * physical screen or monitor.
+         */
+        screenY?: number;
+
+        /**
+         * The x-coordinate of the event on the screen relative to the upper left corner of the 
+         * fully rendered content area in the browser window. This value can be altered and/or affected by 
+         * embedded scrollable pages when the scroll bar is moved.
+         */
+        pageX?: number;
+
+        /**
+         * The y-coordinate of the event on the screen relative to the upper left corner of the 
+         * fully rendered content area in the browser window. This value can be altered and/or affected by 
+         * embedded scrollable pages when the scroll bar is moved.
+         */
+        pageY?: number;
+
+        /**
+         * The x-coordinate of the event relative to the top-left corner of the 
+         * offsetParent element that fires the event.
+         */
+        offsetX?: number;
+
+        /**
+         * The y-coordinate of the event relative to the top-left corner of the 
+         * offsetParent element that fires the event.
+         */
+        offsetY?: number;
+
+        /**
+         * The potential direction associated with the event.
+         */
+        direction?: string;
+
+        /**
+         * The potential velocity associated with the event.
+         */
+        velocity?: IVelocity;
+
+        /**
+         * An array containing all current touch points. The IExtendedEvents 
+         * may slightly differ depending on the browser implementation.
+         */
+        touches?: Array<IExtendedEvent>;
+
+        /**
+         * The type of interaction associated with the touch event ('touch', 'pen', 'mouse', '')
+         */
+        pointerType?: string;
+
+        /**
+         * A unique touch identifier.
+         */
+        identifier?: number;
     }
 
     /**
@@ -1353,7 +1463,7 @@
      * Describes an object to keep track of a single 
      * element's registered custom event types.
      */
-    export interface IEventSubscription extends IGestures<IDomEventInstance> {
+    export interface IEventSubscriber extends IGestures<IDomEventInstance> {
         /**
          * The total registered gesture count for the associated element.
          */

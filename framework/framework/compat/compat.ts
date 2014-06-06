@@ -59,31 +59,31 @@
         private __defineMappedEvents() {
             if (this.hasPointerEvents) {
                 this.mappedEvents = {
-                    $touchStart: 'pointerdown',
-                    $touchEnd: 'pointerup',
-                    $touchMove: 'pointermove',
-                    $touchCancel: 'pointercancel'
+                    $touchstart: 'pointerdown',
+                    $touchend: 'pointerup',
+                    $touchmove: 'pointermove',
+                    $touchcancel: 'pointercancel'
                 };
             } else if (this.hasMsPointerEvents) {
                 this.mappedEvents = {
-                    $touchStart: 'MSPointerDown',
-                    $touchEnd: 'MSPointerUp',
-                    $touchMove: 'MSPointerMove',
-                    $touchCancel: 'MSPointerCancel'
+                    $touchstart: 'MSPointerDown',
+                    $touchend: 'MSPointerUp',
+                    $touchmove: 'MSPointerMove',
+                    $touchcancel: 'MSPointerCancel'
                 };
             } else if (this.hasTouchEvents) {
                 this.mappedEvents = {
-                    $touchStart: 'touchstart',
-                    $touchEnd: 'touchend',
-                    $touchMove: 'touchmove',
-                    $touchCancel: 'touchcancel'
+                    $touchstart: 'touchstart',
+                    $touchend: 'touchend',
+                    $touchmove: 'touchmove',
+                    $touchcancel: 'touchcancel'
                 };
             } else {
                 this.mappedEvents = {
-                    $touchStart: 'mousedown',
-                    $touchEnd: 'mouseup',
-                    $touchMove: 'mousemove',
-                    $touchCancel: null
+                    $touchstart: 'mousedown',
+                    $touchend: 'mouseup',
+                    $touchmove: 'mousemove',
+                    $touchcancel: null
                 };
             }
         }
@@ -269,22 +269,22 @@
         /**
          * An event type for touch start.
          */
-        $touchStart: string;
+        $touchstart: string;
 
         /**
          * An event type for touch end.
          */
-        $touchEnd: string;
+        $touchend: string;
 
         /**
          * An event type for touch move.
          */
-        $touchMove: string;
+        $touchmove: string;
 
         /**
          * An event type for touch cancel.
          */
-        $touchCancel: string;
+        $touchcancel: string;
     }
 
     /**

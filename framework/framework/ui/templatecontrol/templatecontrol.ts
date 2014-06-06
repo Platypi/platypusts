@@ -196,7 +196,6 @@ module plat.ui {
             TemplateControl.$ResourcesFactory.dispose(control);
             TemplateControl.$BindableTemplatesFactory.dispose(control);
 
-            TemplateControl.__resourceCache[control.uid] = null;
             delete TemplateControl.__resourceCache[control.uid];
 
             ContextManager.dispose(control);
@@ -435,7 +434,6 @@ module plat.ui {
 
             TemplateControl.$ResourcesFactory.dispose(control, true);
 
-            TemplateControl.__resourceCache[control.uid] = null;
             delete TemplateControl.__resourceCache[control.uid];
 
             Control.$ContextManagerStatic.dispose(control, true);
