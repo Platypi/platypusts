@@ -3,20 +3,32 @@ module plat.ui.controls {
         /**
          * Removes the <plat-if> node from the DOM
          */
-        replaceWith: string = null;
+        replaceWith = 'any';
 
         /**
          * The evaluated plat-options object.
          */
         options: observable.IObservableProperty<IIfOptions>;
 
-        private __removeListener: IRemoveListener;
-        private __condition: boolean;
         /**
-         * Creates a bindable template with its element nodes.
+         * The Comment used to hold the place of the plat-if element.
          */
-        setTemplate(): void {
-            this.bindableTemplates.add('item', this.elementNodes);
+        commentNode: Comment;
+
+        /**
+         * The DocumentFragment that stores the plat-if element when hidden.
+         */
+        fragmentStore: DocumentFragment;
+
+        private __removeListener: IRemoveListener;
+        private __condition: boolean = false;
+
+        constructor() {
+            super();
+            var $Document: Document = acquire(__Document);
+
+            this.commentNode = $Document.createComment('plat-if-@placeholder');
+            this.fragmentStore = $Document.createDocumentFragment();
         }
 
         /**
@@ -50,6 +62,7 @@ module plat.ui.controls {
                     observe: <any>noop
                 };
             }
+            this._removeItem();
             this.contextChanged();
             this.__removeListener = this.options.observe(this.setter);
         }
@@ -62,6 +75,9 @@ module plat.ui.controls {
                 this.__removeListener();
                 this.__removeListener = null;
             }
+
+            this.commentNode = null;
+            this.fragmentStore = null;
         }
 
         /**
@@ -79,7 +95,7 @@ module plat.ui.controls {
             if (!value) {
                 this._removeItem();
             } else {
-                this.bindableTemplates.bind('item', this._addItem);
+                this._addItem();
             }
 
             this.__condition = value;
@@ -88,22 +104,26 @@ module plat.ui.controls {
         /**
          * The callback used to add the fragment to the DOM 
          * after the bindableTemplate has been created.
-         * 
-         * @param item The DocumentFragment consisting of 
-         * the inner template of the node.
          */
-        _addItem(item: DocumentFragment): void {
-            var endNode = this.endNode;
-            this.dom.insertBefore(endNode.parentNode, item, endNode);
+        _addItem(): void {
+            var commentNode = this.commentNode,
+                parentNode = commentNode.parentNode;
+
+            if (!isNode(parentNode)) {
+                return;
+            }
+
+            parentNode.replaceChild(this.fragmentStore, commentNode);
         }
 
         /**
          * Removes the node from the DOM.
          */
         _removeItem(): void {
-            postpone(() => {
-                Control.dispose(this.controls[0]);
-            });
+            var element = this.element;
+            element.parentNode.insertBefore(this.commentNode, element);
+            insertBefore(this.fragmentStore, element);
+
         }
     }
 

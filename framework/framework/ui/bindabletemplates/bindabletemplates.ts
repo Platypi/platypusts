@@ -58,7 +58,7 @@ module plat.ui {
         $ElementManagerFactory: processing.IElementManagerFactory = acquire(__ElementManagerFactory);
 
         control: ITemplateControl;
-        templates: IObject<DocumentFragment> = {};
+        templates: IObject<async.IThenable<DocumentFragment>> = {};
 
         /**
          * A keyed cache of IElementManagers that represent the roots of compiled templates 
@@ -68,18 +68,15 @@ module plat.ui {
 
         private __compiledControls: Array<ITemplateControl> = [];
 
-        bind(key: string, callback: IBindableTemplateCallback, relativeIdentifier?: string,
-            resources?: IObject<IResource>): DocumentFragment;
-        bind(key: string, callback: IBindableTemplateCallback, relativeIdentifier?: number,
-                resources?: IObject<IResource>): DocumentFragment;
-        bind(key: any, callback: IBindableTemplateCallback,
-                relativeIdentifier?: any, resources?: IObject<IResource>): DocumentFragment {
-            var template: any = this.templates[key],
+        bind(key: string, relativeIdentifier?: string, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
+        bind(key: string, relativeIdentifier?: number, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
+        bind(key: any, relativeIdentifier?: any, resources?: IObject<IResource>): async.IThenable<DocumentFragment> {
+            var templatePromise = this.templates[key],
                 control: ITemplateControl = this.control,
                 nodeMap: processing.INodeMap,
                 $exception: IExceptionStatic;
 
-            if (isNull(template)) {
+            if (isNull(templatePromise)) {
                 $exception = acquire(__ExceptionStatic);
                 $exception.fatal('Cannot bind template, no template stored with key: ' + key,
                     $exception.TEMPLATE);
@@ -94,18 +91,16 @@ module plat.ui {
                 return;
             }
 
-            if (isFunction(template.then)) {
-                template.then((result: DocumentFragment) => {
-                    this._bindTemplate(key, <DocumentFragment>result.cloneNode(true), relativeIdentifier, resources, callback);
-                }).catch((error: any) => {
-                    postpone(() => {
-                        $exception = acquire(__ExceptionStatic);
-                        $exception.fatal(error, $exception.COMPILE);
-                    });
+            return templatePromise.then((result: DocumentFragment) => {
+                return this._bindTemplate(key, <DocumentFragment>result.cloneNode(true), relativeIdentifier, resources);
+            }, (error: any) => {
+                postpone(() => {
+                    $exception = acquire(__ExceptionStatic);
+                    $exception.fatal(error, $exception.BIND);
                 });
-                return;
-            }
-            this._bindTemplate(key, <DocumentFragment>template.cloneNode(true), relativeIdentifier, resources, callback);
+
+                return <DocumentFragment>null;
+            });
         }
 
         add(key: string, template: Element): void;
@@ -119,7 +114,6 @@ module plat.ui {
             }
 
             if (isDocumentFragment(template)) {
-                this.templates[key] = template;
                 this._compile(key, template);
                 return;
             }
@@ -133,8 +127,6 @@ module plat.ui {
             } else {
                 return;
             }
-
-            this.templates[key] = fragment;
 
             this._compile(key, fragment);
         }
@@ -159,22 +151,24 @@ module plat.ui {
          * the binding of the INodeMap for a cloned template.
          */
         _bindTemplate(key: string, template: DocumentFragment, context: string,
-            resources: IObject<IResource>, callback: IBindableTemplateCallback): void {
+            resources: IObject<IResource>): async.IThenable<DocumentFragment> {
             var control = this._createBoundControl(key, template, context, resources),
                 nodeMap = this._createNodeMap(control, template, context);
 
-            this._bindNodeMap(nodeMap, key).then(() => {
+            return this._bindNodeMap(nodeMap, key).then(() => {
                 control.startNode = template.insertBefore(this.$Document.createComment(control.type + ': start node'),
                     template.firstChild);
                 control.endNode = template.insertBefore(this.$Document.createComment(control.type + ': end node'),
                     null);
 
-                callback.call(this.control, template);
-            }).catch((error) => {
+                return template;
+            }, (error: any) => {
                 postpone(() => {
                     var $exception: IExceptionStatic = acquire(__ExceptionStatic);
-                    $exception.fatal(error, $exception.BIND);
+                    $exception.fatal(error, $exception.COMPILE);
                 });
+
+                return <DocumentFragment>null;
             });
         }
 
@@ -191,7 +185,7 @@ module plat.ui {
             this.control.controls.push(child);
 
             manager.clone(template, $managerCache.read(this.control.uid), nodeMap);
-            return ($managerCache.read(child.uid)).bindAndLoad();
+            return $managerCache.read(child.uid).bindAndLoad();
         }
         
         /**
@@ -223,24 +217,19 @@ module plat.ui {
 
             promises.push(manager.fulfillTemplate());
 
-            this.templates[key] = <any>this.$Promise.all(promises).then((results) => {
+            this.templates[key] = this.$Promise.all(promises).then(() => {
                 var element = nodeMap.element,
                     startNode: Comment,
                     endNode: Comment;
 
-                this.templates[key] = <DocumentFragment>nodeMap.element.cloneNode(true);
+                var clone = <DocumentFragment>nodeMap.element.cloneNode(true);
 
                 startNode = control.startNode = this.$Document.createComment(control.type + ': start node');
                 endNode = control.endNode = this.$Document.createComment(control.type + ': end node');
                 element.insertBefore(startNode, element.firstChild);
                 element.insertBefore(endNode, null);
 
-                return this.templates[key];
-            }).catch((error) => {
-                postpone(() => {
-                    var $exception: IExceptionStatic = acquire(__ExceptionStatic);
-                    $exception.fatal(error, $exception.COMPILE);
-                });
+                return clone;
             });
         }
 
@@ -356,36 +345,28 @@ module plat.ui {
          * to specify a data context.
          * 
          * @param key The key used to retrieve the template.
-         * @param callback The callback associated with binding the template to the specified data
-         * context. 
          * @param relativeIdentifier The identifier string relative to this control's context
          * (e.g. 'foo.bar.baz' would signify the object this.context.foo.bar.baz). This is the 
          * most efficient way of specifying context, else the framework has to search for the 
          * object.
          * @param resources An object used as the resources for any top-level 
          * controls created in the template.
-         * @return {DocumentFragment} A clone of the template, fully reconstructed and ready to put
-         * in the DOM.
          */
-        bind(key: string, callback: IBindableTemplateCallback, relativeIdentifier?: string,
-            resources?: IObject<IResource>): DocumentFragment;
+        bind(key: string, relativeIdentifier?: string,
+            resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
         /**
          * Method for linking a new template to a data context and returning a clone of the template, 
          * with all new IControls created if the template contains controls. It is not necessary
          * to specify a data context.
          * 
          * @param key The key used to retrieve the template.
-         * @param callback The callback associated with binding the template to the specified data
-         * context. 
          * @param relativeIdentifier The identifier number relative to this control's context. Only 
          * necessary when context is an array.
          * @param resources An object used as the resources for any top-level 
          * controls created in the template.
-         * @return {DocumentFragment} A clone of the template, fully reconstructed and ready to put
-         * in the DOM.
          */
-        bind(key: string, callback: IBindableTemplateCallback, relativeIdentifier?: number,
-            resources?: IObject<IResource>): DocumentFragment;
+        bind(key: string, relativeIdentifier?: number,
+            resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
 
         /**
          * Adds a template to this object. The template will be stored with the key,
@@ -431,20 +412,5 @@ module plat.ui {
          * Clears the memory being held by this BindableTemplates instance.
          */
         dispose(): void;
-    }
-
-    /**
-     * Describes a function used as the callback associated with binding a specified 
-     * template to a specified data context.
-     * 
-     * @param clone The bound clone of the specified template.
-     */
-    export interface IBindableTemplateCallback {
-        /**
-         * Receives a DocumentFragment clone ready to inject into DOM.
-         * 
-         * @param clone The bound clone of the specified template.
-         */
-        (clone: DocumentFragment): void;
     }
 }

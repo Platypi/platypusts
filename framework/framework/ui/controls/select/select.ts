@@ -132,7 +132,7 @@ module plat.ui.controls {
             for (var i = 0; i < numberOfItems; ++i, ++index) {
                 item = this.context[index];
 
-                this.bindableTemplates.bind('option', this._insertOptions.bind(this, index, item), index);
+                this.bindableTemplates.bind('option', index).then(this._insertOptions.bind(this, index, item));
             }
         }
 
@@ -154,19 +154,12 @@ module plat.ui.controls {
                     optgroup: any = groups[newGroup];
 
                 if (isNull(optgroup)) {
-                    optgroup = groups[newGroup] = <any>new this.$Promise<Element>((resolve) => {
-                        this.bindableTemplates.bind('group', (groupClone: DocumentFragment) => {
-                            optgroup = groups[newGroup] = <Element>groupClone.childNodes[1];
+                    groups[newGroup] = <any>this.bindableTemplates.bind('group', '' + index).then((groupClone: DocumentFragment) => {
+                        optgroup = groups[newGroup] = <Element>groupClone.childNodes[1];
 
-                            optgroup.appendChild(optionClone);
-                            element.appendChild(groupClone);
-                            resolve(optgroup);
-                        }, '' + index);
-                    }).catch((error: any) => {
-                        postpone(() => {
-                            var $exception: IExceptionStatic = acquire(__ExceptionStatic);
-                            $exception.warn(error.message, $exception.BIND);
-                        });
+                        optgroup.appendChild(optionClone);
+                        element.appendChild(groupClone);
+                        return optgroup;
                     });
                     return;
                 } else if (isFunction(optgroup.then)) {

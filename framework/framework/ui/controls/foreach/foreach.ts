@@ -88,6 +88,9 @@ module plat.ui.controls {
          * Adds an item to the ForEach's element.
          */
         _addItem(item: DocumentFragment): void {
+            if (!isNode(item)) {
+                return;
+            }
             this.dom.insertBefore(this.element, item);
         }
 
@@ -152,7 +155,14 @@ module plat.ui.controls {
             var bindableTemplates = this.bindableTemplates;
             
             for (var i = 0; i < numberOfItems; ++i, ++index) {
-                bindableTemplates.bind('item', this._addItem, index, this._getAliases(index));
+                bindableTemplates.bind('item', index, this._getAliases(index)).then((fragment: DocumentFragment) => {
+                    this._addItem(fragment);
+                }).catch((error: any) => {
+                    postpone(() => {
+                        var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                        $exception.fatal(error, $exception.BIND);
+                    });
+                });
             }
         }
 
