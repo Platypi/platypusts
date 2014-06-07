@@ -98,6 +98,12 @@
     <Content Include="css\animations.min.css">
       <DependentUpon>animations.css</DependentUpon>
     </Content>
+    <Content Include="css\media.css">
+      <DependentUpon>media.less</DependentUpon>
+    </Content>
+    <Content Include="css\media.min.css">
+      <DependentUpon>media.css</DependentUpon>
+    </Content>
     <Content Include="css\mixins.css">
       <DependentUpon>mixins.less</DependentUpon>
     </Content>
@@ -126,6 +132,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="css\animations.less" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="css\media.less" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

@@ -1,4 +1,5 @@
 ﻿@import 'animations';
+@import 'media';
 
 // Common
 
@@ -37,7 +38,6 @@
 #Animations > .slideAndFade(@slideOutFadeOut; out; left);
 
 .plat-slidein {
-    position: absolute;
     .animation-name(@slideIn);
     .animation-duration(250ms);
     .animation-fill-mode(forwards);
@@ -46,7 +46,6 @@
 #Animations > .slide();
 
 .plat-slideout {
-    position: absolute;
     .animation-name(@slideOut);
     .animation-duration(200ms);
     .animation-fill-mode(forwards);
