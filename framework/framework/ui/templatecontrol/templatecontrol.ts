@@ -174,7 +174,8 @@ module plat.ui {
 
             var parent = control.parent,
                 uid = control.uid,
-                controls = (control.controls && control.controls.slice(0)),
+                childControls = control.controls,
+                controls = (childControls && childControls.slice(0)),
                 ContextManager = Control.$ContextManagerStatic,
                 define = ContextManager.defineProperty;
 

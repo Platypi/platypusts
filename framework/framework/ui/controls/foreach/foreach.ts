@@ -90,11 +90,15 @@ module plat.ui.controls {
          * Adds an item to the ForEach's element.
          */
         _addItem(item: DocumentFragment): void {
-            var childNodes = Array.prototype.slice.call(item.childNodes),
-                length = childNodes.length;
+            var $animator = this.$Animator,
+                childNodes: Array<Element> = Array.prototype.slice.call(item.childNodes),
+                elementNodes = this.elementNodes,
+                childNode: Element;
             this.dom.insertBefore(this.element, item);
-            for (var i = 0; i < length; ++i) {
-                this.$Animator.animate(childNodes[i], __Enter);
+            while (childNodes.length > 0) {
+                childNode = childNodes.shift();
+                elementNodes.push(childNode);
+                $animator.animate(childNode, __Enter);
             }
         }
 

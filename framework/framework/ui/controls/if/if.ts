@@ -1,5 +1,7 @@
 module plat.ui.controls {
     export class If extends TemplateControl implements IIf {
+        $Animator: IAnimator = acquire(__Animator);
+
         /**
          * Removes the <plat-if> node from the DOM
          */
@@ -12,6 +14,8 @@ module plat.ui.controls {
 
         private __removeListener: IRemoveListener;
         private __condition: boolean;
+        private __remover: async.IThenable<void>;
+
         /**
          * Creates a bindable template with its element nodes.
          */
@@ -78,6 +82,11 @@ module plat.ui.controls {
 
             if (!value) {
                 this._removeItem();
+            } else if (!isNull(this.__remover)) {
+                this.__remover.then(() => {
+                    this.__remover = null;
+                    this.bindableTemplates.bind('item', this._addItem);
+                });
             } else {
                 this.bindableTemplates.bind('item', this._addItem);
             }
@@ -93,17 +102,45 @@ module plat.ui.controls {
          * the inner template of the node.
          */
         _addItem(item: DocumentFragment): void {
-            var endNode = this.endNode;
+            var $animator = this.$Animator,
+                endNode = this.endNode,
+                childNodes: Array<Element> = Array.prototype.slice.call(item.childNodes);
             this.dom.insertBefore(endNode.parentNode, item, endNode);
+            while (childNodes.length > 0) {
+                $animator.animate(childNodes.shift(), __Enter);
+            }
         }
 
         /**
          * Removes the node from the DOM.
          */
         _removeItem(): void {
-            postpone(() => {
+            this.__remover = this.__animateElements().then(() => {
                 Control.dispose(this.controls[0]);
             });
+        }
+
+        private __animateElements(): async.IThenable<void> {
+            var $animator = this.$Animator,
+                startNode = this.startNode,
+                endNode = this.endNode,
+                node = startNode && startNode.nextSibling,
+                promise: async.IThenable<void>;
+
+            while (!(isNull(node) || node === endNode)) {
+                if (node.nodeType === Node.ELEMENT_NODE) {
+                    promise = $animator.animate(<Element>node, __Leave);
+                }
+                if ((node = node.nextSibling) === endNode) {
+                    return promise;
+                }
+            }
+
+            if (isNull(promise)) {
+                promise = (<async.IPromise>acquire(__Promise)).resolve<void>(null);
+            }
+
+            return promise;
         }
     }
 
