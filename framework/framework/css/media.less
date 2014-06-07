@@ -1,5 +1,5 @@
-﻿.media(@max; @rules) {
-    @media screen and (max-width: @max) {
+﻿.media(@min: 0px; @max; @rules) {
+    @media screen and (min-width: @min) and (max-width: @max) {
         @rules();
     }
 }
@@ -8,28 +8,56 @@
     .media(1400px; @rules);
 }
 
+.media1400_strict(@rules) {
+    .media(1100px; 1400px; @rules);
+}
+
 .media1100(@rules) {
     .media(1100px; @rules);
+}
+
+.media1100_strict(@rules) {
+    .media(1000px; 1100px; @rules);
 }
 
 .media1000(@rules) {
     .media(1000px; @rules);
 }
 
+.media1000_strict(@rules) {
+    .media(800px; 1000px; @rules);
+}
+
 .media800(@rules) {
     .media(800px; @rules);
+}
+
+.media800_strict(@rules) {
+    .media(700px; 800px; @rules);
 }
 
 .media700(@rules) {
     .media(700px; @rules);
 }
 
+.media700_strict(@rules) {
+    .media(600px; 700px; @rules);
+}
+
 .media600(@rules) {
     .media(600px; @rules);
 }
 
+.media600_strict(@rules) {
+    .media(500px; 600px; @rules);
+}
+
 .media500(@rules) {
     .media(500px; @rules);
+}
+
+.media500_strict(@rules) {
+    .media(400px; 500px; @rules);
 }
 
 .media400(@rules) {
