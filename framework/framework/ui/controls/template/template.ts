@@ -110,8 +110,7 @@ module plat.ui.controls {
                         return TemplateControl.determineTemplate(this, url);
                     }
                 }).then((template: DocumentFragment) => {
-                    var bindableTemplates = this.bindableTemplates;
-                    bindableTemplates.add(id, template.cloneNode(true));
+                    this.bindableTemplates.add(id, template.cloneNode(true));
                     return this;
                 });
             } else {
@@ -161,14 +160,7 @@ module plat.ui.controls {
          * resolves the clone to be placed into the DOM.
          */
         _instantiateTemplate(): async.IThenable<DocumentFragment> {
-            var bindableTemplates = this.bindableTemplates,
-                id = this._id;
-
-            return new this.$Promise<DocumentFragment>((resolve, reject) => {
-                bindableTemplates.bind(id, (clone: DocumentFragment) => {
-                    resolve(clone);
-                });
-            });
+            return this.bindableTemplates.bind(this._id);
         }
 
         private __mapBindableTemplates(control: Template): void {

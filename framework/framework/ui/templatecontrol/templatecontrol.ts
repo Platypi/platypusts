@@ -470,7 +470,7 @@ module plat.ui {
         elementNodes: Array<Node>;
         startNode: Node;
         endNode: Node;
-        replaceWith = 'div';
+        replaceWith = 'any';
         root: ITemplateControl;
 
         contextChanged(): void { }
@@ -845,7 +845,10 @@ module plat.ui {
          * childNodes of the element will be in its place. In addition, when the element is placed an endNode Comment
          * is created, and the childNodes are added to the elementNodes property on the control. The replaceWith 
          * property can be any property that works with document.createElement(). If the control's element had 
-         * attributes (as well as attribute IControls), those attributes will be carried to the swapped element.
+         * attributes (as well as attribute IControls), those attributes will be carried to the swapped element. The default 
+         * replaceWith is 'any,' meaning it will default to a 'div' in the case that the control type is used as the 
+         * element's nodename (i.e. <plat-foreach plat-context="..."></plat-foreach>), but will maintain whatever element type 
+         * is used otherwise (i.e. <tr plat-control="plat-foreach" plat-context="..."></tr>)
          */
         replaceWith?: string;
 

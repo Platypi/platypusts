@@ -7,12 +7,6 @@ module plat.ui.controls {
          */
         context: Array<any>;
 
-        /**
-         * Specifies that the foreach's element can be replaced with 
-         * any type of element.
-         */
-        replaceWith = 'any';
-
         controls: Array<ITemplateControl>;
         private __clearTimeouts: Array<IRemoveListener> = [];
         private __removeListener: IRemoveListener;
@@ -90,14 +84,18 @@ module plat.ui.controls {
          * Adds an item to the ForEach's element.
          */
         _addItem(item: DocumentFragment): void {
+            if (!isNode(item)) {
+                return;
+            }
+
             var $animator = this.$Animator,
                 childNodes: Array<Element> = Array.prototype.slice.call(item.childNodes),
-                elementNodes = this.elementNodes,
                 childNode: Element;
+
             this.dom.insertBefore(this.element, item);
+
             while (childNodes.length > 0) {
                 childNode = childNodes.shift();
-                elementNodes.push(childNode);
                 $animator.animate(childNode, __Enter);
             }
         }
@@ -163,7 +161,14 @@ module plat.ui.controls {
             var bindableTemplates = this.bindableTemplates;
             
             for (var i = 0; i < numberOfItems; ++i, ++index) {
-                bindableTemplates.bind('item', this._addItem, index, this._getAliases(index));
+                bindableTemplates.bind('item', index, this._getAliases(index)).then((fragment: DocumentFragment) => {
+                    this._addItem(fragment);
+                }).catch((error: any) => {
+                    postpone(() => {
+                        var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                        $exception.fatal(error, $exception.BIND);
+                    });
+                });
             }
         }
 

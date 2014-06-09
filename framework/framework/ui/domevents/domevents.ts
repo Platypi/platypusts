@@ -821,7 +821,7 @@
                 ev.pointerType = 'mouse';
                 // capture the target if it's not the Document
                 if (isNull(this.__capturedTarget) && !isDocument(ev.target)) {
-                    this.__capturedTarget = <ICustomElement>ev.target;;
+                    this.__capturedTarget = <ICustomElement>ev.target;
                 }
             } else {
                 ev.pointerType = eventType.indexOf('mouse') === -1 ? 'touch' : 'mouse';

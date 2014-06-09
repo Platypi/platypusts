@@ -60,7 +60,7 @@
 
             var injectedControl = newControl ? control.inject() : control,
                 replaceType = injectedControl.replaceWith,
-                node = isEmpty(replaceType) ? this.$Document.createElement('div') :
+                node = (isEmpty(replaceType) || replaceType === 'any') ? this.$Document.createElement('div') :
                     <HTMLElement>this.$Document.createElement(replaceType),
                 attributes: IObject<string> = {},
                 nodeMap: processing.INodeMap = {

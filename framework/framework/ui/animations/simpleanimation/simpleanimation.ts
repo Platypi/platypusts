@@ -6,29 +6,28 @@
 
         start(): void {
             var $compat = this.$Compat,
-                $dom = this.dom,
                 animationId = $compat.animationEvents.$animation,
                 element = this.element,
                 className = this.className;
 
-            $dom.addClass(element, className);
+            addClass(element, className);
 
             var computedStyle = this.$Window.getComputedStyle(element);
             if (computedStyle[<any>(animationId + 'Name')] === 'none' ||
                 computedStyle[<any>(animationId + 'PlayState')] === 'paused') {
-                $dom.removeClass(element, className);
+                removeClass(element, className);
                 this.end();
                 return;
             }
 
             this.animationEnd(() => {
-                $dom.removeClass(element, className);
+                removeClass(element, className);
                 this.end();
             });
         }
 
         cancel(): void {
-            this.dom.removeClass(this.element, this.className);
+            removeClass(this.element, this.className);
             super.cancel();
         }
     }

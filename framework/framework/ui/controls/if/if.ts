@@ -3,24 +3,30 @@ module plat.ui.controls {
         $Animator: IAnimator = acquire(__Animator);
 
         /**
-         * Removes the <plat-if> node from the DOM
-         */
-        replaceWith: string = null;
-
-        /**
          * The evaluated plat-options object.
          */
         options: observable.IObservableProperty<IIfOptions>;
 
-        private __removeListener: IRemoveListener;
-        private __condition: boolean;
-        private __remover: async.IThenable<void>;
+        /**
+         * The Comment used to hold the place of the plat-if element.
+         */
+        commentNode: Comment;
 
         /**
-         * Creates a bindable template with its element nodes.
+         * The DocumentFragment that stores the plat-if element when hidden.
          */
-        setTemplate(): void {
-            this.bindableTemplates.add('item', this.elementNodes);
+        fragmentStore: DocumentFragment;
+
+        private __removeListener: IRemoveListener;
+        private __condition: boolean;
+        private __leaveAnimation: IAnimationThenable<void>;
+        private __enterAnimation: IAnimationThenable<void>;
+
+        constructor() {
+            super();
+            var $document: Document = acquire(__Document);
+            this.commentNode = $document.createComment('plat-if-@placeholder');
+            this.fragmentStore = $document.createDocumentFragment();
         }
 
         /**
@@ -54,6 +60,7 @@ module plat.ui.controls {
                     observe: <any>noop
                 };
             }
+
             this.contextChanged();
             this.__removeListener = this.options.observe(this.setter);
         }
@@ -66,6 +73,9 @@ module plat.ui.controls {
                 this.__removeListener();
                 this.__removeListener = null;
             }
+
+            this.commentNode = null;
+            this.fragmentStore = null;
         }
 
         /**
@@ -81,14 +91,23 @@ module plat.ui.controls {
             }
 
             if (!value) {
-                this._removeItem();
-            } else if (!isNull(this.__remover)) {
-                this.__remover.then(() => {
-                    this.__remover = null;
-                    this.bindableTemplates.bind('item', this._addItem);
-                });
+                if (!isNull(this.__enterAnimation)) {
+                    this.__enterAnimation.cancel().then(() => {
+                        this.__enterAnimation = null;
+                        this._removeItem();
+                    });
+                } else {
+                    this._removeItem();
+                }
             } else {
-                this.bindableTemplates.bind('item', this._addItem);
+                if (!isNull(this.__leaveAnimation)) {
+                    this.__leaveAnimation.cancel().then(() => {
+                        this.__leaveAnimation = null;
+                        this._addItem();
+                    });
+                } else {
+                    this._addItem();
+                }
             }
 
             this.__condition = value;
@@ -97,50 +116,31 @@ module plat.ui.controls {
         /**
          * The callback used to add the fragment to the DOM 
          * after the bindableTemplate has been created.
-         * 
-         * @param item The DocumentFragment consisting of 
-         * the inner template of the node.
          */
-        _addItem(item: DocumentFragment): void {
-            var $animator = this.$Animator,
-                endNode = this.endNode,
-                childNodes: Array<Element> = Array.prototype.slice.call(item.childNodes);
-            this.dom.insertBefore(endNode.parentNode, item, endNode);
-            while (childNodes.length > 0) {
-                $animator.animate(childNodes.shift(), __Enter);
+        _addItem(): void {
+            var commentNode = this.commentNode,
+                parentNode = commentNode.parentNode;
+
+            if (!isNode(parentNode)) {
+                return;
             }
+
+            parentNode.replaceChild(this.fragmentStore, commentNode);
+            this.__enterAnimation = this.$Animator.animate(this.element, __Enter).then(() => {
+                this.__enterAnimation = null;
+            });
         }
 
         /**
          * Removes the node from the DOM.
          */
         _removeItem(): void {
-            this.__remover = this.__animateElements().then(() => {
-                Control.dispose(this.controls[0]);
+            var element = this.element;
+            this.__leaveAnimation = this.$Animator.animate(element, __Leave).then(() => {
+                this.__leaveAnimation = null;
+                element.parentNode.insertBefore(this.commentNode, element);
+                insertBefore(this.fragmentStore, element);
             });
-        }
-
-        private __animateElements(): async.IThenable<void> {
-            var $animator = this.$Animator,
-                startNode = this.startNode,
-                endNode = this.endNode,
-                node = startNode && startNode.nextSibling,
-                promise: async.IThenable<void>;
-
-            while (!(isNull(node) || node === endNode)) {
-                if (node.nodeType === Node.ELEMENT_NODE) {
-                    promise = $animator.animate(<Element>node, __Leave);
-                }
-                if ((node = node.nextSibling) === endNode) {
-                    return promise;
-                }
-            }
-
-            if (isNull(promise)) {
-                promise = (<async.IPromise>acquire(__Promise)).resolve<void>(null);
-            }
-
-            return promise;
         }
     }
 

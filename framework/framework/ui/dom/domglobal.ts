@@ -154,9 +154,11 @@ function setInnerHtml(node: Node, html: string): Node {
     return node;
 }
 
-function insertBefore(parent: Node, nodes: any, endNode: Node = null): Array<Node> {
+function insertBefore(parent: Node, nodes: any, endNode?: Node): Array<Node> {
     if (isNull(parent)) {
         return;
+    } else if (isUndefined(endNode)) {
+        endNode = null;
     }
 
     var fragment: DocumentFragment;

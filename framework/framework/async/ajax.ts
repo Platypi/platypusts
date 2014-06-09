@@ -834,23 +834,91 @@ module plat.async {
         }
 
         then<U>(onFulfilled: (success: IAjaxResponse<R>) => U,
-            onRejected?: (error: IAjaxError) => any): IThenable<U>;
+            onRejected?: (error: IAjaxError) => any): IAjaxThenable<U>;
         then<U>(onFulfilled: (success: IAjaxResponse<R>) => IThenable<U>,
-            onRejected?: (error: IAjaxError) => IThenable<U>): IThenable<U>;
+            onRejected?: (error: IAjaxError) => IThenable<U>): IAjaxThenable<U>;
         then<U>(onFulfilled: (success: IAjaxResponse<R>) => IThenable<U>,
-            onRejected?: (error: IAjaxError) => any): IThenable<U>;
+            onRejected?: (error: IAjaxError) => any): IAjaxThenable<U>;
         then<U>(onFulfilled: (success: IAjaxResponse<R>) => U,
-            onRejected?: (error: IAjaxError) => IThenable<U>): IThenable<U>;
+            onRejected?: (error: IAjaxError) => IThenable<U>): IAjaxThenable<U>;
         then<U>(onFulfilled: (success: IAjaxResponse<R>) => U,
-            onRejected?: (error: IAjaxError) => any): IThenable<U> {
-            return super.then<U>(onFulfilled, onRejected);
+            onRejected?: (error: IAjaxError) => any): IAjaxThenable<U> {
+            return <IAjaxThenable<U>><any>super.then<U>(onFulfilled, onRejected);
         }
+
+        catch<U>(onRejected: (error: any) => IAjaxThenable<U>): IAjaxThenable<U>;
+        catch<U>(onRejected: (error: any) => U): IAjaxThenable<U>;
+        catch<U>(onRejected: (error: any) => any): IAjaxThenable<U> {
+            return <IAjaxThenable<U>><any>super.catch<U>(onRejected);
+        }
+    }
+    
+    /**
+     * Describes a type of IThenable that can optionally cancel it's associated AJAX call.
+     */
+    export interface IAjaxThenable<R> extends IThenable<R> {
+        /**
+         * A method to cancel the AJAX call associated with this AjaxPromise.
+         */
+        cancel(): void;
+
+        /**
+         * Takes in two methods, called when/if the promise fulfills/rejects.
+         * 
+         * @param onFulfilled A method called when/if the promise fulills. If undefined the next
+         * onFulfilled method in the promise chain will be called.
+         * @param onRejected A method called when/if the promise rejects. If undefined the next
+         * onRejected method in the promise chain will be called.
+         */
+        then<U>(onFulfilled: (success: R) => IAjaxThenable<U>, onRejected?: (error: any) => IAjaxThenable<U>): IAjaxThenable<U>;
+        /**
+         * Takes in two methods, called when/if the promise fulfills/rejects.
+         * 
+         * @param onFulfilled A method called when/if the promise fulills. If undefined the next
+         * onFulfilled method in the promise chain will be called.
+         * @param onRejected A method called when/if the promise rejects. If undefined the next
+         * onRejected method in the promise chain will be called.
+         */
+        then<U>(onFulfilled: (success: R) => IAjaxThenable<U>, onRejected?: (error: any) => U): IAjaxThenable<U>;
+        /**
+         * Takes in two methods, called when/if the promise fulfills/rejects.
+         * 
+         * @param onFulfilled A method called when/if the promise fulills. If undefined the next
+         * onFulfilled method in the promise chain will be called.
+         * @param onRejected A method called when/if the promise rejects. If undefined the next
+         * onRejected method in the promise chain will be called.
+         */
+        then<U>(onFulfilled: (success: R) => U, onRejected?: (error: any) => IAjaxThenable<U>): IAjaxThenable<U>;
+        /**
+         * Takes in two methods, called when/if the promise fulfills/rejects.
+         * 
+         * @param onFulfilled A method called when/if the promise fulills. If undefined the next
+         * onFulfilled method in the promise chain will be called.
+         * @param onRejected A method called when/if the promise rejects. If undefined the next
+         * onRejected method in the promise chain will be called.
+         */
+        then<U>(onFulfilled: (success: R) => U, onRejected?: (error: any) => U): IAjaxThenable<U>;
+
+        /**
+         * A wrapper method for Promise.then(undefined, onRejected);
+         * 
+         * @param onRejected A method called when/if the promise rejects. If undefined the next
+         * onRejected method in the promise chain will be called.
+         */
+        catch<U>(onRejected: (error: any) => IAjaxThenable<U>): IAjaxThenable<U>;
+        /**
+         * A wrapper method for Promise.then(undefined, onRejected);
+         * 
+         * @param onRejected A method called when/if the promise rejects. If undefined the next
+         * onRejected method in the promise chain will be called.
+         */
+        catch<U>(onRejected: (error: any) => U): IAjaxThenable<U>;
     }
 
     /**
      * Describes a type of IPromise that fulfills with an IAjaxResponse and can be optionally canceled.
      */
-    export interface IAjaxPromise<R> extends IThenable<IAjaxResponse<R>> {
+    export interface IAjaxPromise<R> extends IAjaxThenable<IAjaxResponse<R>> {
         /**
          * A method to cancel the AJAX call associated with this AjaxPromise.
          */
@@ -865,7 +933,7 @@ module plat.async {
          * onRejected method in the promise chain will be called.
          */
         then<U>(onFulfilled: (success: IAjaxResponse<R>) => U,
-            onRejected?: (error: IAjaxError) => any): IThenable<U>;
+            onRejected?: (error: IAjaxError) => any): IAjaxThenable<U>;
         /**
          * Takes in two methods, called when/if the promise fulfills/rejects.
          * 
@@ -875,7 +943,7 @@ module plat.async {
          * onRejected method in the promise chain will be called.
          */
         then<U>(onFulfilled: (success: IAjaxResponse<R>) => IThenable<U>,
-            onRejected?: (error: IAjaxError) => IThenable<U>): IThenable<U>;
+            onRejected?: (error: IAjaxError) => IThenable<U>): IAjaxThenable<U>;
         /**
          * Takes in two methods, called when/if the promise fulfills/rejects.
          * 
@@ -885,7 +953,7 @@ module plat.async {
          * onRejected method in the promise chain will be called.
          */
         then<U>(onFulfilled: (success: IAjaxResponse<R>) => IThenable<U>,
-            onRejected?: (error: IAjaxError) => any): IThenable<U>;
+            onRejected?: (error: IAjaxError) => any): IAjaxThenable<U>;
         /**
          * Takes in two methods, called when/if the promise fulfills/rejects.
          * 
@@ -895,7 +963,7 @@ module plat.async {
          * onRejected method in the promise chain will be called.
          */
         then<U>(onFulfilled: (success: IAjaxResponse<R>) => U,
-            onRejected?: (error: IAjaxError) => IThenable<U>): IThenable<U>;
+            onRejected?: (error: IAjaxError) => IThenable<U>): IAjaxThenable<U>;
     }
 
     /**
