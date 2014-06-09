@@ -14,6 +14,7 @@
     "test": "karma start karma.conf.js"
   },
   "devDependencies": {
-    "karma-html-reporter": "^0.2.3"
+    "karma-html-reporter": "^0.2.3",
+    "karma-coverage": "^0.2.4"
   }
 }

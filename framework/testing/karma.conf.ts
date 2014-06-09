@@ -3,10 +3,25 @@ function cfg(config: any) {
     config.set({
         basePath: '',
         frameworks: ['jasmine'],
+        plugins: [
+            'karma-jasmine',
+            'karma-coverage',
+            'karma-ie-launcher',
+            'karma-chrome-launcher',
+            'karma-firefox-launcher',
+        ],
         files: [
             'framework/platypus.js',
             'tests/**/*.js'
         ],
+
+        exclude: [
+            '**/*node_modules*'
+        ],
+
+        preprocessors: {
+            'framework/platypus.js': 'coverage'
+        },
 
         // web server port
         // CLI --port 9876
@@ -33,7 +48,7 @@ function cfg(config: any) {
         // - PhantomJS
         // - IE (only Windows)
         // CLI --browsers Chrome,Firefox,Safari
-        browsers: ['IE11', 'IE10', 'IE9'],
+        browsers: ['IE11'],// 'IE10', 'IE9'],
 
         customLaunchers: {
             IE11: {
@@ -64,9 +79,13 @@ function cfg(config: any) {
         // CLI --report-slower-than 500
         reportSlowerThan: 500,
 
-        reporters: ['progress', 'html'],
+        reporters: ['progress', 'coverage'],
         htmlReporter: {
             outputDir: 'reporter'
+        },
+        coverageReporter: {
+            type: 'html',
+            dir: 'coverage/'
         }
     });
 }

@@ -70,6 +70,18 @@ module tests.utils {
             expected: false
         },
         {
+            name: 'isDocumentFragment and return true',
+            fn: 'isDocumentFragment',
+            args: [document.createDocumentFragment()],
+            expected: true
+        },
+        {
+            name: 'isDocumentFragment and return false',
+            fn: 'isDocumentFragment',
+            args: [document],
+            expected: false
+        },
+        {
             name: 'isString and return true',
             fn: 'isString',
             args: ['this is a string'],
@@ -78,6 +90,18 @@ module tests.utils {
         {
             name: 'isString and return false',
             fn: 'isString',
+            args: [12345],
+            expected: false
+        },
+        {
+            name: 'isRegExp and return true',
+            fn: 'isRegExp',
+            args: [/foo/],
+            expected: true
+        },
+        {
+            name: 'isRegExp and return false',
+            fn: 'isRegExp',
             args: [12345],
             expected: false
         },
