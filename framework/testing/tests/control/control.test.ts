@@ -2,7 +2,7 @@
     var ControlFactory = plat.acquire(plat.IControlFactory),
         control: plat.IControl;
 
-    ddescribe('Control Tests', () => {
+    describe('Control Tests', () => {
         beforeEach(() => {
             control = ControlFactory.getInstance();
         });

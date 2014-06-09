@@ -39,7 +39,7 @@ module tests.acquire {
         __Parser = '$Parser',
         __Regex = '$Regex',
         __Tokenizer = '$Tokenizer',
-        __Navigator = '$Navigator',
+        __NavigatorInstance = '$NavigatorInstance',
         __RoutingNavigator = '$RoutingNavigator',
         __ContextManagerStatic = '$ContextManagerStatic',
         __Compiler = '$Compiler',
@@ -58,7 +58,7 @@ module tests.acquire {
         __DomEventInstance = '$DomEventInstance',
         __ResourcesFactory = '$ResourcesFactory',
         __TemplateControlFactory = '$TemplateControlFactory',
-        __ViewControlFactory = '$ViewControlFactory',
+        __BaseViewControlFactory = '$BaseViewControlFactory',
         __Utils = '$Utils',
         __Browser = '$Browser',
         __BrowserConfig = '$BrowserConfig',
@@ -123,7 +123,7 @@ module tests.acquire {
             name: __Tokenizer,
             compare: instanceOf(plat.expressions.Tokenizer)
         }, {
-            name: __Navigator,
+            name: __NavigatorInstance,
             compare: instanceOf(plat.navigation.Navigator)
         }, {
             name: __RoutingNavigator,
@@ -180,8 +180,8 @@ module tests.acquire {
             name: __TemplateControlFactory,
             compare: toBe(plat.ui.TemplateControl)
         }, {
-            name: __ViewControlFactory,
-            compare: toBe(plat.ui.ViewControl)
+            name: __BaseViewControlFactory,
+            compare: toBe(plat.ui.BaseViewControl)
         }, {
             name: __Utils,
             compare: instanceOf(plat.Utils)

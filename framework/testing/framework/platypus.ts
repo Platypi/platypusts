@@ -14240,17 +14240,19 @@ module plat {
 
                 promises.push(manager.fulfillTemplate());
 
-                this.templates[key] = this.$Promise.all(promises).then((results) => {
+                this.templates[key] = this.$Promise.all(promises).then(() => {
                     var element = nodeMap.element,
                         startNode: Comment,
                         endNode: Comment;
+
+                    var clone = <DocumentFragment>nodeMap.element.cloneNode(true);
 
                     startNode = control.startNode = this.$Document.createComment(control.type + ': start node');
                     endNode = control.endNode = this.$Document.createComment(control.type + ': end node');
                     element.insertBefore(startNode, element.firstChild);
                     element.insertBefore(endNode, null);
 
-                    return <DocumentFragment>nodeMap.element.cloneNode(true);
+                    return clone;
                 });
             }
 
@@ -17734,13 +17736,14 @@ module plat {
                             optgroup: any = groups[newGroup];
 
                         if (isNull(optgroup)) {
-                            groups[newGroup] = <any>this.bindableTemplates.bind('group', '' + index).then((groupClone: DocumentFragment) => {
-                                optgroup = groups[newGroup] = <Element>groupClone.childNodes[1];
+                            groups[newGroup] = <any>this.bindableTemplates.bind('group', '' + index)
+                                .then((groupClone: DocumentFragment) => {
+                                    optgroup = groups[newGroup] = <Element>groupClone.childNodes[1];
 
-                                optgroup.appendChild(optionClone);
-                                element.appendChild(groupClone);
-                                return optgroup;
-                            });
+                                    optgroup.appendChild(optionClone);
+                                    element.appendChild(groupClone);
+                                    return optgroup;
+                                });
                             return;
                         } else if (isFunction(optgroup.then)) {
                             optgroup.then((group: Element) => {
@@ -17951,20 +17954,32 @@ module plat {
                 /**
                  * Removes the <plat-if> node from the DOM
                  */
-                replaceWith: string = null;
+                replaceWith = 'any';
 
                 /**
                  * The evaluated plat-options object.
                  */
                 options: observable.IObservableProperty<IIfOptions>;
 
-                private __removeListener: IRemoveListener;
-                private __condition: boolean;
                 /**
-                 * Creates a bindable template with its element nodes.
+                 * The Comment used to hold the place of the plat-if element.
                  */
-                setTemplate(): void {
-                    this.bindableTemplates.add('item', this.elementNodes);
+                commentNode: Comment;
+
+                /**
+                 * The DocumentFragment that stores the plat-if element when hidden.
+                 */
+                fragmentStore: DocumentFragment;
+
+                private __removeListener: IRemoveListener;
+                private __condition: boolean = false;
+
+                constructor() {
+                    super();
+                    var $Document: Document = acquire(__Document);
+
+                    this.commentNode = $Document.createComment('plat-if-@placeholder');
+                    this.fragmentStore = $Document.createDocumentFragment();
                 }
 
                 /**
@@ -17998,6 +18013,7 @@ module plat {
                             observe: <any>noop
                         };
                     }
+                    this._removeItem();
                     this.contextChanged();
                     this.__removeListener = this.options.observe(this.setter);
                 }
@@ -18010,6 +18026,9 @@ module plat {
                         this.__removeListener();
                         this.__removeListener = null;
                     }
+
+                    this.commentNode = null;
+                    this.fragmentStore = null;
                 }
 
                 /**
@@ -18027,9 +18046,7 @@ module plat {
                     if (!value) {
                         this._removeItem();
                     } else {
-                        this.bindableTemplates.bind('item').then((fragment) => {
-                            this._addItem(fragment);
-                        });
+                        this._addItem();
                     }
 
                     this.__condition = value;
@@ -18038,25 +18055,26 @@ module plat {
                 /**
                  * The callback used to add the fragment to the DOM 
                  * after the bindableTemplate has been created.
-                 * 
-                 * @param item The DocumentFragment consisting of 
-                 * the inner template of the node.
                  */
-                _addItem(item: DocumentFragment): void {
-                    if (!isNode(item)) {
+                _addItem(): void {
+                    var commentNode = this.commentNode,
+                        parentNode = commentNode.parentNode;
+
+                    if (!isNode(parentNode)) {
                         return;
                     }
-                    var endNode = this.endNode;
-                    this.dom.insertBefore(endNode.parentNode, item, endNode);
+
+                    parentNode.replaceChild(this.fragmentStore, commentNode);
                 }
 
                 /**
                  * Removes the node from the DOM.
                  */
                 _removeItem(): void {
-                    postpone(() => {
-                        Control.dispose(this.controls[0]);
-                    });
+                    var element = this.element;
+                    element.parentNode.insertBefore(this.commentNode, element);
+                    insertBefore(this.fragmentStore, element);
+
                 }
             }
 
