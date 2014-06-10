@@ -660,13 +660,13 @@ module plat.observable {
             // We can't use a fat-arrow function here because we need the array context.
             return function observedArrayFn(...args: any[]) {
                 var oldArray = this.slice(0),
-                    returnValue: any;
+                    returnValue: any,
+                    isShift = method.indexOf('shift') !== -1;
 
-                if (method.indexOf('shift') !== -1) {
+                if (isShift) {
                     _this.__isArrayFunction = true;
                     returnValue = (<any>Array.prototype)[method].apply(this, args);
                     _this.__isArrayFunction = false;
-                    _this._notifyChildProperties(absoluteIdentifier, this, oldArray);
                 } else {
                     returnValue = (<any>Array.prototype)[method].apply(this, args);
                 }
@@ -675,10 +675,6 @@ module plat.observable {
                     length = keys.length,
                     callbacks: Array<(ev: IArrayMethodInfo<any>) => void>,
                     jLength: number;
-
-                if (oldArray.length !== this.length && method.indexOf('shift') === -1) {
-                    _this._execute(absoluteIdentifier + '.length', this.length, oldArray.length);
-                }
 
                 for (var i = 0; i < length; ++i) {
                     callbacks = callbackObjects[keys[i]];
@@ -693,6 +689,12 @@ module plat.observable {
                             arguments: args
                         });
                     }
+                }
+
+                if (isShift) {
+                    _this._notifyChildProperties(absoluteIdentifier, this, oldArray);
+                } else if (oldArray.length !== this.length) {
+                    _this._execute(absoluteIdentifier + '.length', this.length, oldArray.length);
                 }
 
                 return returnValue;
