@@ -73,7 +73,7 @@ module tests.acquire {
             compare: toBe(plat.App)
         }, {
             name: __App,
-            compare: toEqual({})
+            compare: toBe(null)
         }, {
             name: __Http,
             compare: instanceOf(plat.async.Http)
@@ -210,7 +210,7 @@ module tests.acquire {
 
     describe('Acquire Tests', () => {
         it('should test acquire with single string value', () => {
-            var doc = plat.acquire('$Document');
+            var doc = plat.acquire(__Document);
 
             expect(utils.isDocument(doc)).toBe(true);
         });
@@ -222,7 +222,7 @@ module tests.acquire {
         });
 
         it('should test acquire with array of strings', () => {
-            var deps: Array<any> = plat.acquire(['$Document', '$Window']);
+            var deps: Array<any> = plat.acquire([__Document, __Window]);
 
             expect(utils.isDocument(deps[0])).toBe(true);
             expect(utils.isWindow(deps[1])).toBe(true);
@@ -236,7 +236,7 @@ module tests.acquire {
         });
 
         it('should test acquire with a mixed array', () => {
-            var deps: Array<any> = plat.acquire([plat.Document, '$Window']);
+            var deps: Array<any> = plat.acquire([plat.Document, __Window]);
 
             expect(utils.isDocument(deps[0])).toBe(true);
             expect(utils.isWindow(deps[1])).toBe(true);
