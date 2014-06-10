@@ -135,7 +135,7 @@ module plat.register {
      * 
      * @example register.viewControl('my-view-control', MyViewControl);
      */
-    export function viewControl<T>(name: string, Type: new (...args: any[]) => ui.IBaseViewControl,
+    export function viewControl<T>(name: string, Type: new (...args: any[]) => ui.IViewControl,
         dependencies?: Array<any>): typeof register;
     /**
      * Registers a WebViewControl with the framework. The framework will instantiate the control when needed. The 
@@ -150,7 +150,7 @@ module plat.register {
      * @example register.viewControl('my-view-control', MyViewControl, null, ['customers/:customer(/:ordernumber)']);
      */
     export function viewControl<T>(name: string, Type: new (...args: any[]) => ui.IWebViewControl,
-        dependencies?: Array<any>, routes?: Array<any>): typeof register;
+        dependencies: Array<any>, routes: Array<any>): typeof register;
     export function viewControl<T>(name: string, Type: new (...args: any[]) => ui.IBaseViewControl,
         dependencies?: Array<any>, routes?: Array<any>): typeof register {
         if (isString(name)) {

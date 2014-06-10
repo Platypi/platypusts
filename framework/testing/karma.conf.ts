@@ -115,7 +115,7 @@ function cfg(config: any) {
         // - PhantomJS
         // - IE (only Windows)
         // CLI --browsers Chrome,Firefox,Safari
-        browsers: ['IE11'],// 'IE10', 'IE9'],
+        browsers: ['IE11'],
 
         customLaunchers: {
             IE11: {

@@ -37,7 +37,7 @@
         it('should test loaded with undefined attribute', () => {
             control.element = <HTMLElement>control.dom.serializeHtml('<input type="text" plat-bind="foo" />').childNodes[0];
 
-            var spy = spyOn(control.$Parser, 'parse')
+            var spy = spyOn(control.$Parser, 'parse');
 
             spy.and.callThrough();
 
@@ -46,4 +46,4 @@
             expect(control._contextExpression).toBeNull();
         });
     });
-} 
+}
