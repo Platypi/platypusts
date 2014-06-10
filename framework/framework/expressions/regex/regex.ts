@@ -3,7 +3,9 @@
      * A class for keeping track of commonly used regular expressions.
      */
     export class Regex implements IRegex {
-        markupRegex: RegExp = /{{[\S\s]*}}/;
+        $NodeManagerStatic: processing.INodeManagerStatic = acquire(__NodeManagerStatic);
+
+        markupRegex: RegExp;
         argumentRegex: RegExp = /\((.*)\)/;
         aliasRegex: RegExp = /[^@\.\[\(]+(?=[\.\[\(])/;
         initialUrlRegex: RegExp = /\/[^\/]*\.(?:html|htm)/;
@@ -41,6 +43,14 @@
 
         get quotationRegex(): RegExp {
             return /'|"/g;
+        }
+
+        /**
+         * Creates the markup regular expression
+         */
+        constructor() {
+            var $nodeManager = this.$NodeManagerStatic;
+            this.markupRegex = new RegExp($nodeManager.startSymbol + '[\\S\\s]*' + $nodeManager.endSymbol);
         }
     }
 

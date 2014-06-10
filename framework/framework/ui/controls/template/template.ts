@@ -25,9 +25,14 @@ module plat.ui.controls {
          * particular template.
          */
         _url: string;
+
         private __isFirst: boolean = false;
         private __templatePromise: async.IThenable<Template>;
         private __templateControlCache: storage.ICache<any>;
+
+        /**
+         * Creates the Template control cache
+         */
         constructor() {
             super();
             var $cacheFactory: storage.ICacheFactory = acquire(__CacheFactory);
@@ -142,7 +147,7 @@ module plat.ui.controls {
                 }
 
                 this.__mapBindableTemplates(templateControl);
-                return this._instantiateTemplate();
+                return this.bindableTemplates.bind(this._id);
             }).then((clone) => {
                 var endNode = this.endNode;
                 this.dom.insertBefore(endNode.parentNode, clone, endNode);
@@ -153,14 +158,6 @@ module plat.ui.controls {
                         error.response, $exception.TEMPLATE);
                 });
             });
-        }
-
-        /**
-         * Binds the template to the proper context and 
-         * resolves the clone to be placed into the DOM.
-         */
-        _instantiateTemplate(): async.IThenable<DocumentFragment> {
-            return this.bindableTemplates.bind(this._id);
         }
 
         private __mapBindableTemplates(control: Template): void {

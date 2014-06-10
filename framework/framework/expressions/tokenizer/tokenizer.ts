@@ -599,7 +599,7 @@ module plat.expressions {
          */
         _throwError(error: string): void {
             var $exception: IExceptionStatic = acquire(__ExceptionStatic);
-            $exception.fatal(error + ' in {{' + this._input + '}}', $exception.PARSE);
+            $exception.fatal(error + ' in ' + this._input, $exception.PARSE);
         }
 
         /**

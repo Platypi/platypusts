@@ -1,5 +1,5 @@
 module plat.ui.controls {
-    export class If extends TemplateControl implements IIf {
+    export class If extends TemplateControl {
         $Animator: IAnimator = acquire(__Animator);
 
         /**
@@ -40,7 +40,7 @@ module plat.ui.controls {
                 return;
             }
 
-            this.setter(options);
+            this._setter(options);
         }
 
         /**
@@ -62,7 +62,7 @@ module plat.ui.controls {
             }
 
             this.contextChanged();
-            this.__removeListener = this.options.observe(this.setter);
+            this.__removeListener = this.options.observe(this._setter);
         }
 
         /**
@@ -83,7 +83,7 @@ module plat.ui.controls {
          * whether or not to add or remove 
          * the node from the DOM.
          */
-        setter(options: IIfOptions): void {
+        _setter(options: IIfOptions): void {
             var value = options.condition;
 
             if (value === this.__condition) {
@@ -142,15 +142,6 @@ module plat.ui.controls {
                 insertBefore(this.fragmentStore, element);
             });
         }
-    }
-
-    export interface IIf {
-        /**
-         * Checks the condition and decides 
-         * whether or not to add or remove 
-         * the node from the DOM.
-         */
-        setter(options: IIfOptions): void;
     }
 
     /**
