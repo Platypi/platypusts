@@ -1,5 +1,5 @@
 ﻿module tests.controls.bind {
-    describe('Bind Tests', () => {
+    ddescribe('Bind Tests', () => {
         var control: plat.controls.Bind,
             parent: plat.ui.ITemplateControl,
             ControlFactory = plat.acquire(plat.IControlFactory);
@@ -44,6 +44,36 @@
             control.loaded();
             expect(spy).toHaveBeenCalled();
             expect(control._contextExpression).toBeNull();
+        });
+
+        it('should test loaded with nested identifier', () => {
+            control.element = <HTMLElement>control.dom.serializeHtml('<input type="text" plat-bind="foo.bar" />').childNodes[0];
+            control.attributes['platBind'] = 'foo.bar';
+            var spy = spyOn(control.$Parser, 'parse');
+
+            spy.and.callThrough();
+
+            control.loaded();
+            expect(spy.calls.count()).toBe(2);
+            expect(control._contextExpression.aliases).toEqual([]);
+            expect(control._contextExpression.expression).toEqual('foo');
+            expect(control._contextExpression.identifiers).toEqual(['foo']);
+            expect(control._property).toEqual('bar');
+        });
+
+        it('should test loaded with alias identifier and no parent resources', () => {
+            control.element = <HTMLElement>control.dom.serializeHtml('<input type="text" plat-bind="@foo.bar" />').childNodes[0];
+            control.attributes['platBind'] = '@foo';
+            var spy = spyOn(control.$Parser, 'parse');
+
+            spy.and.callThrough();
+
+            control.loaded();
+            expect(spy.calls.count()).toBe(1);
+            expect(control._expression.aliases).toEqual(['foo']);
+            expect(control._expression.expression).toEqual('@foo');
+            expect(control._expression.identifiers).toEqual(['@foo']);
+            expect(control._property).toEqual('@foo');
         });
     });
 }

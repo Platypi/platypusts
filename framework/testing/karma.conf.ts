@@ -146,7 +146,7 @@ function cfg(config: any) {
         // CLI --report-slower-than 500
         reportSlowerThan: 500,
 
-        reporters: ['progress', 'coverage'],
+        reporters: ['progress', 'html', 'coverage'],
         htmlReporter: {
             outputDir: 'reporter'
         },
