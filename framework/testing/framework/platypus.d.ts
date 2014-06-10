@@ -67,7 +67,7 @@ declare module plat {
         *
         * @example register.viewControl('my-view-control', MyViewControl);
         */
-        function viewControl<T>(name: string, Type: new(...args: any[]) => ui.IBaseViewControl, dependencies?: any[]): typeof register;
+        function viewControl<T>(name: string, Type: new(...args: any[]) => ui.IViewControl, dependencies?: any[]): typeof register;
         /**
         * Registers a WebViewControl with the framework. The framework will instantiate the control when needed. The
         * dependencies array corresponds to injectables that will be passed into the Constructor of the control.
@@ -80,7 +80,7 @@ declare module plat {
         *
         * @example register.viewControl('my-view-control', MyViewControl, null, ['customers/:customer(/:ordernumber)']);
         */
-        function viewControl<T>(name: string, Type: new(...args: any[]) => ui.IWebViewControl, dependencies?: any[], routes?: any[]): typeof register;
+        function viewControl<T>(name: string, Type: new(...args: any[]) => ui.IWebViewControl, dependencies: any[], routes: any[]): typeof register;
         /**
         * Registers an injectable with the framework. Injectables are objects that can be used for dependency injection into other objects.
         * The dependencies array corresponds to injectables that will be passed into the Constructor of the injectable.
@@ -95,7 +95,7 @@ declare module plat {
         * @example register.injectable('$CacheFactory', [plat.expressions.IParser], Cache);
         * @example register.injectable('database', MyDatabase, null, register.INSTANCE);
         */
-        function injectable(name: string, Type: new(...args: any[]) => void, dependencies?: any[], injectableType?: string): typeof register;
+        function injectable(name: string, Type: new(...args: any[]) => any, dependencies?: any[], injectableType?: string): typeof register;
         /**
         * Registers an injectable with the framework. Injectables are objects that can be used for dependency injection into other objects.
         * The dependencies array corresponds to injectables that will be passed into the injectable method.
@@ -114,6 +114,27 @@ declare module plat {
         * @example register.injectable('database', function() { return new Database(); }, null, register.INSTANCE);
         */
         function injectable(name: string, method: (...args: any[]) => any, dependencies?: any[], injectableType?: string): typeof register;
+        /**
+        * Adds an animation denoted by its name. Can be either a CSS or JS implementation, but will only be instantiated in
+        * modern browsers that support animations. If you wish to also support legacy browsers, make sure to register a
+        * JS implementation of the animation with plat.register.jsAnimation.
+        *
+        * @param name The unique idenitifer of the animation.
+        * @param Type The constructor for the custom animation.
+        * @param dependencies Any dependencies that need to be injected into the animation at
+        * instantiation.
+        */
+        function animation(name: string, Type: new(...args: any[]) => ui.IAnimationInstance, dependencies?: any[]): typeof register;
+        /**
+        * Adds a JS animation denoted by its name. Intended to be used when JS animation implementations for legacy browsers
+        * is desired.
+        *
+        * @param name The unique idenitifer of the JS animation.
+        * @param Type The constructor for the custom JS animation.
+        * @param dependencies Any dependencies that need to be injected into the JS animation at
+        * instantiation.
+        */
+        function jsAnimation(name: string, Type: new(...args: any[]) => ui.IAnimationInstance, dependencies?: any[]): typeof register;
     }
     module dependency {
         /**
@@ -373,6 +394,10 @@ declare module plat {
         * Exception Type
         */
         static PROMISE: number;
+        /**
+        * Animation Type
+        */
+        static ANIMATION: number;
     }
     /**
     * The Type for referencing the '$ExceptionStatic' injectable as a dependency.
@@ -454,6 +479,10 @@ declare module plat {
         * Exception Type
         */
         PROMISE: number;
+        /**
+        * Animation Type
+        */
+        ANIMATION: number;
     }
     /**
     * A class for checking browser compatibility issues.
@@ -579,24 +608,28 @@ declare module plat {
         /**
         * An event type for touch start.
         */
-        $touchStart: string;
+        $touchstart: string;
         /**
         * An event type for touch end.
         */
-        $touchEnd: string;
+        $touchend: string;
         /**
         * An event type for touch move.
         */
-        $touchMove: string;
+        $touchmove: string;
         /**
         * An event type for touch cancel.
         */
-        $touchCancel: string;
+        $touchcancel: string;
     }
     /**
     * Describes an object containing the properly prefixed animation events.
     */
     interface IAnimationEvents extends IObject<string> {
+        /**
+        * The animation identifier.
+        */
+        $animation: string;
         /**
         * The animation start event.
         */
@@ -605,6 +638,10 @@ declare module plat {
         * The animation end event.
         */
         $animationEnd: string;
+        /**
+        * The transition identifier.
+        */
+        $transition: string;
         /**
         * The transition start event.
         */
@@ -1016,6 +1053,10 @@ declare module plat {
             public camelCaseRegex : RegExp;
             public whiteSpaceRegex : RegExp;
             public quotationRegex : RegExp;
+            /**
+            * Creates the markup regular expression
+            */
+            constructor();
         }
         /**
         * The Type for referencing the '$Regex' injectable as a dependency.
@@ -2022,6 +2063,10 @@ declare module plat {
             public catch<U>(onRejected: (error: any) => IThenable<U>): IThenable<U>;
             public catch<U>(onRejected: (error: any) => U): IThenable<U>;
         }
+        /**
+        * Describes a chaining function that fulfills when the previous link is complete and is
+        * able to be caught in the case of an error.
+        */
         interface IThenable<R> {
             /**
             * Takes in two methods, called when/if the promise fulfills/rejects.
@@ -2223,6 +2268,13 @@ declare module plat {
             */
             data?: any;
             /**
+            * An array of data transform functions that fire in order and consecutively
+            * pass the returned result from one function to the next.
+            */
+            transforms?: {
+                (data: any, xhr: XMLHttpRequest): any;
+            }[];
+            /**
             * Forces a JSONP, cross-domain request when set to true.
             * The default is false.
             */
@@ -2235,6 +2287,7 @@ declare module plat {
             /**
             * The url for the JSONP callback
             * (without the ?{callback}={callback_name} parameter in the url)
+            * or for the XmlHttpRequest.
             */
             url: string;
             /**
@@ -2251,13 +2304,6 @@ declare module plat {
             * http://www.platyfi.com/data?callback=plat_callback00.
             */
             jsonpCallback?: string;
-            /**
-            * An array of data transform functions that fire in order and consecutively
-            * pass the returned result from one function to the next.
-            */
-            transforms?: {
-                (data: any, xhr: XMLHttpRequest): any;
-            }[];
         }
         /**
         * Describes an object that is the response to an AJAX request.
@@ -2302,51 +2348,18 @@ declare module plat {
             public $Window: Window;
             private __http;
             constructor(resolveFunction: IAjaxResolveFunction<R>, promise?: any);
-            /**
-            * A method to cancel the AJAX call associated with this AjaxPromise.
-            */
             public cancel(): void;
-            /**
-            * Takes in two methods, called when/if the promise fulfills/rejects.
-            *
-            * @param onFulfilled A method called when/if the promise fulills. If undefined the next
-            * onFulfilled method in the promise chain will be called.
-            * @param onRejected A method called when/if the promise rejects. If undefined the next
-            * onRejected method in the promise chain will be called.
-            */
-            public then<U>(onFulfilled: (success: IAjaxResponse<R>) => U, onRejected?: (error: IAjaxError) => any): IThenable<U>;
-            /**
-            * Takes in two methods, called when/if the promise fulfills/rejects.
-            *
-            * @param onFulfilled A method called when/if the promise fulills. If undefined the next
-            * onFulfilled method in the promise chain will be called.
-            * @param onRejected A method called when/if the promise rejects. If undefined the next
-            * onRejected method in the promise chain will be called.
-            */
-            public then<U>(onFulfilled: (success: IAjaxResponse<R>) => IThenable<U>, onRejected?: (error: IAjaxError) => IThenable<U>): IThenable<U>;
-            /**
-            * Takes in two methods, called when/if the promise fulfills/rejects.
-            *
-            * @param onFulfilled A method called when/if the promise fulills. If undefined the next
-            * onFulfilled method in the promise chain will be called.
-            * @param onRejected A method called when/if the promise rejects. If undefined the next
-            * onRejected method in the promise chain will be called.
-            */
-            public then<U>(onFulfilled: (success: IAjaxResponse<R>) => IThenable<U>, onRejected?: (error: IAjaxError) => any): IThenable<U>;
-            /**
-            * Takes in two methods, called when/if the promise fulfills/rejects.
-            *
-            * @param onFulfilled A method called when/if the promise fulills. If undefined the next
-            * onFulfilled method in the promise chain will be called.
-            * @param onRejected A method called when/if the promise rejects. If undefined the next
-            * onRejected method in the promise chain will be called.
-            */
-            public then<U>(onFulfilled: (success: IAjaxResponse<R>) => U, onRejected?: (error: IAjaxError) => IThenable<U>): IThenable<U>;
+            public then<U>(onFulfilled: (success: IAjaxResponse<R>) => U, onRejected?: (error: IAjaxError) => any): IAjaxThenable<U>;
+            public then<U>(onFulfilled: (success: IAjaxResponse<R>) => IThenable<U>, onRejected?: (error: IAjaxError) => IThenable<U>): IAjaxThenable<U>;
+            public then<U>(onFulfilled: (success: IAjaxResponse<R>) => IThenable<U>, onRejected?: (error: IAjaxError) => any): IAjaxThenable<U>;
+            public then<U>(onFulfilled: (success: IAjaxResponse<R>) => U, onRejected?: (error: IAjaxError) => IThenable<U>): IAjaxThenable<U>;
+            public catch<U>(onRejected: (error: any) => IAjaxThenable<U>): IAjaxThenable<U>;
+            public catch<U>(onRejected: (error: any) => U): IAjaxThenable<U>;
         }
         /**
-        * Describes a type of IPromise that fulfills with an IAjaxResponse and can be optionally canceled.
+        * Describes a type of IThenable that can optionally cancel it's associated AJAX call.
         */
-        interface IAjaxPromise<R> extends IThenable<IAjaxResponse<R>> {
+        interface IAjaxThenable<R> extends IThenable<R> {
             /**
             * A method to cancel the AJAX call associated with this AjaxPromise.
             */
@@ -2359,7 +2372,7 @@ declare module plat {
             * @param onRejected A method called when/if the promise rejects. If undefined the next
             * onRejected method in the promise chain will be called.
             */
-            then<U>(onFulfilled: (success: IAjaxResponse<R>) => U, onRejected?: (error: IAjaxError) => any): IThenable<U>;
+            then<U>(onFulfilled: (success: R) => IAjaxThenable<U>, onRejected?: (error: any) => IAjaxThenable<U>): IAjaxThenable<U>;
             /**
             * Takes in two methods, called when/if the promise fulfills/rejects.
             *
@@ -2368,7 +2381,7 @@ declare module plat {
             * @param onRejected A method called when/if the promise rejects. If undefined the next
             * onRejected method in the promise chain will be called.
             */
-            then<U>(onFulfilled: (success: IAjaxResponse<R>) => IThenable<U>, onRejected?: (error: IAjaxError) => IThenable<U>): IThenable<U>;
+            then<U>(onFulfilled: (success: R) => IAjaxThenable<U>, onRejected?: (error: any) => U): IAjaxThenable<U>;
             /**
             * Takes in two methods, called when/if the promise fulfills/rejects.
             *
@@ -2377,7 +2390,7 @@ declare module plat {
             * @param onRejected A method called when/if the promise rejects. If undefined the next
             * onRejected method in the promise chain will be called.
             */
-            then<U>(onFulfilled: (success: IAjaxResponse<R>) => IThenable<U>, onRejected?: (error: IAjaxError) => any): IThenable<U>;
+            then<U>(onFulfilled: (success: R) => U, onRejected?: (error: any) => IAjaxThenable<U>): IAjaxThenable<U>;
             /**
             * Takes in two methods, called when/if the promise fulfills/rejects.
             *
@@ -2386,7 +2399,66 @@ declare module plat {
             * @param onRejected A method called when/if the promise rejects. If undefined the next
             * onRejected method in the promise chain will be called.
             */
-            then<U>(onFulfilled: (success: IAjaxResponse<R>) => U, onRejected?: (error: IAjaxError) => IThenable<U>): IThenable<U>;
+            then<U>(onFulfilled: (success: R) => U, onRejected?: (error: any) => U): IAjaxThenable<U>;
+            /**
+            * A wrapper method for Promise.then(undefined, onRejected);
+            *
+            * @param onRejected A method called when/if the promise rejects. If undefined the next
+            * onRejected method in the promise chain will be called.
+            */
+            catch<U>(onRejected: (error: any) => IAjaxThenable<U>): IAjaxThenable<U>;
+            /**
+            * A wrapper method for Promise.then(undefined, onRejected);
+            *
+            * @param onRejected A method called when/if the promise rejects. If undefined the next
+            * onRejected method in the promise chain will be called.
+            */
+            catch<U>(onRejected: (error: any) => U): IAjaxThenable<U>;
+        }
+        /**
+        * Describes a type of IPromise that fulfills with an IAjaxResponse and can be optionally canceled.
+        */
+        interface IAjaxPromise<R> extends IAjaxThenable<IAjaxResponse<R>> {
+            /**
+            * A method to cancel the AJAX call associated with this AjaxPromise.
+            */
+            cancel(): void;
+            /**
+            * Takes in two methods, called when/if the promise fulfills/rejects.
+            *
+            * @param onFulfilled A method called when/if the promise fulills. If undefined the next
+            * onFulfilled method in the promise chain will be called.
+            * @param onRejected A method called when/if the promise rejects. If undefined the next
+            * onRejected method in the promise chain will be called.
+            */
+            then<U>(onFulfilled: (success: IAjaxResponse<R>) => U, onRejected?: (error: IAjaxError) => any): IAjaxThenable<U>;
+            /**
+            * Takes in two methods, called when/if the promise fulfills/rejects.
+            *
+            * @param onFulfilled A method called when/if the promise fulills. If undefined the next
+            * onFulfilled method in the promise chain will be called.
+            * @param onRejected A method called when/if the promise rejects. If undefined the next
+            * onRejected method in the promise chain will be called.
+            */
+            then<U>(onFulfilled: (success: IAjaxResponse<R>) => IThenable<U>, onRejected?: (error: IAjaxError) => IThenable<U>): IAjaxThenable<U>;
+            /**
+            * Takes in two methods, called when/if the promise fulfills/rejects.
+            *
+            * @param onFulfilled A method called when/if the promise fulills. If undefined the next
+            * onFulfilled method in the promise chain will be called.
+            * @param onRejected A method called when/if the promise rejects. If undefined the next
+            * onRejected method in the promise chain will be called.
+            */
+            then<U>(onFulfilled: (success: IAjaxResponse<R>) => IThenable<U>, onRejected?: (error: IAjaxError) => any): IAjaxThenable<U>;
+            /**
+            * Takes in two methods, called when/if the promise fulfills/rejects.
+            *
+            * @param onFulfilled A method called when/if the promise fulills. If undefined the next
+            * onFulfilled method in the promise chain will be called.
+            * @param onRejected A method called when/if the promise rejects. If undefined the next
+            * onRejected method in the promise chain will be called.
+            */
+            then<U>(onFulfilled: (success: IAjaxResponse<R>) => U, onRejected?: (error: IAjaxError) => IThenable<U>): IAjaxThenable<U>;
         }
         /**
         * Describes an object that provides value mappings for
@@ -3892,33 +3964,6 @@ declare module plat {
             dispatch<P>(name: string, sender: any, eventOptions: INavigationEventOptions<P>): INavigationEvent<P>;
         }
         /**
-        * Describes options for an INavigationEvent. The generic parameter specifies the
-        * target type for the event.
-        */
-        interface INavigationEventOptions<P> {
-            /**
-            * Navigation parameter, used to send objects from one view control to another.
-            */
-            parameter: P;
-            /**
-            * The INavigationOptions in use for the navigation.
-            */
-            options: navigation.IBaseNavigationOptions;
-            /**
-            * The navigation event target. Its type depends on the type of Navigation event.
-            */
-            target: any;
-            /**
-            * Specifies the type of IViewControl for the Route Event.
-            */
-            type: string;
-            /**
-            * States whether or not this event is able to be canceled. Some navigation events can be
-            * canceled, preventing further navigation.
-            */
-            cancelable?: boolean;
-        }
-        /**
         * Describes an object used by the Navigator to dispatch Navigation events.
         */
         interface INavigationEvent<P> extends IDispatchEventInstance {
@@ -3975,6 +4020,33 @@ declare module plat {
             * @see EventManager.direction
             */
             initialize(name: string, sender: any, direction?: string, eventOptions?: INavigationEventOptions<P>): any;
+        }
+        /**
+        * Describes options for an INavigationEvent. The generic parameter specifies the
+        * target type for the event.
+        */
+        interface INavigationEventOptions<P> {
+            /**
+            * Navigation parameter, used to send objects from one view control to another.
+            */
+            parameter: P;
+            /**
+            * The INavigationOptions in use for the navigation.
+            */
+            options: navigation.IBaseNavigationOptions;
+            /**
+            * The navigation event target. Its type depends on the type of Navigation event.
+            */
+            target: any;
+            /**
+            * Specifies the type of IViewControl for the Route Event.
+            */
+            type: string;
+            /**
+            * States whether or not this event is able to be canceled. Some navigation events can be
+            * canceled, preventing further navigation.
+            */
+            cancelable?: boolean;
         }
         /**
         * Represents an internal Error Event. This is used for any
@@ -4037,9 +4109,6 @@ declare module plat {
             initialize(name: string, sender: any, direction?: string, error?: E): void;
         }
     }
-    /**
-    * @module plat
-    */
     /**
     * Used for facilitating data and DOM manipulation. Contains lifecycle events
     * as well as properties for communicating with other controls. This is the base
@@ -4108,12 +4177,45 @@ declare module plat {
         private static __addRemoveListener(uid, listener);
         private static __spliceRemoveListener(uid, listener);
         private static __getControls(control, method, key);
+        /**
+        * A unique id, created during instantiation and found on every IControl.
+        */
         public uid: string;
+        /**
+        * The name of an IControl.
+        */
         public name: string;
+        /**
+        * The type of an IControl.
+        */
         public type: string;
+        /**
+        * The parent control that created this control. If this control does not implement ui.IBaseViewControl
+        * then it will inherit its context from the parent.
+        */
         public parent: ui.ITemplateControl;
+        /**
+        * The HTMLElement that represents this IControl. Should only be modified by controls that implement
+        * ui.ITemplateControl. During initialize the control should populate this element with what it wishes
+        * to render to the user.
+        *
+        * When there is innerHTML in the element prior to instantiating the control:
+        *     The element will include the innerHTML
+        * When the control implements templateString or templateUrl:
+        *     The serialized DOM will be auto-generated and included in the element. Any
+        *     innerHTML will be stored in the innerTemplate property on the control.
+        *
+        * After an IControl is initialized its element will be compiled.
+        */
         public element: HTMLElement;
+        /**
+        * The attributes object representing all the attributes for an IControl's element. All attributes are
+        * converted from dash notation to camelCase.
+        */
         public attributes: ui.IAttributesInstance;
+        /**
+        * Contains DOM helper methods for manipulating this control's element.
+        */
         public dom: ui.IDom;
         /**
         * The constructor for a control. Any injectables specified during control registration will be
@@ -4121,26 +4223,201 @@ declare module plat {
         * injector.
         */
         constructor();
+        /**
+        * The initialize event method for a control. In this method a control should initialize all the necessary
+        * variables. This method is typically only necessary for view controls. If a control does not implement
+        * ui.IBaseViewControl then it is not safe to access, observe, or modify the context property in this method.
+        * A view control should call services/set context in this method in order to fire the loaded event. No control
+        * will be loaded until the view control has specified a context.
+        */
         public initialize(): void;
+        /**
+        * The loaded event method for a control. This event is fired after a control has been loaded,
+        * meaning all of its children have also been loaded and initial DOM has been created and populated. It is now
+        * safe for all controls to access, observe, and modify the context property.
+        */
         public loaded(): void;
+        /**
+        * Retrieves all the controls with the specified name.
+        *
+        * @param name The string name with which to populate the returned controls array.
+        */
         public getControlsByName(name: string): IControl[];
+        /**
+        * Retrieves all the controls of the specified type.
+        *
+        * @param type The type used to find controls (e.g. 'plat-foreach')
+        */
         public getControlsByType<T extends Control>(type: string): T[];
+        /**
+        * Retrieves all the controls of the specified type.
+        *
+        * @param Constructor The constructor used to find controls.
+        *
+        * @example this.getControlsByType<ui.controls.ForEach>(ui.controls.ForEach)
+        */
         public getControlsByType<T extends Control>(Constructor: new() => T): T[];
+        /**
+        * Adds an event listener of the specified type to the specified element. Removal of the
+        * event is handled automatically upon disposal.
+        *
+        * @param element The element to add the event listener to.
+        * @param type The type of event to listen to.
+        * @param listener The listener to fire when the event occurs.
+        * @param useCapture Whether to fire the event on the capture or the bubble phase
+        * of event propagation.
+        */
         public addEventListener(element: Node, type: string, listener: ui.IGestureListener, useCapture?: boolean): IRemoveListener;
+        /**
+        * Adds an event listener of the specified type to the specified element. Removal of the
+        * event is handled automatically upon disposal.
+        *
+        * @param element The window object.
+        * @param type The type of event to listen to.
+        * @param listener The listener to fire when the event occurs.
+        * @param useCapture Whether to fire the event on the capture or the bubble phase
+        * of event propagation.
+        */
         public addEventListener(element: Window, type: string, listener: ui.IGestureListener, useCapture?: boolean): IRemoveListener;
+        /**
+        * Allows an IControl to observe any property on its context and receive updates when
+        * the property is changed.
+        *
+        * @param context The immediate parent object containing the property.
+        * @param property The property identifier to watch for changes.
+        * @param listener The method called when the property is changed. This method will have its 'this'
+        * context set to the control instance.
+        */
         public observe<T>(context: any, property: string, listener: (value: T, oldValue: any) => void): IRemoveListener;
+        /**
+        * Allows an IControl to observe any property on its context and receive updates when
+        * the property is changed.
+        *
+        * @param context The immediate parent array containing the property.
+        * @param property The index to watch for changes.
+        * @param listener The method called when the property is changed. This method will have its 'this'
+        * context set to the control instance.
+        */
         public observe<T>(context: any, property: number, listener: (value: T, oldValue: T) => void): IRemoveListener;
+        /**
+        * Allows an IControl to observe an array and receive updates when certain array-changing methods are called.
+        * The methods watched are push, pop, shift, sort, splice, reverse, and unshift. This method does not watch
+        * every item in the array.
+        *
+        * @param context The immediate parent object containing the array as a property.
+        * @param property The array property identifier to watch for changes.
+        * @param listener The method called when an array-changing method is called. This method will have its 'this'
+        * context set to the control instance.
+        */
         public observeArray<T>(context: any, property: string, listener: (ev: observable.IArrayMethodInfo<T>) => void): IRemoveListener;
+        /**
+        * Allows an IControl to observe an array and receive updates when certain array-changing methods are called.
+        * The methods watched are push, pop, shift, sort, splice, reverse, and unshift. This method does not watch
+        * every item in the array.
+        *
+        * @param context The immediate parent array containing the array as a property.
+        * @param property The index on the parent array, specifying the array to watch for changes.
+        * @param listener The method called when an array-changing method is called. This method will have its 'this'
+        * context set to the control instance.
+        */
         public observeArray<T>(context: T[], property: number, listener: (ev: observable.IArrayMethodInfo<T>) => void): IRemoveListener;
+        /**
+        * Parses an expression string and observes any associated identifiers. When an identifier
+        * value changes, the listener will be called.
+        *
+        * @param expression The expression string to watch for changes.
+        * @param listener The listener to call when the expression identifer values change.
+        */
         public observeExpression(expression: string, listener: (value: any, oldValue: any) => void): IRemoveListener;
+        /**
+        * Uses a parsed expression to observe any associated identifiers. When an identifier
+        * value changes, the listener will be called.
+        *
+        * @param expression The IParsedExpression to watch for changes.
+        * @param listener The listener to call when the expression identifer values change.
+        */
         public observeExpression(expression: expressions.IParsedExpression, listener: (value: any, oldValue: any) => void): IRemoveListener;
+        /**
+        * Evaluates an expression string, using the control.context.
+        *
+        * @param expression The expression string to evaluate.
+        * @param context An optional context with which to parse. If
+        * no context is specified, the control.context will be used.
+        */
         public evaluateExpression(expression: string, aliases?: any): any;
+        /**
+        * Evaluates a parsed expression, using the control.context.
+        *
+        * @param expression The IParsedExpression to evaluate.
+        * @param context An optional context with which to parse. If
+        * no context is specified, the control.context will be used.
+        */
         public evaluateExpression(expression: expressions.IParsedExpression, aliases?: any): any;
-        public dispatchEvent(name: string, direction?: string, ...args: any[]): void;
+        /**
+        * Creates a new DispatchEvent and propagates it to controls based on the
+        * provided direction mechanism. Controls in the propagation chain that registered
+        * the event using the control.on() method will receive the event. Propagation will
+        * always start with the sender, so the sender can both produce and consume the same
+        * event.
+        *
+        * @param name The name of the event to send, cooincides with the name used in the
+        * control.on() method.
+        * @param direction='up' Equivalent to events.EventManager.UP
+        * @param ...args Any number of arguments to send to all the listeners.
+        */
         public dispatchEvent(name: string, direction?: 'up', ...args: any[]): void;
+        /**
+        * Creates a new DispatchEvent and propagates it to controls based on the
+        * provided direction mechanism. Controls in the propagation chain that registered
+        * the event using the control.on() method will receive the event. Propagation will
+        * always start with the sender, so the sender can both produce and consume the same
+        * event.
+        *
+        * @param name The name of the event to send, cooincides with the name used in the
+        * control.on() method.
+        * @param direction='down' Equivalent to events.EventManager.DOWN
+        * @param ...args Any number of arguments to send to all the listeners.
+        */
         public dispatchEvent(name: string, direction?: 'down', ...args: any[]): void;
+        /**
+        * Creates a new DispatchEvent and propagates it to controls based on the
+        * provided direction mechanism. Controls in the propagation chain that registered
+        * the event using the control.on() method will receive the event. Propagation will
+        * always start with the sender, so the sender can both produce and consume the same
+        * event.
+        *
+        * @param name The name of the event to send, cooincides with the name used in the
+        * control.on() method.
+        * @param direction='direct' Equivalent to events.EventManager.DIRECT
+        * @param ...args Any number of arguments to send to all the listeners.
+        */
         public dispatchEvent(name: string, direction?: 'direct', ...args: any[]): void;
+        /**
+        * Creates a new DispatchEvent and propagates it to controls based on the
+        * provided direction mechanism. Controls in the propagation chain that registered
+        * the event using the control.on() method will receive the event. Propagation will
+        * always start with the sender, so the sender can both produce and consume the same
+        * event.
+        *
+        * @param name The name of the event to send, cooincides with the name used in the
+        * control.on() method.
+        * @param direction An optional events.eventDirection to propagate the event, defaults to
+        * events.EventManager.UP.
+        * @param ...args Any number of arguments to send to all the listeners.
+        */
+        public dispatchEvent(name: string, direction?: string, ...args: any[]): void;
+        /**
+        * Registers a listener for a DispatchEvent. The listener will be called when a DispatchEvent is
+        * propagating over the control. Any number of listeners can exist for a single event name.
+        *
+        * @param name The name of the event, cooinciding with the DispatchEvent name.
+        * @param listener The method called when the DispatchEvent is fired.
+        */
         public on(name: string, listener: (ev: events.IDispatchEventInstance, ...args: any[]) => void): IRemoveListener;
+        /**
+        * The dispose event is called when a control is being removed from memory. A control should release
+        * all of the memory it is using, including DOM event and property listeners.
+        */
         public dispose(): void;
     }
     /**
@@ -4237,8 +4514,6 @@ declare module plat {
         /**
         * The attributes object representing all the attributes for an IControl's element. All attributes are
         * converted from dash notation to camelCase.
-        *
-        * @see {@link ui.Attributes}
         */
         attributes?: ui.IAttributesInstance;
         /**
@@ -4470,7 +4745,19 @@ declare module plat {
             * @static
             */
             static getInstance(): IAttributeControl;
+            /**
+            * Specifies the ITemplateControl associated with this
+            * control's element. Can be null if no ITemplateControl
+            * exists.
+            */
             public templateControl: ui.ITemplateControl;
+            /**
+            * Specifies the priority of the attribute. The purpose of
+            * this is so that controls like plat-bind can have a higher
+            * priority than plat-tap. The plat-bind will be initialized
+            * and loaded before plat-tap, meaning it has the first chance
+            * to respond to events.
+            */
             public priority: number;
         }
         /**
@@ -4558,13 +4845,7 @@ declare module plat {
         class SimpleEventControl extends AttributeControl implements ISimpleEventControl {
             public $Parser: expressions.IParser;
             public $Regex: expressions.IRegex;
-            /**
-            * The event name.
-            */
             public event: string;
-            /**
-            * The camel-cased name of the control as it appears as an attribute.
-            */
             public attribute: string;
             /**
             * Our event handler bound to our own context.
@@ -4644,153 +4925,78 @@ declare module plat {
             attribute: string;
         }
         class Tap extends SimpleEventControl {
-            /**
-            * The event name.
-            */
             public event: string;
         }
         class Blur extends SimpleEventControl {
-            /**
-            * The event name.
-            */
             public event: string;
         }
         class Change extends SimpleEventControl {
-            /**
-            * The event name.
-            */
             public event: string;
         }
         class Copy extends SimpleEventControl {
-            /**
-            * The event name.
-            */
             public event: string;
         }
         class Cut extends SimpleEventControl {
-            /**
-            * The event name.
-            */
             public event: string;
         }
         class Paste extends SimpleEventControl {
-            /**
-            * The event name.
-            */
             public event: string;
         }
         class DblTap extends SimpleEventControl {
-            /**
-            * The event name.
-            */
             public event: string;
         }
         class Focus extends SimpleEventControl {
-            /**
-            * The event name.
-            */
             public event: string;
         }
         class TouchStart extends SimpleEventControl {
-            /**
-            * The event name.
-            */
             public event: string;
         }
         class TouchEnd extends SimpleEventControl {
-            /**
-            * The event name.
-            */
             public event: string;
         }
         class TouchMove extends SimpleEventControl {
-            /**
-            * The event name.
-            */
             public event: string;
         }
         class TouchCancel extends SimpleEventControl {
-            /**
-            * The event name.
-            */
             public event: string;
         }
         class Hold extends SimpleEventControl {
-            /**
-            * The event name.
-            */
             public event: string;
         }
         class Release extends SimpleEventControl {
-            /**
-            * The event name.
-            */
             public event: string;
         }
         class Swipe extends SimpleEventControl {
-            /**
-            * The event name.
-            */
             public event: string;
         }
         class SwipeLeft extends SimpleEventControl {
-            /**
-            * The event name.
-            */
             public event: string;
         }
         class SwipeRight extends SimpleEventControl {
-            /**
-            * The event name.
-            */
             public event: string;
         }
         class SwipeUp extends SimpleEventControl {
-            /**
-            * The event name.
-            */
             public event: string;
         }
         class SwipeDown extends SimpleEventControl {
-            /**
-            * The event name.
-            */
             public event: string;
         }
         class Track extends SimpleEventControl {
-            /**
-            * The event name.
-            */
             public event: string;
         }
         class TrackLeft extends SimpleEventControl {
-            /**
-            * The event name.
-            */
             public event: string;
         }
         class TrackRight extends SimpleEventControl {
-            /**
-            * The event name.
-            */
             public event: string;
         }
         class TrackUp extends SimpleEventControl {
-            /**
-            * The event name.
-            */
             public event: string;
         }
         class TrackDown extends SimpleEventControl {
-            /**
-            * The event name.
-            */
             public event: string;
         }
         class Submit extends SimpleEventControl {
-            /**
-            * The event name.
-            */
             public event: string;
             /**
             * Prevents the default submit action unless
@@ -4983,9 +5189,6 @@ declare module plat {
             'double quote': number;
         };
         class KeyCodeEventControl extends SimpleEventControl implements IKeyCodeEventControl {
-            /**
-            * An object keyed by keyCode with options as key values.
-            */
             public keyCodes: IObject<{
                 shifted?: boolean;
             }>;
@@ -5073,13 +5276,7 @@ declare module plat {
         * An AttributeControl that deals with binding to a specified property on its element.
         */
         class SetAttributeControl extends AttributeControl implements ISetAttributeControl {
-            /**
-            * The corresponding attribute to set on the element.
-            */
             public property: string;
-            /**
-            * The camel-cased name of the control as it appears as an attribute.
-            */
             public attribute: string;
             /**
             * The function for removing the attribute changed listener.
@@ -5161,15 +5358,9 @@ declare module plat {
             public setter(): void;
         }
         class Href extends ElementPropertyControl {
-            /**
-            * The corresponding attribute to set on the element.
-            */
             public property: string;
         }
         class Src extends ElementPropertyControl {
-            /**
-            * The corresponding attribute to set on the element.
-            */
             public property: string;
         }
         class Bind extends AttributeControl {
@@ -5412,6 +5603,10 @@ declare module plat {
             * The property to set on the associated template control.
             */
             property: string;
+            /**
+            * The camel-cased name of the control as it appears as an attribute.
+            */
+            attribute: string;
         }
         class Options extends ObservableAttributeControl {
             /**
@@ -5436,6 +5631,7 @@ declare module plat {
             /**
             * Evaluates an expression string with a given control and optional context.
             *
+            * @static
             * @param expression The expression string (e.g. 'foo + foo').
             * @param control The control used for evaluation context.
             * @param aliases An optional alias object containing resource alias values
@@ -5444,6 +5640,7 @@ declare module plat {
             /**
             * Evaluates a parsed expression with a given control and optional context.
             *
+            * @static
             * @param expression An IParsedExpression created using the plat.expressions.IParser injectable.
             * @param control The control used for evaluation context.
             * @param aliases An optional alias object containing resource alias values
@@ -5453,6 +5650,7 @@ declare module plat {
             * Given a control and Array of aliases, finds the associated resources and builds a context object containing
             * the values. Returns the object.
             *
+            * @static
             * @param control The control used as the starting point for finding resources.
             * @param aliases An array of aliases to search for.
             * @param resources An optional resources object to extend, if no resources object is passed in a new one will be created.
@@ -5463,6 +5661,7 @@ declare module plat {
             * If the resource is found, it will be returned along with the control instance on which
             * the resource was found.
             *
+            * @static
             * @param control The control on which to start searching for the resource alias.
             * @param alias The alias to search for.
             */
@@ -5472,6 +5671,7 @@ declare module plat {
             };
             /**
             * Recursively disposes a control and its children.
+            *
             * @static
             * @param control A control to dispose.
             */
@@ -5487,6 +5687,7 @@ declare module plat {
             * Notifies a control that its context has been changed by
             * calling the control.contextChanged method if it exists.
             *
+            * @static
             * @param control The control whose context changed.
             * @param newValue The new value of the control's context.
             * @param oldValue The old value of the control's context.
@@ -5496,6 +5697,7 @@ declare module plat {
             * Sets the 'context' resource value on a template control. If the control specifies
             * hasOwnContext, the 'rootContext' resource value will be set.
             *
+            * @static
             * @param control The control whose context resources will be set.
             */
             static setContextResources(control: ITemplateControl): void;
@@ -5504,12 +5706,14 @@ declare module plat {
             * control implements replaceWith=null, All of its nodes between its
             * startNode and endNode (inclusive) will be removed.
             *
+            * @static
             * @param control The control whose element should be removed.
             */
             static removeElement(control: ITemplateControl): void;
             /**
             * Sets the absoluteContextPath read-only property on a control.
             *
+            * @static
             * @param control The control on which to set the absoluteContextPath.
             * @param path The path to set on the control.
             */
@@ -5517,6 +5721,10 @@ declare module plat {
             /**
             * Determines the template for a control by searching for a templateUrl,
             * using the provided templateUrl, or serializing the control's templateString.
+            *
+            * @static
+            * @param control The control whose template is being determined.
+            * @param templateUrl The potential templateUrl to use to grab the template.
             */
             static determineTemplate(control: ITemplateControl, templateUrl?: string): async.IThenable<DocumentFragment>;
             /**
@@ -5533,30 +5741,197 @@ declare module plat {
             */
             static getInstance(): ITemplateControl;
             private static __resourceCache;
-            public absoluteContextPath: string;
+            /**
+            * The context of an ITemplateControl, used for inheritance and data-binding.
+            */
             public context: any;
+            /**
+            * Specifies the absolute path from where the context was created to this IControl's context.
+            * Used by the ContextManager for maintaining context parity.
+            *
+            * @example 'context.childContextProperty.grandChildContextProperty'
+            */
+            public absoluteContextPath: string;
+            /**
+            * Resources are used for providing aliases to use in markup expressions. They
+            * are particularly useful when trying to access properties outside of the
+            * current context, as well as reassigning context at any point in an app.
+            *
+            * By default, every control has a resource for '@control' and '@context'.
+            * IViewControl objects also have a resource for '@root' and '@rootContext', which is a reference
+            * to their root control and root context.
+            *
+            * Resources can be created in HTML, or through the exposed control.resources
+            * object. If specified in HTML, they must be the first element child of the
+            * control upon which the resources will be placed. IViewControls that use a
+            * templateUrl can have resources as their first element in the templateUrl.
+            *
+            * @example
+            * <custom-control>
+            *     <plat-resources>
+            *         <injectable alias="Cache">$CacheFactory</injectable>
+            *         <observable alias="testObj">
+            *              {
+            *                  foo: 'foo',
+            *                  bar: 'bar',
+            *                  baz: 2
+            *              }
+            *         </observable>
+            *     </plat-resources>
+            * </custom-control>
+            *
+            * In the above example, the resources can be accessed by using '@Cache' and '@testObj'.
+            * The type of resource is denoted by the element name.
+            *
+            * Only resources of type 'observable' will have data binding. The types of resources are:
+            * function, injectable, observable, and object. Resources of type 'function' will have their
+            * associated function context bound to the control that contains the resource.
+            *
+            * When an alias is found in a markup expression, the framework will search up the control chain
+            * to find the alias on a control's resources. This first matching alias will be used.
+            */
             public resources: IResources;
+            /**
+            * Flag indicating whether or not the ITemplateControl defines the context property.
+            */
             public hasOwnContext: boolean;
+            /**
+            * A string representing the DOM template for this control. If this property is
+            * defined on a ITemplateControl then DOM will be created and put in the
+            * control's element prior to calling the 'setTemplate' method.
+            */
             public templateString: string;
+            /**
+            * A url containing a string representing the DOM template for this control. If this property is
+            * defined on a ITemplateControl then DOM will be created and put in the
+            * control's element prior to calling the 'setTemplate' method. This property takes
+            * precedence over templateString. In the event that both are defined, templateString
+            * will be ignored.
+            */
             public templateUrl: string;
+            /**
+            * A DocumentFragment representing the innerHTML that existed when this control was instantiated.
+            * This property will only contain the innerHTML when either a templateString or templateUrl is
+            * defined. Its important to clone this property when injecting it somewhere, else its childNodes
+            * will disappear.
+            *
+            * @example this.innerTemplate.cloneNode(true); //Useful if this is not a one-time injection.
+            */
             public innerTemplate: DocumentFragment;
+            /**
+            * A IBindableTemplates object used for binding a data context to a template. This is an
+            * advanced function of a ITemplateControl.
+            */
             public bindableTemplates: IBindableTemplates;
+            /**
+            * An array of child controls. Any controls created by this control can be found in this array. The controls in
+            * this array will have reference to this control in their parent property.
+            */
             public controls: IControl[];
+            /**
+            * A Node array for managing the ITemplateControl's childNodes in the event that this control
+            * replaces its element. This property will only be useful for a ITemplateControl that implements
+            * replaceWith.
+            */
             public elementNodes: Node[];
+            /**
+            * The first node in the ITemplateControl's body. This property will be a Comment node when the
+            * control implements replaceWith = null, otherwise it will be null. This property allows a ITemplateControl
+            * to add nodes to its body in the event that it replaces its element.
+            *
+            * @example this.startNode.parentNode.insertBefore(node, this.startNode.nextSibling);
+            */
             public startNode: Node;
+            /**
+            * The last node in the ITemplateControl's body. This property will be a Comment node when the
+            * control implements replaceWith, otherwise it will be null. This property allows a ITemplateControl
+            * to add nodes to its body in the event that it replaces its element.
+            *
+            * @example this.endNode.parentNode.insertBefore(node, this.endNode);
+            */
             public endNode: Node;
+            /**
+            * Allows a ITemplateControl to either swap its element with another element (e.g. plat-select), or
+            * replace its element altogether. If null or empty string, the element will be removed from the DOM, and the
+            * childNodes of the element will be in its place. In addition, when the element is placed an endNode Comment
+            * is created, and the childNodes are added to the elementNodes property on the control. The replaceWith
+            * property can be any property that works with document.createElement(). If the control's element had
+            * attributes (as well as attribute IControls), those attributes will be carried to the swapped element. The default
+            * replaceWith is 'any,' meaning it will default to a 'div' in the case that the control type is used as the
+            * element's nodename (i.e. <plat-foreach plat-context="..."></plat-foreach>), but will maintain whatever element type
+            * is used otherwise (i.e. <tr plat-control="plat-foreach" plat-context="..."></tr>)
+            */
             public replaceWith: string;
+            /**
+            * Set to the root ancestor control from which this control inherits its context. This value
+            * can be equal to this control.
+            */
             public root: ITemplateControl;
+            /**
+            * This event is fired when an ITemplateControl's context property is changed by an ancestor control.
+            *
+            * @param newValue The new value of the context.
+            * @param oldValue The old value of the context.
+            */
             public contextChanged(): void;
+            /**
+            * A method called for ITemplateControls to set their template. During this method a control should
+            * ready its template for compilation. Whatever is in the control's element (or elementNodes if replaceWith
+            * is implemented) after this method's execution will be compiled and appear on the DOM.
+            */
             public setTemplate(): void;
+            /**
+            * Finds the identifier string associated with the given context object. The string returned
+            * is the path from a control's context.
+            *
+            * @param context The object to locate on the control's context.
+            *
+            * @example
+            *     // returns 'title'
+            *     this.getIdentifier(this.context.title);
+            */
             public getIdentifier(context: any): string;
+            /**
+            * Finds the absolute identifier string associated with the given context object. The string returned
+            * is the path from a control's root ancestor's context.
+            *
+            * @param context The object to locate on the root control's context.
+            */
             public getAbsoluteIdentifier(context: any): string;
+            /**
+            * Finds the associated resources and builds a context object containing
+            * the values. Returns the object.
+            *
+            * @param aliases An array of aliases to search for.
+            * @param resources An optional resources object to extend, if no resources object is passed in a new one will be created.
+            */
             public getResources(aliases: string[], resources?: any): IObject<any>;
+            /**
+            * Starts at a control and searches up its parent chain for a particular resource alias.
+            * If the resource is found, it will be returned along with the control instance on which
+            * the resource was found.
+            *
+            * @param alias The alias to search for.
+            */
             public findResource(alias: string): {
                 resource: IResource;
                 control: ITemplateControl;
             };
+            /**
+            * Evaluates an expression string, using the control.context.
+            *
+            * @param expression The expression string to evaluate.
+            * @param context An optional context with which to parse. If
+            * no context is specified, the control.context will be used.
+            */
             public evaluateExpression(expression: string, context?: any): any;
+            /**
+            * Evaluates a parsed expression, using the control.context.
+            *
+            * @param expression The IParsedExpression to evaluate.
+            * @param context An optional context with which to parse. If
+            * no context is specified, the control.context will be used.
+            */
             public evaluateExpression(expression: expressions.IParsedExpression, context?: any): any;
         }
         /**
@@ -5570,6 +5945,7 @@ declare module plat {
             /**
             * Evaluates an expression string with a given control and optional context.
             *
+            * @static
             * @param expression The expression string (e.g. 'foo + foo').
             * @param control The control used for evaluation context.
             * @param aliases An optional alias object containing resource alias values
@@ -5578,6 +5954,7 @@ declare module plat {
             /**
             * Evaluates a parsed expression with a given control and optional context.
             *
+            * @static
             * @param expression An IParsedExpression created using the plat.expressions.IParser injectable.
             * @param control The control used for evaluation context.
             * @param aliases An optional alias object containing resource alias values
@@ -5587,6 +5964,7 @@ declare module plat {
             * Given a control and Array of aliases, finds the associated resources and builds a context object containing
             * the values. Returns the object.
             *
+            * @static
             * @param control The control used as the starting point for finding resources.
             * @param aliases An array of aliases to search for.
             * @param resources An optional resources object to extend, if no resources object is passed in a new one will be created.
@@ -5597,6 +5975,7 @@ declare module plat {
             * If the resource is found, it will be returned along with the control instance on which
             * the resource was found.
             *
+            * @static
             * @param control The control on which to start searching for the resource alias.
             * @param alias The alias to search for.
             */
@@ -5606,12 +5985,15 @@ declare module plat {
             };
             /**
             * Recursively disposes a control and its children.
+            *
+            * @static
             * @param control A control to dispose.
             */
             dispose(control: ITemplateControl): void;
             /**
             * Loads the control tree depth first (visit children, then visit self).
             *
+            * @static
             * @param control The control serving as the root control to load.
             */
             loadControl(control: ITemplateControl): void;
@@ -5619,6 +6001,7 @@ declare module plat {
             * Notifies a control that its context has been changed by
             * calling the control.contextChanged method if it exists.
             *
+            * @static
             * @param control The control whose context changed.
             * @param newValue The new value of the control's context.
             * @param oldValue The old value of the control's context.
@@ -5628,6 +6011,7 @@ declare module plat {
             * Sets the 'context' resource value on a template control. If the control specifies
             * hasOwnContext, the 'rootContext' resource value will be set.
             *
+            * @static
             * @param control The control whose context resources will be set.
             */
             setContextResources(control: ITemplateControl): void;
@@ -5636,12 +6020,14 @@ declare module plat {
             * control implements replaceWith=null, All of its nodes between its
             * startNode and endNode (inclusive) will be removed.
             *
+            * @static
             * @param control The control whose element should be removed.
             */
             removeElement(control: ITemplateControl): void;
             /**
             * Sets the absoluteContextPath read-only property on a control.
             *
+            * @static
             * @param control The control on which to set the absoluteContextPath.
             * @param path The path to set on the control.
             */
@@ -5649,11 +6035,16 @@ declare module plat {
             /**
             * Determines the template for a control by searching for a templateUrl,
             * using the provided templateUrl, or serializing the control's templateString.
+            *
+            * @static
+            * @param control The control whose template is being determined.
+            * @param templateUrl The potential templateUrl to use to grab the template.
             */
             determineTemplate(control: ITemplateControl, templateUrl?: string): async.IThenable<DocumentFragment>;
             /**
             * Detaches a TemplateControl. Disposes its children, but does not dispose the TemplateControl.
             *
+            * @static
             * @param control The control to be detached.
             */
             detach(control: ITemplateControl): void;
@@ -5672,6 +6063,13 @@ declare module plat {
             * The context of an ITemplateControl, used for inheritance and data-binding.
             */
             context?: any;
+            /**
+            * Specifies the absolute path from where the context was created to this IControl's context.
+            * Used by the ContextManager for maintaining context parity.
+            *
+            * @example 'context.childContextProperty.grandChildContextProperty'
+            */
+            absoluteContextPath?: string;
             /**
             * Resources are used for providing aliases to use in markup expressions. They
             * are particularly useful when trying to access properties outside of the
@@ -5715,13 +6113,6 @@ declare module plat {
             * Flag indicating whether or not the ITemplateControl defines the context property.
             */
             hasOwnContext?: boolean;
-            /**
-            * Specifies the absolute path from where the context was created to this IControl's context.
-            * Used by the ContextManager for maintaining context parity.
-            *
-            * @example 'context.childContextProperty.grandChildContextProperty'
-            */
-            absoluteContextPath?: string;
             /**
             * A string representing the DOM template for this control. If this property is
             * defined on a ITemplateControl then DOM will be created and put in the
@@ -5785,7 +6176,10 @@ declare module plat {
             * childNodes of the element will be in its place. In addition, when the element is placed an endNode Comment
             * is created, and the childNodes are added to the elementNodes property on the control. The replaceWith
             * property can be any property that works with document.createElement(). If the control's element had
-            * attributes (as well as attribute IControls), those attributes will be carried to the swapped element.
+            * attributes (as well as attribute IControls), those attributes will be carried to the swapped element. The default
+            * replaceWith is 'any,' meaning it will default to a 'div' in the case that the control type is used as the
+            * element's nodename (i.e. <plat-foreach plat-context="..."></plat-foreach>), but will maintain whatever element type
+            * is used otherwise (i.e. <tr plat-control="plat-foreach" plat-context="..."></tr>)
             */
             replaceWith?: string;
             /**
@@ -5801,6 +6195,9 @@ declare module plat {
             setTemplate? (): void;
             /**
             * This event is fired when an ITemplateControl's context property is changed by an ancestor control.
+            *
+            * @param newValue The new value of the context.
+            * @param oldValue The old value of the context.
             */
             contextChanged? (newValue: any, oldValue: any): void;
             /**
@@ -5883,9 +6280,24 @@ declare module plat {
             * @static
             */
             static getInstance(): IBaseViewControl;
+            /**
+            * Specifies that this control will have its own context, and it should not inherit a context.
+            */
             public hasOwnContext: boolean;
+            /**
+            * Specifies the navigator for this control. Used for navigating to other IViewControls
+            * in a controls.Viewport.
+            */
             public navigator: navigation.IBaseNavigator;
+            /**
+            * This event is fired when this control has been navigated to.
+            *
+            * @param parameter A navigation parameter sent from the previous IViewControl.
+            */
             public navigatedTo(parameter?: any): void;
+            /**
+            * This event is fired when this control is being navigated away from.
+            */
             public navigatingFrom(): void;
         }
         /**
@@ -5947,7 +6359,11 @@ declare module plat {
         * A control used in a viewport for simulated page navigation. The
         * control has navigation events that are called when navigating to and from the control.
         */
-        class ViewControl extends TemplateControl implements IViewControl {
+        class ViewControl extends BaseViewControl implements IViewControl {
+            /**
+            * Specifies the navigator for this control. Used for navigating to other IViewControls
+            * in a viewport.
+            */
             public navigator: navigation.INavigatorInstance;
         }
         /**
@@ -5969,9 +6385,19 @@ declare module plat {
         class WebViewControl extends BaseViewControl {
             static titleElement: any;
             static setTitle(title: string): void;
+            /**
+            * The title of the page, corresponds to the textContent of the title element in the HTML head.
+            */
             public title: string;
+            /**
+            * Specifies the navigator for this control. Used for navigating to other IWebViewControls
+            * in a routeport.
+            */
             public navigator: navigation.IRoutingNavigator;
             constructor();
+            /**
+            * Allows the IWebViewControl set its title programmatically and have it reflect in the browser title.
+            */
             public setTitle(title: string): void;
         }
         interface IWebViewControl extends IBaseViewControl {
@@ -6015,6 +6441,8 @@ declare module plat {
             public removeAll(startNode: Node, endNode?: Node): void;
             public addClass(element: Element, className: string): void;
             public removeClass(element: Element, className: string): void;
+            public toggleClass(element: Element, className: string): void;
+            public hasClass(element: Element, className: string): boolean;
         }
         /**
         * The Type for referencing the '$Dom' injectable as a dependency.
@@ -6191,19 +6619,55 @@ declare module plat {
             */
             removeAll(startNode: Node, endNode?: Node): void;
             /**
-            * Adds a class to the specified element
+            * Adds a class to the specified element.
             *
             * @param element The element to which the class name is being added.
             * @param className The class name to add to the element.
             */
             addClass(element: Element, className: string): void;
             /**
-            * Removes a class from the specified element
+            * Removes a class from the specified element.
             *
             * @param element The element from which the class name is being removed.
             * @param className The class name to remove from the element.
             */
             removeClass(element: Element, className: string): void;
+            /**
+            * Toggles a class from the specified element.
+            *
+            * @param element The element on which the class name is being toggled.
+            * @param className The class name to toggle on the element.
+            */
+            toggleClass(element: Element, className: string): void;
+            /**
+            * Returns whether or not an element has a particular class assigned to it.
+            *
+            * @param element The element on which the class name is being checked.
+            * @param className The class name to check on the element.
+            */
+            hasClass(element: Element, className: string): void;
+        }
+        /**
+        * An object describing custom element properties added to elements for hashing purposes.
+        */
+        interface ICustomElementProperty extends IObject<string> {
+            /**
+            * A unique id given to the element if it's registered for a custom DOM event.
+            */
+            domEvent?: string;
+            /**
+            * A unique id given to the element if it's registered for an animation.
+            */
+            animation?: string;
+        }
+        /**
+        * An interface for describing an Element with an ICustomElementProperty attached.
+        */
+        interface ICustomElement extends HTMLElement {
+            /**
+            * The PlatypusTS custom element.
+            */
+            __plat: ICustomElementProperty;
         }
         /**
         * The class which provides a way for ITemplateControls to bind a template
@@ -6781,15 +7245,10 @@ declare module plat {
             */
             public _inTouch: boolean;
             /**
-            * The array of all elements currently registered for
-            * DOM events.
-            */
-            public _elements: Node[];
-            /**
             * An array of subscriptions that keep track of all of the
             * events registered on a particular element.
             */
-            public _subscriptions: IEventSubscription[];
+            public _subscribers: IObject<IEventSubscriber>;
             /**
             * The touch start events defined by this browser.
             */
@@ -6879,7 +7338,7 @@ declare module plat {
             private __findFirstSubscriber(eventTarget, type);
             private __addMappedEvent(mappedEvent, useCapture?);
             private __removeEventListener(element, type, listener, useCapture?);
-            private __removeElement(index);
+            private __removeElement(element);
             private __standardizeEventObject(ev);
             private __getOffset(ev);
             private __clearHold();
@@ -6890,7 +7349,7 @@ declare module plat {
             private __checkForRegisteredSwipe(direction);
             private __isHorizontal(direction);
             private __appendGestureStyle();
-            private __createStyle();
+            private __createStyle(styleClass);
             private __removeSelections(element);
             private __returnSelections(element);
             private __preventDefault(ev);
@@ -6942,6 +7401,7 @@ declare module plat {
             public initialize(element: Node, event: string): void;
             public initialize(element: Window, event: string): void;
             public trigger(ev: IPointerEvent): void;
+            private __extendEventObject(customEv, ev);
         }
         /**
         * The Type for referencing the '$DomEventInstance' injectable as a dependency.
@@ -7027,6 +7487,11 @@ declare module plat {
             */
             offsetY?: number;
             /**
+            * The x and y-coordinates of the event as an object relative to the top-left corner of the
+            * offsetParent element that fires the event.
+            */
+            offset: IPoint;
+            /**
             * The potential direction associated with the event.
             */
             direction?: string;
@@ -7063,9 +7528,68 @@ declare module plat {
         */
         interface IGestureEvent extends CustomEvent {
             /**
-            * The detail object defined by the IExtendedEvent interface.
+            * The x-coordinate of the event on the screen relative to the upper left corner of the
+            * browser window. This value cannot be affected by scrolling.
             */
-            detail: IExtendedEvent;
+            clientX?: number;
+            /**
+            * The y-coordinate of the event on the screen relative to the upper left corner of the
+            * browser window. This value cannot be affected by scrolling.
+            */
+            clientY?: number;
+            /**
+            * The x-coordinate of the event on the screen relative to the upper left corner of the
+            * physical screen or monitor.
+            */
+            screenX?: number;
+            /**
+            * The y-coordinate of the event on the screen relative to the upper left corner of the
+            * physical screen or monitor.
+            */
+            screenY?: number;
+            /**
+            * The x-coordinate of the event on the screen relative to the upper left corner of the
+            * fully rendered content area in the browser window. This value can be altered and/or affected by
+            * embedded scrollable pages when the scroll bar is moved.
+            */
+            pageX?: number;
+            /**
+            * The y-coordinate of the event on the screen relative to the upper left corner of the
+            * fully rendered content area in the browser window. This value can be altered and/or affected by
+            * embedded scrollable pages when the scroll bar is moved.
+            */
+            pageY?: number;
+            /**
+            * The x-coordinate of the event relative to the top-left corner of the
+            * offsetParent element that fires the event.
+            */
+            offsetX?: number;
+            /**
+            * The y-coordinate of the event relative to the top-left corner of the
+            * offsetParent element that fires the event.
+            */
+            offsetY?: number;
+            /**
+            * The potential direction associated with the event.
+            */
+            direction?: string;
+            /**
+            * The potential velocity associated with the event.
+            */
+            velocity?: IVelocity;
+            /**
+            * An array containing all current touch points. The IExtendedEvents
+            * may slightly differ depending on the browser implementation.
+            */
+            touches?: IExtendedEvent[];
+            /**
+            * The type of interaction associated with the touch event ('touch', 'pen', 'mouse', '')
+            */
+            pointerType?: string;
+            /**
+            * A unique touch identifier.
+            */
+            identifier?: number;
         }
         /**
         * The listener interface for our custom DOM events.
@@ -7080,7 +7604,7 @@ declare module plat {
         * Describes an object to keep track of a single
         * element's registered custom event types.
         */
-        interface IEventSubscription extends IGestures<IDomEventInstance> {
+        interface IEventSubscriber extends IGestures<IDomEventInstance> {
             /**
             * The total registered gesture count for the associated element.
             */
@@ -7175,9 +7699,9 @@ declare module plat {
             y: number;
         }
         /**
-        * Describes an object containing a speed in both the horiztonal and vertical directions.
+        * Describes an object containing a speed in both the horizontal and vertical directions.
         */
-        interface IVelocity extends IPoint {
+        interface IVelocity {
             /**
             * The horizontal speed.
             */
@@ -7243,7 +7767,8 @@ declare module plat {
             minSwipeVelocity: number;
         }
         /**
-        * Describes an object used for creating a custom class for styling an element.
+        * Describes an object used for creating a custom class for styling an element
+        * listening for a custom DOM event.
         */
         interface IDefaultStyle {
             /**
@@ -7281,12 +7806,310 @@ declare module plat {
             */
             styleConfig: IDefaultStyle[];
         }
+        class Animator implements IAnimator {
+            public $Compat: ICompat;
+            /**
+            * All elements currently being animated.
+            */
+            public _elements: IObject<IAnimatedElement>;
+            private __cssWarning;
+            /**
+            * Animates the element with the defined animation denoted by the key.
+            *
+            * @param element The Element to be animated.
+            * @param key The identifier specifying the type of animation.
+            */
+            public animate(element: Element, key: string): IAnimationPromise;
+            private __parentIsAnimating(element);
+            private __setAnimationId(element, animationInstance);
+            private __stopChildAnimations(element, id);
+            private __resolvePromise();
+        }
+        /**
+        * The Type for referencing the '$Animator' injectable as a dependency.
+        */
+        function IAnimator(): IAnimator;
+        interface IAnimator {
+            /**
+            * Animates the element with the defined animation denoted by the key.
+            *
+            * @param element The Element to be animated.
+            * @param key The identifier specifying the type of animation.
+            */
+            animate(element: Element, key: string): IAnimationPromise;
+        }
+        class Animation implements IAnimationInstance {
+            public $Compat: ICompat;
+            public element: HTMLElement;
+            public dom: IDom;
+            private __resolve;
+            private __animationEvents;
+            private __subscribers;
+            private __removeListener;
+            /**
+            * A function for initializing the animation or any of its properties before start.
+            */
+            public initialize(): void;
+            /**
+            * A function denoting the start of the animation.
+            */
+            public start(): void;
+            /**
+            * A function to be called when the animation is over.
+            */
+            public end(): void;
+            /**
+            * A function to be called to let it be known the animation is being cancelled.
+            */
+            public cancel(): void;
+            /**
+            * A function for reverting any modifications or changes that may have been made as a
+            * result of this animation.
+            */
+            public dispose(): void;
+            /**
+            * A function to listen to the start of an animation event.
+            *
+            * @param listener The function to call when the animation begins.
+            */
+            public animationStart(listener: () => void): IAnimationInstance;
+            /**
+            * A function to listen to the start of a transition event.
+            *
+            * @param listener The function to call when the transition begins.
+            */
+            public transitionStart(listener: () => void): IAnimationInstance;
+            /**
+            * A function to listen to the end of an animation event.
+            *
+            * @param listener The function to call when the animation ends.
+            */
+            public animationEnd(listener: () => void): IAnimationInstance;
+            /**
+            * A function to listen to the end of a transition event.
+            *
+            * @param listener The function to call when the transition ends.
+            */
+            public transitionEnd(listener: () => void): IAnimationInstance;
+            /**
+            * Initializes the element and key properties of this animation and passes in the function
+            * to resolve when finished.
+            *
+            * @param element The element on which the animation will occur.
+            */
+            public _init(element: Element): IAnimationPromise;
+            private __addEventListener(event, listener);
+        }
+        /**
+        * The Type for referencing the '$AnimationInstance' injectable as a dependency.
+        */
+        function IAnimationInstance(): IAnimationInstance;
+        interface IAnimationInstance {
+            /**
+            * The node having the animation performed on it.
+            */
+            element: HTMLElement;
+            /**
+            * Contains DOM helper methods for manipulating this control's element.
+            */
+            dom: IDom;
+            /**
+            * A function for initializing the animation or any of its properties before start.
+            */
+            initialize(): void;
+            /**
+            * A function denoting the start of the animation.
+            */
+            start(): void;
+            /**
+            * A function to be called when the animation is over.
+            */
+            end(): void;
+            /**
+            * A function for reverting any modifications or changes that may have been made as a
+            * result of this animation.
+            */
+            dispose(): void;
+            /**
+            * A function to be called to let it be known the animation is being cancelled.
+            */
+            cancel(): void;
+            /**
+            * A function to listen to the start of an animation event.
+            *
+            * @param listener The function to call when the animation begins.
+            */
+            animationStart(listener: () => void): IAnimationInstance;
+            /**
+            * A function to listen to the start of a transition event.
+            *
+            * @param listener The function to call when the transition begins.
+            */
+            transitionStart(listener: () => void): IAnimationInstance;
+            /**
+            * A function to listen to the end of an animation event.
+            *
+            * @param listener The function to call when the animation ends.
+            */
+            animationEnd(listener: () => void): IAnimationInstance;
+            /**
+            * A function to listen to the end of a transition event.
+            *
+            * @param listener The function to call when the transition ends.
+            */
+            transitionEnd(listener: () => void): IAnimationInstance;
+        }
+        /**
+        * Describes an object representing a currenlty animated element.
+        */
+        interface IAnimatedElement {
+            /**
+            * The function called at the conclusion of the animation.
+            */
+            animationEnd: (reanimated?: boolean) => void;
+            /**
+            * A promise representing an element's current state of animation.
+            */
+            promise?: IAnimationThenable<any>;
+        }
+        /**
+        * Describes a type of Promise that fulfills with an IAjaxResponse and can be optionally canceled.
+        */
+        class AnimationPromise extends async.Promise<void> implements IAnimationPromise {
+            private __animationInstance;
+            constructor(resolveFunction: (resolve: (value?: void) => any) => void, promise?: any);
+            public cancel(): IAnimationPromise;
+            public then<U>(onFulfilled: (success: void) => U): IAnimationThenable<U>;
+            public then<U>(onFulfilled: (success: void) => async.IThenable<U>): IAnimationThenable<U>;
+            public catch<U>(onRejected: (error: any) => IAnimationThenable<U>): IAnimationThenable<U>;
+            public catch<U>(onRejected: (error: any) => U): IAnimationThenable<U>;
+        }
+        /**
+        * Describes a type of IThenable that can optionally cancel it's associated animation.
+        */
+        interface IAnimationThenable<R> extends async.IThenable<R> {
+            /**
+            * A method to cancel the current animation.
+            */
+            cancel(): IAnimationPromise;
+            /**
+            * Takes in two methods, called when/if the promise fulfills/rejects.
+            *
+            * @param onFulfilled A method called when/if the promise fulills. If undefined the next
+            * onFulfilled method in the promise chain will be called.
+            * @param onRejected A method called when/if the promise rejects. If undefined the next
+            * onRejected method in the promise chain will be called.
+            */
+            then<U>(onFulfilled: (success: R) => IAnimationThenable<U>, onRejected?: (error: any) => IAnimationThenable<U>): IAnimationThenable<U>;
+            /**
+            * Takes in two methods, called when/if the promise fulfills/rejects.
+            *
+            * @param onFulfilled A method called when/if the promise fulills. If undefined the next
+            * onFulfilled method in the promise chain will be called.
+            * @param onRejected A method called when/if the promise rejects. If undefined the next
+            * onRejected method in the promise chain will be called.
+            */
+            then<U>(onFulfilled: (success: R) => IAnimationThenable<U>, onRejected?: (error: any) => U): IAnimationThenable<U>;
+            /**
+            * Takes in two methods, called when/if the promise fulfills/rejects.
+            *
+            * @param onFulfilled A method called when/if the promise fulills. If undefined the next
+            * onFulfilled method in the promise chain will be called.
+            * @param onRejected A method called when/if the promise rejects. If undefined the next
+            * onRejected method in the promise chain will be called.
+            */
+            then<U>(onFulfilled: (success: R) => U, onRejected?: (error: any) => IAnimationThenable<U>): IAnimationThenable<U>;
+            /**
+            * Takes in two methods, called when/if the promise fulfills/rejects.
+            *
+            * @param onFulfilled A method called when/if the promise fulills. If undefined the next
+            * onFulfilled method in the promise chain will be called.
+            * @param onRejected A method called when/if the promise rejects. If undefined the next
+            * onRejected method in the promise chain will be called.
+            */
+            then<U>(onFulfilled: (success: R) => U, onRejected?: (error: any) => U): IAnimationThenable<U>;
+            /**
+            * A wrapper method for Promise.then(undefined, onRejected);
+            *
+            * @param onRejected A method called when/if the promise rejects. If undefined the next
+            * onRejected method in the promise chain will be called.
+            */
+            catch<U>(onRejected: (error: any) => IAnimationThenable<U>): IAnimationThenable<U>;
+            /**
+            * A wrapper method for Promise.then(undefined, onRejected);
+            *
+            * @param onRejected A method called when/if the promise rejects. If undefined the next
+            * onRejected method in the promise chain will be called.
+            */
+            catch<U>(onRejected: (error: any) => U): IAnimationThenable<U>;
+        }
+        /**
+        * Describes a type of IPromise that fulfills when an animation is finished and can be optionally canceled.
+        */
+        interface IAnimationPromise extends IAnimationThenable<void> {
+            /**
+            * A method to cancel the current animation.
+            */
+            cancel(): IAnimationPromise;
+            /**
+            * Takes in two methods, called when/if the promise fulfills/rejects.
+            *
+            * @param onFulfilled A method called when/if the promise fulills. If undefined the next
+            * onFulfilled method in the promise chain will be called.
+            */
+            then<U>(onFulfilled: (success: void) => U): IAnimationThenable<U>;
+            /**
+            * Takes in two methods, called when/if the promise fulfills/rejects.
+            *
+            * @param onFulfilled A method called when/if the promise fulills. If undefined the next
+            * onFulfilled method in the promise chain will be called.
+            */
+            then<U>(onFulfilled: (success: void) => async.IThenable<U>): IAnimationThenable<U>;
+            /**
+            * Takes in two methods, called when/if the promise fulfills/rejects.
+            *
+            * @param onFulfilled A method called when/if the promise fulills. If undefined the next
+            * onFulfilled method in the promise chain will be called.
+            */
+            then<U>(onFulfilled: (success: void) => IAnimationThenable<U>): IAnimationThenable<U>;
+        }
+        module animations {
+            class SimpleCssAnimation extends Animation implements ISimpleCssAnimation {
+                public $Window: Window;
+                public className: string;
+                public start(): void;
+                public cancel(): void;
+            }
+            interface ISimpleCssAnimation {
+                /**
+                * The class name to place on the element.
+                */
+                className: string;
+            }
+            class FadeIn extends SimpleCssAnimation {
+                public className: string;
+            }
+            class FadeOut extends SimpleCssAnimation {
+                public className: string;
+            }
+            class Enter extends SimpleCssAnimation {
+                public className: string;
+            }
+            class Leave extends SimpleCssAnimation {
+                public className: string;
+            }
+        }
         module controls {
             class Baseport extends TemplateControl implements IBaseport {
                 public navigator: navigation.IBaseNavigator;
                 public $ManagerCache: storage.ICache<processing.IElementManager>;
                 public $Document: Document;
                 public $ElementManagerFactory: processing.IElementManagerFactory;
+                public $Animator: IAnimator;
+                public $Promise: async.IPromise;
+                /**
+                * @param navigator The navigator used for navigating between pages.
+                */
                 constructor(navigator: navigation.IBaseNavigator);
                 /**
                 * Clears the Baseport's innerHTML.
@@ -7303,6 +8126,10 @@ declare module plat {
                 */
                 public loaded(navigationParameter?: any, options?: navigation.IBaseNavigationOptions): void;
                 /**
+                * Clean up any memory being held.
+                */
+                public dispose(): void;
+                /**
                 * Grabs the root of this Baseport's manager
                 * tree, clears it, and initializes the
                 * creation of a new one by kicking off a
@@ -7318,29 +8145,7 @@ declare module plat {
                 * @param fromControl The ViewControl being navigated
                 * away from.
                 */
-                public navigateFrom(fromControl: IViewControl): void;
-            }
-            /**
-            * Navigation options for a Baseport and all
-            * controls that inherit from Baseport.
-            */
-            interface IBaseportNavigateToOptions {
-                /**
-                * Either a view control or an injector for a view control.
-                */
-                target: any;
-                /**
-                * The navigation parameter.
-                */
-                parameter: any;
-                /**
-                * The options used for navigation.
-                */
-                options: navigation.IBaseNavigationOptions;
-                /**
-                * The type of view control to navigate to.
-                */
-                type: string;
+                public navigateFrom(fromControl: IBaseViewControl): async.IThenable<void>;
             }
             interface IBaseport extends ITemplateControl {
                 /**
@@ -7365,7 +8170,29 @@ declare module plat {
                 * @param fromControl The ViewControl being navigated
                 * away from.
                 */
-                navigateFrom(fromControl: IBaseViewControl): void;
+                navigateFrom(fromControl: IBaseViewControl): async.IThenable<void>;
+            }
+            /**
+            * Navigation options for a Baseport and all
+            * controls that inherit from Baseport.
+            */
+            interface IBaseportNavigateToOptions {
+                /**
+                * Either a view control or an injector for a view control.
+                */
+                target: any;
+                /**
+                * The navigation parameter.
+                */
+                parameter: any;
+                /**
+                * The options used for navigation.
+                */
+                options: navigation.IBaseNavigationOptions;
+                /**
+                * The type of view control to navigate to.
+                */
+                type: string;
             }
             class Viewport extends Baseport {
                 /**
@@ -7429,6 +8256,9 @@ declare module plat {
                 private __isFirst;
                 private __templatePromise;
                 private __templateControlCache;
+                /**
+                * Creates the Template control cache
+                */
                 constructor();
                 /**
                 * Initializes the creation of the template.
@@ -7458,11 +8288,6 @@ declare module plat {
                 * instance of the template with this ID.
                 */
                 public _waitForTemplateControl(templatePromise: async.IThenable<Template>): void;
-                /**
-                * Binds the template to the proper context and
-                * resolves the clone to be placed into the DOM.
-                */
-                public _instantiateTemplate(): async.IThenable<DocumentFragment>;
                 private __mapBindableTemplates(control);
             }
             /**
@@ -7491,20 +8316,24 @@ declare module plat {
                 public loaded(): void;
             }
             class ForEach extends TemplateControl {
+                public $Animator: IAnimator;
+                public $Promise: async.IPromise;
                 /**
                 * The required context is an Array.
                 */
                 public context: any[];
                 /**
-                * Specifies that the foreach's element can be replaced with
-                * any type of element.
+                * The child controls
                 */
-                public replaceWith: string;
                 public controls: ITemplateControl[];
-                private __clearTimeouts;
-                private __removeListener;
                 /**
-                * Creates a bindable template with the elementNodes (innerHTML)
+                * The node length of the element's childNodes (innerHTML)
+                */
+                public _blockLength: number;
+                private __removeListener;
+                private __currentAnimations;
+                /**
+                * Creates a bindable template with the element's childNodes (innerHTML)
                 * specified for the ForEach.
                 */
                 public setTemplate(): void;
@@ -7526,8 +8355,11 @@ declare module plat {
                 public dispose(): void;
                 /**
                 * Adds an item to the ForEach's element.
+                *
+                * @param item The document fragment representing a single item
+                * @param animate Whether to animate the entering item
                 */
-                public _addItem(item: DocumentFragment): void;
+                public _addItem(item: DocumentFragment, animate?: boolean): void;
                 /**
                 * Removes an item from the ForEach's element.
                 */
@@ -7559,8 +8391,15 @@ declare module plat {
                 *
                 * @param numberOfItems The number of items to add.
                 * @param index The point in the array to start adding items.
+                * @param animate whether to animate the new items
                 */
-                public _addItems(numberOfItems: number, index: number): void;
+                public _addItems(numberOfItems: number, index: number, animate?: boolean): void;
+                /**
+                * Removes items from the ForEach's element.
+                *
+                * @param numberOfItems The number of items to remove.
+                */
+                public _removeItems(numberOfItems: number): void;
                 /**
                 * Returns a resource alias object for an item in the array. The
                 * resource object contains index:number, even:boolean, odd:boolean,
@@ -7569,12 +8408,6 @@ declare module plat {
                 * @param index The index used to create the resource aliases.
                 */
                 public _getAliases(index: number): IObject<IResource>;
-                /**
-                * Removes items from the ForEach's element.
-                *
-                * @param numberOfItems The number of items to remove.
-                */
-                public _removeItems(numberOfItems: number): void;
                 /**
                 * Handles items being pushed into the array.
                 *
@@ -7617,101 +8450,16 @@ declare module plat {
                 * @param ev The IArrayMethodInfo
                 */
                 public _reverse(ev: observable.IArrayMethodInfo<any>): void;
-            }
-            interface IForEach {
                 /**
-                * Adds an item to the ForEach's element.
-                */
-                _addItem(item: DocumentFragment): void;
-                /**
-                * Removes an item from the ForEach's element.
-                */
-                _removeItem(): void;
-                /**
-                * Updates the ForEach's children resource objects when
-                * the array changes.
-                */
-                _updateResources(): void;
-                /**
-                * Sets a listener for the changes to the array.
-                */
-                _setListener(): void;
-                /**
-                * Receives an event when a method has been called on an array.
+                * Animate a block of elements
                 *
-                * @param ev The IArrayMethodInfo
+                * @param startNode The starting childNode of the ForEach to animate
+                * @param endNode The ending childNode of the ForEach to animate
+                * @param key The animation key/type
+                * @param cancel Whether or not the animation should cancel all current animations
                 */
-                _arrayChanged(ev: observable.IArrayMethodInfo<any>): void;
-                /**
-                * Maps an array method to its associated method handler.
-                *
-                * @param ev The IArrayMethodInfo
-                */
-                _executeEvent(ev: observable.IArrayMethodInfo<any>): void;
-                /**
-                * Adds new items to the ForEach's element when items are added to
-                * the array.
-                *
-                * @param numberOfItems The number of items to add.
-                * @param index The point in the array to start adding items.
-                */
-                _addItems(numberOfItems: number, index: number): void;
-                /**
-                * Returns a resource alias object for an item in the array. The
-                * resource object contains index:number, even:boolean, odd:boolean,
-                * and first:boolean.
-                *
-                * @param index The index used to create the resource aliases.
-                */
-                _getAliases(index: number): IObject<IResource>;
-                /**
-                * Removes items from the ForEach's element.
-                *
-                * @param numberOfItems The number of items to remove.
-                */
-                _removeItems(numberOfItems: number): void;
-                /**
-                * Handles items being pushed into the array.
-                *
-                * @param ev The IArrayMethodInfo
-                */
-                _push(ev: observable.IArrayMethodInfo<any>): void;
-                /**
-                * Handles items being popped off the array.
-                *
-                * @param ev The IArrayMethodInfo
-                */
-                _pop(ev: observable.IArrayMethodInfo<any>): void;
-                /**
-                * Handles items being shifted off the array.
-                *
-                * @param ev The IArrayMethodInfo
-                */
-                _shift(ev: observable.IArrayMethodInfo<any>): void;
-                /**
-                * Handles adding/removing items when an array is spliced.
-                *
-                * @param ev The IArrayMethodInfo
-                */
-                _splice(ev: observable.IArrayMethodInfo<any>): void;
-                /**
-                * Handles items being unshifted into the array.
-                *
-                * @param ev The IArrayMethodInfo
-                */
-                _unshift(ev: observable.IArrayMethodInfo<any>): void;
-                /**
-                * Handles when the array is sorted.
-                *
-                * @param ev The IArrayMethodInfo
-                */
-                _sort(ev: observable.IArrayMethodInfo<any>): void;
-                /**
-                * Handles when the array is reversed.
-                *
-                * @param ev The IArrayMethodInfo
-                */
-                _reverse(ev: observable.IArrayMethodInfo<any>): void;
+                public _animateItems(startNode: number, endNode: number, key: string, cancel?: boolean): IAnimationThenable<void>;
+                private __handleAnimation(startNode, endNode, key);
             }
             class Html extends TemplateControl {
                 /**
@@ -7888,11 +8636,8 @@ declare module plat {
                 */
                 textContent: string;
             }
-            class If extends TemplateControl implements IIf {
-                /**
-                * Removes the <plat-if> node from the DOM
-                */
-                public replaceWith: string;
+            class If extends TemplateControl {
+                public $Animator: IAnimator;
                 /**
                 * The evaluated plat-options object.
                 */
@@ -7907,6 +8652,8 @@ declare module plat {
                 public fragmentStore: DocumentFragment;
                 private __removeListener;
                 private __condition;
+                private __leaveAnimation;
+                private __enterAnimation;
                 constructor();
                 /**
                 * Checks the options and initializes the
@@ -7928,7 +8675,7 @@ declare module plat {
                 * whether or not to add or remove
                 * the node from the DOM.
                 */
-                public setter(options: IIfOptions): void;
+                public _setter(options: IIfOptions): void;
                 /**
                 * The callback used to add the fragment to the DOM
                 * after the bindableTemplate has been created.
@@ -7938,14 +8685,6 @@ declare module plat {
                 * Removes the node from the DOM.
                 */
                 public _removeItem(): void;
-            }
-            interface IIf {
-                /**
-                * Checks the condition and decides
-                * whether or not to add or remove
-                * the node from the DOM.
-                */
-                setter(options: IIfOptions): void;
             }
             /**
             * The available options for plat.ui.controls.If.
@@ -8020,18 +8759,9 @@ declare module plat {
         * A NodeManager is responsible for data binding a data context to a Node.
         */
         class NodeManager implements INodeManager {
-            static $Regex: expressions.IRegex;
             static $ContextManagerStatic: observable.IContextManagerStatic;
             static $Parser: expressions.IParser;
             static $TemplateControlFactory: ui.ITemplateControlFactory;
-            /**
-            * The start markup notation.
-            */
-            static startSymbol: string;
-            /**
-            * The end markup notation.
-            */
-            static endSymbol: string;
             /**
             * Given an IParsedExpression array, creates an array of unique identifers
             * to use with binding. This allows us to avoid creating multiple listeners
@@ -8076,6 +8806,14 @@ declare module plat {
             */
             static observeIdentifiers(identifiers: string[], control: ui.ITemplateControl, listener: (...args: any[]) => void): void;
             /**
+            * A regular expression for finding markup
+            */
+            static _markupRegex: RegExp;
+            /**
+            * A regular expression for finding newline characters.
+            */
+            static _newLineRegex: RegExp;
+            /**
             * Wraps constant text as an IParsedExpression.
             *
             * @param text The text to wrap.
@@ -8098,14 +8836,6 @@ declare module plat {
         * The external interface for the '$NodeManagerStatic' injectable.
         */
         interface INodeManagerStatic {
-            /**
-            * The start markup notation.
-            */
-            startSymbol: string;
-            /**
-            * The end markup notation.
-            */
-            endSymbol: string;
             /**
             * Given an IParsedExpression array, creates an array of unique identifers
             * to use with binding. This allows us to avoid creating multiple listeners
@@ -8382,7 +9112,7 @@ declare module plat {
             public bind(): void;
             public setUiControlTemplate(templateUrl?: string): void;
             public getUiControl(): ui.ITemplateControl;
-            public fulfillTemplate(): async.IThenable<any>;
+            public fulfillTemplate(): async.IThenable<void>;
             public bindAndLoad(): async.IThenable<void>;
             public observeRootContext(root: ui.ITemplateControl, loadMethod: () => async.IThenable<void>): void;
             /**
@@ -8591,11 +9321,8 @@ declare module plat {
             /**
             * Fullfills any template template promises and finishes the compile phase
             * for the template associated to this ElementManager.
-            *
-            * @return {async.IPromise} A promise, fulfilled when the template
-            * is complete.
             */
-            fulfillTemplate(): async.IThenable<any>;
+            fulfillTemplate(): async.IThenable<void>;
             /**
             * Binds context to the DOM and loads controls.
             */
@@ -8752,6 +9479,7 @@ declare module plat {
             public navigate(navigationParameter: any, options: IBaseNavigationOptions): void;
             public navigated(control: ui.IBaseViewControl, parameter: any, options: IBaseNavigationOptions): void;
             public goBack(options?: IBaseBackNavigationOptions): void;
+            public dispose(): void;
             /**
             * Sends a NavigationEvent with the given parameters.  The 'sender' property of the event will be the
             * navigator.
@@ -8785,7 +9513,8 @@ declare module plat {
             currentState: IBaseNavigationState;
             /**
             * Initializes a Navigator. The viewport will call this method and pass itself in so
-            * the navigator can store it and use it to facilitate navigation.
+            * the navigator can store it and use it to facilitate navigation. Also subscribes to
+            * 'routeChanged' and 'beforeRouteChange' events in the case of a RoutingNavigator.
             *
             * @param baseport The baseport instance this navigator will be attached to.
             */
@@ -8814,6 +9543,10 @@ declare module plat {
             * @param options Optional backwards navigation options of type IBaseBackNavigationOptions.
             */
             goBack(options?: IBaseBackNavigationOptions): void;
+            /**
+            * Clean up memory
+            */
+            dispose(): void;
         }
         /**
         * Options that you can submit to the navigator in order
@@ -8952,13 +9685,11 @@ declare module plat {
             public currentState: IRouteNavigationState;
             private __removeListeners;
             private __historyLength;
-            /**
-            * Subscribe to 'routeChanged' and 'beforeRouteChange' events
-            */
-            constructor();
+            public initialize(baseport: ui.controls.IBaseport): void;
             public navigate(path: string, options?: web.IRouteNavigationOptions): void;
             public navigated(control: ui.IBaseViewControl, parameter: web.IRoute<any>, options: web.IRouteNavigationOptions): void;
             public goBack(options?: IBaseBackNavigationOptions): void;
+            public dispose(): void;
             /**
             * The method called prior to a route change event.
             *
@@ -9059,24 +9790,123 @@ declare module plat {
         private static __ready(ev);
         private static __shutdown();
         private static __registerAppEvents(ev);
+        /**
+        * We need to add [plat-hide] as a css property if platypus.css doesn't exist so we can use it to temporarily
+        * hide elements.
+        */
+        private static __addPlatCss();
+        /**
+        * A unique id, created during instantiation.
+        */
         public uid: string;
         /**
         * Class for every app. This class contains hooks for Application Lifecycle Management (ALM)
         * as well as error handling and navigation events.
         */
         constructor();
+        /**
+        * Event fired when the app is suspended.
+        *
+        * @param ev The ILifecycleEvent object.
+        */
         public suspend(ev: events.ILifecycleEvent): void;
+        /**
+        * Event fired when the app resumes from the suspended state.
+        *
+        * @param ev The ILifecycleEvent object.
+        */
         public resume(ev: events.ILifecycleEvent): void;
+        /**
+        * Event fired when an internal error occures.
+        *
+        * @param ev The IErrorEvent object.
+        */
         public error(ev: events.IErrorEvent<Error>): void;
+        /**
+        * Event fired when the app is ready.
+        *
+        * @param ev The ILifecycleEvent object.
+        */
         public ready(ev: events.ILifecycleEvent): void;
+        /**
+        * Event fired when the app regains connectivity and is now in an online state.
+        *
+        * @param ev The ILifecycleEvent object.
+        */
         public online(ev: events.ILifecycleEvent): void;
+        /**
+        * Event fired when the app loses connectivity and is now in an offline state.
+        *
+        * @param ev The ILifecycleEvent object.
+        */
         public offline(ev: events.ILifecycleEvent): void;
+        /**
+        * Creates a new DispatchEvent and propagates it to all listeners based on the
+        * events.EventManager.DIRECT method. Propagation will always start with the sender,
+        * so the sender can both produce and consume the same event.
+        *
+        * @param name The name of the event to send, cooincides with the name used in the
+        * app.on() method.
+        * @param ...args Any number of arguments to send to all the listeners.
+        */
         public dispatchEvent(name: string, ...args: any[]): void;
+        /**
+        * Registers a listener for a beforeNavigate event. The listener will be called when a beforeNavigate
+        * event is propagating over the app. Any number of listeners can exist for a single event name.
+        * This event is cancelable using the ev.cancel() method, and thereby preventing the navigation.
+        *
+        * @param name='beforeNavigate' The name of the event, cooinciding with the beforeNavigate event.
+        * @param listener The method called when the beforeNavigate event is fired.
+        * @return {IRemoveListener} A method for removing the listener.
+        */
         public on(name: 'beforeNavigate', listener: (ev: events.INavigationEvent<any>) => void): IRemoveListener;
+        /**
+        * Registers a listener for a navigating event. The listener will be called when a navigating
+        * event is propagating over the app. Any number of listeners can exist for a single event name.
+        * This event is cancelable using the ev.cancel() method, and thereby preventing the navigation.
+        *
+        * @param name='navigating' The name of the event, cooinciding with the navigating event.
+        * @param listener The method called when the navigating event is fired.
+        * @return {IRemoveListener} A method for removing the listener.
+        */
         public on(name: 'navigating', listener: (ev: events.INavigationEvent<any>) => void): IRemoveListener;
+        /**
+        * Registers a listener for a navigated event. The listener will be called when a navigated
+        * event is propagating over the app. Any number of listeners can exist for a single event name.
+        * This event is not cancelable.
+        *
+        * @param name='navigated' The name of the event, cooinciding with the navigated event.
+        * @param listener The method called when the navigated event is fired.
+        * @return {IRemoveListener} A method for removing the listener.
+        */
         public on(name: 'navigated', listener: (ev: events.INavigationEvent<any>) => void): IRemoveListener;
+        /**
+        * Registers a listener for a routeChanged event. The listener will be called when a routeChange event
+        * is propagating over the app. Any number of listeners can exist for a single event name.
+        *
+        * @param eventName='routeChange' This specifies that the listener is for a routeChange event.
+        * @param listener The method called when the routeChange is fired. The route argument will contain
+        * a parsed route.
+        * @return {IRemoveListener} A method for removing the listener.
+        */
         public on(name: 'routeChanged', listener: (ev: events.INavigationEvent<web.IRoute<any>>) => void): IRemoveListener;
+        /**
+        * Registers a listener for a NavigationEvent. The listener will be called when a NavigationEvent is
+        * propagating over the app. Any number of listeners can exist for a single event name.
+        *
+        * @param name The name of the event, cooinciding with the NavigationEvent name.
+        * @param listener The method called when the NavigationEvent is fired.
+        * @return {IRemoveListener} A method for removing the listener.
+        */
         public on(name: string, listener: (ev: events.INavigationEvent<any>) => void): IRemoveListener;
+        /**
+        * Kicks off compilation of the DOM from the specified node. If no node is specified,
+        * the default start node is document.body. This method should be called from the app when
+        * using module loaders. If a module loader is in use, the app will delay loading until
+        * this method is called.
+        *
+        * @param node The node where at which DOM compilation begins.
+        */
         public load(node?: Node): void;
     }
     /**

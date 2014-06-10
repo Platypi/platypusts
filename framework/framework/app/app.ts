@@ -143,7 +143,7 @@ module plat {
             } else if (!isNull($document.styleSheets) && $document.styleSheets.length > 0) {
                 (<CSSStyleSheet>$document.styleSheets[0]).insertRule('[plat-hide] { display: none; }', 0);
                 return;
-            } 
+            }
 
             var style = <HTMLStyleElement>document.createElement('style');
 
