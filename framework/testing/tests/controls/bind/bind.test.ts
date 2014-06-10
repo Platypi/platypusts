@@ -1,5 +1,5 @@
 ﻿module tests.controls.bind {
-    ddescribe('Bind Tests', () => {
+    describe('Bind Tests', () => {
         var control: plat.controls.Bind,
             parent: plat.ui.ITemplateControl,
             ControlFactory = plat.acquire(plat.IControlFactory);
@@ -8,6 +8,7 @@
             control = new plat.controls.Bind();
             parent = new plat.ui.TemplateControl();
             parent.controls = [control];
+            parent.resources = plat.acquire(plat.ui.IResourcesFactory).getInstance();
             control.parent = parent;
             control.type = 'plat-bind';
             control.attributes = plat.acquire(plat.ui.IAttributesInstance);
@@ -74,6 +75,88 @@
             expect(control._expression.expression).toEqual('@foo');
             expect(control._expression.identifiers).toEqual(['@foo']);
             expect(control._property).toEqual('@foo');
+        });
+
+        it('should test loaded with alias identifier and no observable resources', () => {
+            control.element = <HTMLElement>control.dom.serializeHtml('<input type="text" plat-bind="@foo.bar" />').childNodes[0];
+            control.attributes['platBind'] = '@foo';
+            parent.resources.add({
+                foo: {
+                    type: 'object',
+                    value: {
+                        bar: 'text'
+                    }
+                }
+            });
+
+            var spy = spyOn(control.$Parser, 'parse');
+
+            spy.and.callThrough();
+
+            control.loaded();
+            expect(spy.calls.count()).toBe(1);
+            expect(control._expression.aliases).toEqual(['foo']);
+            expect(control._expression.expression).toEqual('@foo');
+            expect(control._expression.identifiers).toEqual(['@foo']);
+            expect(control._property).toEqual('@foo');
+        });
+
+        it('should test loaded with alias identifier and observable resources', () => {
+            control.element = <HTMLElement>control.dom.serializeHtml('<input type="text" plat-bind="@foo.bar" />').childNodes[0];
+            control.attributes['platBind'] = '@foo';
+            parent.resources.add({
+                foo: {
+                    type: 'observable',
+                    value: {
+                        bar: 'text'
+                    }
+                }
+            });
+
+            var spy = spyOn(control.$Parser, 'parse');
+
+            spy.and.callThrough();
+
+            control.loaded();
+            expect(spy.calls.count()).toBe(1);
+            expect(control._expression.aliases).toEqual(['foo']);
+            expect(control._expression.expression).toEqual('@foo');
+            expect(control._expression.identifiers).toEqual(['@foo']);
+            expect(control._property).toEqual('value');
+            expect(control._contextExpression.aliases).toEqual([]);
+            expect(control._contextExpression.expression).toEqual('');
+            expect(control._contextExpression.identifiers).toEqual([]);
+            expect(control._contextExpression.evaluate(null)).toEqual({
+                type: 'observable',
+                value: {
+                    bar: 'text'
+                },
+                alias: 'foo'
+            });
+        });
+
+        it('should test loaded with immediate identifier', () => {
+            control.element = <HTMLElement>control.dom.serializeHtml('<input type="text" plat-bind="foo" />').childNodes[0];
+            control.attributes['platBind'] = 'foo';
+            control.initialize();
+            var spy = spyOn(control.$Parser, 'parse');
+
+            spy.and.callThrough();
+
+            control.loaded();
+            expect(spy.calls.count()).toBe(1);
+            expect(control._contextExpression.aliases).toEqual([]);
+            expect(control._contextExpression.expression).toEqual('');
+            expect(control._contextExpression.identifiers).toEqual([]);
+            expect(control._contextExpression.evaluate(null)).toBeNull();
+        });
+
+        it('should test contextChanged', () => {
+            var spy = spyOn(control, '_watchExpression');
+
+            control.contextChanged();
+
+            expect(spy).toHaveBeenCalled();
         });
     });
 }
