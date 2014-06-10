@@ -21,29 +21,12 @@
 
 // Animations
 
-.plat-enter {
-    .animation-name(@slideInFadeIn);
-    .animation-duration(750ms);
-    .animation-fill-mode(forwards);
-}
-
-#Animations > .slideAndFade();
-
-.plat-leave {
-    .animation-name(@slideOutFadeOut);
-    .animation-duration(500ms);
-    .animation-fill-mode(forwards);
-}
-
-#Animations > .slideAndFade(@slideOutFadeOut; out; left);
-
 .plat-slidein {
     .animation-name(@slideIn);
     .animation-duration(250ms);
     .animation-fill-mode(forwards);
 }
 
-#Animations > .slide();
 
 .plat-slideout {
     .animation-name(@slideOut);
@@ -51,7 +34,6 @@
     .animation-fill-mode(forwards);
 }
 
-#Animations > .slide(@slideOut; out; left);
 
 .plat-fadein {
     .animation-name(@fadeIn);
@@ -59,7 +41,6 @@
     .animation-fill-mode(forwards);
 }
 
-#Animations > .fade(@fadeIn; in);
 
 .plat-fadeout {
     .animation-name(@fadeOut);
@@ -68,3 +49,32 @@
 }
 
 #Animations > .fade();
+#Animations > .fade(@fadeIn; in);
+#Animations > .slide();
+#Animations > .slide(@slideOut; out; left);
+#Animations > .slideAndFade();
+#Animations > .slideAndFade(@slideOutFadeOut; out; left);
+
+.media1400({
+    [plat-control="plat-viewport"].plat-enter {
+        .animation-name(@slideInFadeIn);
+        .animation-duration(750ms);
+        .animation-fill-mode(forwards);
+    }
+
+    [plat-control="plat-viewport"].plat-leave {
+        .animation-name(@slideOutFadeOut);
+        .animation-duration(500ms);
+        .animation-fill-mode(forwards);
+    }
+});
+     
+.media800({
+    [plat-control="plat-viewport"].plat-enter {
+        .animation-name(@fadeIn);
+    }
+
+    [plat-control="plat-viewport"].plat-leave {
+        .animation-name(@fadeOut);
+    }
+});
