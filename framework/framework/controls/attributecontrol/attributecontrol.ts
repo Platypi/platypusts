@@ -26,7 +26,20 @@ module plat.controls {
             return new AttributeControl();
         }
 
+        /**
+         * Specifies the ITemplateControl associated with this
+         * control's element. Can be null if no ITemplateControl
+         * exists.
+         */
         templateControl: ui.ITemplateControl = null;
+
+        /**
+         * Specifies the priority of the attribute. The purpose of 
+         * this is so that controls like plat-bind can have a higher 
+         * priority than plat-tap. The plat-bind will be initialized 
+         * and loaded before plat-tap, meaning it has the first chance 
+         * to respond to events.
+         */
         priority = 0;
     }
 

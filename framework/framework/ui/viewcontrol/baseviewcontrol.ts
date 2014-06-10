@@ -34,11 +34,27 @@
             return new ViewControl();
         }
 
+        /**
+         * Specifies that this control will have its own context, and it should not inherit a context.
+         */
         hasOwnContext: boolean = true;
+
+        /**
+         * Specifies the navigator for this control. Used for navigating to other IViewControls
+         * in a controls.Viewport.
+         */
         navigator: navigation.IBaseNavigator;
 
+        /**
+         * This event is fired when this control has been navigated to.
+         * 
+         * @param parameter A navigation parameter sent from the previous IViewControl.
+         */
         navigatedTo(parameter?: any): void { }
 
+        /**
+         * This event is fired when this control is being navigated away from.
+         */
         navigatingFrom(): void { }
     }
 

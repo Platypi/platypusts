@@ -151,6 +151,9 @@ module plat {
             document.head.appendChild(style);
         }
 
+        /**
+         * A unique id, created during instantiation.
+         */
         uid: string;
 
         /**
@@ -162,32 +165,130 @@ module plat {
             ContextManager.defineGetter(this, 'uid', uniqueId('plat_'));
         }
 
+        /**
+         * Event fired when the app is suspended.
+         * 
+         * @param ev The ILifecycleEvent object.
+         */
         suspend(ev: events.ILifecycleEvent): void { }
 
+        /**
+         * Event fired when the app resumes from the suspended state.
+         * 
+         * @param ev The ILifecycleEvent object.
+         */
         resume(ev: events.ILifecycleEvent): void { }
 
+        /**
+         * Event fired when an internal error occures.
+         * 
+         * @param ev The IErrorEvent object.
+         */
         error(ev: events.IErrorEvent<Error>): void { }
 
+        /**
+         * Event fired when the app is ready.
+         * 
+         * @param ev The ILifecycleEvent object.
+         */
         ready(ev: events.ILifecycleEvent): void { }
 
+        /**
+         * Event fired when the app regains connectivity and is now in an online state.
+         * 
+         * @param ev The ILifecycleEvent object.
+         */
         online(ev: events.ILifecycleEvent): void { }
 
+        /**
+         * Event fired when the app loses connectivity and is now in an offline state.
+         * 
+         * @param ev The ILifecycleEvent object.
+         */
         offline(ev: events.ILifecycleEvent): void { }
 
+        /**
+         * Creates a new DispatchEvent and propagates it to all listeners based on the 
+         * events.EventManager.DIRECT method. Propagation will always start with the sender, 
+         * so the sender can both produce and consume the same event.
+         * 
+         * @param name The name of the event to send, cooincides with the name used in the
+         * app.on() method.
+         * @param ...args Any number of arguments to send to all the listeners.
+         */
         dispatchEvent(name: string, ...args: any[]): void {
             App.$EventManagerStatic.dispatch(name, this, App.$EventManagerStatic.DIRECT, args);
         }
 
+        /**
+         * Registers a listener for a beforeNavigate event. The listener will be called when a beforeNavigate 
+         * event is propagating over the app. Any number of listeners can exist for a single event name. 
+         * This event is cancelable using the ev.cancel() method, and thereby preventing the navigation.
+         * 
+         * @param name='beforeNavigate' The name of the event, cooinciding with the beforeNavigate event.
+         * @param listener The method called when the beforeNavigate event is fired.
+         * @return {IRemoveListener} A method for removing the listener. 
+         */
         on(name: 'beforeNavigate', listener: (ev: events.INavigationEvent<any>) => void): IRemoveListener;
+        /**
+         * Registers a listener for a navigating event. The listener will be called when a navigating 
+         * event is propagating over the app. Any number of listeners can exist for a single event name. 
+         * This event is cancelable using the ev.cancel() method, and thereby preventing the navigation.
+         * 
+         * @param name='navigating' The name of the event, cooinciding with the navigating event.
+         * @param listener The method called when the navigating event is fired.
+         * @return {IRemoveListener} A method for removing the listener. 
+         */
         on(name: 'navigating', listener: (ev: events.INavigationEvent<any>) => void): IRemoveListener;
-        on(name: 'navigated',
-            listener: (ev: events.INavigationEvent<any>) => void): IRemoveListener;
+        /**
+         * Registers a listener for a navigated event. The listener will be called when a navigated 
+         * event is propagating over the app. Any number of listeners can exist for a single event name. 
+         * This event is not cancelable.
+         * 
+         * @param name='navigated' The name of the event, cooinciding with the navigated event.
+         * @param listener The method called when the navigated event is fired.
+         * @return {IRemoveListener} A method for removing the listener. 
+         */
+        on(name: 'navigated', listener: (ev: events.INavigationEvent<any>) => void): IRemoveListener;
+        /**
+         * Registers a listener for a routeChanged event. The listener will be called when a routeChange event 
+         * is propagating over the app. Any number of listeners can exist for a single event name.
+         *
+         * @param eventName='routeChange' This specifies that the listener is for a routeChange event.
+         * @param listener The method called when the routeChange is fired. The route argument will contain 
+         * a parsed route.
+         * @return {IRemoveListener} A method for removing the listener.
+         */
         on(name: 'routeChanged', listener: (ev: events.INavigationEvent<web.IRoute<any>>) => void): IRemoveListener;
+        /**
+         * Registers a listener for a NavigationEvent. The listener will be called when a NavigationEvent is 
+         * propagating over the app. Any number of listeners can exist for a single event name.
+         * 
+         * @param name The name of the event, cooinciding with the NavigationEvent name.
+         * @param listener The method called when the NavigationEvent is fired.
+         * @return {IRemoveListener} A method for removing the listener.
+         */
         on(name: string, listener: (ev: events.INavigationEvent<any>) => void): IRemoveListener;
+        /**
+         * Registers a listener for a DispatchEvent. The listener will be called when a DispatchEvent is 
+         * propagating over the app. Any number of listeners can exist for a single event name.
+         * 
+         * @param name The name of the event, cooinciding with the DispatchEvent name.
+         * @param listener The method called when the DispatchEvent is fired.
+         * @return {IRemoveListener} A method for removing the listener.
+         */
         on(name: string, listener: (ev: events.IDispatchEventInstance, ...args: any[]) => void): IRemoveListener {
             return App.$EventManagerStatic.on(this.uid, name, listener, this);
         }
 
+        /**
+         * Kicks off compilation of the DOM from the specified node. If no node is specified, 
+         * the default start node is document.body. This method should be called from the app when 
+         * using module loaders. If a module loader is in use, the app will delay loading until 
+         * this method is called.
+         * 
+         * @param node The node where at which DOM compilation begins.
+         */
         load(node?: Node): void {
             App.load(node);
         }
@@ -348,8 +449,7 @@ module plat {
          * @param listener The method called when the navigated event is fired.
          * @return {IRemoveListener} A method for removing the listener. 
          */
-        on(name: 'navigated',
-            listener: (ev: events.INavigationEvent<any>) => void): IRemoveListener;
+        on(name: 'navigated', listener: (ev: events.INavigationEvent<any>) => void): IRemoveListener;
         /**
          * Registers a listener for a routeChanged event. The listener will be called when a routeChange event 
          * is propagating over the app. Any number of listeners can exist for a single event name.

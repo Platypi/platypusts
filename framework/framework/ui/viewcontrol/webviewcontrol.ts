@@ -11,8 +11,15 @@
             WebViewControl.titleElement.textContent = title.replace(/\//g, ' ');
         }
 
+        /**
+         * The title of the page, corresponds to the textContent of the title element in the HTML head.
+         */
         title = '';
 
+        /**
+         * Specifies the navigator for this control. Used for navigating to other IWebViewControls
+         * in a routeport.
+         */
         navigator: plat.navigation.IRoutingNavigator;
 
         constructor() {
@@ -26,6 +33,9 @@
             });
         }
 
+        /**
+         * Allows the IWebViewControl set its title programmatically and have it reflect in the browser title.
+         */
         setTitle(title: string) {
             this.title = title;
             WebViewControl.setTitle(this.title);

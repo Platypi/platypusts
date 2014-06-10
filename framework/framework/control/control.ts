@@ -1,6 +1,3 @@
-/**
- * @module plat
- */
 module plat {
     /**
      * Used for facilitating data and DOM manipulation. Contains lifecycle events 
@@ -219,12 +216,51 @@ module plat {
             return controls;
         }
 
+        /**
+         * A unique id, created during instantiation and found on every IControl.
+         */
         uid: string;
+
+        /**
+         * The name of an IControl.
+         */
         name: string;
+
+        /**
+         * The type of an IControl.
+         */
         type: string;
+
+        /**
+         * The parent control that created this control. If this control does not implement ui.IBaseViewControl
+         * then it will inherit its context from the parent.
+         */
         parent: ui.ITemplateControl;
+
+        /**
+         * The HTMLElement that represents this IControl. Should only be modified by controls that implement 
+         * ui.ITemplateControl. During initialize the control should populate this element with what it wishes
+         * to render to the user. 
+         * 
+         * When there is innerHTML in the element prior to instantiating the control:
+         *     The element will include the innerHTML
+         * When the control implements templateString or templateUrl:
+         *     The serialized DOM will be auto-generated and included in the element. Any
+         *     innerHTML will be stored in the innerTemplate property on the control.
+         *    
+         * After an IControl is initialized its element will be compiled.
+         */
         element: HTMLElement;
+
+        /**
+         * The attributes object representing all the attributes for an IControl's element. All attributes are 
+         * converted from dash notation to camelCase.
+         */
         attributes: ui.IAttributesInstance;
+
+        /**
+         * Contains DOM helper methods for manipulating this control's element.
+         */
         dom: ui.IDom = acquire(__Dom);
 
         /**
@@ -238,15 +274,44 @@ module plat {
             ContextManager.defineGetter(this, 'uid', uniqueId('plat_'));
         }
 
+        /**
+         * The initialize event method for a control. In this method a control should initialize all the necessary 
+         * variables. This method is typically only necessary for view controls. If a control does not implement 
+         * ui.IBaseViewControl then it is not safe to access, observe, or modify the context property in this method.
+         * A view control should call services/set context in this method in order to fire the loaded event. No control 
+         * will be loaded until the view control has specified a context.
+         */
         initialize() { }
 
+        /**
+         * The loaded event method for a control. This event is fired after a control has been loaded,
+         * meaning all of its children have also been loaded and initial DOM has been created and populated. It is now 
+         * safe for all controls to access, observe, and modify the context property.
+         */
         loaded() { }
 
+        /**
+         * Retrieves all the controls with the specified name.
+         * 
+         * @param name The string name with which to populate the returned controls array.
+         */
         getControlsByName(name: string): Array<IControl> {
             return Control.__getControls(this, 'name', name);
         }
 
+        /**
+         * Retrieves all the controls of the specified type.
+         * 
+         * @param type The type used to find controls (e.g. 'plat-foreach')
+         */
         getControlsByType<T extends Control>(type: string): Array<T>;
+        /**
+         * Retrieves all the controls of the specified type.
+         * 
+         * @param Constructor The constructor used to find controls.
+         * 
+         * @example this.getControlsByType<ui.controls.ForEach>(ui.controls.ForEach)
+         */
         getControlsByType<T extends Control>(Constructor: new () => T): Array<T>;
         getControlsByType(type: any) {
             if (isString(type)) {
@@ -255,7 +320,27 @@ module plat {
             return Control.__getControls(this, 'constructor', type);
         }
 
+        /**
+         * Adds an event listener of the specified type to the specified element. Removal of the 
+         * event is handled automatically upon disposal.
+         * 
+         * @param element The element to add the event listener to.
+         * @param type The type of event to listen to.
+         * @param listener The listener to fire when the event occurs.
+         * @param useCapture Whether to fire the event on the capture or the bubble phase 
+         * of event propagation.
+         */
         addEventListener(element: Node, type: string, listener: ui.IGestureListener, useCapture?: boolean): IRemoveListener;
+        /**
+         * Adds an event listener of the specified type to the specified element. Removal of the 
+         * event is handled automatically upon disposal.
+         * 
+         * @param element The window object.
+         * @param type The type of event to listen to.
+         * @param listener The listener to fire when the event occurs.
+         * @param useCapture Whether to fire the event on the capture or the bubble phase 
+         * of event propagation.
+         */
         addEventListener(element: Window, type: string, listener: ui.IGestureListener, useCapture?: boolean): IRemoveListener;
         addEventListener(element: any, type: string, listener: ui.IGestureListener, useCapture?: boolean): IRemoveListener {
             var removeListener = this.dom.addEventListener(element, type, listener, useCapture),
@@ -269,7 +354,25 @@ module plat {
             };
         }
 
+        /**
+         * Allows an IControl to observe any property on its context and receive updates when
+         * the property is changed.
+         * 
+         * @param context The immediate parent object containing the property.
+         * @param property The property identifier to watch for changes.
+         * @param listener The method called when the property is changed. This method will have its 'this'
+         * context set to the control instance.
+         */
         observe<T>(context: any, property: string, listener: (value: T, oldValue: any) => void): IRemoveListener;
+        /**
+         * Allows an IControl to observe any property on its context and receive updates when
+         * the property is changed.
+         * 
+         * @param context The immediate parent array containing the property.
+         * @param property The index to watch for changes.
+         * @param listener The method called when the property is changed. This method will have its 'this'
+         * context set to the control instance.
+         */
         observe<T>(context: any, property: number, listener: (value: T, oldValue: T) => void): IRemoveListener;
         observe(context: any, property: any, listener: (value: any, oldValue: any) => void): IRemoveListener {
             if (isNull(context) || !context.hasOwnProperty(property)) {
@@ -296,7 +399,27 @@ module plat {
             });
         }
 
+        /**
+         * Allows an IControl to observe an array and receive updates when certain array-changing methods are called.
+         * The methods watched are push, pop, shift, sort, splice, reverse, and unshift. This method does not watch
+         * every item in the array.
+         * 
+         * @param context The immediate parent object containing the array as a property.
+         * @param property The array property identifier to watch for changes.
+         * @param listener The method called when an array-changing method is called. This method will have its 'this'
+         * context set to the control instance.
+         */
         observeArray<T>(context: any, property: string, listener: (ev: observable.IArrayMethodInfo<T>) => void): IRemoveListener;
+        /**
+         * Allows an IControl to observe an array and receive updates when certain array-changing methods are called.
+         * The methods watched are push, pop, shift, sort, splice, reverse, and unshift. This method does not watch
+         * every item in the array.
+         * 
+         * @param context The immediate parent array containing the array as a property.
+         * @param property The index on the parent array, specifying the array to watch for changes.
+         * @param listener The method called when an array-changing method is called. This method will have its 'this'
+         * context set to the control instance.
+         */
         observeArray<T>(context: Array<T>, property: number, listener: (ev: observable.IArrayMethodInfo<T>) => void): IRemoveListener;
         observeArray(context: any, property: any, listener: (ev: observable.IArrayMethodInfo<any>) => void): IRemoveListener {
             if (isNull(context) || !context.hasOwnProperty(property)) {
@@ -348,7 +471,21 @@ module plat {
             };
         }
 
+        /**
+         * Parses an expression string and observes any associated identifiers. When an identifier
+         * value changes, the listener will be called.
+         * 
+         * @param expression The expression string to watch for changes.
+         * @param listener The listener to call when the expression identifer values change.
+         */
         observeExpression(expression: string, listener: (value: any, oldValue: any) => void): IRemoveListener;
+        /**
+         * Uses a parsed expression to observe any associated identifiers. When an identifier
+         * value changes, the listener will be called.
+         * 
+         * @param expression The IParsedExpression to watch for changes.
+         * @param listener The listener to call when the expression identifer values change.
+         */
         observeExpression(expression: expressions.IParsedExpression, listener: (value: any, oldValue: any) => void): IRemoveListener;
         observeExpression(expression: any, listener: (value: any, oldValue: any) => void): IRemoveListener {
             if (isNull(expression)) {
@@ -443,17 +580,80 @@ module plat {
             };
         }
 
+        /**
+         * Evaluates an expression string, using the control.context.
+         * 
+         * @param expression The expression string to evaluate.
+         * @param context An optional context with which to parse. If 
+         * no context is specified, the control.context will be used.
+         */
         evaluateExpression(expression: string, aliases?: any): any;
+        /**
+         * Evaluates a parsed expression, using the control.context.
+         * 
+         * @param expression The IParsedExpression to evaluate.
+         * @param context An optional context with which to parse. If 
+         * no context is specified, the control.context will be used.
+         */
         evaluateExpression(expression: expressions.IParsedExpression, aliases?: any): any;
         evaluateExpression(expression: any, aliases?: any): any {
             var TemplateControl = ui.TemplateControl;
             return TemplateControl.evaluateExpression(expression, this.parent, aliases);
         }
 
-        dispatchEvent(name: string, direction?: string, ...args: any[]): void;
+        /**
+         * Creates a new DispatchEvent and propagates it to controls based on the 
+         * provided direction mechanism. Controls in the propagation chain that registered
+         * the event using the control.on() method will receive the event. Propagation will
+         * always start with the sender, so the sender can both produce and consume the same
+         * event.
+         * 
+         * @param name The name of the event to send, cooincides with the name used in the
+         * control.on() method.
+         * @param direction='up' Equivalent to events.EventManager.UP
+         * @param ...args Any number of arguments to send to all the listeners.
+         */
         dispatchEvent(name: string, direction?: 'up', ...args: any[]): void;
+        /**
+         * Creates a new DispatchEvent and propagates it to controls based on the 
+         * provided direction mechanism. Controls in the propagation chain that registered
+         * the event using the control.on() method will receive the event. Propagation will
+         * always start with the sender, so the sender can both produce and consume the same
+         * event.
+         * 
+         * @param name The name of the event to send, cooincides with the name used in the
+         * control.on() method.
+         * @param direction='down' Equivalent to events.EventManager.DOWN
+         * @param ...args Any number of arguments to send to all the listeners.
+         */
         dispatchEvent(name: string, direction?: 'down', ...args: any[]): void;
+        /**
+         * Creates a new DispatchEvent and propagates it to controls based on the 
+         * provided direction mechanism. Controls in the propagation chain that registered
+         * the event using the control.on() method will receive the event. Propagation will
+         * always start with the sender, so the sender can both produce and consume the same
+         * event.
+         * 
+         * @param name The name of the event to send, cooincides with the name used in the
+         * control.on() method.
+         * @param direction='direct' Equivalent to events.EventManager.DIRECT
+         * @param ...args Any number of arguments to send to all the listeners.
+         */
         dispatchEvent(name: string, direction?: 'direct', ...args: any[]): void;
+        /**
+         * Creates a new DispatchEvent and propagates it to controls based on the 
+         * provided direction mechanism. Controls in the propagation chain that registered
+         * the event using the control.on() method will receive the event. Propagation will
+         * always start with the sender, so the sender can both produce and consume the same
+         * event.
+         * 
+         * @param name The name of the event to send, cooincides with the name used in the
+         * control.on() method.
+         * @param direction An optional events.eventDirection to propagate the event, defaults to
+         * events.EventManager.UP.
+         * @param ...args Any number of arguments to send to all the listeners.
+         */
+        dispatchEvent(name: string, direction?: string, ...args: any[]): void;
         dispatchEvent(name: string, direction?: string, ...args: any[]) {
             var manager = Control.$EventManagerStatic;
 
@@ -472,11 +672,22 @@ module plat {
             manager.dispatch(name, sender, direction, args);
         }
 
+        /**
+         * Registers a listener for a DispatchEvent. The listener will be called when a DispatchEvent is 
+         * propagating over the control. Any number of listeners can exist for a single event name.
+         * 
+         * @param name The name of the event, cooinciding with the DispatchEvent name.
+         * @param listener The method called when the DispatchEvent is fired.
+         */
         on(name: string, listener: (ev: events.IDispatchEventInstance, ...args: any[]) => void): IRemoveListener {
             var manager = Control.$EventManagerStatic;
             return manager.on(this.uid, name, listener, this);
         }
 
+        /**
+         * The dispose event is called when a control is being removed from memory. A control should release 
+         * all of the memory it is using, including DOM event and property listeners.
+         */
         dispose(): void { }
     }
 
@@ -484,13 +695,13 @@ module plat {
      * The Type for referencing the '$ControlFactory' injectable as a dependency.
      */
     export function IControlFactory(
-            $Parser?: expressions.IParser,
-            $ContextManagerStatic?: observable.IContextManagerStatic,
-            $EventManagerStatic?: events.IEventManagerStatic): IControlFactory {
-        Control.$Parser = $Parser;
-        Control.$ContextManagerStatic = $ContextManagerStatic;
-        Control.$EventManagerStatic = $EventManagerStatic;
-        return Control;
+        $Parser?: expressions.IParser,
+        $ContextManagerStatic?: observable.IContextManagerStatic,
+        $EventManagerStatic?: events.IEventManagerStatic): IControlFactory {
+            Control.$Parser = $Parser;
+            Control.$ContextManagerStatic = $ContextManagerStatic;
+            Control.$EventManagerStatic = $EventManagerStatic;
+            return Control;
     }
 
     register.injectable(__ControlFactory, IControlFactory, [

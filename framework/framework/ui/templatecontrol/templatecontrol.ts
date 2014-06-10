@@ -458,25 +458,171 @@ module plat.ui {
 
         private static __resourceCache: any = {};
 
-        absoluteContextPath: string = null;
+        /**
+         * The context of an ITemplateControl, used for inheritance and data-binding.
+         */
         context: any = null;
+
+        /**
+         * Specifies the absolute path from where the context was created to this IControl's context.
+         * Used by the ContextManager for maintaining context parity.
+         * 
+         * @example 'context.childContextProperty.grandChildContextProperty'
+         */
+        absoluteContextPath: string = null;
+
+        /**
+         * Resources are used for providing aliases to use in markup expressions. They 
+         * are particularly useful when trying to access properties outside of the 
+         * current context, as well as reassigning context at any point in an app.
+         * 
+         * By default, every control has a resource for '@control' and '@context'.
+         * IViewControl objects also have a resource for '@root' and '@rootContext', which is a reference
+         * to their root control and root context.
+         * 
+         * Resources can be created in HTML, or through the exposed control.resources 
+         * object. If specified in HTML, they must be the first element child of the 
+         * control upon which the resources will be placed. IViewControls that use a 
+         * templateUrl can have resources as their first element in the templateUrl.
+         * 
+         * @example
+         * <custom-control>
+         *     <plat-resources>
+         *         <injectable alias="Cache">$CacheFactory</injectable>
+         *         <observable alias="testObj">
+         *              { 
+         *                  foo: 'foo', 
+         *                  bar: 'bar', 
+         *                  baz: 2 
+         *              }
+         *         </observable>
+         *     </plat-resources>
+         * </custom-control>
+         * 
+         * In the above example, the resources can be accessed by using '@Cache' and '@testObj'.
+         * The type of resource is denoted by the element name.
+         * 
+         * Only resources of type 'observable' will have data binding. The types of resources are:
+         * function, injectable, observable, and object. Resources of type 'function' will have their
+         * associated function context bound to the control that contains the resource.
+         * 
+         * When an alias is found in a markup expression, the framework will search up the control chain 
+         * to find the alias on a control's resources. This first matching alias will be used.
+         */
         resources: IResources;
+
+        /**
+         * Flag indicating whether or not the ITemplateControl defines the context property.
+         */
         hasOwnContext: boolean = false;
+
+        /**
+         * A string representing the DOM template for this control. If this property is
+         * defined on a ITemplateControl then DOM will be created and put in the 
+         * control's element prior to calling the 'setTemplate' method.
+         */
         templateString: string;
+
+        /**
+         * A url containing a string representing the DOM template for this control. If this property is
+         * defined on a ITemplateControl then DOM will be created and put in the 
+         * control's element prior to calling the 'setTemplate' method. This property takes 
+         * precedence over templateString. In the event that both are defined, templateString
+         * will be ignored.
+         */
         templateUrl: string;
+
+        /**
+         * A DocumentFragment representing the innerHTML that existed when this control was instantiated.
+         * This property will only contain the innerHTML when either a templateString or templateUrl is
+         * defined. Its important to clone this property when injecting it somewhere, else its childNodes
+         * will disappear.
+         * 
+         * @example this.innerTemplate.cloneNode(true); //Useful if this is not a one-time injection.
+         */
         innerTemplate: DocumentFragment;
+
+        /**
+         * A IBindableTemplates object used for binding a data context to a template. This is an
+         * advanced function of a ITemplateControl.
+         */
         bindableTemplates: IBindableTemplates;
+
+        /**
+         * An array of child controls. Any controls created by this control can be found in this array. The controls in
+         * this array will have reference to this control in their parent property.
+         */
         controls: Array<IControl>;
+
+        /**
+         * A Node array for managing the ITemplateControl's childNodes in the event that this control
+         * replaces its element. This property will only be useful for a ITemplateControl that implements
+         * replaceWith.
+         */
         elementNodes: Array<Node>;
+
+        /**
+         * The first node in the ITemplateControl's body. This property will be a Comment node when the
+         * control implements replaceWith = null, otherwise it will be null. This property allows a ITemplateControl
+         * to add nodes to its body in the event that it replaces its element.
+         * 
+         * @example this.startNode.parentNode.insertBefore(node, this.startNode.nextSibling);
+         */
         startNode: Node;
+
+        /**
+         * The last node in the ITemplateControl's body. This property will be a Comment node when the
+         * control implements replaceWith, otherwise it will be null. This property allows a ITemplateControl
+         * to add nodes to its body in the event that it replaces its element.
+         * 
+         * @example this.endNode.parentNode.insertBefore(node, this.endNode);
+         */
         endNode: Node;
+
+        /**
+         * Allows a ITemplateControl to either swap its element with another element (e.g. plat-select), or
+         * replace its element altogether. If null or empty string, the element will be removed from the DOM, and the 
+         * childNodes of the element will be in its place. In addition, when the element is placed an endNode Comment
+         * is created, and the childNodes are added to the elementNodes property on the control. The replaceWith 
+         * property can be any property that works with document.createElement(). If the control's element had 
+         * attributes (as well as attribute IControls), those attributes will be carried to the swapped element. The default 
+         * replaceWith is 'any,' meaning it will default to a 'div' in the case that the control type is used as the 
+         * element's nodename (i.e. <plat-foreach plat-context="..."></plat-foreach>), but will maintain whatever element type 
+         * is used otherwise (i.e. <tr plat-control="plat-foreach" plat-context="..."></tr>)
+         */
         replaceWith = 'any';
+
+        /**
+         * Set to the root ancestor control from which this control inherits its context. This value
+         * can be equal to this control.
+         */
         root: ITemplateControl;
 
+        /**
+         * This event is fired when an ITemplateControl's context property is changed by an ancestor control.
+         * 
+         * @param newValue The new value of the context.
+         * @param oldValue The old value of the context.
+         */
         contextChanged(): void { }
 
+        /**
+         * A method called for ITemplateControls to set their template. During this method a control should
+         * ready its template for compilation. Whatever is in the control's element (or elementNodes if replaceWith
+         * is implemented) after this method's execution will be compiled and appear on the DOM.
+         */
         setTemplate(): void { }
 
+        /**
+         * Finds the identifier string associated with the given context object. The string returned
+         * is the path from a control's context.
+         * 
+         * @param context The object to locate on the control's context.
+         * 
+         * @example 
+         *     // returns 'title'
+         *     this.getIdentifier(this.context.title);
+         */
         getIdentifier(context: any): string {
             var queue: Array<{ context: any; identifier: string; }> = [],
                 dataContext = this.context,
@@ -527,6 +673,12 @@ module plat.ui {
             return obj.identifier;
         }
 
+        /**
+         * Finds the absolute identifier string associated with the given context object. The string returned
+         * is the path from a control's root ancestor's context.
+         * 
+         * @param context The object to locate on the root control's context.
+         */
         getAbsoluteIdentifier(context: any): string {
             if (context === this.context) {
                 return this.absoluteContextPath;
@@ -540,15 +692,43 @@ module plat.ui {
             return this.absoluteContextPath + '.' + localIdentifier;
         }
 
+        /**
+         * Finds the associated resources and builds a context object containing
+         * the values. Returns the object.
+         * 
+         * @param aliases An array of aliases to search for.
+         * @param resources An optional resources object to extend, if no resources object is passed in a new one will be created.
+         */
         getResources(aliases: Array<string>, resources?: any): IObject<any> {
             return TemplateControl.getResources(this, aliases, resources);
         }
 
+        /**
+         * Starts at a control and searches up its parent chain for a particular resource alias. 
+         * If the resource is found, it will be returned along with the control instance on which
+         * the resource was found.
+         * 
+         * @param alias The alias to search for.
+         */
         findResource(alias: string): { resource: IResource; control: ITemplateControl; } {
             return TemplateControl.findResource(this, alias);
         }
 
+        /**
+         * Evaluates an expression string, using the control.context.
+         * 
+         * @param expression The expression string to evaluate.
+         * @param context An optional context with which to parse. If 
+         * no context is specified, the control.context will be used.
+         */
         evaluateExpression(expression: string, context?: any): any;
+        /**
+         * Evaluates a parsed expression, using the control.context.
+         * 
+         * @param expression The IParsedExpression to evaluate.
+         * @param context An optional context with which to parse. If 
+         * no context is specified, the control.context will be used.
+         */
         evaluateExpression(expression: expressions.IParsedExpression, context?: any): any;
         evaluateExpression(expression: any, context?: any) {
             return TemplateControl.evaluateExpression(expression, this, context);
@@ -722,6 +902,14 @@ module plat.ui {
         context?: any;
 
         /**
+         * Specifies the absolute path from where the context was created to this IControl's context.
+         * Used by the ContextManager for maintaining context parity.
+         * 
+         * @example 'context.childContextProperty.grandChildContextProperty'
+         */
+        absoluteContextPath?: string;
+
+        /**
          * Resources are used for providing aliases to use in markup expressions. They 
          * are particularly useful when trying to access properties outside of the 
          * current context, as well as reassigning context at any point in an app.
@@ -765,14 +953,6 @@ module plat.ui {
          * Flag indicating whether or not the ITemplateControl defines the context property.
          */
         hasOwnContext?: boolean;
-
-        /**
-         * Specifies the absolute path from where the context was created to this IControl's context.
-         * Used by the ContextManager for maintaining context parity.
-         * 
-         * @example 'context.childContextProperty.grandChildContextProperty'
-         */
-        absoluteContextPath?: string;
 
         /**
          * A string representing the DOM template for this control. If this property is
@@ -867,6 +1047,9 @@ module plat.ui {
 
         /**
          * This event is fired when an ITemplateControl's context property is changed by an ancestor control.
+         * 
+         * @param newValue The new value of the context.
+         * @param oldValue The old value of the context.
          */
         contextChanged? (newValue: any, oldValue: any): void;
 
