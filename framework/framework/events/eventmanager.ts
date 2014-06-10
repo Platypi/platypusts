@@ -124,7 +124,6 @@ module plat.events {
          * @param uid The uid for which the event listeners will be removed.
          */
         static dispose(uid: string): void {
-            EventManager.__eventsListeners[uid] = null;
             delete EventManager.__eventsListeners[uid];
         }
 
@@ -260,7 +259,6 @@ module plat.events {
                     break;
             }
 
-            EventManager.propagatingEvents[name] = false;
             delete EventManager.propagatingEvents[name];
         }
 

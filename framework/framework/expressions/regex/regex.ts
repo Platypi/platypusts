@@ -3,7 +3,7 @@
      * A class for keeping track of commonly used regular expressions.
      */
     export class Regex implements IRegex {
-        markupRegex: RegExp = /{{[\S\s]*}}/;
+        markupRegex: RegExp;
         argumentRegex: RegExp = /\((.*)\)/;
         aliasRegex: RegExp = /[^@\.\[\(]+(?=[\.\[\(])/;
         initialUrlRegex: RegExp = /\/[^\/]*\.(?:html|htm)/;
@@ -12,7 +12,7 @@
         fileNameRegex: RegExp = /.*(?:\/|\\)/;
 
         get newLineRegex(): RegExp {
-            return /\n|\r/g;
+            return /\r|\n/g;
         }
 
         get optionalRouteRegex(): RegExp {
@@ -41,6 +41,13 @@
 
         get quotationRegex(): RegExp {
             return /'|"/g;
+        }
+
+        /**
+         * Creates the markup regular expression
+         */
+        constructor() {
+            this.markupRegex = new RegExp(__startSymbol + '[\\S\\s]*' + __endSymbol);
         }
     }
 

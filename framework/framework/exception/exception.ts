@@ -82,7 +82,10 @@ module plat {
          * Exception Type
          */
         static PROMISE = 11;
-
+        /**
+         * Animation Type
+         */
+        static ANIMATION = 12;
     }
 
     /**
@@ -172,6 +175,10 @@ module plat {
          * Exception Type
          */
         PROMISE: number;
+        /**
+         * Animation Type
+         */
+        ANIMATION: number;
     }
 
     class PlatException {

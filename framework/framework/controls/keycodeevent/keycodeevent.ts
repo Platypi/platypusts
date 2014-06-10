@@ -98,9 +98,6 @@ module plat.controls {
     };
 
     export class KeyCodeEventControl extends SimpleEventControl implements IKeyCodeEventControl {
-        /**
-         * An object keyed by keyCode with options as key values.
-         */
         keyCodes: IObject<{ shifted?: boolean; }>;
 
         /**

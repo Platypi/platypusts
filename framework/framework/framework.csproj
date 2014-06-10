@@ -62,6 +62,8 @@
     <TypeScriptCompile Include="storage\cache\templatecache.ts" />
     <TypeScriptCompile Include="storage\localstorage.ts" />
     <TypeScriptCompile Include="storage\sessionstorage.ts" />
+    <TypeScriptCompile Include="ui\animations\animations.ts" />
+    <TypeScriptCompile Include="ui\animations\simpleanimation\simpleanimation.ts" />
     <TypeScriptCompile Include="ui\attributes\attributes.ts" />
     <TypeScriptCompile Include="ui\bindabletemplates\bindabletemplates.ts" />
     <TypeScriptCompile Include="ui\controls\anchor\anchor.ts" />
@@ -88,6 +90,51 @@
     <TypeScriptCompile Include="web\router\router.ts" />
     <TypeScriptCompile Include="web\urlutils\urlutils.ts" />
     <TypeScriptCompile Include="window\window.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="css\animations.css">
+      <DependentUpon>animations.less</DependentUpon>
+    </Content>
+    <Content Include="css\animations.min.css">
+      <DependentUpon>animations.css</DependentUpon>
+    </Content>
+    <Content Include="css\media.css">
+      <DependentUpon>media.less</DependentUpon>
+    </Content>
+    <Content Include="css\media.min.css">
+      <DependentUpon>media.css</DependentUpon>
+    </Content>
+    <Content Include="css\mixins.css">
+      <DependentUpon>mixins.less</DependentUpon>
+    </Content>
+    <Content Include="css\mixins.min.css">
+      <DependentUpon>mixins.css</DependentUpon>
+    </Content>
+    <Content Include="css\platypus.css">
+      <DependentUpon>platypus.less</DependentUpon>
+    </Content>
+    <Content Include="css\platypus.less" />
+    <Content Include="css\platypus.min.css">
+      <DependentUpon>platypus.css</DependentUpon>
+    </Content>
+    <Content Include="css\variables.css">
+      <DependentUpon>variables.less</DependentUpon>
+    </Content>
+    <Content Include="css\variables.min.css">
+      <DependentUpon>variables.css</DependentUpon>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="css\mixins.less" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="css\variables.less" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="css\animations.less" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="css\media.less" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

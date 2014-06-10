@@ -39,6 +39,8 @@
 
         goBack(options?: IBaseBackNavigationOptions): void { }
 
+        dispose(): void { }
+
         /**
          * Sends a NavigationEvent with the given parameters.  The 'sender' property of the event will be the 
          * navigator.
@@ -85,7 +87,8 @@
 
         /**
          * Initializes a Navigator. The viewport will call this method and pass itself in so 
-         * the navigator can store it and use it to facilitate navigation.
+         * the navigator can store it and use it to facilitate navigation. Also subscribes to 
+         * 'routeChanged' and 'beforeRouteChange' events in the case of a RoutingNavigator.
          * 
          * @param baseport The baseport instance this navigator will be attached to.
          */
@@ -117,6 +120,11 @@
          * @param options Optional backwards navigation options of type IBaseBackNavigationOptions.
          */
         goBack(options?: IBaseBackNavigationOptions): void;
+
+        /**
+         * Clean up memory
+         */
+        dispose(): void;
     }
 
     /**

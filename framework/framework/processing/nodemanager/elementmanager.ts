@@ -22,6 +22,7 @@ module plat.processing {
             var name = element.nodeName.toLowerCase(),
                 nodeName = name,
                 injector = controlInjectors[name] || viewControlInjectors[name],
+                noControlAttribute = true,
                 hasUiControl = false,
                 uiControlNode: IUiControlNode;
 
@@ -29,9 +30,11 @@ module plat.processing {
                 if (element.hasAttribute('plat-control')) {
                     name = element.getAttribute('plat-control').toLowerCase();
                     injector = controlInjectors[name] || viewControlInjectors[name];
+                    noControlAttribute = false;
                 } else if (element.hasAttribute('data-plat-control')) {
                     name = element.getAttribute('data-plat-control').toLowerCase();
                     injector = controlInjectors[name] || viewControlInjectors[name];
+                    noControlAttribute = false;
                 }
             }
 
@@ -49,12 +52,15 @@ module plat.processing {
 
                 hasUiControl = true;
 
-                element.setAttribute('plat-control', name);
+                if (noControlAttribute) {
+                    element.setAttribute('plat-control', name);
+                }
 
-                var replacementType = uiControl.replaceWith;
-                if (!isEmpty(replacementType) && (replacementType !== 'any' || nodeName === name) &&
+                var replacementType = uiControl.replaceWith,
+                    replaceWithDiv = replacementType === 'any' && noControlAttribute;
+                if (!isEmpty(replacementType) && (replacementType !== 'any' || replaceWithDiv) &&
                         replacementType.toLowerCase() !== nodeName) {
-                    if (replacementType === 'any') {
+                    if (replaceWithDiv) {
                         replacementType = 'div';
                     }
 
@@ -657,7 +663,7 @@ module plat.processing {
                 if (!replace) {
                     var element = uiControl.element;
                     if (!isNull(element) && isFunction(element.removeAttribute)) {
-                        element.removeAttribute('plat-hide');
+                        element.removeAttribute(__Hide);
                     }
                 }
             }
@@ -708,7 +714,7 @@ module plat.processing {
             return uiControlNode.control;
         }
 
-        fulfillTemplate(): async.IThenable<any> {
+        fulfillTemplate(): async.IThenable<void> {
                 if (!isNull(this.templatePromise)) {
                     return this.templatePromise.then(() => {
                         return this._fulfillChildTemplates();
@@ -870,7 +876,7 @@ module plat.processing {
                 uiControl.parent = parent;
             }
             if (isFunction(element.setAttribute)) {
-                element.setAttribute('plat-hide', '');
+                element.setAttribute(__Hide, '');
             }
             uiControl.element = element;
             uiControl.controls = [];
@@ -1021,11 +1027,11 @@ module plat.processing {
         /**
          * Runs through all the children of this manager and calls fulfillTemplate.
          */
-        _fulfillChildTemplates() {
+        _fulfillChildTemplates(): async.IThenable<void> {
             var children = this.children,
                 child: INodeManager,
                 length = children.length,
-                promises: Array<async.IThenable<any>> = [];
+                promises: Array<async.IThenable<void>> = [];
 
             for (var i = 0; i < length; ++i) {
                 child = children[i];
@@ -1232,11 +1238,8 @@ module plat.processing {
         /**
          * Fullfills any template template promises and finishes the compile phase
          * for the template associated to this ElementManager.
-         * 
-         * @return {async.IPromise} A promise, fulfilled when the template 
-         * is complete.
          */
-        fulfillTemplate(): async.IThenable<any>;
+        fulfillTemplate(): async.IThenable<void>;
 
         /**
          * Binds context to the DOM and loads controls.

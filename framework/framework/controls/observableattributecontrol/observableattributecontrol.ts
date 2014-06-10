@@ -5,14 +5,7 @@
     export class ObservableAttributeControl extends AttributeControl implements IObservableAttributeControl {
         $ContextManagerStatic: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
 
-        /**
-         * The property to set on the associated template control.
-         */
         property: string = '';
-
-        /**
-         * The camel-cased name of the control as it appears as an attribute.
-         */
         attribute: string;
 
         /**
@@ -152,6 +145,11 @@
          * The property to set on the associated template control.
          */
         property: string;
+
+        /**
+         * The camel-cased name of the control as it appears as an attribute.
+         */
+        attribute: string;
     }
 
     export class Options extends ObservableAttributeControl {

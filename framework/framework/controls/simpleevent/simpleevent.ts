@@ -6,14 +6,7 @@ module plat.controls {
         $Parser: expressions.IParser = acquire(__Parser);
         $Regex: expressions.IRegex = acquire(__Regex);
 
-        /**
-         * The event name.
-         */
         event: string;
-
-        /**
-         * The camel-cased name of the control as it appears as an attribute.
-         */
         attribute: string;
 
         /**
@@ -230,177 +223,102 @@ module plat.controls {
     }
 
     export class Tap extends SimpleEventControl {
-        /**
-         * The event name.
-         */
         event: string = '$tap';
     }
 
     export class Blur extends SimpleEventControl {
-        /**
-         * The event name.
-         */
         event: string = 'blur';
     }
 
     export class Change extends SimpleEventControl {
-        /**
-         * The event name.
-         */
         event: string = 'change';
     }
 
     export class Copy extends SimpleEventControl {
-        /**
-         * The event name.
-         */
         event: string = 'copy';
     }
 
     export class Cut extends SimpleEventControl {
-        /**
-         * The event name.
-         */
         event: string = 'cut';
     }
 
     export class Paste extends SimpleEventControl {
-        /**
-         * The event name.
-         */
         event: string = 'paste';
     }
 
     export class DblTap extends SimpleEventControl {
-        /**
-         * The event name.
-         */
         event: string = '$dbltap';
     }
 
     export class Focus extends SimpleEventControl {
-        /**
-         * The event name.
-         */
         event: string = 'focus';
     }
 
     export class TouchStart extends SimpleEventControl {
-        /**
-         * The event name.
-         */
         event: string = '$touchstart';
     }
 
     export class TouchEnd extends SimpleEventControl {
-        /**
-         * The event name.
-         */
         event: string = '$touchend';
     }
 
     export class TouchMove extends SimpleEventControl {
-        /**
-         * The event name.
-         */
         event: string = '$touchmove';
     }
 
     export class TouchCancel extends SimpleEventControl {
-        /**
-         * The event name.
-         */
         event: string = '$touchcancel';
     }
 
     export class Hold extends SimpleEventControl {
-        /**
-         * The event name.
-         */
         event: string = '$hold';
     }
 
     export class Release extends SimpleEventControl {
-        /**
-         * The event name.
-         */
         event: string = '$release';
     }
 
     export class Swipe extends SimpleEventControl {
-        /**
-         * The event name.
-         */
         event: string = '$swipe';
     }
 
     export class SwipeLeft extends SimpleEventControl {
-        /**
-         * The event name.
-         */
         event: string = '$swipeleft';
     }
 
     export class SwipeRight extends SimpleEventControl {
-        /**
-         * The event name.
-         */
         event: string = '$swiperight';
     }
 
     export class SwipeUp extends SimpleEventControl {
-        /**
-         * The event name.
-         */
         event: string = '$swipeup';
     }
 
     export class SwipeDown extends SimpleEventControl {
-        /**
-         * The event name.
-         */
         event: string = '$swipedown';
     }
 
     export class Track extends SimpleEventControl {
-        /**
-         * The event name.
-         */
         event: string = '$track';
     }
 
     export class TrackLeft extends SimpleEventControl {
-        /**
-         * The event name.
-         */
         event: string = '$trackleft';
     }
 
     export class TrackRight extends SimpleEventControl {
-        /**
-         * The event name.
-         */
         event: string = '$trackright';
     }
 
     export class TrackUp extends SimpleEventControl {
-        /**
-         * The event name.
-         */
         event: string = '$trackup';
     }
 
     export class TrackDown extends SimpleEventControl {
-        /**
-         * The event name.
-         */
         event: string = '$trackdown';
     }
 
     export class Submit extends SimpleEventControl {
-        /**
-         * The event name.
-         */
         event: string = 'submit';
 
         /**

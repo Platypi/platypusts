@@ -59,31 +59,31 @@
         private __defineMappedEvents() {
             if (this.hasPointerEvents) {
                 this.mappedEvents = {
-                    $touchStart: 'pointerdown',
-                    $touchEnd: 'pointerup',
-                    $touchMove: 'pointermove',
-                    $touchCancel: 'pointercancel'
+                    $touchstart: 'pointerdown',
+                    $touchend: 'pointerup',
+                    $touchmove: 'pointermove',
+                    $touchcancel: 'pointercancel'
                 };
             } else if (this.hasMsPointerEvents) {
                 this.mappedEvents = {
-                    $touchStart: 'MSPointerDown',
-                    $touchEnd: 'MSPointerUp',
-                    $touchMove: 'MSPointerMove',
-                    $touchCancel: 'MSPointerCancel'
+                    $touchstart: 'MSPointerDown',
+                    $touchend: 'MSPointerUp',
+                    $touchmove: 'MSPointerMove',
+                    $touchcancel: 'MSPointerCancel'
                 };
             } else if (this.hasTouchEvents) {
                 this.mappedEvents = {
-                    $touchStart: 'touchstart',
-                    $touchEnd: 'touchend',
-                    $touchMove: 'touchmove',
-                    $touchCancel: 'touchcancel'
+                    $touchstart: 'touchstart',
+                    $touchend: 'touchend',
+                    $touchmove: 'touchmove',
+                    $touchcancel: 'touchcancel'
                 };
             } else {
                 this.mappedEvents = {
-                    $touchStart: 'mousedown',
-                    $touchEnd: 'mouseup',
-                    $touchMove: 'mousemove',
-                    $touchCancel: null
+                    $touchstart: 'mousedown',
+                    $touchend: 'mouseup',
+                    $touchmove: 'mousemove',
+                    $touchcancel: null
                 };
             }
         }
@@ -91,8 +91,6 @@
         private __defineAnimationEvents() {
             var div = this.$Document.createElement('div'),
                 animations: IObject<string> = {
-                    OAnimation: 'o',
-                    MozAnimation: '',
                     WebkitAnimation: 'webkit',
                     animation: ''
                 },
@@ -110,16 +108,20 @@
             }
 
             this.animationSupported = index > -1;
-            this.animationEvents = prefix === 'webkit' ? {
+            this.animationEvents = prefix === '' ? {
+                $animation: 'animation',
+                $animationStart: 'animationstart',
+                $animationEnd: 'animationend',
+                $transition: 'transition',
+                $transitionStart: 'transitionstart',
+                $transitionEnd: 'transitionend'
+            } : {
+                $animation: prefix + 'Animation',
                 $animationStart: prefix + 'AnimationStart',
                 $animationEnd: prefix + 'AnimationEnd',
+                $transition: prefix + 'Transition',
                 $transitionStart: prefix + 'TransitionStart',
                 $transitionEnd: prefix + 'TransitionEnd'
-            } : {
-                $animationStart: prefix + 'animationstart',
-                $animationEnd: prefix + 'animationend',
-                $transitionStart: prefix + 'transitionstart',
-                $transitionEnd: prefix + 'transitionend'
             };
         }
 
@@ -149,15 +151,13 @@
                 }
             }
 
-            var $exception: IExceptionStatic = acquire(__ExceptionStatic);
-            $exception.warn('platypus.css was not found prior to platypus.js. If you intend to use ' +
-                'platypus.css, please move it before platypus.js inside your head or body declaration');
+            this.platCss = false;
         }
     }
 
-    /**
+        /**
      * The Type for referencing the '$Compat' injectable as a dependency.
-     */
+         */
     export function ICompat(): ICompat {
         return new Compat();
     }
@@ -269,28 +269,33 @@
         /**
          * An event type for touch start.
          */
-        $touchStart: string;
+        $touchstart: string;
 
         /**
          * An event type for touch end.
          */
-        $touchEnd: string;
+        $touchend: string;
 
         /**
          * An event type for touch move.
          */
-        $touchMove: string;
+        $touchmove: string;
 
         /**
          * An event type for touch cancel.
          */
-        $touchCancel: string;
+        $touchcancel: string;
     }
 
     /**
      * Describes an object containing the properly prefixed animation events.
      */
     export interface IAnimationEvents extends IObject<string> {
+        /**
+         * The animation identifier.
+         */
+        $animation: string;
+
         /**
          * The animation start event.
          */
@@ -300,6 +305,11 @@
          * The animation end event.
          */
         $animationEnd: string;
+
+        /**
+         * The transition identifier.
+         */
+        $transition: string;
 
         /**
          * The transition start event.

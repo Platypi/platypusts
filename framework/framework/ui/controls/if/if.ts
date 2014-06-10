@@ -1,9 +1,6 @@
 module plat.ui.controls {
-    export class If extends TemplateControl implements IIf {
-        /**
-         * Removes the <plat-if> node from the DOM
-         */
-        replaceWith = 'any';
+    export class If extends TemplateControl {
+        $Animator: IAnimator = acquire(__Animator);
 
         /**
          * The evaluated plat-options object.
@@ -21,14 +18,15 @@ module plat.ui.controls {
         fragmentStore: DocumentFragment;
 
         private __removeListener: IRemoveListener;
-        private __condition: boolean = false;
+        private __condition: boolean;
+        private __leaveAnimation: IAnimationThenable<void>;
+        private __enterAnimation: IAnimationThenable<void>;
 
         constructor() {
             super();
-            var $Document: Document = acquire(__Document);
-
-            this.commentNode = $Document.createComment('plat-if-@placeholder');
-            this.fragmentStore = $Document.createDocumentFragment();
+            var $document: Document = acquire(__Document);
+            this.commentNode = $document.createComment('plat-if-@placeholder');
+            this.fragmentStore = $document.createDocumentFragment();
         }
 
         /**
@@ -42,7 +40,7 @@ module plat.ui.controls {
                 return;
             }
 
-            this.setter(options);
+            this._setter(options);
         }
 
         /**
@@ -62,9 +60,9 @@ module plat.ui.controls {
                     observe: <any>noop
                 };
             }
-            this._removeItem();
+
             this.contextChanged();
-            this.__removeListener = this.options.observe(this.setter);
+            this.__removeListener = this.options.observe(this._setter);
         }
 
         /**
@@ -85,7 +83,7 @@ module plat.ui.controls {
          * whether or not to add or remove 
          * the node from the DOM.
          */
-        setter(options: IIfOptions): void {
+        _setter(options: IIfOptions): void {
             var value = options.condition;
 
             if (value === this.__condition) {
@@ -93,9 +91,23 @@ module plat.ui.controls {
             }
 
             if (!value) {
-                this._removeItem();
+                if (!isNull(this.__enterAnimation)) {
+                    this.__enterAnimation.cancel().then(() => {
+                        this.__enterAnimation = null;
+                        this._removeItem();
+                    });
+                } else {
+                    this._removeItem();
+                }
             } else {
-                this._addItem();
+                if (!isNull(this.__leaveAnimation)) {
+                    this.__leaveAnimation.cancel().then(() => {
+                        this.__leaveAnimation = null;
+                        this._addItem();
+                    });
+                } else {
+                    this._addItem();
+                }
             }
 
             this.__condition = value;
@@ -114,6 +126,9 @@ module plat.ui.controls {
             }
 
             parentNode.replaceChild(this.fragmentStore, commentNode);
+            this.__enterAnimation = this.$Animator.animate(this.element, __Enter).then(() => {
+                this.__enterAnimation = null;
+            });
         }
 
         /**
@@ -121,19 +136,12 @@ module plat.ui.controls {
          */
         _removeItem(): void {
             var element = this.element;
-            element.parentNode.insertBefore(this.commentNode, element);
-            insertBefore(this.fragmentStore, element);
-
+            this.__leaveAnimation = this.$Animator.animate(element, __Leave).then(() => {
+                this.__leaveAnimation = null;
+                element.parentNode.insertBefore(this.commentNode, element);
+                insertBefore(this.fragmentStore, element);
+            });
         }
-    }
-
-    export interface IIf {
-        /**
-         * Checks the condition and decides 
-         * whether or not to add or remove 
-         * the node from the DOM.
-         */
-        setter(options: IIfOptions): void;
     }
 
     /**

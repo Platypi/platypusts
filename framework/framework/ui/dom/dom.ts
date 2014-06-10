@@ -69,6 +69,14 @@ module plat.ui {
         removeClass(element: Element, className: string): void {
             return removeClass(<HTMLElement>element, className);
         }
+
+        toggleClass(element: Element, className: string): void {
+            return toggleClass(<HTMLElement>element, className);
+        }
+
+        hasClass(element: Element, className: string): boolean {
+            return hasClass(<HTMLElement>element, className);
+        }
     }
 
     /**
@@ -262,7 +270,7 @@ module plat.ui {
         removeAll(startNode: Node, endNode?: Node): void;
 
         /**
-         * Adds a class to the specified element
+         * Adds a class to the specified element.
          * 
          * @param element The element to which the class name is being added.
          * @param className The class name to add to the element.
@@ -270,11 +278,52 @@ module plat.ui {
         addClass(element: Element, className: string): void;
 
         /**
-         * Removes a class from the specified element
+         * Removes a class from the specified element.
          * 
          * @param element The element from which the class name is being removed.
          * @param className The class name to remove from the element.
          */
         removeClass(element: Element, className: string): void;
+
+        /**
+         * Toggles a class from the specified element.
+         * 
+         * @param element The element on which the class name is being toggled.
+         * @param className The class name to toggle on the element.
+         */
+        toggleClass(element: Element, className: string): void;
+
+        /**
+         * Returns whether or not an element has a particular class assigned to it.
+         * 
+         * @param element The element on which the class name is being checked.
+         * @param className The class name to check on the element.
+         */
+        hasClass(element: Element, className: string): void;
+    }
+
+    /**
+     * An object describing custom element properties added to elements for hashing purposes.
+     */
+    export interface ICustomElementProperty extends IObject<string> {
+        /**
+         * A unique id given to the element if it's registered for a custom DOM event.
+         */
+        domEvent?: string;
+
+        /**
+         * A unique id given to the element if it's registered for an animation.
+         */
+        animation?: string;
+    }
+
+    /**
+     * An interface for describing an Element with an ICustomElementProperty attached.
+     */
+    export interface ICustomElement extends HTMLElement {
+        /**
+         * The PlatypusTS custom element.
+         */
+        __plat: ICustomElementProperty;
     }
 }

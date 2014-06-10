@@ -49,13 +49,13 @@ module plat.ui.controls {
                 var group = this.__group = platOptions.group,
                     optionGroup = $document.createElement('optgroup');
 
-                optionGroup.label = '{{' + group + '}}';
+                optionGroup.label = __startSymbol + group + __endSymbol;
 
                 this.bindableTemplates.add('group', optionGroup);
             }
 
-            option.value = '{{' + platOptions.value + '}}';
-            option.textContent = '{{' + platOptions.textContent + '}}';
+            option.value = __startSymbol + platOptions.value + __endSymbol;
+            option.textContent = __startSymbol + platOptions.textContent + __endSymbol;
 
             this.bindableTemplates.add('option', option);
         }

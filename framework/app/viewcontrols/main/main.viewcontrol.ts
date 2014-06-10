@@ -10,16 +10,12 @@ module app {
                 'Jonathan',
                 'Paul',
                 'Will'
-            ],
-            condition: false
+            ]
         };
         navigatedTo(route: plat.web.IRoute<any>) {
-            setInterval(() => {
-                this.context.condition = !this.context.condition;
-            }, 1000);
             if (route.path.length === 0) {
                 return;
-            }
+        }
 
             this.title = route.path.replace(/\//g, ' ');
         }

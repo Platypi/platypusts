@@ -15,14 +15,10 @@
         private __removeListeners: Array<IRemoveListener> = [];
         private __historyLength = 0;
 
-        /**
-         * Subscribe to 'routeChanged' and 'beforeRouteChange' events
-         */
-        constructor() {
-            super();
-
+        initialize(baseport: ui.controls.IBaseport): void {
             this.__removeListeners.push(this.$EventManagerStatic.on(this.uid, 'routeChanged', this._onRouteChanged, this));
             this.__removeListeners.push(this.$EventManagerStatic.on(this.uid, 'beforeRouteChange', this._beforeRouteChange, this));
+            super.initialize(baseport);
         }
 
         navigate(path: string, options?: web.IRouteNavigationOptions): void {
@@ -44,6 +40,13 @@
             }
 
             this.$Router.goBack((isNumber(options.length) ? options.length : 1));
+        }
+
+        dispose(): void {
+            var listeners = this.__removeListeners;
+            while (listeners.length > 0) {
+                listeners.pop()();
+            }
         }
 
         /**
@@ -76,9 +79,10 @@
             }
 
             this.__historyLength++;
-            this.baseport.navigateFrom(viewControl);
-            this.$BaseViewControlFactory.dispose(viewControl);
+            this.baseport.navigateFrom(viewControl).then(() => {
+                this.$BaseViewControlFactory.dispose(viewControl);
             this.baseport.navigateTo(ev);
+            });
         }
     }
 

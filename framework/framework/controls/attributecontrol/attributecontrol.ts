@@ -12,7 +12,6 @@ module plat.controls {
          * @param control The AttributeControl to dispose.
          */
         static dispose(control: IAttributeControl): void {
-            control.templateControl = null;
             delete control.templateControl;
 
             Control.dispose(control);

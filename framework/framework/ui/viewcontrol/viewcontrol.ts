@@ -3,7 +3,7 @@ module plat.ui {
      * A control used in a viewport for simulated page navigation. The 
      * control has navigation events that are called when navigating to and from the control.
      */
-    export class ViewControl extends TemplateControl implements IViewControl {
+    export class ViewControl extends BaseViewControl implements IViewControl {
         navigator: navigation.INavigatorInstance;
     }
 

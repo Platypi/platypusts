@@ -58,7 +58,6 @@ module plat.observable {
 
             if (!isNull(manager)) {
                 manager.dispose();
-                managers[uid] = null;
                 delete managers[uid];
             }
 
@@ -88,7 +87,6 @@ module plat.observable {
                 remove(keys[i], uid);
             }
 
-            controls[uid] = null;
             delete controls[uid];
 
             if (!isNull(control.context)) {
@@ -107,7 +105,6 @@ module plat.observable {
             var listeners = ContextManager.observedArrayListeners[absoluteIdentifier];
 
             if (!isNull(listeners)) {
-                listeners[uid] = null;
                 delete listeners[uid];
             }
         }
@@ -221,7 +218,6 @@ module plat.observable {
                     continue;
                 }
 
-                identifiers[identifier] = null;
                 delete identifiers[identifier];
             }
         }
@@ -561,7 +557,6 @@ module plat.observable {
                 oldChild: any;
 
             if (length === 0) {
-                this.__identifierHash[identifier] = null;
                 delete this.__identifierHash[identifier];
                 return;
             }
@@ -665,13 +660,13 @@ module plat.observable {
             // We can't use a fat-arrow function here because we need the array context.
             return function observedArrayFn(...args: any[]) {
                 var oldArray = this.slice(0),
-                    returnValue: any;
+                    returnValue: any,
+                    isShift = method.indexOf('shift') !== -1;
 
-                if (method.indexOf('shift') !== -1) {
+                if (isShift) {
                     _this.__isArrayFunction = true;
                     returnValue = (<any>Array.prototype)[method].apply(this, args);
                     _this.__isArrayFunction = false;
-                    _this._notifyChildProperties(absoluteIdentifier, this, oldArray);
                 } else {
                     returnValue = (<any>Array.prototype)[method].apply(this, args);
                 }
@@ -680,10 +675,6 @@ module plat.observable {
                     length = keys.length,
                     callbacks: Array<(ev: IArrayMethodInfo<any>) => void>,
                     jLength: number;
-
-                if (oldArray.length !== this.length && method.indexOf('shift') === -1) {
-                    _this._execute(absoluteIdentifier + '.length', this.length, oldArray.length);
-                }
 
                 for (var i = 0; i < length; ++i) {
                     callbacks = callbackObjects[keys[i]];
@@ -698,6 +689,12 @@ module plat.observable {
                             arguments: args
                         });
                     }
+                }
+
+                if (isShift) {
+                    _this._notifyChildProperties(absoluteIdentifier, this, oldArray);
+                } else if (oldArray.length !== this.length) {
+                    _this._execute(absoluteIdentifier + '.length', this.length, oldArray.length);
                 }
 
                 return returnValue;
@@ -728,9 +725,7 @@ module plat.observable {
             }
 
             if (isEmpty(this.__identifiers[identifier])) {
-                this.__identifierHash[identifier] = null;
                 delete this.__identifierHash[identifier];
-                this.__contextObjects[identifier] = null;
                 delete this.__contextObjects[identifier];
             }
         }

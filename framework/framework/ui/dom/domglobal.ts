@@ -154,9 +154,11 @@ function setInnerHtml(node: Node, html: string): Node {
     return node;
 }
 
-function insertBefore(parent: Node, nodes: any, endNode: Node = null): Array<Node> {
+function insertBefore(parent: Node, nodes: any, endNode?: Node): Array<Node> {
     if (isNull(parent)) {
         return;
+    } else if (isUndefined(endNode)) {
+        endNode = null;
     }
 
     var fragment: DocumentFragment;
@@ -321,10 +323,48 @@ function removeClass(element: HTMLElement, className: string): void {
             return;
         }
 
-        element.className
+        element.className = element.className
             .replace(new RegExp('^' + className + '\\s|\\s' + className + '$|\\s' + className + '|' + className + '\\s', 'g'), '');
         return;
     }
 
     element.classList.remove(className);
+}
+
+function toggleClass(element: HTMLElement, className: string): void {
+    if (isUndefined(element.classList)) {
+        var name = element.className;
+        if (name === '') {
+            element.className = className;
+        } else if (name === className) {
+            element.className = '';
+            return;
+        }
+
+        var classNameRegex = new RegExp('^' + className + '\\s|\\s' + className + '$|\\s' + className + '|' + className + '\\s', 'g');
+        if (classNameRegex.test(name)) {
+            element.className = name.replace(classNameRegex, '');
+            return;
+        }
+
+        element.className += ' ' + className;
+        return;
+    }
+
+    element.classList.toggle(className);
+}
+
+function hasClass(element: HTMLElement, className: string): boolean {
+    if (isUndefined(element.classList)) {
+        var name = element.className;
+        if (name === '') {
+            return false;
+        } else if (name === className) {
+            return true;
+        }
+
+        return new RegExp('^' + className + '\\s|\\s' + className + '$|\\s' + className + '|' + className + '\\s', 'g').test(name);
+    }
+
+    return element.classList.contains(className);
 }
