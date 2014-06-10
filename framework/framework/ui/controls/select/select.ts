@@ -154,13 +154,14 @@ module plat.ui.controls {
                     optgroup: any = groups[newGroup];
 
                 if (isNull(optgroup)) {
-                    groups[newGroup] = <any>this.bindableTemplates.bind('group', '' + index).then((groupClone: DocumentFragment) => {
-                        optgroup = groups[newGroup] = <Element>groupClone.childNodes[1];
+                    groups[newGroup] = <any>this.bindableTemplates.bind('group', '' + index)
+                        .then((groupClone: DocumentFragment) => {
+                            optgroup = groups[newGroup] = <Element>groupClone.childNodes[1];
 
-                        optgroup.appendChild(optionClone);
-                        element.appendChild(groupClone);
-                        return optgroup;
-                    });
+                            optgroup.appendChild(optionClone);
+                            element.appendChild(groupClone);
+                            return optgroup;
+                        });
                     return;
                 } else if (isFunction(optgroup.then)) {
                     optgroup.then((group: Element) => {

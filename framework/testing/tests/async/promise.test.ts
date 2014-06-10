@@ -2,18 +2,13 @@
     var Promise = plat.acquire(plat.async.IPromise);
 
     describe('Promise Tests', () => {
-        it('should test all', () => {
+        it('should test all', (done) => {
             var result = [],
                 promises = [2, Promise.resolve(3), 4];
 
             Promise.all(promises).then((success) => {
-                result = success;
-            });
-
-            waits(1);
-
-            runs(() => {
-                expect(result).toEqual([2, 3, 4]);
+                expect(success).toEqual([2, 3, 4]);
+                done();
             });
 
             var exception = false;
@@ -28,35 +23,25 @@
         });
 
 
-        it('should test cast', () => {
+        it('should test cast', (done) => {
             var numPromise = Promise.cast(2),
                 promise: plat.async.IThenable<any> = Promise.cast(Promise.resolve(4)),
                 result: Array<number>;
 
             Promise.all<number>([numPromise, promise]).then((success) => {
-                result = success;
-            });
-
-            waits(1);
-
-            runs(() => {
-                expect(result).toEqual([2, 4]);
+                expect(success).toEqual([2, 4]);
+                done();
             });
         });
 
-        it('should test race', () => {
+        it('should test race', (done) => {
             var numPromise = Promise.cast(2),
                 promise: plat.async.IThenable<any> = Promise.cast(Promise.resolve(4)),
                 result: number;
 
             Promise.race<number>([promise, numPromise]).then((success) => {
-                result = success;
-            });
-
-            waits(1);
-
-            runs(() => {
-                expect(result).toEqual(2);
+                expect(success).toEqual(2);
+                done();
             });
 
             var exception = false;
@@ -70,38 +55,25 @@
             expect(exception).toBe(true);
         });
 
-        it('should test resolve', () => {
+        it('should test resolve', (done) => {
             var result: number;
 
             Promise.resolve(2).then((success) => {
-                result = success;
-            });
-
-            waits(1);
-
-            runs(() => {
-                expect(result).toEqual(2);
+                expect(success).toEqual(2);
+                done();
             });
         });
 
-        it('should test reject', () => {
-            var result: number,
-                result2: number;
+        it('should test reject', (done) => {
 
             Promise.reject(2).then(() => {
                 return null;
             }, (error) => {
-                result = error;
-                return result;
+                expect(error).toEqual(2);
+                return 4;
             }).then((success) => {
-                result2 = success;
-            });
-
-            waits(1);
-
-            runs(() => {
-                expect(result).toEqual(2);
-                expect(result2).toEqual(2);
+                expect(success).toEqual(4);
+                done();
             });
         });
     });

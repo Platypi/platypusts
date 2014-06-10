@@ -70,6 +70,18 @@ module tests.utils {
             expected: false
         },
         {
+            name: 'isDocumentFragment and return true',
+            fn: 'isDocumentFragment',
+            args: [document.createDocumentFragment()],
+            expected: true
+        },
+        {
+            name: 'isDocumentFragment and return false',
+            fn: 'isDocumentFragment',
+            args: [document],
+            expected: false
+        },
+        {
             name: 'isString and return true',
             fn: 'isString',
             args: ['this is a string'],
@@ -78,6 +90,18 @@ module tests.utils {
         {
             name: 'isString and return false',
             fn: 'isString',
+            args: [12345],
+            expected: false
+        },
+        {
+            name: 'isRegExp and return true',
+            fn: 'isRegExp',
+            args: [/foo/],
+            expected: true
+        },
+        {
+            name: 'isRegExp and return false',
+            fn: 'isRegExp',
             args: [12345],
             expected: false
         },
@@ -440,7 +464,7 @@ module tests.utils {
             var spy = spyOn(utils, 'noop');
 
             utils.noop();
-            expect(spy.wasCalled).toBe(true);
+            expect(spy).toHaveBeenCalled();
         });
 
         it('should test extend with 3 args', () => {
@@ -467,7 +491,7 @@ module tests.utils {
 
             utils.forEach([true, true, true], utils.noop);
 
-            expect(spy.callCount).toBe(3);
+            expect(spy.calls.count()).toBe(3);
         });
 
         it('should test forEach with an object', () => {
@@ -475,7 +499,7 @@ module tests.utils {
 
             utils.forEach({ foo: true, bar: true, baz: true }, utils.noop);
 
-            expect(spy.callCount).toBe(3);
+            expect(spy.calls.count()).toBe(3);
         });
 
         it('should test forEach with null', () => {
@@ -483,7 +507,7 @@ module tests.utils {
 
             utils.forEach(null, utils.noop);
 
-            expect(spy.wasCalled).toBe(false);
+            expect(spy).not.toHaveBeenCalled();
         });
 
         it('should test forEach with a string', () => {
@@ -491,8 +515,8 @@ module tests.utils {
 
             utils.forEach('foo', utils.noop);
 
-            expect(spy.callCount).toBe(3);
-            expect(spy.mostRecentCall.args).toEqual(['o', 2, 'foo']);
+            expect(spy.calls.count()).toBe(3);
+            expect(spy.calls.mostRecent().args).toEqual(['o', 2, 'foo']);
         });
 
         it('should test some with a string and return false', () => {
@@ -500,71 +524,37 @@ module tests.utils {
 
             expect(utils.some('foo', <any>utils.noop)).toBe(false);
 
-            expect(spy.callCount).toBe(3);
-            expect(spy.mostRecentCall.args).toEqual(['o', 2, 'foo']);
+            expect(spy.calls.count()).toBe(3);
+            expect(spy.calls.mostRecent().args).toEqual(['o', 2, 'foo']);
         });
 
-        it('should test postpone', () => {
-            var done = false,
-                postArg: any;
+        it('should test postpone', (done) => {
+            var postArg: any;
 
-            runs(() => {
-                utils.postpone((arg) => {
-                    done = true;
-                    postArg = arg;
-                }, ['foo']);
-            });
-
-            waitsFor(() => {
-                return done;
-            }, 'postArg should be set', 5);
-
-            runs(() => {
-                expect(postArg).toBe('foo');
-            });
+            utils.postpone((arg) => {
+                expect(arg).toBe('foo');
+                done();
+            }, ['foo']);
         });
 
-        it('should test defer', () => {
-            var done = false,
-                postArg: any;
-
-            runs(() => {
-                utils.defer((arg) => {
-                    done = true;
-                    postArg = arg;
-                }, 0, ['foo']);
-            });
-
-            waitsFor(() => {
-                return done;
-            }, 'postArg should be set', 5);
-
-            runs(() => {
-                expect(postArg).toBe('foo');
-            });
+        it('should test defer', (done) => {
+            utils.defer((arg) => {
+                expect(arg).toBe('foo');
+                done();
+            }, 0, ['foo']);
         });
 
-        it('should test a cancelled defer', () => {
-            var done = false,
-                postArg: any;
+        it('should test a cancelled defer', (done) => {
+            var postArg: string;
 
-            runs(() => {
-                utils.defer((arg) => {
-                    postArg = arg;
-                }, 0, ['foo'])();
+            utils.defer((arg) => {
+                postArg = arg;
+            }, 0, ['foo'])();
 
-                setTimeout(() => {
-                    done = true;
-                }, 4);
-            });
-
-            waitsFor(() => {
-                return done;
-            }, 'postArg should be set', 5);
-
-            runs(() => {
+            setTimeout(() => {
                 expect(postArg).not.toBe('foo');
-            });
+                done();
+            }, 5);
         });
 
         it('should test uniqueId with no prefix', () => {

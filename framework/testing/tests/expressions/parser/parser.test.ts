@@ -491,7 +491,7 @@ module tests.expressions.parser {
                     spy = spyOn(context, test.watch);
 
                     if (test.callThrough) {
-                        (<any>spy).andCallThrough();
+                        spy.and.callThrough();
                     }
                 }
 
@@ -514,7 +514,7 @@ module tests.expressions.parser {
                 expect(evaluate)[test.fn](test.returns);
 
                 if (!!spy) {
-                    expect(spy.wasCalled).toBe(test.wasCalled);
+                    expect(spy.calls.any()).toBe(test.wasCalled);
                 }
             });
         });

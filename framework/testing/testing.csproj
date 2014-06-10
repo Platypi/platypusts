@@ -52,12 +52,14 @@
     <TypeScriptSourceMap>false</TypeScriptSourceMap>
   </PropertyGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="framework\platypus.ts" />
     <TypeScriptCompile Include="karma.conf.ts" />
     <TypeScriptCompile Include="tests\acquire\acquire.test.ts" />
     <TypeScriptCompile Include="tests\app\app.test.ts" />
     <TypeScriptCompile Include="tests\app\appstatic.test.ts" />
     <TypeScriptCompile Include="tests\async\promise.test.ts" />
+    <TypeScriptCompile Include="tests\controls\attributecontrol\attributecontrol.test.ts" />
+    <TypeScriptCompile Include="tests\controls\attributecontrol\attributecontrolfactory.test.ts" />
+    <TypeScriptCompile Include="tests\controls\bind\bind.test.ts" />
     <TypeScriptCompile Include="tests\control\control.test.ts" />
     <TypeScriptCompile Include="tests\control\controlfactory.test.ts" />
     <TypeScriptCompile Include="tests\expressions\parser\parser.test.ts" />
@@ -74,9 +76,7 @@
   <ItemGroup>
     <Content Include="package.json" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="mock\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
     <TypeScriptModuleKind>commonjs</TypeScriptModuleKind>
   </PropertyGroup>

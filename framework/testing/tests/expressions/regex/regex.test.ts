@@ -94,6 +94,20 @@ module tests.expressions.regex {
             replace: 'myotamelasedord',
             expected: ['_n', '_', 'n']
         },
+        {
+            name: 'whitespace regex',
+            regex: regex.whiteSpaceRegex,
+            input: ' some whitespace',
+            replace: 'somewhitespace',
+            expected: [' ', undefined]
+        },
+        {
+            name: 'quotation regex',
+            regex: regex.quotationRegex,
+            input: 'foo"\'',
+            replace: 'foo',
+            expected: ['"']
+        }
     ];
 
     describe('Regex Tests', () => {

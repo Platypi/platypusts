@@ -86,7 +86,7 @@ module plat {
         /**
          * The instance of the registered IApp.
          */
-        static app: IApp;
+        static app: IApp = null;
 
         /**
          * A static method called when the application is ready. It calls the app instance's 
