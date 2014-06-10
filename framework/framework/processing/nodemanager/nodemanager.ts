@@ -3,19 +3,9 @@ module plat.processing {
      * A NodeManager is responsible for data binding a data context to a Node.
      */
     export class NodeManager implements INodeManager {
-        static $Regex: expressions.IRegex;
         static $ContextManagerStatic: observable.IContextManagerStatic;
         static $Parser: expressions.IParser;
         static $TemplateControlFactory: ui.ITemplateControlFactory;
-        /**
-         * The start markup notation.
-         */
-        static startSymbol: string = '{{';
-
-        /**
-         * The end markup notation.
-         */
-        static endSymbol: string = '}}';
 
         /**
          * Given an IParsedExpression array, creates an array of unique identifers
@@ -62,7 +52,7 @@ module plat.processing {
          * @return {Boolean} Indicates whether or not there is markup.
          */
         static hasMarkup(text: string): boolean {
-            return NodeManager.$Regex.markupRegex.test(text);
+            return NodeManager._markupRegex.test(text);
         }
 
         /**
@@ -74,16 +64,14 @@ module plat.processing {
         static findMarkup(text: string): Array<expressions.IParsedExpression> {
             var start: number,
                 end: number,
-                text = text.replace(NodeManager.$Regex.newLineRegex, ''),
+                text = text.replace(NodeManager._newLineRegex, ''),
                 parsedExpressions: Array<expressions.IParsedExpression> = [],
-                startSymbol = NodeManager.startSymbol,
-                endSymbol = NodeManager.endSymbol,
                 wrapExpression = NodeManager._wrapExpression,
                 substring: string,
                 expression: expressions.IParsedExpression,
                 $parser = NodeManager.$Parser;
 
-            while ((start = text.indexOf(startSymbol)) !== -1 && (end = text.indexOf(endSymbol)) !== -1) {
+            while ((start = text.indexOf(__startSymbol)) !== -1 && (end = text.indexOf(__endSymbol)) !== -1) {
                 if (start !== 0) {
                     parsedExpressions.push(wrapExpression(text.substring(0, start)));
                 }
@@ -247,6 +235,16 @@ module plat.processing {
         }
 
         /**
+         * A regular expression for finding markup
+         */
+        static _markupRegex: RegExp;
+
+        /**
+         * A regular expression for finding newline characters.
+         */
+        static _newLineRegex: RegExp;
+
+        /**
          * Wraps constant text as an IParsedExpression.
          * 
          * @param text The text to wrap.
@@ -306,7 +304,8 @@ module plat.processing {
         $ContextManagerStatic?: observable.IContextManagerStatic,
         $Parser?: expressions.IParser,
         $TemplateControlFactory?: ui.ITemplateControlFactory): INodeManagerStatic {
-            NodeManager.$Regex = $Regex;
+            NodeManager._markupRegex = $Regex.markupRegex;
+            NodeManager._newLineRegex = $Regex.newLineRegex;
             NodeManager.$ContextManagerStatic = $ContextManagerStatic;
             NodeManager.$Parser = $Parser;
             NodeManager.$TemplateControlFactory = $TemplateControlFactory;
@@ -324,16 +323,6 @@ module plat.processing {
      * The external interface for the '$NodeManagerStatic' injectable.
      */
     export interface INodeManagerStatic {
-        /**
-         * The start markup notation.
-         */
-        startSymbol: string;
-
-        /**
-         * The end markup notation.
-         */
-        endSymbol: string;
-
         /**
          * Given an IParsedExpression array, creates an array of unique identifers
          * to use with binding. This allows us to avoid creating multiple listeners

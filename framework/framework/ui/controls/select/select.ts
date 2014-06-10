@@ -1,6 +1,5 @@
 module plat.ui.controls {
     export class Select extends TemplateControl {
-        $NodeManagerStatic: processing.INodeManagerStatic = acquire(__NodeManagerStatic);
         $Promise: async.IPromise = acquire(__Promise);
         $Document: Document = acquire(__Document);
 
@@ -37,10 +36,7 @@ module plat.ui.controls {
         setTemplate(): void {
             var element = this.element,
                 firstElementChild = element.firstElementChild,
-                $document = this.$Document,
-                $nodeManager = this.$NodeManagerStatic,
-                startSymbol = $nodeManager.startSymbol,
-                endSymbol = $nodeManager.endSymbol;
+                $document = this.$Document;
 
             if (!isNull(firstElementChild) && firstElementChild.nodeName.toLowerCase() === 'option') {
                 this.__defaultOption = <HTMLOptionElement>firstElementChild.cloneNode(true);
@@ -53,13 +49,13 @@ module plat.ui.controls {
                 var group = this.__group = platOptions.group,
                     optionGroup = $document.createElement('optgroup');
 
-                optionGroup.label = startSymbol + group + endSymbol;
+                optionGroup.label = __startSymbol + group + __endSymbol;
 
                 this.bindableTemplates.add('group', optionGroup);
             }
 
-            option.value = startSymbol + platOptions.value + endSymbol;
-            option.textContent = startSymbol + platOptions.textContent + endSymbol;
+            option.value = __startSymbol + platOptions.value + __endSymbol;
+            option.textContent = __startSymbol + platOptions.textContent + __endSymbol;
 
             this.bindableTemplates.add('option', option);
         }

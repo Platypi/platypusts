@@ -3,8 +3,6 @@
      * A class for keeping track of commonly used regular expressions.
      */
     export class Regex implements IRegex {
-        $NodeManagerStatic: processing.INodeManagerStatic = acquire(__NodeManagerStatic);
-
         markupRegex: RegExp;
         argumentRegex: RegExp = /\((.*)\)/;
         aliasRegex: RegExp = /[^@\.\[\(]+(?=[\.\[\(])/;
@@ -14,7 +12,7 @@
         fileNameRegex: RegExp = /.*(?:\/|\\)/;
 
         get newLineRegex(): RegExp {
-            return /\n|\r/g;
+            return /\r|\n/g;
         }
 
         get optionalRouteRegex(): RegExp {
@@ -49,8 +47,7 @@
          * Creates the markup regular expression
          */
         constructor() {
-            var $nodeManager = this.$NodeManagerStatic;
-            this.markupRegex = new RegExp($nodeManager.startSymbol + '[\\S\\s]*' + $nodeManager.endSymbol);
+            this.markupRegex = new RegExp(__startSymbol + '[\\S\\s]*' + __endSymbol);
         }
     }
 

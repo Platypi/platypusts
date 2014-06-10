@@ -1,7 +1,7 @@
-﻿/**
- * Injectables
- */
-var __AppStatic = '$AppStatic',
+﻿var /**
+     * Injectables
+     */
+    __AppStatic = '$AppStatic',
     __App = '$App',
     __Http = '$Http',
     __HttpConfig = '$HttpConfig',
@@ -49,12 +49,12 @@ var __AppStatic = '$AppStatic',
     __Window = '$Window',
     __LocalStorage = '$LocalStorage',
     __SessionStorage = '$SessionStorage',
-    __Geolocation = '$Geolocation';
+    __Geolocation = '$Geolocation',
 
-/**
- * Controls
- */
-var __Plat = 'plat-',
+    /**
+     * Controls
+     */
+    __Plat = 'plat-',
     __Bind = __Plat + 'bind',
     __Href = __Plat + 'href',
     __Src = __Plat + 'src',
@@ -103,15 +103,21 @@ var __Plat = 'plat-',
     __Select = __Plat + 'select',
     __Template = __Plat + 'template',
     __Routeport = __Plat + 'routeport',
-    __Viewport = __Plat + 'viewport';
+    __Viewport = __Plat + 'viewport',
 
-/**
- * Animations
- */
-var __Hide = __Plat + 'hide',
+    /**
+     * Animations
+     */
+    __Hide = __Plat + 'hide',
     __Animating = __Plat + 'animating',
     __Enter = __Plat + 'enter',
     __Leave = __Plat + 'leave',
     __Move = __Plat + 'move',
     __FadeIn = __Plat + 'fadein',
-    __FadeOut = __Plat + 'fadeout';
+    __FadeOut = __Plat + 'fadeout',
+
+    /**
+     * Constants
+     */
+    __startSymbol = '{{',
+    __endSymbol = '}}';
