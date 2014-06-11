@@ -17,8 +17,8 @@ module plat.ui.controls {
          */
         fragmentStore: DocumentFragment;
 
+        private __condition: boolean = true;
         private __removeListener: IRemoveListener;
-        private __condition: boolean;
         private __leaveAnimation: IAnimationThenable<void>;
         private __enterAnimation: IAnimationThenable<void>;
 
@@ -84,22 +84,13 @@ module plat.ui.controls {
          * the node from the DOM.
          */
         _setter(options: IIfOptions): void {
-            var value = options.condition;
+            var value = !!options.condition;
 
             if (value === this.__condition) {
                 return;
             }
 
-            if (!value) {
-                if (!isNull(this.__enterAnimation)) {
-                    this.__enterAnimation.cancel().then(() => {
-                        this.__enterAnimation = null;
-                        this._removeItem();
-                    });
-                } else {
-                    this._removeItem();
-                }
-            } else {
+            if (value) {
                 if (!isNull(this.__leaveAnimation)) {
                     this.__leaveAnimation.cancel().then(() => {
                         this.__leaveAnimation = null;
@@ -107,6 +98,15 @@ module plat.ui.controls {
                     });
                 } else {
                     this._addItem();
+                }
+            } else {
+                if (!isNull(this.__enterAnimation)) {
+                    this.__enterAnimation.cancel().then(() => {
+                        this.__enterAnimation = null;
+                        this._removeItem();
+                    });
+                } else {
+                    this._removeItem();
                 }
             }
 
