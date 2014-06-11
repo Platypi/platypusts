@@ -12,8 +12,10 @@
 
             addClass(element, className);
 
-            var computedStyle = this.$Window.getComputedStyle(element);
-            if (computedStyle[<any>(animationId + 'Name')] === 'none' ||
+            var computedStyle = this.$Window.getComputedStyle(element),
+                animationName = computedStyle[<any>(animationId + 'Name')];
+            if (animationName === '' ||
+                animationName === 'none' ||
                 computedStyle[<any>(animationId + 'PlayState')] === 'paused') {
                 removeClass(element, className);
                 this.end();
