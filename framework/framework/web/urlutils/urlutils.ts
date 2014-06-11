@@ -134,7 +134,7 @@
         return new UrlUtils();
     }
 
-    register.injectable(__UrlUtilsInstance, IUrlUtilsInstance, null, register.INSTANCE);
+    register.injectable(__UrlUtilsInstance, IUrlUtilsInstance, null, __INSTANCE);
 
     /**
      * Defines an object that deals with obtaining detailed information about an 

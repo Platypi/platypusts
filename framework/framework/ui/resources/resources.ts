@@ -399,7 +399,7 @@ module plat.ui {
     register.injectable(__ResourcesFactory, IResourcesFactory, [
         __ContextManagerStatic,
         __Regex
-    ], register.FACTORY);
+    ], __FACTORY);
 
     /**
      * Creates and manages IResources for TemplateControls.

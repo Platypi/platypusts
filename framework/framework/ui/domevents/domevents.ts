@@ -1213,7 +1213,7 @@
         return new DomEvent();
     }
 
-    register.injectable(__DomEventInstance, IDomEventInstance, null, register.INSTANCE);
+    register.injectable(__DomEventInstance, IDomEventInstance, null, __INSTANCE);
 
     /**
      * Describes an object used for managing a single custom event.

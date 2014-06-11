@@ -1069,7 +1069,7 @@ module plat.processing {
         __ManagerCache,
         __ResourcesFactory,
         __BindableTemplatesFactory
-    ], register.FACTORY);
+    ], __FACTORY);
 
     /**
      * Creates and manages a class for dealing with Element nodes.

@@ -898,7 +898,7 @@ module plat.observable {
         return ContextManager;
     }
 
-    register.injectable(__ContextManagerStatic, IContextManagerStatic, null, register.STATIC);
+    register.injectable(__ContextManagerStatic, IContextManagerStatic, null, __STATIC);
 
         /**
      * The external interface for the '$ContextManagerStatic' injectable.

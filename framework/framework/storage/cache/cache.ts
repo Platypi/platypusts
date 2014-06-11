@@ -128,7 +128,7 @@ module plat.storage {
         return Cache;
     }
 
-    register.injectable(__CacheFactory, ICacheFactory, null, register.FACTORY);
+    register.injectable(__CacheFactory, ICacheFactory, null, __FACTORY);
 
     /**
      * Used to manage all the defined caches for the current application session.

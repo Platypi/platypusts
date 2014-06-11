@@ -534,7 +534,7 @@ module plat.async {
         return Promise;
     }
 
-    register.injectable(__Promise, IPromise, [__Window], register.CLASS);
+    register.injectable(__Promise, IPromise, [__Window], __CLASS);
 
     /**
      * The injectable reference for the ES6 Promise implementation.

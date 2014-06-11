@@ -317,7 +317,7 @@ module plat {
         __Document,
         __Compiler,
         __LifecycleEventStatic
-    ], register.STATIC);
+    ], __STATIC);
 
     /**
      * The Type for referencing the '$App' injectable as a dependency.
@@ -326,7 +326,7 @@ module plat {
         return $AppStatic.app;
     }
 
-    register.injectable(__App, IApp, [__AppStatic], register.INSTANCE);
+    register.injectable(__App, IApp, [__AppStatic], __INSTANCE);
 
     /**
      * The external interface for the '$AppStatic' interface.

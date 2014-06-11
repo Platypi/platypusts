@@ -41,7 +41,7 @@ module plat.processing {
         return CommentManager;
     }
 
-    register.injectable(__CommentManagerFactory, ICommentManagerFactory, null, register.FACTORY);
+    register.injectable(__CommentManagerFactory, ICommentManagerFactory, null, __FACTORY);
 
     /**
      * Creates and manages a class for dealing with Comment nodes.

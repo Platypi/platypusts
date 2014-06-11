@@ -65,7 +65,7 @@
         return BaseViewControl;
     }
 
-    register.injectable(__BaseViewControlFactory, IBaseViewControlFactory, null, register.FACTORY);
+    register.injectable(__BaseViewControlFactory, IBaseViewControlFactory, null, __FACTORY);
 
     /**
      * Creates and manages IViewControls.

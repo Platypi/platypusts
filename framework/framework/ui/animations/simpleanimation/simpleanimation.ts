@@ -1,5 +1,5 @@
 ﻿module plat.ui.animations {
-    export class SimpleCssAnimation extends Animation implements ISimpleCssAnimation {
+    export class SimpleCssAnimation extends CssAnimation implements ISimpleCssAnimation {
         $Window: Window = acquire(__Window);
 
         className: string;
@@ -34,7 +34,7 @@
         }
     }
 
-    export interface ISimpleCssAnimation {
+    export interface ISimpleCssAnimation extends ICssAnimation {
         /**
          * The class name to place on the element.
          */

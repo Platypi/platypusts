@@ -95,7 +95,7 @@ module plat {
         return Exception;
     }
 
-    register.injectable(__ExceptionStatic, IExceptionStatic, null, register.STATIC);
+    register.injectable(__ExceptionStatic, IExceptionStatic, null, __STATIC);
 
     /**
      * The intended external interface for the '$ExceptionStatic' injectable.

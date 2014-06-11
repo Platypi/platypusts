@@ -31,7 +31,6 @@
     __ManagerCache = '$ManagerCache',
     __TemplateCache = '$TemplateCache',
     __Animator = '$Animator',
-    __AnimationInstance = '$AnimationInstance',
     __AttributesInstance = '$AttributesInstance',
     __BindableTemplatesFactory = '$BindableTemplatesFactory',
     __Dom = '$Dom',
@@ -120,4 +119,11 @@
      * Constants
      */
     __startSymbol = '{{',
-    __endSymbol = '}}';
+    __endSymbol = '}}',
+    __STATIC = 'static',
+    __SINGLETON = 'singleton',
+    __INSTANCE = 'instance',
+    __FACTORY = 'factory',
+    __CLASS = 'class',
+    __CSS = 'css',
+    __JS = 'js';

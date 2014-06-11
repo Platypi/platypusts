@@ -30,7 +30,7 @@ module plat.events {
         return new DispatchEvent();
     }
 
-    register.injectable(__DispatchEventInstance, IDispatchEventInstance, null, register.INSTANCE);
+    register.injectable(__DispatchEventInstance, IDispatchEventInstance, null, __INSTANCE);
 
     /**
      * Describes an event that propagates through a control tree. 
