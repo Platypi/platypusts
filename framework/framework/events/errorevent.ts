@@ -40,7 +40,7 @@
         return ErrorEvent;
     }
 
-    register.injectable(__ErrorEventStatic, IErrorEventStatic, [__EventManagerStatic], register.STATIC);
+    register.injectable(__ErrorEventStatic, IErrorEventStatic, [__EventManagerStatic], __STATIC);
     
     /**
      * The intended external interface for the $ErrorEventStatic injectable.

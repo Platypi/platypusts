@@ -50,7 +50,7 @@ module plat.controls {
         return AttributeControl;
     }
 
-    register.injectable(__AttributeControlFactory, IAttributeControlFactory, null, register.FACTORY);
+    register.injectable(__AttributeControlFactory, IAttributeControlFactory, null, __FACTORY);
 
     /**
      * Creates and manages instances of IAttributeControl.

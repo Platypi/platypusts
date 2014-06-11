@@ -34,7 +34,7 @@
         return LifecycleEvent;
     }
 
-    register.injectable(__LifecycleEventStatic, ILifecycleEventStatic, null, register.STATIC);
+    register.injectable(__LifecycleEventStatic, ILifecycleEventStatic, null, __STATIC);
 
     /**
      * The intended external interface for the '$LifecycleEventStatic' injectable.

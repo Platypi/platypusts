@@ -764,7 +764,7 @@ module plat.ui {
         __Parser,
         __Http,
         __Promise
-    ], register.FACTORY);
+    ], __FACTORY);
 
     /**
      * Creates and manages ITemplateControls.

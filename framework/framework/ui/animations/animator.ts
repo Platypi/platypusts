@@ -1,4 +1,7 @@
 ﻿module plat.ui {
+    /**
+     * A class used for animating elements.
+     */
     export class Animator implements IAnimator {
         $Compat: ICompat = acquire(__Compat);
 
@@ -23,7 +26,7 @@
             var $compat = this.$Compat,
                 animation = animationInjectors[key],
                 jsAnimation = jsAnimationInjectors[key],
-                animationInstance: IAnimationInstance;
+                animationInstance: IBaseAnimation;
 
             if (!$compat.animationSupported || isUndefined(animation)) {
                 if (isUndefined(jsAnimation)) {
@@ -46,7 +49,7 @@
             var id = this.__setAnimationId(element, animationInstance);
             this.__stopChildAnimations(element, id);
             var animationObj = this._elements[id],
-                animationPromise = (<Animation>animationInstance)._init(element).then(() => {
+                animationPromise = (<BaseAnimation>animationInstance)._init(element).then(() => {
                     animationObj.promise = null;
                     animationObj.animationEnd();
                 });
@@ -70,7 +73,7 @@
             return false;
         }
 
-        private __setAnimationId(element: Node, animationInstance: IAnimationInstance): string {
+        private __setAnimationId(element: Node, animationInstance: IBaseAnimation): string {
             var elements = this._elements,
                 plat = (<ICustomElement>element).__plat,
                 id: string;
@@ -150,6 +153,9 @@
 
     register.injectable('$Animator', IAnimator);
 
+    /**
+     * Describes an object used for animating elements.
+     */
     export interface IAnimator {
         /**
          * Animates the element with the defined animation denoted by the key.
@@ -158,216 +164,6 @@
          * @param key The identifier specifying the type of animation.
          */
         animate(element: Element, key: string): IAnimationPromise;
-    }
-
-    export class Animation implements IAnimationInstance {
-        $Compat: ICompat = acquire(__Compat);
-
-        element: HTMLElement;
-        dom: IDom = acquire(__Dom);
-
-        private __resolve: () => void;
-        private __animationEvents: IAnimationEvents = this.$Compat.animationEvents;
-        private __subscribers: Array<() => void> = [];
-        private __removeListener: IRemoveListener;
-
-        /**
-         * A function for initializing the animation or any of its properties before start.
-         */
-        initialize(): void { }
-
-        /**
-         * A function denoting the start of the animation.
-         */
-        start(): void { }
-
-        /**
-         * A function to be called when the animation is over.
-         */
-        end(): void {
-            if (isFunction(this.__resolve)) {
-                this.__resolve();
-            }
-            this.dispose();
-        }
-
-        /**
-         * A function to be called to let it be known the animation is being cancelled.
-         */
-        cancel(): void {
-            this.end();
-        }
-
-        /**
-         * A function for reverting any modifications or changes that may have been made as a 
-         * result of this animation.
-         */
-        dispose(): void {
-            if (isFunction(this.__removeListener)) {
-                this.__removeListener();
-                this.__removeListener = null;
-            }
-            this.__subscribers = [];
-            this.__resolve = null;
-        }
-
-        /**
-         * A function to listen to the start of an animation event.
-         * 
-         * @param listener The function to call when the animation begins.
-         */
-        animationStart(listener: () => void): IAnimationInstance {
-            return this.__addEventListener(this.__animationEvents.$animationStart, listener);
-        }
-        
-        /**
-         * A function to listen to the start of a transition event.
-         * 
-         * @param listener The function to call when the transition begins.
-         */
-        transitionStart(listener: () => void): IAnimationInstance {
-            return this.__addEventListener(this.__animationEvents.$transitionStart, listener);
-        }
-        
-        /**
-         * A function to listen to the end of an animation event.
-         * 
-         * @param listener The function to call when the animation ends.
-         */
-        animationEnd(listener: () => void): IAnimationInstance {
-            return this.__addEventListener(this.__animationEvents.$animationEnd, listener);
-        }
-        
-        /**
-         * A function to listen to the end of a transition event.
-         * 
-         * @param listener The function to call when the transition ends.
-         */
-        transitionEnd(listener: () => void): IAnimationInstance {
-            return this.__addEventListener(this.__animationEvents.$transitionEnd, listener);
-        }
-        
-        /**
-         * Initializes the element and key properties of this animation and passes in the function 
-         * to resolve when finished.
-         * 
-         * @param element The element on which the animation will occur.
-         */
-        _init(element: Element): IAnimationPromise {
-            this.element = <HTMLElement>element;
-
-            return new AnimationPromise((resolve) => {
-                this.__resolve = resolve;
-                this.initialize();
-                this.start();
-            }, { __animationInstance: this });
-        }
-
-        private __addEventListener(event: string, listener: () => void): IAnimationInstance {
-            var subscribers = this.__subscribers,
-                subscriber = () => {
-                    this.__removeListener = this.dom.addEventListener(this.element, event, (ev: Event) => {
-                        this.__removeListener();
-                        this.__removeListener = null;
-
-                        if (subscribers.length === 0) {
-                            return;
-                        }
-
-                        listener.call(this);
-                        subscribers.shift();
-
-                        if (subscribers.length === 0) {
-                            return;
-                        }
-
-                        subscribers[0]();
-                    }, false);
-                };
-
-            subscribers.push(subscriber);
-
-            if (subscribers.length === 1) {
-                subscriber();
-            }
-
-            return this;
-        }
-    }
-
-    /**
-     * The Type for referencing the '$AnimationInstance' injectable as a dependency.
-     */
-    export function IAnimationInstance(): IAnimationInstance {
-        return new Animation();
-    }
-
-    register.injectable('$AnimationInstance', IAnimationInstance, null, register.INSTANCE);
-
-    export interface IAnimationInstance {
-        /**
-         * The node having the animation performed on it.
-         */
-        element: HTMLElement;
-
-        /**
-         * Contains DOM helper methods for manipulating this control's element.
-         */
-        dom: IDom;
-
-        /**
-         * A function for initializing the animation or any of its properties before start.
-         */
-        initialize(): void;
-
-        /**
-         * A function denoting the start of the animation.
-         */
-        start(): void;
-
-        /**
-         * A function to be called when the animation is over.
-         */
-        end(): void;
-
-        /**
-         * A function for reverting any modifications or changes that may have been made as a 
-         * result of this animation.
-         */
-        dispose(): void;
-
-        /**
-         * A function to be called to let it be known the animation is being cancelled.
-         */
-        cancel(): void;
-
-        /**
-         * A function to listen to the start of an animation event.
-         * 
-         * @param listener The function to call when the animation begins.
-         */
-        animationStart(listener: () => void): IAnimationInstance;
-
-        /**
-         * A function to listen to the start of a transition event.
-         * 
-         * @param listener The function to call when the transition begins.
-         */
-        transitionStart(listener: () => void): IAnimationInstance;
-
-        /**
-         * A function to listen to the end of an animation event.
-         * 
-         * @param listener The function to call when the animation ends.
-         */
-        animationEnd(listener: () => void): IAnimationInstance;
-
-        /**
-         * A function to listen to the end of a transition event.
-         * 
-         * @param listener The function to call when the transition ends.
-         */
-        transitionEnd(listener: () => void): IAnimationInstance;
     }
 
     /**
@@ -389,7 +185,7 @@
      * Describes a type of Promise that fulfills with an IAjaxResponse and can be optionally canceled.
      */
     export class AnimationPromise extends async.Promise<void> implements IAnimationPromise {
-        private __animationInstance: IAnimationInstance;
+        private __animationInstance: IBaseAnimation;
         constructor(resolveFunction: (resolve: (value?: void) => any) => void, promise?: any) {
             super(resolveFunction);
             if (!isNull(promise)) {

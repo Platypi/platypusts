@@ -290,7 +290,7 @@ module plat.ui {
         return BindableTemplates;
     }
 
-    register.injectable(__BindableTemplatesFactory, IBindableTemplatesFactory, null, register.FACTORY);
+    register.injectable(__BindableTemplatesFactory, IBindableTemplatesFactory, null, __FACTORY);
 
     /**
      * The external interface for the '$BindableTemplatesFactory' injectable.

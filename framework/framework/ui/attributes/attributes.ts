@@ -67,7 +67,7 @@ module plat.ui {
         return new Attributes();
     }
 
-    register.injectable(__AttributesInstance, IAttributesInstance, null, register.INSTANCE);
+    register.injectable(__AttributesInstance, IAttributesInstance, null, __INSTANCE);
 
     /**
      * Describes an object that stores the information about an Element's attribute NamedNodeMap.

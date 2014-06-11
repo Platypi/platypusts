@@ -708,7 +708,7 @@ module plat {
         __Parser,
         __ContextManagerStatic,
         __EventManagerStatic
-    ], register.FACTORY);
+    ], __FACTORY);
 
     /**
      * Creates and manages instances of IControl.

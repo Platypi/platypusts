@@ -393,7 +393,7 @@ module plat.events {
         __Document,
         __Window,
         __Dom
-    ], register.STATIC);
+    ], __STATIC);
 
     /**
      * Event object for a control dispatch event. Contains information about the type of event.

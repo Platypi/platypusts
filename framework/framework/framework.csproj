@@ -62,7 +62,10 @@
     <TypeScriptCompile Include="storage\cache\templatecache.ts" />
     <TypeScriptCompile Include="storage\localstorage.ts" />
     <TypeScriptCompile Include="storage\sessionstorage.ts" />
-    <TypeScriptCompile Include="ui\animations\animations.ts" />
+    <TypeScriptCompile Include="ui\animations\cssanimation.ts" />
+    <TypeScriptCompile Include="ui\animations\animator.ts" />
+    <TypeScriptCompile Include="ui\animations\baseanimation.ts" />
+    <TypeScriptCompile Include="ui\animations\jsAnimation.ts" />
     <TypeScriptCompile Include="ui\animations\simpleanimation\simpleanimation.ts" />
     <TypeScriptCompile Include="ui\attributes\attributes.ts" />
     <TypeScriptCompile Include="ui\bindabletemplates\bindabletemplates.ts" />

@@ -239,8 +239,8 @@ module plat.dependency {
 
             injectable = <T>Injector.__construct(this.Constructor, toInject, type);
 
-            if (type === register.SINGLETON || type === register.FACTORY ||
-                type === register.STATIC || type === register.CLASS) {
+            if (type === __SINGLETON || type === __FACTORY ||
+                type === __STATIC || type === __CLASS) {
                 this._wrapInjector(injectable);
             }
 

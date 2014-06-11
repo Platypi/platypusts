@@ -317,7 +317,7 @@ module plat.processing {
         __ContextManagerStatic,
         __Parser,
         __TemplateControlFactory
-    ], register.STATIC);
+    ], __STATIC);
 
     /**
      * The external interface for the '$NodeManagerStatic' injectable.

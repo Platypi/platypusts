@@ -201,7 +201,7 @@ module plat.navigation {
         return new Navigator();
     }
 
-    register.injectable(__NavigatorInstance, INavigatorInstance, null, register.INSTANCE);
+    register.injectable(__NavigatorInstance, INavigatorInstance, null, __INSTANCE);
 
     /**
      * An object implementing INavigator allows ui.IViewControls to implement methods 
