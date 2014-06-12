@@ -21,7 +21,9 @@
         it('should test setter with empty expression', () => {
             control = new plat.controls.Href();
             control.attributes = plat.acquire(plat.ui.IAttributesInstance);
-            var element: HTMLAnchorElement = control.element = <HTMLAnchorElement>control.dom.serializeHtml('<a plat-href=""></a>').childNodes[0];
+            var element: HTMLAnchorElement =
+                control.element =
+                <HTMLAnchorElement>control.dom.serializeHtml('<a plat-href=""></a>').childNodes[0];
             control.property = 'href';
             control.attribute = 'platHref';
             control.attributes['platHref'] = '';
@@ -44,7 +46,9 @@
         });
 
         it('should test setter with undefined property', () => {
-            var element: HTMLAnchorElement = control.element = <HTMLAnchorElement>control.dom.serializeHtml('<input plat-href="foo"></a>').childNodes[0];
+            var element: HTMLAnchorElement =
+                control.element =
+                <HTMLAnchorElement>control.dom.serializeHtml('<input plat-href="foo"></a>').childNodes[0];
             control.property = 'href';
             control.attribute = 'platHref';
             control.attributes['platHref'] = 'foo';
@@ -59,7 +63,9 @@
         it('should test setter', () => {
             control = new plat.controls.Src();
             control.attributes = plat.acquire(plat.ui.IAttributesInstance);
-            var element: HTMLAnchorElement = control.element = <HTMLAnchorElement>control.dom.serializeHtml('<a plat-href="foo"></a>').childNodes[0];
+            var element: HTMLAnchorElement =
+                control.element =
+                <HTMLAnchorElement>control.dom.serializeHtml('<a plat-href="foo"></a>').childNodes[0];
             control.property = 'href';
             control.attribute = 'platHref';
             control.attributes['platHref'] = 'foo';
