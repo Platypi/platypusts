@@ -260,8 +260,8 @@
                 countType = swipeGesture;
             }
 
-            this.__registerElement(element, type);
             (<any>this._gestureCount)[countType]++;
+            this.__registerElement(element, type);
 
             return () => {
                 this.__removeEventListener(element, type, listener, useCapture);
@@ -738,10 +738,6 @@
                 plat.domEvent = id;
             }
 
-            var $domEvent: IDomEventInstance = acquire(__DomEventInstance);
-
-            $domEvent.initialize(element, type);
-
             // check if DomEvents is ready
             if (!this._isActive) {
                 this.__registerTypes();
@@ -753,16 +749,23 @@
                 this._isActive = true;
             }
 
+            var $domEvent: IDomEventInstance;
             if (isNull(id)) {
-                var subscription = this._subscribers[plat.domEvent];
-                if (isUndefined((<any>subscription)[type])) {
-                    (<any>subscription)[type] = $domEvent;
-                    subscription.gestureCount++;
+                var subscriber = this._subscribers[plat.domEvent];
+                if (isUndefined((<any>subscriber)[type])) {
+                    $domEvent = acquire(__DomEventInstance);
+                    $domEvent.initialize(element, type);
+                    (<any>subscriber)[type] = $domEvent;
+                } else {
+                    (<any>subscriber)[type].count++;
                 }
+                subscriber.gestureCount++;
             } else {
-                var gesture = { gestureCount: 1 };
-                (<any>gesture)[type] = $domEvent;
-                this._subscribers[id] = gesture;
+                var newSubscriber = { gestureCount: 1 };
+                $domEvent = acquire(__DomEventInstance);
+                $domEvent.initialize(element, type);
+                (<any>newSubscriber)[type] = $domEvent;
+                this._subscribers[id] = newSubscriber;
 
                 if (!isUndefined((<HTMLElement>element).className)) {
                     addClass(<HTMLElement>element, DomEvents.config.styleConfig[0].className);
@@ -778,9 +781,17 @@
             }
 
             var domEventId = plat.domEvent,
-                eventSubscriber = this._subscribers[domEventId];
+                eventSubscriber = this._subscribers[domEventId],
+                domEvent: IDomEventInstance = (<any>eventSubscriber)[type];
 
-            delete (<any>eventSubscriber)[type];
+            if (isNull(domEvent)) {
+                return;
+            }
+
+            domEvent.count--;
+            if (domEvent.count === 0) {
+                delete (<any>eventSubscriber)[type];
+            }
             eventSubscriber.gestureCount--;
 
             if (eventSubscriber.gestureCount === 0) {
@@ -893,8 +904,8 @@
                 countType = swipeGesture;
             }
 
-            this.__unregisterElement(element, type);
             (<any>this._gestureCount)[countType]--;
+            this.__unregisterElement(element, type);
         }
         private __removeElement(element: ICustomElement): void {
             this.__returnSelections(element);
@@ -911,8 +922,7 @@
 
             // check if no elements are left listening
             if (isEmpty(this._subscribers)) {
-                this.__unregisterTypes();
-                this._isActive = false;
+                this.dispose();
             }
         }
         private __standardizeEventObject(ev: IExtendedEvent): void {
@@ -1173,12 +1183,14 @@
 
         element: any;
         event: string;
+        count = 0;
 
         initialize(element: Node, event: string): void;
         initialize(element: Window, event: string): void;
         initialize(element: any, event: string) {
             this.element = element;
             this.event = event;
+            this.count++;
         }
 
         trigger(ev: IPointerEvent): void {
@@ -1194,10 +1206,10 @@
             customEv.clientY = ev.clientY;
             customEv.offsetX = ev.offset.x;
             customEv.offsetY = ev.offset.y;
-            customEv.direction = ev.direction;
+            customEv.direction = ev.direction || 'none';
             customEv.touches = ev.touches;
-            customEv.velocity = ev.velocity;
-            customEv.identifier = ev.identifier;
+            customEv.velocity = ev.velocity || { x: 0, y: 0 };
+            customEv.identifier = ev.identifier || 0;
             customEv.pointerType = ev.pointerType;
             customEv.screenX = ev.screenX;
             customEv.screenY = ev.screenY;
@@ -1220,27 +1232,32 @@
      */
     export interface IDomEventInstance {
         /**
-         * The node or window object associated with this DomEvent object.
+         * The node or window object associated with this IDomEventInstance object.
          */
         element: any;
 
         /**
-         * The event type associated with this DomEvent.
+         * The event type associated with this IDomEventInstance.
          */
         event: string;
 
         /**
-         * Initializes the element and event of the DomEvent object
+         * The number of events registered to this IDomEventInstance.
+         */
+        count: number;
+
+        /**
+         * Initializes the element and event of the IDomEventInstance object
          * 
-         * @param The node associated with this DomEvent. 
-         * @param event The type of event this DomEvent is managing.
+         * @param The node associated with this IDomEventInstance. 
+         * @param event The type of event this IDomEventInstance is managing.
          */
         initialize(element: Node, event: string): void;
         /**
-         * Initializes the element and event of the DomEvent object
+         * Initializes the element and event of the IDomEventInstance object
          * 
          * @param The window object. 
-         * @param event The type of event this DomEvent is managing.
+         * @param event The type of event this IDomEventInstance is managing.
          */
         initialize(element: Window, event: string): void;
 
