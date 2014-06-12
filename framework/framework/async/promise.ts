@@ -49,8 +49,7 @@ module plat.async {
         static all<R>(promises: Array<R>): IThenable<Array<R>>;
         static all(promises: Array<any>): IThenable<Array<any>> {
             if (!isArray(promises)) {
-                var $exception: IExceptionStatic = acquire(__ExceptionStatic);
-                $exception.fatal(new TypeError('You must pass an array to all.'), $exception.PROMISE);
+                return Promise.all([promises]);
             }
 
             return new Promise<Array<any>>((resolve: (value?: Array<any>) => void, reject: (reason?: any) => void) => {
@@ -116,8 +115,7 @@ module plat.async {
         static race<R>(promises: Array<R>): IThenable<R>;
         static race(promises: Array<any>): IThenable<any> {
             if (!isArray(promises)) {
-                var $exception: IExceptionStatic = acquire(__ExceptionStatic);
-                $exception.fatal(new TypeError('You must pass an array to race.'), $exception.PROMISE);
+                return Promise.race([promises]);
             }
 
             return new Promise<any>((resolve: (value: any) => any, reject: (error: any) => any) => {

@@ -8,34 +8,6 @@
 declare module plat {
     module register {
         /**
-        * Static injectables will be injected before the application loads. This provides a way to create
-        * a static constructor and load dependencies into static class properties.
-        */
-        var STATIC: string;
-        /**
-        * Singleton injectables will contain a constructor. A Singleton injectable will be instantiated once and
-        * used throughout the application lifetime. It will be instantiated when another component is injected
-        * and lists it as a dependency.
-        */
-        var SINGLETON: string;
-        /**
-        * Instance injectables will contain a constructor. An Instance injectable will be instantiated multiple times
-        * throughout the application lifetime. It will be instantiated whenever another component is injected
-        * and lists it as a dependency.
-        */
-        var INSTANCE: string;
-        /**
-        * Factory injectables will not contain a constructor but will instead contain a method for obtaining an
-        * instance, such as getInstance() or create(). It will be injected before the application loads, similar to a Static
-        * injectable.
-        */
-        var FACTORY: string;
-        /**
-        * Class injectables are essentially a direct reference to a class's constructor. It may contain both
-        * static and instance methods as well as a constructor for creating a new instance.
-        */
-        var CLASS: string;
-        /**
         * Registers the IApp with the framework. The framework will instantiate the IApp when needed, and wire up
         * the Application Lifecycle events. The dependencies array corresponds to injectables that will be
         * passed into the Constructor of the app.
@@ -53,7 +25,7 @@ declare module plat {
         * @param Type The constructor for the IControl.
         * @param dependencies An array of strings representing the dependencies needed for the IControl injector.
         *
-        * @example register.control('my-tap', MyTap, [plat.expressions.IParser]);
+        * @example plat.register.control('my-tap', MyTap, [plat.expressions.IParser]);
         */
         function control(name: string, Type: new(...args: any[]) => IControl, dependencies?: any[]): typeof register;
         /**
@@ -65,9 +37,9 @@ declare module plat {
         * @param Type The constructor for the IViewControl.
         * @param dependencies An optional array of strings representing the dependencies needed for the IViewControl injector.
         *
-        * @example register.viewControl('my-view-control', MyViewControl);
+        * @example plat.register.viewControl('my-view-control', MyViewControl);
         */
-        function viewControl<T>(name: string, Type: new(...args: any[]) => ui.IViewControl, dependencies?: any[]): typeof register;
+        function viewControl(name: string, Type: new(...args: any[]) => ui.IViewControl, dependencies?: any[]): typeof register;
         /**
         * Registers a WebViewControl with the framework. The framework will instantiate the control when needed. The
         * dependencies array corresponds to injectables that will be passed into the Constructor of the control.
@@ -78,9 +50,9 @@ declare module plat {
         * @param dependencies An optional array of strings representing the dependencies needed for the IWebViewControl injector.
         * @param routes Optional route strings (or regular expressions) used for matching a URL to the registered IWebViewControl.
         *
-        * @example register.viewControl('my-view-control', MyViewControl, null, ['customers/:customer(/:ordernumber)']);
+        * @example plat.register.viewControl('my-view-control', MyViewControl, null, ['customers/:customer(/:ordernumber)']);
         */
-        function viewControl<T>(name: string, Type: new(...args: any[]) => ui.IWebViewControl, dependencies: any[], routes: any[]): typeof register;
+        function viewControl(name: string, Type: new(...args: any[]) => ui.IWebViewControl, dependencies: any[], routes: any[]): typeof register;
         /**
         * Registers an injectable with the framework. Injectables are objects that can be used for dependency injection into other objects.
         * The dependencies array corresponds to injectables that will be passed into the Constructor of the injectable.
@@ -89,11 +61,12 @@ declare module plat {
         * @param dependencies An array of strings representing the dependencies needed for the injectable's injector.
         * @param Type The constructor for the injectable. The injectable will only be instantiated once during the application
         * lifetime.
-        * @param injectableType Specifies the type of injectable, either register.SINGLETON,
-        * register.STATIC, register.INSTANCE, register.FACTORY, register.CLASS (defaults to register.SINGLETON).
+        * @param injectableType Specifies the type of injectable, either plat.register.injectable.SINGLETON,
+        * plat.register.injectable.STATIC, plat.register.injectable.INSTANCE, plat.register.injectable.FACTORY,
+        * plat.register.injectable.CLASS (defaults to plat.register.injectable.SINGLETON).
         *
-        * @example register.injectable('$CacheFactory', [plat.expressions.IParser], Cache);
-        * @example register.injectable('database', MyDatabase, null, register.INSTANCE);
+        * @example plat.register.injectable('$CacheFactory', [plat.expressions.IParser], Cache);
+        * @example plat.register.injectable('database', MyDatabase, null, register.injectable.INSTANCE);
         */
         function injectable(name: string, Type: new(...args: any[]) => any, dependencies?: any[], injectableType?: string): typeof register;
         /**
@@ -104,37 +77,107 @@ declare module plat {
         * @param dependencies An array of strings representing the dependencies needed for the injectable's injector.
         * @param Type The constructor for the injectable. The injectable will only be instantiated once during the application
         * lifetime.
-        * @param injectableType Specifies the type of injectable, either register.SINGLETON,
-        * register.STATIC, register.INSTANCE, register.FACTORY, register.CLASS (defaults to register.SINGLETON).
+        * @param injectableType Specifies the type of injectable, either plat.register.injectable.SINGLETON,
+        * plat.register.injectable.STATIC, plat.register.injectable.INSTANCE, plat.register.injectable.FACTORY,
+        * plat.register.injectable.CLASS (defaults to plat.register.injectable.SINGLETON).
         *
         * @return {register} The object that contains the register methods (for method chaining).
         *
-        * @example register.injectable('$CacheFactory', [plat.expressions.IParser],
+        * @example plat.register.injectable('$CacheFactory', [plat.expressions.IParser],
         *  function(parser: plat.expressions.IParser) { return { ... }; });
-        * @example register.injectable('database', function() { return new Database(); }, null, register.INSTANCE);
+        * @example plat.register.injectable('database', function() { return new Database(); }, null, register.injectable.INSTANCE);
         */
         function injectable(name: string, method: (...args: any[]) => any, dependencies?: any[], injectableType?: string): typeof register;
         /**
-        * Adds an animation denoted by its name. Can be either a CSS or JS implementation, but will only be instantiated in
-        * modern browsers that support animations. If you wish to also support legacy browsers, make sure to register a
-        * JS implementation of the animation with plat.register.jsAnimation.
+        * A function for registering an injectable that also contains constants for injectable type.
+        */
+        module injectable {
+            /**
+            * Static injectables will be injected before the application loads. This provides a way to create
+            * a static constructor and load dependencies into static class properties.
+            */
+            var STATIC: string;
+            /**
+            * Singleton injectables will contain a constructor. A Singleton injectable will be instantiated once and
+            * used throughout the application lifetime. It will be instantiated when another component is injected
+            * and lists it as a dependency.
+            */
+            var SINGLETON: string;
+            /**
+            * Instance injectables will contain a constructor. An Instance injectable will be instantiated multiple times
+            * throughout the application lifetime. It will be instantiated whenever another component is injected
+            * and lists it as a dependency.
+            */
+            var INSTANCE: string;
+            /**
+            * Factory injectables will not contain a constructor but will instead contain a method for obtaining an
+            * instance, such as getInstance() or create(). It will be injected before the application loads, similar to a Static
+            * injectable.
+            */
+            var FACTORY: string;
+            /**
+            * Class injectables are essentially a direct reference to a class's constructor. It may contain both
+            * static and instance methods as well as a constructor for creating a new instance.
+            */
+            var CLASS: string;
+        }
+        /**
+        * Adds a CSS animation denoted by its name. If you wish to also support legacy browsers, make sure to register a
+        * JS implementation as well.
         *
         * @param name The unique idenitifer of the animation.
         * @param Type The constructor for the custom animation.
         * @param dependencies Any dependencies that need to be injected into the animation at
         * instantiation.
+        * @param animationType The type of animation. Both the intended type and default value are plat.register.animation.CSS.
         */
-        function animation(name: string, Type: new(...args: any[]) => ui.IAnimationInstance, dependencies?: any[]): typeof register;
+        function animation(name: string, Type: new(...args: any[]) => ui.ICssAnimation, dependencies?: any[], animationType?: 'css'): typeof register;
         /**
-        * Adds a JS animation denoted by its name. Intended to be used when JS animation implementations for legacy browsers
+        * Adds a CSS animation denoted by its name. If you wish to also support legacy browsers, make sure to register a
+        * JS implementation as well.
+        *
+        * @param name The unique idenitifer of the animation.
+        * @param Type The constructor for the custom animation.
+        * @param dependencies Any dependencies that need to be injected into the animation at
+        * instantiation.
+        * @param animationType The type of animation. Both the intended type and default value are plat.register.animation.CSS.
+        */
+        function animation(name: string, Type: new(...args: any[]) => ui.ICssAnimation, dependencies?: any[], animationType?: string): typeof register;
+        /**
+        * Adds a JS animation denoted by its name. If  Intended to be used when JS animation implementations for legacy browsers
         * is desired.
         *
-        * @param name The unique idenitifer of the JS animation.
-        * @param Type The constructor for the custom JS animation.
-        * @param dependencies Any dependencies that need to be injected into the JS animation at
+        * @param name The unique idenitifer of the animation.
+        * @param Type The constructor for the custom animation.
+        * @param dependencies Any dependencies that need to be injected into the animation at
         * instantiation.
+        * @param animationType The type of animation. The intended type is plat.register.animation.JS.
         */
-        function jsAnimation(name: string, Type: new(...args: any[]) => ui.IAnimationInstance, dependencies?: any[]): typeof register;
+        function animation(name: string, Type: new(...args: any[]) => ui.IJsAnimation, dependencies: any[], animationType: 'js'): typeof register;
+        /**
+        * Adds a JS animation denoted by its name. If  Intended to be used when JS animation implementations for legacy browsers
+        * is desired.
+        *
+        * @param name The unique idenitifer of the animation.
+        * @param Type The constructor for the custom animation.
+        * @param dependencies Any dependencies that need to be injected into the animation at
+        * instantiation.
+        * @param animationType The type of animation. The intended type is plat.register.animation.JS.
+        */
+        function animation(name: string, Type: new(...args: any[]) => ui.IJsAnimation, dependencies: any[], animationType: string): typeof register;
+        /**
+        * A function for registering animations that also contains constants for animation type.
+        */
+        module animation {
+            /**
+            * A CSS animation.
+            */
+            var CSS: string;
+            /**
+            * A JavaScript animation.
+            */
+            var JS: string;
+        }
     }
     module dependency {
         /**
@@ -5544,10 +5587,6 @@ declare module plat {
                 (newValue: any, oldValue: any): void;
             }[];
             /**
-            * A function for adding listeners.
-            */
-            public _boundAddListener: (listener: (newValue: any, oldValue: any) => void) => IRemoveListener;
-            /**
             * The function to stop listening for property changes.
             */
             public _removeListener: IRemoveListener;
@@ -7398,6 +7437,7 @@ declare module plat {
             public $Document: Document;
             public element: any;
             public event: string;
+            public count: number;
             public initialize(element: Node, event: string): void;
             public initialize(element: Window, event: string): void;
             public trigger(ev: IPointerEvent): void;
@@ -7412,25 +7452,29 @@ declare module plat {
         */
         interface IDomEventInstance {
             /**
-            * The node or window object associated with this DomEvent object.
+            * The node or window object associated with this IDomEventInstance object.
             */
             element: any;
             /**
-            * The event type associated with this DomEvent.
+            * The event type associated with this IDomEventInstance.
             */
             event: string;
             /**
-            * Initializes the element and event of the DomEvent object
+            * The number of events registered to this IDomEventInstance.
+            */
+            count: number;
+            /**
+            * Initializes the element and event of the IDomEventInstance object
             *
-            * @param The node associated with this DomEvent.
-            * @param event The type of event this DomEvent is managing.
+            * @param The node associated with this IDomEventInstance.
+            * @param event The type of event this IDomEventInstance is managing.
             */
             initialize(element: Node, event: string): void;
             /**
-            * Initializes the element and event of the DomEvent object
+            * Initializes the element and event of the IDomEventInstance object
             *
             * @param The window object.
-            * @param event The type of event this DomEvent is managing.
+            * @param event The type of event this IDomEventInstance is managing.
             */
             initialize(element: Window, event: string): void;
             /**
@@ -7806,6 +7850,9 @@ declare module plat {
             */
             styleConfig: IDefaultStyle[];
         }
+        /**
+        * A class used for animating elements.
+        */
         class Animator implements IAnimator {
             public $Compat: ICompat;
             /**
@@ -7829,6 +7876,9 @@ declare module plat {
         * The Type for referencing the '$Animator' injectable as a dependency.
         */
         function IAnimator(): IAnimator;
+        /**
+        * Describes an object used for animating elements.
+        */
         interface IAnimator {
             /**
             * Animates the element with the defined animation denoted by the key.
@@ -7837,127 +7887,6 @@ declare module plat {
             * @param key The identifier specifying the type of animation.
             */
             animate(element: Element, key: string): IAnimationPromise;
-        }
-        class Animation implements IAnimationInstance {
-            public $Compat: ICompat;
-            public element: HTMLElement;
-            public dom: IDom;
-            private __resolve;
-            private __animationEvents;
-            private __subscribers;
-            private __removeListener;
-            /**
-            * A function for initializing the animation or any of its properties before start.
-            */
-            public initialize(): void;
-            /**
-            * A function denoting the start of the animation.
-            */
-            public start(): void;
-            /**
-            * A function to be called when the animation is over.
-            */
-            public end(): void;
-            /**
-            * A function to be called to let it be known the animation is being cancelled.
-            */
-            public cancel(): void;
-            /**
-            * A function for reverting any modifications or changes that may have been made as a
-            * result of this animation.
-            */
-            public dispose(): void;
-            /**
-            * A function to listen to the start of an animation event.
-            *
-            * @param listener The function to call when the animation begins.
-            */
-            public animationStart(listener: () => void): IAnimationInstance;
-            /**
-            * A function to listen to the start of a transition event.
-            *
-            * @param listener The function to call when the transition begins.
-            */
-            public transitionStart(listener: () => void): IAnimationInstance;
-            /**
-            * A function to listen to the end of an animation event.
-            *
-            * @param listener The function to call when the animation ends.
-            */
-            public animationEnd(listener: () => void): IAnimationInstance;
-            /**
-            * A function to listen to the end of a transition event.
-            *
-            * @param listener The function to call when the transition ends.
-            */
-            public transitionEnd(listener: () => void): IAnimationInstance;
-            /**
-            * Initializes the element and key properties of this animation and passes in the function
-            * to resolve when finished.
-            *
-            * @param element The element on which the animation will occur.
-            */
-            public _init(element: Element): IAnimationPromise;
-            private __addEventListener(event, listener);
-        }
-        /**
-        * The Type for referencing the '$AnimationInstance' injectable as a dependency.
-        */
-        function IAnimationInstance(): IAnimationInstance;
-        interface IAnimationInstance {
-            /**
-            * The node having the animation performed on it.
-            */
-            element: HTMLElement;
-            /**
-            * Contains DOM helper methods for manipulating this control's element.
-            */
-            dom: IDom;
-            /**
-            * A function for initializing the animation or any of its properties before start.
-            */
-            initialize(): void;
-            /**
-            * A function denoting the start of the animation.
-            */
-            start(): void;
-            /**
-            * A function to be called when the animation is over.
-            */
-            end(): void;
-            /**
-            * A function for reverting any modifications or changes that may have been made as a
-            * result of this animation.
-            */
-            dispose(): void;
-            /**
-            * A function to be called to let it be known the animation is being cancelled.
-            */
-            cancel(): void;
-            /**
-            * A function to listen to the start of an animation event.
-            *
-            * @param listener The function to call when the animation begins.
-            */
-            animationStart(listener: () => void): IAnimationInstance;
-            /**
-            * A function to listen to the start of a transition event.
-            *
-            * @param listener The function to call when the transition begins.
-            */
-            transitionStart(listener: () => void): IAnimationInstance;
-            /**
-            * A function to listen to the end of an animation event.
-            *
-            * @param listener The function to call when the animation ends.
-            */
-            animationEnd(listener: () => void): IAnimationInstance;
-            /**
-            * A function to listen to the end of a transition event.
-            *
-            * @param listener The function to call when the transition ends.
-            */
-            transitionEnd(listener: () => void): IAnimationInstance;
         }
         /**
         * Describes an object representing a currenlty animated element.
@@ -8073,14 +8002,176 @@ declare module plat {
             */
             then<U>(onFulfilled: (success: void) => IAnimationThenable<U>): IAnimationThenable<U>;
         }
+        /**
+        * A class representing a single animation for a single element.
+        */
+        class BaseAnimation implements IBaseAnimation {
+            public $Compat: ICompat;
+            /**
+            * The node having the animation performed on it.
+            */
+            public element: HTMLElement;
+            /**
+            * Contains DOM helper methods for manipulating this control's element.
+            */
+            public dom: IDom;
+            private __resolve;
+            /**
+            * A function for initializing the animation or any of its properties before start.
+            */
+            public initialize(): void;
+            /**
+            * A function denoting the start of the animation.
+            */
+            public start(): void;
+            /**
+            * A function to be called when the animation is over.
+            */
+            public end(): void;
+            /**
+            * A function to be called to let it be known the animation is being cancelled.
+            */
+            public cancel(): void;
+            /**
+            * A function for reverting any modifications or changes that may have been made as a
+            * result of this animation.
+            */
+            public dispose(): void;
+            /**
+            * Initializes the element and key properties of this animation and passes in the function
+            * to resolve when finished.
+            *
+            * @param element The element on which the animation will occur.
+            */
+            public _init(element: Element): IAnimationPromise;
+        }
+        /**
+        * Describes an object representing a single animation for a single element.
+        */
+        interface IBaseAnimation {
+            /**
+            * The node having the animation performed on it.
+            */
+            element: HTMLElement;
+            /**
+            * Contains DOM helper methods for manipulating this control's element.
+            */
+            dom: IDom;
+            /**
+            * A function for initializing the animation or any of its properties before start.
+            */
+            initialize(): void;
+            /**
+            * A function denoting the start of the animation.
+            */
+            start(): void;
+            /**
+            * A function to be called when the animation is over.
+            */
+            end(): void;
+            /**
+            * A function for reverting any modifications or changes that may have been made as a
+            * result of this animation.
+            */
+            dispose(): void;
+            /**
+            * A function to be called to let it be known the animation is being cancelled.
+            */
+            cancel(): void;
+        }
+        /**
+        * A class representing a single CSS animation for a single element.
+        */
+        class CssAnimation extends BaseAnimation implements ICssAnimation {
+            private __animationEvents;
+            private __subscribers;
+            private __removeListener;
+            /**
+            * A function for reverting any modifications or changes that may have been made as a
+            * result of this animation.
+            */
+            public dispose(): void;
+            /**
+            * A function to listen to the start of an animation event.
+            *
+            * @param listener The function to call when the animation begins.
+            */
+            public animationStart(listener: () => void): ICssAnimation;
+            /**
+            * A function to listen to the start of a transition event.
+            *
+            * @param listener The function to call when the transition begins.
+            */
+            public transitionStart(listener: () => void): ICssAnimation;
+            /**
+            * A function to listen to the end of an animation event.
+            *
+            * @param listener The function to call when the animation ends.
+            */
+            public animationEnd(listener: () => void): ICssAnimation;
+            /**
+            * A function to listen to the end of a transition event.
+            *
+            * @param listener The function to call when the transition ends.
+            */
+            public transitionEnd(listener: () => void): ICssAnimation;
+            private __addEventListener(event, listener);
+        }
+        /**
+        * Describes an object representing a single CSS animation for a single element.
+        */
+        interface ICssAnimation extends IBaseAnimation {
+            /**
+            * A function to listen to the start of an animation event.
+            *
+            * @param listener The function to call when the animation begins.
+            */
+            animationStart(listener: () => void): ICssAnimation;
+            /**
+            * A function to listen to the start of a transition event.
+            *
+            * @param listener The function to call when the transition begins.
+            */
+            transitionStart(listener: () => void): ICssAnimation;
+            /**
+            * A function to listen to the end of an animation event.
+            *
+            * @param listener The function to call when the animation ends.
+            */
+            animationEnd(listener: () => void): ICssAnimation;
+            /**
+            * A function to listen to the end of a transition event.
+            *
+            * @param listener The function to call when the transition ends.
+            */
+            transitionEnd(listener: () => void): ICssAnimation;
+        }
+        /**
+        * A class for creating a single JavaScript animation for a single element.
+        */
+        class JsAnimation extends BaseAnimation implements IJsAnimation {
+            /**
+            * A flag specifying that this animation is a JavaScript implementation.
+            */
+            public isJs: boolean;
+        }
+        /**
+        * Describes an object representing a single JavaScript animation for a single element.
+        */
+        interface IJsAnimation extends IBaseAnimation {
+            /**
+            * A flag specifying that this animation is a JavaScript implementation.
+            */
+            isJs: boolean;
+        }
         module animations {
-            class SimpleCssAnimation extends Animation implements ISimpleCssAnimation {
+            class SimpleCssAnimation extends CssAnimation implements ISimpleCssAnimation {
                 public $Window: Window;
                 public className: string;
                 public start(): void;
                 public cancel(): void;
             }
-            interface ISimpleCssAnimation {
+            interface ISimpleCssAnimation extends ICssAnimation {
                 /**
                 * The class name to place on the element.
                 */
@@ -8650,8 +8741,8 @@ declare module plat {
                 * The DocumentFragment that stores the plat-if element when hidden.
                 */
                 public fragmentStore: DocumentFragment;
-                private __removeListener;
                 private __condition;
+                private __removeListener;
                 private __leaveAnimation;
                 private __enterAnimation;
                 constructor();

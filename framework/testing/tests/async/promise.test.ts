@@ -14,12 +14,14 @@
             var exception = false;
 
             try {
-                Promise.all(null);
+                Promise.all(<Array<number>><any>2).then((arr) => {
+                    expect(arr.length).toBeDefined();
+                });
             } catch (e) {
                 exception = true;
             }
 
-            expect(exception).toBe(true);
+            expect(exception).toBe(false);
         });
 
 
@@ -36,7 +38,7 @@
 
         it('should test race', (done) => {
             var numPromise = Promise.cast(2),
-                promise: plat.async.IThenable<any> = Promise.cast(Promise.resolve(4)),
+                promise: plat.async.IThenable<any> = new Promise((resolve) => { setTimeout(resolve, 0, 4); }),
                 result: number;
 
             Promise.race<number>([promise, numPromise]).then((success) => {
@@ -47,12 +49,14 @@
             var exception = false;
 
             try {
-                Promise.race(null);
+                Promise.race(null).then((out) => {
+                    expect(out).toEqual(null);
+                });
             } catch (e) {
                 exception = true;
             }
 
-            expect(exception).toBe(true);
+            expect(exception).toBe(false);
         });
 
         it('should test resolve', (done) => {
