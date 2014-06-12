@@ -22,11 +22,6 @@
         _listeners: Array<(newValue: any, oldValue: any) => void> = [];
 
         /**
-         * A function for adding listeners.
-         */
-        _boundAddListener: (listener: (newValue: any, oldValue: any) => void) => IRemoveListener;
-
-        /**
          * The function to stop listening for property changes.
          */
         _removeListener: IRemoveListener;
@@ -37,7 +32,6 @@
          */
         initialize(): void {
             this.attribute = camelCase(this.type);
-            this._boundAddListener = this._addListener.bind(this);
             this._setProperty(this._getValue());
         }
 
@@ -77,7 +71,7 @@
 
             this.$ContextManagerStatic.defineGetter(templateControl, this.property, <observable.IObservableProperty<any>>{
                 value: value,
-                observe: this._boundAddListener
+                observe: this._addListener.bind(this)
             }, true, true);
             this._callListeners(value, oldValue);
         }

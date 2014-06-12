@@ -63,6 +63,7 @@
     <TypeScriptCompile Include="tests\controls\bind\bind.test.ts" />
     <TypeScriptCompile Include="tests\controls\elementpropertycontrol\elementpropertycontrol.test.ts" />
     <TypeScriptCompile Include="tests\controls\name\namecontrol.test.ts" />
+    <TypeScriptCompile Include="tests\controls\observableattributecontrol\observableattributecontrol.test.ts" />
     <TypeScriptCompile Include="tests\control\control.test.ts" />
     <TypeScriptCompile Include="tests\control\controlfactory.test.ts" />
     <TypeScriptCompile Include="tests\expressions\parser\parser.test.ts" />
