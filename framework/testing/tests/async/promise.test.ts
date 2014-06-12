@@ -69,7 +69,6 @@
         });
 
         it('should test reject', (done) => {
-
             Promise.reject(2).then(() => {
                 return null;
             }, (error) => {
