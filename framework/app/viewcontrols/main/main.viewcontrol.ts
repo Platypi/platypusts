@@ -4,13 +4,14 @@ module app {
         templateUrl = 'viewcontrols/main/main.viewcontrol.html';
         context = {
             names: [
-                'Matt',
-                'M@',
-                'Darion',
-                'Jonathan',
-                'Paul',
-                'Will'
-            ]
+                { name: 'Matt' },
+                { name: 'M@' },
+                { name: 'Darion' },
+                { name: 'Jonathan' },
+                { name: 'Paul' },
+                { name: 'Will' }
+            ],
+            selected: 'M@'
         };
         navigatedTo(route: plat.web.IRoute<any>) {
             if (route.path.length === 0) {
