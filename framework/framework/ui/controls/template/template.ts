@@ -100,8 +100,6 @@ module plat.ui.controls {
 
             if (!isNull(url)) {
                 template = this.$TemplateCache.read(url);
-                //determineTemplate sets the templateUrl so we need to reset it back to null
-                this.templateUrl = null;
                 this.dom.clearNodeBlock(this.elementNodes, parentNode);
             } else {
                 template = this.$Document.createDocumentFragment();
