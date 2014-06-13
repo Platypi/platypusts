@@ -10,6 +10,11 @@ module plat.ui.controls {
         replaceWith: string = 'select';
 
         /**
+         * This control needs to load before plat-bind.
+         */
+        priority = 120;
+
+        /**
          * Specifies the context as an Array.
          */
         context: Array<any>;

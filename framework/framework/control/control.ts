@@ -232,6 +232,15 @@ module plat {
         type: string;
 
         /**
+         * Specifies the priority of the control. The purpose of 
+         * this is so that controls like plat-bind can have a higher 
+         * priority than plat-tap. The plat-bind will be initialized 
+         * and loaded before plat-tap, meaning it has the first chance 
+         * to respond to events.
+         */
+        priority = 0;
+
+        /**
          * The parent control that created this control. If this control does not implement ui.IBaseViewControl
          * then it will inherit its context from the parent.
          */
@@ -786,6 +795,15 @@ module plat {
          * The type of an IControl.
          */
         type?: string;
+
+        /**
+         * Specifies the priority of the control. The purpose of 
+         * this is so that controls like plat-bind can have a higher 
+         * priority than plat-tap. The plat-bind will be initialized 
+         * and loaded before plat-tap, meaning it has the first chance 
+         * to respond to events.
+         */
+        priority?: number;
 
         /**
          * The parent control that created this control. If this control does not implement ui.IBaseViewControl

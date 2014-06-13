@@ -81,7 +81,7 @@
             this.__historyLength++;
             this.baseport.navigateFrom(viewControl).then(() => {
                 this.$BaseViewControlFactory.dispose(viewControl);
-            this.baseport.navigateTo(ev);
+                this.baseport.navigateTo(ev);
             });
         }
     }

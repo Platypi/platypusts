@@ -81,7 +81,7 @@ module plat.processing {
             manager.initialize(elementMap, parent);
 
             if (!(elementMap.hasControl || hasUiControl)) {
-                manager.bind = noop;
+                manager.bind = () => { return []; };
             } else {
                 manager.setUiControlTemplate();
                 return hasUiControl ? null : manager;
@@ -145,7 +145,7 @@ module plat.processing {
             manager.isClone = true;
 
             if (!nodeMap.hasControl && isNull(newControl)) {
-                manager.bind = noop;
+                manager.bind = () => { return []; };
             }
 
             if (!isNull(newControl)) {
@@ -592,7 +592,7 @@ module plat.processing {
             }
         }
 
-        bind(): void {
+        bind(): Array<IControl> {
             var nodeMap = this.nodeMap,
                 parent = this.getParentControl(),
                 controlNode = nodeMap.uiControlNode,
@@ -669,7 +669,8 @@ module plat.processing {
             }
 
             this._observeControlIdentifiers(nodes, parent, controls);
-            this._loadAttributeControls(<Array<controls.IAttributeControl>>controls, uiControl);
+
+            return controls;
         }
 
         setUiControlTemplate(templateUrl?: string): void {
@@ -728,9 +729,8 @@ module plat.processing {
             var children = this.children,
                 length = children.length,
                 child: INodeManager,
-                promises: Array<async.IThenable<void>> = [];
-
-            this.bind();
+                promises: Array<async.IThenable<void>> = [],
+                controls = this.bind();
 
             for (var i = 0; i < length; ++i) {
                 child = children[i];
@@ -747,7 +747,7 @@ module plat.processing {
             }
 
             return this.$Promise.all(promises).then(() => {
-                this.$ControlFactory.load(this.getUiControl());
+                this._loadControls(<Array<controls.IAttributeControl>>controls, this.getUiControl());
             }).catch((error: any) => {
                 postpone(() => {
                     var $exception: IExceptionStatic = acquire(__ExceptionStatic);
@@ -826,18 +826,30 @@ module plat.processing {
          * @param templateControl The ITemplateControl associated with this 
          * ElementManager.
          */
-        _loadAttributeControls(controls: Array<controls.IAttributeControl>,
+        _loadControls(controls: Array<controls.IAttributeControl>,
             templateControl: ui.ITemplateControl): void {
             var length = controls.length,
                 control: controls.IAttributeControl,
                 load = this.$ControlFactory.load,
-                i = isNull(templateControl) ? 0 : 1;
+                hasTemplateControl = !isNull(templateControl),
+                i = hasTemplateControl ? 1 : 0,
+                templateControlPriority = hasTemplateControl ? templateControl.priority : Number.MIN_VALUE,
+                templateControlLoaded = !hasTemplateControl;
 
             for (; i < length; ++i) {
                 control = controls[i];
                 control.templateControl = templateControl;
 
+                if (!templateControlLoaded && templateControlPriority > control.priority) {
+                    templateControlLoaded = true;
+                    load(templateControl);
+                }
+
                 load(control);
+            }
+
+            if (!templateControlLoaded) {
+                load(templateControl);
             }
         }
 

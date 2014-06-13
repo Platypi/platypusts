@@ -16,6 +16,11 @@
         attribute: string;
 
         /**
+         * This control needs to load before its templateControl
+         */
+        priority = 200;
+
+        /**
          * The set of functions added by the Template Control that listens 
          * for property changes.
          */

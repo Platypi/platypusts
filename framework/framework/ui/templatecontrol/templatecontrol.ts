@@ -459,6 +459,11 @@ module plat.ui {
         private static __resourceCache: any = {};
 
         /**
+         * By default TemplateControls have a priority of 100.
+         */
+        priority = 100;
+
+        /**
          * The context of an ITemplateControl, used for inheritance and data-binding.
          */
         context: any = null;
