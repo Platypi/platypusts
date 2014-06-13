@@ -25,6 +25,11 @@ module plat.ui.controls {
          */
         options: observable.IObservableProperty<ISelectOptions>;
 
+        /**
+         * Will fulfill whenever all items are loaded.
+         */
+        itemsLoaded: async.IThenable<Array<void>>;
+
         private __removeListener: IRemoveListener;
         private __isGrouped: boolean = false;
         private __group: string;
@@ -54,8 +59,19 @@ module plat.ui.controls {
                 this.bindableTemplates.add('group', optionGroup);
             }
 
-            option.value = __startSymbol + platOptions.value + __endSymbol;
-            option.textContent = __startSymbol + platOptions.textContent + __endSymbol;
+            var value = platOptions.value,
+                textContent = platOptions.textContent;
+
+            if (!isString(value) || isEmpty(value)) {
+                value = undefined;
+            }
+
+            if (!isString(textContent) || isEmpty(textContent)) {
+                textContent = undefined;
+            }
+
+            option.value = __startSymbol + (value || textContent) + __endSymbol;
+            option.textContent = __startSymbol + (textContent || value) + __endSymbol;
 
             this.bindableTemplates.add('option', option);
         }
@@ -81,7 +97,7 @@ module plat.ui.controls {
             }
 
             if (newLength > oldLength) {
-                this._addItems(newLength - oldLength, oldLength);
+                this.itemsLoaded = this._addItems(newLength - oldLength, oldLength);
             } else if (newLength < oldLength) {
                 this._removeItems(oldLength - newLength);
             }
@@ -98,7 +114,7 @@ module plat.ui.controls {
                 return;
             }
 
-            this._addItems(context.length, 0);
+            this.itemsLoaded = this._addItems(context.length, 0);
 
             this.__removeListener = this.observeArray(this, 'context', (ev?: observable.IArrayMethodInfo<any>) => {
                 if (isFunction((<any>this)['_' + ev.method])) {
@@ -125,15 +141,18 @@ module plat.ui.controls {
          * @param length The current index of the next 
          * set of items to add.
          */
-        _addItems(numberOfItems: number, length: number): void {
+        _addItems(numberOfItems: number, length: number): async.IThenable<Array<void>> {
             var index = length,
-                item: any;
+                item: any,
+                promises: Array<async.IThenable<void>> = [];
 
             for (var i = 0; i < numberOfItems; ++i, ++index) {
                 item = this.context[index];
 
-                this.bindableTemplates.bind('option', index).then(this._insertOptions.bind(this, index, item));
+                promises.push(this.bindableTemplates.bind('option', index).then<void>(this._insertOptions.bind(this, index, item)));
             }
+
+            return this.$Promise.all(promises);
         }
 
         /**
