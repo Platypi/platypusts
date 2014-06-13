@@ -78,6 +78,10 @@ function isRegExp(obj: any): boolean {
     return Object.prototype.toString.call(obj) === '[object RegExp]';
 }
 
+function isPromise(obj: any): boolean {
+    return obj.toString() === '[object Promise]' || isObject(obj) && isFunction(obj.then);
+}
+
 function isEmpty(obj: any): boolean {
     if (isNull(obj)) {
         return true;

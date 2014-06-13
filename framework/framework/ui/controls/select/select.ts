@@ -189,7 +189,7 @@ module plat.ui.controls {
                             return optgroup;
                         });
                     return;
-                } else if (isFunction(optgroup.then)) {
+                } else if (isPromise(optgroup)) {
                     optgroup.then((group: Element) => {
                         group.appendChild(optionClone);
                         return group;

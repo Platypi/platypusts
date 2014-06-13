@@ -109,7 +109,7 @@ module plat.ui.controls {
             }
 
             var controlPromise: async.IThenable<ITemplateControl>;
-            if (isFunction(template.then)) {
+            if (isPromise(template)) {
                 controlPromise = template.catch((error: Error) => {
                     if (isNull(error)) {
                         return TemplateControl.determineTemplate(this, url);

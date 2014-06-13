@@ -41,6 +41,10 @@ module plat {
             return isRegExp(obj);
         }
 
+        isPromise(obj: any): boolean {
+            return isPromise(obj);
+        }
+
         isEmpty(obj: any): boolean {
             return isEmpty(obj);
         }
@@ -232,6 +236,13 @@ module plat {
          * @return {boolean} True if obj is a RegExp object, false otherwise.
          */
         isRegExp(obj: any): boolean;
+
+        /**
+         * Takes in anything and determines if it is a Promise object.
+         * 
+         * @param obj Anything.
+         */
+        isPromise(obj: any): boolean;
 
         /**
          * Takes in anything and determines if it is empty. Useful for

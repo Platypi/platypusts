@@ -75,7 +75,7 @@ module plat.async {
                 for (var i = 0; i < promises.length; i++) {
                     promise = promises[i];
 
-                    if (promise && isFunction(promise.then)) {
+                    if (isPromise(promise)) {
                         promise.then(resolver(i), reject);
                     } else {
                         resolveAll(i, promise);
@@ -367,6 +367,10 @@ module plat.async {
         catch<U>(onRejected: (error: any) => U): IThenable<U>;
         catch<U>(onRejected: (error: any) => any): IThenable<U> {
             return this.then(null, onRejected);
+        }
+
+        toString() {
+            return '[object Promise]';
         }
     }
 

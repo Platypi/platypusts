@@ -399,7 +399,7 @@ module plat.controls {
             // check to make sure the user changed to a valid value
             if (element.value !== newValue) {
                 var select = <ui.controls.Select>this.templateControl;
-                if (!isNull(select) && select.type === __Select) {
+                if (!isNull(select) && select.type === __Select && isPromise(select.itemsLoaded)) {
                     select.itemsLoaded.then(() => {
                         element.value = newValue;
 
