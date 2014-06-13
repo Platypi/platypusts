@@ -97,7 +97,7 @@ module plat.ui.controls {
             }
 
             if (newLength > oldLength) {
-                this.itemsLoaded = this._addItems(newLength - oldLength, oldLength);
+                this._addItems(newLength - oldLength, oldLength);
             } else if (newLength < oldLength) {
                 this._removeItems(oldLength - newLength);
             }
@@ -114,7 +114,7 @@ module plat.ui.controls {
                 return;
             }
 
-            this.itemsLoaded = this._addItems(context.length, 0);
+            this._addItems(context.length, 0);
 
             this.__removeListener = this.observeArray(this, 'context', (ev?: observable.IArrayMethodInfo<any>) => {
                 if (isFunction((<any>this)['_' + ev.method])) {
@@ -152,7 +152,9 @@ module plat.ui.controls {
                 promises.push(this.bindableTemplates.bind('option', index).then<void>(this._insertOptions.bind(this, index, item)));
             }
 
-            return this.$Promise.all(promises);
+            this.itemsLoaded = this.$Promise.all(promises);
+
+            return this.itemsLoaded;
         }
 
         /**
