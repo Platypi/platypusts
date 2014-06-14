@@ -806,36 +806,27 @@
 
             if ($compat.hasPointerEvents) {
                 if (eventType === 'pointerdown') {
-                    (<any>ev.target).setPointerCapture(ev.pointerId);
+                    this.__setCapture(ev.target);
                 }
 
                 this.__updatePointers(ev, this.__pointerEndRegex.test(eventType));
             } else if ($compat.hasMsPointerEvents) {
                 if (eventType === 'MSPointerDown') {
-                    (<any>ev.target).msSetPointerCapture(ev.pointerId);
-                }
-
-                switch (<any>ev.pointerType) {
-                    case MSPointerEvent.MSPOINTER_TYPE_MOUSE:
-                        ev.pointerType = 'mouse';
-                        break;
-                    case MSPointerEvent.MSPOINTER_TYPE_PEN:
-                        ev.pointerType = 'pen';
-                        break;
-                    case MSPointerEvent.MSPOINTER_TYPE_TOUCH:
-                        ev.pointerType = 'touch';
-                        break;
+                    this.__setCapture(ev.target);
                 }
 
                 this.__updatePointers(ev, this.__pointerEndRegex.test(eventType));
             } else if (eventType === 'mousedown') {
                 ev.pointerType = 'mouse';
-                // capture the target if it's not the Document
-                if (isNull(this.__capturedTarget) && !isDocument(ev.target)) {
-                    this.__capturedTarget = <ICustomElement>ev.target;
-                }
+                this.__setCapture(ev.target);
             } else {
+                // do not need to set catpure for touchstart events
                 ev.pointerType = eventType.indexOf('mouse') === -1 ? 'touch' : 'mouse';
+            }
+        }
+        private __setCapture(target: EventTarget) {
+            if (isNull(this.__capturedTarget) && !isDocument(target)) {
+                this.__capturedTarget = <ICustomElement>target;
             }
         }
         private __updatePointers(ev: IPointerEvent, remove: boolean): void {
@@ -1202,6 +1193,8 @@
 
         private __extendEventObject(customEv: IGestureEvent, ev: IPointerEvent) {
             // not using extend function because this gets called so often for certain events.
+            var pointerType = ev.pointerType;
+
             customEv.clientX = ev.clientX;
             customEv.clientY = ev.clientY;
             customEv.offsetX = ev.offset.x;
@@ -1210,11 +1203,24 @@
             customEv.touches = ev.touches;
             customEv.velocity = ev.velocity || { x: 0, y: 0 };
             customEv.identifier = ev.identifier || 0;
-            customEv.pointerType = ev.pointerType;
+            customEv.pointerType = isNumber(pointerType) ? this.__convertPointerType(pointerType, ev.type) : pointerType;
             customEv.screenX = ev.screenX;
             customEv.screenY = ev.screenY;
             customEv.pageX = ev.pageX;
             customEv.pageY = ev.pageY;
+        }
+
+        private __convertPointerType(pointerType: any, eventType: string) {
+            switch (<any>pointerType) {
+                case MSPointerEvent.MSPOINTER_TYPE_MOUSE:
+                    return 'mouse';
+                case MSPointerEvent.MSPOINTER_TYPE_PEN:
+                    return 'pen';
+                case MSPointerEvent.MSPOINTER_TYPE_TOUCH:
+                    return 'touch';
+            }
+
+            return (eventType.indexOf('mouse') === -1) ? 'touch' : 'mouse';
         }
     }
 
