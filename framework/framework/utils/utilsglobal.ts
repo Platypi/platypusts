@@ -30,12 +30,15 @@ function extend(destination: any, ...sources: any[]): any {
                 if (isArray(property)) {
                     extend(deep, destination[key] || (destination[key] = []), property);
                     return;
+                } else if (isDate(property)) {
+                    destination[key] = new Date(property.getTime());
+                    return;
                 } else if (isObject(property)) {
                     extend(deep, destination[key] || (destination[key] = {}), property);
                     return;
                 }
             }
-            destination[key] = source[key];
+            destination[key] = property;
         });
     });
 
@@ -132,6 +135,10 @@ function isArrayLike(obj: any): boolean {
     }
 
     return isString(obj) || obj.length >= 0;
+}
+
+function isDate(obj: any): boolean {
+    return Object.prototype.toString.call(obj) === '[object Date]';
 }
 
 function filter<T>(obj: any, iterator: (value: T, key: any, obj: any) => boolean, context?: any): Array<T> {

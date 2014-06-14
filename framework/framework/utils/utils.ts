@@ -77,6 +77,10 @@ module plat {
             return isArrayLike(obj);
         }
 
+        isDate(obj: any): boolean {
+            return isDate(obj);
+        }
+
         filter<T>(array: Array<T>, iterator: (value: T, key: any, obj: any) => boolean, context?: any): Array<T>;
         filter<T>(obj: any, iterator: (value: T, key: any, obj: any) => boolean, context?: any): Array<T>;
         filter<T>(obj: any, iterator: (value: T, key: any, obj: any) => boolean, context?: any): Array<T> {
@@ -318,6 +322,13 @@ module plat {
          * Array, string, arguments, or NodeList), false otherwise.
          */
         isArrayLike(obj: any): boolean;
+
+        /**
+         * Takes in anything and determines if it is a Date object.
+         * 
+         * @param obj Anything.
+         */
+        isDate(obj: any): boolean;
 
         /**
          * Takes in an array and a function to evaluate the properties in the array.

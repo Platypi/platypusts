@@ -14,9 +14,10 @@ module app {
             selected: 'M@'
         };
         navigatedTo(route: plat.web.IRoute<any>) {
+            console.log((<any>Object).observe);
             if (route.path.length === 0) {
                 return;
-        }
+            }
 
             this.title = route.path.replace(/\//g, ' ');
         }
