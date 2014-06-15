@@ -31,10 +31,10 @@
             this.__defineBooleans();
             this.__defineMappedEvents();
             this.__defineAnimationEvents();
-            this.__findCss();
+            this.__determineCss();
         }
 
-        private __defineBooleans() {
+        private __defineBooleans(): void {
             var $window = this.$Window,
                 navigator = $window.navigator,
                 history = $window.history,
@@ -56,7 +56,7 @@
             this.hasMsPointerEvents = !!navigator.msPointerEnabled;
         }
 
-        private __defineMappedEvents() {
+        private __defineMappedEvents(): void {
             if (this.hasPointerEvents) {
                 this.mappedEvents = {
                     $touchstart: 'pointerdown',
@@ -88,7 +88,7 @@
             }
         }
 
-        private __defineAnimationEvents() {
+        private __defineAnimationEvents(): void {
             var div = this.$Document.createElement('div'),
                 animations: IObject<string> = {
                     WebkitAnimation: 'webkit',
@@ -125,39 +125,30 @@
             };
         }
 
-        private __findCss() {
+        private __determineCss(): void {
             var $document = this.$Document,
-                styleSheets = $document.styleSheets;
+                head = $document.head,
+                element = $document.createElement('div');
 
-            if (isNull(styleSheets)) {
+            element.setAttribute(__Hide, '');
+            head.insertBefore(element, null);
+
+            var computedStyle = this.$Window.getComputedStyle(element),
+                display = computedStyle.display;
+
+            if (display === 'none') {
+                this.platCss = true;
+            } else {
                 this.platCss = false;
-                return;
             }
 
-            var length = styleSheets.length,
-                styleSheet: CSSStyleSheet,
-                rules: CSSRuleList,
-                j: number, jLength: number;
-
-            for (var i = 0; i < length; ++i) {
-                styleSheet = <CSSStyleSheet>styleSheets[i];
-                rules = styleSheet.cssRules;
-                jLength = (<CSSRuleList>(rules || [])).length;
-                for (j = 0; j < jLength; ++j) {
-                    if (rules[j].cssText.indexOf('[' + __Hide + ']') !== -1) {
-                        this.platCss = true;
-                        return;
-                    }
-                }
-            }
-
-            this.platCss = false;
+            head.removeChild(element);
         }
     }
 
-        /**
-     * The Type for referencing the '$Compat' injectable as a dependency.
-         */
+   /**
+    * The Type for referencing the '$Compat' injectable as a dependency.
+    */
     export function ICompat(): ICompat {
         return new Compat();
     }

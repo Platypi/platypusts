@@ -212,6 +212,7 @@ module plat.dependency {
 
             if (name === __AppStatic) {
                 var App: IAppStatic = <IAppStatic>(<any>this).inject();
+                this.__dependencies = deps;
                 App.start();
             }
         }
