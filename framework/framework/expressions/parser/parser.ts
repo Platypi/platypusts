@@ -356,7 +356,13 @@ module plat.expressions {
                 identifierIndexer = tempIdentifiers.pop(),
                 context = codeArray.pop();
 
-            if (this._isValUnequal(previousToken, '++--()[]*/%?:>=<=&&||!===')) {
+            if (identifierIndexer[0] === '@') {
+                codeStr = '(' + this.__indexIntoContext.toString() + ')(' + context + ',' + codeStr + ')';
+                identifiers.push(identifierIndexer);
+            } else if (this._isValEqual(previousToken, '++--()[]*/%?:>=<=&&||!===')) {
+                codeStr = '(' + this.__indexIntoContext.toString() + ')(' + context + ',' + codeStr + ')';
+                tempIdentifiers.push('.');
+            } else {
                 codeStr = '(' + this.__indexIntoContext.toString() + ')(' + context + ',"' + codeStr + '")';
 
                 var lastIndex = tempIdentifiers.length - 1;
@@ -367,9 +373,6 @@ module plat.expressions {
                 } else if (!isNull(identifierIndexer) && identifierIndexer !== '.') {
                     identifiers.push(identifierIndexer);
                 }
-            } else {
-                codeStr = '(' + this.__indexIntoContext.toString() + ')(' + context + ',' + codeStr + ')';
-                tempIdentifiers.push('.');
             }
 
             codeArray.push(codeStr);
