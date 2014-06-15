@@ -463,27 +463,23 @@
 
             this.__standardizeEventObject(ev);
 
-            // return if the touch count was greater than 0
-            if (ev.touches.length > 0) {
-                return;
-            }
-
             // if we were detecting move events, unregister them
             if (this.__detectMove) {
                 this.__unregisterType(this.__MOVE);
                 this.__detectMove = false;
             }
 
-            // if event cancelled
-            if (this.__cancelRegex.test(ev.type)) {
+            // return if the touch count was greater than 0,
+            // check for cancel event,
+            // handle release
+            if (ev.touches.length > 0) {
+                return;
+            } else if (this.__cancelRegex.test(ev.type)) {
                 this.__tapCount = 0;
                 this.__hasRelease = false;
                 this.__hasSwiped = false;
                 return;
-            }
- 
-            // handle release events
-            if (this.__hasRelease) {
+            } else if (this.__hasRelease) {
                 this.__handleRelease(ev);
             }
 
@@ -494,11 +490,17 @@
 
             var config = DomEvents.config,
                 intervals = config.intervals,
-                touchEnd = ev.timeStamp;
+                touchEnd = ev.timeStamp,
+                touchDown = this.__lastTouchDown;
+
+            if (isNull(touchDown)) {
+                this.__tapCount = 0;
+                return;
+            }
             
             // if the user moved their finger (for scroll) or had their finger down too long to be 
             // considered a tap
-            if (this.__hasMoved || ((touchEnd - this.__lastTouchDown.timeStamp) > intervals.tapInterval)) {
+            if (this.__hasMoved || ((touchEnd - touchDown.timeStamp) > intervals.tapInterval)) {
                 this.__tapCount = 0;
                 return;
             }
