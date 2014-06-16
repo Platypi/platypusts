@@ -352,6 +352,10 @@ module plat {
          */
         addEventListener(element: Window, type: string, listener: ui.IGestureListener, useCapture?: boolean): IRemoveListener;
         addEventListener(element: any, type: string, listener: ui.IGestureListener, useCapture?: boolean): IRemoveListener {
+            if (isFunction(listener)) {
+                listener = listener.bind(this);
+            }
+
             var removeListener = this.dom.addEventListener(element, type, listener, useCapture),
                 uid = this.uid;
 
