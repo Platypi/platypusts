@@ -1107,6 +1107,9 @@
         }
         private __preventDefault(ev: Event): boolean {
             var nodeName = (<Node>ev.target).nodeName;
+            if (isString(nodeName)) {
+                nodeName = nodeName.toLowerCase();
+            }
 
             if (nodeName === 'input' || nodeName === 'textarea') {
                 return true;
