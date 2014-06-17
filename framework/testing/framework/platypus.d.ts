@@ -557,7 +557,7 @@ declare module plat {
         private __defineBooleans();
         private __defineMappedEvents();
         private __defineAnimationEvents();
-        private __findCss();
+        private __determineCss();
     }
     /**
     * The Type for referencing the '$Compat' injectable as a dependency.
@@ -708,6 +708,7 @@ declare module plat {
         public isDocumentFragment(obj: any): boolean;
         public isString(obj: any): boolean;
         public isRegExp(obj: any): boolean;
+        public isPromise(obj: any): boolean;
         public isEmpty(obj: any): boolean;
         public isBoolean(obj: any): boolean;
         public isNumber(obj: any): boolean;
@@ -716,7 +717,8 @@ declare module plat {
         public isUndefined(obj: any): boolean;
         public isArray(obj: any): boolean;
         public isArrayLike(obj: any): boolean;
-        public filter<T>(array: T[], iterator: (value: T, key: any, obj: any) => boolean, context?: any): T[];
+        public isDate(obj: any): boolean;
+        public filter<T>(array: T[], iterator: (value: T, index: number, obj: any) => boolean, context?: any): T[];
         public filter<T>(obj: any, iterator: (value: T, key: any, obj: any) => boolean, context?: any): T[];
         public where<T>(array: T[], properties: any): T[];
         public where<T>(obj: any, properties: any): T[];
@@ -827,6 +829,12 @@ declare module plat {
         */
         isRegExp(obj: any): boolean;
         /**
+        * Takes in anything and determines if it is a Promise object.
+        *
+        * @param obj Anything.
+        */
+        isPromise(obj: any): boolean;
+        /**
         * Takes in anything and determines if it is empty. Useful for
         * checking for empty strings, arrays, or objects without keys.
         *
@@ -894,6 +902,12 @@ declare module plat {
         */
         isArrayLike(obj: any): boolean;
         /**
+        * Takes in anything and determines if it is a Date object.
+        *
+        * @param obj Anything.
+        */
+        isDate(obj: any): boolean;
+        /**
         * Takes in an array and a function to evaluate the properties in the array.
         * Returns a filtered array of objects resulting from evaluating the function.
         *
@@ -904,7 +918,7 @@ declare module plat {
         *
         * @return {Array<T>} An array of objects which evaluated to true with the iterator.
         */
-        filter<T>(array: T[], iterator: (value: T, key: any, obj: any) => boolean, context?: any): T[];
+        filter<T>(array: T[], iterator: (value: T, index: number, obj: any) => boolean, context?: any): T[];
         /**
         * Takes in an object/array and a function to evaluate the properties in the object/array.
         * Returns a filtered array of objects resulting from evaluating the function.
@@ -2105,6 +2119,7 @@ declare module plat {
             public then<U>(onFulfilled: (success: R) => U, onRejected?: (error: any) => U): IThenable<U>;
             public catch<U>(onRejected: (error: any) => IThenable<U>): IThenable<U>;
             public catch<U>(onRejected: (error: any) => U): IThenable<U>;
+            public toString(): string;
         }
         /**
         * Describes a chaining function that fulfills when the previous link is complete and is
@@ -4233,6 +4248,14 @@ declare module plat {
         */
         public type: string;
         /**
+        * Specifies the priority of the control. The purpose of
+        * this is so that controls like plat-bind can have a higher
+        * priority than plat-tap. The plat-bind will be initialized
+        * and loaded before plat-tap, meaning it has the first chance
+        * to respond to events.
+        */
+        public priority: number;
+        /**
         * The parent control that created this control. If this control does not implement ui.IBaseViewControl
         * then it will inherit its context from the parent.
         */
@@ -4536,6 +4559,14 @@ declare module plat {
         */
         type?: string;
         /**
+        * Specifies the priority of the control. The purpose of
+        * this is so that controls like plat-bind can have a higher
+        * priority than plat-tap. The plat-bind will be initialized
+        * and loaded before plat-tap, meaning it has the first chance
+        * to respond to events.
+        */
+        priority?: number;
+        /**
         * The parent control that created this control. If this control does not implement ui.IBaseViewControl
         * then it will inherit its context from the parent.
         */
@@ -4794,14 +4825,6 @@ declare module plat {
             * exists.
             */
             public templateControl: ui.ITemplateControl;
-            /**
-            * Specifies the priority of the attribute. The purpose of
-            * this is so that controls like plat-bind can have a higher
-            * priority than plat-tap. The plat-bind will be initialized
-            * and loaded before plat-tap, meaning it has the first chance
-            * to respond to events.
-            */
-            public priority: number;
         }
         /**
         * The Type for referencing the '$AttributeControlFactory' injectable as a dependency.
@@ -4837,14 +4860,6 @@ declare module plat {
             * exists.
             */
             templateControl?: ui.ITemplateControl;
-            /**
-            * Specifies the priority of the attribute. The purpose of
-            * this is so that controls like plat-bind can have a higher
-            * priority than plat-tap. The plat-bind will be initialized
-            * and loaded before plat-tap, meaning it has the first chance
-            * to respond to events.
-            */
-            priority?: number;
         }
         class Name extends AttributeControl {
             public $ContextManagerStatic: observable.IContextManagerStatic;
@@ -5580,6 +5595,10 @@ declare module plat {
             */
             public attribute: string;
             /**
+            * This control needs to load before its templateControl
+            */
+            public priority: number;
+            /**
             * The set of functions added by the Template Control that listens
             * for property changes.
             */
@@ -5780,6 +5799,10 @@ declare module plat {
             */
             static getInstance(): ITemplateControl;
             private static __resourceCache;
+            /**
+            * By default TemplateControls have a priority of 100.
+            */
+            public priority: number;
             /**
             * The context of an ITemplateControl, used for inheritance and data-binding.
             */
@@ -7373,6 +7396,7 @@ declare module plat {
             private __registerElement(element, type);
             private __unregisterElement(element, type);
             private __setTouchPoint(ev);
+            private __setCapture(target);
             private __updatePointers(ev, remove);
             private __findFirstSubscriber(eventTarget, type);
             private __addMappedEvent(mappedEvent, useCapture?);
@@ -7389,6 +7413,7 @@ declare module plat {
             private __isHorizontal(direction);
             private __appendGestureStyle();
             private __createStyle(styleClass);
+            private __handleInput(target);
             private __removeSelections(element);
             private __returnSelections(element);
             private __preventDefault(ev);
@@ -7442,6 +7467,7 @@ declare module plat {
             public initialize(element: Window, event: string): void;
             public trigger(ev: IPointerEvent): void;
             private __extendEventObject(customEv, ev);
+            private __convertPointerType(pointerType, eventType);
         }
         /**
         * The Type for referencing the '$DomEventInstance' injectable as a dependency.
@@ -8418,6 +8444,10 @@ declare module plat {
                 */
                 public controls: ITemplateControl[];
                 /**
+                * Will fulfill whenever all items are loaded.
+                */
+                public itemsLoaded: async.IThenable<void[]>;
+                /**
                 * The node length of the element's childNodes (innerHTML)
                 */
                 public _blockLength: number;
@@ -8484,7 +8514,7 @@ declare module plat {
                 * @param index The point in the array to start adding items.
                 * @param animate whether to animate the new items
                 */
-                public _addItems(numberOfItems: number, index: number, animate?: boolean): void;
+                public _addItems(numberOfItems: number, index: number, animate?: boolean): async.IThenable<void[]>;
                 /**
                 * Removes items from the ForEach's element.
                 *
@@ -8571,6 +8601,10 @@ declare module plat {
                 */
                 public replaceWith: string;
                 /**
+                * This control needs to load before plat-bind.
+                */
+                public priority: number;
+                /**
                 * Specifies the context as an Array.
                 */
                 public context: any[];
@@ -8583,6 +8617,10 @@ declare module plat {
                 * The evaluated plat-options object.
                 */
                 public options: observable.IObservableProperty<ISelectOptions>;
+                /**
+                * Will fulfill whenever all items are loaded.
+                */
+                public itemsLoaded: async.IThenable<void[]>;
                 private __removeListener;
                 private __isGrouped;
                 private __group;
@@ -8617,7 +8655,7 @@ declare module plat {
                 * @param length The current index of the next
                 * set of items to add.
                 */
-                public _addItems(numberOfItems: number, length: number): void;
+                public _addItems(numberOfItems: number, length: number): async.IThenable<void[]>;
                 /**
                 * The callback used to add an option after
                 * its template has been bound.
@@ -9200,7 +9238,7 @@ declare module plat {
             public templatePromise: async.IThenable<void>;
             public clone(newNode: Node, parentManager: IElementManager, nodeMap?: INodeMap): number;
             public initialize(nodeMap: INodeMap, parent: IElementManager, dontInitialize?: boolean): void;
-            public bind(): void;
+            public bind(): IControl[];
             public setUiControlTemplate(templateUrl?: string): void;
             public getUiControl(): ui.ITemplateControl;
             public fulfillTemplate(): async.IThenable<void>;
@@ -9223,7 +9261,7 @@ declare module plat {
             * @param templateControl The ITemplateControl associated with this
             * ElementManager.
             */
-            public _loadAttributeControls(controls: controls.IAttributeControl[], templateControl: ui.ITemplateControl): void;
+            public _loadControls(controls: controls.IAttributeControl[], templateControl: ui.ITemplateControl): void;
             /**
             * Fulfills the template promise prior to binding and loading the control.
             */

@@ -345,6 +345,7 @@
                 subscribeFn: () => void;
 
             if (noHolds) {
+                this.__hasRelease = false;
                 this.__holdTimeout = setTimeout(() => {
                     this.__hasRelease = true;
                 }, holdInterval);
@@ -356,6 +357,7 @@
                     this.__holdTimeout = null;
                 };
             } else {
+                this.__hasRelease = false;
                 // has both hold and release events registered
                 domEvent = this.__findFirstSubscriber(<ICustomElement>ev.target, this._gestures.$hold);
                 subscribeFn = () => {
@@ -377,6 +379,9 @@
          * @param ev The touch start event object.
          */
         _onMove(ev: IPointerEvent): void {
+            // clear hold event
+            this.__clearHold();
+
             // return immediately if we should not be detecting move, 
             // if there are multiple touches present, or 
             // if it is a mouse event and currently in a touch
@@ -386,16 +391,12 @@
                 return;
             }
 
-            // clear hold event
-            this.__clearHold();
-
             var gestureCount = this._gestureCount,
                 noTracking = gestureCount.$track <= 0,
-                noMoveEvents = gestureCount.$swipe <= 0 && noTracking,
-                noTapEvents = gestureCount.$dbltap <= 0 && gestureCount.$tap <= 0;
+                noMoveEvents = gestureCount.$swipe <= 0 && noTracking;
 
-            // return if no move events and no tap events are registred
-            if (noMoveEvents && noTapEvents) {
+            // return if no move events and no tap events are registered
+            if (noMoveEvents && gestureCount.$dbltap <= 0 && gestureCount.$tap <= 0) {
                 return;
             }
 
@@ -413,7 +414,7 @@
             if (minMove) {
                 this.__hasMoved = true;
             } else {
-                // cannot call ev.preventDefault up top due to Chrome cancelling touch based scrolling
+                // cannot call ev.preventDefault up top due to Chrome canceling touch based scrolling
                 // call prevent default here to try and avoid mouse events when min move hasnt occurred
                 ev.preventDefault();
             }
@@ -448,8 +449,9 @@
          * @param ev The touch start event object.
          */
         _onTouchEnd(ev: IPointerEvent): void {
+            var eventType = ev.type;
             // call prevent default to try and avoid mouse events
-            if (ev.type !== 'mouseup') {
+            if (eventType !== 'mouseup') {
                 this._inTouch = false;
                 ev.preventDefault();
             } else if (!isUndefined(this._inTouch)) {
@@ -461,23 +463,25 @@
             // set any captured target back to null
             this.__capturedTarget = null;
 
-            this.__standardizeEventObject(ev);
-
             // if we were detecting move events, unregister them
             if (this.__detectMove) {
                 this.__unregisterType(this.__MOVE);
                 this.__detectMove = false;
             }
 
-            // return if the touch count was greater than 0,
             // check for cancel event,
-            // handle release
-            if (ev.touches.length > 0) {
-                return;
-            } else if (this.__cancelRegex.test(ev.type)) {
+            if (this.__cancelRegex.test(eventType)) {
                 this.__tapCount = 0;
                 this.__hasRelease = false;
                 this.__hasSwiped = false;
+                return;
+            }
+
+            this.__standardizeEventObject(ev);
+
+            // return if the touch count was greater than 0, 
+            // or handle release
+            if (ev.touches.length > 0) {
                 return;
             } else if (this.__hasRelease) {
                 this.__handleRelease(ev);
@@ -497,12 +501,21 @@
                 this.__tapCount = 0;
                 return;
             }
-            
-            // if the user moved their finger (for scroll) or had their finger down too long to be 
-            // considered a tap
-            if (this.__hasMoved || ((touchEnd - touchDown.timeStamp) > intervals.tapInterval)) {
+
+            // if the user moved their finger (for scroll) we do not want default or custom behaviour, 
+            // else if they had their finger down too long to be considered a tap, we do not want default or 
+            // custom behaviour, but if the event type is 'touchend' we may need to implement the default behaviour.
+            if (this.__hasMoved) {
                 this.__tapCount = 0;
                 return;
+            } else if ((touchEnd - touchDown.timeStamp) > intervals.tapInterval) {
+                if (eventType === 'touchend') {
+                    this.__handleInput(<HTMLInputElement>ev.target);
+                }
+                this.__tapCount = 0;
+                return;
+            } else if (eventType === 'touchend') {
+                this.__handleInput(<HTMLInputElement>ev.target);
             }
 
             var lastTouchUp = this.__lastTouchUp,
@@ -882,7 +895,8 @@
                 $document.removeEventListener(mappedEvent, this.__mappedEventListener, useCapture);
             };
         }
-        private __removeEventListener(element: ICustomElement, type: string, listener: IGestureListener, useCapture?: boolean): void {
+        private __removeEventListener(element: ICustomElement, type: string, listener: IGestureListener,
+            useCapture?: boolean): void {
             var gestures = this._gestures;
 
             element.removeEventListener(type, listener, useCapture);
@@ -1080,6 +1094,33 @@
                 style += textContent + ' } ';
 
             return style;
+        }
+        private __handleInput(target: HTMLInputElement) {
+            var nodeName = target.nodeName;
+
+            if (isString(nodeName)) {
+                nodeName = nodeName.toLowerCase();
+            }
+
+            if (nodeName === 'input') {
+                switch (target.type) {
+                    case 'button':
+                    case 'range':
+                        break;
+                    case 'checkbox':
+                    case 'radio':
+                    case 'file':
+                        target.click();
+                        break;
+                    default:
+                        target.focus();
+                        break;
+                }
+            } else if (nodeName === 'textarea') {
+                target.focus();
+            } else if (nodeName === 'label') {
+                target.click();
+            }
         }
         private __removeSelections(element: Node): void {
             if (!isNode(element)) {
