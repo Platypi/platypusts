@@ -154,8 +154,10 @@ module plat.async {
 
                 if (status === 0) {
                     var response = xhr.response;
-                    if (isNull(response) && responseType === '' || responseType === 'text') {
-                        response = xhr.responseText;
+                    if (isNull(response)) {
+                        try {
+                            response = xhr.responseText;
+                        } catch (e) { }
                     }
 
                     // file protocol issue **Needs to be tested more thoroughly**
@@ -374,10 +376,12 @@ module plat.async {
                 response = xhr.response,
                 xhrResponseType = xhr.responseType;
 
-            // need to do this instead of boolean short circuit because chrome doesn't like checking 
+            // need to try, catch instead of boolean short circuit because chrome doesn't like checking 
             // responseText when the responseType is anything other than empty or 'text'
-            if (isNull(response) && (xhrResponseType === '' || xhrResponseType === 'text')) {
-                response = xhr.responseText;
+            if (isNull(response)) {
+                try {
+                    response = xhr.responseText;
+                } catch (e) { }
             }
 
             if (status === 0) {
