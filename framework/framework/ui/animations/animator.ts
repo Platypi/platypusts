@@ -17,8 +17,9 @@
          * 
          * @param element The Element to be animated.
          * @param key The identifier specifying the type of animation.
+         * @param options Specified options for the animation.
          */
-        animate(element: Element, key: string): IAnimationPromise {
+        animate(element: Element, key: string, options?: any): IAnimationPromise {
             if (!isNode(element) || element.nodeType !== Node.ELEMENT_NODE || this.__parentIsAnimating(element)) {
                 return this.__resolvePromise();
             }
@@ -49,7 +50,7 @@
             var id = this.__setAnimationId(element, animationInstance);
             this.__stopChildAnimations(element, id);
             var animationObj = this._elements[id],
-                animationPromise = (<BaseAnimation>animationInstance)._init(element).then(() => {
+                animationPromise = (<BaseAnimation>animationInstance)._init(element, options).then(() => {
                     animationObj.promise = null;
                     animationObj.animationEnd();
                 });
@@ -162,8 +163,9 @@
          * 
          * @param element The Element to be animated.
          * @param key The identifier specifying the type of animation.
+         * @param options Specified options for the animation.
          */
-        animate(element: Element, key: string): IAnimationPromise;
+        animate(element: Element, key: string, options?: any): IAnimationPromise;
     }
 
     /**
@@ -172,6 +174,9 @@
     export interface IAnimatedElement {
         /**
          * The function called at the conclusion of the animation.
+         * 
+         * @param reanimated Specifies whether the element is being reanimated while 
+         * in a current animation.
          */
         animationEnd: (reanimated?: boolean) => void;
 

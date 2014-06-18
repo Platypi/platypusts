@@ -15,6 +15,11 @@
          */
         dom: IDom = acquire(__Dom);
 
+        /**
+         * Specified options for the animation.
+         */
+        options: any;
+
         private __resolve: () => void;
 
         /**
@@ -57,9 +62,11 @@
          * to resolve when finished.
          * 
          * @param element The element on which the animation will occur.
+         * @param options Specified options for the animation.
          */
-        _init(element: Element): IAnimationPromise {
+        _init(element: Element, options?: any): IAnimationPromise {
             this.element = <HTMLElement>element;
+            this.options = options;
 
             return new AnimationPromise((resolve) => {
                 this.__resolve = resolve;
@@ -82,6 +89,11 @@
          * Contains DOM helper methods for manipulating this control's element.
          */
         dom: IDom;
+
+        /**
+         * Specified options for the animation.
+         */
+        options: any;
 
         /**
          * A function for initializing the animation or any of its properties before start.
