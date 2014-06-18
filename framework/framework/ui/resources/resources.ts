@@ -176,7 +176,7 @@ module plat.ui {
                 resource = (<any>resources)[key];
 
                 if (!isNull(resource) && resource.type === 'observable') {
-                    define(resources, key, persist ? deepExtend({}, resource) : null, true, true);
+                    define(resources, key, persist ? _clone(resource, true) : null, true, true);
                 }
             }
 

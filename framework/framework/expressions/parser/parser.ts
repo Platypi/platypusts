@@ -354,9 +354,10 @@ module plat.expressions {
                 previousToken = tokens[index - 1],
                 indexer: number,
                 identifierIndexer = tempIdentifiers.pop(),
+                hasIdentifierIndexer = !isNull(identifierIndexer),
                 context = codeArray.pop();
-
-            if (identifierIndexer[0] === '@') {
+            
+            if (hasIdentifierIndexer && identifierIndexer[0] === '@') {
                 codeStr = '(' + this.__indexIntoContext.toString() + ')(' + context + ',' + codeStr + ')';
                 identifiers.push(identifierIndexer);
             } else if (this._isValEqual(previousToken, '++--()[]*/%?:>=<=&&||!===')) {
@@ -370,7 +371,7 @@ module plat.expressions {
                     if (tempIdentifiers[lastIndex] !== '.') {
                         tempIdentifiers[lastIndex] += '.' + identifierIndexer;
                     }
-                } else if (!isNull(identifierIndexer) && identifierIndexer !== '.') {
+                } else if (hasIdentifierIndexer && identifierIndexer !== '.') {
                     identifiers.push(identifierIndexer);
                 }
             }

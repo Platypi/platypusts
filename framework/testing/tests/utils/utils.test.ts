@@ -486,6 +486,114 @@ module tests.utils {
             expect(baz.bar).toEqual(bar.bar);
         });
 
+        it('should test clone', () => {
+            var foo = { foo: 'foo', bar: [{ foo: 'foo' }, { bar: 'bar' }] },
+                baz = utils.clone(foo);
+
+            expect(baz).toEqual(foo);
+            expect(baz).not.toBe(foo);
+            expect(baz.bar).toBe(foo.bar);
+        });
+
+        it('should test clone with null', () => {
+            var foo = null,
+                baz = utils.clone(foo);
+
+            expect(baz).toEqual(foo);
+        });
+
+        it('should test clone with a string', () => {
+            var foo = 'foo',
+                baz = utils.clone(foo);
+
+            expect(baz).toEqual(foo);
+        });
+
+        it('should test clone with a number', () => {
+            var foo = 'foo',
+                baz = utils.clone(foo);
+
+            expect(baz).toEqual(foo);
+        });
+        
+        it('should test clone with an array', () => {
+            var foo = [
+                { foo: 'foo', bar: [{ foo: 'foo' }, { bar: 'bar' }] },
+                { foo: 'foo', bar: [{ foo: 'foo' }, { bar: 'bar' }] },
+                { foo: 'foo', bar: [{ foo: 'foo' }, { bar: 'bar' }] },
+                { foo: 'foo', bar: [{ foo: 'foo' }, { bar: 'bar' }] }
+            ],
+                baz = utils.clone(foo, true);
+
+            expect(baz).toEqual(foo);
+            expect(baz).not.toBe(foo);
+            expect(baz[0].bar).not.toBe(foo[0].bar);
+        });
+
+        it('should test clone with a Date', () => {
+            var foo = new Date(),
+                baz = utils.clone(foo, true);
+
+            expect(baz).toEqual(foo);
+            expect(baz).not.toBe(foo);
+        });
+
+        it('should test clone with a RegExp', () => {
+            var foo = /test/ig,
+                baz = utils.clone(foo);
+
+            expect(baz).toEqual(foo);
+            expect(baz).not.toBe(foo);
+            expect(baz.global).toBe(foo.global);
+            expect(baz.ignoreCase).toBe(foo.ignoreCase);
+        });
+
+        it('should test clone with a RegExpExecArray', () => {
+            var foo = /test/.exec('test'),
+                baz = utils.clone(foo);
+
+            expect(baz).toEqual(foo);
+            expect(baz).not.toBe(foo);
+        });
+
+        it('should test clone with nested Date, RegExp, and RegExpArray', () => {
+            var date = new Date(),
+                regex = /test/,
+                exec = regex.exec('test'),
+                foo = [
+                    { date: date, regex: [regex, exec], exec: exec },
+                    { date: date, regex: [regex, exec], exec: exec },
+                    { date: date, regex: [regex, exec], exec: exec },
+                    { date: date, regex: [regex, exec], exec: exec }
+                ],
+                baz = utils.clone(foo, true);
+
+            expect(baz).toEqual(foo);
+            expect(baz).not.toBe(foo);
+        });
+
+        it('should test clone with a Node', () => {
+            var foo = document.createElement('div'),
+                baz = utils.clone(foo);
+
+            expect(baz).toEqual(foo);
+            expect(baz).not.toBe(foo);
+        });
+
+        it('should test clone with a Function', () => {
+            var foo = () => { },
+                baz = utils.clone(foo);
+
+            expect(baz).toBe(foo);
+        });
+
+        it('should test clone with am Error', () => {
+            var foo = new TypeError('test'),
+                baz = utils.clone(foo);
+            
+            expect(baz).toEqual(foo);
+        });
+
         it('should test forEach with an array', () => {
             var spy = spyOn(utils, 'noop');
 

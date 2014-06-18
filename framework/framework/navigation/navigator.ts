@@ -27,7 +27,7 @@ module plat.navigation {
             this.$BaseViewControlFactory.detach(viewControl);
 
             if (isObject(parameter)) {
-                parameter = deepExtend({}, parameter);
+                parameter = _clone(parameter, true);
             }
 
             this.baseport.controls = [];

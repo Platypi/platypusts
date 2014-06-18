@@ -140,6 +140,13 @@ module tests.expressions.parser {
             fn: 'toBe'
         },
         {
+            name: 'array-notation + alias indexer',
+            returns: 'beans',
+            identifiers: ['arrayTest', '@index'],
+            expression: 'arrayTest[@index]',
+            fn: 'toBe'
+        },
+        {
             name: 'strict equals',
             returns: false,
             identifiers: [],
@@ -506,7 +513,8 @@ module tests.expressions.parser {
                             fn: function (a) {
                                 return 'hi ' + a;
                             }
-                        }
+                        },
+                        '@index': 1
                     });
 
                 expect(parsed.expression).toEqual(test.expression);

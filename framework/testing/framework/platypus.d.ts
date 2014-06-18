@@ -1,5 +1,5 @@
 /**
-* PlatypusTS v0.0.1.9 (http://getplatypi.com)
+* PlatypusTS v0.0.1.10 (http://getplatypi.com)
 * Copyright 2014 Platypi, LLC. All rights reserved.
 *
 * PlatypusTS is licensed under the GPL-3.0 found at
@@ -701,6 +701,7 @@ declare module plat {
         public noop(): void;
         public extend(destination: any, ...sources: any[]): any;
         public deepExtend(destination: any, ...sources: any[]): any;
+        public clone(obj: any, deep?: boolean): any;
         public isObject(obj: any): boolean;
         public isWindow(obj: any): boolean;
         public isDocument(obj: any): boolean;
@@ -772,6 +773,15 @@ declare module plat {
         * @return {any} The extended destination object.
         */
         deepExtend(destination: any, ...sources: any[]): any;
+        /**
+        * Creates a copy of the passed-in object. If deep is true it will
+        * be a deep copy (duplicate), else nested objects/arrays will be copied by reference
+        * and not duplicated.
+        *
+        * @param obj The object to clone.
+        * @param deep Whether or not it is a deep clone.
+        */
+        clone(obj: any, deep?: boolean): any;
         /**
         * Takes in anything and determines if it is a type of Object.
         *
@@ -7891,8 +7901,9 @@ declare module plat {
             *
             * @param element The Element to be animated.
             * @param key The identifier specifying the type of animation.
+            * @param options Specified options for the animation.
             */
-            public animate(element: Element, key: string): IAnimationPromise;
+            public animate(element: Element, key: string, options?: any): IAnimationPromise;
             private __parentIsAnimating(element);
             private __setAnimationId(element, animationInstance);
             private __stopChildAnimations(element, id);
@@ -7911,8 +7922,9 @@ declare module plat {
             *
             * @param element The Element to be animated.
             * @param key The identifier specifying the type of animation.
+            * @param options Specified options for the animation.
             */
-            animate(element: Element, key: string): IAnimationPromise;
+            animate(element: Element, key: string, options?: any): IAnimationPromise;
         }
         /**
         * Describes an object representing a currenlty animated element.
@@ -7920,6 +7932,9 @@ declare module plat {
         interface IAnimatedElement {
             /**
             * The function called at the conclusion of the animation.
+            *
+            * @param reanimated Specifies whether the element is being reanimated while
+            * in a current animation.
             */
             animationEnd: (reanimated?: boolean) => void;
             /**
@@ -8041,6 +8056,10 @@ declare module plat {
             * Contains DOM helper methods for manipulating this control's element.
             */
             public dom: IDom;
+            /**
+            * Specified options for the animation.
+            */
+            public options: any;
             private __resolve;
             /**
             * A function for initializing the animation or any of its properties before start.
@@ -8068,8 +8087,9 @@ declare module plat {
             * to resolve when finished.
             *
             * @param element The element on which the animation will occur.
+            * @param options Specified options for the animation.
             */
-            public _init(element: Element): IAnimationPromise;
+            public _init(element: Element, options?: any): IAnimationPromise;
         }
         /**
         * Describes an object representing a single animation for a single element.
@@ -8083,6 +8103,10 @@ declare module plat {
             * Contains DOM helper methods for manipulating this control's element.
             */
             dom: IDom;
+            /**
+            * Specified options for the animation.
+            */
+            options: any;
             /**
             * A function for initializing the animation or any of its properties before start.
             */
@@ -10207,4 +10231,7 @@ declare module plat {
     interface IRemoveListener {
         (): void;
     }
+}
+declare module 'plat' {
+    export = plat;
 }

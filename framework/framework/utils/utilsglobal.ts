@@ -33,6 +33,9 @@ function extend(destination: any, ...sources: any[]): any {
                 } else if (isDate(property)) {
                     destination[key] = new Date(property.getTime());
                     return;
+                } else if (isRegExp(property)) {
+                    destination[key] = new RegExp((<RegExp>property).source);
+                    return;
                 } else if (isObject(property)) {
                     extend(deep, destination[key] || (destination[key] = {}), property);
                     return;
@@ -47,6 +50,36 @@ function extend(destination: any, ...sources: any[]): any {
 
 function deepExtend(destination: any, ...sources: any[]): any {
     return extend.apply(null, [true, destination].concat(sources));
+}
+
+function _clone(obj: any, deep?: boolean) {
+    if (!isObject(obj)) {
+        return obj;
+    } else if (isDate(obj)) {
+        return new Date((<Date>obj).getTime());
+    } else if (isRegExp(obj)) {
+        return new RegExp((<any>obj));
+    } else if (isNode(obj)) {
+        return (<Node>obj).cloneNode(deep);
+    } else if (isError(obj)) {
+        return new obj.constructor((<Error>obj).message);
+    }
+
+    var type = {};
+
+    if (isArray(obj)) {
+        type = [];
+    }
+
+    if (isBoolean(deep) && deep) {
+        return deepExtend(type, obj);
+    }
+
+    return extend(type, obj);
+}
+
+function isError(obj: any): boolean {
+    return Object.prototype.toString.call(obj) === '[object Error]';
 }
 
 function isObject(obj: any): boolean {

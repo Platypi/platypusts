@@ -90,7 +90,7 @@ module plat.observable {
             delete controls[uid];
 
             if (!isNull(control.context)) {
-                ContextManager.defineProperty(control, 'context', persist ? deepExtend({}, control.context) : null, true, true);
+                ContextManager.defineProperty(control, 'context', persist ? _clone(control.context, true) : null, true, true);
             }
         }
 

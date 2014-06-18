@@ -13,6 +13,10 @@ module plat {
             return extend.apply(null, [true, destination].concat(sources));
         }
 
+        clone(obj: any, deep?: boolean): any {
+            return _clone(obj, deep);
+        }
+
         isObject(obj: any): boolean {
             return isObject(obj);
         }
@@ -177,6 +181,16 @@ module plat {
          * @return {any} The extended destination object.
          */
         deepExtend(destination: any, ...sources: any[]): any;
+
+        /**
+         * Creates a copy of the passed-in object. If deep is true it will 
+         * be a deep copy (duplicate), else nested objects/arrays will be copied by reference
+         * and not duplicated.
+         * 
+         * @param obj The object to clone.
+         * @param deep Whether or not it is a deep clone.
+         */
+        clone(obj: any, deep?: boolean): any;
 
         /**
          * Takes in anything and determines if it is a type of Object.
