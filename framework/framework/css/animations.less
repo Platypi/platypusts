@@ -29,8 +29,7 @@
                 to {
                     opacity: 1;
                 }
-            }
-            & when (@direction = out) {
+            } & when (@direction = out) {
                 from {
                     opacity: 1;
                 }
@@ -49,20 +48,17 @@
                     from {
                         padding-left: -100%;
                     }
-                }
-                & when (@from = right) {
+                } & when (@from = right) {
                     from {
                         padding-left: 100%;
                     }
                 }
-            }
-            & when (@direction = out) {
+            } & when (@direction = out) {
                 & when (@from = left) {
                     to {
                         padding-left: -100%;
                     }
-                }
-                & when (@from = right) {
+                } & when (@from = right) {
                     to {
                         padding-left: 100%;
                     }
@@ -80,8 +76,7 @@
                         padding-left: -100%;
                         opacity: 0;
                     }
-                }
-                & when (@from-to = right) {
+                } & when (@from-to = right) {
                     0% {
                         padding-left: 100%;
                         opacity: 0;
@@ -99,8 +94,7 @@
                 100% {
                     opacity: 1;
                 }
-            }
-            & when (@direction = out) {
+            } & when (@direction = out) {
                 0% {
                     opacity: 1;
                 }
@@ -112,14 +106,12 @@
                 }
                 75% {
                     opacity: 0.1;
-                }
-                & when (@from-to = left) {
+                } & when (@from-to = left) {
                     100% {
                         padding-left: -100%;
                         opacity: 0;
                     }
-                }
-                & when (@from-to = right) {
+                } & when (@from-to = right) {
                     100% {
                         padding-left: 100%;
                         opacity: 0;
