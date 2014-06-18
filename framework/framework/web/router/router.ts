@@ -255,6 +255,9 @@
                 };
                 return;
             } else {
+                if (route[0] === '/') {
+                    route = (<string>route).substr(1);
+                }
                 routeParameters = this._getRouteParameters(route);
                 routeParameters.injector = injector;
                 routeParameters.type = type;
