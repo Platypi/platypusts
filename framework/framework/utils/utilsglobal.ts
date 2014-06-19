@@ -34,7 +34,7 @@ function extend(destination: any, ...sources: any[]): any {
                     destination[key] = new Date(property.getTime());
                     return;
                 } else if (isRegExp(property)) {
-                    destination[key] = new RegExp((<RegExp>property).source);
+                    destination[key] = new RegExp(property);
                     return;
                 } else if (isObject(property)) {
                     extend(deep, destination[key] || (destination[key] = {}), property);
@@ -58,7 +58,7 @@ function _clone(obj: any, deep?: boolean) {
     } else if (isDate(obj)) {
         return new Date((<Date>obj).getTime());
     } else if (isRegExp(obj)) {
-        return new RegExp((<any>obj));
+        return new RegExp(obj);
     } else if (isNode(obj)) {
         return (<Node>obj).cloneNode(deep);
     } else if (isError(obj)) {
