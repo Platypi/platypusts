@@ -54,10 +54,6 @@ module plat.controls {
         setter(): void {
             var expression = (<any>this.attributes)[this.attribute];
 
-            if (isEmpty(expression)) {
-                return;
-            }
-
             postpone(() => {
                 if (!isNode(this.element)) {
                     return;
@@ -119,42 +115,42 @@ module plat.controls {
     }
 
     export class Visible extends SetAttributeControl {
-        private __initialDisplay: string;
-        /**
-         * Obtains the initial visibility of the item 
-         * based on it's initial display.
-         */
-        initialize(): void {
-            var element = this.element;
+        property: string = __Hide;
 
-            if (!isEmpty(element.style.display)) {
-                this.__initialDisplay = element.style.display;
-            } else {
-                var $window = acquire(__Window);
-                this.__initialDisplay = $window.getComputedStyle(element).display;
-            }
+        initialize() {
+            this.__hide();
+        }
 
-            if (this.__initialDisplay === 'none') {
-                this.__initialDisplay = '';
+        setter() {
+            var expression = (<any>this.attributes)[this.attribute];
+
+            postpone(() => {
+                if (!isNode(this.element)) {
+                    return;
+                }
+
+                switch (expression) {
+                    case 'false':
+                    case '0':
+                    case 'null':
+                    case '':
+                        this.__hide();
+                        break;
+                    default:
+                        this.__show();
+                }
+            });
+        }
+
+        private __hide() {
+            if (!this.element.hasAttribute(this.property)) {
+                this.element.setAttribute(this.property, '');
             }
         }
 
-        /**
-         * Evaluates boolean expression and sets the display.
-         */
-        setter(): void {
-            var expression: string = (<any>this.attributes)[this.attribute],
-                style = this.element.style;
-
-            switch (expression) {
-                case 'false':
-                case '0':
-                case 'null':
-                case '':
-                    style.display = 'none';
-                    break;
-                default:
-                    style.display = this.__initialDisplay;
+        private __show() {
+            if (this.element.hasAttribute(this.property)) {
+                this.element.removeAttribute(this.property);
             }
         }
     }
