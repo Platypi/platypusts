@@ -48,7 +48,7 @@
     export interface IErrorEventStatic {
         /**
          * Creates a new ErrorEvent and fires it.
-         *
+         * 
          * @param name The name of the event.
          * @param sender The sender of the event.
          * @param error The error that occurred, resulting in the event.

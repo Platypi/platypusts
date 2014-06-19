@@ -49,7 +49,7 @@ module plat.processing {
     export interface ICommentManagerFactory {
         /**
          * Creates a new CommentManager for the given Comment node.
-         *
+         * 
          * @static
          * @param node The Comment to associate with the new manager.
          * @param parent The parent IElementManager.

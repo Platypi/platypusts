@@ -209,7 +209,7 @@ module plat.controls {
          * @param postpone Whether or not to postpone the event listener
          */
         _addEventListener(event: string, listener?: () => void, postpone?: boolean): void {
-            var listener = listener ||
+            listener = listener ||
                 (!!postpone ? this._postponedEventListener : this._eventListener);
 
             this.addEventListener(this.element, event, listener, false);
@@ -444,9 +444,10 @@ module plat.controls {
 
             var value: any,
                 numberValue: number;
+
             while (length-- > 0) {
                 option = options[length];
-                value = option.value,
+                value = option.value;
                 numberValue = Number(value);
 
                 if (newValue.indexOf(value) !== -1 || (isNumber(numberValue) && newValue.indexOf(numberValue) !== -1)) {

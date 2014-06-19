@@ -15,9 +15,7 @@ module plat.ui {
             var keys = Object.keys(attributes),
                 attributeListeners = this.__listeners,
                 key: string,
-                length = keys.length,
-                parent = control.parent,
-                hasParent = !isNull(parent);
+                length = keys.length;
 
             for (var i = 0; i < length; ++i) {
                 key = keys[i];

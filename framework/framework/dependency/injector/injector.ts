@@ -66,7 +66,6 @@ module plat.dependency {
             var deps: Array<string> = [],
                 length = dependencies.length,
                 dependency: any,
-                injector: Injector<any>,
                 value: string;
 
             for (var i = 0; i < length; ++i) {
@@ -200,8 +199,6 @@ module plat.dependency {
                     dependencies: dependencies.slice(0)
                 }],
                 dependency: string,
-                getDependencies = Injector.getDependencies,
-                convert = Injector.convertDependencies,
                 locate = Injector.__locateInjector,
                 length: number;
 
@@ -289,7 +286,6 @@ module plat.dependency {
 
             var dependencies: Array<IInjector<any>> = this.__dependencies || [],
                 length = dependencies.length,
-                dependency: string,
                 injectable: any;
 
             for (var i = 0; i < length; ++i) {

@@ -50,7 +50,7 @@ module plat.controls {
                 name = this._label;
 
             if (!isNull(rootControl)) {
-                delete (<any>rootControl)[name];
+                deleteProperty(rootControl, name);
             }
         }
     }

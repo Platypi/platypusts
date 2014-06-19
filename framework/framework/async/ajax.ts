@@ -101,7 +101,7 @@ module plat.async {
 
                 var oldValue = $window[jsonpCallback];
                 $window[jsonpCallback] = (response: any) => {
-                    //clean up
+                    // clean up
                     if (isFunction(this.clearTimeout)) {
                         this.clearTimeout();
                     }
@@ -110,13 +110,14 @@ module plat.async {
                     if (!isUndefined(oldValue)) {
                         $window[jsonpCallback] = oldValue;
                     } else {
-                        delete $window[jsonpCallback];
+                        deleteProperty($window, jsonpCallback);
                     }
 
-                    //call callback
+                    // call callback
                     resolve({
                         response: response,
-                        status: 200 // OK
+                        // ok
+                        status: 200
                     });
                 };
 
@@ -124,13 +125,14 @@ module plat.async {
 
                 var timeout = options.timeout;
                 if (isNumber(timeout) && timeout > 0) {
-                    // We first postpone to avoid always timing out when debugging, though this is not
+                    // we first postpone to avoid always timing out when debugging, though this is not
                     // a foolproof method.
                     this.clearTimeout = postpone(() => {
                         this.clearTimeout = defer(() => {
                             reject(new AjaxError({
                                 response: 'Request timed out in ' + timeout + 'ms for ' + url,
-                                status: 408 // Request Timeout
+                                // request timeout
+                                status: 408
                             }));
                             $window[jsonpCallback] = noop;
                         }, timeout - 1);
@@ -141,7 +143,7 @@ module plat.async {
 
         /**
          * A wrapper for the XMLHttpRequest's onReadyStateChanged callback.
-         *
+         * 
          * @return {bool} Waits for the readyState to be complete and then 
          * return true in the case of a success and false in the case of 
          * an error.
@@ -149,8 +151,7 @@ module plat.async {
         _xhrOnReadyStateChange(): boolean {
             var xhr = this.xhr;
             if (xhr.readyState === 4) {
-                var status = xhr.status,
-                    responseType = xhr.responseType;
+                var status = xhr.status;
 
                 if (status === 0) {
                     var response = xhr.response;
@@ -161,7 +162,7 @@ module plat.async {
                     }
 
                     // file protocol issue **Needs to be tested more thoroughly**
-                    // OK if response is not empty, Not Found otherwise
+                    // ok if response is not empty, Not Found otherwise
                     if (!isEmpty(response)) {
                         return true;
                     }
@@ -181,7 +182,7 @@ module plat.async {
 
         /**
          * The function that initializes and sends the XMLHttpRequest.
-         *
+         * 
          * @return {Promise<IAjaxResponse>} A promise that fulfills with the 
          * formatted IAjaxResponse and rejects if there is a problem with an 
          * IAjaxError.
@@ -220,7 +221,8 @@ module plat.async {
                 xhr.open(
                     method.toUpperCase(),
                     url,
-                    true, // synchronous XHR not supported
+                    // synchronous XHR not supported
+                    true,
                     options.user,
                     options.password
                     );
@@ -282,7 +284,7 @@ module plat.async {
                                 if (this.__fileSupported) {
                                     // use FormData
                                     data = this.__appendFormData();
-                                    // Do not set the Content-Type header due to modern browsers 
+                                    // do not set the Content-Type header due to modern browsers 
                                     // setting special headers for multipart/form-data
                                     this.__setHeaders();
                                     xhr.send(data);
@@ -323,7 +325,7 @@ module plat.async {
 
                 var timeout = options.timeout;
                 if (isNumber(timeout) && timeout > 0) {
-                    // We first postpone to avoid always timing out when debugging, though this is not
+                    // we first postpone to avoid always timing out when debugging, though this is not
                     // a foolproof method.
                     this.clearTimeout = postpone(() => {
                         this.clearTimeout = defer(() => {
@@ -345,7 +347,7 @@ module plat.async {
         
         /**
          * Returns a promise that is immediately rejected due to an error.
-         *
+         * 
          * @return {Promise<IAjaxResponse>} A promise that immediately rejects 
          * with an IAjaxError
          */
@@ -363,8 +365,8 @@ module plat.async {
         }
         
         /**
-         * The function that formats the response from the XMLHttpRequest
-         *
+         * The function that formats the response from the XMLHttpRequest.
+         * 
          * @param responseType The user designated responseType
          * @param success Signifies if the response was a success
          * @return {IAjaxResponse} The IAjaxResponse to be returned to 
@@ -385,7 +387,7 @@ module plat.async {
 
             if (status === 0) {
                 // file protocol issue **Needs to be tested more thoroughly**
-                // OK if response empty, Not Found otherwise
+                // ok if response empty, Not Found otherwise
                 status = success ? 200 : 404;
             }
 
@@ -427,8 +429,7 @@ module plat.async {
                 keys = Object.keys(data),
                 key: string,
                 val: any,
-                formBuffer: Array<string> = [],
-                formStr = '';
+                formBuffer: Array<string> = [];
 
             while (keys.length > 0) {
                 key = keys.pop();
@@ -601,7 +602,7 @@ module plat.async {
          * Performs either the XmlHttpRequest or the JSONP callback and returns an AjaxPromise. 
          * The Promise is fulfilled or rejected when either the XmlHttpRequest returns or the 
          * JSONP callback is fired.
-         *
+         * 
          * @return {IAjaxPromise} A promise that fulfills/rejects
          * when either the XmlHttpRequest returns (Response statuses >= 200 and < 300 are a success.
          * Other response statuses are failures) or the JSONP callback is fired.
@@ -611,7 +612,7 @@ module plat.async {
         /**
          * Adds the script tag and processes the callback for the JSONP. The AjaxPromise from 
          * the ajax or jsonp call is fulfilled or rejected when the JSONP callback is called.
-         *
+         * 
          * @return {IAjaxPromise} A promise that fulfills with the 
          * JSONP callback and rejects if there is a problem.
          */
@@ -795,7 +796,7 @@ module plat.async {
         }
     }
 
-    // Have to bypass TS flags in order to properly extend Error
+    // have to bypass TS flags in order to properly extend Error
     (<any>AjaxError).prototype = Error.prototype;
 
     /**

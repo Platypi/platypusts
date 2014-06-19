@@ -253,7 +253,7 @@ module plat {
         /**
          * Registers a listener for a routeChanged event. The listener will be called when a routeChange event 
          * is propagating over the app. Any number of listeners can exist for a single event name.
-         *
+         * 
          * @param eventName='routeChange' This specifies that the listener is for a routeChange event.
          * @param listener The method called when the routeChange is fired. The route argument will contain 
          * a parsed route.
@@ -346,7 +346,7 @@ module plat {
         /**
          * Kicks off compilation of the DOM from the specified node. If no node is specified,
          * the default start node is document.body.
-         *
+         * 
          * @param node The node at which DOM compilation begins.
          */
         load(node?: Node): void;
@@ -453,7 +453,7 @@ module plat {
         /**
          * Registers a listener for a routeChanged event. The listener will be called when a routeChange event 
          * is propagating over the app. Any number of listeners can exist for a single event name.
-         *
+         * 
          * @param eventName='routeChange' This specifies that the listener is for a routeChange event.
          * @param listener The method called when the routeChange is fired. The route argument will contain 
          * a parsed route.

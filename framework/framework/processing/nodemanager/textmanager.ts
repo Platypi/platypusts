@@ -110,12 +110,8 @@ module plat.processing {
          * the node value.
          */
         _setText(node: Node, control: ui.ITemplateControl, expressions: Array<expressions.IParsedExpression>): void {
-            var control = control || <ui.ITemplateControl>{},
-                value: any;
-
-            value = NodeManager.build(expressions, control);
-
-            node.nodeValue = value;
+            control = control || <ui.ITemplateControl>{};
+            node.nodeValue = NodeManager.build(expressions, control);
         }
     }
 

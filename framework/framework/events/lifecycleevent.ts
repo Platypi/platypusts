@@ -42,7 +42,7 @@
     export interface ILifecycleEventStatic {
         /**
          * Creates a new LifecycleEvent and fires it.
-         *
+         * 
          * @param name The name of the event.
          * @param sender The sender of the event.
          */

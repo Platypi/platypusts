@@ -212,7 +212,7 @@
                 this.__history.push(matchedRoute.route.path);
             }
 
-            var event = this.$NavigationEventStatic.dispatch('routeChanged', this, {
+            this.$NavigationEventStatic.dispatch('routeChanged', this, {
                 parameter: matchedRoute.route,
                 target: matchedRoute.injector,
                 type: matchedRoute.type,

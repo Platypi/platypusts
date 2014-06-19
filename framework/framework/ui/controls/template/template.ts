@@ -43,8 +43,7 @@ module plat.ui.controls {
          * Initializes the creation of the template.
          */
         initialize(): void {
-            var templateControlCache = this.__templateControlCache,
-                id = this._id = this.options.value.id,
+            var id = this._id = this.options.value.id,
                 options = this.options.value;
 
             if (isNull(id)) {

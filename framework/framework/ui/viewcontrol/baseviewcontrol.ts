@@ -74,7 +74,7 @@
         /**
          * Detaches a ViewControl. Disposes its children, but does not dispose the ViewControl.
          * Useful for the Navigator when storing the ViewControl in history.
-         *
+         * 
          * @static
          * @param control The control to be detached.
          */
@@ -90,7 +90,7 @@
 
         /**
          * Returns a new instance of an IViewControl.
-         *
+         * 
          * @static
          */
         getInstance(): IBaseViewControl;

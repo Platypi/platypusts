@@ -1,7 +1,8 @@
-﻿var /**
+﻿/* tslint:disable:no-unused-variable */
+    /*
      * Injectables
      */
-    __AppStatic = '$AppStatic',
+var __AppStatic = '$AppStatic',
     __App = '$App',
     __Http = '$Http',
     __HttpConfig = '$HttpConfig',
@@ -127,3 +128,4 @@
     __CLASS = 'class',
     __CSS = 'css',
     __JS = 'js';
+/* tslint:enable:no-unused-variable */

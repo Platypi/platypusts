@@ -97,10 +97,10 @@
                 }
 
                 removeClass(<HTMLElement>element, __Animating);
-                delete elements[id];
-                delete plat.animation;
+                deleteProperty(elements, id);
+                deleteProperty(plat, 'animation');
                 if (isEmpty(plat)) {
-                    delete (<ICustomElement>element).__plat;
+                    deleteProperty(element, '__plat');
                 }
             };
 

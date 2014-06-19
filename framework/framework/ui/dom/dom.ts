@@ -109,7 +109,7 @@ module plat.ui {
          * Takes a Node Array and either adds it to the passed in Node,
          * or creates a DocumentFragment and adds the NodeList to the
          * Fragment.
-         *
+         * 
          * @param nodeList A Node Array to be appended to the root/DocumentFragment
          * @param root An optional Node to append the nodeList.
          * 
@@ -120,7 +120,7 @@ module plat.ui {
          * Takes a NodeList and either adds it to the passed in Node,
          * or creates a DocumentFragment and adds the NodeList to the
          * Fragment.
-         *
+         * 
          * @param nodeList A NodeList to be appended to the root/DocumentFragment
          * @param root An optional Node to append the nodeList.
          * 
@@ -130,21 +130,21 @@ module plat.ui {
 
         /**
          * Clears a DOM Node by removing all of its childNodes.
-         *
+         * 
          * @param node The DOM Node to clear.
          */
         clearNode(node: Node): void;
 
         /**
          * Removes all the Nodes in the Array from the parent Node.
-         *
+         * 
          * @param nodeList The Node Array to remove from the parent Node.
          * @param parent The parent Node used to remove the nodeList.
          */
         clearNodeBlock(nodeList: Array<Node>, parent?: Node): void;
         /**
          * Removes all the Nodes in the NodeList from the parent Node.
-         *
+         * 
          * @param nodeList The NodeList to remove from the parent Node.
          * @param parent The parent Node used to remove the nodeList.
          */
@@ -154,41 +154,41 @@ module plat.ui {
          * Sets the innerHTML of a Node. Can take in a Node rather than an Element
          * because it does not use innerHTML on the passed-in Node (it appends its
          * childNodes).
-         *
+         * 
          * @param node The Node to set innerHTML.
          * @param html HTML string to be put inside the node.
-         *
+         * 
          * @return {Node} The same node passed in, with innerHTML set.
          */
         setInnerHtml(node: Node, html: string): Node;
 
         /**
          * Inserts a list of Nodes before the designated end Node.
-         *
+         * 
          * @param parent The parent node into which to insert nodes.
          * @param nodes The Node Array to insert into the parent.
          * @param endNode An optional endNode to use to insert nodes.
-         *
+         * 
          * @return {Array<Node>} An Array copy of nodes.
          */
         insertBefore(parent: Node, nodes: Array<Node>, endNode?: Node): Array<Node>;
         /**
          * Inserts a list of Nodes before the designated end Node.
-         *
+         * 
          * @param parent The parent node into which to insert nodes.
          * @param nodes The NodeList to insert into the parent.
          * @param endNode An optional endNode to use to insert nodes.
-         *
+         * 
          * @return {Array<Node>} An Array copy of nodes.
          */
         insertBefore(parent: Node, nodes: NodeList, endNode?: Node): Array<Node>;
         /**
          * Inserts a list of Nodes before the designated end Node.
-         *
+         * 
          * @param parent The parent node into which to insert nodes.
          * @param fragment The DocumentFragment to insert into the parent.
          * @param endNode An optional endNode to use to insert the fragment.
-         *
+         * 
          * @return {Array<Node>} An Array copy of the fragment's childNodes.
          */
         insertBefore(parent: Node, fragment: DocumentFragment, endNode?: Node): Array<Node>;
@@ -196,7 +196,7 @@ module plat.ui {
         /**
          * Takes the child nodes of the given node and places them above the node
          * in the DOM. Then removes the given node.
-         *
+         * 
          * @param node The Node to replace.
          * 
          * @return {Array<Node>} A Node Array that represents the childNodes of the
@@ -207,7 +207,7 @@ module plat.ui {
         /**
          * Takes the childNodes of the given element and appends them to the newElement.
          * Then replaces the element in its parent's tree with the newElement.
-         *
+         * 
          * @param node The Node to remove from its parent.
          * @param newElement The HTMLElement populate with childNodes and add to the
          * element's parent.
@@ -218,7 +218,7 @@ module plat.ui {
         /**
          * Takes the childNodes of the given element and appends them to the newElement.
          * Then replaces the element in its parent's tree with the newElement.
-         *
+         * 
          * @param node The Node to remove from its parent.
          * @param newElement The Element populate with childNodes and add to the
          * element's parent.
@@ -229,7 +229,7 @@ module plat.ui {
         /**
          * Takes the childNodes of the given Node and appends them to the newNode.
          * Then replaces the Node in its parent's tree with the newNode.
-         *
+         * 
          * @param node The Node to remove from its parent.
          * @param newElement The Node populate with childNodes and add to the
          * node's parent.
@@ -241,7 +241,7 @@ module plat.ui {
         /**
          * Takes in a string representing innerHTML and returns a DocumentFragment
          * containing the serialized DOM.
-         *
+         * 
          * @param html The DOM string.
          * 
          * @return {DocumentFragment} The serialized DOM.
@@ -252,7 +252,7 @@ module plat.ui {
          * Takes in a startNode and endNode, each having the same parentNode.
          * Removes every node in between the startNode.  If endNode is not specified,
          * DOM will be removed until the end of the parentNode's children.
-         *
+         * 
          * @param startNode The starting node, which will not be removed.
          * @param endNode The ending node, which will not be removed.
          */
@@ -263,7 +263,7 @@ module plat.ui {
          * Removes every node in between the startNode and endNode as well as
          * the startNode and the endNode.  If endNode is not specified, DOM
          * will be removed until the end of the parentNode's children.
-         *
+         * 
          * @param startNode The first node to remove.
          * @param endNode The last node to remove.
          */

@@ -98,7 +98,6 @@ module plat.processing {
          */
         static locateResources(node: Node): HTMLElement {
             var childNodes: Array<Node> = Array.prototype.slice.call(node.childNodes),
-                length = childNodes.length,
                 childNode: Node;
 
             while (childNodes.length > 0) {
@@ -114,7 +113,7 @@ module plat.processing {
 
         /**
          * Clones an ElementManager with a new element.
-         *
+         * 
          * @static
          * @param sourceManager The original IElementManager.
          * @param parent The parent IElementManager for the new clone.
@@ -200,7 +199,7 @@ module plat.processing {
         /**
          * Creates new nodes for an INodeMap corresponding to the element associated with the nodeMap or
          * the passed-in element.
-         *
+         * 
          * @static
          * @param nodeMap The nodeMap to populate with attribute nodes.
          * @param parent The parent control for the new attribute controls.
@@ -553,7 +552,7 @@ module plat.processing {
                 childNodeOffset = 0;
 
             for (var i = 0; i < length; ++i) {
-                //clone children
+                // clone children
                 childNodeOffset += children[i].clone(childNodes[childNodeOffset], clonedManager);
             }
 
@@ -574,8 +573,7 @@ module plat.processing {
                 controlNode = nodeMap.uiControlNode,
                 control: ui.ITemplateControl,
                 hasAttributeControl = nodeMap.hasControl,
-                hasUiControl = !isNull(controlNode),
-                replaceElement = false;
+                hasUiControl = !isNull(controlNode);
 
             if (hasUiControl) {
                 this._populateUiControl();
@@ -598,10 +596,7 @@ module plat.processing {
                 controlNode = nodeMap.uiControlNode,
                 uiControl: ui.ITemplateControl,
                 nodes = nodeMap.nodes,
-                node: INode,
                 controls: Array<IControl> = [],
-                control: IControl,
-                attributes = nodeMap.attributes,
                 hasParent = !isNull(parent),
                 getManager = this.$ContextManagerStatic.getManager,
                 contextManager: observable.IContextManager,
@@ -961,7 +956,7 @@ module plat.processing {
          */
         _initializeControl(uiControl: ui.ITemplateControl, template: DocumentFragment): void {
             var element = this.nodeMap.element,
-                //have to check if null since isNull checks for undefined case
+                // have to check if null since isNull checks for undefined case
                 replaceElement = this.replace,
                 hasOwnContext = uiControl.hasOwnContext,
                 hasParent = !isNull(uiControl.parent),
@@ -1091,7 +1086,7 @@ module plat.processing {
          * Determines if the associated Element has controls that need to be instantiated or Attr nodes
          * containing text markup. If controls exist or markup is found a new ElementManager will be created,
          * else an empty INodeManager will be added to the Array of INodeManagers.
-         *
+         * 
          * @static
          * @param element The Element to use to identifier markup and controls.
          * @param parent The parent ui.ITemplateControl used for context inheritance.
@@ -1101,7 +1096,7 @@ module plat.processing {
         /**
          * Creates new nodes for an INodeMap corresponding to the element associated with the nodeMap or
          * the passed-in element.
-         *
+         * 
          * @static
          * @param nodeMap The nodeMap to populate with attribute nodes.
          * @param parent The parent control for the new attribute controls.
@@ -1115,7 +1110,7 @@ module plat.processing {
 
         /**
          * Clones a UI Control with a new nodeMap.
-         *
+         * 
          * @static
          * @param sourceMap The source INodeMap used to clone the UI Control
          * @param parent The parent control of the clone.
@@ -1124,7 +1119,7 @@ module plat.processing {
 
         /**
          * Clones an ElementManager with a new element.
-         *
+         * 
          * @static
          * @param sourceManager The original IElementManager.
          * @param parent The parent IElementManager for the new clone.
@@ -1138,7 +1133,7 @@ module plat.processing {
         /**
          * Looks through the Node's child nodes to try and find any
          * defined Resources in a <plat-resources> tags.
-         *
+         * 
          * @static
          * @param node The node who may have Resources as a child node.
          */
@@ -1212,8 +1207,8 @@ module plat.processing {
          * used for transclusion, it can't rely on one INodeManager array.
          * 
          * @param parent The parent IElementManager.
-	     * @param dontInitialize Specifies whether or not the initialize method should 
-	     * be called for a control.
+         * @param dontInitialize Specifies whether or not the initialize method should 
+         * be called for a control.
          * @param dontInitialize Specifies whether or not the initialize method should 
          * be called for a control.
          */

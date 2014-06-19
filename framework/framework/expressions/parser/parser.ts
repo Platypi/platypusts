@@ -55,7 +55,7 @@ module plat.expressions {
                     token = tokenObj.val,
                     args = tokenObj.args;
 
-                //check if its an accessor
+                // check if its an accessor
                 if (isAccessor(token)) {
                     switch (token) {
                         case '()':
@@ -66,11 +66,11 @@ module plat.expressions {
                             tempIdentifiers.push('.');
                             break;
                         default:
-                            //handle empty array
+                            // handle empty array
                             if (args < 0) {
                                 codeArray.push('[]');
                                 tempIdentifiers.push('.');
-                                //handle array literal
+                                // handle array literal
                             } else if (args > 0) {
                                 codeArray.push(this.__convertArrayLiteral(args));
                                 tempIdentifiers.push('.');
@@ -79,7 +79,7 @@ module plat.expressions {
                             }
                             break;
                     }
-                    //check if its an operator
+                    // check if its an operator
                 } else if (isOperator(token)) {
                     switch (token) {
                         case '?':
@@ -99,7 +99,7 @@ module plat.expressions {
                     }
                     // its either function, object, or primitive
                 } else {
-                    //potential function or object to index into
+                    // potential function or object to index into
                     if (args < 0) {
                         codeStr = this.__convertFunction(i, token, useLocalContext);
                         // primitive
@@ -130,10 +130,9 @@ module plat.expressions {
             return parsedExpression;
         }
 
-        // PARSE CASES
+        // parse cases
         private __convertPrimitive(index: number, token: string, args: number): string {
-            var tokens = this._tokens,
-                tempIdentifiers = this.__tempIdentifiers;
+            var tempIdentifiers = this.__tempIdentifiers;
 
             if (args > 0) {
                 tempIdentifiers.push('.');
@@ -250,7 +249,7 @@ module plat.expressions {
             return codeStr;
         }
 
-        // ACCESSORS
+        // accessors
         private __handleFunction(index: number, args: number, useLocalContext: boolean): boolean {
             var tokens = this._tokens,
                 identifiers = this.__identifiers,
@@ -299,7 +298,7 @@ module plat.expressions {
                     if (!(lastIndex < 0 || tempIdentifiers[lastIndex] === '.' || identifierFnName === '')) {
                         tempIdentifiers[lastIndex] += '.' + identifierFnName;
                         identifiers.push(tempIdentifiers.pop());
-                        //check fn name is not null, pushed an identifier, and the context is not an array literal
+                        // check fn name is not null, pushed an identifier, and the context is not an array literal
                     } else if (!(identifierFnName === '' ||
                         !pushedIdentifier ||
                         context[0] === '[' ||
@@ -352,7 +351,6 @@ module plat.expressions {
 
             var codeStr = codeArray.pop(),
                 previousToken = tokens[index - 1],
-                indexer: number,
                 identifierIndexer = tempIdentifiers.pop(),
                 hasIdentifierIndexer = !isNull(identifierIndexer),
                 context = codeArray.pop();
@@ -381,7 +379,7 @@ module plat.expressions {
             return useLocalContext;
         }
 
-        // OPERATORS
+        // operators
         private __handleQuestion(): void {
             var identifiers = this.__identifiers,
                 tempIdentifiers = this.__tempIdentifiers,
@@ -450,7 +448,7 @@ module plat.expressions {
             codeArray.push(codeStr);
         }
 
-        // PRIVATE HELPER FUNCTIONS
+        // private helper functions
         private __findInitialContext(context: any, aliases: any, token: string, undefined?: any): any {
             if (token[0] === '@' && aliases !== null && typeof aliases === 'object') {
                 return aliases[token];
@@ -466,7 +464,7 @@ module plat.expressions {
             return context === null ? null : undefined;
         }
 
-        // PROTECTED HELPER FUNCTIONS
+        // protected helper functions
         /**
          * Peek at the next token.
          * 

@@ -89,7 +89,6 @@ module plat.events {
          * @param name The name of the event.
          * @param sender The object that initiated the event.
          * @param direction The event direction this object is using for propagation.
-         *
          * 
          * @see EventManager
          */

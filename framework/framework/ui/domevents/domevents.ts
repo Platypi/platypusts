@@ -544,7 +544,7 @@
             };
         }
 
-        // Gesture handling methods
+        // gesture handling methods
 
         private __handleTap(ev: IPointerEvent): void {
             this.__tapCount++;
@@ -613,10 +613,7 @@
                 return;
             }
 
-            var swipeGesture = this._gestures.$swipe,
-                direction = lastMove.direction,
-                swipeDirectionGesture = swipeGesture + direction,
-                swipeSubscribers = this.__swipeSubscribers,
+            var swipeSubscribers = this.__swipeSubscribers,
                 swipeDomEvent = swipeSubscribers.master,
                 swipeDirectionDomEvent = swipeSubscribers.directional;
 
@@ -663,7 +660,7 @@
             domEvent.trigger(ev);
         }
 
-        // Touch type and element registration
+        // touch type and element registration
 
         private __getTypes(): void {
             var $compat = this.$Compat,
@@ -787,8 +784,7 @@
             }
         }
         private __unregisterElement(element: ICustomElement, type: string): void {
-            var id: string,
-                plat = element.__plat;
+            var plat = element.__plat;
             if (isNull(plat) || isNull(plat.domEvent)) {
                 return;
             }
@@ -803,19 +799,18 @@
 
             domEvent.count--;
             if (domEvent.count === 0) {
-                delete (<any>eventSubscriber)[type];
+                deleteProperty(eventSubscriber, type);
             }
             eventSubscriber.gestureCount--;
 
             if (eventSubscriber.gestureCount === 0) {
-                delete this._subscribers[domEventId];
+                deleteProperty(this._subscribers, domEventId);
                 this.__removeElement(element);
             }
         }
         private __setTouchPoint(ev: IPointerEvent): void {
             var eventType = ev.type,
-                $compat = this.$Compat,
-                noTouchEvents = !$compat.hasTouchEvents;
+                $compat = this.$Compat;
 
             if ($compat.hasPointerEvents) {
                 if (eventType === 'pointerdown') {
@@ -849,7 +844,7 @@
             if (remove) {
                 if (!isUndefined(pointer)) {
                     this.__pointerEvents.splice(this.__pointerEvents.indexOf(pointer), 1);
-                    delete this.__pointerHash[id];
+                    deleteProperty(this.__pointerHash, id);
                 }
             } else {
                 ev.identifier = ev.pointerId;
@@ -863,7 +858,7 @@
             }
         }
 
-        // Event and subscription handling
+        // event and subscription handling
 
         private __findFirstSubscriber(eventTarget: ICustomElement, type: string): IDomEventInstance {
             var plat: ICustomElementProperty,
@@ -920,9 +915,9 @@
             }
 
             var plat = element.__plat;
-            delete plat.domEvent;
+            deleteProperty(plat, 'domEvent');
             if (isEmpty(plat)) {
-                delete element.__plat;
+                deleteProperty(element, '__plat');
             }
 
             // check if no elements are left listening
@@ -985,7 +980,7 @@
             }
         }
 
-        // Utility methods
+        // utility methods
 
         private __getDistance(x1: number, x2: number, y1: number, y2: number): number {
             var x = Math.abs(x2 - x1),
@@ -1056,7 +1051,7 @@
                 return;
             } else if (!isNull($document.styleSheets) && $document.styleSheets.length > 0) {
                 var styleSheet = <CSSStyleSheet>$document.styleSheets[0];
-                styleClasses = DomEvents.config.styleConfig,
+                styleClasses = DomEvents.config.styleConfig;
                 classLength = styleClasses.length;
                 while (classLength-- > 0) {
                     styleSheet.insertRule(this.__createStyle(styleClasses[classLength]), 0);
@@ -1069,7 +1064,7 @@
                 textContent = '';
 
             style.type = 'text/css';
-            styleClasses = DomEvents.config.styleConfig,
+            styleClasses = DomEvents.config.styleConfig;
             classLength = styleClasses.length;
             while (classLength-- > 0) {
                 textContent = this.__createStyle(styleClasses[classLength]) + textContent;

@@ -64,12 +64,13 @@ module plat.processing {
         static findMarkup(text: string): Array<expressions.IParsedExpression> {
             var start: number,
                 end: number,
-                text = text.replace(NodeManager._newLineRegex, ''),
                 parsedExpressions: Array<expressions.IParsedExpression> = [],
                 wrapExpression = NodeManager._wrapExpression,
                 substring: string,
                 expression: expressions.IParsedExpression,
                 $parser = NodeManager.$Parser;
+
+            text = text.replace(NodeManager._newLineRegex, '');
 
             while ((start = text.indexOf(__startSymbol)) !== -1 && (end = text.indexOf(__endSymbol)) !== -1) {
                 if (start !== 0) {
@@ -81,7 +82,7 @@ module plat.processing {
 
                 substring = text.substring(start + 2, end - 2);
 
-                //check for one-time databinding
+                // check for one-time databinding
                 if (substring[0] === '=') {
                     substring = substring.substr(1).trim();
                     expression = $parser.parse(substring);
@@ -193,7 +194,7 @@ module plat.processing {
                 absoluteIdentifier = '';
 
                 if (identifier[0] === '@') {
-                    // We found an alias
+                    // we found an alias
                     split = identifier.split('.');
                     alias = split.shift().substr(1);
 
@@ -214,7 +215,7 @@ module plat.processing {
                         continue;
                     }
                 } else {
-                    // Look on the control.context
+                    // look on the control.context
                     split = identifier.split('.');
 
                     if (!isNull($contextManager.getContext(context, split))) {
@@ -327,7 +328,7 @@ module plat.processing {
          * Given an IParsedExpression array, creates an array of unique identifers
          * to use with binding. This allows us to avoid creating multiple listeners
          * for the identifier and node.
-         *
+         * 
          * @static
          * @param expressions An IParsedExpression array to search for identifiers.
          * @return {Array<string>} An array of identifiers.
@@ -336,7 +337,7 @@ module plat.processing {
 
         /**
          * Determines if a string has the markup notation.
-         *
+         * 
          * @param text The text string in which to search for markup.
          * @return {Boolean} Indicates whether or not there is markup.
          */
@@ -344,7 +345,7 @@ module plat.processing {
 
         /**
          * Given a string, finds markup in the string and creates an IParsedExpression array.
-         *
+         * 
          * @static
          * @param text The text string to parse.
          * @return {Array<IParsedExpression>}
@@ -354,7 +355,7 @@ module plat.processing {
         /**
          * Takes in data context and an IParsedExpression array and outputs a string of the evaluated
          * expressions.
-         *
+         * 
          * @static
          * @param expressions The IParsedExpression array to evaluate.
          * @param control The IControl used to parse the expressions.
@@ -364,7 +365,7 @@ module plat.processing {
 
         /**
          * Registers a listener to be notified of a change in any associated identifier.
-         *
+         * 
          * @static
          * @param identifiers An Array of identifiers to observe.
          * @param control The control associated to the identifiers.

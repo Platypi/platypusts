@@ -1,3 +1,4 @@
+/* tslint:disable:no-unused-variable */
 /**
  * An object used to create ITokenDetails for every operator.
  */
@@ -310,3 +311,4 @@ function isOperator(key: string): boolean {
 function isKeyword(key: string): boolean {
     return !isUndefined(KEYWORDS[key]);
 }
+/* tslint:enable:no-unused-variable */

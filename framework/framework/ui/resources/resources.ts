@@ -299,7 +299,7 @@ module plat.ui {
                 }
             }
 
-            delete Resources.__observableResourceRemoveListeners[uid];
+            deleteProperty(Resources.__observableResourceRemoveListeners, uid);
         }
 
         private static __controlResources = ['control', 'context', 'root', 'rootContext'];
@@ -349,7 +349,6 @@ module plat.ui {
 
             var keys = Object.keys(resources),
                 key: string,
-                injector: dependency.IInjector<any>,
                 length = keys.length;
 
             for (var i = 0; i < length; ++i) {
@@ -408,7 +407,7 @@ module plat.ui {
         /**
          * Populates an IResource value if necessary, and adds it to the given
          * control's resources.
-         *
+         * 
          * @static
          * @param control The control for which to create a resource.
          * @param resource The IResource used to set the value.
@@ -418,7 +417,7 @@ module plat.ui {
         /**
          * Adds resource aliases for '@control' and '@context'. The resources are
          * aliases for the control instance and the control.context.
-         *
+         * 
          * @static
          * @param control The control on which to add the resources.
          */
@@ -428,7 +427,7 @@ module plat.ui {
          * Binds the resources in a resource instance. This involves injecting
          * the injectable resources, creating object/observable resources, and
          * binding functions to the associated control's instance.
-         *
+         * 
          * @static
          * @param resourcesInstance The instance of the IResources object.
          */
@@ -449,7 +448,7 @@ module plat.ui {
         /**
          * Parses a resources Element and creates
          * an IObject<IResource> with its element children.
-         *
+         * 
          * @static
          * @param element The resources element to parse.
          * 

@@ -72,8 +72,6 @@ module plat.ui {
         bind(key: string, relativeIdentifier?: number, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
         bind(key: any, relativeIdentifier?: any, resources?: IObject<IResource>): async.IThenable<DocumentFragment> {
             var templatePromise = this.templates[key],
-                control: ITemplateControl = this.control,
-                nodeMap: processing.INodeMap,
                 $exception: IExceptionStatic;
 
             if (isNull(templatePromise)) {
@@ -299,7 +297,7 @@ module plat.ui {
         /**
          * Creates a new instance of BindableTemplates and returns it. If a BindableTemplates is
          * passed in, it will use the properties on the original BindableTemplates.
-         *
+         * 
          * @static
          * @param control The ITemplateControl containing the new BindableTemplate object, used for data context
          * inheritance for templates.

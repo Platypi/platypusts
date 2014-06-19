@@ -1,4 +1,5 @@
-﻿var __nodeNameRegex = /<([\w:]+)/,
+﻿/* tslint:disable:no-unused-variable */
+var __nodeNameRegex = /<([\w:]+)/,
     __option = [1, '<select multiple="multiple">', '</select>'],
     __table = [1, '<table>', '</table>'],
     __tableData = [3, '<table><tbody><tr>', '</tr></tbody></table>'],
@@ -368,3 +369,4 @@ function hasClass(element: HTMLElement, className: string): boolean {
 
     return element.classList.contains(className);
 }
+/* tslint:enable:no-unused-variable */

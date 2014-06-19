@@ -35,7 +35,7 @@ module plat.expressions {
             for (var index = 0; index < length; index++) {
                 char = input[index];
 
-                //space
+                // space
                 if (isSpace(char)) {
                     continue;
                 } else if (isAlphaNumeric(char)) {
@@ -84,7 +84,7 @@ module plat.expressions {
                         default:
                             index = this.__handleOtherOperator(index, char);
                     }
-                    //semicolon throw error
+                    // semicolon throw error
                 } else if (char === ';') {
                     this._throwError('Unexpected semicolon');
                 }
@@ -105,7 +105,7 @@ module plat.expressions {
             return output;
         }
 
-        // ALPHANUMERIC CASE
+        // alphanumeric case
         private __handleAplhaNumeric(index: number, char: string): number {
             var functionArr: Array<string> = [],
                 isNumberLike = this._isNumeric(char);
@@ -123,7 +123,7 @@ module plat.expressions {
             return index;
         }
 
-        // DELIMITER FUNCTIONS
+        // delimeter functions
         private __handlePeriod(index: number, char: string): number {
             var functionArr: Array<string> = [],
                 outputQueue = this.__outputQueue,
@@ -131,7 +131,7 @@ module plat.expressions {
                 topOutputLength = outputQueue.length - 1,
                 previousChar = this._input[index - 1];
 
-            //if output queue is null OR space or operator or ( or , before .
+            // if output queue is null OR space or operator or ( or , before .
             if (topOutputLength < 0 ||
                 this._isSpace(previousChar) ||
                 !isNull(OPERATORS[previousChar]) ||
@@ -170,7 +170,7 @@ module plat.expressions {
             } else {
                 this._popStackForVal(topOperator, '{', 'Improper object literal');
 
-                //pop left brace off stack
+                // pop left brace off stack
                 operatorStack.shift();
 
                 this.__lastColonChar.pop();
@@ -211,11 +211,11 @@ module plat.expressions {
 
                 this._popStackForVal(topOperator, '[', 'Brackets mismatch');
 
-                //pop left bracket off stack
+                // pop left bracket off stack
                 operatorStack.shift();
 
                 this.__lastCommaChar.pop();
-                //check if function on top of stack
+                // check if function on top of stack
                 outputQueue.push({ val: '[]', args: isEmptyArray ? -1 : lastArgCountObj.num + 1 });
             }
         }
@@ -249,12 +249,12 @@ module plat.expressions {
             } else {
                 this._popStackForVal(topOperator, '(', 'Parentheses mismatch');
 
-                //pop left parenthesis off stack
+                // pop left parenthesis off stack
                 operatorStack.shift();
 
                 this.__lastCommaChar.pop();
 
-                //check if function on top of stack
+                // check if function on top of stack
                 var previousParen = this.__previousChar === '(';
                 if (!isNull(localArgCountObj) &&
                     this.__removeFnFromStack(previousParen ? localArgCountObj.num : localArgCountObj.num + 1)) {
@@ -271,7 +271,7 @@ module plat.expressions {
                     length = argCountArray.length;
 
                 if (length > 0) {
-                    //increment deepest fn count (don't need to increment obj count because we increment with colon)
+                    // increment deepest fn count (don't need to increment obj count because we increment with colon)
                     argCountArray[length - 1].num++;
                 } else {
                     this._throwError('Mismatch with ' + lastCommaArg);
@@ -299,7 +299,7 @@ module plat.expressions {
             return str.index;
         }
 
-        // OPERATOR FUNCTIONS
+        // operator functions
         private __handleQuestion(char: string): void {
             this.__lastColonChar.push(char);
             this.__determinePrecedence(char);
@@ -317,7 +317,8 @@ module plat.expressions {
                     this._throwError('Ternary mismatch');
                 } else {
                     ternary--;
-                    lastColonCharArray.pop(); //pop latest colon char off queue
+                    // pop latest colon char off queue
+                    lastColonCharArray.pop();
 
                     this._popStackForVal(topOperator, '?', 'Ternary mismatch');
 
@@ -359,7 +360,7 @@ module plat.expressions {
             }
         }
 
-        // PRIVATE HELPER FUNCTIONS
+        // private helper functions
         private __determineOperator(operator: any): ITokenDetails {
             switch (operator) {
                 case '+':
@@ -443,7 +444,7 @@ module plat.expressions {
             return atLeastOne;
         }
 
-        // PROTECTED HELPER FUNCTIONS
+        // protected helper functions
         /**
          * Determines character type
          * 
@@ -492,7 +493,7 @@ module plat.expressions {
                 input = this._input;
 
             while ((++index < input.length) && ch !== '') {
-                ch = input[index],
+                ch = input[index];
                 fn = char + ch;
 
                 if (isOperator(fn)) {

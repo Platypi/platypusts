@@ -58,7 +58,7 @@ module plat.observable {
 
             if (!isNull(manager)) {
                 manager.dispose();
-                delete managers[uid];
+                deleteProperty(managers, uid);
             }
 
             var keys = Object.keys(identifiers),
@@ -87,7 +87,7 @@ module plat.observable {
                 remove(keys[i], uid);
             }
 
-            delete controls[uid];
+            deleteProperty(controls, uid);
 
             if (!isNull(control.context)) {
                 ContextManager.defineProperty(control, 'context', persist ? _clone(control.context, true) : null, true, true);
@@ -105,7 +105,7 @@ module plat.observable {
             var listeners = ContextManager.observedArrayListeners[absoluteIdentifier];
 
             if (!isNull(listeners)) {
-                delete listeners[uid];
+                deleteProperty(listeners, uid);
             }
         }
 
@@ -218,7 +218,7 @@ module plat.observable {
                     continue;
                 }
 
-                delete identifiers[identifier];
+                deleteProperty(identifiers, identifier);
             }
         }
 
@@ -290,7 +290,6 @@ module plat.observable {
 
             var split = absoluteIdentifier.split('.'),
                 key = split.pop(),
-                path: string,
                 context = this.context,
                 hasIdentifier = this._hasIdentifier(absoluteIdentifier),
                 hasObservableListener = !isNull(observableListener),
@@ -340,7 +339,7 @@ module plat.observable {
                 };
             }
 
-            //check if value is defined and context manager hasn't seen this identifier
+            // check if value is defined and context manager hasn't seen this identifier
             if (!hasIdentifier) {
                 if (isArray(context) && key === 'length') {
                     var removeArrayObserve = this.observe(join, {
@@ -483,8 +482,7 @@ module plat.observable {
          * @param oldRootContext The old context.
          */
         _getValues(split: Array<string>, newRootContext: any, oldRootContext: any): { newValue: any; oldValue: any; } {
-            var length = split.length,
-                property: string,
+            var property: string,
                 doNew = true,
                 doOld = true;
 
@@ -557,7 +555,7 @@ module plat.observable {
                 oldChild: any;
 
             if (length === 0) {
-                delete this.__identifierHash[identifier];
+                deleteProperty(this.__identifierHash, identifier);
                 return;
             }
 
@@ -657,7 +655,7 @@ module plat.observable {
             var callbackObjects = ContextManager.observedArrayListeners[absoluteIdentifier],
                 _this = this;
 
-            // We can't use a fat-arrow function here because we need the array context.
+            // we can't use a fat-arrow function here because we need the array context.
             return function observedArrayFn(...args: any[]) {
                 var oldArray = this.slice(0),
                     returnValue: any,
@@ -725,8 +723,8 @@ module plat.observable {
             }
 
             if (isEmpty(this.__identifiers[identifier])) {
-                delete this.__identifierHash[identifier];
-                delete this.__contextObjects[identifier];
+                deleteProperty(this.__identifierHash, identifier);
+                deleteProperty(this.__contextObjects, identifier);
             }
         }
 
@@ -756,7 +754,7 @@ module plat.observable {
             this.__contextObjects[identifier] = value;
 
             if (isUndefined(value)) {
-                delete this.__contextObjects[identifier];
+                deleteProperty(this.__contextObjects, identifier);
             }
 
             if (isNull(observableListeners)) {
@@ -900,7 +898,7 @@ module plat.observable {
 
     register.injectable(__ContextManagerStatic, IContextManagerStatic, null, __STATIC);
 
-        /**
+    /**
      * The external interface for the '$ContextManagerStatic' injectable.
      */
     export interface IContextManagerStatic {
@@ -999,7 +997,7 @@ module plat.observable {
         /**
          * Ensures that an identifier path will exist on a given control. Will create
          * objects/arrays if necessary.
-         *
+         * 
          * @static
          * @param control The control on which to create the context.
          * @param identifier The period-delimited identifier string used to create

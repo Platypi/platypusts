@@ -119,8 +119,7 @@ module plat.async {
             }
 
             return new Promise<any>((resolve: (value: any) => any, reject: (error: any) => any) => {
-                var results: Array<any> = [],
-                    promise: Promise<any>;
+                var promise: Promise<any>;
 
                 for (var i = 0; i < promises.length; i++) {
                     promise = promises[i];
@@ -494,7 +493,7 @@ module plat.async {
     var process: any = process,
         scheduleFlush: () => void;
 
-    // Decide what async method to use to triggering processing of queued callbacks:
+    // decide what async method to use to triggering processing of queued callbacks:
     if (typeof process !== 'undefined' && {}.toString.call(process) === '[object process]') {
         scheduleFlush = useNextTick();
     } else if (BrowserMutationObserver) {
@@ -557,7 +556,7 @@ module plat.async {
          * returned promise is an array containing the fulfillment result arguments
          * in-order. The rejection argument is the rejection argument of the
          * first-rejected promise.
-         *
+         * 
          * @param promises An array of promises, although every argument is potentially
          * cast to a promise meaning not every item in the array needs to be a promise.
          */
@@ -568,7 +567,7 @@ module plat.async {
          * returned promise is an array containing the fulfillment result arguments
          * in-order. The rejection argument is the rejection argument of the
          * first-rejected promise.
-         *
+         * 
          * @param promises An array of objects, if an object is not a promise, it will be cast.
          */
         all<R>(promises: Array<R>): IThenable<Array<R>>;
@@ -576,7 +575,7 @@ module plat.async {
         /**
          * Creates a promise that fulfills to the passed in object. If the
          * passed-in object is a promise it returns the promise.
-         *
+         * 
          * @param object The object to cast to a Promise.
          */
         cast<R>(object?: R): IThenable<R>;
@@ -584,14 +583,14 @@ module plat.async {
         /**
          * Returns a promise that fulfills as soon as any of the promises fulfill,
          * or rejects as soon as any of the promises reject (whichever happens first).
-         *
+         * 
          * @param promises An Array of promises to 'race'.
          */
         race<R>(promises: Array<IThenable<R>>): IThenable<R>;
         /**
          * Returns a promise that fulfills as soon as any of the promises fulfill,
          * or rejects as soon as any of the promises reject (whichever happens first).
-         *
+         * 
          * @param promises An Array of anything to 'race'. Objects that aren't promises will
          * be cast.
          */

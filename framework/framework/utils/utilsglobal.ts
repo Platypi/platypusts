@@ -1,4 +1,5 @@
-﻿var __nativeIsArray = !!Array.isArray,
+﻿/* tslint:disable:no-unused-variable */
+var __nativeIsArray = !!Array.isArray,
     __uids__: plat.IObject<Array<string>> = {};
 
 function noop(): void { }
@@ -320,19 +321,19 @@ function uniqueId(prefix?: string): string {
 
     while (index--) {
         charCode = puid[index].charCodeAt(0);
-        //'9'
+        // '9'
         if (charCode === 57) {
             puid[index] = 'A';
             return join();
         }
 
-        //'Z'
+        // 'Z'
         if (charCode === 90) {
             puid[index] = 'a';
             return join();
         }
 
-        //'z'
+        // 'z'
         if (charCode === 122) {
             puid[index] = '0';
         } else {
@@ -364,3 +365,14 @@ function camelCase(str: string): string {
         (match: string, delimiter?: string, char?: string, index?: number)
             => index ? char.toUpperCase() : char);
 }
+
+function deleteProperty(obj: any, property: number): any;
+function deleteProperty(obj: any, property: string): any;
+function deleteProperty(obj: any, property: any): any {
+    /* tslint:disable:no-unused-expression */
+    delete obj[property];
+    /* tslint:enable:no-unused-expression */
+
+    return obj;
+}
+/* tslint:enable:no-unused-variable */

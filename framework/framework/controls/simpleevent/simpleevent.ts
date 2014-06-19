@@ -165,7 +165,6 @@ module plat.controls {
         _findAliases(arguments: Array<string>): Array<string> {
             var length = arguments.length,
                 arg: string,
-                alias: string,
                 exec: RegExpExecArray,
                 aliases: IObject<boolean> = {},
                 $regex = this.$Regex;

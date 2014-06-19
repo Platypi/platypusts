@@ -76,7 +76,7 @@
 
         /**
          * Finds the arguments in a method expression
-         *
+         * 
          * @example
          *   // outputs ["('foo', 'bar', 'baz')", "'foo', 'bar', 'baz'"]
          *   exec("myFunction('foo', 'bar', 'baz')");
@@ -86,11 +86,11 @@
         /**
          * Given a string, finds the root alias name if that string is an
          * alias path.
-         *
+         * 
          * @example
          *   // outputs ['context']
          *   exec('@context.foo');
-         *
+         * 
          * @example
          *   // outputs null
          *   exec('@context');
@@ -99,11 +99,11 @@
 
         /**
          * Finds optional parameters in a route string.
-         *
+         * 
          * @example
          *   // outputs ['(/foo)', '/foo']
          *   exec('(/foo)/bar');
-         *
+         * 
          * @example
          *  // outputs ['(/foo)', '/foo']
          *  exec('(/foo))');
@@ -112,11 +112,11 @@
 
         /**
          * Finds named parameters in a route string.
-         *
+         * 
          * @example
          *   // outputs [':foo']
          *   exec('/:foo/bar')
-         *
+         * 
          *   // outputs [':foo']
          *   exec('(/:foo)/bar');
          */
@@ -124,7 +124,7 @@
 
         /**
          * Finds an alphanumeric wildcard match in a route string.
-         *
+         * 
          * @example
          *   // outputs ['*bar']
          *   exec('/foo/*bar/baz')
@@ -133,7 +133,7 @@
 
         /**
          * Finds invalid characters in a route string.
-         *
+         * 
          * @example
          *  // outputs ['?']
          *  exec('/foo/bar?query=baz');
@@ -159,19 +159,19 @@
          * Finds delimeters for spinal-case, snake_case, and dot.case.
          * useful for converting to camelCase. Also can turn a string
          * into camelCase with space as a delimeter.
-         *
+         * 
          * @example
          *   // outputs ['-o', '-', 'o']
          *   exec('plat-options')
-         *
+         * 
          * @example
          *   // outputs ['.c', '.', 'c']
          *   exec('plat.config')
-         *
+         * 
          * @example
          *   // outputs ['_v', '_', 'v']
          *   exec('plat_var')
-         *
+         * 
          * @example
          *   // outputs [' W', ' ', 'W']
          *   exec('Hello World')

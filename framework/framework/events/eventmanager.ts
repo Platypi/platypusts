@@ -124,7 +124,7 @@ module plat.events {
          * @param uid The uid for which the event listeners will be removed.
          */
         static dispose(uid: string): void {
-            delete EventManager.__eventsListeners[uid];
+            deleteProperty(EventManager.__eventsListeners, uid);
         }
 
         /**
@@ -259,7 +259,7 @@ module plat.events {
                     break;
             }
 
-            delete EventManager.propagatingEvents[name];
+            deleteProperty(EventManager.propagatingEvents, name);
         }
 
         /**
@@ -433,7 +433,7 @@ module plat.events {
         /**
          * Removes all event listeners for a given uid. Useful for garbage collection when
          * certain objects that listen to events go out of scope.
-         *
+         * 
          * @param uid The uid for which the event listeners will be removed.
          */
         dispose(uid: string): void;
@@ -443,7 +443,7 @@ module plat.events {
          * event is propagating over the given uid. Any number of listeners can exist for a single event name. The 
          * listener can chose to cancel the event using ev.cancel(), preventing any navigation as well as further 
          * calls to event listeners.
-         *
+         * 
          * @param uid A unique id to associate with the object registering the listener.
          * @param eventName='beforeNavigate' Specifies that this is a listener for the beforeNavigate event.
          * @param listener The method called when the beforeNavigate event is fired.
@@ -457,7 +457,7 @@ module plat.events {
          * event is propagating over the given uid. Any number of listeners can exist for a single event name.
          * The listener can chose to cancel the event using ev.cancel(), preventing any navigation as well as further 
          * calls to event listeners.
-         *
+         * 
          * @param uid A unique id to associate with the object registering the listener.
          * @param eventName='navigating' Specifies that this is a listener for the navigating event.
          * @param listener The method called when the navigating event is fired.
@@ -470,7 +470,7 @@ module plat.events {
          * Registers a listener for the navigated Event. The listener will be called when the navigated 
          * event is propagating over the given uid. Any number of listeners can exist for a single event name.
          * The listener cannot cancel the event.
-         *
+         * 
          * @param uid A unique id to associate with the object registering the listener.
          * @param eventName='navigated' Specifies that this is a listener for the navigated event.
          * @param listener The method called when the navigated event is fired.
@@ -482,7 +482,7 @@ module plat.events {
         /**
          * Registers a listener for a NavigationEvent. The listener will be called when a NavigationEvent is
          * propagating over the given uid. Any number of listeners can exist for a single event name.
-         *
+         * 
          * @param uid A unique id to associate with the object registering the listener.
          * @param eventName The name of the event to listen to.
          * @param listener The method called when the NavigationEvent is fired.
@@ -494,7 +494,7 @@ module plat.events {
         /**
          * Registers a listener for the ready AlmEvent. The ready event will be called when the app 
          * is ready to start.
-         *
+         * 
          * @param uid A unique id to associate with the object registering the listener.
          * @param eventName='ready' Specifies that the listener is for the ready event.
          * @param listener The method called when the app is ready to start.
@@ -506,7 +506,7 @@ module plat.events {
         /**
          * Registers a listener for the suspend AlmEvent. The listener will be called when an app 
          * is being suspended.
-         *
+         * 
          * @param uid A unique id to associate with the object registering the listener.
          * @param eventName='suspend' Specifies the listener is for the suspend event.
          * @param listener The method called when the suspend event is fired.
@@ -518,7 +518,7 @@ module plat.events {
         /**
          * Registers a listener for the resume AlmEvent. The listener will be called when an app 
          * is being resumeed.
-         *
+         * 
          * @param uid A unique id to associate with the object registering the listener.
          * @param eventName='suspend' Specifies the listener is for the resume event.
          * @param listener The method called when the resume event is fired.
@@ -530,7 +530,7 @@ module plat.events {
         /**
          * Registers a listener for the online AlmEvent. This event fires when the app's network 
          * connection changes to be online.
-         *
+         * 
          * @param uid A unique id to associate with the object registering the listener.
          * @param eventName='online' Specifies the listener is for the online event.
          * @param listener The method called when the online event is fired.
@@ -542,7 +542,7 @@ module plat.events {
         /**
          * Registers a listener for the offline AlmEvent. This event fires when the app's network 
          * connection changes to be offline.
-         *
+         * 
          * @param uid A unique id to associate with the object registering the listener.
          * @param eventName='offline' Specifies the listener is for the offline event.
          * @param listener The method called when the offline is fired.
@@ -554,7 +554,7 @@ module plat.events {
         /**
          * Registers a listener for an AlmEvent. The listener will be called when an AlmEvent is
          * propagating over the given uid. Any number of listeners can exist for a single event name.
-         *
+         * 
          * @param uid A unique id to associate with the object registering the listener.
          * @param eventName The name of the event to listen to.
          * @param listener The method called when the AlmEvent is fired.
@@ -566,7 +566,7 @@ module plat.events {
         /**
          * Registers a listener for a ErrorEvent. The listener will be called when a ErrorEvent is
          * propagating over the given uid. Any number of listeners can exist for a single event name.
-         *
+         * 
          * @param uid A unique id to associate with the object registering the listener.
          * @param eventName The name of the event to listen to.
          * @param listener The method called when the ErrorEvent is fired.
@@ -578,7 +578,7 @@ module plat.events {
         /**
          * Registers a listener for a ErrorEvent. The listener will be called when a ErrorEvent is
          * propagating over the given uid. Any number of listeners can exist for a single event name.
-         *
+         * 
          * @param uid A unique id to associate with the object registering the listener.
          * @param eventName The name of the event to listen to.
          * @param listener The method called when the ErrorEvent is fired.
@@ -590,7 +590,7 @@ module plat.events {
         /**
          * Registers a listener for a DispatchEvent. The listener will be called when a DispatchEvent is
          * propagating over the given uid. Any number of listeners can exist for a single event name.
-         *
+         * 
          * @param uid A unique id to associate with the object registering the listener.
          * @param eventName The name of the event to listen to.
          * @param listener The method called when the DispatchEvent is fired.
@@ -603,52 +603,52 @@ module plat.events {
         /**
          * Looks for listeners to a given event name, and fires the listeners using the specified
          * event direction.
-         *
+         * 
          * @static
          * @param name The name of the event.
          * @param sender The object sending the event.
          * @param direction='up' Equivalent to EventManager.direction.UP.
          * @param args The arguments to send to the listeners.
-         *
+         * 
          * @see EventManager.direction
          */
         dispatch(name: string, sender: any, direction: 'up', args?: Array<any>): void;
         /**
          * Looks for listeners to a given event name, and fires the listeners using the specified
          * event direction.
-         *
+         * 
          * @static
          * @param name The name of the event.
          * @param sender The object sending the event.
          * @param direction='down' Equivalent to EventManager.direction.DOWN.
          * @param args The arguments to send to the listeners.
-         *
+         * 
          * @see EventManager.direction
          */
         dispatch(name: string, sender: any, direction: 'down', args?: Array<any>): void;
         /**
          * Looks for listeners to a given event name, and fires the listeners using the specified
          * event direction.
-         *
+         * 
          * @static
          * @param name The name of the event.
          * @param sender The object sending the event.
          * @param direction='direct' Equivalent to EventManager.direction.DIRECT.
          * @param args The arguments to send to the listeners.
-         *
+         * 
          * @see EventManager.direction
          */
         dispatch(name: string, sender: any, direction: 'direct', args?: Array<any>): void;
         /**
          * Looks for listeners to a given event name, and fires the listeners using the specified
          * event direction.
-         *
+         * 
          * @static
          * @param name The name of the event.
          * @param sender The object sending the event.
          * @param direction The direction in which to send the event.
          * @param args The arguments to send to the listeners.
-         *
+         * 
          * @see EventManager.direction
          */
         dispatch(name: string, sender: any, direction: string, args?: Array<any>): void;

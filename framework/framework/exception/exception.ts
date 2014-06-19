@@ -104,7 +104,7 @@ module plat {
         /**
          * Method for sending a warning to all listeners. Will
          * not throw an error.
-         *
+         * 
          * @param message The message to be sent to the listeners.
          * @param type Denotes the type of fatal exception.
          */
@@ -113,7 +113,7 @@ module plat {
         /**
          * Method for sending a fatal error to all listeners. Will
          * throw an error.
-         *
+         * 
          * @param error The Error to be sent to all the listeners.
          * @param type Denotes the type of fatal exception.
          */
@@ -121,7 +121,7 @@ module plat {
         /**
          * Method for sending a fatal message to all listeners. Will
          * throw an error.
-         *
+         * 
          * @param message The message to be sent to all the listeners.
          * @param type Denotes the type of fatal exception.
          */
@@ -244,8 +244,7 @@ module plat {
         }
 
         if (message instanceof Error) {
-            var temp = message,
-                properties = Object.getOwnPropertyNames(message),
+            var properties = Object.getOwnPropertyNames(message),
                 length = properties.length;
 
             error.message = '';

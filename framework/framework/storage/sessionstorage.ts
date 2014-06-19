@@ -3,7 +3,9 @@ module plat.storage {
      * A class for wrapping SessionStorage as an injectable.
      */
     export class SessionStorage extends BaseStorage implements ISessionStorage {
+        /* tslint:disable:no-unused-variable */
         private __storage: Storage = (<Window>acquire(__Window)).sessionStorage;
+        /* tslint:enable:no-unused-variable */
     }
 
     /**

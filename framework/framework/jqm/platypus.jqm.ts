@@ -28,7 +28,7 @@
     }
 
     function removeBase(): void {
-        // JQM adds a base tag for ajax navigation, we do not want this.
+        // jqm adds a base tag for ajax navigation, we do not want this.
         var base = document.head.querySelector('base');
         if (base) {
             document.head.removeChild(base);

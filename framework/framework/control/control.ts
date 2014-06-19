@@ -135,7 +135,7 @@ module plat {
                     listeners[index]();
                 }
 
-                delete removeListeners[uid];
+                deleteProperty(removeListeners, uid);
             }
         }
 
@@ -730,7 +730,7 @@ module plat {
         /**
          * Finds the ancestor control for the given control that contains the root
          * context.
-         *
+         * 
          * @static
          * @param control The control with which to find the root.
          * @return {ui.ITemplateControl}
@@ -740,7 +740,7 @@ module plat {
 
         /**
          * Given a control, calls the loaded method for the control if it exists.
-         *
+         * 
          * @static
          * @param control The control to load.
          */
@@ -749,7 +749,7 @@ module plat {
         /**
          * Disposes all the necessary memory for a control. Uses specific dispose
          * methods related to a control's constructor if necessary.
-         *
+         * 
          * @static
          * @param control The Control to dispose.
          */
@@ -758,7 +758,7 @@ module plat {
         /**
          * Splices a control from its parent's controls list. Sets the control's parent
          * to null.
-         *
+         * 
          * @static
          * @param control The control whose parent will be removed.
          */
@@ -766,7 +766,7 @@ module plat {
 
         /**
          * Removes all event listeners for a control with the given uid.
-         *
+         * 
          * @static
          * @param control The control having its event listeners removed.
          */
@@ -774,7 +774,7 @@ module plat {
 
         /**
          * Returns a new instance of an IControl.
-         *
+         * 
          * @static
          */
         getInstance(): IControl;

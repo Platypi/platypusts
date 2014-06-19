@@ -12,7 +12,7 @@ module plat.controls {
          * @param control The AttributeControl to dispose.
          */
         static dispose(control: IAttributeControl): void {
-            delete control.templateControl;
+            deleteProperty(control, 'templateControl');
 
             Control.dispose(control);
         }
@@ -50,7 +50,7 @@ module plat.controls {
         /**
          * Method for disposing an attribute control. Removes any
          * necessary objects from the control.
-         *
+         * 
          * @static
          * @param control The AttributeControl to dispose.
          */
@@ -58,7 +58,7 @@ module plat.controls {
 
         /**
          * Returns a new instance of an IAttributeControl.
-         *
+         * 
          * @static
          */
         getInstance(): IAttributeControl;

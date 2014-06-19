@@ -1,5 +1,5 @@
 module plat.controls {
-    // Keyboard events
+    // keyboard events
     export var KeyCodes = {
         'backspace': 8,
         'tab': 9,

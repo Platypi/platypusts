@@ -66,7 +66,7 @@
          * Dispatches an event with the specified target type.
          * 
          * @generic P Corresponds to the type of the event parameter.
-         *
+         * 
          * @param name The name of the event (e.g. 'beforeNavigate')
          * @param sender The object sending the event.
          * @param eventOptions An object implementing INavigationEvent, specifying what all event listeners

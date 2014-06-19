@@ -14,10 +14,10 @@ module plat.navigation {
                 viewControl = state.control,
                 injector: dependency.IInjector<ui.IViewControl>,
                 key: string,
-                options = options || <IBaseNavigationOptions>{},
                 parameter = options.parameter,
                 event: events.INavigationEvent<any>;
 
+            options = options || <IBaseNavigationOptions>{};
             event = this._sendEvent('beforeNavigate', Constructor, null, parameter, options, true);
 
             if (event.canceled) {

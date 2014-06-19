@@ -106,7 +106,7 @@ module plat.storage {
         }
 
         remove(key: string): void {
-            delete internalCaches[this.__id][key];
+            deleteProperty(internalCaches[this.__id], key);
             this.__size--;
         }
 
@@ -117,7 +117,7 @@ module plat.storage {
 
         dispose(): void {
             this.clear();
-            delete caches[this.__id];
+            deleteProperty(caches, this.__id);
         }
     }
 

@@ -172,8 +172,7 @@ module plat.ui {
                 return;
             }
 
-            var parent = control.parent,
-                uid = control.uid,
+            var uid = control.uid,
                 childControls = control.controls,
                 controls = (childControls && childControls.slice(0)),
                 ContextManager = Control.$ContextManagerStatic,
@@ -197,7 +196,7 @@ module plat.ui {
             TemplateControl.$ResourcesFactory.dispose(control);
             TemplateControl.$BindableTemplatesFactory.dispose(control);
 
-            delete TemplateControl.__resourceCache[control.uid];
+            deleteProperty(TemplateControl.__resourceCache, control.uid);
 
             ContextManager.dispose(control);
             events.EventManager.dispose(control.uid);
@@ -435,7 +434,7 @@ module plat.ui {
 
             TemplateControl.$ResourcesFactory.dispose(control, true);
 
-            delete TemplateControl.__resourceCache[control.uid];
+            deleteProperty(TemplateControl.__resourceCache, control.uid);
 
             Control.$ContextManagerStatic.dispose(control, true);
             events.EventManager.dispose(control.uid);
@@ -777,7 +776,7 @@ module plat.ui {
     export interface ITemplateControlFactory {
         /**
          * Evaluates an expression string with a given control and optional context.
-         *
+         * 
          * @static
          * @param expression The expression string (e.g. 'foo + foo').
          * @param control The control used for evaluation context.
@@ -786,7 +785,7 @@ module plat.ui {
         evaluateExpression(expression: string, control?: ITemplateControl, aliases?: any): any;
         /**
          * Evaluates a parsed expression with a given control and optional context.
-         *
+         * 
          * @static
          * @param expression An IParsedExpression created using the plat.expressions.IParser injectable.
          * @param control The control used for evaluation context.
@@ -797,7 +796,7 @@ module plat.ui {
         /**
          * Given a control and Array of aliases, finds the associated resources and builds a context object containing
          * the values. Returns the object.
-         *
+         * 
          * @static
          * @param control The control used as the starting point for finding resources.
          * @param aliases An array of aliases to search for.
@@ -809,7 +808,7 @@ module plat.ui {
          * Starts at a control and searches up its parent chain for a particular resource alias.
          * If the resource is found, it will be returned along with the control instance on which
          * the resource was found.
-         *
+         * 
          * @static
          * @param control The control on which to start searching for the resource alias.
          * @param alias The alias to search for.
@@ -826,7 +825,7 @@ module plat.ui {
 
         /**
          * Loads the control tree depth first (visit children, then visit self).
-         *
+         * 
          * @static
          * @param control The control serving as the root control to load.
          */
@@ -835,7 +834,7 @@ module plat.ui {
         /**
          * Notifies a control that its context has been changed by
          * calling the control.contextChanged method if it exists.
-         *
+         * 
          * @static
          * @param control The control whose context changed.
          * @param newValue The new value of the control's context.
@@ -846,7 +845,7 @@ module plat.ui {
         /**
          * Sets the 'context' resource value on a template control. If the control specifies
          * hasOwnContext, the 'rootContext' resource value will be set.
-         *
+         * 
          * @static
          * @param control The control whose context resources will be set.
          */
@@ -856,7 +855,7 @@ module plat.ui {
          * Completely removes a control's element from its parentNode. If the
          * control implements replaceWith=null, All of its nodes between its
          * startNode and endNode (inclusive) will be removed.
-         *
+         * 
          * @static
          * @param control The control whose element should be removed.
          */
@@ -883,7 +882,7 @@ module plat.ui {
 
         /**
          * Detaches a TemplateControl. Disposes its children, but does not dispose the TemplateControl.
-         *
+         * 
          * @static
          * @param control The control to be detached.
          */
@@ -891,7 +890,7 @@ module plat.ui {
 
         /**
          * Returns a new instance of TemplateControl.
-         *
+         * 
          * @static
          */
         getInstance(): ITemplateControl;

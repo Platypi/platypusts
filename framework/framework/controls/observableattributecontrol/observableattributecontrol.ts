@@ -132,8 +132,7 @@
          */
         _observeProperty(): void {
             var expression = (<any>this.attributes)[this.attribute],
-                templateControl = this.templateControl,
-                parent = this.parent;
+                templateControl = this.templateControl;
 
             if (isNull(templateControl)) {
                 return;

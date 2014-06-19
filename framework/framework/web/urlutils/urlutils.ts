@@ -89,13 +89,13 @@
             element.setAttribute('href', url);
             url = element.href;
 
-            // We need to do this twice for cerain browsers (e.g. win8)
+            // we need to do this twice for cerain browsers (e.g. win8)
             element.setAttribute('href', url);
             url = element.href;
 
             var protocol = element.protocol ? element.protocol.replace(/:$/, '') : '';
 
-            // Cordova adds //www for some urls, so we want to take those out.
+            // cordova adds //www for some urls, so we want to take those out.
             if (protocol.indexOf('http') === -1 && protocol.indexOf('ms-appx') === -1) {
                 url = url.replace('//', '');
             }

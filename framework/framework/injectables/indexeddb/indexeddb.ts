@@ -1,7 +1,7 @@
-//***************************************************//
-//****** Promise implementation does not work *******//
-//*************** Temporarily on hold ***************//
-//***************************************************//
+/**
+ * Promise implementation does not work 
+ * Temporarily on hold 
+ */
 
 module plat {
     /**
@@ -152,9 +152,6 @@ module plat {
                     this._db.deleteObjectStore(name);
                     return;
                 }
-
-                //exception.warn('Cannot modify database schema outside of a database upgrade',
-                //    ExceptionType.Injectable);
             }
 
             /**
@@ -546,8 +543,7 @@ module plat {
             }
 
             private requestFn(fn: string, arg0?: any, arg1?: any) {
-                var request = (<any>this._store)[fn](arg0, arg1),
-                    that = this;
+                var request = (<any>this._store)[fn](arg0, arg1);
 
                 return new DatabaseEventResultPromise((resolve, reject) => {
                     request.onsuccess = function requestSuccess() {
@@ -1660,7 +1656,8 @@ module plat {
 
                     dbRequest.onsuccess = function onOpen(event) {
                         var db = new Db(this.result);
-                        resolve(db); //need to check this vs. resolving in onupgradeneeded
+                        // need to check this vs. resolving in onupgradeneeded
+                        resolve(db);
                     };
 
                     dbRequest.onupgradeneeded = function dbUpgrade(event) {
@@ -1669,7 +1666,7 @@ module plat {
                         if (isFunction(onUpgradeNeeded)) {
                             onUpgradeNeeded(db);
                         } else {
-                            //exception.warn('Your database ' + name +
+                            // exception.warn('Your database ' + name +
                             //    ' was upgraded with newer version, but no onUpgradeNeeded ' +
                             //    'callback was specified', ExceptionType.Injectable);
                         }
@@ -1719,7 +1716,7 @@ module plat {
                 var indexedDb = window.indexedDB;
 
                 if (isNull(indexedDb)) {
-                    //exception.fatal('IndexedDb is not supported', ExceptionType.Injectable);
+                    // exception.fatal('IndexedDb is not supported', ExceptionType.Injectable);
                 }
 
                 return indexedDb.cmp(first, second);
