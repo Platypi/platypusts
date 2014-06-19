@@ -34,14 +34,13 @@ module plat.storage {
                 return <any>this.$Promise.reject(null);
             }
 
-            promise.then<DocumentFragment>((node) => {
+            return promise.then((node) => {
                 return this.put(key, node);
-            }).catch((error) => {
+            }, (error: Error) => {
                 var $exception: IExceptionStatic = acquire(__ExceptionStatic);
                 $exception.warn('Error retrieving template from promise.', $exception.TEMPLATE);
+                return <DocumentFragment>null;
             });
-
-            return promise;
         }
     }
 
