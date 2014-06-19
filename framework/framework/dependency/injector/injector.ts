@@ -135,7 +135,7 @@ module plat.dependency {
             if (isNull(Constructor)) {
                 return;
             } else if (isString(Constructor)) {
-                return injectableInjectors[Constructor];
+                return injectableInjectors[Constructor] || Injector.__noop();
             } else if (Constructor === window) {
                 return (<any>injectableInjectors).$Window;
             } else if (Constructor === window.document) {
@@ -145,8 +145,7 @@ module plat.dependency {
             var injectors = injectableInjectors,
                 injector: IInjector<any>,
                 keys = Object.keys(injectors),
-                length = keys.length,
-                value: any;
+                length = keys.length;
 
             for (var i = 0; i < length; ++i) {
                 injector = injectors[keys[i]];
@@ -254,7 +253,6 @@ module plat.dependency {
 
                 if(isNull(dependency)) {
                     throw new TypeError('The dependency at index ' + index + ' is undefined, did you forgot to include a file?');
-                    return;
                 }
                 
                 throw new TypeError('Could not resolve dependency ' +
@@ -262,9 +260,10 @@ module plat.dependency {
                     ' for ' +
                     name +
                     '. Are you using a static injectable Type?');
-                return;
             }
+
             circularReference = Injector.__findCircularReferences(this);
+
             if (isString(circularReference)) {
                 throw new Error('Circular dependency detected from ' + name + ' to ' + circularReference + '.');
             }

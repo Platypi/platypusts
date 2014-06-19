@@ -373,8 +373,7 @@ module plat.async {
         _formatResponse(responseType: string, success: boolean): IAjaxResponse<any> {
             var xhr = this.xhr,
                 status = xhr.status,
-                response = xhr.response,
-                xhrResponseType = xhr.responseType;
+                response = xhr.response;
 
             // need to try, catch instead of boolean short circuit because chrome doesn't like checking 
             // responseText when the responseType is anything other than empty or 'text'

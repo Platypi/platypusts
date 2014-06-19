@@ -615,7 +615,6 @@
 
             var swipeGesture = this._gestures.$swipe,
                 direction = lastMove.direction,
-                velocity = lastMove.velocity,
                 swipeDirectionGesture = swipeGesture + direction,
                 swipeSubscribers = this.__swipeSubscribers,
                 swipeDomEvent = swipeSubscribers.master,
@@ -635,7 +634,6 @@
         }
         private __handleTrack(ev: IPointerEvent): void {
             var trackGesture = this._gestures.$track,
-                velocity = ev.velocity,
                 direction = ev.direction,
                 trackDirectionGesture = trackGesture + direction,
                 eventTarget = this.__capturedTarget || <ICustomElement>ev.target,

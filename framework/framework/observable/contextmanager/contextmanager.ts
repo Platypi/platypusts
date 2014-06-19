@@ -315,7 +315,7 @@ module plat.observable {
             // set observedIdentifier to null
             this.__observedIdentifier = null;
 
-            var value = this.__contextObjects[absoluteIdentifier] = context[key];
+            this.__contextObjects[absoluteIdentifier] = context[key];
 
             // if observedIdentifier is not null, the primitive is already being watched
             var observedIdentifier = this.__observedIdentifier,
