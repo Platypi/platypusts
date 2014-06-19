@@ -185,6 +185,54 @@ module plat.dependency {
                 !isUndefined(dependency.Constructor);
         }
 
+        private static __findCircularReferences(injector: Injector<any>) {
+            if (!(isObject(injector) && isArray(injector.__dependencies))) {
+                return;
+            }
+
+            var source = injector.name,
+                dependencies = injector.__dependencies,
+                node: {
+                    name: string;
+                    dependencies: Array<string>;
+                },
+                stack: Array<typeof node> = [{
+                    name: source,
+                    dependencies: dependencies.slice(0)
+                }],
+                dependency: string,
+                getDependencies = Injector.getDependencies,
+                convert = Injector.convertDependencies,
+                locate = Injector.__locateInjector,
+                length: number;
+
+            while (stack.length > 0) {
+                node = stack.pop();
+
+                dependencies = node.dependencies;
+                length = dependencies.length;
+
+                for (var i = 0; i < length; ++i) {
+                    dependency = dependencies[i];
+
+                    if (dependency === source) {
+                        return node.name;
+                    }
+
+                    injector = locate(dependency);
+
+                    if (!(isObject(injector) && isArray(injector.__dependencies))) {
+                        continue;
+                    }
+
+                    stack.push({
+                        name: injector.name,
+                        dependencies: injector.__dependencies.slice(0)
+                    });
+                }
+            }
+        }
+
         private __dependencies: Array<any>;
 
         /**
@@ -198,16 +246,27 @@ module plat.dependency {
          */
         constructor(public name: string, public Constructor: new () => T, dependencies?: Array<any>, public type?: string) {
             var deps = this.__dependencies = Injector.convertDependencies(dependencies),
-                index = deps.indexOf('noop');
+                index = deps.indexOf('noop'),
+                circularReference: string;
 
             if (index > -1) {
-                var dependency = String(dependencies[index] || '');
+                var dependency = dependencies[index];
+
+                if(isNull(dependency)) {
+                    throw new TypeError('The dependency at index ' + index + ' is undefined, did you forgot to include a file?');
+                    return;
+                }
                 
                 throw new TypeError('Could not resolve dependency ' +
                     dependency.substring(9, dependency.indexOf('(')) +
                     ' for ' +
                     name +
                     '. Are you using a static injectable Type?');
+                return;
+            }
+            circularReference = Injector.__findCircularReferences(this);
+            if (isString(circularReference)) {
+                throw new Error('Circular dependency detected from ' + name + ' to ' + circularReference + '.');
             }
 
             if (name === __AppStatic) {

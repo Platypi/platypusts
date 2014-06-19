@@ -36,6 +36,9 @@ function extend(destination: any, ...sources: any[]): any {
                 } else if (isRegExp(property)) {
                     destination[key] = new RegExp(property);
                     return;
+                } else if (isNode(property)) {
+                    destination[key] = (<Node>property).cloneNode(true);
+                    return;
                 } else if (isObject(property)) {
                     extend(deep, destination[key] || (destination[key] = {}), property);
                     return;
