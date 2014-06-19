@@ -51,7 +51,12 @@
             var ContextManager: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
             ContextManager.defineGetter(this, 'uid', uniqueId('plat_'));
 
-            this._removeListener = this.$EventManagerStatic.on(this.uid, 'urlChanged', this._routeChanged, this);
+            this._removeListener = this.$EventManagerStatic.on(this.uid, 'urlChanged', (ev: events.IDispatchEventInstance, utils: web.IUrlUtilsInstance) => {
+                postpone(() => {
+                    this._routeChanged(ev, utils);
+                });
+            }, this);
+
             var $browserConfig = this.$BrowserConfig;
             if ($browserConfig.routingType === $browserConfig.NONE) {
                 $browserConfig.routingType = $browserConfig.HASH;
