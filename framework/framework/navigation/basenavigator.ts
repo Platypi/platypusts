@@ -11,6 +11,7 @@
         uid: string;
         baseport: ui.controls.IBaseport;
         currentState: IBaseNavigationState;
+        navigating: boolean;
 
         /**
          * Define unique id and subscribe to the 'goBack' event
@@ -24,13 +25,16 @@
             this.baseport = baseport;
         }
 
-        navigate(navigationParameter: any, options: IBaseNavigationOptions): void { }
+        navigate(navigationParameter: any, options: IBaseNavigationOptions): void {
+            this.navigating = true;
+        }
 
         navigated(control: ui.IBaseViewControl, parameter: any, options: IBaseNavigationOptions): void {
             this.currentState = {
                 control: control
             };
 
+            this.navigating = false;
             control.navigator = this;
             control.navigatedTo(parameter);
 
@@ -77,6 +81,11 @@
          * facilitate navigation.
          */
         baseport: ui.controls.IBaseport;
+
+        /**
+         * Set to true during navigate, set to false during navigated.
+         */
+        navigating: boolean;
 
         /**
          * Specifies the current state of navigation. This state should contain 

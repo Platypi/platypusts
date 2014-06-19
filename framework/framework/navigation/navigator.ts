@@ -24,6 +24,8 @@ module plat.navigation {
                 return;
             }
 
+            this.navigating = true;
+
             this.$BaseViewControlFactory.detach(viewControl);
 
             if (isObject(parameter)) {

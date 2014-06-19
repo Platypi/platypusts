@@ -85,12 +85,16 @@
             viewportManager.children = [];
 
             var manager = this.$ElementManagerFactory.getInstance();
-
+            
             manager.initialize(nodeMap, viewportManager, !newControl);
 
             control = this.controls[0];
             control.navigator = this.navigator;
             this.navigator.navigated(control, parameter, options);
+
+            if (this.navigator.navigating) {
+                return;
+            }
 
             manager.setUiControlTemplate();
         }

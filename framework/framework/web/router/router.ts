@@ -76,7 +76,7 @@
             }
         }
 
-        route(path: string, options?: IRouteNavigationOptions): void {
+        route(path: string, options?: IRouteNavigationOptions): boolean {
             options = options || <IRouteNavigationOptions>{};
 
             var replace = options.replace,
@@ -89,7 +89,7 @@
                 this.__firstRoute = false;
                 if (isEmpty(path)) {
                     this._routeChanged(null, currentUtils);
-                    return;
+                    return true;
                 }
             }
 
@@ -98,7 +98,7 @@
             if (isNull(build)) {
                 var $exception: IExceptionStatic = acquire(__ExceptionStatic);
                 $exception.warn('Route: ' + path + ' is not a matched route.', $exception.NAVIGATION);
-                return;
+                return false;
             }
 
             route = build.route;
@@ -113,7 +113,7 @@
             });
 
             if (event.canceled) {
-                return;
+                return false;
             }
 
             var nextUtils = $browser.urlUtils(route);
@@ -123,6 +123,7 @@
             }
 
             $browser.url(route, replace);
+            return true;
         }
 
         goBack(length?: number): void {
@@ -440,7 +441,7 @@
          * @param path The route path to navigate to.
          * @param options The IRouteNavigationOptions included with this route.
          */
-        route(path: string, options?: web.IRouteNavigationOptions): void;
+        route(path: string, options?: web.IRouteNavigationOptions): boolean;
 
         /**
          * Navigates back in the history.

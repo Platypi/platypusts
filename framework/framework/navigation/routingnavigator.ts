@@ -22,7 +22,10 @@
         }
 
         navigate(path: string, options?: web.IRouteNavigationOptions): void {
-            this.$Router.route(path, options);
+            this.navigating = true;
+            if (!this.$Router.route(path, options)) {
+                this.navigating = false;
+            }
         }
 
         navigated(control: ui.IBaseViewControl, parameter: web.IRoute<any>, options: web.IRouteNavigationOptions): void {
