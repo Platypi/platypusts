@@ -1,7 +1,7 @@
 module plat.controls {
     export class Name extends AttributeControl {
-        $ContextManagerStatic: observable.IContextManagerStatic = acquire('$ContextManagerStatic');
-        $ExceptionStatic: IExceptionStatic = acquire('$ExceptionStatic');
+        $ContextManagerStatic: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
+
         /**
          * The root control that will have the INamedElement set as a property.
          */
@@ -16,9 +16,9 @@ module plat.controls {
          * Finds the root control and defines the property specified by the 
          * attribute value as the INamedElement.
          */
-        initialize() {
+        initialize(): void {
             var attr = camelCase(this.type),
-                name = this.attributes[attr];
+                name = (<any>this.attributes)[attr];
 
             if (isEmpty(name)) {
                 return;
@@ -35,12 +35,6 @@ module plat.controls {
             }
 
             if (!isNull(rootControl)) {
-                if (!isNull(rootControl[name])) {
-                    this.$ExceptionStatic.warn('Multiple instances of plat-name = ' +
-                        name + ' found, or root control already has property defined.', this.$ExceptionStatic.NAME);
-                    return;
-                }
-
                 define(rootControl, name, {
                     element: this.element,
                     control: templateControl
@@ -51,34 +45,33 @@ module plat.controls {
         /**
          * Removes the INamedElement from the root control.
          */
-        dispose() {
+        dispose(): void {
             var rootControl = this._rootControl,
                 name = this._label;
 
             if (!isNull(rootControl)) {
-                this.$ContextManagerStatic.defineProperty(rootControl, name, null, true, true);
-                delete rootControl[name];
+                deleteProperty(rootControl, name);
             }
         }
     }
 
-    register.control('plat-name', Name);
+    register.control(__Name, Name);
 
     /**
      * Defines the object added to a root control when an HTML element has 
      * a plat-name attribute. If the element corresponds to a registered 
      * control, the control will be included in the object.
      */
-    export interface INamedElement<T extends HTMLElement, U> {
+    export interface INamedElement<E extends Element, C> {
         /**
          * The element on which the plat-name is specified.
          */
-        element: T;
+        element: E;
 
         /**
          * The template control on the associated element, if one 
          * exists.
          */
-        control?: U;
+        control?: C;
     }
 }

@@ -3,7 +3,7 @@ module plat.storage {
     var internalCaches: any = {};
 
     /**
-     * A Cache class, for use with the $CacheStatic injectable. Used for storing objects.
+     * A Cache class, for use with the $CacheFactory injectable. Used for storing objects.
      * Takes in a generic type corresponding to the type of objects it contains.
      * 
      */
@@ -11,16 +11,16 @@ module plat.storage {
         /**
          * Method for creating a new Cache. Takes a generic type to denote the
          * type of objects stored in the new Cache.  If the Cache already exists
-         * in the $CacheStatic, a new Cache will not be created.
+         * in the $CacheFactory, a new Cache will not be created.
          * 
          * @static
          * @param id The id of the new Cache.
          * @param options ICacheOptions for customizing the Cache.
          */
-        static create<T>(id: string, options?: ICacheOptions) {
+        static create<T>(id: string, options?: ICacheOptions): ICache<T> {
             var cache: ICache<T> = caches[id];
 
-            if (cache === null || cache === undefined) {
+            if (isNull(cache)) {
                 cache = caches[id] = new Cache<T>(id, options);
             }
 
@@ -28,7 +28,7 @@ module plat.storage {
         }
 
         /**
-         * Gets a cache out of the $CacheStatic if it exists.
+         * Gets a cache out of the $CacheFactory if it exists.
          * 
          * @static
          * @param id The identifier used to search for the cache.
@@ -44,7 +44,7 @@ module plat.storage {
          * 
          * @static
          */
-        static clear() {
+        static clear(): void {
             var keys = Object.keys(caches),
                 length = keys.length;
 
@@ -67,7 +67,7 @@ module plat.storage {
             this.__id = id;
             this.__options = options;
 
-            if (options === null || options === undefined) {
+            if (isNull(options)) {
                 this.__options = {
                     timeout: 0
                 };
@@ -76,10 +76,7 @@ module plat.storage {
             internalCaches[id] = {};
         }
 
-        /**
-         * Method for accessing information about the cache.
-         */
-        info() {
+        info(): ICacheInfo {
             return {
                 id: this.__id,
                 size: this.__size,
@@ -87,15 +84,7 @@ module plat.storage {
             };
         }
 
-        /**
-         * Method for inserting an object into the cache.
-         * 
-         * @param key The key to use for storage/retrieval of the object.
-         * @param value The value to store with the associated key.
-         * 
-         * @return {T} The value inserted into the cache.
-         */
-        put(key: string, value: T) {
+        put(key: string, value: T): T {
             var val = internalCaches[this.__id][key];
             internalCaches[this.__id][key] = value;
 
@@ -112,103 +101,64 @@ module plat.storage {
             return value;
         }
 
-        /**
-         * Method for retrieving an object from the cache.
-         * 
-         * @param key The key to search for in the cache.
-         * 
-         * @return {T|undefined} The value found at the associated key. Returns undefined for a cache miss.
-         */
-        read(key: string) {
-            return <T>internalCaches[this.__id][key];
+        read(key: string): T {
+            return internalCaches[this.__id][key];
         }
 
-        /**
-         * Method for removing an object from the cache.
-         * 
-         * @param key The key to remove from the cache.
-         */
-        remove(key: string) {
-            internalCaches[this.__id][key] = null;
-            delete internalCaches[this.__id][key];
+        remove(key: string): void {
+            deleteProperty(internalCaches[this.__id], key);
             this.__size--;
         }
 
-        /**
-         * Method for clearing the cache, removing all of its keys.
-         */
-        clear() {
+        clear(): void {
             internalCaches[this.__id] = {};
             this.__size = 0;
         }
 
-        /**
-         * Method for removing this cache from the $CacheStatic.
-         */
-        dispose() {
+        dispose(): void {
             this.clear();
-            caches[this.__id] = null;
-            delete caches[this.__id];
+            deleteProperty(caches, this.__id);
         }
     }
 
     /**
-     * The Type for referencing the '$CacheStatic' injectable as a dependency.
+     * The Type for referencing the '$CacheFactory' injectable as a dependency.
      */
-    export function CacheStatic() {
+    export function ICacheFactory(): ICacheFactory {
         return Cache;
     }
 
-    register.injectable('$CacheStatic', CacheStatic, null, register.injectableType.STATIC);
+    register.injectable(__CacheFactory, ICacheFactory, null, __FACTORY);
 
     /**
-     * A cache for persisting NodeManager trees.
+     * Used to manage all the defined caches for the current application session.
      */
-    var managerCache = Cache.create<processing.INodeManager>('__managerCache');
-
-    /**
-     * The Type for referencing the '$ManagerCacheStatic' injectable as a dependency.
-     */
-    export function ManagerCacheStatic() {
-        return managerCache;
-    }
-
-    register.injectable('$ManagerCacheStatic', ManagerCacheStatic, null, register.injectableType.STATIC);
-
-    /**
-     * Options for a cache.
-     */
-    export interface ICacheOptions {
+    export interface ICacheFactory {
         /**
-         * Specifies a timeout for a cache value. When a value 
-         * is put in the cache, it will be valid for the given
-         * period of time (in milliseconds). After the timeout 
-         * is reached, the value will automatically be removed
-         * from the cache.
+         * Method for creating a new ICache. Takes a generic type to denote the
+         * type of objects stored in the new ICache.  If the ICache already exists
+         * in the ICacheStatic, a new ICache will not be created.
+         * 
+         * @param id The id of the new ICache.
+         * @param options ICacheOptions for customizing the ICache.
+         * 
+         * @return {ICache} The newly created ICache object.
          */
-        timeout?: number;
-    }
-
-    /**
-     * Contains information about an ICache.
-     */
-    export interface ICacheInfo {
-        /**
-         * A unique id for the ICache object, used to 
-         * retrieve the ICache out of the $CacheStatic.
-         */
-        id: string;
+        create<T>(id: string, options?: ICacheOptions): ICache<T>;
 
         /**
-         * Represents the number of items in the ICache.
+         * Gets a cache out of the ICacheStatic if it exists.
+         * 
+         * @param id The identifier used to search for the cache.
+         * 
+         * @returns {ICache|undefined}
          */
-        size: number;
+        fetch<T>(id: string): ICache<T>;
 
         /**
-         * Represents the ICacheOptions that the ICache is
-         * using.
+         * Clears the ICacheStatic and all of its caches.
          */
-        options: ICacheOptions;
+        clear(): void;
     }
 
     /**
@@ -254,40 +204,58 @@ module plat.storage {
         clear(): void;
 
         /**
-         * Method for removing an ICache from the $CacheStatic.
+         * Method for removing an ICache from the $CacheFactory.
          */
         dispose(): void;
     }
 
     /**
-     * External interface for the '$CacheStatic' injectable. CacheStatic is used to manage all 
-     * the caches for the application.
+     * A cache for persisting NodeManager trees.
      */
-    export interface ICacheStatic {
+    var managerCache = Cache.create<processing.INodeManager>('__managerCache');
+
+    /**
+     * The Type for referencing the '$ManagerCache' injectable as a dependency.
+     */
+    export function IManagerCache(): typeof managerCache {
+        return managerCache;
+    }
+
+    register.injectable(__ManagerCache, IManagerCache);
+
+    /**
+     * Options for a cache.
+     */
+    export interface ICacheOptions {
         /**
-         * Method for creating a new ICache. Takes a generic type to denote the
-         * type of objects stored in the new ICache.  If the ICache already exists
-         * in the ICacheStatic, a new ICache will not be created.
-         * 
-         * @param id The id of the new ICache.
-         * @param options ICacheOptions for customizing the ICache.
-         * 
-         * @return {ICache} The newly created ICache object.
+         * Specifies a timeout for a cache value. When a value 
+         * is put in the cache, it will be valid for the given
+         * period of time (in milliseconds). After the timeout 
+         * is reached, the value will automatically be removed
+         * from the cache.
          */
-        create<T>(id: string, options?: ICacheOptions): ICache<T>;
+        timeout?: number;
+    }
+
+    /**
+     * Contains information about an ICache.
+     */
+    export interface ICacheInfo {
+        /**
+         * A unique id for the ICache object, used to 
+         * retrieve the ICache out of the $CacheFactory.
+         */
+        id: string;
 
         /**
-         * Gets a cache out of the ICacheStatic if it exists.
-         * 
-         * @param id The identifier used to search for the cache.
-         * 
-         * @returns {ICache|undefined}
+         * Represents the number of items in the ICache.
          */
-        fetch<T>(id: string): ICache<T>;
+        size: number;
 
         /**
-         * Clears the ICacheStatic and all of its caches.
+         * Represents the ICacheOptions that the ICache is
+         * using.
          */
-        clear(): void;
+        options: ICacheOptions;
     }
 }

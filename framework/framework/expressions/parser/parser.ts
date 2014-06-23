@@ -3,12 +3,12 @@ module plat.expressions {
      * Parses javascript expression strings and creates IParsedExpressions.
      */
     export class Parser implements IParser {
+        $Tokenizer: ITokenizer = acquire(__Tokenizer);
+
         /**
          * A single expression's token representation created by the Tokenizer.
          */
         _tokens: Array<IToken> = [];
-        $tokenizer: ITokenizer = acquire('$tokenizer');
-        $ExceptionStatic: IExceptionStatic = acquire('$ExceptionStatic');
         private __cache: IObject<IParsedExpression> = {};
         private __codeArray: Array<string> = [];
         private __identifiers: Array<string> = [];
@@ -16,18 +16,13 @@ module plat.expressions {
         private __aliases: Array<string> = [];
         private __uniqueAliases: IObject<boolean> = {};
 
-        /**
-         * Parses a string representation of a javascript expression and turns it
-         * into an IParsedExpression.
-         * 
-         * @param input The string representation of a javascript expression.
-         */
         parse(input: string): IParsedExpression {
             var parsedObject = this.__cache[input];
             if (!isNull(parsedObject)) {
                 return parsedObject;
             }
-            this._tokens = this.$tokenizer.createTokens(input);
+
+            this._tokens = this.$Tokenizer.createTokens(input);
 
             parsedObject = this._evaluate(input);
 
@@ -60,9 +55,8 @@ module plat.expressions {
                     token = tokenObj.val,
                     args = tokenObj.args;
 
-                //check if its an accessor
+                // check if its an accessor
                 if (isAccessor(token)) {
-                    var obj;
                     switch (token) {
                         case '()':
                             useLocalContext = this.__handleFunction(i, args, useLocalContext);
@@ -72,11 +66,11 @@ module plat.expressions {
                             tempIdentifiers.push('.');
                             break;
                         default:
-                            //handle empty array
+                            // handle empty array
                             if (args < 0) {
                                 codeArray.push('[]');
                                 tempIdentifiers.push('.');
-                                //handle array literal
+                                // handle array literal
                             } else if (args > 0) {
                                 codeArray.push(this.__convertArrayLiteral(args));
                                 tempIdentifiers.push('.');
@@ -85,7 +79,7 @@ module plat.expressions {
                             }
                             break;
                     }
-                    //check if its an operator
+                    // check if its an operator
                 } else if (isOperator(token)) {
                     switch (token) {
                         case '?':
@@ -105,7 +99,7 @@ module plat.expressions {
                     }
                     // its either function, object, or primitive
                 } else {
-                    //potential function or object to index into
+                    // potential function or object to index into
                     if (args < 0) {
                         codeStr = this.__convertFunction(i, token, useLocalContext);
                         // primitive
@@ -136,10 +130,9 @@ module plat.expressions {
             return parsedExpression;
         }
 
-        // PARSE CASES
-        private __convertPrimitive(index: number, token: string, args: number) {
-            var tokens = this._tokens,
-                tempIdentifiers = this.__tempIdentifiers;
+        // parse cases
+        private __convertPrimitive(index: number, token: string, args: number): string {
+            var tempIdentifiers = this.__tempIdentifiers;
 
             if (args > 0) {
                 tempIdentifiers.push('.');
@@ -170,7 +163,7 @@ module plat.expressions {
                 }
             }
         }
-        private __convertFunction(index: number, token: string, useLocalContext: boolean) {
+        private __convertFunction(index: number, token: string, useLocalContext: boolean): string {
             var tokens = this._tokens,
                 tempIdentifiers = this.__tempIdentifiers,
                 nextToken = this._peek(index);
@@ -204,15 +197,15 @@ module plat.expressions {
                 return '(initialContext = (' + this.__findInitialContext.toString() + ')(context,aliases,"' + token + '"))';
             }
         }
-        private __convertObject(args: number) {
+        private __convertObject(args: number): string {
             var identifiers = this.__identifiers,
                 tempIdentifiers = this.__tempIdentifiers,
                 codeArray = this.__codeArray,
                 j = 0,
-                key,
+                key: string,
                 codeStr = '{',
-                tempIdentifier,
-                temp;
+                tempIdentifier: string,
+                temp: string;
 
             while (j++ < args) {
                 temp = codeArray.pop();
@@ -231,14 +224,14 @@ module plat.expressions {
 
             return codeStr.replace(',', '') + '}';
         }
-        private __convertArrayLiteral(args: number) {
+        private __convertArrayLiteral(args: number): string {
             var identifiers = this.__identifiers,
                 tempIdentifiers = this.__tempIdentifiers,
                 codeArray = this.__codeArray,
                 j = 0,
                 tempStr = '',
                 codeStr = '[',
-                tempIdentifier;
+                tempIdentifier: string;
 
             while (j++ < args) {
                 tempStr = codeArray.pop() + ',' + tempStr;
@@ -256,8 +249,8 @@ module plat.expressions {
             return codeStr;
         }
 
-        // ACCESSORS
-        private __handleFunction(index: number, args: number, useLocalContext: boolean) {
+        // accessors
+        private __handleFunction(index: number, args: number, useLocalContext: boolean): boolean {
             var tokens = this._tokens,
                 identifiers = this.__identifiers,
                 tempIdentifiers = this.__tempIdentifiers,
@@ -267,10 +260,10 @@ module plat.expressions {
                 previousTokenIsFnName = (previousToken.args === -2),
                 grabFnName = previousTokenIsFnName || this._isValEqual(previousToken, '[].'),
                 tempStr = '',
-                tempIdentifier,
+                tempIdentifier: string,
                 fnName = '',
                 identifierFnName = '',
-                codeStr,
+                codeStr: string,
                 pushedIdentifier = false;
 
             if (grabFnName) {
@@ -305,7 +298,7 @@ module plat.expressions {
                     if (!(lastIndex < 0 || tempIdentifiers[lastIndex] === '.' || identifierFnName === '')) {
                         tempIdentifiers[lastIndex] += '.' + identifierFnName;
                         identifiers.push(tempIdentifiers.pop());
-                        //check fn name is not null, pushed an identifier, and the context is not an array literal
+                        // check fn name is not null, pushed an identifier, and the context is not an array literal
                     } else if (!(identifierFnName === '' ||
                         !pushedIdentifier ||
                         context[0] === '[' ||
@@ -345,7 +338,7 @@ module plat.expressions {
 
             return useLocalContext;
         }
-        private __indexIntoObject(index: number, useLocalContext: boolean) {
+        private __indexIntoObject(index: number, useLocalContext: boolean): boolean {
             var tokens = this._tokens,
                 identifiers = this.__identifiers,
                 tempIdentifiers = this.__tempIdentifiers,
@@ -358,11 +351,17 @@ module plat.expressions {
 
             var codeStr = codeArray.pop(),
                 previousToken = tokens[index - 1],
-                indexer,
                 identifierIndexer = tempIdentifiers.pop(),
+                hasIdentifierIndexer = !isNull(identifierIndexer),
                 context = codeArray.pop();
-
-            if (this._isValUnequal(previousToken, '++--()[]*/%?:>=<=&&||!===')) {
+            
+            if (hasIdentifierIndexer && identifierIndexer[0] === '@') {
+                codeStr = '(' + this.__indexIntoContext.toString() + ')(' + context + ',' + codeStr + ')';
+                identifiers.push(identifierIndexer);
+            } else if (this._isValEqual(previousToken, '++--()[]*/%?:>=<=&&||!===')) {
+                codeStr = '(' + this.__indexIntoContext.toString() + ')(' + context + ',' + codeStr + ')';
+                tempIdentifiers.push('.');
+            } else {
                 codeStr = '(' + this.__indexIntoContext.toString() + ')(' + context + ',"' + codeStr + '")';
 
                 var lastIndex = tempIdentifiers.length - 1;
@@ -370,12 +369,9 @@ module plat.expressions {
                     if (tempIdentifiers[lastIndex] !== '.') {
                         tempIdentifiers[lastIndex] += '.' + identifierIndexer;
                     }
-                } else if (!isNull(identifierIndexer) && identifierIndexer !== '.') {
+                } else if (hasIdentifierIndexer && identifierIndexer !== '.') {
                     identifiers.push(identifierIndexer);
                 }
-            } else {
-                codeStr = '(' + this.__indexIntoContext.toString() + ')(' + context + ',' + codeStr + ')';
-                tempIdentifiers.push('.');
             }
 
             codeArray.push(codeStr);
@@ -383,14 +379,14 @@ module plat.expressions {
             return useLocalContext;
         }
 
-        // OPERATORS
-        private __handleQuestion() {
+        // operators
+        private __handleQuestion(): void {
             var identifiers = this.__identifiers,
                 tempIdentifiers = this.__tempIdentifiers,
                 codeArray = this.__codeArray,
                 temp = codeArray.pop(),
                 codeStr = codeArray.pop() + '?' + temp,
-                tempIdentifier;
+                tempIdentifier: string;
 
             for (var i = 0; i < 2; i++) {
                 if (tempIdentifiers.length > 0) {
@@ -405,13 +401,13 @@ module plat.expressions {
 
             codeArray.push(codeStr);
         }
-        private __handleColon() {
+        private __handleColon(): void {
             var identifiers = this.__identifiers,
                 tempIdentifiers = this.__tempIdentifiers,
                 codeArray = this.__codeArray,
                 temp = codeArray.pop(),
                 codeStr = codeArray.pop() + ':' + temp,
-                tempIdentifier;
+                tempIdentifier: string;
 
             for (var i = 0; i < 2; i++) {
                 if (tempIdentifiers.length > 0) {
@@ -426,14 +422,14 @@ module plat.expressions {
 
             codeArray.push(codeStr);
         }
-        private __handleOperator(token: string, args: number) {
+        private __handleOperator(token: string, args: number): void {
             var identifiers = this.__identifiers,
                 tempIdentifiers = this.__tempIdentifiers,
                 codeArray = this.__codeArray,
                 j = 0,
                 tempStr = '',
                 codeStr = '(' + OPERATORS[token].fn.toString() + ')(context, aliases,',
-                tempIdentifier;
+                tempIdentifier: string;
 
 
             while (j++ < args) {
@@ -452,8 +448,8 @@ module plat.expressions {
             codeArray.push(codeStr);
         }
 
-        // PRIVATE HELPER FUNCTIONS
-        private __findInitialContext(context: any, aliases: any, token: string, undefined?: any) {
+        // private helper functions
+        private __findInitialContext(context: any, aliases: any, token: string, undefined?: any): any {
             if (token[0] === '@' && aliases !== null && typeof aliases === 'object') {
                 return aliases[token];
             } else if (context !== null && typeof context === 'object') {
@@ -461,30 +457,30 @@ module plat.expressions {
             }
             return context === null ? null : undefined;
         }
-        private __indexIntoContext(context: any, token: string, undefined?: any) {
+        private __indexIntoContext(context: any, token: string, undefined?: any): any {
             if (context !== null && typeof context === 'object') {
                 return context[token];
             }
             return context === null ? null : undefined;
         }
 
-        // PROTECTED HELPER FUNCTIONS
+        // protected helper functions
         /**
          * Peek at the next token.
          * 
          * @param index The current index.
          */
-        _peek(index: number) {
+        _peek(index: number): IToken {
             return this._tokens[index + 1];
         }
 
         /**
          * Evaluate and remove the leftover identifiers.
          */
-        _popRemainingIdentifiers() {
+        _popRemainingIdentifiers(): void {
             var identifiers = this.__identifiers,
                 tempIdentifiers = this.__tempIdentifiers,
-                last;
+                last: string;
 
             while (tempIdentifiers.length > 0) {
                 last = tempIdentifiers.pop();
@@ -497,11 +493,11 @@ module plat.expressions {
         /**
          * Remove duplicate identifiers.
          */
-        _makeIdentifiersUnique() {
+        _makeIdentifiersUnique(): void {
             var identifiers = this.__identifiers,
-                uniqueIdentifiers = [],
-                uniqueIdentifierObject = {},
-                identifier;
+                uniqueIdentifiers: Array<string> = [],
+                uniqueIdentifierObject: IObject<boolean> = {},
+                identifier: string;
 
             while (identifiers.length > 0) {
                 identifier = identifiers.pop();
@@ -543,7 +539,7 @@ module plat.expressions {
         /**
          * Reset the parser's properties.
          */
-        _resetParser() {
+        _resetParser(): void {
             this._tokens = [];
             this.__codeArray = [];
             this.__identifiers = [];
@@ -557,12 +553,34 @@ module plat.expressions {
          * 
          * @param error The error message to throw
          */
-        _throwError(error: string) {
-            this.$ExceptionStatic.fatal(error, this.$ExceptionStatic.PARSE);
+        _throwError(error: string): void {
+            var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+            $exception.fatal(error, $exception.PARSE);
         }
     }
 
-    register.injectable('$parser', Parser);
+    /**
+     * The Type for referencing the '$Parser' injectable as a dependency.
+     */
+    export function IParser(): IParser {
+        return new Parser();
+    }
+
+    register.injectable(__Parser, IParser);
+
+    /**
+     * Describes an object that can parse an expression string and turn it into an
+     * IParsedExpression. The intended external interface for the '$Parser' 
+     * injectable.
+     */
+    export interface IParser {
+        /**
+         * Takes in an expression string and outputs an IParsedExpression.
+         * 
+         * @param input An expression string to parse.
+         */
+        parse(expression: string): IParsedExpression;
+    }
 
     /**
      * Describes an object that is the result of parsing an expression string. Provides a
@@ -598,19 +616,5 @@ module plat.expressions {
          * for this expression. Typically this is added to a clone of the IParsedExpression.
          */
         oneTime?: boolean;
-    }
-
-    /**
-     * Describes an object that can parse an expression string and turn it into an
-     * IParsedExpression. The intended external interface for the '$parser' 
-     * injectable.
-     */
-    export interface IParser {
-        /**
-         * Takes in an expression string and outputs an IParsedExpression.
-         * 
-         * @param input An expression string to parse.
-         */
-        parse(expression: string): IParsedExpression;
     }
 }

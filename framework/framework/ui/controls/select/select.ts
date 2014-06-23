@@ -1,10 +1,18 @@
 module plat.ui.controls {
     export class Select extends TemplateControl {
+        $Promise: async.IPromise = acquire(__Promise);
+        $Document: Document = acquire(__Document);
+
         /**
          * Replaces the <plat-select> node with 
          * a <select> node.
          */
         replaceWith: string = 'select';
+
+        /**
+         * This control needs to load before plat-bind.
+         */
+        priority = 120;
 
         /**
          * Specifies the context as an Array.
@@ -15,14 +23,18 @@ module plat.ui.controls {
          * An object that keeps track of unique 
          * optgroups.
          */
-        groups: IObject<HTMLElement> = {};
+        groups: IObject<Element> = {};
 
         /**
          * The evaluated plat-options object.
          */
         options: observable.IObservableProperty<ISelectOptions>;
-        $PromiseStatic: async.IPromiseStatic = acquire('$PromiseStatic');
-        $Exception: IExceptionStatic = acquire('$ExceptionStatic');
+
+        /**
+         * Will fulfill whenever all items are loaded.
+         */
+        itemsLoaded: async.IThenable<Array<void>>;
+
         private __removeListener: IRemoveListener;
         private __isGrouped: boolean = false;
         private __group: string;
@@ -31,10 +43,10 @@ module plat.ui.controls {
          * Creates the bindable option template and grouping 
          * template if necessary.
          */
-        setTemplate() {
+        setTemplate(): void {
             var element = this.element,
                 firstElementChild = element.firstElementChild,
-                $document: Document = acquire('$document');
+                $document = this.$Document;
 
             if (!isNull(firstElementChild) && firstElementChild.nodeName.toLowerCase() === 'option') {
                 this.__defaultOption = <HTMLOptionElement>firstElementChild.cloneNode(true);
@@ -47,13 +59,24 @@ module plat.ui.controls {
                 var group = this.__group = platOptions.group,
                     optionGroup = $document.createElement('optgroup');
 
-                optionGroup.label = '{{' + group + '}}';
+                optionGroup.label = __startSymbol + group + __endSymbol;
 
                 this.bindableTemplates.add('group', optionGroup);
             }
 
-            option.value = '{{' + platOptions.value + '}}';
-            option.textContent = '{{' + platOptions.textContent + '}}';
+            var value = platOptions.value,
+                textContent = platOptions.textContent;
+
+            if (!isString(value) || isEmpty(value)) {
+                value = undefined;
+            }
+
+            if (!isString(textContent) || isEmpty(textContent)) {
+                textContent = undefined;
+            }
+
+            option.value = __startSymbol + (value || textContent) + __endSymbol;
+            option.textContent = __startSymbol + (textContent || value) + __endSymbol;
 
             this.bindableTemplates.add('option', option);
         }
@@ -65,15 +88,15 @@ module plat.ui.controls {
          * @param newValue The new array context.
          * @param oldValue The old array context.
          */
-        contextChanged(newValue?: Array<any>, oldValue?: Array<any>) {
+        contextChanged(newValue?: Array<any>, oldValue?: Array<any>): void {
             var newLength = isNull(newValue) ? 0 : newValue.length,
                 oldLength = isNull(oldValue) ? 0 : oldValue.length;
 
             if (isNull(this.__removeListener)) {
                 this.__removeListener = this.observeArray(this, 'context',
                 (ev?: observable.IArrayMethodInfo<any>) => {
-                    if (isFunction(this['_' + ev.method])) {
-                        this['_' + ev.method](ev);
+                    if (isFunction((<any>this)['_' + ev.method])) {
+                        (<any>this)['_' + ev.method](ev);
                     }
                 });
             }
@@ -89,7 +112,7 @@ module plat.ui.controls {
          * Observes the new array context and adds 
          * the options accordingly.
          */
-        loaded() {
+        loaded(): void {
             var context = this.context;
 
             if (isNull(context)) {
@@ -99,8 +122,8 @@ module plat.ui.controls {
             this._addItems(context.length, 0);
 
             this.__removeListener = this.observeArray(this, 'context', (ev?: observable.IArrayMethodInfo<any>) => {
-                if (isFunction(this['_' + ev.method])) {
-                    this['_' + ev.method](ev);
+                if (isFunction((<any>this)['_' + ev.method])) {
+                    (<any>this)['_' + ev.method](ev);
                 }
             });
         }
@@ -108,7 +131,7 @@ module plat.ui.controls {
         /**
          * Stops observing the array context.
          */
-        dispose() {
+        dispose(): void {
             if (isFunction(this.__removeListener)) {
                 this.__removeListener();
                 this.__removeListener = null;
@@ -123,15 +146,20 @@ module plat.ui.controls {
          * @param length The current index of the next 
          * set of items to add.
          */
-        _addItems(numberOfItems: number, length: number) {
+        _addItems(numberOfItems: number, length: number): async.IThenable<Array<void>> {
             var index = length,
-                item;
+                item: any,
+                promises: Array<async.IThenable<void>> = [];
 
             for (var i = 0; i < numberOfItems; ++i, ++index) {
                 item = this.context[index];
 
-                this.bindableTemplates.bind('option', this._insertOptions.bind(this, index, item), index);
+                promises.push(this.bindableTemplates.bind('option', index).then<void>(this._insertOptions.bind(this, index, item)));
             }
+
+            this.itemsLoaded = this.$Promise.all(promises);
+
+            return this.itemsLoaded;
         }
 
         /**
@@ -143,7 +171,7 @@ module plat.ui.controls {
          * @param optionClone The bound DocumentFragment to be 
          * inserted into the DOM.
          */
-        _insertOptions(index: number, item: any, optionClone: DocumentFragment) {
+        _insertOptions(index: number, item: any, optionClone: DocumentFragment): void {
             var element = this.element;
 
             if (this.__isGrouped) {
@@ -152,22 +180,17 @@ module plat.ui.controls {
                     optgroup: any = groups[newGroup];
 
                 if (isNull(optgroup)) {
-                    optgroup = groups[newGroup] = <any>new this.$PromiseStatic<HTMLElement, Error>((resolve) => {
-                        this.bindableTemplates.bind('group', (groupClone: DocumentFragment) => {
-                            optgroup = groups[newGroup] = <HTMLElement>groupClone.childNodes[1];
+                    groups[newGroup] = <any>this.bindableTemplates.bind('group', '' + index)
+                        .then((groupClone: DocumentFragment) => {
+                            optgroup = groups[newGroup] = <Element>groupClone.childNodes[1];
 
                             optgroup.appendChild(optionClone);
                             element.appendChild(groupClone);
-                            resolve(optgroup);
-                        }, '' + index);
-                    }).catch((error) => {
-                        postpone(() => {
-                            this.$Exception.warn(error.message);
+                            return optgroup;
                         });
-                    });
                     return;
-                } else if (isFunction(optgroup.then)) {
-                    optgroup.then((group: HTMLElement) => {
+                } else if (isPromise(optgroup)) {
+                    optgroup.then((group: Element) => {
                         group.appendChild(optionClone);
                         return group;
                     });
@@ -187,7 +210,7 @@ module plat.ui.controls {
          * @param parent The element whose child 
          * will be removed.
          */
-        _removeItem(parent: HTMLElement) {
+        _removeItem(parent: Element): void {
             parent.removeChild(parent.lastElementChild);
         }
 
@@ -197,7 +220,7 @@ module plat.ui.controls {
          * @param numberOfItems The number of items 
          * to remove.
          */
-        _removeItems(numberOfItems: number) {
+        _removeItems(numberOfItems: number): void {
             var element = this.element,
                 removeItem = this._removeItem;
             while (numberOfItems-- > 0) {
@@ -211,7 +234,7 @@ module plat.ui.controls {
          * 
          * @param ev The array mutation object
          */
-        _itemRemoved(ev: observable.IArrayMethodInfo<any>) {
+        _itemRemoved(ev: observable.IArrayMethodInfo<any>): void {
             if (ev.oldArray.length === 0) {
                 return;
             }
@@ -233,7 +256,7 @@ module plat.ui.controls {
          * Resets the select element by removing all its 
          * items and adding them back.
          */
-        _resetSelect() {
+        _resetSelect(): void {
             var itemLength = this.context.length,
                 nodeLength = this.element.childNodes.length;
 
@@ -252,7 +275,7 @@ module plat.ui.controls {
          * 
          * @param ev The array mutation object
          */
-        _push(ev: observable.IArrayMethodInfo<any>) {
+        _push(ev: observable.IArrayMethodInfo<any>): void {
             this._addItems(ev.arguments.length, ev.oldArray.length);
         }
 
@@ -262,7 +285,7 @@ module plat.ui.controls {
          * 
          * @param ev The array mutation object
          */
-        _pop(ev: observable.IArrayMethodInfo<any>) {
+        _pop(ev: observable.IArrayMethodInfo<any>): void {
             this._itemRemoved(ev);
         }
 
@@ -272,7 +295,7 @@ module plat.ui.controls {
          * 
          * @param ev The array mutation object
          */
-        _shift(ev: observable.IArrayMethodInfo<any>) {
+        _shift(ev: observable.IArrayMethodInfo<any>): void {
             if (this.__isGrouped) {
                 this._resetSelect();
                 return;
@@ -287,7 +310,7 @@ module plat.ui.controls {
          * 
          * @param ev The array mutation object
          */
-        _splice(ev: observable.IArrayMethodInfo<any>) {
+        _splice(ev: observable.IArrayMethodInfo<any>): void {
             if (this.__isGrouped) {
                 this._resetSelect();
                 return;
@@ -309,7 +332,7 @@ module plat.ui.controls {
          * 
          * @param ev The array mutation object
          */
-        _unshift(ev: observable.IArrayMethodInfo<any>) {
+        _unshift(ev: observable.IArrayMethodInfo<any>): void {
             if (this.__isGrouped) {
                 this._resetSelect();
                 return;
@@ -324,7 +347,7 @@ module plat.ui.controls {
          * 
          * @param ev The array mutation object
          */
-        _sort(ev: observable.IArrayMethodInfo<any>) {
+        _sort(ev: observable.IArrayMethodInfo<any>): void {
             if (this.__isGrouped) {
                 this._resetSelect();
             }
@@ -336,7 +359,7 @@ module plat.ui.controls {
          * 
          * @param ev The array mutation object
          */
-        _reverse(ev: observable.IArrayMethodInfo<any>) {
+        _reverse(ev: observable.IArrayMethodInfo<any>): void {
             if (this.__isGrouped) {
                 this._resetSelect();
             }
@@ -369,5 +392,5 @@ module plat.ui.controls {
         textContent: string;
     }
 
-    register.control('plat-select', Select);
+    register.control(__Select, Select);
 }

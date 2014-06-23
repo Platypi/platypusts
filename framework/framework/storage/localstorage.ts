@@ -3,10 +3,19 @@ module plat.storage {
      * A class used to wrap local storage into an injectable.
      */
     export class LocalStorage extends BaseStorage implements ILocalStorage {
-        private __storage: Storage = acquire('$window').localStorage;
+        /* tslint:disable:no-unused-variable */
+        private __storage: Storage = (<Window>acquire(__Window)).localStorage;
+        /* tslint:enable:no-unused-variable */
     }
 
-    register.injectable('$localStorage', LocalStorage);
+    /**
+     * The Type for referencing the '$LocalStorage' injectable as a dependency.
+     */
+    export function ILocalStorage(): ILocalStorage {
+        return new LocalStorage();
+    }
+
+    register.injectable(__LocalStorage, ILocalStorage);
 
     /**
      * Describes an object used to wrap local storage into an injectable.

@@ -28,7 +28,6 @@
     <TypeScriptCompile Include="controls\keycodeevent\keycodeevent.ts" />
     <TypeScriptCompile Include="controls\name\namecontrol.ts" />
     <TypeScriptCompile Include="controls\observableattributecontrol\observableattributecontrol.ts" />
-    <TypeScriptCompile Include="controls\options\options.ts" />
     <TypeScriptCompile Include="controls\setattributecontrol\setattributecontrol.ts" />
     <TypeScriptCompile Include="controls\simpleevent\simpleevent.ts" />
     <TypeScriptCompile Include="control\control.ts" />
@@ -56,12 +55,18 @@
     <TypeScriptCompile Include="processing\nodemanager\elementmanager.ts" />
     <TypeScriptCompile Include="processing\nodemanager\nodemanager.ts" />
     <TypeScriptCompile Include="processing\nodemanager\textmanager.ts" />
+    <TypeScriptCompile Include="references\references.ts" />
     <TypeScriptCompile Include="register\register.ts" />
     <TypeScriptCompile Include="storage\basestorage.ts" />
     <TypeScriptCompile Include="storage\cache\cache.ts" />
     <TypeScriptCompile Include="storage\cache\templatecache.ts" />
     <TypeScriptCompile Include="storage\localstorage.ts" />
     <TypeScriptCompile Include="storage\sessionstorage.ts" />
+    <TypeScriptCompile Include="ui\animations\cssanimation.ts" />
+    <TypeScriptCompile Include="ui\animations\animator.ts" />
+    <TypeScriptCompile Include="ui\animations\baseanimation.ts" />
+    <TypeScriptCompile Include="ui\animations\jsAnimation.ts" />
+    <TypeScriptCompile Include="ui\animations\simpleanimation\simpleanimation.ts" />
     <TypeScriptCompile Include="ui\attributes\attributes.ts" />
     <TypeScriptCompile Include="ui\bindabletemplates\bindabletemplates.ts" />
     <TypeScriptCompile Include="ui\controls\anchor\anchor.ts" />
@@ -76,15 +81,63 @@
     <TypeScriptCompile Include="ui\controls\viewport\viewport.ts" />
     <TypeScriptCompile Include="ui\domevents\domevents.ts" />
     <TypeScriptCompile Include="ui\dom\dom.ts" />
+    <TypeScriptCompile Include="ui\dom\domglobal.ts" />
     <TypeScriptCompile Include="ui\resources\resources.ts" />
     <TypeScriptCompile Include="ui\templatecontrol\templatecontrol.ts" />
+    <TypeScriptCompile Include="ui\viewcontrol\baseviewcontrol.ts" />
     <TypeScriptCompile Include="ui\viewcontrol\viewcontrol.ts" />
+    <TypeScriptCompile Include="ui\viewcontrol\webviewcontrol.ts" />
     <TypeScriptCompile Include="utils\utils.ts" />
     <TypeScriptCompile Include="utils\utilsglobal.ts" />
-    <TypeScriptCompile Include="web\browser\browser.config.ts" />
     <TypeScriptCompile Include="web\browser\browser.ts" />
     <TypeScriptCompile Include="web\router\router.ts" />
+    <TypeScriptCompile Include="web\urlutils\urlutils.ts" />
     <TypeScriptCompile Include="window\window.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="css\animations.css">
+      <DependentUpon>animations.less</DependentUpon>
+    </Content>
+    <Content Include="css\animations.min.css">
+      <DependentUpon>animations.css</DependentUpon>
+    </Content>
+    <Content Include="css\media.css">
+      <DependentUpon>media.less</DependentUpon>
+    </Content>
+    <Content Include="css\media.min.css">
+      <DependentUpon>media.css</DependentUpon>
+    </Content>
+    <Content Include="css\mixins.css">
+      <DependentUpon>mixins.less</DependentUpon>
+    </Content>
+    <Content Include="css\mixins.min.css">
+      <DependentUpon>mixins.css</DependentUpon>
+    </Content>
+    <Content Include="css\platypus.css">
+      <DependentUpon>platypus.less</DependentUpon>
+    </Content>
+    <Content Include="css\platypus.less" />
+    <Content Include="css\platypus.min.css">
+      <DependentUpon>platypus.css</DependentUpon>
+    </Content>
+    <Content Include="css\variables.css">
+      <DependentUpon>variables.less</DependentUpon>
+    </Content>
+    <Content Include="css\variables.min.css">
+      <DependentUpon>variables.css</DependentUpon>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="css\mixins.less" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="css\variables.less" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="css\animations.less" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="css\media.less" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -118,6 +171,7 @@
     <TypeScriptRemoveComments>false</TypeScriptRemoveComments>
     <TypeScriptSourceMap>true</TypeScriptSourceMap>
     <TypeScriptModuleKind>none</TypeScriptModuleKind>
+    <TypeScriptNoImplicitAny>True</TypeScriptNoImplicitAny>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <TypeScriptTarget>ES5</TypeScriptTarget>

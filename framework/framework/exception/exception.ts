@@ -10,7 +10,7 @@ module plat {
          * @param message The message to be sent to the listeners.
          * @param type Denotes the type of fatal exception.
          */
-        static warn(message: string, type?: number) {
+        static warn(message: string, type?: number): void {
             raise(message, type, false);
         }
 
@@ -21,7 +21,7 @@ module plat {
          * @param error The Error to be sent to all the listeners.
          * @param type Denotes the type of fatal exception. 
          */
-        static fatal(error: Error, type?: number);
+        static fatal(error: Error, type?: number): void;
         /**
          * Method for sending a fatal message to all listeners. Will
          * throw an error.
@@ -29,7 +29,7 @@ module plat {
          * @param message The message to be sent to all the listeners.
          * @param type Denotes the type of fatal exception.
          */
-        static fatal(message: string, type?: number);
+        static fatal(message: string, type?: number): void;
         static fatal(message: any, type?: number) {
             raise(message, type, true);
         }
@@ -82,8 +82,20 @@ module plat {
          * Exception Type
          */
         static PROMISE = 11;
-
+        /**
+         * Animation Type
+         */
+        static ANIMATION = 12;
     }
+
+    /**
+     * The Type for referencing the '$ExceptionStatic' injectable as a dependency.
+     */
+    export function IExceptionStatic(): IExceptionStatic {
+        return Exception;
+    }
+
+    register.injectable(__ExceptionStatic, IExceptionStatic, null, __STATIC);
 
     /**
      * The intended external interface for the '$ExceptionStatic' injectable.
@@ -92,7 +104,7 @@ module plat {
         /**
          * Method for sending a warning to all listeners. Will
          * not throw an error.
-         *
+         * 
          * @param message The message to be sent to the listeners.
          * @param type Denotes the type of fatal exception.
          */
@@ -101,7 +113,7 @@ module plat {
         /**
          * Method for sending a fatal error to all listeners. Will
          * throw an error.
-         *
+         * 
          * @param error The Error to be sent to all the listeners.
          * @param type Denotes the type of fatal exception.
          */
@@ -109,7 +121,7 @@ module plat {
         /**
          * Method for sending a fatal message to all listeners. Will
          * throw an error.
-         *
+         * 
          * @param message The message to be sent to all the listeners.
          * @param type Denotes the type of fatal exception.
          */
@@ -163,33 +175,30 @@ module plat {
          * Exception Type
          */
         PROMISE: number;
+        /**
+         * Animation Type
+         */
+        ANIMATION: number;
     }
 
-    /**
-     * The Type for referencing the '$ExceptionStatic' injectable as a dependency.
-     */
-    export function ExceptionStatic() {
-        return Exception;
+    class PlatException {
+        constructor(public message: string, public name: string) { }
     }
 
-    register.injectable('$ExceptionStatic', ExceptionStatic, null, register.injectableType.STATIC);
-
-    function PlatException(message, name) {
-        this.message = message;
-        this.name = name;
+    class PlatError {
+        message: string;
+        name = 'PlatError';
+        constructor(message?: string) {
+            this.message = message || '';
+        }
     }
 
-    function PlatError(message?: string) {
-        this.message = message || '';
-        this.name = 'PlatError';
-    }
-
-    function setPrototypes(platError?: any) {
+    function setPrototypes(platError?: any): void {
         PlatError.prototype = platError || Error.prototype;
         PlatException.prototype = new PlatError();
     }
 
-    function raise(message: any, type: number, isFatal?: boolean) {
+    function raise(message: any, type: number, isFatal?: boolean): void {
         var error: Error;
 
         if (message instanceof Error) {
@@ -235,18 +244,18 @@ module plat {
         }
 
         if (message instanceof Error) {
-            var temp = message,
-                properties = Object.getOwnPropertyNames(message),
+            var properties = Object.getOwnPropertyNames(message),
                 length = properties.length;
 
             error.message = '';
             error = Object.create(error);
 
             for (var i = 0; i < length; ++i) {
-                error[properties[i]] = message[properties[i]];
+                (<any>error)[properties[i]] = message[properties[i]];
             }
         }
-        var ErrorEvent: events.IErrorEventStatic = acquire('$ErrorEventStatic');
+
+        var ErrorEvent: events.IErrorEventStatic = acquire(__ErrorEventStatic);
 
         ErrorEvent.dispatch('error', Exception, error);
 

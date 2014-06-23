@@ -1,13 +1,11 @@
 ﻿module plat {
     /**
-     * The Type for referencing the '$document' injectable as a dependency. 
+     * The Type for referencing the '$Document' injectable as a dependency. 
      * Used so that the Window can be mocked.
      */
-    export function DocumentStatic(window: Window) {
-        return window.document;
+    export function Document($Window: Window): Document {
+        return $Window.document;
     }
 
-    register.injectable('$document', DocumentStatic, [
-        '$window'
-    ], register.injectableType.STATIC);
+    register.injectable(__Document, Document, [__Window]);
 }

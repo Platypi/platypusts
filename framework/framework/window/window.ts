@@ -1,12 +1,11 @@
 ﻿module plat {
     /**
-     * The Type for referencing the '$window' injectable as a dependency. 
+     * The Type for referencing the '$Window' injectable as a dependency. 
      * Used so that the Window can be mocked.
      */
-    export function WindowStatic() {
+    export function Window(): Window {
         return window;
     }
 
-    register.injectable('$window', WindowStatic,
-        null, register.injectableType.STATIC);
+    register.injectable(__Window, Window);
 }

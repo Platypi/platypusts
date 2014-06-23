@@ -3,79 +3,157 @@
      * A class for checking browser compatibility issues.
      */
     export class Compat implements ICompat {
-        /**
-         * Signifies whether or not Cordova is defined. If it is, 
-         * we hook up ALM events to Cordova's functions.
-         */
+        $Window: Window = acquire(__Window);
+        $Document: Document = acquire(__Document);
+
+        isCompatible: boolean;
         cordova: boolean;
-
-        /**
-         * Signifies whether window.history.pushState is defined.
-         */
         pushState: boolean;
-        
-        /**
-         * Signifies whether Require is present. If it is, we assume 
-         * it is going to be used and leave the loading of the app up 
-         * to the developer.
-         */
+        fileSupported: boolean;
         amd: boolean;
-        
-        /**
-         * Signifies whether we are in the contet of a Windows 8 app.
-         */
         msApp: boolean;
-        
-        /**
-         * Signifies whether indexedDB exists on the window.
-         */
         indexedDb: boolean;
-
-        /**
-         * Signifies whether Object.prototype.__proto__ exists.
-         */
         proto: boolean;
-
-        /**
-         * Signifies whether Object.prototype.getPrototypeOf exists.
-         */
         getProto: boolean;
-
-        /**
-         * Signifies whether Object.prototype.setPrototypeOf exists.
-         */
         setProto: boolean;
+        hasTouchEvents: boolean;
+        hasPointerEvents: boolean;
+        hasMsPointerEvents: boolean;
+        animationSupported: boolean;
+        platCss: boolean;
+        mappedEvents: IMappedEvents;
+        animationEvents: IAnimationEvents;
 
         /**
-         * Determines if the browser is modern enough to correctly 
-         * run PlatypusTS.
+         * Define everything
          */
-        get isCompatible() {
-            var $document = acquire('$document');
-
-            return isFunction(Object.defineProperty) &&
-                isFunction($document.querySelector);
+        constructor() {
+            this.__defineBooleans();
+            this.__defineMappedEvents();
+            this.__defineAnimationEvents();
+            this.__determineCss();
         }
 
-        constructor() {
-            var contextManager: observable.IContextManagerStatic = acquire('$ContextManagerStatic'),
-                $window: Window = acquire('$window'),
-                define = contextManager.defineGetter,
-                def = $window['define'],
-                msA = $window['MSApp'];
+        private __defineBooleans(): void {
+            var $window = this.$Window,
+                navigator = $window.navigator,
+                history = $window.history,
+                def = (<any>$window).define,
+                msA = (<any>$window).MSApp;
 
-            define(this, 'cordova', !isNull($window['cordova']));
-            define(this, 'pushState', !isNull($window.history.pushState));
-            define(this, 'amd', isFunction(def) && !isNull(def.amd));
-            define(this, 'msApp', isObject(msA) && isFunction(msA.execUnsafeLocalFunction));
-            define(this, 'indexedDb', !isNull($window.indexedDB));
-            define(this, 'proto', isObject((<any>{}).__proto__));
-            define(this, 'getProto', isFunction(Object.getPrototypeOf));
-            define(this, 'setProto', isFunction((<any>Object).setPrototypeOf));
+            this.isCompatible = isFunction(Object.defineProperty) && isFunction(this.$Document.querySelector);
+            this.cordova = !isNull((<any>$window).cordova);
+            this.pushState = !(isNull(history) || isNull(history.pushState));
+            this.fileSupported = !(isUndefined((<any>$window).File) || isUndefined((<any>$window).FormData));
+            this.amd = isFunction(def) && !isNull(def.amd);
+            this.msApp = isObject(msA) && isFunction(msA.execUnsafeLocalFunction);
+            this.indexedDb = !isNull($window.indexedDB);
+            this.proto = isObject((<any>{}).__proto__);
+            this.getProto = isFunction(Object.getPrototypeOf);
+            this.setProto = isFunction((<any>Object).setPrototypeOf);
+            this.hasTouchEvents = !isUndefined((<any>$window).ontouchstart);
+            this.hasPointerEvents = !!navigator.pointerEnabled;
+            this.hasMsPointerEvents = !!navigator.msPointerEnabled;
+        }
+
+        private __defineMappedEvents(): void {
+            if (this.hasPointerEvents) {
+                this.mappedEvents = {
+                    $touchstart: 'pointerdown',
+                    $touchend: 'pointerup',
+                    $touchmove: 'pointermove',
+                    $touchcancel: 'pointercancel'
+                };
+            } else if (this.hasMsPointerEvents) {
+                this.mappedEvents = {
+                    $touchstart: 'MSPointerDown',
+                    $touchend: 'MSPointerUp',
+                    $touchmove: 'MSPointerMove',
+                    $touchcancel: 'MSPointerCancel'
+                };
+            } else if (this.hasTouchEvents) {
+                this.mappedEvents = {
+                    $touchstart: 'touchstart',
+                    $touchend: 'touchend',
+                    $touchmove: 'touchmove',
+                    $touchcancel: 'touchcancel'
+                };
+            } else {
+                this.mappedEvents = {
+                    $touchstart: 'mousedown',
+                    $touchend: 'mouseup',
+                    $touchmove: 'mousemove',
+                    $touchcancel: null
+                };
+            }
+        }
+
+        private __defineAnimationEvents(): void {
+            var div = this.$Document.createElement('div'),
+                animations: IObject<string> = {
+                    WebkitAnimation: 'webkit',
+                    animation: ''
+                },
+                keys = Object.keys(animations),
+                index = keys.length,
+                prefix = '',
+                key: any;
+
+            while (index-- > 0) {
+                key = keys[index];
+                if (!isUndefined(div.style[key])) {
+                    prefix = animations[key];
+                    break;
+                }
+            }
+
+            this.animationSupported = index > -1;
+            this.animationEvents = prefix === '' ? {
+                $animation: 'animation',
+                $animationStart: 'animationstart',
+                $animationEnd: 'animationend',
+                $transition: 'transition',
+                $transitionStart: 'transitionstart',
+                $transitionEnd: 'transitionend'
+            } : {
+                $animation: prefix + 'Animation',
+                $animationStart: prefix + 'AnimationStart',
+                $animationEnd: prefix + 'AnimationEnd',
+                $transition: prefix + 'Transition',
+                $transitionStart: prefix + 'TransitionStart',
+                $transitionEnd: prefix + 'TransitionEnd'
+            };
+        }
+
+        private __determineCss(): void {
+            var $document = this.$Document,
+                head = $document.head,
+                element = $document.createElement('div');
+
+            element.setAttribute(__Hide, '');
+            head.insertBefore(element, null);
+
+            var computedStyle = this.$Window.getComputedStyle(element),
+                display = computedStyle.display;
+
+            if (display === 'none') {
+                this.platCss = true;
+            } else {
+                this.platCss = false;
+            }
+
+            head.removeChild(element);
         }
     }
 
-    register.injectable('$compat', Compat);
+   /**
+    * The Type for referencing the '$Compat' injectable as a dependency.
+    */
+    export function ICompat(): ICompat {
+        return new Compat();
+    }
+
+    register.injectable(__Compat, ICompat);
 
     /**
      * An object containing boolean values signifying browser 
@@ -83,6 +161,12 @@
      */
     export interface ICompat {
         /**
+         * Determines if the browser is modern enough to correctly 
+         * run PlatypusTS.
+         */
+        isCompatible: boolean;
+
+        /**
          * Signifies whether or not Cordova is defined. If it is, 
          * we hook up ALM events to Cordova's functions.
          */
@@ -92,6 +176,11 @@
          * Signifies whether window.history.pushState is defined.
          */
         pushState: boolean;
+
+        /**
+         * Signifies whether the File API is supported.
+         */
+        fileSupported: boolean;
 
         /**
          * Signifies whether Require is present. If it is, we assume 
@@ -126,9 +215,101 @@
         setProto: boolean;
 
         /**
-         * Determines if the browser is modern enough to correctly 
-         * run PlatypusTS.
+         * Whether or not the current browser has touch events 
+         * like touchstart, touchmove, touchend, etc.
          */
-        isCompatible: boolean;
+        hasTouchEvents: boolean;
+
+        /**
+         * Whether or not the current browser has pointer events 
+         * like pointerdown, MSPointerMove, pointerup, etc.
+         */
+        hasPointerEvents: boolean;
+
+        /**
+         * Whether or not the current browser has touch events 
+         * like MSPointerDown, touchmove, MSPointerUp, etc.
+         */
+        hasMsPointerEvents: boolean;
+
+        /**
+         * Whether or not the browser supports animations.
+         */
+        animationSupported: boolean;
+
+        /**
+         * Whether the platypus.css file was included or not.
+         */
+        platCss: boolean;
+
+        /**
+         * An object containing the correctly mapped touch events for the browser.
+         */
+        mappedEvents: IMappedEvents;
+
+        /**
+         * An object containing the properly prefixed animation events.
+         */
+        animationEvents: IAnimationEvents;
+    }
+
+    /**
+     * Describes an object containing the correctly mapped touch events for the browser.
+     */
+    export interface IMappedEvents extends IObject<string> {
+        /**
+         * An event type for touch start.
+         */
+        $touchstart: string;
+
+        /**
+         * An event type for touch end.
+         */
+        $touchend: string;
+
+        /**
+         * An event type for touch move.
+         */
+        $touchmove: string;
+
+        /**
+         * An event type for touch cancel.
+         */
+        $touchcancel: string;
+    }
+
+    /**
+     * Describes an object containing the properly prefixed animation events.
+     */
+    export interface IAnimationEvents extends IObject<string> {
+        /**
+         * The animation identifier.
+         */
+        $animation: string;
+
+        /**
+         * The animation start event.
+         */
+        $animationStart: string;
+
+        /**
+         * The animation end event.
+         */
+        $animationEnd: string;
+
+        /**
+         * The transition identifier.
+         */
+        $transition: string;
+
+        /**
+         * The transition start event.
+         */
+        $transitionStart: string;
+
+        /**
+         * The transition end event.
+         */
+        $transitionEnd: string;
     }
 }

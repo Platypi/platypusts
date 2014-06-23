@@ -1,7 +1,7 @@
-//***************************************************//
-//****** Promise implementation does not work *******//
-//*************** Temporarily on hold ***************//
-//***************************************************//
+/**
+ * Promise implementation does not work 
+ * Temporarily on hold 
+ */
 
 module plat {
     /**
@@ -130,7 +130,7 @@ module plat {
                         };
 
                         objectStore.transaction.onerror = (event) => {
-                            reject(new DatabaseError(event.target['errorCode'], 'Unknown error'));
+                            reject(new DatabaseError((<any>event.target).errorCode, 'Unknown error'));
                         };
                     }, { _store: store });
                 }
@@ -152,9 +152,6 @@ module plat {
                     this._db.deleteObjectStore(name);
                     return;
                 }
-
-                //exception.warn('Cannot modify database schema outside of a database upgrade',
-                //    ExceptionType.Injectable);
             }
 
             /**
@@ -179,7 +176,7 @@ module plat {
                     };
 
                     tr.onerror = (event) => {
-                        reject(new DatabaseError(event.target['errorCode'], 'Unknown error'));
+                        reject(new DatabaseError((<any>event.target).errorCode, 'Unknown error'));
                     };
                 }, { db: this, _transaction: transaction });
             }
@@ -411,7 +408,7 @@ module plat {
              * The boolean value of this object store's autoIncrement flag.
              */
             get autoIncrement() {
-                return <boolean>this._store['autoIncrement'];
+                return <boolean>(<any>this._store).autoIncrement;
             }
 
             /**
@@ -539,23 +536,22 @@ module plat {
                         resolve(new Cursor(this.result, that));
                     };
 
-                    request.onerror = (event) => {
-                        reject(new DatabaseError(event.target['errorCode'], 'Unknown error'));
+                    request.onerror = (event: ErrorEvent) => {
+                        reject(new DatabaseError((<any>event.target).errorCode, 'Unknown error'));
                     };
                 });
             }
 
             private requestFn(fn: string, arg0?: any, arg1?: any) {
-                var request = this._store[fn](arg0, arg1),
-                    that = this;
+                var request = (<any>this._store)[fn](arg0, arg1);
 
                 return new DatabaseEventResultPromise((resolve, reject) => {
-                    request.onsuccess = function requestSuccess(event) {
+                    request.onsuccess = function requestSuccess() {
                         resolve(this.result);
                     };
 
-                    request.onerror = (event) => {
-                        reject(new DatabaseError(event.target['errorCode'], 'Unknown error'));
+                    request.onerror = (event: Event) => {
+                        reject(new DatabaseError((<any>event.target).errorCode, 'Unknown error'));
                     };
                 });
             }
@@ -692,7 +688,7 @@ module plat {
                     };
 
                     objectStore.transaction.onerror = (event) => {
-                        var error = this.error = new DatabaseError(event.target['errorCode'], 'Unknown error');
+                        var error = this.error = new DatabaseError((<any>event.target).errorCode, 'Unknown error');
                         reject(error);
                     };
                 }, { db: this.db, _store: objectStore });
@@ -819,21 +815,21 @@ module plat {
                     };
 
                     request.onerror = (event) => {
-                        reject(new DatabaseError(event.target['errorCode'], 'Unknown error'));
+                        reject(new DatabaseError((<any>event.target).errorCode, 'Unknown error'));
                     };
                 });
             }
 
             private requestFn(fn: string, arg?: any) {
-                var request = this._index[fn](arg);
+                var request = (<any>this._index)[fn](arg);
 
                 return new DatabaseEventResultPromise((resolve, reject) => {
-                    request.onsuccess = function requestSuccess(event) {
+                    request.onsuccess = function requestSuccess() {
                         resolve(this.result);
                     };
 
-                    request.onerror = (event) => {
-                        reject(new DatabaseError(event.target['errorCode'], 'Unknown error'));
+                    request.onerror = (event: ErrorEvent) => {
+                        reject(new DatabaseError((<any>event.target).errorCode, 'Unknown error'));
                     };
                 });
             }
@@ -843,26 +839,26 @@ module plat {
          * Describes a promise that fulfills with a Db instance and rejects 
          * in the case of an error.
          */
-        export interface IDatabasePromise extends async.IPromise<IDb, IDatabaseError> { }
+        export interface IDatabasePromise extends async.IThenable<IDb> { }
 
         /**
          * Describes a promise that fulfills with a Db instance and rejects 
          * in the case of an error.
          */
-        export class DatabasePromise extends async.Promise<IDb, IDatabaseError>
+        export class DatabasePromise extends async.Promise<IDb>
             implements IDatabasePromise { }
 
         /**
          * Describes a promise that fulfills with a result of any type and rejects 
          * in the case of an error.
          */
-        export interface IDatabaseEventResultPromise extends async.IPromise<any, IDatabaseError> { }
+        export interface IDatabaseEventResultPromise extends async.IThenable<any> { }
 
         /**
          * Describes a promise that fulfills with a result of any type and rejects 
          * in the case of an error.
          */
-        export class DatabaseEventResultPromise extends async.Promise<any, IDatabaseError>
+        export class DatabaseEventResultPromise extends async.Promise<any>
             implements IDatabaseEventResultPromise { }
 
         /**
@@ -1017,7 +1013,7 @@ module plat {
              * The boolean value of this object store's autoIncrement flag.
              */
             get autoIncrement() {
-                return <boolean>this._store['autoIncrement'];
+                return <boolean>(<any>this._store).autoIncrement;
             }
 
             /**
@@ -1145,13 +1141,13 @@ module plat {
          * Describes a promise that fulfills with a injectables.ICursor and rejects with a 
          * injectables.IDatabaseError.
          */
-        export interface ICursorPromise extends async.IPromise<ICursor, IDatabaseError> { }
+        export interface ICursorPromise extends async.IThenable<ICursor> { }
 
         /**
          * Describes a promise that fulfills with a injectables.ICursor and rejects with a 
          * injectables.IDatabaseError.
          */
-        export class CursorPromise extends async.Promise<ICursor, IDatabaseError>
+        export class CursorPromise extends async.Promise<ICursor>
             implements ICursorPromise { }
 
         /**
@@ -1387,7 +1383,7 @@ module plat {
                     };
 
                     request.onerror = (event) => {
-                        reject(new DatabaseError(event.target['errorCode'], 'Unknown error'));
+                        reject(new DatabaseError((<any>event.target).errorCode, 'Unknown error'));
                     };
                 });
             }
@@ -1485,7 +1481,7 @@ module plat {
                     };
 
                     objectStore.transaction.onerror = (event) => {
-                        var error = this.error = new DatabaseError(event.target['errorCode'], 'Unknown error');
+                        var error = this.error = new DatabaseError((<any>event.target).errorCode, 'Unknown error');
                         reject(error);
                     };
                 }, { db: this.db, _store: objectStore });
@@ -1655,12 +1651,13 @@ module plat {
                     var dbRequest = indexedDb.open(name, version);
 
                     dbRequest.onerror = (event) => {
-                        reject(new DatabaseError(event.target['errorCode'], 'Unknown error'));
+                        reject(new DatabaseError((<any>event.target).errorCode, 'Unknown error'));
                     };
 
                     dbRequest.onsuccess = function onOpen(event) {
                         var db = new Db(this.result);
-                        resolve(db); //need to check this vs. resolving in onupgradeneeded
+                        // need to check this vs. resolving in onupgradeneeded
+                        resolve(db);
                     };
 
                     dbRequest.onupgradeneeded = function dbUpgrade(event) {
@@ -1669,7 +1666,7 @@ module plat {
                         if (isFunction(onUpgradeNeeded)) {
                             onUpgradeNeeded(db);
                         } else {
-                            //exception.warn('Your database ' + name +
+                            // exception.warn('Your database ' + name +
                             //    ' was upgraded with newer version, but no onUpgradeNeeded ' +
                             //    'callback was specified', ExceptionType.Injectable);
                         }
@@ -1696,7 +1693,7 @@ module plat {
                     var dbRequest = indexedDb.deleteDatabase(name);
 
                     dbRequest.onerror = (event) => {
-                        reject(new DatabaseError(event.target['errorCode'], 'Unknown error'));
+                        reject(new DatabaseError((<any>event.target).errorCode, 'Unknown error'));
                     };
 
                     dbRequest.onsuccess = (event) => {
@@ -1719,7 +1716,7 @@ module plat {
                 var indexedDb = window.indexedDB;
 
                 if (isNull(indexedDb)) {
-                    //exception.fatal('IndexedDb is not supported', ExceptionType.Injectable);
+                    // exception.fatal('IndexedDb is not supported', ExceptionType.Injectable);
                 }
 
                 return indexedDb.cmp(first, second);

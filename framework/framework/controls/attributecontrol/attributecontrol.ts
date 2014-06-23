@@ -11,11 +11,19 @@ module plat.controls {
          * @static
          * @param control The AttributeControl to dispose.
          */
-        static dispose(control: IAttributeControl) {
-            control.templateControl = null;
-            delete control.templateControl;
+        static dispose(control: IAttributeControl): void {
+            deleteProperty(control, 'templateControl');
 
             Control.dispose(control);
+        }
+
+        /**
+         * Returns a new instance of AttributeControl.
+         * 
+         * @static
+         */
+        static getInstance(): IAttributeControl {
+            return new AttributeControl();
         }
 
         /**
@@ -24,26 +32,37 @@ module plat.controls {
          * exists.
          */
         templateControl: ui.ITemplateControl = null;
-
-        /**
-         * Specifies the priority of the attribute. The purpose of 
-         * this is so that controls like plat-bind can have a higher 
-         * priority than plat-tap. The plat-bind will be initialized 
-         * and loaded before plat-tap, meaning it has the first chance 
-         * to respond to events.
-         */
-        priority = 0;
     }
 
     /**
-     * The Type for referencing the '$AttributeControlStatic' injectable as a dependency.
+     * The Type for referencing the '$AttributeControlFactory' injectable as a dependency.
      */
-    export function AttributeControlStatic($ControlStatic) {
+    export function IAttributeControlFactory(): IAttributeControlFactory {
         return AttributeControl;
     }
 
-    register.injectable('$AttributeControlStatic', AttributeControlStatic,
-        null, register.injectableType.STATIC);
+    register.injectable(__AttributeControlFactory, IAttributeControlFactory, null, __FACTORY);
+
+    /**
+     * Creates and manages instances of IAttributeControl.
+     */
+    export interface IAttributeControlFactory {
+        /**
+         * Method for disposing an attribute control. Removes any
+         * necessary objects from the control.
+         * 
+         * @static
+         * @param control The AttributeControl to dispose.
+         */
+        dispose(control: IAttributeControl): void;
+
+        /**
+         * Returns a new instance of an IAttributeControl.
+         * 
+         * @static
+         */
+        getInstance(): IAttributeControl;
+    }
 
     /**
      * An object describing a type of control that can be used as an attribute but will 
@@ -55,34 +74,6 @@ module plat.controls {
          * control's element. Can be null if no ITemplateControl
          * exists.
          */
-        templateControl: ui.ITemplateControl;
-
-        /**
-         * Specifies the priority of the attribute. The purpose of 
-         * this is so that controls like plat-bind can have a higher 
-         * priority than plat-tap. The plat-bind will be initialized 
-         * and loaded before plat-tap, meaning it has the first chance 
-         * to respond to events.
-         */
-        priority: number;
-    }
-
-    /**
-     * The external interface for the '$AttributeControlStatic' injectable.
-     */
-    export interface IAttributeControlStatic {
-        /**
-         * Method for disposing an attribute control. Removes any
-         * necessary objects from the control.
-         *
-         * @static
-         * @param control The AttributeControl to dispose.
-         */
-        dispose(control: IAttributeControl): void;
-
-        /**
-         * Create a new empty IAttributeControl
-         */
-        new (): IAttributeControl;
+        templateControl?: ui.ITemplateControl;
     }
 }

@@ -1,9 +1,14 @@
 ﻿module plat.ui.controls {
     export class Baseport extends TemplateControl implements IBaseport {
-        $ManagerCacheStatic: storage.ICache<processing.IElementManager> = acquire('$ManagerCacheStatic');
-        $ExceptionStatic: IExceptionStatic = acquire('$ExceptionStatic');
-        $document: Document = acquire('$document');
-        $ElementManagerStatic: processing.IElementManagerStatic = acquire('$ElementManagerStatic');
+        $ManagerCache: storage.ICache<processing.IElementManager> = acquire(__ManagerCache);
+        $Document: Document = acquire(__Document);
+        $ElementManagerFactory: processing.IElementManagerFactory = acquire(__ElementManagerFactory);
+        $Animator: IAnimator = acquire(__Animator);
+        $Promise: async.IPromise = acquire(__Promise);
+
+        /**
+         * @param navigator The navigator used for navigating between pages.
+         */
         constructor(public navigator: navigation.IBaseNavigator) {
             super();
         }
@@ -11,7 +16,7 @@
         /**
          * Clears the Baseport's innerHTML.
          */
-        setTemplate() {
+        setTemplate(): void {
             this.dom.clearNode(this.element);
         }
 
@@ -24,10 +29,17 @@
          * needed on load for the inherited form of 
          * navigation.
          */
-        loaded(navigationParameter?: any, options?: navigation.IBaseNavigationOptions) {
+        loaded(navigationParameter?: any, options?: navigation.IBaseNavigationOptions): void {
             var navigator = this.navigator;
             navigator.initialize(this);
             navigator.navigate(navigationParameter, options);
+        }
+
+        /**
+         * Clean up any memory being held.
+         */
+        dispose() {
+            this.navigator.dispose();
         }
 
         /**
@@ -38,7 +50,7 @@
          * 
          * @param ev The navigation options
          */
-        navigateTo(ev: IBaseportNavigateToOptions) {
+        navigateTo(ev: IBaseportNavigateToOptions): void {
             var control = ev.target,
                 parameter = ev.parameter,
                 options = ev.options,
@@ -46,13 +58,12 @@
                 controlType = ev.type,
                 newControl = isFunction(control.inject);
 
-            //var node = this.$document.createElement(controlType),
             var injectedControl = newControl ? control.inject() : control,
                 replaceType = injectedControl.replaceWith,
-                node = isEmpty(replaceType) ? this.$document.createElement('div') :
-                    <HTMLElement>this.$document.createElement(replaceType),
+                node = (isEmpty(replaceType) || replaceType === 'any') ? this.$Document.createElement('div') :
+                    <HTMLElement>this.$Document.createElement(replaceType),
                 attributes: IObject<string> = {},
-                nodeMap = {
+                nodeMap: processing.INodeMap = {
                     element: node,
                     attributes: attributes,
                     nodes: [],
@@ -68,16 +79,22 @@
             node.setAttribute('plat-control', controlType);
             element.appendChild(node);
 
-            var viewportManager = this.$ManagerCacheStatic.read(this.uid);
+            this.$Animator.animate(this.element, __Enter);
+
+            var viewportManager = this.$ManagerCache.read(this.uid);
             viewportManager.children = [];
 
-            var manager = this.$ElementManagerStatic.getInstance();
-
+            var manager = this.$ElementManagerFactory.getInstance();
+            
             manager.initialize(nodeMap, viewportManager, !newControl);
 
             control = this.controls[0];
             control.navigator = this.navigator;
             this.navigator.navigated(control, parameter, options);
+
+            if (this.navigator.navigating) {
+                return;
+            }
 
             manager.setUiControlTemplate();
         }
@@ -89,39 +106,14 @@
          * @param fromControl The ViewControl being navigated 
          * away from.
          */
-        navigateFrom(fromControl: IViewControl) {
+        navigateFrom(fromControl: IBaseViewControl): async.IThenable<void> {
             if (isNull(fromControl) || !isFunction(fromControl.navigatingFrom)) {
-                return;
+                return this.$Promise.resolve<void>(null);
             }
 
             fromControl.navigatingFrom();
+            return this.$Animator.animate(this.element, __Leave);
         }
-    }
-
-    /**
-     * Navigation options for a Baseport and all 
-     * controls that inherit from Baseport.
-     */
-    export interface IBaseportNavigateToOptions {
-        /**
-         * Either a view control or an injector for a view control.
-         */
-        target: any;
-
-        /**
-         * The navigation parameter.
-         */
-        parameter: any;
-
-        /**
-         * The options used for navigation.
-         */
-        options: navigation.IBaseNavigationOptions;
-
-        /**
-         * The type of view control to navigate to.
-         */
-        type: string;
     }
 
     export interface IBaseport extends ITemplateControl {
@@ -149,6 +141,32 @@
          * @param fromControl The ViewControl being navigated 
          * away from.
          */
-        navigateFrom(fromControl: IViewControl): void;
+        navigateFrom(fromControl: IBaseViewControl): async.IThenable<void>;
+    }
+
+    /**
+     * Navigation options for a Baseport and all 
+     * controls that inherit from Baseport.
+     */
+    export interface IBaseportNavigateToOptions {
+        /**
+         * Either a view control or an injector for a view control.
+         */
+        target: any;
+
+        /**
+         * The navigation parameter.
+         */
+        parameter: any;
+
+        /**
+         * The options used for navigation.
+         */
+        options: navigation.IBaseNavigationOptions;
+
+        /**
+         * The type of view control to navigate to.
+         */
+        type: string;
     }
 }

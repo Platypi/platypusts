@@ -3,10 +3,19 @@ module plat.storage {
      * A class for wrapping SessionStorage as an injectable.
      */
     export class SessionStorage extends BaseStorage implements ISessionStorage {
-        private __storage: Storage = acquire('$window').sessionStorage;
+        /* tslint:disable:no-unused-variable */
+        private __storage: Storage = (<Window>acquire(__Window)).sessionStorage;
+        /* tslint:enable:no-unused-variable */
     }
 
-    register.injectable('$sessionStorage', SessionStorage);
+    /**
+     * The Type for referencing the '$SessionStorage' injectable as a dependency.
+     */
+    export function ISessionStorage(): ISessionStorage {
+        return new SessionStorage();
+    }
+
+    register.injectable(__SessionStorage, ISessionStorage);
 
     /**
      * Describes an object used to wrap session storage into an injectable.

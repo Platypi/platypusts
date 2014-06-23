@@ -3,14 +3,7 @@ module plat.controls {
      * An AttributeControl that deals with binding to a specified property on its element.
      */
     export class SetAttributeControl extends AttributeControl implements ISetAttributeControl {
-        /**
-         * The corresponding attribute to set on the element.
-         */
         property: string;
-
-        /**
-         * The camel-cased name of the control as it appears as an attribute.
-         */
         attribute: string;
 
         /**
@@ -22,7 +15,7 @@ module plat.controls {
          * Sets the corresponding attribute {property} value and 
          * observes the attribute for changes.
          */
-        loaded() {
+        loaded(): void {
             if (isNull(this.element)) {
                 return;
             }
@@ -36,7 +29,7 @@ module plat.controls {
          * Resets the corresponding attribute {property} value upon 
          * a change of context.
          */
-        contextChanged() {
+        contextChanged(): void {
             if (isNull(this.element)) {
                 return;
             }
@@ -47,7 +40,7 @@ module plat.controls {
         /**
          * Stops listening to attribute changes.
          */
-        dispose() {
+        dispose(): void {
             if (isFunction(this.__removeListener)) {
                 this.__removeListener();
                 this.__removeListener = null;
@@ -58,26 +51,28 @@ module plat.controls {
          * The function for setting the corresponding 
          * attribute {property} value.
          */
-        setter() {
-            var expression = this.attributes[this.attribute];
+        setter(): void {
+            var expression = (<any>this.attributes)[this.attribute];
 
-            if (isEmpty(expression)) {
-                return;
-            }
+            postpone(() => {
+                if (!isNode(this.element)) {
+                    return;
+                }
 
-            switch (expression) {
-                case 'false':
-                case '0':
-                case 'null':
-                case '':
-                    this.element.setAttribute(this.property, '');
-                    this.element[this.property] = false;
-                    this.element.removeAttribute(this.property);
-                    break;
-                default:
-                    this.element.setAttribute(this.property, this.property);
-                    this.element[this.property] = true;
-            }
+                switch (expression) {
+                    case 'false':
+                    case '0':
+                    case 'null':
+                    case '':
+                        this.element.setAttribute(this.property, '');
+                        (<any>this.element)[this.property] = false;
+                        this.element.removeAttribute(this.property);
+                        break;
+                    default:
+                        this.element.setAttribute(this.property, this.property);
+                        (<any>this.element)[this.property] = true;
+                }
+            });
         }
     }
 
@@ -120,42 +115,42 @@ module plat.controls {
     }
 
     export class Visible extends SetAttributeControl {
-        private __initialDisplay: string;
-        /**
-         * Obtains the initial visibility of the item 
-         * based on it's initial display.
-         */
+        property: string = __Hide;
+
         initialize() {
-            var element = this.element;
+            this.__hide();
+        }
 
-            if (!isEmpty(element.style.display)) {
-                this.__initialDisplay = element.style.display;
-            } else {
-                var $window = acquire('$window');
-                this.__initialDisplay = $window.getComputedStyle(element).display;
-            }
+        setter() {
+            var expression = (<any>this.attributes)[this.attribute];
 
-            if (this.__initialDisplay === 'none') {
-                this.__initialDisplay = '';
+            postpone(() => {
+                if (!isNode(this.element)) {
+                    return;
+                }
+
+                switch (expression) {
+                    case 'false':
+                    case '0':
+                    case 'null':
+                    case '':
+                        this.__hide();
+                        break;
+                    default:
+                        this.__show();
+                }
+            });
+        }
+
+        private __hide() {
+            if (!this.element.hasAttribute(this.property)) {
+                this.element.setAttribute(this.property, '');
             }
         }
 
-        /**
-         * Evaluates boolean expression and sets the display.
-         */
-        setter() {
-            var expression: string = this.attributes[this.attribute],
-                style = this.element.style;
-
-            switch (expression) {
-                case 'false':
-                case '0':
-                case 'null':
-                case '':
-                    style.display = 'none';
-                    break;
-                default:
-                    style.display = this.__initialDisplay;
+        private __show() {
+            if (this.element.hasAttribute(this.property)) {
+                this.element.removeAttribute(this.property);
             }
         }
     }
@@ -164,8 +159,8 @@ module plat.controls {
         /**
          * Sets the evaluated styles on the element.
          */
-        setter() {
-            var expression: string = this.attributes[this.attribute];
+        setter(): void {
+            var expression: string = (<any>this.attributes)[this.attribute];
 
             if (isEmpty(expression)) {
                 return;
@@ -174,9 +169,9 @@ module plat.controls {
             var attributes = expression.split(';'),
                 elementStyle = this.element.style,
                 length = attributes.length,
-                splitStyles,
-                styleType,
-                styleValue;
+                splitStyles: Array<string>,
+                styleType: string,
+                styleValue: string;
 
             for (var i = 0; i < length; ++i) {
                 splitStyles = attributes[i].split(':');
@@ -184,18 +179,18 @@ module plat.controls {
                     styleType = camelCase(splitStyles[0].trim());
                     styleValue = splitStyles[1].trim();
 
-                    if (!isUndefined(elementStyle[styleType])) {
-                        elementStyle[styleType] = styleValue;
+                    if (!isUndefined((<any>elementStyle)[styleType])) {
+                        (<any>elementStyle)[styleType] = styleValue;
                     }
                 }
             }
         }
     }
 
-    register.control('plat-checked', Checked);
-    register.control('plat-disabled', Disabled);
-    register.control('plat-selected', Selected);
-    register.control('plat-readonly', ReadOnly);
-    register.control('plat-visible', Visible);
-    register.control('plat-style', Style);
+    register.control(__Checked, Checked);
+    register.control(__Disabled, Disabled);
+    register.control(__Selected, Selected);
+    register.control(__ReadOnly, ReadOnly);
+    register.control(__Visible, Visible);
+    register.control(__Style, Style);
 }

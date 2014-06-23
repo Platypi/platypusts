@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <ProjectGuid>{9AA9E4A9-1677-4521-837F-E4C4E3631F3C}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <OutputPath>bin</OutputPath>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <TypeScriptToolsVersion>1.0</TypeScriptToolsVersion>
+    <UseIISExpress>true</UseIISExpress>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+  </PropertyGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">12.0</VisualStudioVersion>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace>testing</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\WebApplications\Microsoft.WebApplication.targets" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\WebApplications\Microsoft.WebApplication.targets')" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>50833</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:50833/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <TypeScriptRemoveComments>false</TypeScriptRemoveComments>
+    <TypeScriptSourceMap>true</TypeScriptSourceMap>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <TypeScriptRemoveComments>true</TypeScriptRemoveComments>
+    <TypeScriptSourceMap>false</TypeScriptSourceMap>
+  </PropertyGroup>
+  <ItemGroup>
+    <TypeScriptCompile Include="framework\platypus.d.ts" />
+    <TypeScriptCompile Include="karma.conf.ts" />
+    <TypeScriptCompile Include="tests\acquire\acquire.test.ts" />
+    <TypeScriptCompile Include="tests\app\app.test.ts" />
+    <TypeScriptCompile Include="tests\app\appstatic.test.ts" />
+    <TypeScriptCompile Include="tests\async\promise.test.ts" />
+    <TypeScriptCompile Include="tests\controls\attributecontrol\attributecontrol.test.ts" />
+    <TypeScriptCompile Include="tests\controls\attributecontrol\attributecontrolfactory.test.ts" />
+    <TypeScriptCompile Include="tests\controls\bind\bind.test.ts" />
+    <TypeScriptCompile Include="tests\controls\elementpropertycontrol\elementpropertycontrol.test.ts" />
+    <TypeScriptCompile Include="tests\controls\name\namecontrol.test.ts" />
+    <TypeScriptCompile Include="tests\controls\observableattributecontrol\observableattributecontrol.test.ts" />
+    <TypeScriptCompile Include="tests\controls\setattributecontrol\setattributecontrol.test.ts" />
+    <TypeScriptCompile Include="tests\control\control.test.ts" />
+    <TypeScriptCompile Include="tests\control\controlfactory.test.ts" />
+    <TypeScriptCompile Include="tests\expressions\parser\parser.test.ts" />
+    <TypeScriptCompile Include="tests\expressions\regex\regex.test.ts" />
+    <TypeScriptCompile Include="tests\expressions\tokenizer\tokenizer.test.ts" />
+    <TypeScriptCompile Include="tests\observable\contextmanager\contextmanager.test.ts" />
+    <TypeScriptCompile Include="tests\observable\contextmanager\contextmanagerstatic.test.ts" />
+    <TypeScriptCompile Include="tests\storage\cache\cache.test.ts" />
+    <TypeScriptCompile Include="tests\utils\utils.test.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="tsd.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="package.json" />
+  </ItemGroup>
+  <ItemGroup />
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <TypeScriptModuleKind>commonjs</TypeScriptModuleKind>
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets')" />
+</Project>

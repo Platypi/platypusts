@@ -3,20 +3,20 @@ module plat {
      * Provides methods for interacting with geolocation services on a device.
      */
     export class Geolocation implements IGeolocation {
-        $PromiseStatic: async.IPromiseStatic = acquire('$PromiseStatic');
+        $Promise: async.IPromise = acquire(__Promise);
 
         /**
          * Attempts to acquire position information of the device.
          * 
          * @param positionOptions Optional IGeolocationPositionOptions for configuring the acquisition.
-         * @return {async.IPromise<IGeolocationPosition, IGeolocationPositionError>} A promise,
+         * @return {async.IThenable<IGeolocationPosition, IGeolocationPositionError>} A promise,
          * resolving when the position is found, and rejecting in the event of a position error.
          */
-        getCurrentPosition(positionOptions?: IGeolocationPositionOptions) {
-            return new this.$PromiseStatic<IGeolocationPosition,
-                IGeolocationPositionError>((resolve, reject) => {
-                    navigator.geolocation.getCurrentPosition(resolve, reject, positionOptions);
-                });
+        getCurrentPosition(positionOptions?: IGeolocationPositionOptions)
+                : async.IThenable<IGeolocationPosition> {
+            return new this.$Promise<IGeolocationPosition>((resolve, reject) => {
+                navigator.geolocation.getCurrentPosition(resolve, reject, positionOptions);
+            });
         }
 
         /**
@@ -47,6 +47,15 @@ module plat {
     }
 
     /**
+     * The Type for referencing the '$Geolocation' injectable as a dependency.
+     */
+    export function IGeolocation(): IGeolocation {
+        return new Geolocation();
+    }
+
+    register.injectable(__Geolocation, IGeolocation);
+
+    /**
      * Describes an object which provides methods to interact with geolocation services on a device.
      */
     export interface IGeolocation {
@@ -54,11 +63,11 @@ module plat {
          * Attempts to acquire position information of the device.
          * 
          * @param positionOptions Optional IGeolocationPositionOptions for configuring the acquisition.
-         * @return {async.IPromise<IGeolocationPosition, IGeolocationPositionError>} A promise,
+         * @return {async.IThenable<IGeolocationPosition, IGeolocationPositionError>} A promise,
          * resolving when the position is found, and rejecting in the event of a position error.
          */
         getCurrentPosition(positionOptions?: IGeolocationPositionOptions):
-            async.IPromise<IGeolocationPosition, IGeolocationPositionError>;
+            async.IThenable<IGeolocationPosition>;
 
         /**
          * An asynchronous operation for receiving notifications when a device location changes. Cannot return
@@ -207,6 +216,4 @@ module plat {
          */
         maximumAge?: number;
     }
-
-    register.injectable('$geolocation', Geolocation);
 }

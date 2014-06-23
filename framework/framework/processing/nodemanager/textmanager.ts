@@ -11,7 +11,7 @@ module plat.processing {
          * @param node The Node used to find markup.
          * @param parent The parent ITemplateControl for the node.
          */
-        static create(node: Node, parent: IElementManager) {
+        static create(node: Node, parent: IElementManager): ITextManager {
             var value = node.nodeValue,
                 manager = new TextManager();
 
@@ -64,7 +64,7 @@ module plat.processing {
          * @param node The new text node to associate with the clone.
          * @param parent The parent IElementManager for the new clone.
          */
-        static _clone(sourceManager: INodeManager, node: Node, parent: IElementManager) {
+        static _clone(sourceManager: INodeManager, node: Node, parent: IElementManager): ITextManager {
             var map = sourceManager.nodeMap,
                 manager = new TextManager();
 
@@ -83,21 +83,12 @@ module plat.processing {
          */
         type: string = 'text';
 
-        /**
-         * Clones this TextManager with a new node.
-         * 
-         * @param newNode The new node attached to the cloned TextManager.
-         * @param parentManager The parent ElementManager for the clone.
-         */
-        clone(newNode: Node, parentManager: IElementManager) {
+        clone(newNode: Node, parentManager: IElementManager): number {
             TextManager._clone(this, newNode, parentManager);
             return 1;
         }
 
-        /**
-         * The function used for data-binding a data context to the DOM.
-         */
-        bind() {
+        bind(): void {
             var parent = this.getParentControl(),
                 node = this.nodeMap.nodes[0],
                 textNode = node.node,
@@ -118,24 +109,35 @@ module plat.processing {
          * @param expressions An array of parsed expressions used to build 
          * the node value.
          */
-        _setText(node: Node, control: ui.ITemplateControl, expressions: Array<expressions.IParsedExpression>) {
-            var control = control || <ui.ITemplateControl>{},
-                value;
-
-            value = NodeManager.build(expressions, control);
-
-            node.nodeValue = value;
+        _setText(node: Node, control: ui.ITemplateControl, expressions: Array<expressions.IParsedExpression>): void {
+            control = control || <ui.ITemplateControl>{};
+            node.nodeValue = NodeManager.build(expressions, control);
         }
     }
 
     /**
-     * The Type for referencing the '$TextManagerStatic' injectable as a dependency.
+     * The Type for referencing the '$TextManagerFactory' injectable as a dependency.
      */
-    export function TextManagerStatic() {
+    export function ITextManagerFactory(): ITextManagerFactory {
         return TextManager;
     }
 
-    register.injectable('$TextManagerStatic', TextManagerStatic, null, register.injectableType.STATIC);
+    register.injectable(__TextManagerFactory, ITextManagerFactory, null, __FACTORY);
+
+    /**
+     * Creates and manages a class for dealing with Text nodes.
+     */
+    export interface ITextManagerFactory {
+        /**
+         * Determines if a text node has markup, and creates a TextManager if it does.
+         * A TextManager or empty TextManager will be added to the managers array.
+         * 
+         * @static
+         * @param node The Node used to find markup.
+         * @param parent The parent ui.ITemplateControl for the node.
+         */
+        create(node: Node, parent?: IElementManager): ITextManager;
+    }
 
     /**
      * An object responsible for initializing and data-binding values to text nodes.
@@ -152,21 +154,6 @@ module plat.processing {
         /**
          * The function used for data-binding a data context to the DOM.
          */
-        bind();
-    }
-
-    /**
-     * The external interface for the '$TextManagerStatic' injectable.
-     */
-    export interface ITextManagerStatic {
-        /**
-         * Determines if a text node has markup, and creates a TextManager if it does.
-         * A TextManager or empty TextManager will be added to the managers array.
-         * 
-         * @static
-         * @param node The Node used to find markup.
-         * @param parent The parent ui.ITemplateControl for the node.
-         */
-        create(node: Node, parent?: IElementManager): ITextManager;
+        bind(): void;
     }
 }

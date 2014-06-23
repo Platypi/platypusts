@@ -1,7 +1,8 @@
-﻿var __nativeIsArray = !!Array.isArray,
-    __uids__ = {};
+﻿/* tslint:disable:no-unused-variable */
+var __nativeIsArray = !!Array.isArray,
+    __uids__: plat.IObject<Array<string>> = {};
 
-function noop() { }
+function noop(): void { }
 
 function extend(destination: any, ...sources: any[]): any {
     if (isNull(destination)) {
@@ -14,27 +15,37 @@ function extend(destination: any, ...sources: any[]): any {
         destination = sources.shift();
     }
 
-    var keys, property;
+    var keys: Array<string>,
+        property: any;
 
     forEach(sources, (source, k) => {
-        if (!(isObject(source) || isArray(source))) {
+        if (!isObject(source)) {
             return;
         }
 
         keys = Object.keys(source);
 
-        forEach(keys, (key: string) => {
+        forEach(keys, (key) => {
             property = source[key];
             if (deep) {
                 if (isArray(property)) {
                     extend(deep, destination[key] || (destination[key] = []), property);
+                    return;
+                } else if (isDate(property)) {
+                    destination[key] = new Date(property.getTime());
+                    return;
+                } else if (isRegExp(property)) {
+                    destination[key] = new RegExp(property);
+                    return;
+                } else if (isNode(property)) {
+                    destination[key] = (<Node>property).cloneNode(true);
                     return;
                 } else if (isObject(property)) {
                     extend(deep, destination[key] || (destination[key] = {}), property);
                     return;
                 }
             }
-            destination[key] = source[key];
+            destination[key] = property;
         });
     });
 
@@ -43,6 +54,36 @@ function extend(destination: any, ...sources: any[]): any {
 
 function deepExtend(destination: any, ...sources: any[]): any {
     return extend.apply(null, [true, destination].concat(sources));
+}
+
+function _clone(obj: any, deep?: boolean) {
+    if (!isObject(obj)) {
+        return obj;
+    } else if (isDate(obj)) {
+        return new Date((<Date>obj).getTime());
+    } else if (isRegExp(obj)) {
+        return new RegExp(obj);
+    } else if (isNode(obj)) {
+        return (<Node>obj).cloneNode(deep);
+    } else if (isError(obj)) {
+        return new obj.constructor((<Error>obj).message);
+    }
+
+    var type = {};
+
+    if (isArray(obj)) {
+        type = [];
+    }
+
+    if (isBoolean(deep) && deep) {
+        return deepExtend(type, obj);
+    }
+
+    return extend(type, obj);
+}
+
+function isError(obj: any): boolean {
+    return Object.prototype.toString.call(obj) === '[object Error]';
 }
 
 function isObject(obj: any): boolean {
@@ -61,12 +102,24 @@ function isNode(obj: any): boolean {
     return !!(obj && typeof obj.nodeType === 'number');
 }
 
+function isDocumentFragment(obj: any): boolean {
+    return !!(obj && (<Node>obj).nodeType === Node.DOCUMENT_FRAGMENT_NODE);
+}
+
+function isFile(obj: any): boolean {
+    return isObject(obj) && obj.toString() === '[object File]';
+}
+
 function isString(obj: any): boolean {
     return typeof obj === 'string';
 }
 
 function isRegExp(obj: any): boolean {
     return Object.prototype.toString.call(obj) === '[object RegExp]';
+}
+
+function isPromise(obj: any): boolean {
+    return obj.toString() === '[object Promise]' || isObject(obj) && isFunction(obj.then);
 }
 
 function isEmpty(obj: any): boolean {
@@ -121,8 +174,12 @@ function isArrayLike(obj: any): boolean {
     return isString(obj) || obj.length >= 0;
 }
 
+function isDate(obj: any): boolean {
+    return Object.prototype.toString.call(obj) === '[object Date]';
+}
+
 function filter<T>(obj: any, iterator: (value: T, key: any, obj: any) => boolean, context?: any): Array<T> {
-    var arr = [];
+    var arr: Array<T> = [];
     if (isNull(obj)) {
         return arr;
     }
@@ -143,14 +200,19 @@ function filter<T>(obj: any, iterator: (value: T, key: any, obj: any) => boolean
 function where(obj: any, properties: any): Array<any> {
     return filter(obj, (value)
         => !some(properties, (property, key)
-            => value[key] !== property));
+            => (<any>value)[key] !== property));
 }
 
+function forEach<T>(array: Array <T>, iterator: (value: T, index: number, obj: any) => void, context?: any): Array < T>;
+function forEach<T>(obj: any, iterator: (value: T, key: string, obj: any) => void, context?: any): any;
 function forEach<T>(obj: any, iterator: (value: T, key: any, obj: any) => void, context?: any): any {
-    if (isNull(obj)) {
+    if (isNull(obj) || !(isObject(obj) || isArrayLike(obj))) {
         return obj;
     }
-    var i, key, length;
+
+    var i: number,
+        key: string,
+        length: number;
 
     if (isFunction(obj.forEach)) {
         return obj.forEach(iterator, context);
@@ -159,10 +221,11 @@ function forEach<T>(obj: any, iterator: (value: T, key: any, obj: any) => void, 
             iterator.call(context, obj[i], i, obj);
         }
     } else {
-        for (key in obj) {
-            if (obj.hasOwnProperty(key)) {
-                iterator.call(context, obj[key], key, obj);
-            }
+        var keys = Object.keys(obj);
+        length = keys.length;
+        while (keys.length > 0) {
+            key = keys.shift();
+            iterator.call(context, obj[key], key, obj);
         }
     }
 
@@ -170,7 +233,8 @@ function forEach<T>(obj: any, iterator: (value: T, key: any, obj: any) => void, 
 }
 
 function map<T, U>(obj: any, iterator: (value: T, key: any, obj: any) => U, context?: any): Array<U> {
-    var arr: any = [];
+    var arr: Array<U> = [];
+
     if (isNull(obj)) {
         return arr;
     }
@@ -187,14 +251,18 @@ function map<T, U>(obj: any, iterator: (value: T, key: any, obj: any) => U, cont
 }
 
 function pluck<T, U>(obj: any, key: string): Array<U> {
-    return map<T, U>(obj, (value) => value[key]);
+    return map<T, U>(obj, (value) => (<any>value)[key]);
 }
 
 function some<T>(obj: any, iterator: (value: T, key: any, obj: any) => boolean, context?: any): boolean {
-    if (isNull(obj)) {
+    if (isNull(obj) || isFunction(obj)) {
         return false;
     }
-    var i, key, length, ret;
+
+    var i: number,
+        key: string,
+        length: number,
+        ret: boolean;
 
     if (isFunction(obj.some)) {
         return obj.some(iterator, context);
@@ -206,12 +274,13 @@ function some<T>(obj: any, iterator: (value: T, key: any, obj: any) => boolean, 
             }
         }
     } else {
-        for (key in obj) {
-            if (obj.hasOwnProperty(key)) {
-                ret = iterator.call(context, obj[key], key, obj);
-                if (ret === true) {
-                    return true;
-                }
+        var keys = Object.keys(obj);
+        length = keys.length;
+        while (keys.length > 0) {
+            key = keys.shift();
+            ret = iterator.call(context, obj[key], key, obj);
+            if (ret === true) {
+                return true;
             }
         }
     }
@@ -219,12 +288,12 @@ function some<T>(obj: any, iterator: (value: T, key: any, obj: any) => boolean, 
     return false;
 }
 
-function postpone(method: (...args: any[]) => void, args?: Array<any>, context?: any) {
+function postpone(method: (...args: any[]) => void, args?: Array<any>, context?: any): plat.IRemoveListener {
     return defer(method, 0, args, context);
 }
 
 
-function defer(method: (...args: any[]) => void, timeout: number, args?: Array<any>, context?: any) {
+function defer(method: (...args: any[]) => void, timeout: number, args?: Array<any>, context?: any): plat.IRemoveListener {
     function defer() {
         method.apply(context, args);
     }
@@ -236,7 +305,7 @@ function defer(method: (...args: any[]) => void, timeout: number, args?: Array<a
     };
 }
 
-function uniqueId(prefix?: string) {
+function uniqueId(prefix?: string): string {
     if (isNull(prefix)) {
         prefix = '';
     }
@@ -248,34 +317,34 @@ function uniqueId(prefix?: string) {
     }
 
     var index = puid.length,
-        char;
+        charCode: number;
 
     while (index--) {
-        char = puid[index].charCodeAt(0);
-        //'9'
-        if (char === 57) {
+        charCode = puid[index].charCodeAt(0);
+        // '9'
+        if (charCode === 57) {
             puid[index] = 'A';
             return join();
         }
 
-        //'Z'
-        if (char === 90) {
+        // 'Z'
+        if (charCode === 90) {
             puid[index] = 'a';
             return join();
         }
 
-        //'z'
-        if (char === 122) {
+        // 'z'
+        if (charCode === 122) {
             puid[index] = '0';
         } else {
-            puid[index] = String.fromCharCode(char + 1);
+            puid[index] = String.fromCharCode(charCode + 1);
             return join();
         }
     }
 
     puid.unshift('0');
 
-    function join() {
+    function join(): string {
         return prefix + puid.join('');
     }
 
@@ -284,15 +353,26 @@ function uniqueId(prefix?: string) {
 
 var camelCaseRegex: RegExp;
 
-function camelCase(str: string) {
+function camelCase(str: string): string {
     if (!isString(str) || isEmpty(str)) {
         return str;
     }
 
     str = str.charAt(0).toLowerCase() + str.substr(1);
-    camelCaseRegex = camelCaseRegex || (<plat.expressions.IRegex>plat.acquire('$regex')).camelCaseRegex;
+    camelCaseRegex = camelCaseRegex || (<plat.expressions.IRegex>plat.acquire(__Regex)).camelCaseRegex;
 
     return str.replace(camelCaseRegex,
         (match: string, delimiter?: string, char?: string, index?: number)
             => index ? char.toUpperCase() : char);
 }
+
+function deleteProperty(obj: any, property: number): any;
+function deleteProperty(obj: any, property: string): any;
+function deleteProperty(obj: any, property: any): any {
+    /* tslint:disable:no-unused-expression */
+    delete obj[property];
+    /* tslint:enable:no-unused-expression */
+
+    return obj;
+}
+/* tslint:enable:no-unused-variable */

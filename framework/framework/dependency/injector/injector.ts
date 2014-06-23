@@ -9,7 +9,7 @@ module plat.dependency {
         /**
          * Initializes all static injectors.
          */
-        static initialize() {
+        static initialize(): void {
             var injectors = staticInjectors,
                 keys = Object.keys(injectors),
                 length = keys.length;
@@ -27,14 +27,14 @@ module plat.dependency {
          * @param dependencies The array of dependencies specified 
          * by either their Constructor or their registered name.
          */
-        static getDependencies(dependencies: Array<any>) {
+        static getDependencies(dependencies: Array<any>): Array<IInjector<any>> {
             if (isNull(dependencies) || isEmpty(dependencies)) {
                 return [];
             }
 
-            var deps = [],
+            var deps: Array<IInjector<any>> = [],
                 length = dependencies.length,
-                dependency;
+                dependency: any;
 
             for (var i = 0; i < length; ++i) {
                 dependency = dependencies[i];
@@ -59,14 +59,13 @@ module plat.dependency {
          * @param dependencies The array of dependencies specified 
          * by either their Constructor or their registered name.
          */
-        static convertDependencies(dependencies: Array<any>) {
+        static convertDependencies(dependencies: Array<any>): Array<string> {
             if (!isArray(dependencies)) {
                 return [];
             }
             var deps: Array<string> = [],
                 length = dependencies.length,
-                dependency,
-                injector: Injector<any>,
+                dependency: any,
                 value: string;
 
             for (var i = 0; i < length; ++i) {
@@ -85,15 +84,15 @@ module plat.dependency {
             return deps;
         }
 
-        private static __getInjectorName(dependency): string {
+        private static __getInjectorName(dependency: any): string {
             if (isNull(dependency)) {
                 return 'noop';
             } else if (isString(dependency)) {
                 return dependency;
             } else if (dependency === window) {
-                return '$window';
+                return __Window;
             } else if (dependency === window.document) {
-                return '$document';
+                return __Document;
             }
 
             var injectors = injectableInjectors,
@@ -117,7 +116,7 @@ module plat.dependency {
             return 'noop';
         }
 
-        private static __construct(Constructor: any, args: Array<any>, pattern: string) {
+        private static __construct(Constructor: any, args: Array<any>, pattern: string): any {
             if (isNull(Constructor) || isNull(Constructor.prototype)) {
                 return Constructor;
             }
@@ -131,22 +130,21 @@ module plat.dependency {
             return obj;
         }
 
-        private static __locateInjector(Constructor: any) {
+        private static __locateInjector(Constructor: any): any {
             if (isNull(Constructor)) {
                 return;
             } else if (isString(Constructor)) {
-                return injectableInjectors[Constructor];
+                return injectableInjectors[Constructor] || Injector.__noop();
             } else if (Constructor === window) {
-                return injectableInjectors['$window'];
+                return (<any>injectableInjectors).$Window;
             } else if (Constructor === window.document) {
-                return injectableInjectors['$document'];
+                return (<any>injectableInjectors).$Document;
             }
 
             var injectors = injectableInjectors,
                 injector: IInjector<any>,
                 keys = Object.keys(injectors),
-                length = keys.length,
-                value: any;
+                length = keys.length;
 
             for (var i = 0; i < length; ++i) {
                 injector = injectors[keys[i]];
@@ -185,6 +183,52 @@ module plat.dependency {
                 !isUndefined(dependency.Constructor);
         }
 
+        private static __findCircularReferences(injector: Injector<any>) {
+            if (!(isObject(injector) && isArray(injector.__dependencies))) {
+                return;
+            }
+
+            var source = injector.name,
+                dependencies = injector.__dependencies,
+                node: {
+                    name: string;
+                    dependencies: Array<string>;
+                },
+                stack: Array<typeof node> = [{
+                    name: source,
+                    dependencies: dependencies.slice(0)
+                }],
+                dependency: string,
+                locate = Injector.__locateInjector,
+                length: number;
+
+            while (stack.length > 0) {
+                node = stack.pop();
+
+                dependencies = node.dependencies;
+                length = dependencies.length;
+
+                for (var i = 0; i < length; ++i) {
+                    dependency = dependencies[i];
+
+                    if (dependency === source) {
+                        return node.name;
+                    }
+
+                    injector = locate(dependency);
+
+                    if (!(isObject(injector) && isArray(injector.__dependencies))) {
+                        continue;
+                    }
+
+                    stack.push({
+                        name: injector.name,
+                        dependencies: injector.__dependencies.slice(0)
+                    });
+                }
+            }
+        }
+
         private __dependencies: Array<any>;
 
         /**
@@ -193,15 +237,22 @@ module plat.dependency {
          * associated constructor.
          * @param Constructor The constructor method for the component requiring the dependency 
          * injection.
-         * @param type The type of injector, used for injectables specifying a register.injectableType of 
-         * STATIC, SINGLE, or MULTI. The default is SINGLE.
+         * @param type The type of injector, used for injectables specifying a injectableType of 
+         * STATIC, SINGLETON, FACTORY, INSTANCE, or CLASS. The default is SINGLETON.
          */
         constructor(public name: string, public Constructor: new () => T, dependencies?: Array<any>, public type?: string) {
             var deps = this.__dependencies = Injector.convertDependencies(dependencies),
-                index = deps.indexOf('noop');
+                index = deps.indexOf('noop'),
+                circularReference: string;
 
             if (index > -1) {
-                var dependency = String(dependencies[index] || '');
+                var dependency = dependencies[index];
+
+                if(isNull(dependency)) {
+                    throw new TypeError('The dependency for ' +
+                        name + ' at index ' +
+                        index + ' is undefined, did you forgot to include a file?');
+                }
                 
                 throw new TypeError('Could not resolve dependency ' +
                     dependency.substring(9, dependency.indexOf('(')) +
@@ -210,8 +261,15 @@ module plat.dependency {
                     '. Are you using a static injectable Type?');
             }
 
-            if (name === '$AppStatic') {
+            circularReference = Injector.__findCircularReferences(this);
+
+            if (isString(circularReference)) {
+                throw new Error('Circular dependency detected from ' + name + ' to ' + circularReference + '.');
+            }
+
+            if (name === __AppStatic) {
                 var App: IAppStatic = <IAppStatic>(<any>this).inject();
+                this.__dependencies = deps;
                 App.start();
             }
         }
@@ -223,22 +281,23 @@ module plat.dependency {
          * as a SINGLE type it will only inject that injectable once.
          */
         inject(): T {
-            var toInject: any = [];
+            var toInject: any = [],
+                type = this.type;
 
             this.__dependencies = Injector.getDependencies(this.__dependencies);
 
             var dependencies: Array<IInjector<any>> = this.__dependencies || [],
                 length = dependencies.length,
-                dependency,
                 injectable: any;
 
             for (var i = 0; i < length; ++i) {
                 toInject.push(dependencies[i].inject());
             }
 
-            injectable = <T>Injector.__construct(this.Constructor, toInject, this.type);
+            injectable = <T>Injector.__construct(this.Constructor, toInject, type);
 
-            if (this.type === register.injectableType.SINGLE || this.type === register.injectableType.STATIC) {
+            if (type === __SINGLETON || type === __FACTORY ||
+                type === __STATIC || type === __CLASS) {
                 this._wrapInjector(injectable);
             }
 
@@ -249,10 +308,11 @@ module plat.dependency {
          * Wraps the injector with the instantiated value in the case of a 
          * SINGLE or STATIC type so that it does not re-instantiate.
          */
-        _wrapInjector(value: any) {
-            return injectableInjectors[this.name] = <IInjector<any>>{
+        _wrapInjector(value: any): IInjector<any> {
+            var name = this.name;
+            return injectableInjectors[name] = <IInjector<any>>{
                 type: this.type,
-                name: this.name,
+                name: name,
                 __dependencies: this.__dependencies,
                 Constructor: this.Constructor,
                 inject: () => <T>value

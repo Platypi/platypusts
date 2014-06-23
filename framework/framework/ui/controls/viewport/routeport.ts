@@ -15,7 +15,7 @@
          * Looks for a defaultRoute and initializes the loading 
          * of the view.
          */
-        loaded() {
+        loaded(): void {
             var path = '',
                 options = this.options;
 
@@ -40,5 +40,5 @@
         defaultRoute: string;
     }
 
-    register.control('plat-routeport', Routeport, ['$routingNavigator']);
+    register.control(__Routeport, Routeport, [__RoutingNavigator]);
 }

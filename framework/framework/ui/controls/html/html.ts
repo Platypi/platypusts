@@ -3,14 +3,14 @@ module plat.ui.controls {
         /**
          * Loads the new HTML String.
          */
-        contextChanged() {
+        contextChanged(): void {
             this.loaded();
         }
 
         /**
          * Loads the context as the innerHTML of the element.
          */
-        loaded() {
+        loaded(): void {
             var context = this.context;
 
             if (!isString(context)) {
@@ -21,5 +21,5 @@ module plat.ui.controls {
         }
     }
 
-    register.control('plat-html', Html);
+    register.control(__Html, Html);
 }

@@ -4,41 +4,32 @@ module plat.navigation {
      * Every Viewport has its own Navigator instance, allowing multiple navigators to 
      * coexist in one app.
      */
-    export class Navigator extends BaseNavigator implements INavigator {
-        /**
-         * Contains the navigation history stack.
-         */
+    export class Navigator extends BaseNavigator implements INavigatorInstance {
         history: Array<IBaseNavigationState> = [];
 
-        /**
-         * Allows a ui.IViewControl to navigate to another ui.IViewControl. Also allows for
-         * navigation parameters to be sent to the new ui.IViewControl.
-         * 
-         * @param Constructor The Constructor for the new ui.IViewControl. The Navigator will find the injector 
-         * for the Constructor and create a new instance of the control.
-         * @param options Optional IBaseNavigationOptions used for Navigation.
-         */
-        navigate(Constructor?: new (...args: any[]) => ui.IViewControl, options?: INavigationOptions);
-        navigate(injector?: dependency.IInjector<IControl>, options?: INavigationOptions);
+        navigate(Constructor?: new (...args: any[]) => ui.IViewControl, options?: INavigationOptions): void;
+        navigate(injector?: dependency.IInjector<ui.IViewControl>, options?: INavigationOptions): void;
         navigate(Constructor?: any, options?: INavigationOptions) {
             var state = this.currentState || <IBaseNavigationState>{},
                 viewControl = state.control,
                 injector: dependency.IInjector<ui.IViewControl>,
                 key: string,
-                options = options || <IBaseNavigationOptions>{},
                 parameter = options.parameter,
-                event: events.INavigationEvent<any, any, IBaseNavigator>;
+                event: events.INavigationEvent<any>;
 
+            options = options || <IBaseNavigationOptions>{};
             event = this._sendEvent('beforeNavigate', Constructor, null, parameter, options, true);
 
             if (event.canceled) {
                 return;
             }
 
-            this.$ViewControlStatic.detach(viewControl);
+            this.navigating = true;
+
+            this.$BaseViewControlFactory.detach(viewControl);
 
             if (isObject(parameter)) {
-                parameter = deepExtend({}, parameter);
+                parameter = _clone(parameter, true);
             }
 
             this.baseport.controls = [];
@@ -52,7 +43,7 @@ module plat.navigation {
 
                 while (keys.length > 0) {
                     key = keys.pop();
-                    control = viewControlInjectors[key];
+                    control = <any>viewControlInjectors[key];
                     if (control.Constructor === Constructor) {
                         injector = control;
                         break;
@@ -61,33 +52,35 @@ module plat.navigation {
             }
 
             if (isNull(injector)) {
-                this.$ExceptionStatic.fatal('Attempting to navigate to unregistered view control.', this.$ExceptionStatic.NAVIGATION);
-            }
-
-            if (!isNull(viewControl)) {
-                this.baseport.navigateFrom(viewControl);
-                if (!options.replace) {
-                    this.history.push({ control: viewControl });
-                }
+                var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                $exception.fatal('Attempting to navigate to unregistered view control.', $exception.NAVIGATION);
             }
 
             event.target = injector;
             event.type = key;
+
+            if (!isNull(viewControl)) {
+                this.baseport.navigateFrom(viewControl).then(() => {
+                    this.$BaseViewControlFactory.detach(viewControl);
+
+                if (!options.replace) {
+                    this.history.push({ control: viewControl });
+                }
+
+                    this.baseport.navigateTo(event);
+                });
+
+                return;
+            }
+
             this.baseport.navigateTo(event);
         }
 
-        /**
-         * Returns to the last visited ui.IViewControl.
-         * 
-         * @param options Optional IBackNavigationOptions allowing the ui.IViewControl
-         * to customize navigation. Enables navigating back to a specified point in history as well
-         * as specifying a new templateUrl to use at the next ui.IViewControl.
-         */
-        goBack(options?: IBackNavigationOptions) {
+        goBack(options?: IBackNavigationOptions): void {
             options = options || {};
 
             if (this.history.length === 0) {
-                this.$EventManagerStatic.dispatch('shutdown', this, this.$EventManagerStatic.direction.DIRECT);
+                this.$EventManagerStatic.dispatch('shutdown', this, this.$EventManagerStatic.DIRECT);
             }
 
             var viewControl = this.currentState.control,
@@ -103,58 +96,53 @@ module plat.navigation {
                 return;
             }
 
+            var $exception: IExceptionStatic;
             if (!isNull(Constructor)) {
                 var index = this._findInHistory(Constructor);
 
                 if (index > -1) {
                     length = this.history.length - index;
                 } else {
-                    this.$ExceptionStatic.warn('Cannot find ViewControl in navigation history.', this.$ExceptionStatic.NAVIGATION);
+                    $exception = acquire(__ExceptionStatic);
+                    $exception.warn('Cannot find ViewControl in navigation history.', $exception.NAVIGATION);
                     return;
                 }
             }
 
             if (!isNumber(length) || length > this.history.length) {
-                this.$ExceptionStatic.warn('Not enough views in the navigation history in order to navigate back.',
-                    this.$ExceptionStatic.NAVIGATION);
+                $exception = acquire(__ExceptionStatic);
+                $exception.warn('Not enough views in the navigation history in order to navigate back.',
+                    $exception.NAVIGATION);
                 return;
             }
 
-            var ViewControl: ui.IViewControlStatic = acquire('$ViewControlStatic');
+            this.baseport.navigateFrom(viewControl).then(() => {
+                this.$BaseViewControlFactory.dispose(viewControl);
 
-            this.baseport.navigateFrom(viewControl);
-            ViewControl.dispose(viewControl);
+                var last: IBaseNavigationState = this._goBackLength(length);
 
-            var last: IBaseNavigationState = this._goBackLength(length);
+                if (isNull(last)) {
+                    return;
+                }
 
-            if (isNull(last)) {
-                return;
-            }
+                viewControl = last.control;
 
-            viewControl = last.control;
+                this.currentState = last;
 
-            this.currentState = last;
+                event.target = viewControl;
+                event.type = viewControl.type;
 
-            event.target = viewControl;
-            event.type = viewControl.type;
-
-            this.baseport.navigateTo(event);
+                this.baseport.navigateTo(event);
+            });
         }
 
-        /**
-         * Lets the caller know if there are ui.IViewControls in the history, meaning the caller
-         * is safe to perform a backward navigation.
-         */
         canGoBack(): boolean {
             return this.history.length > 0;
         }
 
-        /**
-         * Clears the navigation history, disposing all the controls.
-         */
-        clearHistory() {
+        clearHistory(): void {
             var history = this.history,
-                dispose = this.$ViewControlStatic.dispose;
+                dispose = this.$BaseViewControlFactory.dispose;
 
             while (history.length > 0) {
                 dispose(history.pop().control);
@@ -167,7 +155,7 @@ module plat.navigation {
          * 
          * @param Constructor The view control constructor to search for in the history stack.
          */
-        _findInHistory(Constructor: new (...args: any[]) => ui.IViewControl) {
+        _findInHistory(Constructor: new (...args: any[]) => ui.IViewControl): number {
             var history = this.history,
                 length = history.length - 1,
                 index = -1,
@@ -190,11 +178,11 @@ module plat.navigation {
          * associated with length + 1 entries back in the history.  It disposes all the view controls 
          * encapsulated in the length.
          */
-        _goBackLength(length?: number) {
+        _goBackLength(length?: number): IBaseNavigationState {
             length = isNumber(length) ? length : 1;
 
             var last: IBaseNavigationState,
-                dispose = this.$ViewControlStatic.dispose;
+                dispose = this.$BaseViewControlFactory.dispose;
 
             while (length-- > 0) {
                 if (!isNull(last) && !isNull(last.control)) {
@@ -208,7 +196,56 @@ module plat.navigation {
         }
     }
 
-    register.injectable('$navigator', Navigator, null, register.injectableType.MULTI);
+    /**
+     * The Type for referencing the '$Navigator' injectable as a dependency.
+     */
+    export function INavigatorInstance(): INavigatorInstance {
+        return new Navigator();
+    }
+
+    register.injectable(__NavigatorInstance, INavigatorInstance, null, __INSTANCE);
+
+    /**
+     * An object implementing INavigator allows ui.IViewControls to implement methods 
+     * used to navigate within a Viewport.
+     */
+    export interface INavigatorInstance extends IBaseNavigator {
+        /**
+         * Contains the navigation history stack for the associated Viewport.
+         */
+        history: Array<IBaseNavigationState>;
+
+        /**
+         * Allows a ui.IViewControl to navigate to another ui.IViewControl. Also allows for
+         * navigation parameters to be sent to the new ui.IViewControl.
+         * 
+         * @param Constructor The Constructor for the new ui.IViewControl. The Navigator will find the injector 
+         * for the Constructor and create a new instance of the control.
+         * @param options Optional IBaseNavigationOptions used for Navigation.
+         */
+        navigate(Constructor?: new (...args: any[]) => ui.IViewControl, options?: INavigationOptions): void;
+        navigate(injector?: dependency.IInjector<ui.IViewControl>, options?: INavigationOptions): void;
+
+        /**
+         * Returns to the last visited ui.IViewControl.
+         * 
+         * @param options Optional IBackNavigationOptions allowing the ui.IViewControl
+         * to customize navigation. Enables navigating back to a specified point in history as well
+         * as specifying a new templateUrl to use at the next ui.IViewControl.
+         */
+        goBack(options?: IBackNavigationOptions): void;
+
+        /**
+         * Lets the caller know if there are ui.IViewControls in the history, meaning the caller
+         * is safe to perform a backward navigation.
+         */
+        canGoBack(): boolean;
+
+        /**
+         * Clears the navigation history, disposing all the controls.
+         */
+        clearHistory(): void;
+    }
 
     /**
      * Options that you can submit to the Navigator in order
@@ -236,48 +273,6 @@ module plat.navigation {
          * of the ui.IViewControl in its history and navigate to it.
          */
         ViewControl?: new (...args: any[]) => ui.IViewControl;
-    }
-
-    /**
-     * An object implementing INavigator allows ui.IViewControls to implement methods 
-     * used to navigate within a Viewport.
-     */
-    export interface INavigator extends IBaseNavigator {
-        /**
-         * Contains the navigation history stack for the associated Viewport.
-         */
-        history: Array<IBaseNavigationState>;
-
-        /**
-         * Allows a ui.IViewControl to navigate to another ui.IViewControl. Also allows for
-         * navigation parameters to be sent to the new ui.IViewControl.
-         * 
-         * @param Constructor The Constructor for the new ui.IViewControl. The Navigator will find the injector 
-         * for the Constructor and create a new instance of the control.
-         * @param options Optional IBaseNavigationOptions used for Navigation.
-         */
-        navigate(Constructor?: new (...args: any[]) => ui.IViewControl, options?: INavigationOptions): void;
-        navigate(injector?: dependency.IInjector<IControl>, options?: INavigationOptions): void;
-
-        /**
-         * Returns to the last visited ui.IViewControl.
-         * 
-         * @param options Optional IBackNavigationOptions allowing the ui.IViewControl
-         * to customize navigation. Enables navigating back to a specified point in history as well
-         * as specifying a new templateUrl to use at the next ui.IViewControl.
-         */
-        goBack(options?: IBackNavigationOptions): void;
-
-        /**
-         * Lets the caller know if there are ui.IViewControls in the history, meaning the caller
-         * is safe to perform a backward navigation.
-         */
-        canGoBack(): boolean;
-
-        /**
-         * Clears the navigation history, disposing all the controls.
-         */
-        clearHistory(): void;
     }
 }
 

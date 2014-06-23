@@ -11,7 +11,7 @@ module plat.processing {
          * @param node The Comment to associate with the new manager.
          * @param parent The parent IElementManager.
          */
-        static create(node: Node, parent: IElementManager) {
+        static create(node: Node, parent: IElementManager): ICommentManager {
             var manager = new CommentManager();
 
             manager.initialize({
@@ -19,6 +19,8 @@ module plat.processing {
                     node: node
                 }]
             }, parent);
+
+            return manager;
         }
 
         /**
@@ -26,28 +28,34 @@ module plat.processing {
          */
         type: string = 'comment';
 
-        /**
-         * A method for cloning this CommentManager.
-         * 
-         * @param newNode The new Comment node to associate with the cloned
-         * manager.
-         * @param parentManager The parent IElementManager for the new clone.
-         */
-        clone(newNode: Node, parentManager: IElementManager) {
+        clone(newNode: Node, parentManager: IElementManager): number {
             CommentManager.create(newNode, parentManager);
             return 1;
         }
     }
 
     /**
-     * The Type for referencing the '$CommentManagerStatic' injectable as a dependency.
+     * The Type for referencing the '$CommentManagerFactory' injectable as a dependency.
      */
-    export function CommentManagerStatic() {
+    export function ICommentManagerFactory(): ICommentManagerFactory {
         return CommentManager;
     }
 
-    register.injectable('$CommentManagerStatic', CommentManagerStatic,
-        null, register.injectableType.STATIC);
+    register.injectable(__CommentManagerFactory, ICommentManagerFactory, null, __FACTORY);
+
+    /**
+     * Creates and manages a class for dealing with Comment nodes.
+     */
+    export interface ICommentManagerFactory {
+        /**
+         * Creates a new CommentManager for the given Comment node.
+         * 
+         * @static
+         * @param node The Comment to associate with the new manager.
+         * @param parent The parent IElementManager.
+         */
+        create(node: Node, parent: IElementManager): ICommentManager;
+    }
 
     /**
      * An object used to manage Comment nodes.
@@ -61,19 +69,5 @@ module plat.processing {
          * @param parentManager The parent IElementManager for the new clone.
          */
         clone(newNode: Node, parentManager: IElementManager): number;
-    }
-
-    /**
-     * The external interface for the '$CommentManagerStatic' injectable.
-     */
-    export interface ICommentManagerStatic {
-        /**
-         * Creates a new CommentManager for the given Comment node.
-         *
-         * @static
-         * @param node The Comment to associate with the new manager.
-         * @param parent The parent IElementManager.
-         */
-        create(node: Node, parent: IElementManager): ICommentManager;
     }
 }

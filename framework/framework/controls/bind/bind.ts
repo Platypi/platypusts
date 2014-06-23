@@ -1,13 +1,15 @@
 module plat.controls {
     export class Bind extends AttributeControl {
+        $Parser: expressions.IParser = acquire(__Parser);
+        $ContextManagerStatic: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
+
         /**
          * The priority of Bind is set high to take precede 
          * other controls that may be listening to the same 
          * event.
          */
         priority: number = 100;
-        $parser: expressions.IParser = acquire('$parser');
-        $ExceptionStatic: IExceptionStatic = acquire('$ExceptionStatic');
+
         /**
          * The function used to add the proper event based on the input type.
          */
@@ -22,12 +24,6 @@ module plat.controls {
          * The function used to set the bound value.
          */
         _setter: any;
-
-        /**
-         * An array of functions to remove the event listeners attached 
-         * to this element.
-         */
-        _removeEventListeners: Array<IRemoveListener> = [];
 
         /**
          * The event listener attached to this element.
@@ -55,29 +51,34 @@ module plat.controls {
          */
         _property: string;
 
+        private __fileSupported = (<ICompat>acquire(__Compat)).fileSupported;
+        private __fileNameRegex = (<expressions.IRegex>acquire(__Regex)).fileNameRegex;
+        private __isSelf = false;
+
         /**
-         * Determines the type of HTMLElement being bound to 
+         * Determines the type of Element being bound to 
          * and sets the necessary handlers.
          */
-        initialize() {
+        initialize(): void {
             this._determineType();
         }
 
         /**
          * Parses and watches the expression being bound to.
          */
-        loaded() {
+        loaded(): void {
             if (isNull(this.parent) || isNull(this.element)) {
                 return;
             }
 
             var attr = camelCase(this.type),
-                expression = this._expression = this.$parser.parse(this.attributes[attr]);
+                expression = this._expression = this.$Parser.parse((<any>this.attributes)[attr]);
 
-            var identifiers = this._expression.identifiers;
+            var identifiers = expression.identifiers;
 
             if (identifiers.length !== 1) {
-                this.$ExceptionStatic.warn('Only 1 identifier allowed in a plat-bind expression');
+                var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                $exception.warn('Only 1 identifier allowed in a plat-bind expression', $exception.BIND);
                 this._contextExpression = null;
                 return;
             }
@@ -87,7 +88,7 @@ module plat.controls {
             this._property = split.pop();
 
             if (split.length > 0) {
-                this._contextExpression = this.$parser.parse(split.join('.'));
+                this._contextExpression = this.$Parser.parse(split.join('.'));
             } else if (expression.aliases.length > 0) {
                 var alias = expression.aliases[0],
                     resourceObj = this.parent.findResource(alias);
@@ -129,27 +130,14 @@ module plat.controls {
         /**
          * Re-observes the expression with the new context.
          */
-        contextChanged() {
+        contextChanged(): void {
             this._watchExpression();
         }
 
         /**
          * Removes all of the element's event listeners.
          */
-        dispose() {
-            var element = this.element;
-
-            if (!isNull(element)) {
-                var removeListeners = this._removeEventListeners,
-                    length = removeListeners.length;
-
-                for (var i = 0; i < length; ++i) {
-                    removeListeners[i]();
-                }
-
-                this._removeEventListeners = null;
-            }
-
+        dispose(): void {
             this._eventListener = null;
             this._postponedEventListener = null;
             this._addEventType = null;
@@ -159,9 +147,9 @@ module plat.controls {
          * Adds a text event as the event listener. 
          * Used for textarea and input[type=text].
          */
-        _addTextEventListener() {
+        _addTextEventListener(): void {
             var composing = false,
-                timeout;
+                timeout: IRemoveListener;
 
             this._eventListener = () => {
                 if (composing) {
@@ -208,7 +196,7 @@ module plat.controls {
          * Adds a change event as the event listener. 
          * Used for select, input[type=radio], and input[type=range].
          */
-        _addChangeEventListener() {
+        _addChangeEventListener(): void {
             this._eventListener = this._propertyChanged.bind(this);
             this._addEventListener('change');
         }
@@ -220,19 +208,17 @@ module plat.controls {
          * @param listener The event listener
          * @param postpone Whether or not to postpone the event listener
          */
-        _addEventListener(event: string, listener?: () => void, postpone?: boolean) {
-            var listener = listener ||
+        _addEventListener(event: string, listener?: () => void, postpone?: boolean): void {
+            listener = listener ||
                 (!!postpone ? this._postponedEventListener : this._eventListener);
 
-            this._pushRemoveEventListener(event, listener);
-
-            this.element.addEventListener(event, listener, false);
+            this.addEventListener(this.element, event, listener, false);
         }
 
         /**
          * Getter for input[type=checkbox] and input[type=radio]
          */
-        _getChecked() {
+        _getChecked(): boolean {
             return (<HTMLInputElement>this.element).checked;
         }
 
@@ -240,19 +226,106 @@ module plat.controls {
          * Getter for input[type=text], input[type=range], 
          * textarea, and select.
          */
-        _getValue() {
+        _getValue(): string {
             return (<HTMLInputElement>this.element).value;
         }
 
         /**
+         * Getter for input[type="file"]. Creates a partial IFile 
+         * element if file is not supported.
+         */
+        _getFile(): IFile {
+            var element = <HTMLInputElement>this.element,
+                value = element.value;
+
+            if (this.__fileSupported && element.files.length > 0) {
+                return <IFile>element.files[0];
+            }
+
+            return {
+                name: value.replace(this.__fileNameRegex, ''),
+                path: value,
+                lastModifiedDate: undefined,
+                type: undefined,
+                size: undefined,
+                msDetachStream: noop,
+                msClose: noop,
+                slice: () => <Blob>{ }
+            };
+        }
+
+        /**
+         * Getter for input[type="file"]-multiple
+         */
+        _getFiles(): Array<IFile> {
+            var element = <HTMLInputElement>this.element;
+
+            if (this.__fileSupported) {
+                return Array.prototype.slice.call(element.files);
+            }
+
+            // this case should never be hit since ie9 does not support multi-file uploads, 
+            // but kept in here for now for consistency's sake
+            var filelist = element.value.split(/,|;/g),
+                length = filelist.length,
+                files: Array<IFile> = [],
+                fileValue: string;
+
+            for (var i = 0; i < length; ++i) {
+                fileValue = filelist[i];
+                files.push({
+                    name: fileValue.replace(this.__fileNameRegex, ''),
+                    path: fileValue,
+                    lastModifiedDate: undefined,
+                    type: undefined,
+                    size: undefined,
+                    msDetachStream: noop,
+                    msClose: noop,
+                    slice: () => <Blob>{}
+                });
+            }
+
+            return files;
+        }
+
+        /**
+         * Getter for select-multiple
+         */
+        _getSelectedValues(): Array<string> {
+            var options = (<HTMLSelectElement>this.element).options,
+                length = options.length,
+                option: HTMLOptionElement,
+                selectedValues: Array<string> = [];
+
+            for (var i = 0; i < length; ++i) {
+                option = options[i];
+                if (option.selected) {
+                    selectedValues.push(option.value);
+                }
+            }
+
+            return selectedValues;
+        }
+
+        /**
          * Setter for textarea, input[type=text], 
-         * and input[type=button]
+         * and input[type=button], and select
          * 
          * @param newValue The new value to set
          */
-        _setText(newValue: any) {
+        _setText(newValue: any): void {
+            if (this.__isSelf) {
+                return;
+            }
+
             if (isNull(newValue)) {
-                newValue = '';
+                var element = <HTMLInputElement>this.element;
+                if (isNull(element.value)) {
+                    newValue = '';
+                } else {
+                    this._propertyChanged();
+                    return;
+                }
             }
 
             this.__setValue(newValue);
@@ -263,9 +336,19 @@ module plat.controls {
          * 
          * @param newValue The new value to set
          */
-        _setRange(newValue: any) {
+        _setRange(newValue: any): void {
+            if (this.__isSelf) {
+                return;
+            }
+
             if (isEmpty(newValue)) {
-                newValue = 0;
+                var element = <HTMLInputElement>this.element;
+                if (isEmpty(element.value)) {
+                    newValue = 0;
+                } else {
+                    this._propertyChanged();
+                    return;
+                }
             }
 
             this.__setValue(newValue);
@@ -276,8 +359,15 @@ module plat.controls {
          * 
          * @param newValue The new value to set
          */
-        _setChecked(newValue: any) {
-            (<HTMLInputElement>this.element).checked = !(newValue === false);
+        _setChecked(newValue: any): void {
+            if (this.__isSelf) {
+                return;
+            } else if (!isBoolean(newValue)) {
+                this._propertyChanged();
+                return;
+            }
+
+            (<HTMLInputElement>this.element).checked = newValue;
         }
 
         /**
@@ -285,15 +375,95 @@ module plat.controls {
          * 
          * @param newValue The new value to set
          */
-        _setSelectedIndex(newValue: any) {
-            (<HTMLSelectElement>this.element).value = newValue;
+        _setSelectedIndex(newValue: any): void {
+            if (this.__isSelf) {
+                return;
+            }
+
+            var element = <HTMLSelectElement>this.element;
+            if (isNull(newValue)) {
+                if (isEmpty(element.value)) {
+                    element.selectedIndex = -1;
+                }
+
+                this._propertyChanged();
+                return;
+            } else if (element.value === newValue) {
+                return;
+            } else if (newValue === '') {
+                element.selectedIndex = -1;
+                return;
+            }
+
+            element.value = newValue;
+            // check to make sure the user changed to a valid value
+            if (element.value !== newValue) {
+                var select = <ui.controls.Select>this.templateControl;
+                if (!isNull(select) && select.type === __Select && isPromise(select.itemsLoaded)) {
+                    select.itemsLoaded.then(() => {
+                        element.value = newValue;
+
+                        if (element.value !== newValue) {
+                            element.selectedIndex = -1;
+                        }
+                    });
+                }
+
+                element.selectedIndex = -1;
+            }
         }
 
         /**
-         * Determines the type of HTMLElement being bound to 
+         * Setter for select-multiple
+         * 
+         * @param newValue The new value to set
+         */
+        _setSelectedIndices(newValue: any): void {
+            if (this.__isSelf) {
+                return;
+            }
+
+            var options = (<HTMLSelectElement>this.element).options,
+                length = options.length,
+                option: HTMLOptionElement;
+
+            if (isNull(newValue) || !isArray(newValue)) {
+                // unselects the options unless a match is found
+                while (length-- > 0) {
+                    option = options[length];
+                    // purposely doing a soft equality match
+                    if (option.value === '' + newValue) {
+                        option.selected = true;
+                        return;
+                    }
+
+                    option.selected = false;
+                }
+                return;
+            }
+
+            var value: any,
+                numberValue: number;
+
+            while (length-- > 0) {
+                option = options[length];
+                value = option.value;
+                numberValue = Number(value);
+
+                if (newValue.indexOf(value) !== -1 || (isNumber(numberValue) && newValue.indexOf(numberValue) !== -1)) {
+                    option.selected = true;
+                    continue;
+                }
+
+                option.selected = false;
+            }
+        }
+
+        /**
+         * Determines the type of Element being bound to 
          * and sets the necessary handlers.
          */
-        _determineType() {
+        _determineType(): void {
             var element = this.element;
 
             if (isNull(element)) {
@@ -322,6 +492,11 @@ module plat.controls {
                             this._getter = this._getValue;
                             this._setter = this._setRange;
                             break;
+                        case 'file':
+                            var multi = (<HTMLInputElement>element).multiple;
+                            this._addEventType = this._addChangeEventListener;
+                            this._getter = multi ? this._getFiles : this._getFile;
+                            break;
                         default:
                             this._addEventType = this._addTextEventListener;
                             this._getter = this._getValue;
@@ -330,12 +505,19 @@ module plat.controls {
                     }
                     break;
                 case 'select':
-                    this._addEventType = this._addChangeEventListener;
-                    this._getter = this._getValue;
-                    this._setter = this._setSelectedIndex;
-                    var options = (<HTMLSelectElement>element).options,
+                    var multiple = (<HTMLSelectElement>element).multiple,
+                        options = (<HTMLSelectElement>element).options,
                         length = options.length,
                         option: HTMLSelectElement;
+
+                    this._addEventType = this._addChangeEventListener;
+                    if (multiple) {
+                        this._getter = this._getSelectedValues;
+                        this._setter = this._setSelectedIndices;
+                    } else {
+                        this._getter = this._getValue;
+                        this._setter = this._setSelectedIndex;
+                    }
 
                     for (var i = 0; i < length; ++i) {
                         option = options[i];
@@ -350,37 +532,43 @@ module plat.controls {
         /**
          * Observes the expression to bind to.
          */
-        _watchExpression() {
+        _watchExpression(): void {
+            var contextExpression = this._contextExpression,
+                context = this.evaluateExpression(contextExpression);
+
+            if (isNull(context) && contextExpression.identifiers.length > 0) {
+                context = this.$ContextManagerStatic.createContext(this.parent,
+                    contextExpression.identifiers[0]);
+            }
+
+            if (!isFunction(this._setter)) {
+                return;
+            } else if (this._setter === this._setSelectedIndices) {
+                var property = this._property;
+                if (isNull(context[property])) {
+                    context[property] = [];
+                }
+                this.observeArray(context, property, (arrayInfo: observable.IArrayMethodInfo<string>) => {
+                    this._setter(arrayInfo.newArray);
+                });
+            }
+
             var expression = this._expression;
+
             this.observeExpression(expression, this._setter);
-            this._setter(this.parent.evaluateExpression(expression));
-        }
-
-        /**
-         * Pushes a new function for removing a newly added 
-         * event listener.
-         * 
-         * @param event The event type
-         * @param listener The event listener
-         */
-        _pushRemoveEventListener(event: string, listener: () => void) {
-            var element = this.element;
-
-            this._removeEventListeners.push(() => {
-                element.removeEventListener(event, listener, false);
-            });
+            this._setter(this.evaluateExpression(expression));
         }
 
         /**
          * Sets the context property being bound to when the 
          * element's property is changed.
          */
-        _propertyChanged() {
+        _propertyChanged(): void {
             if (isNull(this._contextExpression)) {
                 return;
             }
 
-            var context = this.parent.evaluateExpression(this._contextExpression),
+            var context = this.evaluateExpression(this._contextExpression),
                 property = this._property;
 
             var newValue = this._getter();
@@ -389,17 +577,33 @@ module plat.controls {
                 return;
             }
 
+            // set flag to let setter functions know we changed the property
+            this.__isSelf = true;
             context[property] = newValue;
+            this.__isSelf = false;
         }
-        private __setValue(newValue: any) {
-            if ((<HTMLInputElement>this.element).value === newValue) {
+
+        private __setValue(newValue: any): void {
+            var element = <HTMLInputElement>this.element;
+            if (element.value === newValue) {
                 return;
             }
 
-            (<HTMLInputElement>this.element).value = newValue;
+            element.value = newValue;
         }
     }
 
-    register.control('plat-bind', Bind);
-}
+    register.control(__Bind, Bind);
 
+    /**
+     * A file interface for browsers that do not support the 
+     * File API.
+     */
+    export interface IFile extends File {
+        /**
+         * An absolute path to the file. The property is not added supported to 
+         * File types.
+         */
+        path?: string;
+    }
+}

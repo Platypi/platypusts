@@ -5,10 +5,10 @@
 var controlInjectors: plat.dependency.IInjectorObject<plat.IControl> = {};
 
 /**
- * An IInjectorObject of plat.ui.IViewControls. Contains all the registered
+ * An IInjectorObject of plat.ui.IBaseViewControls. Contains all the registered
  * view controls for an application.
  */
-var viewControlInjectors: plat.dependency.IInjectorObject<plat.ui.IViewControl> = {};
+var viewControlInjectors: plat.dependency.IInjectorObject<plat.ui.IBaseViewControl> = {};
 
 /**
  * An IInjectorObject of objects. Contains all the registered
@@ -22,6 +22,16 @@ var injectableInjectors: plat.dependency.IInjectorObject<plat.dependency.IInject
  */
 var staticInjectors: plat.dependency.IInjectorObject<plat.dependency.IInjector<any>> = {};
 
+/**
+ * An IInjectorObject of animations. Can be either CSS or JS implementations.
+ */
+var animationInjectors: plat.dependency.IInjectorObject<plat.ui.IBaseAnimation> = {};
+
+/**
+ * An IInjectorObject of animations. Should only contain JS implementations.
+ */
+var jsAnimationInjectors: plat.dependency.IInjectorObject<plat.ui.IBaseAnimation> = {};
+
 module plat.register {
     /**
      * Generic function for creating an Injector and adding it to an IInjectorObject.
@@ -31,14 +41,16 @@ module plat.register {
      * @param Type The constructor or function definition for the Injector.
      * @param dependencies An array of strings representing the dependencies needed for the
      * injector.
-     * @param type The injectable type
+     * @param injectableType The injectable type.
+     * @param isStatic The injectable type is a static type.
      * 
      * @return {register} The object that contains the register methods (for method chaining).
      */
-    function add(obj: dependency.IInjectorObject<any>, name: string, Type: any, dependencies?: Array<any>, type?: string) {
-        var injector = obj[name] = new dependency.Injector<any>(name, Type, dependencies, type);
+    function add(obj: dependency.IInjectorObject<any>, name: string, Type: any, dependencies?: Array<any>,
+        injectableType?: string, isStatic?: boolean): typeof register {
+        var injector = obj[name] = new dependency.Injector<any>(name, Type, dependencies, injectableType);
 
-        if (type === injectableType.STATIC) {
+        if (isStatic === true) {
             staticInjectors[name] = injector;
         }
 
@@ -55,8 +67,10 @@ module plat.register {
      * @param dependencies An array of strings representing the dependencies needed for the app injector.
      */
     export function app(name: string, Type: new (...args: any[]) => IApp, dependencies?: Array<any>): typeof register {
-        var app = new dependency.Injector<IApp>(name, Type, dependencies);
-        (<IAppStatic>acquire('$AppStatic')).registerApp(app);
+        var app = new dependency.Injector<IApp>(name, Type, dependencies),
+            $appStatic: IAppStatic = acquire(__AppStatic);
+
+        $appStatic.registerApp(app);
         return register;
     }
 
@@ -68,39 +82,58 @@ module plat.register {
      * @param Type The constructor for the IControl.
      * @param dependencies An array of strings representing the dependencies needed for the IControl injector.
      * 
-     * @example register.control('plat-tap', Tap, [plat.expressions.Parser]);
+     * @example plat.register.control('my-tap', MyTap, [plat.expressions.IParser]);
      */
     export function control(name: string, Type: new (...args: any[]) => IControl, dependencies?: Array<any>): typeof register {
         if (isString(name)) {
             name = name.toLowerCase();
+        } else {
+            throw new Error('A Control must be registered with a string name');
         }
 
         return add(controlInjectors, name, Type, dependencies);
     }
 
     /**
-     * Registers a ViewControl with the framework. The framework will instantiate the IControl when needed. The 
+     * Registers a ViewControl with the framework. The framework will instantiate the control when needed. The 
      * dependencies array corresponds to injectables that will be passed into the Constructor of the control.
      * 
      * @param name The control type, corresponding to the HTML notation for creating a new IViewControl. Used for navigation 
      * to the specified ViewControl.
      * @param Type The constructor for the IViewControl.
      * @param dependencies An optional array of strings representing the dependencies needed for the IViewControl injector.
-     * @param routes Optional route strings (or regular expressions) used for matching a URL to the registered IViewControl.
      * 
-     * @example register.viewControl('my-view-control', MyViewControl, null, ['customers/:customer(/:ordernumber)']);
+     * @example plat.register.viewControl('my-view-control', MyViewControl);
      */
     export function viewControl(name: string, Type: new (...args: any[]) => ui.IViewControl,
+        dependencies?: Array<any>): typeof register;
+    /**
+     * Registers a WebViewControl with the framework. The framework will instantiate the control when needed. The 
+     * dependencies array corresponds to injectables that will be passed into the Constructor of the control.
+     * 
+     * @param name The control type, corresponding to the HTML notation for creating a new IWebViewControl. Used for navigation 
+     * to the specified WebViewControl.
+     * @param Type The constructor for the IWebViewControl.
+     * @param dependencies An optional array of strings representing the dependencies needed for the IWebViewControl injector.
+     * @param routes Optional route strings (or regular expressions) used for matching a URL to the registered IWebViewControl.
+     * 
+     * @example plat.register.viewControl('my-view-control', MyViewControl, null, ['customers/:customer(/:ordernumber)']);
+     */
+    export function viewControl(name: string, Type: new (...args: any[]) => ui.IWebViewControl,
+        dependencies: Array<any>, routes: Array<any>): typeof register;
+    export function viewControl(name: string, Type: new (...args: any[]) => ui.IBaseViewControl,
         dependencies?: Array<any>, routes?: Array<any>): typeof register {
         if (isString(name)) {
             name = name.toLowerCase();
+        } else {
+            throw new Error('A ViewControl must be registered with a string name');
         }
 
         var ret = add(viewControlInjectors, name, Type, dependencies);
 
         if (isArray(routes)) {
-            var router: web.IRouter = acquire('$router');
-            router.registerRoutes(name, routes);
+            var $Router: web.IRouter = acquire(__Router);
+            $Router.registerRoutes(name, routes);
         }
 
         return ret;
@@ -114,15 +147,14 @@ module plat.register {
      * @param dependencies An array of strings representing the dependencies needed for the injectable's injector.
      * @param Type The constructor for the injectable. The injectable will only be instantiated once during the application
      * lifetime.
-     * @param injectableType Specifies the type of injectable, either register.injectableType.SINGLE or 
-     * register.injectableType.MULTI (defaults to register.injectableType.SINGLE).
+     * @param injectableType Specifies the type of injectable, either plat.register.injectable.SINGLETON, 
+     * plat.register.injectable.STATIC, plat.register.injectable.INSTANCE, plat.register.injectable.FACTORY, 
+     * plat.register.injectable.CLASS (defaults to plat.register.injectable.SINGLETON).
      * 
-     * @see register.injectableType
-     * 
-     * @example register.injectable('$CacheStatic', [plat.expressions.Parser], Cache);
-     * @example register.injectable('database', MyDatabase, null, register.injectableType.MULTI);
+     * @example plat.register.injectable('$CacheFactory', [plat.expressions.IParser], Cache);
+     * @example plat.register.injectable('database', MyDatabase, null, register.injectable.INSTANCE);
      */
-    export function injectable(name: string, Type: new (...args: any[]) => void,
+    export function injectable(name: string, Type: new (...args: any[]) => any,
         dependencies?: Array<any>, injectableType?: string): typeof register;
     /**
      * Registers an injectable with the framework. Injectables are objects that can be used for dependency injection into other objects.
@@ -132,45 +164,146 @@ module plat.register {
      * @param dependencies An array of strings representing the dependencies needed for the injectable's injector.
      * @param Type The constructor for the injectable. The injectable will only be instantiated once during the application
      * lifetime.
-     * @param injectableType Specifies the type of injectable, either register.injectableType.SINGLE or 
-     * register.injectableType.MULTI (defaults to register.injectableType.SINGLE).
-     * 
-     * @see register.injectableType
+     * @param injectableType Specifies the type of injectable, either plat.register.injectable.SINGLETON, 
+     * plat.register.injectable.STATIC, plat.register.injectable.INSTANCE, plat.register.injectable.FACTORY, 
+     * plat.register.injectable.CLASS (defaults to plat.register.injectable.SINGLETON).
      * 
      * @return {register} The object that contains the register methods (for method chaining).
      * 
-     * @example register.injectable('$CacheStatic', [plat.expressions.Parser], 
-     *  export function(parser? plat.expressions.IParser) { return { ... }; });
-     * @example register.injectable('database', export function() { return new Database(); }, null, register.injectableType.MULTI);
+     * @example plat.register.injectable('$CacheFactory', [plat.expressions.IParser], 
+     *  function(parser: plat.expressions.IParser) { return { ... }; });
+     * @example plat.register.injectable('database', function() { return new Database(); }, null, register.injectable.INSTANCE);
      */
     export function injectable(name: string, method: (...args: any[]) => any,
         dependencies?: Array<any>, injectableType?: string): typeof register;
     export function injectable(name: string, Type: any, dependencies?: Array<any>, injectableType?: string): typeof register {
-        return add(injectableInjectors, name, Type, dependencies, injectableType || register.injectableType.SINGLE);
+        if (!isString(injectableType)) {
+            injectableType = __SINGLETON;
+        } else {
+            injectableType = injectableType.toLowerCase();
+            if (injectableType === __FACTORY || injectableType === __STATIC || injectableType === __CLASS) {
+                return add(injectableInjectors, name, Type, dependencies, injectableType, true);
+            } else if (!(injectableType === __SINGLETON || injectableType === __INSTANCE)) {
+                throw new Error('Invalid injectable type ' + injectableType + ' during injectable registration.');
+            }
+        }
+
+        return add(injectableInjectors, name, Type, dependencies, injectableType, false);
     }
 
     /**
-     * Defines the different types of injectables.
+     * A function for registering an injectable that also contains constants for injectable type.
      */
-    export var injectableType = {
+    export module injectable {
         /**
          * Static injectables will be injected before the application loads. This provides a way to create 
          * a static constructor and load dependencies into static class properties.
          */
-        STATIC: 'static',
+        export var STATIC = __STATIC;
 
         /**
-         * Single injectables will contain a constructor. A single injectable will be instantiated once and 
+         * Singleton injectables will contain a constructor. A Singleton injectable will be instantiated once and 
          * used throughout the application lifetime. It will be instantiated when another component is injected 
          * and lists it as a dependency.
          */
-        SINGLE: 'single',
+        export var SINGLETON = __SINGLETON;
 
         /**
-         * Multi injectables will contain a constructor. A multi injectable will be instantiated multiple times 
+         * Instance injectables will contain a constructor. An Instance injectable will be instantiated multiple times 
          * throughout the application lifetime. It will be instantiated whenever another component is injected 
          * and lists it as a dependency.
          */
-        MULTI: 'multi'
-    };
+        export var INSTANCE = __INSTANCE;
+
+        /**
+         * Factory injectables will not contain a constructor but will instead contain a method for obtaining an 
+         * instance, such as getInstance() or create(). It will be injected before the application loads, similar to a Static 
+         * injectable.
+         */
+        export var FACTORY = __FACTORY;
+
+        /**
+         * Class injectables are essentially a direct reference to a class's constructor. It may contain both 
+         * static and instance methods as well as a constructor for creating a new instance.
+         */
+        export var CLASS = __CLASS;
+    }
+
+    /**
+     * Adds a CSS animation denoted by its name. If you wish to also support legacy browsers, make sure to register a 
+     * JS implementation as well.
+     * 
+     * @param name The unique idenitifer of the animation.
+     * @param Type The constructor for the custom animation.
+     * @param dependencies Any dependencies that need to be injected into the animation at 
+     * instantiation.
+     * @param animationType The type of animation. Both the intended type and default value are plat.register.animation.CSS.
+     */
+    export function animation(name: string, Type: new (...args: any[]) => ui.ICssAnimation,
+        dependencies?: Array<any>, animationType?: 'css'): typeof register;
+    /**
+     * Adds a CSS animation denoted by its name. If you wish to also support legacy browsers, make sure to register a 
+     * JS implementation as well.
+     * 
+     * @param name The unique idenitifer of the animation.
+     * @param Type The constructor for the custom animation.
+     * @param dependencies Any dependencies that need to be injected into the animation at 
+     * instantiation.
+     * @param animationType The type of animation. Both the intended type and default value are plat.register.animation.CSS.
+     */
+    export function animation(name: string, Type: new (...args: any[]) => ui.ICssAnimation,
+        dependencies?: Array<any>, animationType?: string): typeof register;
+    /**
+     * Adds a JS animation denoted by its name. If  Intended to be used when JS animation implementations for legacy browsers 
+     * is desired.
+     * 
+     * @param name The unique idenitifer of the animation.
+     * @param Type The constructor for the custom animation.
+     * @param dependencies Any dependencies that need to be injected into the animation at 
+     * instantiation.
+     * @param animationType The type of animation. The intended type is plat.register.animation.JS.
+     */
+    export function animation(name: string, Type: new (...args: any[]) => ui.IJsAnimation,
+        dependencies: Array<any>, animationType: 'js'): typeof register;
+    /**
+     * Adds a JS animation denoted by its name. If  Intended to be used when JS animation implementations for legacy browsers 
+     * is desired.
+     * 
+     * @param name The unique idenitifer of the animation.
+     * @param Type The constructor for the custom animation.
+     * @param dependencies Any dependencies that need to be injected into the animation at 
+     * instantiation.
+     * @param animationType The type of animation. The intended type is plat.register.animation.JS.
+     */
+    export function animation(name: string, Type: new (...args: any[]) => ui.IJsAnimation,
+        dependencies: Array<any>, animationType: string): typeof register;
+    export function animation(name: string, Type: new (...args: any[]) => ui.IBaseAnimation,
+        dependencies?: Array<any>, animationType?: string): typeof register {
+        if (!isString(animationType)) {
+            animationType = __CSS;
+        } else {
+            animationType = animationType.toLowerCase();
+            if (!(animationType === animation.CSS || animationType === animation.JS)) {
+                throw new Error('Invalid animationType "' + animationType + '" during animation registration.');
+            }
+        }
+
+        return add((animationType === __JS ? jsAnimationInjectors : animationInjectors),
+            name, Type, dependencies, register.injectable.INSTANCE);
+    }
+
+    /**
+     * A function for registering animations that also contains constants for animation type.
+     */
+    export module animation {
+        /**
+         * A CSS animation.
+         */
+        export var CSS = __CSS;
+
+        /**
+         * A JavaScript animation.
+         */
+        export var JS = __JS;
+    }
 }

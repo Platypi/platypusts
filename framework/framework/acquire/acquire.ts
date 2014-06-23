@@ -3,6 +3,13 @@ module plat {
      * Returns the requested injectable dependency.
      * 
      * @param dependency The dependency Type to return.
+     * @param {T} The requested dependency.
+     */
+    export function acquire<T>(dependency: () => T): T;
+    /**
+     * Returns the requested injectable dependency.
+     * 
+     * @param dependency The dependency Type to return.
      * @param {any} The requested dependency.
      */
     export function acquire(dependency: Function): any;
@@ -45,13 +52,13 @@ module plat {
         }
 
         var length = deps.length,
-            output = [];
+            output: Array<any> = [];
 
         for (var i = 0; i < length; ++i) {
-            output = deps[i].inject();
+            output.push(deps[i].inject());
         }
 
-        if (array) {
+        if (!array) {
             return output[0];
         }
 
@@ -63,6 +70,13 @@ module plat {
      * as an array in the order they were specified.
      */
     export interface IAcquire {
+        /**
+         * Returns the requested injectable dependency.
+         * 
+         * @param dependency The dependency Type to return.
+         * @param {T} The requested dependency.
+         */
+        <T>(dependency: () => T): T;
         /**
          * Returns the requested injectable dependency.
          * 

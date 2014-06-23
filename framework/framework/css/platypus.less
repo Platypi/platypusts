@@ -1,0 +1,80 @@
+﻿@import 'animations';
+@import 'media';
+
+// Common
+
+[plat-hide] {
+    display: none;
+}
+
+// Gestures
+
+.plat-gesture {
+    .misc-webkit-touch();
+    .user-select();
+    .touch-action();
+}
+
+.plat-no-touch-action {
+    .touch-action(none);
+}
+
+// Animations
+
+.plat-slidein {
+    .animation-name(@slideIn);
+    .animation-duration(250ms);
+    .animation-fill-mode(forwards);
+}
+
+
+.plat-slideout {
+    .animation-name(@slideOut);
+    .animation-duration(200ms);
+    .animation-fill-mode(forwards);
+}
+
+
+.plat-fadein {
+    .animation-name(@fadeIn);
+    .animation-duration(500ms);
+    .animation-fill-mode(forwards);
+}
+
+
+.plat-fadeout {
+    .animation-name(@fadeOut);
+    .animation-duration(100ms);
+    .animation-fill-mode(forwards);
+}
+
+#Animations > .fade();
+#Animations > .fade(@fadeIn; in);
+#Animations > .slide();
+#Animations > .slide(@slideOut; out; left);
+#Animations > .slideAndFade();
+#Animations > .slideAndFade(@slideOutFadeOut; out; left);
+
+.media1400({
+    [plat-control="plat-viewport"].plat-enter {
+        .animation-name(@slideInFadeIn);
+        .animation-duration(750ms);
+        .animation-fill-mode(forwards);
+    }
+
+    [plat-control="plat-viewport"].plat-leave {
+        .animation-name(@slideOutFadeOut);
+        .animation-duration(500ms);
+        .animation-fill-mode(forwards);
+    }
+});
+     
+.media800({
+    [plat-control="plat-viewport"].plat-enter {
+        .animation-name(@fadeIn);
+    }
+
+    [plat-control="plat-viewport"].plat-leave {
+        .animation-name(@fadeOut);
+    }
+});
