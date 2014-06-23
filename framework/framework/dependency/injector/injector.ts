@@ -249,7 +249,9 @@ module plat.dependency {
                 var dependency = dependencies[index];
 
                 if(isNull(dependency)) {
-                    throw new TypeError('The dependency at index ' + index + ' is undefined, did you forgot to include a file?');
+                    throw new TypeError('The dependency for ' +
+                        name + ' at index ' +
+                        index + ' is undefined, did you forgot to include a file?');
                 }
                 
                 throw new TypeError('Could not resolve dependency ' +

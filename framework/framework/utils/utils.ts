@@ -13,7 +13,7 @@ module plat {
             return extend.apply(null, [true, destination].concat(sources));
         }
 
-        clone(obj: any, deep?: boolean): any {
+        clone<T>(obj: T, deep?: boolean): T {
             return _clone(obj, deep);
         }
 
@@ -190,7 +190,7 @@ module plat {
          * @param obj The object to clone.
          * @param deep Whether or not it is a deep clone.
          */
-        clone(obj: any, deep?: boolean): any;
+        clone<T>(obj: T, deep?: boolean): T;
 
         /**
          * Takes in anything and determines if it is a type of Object.
