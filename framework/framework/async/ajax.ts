@@ -874,7 +874,7 @@ module plat.async {
          * @param onRejected A method called when/if the promise rejects. If undefined the next
          * onRejected method in the promise chain will be called.
          */
-        then<U>(onFulfilled: (success: R) => IAjaxThenable<U>, onRejected?: (error: any) => IAjaxThenable<U>): IAjaxThenable<U>;
+        then<U>(onFulfilled: (success: R) => IThenable<U>, onRejected?: (error: any) => IThenable<U>): IAjaxThenable<U>;
         /**
          * Takes in two methods, called when/if the promise fulfills/rejects.
          * 
@@ -883,7 +883,7 @@ module plat.async {
          * @param onRejected A method called when/if the promise rejects. If undefined the next
          * onRejected method in the promise chain will be called.
          */
-        then<U>(onFulfilled: (success: R) => IAjaxThenable<U>, onRejected?: (error: any) => U): IAjaxThenable<U>;
+        then<U>(onFulfilled: (success: R) => IThenable<U>, onRejected?: (error: any) => U): IAjaxThenable<U>;
         /**
          * Takes in two methods, called when/if the promise fulfills/rejects.
          * 
@@ -892,7 +892,7 @@ module plat.async {
          * @param onRejected A method called when/if the promise rejects. If undefined the next
          * onRejected method in the promise chain will be called.
          */
-        then<U>(onFulfilled: (success: R) => U, onRejected?: (error: any) => IAjaxThenable<U>): IAjaxThenable<U>;
+        then<U>(onFulfilled: (success: R) => U, onRejected?: (error: any) => IThenable<U>): IAjaxThenable<U>;
         /**
          * Takes in two methods, called when/if the promise fulfills/rejects.
          * 
@@ -909,7 +909,7 @@ module plat.async {
          * @param onRejected A method called when/if the promise rejects. If undefined the next
          * onRejected method in the promise chain will be called.
          */
-        catch<U>(onRejected: (error: any) => IAjaxThenable<U>): IAjaxThenable<U>;
+        catch<U>(onRejected: (error: any) => IThenable<U>): IAjaxThenable<U>;
         /**
          * A wrapper method for Promise.then(undefined, onRejected);
          * 
