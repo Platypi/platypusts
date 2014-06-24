@@ -644,16 +644,16 @@ module plat.processing {
                     absoluteContextPath = 'context';
                 }
 
+                (<any>uiControl).zCC__plat = contextManager.observe(absoluteContextPath, {
+                    uid: uiControl.uid,
+                    listener: (newValue, oldValue) => {
+                        uiControl.context = newValue;
+                    }
+                });
+
                 $TemplateControlFactory.setAbsoluteContextPath(uiControl, absoluteContextPath);
                 $TemplateControlFactory.setContextResources(uiControl);
                 ElementManager.$ResourcesFactory.bindResources(uiControl.resources);
-
-                contextManager.observe(uiControl.absoluteContextPath, {
-                    uid: uiControl.uid,
-                    listener: (newValue, oldValue) => {
-                        $TemplateControlFactory.contextChanged(uiControl, newValue, oldValue);
-                    }
-                });
 
                 if (!replace) {
                     var element = uiControl.element;

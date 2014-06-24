@@ -46,16 +46,11 @@ module plat.ui.controls {
         setTemplate(): void {
             var element = this.element,
                 firstElementChild = element.firstElementChild,
-                $document = this.$Document;
-
-            if (!isNull(firstElementChild) && firstElementChild.nodeName.toLowerCase() === 'option') {
-                this.__defaultOption = <HTMLOptionElement>firstElementChild.cloneNode(true);
-            }
-
-            var platOptions = this.options.value,
+                $document = this.$Document,
+                platOptions = this.options.value,
                 option = $document.createElement('option');
 
-            if (this.__isGrouped = !isNull(platOptions.group)) {
+            if (!isNull(platOptions.group)) {
                 var group = this.__group = platOptions.group,
                     optionGroup = $document.createElement('optgroup');
 
@@ -89,8 +84,8 @@ module plat.ui.controls {
          * @param oldValue The old array context.
          */
         contextChanged(newValue?: Array<any>, oldValue?: Array<any>): void {
-            var newLength = isNull(newValue) ? 0 : newValue.length,
-                oldLength = isNull(oldValue) ? 0 : oldValue.length;
+            var newLength = isArray(newValue) ? newValue.length : 0,
+                oldLength = isArray(oldValue) ? oldValue.length : 0;
 
             if (isNull(this.__removeListener)) {
                 this.__removeListener = this.observeArray(this, 'context',
@@ -113,7 +108,17 @@ module plat.ui.controls {
          * the options accordingly.
          */
         loaded(): void {
-            var context = this.context;
+            var context = this.context,
+                element = this.element,
+                firstElementChild = element.firstElementChild,
+                group = this.options.value.group;
+
+            if (isNode(firstElementChild) && firstElementChild.nodeName.toLowerCase() === 'option') {
+                this.__defaultOption = <HTMLOptionElement>firstElementChild.cloneNode(true);
+            }
+
+            this.__isGrouped = !isNull(group);
+            this.__group = group;
 
             if (isNull(context)) {
                 return;

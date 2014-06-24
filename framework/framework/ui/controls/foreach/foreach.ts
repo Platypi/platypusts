@@ -32,7 +32,6 @@ module plat.ui.controls {
          */
         setTemplate(): void {
             var childNodes: Array<Node> = Array.prototype.slice.call(this.element.childNodes);
-            this._blockLength = childNodes.length + 2;
             this.bindableTemplates.add('item', childNodes);
         }
 
@@ -110,6 +109,8 @@ module plat.ui.controls {
 
             if (!animate) {
                 return;
+            } else if (this._blockLength === 0) {
+                this._blockLength = childNodes.length;
             }
 
             var currentAnimations = this.__currentAnimations;
@@ -259,8 +260,14 @@ module plat.ui.controls {
          * @param ev The IArrayMethodInfo
          */
         _pop(ev: observable.IArrayMethodInfo<any>): void {
-            var startNode = this._blockLength * ev.newArray.length,
+            var blockLength = this._blockLength,
+                startNode: number,
+                animationPromise: plat.ui.IAnimationThenable<void>;
+
+            if (blockLength > 0) {
+                startNode = blockLength * ev.newArray.length,
                 animationPromise = this._animateItems(startNode, undefined, __Leave);
+            }
 
             if (isNull(animationPromise)) {
                 this._removeItems(1);

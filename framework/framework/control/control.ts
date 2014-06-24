@@ -51,6 +51,23 @@ module plat {
                 return;
             }
 
+            var ctrl = <ui.ITemplateControl>control;
+            if (isString(ctrl.absoluteContextPath) && isFunction(ctrl.contextChanged)) {
+                var contextManager = Control.$ContextManagerStatic.getManager(ctrl.root);
+
+                if (isFunction((<any>ctrl).zCC__plat)) {
+                    (<any>ctrl).zCC__plat();
+                    deleteProperty(ctrl, 'zCC__plat');
+                }
+
+                contextManager.observe(ctrl.absoluteContextPath, {
+                    uid: control.uid,
+                    listener: (newValue, oldValue) => {
+                        ui.TemplateControl.contextChanged(control, newValue, oldValue);
+                    }
+                });
+            }
+
             if (isFunction(control.loaded)) {
                 control.loaded();
             }

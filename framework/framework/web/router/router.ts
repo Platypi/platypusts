@@ -51,7 +51,8 @@
             var ContextManager: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
             ContextManager.defineGetter(this, 'uid', uniqueId('plat_'));
 
-            this._removeListener = this.$EventManagerStatic.on(this.uid, 'urlChanged', (ev: events.IDispatchEventInstance, utils: web.IUrlUtilsInstance) => {
+            this._removeListener = this.$EventManagerStatic.on(this.uid, 'urlChanged',
+                (ev: events.IDispatchEventInstance, utils: web.IUrlUtilsInstance) => {
                 postpone(() => {
                     this._routeChanged(ev, utils);
                 });
