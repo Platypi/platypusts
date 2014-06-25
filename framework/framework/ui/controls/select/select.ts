@@ -44,9 +44,7 @@ module plat.ui.controls {
          * template if necessary.
          */
         setTemplate(): void {
-            var element = this.element,
-                firstElementChild = element.firstElementChild,
-                $document = this.$Document,
+            var $document = this.$Document,
                 platOptions = this.options.value,
                 option = $document.createElement('option');
 
