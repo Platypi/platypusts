@@ -55,17 +55,17 @@ module plat {
             if (isString(ctrl.absoluteContextPath) && isFunction(ctrl.contextChanged)) {
                 var contextManager = Control.$ContextManagerStatic.getManager(ctrl.root);
 
-                if (isFunction((<any>ctrl).zCC__plat)) {
-                    (<any>ctrl).zCC__plat();
-                    deleteProperty(ctrl, 'zCC__plat');
-                }
-
                 contextManager.observe(ctrl.absoluteContextPath, {
                     uid: control.uid,
                     listener: (newValue, oldValue) => {
                         ui.TemplateControl.contextChanged(control, newValue, oldValue);
                     }
                 });
+
+                if (isFunction((<any>ctrl).zCC__plat)) {
+                    (<any>ctrl).zCC__plat();
+                    deleteProperty(ctrl, 'zCC__plat');
+                }
             }
 
             if (isFunction(control.loaded)) {

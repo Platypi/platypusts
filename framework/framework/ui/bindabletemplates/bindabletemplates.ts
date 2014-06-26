@@ -257,13 +257,7 @@ module plat.ui {
             var $TemplateControlFactory = this.$TemplateControlFactory,
                 control = $TemplateControlFactory.getInstance(),
                 $ResourcesFactory = this.$ResourcesFactory,
-                parent = this.control,
-                hasRelativeIdentifier = !isEmpty(relativeIdentifier),
-                absoluteContextPath: string = hasRelativeIdentifier ?
-                parent.absoluteContextPath + '.' + relativeIdentifier :
-                absoluteContextPath = parent.absoluteContextPath;
-
-            $TemplateControlFactory.setAbsoluteContextPath(control, absoluteContextPath);
+                parent = this.control;
 
             var _resources = $ResourcesFactory.getInstance();
 
@@ -275,7 +269,7 @@ module plat.ui {
             control.parent = parent;
             control.controls = [];
             control.element = <HTMLElement>template;
-            control.type = this.control.type + '-@' + key;
+            control.type = parent.type + '-@' + key;
 
             return control;
         }

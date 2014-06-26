@@ -1,1 +1,7 @@
-﻿<plat-select plat-context="names" plat-bind="selected" plat-options="{ value: 'name' }"></plat-select>
+﻿<plat-select plat-context="names" plat-bind="selected" plat-options="{ value: 'name' }" plat-change="change"></plat-select>
+
+<custom-control plat-name="custom">
+    <first>
+        <input type="text" plat-bind="test" />
+    </first>
+</custom-control>

@@ -276,7 +276,7 @@ module plat.observable {
             var join = split.join('.'),
                 context = this.__contextObjects[join];
 
-            if (isNull(this.__contextObjects[join])) {
+            if (isNull(context)) {
                 context = this.__contextObjects[join] = ContextManager.getContext(this.context, split);
             }
 
@@ -298,7 +298,7 @@ module plat.observable {
             if (split.length > 0) {
                 join = split.join('.');
                 context = this.__contextObjects[join];
-                if (isNull(this.__contextObjects[join])) {
+                if (isNull(context)) {
                     context = this.__contextObjects[join] = this._getImmediateContext(join);
                 }
             }
@@ -611,16 +611,14 @@ module plat.observable {
          * @param observableListener The function and associated uid to be fired 
          * for this identifier.
          */
-        _addObservableListener(absoluteIdentifier: string,
-            observableListener: IListener): IRemoveListener {
-            var uid = observableListener.uid;
+        _addObservableListener(absoluteIdentifier: string, observableListener: IListener): IRemoveListener {
+            var uid = observableListener.uid,
+                remove = () => {
+                    ContextManager.removeIdentifier([uid], absoluteIdentifier);
+                    this._removeCallback(absoluteIdentifier, observableListener);
+                };
 
             this.__add(absoluteIdentifier, observableListener);
-
-            var remove = () => {
-                ContextManager.removeIdentifier([uid], absoluteIdentifier);
-                this._removeCallback(absoluteIdentifier, uid);
-            };
 
             ContextManager.pushRemoveListener(absoluteIdentifier, uid, remove);
 
@@ -700,27 +698,19 @@ module plat.observable {
         }
 
         /**
-         * Removes listener callbacks based on control uid.
+         * Removes a single listener callback
          * 
          * @param identifier The identifier attached to the callbacks.
-         * @param uid The uid to remove the callback from.
+         * @param listener The observable listener to remove.
          */
-        _removeCallback(identifier: string, uid: string): void {
+        _removeCallback(identifier: string, listener: IListener): void {
             var callbacks = this.__identifiers[identifier];
             if (isNull(callbacks)) {
                 return;
             }
 
-            // filter out callback objects that have matching uids
-            var length = callbacks.length - 1,
-                callback: IListener;
-
-            for (var i = length; i >= 0; --i) {
-                callback = callbacks[i];
-                if (callback.uid === uid) {
-                    callbacks.splice(i, 1);
-                }
-            }
+            // splice the observed listener
+            callbacks.splice(callbacks.indexOf(listener), 1);
 
             if (isEmpty(this.__identifiers[identifier])) {
                 deleteProperty(this.__identifierHash, identifier);
