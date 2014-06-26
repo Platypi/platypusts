@@ -10,6 +10,8 @@ module plat.navigation {
         navigate(Constructor?: new (...args: any[]) => ui.IViewControl, options?: INavigationOptions): void;
         navigate(injector?: dependency.IInjector<ui.IViewControl>, options?: INavigationOptions): void;
         navigate(Constructor?: any, options?: INavigationOptions) {
+            options = options || <IBaseNavigationOptions>{};
+
             var state = this.currentState || <IBaseNavigationState>{},
                 viewControl = state.control,
                 injector: dependency.IInjector<ui.IViewControl>,
@@ -17,7 +19,6 @@ module plat.navigation {
                 parameter = options.parameter,
                 event: events.INavigationEvent<any>;
 
-            options = options || <IBaseNavigationOptions>{};
             event = this._sendEvent('beforeNavigate', Constructor, null, parameter, options, true);
 
             if (event.canceled) {

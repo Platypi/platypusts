@@ -265,7 +265,7 @@ module plat.ui.controls {
                 animationPromise: plat.ui.IAnimationThenable<void>;
 
             if (blockLength > 0) {
-                startNode = blockLength * ev.newArray.length,
+                startNode = blockLength * ev.newArray.length;
                 animationPromise = this._animateItems(startNode, undefined, __Leave);
             }
 

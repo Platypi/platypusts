@@ -343,7 +343,8 @@ module plat.expressions {
                 identifiers = this.__identifiers,
                 tempIdentifiers = this.__tempIdentifiers,
                 codeArray = this.__codeArray,
-                nextChar = this._peek(index);
+                nextChar = this._peek(index),
+                lastIndex: number;
 
             if (this._isValEqual(nextChar, '()')) {
                 return true;
@@ -353,7 +354,8 @@ module plat.expressions {
                 previousToken = tokens[index - 1],
                 identifierIndexer = tempIdentifiers.pop(),
                 hasIdentifierIndexer = !isNull(identifierIndexer),
-                context = codeArray.pop();
+                context = codeArray.pop(),
+                token = tokens[index];
             
             if (hasIdentifierIndexer && identifierIndexer[0] === '@') {
                 codeStr = '(' + this.__indexIntoContext.toString() + ')(' + context + ',' + codeStr + ')';
@@ -361,15 +363,26 @@ module plat.expressions {
             } else if (this._isValEqual(previousToken, '++--()[]*/%?:>=<=&&||!===')) {
                 codeStr = '(' + this.__indexIntoContext.toString() + ')(' + context + ',' + codeStr + ')';
                 tempIdentifiers.push('.');
+            } else if (previousToken.args < 0 && this._isValEqual(token, '[]')) {
+                codeStr = '(' + this.__indexIntoContext.toString() + ')(' + context + ',' + codeStr + ')';
+
+                lastIndex = tempIdentifiers.length - 1;
+                if (lastIndex >= 0) {
+                    if (tempIdentifiers[lastIndex] !== '.') {
+                        identifiers.push(tempIdentifiers.pop());
+                    }
+                }
+
+                identifiers.push(identifierIndexer);
             } else {
                 codeStr = '(' + this.__indexIntoContext.toString() + ')(' + context + ',"' + codeStr + '")';
 
-                var lastIndex = tempIdentifiers.length - 1;
+                lastIndex = tempIdentifiers.length - 1;
                 if (lastIndex >= 0) {
                     if (tempIdentifiers[lastIndex] !== '.') {
                         tempIdentifiers[lastIndex] += '.' + identifierIndexer;
                     }
-                } else if (hasIdentifierIndexer && identifierIndexer !== '.') {
+                } else if (hasIdentifierIndexer && identifierIndexer !== '.' && this._isValUnequal(token, '.')) {
                     identifiers.push(identifierIndexer);
                 }
             }

@@ -7,7 +7,7 @@
         private static __urlUtilsElement: HTMLAnchorElement;
         private static __getQuery(search: string): IObject<string> {
             if (isEmpty(search)) {
-                return <IObject<string>>{};
+                return;
             }
 
             var split = search.split('&'),
@@ -19,7 +19,7 @@
             for (var i = 0; i < length; ++i) {
                 item = split[i].split('=');
 
-                define(query, item[0], item[1]);
+                query[item[0]] = item[1];
             }
 
             return query;

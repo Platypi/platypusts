@@ -2,85 +2,89 @@
 module tests.expressions.parser {
     var parser = plat.acquire(plat.expressions.IParser),
         context = {
-        title: 'Parser',
-        fooFn: function (arg0, arg1) {
-            return arg0 + arg1;
-        },
-        wild: function (array0, array1) {
-            return array0.concat(array1);
-        },
-        five: 'high ',
-        barz: {
-            arrayTest: ['cool', 'beans', 'test'],
-            customers: {
-                value: {
-                    text: function () {
-                        return 'function text';
+            title: 'Parser',
+            fooFn: function (arg0, arg1) {
+                return arg0 + arg1;
+            },
+            wild: function (array0, array1) {
+                return array0.concat(array1);
+            },
+            five: 'high ',
+            barz: {
+                arrayTest: ['cool', 'beans', 'test'],
+                customers: {
+                    value: {
+                        text: function () {
+                            return 'function text';
+                        }
+                    },
+                    isDumb: true,
+                    value2: 'value2',
+                    value3: function (input: string, input2: string, input3: string) {
+                        return input + input2 + input3;
                     }
                 },
-                isDumb: true,
-                value2: 'value2',
-                value3: function (input: string, input2: string, input3: string) {
-                    return input + input2 + input3;
+                morgan: 'boss',
+                test: function () {
+                    return 'barz';
                 }
             },
-            morgan: 'boss',
-            test: function () {
-                return 'barz';
-            }
-        },
-        foo: function (arg: string) {
-            return arg;
-        },
-        fudge: function () {
-            return 'chocolate';
-        },
-        math: function () {
-            return 5;
-        },
-        condition: true,
-        test: 'hello',
-        arrayTest: ['cool', 'beans', 'test'],
-        mathFn: function (input1, input2) {
-            return input1 + input2;
-        },
-        thisThat: function () {
-            return this.otherThis;
-        },
-        thirdThis: function () {
-            return this.thisThis;
-        },
-        otherThis: function () {
-            return this.thirdThis;
-        },
-        thisThis: function () {
-            return this;
-        },
-        customers: function () {
-            return 'customers';
-        },
-        embed: function () {
+            foo: function (arg: string) {
+                return arg;
+            },
+            fudge: function () {
+                return 'chocolate';
+            },
+            math: function () {
+                return 5;
+            },
+            index: 'barz',
+            condition: true,
+            test: 'hello',
+            arrayTest: ['cool', 'beans', 'test'],
+            mathFn: function (input1, input2) {
+                return input1 + input2;
+            },
+            thisThat: function () {
+                return this.otherThis;
+            },
+            thirdThis: function () {
+                return this.thisThis;
+            },
+            otherThis: function () {
+                return this.thirdThis;
+            },
+            thisThis: function () {
+                return this;
+            },
+            customers: function () {
+                return 'customers';
+            },
+            embed: function () {
 
-            function createFn(num) {
-                return function () {
-                    return 'The number ' + num;
-                };
-            }
-
-            return function (num: number) {
-                var array = [];
-                while (num--) {
-                    array.push(createFn(num));
+                function createFn(num) {
+                    return function () {
+                        return 'The number ' + num;
+                    };
                 }
-                return array;
-            };
-        },
-        not: '',
-        numString: '1',
-        isTrue: function (obj: any) {
-            return obj === true;
-        }
-    };
+
+                return function (num: number) {
+                    var array = [];
+                    while (num--) {
+                        array.push(createFn(num));
+                    }
+                    return array;
+                };
+            },
+            not: '',
+            numString: '1',
+            isTrue: function (obj: any) {
+                return obj === true;
+            },
+            context: null
+        };
+
+    context.context = context;
 
     var tests: Array<IParserTest> = [
         {
@@ -109,6 +113,20 @@ module tests.expressions.parser {
             returns: 'Quick and tasty chocolate',
             identifiers: ['barz.customers.value3', 'fudge'],
             expression: 'barz["customers"]["value3"]("Quick and ", "tasty ", fudge())',
+            fn: 'toBe'
+        },
+        {
+            name: 'array-notation with alias + identifier indexer',
+            returns: 'boss',
+            identifiers: ['index', '@context'],
+            expression: '@context[index].morgan',
+            fn: 'toBe'
+        },
+        {
+            name: 'array-notation + identifier indexer',
+            returns: 'boss',
+            identifiers: ['index', 'context'],
+            expression: 'context[index].morgan',
             fn: 'toBe'
         },
         {
