@@ -13,8 +13,7 @@
             var split = search.split('&'),
                 query: IObject<string> = {},
                 length = split.length,
-                item: Array<string>,
-                define = (<observable.IContextManagerStatic>acquire(__ContextManagerStatic)).defineGetter;
+                item: Array<string>;
 
             for (var i = 0; i < length; ++i) {
                 item = split[i].split('=');
