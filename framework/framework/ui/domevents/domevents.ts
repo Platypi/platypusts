@@ -1091,28 +1091,34 @@
         private __handleInput(target: HTMLInputElement) {
             var nodeName = target.nodeName;
 
-            if (isString(nodeName)) {
-                nodeName = nodeName.toLowerCase();
+            if (!isString(nodeName)) {
+                return;
             }
 
-            if (nodeName === 'input') {
-                switch (target.type) {
-                    case 'button':
-                    case 'range':
-                        break;
-                    case 'checkbox':
-                    case 'radio':
-                    case 'file':
-                        target.click();
-                        break;
-                    default:
-                        target.focus();
-                        break;
-                }
-            } else if (nodeName === 'textarea') {
-                target.focus();
-            } else if (nodeName === 'label') {
-                target.click();
+            switch (nodeName.toLowerCase()) {
+                case 'input':
+                    switch (target.type) {
+                        case 'range':
+                            break;
+                        case 'button':
+                        case 'submit':
+                        case 'checkbox':
+                        case 'radio':
+                        case 'file':
+                            target.click();
+                            break;
+                        default:
+                            target.focus();
+                            break;
+                    }
+                    break;
+                case 'button':
+                case 'label':
+                    target.click();
+                    break;
+                default:
+                    target.focus();
+                    break;
             }
         }
         private __removeSelections(element: Node): void {
