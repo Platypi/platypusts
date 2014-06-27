@@ -134,9 +134,10 @@
             head.insertBefore(element, null);
 
             var computedStyle = this.$Window.getComputedStyle(element),
-                display = computedStyle.display;
+                display = computedStyle.display,
+                visibility = computedStyle.visibility;
 
-            if (display === 'none') {
+            if (display === 'none' || visibility === 'hidden') {
                 this.platCss = true;
             } else {
                 this.platCss = false;
