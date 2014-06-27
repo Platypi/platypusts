@@ -284,9 +284,7 @@ module plat.dependency {
             var toInject: any = [],
                 type = this.type;
 
-            this.__dependencies = Injector.getDependencies(this.__dependencies);
-
-            var dependencies: Array<IInjector<any>> = this.__dependencies || [],
+            var dependencies = Injector.getDependencies(this.__dependencies) || [],
                 length = dependencies.length,
                 injectable: any;
 
