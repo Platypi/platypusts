@@ -470,6 +470,8 @@
                 this.__detectMove = false;
             }
 
+            this.__standardizeEventObject(ev);
+
             // check for cancel event,
             if (this.__cancelRegex.test(eventType)) {
                 this.__tapCount = 0;
@@ -477,8 +479,6 @@
                 this.__hasSwiped = false;
                 return;
             }
-
-            this.__standardizeEventObject(ev);
 
             // return if the touch count was greater than 0, 
             // or handle release
