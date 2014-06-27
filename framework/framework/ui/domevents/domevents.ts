@@ -308,6 +308,9 @@
                 return;
             }
 
+            // set any captured target back to null
+            this.__capturedTarget = null;
+
             this.__standardizeEventObject(ev);
 
             if ((this.__touchCount = ev.touches.length) > 1) {
@@ -460,8 +463,6 @@
 
             // clear hold event
             this.__clearHold();
-            // set any captured target back to null
-            this.__capturedTarget = null;
 
             // if we were detecting move events, unregister them
             if (this.__detectMove) {
