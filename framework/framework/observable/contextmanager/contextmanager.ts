@@ -121,12 +121,12 @@ module plat.observable {
         static getContext(rootContext: any, split: Array<string>): any {
             split = split.slice(0);
             if (isNull(rootContext)) {
-                return null;
+                return rootContext;
             }
             while (split.length > 0) {
                 rootContext = rootContext[split.shift()];
                 if (isNull(rootContext)) {
-                    return null;
+                    return rootContext;
                 }
             }
 
@@ -277,7 +277,7 @@ module plat.observable {
                 context = this.__contextObjects[join];
 
             if (isNull(context)) {
-                context = this.__contextObjects[join] = ContextManager.getContext(this.context, split);
+                context = this.__contextObjects[join] = this._getImmediateContext(join);
             }
 
             return context;
