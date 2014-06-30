@@ -197,6 +197,7 @@
         private __swipeOrigin: ITouchPoint;
         private __lastMoveEvent: IPointerEvent;
         private __capturedTarget: ICustomElement;
+        private __focusedElement: HTMLInputElement;
         private __mappedEventListener = this.__handleMappedEvent.bind(this);
         private __reverseMap = {};
         private __swipeSubscribers: { master: IDomEventInstance; directional: IDomEventInstance };
@@ -291,6 +292,7 @@
             this.__lastTouchDown = null;
             this.__lastTouchUp = null;
             this.__capturedTarget = null;
+            this.__focusedElement = null;
         }
 
         /**
@@ -1090,7 +1092,12 @@
             return style;
         }
         private __handleInput(target: HTMLInputElement) {
-            var nodeName = target.nodeName;
+            var nodeName = target.nodeName,
+                focusedElement = this.__focusedElement || <HTMLInputElement>{};
+
+            if (isFunction(focusedElement.blur)) {
+                focusedElement.blur();
+            }
 
             if (!isString(nodeName)) {
                 return;
@@ -1114,6 +1121,7 @@
                     }
                     break;
                 case 'button':
+                case 'select':
                 case 'label':
                     target.click();
                     break;
@@ -1121,6 +1129,8 @@
                     target.focus();
                     break;
             }
+
+            this.__focusedElement = target;
         }
         private __removeSelections(element: Node): void {
             if (!isNode(element)) {
