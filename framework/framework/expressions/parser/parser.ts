@@ -18,6 +18,7 @@ module plat.expressions {
 
         parse(input: string): IParsedExpression {
             var parsedObject = this.__cache[input];
+            
             if (!isNull(parsedObject)) {
                 return parsedObject;
             }

@@ -506,8 +506,11 @@ module tests.expressions.parser {
         }
 
     ];
-
     describe('Parser Tests', () => {
+        beforeEach(() => {
+            (<any>parser).__cache = [];
+        });
+
         tests.forEach((test) => {
             it('should test ' + test.name, () => {
                 var spy: jasmine.Spy;
