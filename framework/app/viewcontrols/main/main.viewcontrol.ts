@@ -19,8 +19,14 @@ module app {
             this.title = route.path.replace(/\//g, ' ');
         }
 
-        select(index: number) {
-            this.context.item = this.context.items[index];
+        pushPop() {
+            var items = this.context.items;
+            if (items.length % 2 === 0) {
+                items.push({ first: 'Jon', last: 'McCann' });
+                return;
+            }
+
+            items.pop();
         }
     }
 

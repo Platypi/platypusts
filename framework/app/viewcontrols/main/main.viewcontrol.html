@@ -1,14 +1,8 @@
 ﻿<plat-foreach plat-context="items">
     <div>
-        <button plat-tap="select(@index)">select</button><span>{{first}} </span><span>{{last}}</span>
+        <input type="text" plat-bind="first" />
+        <span>{{first}} </span><span>{{last}}</span>
     </div>
 </plat-foreach>
 
-<div>
-    <input type="text" plat-bind="item.first" />
-</div>
-<div>
-    <input type="text" plat-bind="item.last" />
-</div>
-
-<input type="button" value="{{item.first}}" />
+<input type="button" plat-tap="pushPop" value="{{items.length % 2 === 0 ? 'push' : 'pop'}}" />

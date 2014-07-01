@@ -63,17 +63,13 @@ module plat.observable {
 
             var keys = Object.keys(identifiers),
                 identifier: string,
-                listeners: Array<IRemoveListener>,
-                i: number,
-                j: number,
-                jLength: number;
+                listeners: Array<IRemoveListener>;
 
             while (keys.length > 0) {
                 identifier = keys.shift();
                 listeners = identifiers[identifier];
-                jLength = listeners.length;
-                for (j = 0; j < jLength; ++j) {
-                    listeners[j]();
+                while (listeners.length > 0) {
+                    listeners.shift()();
                 }
             }
 
@@ -83,7 +79,7 @@ module plat.observable {
             keys = Object.keys(arrayListeners);
             length = keys.length;
 
-            for (i = 0; i < length; ++i) {
+            for (var i = 0; i < length; ++i) {
                 remove(keys[i], uid);
             }
 
@@ -609,7 +605,6 @@ module plat.observable {
         _addObservableListener(absoluteIdentifier: string, observableListener: IListener): IRemoveListener {
             var uid = observableListener.uid,
                 remove = () => {
-                    ContextManager.removeIdentifier([uid], absoluteIdentifier);
                     this._removeCallback(absoluteIdentifier, observableListener);
                 };
 

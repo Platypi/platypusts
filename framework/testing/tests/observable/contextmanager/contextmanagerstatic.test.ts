@@ -99,7 +99,7 @@ module tests.observable.contextManagerStatic {
 
             context = ContextManager.getContext(rootContext, 'foo.baz.bar'.split('.'));
 
-            expect(context).toBeNull();
+            expect(context).toBeUndefined();
 
             context = ContextManager.getContext(null, 'foo.bar.baz'.split('.'));
 
