@@ -1,7 +1,14 @@
-﻿<plat-select plat-context="names" plat-bind="selected" plat-options="{ value: 'name' }" plat-change="change"></plat-select>
+﻿<plat-foreach plat-context="items">
+    <div>
+        <button plat-tap="select(@index)">select</button><span>{{first}} </span><span>{{last}}</span>
+    </div>
+</plat-foreach>
 
-<custom-control plat-name="custom">
-    <first>
-        <input type="text" plat-bind="test" />
-    </first>
-</custom-control>
+<div>
+    <input type="text" plat-bind="item.first" />
+</div>
+<div>
+    <input type="text" plat-bind="item.last" />
+</div>
+
+<input type="button" value="{{item.first}}" />
