@@ -8,10 +8,10 @@ module app {
                 { first: 'Darion', last: 'Welch' },
                 { first: 'Will', last: 'Johnston' }
             ],
+            htmlObj: {}
         };
 
         navigatedTo(route: plat.web.IRoute<any>) {
-            console.log((<any>Object).observe);
             if (route.path.length === 0) {
                 return;
             }
@@ -25,7 +25,7 @@ module app {
                 items.push({ first: 'Jon', last: 'McCann' });
                 return;
             }
-
+            
             items.pop();
         }
     }

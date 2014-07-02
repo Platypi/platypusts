@@ -5,4 +5,7 @@
     </div>
 </plat-foreach>
 
+<textarea plat-bind="htmlObj.html"></textarea>
+<plat-html plat-context="htmlObj.html"></plat-html>
+
 <input type="button" plat-tap="pushPop" value="{{items.length % 2 === 0 ? 'push' : 'pop'}}" />

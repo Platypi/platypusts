@@ -1120,6 +1120,7 @@
                             break;
                     }
                     break;
+                case 'a':
                 case 'button':
                 case 'select':
                 case 'label':
