@@ -38,7 +38,7 @@ module tests.observable.contextManager {
 
             context = manager.getContext('foo.bar.bar'.split('.'));
 
-            expect(context).toBeNull();
+            expect(context).toBeUndefined();
         });
 
         it('should test observe with a boolean', () => {

@@ -102,16 +102,23 @@ module plat.ui.controls {
             }
 
             var $animator = this.$Animator,
-                childNodes: Array<Element> = animate === true ? Array.prototype.slice.call(item.childNodes) : null,
+                childNodes: Array<Element>,
                 childNode: Element;
 
-            this.dom.insertBefore(this.element, item);
-
-            if (!animate) {
+            if (animate === true) {
+                childNodes = Array.prototype.slice.call(item.childNodes);
+                if (this._blockLength === 0) {
+                    this._blockLength = childNodes.length;
+                }
+            } else {
+                if (this._blockLength === 0) {
+                    this._blockLength = item.childNodes.length;
+                }
+                this.dom.insertBefore(this.element, item);
                 return;
-            } else if (this._blockLength === 0) {
-                this._blockLength = childNodes.length;
             }
+
+            this.dom.insertBefore(this.element, item);
 
             var currentAnimations = this.__currentAnimations;
             while (childNodes.length > 0) {
