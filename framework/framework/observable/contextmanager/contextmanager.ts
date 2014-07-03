@@ -385,7 +385,7 @@ module plat.observable {
             }
 
             if (isNull(array)) {
-                return;
+                return noop;
             }
 
             var observedArrayCallbacks = ContextManager.observedArrayListeners[absoluteIdentifier];
