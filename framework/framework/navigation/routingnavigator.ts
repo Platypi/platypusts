@@ -85,6 +85,11 @@
             this.baseport.navigateFrom(viewControl).then(() => {
                 this.$BaseViewControlFactory.dispose(viewControl);
                 this.baseport.navigateTo(ev);
+            }).catch((error) => {
+                postpone(() => {
+                    var Exception: IExceptionStatic = acquire(__ExceptionStatic);
+                    Exception.fatal(error, Exception.NAVIGATION);
+                });
             });
         }
     }
