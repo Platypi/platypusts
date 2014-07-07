@@ -18,6 +18,7 @@
          */
         setTemplate(): void {
             this.dom.clearNode(this.element);
+            this._load();
         }
 
         /**
@@ -29,7 +30,7 @@
          * needed on load for the inherited form of 
          * navigation.
          */
-        loaded(navigationParameter?: any, options?: navigation.IBaseNavigationOptions): void {
+        _load(navigationParameter?: any, options?: navigation.IBaseNavigationOptions): void {
             var navigator = this.navigator;
             navigator.initialize(this);
             navigator.navigate(navigationParameter, options);

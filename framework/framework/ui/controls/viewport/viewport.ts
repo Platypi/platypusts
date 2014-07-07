@@ -16,7 +16,7 @@ module plat.ui.controls {
          * Checks for a defaultView, finds the ViewControl's injector, 
          * and initializes the loading of the view.
          */
-        loaded(): void {
+        _load(): void {
             var $exception: IExceptionStatic;
             if (isNull(this.options)) {
                 $exception = acquire(__ExceptionStatic);
@@ -36,7 +36,7 @@ module plat.ui.controls {
                 return;
             }
 
-            super.loaded(injector);
+            super._load(injector);
         }
     }
 

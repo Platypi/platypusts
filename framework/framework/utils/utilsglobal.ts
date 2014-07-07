@@ -119,7 +119,7 @@ function isRegExp(obj: any): boolean {
 }
 
 function isPromise(obj: any): boolean {
-    return obj.toString() === '[object Promise]' || isObject(obj) && isFunction(obj.then);
+    return isObject(obj) && (obj.toString() === '[object Promise]' || isFunction(obj.then));
 }
 
 function isEmpty(obj: any): boolean {
