@@ -376,11 +376,14 @@ module plat.controls {
          * @param newValue The new value to set
          */
         _setRadio(newValue: any): void {
+            var element = (<HTMLInputElement>this.element);
             if (this.__isSelf) {
+                return;
+            } else if (isNull(newValue) && element.checked) {
+                this._propertyChanged();
                 return;
             }
 
-            var element = (<HTMLInputElement>this.element);
             element.checked = (element.value === newValue);
         }
 
