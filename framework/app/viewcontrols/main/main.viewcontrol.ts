@@ -11,12 +11,18 @@ module app {
             htmlObj: {}
         };
 
+        options: plat.controls.INamedElement<HTMLDivElement, void>;
+
         navigatedTo(route: plat.web.IRoute<any>) {
             if (route.path.length === 0) {
                 return;
             }
 
             this.title = route.path.replace(/\//g, ' ');
+        }
+
+        loaded() {
+            this.options.element.textContent = 'Bar';
         }
 
         pushPop() {

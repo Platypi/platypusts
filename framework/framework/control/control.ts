@@ -99,7 +99,7 @@ module plat {
             Control.removeEventListeners(control);
             Control.$ContextManagerStatic.dispose(control);
             control.dispose();
-
+            control.element = null;
             Control.removeParent(control);
         }
 

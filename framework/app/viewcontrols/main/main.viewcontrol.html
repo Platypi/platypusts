@@ -5,6 +5,10 @@
     </div>
 </plat-foreach>
 
+<plat-if plat-options="{ condition: true }">
+    <div plat-name="options">Foo</div>
+</plat-if>
+
 <textarea plat-bind="htmlObj.html"></textarea>
 <plat-html plat-context="htmlObj.html"></plat-html>
 
