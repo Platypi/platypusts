@@ -154,9 +154,9 @@ module plat.ui {
                 nodeMap = this._createNodeMap(control, template, context);
 
             return this._bindNodeMap(nodeMap, key).then(() => {
-                control.startNode = template.insertBefore(this.$Document.createComment(control.type + ': start node'),
+                control.startNode = template.insertBefore(this.$Document.createComment(control.type + __START_NODE),
                     template.firstChild);
-                control.endNode = template.insertBefore(this.$Document.createComment(control.type + ': end node'),
+                control.endNode = template.insertBefore(this.$Document.createComment(control.type + __END_NODE),
                     null);
 
                 return template;
@@ -191,7 +191,7 @@ module plat.ui {
          * the compilation of the template.
          */
         _compile(key: string, template: DocumentFragment): void {
-            var control = this._createBoundControl(key + '-compiled', template),
+            var control = this._createBoundControl(key + __COMPILED, template),
                 nodeMap = this._createNodeMap(control, template);
 
             this.__compiledControls.push(control);
@@ -222,8 +222,8 @@ module plat.ui {
 
                 var clone = <DocumentFragment>nodeMap.element.cloneNode(true);
 
-                startNode = control.startNode = this.$Document.createComment(control.type + ': start node');
-                endNode = control.endNode = this.$Document.createComment(control.type + ': end node');
+                startNode = control.startNode = this.$Document.createComment(control.type + __START_NODE);
+                endNode = control.endNode = this.$Document.createComment(control.type + __END_NODE);
                 element.insertBefore(startNode, element.firstChild);
                 element.insertBefore(endNode, null);
 
@@ -269,7 +269,7 @@ module plat.ui {
             control.parent = parent;
             control.controls = [];
             control.element = <HTMLElement>template;
-            control.type = parent.type + '-@' + key;
+            control.type = parent.type + __BOUND_PREFIX + key;
 
             return control;
         }

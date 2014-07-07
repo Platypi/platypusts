@@ -25,7 +25,7 @@ module plat.ui.controls {
         constructor() {
             super();
             var $document: Document = acquire(__Document);
-            this.commentNode = $document.createComment('plat-if-@placeholder');
+            this.commentNode = $document.createComment('plat-if' + __BOUND_PREFIX + 'placeholder');
             this.fragmentStore = $document.createDocumentFragment();
         }
 

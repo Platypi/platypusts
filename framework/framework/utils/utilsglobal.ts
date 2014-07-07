@@ -375,4 +375,10 @@ function deleteProperty(obj: any, property: any): any {
 
     return obj;
 }
+
+function access(obj: any, property: number): any;
+function access(obj: any, property: string): any;
+function access(obj: any, property: any): any {
+    return obj[property];
+}
 /* tslint:enable:no-unused-variable */

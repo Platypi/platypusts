@@ -934,8 +934,8 @@ module plat.processing {
                 $document = ElementManager.$Document,
                 controlType = control.type,
                 controlUid = control.uid,
-                startNode = control.startNode = $document.createComment(controlType + ' ' + controlUid + ': start node'),
-                endNode = control.endNode = $document.createComment(controlType + ' ' + controlUid + ': end node'),
+                startNode = control.startNode = $document.createComment(controlType + ' ' + controlUid + __START_NODE),
+                endNode = control.endNode = $document.createComment(controlType + ' ' + controlUid + __END_NODE),
                 create = this.$CommentManagerFactory.create;
 
             create(startNode, this);

@@ -53,8 +53,7 @@ module plat.controls {
                 namedElement = {
                     element: this.element,
                     control: templateControl
-                },
-                isPrecompiled = false;
+                };
 
             while (isObject(control)) {
                 var obj = control[name];
@@ -71,7 +70,7 @@ module plat.controls {
             var control = this.parent;
 
             while (!isNull(control)) {
-                if (control.type.indexOf('-compiled') !== -1) {
+                if (control.type.indexOf(__COMPILED) !== -1) {
                     return true;
                 }
                 control = control.parent;

@@ -342,7 +342,7 @@ module plat.observable {
                         parentContext = this.getContext(split);
 
                     this.__observedIdentifier = null;
-                    parentContext[property];
+                    access(parentContext, property);
 
                     if (isString(this.__observedIdentifier)) {
                         join = this.__observedIdentifier;
@@ -403,7 +403,7 @@ module plat.observable {
                 context = this.getContext(split);
 
             this.__observedIdentifier = null;
-            context[property];
+            access(context, property);
 
             if (isString(this.__observedIdentifier)) {
                 absoluteIdentifier = this.__observedIdentifier;
@@ -421,10 +421,9 @@ module plat.observable {
                 arrayCallbacks = observedArrayCallbacks[uid] = [];
             }
 
-            var index = arrayCallbacks.length,
-                removeListener = () => {
-                    arrayCallbacks.splice(arrayCallbacks.indexOf(listener), 1);
-                };
+            var removeListener = () => {
+                arrayCallbacks.splice(arrayCallbacks.indexOf(listener), 1);
+            };
 
             arrayCallbacks.push(listener);
 
@@ -640,7 +639,8 @@ module plat.observable {
 
             if (isObject(context)) {
                 this.__observedIdentifier = null;
-                context[property];
+                access(context, property);
+
                 if (isString(this.__observedIdentifier)) {
                     absoluteIdentifier = this.__observedIdentifier + (isLength ? '.length' : '');
                 }
