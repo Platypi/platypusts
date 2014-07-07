@@ -630,26 +630,19 @@ module plat.observable {
                 },
                 split = absoluteIdentifier.split('.'),
                 property = split.pop(),
+                isLength = property === 'length',
                 context: any;
 
-            if (property === 'length') {
+            if (isLength) {
                 property = split.pop();
                 context = this.getContext(split);
+            }
 
-                if (isObject(context)) {
-                    this.__observedIdentifier = null;
-                    context[property];
-                    if (isString(this.__observedIdentifier)) {
-                        absoluteIdentifier = this.__observedIdentifier + '.length';
-                    }
-                }
-            } else {
-                if (isObject(context)) {
-                    this.__observedIdentifier = null;
-                    context[property];
-                    if (isString(this.__observedIdentifier)) {
-                        absoluteIdentifier = this.__observedIdentifier;
-                    }
+            if (isObject(context)) {
+                this.__observedIdentifier = null;
+                context[property];
+                if (isString(this.__observedIdentifier)) {
+                    absoluteIdentifier = this.__observedIdentifier + (isLength ? '.length' : '');
                 }
             }
 
