@@ -268,7 +268,7 @@ module plat.observable {
         private __isArrayFunction: boolean = false;
         private __observedIdentifier: string;
 
-        getContext(split: Array<string>): void {
+        getContext(split: Array<string>): any {
             var join = split.join('.'),
                 context = this.__contextObjects[join];
 
@@ -338,6 +338,16 @@ module plat.observable {
             // check if value is defined and context manager hasn't seen this identifier
             if (!hasIdentifier) {
                 if (isArray(context) && key === 'length') {
+                    var property = split.pop(),
+                        parentContext = this.getContext(split);
+
+                    this.__observedIdentifier = null;
+                    parentContext[property];
+
+                    if (isString(this.__observedIdentifier)) {
+                        join = this.__observedIdentifier;
+                    }
+
                     var removeArrayObserve = this.observe(join, {
                         uid: observableListener.uid,
                         listener: (newValue: Array<any>, oldValue: Array<any>) => {
@@ -388,6 +398,17 @@ module plat.observable {
                 return noop;
             }
 
+            var split = absoluteIdentifier.split('.'),
+                property = split.pop(),
+                context = this.getContext(split);
+
+            this.__observedIdentifier = null;
+            context[property];
+
+            if (isString(this.__observedIdentifier)) {
+                absoluteIdentifier = this.__observedIdentifier;
+            }
+
             var observedArrayCallbacks = ContextManager.observedArrayListeners[absoluteIdentifier];
 
             if (isNull(observedArrayCallbacks)) {
@@ -402,7 +423,7 @@ module plat.observable {
 
             var index = arrayCallbacks.length,
                 removeListener = () => {
-                    arrayCallbacks.splice(index, 1);
+                    arrayCallbacks.splice(arrayCallbacks.indexOf(listener), 1);
                 };
 
             arrayCallbacks.push(listener);
@@ -606,7 +627,31 @@ module plat.observable {
             var uid = observableListener.uid,
                 remove = () => {
                     this._removeCallback(absoluteIdentifier, observableListener);
-                };
+                },
+                split = absoluteIdentifier.split('.'),
+                property = split.pop(),
+                context: any;
+
+            if (property === 'length') {
+                property = split.pop();
+                context = this.getContext(split);
+
+                if (isObject(context)) {
+                    this.__observedIdentifier = null;
+                    context[property];
+                    if (isString(this.__observedIdentifier)) {
+                        absoluteIdentifier = this.__observedIdentifier + '.length';
+                    }
+                }
+            } else {
+                if (isObject(context)) {
+                    this.__observedIdentifier = null;
+                    context[property];
+                    if (isString(this.__observedIdentifier)) {
+                        absoluteIdentifier = this.__observedIdentifier;
+                    }
+                }
+            }
 
             this.__add(absoluteIdentifier, observableListener);
 
