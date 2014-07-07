@@ -191,7 +191,7 @@ module plat.ui {
          * the compilation of the template.
          */
         _compile(key: string, template: DocumentFragment): void {
-            var control = this._createBoundControl(key, template),
+            var control = this._createBoundControl(key + '-compiled', template),
                 nodeMap = this._createNodeMap(control, template);
 
             this.__compiledControls.push(control);

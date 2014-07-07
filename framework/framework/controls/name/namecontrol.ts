@@ -13,7 +13,7 @@ module plat.controls {
             var attr = camelCase(this.type),
                 name = (<any>this.attributes)[attr];
 
-            if (isEmpty(name)) {
+            if (isEmpty(name) || this._isPrecompiled()) {
                 return;
             }
 
@@ -28,7 +28,7 @@ module plat.controls {
             var name = this._label,
                 control: any = this.parent;
 
-            while (isObject(control)) {
+            while (!isUndefined(name) && isObject(control)) {
                 if (isObject(control[name]) &&
                     isNode(control[name].element) &&
                     control[name].element === this.element) {
@@ -53,15 +53,30 @@ module plat.controls {
                 namedElement = {
                     element: this.element,
                     control: templateControl
-                };
+                },
+                isPrecompiled = false;
 
             while (isObject(control)) {
-                if (isNull(control[name])) {
+                var obj = control[name];
+
+                if (!isObject(obj)) {
                     control[name] = namedElement;
                 }
 
                 control = control.parent;
             }
+        }
+
+        _isPrecompiled() {
+            var control = this.parent;
+
+            while (!isNull(control)) {
+                if (control.type.indexOf('-compiled') !== -1) {
+                    return true;
+                }
+                control = control.parent;
+            }
+            return false;
         }
     }
 
