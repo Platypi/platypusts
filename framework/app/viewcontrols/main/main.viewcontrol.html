@@ -13,4 +13,8 @@
 <textarea plat-bind="htmlObj.html"></textarea>
 <plat-html plat-context="htmlObj.html"></plat-html>
 
+<input type="radio" plat-bind="radioVal" />1<br />
+<input type="radio" plat-bind="radioVal" value="2" />2<br />
+<input type="radio" plat-bind="radioVal" value="3" />3<br />
+
 <input type="button" plat-tap="pushPop" value="{{items.length % 2 === 0 ? 'push' : 'pop'}}" />

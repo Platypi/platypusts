@@ -355,7 +355,7 @@ module plat.controls {
         }
 
         /**
-         * Setter for input[type=checkbox] and input[type=radio]
+         * Setter for input[type=checkbox]
          * 
          * @param newValue The new value to set
          */
@@ -368,6 +368,20 @@ module plat.controls {
             }
 
             (<HTMLInputElement>this.element).checked = newValue;
+        }
+
+        /**
+         * Setter for input[type=radio]
+         * 
+         * @param newValue The new value to set
+         */
+        _setRadio(newValue: any): void {
+            if (this.__isSelf) {
+                return;
+            }
+
+            var element = (<HTMLInputElement>this.element);
+            element.checked = (element.value === newValue);
         }
 
         /**
@@ -478,10 +492,12 @@ module plat.controls {
                             this._setter = this._setText;
                             break;
                         case 'checkbox':
-                        case 'radio':
                             this._addEventType = this._addChangeEventListener;
                             this._getter = this._getChecked;
                             this._setter = this._setChecked;
+                            break;
+                        case 'radio':
+                            this.__initializeRadio();
                             break;
                         case 'range':
                             this._addEventType = this._addChangeEventListener;
@@ -501,26 +517,7 @@ module plat.controls {
                     }
                     break;
                 case 'select':
-                    var multiple = (<HTMLSelectElement>element).multiple,
-                        options = (<HTMLSelectElement>element).options,
-                        length = options.length,
-                        option: HTMLSelectElement;
-
-                    this._addEventType = this._addChangeEventListener;
-                    if (multiple) {
-                        this._getter = this._getSelectedValues;
-                        this._setter = this._setSelectedIndices;
-                    } else {
-                        this._getter = this._getValue;
-                        this._setter = this._setSelectedIndex;
-                    }
-
-                    for (var i = 0; i < length; ++i) {
-                        option = options[i];
-                        if (!option.hasAttribute('value')) {
-                            option.setAttribute('value', option.textContent);
-                        }
-                    }
+                    this.__initializeSelect();
                     break;
             }
         }
@@ -586,6 +583,51 @@ module plat.controls {
             }
 
             element.value = newValue;
+        }
+
+        private __initializeRadio() {
+            var element = this.element;
+
+            this._addEventType = this._addChangeEventListener;
+            this._getter = this._getValue;
+            this._setter = this._setRadio;
+
+            if (!element.hasAttribute('name')) {
+                var attr = camelCase(this.type),
+                    expression = (<any>this.attributes)[attr];
+
+                element.setAttribute('name', expression);
+            }
+
+            if (element.hasAttribute('value')) {
+                return;
+            }
+
+            element.setAttribute('value', '');
+        }
+
+        private __initializeSelect() {
+            var element = this.element,
+                multiple = (<HTMLSelectElement>element).multiple,
+                options = (<HTMLSelectElement>element).options,
+                length = options.length,
+                option: HTMLSelectElement;
+
+            this._addEventType = this._addChangeEventListener;
+            if (multiple) {
+                this._getter = this._getSelectedValues;
+                this._setter = this._setSelectedIndices;
+            } else {
+                this._getter = this._getValue;
+                this._setter = this._setSelectedIndex;
+            }
+
+            for (var i = 0; i < length; ++i) {
+                option = options[i];
+                if (!option.hasAttribute('value')) {
+                    option.setAttribute('value', option.textContent);
+                }
+            }
         }
     }
 

@@ -8,7 +8,8 @@ module app {
                 { first: 'Darion', last: 'Welch' },
                 { first: 'Will', last: 'Johnston' }
             ],
-            htmlObj: {}
+            htmlObj: {},
+            radioVal: null
         };
 
         options: plat.controls.INamedElement<HTMLDivElement, void>;
