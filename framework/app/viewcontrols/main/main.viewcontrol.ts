@@ -23,6 +23,7 @@ module app {
 
         loaded() {
             this.options.element.textContent = 'Bar';
+            this.context.items.push({ first: 'Donald', last: 'Jones' });
         }
 
         pushPop() {

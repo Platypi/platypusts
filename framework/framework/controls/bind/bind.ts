@@ -18,12 +18,12 @@ module plat.controls {
         /**
          * The function used to get the bound value.
          */
-        _getter: any;
+        _getter: () => any;
 
         /**
          * The function used to set the bound value.
          */
-        _setter: any;
+        _setter: (value: any, firstTime?: boolean) => void;
 
         /**
          * The event listener attached to this element.
@@ -118,7 +118,7 @@ module plat.controls {
                 };
             }
 
-            this._watchExpression();
+            this._watchExpression(true);
 
             if (isNull(this._addEventType)) {
                 return;
@@ -375,14 +375,14 @@ module plat.controls {
          * 
          * @param newValue The new value to set
          */
-        _setSelectedIndex(newValue: any): void {
+        _setSelectedIndex(newValue: any, firstTime?: boolean): void {
             if (this.__isSelf) {
                 return;
             }
 
             var element = <HTMLSelectElement>this.element;
             if (isNull(newValue)) {
-                if (isEmpty(element.value)) {
+                if (firstTime === true || isEmpty(element.value)) {
                     element.selectedIndex = -1;
                 }
 
@@ -390,7 +390,7 @@ module plat.controls {
                 return;
             } else if (element.value === newValue) {
                 return;
-            } else if (newValue === '') {
+            } else if (firstTime === true && newValue === '') {
                 element.selectedIndex = -1;
                 return;
             }
@@ -401,11 +401,7 @@ module plat.controls {
                 var select = <ui.controls.Select>this.templateControl;
                 if (!isNull(select) && select.type === __Select && isPromise(select.itemsLoaded)) {
                     select.itemsLoaded.then(() => {
-                        element.value = newValue;
-
-                        if (element.value !== newValue) {
-                            element.selectedIndex = -1;
-                        }
+                        this._setSelectedIndex(newValue, firstTime);
                     });
                 }
 
@@ -532,7 +528,7 @@ module plat.controls {
         /**
          * Observes the expression to bind to.
          */
-        _watchExpression(): void {
+        _watchExpression(firstTime?: boolean): void {
             var contextExpression = this._contextExpression,
                 context = this.evaluateExpression(contextExpression);
 
@@ -556,7 +552,7 @@ module plat.controls {
             var expression = this._expression;
 
             this.observeExpression(expression, this._setter);
-            this._setter(this.evaluateExpression(expression));
+            this._setter(this.evaluateExpression(expression), firstTime);
         }
 
         /**

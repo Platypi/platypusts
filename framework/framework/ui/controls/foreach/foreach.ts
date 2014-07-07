@@ -25,6 +25,7 @@ module plat.ui.controls {
 
         private __removeListener: IRemoveListener;
         private __currentAnimations: Array<IAnimationThenable<void>> = [];
+        private __resolveFn: () => void;
 
         /**
          * Creates a bindable template with the element's childNodes (innerHTML) 
@@ -88,6 +89,8 @@ module plat.ui.controls {
                 this.__removeListener();
                 this.__removeListener = null;
             }
+
+            this.__resolveFn = null;
         }
         
         /**
@@ -204,7 +207,19 @@ module plat.ui.controls {
                 }));
             }
 
-            this.itemsLoaded = this.$Promise.all(promises);
+            if (promises.length > 0) {
+                if (isFunction(this.__resolveFn)) {
+                    this.__resolveFn();
+                    this.__resolveFn = null;
+                }
+
+                this.itemsLoaded = this.$Promise.all(promises);
+            } else {
+                this.itemsLoaded = new this.$Promise((resolve) => {
+                    this.__resolveFn = resolve;
+                });
+            }
+
             return this.itemsLoaded;
         }
 

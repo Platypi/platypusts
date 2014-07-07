@@ -39,6 +39,8 @@ module plat.ui.controls {
         private __isGrouped: boolean = false;
         private __group: string;
         private __defaultOption: HTMLOptionElement;
+        private __resolveFn: () => void;
+
         /**
          * Creates the bindable option template and grouping 
          * template if necessary.
@@ -82,6 +84,10 @@ module plat.ui.controls {
          * @param oldValue The old array context.
          */
         contextChanged(newValue?: Array<any>, oldValue?: Array<any>): void {
+            if (!isArray(newValue)) {
+                return;
+            }
+
             var newLength = isArray(newValue) ? newValue.length : 0,
                 oldLength = isArray(oldValue) ? oldValue.length : 0;
 
@@ -118,7 +124,7 @@ module plat.ui.controls {
             this.__isGrouped = !isNull(group);
             this.__group = group;
 
-            if (isNull(context)) {
+            if (!isArray(context)) {
                 return;
             }
 
@@ -139,6 +145,8 @@ module plat.ui.controls {
                 this.__removeListener();
                 this.__removeListener = null;
             }
+
+            this.__resolveFn = null;
         }
 
         /**
@@ -160,7 +168,18 @@ module plat.ui.controls {
                 promises.push(this.bindableTemplates.bind('option', index).then<void>(this._insertOptions.bind(this, index, item)));
             }
 
-            this.itemsLoaded = this.$Promise.all(promises);
+            if (promises.length > 0) {
+                if (isFunction(this.__resolveFn)) {
+                    this.__resolveFn();
+                    this.__resolveFn = null;
+                }
+
+                this.itemsLoaded = this.$Promise.all(promises);
+            } else {
+                this.itemsLoaded = new this.$Promise((resolve) => {
+                    this.__resolveFn = resolve;
+                });
+            }
 
             return this.itemsLoaded;
         }
