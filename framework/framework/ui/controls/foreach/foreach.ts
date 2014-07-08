@@ -16,7 +16,7 @@ module plat.ui.controls {
         /**
          * Will fulfill whenever all items are loaded.
          */
-        itemsLoaded: async.IThenable<Array<void>>;
+        itemsLoaded: async.IThenable<void>;
 
         /**
          * The node length of the element's childNodes (innerHTML)
@@ -192,7 +192,7 @@ module plat.ui.controls {
          * @param index The point in the array to start adding items.
          * @param animate whether to animate the new items
          */
-        _addItems(numberOfItems: number, index: number, animate?: boolean): async.IThenable<Array<void>> {
+        _addItems(numberOfItems: number, index: number, animate?: boolean): async.IThenable<void> {
             var bindableTemplates = this.bindableTemplates,
                 promises: Array<async.IThenable<void>> = [];
             
@@ -213,9 +213,12 @@ module plat.ui.controls {
                     this.__resolveFn = null;
                 }
 
-                this.itemsLoaded = this.$Promise.all(promises);
+                var Promise = this.$Promise;
+                this.itemsLoaded = Promise.all(promises).then<void>(() => {
+                    return Promise.resolve(undefined);
+                });
             } else {
-                this.itemsLoaded = new this.$Promise((resolve) => {
+                this.itemsLoaded = new this.$Promise<void>((resolve) => {
                     this.__resolveFn = resolve;
                 });
             }

@@ -18,3 +18,15 @@
 <input type="radio" plat-bind="radioVal" value="3" />3<br />
 
 <input type="button" plat-tap="pushPop" value="{{items.length % 2 === 0 ? 'push' : 'pop'}}" />
+
+<br />
+<br />
+<plat-select plat-context="items" plat-options="{ value: 'first', group: 'group' }" plat-bind="firstName"></plat-select>
+<br />
+<select plat-bind="firstName">
+    <option value="Matt">Matt</option>
+    <option value="Will">Will</option>
+    <option value="Darion">Darion</option>
+</select>
+<br />
+<div>{{firstName}}</div>

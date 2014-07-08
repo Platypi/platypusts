@@ -118,7 +118,7 @@ module plat.controls {
                 };
             }
 
-            this._watchExpression(true);
+            this._watchExpression();
 
             if (isNull(this._addEventType)) {
                 return;
@@ -312,17 +312,20 @@ module plat.controls {
          * and input[type=button], and select
          * 
          * @param newValue The new value to set
+         * @param oldValue The previously bound value
          */
-        _setText(newValue: any): void {
+        _setText(newValue: any, oldValue?: any): void {
             if (this.__isSelf) {
                 return;
             }
 
             if (isNull(newValue)) {
-                var element = <HTMLInputElement>this.element;
-                if (isNull(element.value)) {
-                    newValue = '';
-                } else {
+                newValue = '';
+
+                if (isUndefined(oldValue)) {
+                    if (isNull((<HTMLInputElement>this.element).value)) {
+                        this.__setValue(newValue);
+                    }
                     this._propertyChanged();
                     return;
                 }
@@ -335,17 +338,20 @@ module plat.controls {
          * Setter for input[type=range]
          * 
          * @param newValue The new value to set
+         * @param oldValue The previously bound value
          */
-        _setRange(newValue: any): void {
+        _setRange(newValue: any, oldValue?: any): void {
             if (this.__isSelf) {
                 return;
             }
 
             if (isEmpty(newValue)) {
-                var element = <HTMLInputElement>this.element;
-                if (isEmpty(element.value)) {
-                    newValue = 0;
-                } else {
+                newValue = 0;
+
+                if (isUndefined(oldValue)) {
+                    if (isEmpty((<HTMLInputElement>this.element).value)) {
+                        this.__setValue(newValue);
+                    }
                     this._propertyChanged();
                     return;
                 }
@@ -358,13 +364,17 @@ module plat.controls {
          * Setter for input[type=checkbox]
          * 
          * @param newValue The new value to set
+         * @param oldValue The previously bound value
          */
-        _setChecked(newValue: any): void {
+        _setChecked(newValue: any, oldValue?: any): void {
             if (this.__isSelf) {
                 return;
             } else if (!isBoolean(newValue)) {
-                this._propertyChanged();
-                return;
+                if (isUndefined(oldValue)) {
+                    this._propertyChanged();
+                    return;
+                }
+                newValue = !!newValue;
             }
 
             (<HTMLInputElement>this.element).checked = newValue;
@@ -374,8 +384,9 @@ module plat.controls {
          * Setter for input[type=radio]
          * 
          * @param newValue The new value to set
+         * @param oldValue The previously bound value
          */
-        _setRadio(newValue: any): void {
+        _setRadio(newValue: any, oldValue?: any): void {
             var element = (<HTMLInputElement>this.element);
             if (this.__isSelf) {
                 return;
@@ -391,37 +402,36 @@ module plat.controls {
          * Setter for select
          * 
          * @param newValue The new value to set
+         * @param oldValue The previously bound value
          */
-        _setSelectedIndex(newValue: any, firstTime?: boolean): void {
+        _setSelectedIndex(newValue: any, oldValue?: any): void {
             if (this.__isSelf) {
                 return;
             }
 
             var element = <HTMLSelectElement>this.element;
             if (isNull(newValue)) {
-                if (firstTime === true || isEmpty(element.value)) {
-                    element.selectedIndex = -1;
+                element.selectedIndex = -1;
+                if (isUndefined(oldValue)) {
+                    this.__checkAsynchronousSelect(newValue);
+                    this._propertyChanged();
                 }
-
-                this._propertyChanged();
                 return;
             } else if (element.value === newValue) {
-                return;
-            } else if (firstTime === true && newValue === '') {
-                element.selectedIndex = -1;
+                if (isUndefined(oldValue)) {
+                    this.__checkAsynchronousSelect(newValue);
+                }
                 return;
             }
 
             element.value = newValue;
             // check to make sure the user changed to a valid value
             if (element.value !== newValue) {
-                var select = <ui.controls.Select>this.templateControl;
-                if (!isNull(select) && select.type === __Select && isPromise(select.itemsLoaded)) {
-                    select.itemsLoaded.then(() => {
-                        this._setSelectedIndex(newValue, firstTime);
-                    });
+                if (isUndefined(oldValue)) {
+                    this.__checkAsynchronousSelect(newValue);
                 }
-
+                element.selectedIndex = -1;
+            } else if (element.selectedIndex === -1) {
                 element.selectedIndex = -1;
             }
         }
@@ -430,22 +440,34 @@ module plat.controls {
          * Setter for select-multiple
          * 
          * @param newValue The new value to set
+         * @param oldValue The previously bound value
          */
-        _setSelectedIndices(newValue: any): void {
+        _setSelectedIndices(newValue: any, oldValue?: any): void {
             if (this.__isSelf) {
                 return;
             }
 
             var options = (<HTMLSelectElement>this.element).options,
-                length = options.length,
-                option: HTMLOptionElement;
+                length = isNull(options) ? 0 : options.length,
+                option: HTMLOptionElement,
+                nullValue = isNull(newValue);
 
-            if (isNull(newValue) || !isArray(newValue)) {
+            if (length === 0) {
+                this.__checkAsynchronousSelect(newValue);
+                if (isUndefined(oldValue)) {
+                    this._propertyChanged();
+                }
+                return;
+            }
+
+            if (nullValue || !isArray(newValue)) {
+                if (isUndefined(oldValue)) {
+                    this._propertyChanged();
+                }
                 // unselects the options unless a match is found
                 while (length-- > 0) {
                     option = options[length];
-                    // purposely doing a soft equality match
-                    if (option.value === '' + newValue) {
+                    if (!nullValue && option.value === '' + newValue) {
                         option.selected = true;
                         return;
                     }
@@ -528,7 +550,7 @@ module plat.controls {
         /**
          * Observes the expression to bind to.
          */
-        _watchExpression(firstTime?: boolean): void {
+        _watchExpression(): void {
             var contextExpression = this._contextExpression,
                 context = this.evaluateExpression(contextExpression);
 
@@ -537,10 +559,11 @@ module plat.controls {
                     contextExpression.identifiers[0]);
             }
 
+            var property: string;
             if (!isFunction(this._setter)) {
                 return;
             } else if (this._setter === this._setSelectedIndices) {
-                var property = this._property;
+                property = this._property;
                 if (isNull(context[property])) {
                     context[property] = [];
                 }
@@ -552,14 +575,14 @@ module plat.controls {
             var expression = this._expression;
 
             this.observeExpression(expression, this._setter);
-            this._setter(this.evaluateExpression(expression), firstTime);
+            this._setter(this.evaluateExpression(expression));
         }
 
         /**
          * Sets the context property being bound to when the 
          * element's property is changed.
          */
-        _propertyChanged(): void {
+        _propertyChanged(): any {
             if (isNull(this._contextExpression)) {
                 return;
             }
@@ -570,13 +593,15 @@ module plat.controls {
             var newValue = this._getter();
 
             if (isNull(context) || context[property] === newValue) {
-                return;
+                return newValue;
             }
 
             // set flag to let setter functions know we changed the property
             this.__isSelf = true;
             context[property] = newValue;
             this.__isSelf = false;
+
+            return newValue;
         }
 
         private __setValue(newValue: any): void {
@@ -630,6 +655,26 @@ module plat.controls {
                 if (!option.hasAttribute('value')) {
                     option.setAttribute('value', option.textContent);
                 }
+            }
+        }
+
+        private __checkAsynchronousSelect(newValue: any): void {
+            var select = <ui.controls.Select>this.templateControl;
+            if (!isNull(select) && select.type === __Select && isPromise(select.itemsLoaded)) {
+                var element = <HTMLSelectElement>this.element,
+                    split = select.absoluteContextPath.split('.'),
+                    key = split.pop();
+
+                this.observeArray(this.$ContextManagerStatic.getContext(this.parent, split), key,
+                    (ev: observable.IArrayMethodInfo<any>) => {
+                    select.itemsLoaded.then(() => {
+                        this._setSelectedIndex(this.evaluateExpression(this._expression), null);
+                    });
+                });
+
+                select.itemsLoaded.then(() => {
+                    this._setSelectedIndex(newValue, null);
+                });
             }
         }
     }

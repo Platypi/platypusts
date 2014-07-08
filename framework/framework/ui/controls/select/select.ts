@@ -33,7 +33,7 @@ module plat.ui.controls {
         /**
          * Will fulfill whenever all items are loaded.
          */
-        itemsLoaded: async.IThenable<Array<void>>;
+        itemsLoaded: async.IThenable<void>;
 
         private __removeListener: IRemoveListener;
         private __isGrouped: boolean = false;
@@ -147,6 +147,7 @@ module plat.ui.controls {
             }
 
             this.__resolveFn = null;
+            this.__defaultOption = null;
         }
 
         /**
@@ -157,15 +158,16 @@ module plat.ui.controls {
          * @param length The current index of the next 
          * set of items to add.
          */
-        _addItems(numberOfItems: number, length: number): async.IThenable<Array<void>> {
+        _addItems(numberOfItems: number, length: number): async.IThenable<void> {
             var index = length,
                 item: any,
+                bindableTemplates = this.bindableTemplates,
                 promises: Array<async.IThenable<void>> = [];
 
             for (var i = 0; i < numberOfItems; ++i, ++index) {
                 item = this.context[index];
 
-                promises.push(this.bindableTemplates.bind('option', index).then<void>(this._insertOptions.bind(this, index, item)));
+                promises.push(bindableTemplates.bind('option', index).then<void>(this._insertOptions.bind(this, index, item)));
             }
 
             if (promises.length > 0) {
@@ -174,9 +176,12 @@ module plat.ui.controls {
                     this.__resolveFn = null;
                 }
 
-                this.itemsLoaded = this.$Promise.all(promises);
+                var Promise = this.$Promise;
+                this.itemsLoaded = Promise.all(promises).then(() => {
+                    return Promise.resolve(undefined);
+                });
             } else {
-                this.itemsLoaded = new this.$Promise((resolve) => {
+                this.itemsLoaded = new this.$Promise<void>((resolve) => {
                     this.__resolveFn = resolve;
                 });
             }
@@ -193,47 +198,46 @@ module plat.ui.controls {
          * @param optionClone The bound DocumentFragment to be 
          * inserted into the DOM.
          */
-        _insertOptions(index: number, item: any, optionClone: DocumentFragment): void {
+        _insertOptions(index: number, item: any, optionClone: DocumentFragment): async.IThenable<any> {
             var element = this.element;
-
             if (this.__isGrouped) {
                 var groups = this.groups,
                     newGroup = item[this.__group],
                     optgroup: any = groups[newGroup];
 
                 if (isNull(optgroup)) {
-                    groups[newGroup] = <any>this.bindableTemplates.bind('group', '' + index)
+                    return (groups[newGroup] = <any>this.bindableTemplates.bind('group', index)
                         .then((groupClone: DocumentFragment) => {
                             optgroup = groups[newGroup] = <Element>groupClone.childNodes[1];
 
                             optgroup.appendChild(optionClone);
                             element.appendChild(groupClone);
                             return optgroup;
-                        });
-                    return;
+                        }));
                 } else if (isPromise(optgroup)) {
-                    optgroup.then((group: Element) => {
+                    return optgroup.then((group: Element) => {
                         group.appendChild(optionClone);
                         return group;
                     });
-                    return;
                 }
 
                 optgroup.appendChild(optionClone);
-                return;
+                return this.$Promise.resolve(null);
             }
 
             element.appendChild(optionClone);
+            return this.$Promise.resolve(null);
         }
 
         /**
-         * Removes an item from the DOM.
-         * 
-         * @param parent The element whose child 
-         * will be removed.
+         * Removes the last option item from the DOM.
          */
-        _removeItem(parent: Element): void {
-            parent.removeChild(parent.lastElementChild);
+        _removeItem(index: number): void {
+            if (index < 0) {
+                return;
+            }
+
+            TemplateControl.dispose(this.controls[index]);
         }
 
         /**
@@ -244,9 +248,11 @@ module plat.ui.controls {
          */
         _removeItems(numberOfItems: number): void {
             var element = this.element,
-                removeItem = this._removeItem;
+                controls = this.controls,
+                length = controls.length - 1;
+
             while (numberOfItems-- > 0) {
-                removeItem(element);
+                this._removeItem(length--);
             }
         }
 
@@ -259,15 +265,8 @@ module plat.ui.controls {
         _itemRemoved(ev: observable.IArrayMethodInfo<any>): void {
             if (ev.oldArray.length === 0) {
                 return;
-            }
-
-            if (this.__isGrouped) {
-                var removed = ev.returnValue,
-                    group = removed[this.__group],
-                    optgroup = this.groups[group];
-
-                this._removeItem(optgroup);
-
+            } else if (this.__isGrouped) {
+                this._resetSelect();
                 return;
             }
 
@@ -280,12 +279,13 @@ module plat.ui.controls {
          */
         _resetSelect(): void {
             var itemLength = this.context.length,
-                nodeLength = this.element.childNodes.length;
+                element = this.element,
+                nodeLength = element.childNodes.length;
 
             this._removeItems(nodeLength);
             this.groups = {};
             if (!isNull(this.__defaultOption)) {
-                this.element.appendChild(this.__defaultOption);
+                element.appendChild(this.__defaultOption.cloneNode(true));
             }
 
             this._addItems(itemLength, 0);
@@ -318,11 +318,6 @@ module plat.ui.controls {
          * @param ev The array mutation object
          */
         _shift(ev: observable.IArrayMethodInfo<any>): void {
-            if (this.__isGrouped) {
-                this._resetSelect();
-                return;
-            }
-
             this._itemRemoved(ev);
         }
 

@@ -369,9 +369,11 @@ function camelCase(str: string): string {
 function deleteProperty(obj: any, property: number): any;
 function deleteProperty(obj: any, property: string): any;
 function deleteProperty(obj: any, property: any): any {
-    /* tslint:disable:no-unused-expression */
-    delete obj[property];
-    /* tslint:enable:no-unused-expression */
+    if (!isNull(obj)) {
+        /* tslint:disable:no-unused-expression */
+        delete obj[property];
+        /* tslint:enable:no-unused-expression */
+    }
 
     return obj;
 }
@@ -379,6 +381,9 @@ function deleteProperty(obj: any, property: any): any {
 function access(obj: any, property: number): any;
 function access(obj: any, property: string): any;
 function access(obj: any, property: any): any {
+    if (isNull(obj)) {
+        return obj;
+    }
     return obj[property];
 }
 /* tslint:enable:no-unused-variable */
