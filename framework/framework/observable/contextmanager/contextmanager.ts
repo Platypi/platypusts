@@ -339,7 +339,8 @@ module plat.observable {
             if (!hasIdentifier) {
                 if (isArray(context) && key === 'length') {
                     var property = split.pop(),
-                        parentContext = this.getContext(split);
+                        parentContext = this.getContext(split),
+                        uid = observableListener.uid;
 
                     this.__observedIdentifier = null;
                     access(parentContext, property);
@@ -348,17 +349,18 @@ module plat.observable {
                         join = this.__observedIdentifier;
                     }
 
-                    var removeArrayObserve = this.observe(join, {
-                        uid: observableListener.uid,
+                    var removeObservableListener = removeCallback,
+                        removeListener = this.observeArray(uid, noop, join, context, null),
+                        removeArrayObserve = this.observe(join, {
+                        uid: uid,
                         listener: (newValue: Array<any>, oldValue: Array<any>) => {
                             removeListener();
-                            removeListener = this.observeArray(observableListener.uid, noop, join, newValue, oldValue);
+                            removeListener = this.observeArray(uid, noop, join, newValue, oldValue);
                         }
                     });
 
-                    var removeListener = this.observeArray(observableListener.uid, noop, join, context, null);
-
                     removeCallback = () => {
+                        removeObservableListener();
                         removeArrayObserve();
                         removeListener();
                     };
