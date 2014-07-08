@@ -418,10 +418,6 @@
             // if minimum distance moved
             if (minMove) {
                 this.__hasMoved = true;
-            } else {
-                // cannot call ev.preventDefault up top due to Chrome canceling touch based scrolling
-                // call prevent default here to try and avoid mouse events when min move hasnt occurred
-                ev.preventDefault();
             }
 
             // if no move events or no tracking events and the user hasn't moved the minimum swipe distance
@@ -455,10 +451,9 @@
          */
         _onTouchEnd(ev: IPointerEvent): void {
             var eventType = ev.type;
-            // call prevent default to try and avoid mouse events
+
             if (eventType !== 'mouseup') {
                 this._inTouch = false;
-                ev.preventDefault();
             } else if (!isUndefined(this._inTouch)) {
                 return;
             }
@@ -1132,6 +1127,15 @@
             }
 
             this.__focusedElement = target;
+            this.__preventClick(target);
+        }
+        private __preventClick(target: EventTarget): void {
+            var preventDefault = (ev: Event) => {
+                ev.preventDefault();
+                target.removeEventListener('click', preventDefault, false);
+                return false;
+            };
+            target.addEventListener('click', preventDefault, false);
         }
         private __removeSelections(element: Node): void {
             if (!isNode(element)) {
