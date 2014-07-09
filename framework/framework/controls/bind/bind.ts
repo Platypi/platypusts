@@ -2,6 +2,7 @@ module plat.controls {
     export class Bind extends AttributeControl {
         $Parser: expressions.IParser = acquire(__Parser);
         $ContextManagerStatic: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
+        $document: Document = acquire(__Document);
 
         /**
          * The priority of Bind is set high to take precede 
@@ -414,32 +415,34 @@ module plat.controls {
         _setSelectedIndex(newValue: any, oldValue?: any, firstTime?: boolean): void {
             if (this.__isSelf) {
                 return;
+            } else if (firstTime === true) {
+                this.__checkAsynchronousSelect(newValue);
             }
 
-            var element = <HTMLSelectElement>this.element;
+            var element = <HTMLSelectElement>this.element,
+                value = element.value;
             if (isNull(newValue)) {
-                element.selectedIndex = -1;
-                if (firstTime === true) {
-                    this.__checkAsynchronousSelect(newValue);
+                if (firstTime === true || !this.$document.body.contains(element)) {
                     this._propertyChanged();
+                    return;
                 }
+                element.selectedIndex = -1;
                 return;
-            } else if (element.value === newValue) {
-                if (isUndefined(oldValue)) {
-                    this.__checkAsynchronousSelect(newValue);
+            } else if (value === newValue) {
+                return;
+            } else if (!this.$document.body.contains(element)) {
+                element.value = newValue;
+                if (element.value !== newValue) {
+                    element.value = value;
+                    this._propertyChanged();
                 }
                 return;
             }
 
             element.value = newValue;
             // check to make sure the user changed to a valid value
-            if (element.value !== newValue) {
-                if (isUndefined(oldValue)) {
-                    this.__checkAsynchronousSelect(newValue);
-                }
-                element.selectedIndex = -1;
-            } else if (element.selectedIndex === -1) {
-                // an ie fix for inconsistency
+            // second boolean argument is an ie fix for inconsistency
+            if (element.value !== newValue || element.selectedIndex === -1) {
                 element.selectedIndex = -1;
             }
         }
@@ -643,9 +646,9 @@ module plat.controls {
         }
 
         private __initializeSelect() {
-            var element = this.element,
-                multiple = (<HTMLSelectElement>element).multiple,
-                options = (<HTMLSelectElement>element).options,
+            var element = <HTMLSelectElement>this.element,
+                multiple = element.multiple,
+                options = element.options,
                 length = options.length,
                 option: HTMLSelectElement;
 
@@ -669,19 +672,18 @@ module plat.controls {
         private __checkAsynchronousSelect(newValue: any): void {
             var select = <ui.controls.Select>this.templateControl;
             if (!isNull(select) && select.type === __Select && isPromise(select.itemsLoaded)) {
-                var element = <HTMLSelectElement>this.element,
-                    split = select.absoluteContextPath.split('.'),
+                var split = select.absoluteContextPath.split('.'),
                     key = split.pop();
 
                 this.observeArray(this.$ContextManagerStatic.getContext(this.parent, split), key,
                     (ev: observable.IArrayMethodInfo<any>) => {
-                    select.itemsLoaded.then(() => {
-                        this._setSelectedIndex(this.evaluateExpression(this._expression), null);
+                        select.itemsLoaded.then(() => {
+                            this._setSelectedIndex(this.evaluateExpression(this._expression));
+                        });
                     });
-                });
 
                 select.itemsLoaded.then(() => {
-                    this._setSelectedIndex(newValue, null);
+                    this._setSelectedIndex(newValue);
                 });
             }
         }
