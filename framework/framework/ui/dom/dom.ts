@@ -12,9 +12,11 @@ module plat.ui {
             return this.$DomEvents.addEventListener(element, type, listener, useCapture);
         }
 
+        appendChildren(nodeList: Array<Node>): DocumentFragment;
+        appendChildren(nodeList: NodeList): DocumentFragment;
         appendChildren(nodeList: Array<Node>, root?: Node): Node;
         appendChildren(nodeList: NodeList, root?: Node): Node;
-        appendChildren(nodeList: any, root?: Node) {
+        appendChildren(nodeList: any, root?: Node): any {
             return appendChildren(nodeList, root);
         }
 
@@ -105,6 +107,27 @@ module plat.ui {
         addEventListener(element: Node, type: string, listener: ui.IGestureListener, useCapture?: boolean): IRemoveListener;
         addEventListener(element: Window, type: string, listener: ui.IGestureListener, useCapture?: boolean): IRemoveListener;
 
+        /**
+         * Takes a Node Array and either adds it to the passed in Node,
+         * or creates a DocumentFragment and adds the NodeList to the
+         * Fragment.
+         * 
+         * @param nodeList A Node Array to be appended to the root/DocumentFragment
+         * 
+         * @return {Node} The root Node or a DocumentFragment.
+         */
+        appendChildren(nodeList: Array<Node>): DocumentFragment;
+        /**
+         * Takes a Node Array and either adds it to the passed in Node,
+         * or creates a DocumentFragment and adds the NodeList to the
+         * Fragment.
+         * 
+         * @param nodeList A Node Array to be appended to the root/DocumentFragment
+         * @param root An optional Node to append the nodeList.
+         * 
+         * @return {Node} The root Node or a DocumentFragment.
+         */
+        appendChildren(nodeList: NodeList): DocumentFragment;
         /**
          * Takes a Node Array and either adds it to the passed in Node,
          * or creates a DocumentFragment and adds the NodeList to the
