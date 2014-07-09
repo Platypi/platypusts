@@ -23,7 +23,7 @@ module plat.controls {
         /**
          * The function used to set the bound value.
          */
-        _setter: (value: any, firstTime?: boolean) => void;
+        _setter: (newValue: any, oldValue?: any, firstTime?: boolean) => void;
 
         /**
          * The event listener attached to this element.
@@ -313,8 +313,10 @@ module plat.controls {
          * 
          * @param newValue The new value to set
          * @param oldValue The previously bound value
+         * @param firstTime The context is being evaluated for the first time and 
+         * should thus change the property if null
          */
-        _setText(newValue: any, oldValue?: any): void {
+        _setText(newValue: any, oldValue?: any, firstTime?: boolean): void {
             if (this.__isSelf) {
                 return;
             }
@@ -322,7 +324,7 @@ module plat.controls {
             if (isNull(newValue)) {
                 newValue = '';
 
-                if (isUndefined(oldValue)) {
+                if (firstTime === true) {
                     if (isNull((<HTMLInputElement>this.element).value)) {
                         this.__setValue(newValue);
                     }
@@ -339,8 +341,10 @@ module plat.controls {
          * 
          * @param newValue The new value to set
          * @param oldValue The previously bound value
+         * @param firstTime The context is being evaluated for the first time and 
+         * should thus change the property if null
          */
-        _setRange(newValue: any, oldValue?: any): void {
+        _setRange(newValue: any, oldValue?: any, firstTime?: boolean): void {
             if (this.__isSelf) {
                 return;
             }
@@ -348,7 +352,7 @@ module plat.controls {
             if (isEmpty(newValue)) {
                 newValue = 0;
 
-                if (isUndefined(oldValue)) {
+                if (firstTime === true) {
                     if (isEmpty((<HTMLInputElement>this.element).value)) {
                         this.__setValue(newValue);
                     }
@@ -365,12 +369,14 @@ module plat.controls {
          * 
          * @param newValue The new value to set
          * @param oldValue The previously bound value
+         * @param firstTime The context is being evaluated for the first time and 
+         * should thus change the property if null
          */
-        _setChecked(newValue: any, oldValue?: any): void {
+        _setChecked(newValue: any, oldValue?: any, firstTime?: boolean): void {
             if (this.__isSelf) {
                 return;
             } else if (!isBoolean(newValue)) {
-                if (isUndefined(oldValue)) {
+                if (firstTime === true) {
                     this._propertyChanged();
                     return;
                 }
@@ -384,9 +390,8 @@ module plat.controls {
          * Setter for input[type=radio]
          * 
          * @param newValue The new value to set
-         * @param oldValue The previously bound value
          */
-        _setRadio(newValue: any, oldValue?: any): void {
+        _setRadio(newValue: any): void {
             var element = (<HTMLInputElement>this.element);
             if (this.__isSelf) {
                 return;
@@ -403,8 +408,10 @@ module plat.controls {
          * 
          * @param newValue The new value to set
          * @param oldValue The previously bound value
+         * @param firstTime The context is being evaluated for the first time and 
+         * should thus change the property if null
          */
-        _setSelectedIndex(newValue: any, oldValue?: any): void {
+        _setSelectedIndex(newValue: any, oldValue?: any, firstTime?: boolean): void {
             if (this.__isSelf) {
                 return;
             }
@@ -412,7 +419,7 @@ module plat.controls {
             var element = <HTMLSelectElement>this.element;
             if (isNull(newValue)) {
                 element.selectedIndex = -1;
-                if (isUndefined(oldValue)) {
+                if (firstTime === true) {
                     this.__checkAsynchronousSelect(newValue);
                     this._propertyChanged();
                 }
@@ -432,6 +439,7 @@ module plat.controls {
                 }
                 element.selectedIndex = -1;
             } else if (element.selectedIndex === -1) {
+                // an ie fix for inconsistency
                 element.selectedIndex = -1;
             }
         }
@@ -441,8 +449,10 @@ module plat.controls {
          * 
          * @param newValue The new value to set
          * @param oldValue The previously bound value
+         * @param firstTime The context is being evaluated for the first time and 
+         * should thus change the property if null
          */
-        _setSelectedIndices(newValue: any, oldValue?: any): void {
+        _setSelectedIndices(newValue: any, oldValue?: any, firstTime?: boolean): void {
             if (this.__isSelf) {
                 return;
             }
@@ -454,14 +464,14 @@ module plat.controls {
 
             if (length === 0) {
                 this.__checkAsynchronousSelect(newValue);
-                if (isUndefined(oldValue)) {
+                if (firstTime === true) {
                     this._propertyChanged();
                 }
                 return;
             }
 
             if (nullValue || !isArray(newValue)) {
-                if (isUndefined(oldValue)) {
+                if (firstTime === true) {
                     this._propertyChanged();
                 }
                 // unselects the options unless a match is found
@@ -568,21 +578,21 @@ module plat.controls {
                     context[property] = [];
                 }
                 this.observeArray(context, property, (arrayInfo: observable.IArrayMethodInfo<string>) => {
-                    this._setter(arrayInfo.newArray);
+                    this._setter(arrayInfo.newArray, arrayInfo.oldArray, true);
                 });
             }
 
             var expression = this._expression;
 
             this.observeExpression(expression, this._setter);
-            this._setter(this.evaluateExpression(expression));
+            this._setter(this.evaluateExpression(expression), undefined, true);
         }
 
         /**
          * Sets the context property being bound to when the 
          * element's property is changed.
          */
-        _propertyChanged(): any {
+        _propertyChanged(): void {
             if (isNull(this._contextExpression)) {
                 return;
             }
@@ -593,15 +603,13 @@ module plat.controls {
             var newValue = this._getter();
 
             if (isNull(context) || context[property] === newValue) {
-                return newValue;
+                return;
             }
 
             // set flag to let setter functions know we changed the property
             this.__isSelf = true;
             context[property] = newValue;
             this.__isSelf = false;
-
-            return newValue;
         }
 
         private __setValue(newValue: any): void {
