@@ -671,7 +671,7 @@ module plat.controls {
 
         private __checkAsynchronousSelect(newValue: any): void {
             var select = <ui.controls.Select>this.templateControl;
-            if (!isNull(select) && select.type === __Select && isPromise(select.itemsLoaded)) {
+            if (!isNull(select) && (select.type === __Select || select.type === __ForEach) && isPromise(select.itemsLoaded)) {
                 var split = select.absoluteContextPath.split('.'),
                     key = split.pop();
 

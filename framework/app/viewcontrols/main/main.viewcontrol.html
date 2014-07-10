@@ -23,10 +23,8 @@
 <br />
 <plat-select plat-context="items" plat-options="{ value: 'first', group: 'group' }" plat-bind="firstName"></plat-select>
 <br />
-<select plat-bind="firstName">
-    <option value="Matt">Matt</option>
-    <option value="Will">Will</option>
-    <option value="Darion">Darion</option>
+<select plat-bind="firstName" plat-control="plat-foreach" plat-context="items">
+    <option value="{{first}}">{{first}}</option>
 </select>
 <br />
 <div>{{firstName}}</div>

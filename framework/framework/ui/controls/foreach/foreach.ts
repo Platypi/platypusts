@@ -9,6 +9,11 @@ module plat.ui.controls {
         context: Array<any>;
 
         /**
+         * This control needs to load before plat-bind.
+         */
+        priority = 120;
+
+        /**
          * The child controls
          */
         controls: Array<ITemplateControl>;
