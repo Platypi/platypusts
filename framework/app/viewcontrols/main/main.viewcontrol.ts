@@ -4,13 +4,14 @@ module app {
         templateUrl = 'viewcontrols/main/main.viewcontrol.html';
         context: any = {
             items: [
-                { first: 'Matt', last: 'Morgan', group: '0' },
-                { first: 'Darion', last: 'Welch', group: '1' },
-                { first: 'Will', last: 'Johnston', group: '0' }
+                { id: 0, first: 'Matt', last: 'Morgan', group: '0' },
+                { id: 1, first: 'Darion', last: 'Welch', group: '1' },
+                { id: 2, first: 'Will', last: 'Johnston', group: '0' }
             ],
             htmlObj: {},
             radioVal: null,
-            firstName: 'Jon'
+            firstName: 'Matt',
+            id: 2
         };
 
         options: plat.controls.INamedElement<HTMLDivElement, void>;
@@ -25,7 +26,6 @@ module app {
 
         loaded() {
             this.options.element.textContent = 'Bar';
-            this.context.items.push({ first: 'Donald', last: 'Jones', group: '1' });
         }
 
         pushPop() {

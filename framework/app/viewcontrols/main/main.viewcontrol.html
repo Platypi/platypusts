@@ -21,10 +21,10 @@
 
 <br />
 <br />
-<plat-select plat-context="items" plat-options="{ value: 'first', group: 'group' }" plat-bind="firstName"></plat-select>
+<plat-select plat-context="items" plat-options="{ value: 'id', textContent: 'first' group: 'group' }" plat-bind="id"></plat-select>
 <br />
-<select plat-bind="firstName" plat-control="plat-foreach" plat-context="items">
-    <option value="{{first}}">{{first}}</option>
+<select plat-bind="id" plat-control="plat-foreach" plat-context="items">
+    <option value="{{id}}">{{first}}</option>
 </select>
 <br />
-<div>{{firstName}}</div>
+<div>{{id}}</div>
