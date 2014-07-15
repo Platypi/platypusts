@@ -28,3 +28,11 @@
 </select>
 <br />
 <div>{{id}}</div>
+<br />
+<br />
+
+<div plat-visible="{{item.items.length === undefined || item.items.length === 0}}">Empty</div>
+<div plat-visible="{{item === null}}">test</div>
+<plat-foreach plat-context="item.items">
+    <div>{{name}}</div>
+</plat-foreach>

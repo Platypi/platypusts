@@ -469,13 +469,13 @@ module plat.expressions {
             } else if (context !== null && typeof context === 'object') {
                 return context[token];
             }
-            return context === null ? null : undefined;
+            return undefined;
         }
         private __indexIntoContext(context: any, token: string, undefined?: any): any {
             if (context !== null && typeof context === 'object') {
                 return context[token];
             }
-            return context === null ? null : undefined;
+            return undefined;
         }
 
         // protected helper functions

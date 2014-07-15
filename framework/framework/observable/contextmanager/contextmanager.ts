@@ -272,7 +272,7 @@ module plat.observable {
             var join = split.join('.'),
                 context = this.__contextObjects[join];
 
-            if (isNull(context)) {
+            if (isUndefined(context)) {
                 context = this.__contextObjects[join] = this._getImmediateContext(join);
             }
 
@@ -281,7 +281,7 @@ module plat.observable {
 
         observe(absoluteIdentifier: string, observableListener: IListener): IRemoveListener {
             if (isEmpty(absoluteIdentifier)) {
-                return;
+                return noop;
             }
 
             var split = absoluteIdentifier.split('.'),
@@ -294,7 +294,7 @@ module plat.observable {
             if (split.length > 0) {
                 join = split.join('.');
                 context = this.__contextObjects[join];
-                if (isNull(context)) {
+                if (isUndefined(context)) {
                     context = this.__contextObjects[join] = this._getImmediateContext(join);
                 }
             }
@@ -304,7 +304,7 @@ module plat.observable {
                     return this._addObservableListener(absoluteIdentifier, observableListener);
                 }
 
-                return;
+                return noop;
             }
 
             // set observedIdentifier to null
@@ -314,12 +314,11 @@ module plat.observable {
 
             // if observedIdentifier is not null, the primitive is already being watched
             var observedIdentifier = this.__observedIdentifier,
-                isObserved = !isNull(observedIdentifier);
+                isObserved = !isNull(observedIdentifier),
+                removeCallback = noop;
             if (isObserved) {
                 hasIdentifier = true;
             }
-
-            var removeCallback = noop;
 
             if (hasObservableListener) {
                 var removeObservedCallback = noop,
@@ -337,7 +336,7 @@ module plat.observable {
 
             // check if value is defined and context manager hasn't seen this identifier
             if (!hasIdentifier) {
-                if (isArray(context) && key === 'length') {
+                if (key === 'length' && isArray(context)) {
                     var property = split.pop(),
                         parentContext = this.getContext(split),
                         uid = observableListener.uid;
@@ -874,17 +873,12 @@ module plat.observable {
 
             callbacks.push(observableListener);
 
-            if (isNull(this.__identifierHash[identifier])) {
-                this.__addHashValues(identifier);
-            }
+            this.__addHashValues(identifier);
         }
         private __addHashValues(identifier: string) {
             var split = identifier.split('.'),
-                ident = '',
-                hashValue: Array<string>;
-
-            ident = split.shift();
-            hashValue = this.__identifierHash[ident];
+                ident = split.shift(),
+                hashValue = this.__identifierHash[ident];
 
             if (isNull(hashValue)) {
                 hashValue = this.__identifierHash[ident] = [];
@@ -893,7 +887,9 @@ module plat.observable {
                 }
             }
 
-            hashValue.push(identifier);
+            if (hashValue.indexOf(identifier) === -1) {
+                hashValue.push(identifier);
+            }
 
             while (split.length > 0) {
                 ident += '.' + split.shift();
@@ -901,8 +897,10 @@ module plat.observable {
 
                 if (isNull(hashValue)) {
                     hashValue = this.__identifierHash[ident] = [];
-                }
-                if (ident !== identifier) {
+                    if (ident !== identifier) {
+                        hashValue.push(identifier);
+                    }
+                } else if (ident !== identifier && hashValue.indexOf(identifier) === -1) {
                     hashValue.push(identifier);
                 }
             }
