@@ -223,7 +223,7 @@ module plat.ui.controls {
 
                 var Promise = this.$Promise;
                 this.itemsLoaded = Promise.all(promises).then<void>(() => {
-                    return Promise.resolve(undefined);
+                    return;
                 });
             } else {
                 this.itemsLoaded = new this.$Promise<void>((resolve) => {
