@@ -415,8 +415,8 @@ module plat.controls {
         _setSelectedIndex(newValue: any, oldValue?: any, firstTime?: boolean): void {
             if (this.__isSelf) {
                 return;
-            } else if (firstTime === true) {
-                this.__checkAsynchronousSelect(newValue);
+            } else if (firstTime === true && this.__checkAsynchronousSelect()) {
+                return;
             }
 
             var element = <HTMLSelectElement>this.element,
@@ -428,6 +428,19 @@ module plat.controls {
                 }
                 element.selectedIndex = -1;
                 return;
+            } else if (!isString(newValue)) {
+                var Exception: IExceptionStatic = acquire(__ExceptionStatic),
+                    message: string;
+                if (isNumber(newValue)) {
+                    newValue = newValue.toString();
+                    message = 'Trying to bind a value of type number to a select element. ' +
+                        'The value will implicitly be converted to type string.';
+                } else {
+                    message = 'Trying to bind a value that is not a string to a select element. ' +
+                        'The element\'s selected index will be set to -1.';
+                }
+
+                Exception.warn(message, Exception.BIND);
             } else if (value === newValue) {
                 return;
             } else if (!this.$document.body.contains(element)) {
@@ -458,20 +471,14 @@ module plat.controls {
         _setSelectedIndices(newValue: any, oldValue?: any, firstTime?: boolean): void {
             if (this.__isSelf) {
                 return;
+            } else if (firstTime === true && this.__checkAsynchronousSelect()) {
+                return;
             }
 
             var options = (<HTMLSelectElement>this.element).options,
                 length = isNull(options) ? 0 : options.length,
                 option: HTMLOptionElement,
                 nullValue = isNull(newValue);
-
-            if (length === 0) {
-                this.__checkAsynchronousSelect(newValue);
-                if (firstTime === true) {
-                    this._propertyChanged();
-                }
-                return;
-            }
 
             if (nullValue || !isArray(newValue)) {
                 if (firstTime === true) {
@@ -669,23 +676,28 @@ module plat.controls {
             }
         }
 
-        private __checkAsynchronousSelect(newValue: any): void {
+        private __checkAsynchronousSelect(): boolean {
             var select = <ui.controls.Select>this.templateControl;
             if (!isNull(select) && (select.type === __Select || select.type === __ForEach) && isPromise(select.itemsLoaded)) {
                 var split = select.absoluteContextPath.split('.'),
-                    key = split.pop();
+                    key = split.pop(),
+                    value: any;
 
                 this.observeArray(this.$ContextManagerStatic.getContext(this.parent, split), key,
                     (ev: observable.IArrayMethodInfo<any>) => {
                         select.itemsLoaded.then(() => {
-                            this._setSelectedIndex(this.evaluateExpression(this._expression));
+                            this._setter(this.evaluateExpression(this._expression));
                         });
                     });
 
                 select.itemsLoaded.then(() => {
-                    this._setSelectedIndex(newValue);
+                    this._setter(this.evaluateExpression(this._expression));
                 });
+
+                return true;
             }
+
+            return false;
         }
     }
 
