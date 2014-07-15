@@ -247,8 +247,7 @@ module plat.ui.controls {
          * to remove.
          */
         _removeItems(numberOfItems: number): void {
-            var element = this.element,
-                controls = this.controls,
+            var controls = this.controls,
                 length = controls.length - 1;
 
             while (numberOfItems-- > 0) {
