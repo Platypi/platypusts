@@ -105,7 +105,10 @@ module plat.ui.controls {
          * @param animate Whether to animate the entering item
          */
         _addItem(item: DocumentFragment, animate?: boolean): void {
-            if (!isNode(item)) {
+            if (!isNode(item) ||
+                !isArray(this.context) ||
+                this.context.length === 0 ||
+                this.controls.length === 0) {
                 return;
             }
 

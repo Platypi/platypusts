@@ -151,9 +151,20 @@ module plat.ui {
         _bindTemplate(key: string, template: DocumentFragment, context: string,
             resources: IObject<IResource>): async.IThenable<DocumentFragment> {
             var control = this._createBoundControl(key, template, context, resources),
-                nodeMap = this._createNodeMap(control, template, context);
+                nodeMap = this._createNodeMap(control, template, context),
+                disposed = false,
+                dispose = control.dispose;
+
+            control.dispose = () => {
+                disposed = true;
+                dispose.call(control);
+                control.dispose = dispose;
+            };
 
             return this._bindNodeMap(nodeMap, key).then(() => {
+                if (disposed) {
+                    return this.$Document.createDocumentFragment();
+                }
                 control.startNode = template.insertBefore(this.$Document.createComment(control.type + __START_NODE),
                     template.firstChild);
                 control.endNode = template.insertBefore(this.$Document.createComment(control.type + __END_NODE),
