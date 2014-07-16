@@ -272,7 +272,7 @@ module plat.observable {
             var join = split.join('.'),
                 context = this.__contextObjects[join];
 
-            if (isUndefined(context)) {
+            if (isNull(context)) {
                 context = this.__contextObjects[join] = this._getImmediateContext(join);
             }
 
@@ -294,7 +294,7 @@ module plat.observable {
             if (split.length > 0) {
                 join = split.join('.');
                 context = this.__contextObjects[join];
-                if (isUndefined(context)) {
+                if (isNull(context)) {
                     context = this.__contextObjects[join] = this._getImmediateContext(join);
                 }
             }
@@ -770,10 +770,10 @@ module plat.observable {
         _execute(identifier: string, value: any, oldValue: any): void {
             var observableListeners = this.__identifiers[identifier];
 
-            this.__contextObjects[identifier] = value;
-
             if (isUndefined(value)) {
                 deleteProperty(this.__contextObjects, identifier);
+            } else {
+                this.__contextObjects[identifier] = value;
             }
 
             if (isNull(observableListeners)) {

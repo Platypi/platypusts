@@ -162,12 +162,13 @@ module plat.ui {
             };
 
             return this._bindNodeMap(nodeMap, key).then(() => {
+                var $document = this.$Document;
                 if (disposed) {
-                    return this.$Document.createDocumentFragment();
+                    return $document.createDocumentFragment();
                 }
-                control.startNode = template.insertBefore(this.$Document.createComment(control.type + __START_NODE),
+                control.startNode = template.insertBefore($document.createComment(control.type + __START_NODE),
                     template.firstChild);
-                control.endNode = template.insertBefore(this.$Document.createComment(control.type + __END_NODE),
+                control.endNode = template.insertBefore($document.createComment(control.type + __END_NODE),
                     null);
 
                 return template;
