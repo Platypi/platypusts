@@ -64,9 +64,9 @@ module plat.navigation {
                 this.baseport.navigateFrom(viewControl).then(() => {
                     this.$BaseViewControlFactory.detach(viewControl);
 
-                if (!options.replace) {
-                    this.history.push({ control: viewControl });
-                }
+                    if (!options.replace) {
+                        this.history.push({ control: viewControl });
+                    }
 
                     this.baseport.navigateTo(event);
                 });

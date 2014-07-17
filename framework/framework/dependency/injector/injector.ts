@@ -37,18 +37,25 @@ module plat.dependency {
                 dependency: any;
 
             for (var i = 0; i < length; ++i) {
-                dependency = dependencies[i];
-                if (isNull(dependency) || dependency === 'noop') {
-                    deps.push(Injector.__noop());
-                    continue;
-                } else if (Injector.__isInjector(dependency)) {
-                    return dependencies;
-                }
-
-                deps.push(Injector.__locateInjector(dependency));
+                deps.push(Injector.getDependency(dependencies[i]));
             }
 
             return deps;
+        }
+
+        /**
+         * Finds and returns the dependency.
+         * 
+         * @param dependency an object/string used to find the dependency.
+         */
+        static getDependency(dependency: any): IInjector<any> {
+            if (isNull(dependency) || dependency === 'noop') {
+                return Injector.__noop();
+            } else if (Injector.__isInjector(dependency)) {
+                return dependency;
+            }
+
+            return Injector.__locateInjector(dependency);
         }
 
         /**
@@ -229,7 +236,7 @@ module plat.dependency {
             }
         }
 
-        private __dependencies: Array<any>;
+        private __dependencies: Array<string>;
 
         /**
          * @param name The name of the injected type.
@@ -284,12 +291,14 @@ module plat.dependency {
             var toInject: any = [],
                 type = this.type;
 
-            var dependencies = Injector.getDependencies(this.__dependencies) || [],
+            var dependencies = this.__dependencies,
                 length = dependencies.length,
+                dependency: IInjector<any>,
                 injectable: any;
 
             for (var i = 0; i < length; ++i) {
-                toInject.push(dependencies[i].inject());
+                dependency = Injector.getDependency(dependencies[i]);
+                toInject.push(dependency.inject());
             }
 
             injectable = <T>Injector.__construct(this.Constructor, toInject, type);

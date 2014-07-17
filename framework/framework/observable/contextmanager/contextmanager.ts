@@ -887,7 +887,7 @@ module plat.observable {
                 }
             }
 
-            if (hashValue.indexOf(identifier) === -1) {
+            if (ident !== identifier && hashValue.indexOf(identifier) === -1) {
                 hashValue.push(identifier);
             }
 
