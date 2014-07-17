@@ -91,13 +91,16 @@
         }
 
         private __defineAnimationEvents(): void {
-            var div = this.$Document.createElement('div'),
-                styles = this.$Window.getComputedStyle(div, ''),
-                prefix = !isUndefined((<any>styles).OLink) ?
-                'o' :
-                (Array.prototype.slice.call(styles)
-                    .join('')
-                    .match(/-(moz|webkit|ms)-/))[1] || '';
+            var documentElement = this.$Document.documentElement,
+                styles = this.$Window.getComputedStyle(documentElement, ''),
+                prefix: string;
+
+            if (!isUndefined((<any>styles).OLink)) {
+                prefix = 'o';
+            } else {
+                var matches = Array.prototype.slice.call(styles).join('').match(/-(moz|webkit|ms)-/);
+                prefix = (isArray(matches) && matches.length > 1) ? matches[1] : '';
+            }
 
             this.vendorPrefix = {
                 lowerCase: prefix,
@@ -106,7 +109,7 @@
             };
 
             if (prefix === 'webkit') {
-                this.animationSupported = !isUndefined((<any>div.style).WebkitAnimation);
+                this.animationSupported = !isUndefined((<any>documentElement.style).WebkitAnimation);
                 if (!this.animationSupported) {
                     this.animationEvents = {
                         $animation: '',
@@ -128,7 +131,7 @@
                     $transitionEnd: 'webkitTransitionEnd'
                 };
             } else {
-                this.animationSupported = !isUndefined((<any>div.style).animation);
+                this.animationSupported = !isUndefined((<any>documentElement.style).animation);
                 if (!this.animationSupported) {
                     this.animationEvents = {
                         $animation: '',
