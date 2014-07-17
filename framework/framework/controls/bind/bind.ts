@@ -680,8 +680,7 @@ module plat.controls {
             var select = <ui.controls.Select>this.templateControl;
             if (!isNull(select) && (select.type === __Select || select.type === __ForEach) && isPromise(select.itemsLoaded)) {
                 var split = select.absoluteContextPath.split('.'),
-                    key = split.pop(),
-                    value: any;
+                    key = split.pop();
 
                 this.observeArray(this.$ContextManagerStatic.getContext(this.parent, split), key,
                     (ev: observable.IArrayMethodInfo<any>) => {

@@ -33,8 +33,7 @@ module plat.dependency {
             }
 
             var deps: Array<IInjector<any>> = [],
-                length = dependencies.length,
-                dependency: any;
+                length = dependencies.length;
 
             for (var i = 0; i < length; ++i) {
                 deps.push(Injector.getDependency(dependencies[i]));
