@@ -1,6 +1,7 @@
 ﻿module plat {
     /**
-     * A class for checking browser compatibility issues.
+     * A class containing boolean values signifying browser 
+     * and/or platform compatibilities.
      */
     export class Compat implements ICompat {
         $Window: Window = acquire(__Window);
@@ -23,6 +24,7 @@
         platCss: boolean;
         mappedEvents: IMappedEvents;
         animationEvents: IAnimationEvents;
+        vendorPrefix: IVendorPrefix;
 
         /**
          * Define everything
@@ -90,39 +92,64 @@
 
         private __defineAnimationEvents(): void {
             var div = this.$Document.createElement('div'),
-                animations: IObject<string> = {
-                    WebkitAnimation: 'webkit',
-                    animation: ''
-                },
-                keys = Object.keys(animations),
-                index = keys.length,
-                prefix = '',
-                key: any;
+                styles = this.$Window.getComputedStyle(div, ''),
+                prefix = !isUndefined((<any>styles).OLink) ?
+                'o' :
+                (Array.prototype.slice.call(styles)
+                    .join('')
+                    .match(/-(moz|webkit|ms)-/))[1] || '';
 
-            while (index-- > 0) {
-                key = keys[index];
-                if (!isUndefined(div.style[key])) {
-                    prefix = animations[key];
-                    break;
-                }
-            }
-
-            this.animationSupported = index > -1;
-            this.animationEvents = prefix === '' ? {
-                $animation: 'animation',
-                $animationStart: 'animationstart',
-                $animationEnd: 'animationend',
-                $transition: 'transition',
-                $transitionStart: 'transitionstart',
-                $transitionEnd: 'transitionend'
-            } : {
-                $animation: prefix + 'Animation',
-                $animationStart: prefix + 'AnimationStart',
-                $animationEnd: prefix + 'AnimationEnd',
-                $transition: prefix + 'Transition',
-                $transitionStart: prefix + 'TransitionStart',
-                $transitionEnd: prefix + 'TransitionEnd'
+            this.vendorPrefix = {
+                lowerCase: prefix,
+                css: prefix === '' ? '' : '-' + prefix + '-',
+                js: prefix[0].toUpperCase() + prefix.substr(1)
             };
+
+            if (prefix === 'webkit') {
+                this.animationSupported = !isUndefined((<any>div.style).WebkitAnimation);
+                if (!this.animationSupported) {
+                    this.animationEvents = {
+                        $animation: '',
+                        $animationStart: '',
+                        $animationEnd: '',
+                        $transition: '',
+                        $transitionStart: '',
+                        $transitionEnd: ''
+                    };
+                    return;
+                }
+
+                this.animationEvents = {
+                    $animation: 'webkitAnimation',
+                    $animationStart: 'webkitAnimationStart',
+                    $animationEnd: 'webkitAnimationEnd',
+                    $transition: 'webkitTransition',
+                    $transitionStart: 'webkitTransitionStart',
+                    $transitionEnd: 'webkitTransitionEnd'
+                };
+            } else {
+                this.animationSupported = !isUndefined((<any>div.style).animation);
+                if (!this.animationSupported) {
+                    this.animationEvents = {
+                        $animation: '',
+                        $animationStart: '',
+                        $animationEnd: '',
+                        $transition: '',
+                        $transitionStart: '',
+                        $transitionEnd: ''
+                    };
+                    return;
+                }
+
+                this.animationEvents = {
+                    $animation: 'animation',
+                    $animationStart: 'animationstart',
+                    $animationEnd: 'animationend',
+                    $transition: 'transition',
+                    $transitionStart: 'transitionstart',
+                    $transitionEnd: 'transitionend'
+                };
+            }
         }
 
         private __determineCss(): void {
@@ -252,6 +279,11 @@
          * An object containing the properly prefixed animation events.
          */
         animationEvents: IAnimationEvents;
+
+        /**
+         * An object containing information regarding any potential vendor prefix.
+         */
+        vendorPrefix: IVendorPrefix;
     }
 
     /**
@@ -312,5 +344,27 @@
          * The transition end event.
          */
         $transitionEnd: string;
+    }
+
+    /**
+     * Describes an object that contains information regarding the browser's 
+     * vendor prefix.
+     */
+    export interface IVendorPrefix extends IObject<string> {
+        /**
+         * The lowercase representation of the browser's vendor prefix.
+         */
+        lowerCase: string;
+
+        /**
+         * The css representation of the browser's vendor prefix.
+         */
+        css: string;
+
+        /**
+         * The JavaScript representation of the browser's vendor prefix 
+         * denoted by it beginning with a capital letter.
+         */
+        js: string;
     }
 }
