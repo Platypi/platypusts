@@ -50,7 +50,7 @@ module plat.dependency {
         static getDependency(dependency: any): IInjector<any> {
             if (isNull(dependency) || dependency === 'noop') {
                 return Injector.__noop();
-            } else if (Injector.__isInjector(dependency)) {
+            } else if (Injector.isInjector(dependency)) {
                 return dependency;
             }
 
@@ -88,6 +88,18 @@ module plat.dependency {
             }
 
             return deps;
+        }
+
+        /**
+         * Checks if the object being passed in fulfills the requirements for being an Injector.
+         * 
+         * @param dependency The object to check.
+         */
+        static isInjector(dependency: Injector<any>): boolean {
+            return isFunction(dependency.inject) &&
+                !isUndefined(dependency.type) &&
+                !isUndefined(dependency.name) &&
+                !isUndefined(dependency.Constructor);
         }
 
         private static __getInjectorName(dependency: any): string {
@@ -182,13 +194,6 @@ module plat.dependency {
             };
         }
 
-        private static __isInjector(dependency: Injector<any>): boolean {
-            return isFunction(dependency.inject) &&
-                !isUndefined(dependency.type) &&
-                !isUndefined(dependency.name) &&
-                !isUndefined(dependency.Constructor);
-        }
-
         private static __findCircularReferences(injector: Injector<any>) {
             if (!(isObject(injector) && isArray(injector.__dependencies))) {
                 return;
@@ -246,7 +251,7 @@ module plat.dependency {
          * @param type The type of injector, used for injectables specifying a injectableType of 
          * STATIC, SINGLETON, FACTORY, INSTANCE, or CLASS. The default is SINGLETON.
          */
-        constructor(public name: string, public Constructor: new () => T, dependencies?: Array<any>, public type?: string) {
+        constructor(public name: string, public Constructor: new () => T, dependencies?: Array<any>, public type: string = null) {
             var deps = this.__dependencies = Injector.convertDependencies(dependencies),
                 index = deps.indexOf('noop'),
                 circularReference: string;

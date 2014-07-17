@@ -17,7 +17,9 @@ module plat.navigation {
                 injector: dependency.IInjector<ui.IViewControl>,
                 key: string,
                 parameter = options.parameter,
-                event: events.INavigationEvent<any>;
+                event: events.INavigationEvent<any>,
+                baseport = this.baseport,
+                BaseViewControlFactory = this.$BaseViewControlFactory;
 
             event = this._sendEvent('beforeNavigate', Constructor, null, parameter, options, true);
 
@@ -26,14 +28,13 @@ module plat.navigation {
             }
 
             this.navigating = true;
-
-            this.$BaseViewControlFactory.detach(viewControl);
+            BaseViewControlFactory.detach(viewControl);
 
             if (isObject(parameter)) {
                 parameter = _clone(parameter, true);
             }
 
-            this.baseport.controls = [];
+            baseport.controls = [];
 
             if (isFunction(Constructor.inject)) {
                 injector = Constructor;
@@ -61,35 +62,42 @@ module plat.navigation {
             event.type = key;
 
             if (!isNull(viewControl)) {
-                this.baseport.navigateFrom(viewControl).then(() => {
-                    this.$BaseViewControlFactory.detach(viewControl);
+                baseport.navigateFrom(viewControl).then(() => {
+                    BaseViewControlFactory.detach(viewControl);
 
                     if (!options.replace) {
                         this.history.push({ control: viewControl });
                     }
 
-                    this.baseport.navigateTo(event);
+                    baseport.navigateTo(event);
+                }).catch((error) => {
+                    postpone(() => {
+                        var Exception: IExceptionStatic = acquire(__ExceptionStatic);
+                        Exception.fatal(error, Exception.NAVIGATION);
+                    });
                 });
 
                 return;
             }
 
-            this.baseport.navigateTo(event);
+            // need to postpone so that the viewport can compile before the first navigation
+            postpone(() => {
+                baseport.navigateTo(event);
+            });
         }
 
         goBack(options?: IBackNavigationOptions): void {
             options = options || {};
-
-            if (this.history.length === 0) {
-                this.$EventManagerStatic.dispatch('shutdown', this, this.$EventManagerStatic.DIRECT);
-            }
-
             var viewControl = this.currentState.control,
                 length = isNumber(options.length) ? options.length : 1,
                 Constructor = options.ViewControl,
-                parameter = options.parameter;
+                parameter = options.parameter,
+                history = this.history,
+                baseport = this.baseport;
 
-            options = options || {};
+            if (history.length === 0) {
+                this.$EventManagerStatic.dispatch('shutdown', this, this.$EventManagerStatic.DIRECT);
+            }
 
             var event = this._sendEvent('beforeNavigate', viewControl, viewControl.type, parameter, options, true);
 
@@ -102,7 +110,7 @@ module plat.navigation {
                 var index = this._findInHistory(Constructor);
 
                 if (index > -1) {
-                    length = this.history.length - index;
+                    length = history.length - index;
                 } else {
                     $exception = acquire(__ExceptionStatic);
                     $exception.warn('Cannot find ViewControl in navigation history.', $exception.NAVIGATION);
@@ -110,14 +118,14 @@ module plat.navigation {
                 }
             }
 
-            if (!isNumber(length) || length > this.history.length) {
+            if (!isNumber(length) || length > history.length) {
                 $exception = acquire(__ExceptionStatic);
                 $exception.warn('Not enough views in the navigation history in order to navigate back.',
                     $exception.NAVIGATION);
                 return;
             }
 
-            this.baseport.navigateFrom(viewControl).then(() => {
+            baseport.navigateFrom(viewControl).then(() => {
                 this.$BaseViewControlFactory.dispose(viewControl);
 
                 var last: IBaseNavigationState = this._goBackLength(length);
@@ -133,7 +141,12 @@ module plat.navigation {
                 event.target = viewControl;
                 event.type = viewControl.type;
 
-                this.baseport.navigateTo(event);
+                baseport.navigateTo(event);
+            }).catch((error) => {
+                postpone(() => {
+                    var Exception: IExceptionStatic = acquire(__ExceptionStatic);
+                    Exception.fatal(error, Exception.NAVIGATION);
+                });
             });
         }
 
@@ -183,14 +196,15 @@ module plat.navigation {
             length = isNumber(length) ? length : 1;
 
             var last: IBaseNavigationState,
-                dispose = this.$BaseViewControlFactory.dispose;
+                dispose = this.$BaseViewControlFactory.dispose,
+                history = this.history;
 
             while (length-- > 0) {
                 if (!isNull(last) && !isNull(last.control)) {
                     dispose(last.control);
                 }
 
-                last = this.history.pop();
+                last = history.pop();
             }
 
             return last;

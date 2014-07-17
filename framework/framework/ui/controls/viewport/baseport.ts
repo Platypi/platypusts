@@ -57,9 +57,8 @@
                 options = ev.options,
                 element = this.element,
                 controlType = ev.type,
-                newControl = isFunction(control.inject);
-
-            var injectedControl = newControl ? control.inject() : control,
+                newControl = dependency.Injector.isInjector(control),
+                injectedControl = newControl ? control.inject() : control,
                 replaceType = injectedControl.replaceWith,
                 node = (isEmpty(replaceType) || replaceType === 'any') ? this.$Document.createElement('div') :
                     <HTMLElement>this.$Document.createElement(replaceType),
@@ -82,18 +81,18 @@
 
             this.$Animator.animate(this.element, __Enter);
 
-            var viewportManager = this.$ManagerCache.read(this.uid);
-            viewportManager.children = [];
+            var viewportManager = this.$ManagerCache.read(this.uid),
+                manager = this.$ElementManagerFactory.getInstance(),
+                navigator = this.navigator;
 
-            var manager = this.$ElementManagerFactory.getInstance();
-            
+            viewportManager.children = [];
             manager.initialize(nodeMap, viewportManager, !newControl);
 
             control = this.controls[0];
-            control.navigator = this.navigator;
-            this.navigator.navigated(control, parameter, options);
+            control.navigator = navigator;
+            navigator.navigated(control, parameter, options);
 
-            if (this.navigator.navigating) {
+            if (navigator.navigating) {
                 return;
             }
 

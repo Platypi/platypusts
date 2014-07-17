@@ -307,7 +307,7 @@ module plat.ui.controls {
                 return;
             }
 
-            animationPromise.then(() => {
+            this.itemsLoaded = animationPromise.then(() => {
                 this._removeItems(1);
             });
         }
