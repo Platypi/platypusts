@@ -360,7 +360,8 @@
         lowerCase: string;
 
         /**
-         * The css representation of the browser's vendor prefix.
+         * The css representation of the browser's vendor prefix 
+         * denoted by -{prefix}-.
          */
         css: string;
 
