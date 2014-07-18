@@ -274,6 +274,10 @@ module plat.ui.controls {
                 first: {
                     value: index === 0,
                     type: 'observable'
+                },
+                last: {
+                    value: index === (this.context.length - 1),
+                    type: 'observable'
                 }
             };
         }
