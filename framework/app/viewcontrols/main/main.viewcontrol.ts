@@ -48,5 +48,5 @@ module app {
         }
     }
 
-    plat.register.viewControl('viewcontrol', MainViewControl, ['foo'], ['']);
+    plat.register.viewControl('viewcontrol', MainViewControl, null, ['']);
 }

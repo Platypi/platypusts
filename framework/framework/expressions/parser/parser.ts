@@ -531,8 +531,10 @@ module plat.expressions {
          * @param char The char to compare with
          */
         _isValEqual(obj: any, char: string): boolean {
-            if (isNull(obj)) {
+            if (isNull(obj) || isNull(obj.val)) {
                 return isNull(char);
+            } else if (obj.val === '') {
+                return char === '';
             }
             return char.indexOf(obj.val) !== -1;
         }
@@ -544,8 +546,10 @@ module plat.expressions {
          * @param char The char to compare with
          */
         _isValUnequal(obj: any, char: string): boolean {
-            if (isNull(obj)) {
+            if (isNull(obj) || isNull(obj.val)) {
                 return !isNull(char);
+            } else if (obj.val === '') {
+                return char !== '';
             }
             return char.indexOf(obj.val) === -1;
         }
