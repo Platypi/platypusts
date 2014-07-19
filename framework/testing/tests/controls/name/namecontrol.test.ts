@@ -7,6 +7,7 @@
         beforeEach(() => {
             control = new plat.controls.Name();
             parent = new plat.ui.TemplateControl();
+            parent.type = 'test-control';
             parent.controls = [control];
             parent.resources = plat.acquire(plat.ui.IResourcesFactory).getInstance();
             parent.hasOwnContext = true;
