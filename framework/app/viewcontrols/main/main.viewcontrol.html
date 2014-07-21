@@ -1,10 +1,13 @@
 ﻿<plat-foreach plat-context="items">
-    <div>
+    <div plat-visible="{{@rootContext.bools[@index].show}}">
         <div>{{@rootContext.items.length}}</div>
         <input type="text" plat-bind="first" />
         <span>{{first}} </span><span>{{last}}</span>
     </div>
 </plat-foreach>
+
+<br />
+<input type="button" plat-tap="pushPop" value="{{items.length % 2 === 0 ? 'push' : 'pop'}}" />
 
 <plat-if plat-options="{ condition: true }">
     <div plat-name="options">Foo</div>
@@ -17,9 +20,6 @@
 <input type="radio" plat-bind="radioVal" value="2" checked />2<br />
 <input type="radio" plat-bind="radioVal" value="3" />3<br />
 
-<input type="button" plat-tap="pushPop" value="{{items.length % 2 === 0 ? 'push' : 'pop'}}" />
-
-<br />
 <br />
 <plat-select plat-context="items" plat-options="{ value: 'id', textContent: 'first' group: 'group' }" plat-bind="id"></plat-select>
 <br />
@@ -28,11 +28,3 @@
 </select>
 <br />
 <div>{{id}}</div>
-<br />
-<br />
-
-<div plat-visible="{{item.items.length === undefined || item.items.length === 0}}">Empty</div>
-<div plat-visible="{{item === null}}">test</div>
-<plat-foreach plat-context="item.items">
-    <div>{{name}}</div>
-</plat-foreach>

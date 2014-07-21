@@ -361,6 +361,9 @@ module plat.expressions {
             if (hasIdentifierIndexer && identifierIndexer[0] === '@') {
                 codeStr = '(' + this.__indexIntoContext.toString() + ')(' + context + ',' + codeStr + ')';
                 identifiers.push(identifierIndexer);
+                if (tempIdentifiers.length > 0) {
+                    identifiers.push(tempIdentifiers.pop());
+                }
             } else if (this._isValEqual(previousToken, '++--()[]*/%?:>=<=&&||!===')) {
                 codeStr = '(' + this.__indexIntoContext.toString() + ')(' + context + ',' + codeStr + ')';
                 tempIdentifiers.push('.');

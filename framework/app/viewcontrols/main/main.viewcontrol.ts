@@ -8,6 +8,11 @@ module app {
                 { id: 1, first: 'Darion', last: 'Welch', group: '1' },
                 { id: 2, first: 'Will', last: 'Johnston', group: '0' }
             ],
+            bools: <Array<{ show: boolean; }>>[
+                { show: true },
+                { show: true },
+                { show: true }
+            ],
             htmlObj: {},
             radioVal: <string>null,
             firstName: 'Matt',
@@ -33,7 +38,9 @@ module app {
             var context = this.context,
                 items = context.items;
             if (items.length % 2 === 0) {
+                context.bools[0].show = false;
                 items.push({ id: 3, first: 'Jon', last: 'McCann', group: '2' });
+                context.bools.push({ show: true });
                 context.item = null;
                 return;
             }
@@ -45,6 +52,7 @@ module app {
                 ]
             };
             items.pop();
+            context.bools.pop();
         }
     }
 
