@@ -416,6 +416,9 @@ module plat.controls {
             if (this.__isSelf) {
                 return;
             } else if (firstTime === true && this.__checkAsynchronousSelect()) {
+                if (isNull(newValue)) {
+                    this._propertyChanged();
+                }
                 return;
             }
 

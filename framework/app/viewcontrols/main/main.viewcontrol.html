@@ -21,7 +21,9 @@
 <input type="radio" plat-bind="radioVal" value="3" />3<br />
 
 <br />
-<plat-select plat-context="items" plat-options="{ value: 'id', textContent: 'first' group: 'group' }" plat-bind="id"></plat-select>
+<plat-select plat-context="items" plat-options="{ value: 'id', textContent: 'first' group: 'group' }" plat-bind="id">
+    <option value="">-default-</option>
+</plat-select>
 <br />
 <select plat-bind="id" plat-control="plat-foreach" plat-context="items">
     <option value="{{id}}">{{first}}</option>
