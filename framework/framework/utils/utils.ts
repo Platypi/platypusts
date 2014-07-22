@@ -486,9 +486,9 @@ module plat {
          * @param args The arguments to apply to the method.
          * @param context An optional context to bind to the method.
          * 
-         * @return {() => void} A function that will clear the timeout when called.
+         * @return {plat.IRemoveListener} A function that will clear the timeout when called.
          */
-        postpone(method: (...args: any[]) => void, args?: Array<any>, context?: any): () => void;
+        postpone(method: (...args: any[]) => void, args?: Array<any>, context?: any): IRemoveListener;
 
         /**
          * Takes in a method and array of arguments to pass to that method. Delays calling the method until 
@@ -499,9 +499,9 @@ module plat {
          * @param args The arguments to apply to the method.
          * @param context An optional context to bind to the method.
          * 
-         * @return {() => void} A function that will clear the timeout when called.
+         * @return {plat.IRemoveListener} A function that will clear the timeout when called.
          */
-        defer(method: (...args: any[]) => void, timeout: number, args?: Array<any>, context?: any): () => void;
+        defer(method: (...args: any[]) => void, timeout: number, args?: Array<any>, context?: any): IRemoveListener;
 
         /**
          * Takes in a prefix and returns a unique identifier string with the prefix preprended. If no prefix
