@@ -41,6 +41,13 @@ module plat.ui.controls {
         private __defaultOption: HTMLOptionElement;
         private __resolveFn: () => void;
 
+        constructor() {
+            super();
+            this.itemsLoaded = new this.$Promise<void>((resolve) => {
+                this.__resolveFn = resolve;
+            });
+        }
+
         /**
          * Creates the bindable option template and grouping 
          * template if necessary.
@@ -171,16 +178,18 @@ module plat.ui.controls {
             }
 
             if (promises.length > 0) {
+                this.itemsLoaded = this.$Promise.all(promises).then(() => {
+                    if (isFunction(this.__resolveFn)) {
+                        this.__resolveFn();
+                        this.__resolveFn = null;
+                    }
+                    return;
+                });
+            } else {
                 if (isFunction(this.__resolveFn)) {
                     this.__resolveFn();
                     this.__resolveFn = null;
                 }
-
-                var Promise = this.$Promise;
-                this.itemsLoaded = Promise.all(promises).then(() => {
-                    return;
-                });
-            } else {
                 this.itemsLoaded = new this.$Promise<void>((resolve) => {
                     this.__resolveFn = resolve;
                 });

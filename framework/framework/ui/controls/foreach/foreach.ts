@@ -32,6 +32,13 @@ module plat.ui.controls {
         private __currentAnimations: Array<IAnimationThenable<void>> = [];
         private __resolveFn: () => void;
 
+        constructor() {
+            super();
+            this.itemsLoaded = new this.$Promise<void>((resolve) => {
+                this.__resolveFn = resolve;
+            });
+        }
+
         /**
          * Creates a bindable template with the element's childNodes (innerHTML) 
          * specified for the ForEach.
@@ -216,16 +223,18 @@ module plat.ui.controls {
             }
 
             if (promises.length > 0) {
+                this.itemsLoaded = this.$Promise.all(promises).then<void>(() => {
+                    if (isFunction(this.__resolveFn)) {
+                        this.__resolveFn();
+                        this.__resolveFn = null;
+                    }
+                    return;
+                });
+            } else {
                 if (isFunction(this.__resolveFn)) {
                     this.__resolveFn();
                     this.__resolveFn = null;
                 }
-
-                var Promise = this.$Promise;
-                this.itemsLoaded = Promise.all(promises).then<void>(() => {
-                    return;
-                });
-            } else {
                 this.itemsLoaded = new this.$Promise<void>((resolve) => {
                     this.__resolveFn = resolve;
                 });

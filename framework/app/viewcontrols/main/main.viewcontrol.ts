@@ -3,11 +3,7 @@ module app {
         title = 'Main';
         templateUrl = 'viewcontrols/main/main.viewcontrol.html';
         context = {
-            items: [
-                { id: 0, first: 'Matt', last: 'Morgan', group: '0' },
-                { id: 1, first: 'Darion', last: 'Welch', group: '1' },
-                { id: 2, first: 'Will', last: 'Johnston', group: '0' }
-            ],
+            items: <any>null,
             bools: <Array<{ show: boolean; }>>[
                 { show: true },
                 { show: true },
@@ -17,7 +13,8 @@ module app {
             radioVal: <string>null,
             firstName: 'Matt',
             id: 2,
-            item: <any>null
+            item: <any>null,
+            asyncObj: <any>null
         };
 
         options: plat.controls.INamedElement<HTMLDivElement, void>;
@@ -31,6 +28,23 @@ module app {
         }
 
         loaded() {
+            postpone(() => {
+                this.context.items = [
+                    { id: 0, first: 'Matt', last: 'Morgan', group: '0' },
+                    { id: 1, first: 'Darion', last: 'Welch', group: '1' },
+                    { id: 2, first: 'Will', last: 'Johnston', group: '0' }
+                ];
+            });
+
+            postpone(() => {
+                this.context.asyncObj = {
+                    org: {
+                        group: {
+                            id: 2
+                        }
+                    }
+                };
+            });
             //this.options.element.textContent = 'Bar';
         }
 
