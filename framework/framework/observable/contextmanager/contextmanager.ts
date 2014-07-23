@@ -264,6 +264,7 @@ module plat.observable {
 
         private __identifiers: IObject<Array<IListener>> = {};
         private __identifierHash: IObject<Array<string>> = {};
+        private __lengthListeners: IObject<IListener> = {};
         private __contextObjects: IObject<any> = {};
         private __isArrayFunction: boolean = false;
         private __observedIdentifier: string;
@@ -289,7 +290,7 @@ module plat.observable {
                 context = this.context,
                 hasIdentifier = this._hasIdentifier(absoluteIdentifier),
                 hasObservableListener = !isNull(observableListener),
-                join: string;
+                join = key;
 
             if (split.length > 0) {
                 join = split.join('.');
@@ -301,6 +302,12 @@ module plat.observable {
 
             if (!isObject(context)) {
                 if (hasObservableListener) {
+                    if (key === 'length') {
+                        this.__lengthListeners[absoluteIdentifier] = observableListener;
+                        ContextManager.pushRemoveListener(absoluteIdentifier, uid, () => {
+                            deleteProperty(this.__lengthListeners, absoluteIdentifier);
+                        });
+                    }
                     return this._addObservableListener(absoluteIdentifier, observableListener);
                 }
 
@@ -351,12 +358,12 @@ module plat.observable {
                     var removeObservableListener = removeCallback,
                         removeListener = this.observeArray(uid, noop, join, context, null),
                         removeArrayObserve = this.observe(join, {
-                        uid: uid,
-                        listener: (newValue: Array<any>, oldValue: Array<any>) => {
-                            removeListener();
-                            removeListener = this.observeArray(uid, noop, join, newValue, oldValue);
-                        }
-                    });
+                            uid: uid,
+                            listener: (newValue: Array<any>, oldValue: Array<any>) => {
+                                removeListener();
+                                removeListener = this.observeArray(uid, noop, join, newValue, oldValue);
+                            }
+                        });
 
                     removeCallback = () => {
                         removeObservableListener();
@@ -581,8 +588,34 @@ module plat.observable {
                 if (isEmpty(parentProperty)) {
                     newParent = newValue;
                     oldParent = oldValue;
-                    newChild = isNull(newParent) ? newParent : newParent[key];
-                    oldChild = isNull(oldParent) ? oldParent : oldParent[key];
+                    newChild = isNull(newParent) ? undefined : newParent[key];
+                    oldChild = isNull(oldParent) ? undefined : oldParent[key];
+
+                    if (key === 'length' && !isArray(oldParent) && isArray(newParent)) {
+                        var lengthListener = this.__lengthListeners[binding];
+                        if (!isNull(lengthListener)) {
+                            var uid = lengthListener.uid,
+                                arraySplit = identifier.split('.'),
+                                arrayKey = arraySplit.pop(),
+                                arrayParent = this.getContext(arraySplit),
+                                join: string;
+
+                            this.__observedIdentifier = null;
+                            access(arrayParent, arrayKey);
+
+                            join = isString(this.__observedIdentifier) ? this.__observedIdentifier : arraySplit.join('.');
+                            var removeListener = this.observeArray(uid, noop, join, newParent, null);
+                            this.observe(join, {
+                                uid: uid,
+                                listener: (nValue: Array<any>, oValue: Array<any>) => {
+                                    removeListener();
+                                    removeListener = this.observeArray(uid, noop, join, nValue, oValue);
+                                }
+                            });
+
+                            deleteProperty(this.__lengthListeners, binding);
+                        }
+                    }
                 } else {
                     value = values[parentProperty];
 
@@ -597,8 +630,8 @@ module plat.observable {
 
                     newParent = value.newValue;
                     oldParent = value.oldValue;
-                    newChild = isNull(newParent) ? null : newParent[key];
-                    oldChild = isNull(oldParent) ? null : oldParent[key];
+                    newChild = isNull(newParent) ? undefined : newParent[key];
+                    oldChild = isNull(oldParent) ? undefined : oldParent[key];
                 }
 
                 values[property] = {
@@ -606,7 +639,7 @@ module plat.observable {
                     oldValue: oldChild
                 };
 
-                if (!(isNull(newParent) || isUndefined(newChild))) {
+                if (isObject(newParent)) {
                     this._define(binding, newParent, key);
                 }
 
