@@ -232,8 +232,15 @@ module plat.observable {
                 temp: any,
                 context = control.context;
 
-            if (isNull(context)) {
-                context = control.context = {};
+            if (!isObject(context)) {
+                if (isNull(context)) {
+                    context = control.context = {};
+                } else {
+                    var Exception: IExceptionStatic = acquire(__ExceptionStatic);
+                    Exception.warn('A child control is trying to create a child context that has ' +
+                        'a parent control with a primitive type context', Exception.BIND);
+                    return {};
+                }
             }
 
             while (split.length > 0) {
