@@ -577,9 +577,17 @@ module plat.controls {
             var contextExpression = this._contextExpression,
                 context = this.evaluateExpression(contextExpression);
 
-            if (isNull(context) && contextExpression.identifiers.length > 0) {
-                context = this.$ContextManagerStatic.createContext(this.parent,
-                    contextExpression.identifiers[0]);
+            if (!isObject(context)) {
+                if (isNull(context) && contextExpression.identifiers.length > 0) {
+                    context = this.$ContextManagerStatic.createContext(this.parent,
+                        contextExpression.identifiers[0]);
+                } else {
+                    var Exception: IExceptionStatic = acquire(__ExceptionStatic);
+                    Exception.warn('plat-bind is trying to index into a primitive type. ' +
+                        this._contextExpression.expression + ' is already defined and not ' +
+                        'an object when trying to evaluate plat-bind="' +
+                        this._expression.expression + '"', Exception.BIND);
+                }
             }
 
             var property: string;
