@@ -1,30 +1,8 @@
-﻿<plat-foreach plat-context="items">
-    <div plat-visible="{{@rootContext.bools[@index].show}}">
-        <div>{{@rootContext.items.length}}</div>
-        <input type="text" plat-bind="first" />
-        <span>{{first}} </span><span>{{last}}</span>
-    </div>
-</plat-foreach>
-
+﻿<form plat-submit="foo">
+    <input plat-name="text" type="text" plat-bind="text" />
+    <input plat-name="password" type="password" plat-bind="password" />
+    <button type="submit">tap</button>
+</form>
 <br />
-<input type="button" plat-tap="pushPop" value="{{items.length % 2 === 0 ? 'push' : 'pop'}}" />
-
-<plat-if plat-options="{ condition: true }">
-    <div plat-name="options">Foo</div>
-</plat-if>
-
-<textarea plat-bind="htmlObj.html"></textarea>
-<plat-html plat-context="htmlObj.html"></plat-html>
-
-<input type="radio" plat-bind="radioVal" value="1" />1<br />
-<input type="radio" plat-bind="radioVal" value="2" checked />2<br />
-<input type="radio" plat-bind="radioVal" value="3" />3<br />
-
 <br />
-<plat-select plat-context="items" plat-options="{ value: 'id', textContent: 'first' group: 'group' }" plat-bind="asyncObj.org.group.id">
-    <option value="">-default-</option>
-</plat-select>
-<br />
-<select plat-bind="id" plat-control="plat-foreach" plat-context="items">
-    <option value="{{id}}">{{first}}</option>
-</select>
+<button plat-tap="foo">pseudo</button>

@@ -161,7 +161,7 @@ module plat.controls {
             };
 
             this._postponedEventListener = () => {
-                if (!!timeout) {
+                if (isFunction(timeout)) {
                     return;
                 }
 
@@ -211,7 +211,7 @@ module plat.controls {
          */
         _addEventListener(event: string, listener?: () => void, postpone?: boolean): void {
             listener = listener ||
-                (!!postpone ? this._postponedEventListener : this._eventListener);
+                (postpone === true ? this._postponedEventListener : this._eventListener);
 
             this.addEventListener(this.element, event, listener, false);
         }

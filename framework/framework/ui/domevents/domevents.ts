@@ -182,19 +182,19 @@
         private __START = 'start';
         private __MOVE = 'move';
         private __END = 'end';
-        private __detectMove = false;
         private __hasMoved = false;
         private __hasSwiped = false;
         private __hasRelease = false;
+        private __detectingMove = false;
         private __tapCount = 0;
         private __touchCount = 0;
         private __tapTimeout: number;
         private __holdTimeout: number;
         private __cancelRegex = /cancel/i;
         private __pointerEndRegex = /up|cancel/i;
-        private __lastTouchDown: ITouchPoint;
-        private __lastTouchUp: ITouchPoint;
-        private __swipeOrigin: ITouchPoint;
+        private __lastTouchDown: IPointerEvent;
+        private __lastTouchUp: IPointerEvent;
+        private __swipeOrigin: IPointerEvent;
         private __lastMoveEvent: IPointerEvent;
         private __capturedTarget: ICustomElement;
         private __focusedElement: HTMLInputElement;
@@ -287,6 +287,10 @@
             this.__reverseMap = {};
             this.__tapCount = 0;
             this.__touchCount = 0;
+            this.__detectingMove = false;
+            this.__hasMoved = false;
+            this.__hasRelease = false;
+            this.__hasSwiped = false;
             this.__swipeOrigin = null;
             this.__lastMoveEvent = null;
             this.__lastTouchDown = null;
@@ -300,14 +304,15 @@
          * 
          * @param ev The touch start event object.
          */
-        _onTouchStart(ev: IPointerEvent): void {
+        _onTouchStart(ev: IPointerEvent): boolean {
             var isTouch = ev.type !== 'mousedown';
 
             if (isTouch) {
                 this._inTouch = true;
             } else if (this._inTouch === true) {
                 // return immediately if mouse event and currently in a touch
-                return;
+                ev.preventDefault();
+                return false;
             }
 
             // set any captured target back to null
@@ -315,34 +320,25 @@
 
             this.__standardizeEventObject(ev);
 
-            if ((this.__touchCount = ev.touches.length) > 1) {
-                return;
-            }
-
+            this.__lastTouchDown = this.__swipeOrigin = ev;
+            this.__lastMoveEvent = null;
             this.__hasMoved = false;
 
-            this.__lastTouchDown = this.__swipeOrigin = {
-                x: ev.clientX,
-                y: ev.clientY,
-                target: ev.target,
-                timeStamp: ev.timeStamp
-            };
+            if ((this.__touchCount = ev.touches.length) > 1) {
+                ev.preventDefault();
+                return false;
+            }
+
+            this.__registerType(this.__MOVE);
+            this.__detectingMove = true;
 
             var gestureCount = this._gestureCount,
                 noHolds = gestureCount.$hold <= 0,
                 noRelease = gestureCount.$release <= 0;
 
-            // check to see if we need to detect movement
-            if (gestureCount.$tap > 0 || gestureCount.$dbltap > 0 ||
-                gestureCount.$track > 0 || gestureCount.$swipe > 0) {
-                this.__lastMoveEvent = null;
-                this.__detectMove = true;
-                this.__registerType(this.__MOVE);
-            }
-
             // return if no hold or release events are registered
             if (noHolds && noRelease) {
-                return;
+                return true;
             }
 
             var holdInterval = DomEvents.config.intervals.holdInterval,
@@ -376,6 +372,8 @@
             if (!isNull(domEvent)) {
                 this.__holdTimeout = setTimeout(subscribeFn, holdInterval);
             }
+
+            return true;
         }
 
         /**
@@ -383,36 +381,27 @@
          * 
          * @param ev The touch start event object.
          */
-        _onMove(ev: IPointerEvent): void {
+        _onMove(ev: IPointerEvent): boolean {
             // clear hold event
             this.__clearHold();
 
-            // return immediately if we should not be detecting move, 
-            // if there are multiple touches present, or 
+            // return immediately if there are multiple touches present, or 
             // if it is a mouse event and currently in a touch
-            if (!this.__detectMove ||
-                this.__touchCount > 1 ||
-                (this._inTouch === true && ev.type === 'mousemove')) {
-                return;
-            }
-
-            var gestureCount = this._gestureCount,
-                noTracking = gestureCount.$track <= 0,
-                noMoveEvents = gestureCount.$swipe <= 0 && noTracking;
-
-            // return if no move events and no tap events are registered
-            if (noMoveEvents && gestureCount.$dbltap <= 0 && gestureCount.$tap <= 0) {
-                return;
+            if (this.__touchCount > 1 || (this._inTouch === true && ev.type === 'mousemove')) {
+                ev.preventDefault();
+                return false;
             }
 
             this.__standardizeEventObject(ev);
 
-            var config = DomEvents.config,
+            var gestureCount = this._gestureCount,
+                noTracking = gestureCount.$track <= 0,
+                config = DomEvents.config,
                 swipeOrigin = this.__swipeOrigin,
                 x = ev.clientX,
                 y = ev.clientY,
-                lastX = swipeOrigin.x,
-                lastY = swipeOrigin.y,
+                lastX = swipeOrigin.clientX,
+                lastY = swipeOrigin.clientY,
                 minMove = this.__getDistance(lastX, x, lastY, y) >= config.distances.minScrollDistance;
 
             // if minimum distance moved
@@ -421,8 +410,8 @@
             }
 
             // if no move events or no tracking events and the user hasn't moved the minimum swipe distance
-            if (noMoveEvents || (noTracking && !minMove)) {
-                return;
+            if ((gestureCount.$swipe <= 0 && noTracking) || (noTracking && !minMove)) {
+                return true;
             }
 
             var lastMove = this.__lastMoveEvent,
@@ -433,7 +422,8 @@
                 ev.preventDefault();
             }
 
-            var velocity = ev.velocity = this.__getVelocity(x - swipeOrigin.x, y - swipeOrigin.y, ev.timeStamp - swipeOrigin.timeStamp);
+            var velocity = ev.velocity = this.__getVelocity(x - swipeOrigin.clientX, y - swipeOrigin.clientY,
+                ev.timeStamp - swipeOrigin.timeStamp);
             this.__hasSwiped = (this.__isHorizontal(direction) ? velocity.x : velocity.y) >= config.velocities.minSwipeVelocity;
 
             // if tracking events exist
@@ -442,6 +432,8 @@
             }
 
             this.__lastMoveEvent = ev;
+
+            return true;
         }
 
         /**
@@ -449,22 +441,47 @@
          * 
          * @param ev The touch start event object.
          */
-        _onTouchEnd(ev: IPointerEvent): void {
-            var eventType = ev.type;
+        _onTouchEnd(ev: IPointerEvent): boolean {
+            var eventType = ev.type,
+                hasMoved = this.__hasMoved,
+                inTouch = this._inTouch;
+
+            // return immediately if there were multiple touches present
+            if (this.__touchCount > 1) {
+                ev.preventDefault();
+                if (eventType === 'touchend') {
+                    this.__preventClickFromTouch();
+                }
+                return false;
+            }
 
             if (eventType !== 'mouseup') {
-                this._inTouch = false;
-            } else if (!isUndefined(this._inTouch)) {
-                return;
+                if (eventType === 'touchend') {
+                    var target = <HTMLInputElement>ev.target;
+                    if (hasMoved) {
+                        ev.preventDefault();
+                        this.__preventClickFromTouch();
+                    } else if (this.__isFocused(target)) {
+                        this.__preventClickFromTouch();
+                    } else {
+                        ev.preventDefault();
+                        if (inTouch === true) {
+                            this.__handleInput(target);
+                        }
+                    }
+                    this._inTouch = false;
+                }
+            } else if (!isUndefined(inTouch)) {
+                ev.preventDefault();
+                return false;
             }
 
             // clear hold event
             this.__clearHold();
 
-            // if we were detecting move events, unregister them
-            if (this.__detectMove) {
+            if (this.__detectingMove) {
                 this.__unregisterType(this.__MOVE);
-                this.__detectMove = false;
+                this.__detectingMove = false;
             }
 
             this.__standardizeEventObject(ev);
@@ -474,13 +491,14 @@
                 this.__tapCount = 0;
                 this.__hasRelease = false;
                 this.__hasSwiped = false;
-                return;
+                return true;
             }
 
             // return if the touch count was greater than 0, 
             // or handle release
             if (ev.touches.length > 0) {
-                return;
+                ev.preventDefault();
+                return false;
             } else if (this.__hasRelease) {
                 this.__handleRelease(ev);
             }
@@ -495,25 +513,11 @@
                 touchEnd = ev.timeStamp,
                 touchDown = this.__lastTouchDown;
 
-            if (isNull(touchDown)) {
-                this.__tapCount = 0;
-                return;
-            }
-
             // if the user moved their finger (for scroll) we do not want default or custom behaviour, 
-            // else if they had their finger down too long to be considered a tap, we do not want default or 
-            // custom behaviour, but if the event type is 'touchend' we may need to implement the default behaviour.
-            if (this.__hasMoved) {
+            // else if they had their finger down too long to be considered a tap, we want to return
+            if (hasMoved || isNull(touchDown) || ((touchEnd - touchDown.timeStamp) > intervals.tapInterval)) {
                 this.__tapCount = 0;
-                return;
-            } else if ((touchEnd - touchDown.timeStamp) > intervals.tapInterval) {
-                if (eventType === 'touchend') {
-                    this.__handleInput(<HTMLInputElement>ev.target);
-                }
-                this.__tapCount = 0;
-                return;
-            } else if (eventType === 'touchend') {
-                this.__handleInput(<HTMLInputElement>ev.target);
+                return !hasMoved;
             }
 
             var lastTouchUp = this.__lastTouchUp,
@@ -523,7 +527,7 @@
             // check if can be a double tap event by checking number of taps, distance between taps, 
             // and time between taps
             if (this.__tapCount > 0 &&
-                this.__getDistance(x, lastTouchUp.x, y, lastTouchUp.y) <= config.distances.maxDblTapDistance &&
+                this.__getDistance(x, lastTouchUp.clientX, y, lastTouchUp.clientY) <= config.distances.maxDblTapDistance &&
                 ((touchEnd - lastTouchUp.timeStamp) <= intervals.dblTapInterval)) {
                 // handle dbltap events
                 this.__handleDbltap(ev);
@@ -534,12 +538,9 @@
             // handle tap events
             this.__handleTap(ev);
 
-            this.__lastTouchUp = {
-                x: x,
-                y: y,
-                target: ev.target,
-                timeStamp: touchEnd
-            };
+            this.__lastTouchUp = ev;
+
+            return true;
         }
 
         // gesture handling methods
@@ -664,7 +665,12 @@
             var $compat = this.$Compat,
                 touchEvents = $compat.mappedEvents;
 
-            if ($compat.hasTouchEvents) {
+            if ($compat.hasPointerEvents) {
+                this._startEvents = [touchEvents.$touchstart];
+                this._moveEvents = [touchEvents.$touchmove];
+                this._endEvents = [touchEvents.$touchend, touchEvents.$touchcancel];
+                return;
+            } else if ($compat.hasTouchEvents) {
                 this._startEvents = [touchEvents.$touchstart, 'mousedown'];
                 this._moveEvents = [touchEvents.$touchmove, 'mousemove'];
                 this._endEvents = [touchEvents.$touchend, touchEvents.$touchcancel, 'mouseup'];
@@ -1013,12 +1019,7 @@
                 return false;
             }
 
-            this.__swipeOrigin = {
-                x: lastMove.clientX,
-                y: lastMove.clientY,
-                target: lastMove.target,
-                timeStamp: lastMove.timeStamp
-            };
+            this.__swipeOrigin = lastMove;
 
             this.__hasSwiped = false;
             return this.__checkForRegisteredSwipe(direction);
@@ -1086,56 +1087,120 @@
 
             return style;
         }
-        private __handleInput(target: HTMLInputElement) {
+        private __isFocused(target: EventTarget): boolean {
+            return target === this.__focusedElement;
+        }
+        private __handleInput(target: HTMLInputElement): void {
             var nodeName = target.nodeName,
                 focusedElement = this.__focusedElement || <HTMLInputElement>{};
 
-            if (isFunction(focusedElement.blur)) {
-                focusedElement.blur();
-            }
-
             if (!isString(nodeName)) {
+                this.__focusedElement = null;
+                if (isFunction(focusedElement.blur)) {
+                    focusedElement.blur();
+                }
                 return;
             }
 
+            var remover: IRemoveListener,
+                $document: Document;
             switch (nodeName.toLowerCase()) {
                 case 'input':
                     switch (target.type) {
                         case 'range':
+                            if (isFunction(focusedElement.blur)) {
+                                focusedElement.blur();
+                            }
                             break;
                         case 'button':
                         case 'submit':
                         case 'checkbox':
                         case 'radio':
                         case 'file':
-                            target.click();
+                            if (isFunction(focusedElement.blur)) {
+                                focusedElement.blur();
+                            }
+                            $document = this.$Document;
+                            postpone(() => {
+                                if ($document.body.contains(target)) {
+                                    target.click();
+                                }
+                            });
                             break;
                         default:
+                            this.__focusedElement = target;
                             target.focus();
-                            break;
+                            remover = this.addEventListener(target, 'blur', () => {
+                                if (this.__isFocused(target)) {
+                                    this.__focusedElement = null;
+                                }
+                                remover();
+                            });
+                            return;
                     }
                     break;
                 case 'a':
                 case 'button':
                 case 'select':
                 case 'label':
-                    target.click();
+                    if (isFunction(focusedElement.blur)) {
+                        focusedElement.blur();
+                    }
+                    $document = this.$Document;
+                    postpone(() => {
+                        if ($document.body.contains(target)) {
+                            target.click();
+                        }
+                    });
                     break;
-                default:
+                case 'textarea':
+                    this.__focusedElement = target;
                     target.focus();
+                    remover = this.addEventListener(target, 'blur', () => {
+                        if (this.__isFocused(target)) {
+                            this.__focusedElement = null;
+                        }
+                        remover();
+                    });
+                    return;
+                default:
+                    if (isFunction(focusedElement.blur)) {
+                        focusedElement.blur();
+                    }
                     break;
             }
 
-            this.__focusedElement = target;
-            this.__preventClick(target);
+            this.__focusedElement = null;
+            return;
         }
-        private __preventClick(target: EventTarget): void {
-            var preventDefault = (ev: Event) => {
-                ev.preventDefault();
-                target.removeEventListener('click', preventDefault, false);
-                return false;
-            };
-            target.addEventListener('click', preventDefault, false);
+        private __preventClickFromTouch(): void {
+            var $document = this.$Document,
+                delayedClickRemover = defer(() => {
+                    $document.removeEventListener('click', preventDefault, true);
+                    $document.removeEventListener('mousedown', preventDefault, true);
+                    $document.removeEventListener('mouseup', preventDefault, true);
+                }, 400),
+                preventDefault = (ev: Event) => {
+                    ev.preventDefault();
+                    ev.stopPropagation();
+                    $document.removeEventListener(ev.type, preventDefault, true);
+                    if (delayedClickRemover === noop) {
+                        return false;
+                    }
+                    delayedClickRemover();
+                    delayedClickRemover = noop;
+
+                    var touchDown = this.__lastTouchDown;
+                    if (isNull(touchDown) || this.__isFocused(touchDown.target)) {
+                        return false;
+                    }
+                    this.__handleInput(<HTMLInputElement>touchDown.target);
+                    return false;
+                };
+
+            $document.addEventListener('click', preventDefault, true);
+            $document.addEventListener('mousedown', preventDefault, true);
+            $document.addEventListener('mouseup', preventDefault, true);
         }
         private __removeSelections(element: Node): void {
             if (!isNode(element)) {
@@ -1643,6 +1708,11 @@
          * The time of the touch.
          */
         timeStamp: number;
+
+        /**
+         * Prevents the default action of the browser
+         */
+        preventDefault?: () => void;
     }
 
     /**

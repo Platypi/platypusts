@@ -3,21 +3,12 @@ module app {
         title = 'Main';
         templateUrl = 'viewcontrols/main/main.viewcontrol.html';
         context = {
-            items: <any>null,
-            bools: <Array<{ show: boolean; }>>[
-                { show: true },
-                { show: true },
-                { show: true }
-            ],
-            htmlObj: {},
-            radioVal: <string>null,
-            firstName: 'Matt',
-            id: 2,
-            item: <any>null,
-            asyncObj: <any>null
+            text: <string>null,
+            password: <string>null
         };
 
-        options: plat.controls.INamedElement<HTMLDivElement, void>;
+        text: plat.controls.INamedElement<HTMLElement, void>;
+        password: plat.controls.INamedElement<HTMLElement, void>;
 
         navigatedTo(route: plat.web.IRoute<any>) {
             if (route.path.length === 0) {
@@ -28,45 +19,13 @@ module app {
         }
 
         loaded() {
-            postpone(() => {
-                this.context.items = [
-                    { id: 0, first: 'Matt', last: 'Morgan', group: '0' },
-                    { id: 1, first: 'Darion', last: 'Welch', group: '1' },
-                    { id: 2, first: 'Will', last: 'Johnston', group: '0' }
-                ];
-            });
-
-            postpone(() => {
-                this.context.asyncObj = {
-                    org: {
-                        group: {
-                            id: 2
-                        }
-                    }
-                };
-            });
-            //this.options.element.textContent = 'Bar';
         }
 
-        pushPop() {
-            var context = this.context,
-                items = context.items;
-            if (items.length % 2 === 0) {
-                context.bools[0].show = false;
-                items.push({ id: 3, first: 'Jon', last: 'McCann', group: '2' });
-                context.bools.push({ show: true });
-                context.item = null;
-                return;
-            }
-            context.item = {
-                items: [
-                    { name: 'Will' },
-                    { name: 'Darion' },
-                    { name: 'Matt' }
-                ]
-            };
-            items.pop();
-            context.bools.pop();
+        foo() {
+            var context = this.context;
+            console.log(context.text);
+            console.log(context.password);
+            console.log('');
         }
     }
 
