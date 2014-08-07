@@ -646,7 +646,7 @@ module plat.observable {
                     oldValue: oldChild
                 };
 
-                if (isObject(newParent)) {
+                if (isObject(newParent) && (!isArray(newParent) || newParent.length > key)) {
                     this._define(binding, newParent, key);
                 }
 
