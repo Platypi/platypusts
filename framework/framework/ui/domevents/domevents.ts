@@ -767,8 +767,7 @@
             if (isNull(id)) {
                 var subscriber = this._subscribers[plat.domEvent];
                 if (isUndefined((<any>subscriber)[type])) {
-                    $domEvent = acquire(__DomEventInstance);
-                    $domEvent.initialize(element, type);
+                    $domEvent = new CustomDomEvent(element, type);
                     (<any>subscriber)[type] = $domEvent;
                 } else {
                     (<any>subscriber)[type].count++;
@@ -776,8 +775,7 @@
                 subscriber.gestureCount++;
             } else {
                 var newSubscriber = { gestureCount: 1 };
-                $domEvent = acquire(__DomEventInstance);
-                $domEvent.initialize(element, type);
+                $domEvent = new CustomDomEvent(element, type);
                 (<any>newSubscriber)[type] = $domEvent;
                 this._subscribers[id] = newSubscriber;
 
@@ -795,7 +793,7 @@
 
             var domEventId = plat.domEvent,
                 eventSubscriber = this._subscribers[domEventId],
-                domEvent: IDomEventInstance = (<any>eventSubscriber)[type];
+                domEvent: ICustomDomEventInstance = (<any>eventSubscriber)[type];
 
             if (isNull(domEvent)) {
                 return;
@@ -1293,18 +1291,50 @@
     register.injectable(__DomEventsConfig, IDomEventsConfig);
 
     /**
-     * A class for managing of a single custom event.
+     * A class for managing a single custom event.
      */
     export class DomEvent implements IDomEventInstance {
         $Document: Document = acquire(__Document);
 
         element: any;
         event: string;
-        count = 0;
 
         initialize(element: Node, event: string): void;
         initialize(element: Window, event: string): void;
-        initialize(element: any, event: string) {
+        initialize(element: any, event: string): void {
+            this.element = element;
+            this.event = event;
+        }
+
+        trigger(eventExtension?: Object): void {
+            var customEv = <CustomEvent>this.$Document.createEvent('CustomEvent');
+            if (isObject(eventExtension)) {
+                extend(customEv, eventExtension);
+            }
+            customEv.initCustomEvent(this.event, true, true, 0);
+            this.element.dispatchEvent(customEv);
+        }
+    }
+
+    /**
+     * The Type for referencing the '$DomEventInstance' injectable as a dependency.
+     */
+    export function IDomEventInstance(): IDomEventInstance {
+        return new DomEvent();
+    }
+
+    register.injectable(__DomEventInstance, IDomEventInstance, null, __INSTANCE);
+
+    /**
+     * A specialized class for managing a single custom touch event in DomEvents.
+     */
+    class CustomDomEvent extends DomEvent {
+        count = 0;
+
+        constructor(element: Node, event: string);
+        constructor(element: Window, event: string);
+        constructor(element: any, event: string) {
+            super();
             this.element = element;
             this.event = event;
             this.count++;
@@ -1317,7 +1347,7 @@
             this.element.dispatchEvent(customEv);
         }
 
-        private __extendEventObject(customEv: IGestureEvent, ev: IPointerEvent) {
+        private __extendEventObject(customEv: IGestureEvent, ev: IPointerEvent): void {
             // not using extend function because this gets called so often for certain events.
             var pointerType = ev.pointerType;
 
@@ -1336,7 +1366,7 @@
             customEv.pageY = ev.pageY;
         }
 
-        private __convertPointerType(pointerType: any, eventType: string) {
+        private __convertPointerType(pointerType: any, eventType: string): string {
             switch (<any>pointerType) {
                 case MSPointerEvent.MSPOINTER_TYPE_MOUSE:
                     return 'mouse';
@@ -1350,14 +1380,19 @@
         }
     }
 
-    /**
-     * The Type for referencing the '$DomEventInstance' injectable as a dependency.
-     */
-    export function IDomEventInstance(): IDomEventInstance {
-        return new DomEvent();
-    }
+    interface ICustomDomEventInstance extends IDomEventInstance {
+        /**
+         * The number of events registered to this IDomEventInstance.
+         */
+        count: number;
 
-    register.injectable(__DomEventInstance, IDomEventInstance, null, __INSTANCE);
+        /**
+         * Triggers a custom event to bubble up to all elements in this branch of the DOM tree.
+         * 
+         * @param ev The event object used to extend the custom touch event.
+         */
+        trigger(ev: IPointerEvent): void;
+    }
 
     /**
      * Describes an object used for managing a single custom event.
@@ -1372,11 +1407,6 @@
          * The event type associated with this IDomEventInstance.
          */
         event: string;
-
-        /**
-         * The number of events registered to this IDomEventInstance.
-         */
-        count: number;
 
         /**
          * Initializes the element and event of the IDomEventInstance object
@@ -1396,9 +1426,9 @@
         /**
          * Triggers a custom event to bubble up to all elements in this branch of the DOM tree.
          * 
-         * @param ev The event object to pass in as the custom event object's detail property.
+         * @param eventExtension object containing properties to extend the custom DOM event.
          */
-        trigger(ev: IPointerEvent): void;
+        trigger(eventExtension?: Object): void;
     }
 
     /**
