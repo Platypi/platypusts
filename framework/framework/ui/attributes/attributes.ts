@@ -6,7 +6,7 @@ module plat.ui {
      * Attributes for this object are converted from dash-notation to camelCase notation.
      */
     export class Attributes implements IAttributesInstance {
-        private __listeners: IObject<Array<(newValue: any, oldValue: any) => void>> = {};
+        private __listeners: IObject<Array<(newValue: any, oldValue?: any) => void>> = {};
         private __control: IControl;
 
         initialize(control: IControl, attributes: IObject<string>): void {
@@ -24,7 +24,7 @@ module plat.ui {
             }
         }
 
-        observe(key: string, listener: (newValue: any, oldValue: any) => void): IRemoveListener {
+        observe(key: string, listener: (newValue: any, oldValue?: any) => void): IRemoveListener {
             var listeners = this.__listeners[camelCase(key)];
 
             if (isNull(listeners)) {
