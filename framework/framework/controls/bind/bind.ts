@@ -567,6 +567,13 @@ module plat.controls {
                 case 'select':
                     this.__initializeSelect();
                     break;
+                default:
+                    if (isNull(this.templateControl)) {
+                        return;
+                    }
+
+                    this._observeBindableProperty();
+                    break;
             }
         }
 
@@ -631,6 +638,24 @@ module plat.controls {
             this.__isSelf = true;
             context[property] = newValue;
             this.__isSelf = false;
+        }
+
+        /**
+         * Checks if the associated Template Control is a BindablePropertyControl and 
+         * initializes all listeners accordingly.
+         */
+        _observeBindableProperty() {
+            var templateControl = <ui.IBindablePropertyControl>this.templateControl;
+
+            if (isFunction(templateControl.observeProperty) &&
+                isFunction(templateControl.setProperty)) {
+                templateControl.observeProperty((newValue: any) => {
+                    this._getter = () => newValue;
+                    this._propertyChanged();
+                });
+
+                this._setter = templateControl.setProperty;
+            }
         }
 
         private __setValue(newValue: any): void {

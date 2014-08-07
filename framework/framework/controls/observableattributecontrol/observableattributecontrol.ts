@@ -24,7 +24,7 @@
          * The set of functions added by the Template Control that listens 
          * for property changes.
          */
-        _listeners: Array<(newValue: any, oldValue: any) => void> = [];
+        _listeners: Array<(newValue: any, oldValue?: any) => void> = [];
 
         /**
          * The function to stop listening for property changes.
@@ -87,7 +87,7 @@
          * @param value The new value of the evaluated expression.
          * @param oldValue The old value of the evaluated expression.
          */
-        _callListeners(newValue: any, oldValue: any): void {
+        _callListeners(newValue: any, oldValue?: any): void {
             var listeners = this._listeners,
                 length = listeners.length,
                 templateControl = this.templateControl;
@@ -102,13 +102,13 @@
          * 
          * @param listener The listener added by the Template Control.
          */
-        _addListener(listener: (newValue: any, oldValue: any) => void): IRemoveListener {
+        _addListener(listener: (newValue: any, oldValue?: any) => void): IRemoveListener {
             var listeners = this._listeners,
                 index = listeners.length;
 
             listeners.push(listener);
 
-            return function removeListener() {
+            return () => {
                 listeners.splice(index, 1);
             };
         }
