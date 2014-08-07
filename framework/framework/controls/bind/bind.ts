@@ -644,7 +644,7 @@ module plat.controls {
          * Checks if the associated Template Control is a BindablePropertyControl and 
          * initializes all listeners accordingly.
          */
-        _observeBindableProperty() {
+        _observeBindableProperty(): void {
             var templateControl = <ui.IBindablePropertyControl>this.templateControl;
 
             if (isFunction(templateControl.observeProperty) &&
@@ -654,8 +654,16 @@ module plat.controls {
                     this._propertyChanged();
                 });
 
-                this._setter = templateControl.setProperty;
+                this._setter = this.__setBindableProperty;
             }
+        }
+
+        private __setBindableProperty(newValue: any, oldValue?: any, firstTime?: boolean): void {
+            if (this.__isSelf) {
+                return;
+            }
+
+            (<ui.IBindablePropertyControl>this.templateControl).setProperty(newValue, oldValue, firstTime);
         }
 
         private __setValue(newValue: any): void {
