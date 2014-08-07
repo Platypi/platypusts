@@ -1,5 +1,5 @@
 /**
-* PlatypusTS v0.0.1.10 (http://getplatypi.com)
+* PlatypusTS v0.0.1.9 (http://getplatypi.com)
 * Copyright 2014 Platypi, LLC. All rights reserved.
 *
 * PlatypusTS is licensed under the GPL-3.0 found at
@@ -216,6 +216,7 @@ declare module plat {
             private static __wrap(value);
             private static __noop();
             private static __isInjector(dependency);
+            private static __findCircularReferences(injector);
             private __dependencies;
             /**
             * @param name The name of the injected type.
@@ -701,7 +702,7 @@ declare module plat {
         public noop(): void;
         public extend(destination: any, ...sources: any[]): any;
         public deepExtend(destination: any, ...sources: any[]): any;
-        public clone(obj: any, deep?: boolean): any;
+        public clone<T>(obj: T, deep?: boolean): T;
         public isObject(obj: any): boolean;
         public isWindow(obj: any): boolean;
         public isDocument(obj: any): boolean;
@@ -781,7 +782,7 @@ declare module plat {
         * @param obj The object to clone.
         * @param deep Whether or not it is a deep clone.
         */
-        clone(obj: any, deep?: boolean): any;
+        clone<T>(obj: T, deep?: boolean): T;
         /**
         * Takes in anything and determines if it is a type of Object.
         *
@@ -1869,7 +1870,7 @@ declare module plat {
             */
             constructor();
             public registerRoutes(type: string, routes: any[]): void;
-            public route(path: string, options?: IRouteNavigationOptions): void;
+            public route(path: string, options?: IRouteNavigationOptions): boolean;
             public goBack(length?: number): void;
             /**
             * Builds a valid route with a valid query string to use for navigation.
@@ -1956,7 +1957,7 @@ declare module plat {
             * @param path The route path to navigate to.
             * @param options The IRouteNavigationOptions included with this route.
             */
-            route(path: string, options?: IRouteNavigationOptions): void;
+            route(path: string, options?: IRouteNavigationOptions): boolean;
             /**
             * Navigates back in the history.
             *
@@ -3535,7 +3536,6 @@ declare module plat {
             * @param name The name of the event.
             * @param sender The object that initiated the event.
             * @param direction The event direction this object is using for propagation.
-            *
             *
             * @see EventManager
             */
@@ -5401,16 +5401,11 @@ declare module plat {
             public property: string;
         }
         class Visible extends SetAttributeControl {
-            private __initialDisplay;
-            /**
-            * Obtains the initial visibility of the item
-            * based on it's initial display.
-            */
+            public property: string;
             public initialize(): void;
-            /**
-            * Evaluates boolean expression and sets the display.
-            */
             public setter(): void;
+            private __hide();
+            private __show();
         }
         class Style extends SetAttributeControl {
             /**
@@ -9624,6 +9619,7 @@ declare module plat {
             public uid: string;
             public baseport: ui.controls.IBaseport;
             public currentState: IBaseNavigationState;
+            public navigating: boolean;
             /**
             * Define unique id and subscribe to the 'goBack' event
             */
@@ -9658,6 +9654,10 @@ declare module plat {
             * facilitate navigation.
             */
             baseport: ui.controls.IBaseport;
+            /**
+            * Set to true during navigate, set to false during navigated.
+            */
+            navigating: boolean;
             /**
             * Specifies the current state of navigation. This state should contain
             * enough information for it to be pushed onto the history stack when
@@ -10231,7 +10231,4 @@ declare module plat {
     interface IRemoveListener {
         (): void;
     }
-}
-declare module 'plat' {
-    export = plat;
 }

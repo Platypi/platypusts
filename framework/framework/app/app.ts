@@ -141,13 +141,13 @@ module plat {
             if (App.$Compat.platCss) {
                 return;
             } else if (!isNull($document.styleSheets) && $document.styleSheets.length > 0) {
-                (<CSSStyleSheet>$document.styleSheets[0]).insertRule('[plat-hide] { display: none; }', 0);
+                (<CSSStyleSheet>$document.styleSheets[0]).insertRule('[plat-hide] { display: none !important; }', 0);
                 return;
             }
 
             var style = <HTMLStyleElement>document.createElement('style');
 
-            style.textContent = '[plat-hide] { display: none; }';
+            style.textContent = '[plat-hide] { display: none !important; }';
             document.head.appendChild(style);
         }
 

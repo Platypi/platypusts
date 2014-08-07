@@ -66,6 +66,7 @@ module plat.storage {
         constructor(id: string, options?: ICacheOptions) {
             this.__id = id;
             this.__options = options;
+            this.__size = 0;
 
             if (isNull(options)) {
                 this.__options = {

@@ -2,6 +2,7 @@ module plat.controls {
     export class Bind extends AttributeControl {
         $Parser: expressions.IParser = acquire(__Parser);
         $ContextManagerStatic: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
+        $document: Document = acquire(__Document);
 
         /**
          * The priority of Bind is set high to take precede 
@@ -18,12 +19,12 @@ module plat.controls {
         /**
          * The function used to get the bound value.
          */
-        _getter: any;
+        _getter: () => any;
 
         /**
          * The function used to set the bound value.
          */
-        _setter: any;
+        _setter: (newValue: any, oldValue?: any, firstTime?: boolean) => void;
 
         /**
          * The event listener attached to this element.
@@ -160,7 +161,7 @@ module plat.controls {
             };
 
             this._postponedEventListener = () => {
-                if (!!timeout) {
+                if (isFunction(timeout)) {
                     return;
                 }
 
@@ -210,7 +211,7 @@ module plat.controls {
          */
         _addEventListener(event: string, listener?: () => void, postpone?: boolean): void {
             listener = listener ||
-                (!!postpone ? this._postponedEventListener : this._eventListener);
+                (postpone === true ? this._postponedEventListener : this._eventListener);
 
             this.addEventListener(this.element, event, listener, false);
         }
@@ -312,17 +313,22 @@ module plat.controls {
          * and input[type=button], and select
          * 
          * @param newValue The new value to set
+         * @param oldValue The previously bound value
+         * @param firstTime The context is being evaluated for the first time and 
+         * should thus change the property if null
          */
-        _setText(newValue: any): void {
+        _setText(newValue: any, oldValue?: any, firstTime?: boolean): void {
             if (this.__isSelf) {
                 return;
             }
 
             if (isNull(newValue)) {
-                var element = <HTMLInputElement>this.element;
-                if (isNull(element.value)) {
-                    newValue = '';
-                } else {
+                newValue = '';
+
+                if (firstTime === true) {
+                    if (isNull((<HTMLInputElement>this.element).value)) {
+                        this.__setValue(newValue);
+                    }
                     this._propertyChanged();
                     return;
                 }
@@ -335,17 +341,22 @@ module plat.controls {
          * Setter for input[type=range]
          * 
          * @param newValue The new value to set
+         * @param oldValue The previously bound value
+         * @param firstTime The context is being evaluated for the first time and 
+         * should thus change the property if null
          */
-        _setRange(newValue: any): void {
+        _setRange(newValue: any, oldValue?: any, firstTime?: boolean): void {
             if (this.__isSelf) {
                 return;
             }
 
             if (isEmpty(newValue)) {
-                var element = <HTMLInputElement>this.element;
-                if (isEmpty(element.value)) {
-                    newValue = 0;
-                } else {
+                newValue = 0;
+
+                if (firstTime === true) {
+                    if (isEmpty((<HTMLInputElement>this.element).value)) {
+                        this.__setValue(newValue);
+                    }
                     this._propertyChanged();
                     return;
                 }
@@ -355,60 +366,99 @@ module plat.controls {
         }
 
         /**
-         * Setter for input[type=checkbox] and input[type=radio]
+         * Setter for input[type=checkbox]
          * 
          * @param newValue The new value to set
+         * @param oldValue The previously bound value
+         * @param firstTime The context is being evaluated for the first time and 
+         * should thus change the property if null
          */
-        _setChecked(newValue: any): void {
+        _setChecked(newValue: any, oldValue?: any, firstTime?: boolean): void {
             if (this.__isSelf) {
                 return;
             } else if (!isBoolean(newValue)) {
-                this._propertyChanged();
-                return;
+                if (firstTime === true) {
+                    this._propertyChanged();
+                    return;
+                }
+                newValue = !!newValue;
             }
 
             (<HTMLInputElement>this.element).checked = newValue;
         }
 
         /**
-         * Setter for select
+         * Setter for input[type=radio]
          * 
          * @param newValue The new value to set
          */
-        _setSelectedIndex(newValue: any): void {
+        _setRadio(newValue: any): void {
+            var element = (<HTMLInputElement>this.element);
             if (this.__isSelf) {
+                return;
+            } else if (isNull(newValue) && element.checked) {
+                this._propertyChanged();
                 return;
             }
 
-            var element = <HTMLSelectElement>this.element;
+            element.checked = (element.value === newValue);
+        }
+
+        /**
+         * Setter for select
+         * 
+         * @param newValue The new value to set
+         * @param oldValue The previously bound value
+         * @param firstTime The context is being evaluated for the first time and 
+         * should thus change the property if null
+         */
+        _setSelectedIndex(newValue: any, oldValue?: any, firstTime?: boolean): void {
+            if (this.__isSelf) {
+                return;
+            } else if (firstTime === true && this.__checkAsynchronousSelect()) {
+                if (isNull(newValue)) {
+                    this._propertyChanged();
+                }
+                return;
+            }
+
+            var element = <HTMLSelectElement>this.element,
+                value = element.value;
             if (isNull(newValue)) {
-                if (isEmpty(element.value)) {
-                    element.selectedIndex = -1;
+                if (firstTime === true || !this.$document.body.contains(element)) {
+                    this._propertyChanged();
+                    return;
+                }
+                element.selectedIndex = -1;
+                return;
+            } else if (!isString(newValue)) {
+                var Exception: IExceptionStatic = acquire(__ExceptionStatic),
+                    message: string;
+                if (isNumber(newValue)) {
+                    newValue = newValue.toString();
+                    message = 'Trying to bind a value of type number to a select element. ' +
+                        'The value will implicitly be converted to type string.';
+                } else {
+                    message = 'Trying to bind a value that is not a string to a select element. ' +
+                        'The element\'s selected index will be set to -1.';
                 }
 
-                this._propertyChanged();
+                Exception.warn(message, Exception.BIND);
+            } else if (value === newValue) {
                 return;
-            } else if (element.value === newValue) {
-                return;
-            } else if (newValue === '') {
-                element.selectedIndex = -1;
+            } else if (!this.$document.body.contains(element)) {
+                element.value = newValue;
+                if (element.value !== newValue) {
+                    element.value = value;
+                    this._propertyChanged();
+                }
                 return;
             }
 
             element.value = newValue;
             // check to make sure the user changed to a valid value
-            if (element.value !== newValue) {
-                var select = <ui.controls.Select>this.templateControl;
-                if (!isNull(select) && select.type === __Select && isPromise(select.itemsLoaded)) {
-                    select.itemsLoaded.then(() => {
-                        element.value = newValue;
-
-                        if (element.value !== newValue) {
-                            element.selectedIndex = -1;
-                        }
-                    });
-                }
-
+            // second boolean argument is an ie fix for inconsistency
+            if (element.value !== newValue || element.selectedIndex === -1) {
                 element.selectedIndex = -1;
             }
         }
@@ -417,22 +467,30 @@ module plat.controls {
          * Setter for select-multiple
          * 
          * @param newValue The new value to set
+         * @param oldValue The previously bound value
+         * @param firstTime The context is being evaluated for the first time and 
+         * should thus change the property if null
          */
-        _setSelectedIndices(newValue: any): void {
+        _setSelectedIndices(newValue: any, oldValue?: any, firstTime?: boolean): void {
             if (this.__isSelf) {
+                return;
+            } else if (firstTime === true && this.__checkAsynchronousSelect()) {
                 return;
             }
 
             var options = (<HTMLSelectElement>this.element).options,
-                length = options.length,
-                option: HTMLOptionElement;
+                length = isNull(options) ? 0 : options.length,
+                option: HTMLOptionElement,
+                nullValue = isNull(newValue);
 
-            if (isNull(newValue) || !isArray(newValue)) {
+            if (nullValue || !isArray(newValue)) {
+                if (firstTime === true) {
+                    this._propertyChanged();
+                }
                 // unselects the options unless a match is found
                 while (length-- > 0) {
                     option = options[length];
-                    // purposely doing a soft equality match
-                    if (option.value === '' + newValue) {
+                    if (!nullValue && option.value === '' + newValue) {
                         option.selected = true;
                         return;
                     }
@@ -482,10 +540,12 @@ module plat.controls {
                             this._setter = this._setText;
                             break;
                         case 'checkbox':
-                        case 'radio':
                             this._addEventType = this._addChangeEventListener;
                             this._getter = this._getChecked;
                             this._setter = this._setChecked;
+                            break;
+                        case 'radio':
+                            this.__initializeRadio();
                             break;
                         case 'range':
                             this._addEventType = this._addChangeEventListener;
@@ -505,26 +565,14 @@ module plat.controls {
                     }
                     break;
                 case 'select':
-                    var multiple = (<HTMLSelectElement>element).multiple,
-                        options = (<HTMLSelectElement>element).options,
-                        length = options.length,
-                        option: HTMLSelectElement;
-
-                    this._addEventType = this._addChangeEventListener;
-                    if (multiple) {
-                        this._getter = this._getSelectedValues;
-                        this._setter = this._setSelectedIndices;
-                    } else {
-                        this._getter = this._getValue;
-                        this._setter = this._setSelectedIndex;
+                    this.__initializeSelect();
+                    break;
+                default:
+                    if (isNull(this.templateControl)) {
+                        return;
                     }
 
-                    for (var i = 0; i < length; ++i) {
-                        option = options[i];
-                        if (!option.hasAttribute('value')) {
-                            option.setAttribute('value', option.textContent);
-                        }
-                    }
+                    this._observeBindableProperty();
                     break;
             }
         }
@@ -536,27 +584,36 @@ module plat.controls {
             var contextExpression = this._contextExpression,
                 context = this.evaluateExpression(contextExpression);
 
-            if (isNull(context) && contextExpression.identifiers.length > 0) {
-                context = this.$ContextManagerStatic.createContext(this.parent,
-                    contextExpression.identifiers[0]);
+            if (!isObject(context)) {
+                if (isNull(context) && contextExpression.identifiers.length > 0) {
+                    context = this.$ContextManagerStatic.createContext(this.parent,
+                        contextExpression.identifiers[0]);
+                } else {
+                    var Exception: IExceptionStatic = acquire(__ExceptionStatic);
+                    Exception.warn('plat-bind is trying to index into a primitive type. ' +
+                        this._contextExpression.expression + ' is already defined and not ' +
+                        'an object when trying to evaluate plat-bind="' +
+                        this._expression.expression + '"', Exception.BIND);
+                }
             }
 
+            var property: string;
             if (!isFunction(this._setter)) {
                 return;
             } else if (this._setter === this._setSelectedIndices) {
-                var property = this._property;
+                property = this._property;
                 if (isNull(context[property])) {
                     context[property] = [];
                 }
                 this.observeArray(context, property, (arrayInfo: observable.IArrayMethodInfo<string>) => {
-                    this._setter(arrayInfo.newArray);
+                    this._setter(arrayInfo.newArray, arrayInfo.oldArray, true);
                 });
             }
 
             var expression = this._expression;
 
             this.observeExpression(expression, this._setter);
-            this._setter(this.evaluateExpression(expression));
+            this._setter(this.evaluateExpression(expression), undefined, true);
         }
 
         /**
@@ -583,6 +640,32 @@ module plat.controls {
             this.__isSelf = false;
         }
 
+        /**
+         * Checks if the associated Template Control is a BindablePropertyControl and 
+         * initializes all listeners accordingly.
+         */
+        _observeBindableProperty(): void {
+            var templateControl = <ui.IBindablePropertyControl>this.templateControl;
+
+            if (isFunction(templateControl.observeProperty) &&
+                isFunction(templateControl.setProperty)) {
+                templateControl.observeProperty((newValue: any) => {
+                    this._getter = () => newValue;
+                    this._propertyChanged();
+                });
+
+                this._setter = this.__setBindableProperty;
+            }
+        }
+
+        private __setBindableProperty(newValue: any, oldValue?: any, firstTime?: boolean): void {
+            if (this.__isSelf) {
+                return;
+            }
+
+            (<ui.IBindablePropertyControl>this.templateControl).setProperty(newValue, oldValue, firstTime);
+        }
+
         private __setValue(newValue: any): void {
             var element = <HTMLInputElement>this.element;
             if (element.value === newValue) {
@@ -590,6 +673,74 @@ module plat.controls {
             }
 
             element.value = newValue;
+        }
+
+        private __initializeRadio() {
+            var element = this.element;
+
+            this._addEventType = this._addChangeEventListener;
+            this._getter = this._getValue;
+            this._setter = this._setRadio;
+
+            if (!element.hasAttribute('name')) {
+                var attr = camelCase(this.type),
+                    expression = (<any>this.attributes)[attr];
+
+                element.setAttribute('name', expression);
+            }
+
+            if (element.hasAttribute('value')) {
+                return;
+            }
+
+            element.setAttribute('value', '');
+        }
+
+        private __initializeSelect() {
+            var element = <HTMLSelectElement>this.element,
+                multiple = element.multiple,
+                options = element.options,
+                length = options.length,
+                option: HTMLSelectElement;
+
+            this._addEventType = this._addChangeEventListener;
+            if (multiple) {
+                this._getter = this._getSelectedValues;
+                this._setter = this._setSelectedIndices;
+            } else {
+                this._getter = this._getValue;
+                this._setter = this._setSelectedIndex;
+            }
+
+            for (var i = 0; i < length; ++i) {
+                option = options[i];
+                if (!option.hasAttribute('value')) {
+                    option.setAttribute('value', option.textContent);
+                }
+            }
+        }
+
+        private __checkAsynchronousSelect(): boolean {
+            var select = <ui.controls.Select>this.templateControl;
+            if (!isNull(select) && (select.type === __Select || select.type === __ForEach) && isPromise(select.itemsLoaded)) {
+                var split = select.absoluteContextPath.split('.'),
+                    key = split.pop();
+
+                this.observeArray(this.$ContextManagerStatic.getContext(this.parent, split), key,
+                    (ev: observable.IArrayMethodInfo<any>) => {
+                        select.itemsLoaded.then(() => {
+                            this._setter(this.evaluateExpression(this._expression));
+                        });
+                    });
+
+                select.itemsLoaded.then(() => {
+                    this._setter(this.evaluateExpression(this._expression));
+                });
+
+                return true;
+            }
+
+            return false;
         }
     }
 

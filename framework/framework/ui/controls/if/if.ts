@@ -21,11 +21,12 @@ module plat.ui.controls {
         private __removeListener: IRemoveListener;
         private __leaveAnimation: IAnimationThenable<void>;
         private __enterAnimation: IAnimationThenable<void>;
+        private __firstTime: boolean = true;
 
         constructor() {
             super();
             var $document: Document = acquire(__Document);
-            this.commentNode = $document.createComment('plat-if-@placeholder');
+            this.commentNode = $document.createComment('plat-if' + __BOUND_PREFIX + 'placeholder');
             this.fragmentStore = $document.createDocumentFragment();
         }
 
@@ -62,6 +63,7 @@ module plat.ui.controls {
             }
 
             this.contextChanged();
+            this.__firstTime = false;
             this.__removeListener = this.options.observe(this._setter);
         }
 
@@ -136,6 +138,13 @@ module plat.ui.controls {
          */
         _removeItem(): void {
             var element = this.element;
+
+            if (this.__firstTime) {
+                element.parentNode.insertBefore(this.commentNode, element);
+                insertBefore(this.fragmentStore, element);
+                return;
+            }
+
             this.__leaveAnimation = this.$Animator.animate(element, __Leave).then(() => {
                 this.__leaveAnimation = null;
                 element.parentNode.insertBefore(this.commentNode, element);

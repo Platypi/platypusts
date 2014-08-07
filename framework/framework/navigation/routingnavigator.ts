@@ -75,16 +75,22 @@
         _onRouteChanged(ev: events.INavigationEvent<web.IRoute<any>>): void {
             var state = this.currentState || <IRouteNavigationState>{},
                 viewControl = state.control,
-                injector = ev.target;
+                injector = ev.target,
+                baseport = this.baseport;
 
             if (isNull(injector)) {
                 return;
             }
 
             this.__historyLength++;
-            this.baseport.navigateFrom(viewControl).then(() => {
+            baseport.navigateFrom(viewControl).then(() => {
                 this.$BaseViewControlFactory.dispose(viewControl);
-                this.baseport.navigateTo(ev);
+                baseport.navigateTo(ev);
+            }).catch((error) => {
+                postpone(() => {
+                    var Exception: IExceptionStatic = acquire(__ExceptionStatic);
+                    Exception.fatal(error, Exception.NAVIGATION);
+                });
             });
         }
     }

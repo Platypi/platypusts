@@ -1,1 +1,8 @@
-﻿<plat-select plat-context="names" plat-bind="selected" plat-options="{ value: 'name' }"></plat-select>
+﻿<form plat-submit="foo">
+    <input plat-name="text" type="text" plat-bind="text" />
+    <input plat-name="password" type="password" plat-bind="password" />
+    <button type="submit">tap</button>
+</form>
+<br />
+<br />
+<button plat-tap="foo">pseudo</button>

@@ -127,5 +127,9 @@ var __AppStatic = '$AppStatic',
     __FACTORY = 'factory',
     __CLASS = 'class',
     __CSS = 'css',
+    __COMPILED = '-compiled',
+    __BOUND_PREFIX = '-@',
+    __START_NODE = ': start node',
+    __END_NODE = ': end node',
     __JS = 'js';
 /* tslint:enable:no-unused-variable */

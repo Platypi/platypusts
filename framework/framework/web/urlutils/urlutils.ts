@@ -7,19 +7,18 @@
         private static __urlUtilsElement: HTMLAnchorElement;
         private static __getQuery(search: string): IObject<string> {
             if (isEmpty(search)) {
-                return <IObject<string>>{};
+                return;
             }
 
             var split = search.split('&'),
                 query: IObject<string> = {},
                 length = split.length,
-                item: Array<string>,
-                define = (<observable.IContextManagerStatic>acquire(__ContextManagerStatic)).defineGetter;
+                item: Array<string>;
 
             for (var i = 0; i < length; ++i) {
                 item = split[i].split('=');
 
-                define(query, item[0], item[1]);
+                query[item[0]] = item[1];
             }
 
             return query;

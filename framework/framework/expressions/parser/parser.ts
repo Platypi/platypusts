@@ -18,6 +18,7 @@ module plat.expressions {
 
         parse(input: string): IParsedExpression {
             var parsedObject = this.__cache[input];
+            
             if (!isNull(parsedObject)) {
                 return parsedObject;
             }
@@ -343,7 +344,8 @@ module plat.expressions {
                 identifiers = this.__identifiers,
                 tempIdentifiers = this.__tempIdentifiers,
                 codeArray = this.__codeArray,
-                nextChar = this._peek(index);
+                nextChar = this._peek(index),
+                lastIndex: number;
 
             if (this._isValEqual(nextChar, '()')) {
                 return true;
@@ -353,23 +355,38 @@ module plat.expressions {
                 previousToken = tokens[index - 1],
                 identifierIndexer = tempIdentifiers.pop(),
                 hasIdentifierIndexer = !isNull(identifierIndexer),
-                context = codeArray.pop();
+                context = codeArray.pop(),
+                token = tokens[index];
             
             if (hasIdentifierIndexer && identifierIndexer[0] === '@') {
                 codeStr = '(' + this.__indexIntoContext.toString() + ')(' + context + ',' + codeStr + ')';
                 identifiers.push(identifierIndexer);
+                if (tempIdentifiers.length > 0) {
+                    identifiers.push(tempIdentifiers.pop());
+                }
             } else if (this._isValEqual(previousToken, '++--()[]*/%?:>=<=&&||!===')) {
                 codeStr = '(' + this.__indexIntoContext.toString() + ')(' + context + ',' + codeStr + ')';
                 tempIdentifiers.push('.');
+            } else if (previousToken.args < 0 && this._isValEqual(token, '[]')) {
+                codeStr = '(' + this.__indexIntoContext.toString() + ')(' + context + ',' + codeStr + ')';
+
+                lastIndex = tempIdentifiers.length - 1;
+                if (lastIndex >= 0) {
+                    if (tempIdentifiers[lastIndex] !== '.') {
+                        identifiers.push(tempIdentifiers.pop());
+                    }
+                }
+
+                identifiers.push(identifierIndexer);
             } else {
                 codeStr = '(' + this.__indexIntoContext.toString() + ')(' + context + ',"' + codeStr + '")';
 
-                var lastIndex = tempIdentifiers.length - 1;
+                lastIndex = tempIdentifiers.length - 1;
                 if (lastIndex >= 0) {
                     if (tempIdentifiers[lastIndex] !== '.') {
                         tempIdentifiers[lastIndex] += '.' + identifierIndexer;
                     }
-                } else if (hasIdentifierIndexer && identifierIndexer !== '.') {
+                } else if (hasIdentifierIndexer && identifierIndexer !== '.' && this._isValUnequal(token, '.')) {
                     identifiers.push(identifierIndexer);
                 }
             }
@@ -455,13 +472,13 @@ module plat.expressions {
             } else if (context !== null && typeof context === 'object') {
                 return context[token];
             }
-            return context === null ? null : undefined;
+            return undefined;
         }
         private __indexIntoContext(context: any, token: string, undefined?: any): any {
             if (context !== null && typeof context === 'object') {
                 return context[token];
             }
-            return context === null ? null : undefined;
+            return undefined;
         }
 
         // protected helper functions
@@ -517,8 +534,10 @@ module plat.expressions {
          * @param char The char to compare with
          */
         _isValEqual(obj: any, char: string): boolean {
-            if (isNull(obj)) {
+            if (isNull(obj) || isNull(obj.val)) {
                 return isNull(char);
+            } else if (obj.val === '') {
+                return char === '';
             }
             return char.indexOf(obj.val) !== -1;
         }
@@ -530,8 +549,10 @@ module plat.expressions {
          * @param char The char to compare with
          */
         _isValUnequal(obj: any, char: string): boolean {
-            if (isNull(obj)) {
+            if (isNull(obj) || isNull(obj.val)) {
                 return !isNull(char);
+            } else if (obj.val === '') {
+                return char !== '';
             }
             return char.indexOf(obj.val) === -1;
         }

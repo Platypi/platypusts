@@ -158,7 +158,12 @@ $RECYCLE.BIN/
 # TypeScript compiled files
 *.js
 *.js.map
-typings/*
 
-# Framework CSS
-*framework*.css
+/framework/testing/coverage
+/framework/testing/node_modules
+/framework/testing/reporter
+/framework/testing/typings
+/framework/framework/*
+
+!*.less
+!*.ts

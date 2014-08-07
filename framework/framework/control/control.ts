@@ -51,6 +51,23 @@ module plat {
                 return;
             }
 
+            var ctrl = <ui.ITemplateControl>control;
+            if (isString(ctrl.absoluteContextPath) && isFunction(ctrl.contextChanged)) {
+                var contextManager = Control.$ContextManagerStatic.getManager(ctrl.root);
+
+                contextManager.observe(ctrl.absoluteContextPath, {
+                    uid: control.uid,
+                    listener: (newValue, oldValue) => {
+                        ui.TemplateControl.contextChanged(control, newValue, oldValue);
+                    }
+                });
+
+                if (isFunction((<any>ctrl).zCC__plat)) {
+                    (<any>ctrl).zCC__plat();
+                    deleteProperty(ctrl, 'zCC__plat');
+                }
+            }
+
             if (isFunction(control.loaded)) {
                 control.loaded();
             }
@@ -82,7 +99,7 @@ module plat {
             Control.removeEventListeners(control);
             Control.$ContextManagerStatic.dispose(control);
             control.dispose();
-
+            control.element = null;
             Control.removeParent(control);
         }
 
@@ -446,18 +463,18 @@ module plat {
                 return noop;
             }
 
-            var control = isFunction((<ui.ITemplateControl>(<any>this)).getAbsoluteIdentifier) ? this : <IControl>this.parent;
+            var control = isFunction((<ui.ITemplateControl>this).getAbsoluteIdentifier) ? this : <IControl>this.parent;
 
-            if (isNull(control) || !isFunction((<ui.ITemplateControl>(<any>control)).getAbsoluteIdentifier)) {
+            if (isNull(control) || !isFunction((<ui.ITemplateControl>control).getAbsoluteIdentifier)) {
                 return noop;
             }
 
-            var absoluteIdentifier = (<ui.ITemplateControl>(<any>control)).getAbsoluteIdentifier(context),
+            var absoluteIdentifier = (<ui.ITemplateControl>control).getAbsoluteIdentifier(context),
                 ContextManager = Control.$ContextManagerStatic;
 
             if (isNull(absoluteIdentifier)) {
                 if (property === 'context') {
-                    absoluteIdentifier = (<ui.ITemplateControl>(<any>control)).absoluteContextPath;
+                    absoluteIdentifier = (<ui.ITemplateControl>control).absoluteContextPath;
                 } else {
                     return noop;
                 }
@@ -470,11 +487,11 @@ module plat {
                 removeCallback = contextManager.observe(absoluteIdentifier, {
                     listener: (newValue: Array<any>, oldValue: Array<any>) => {
                         removeListener();
-                        removeListener = contextManager.observeArray(this.uid, callback, absoluteIdentifier, newValue, oldValue);
+                        removeListener = contextManager.observeArray(uid, callback, absoluteIdentifier, newValue, oldValue);
                     },
                     uid: uid
                 }),
-                removeListener = contextManager.observeArray(this.uid, callback, absoluteIdentifier, array, null);
+                removeListener = contextManager.observeArray(uid, callback, absoluteIdentifier, array, null);
 
             // need to call callback if 
             return () => {

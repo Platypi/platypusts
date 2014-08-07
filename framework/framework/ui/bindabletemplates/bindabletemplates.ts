@@ -151,12 +151,24 @@ module plat.ui {
         _bindTemplate(key: string, template: DocumentFragment, context: string,
             resources: IObject<IResource>): async.IThenable<DocumentFragment> {
             var control = this._createBoundControl(key, template, context, resources),
-                nodeMap = this._createNodeMap(control, template, context);
+                nodeMap = this._createNodeMap(control, template, context),
+                disposed = false,
+                dispose = control.dispose;
+
+            control.dispose = () => {
+                disposed = true;
+                dispose.call(control);
+                control.dispose = dispose;
+            };
 
             return this._bindNodeMap(nodeMap, key).then(() => {
-                control.startNode = template.insertBefore(this.$Document.createComment(control.type + ': start node'),
+                var $document = this.$Document;
+                if (disposed) {
+                    return $document.createDocumentFragment();
+                }
+                control.startNode = template.insertBefore($document.createComment(control.type + __START_NODE),
                     template.firstChild);
-                control.endNode = template.insertBefore(this.$Document.createComment(control.type + ': end node'),
+                control.endNode = template.insertBefore($document.createComment(control.type + __END_NODE),
                     null);
 
                 return template;
@@ -191,7 +203,7 @@ module plat.ui {
          * the compilation of the template.
          */
         _compile(key: string, template: DocumentFragment): void {
-            var control = this._createBoundControl(key, template),
+            var control = this._createBoundControl(key + __COMPILED, template),
                 nodeMap = this._createNodeMap(control, template);
 
             this.__compiledControls.push(control);
@@ -222,8 +234,8 @@ module plat.ui {
 
                 var clone = <DocumentFragment>nodeMap.element.cloneNode(true);
 
-                startNode = control.startNode = this.$Document.createComment(control.type + ': start node');
-                endNode = control.endNode = this.$Document.createComment(control.type + ': end node');
+                startNode = control.startNode = this.$Document.createComment(control.type + __START_NODE);
+                endNode = control.endNode = this.$Document.createComment(control.type + __END_NODE);
                 element.insertBefore(startNode, element.firstChild);
                 element.insertBefore(endNode, null);
 
@@ -257,13 +269,7 @@ module plat.ui {
             var $TemplateControlFactory = this.$TemplateControlFactory,
                 control = $TemplateControlFactory.getInstance(),
                 $ResourcesFactory = this.$ResourcesFactory,
-                parent = this.control,
-                hasRelativeIdentifier = !isEmpty(relativeIdentifier),
-                absoluteContextPath: string = hasRelativeIdentifier ?
-                parent.absoluteContextPath + '.' + relativeIdentifier :
-                absoluteContextPath = parent.absoluteContextPath;
-
-            $TemplateControlFactory.setAbsoluteContextPath(control, absoluteContextPath);
+                parent = this.control;
 
             var _resources = $ResourcesFactory.getInstance();
 
@@ -275,7 +281,7 @@ module plat.ui {
             control.parent = parent;
             control.controls = [];
             control.element = <HTMLElement>template;
-            control.type = this.control.type + '-@' + key;
+            control.type = parent.type + __BOUND_PREFIX + key;
 
             return control;
         }

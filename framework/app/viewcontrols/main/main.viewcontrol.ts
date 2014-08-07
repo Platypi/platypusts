@@ -3,25 +3,31 @@ module app {
         title = 'Main';
         templateUrl = 'viewcontrols/main/main.viewcontrol.html';
         context = {
-            names: [
-                { name: 'Matt' },
-                { name: 'M@' },
-                { name: 'Darion' },
-                { name: 'Jonathan' },
-                { name: 'Paul' },
-                { name: 'Will' }
-            ],
-            selected: 'M@'
+            text: <string>null,
+            password: <string>null
         };
+
+        text: plat.controls.INamedElement<HTMLElement, void>;
+        password: plat.controls.INamedElement<HTMLElement, void>;
+
         navigatedTo(route: plat.web.IRoute<any>) {
-            console.log((<any>Object).observe);
             if (route.path.length === 0) {
                 return;
             }
 
             this.title = route.path.replace(/\//g, ' ');
         }
+
+        loaded() {
+        }
+
+        foo() {
+            var context = this.context;
+            console.log(context.text);
+            console.log(context.password);
+            console.log('');
+        }
     }
 
-    plat.register.viewControl('viewcontrol', MainViewControl, ['foo'], ['']);
+    plat.register.viewControl('viewcontrol', MainViewControl, null, ['']);
 }

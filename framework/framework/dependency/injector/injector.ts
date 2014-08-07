@@ -33,22 +33,28 @@ module plat.dependency {
             }
 
             var deps: Array<IInjector<any>> = [],
-                length = dependencies.length,
-                dependency: any;
+                length = dependencies.length;
 
             for (var i = 0; i < length; ++i) {
-                dependency = dependencies[i];
-                if (isNull(dependency) || dependency === 'noop') {
-                    deps.push(Injector.__noop());
-                    continue;
-                } else if (Injector.__isInjector(dependency)) {
-                    return dependencies;
-                }
-
-                deps.push(Injector.__locateInjector(dependency));
+                deps.push(Injector.getDependency(dependencies[i]));
             }
 
             return deps;
+        }
+
+        /**
+         * Finds and returns the dependency.
+         * 
+         * @param dependency an object/string used to find the dependency.
+         */
+        static getDependency(dependency: any): IInjector<any> {
+            if (isNull(dependency) || dependency === 'noop') {
+                return Injector.__noop();
+            } else if (Injector.isInjector(dependency)) {
+                return dependency;
+            }
+
+            return Injector.__locateInjector(dependency);
         }
 
         /**
@@ -82,6 +88,18 @@ module plat.dependency {
             }
 
             return deps;
+        }
+
+        /**
+         * Checks if the object being passed in fulfills the requirements for being an Injector.
+         * 
+         * @param dependency The object to check.
+         */
+        static isInjector(dependency: Injector<any>): boolean {
+            return isFunction(dependency.inject) &&
+                !isUndefined(dependency.type) &&
+                !isUndefined(dependency.name) &&
+                !isUndefined(dependency.Constructor);
         }
 
         private static __getInjectorName(dependency: any): string {
@@ -176,13 +194,6 @@ module plat.dependency {
             };
         }
 
-        private static __isInjector(dependency: Injector<any>): boolean {
-            return isFunction(dependency.inject) &&
-                !isUndefined(dependency.type) &&
-                !isUndefined(dependency.name) &&
-                !isUndefined(dependency.Constructor);
-        }
-
         private static __findCircularReferences(injector: Injector<any>) {
             if (!(isObject(injector) && isArray(injector.__dependencies))) {
                 return;
@@ -229,7 +240,7 @@ module plat.dependency {
             }
         }
 
-        private __dependencies: Array<any>;
+        private __dependencies: Array<string>;
 
         /**
          * @param name The name of the injected type.
@@ -240,7 +251,7 @@ module plat.dependency {
          * @param type The type of injector, used for injectables specifying a injectableType of 
          * STATIC, SINGLETON, FACTORY, INSTANCE, or CLASS. The default is SINGLETON.
          */
-        constructor(public name: string, public Constructor: new () => T, dependencies?: Array<any>, public type?: string) {
+        constructor(public name: string, public Constructor: new () => T, dependencies?: Array<any>, public type: string = null) {
             var deps = this.__dependencies = Injector.convertDependencies(dependencies),
                 index = deps.indexOf('noop'),
                 circularReference: string;
@@ -248,7 +259,7 @@ module plat.dependency {
             if (index > -1) {
                 var dependency = dependencies[index];
 
-                if(isNull(dependency)) {
+                if (isNull(dependency)) {
                     throw new TypeError('The dependency for ' +
                         name + ' at index ' +
                         index + ' is undefined, did you forgot to include a file?');
@@ -284,14 +295,14 @@ module plat.dependency {
             var toInject: any = [],
                 type = this.type;
 
-            this.__dependencies = Injector.getDependencies(this.__dependencies);
-
-            var dependencies: Array<IInjector<any>> = this.__dependencies || [],
+            var dependencies = this.__dependencies,
                 length = dependencies.length,
+                dependency: IInjector<any>,
                 injectable: any;
 
             for (var i = 0; i < length; ++i) {
-                toInject.push(dependencies[i].inject());
+                dependency = Injector.getDependency(dependencies[i]);
+                toInject.push(dependency.inject());
             }
 
             injectable = <T>Injector.__construct(this.Constructor, toInject, type);

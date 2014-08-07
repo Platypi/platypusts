@@ -1,12 +1,5 @@
 module plat.controls {
     export class Name extends AttributeControl {
-        $ContextManagerStatic: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
-
-        /**
-         * The root control that will have the INamedElement set as a property.
-         */
-        _rootControl: ui.ITemplateControl;
-
         /**
          * The property name on the root control to set as the INamedElement.
          */
@@ -20,38 +13,69 @@ module plat.controls {
             var attr = camelCase(this.type),
                 name = (<any>this.attributes)[attr];
 
-            if (isEmpty(name)) {
+            if (isEmpty(name) || this._isPrecompiled()) {
                 return;
             }
 
             this._label = name;
-
-            var templateControl = this.templateControl,
-                rootControl = this._rootControl = Control.getRootControl(this.parent),
-                define = this.$ContextManagerStatic.defineGetter;
-
-            if (!isNull(templateControl)) {
-                define(templateControl, 'name', name, true, true);
-            }
-
-            if (!isNull(rootControl)) {
-                define(rootControl, name, {
-                    element: this.element,
-                    control: templateControl
-                }, true, true);
-            }
+            this._define(name);
         }
 
         /**
          * Removes the INamedElement from the root control.
          */
         dispose(): void {
-            var rootControl = this._rootControl,
-                name = this._label;
+            var name = this._label,
+                control: any = this.parent;
 
-            if (!isNull(rootControl)) {
-                deleteProperty(rootControl, name);
+            while (!isUndefined(name) && isObject(control)) {
+                if (isObject(control[name]) &&
+                    isNode(control[name].element) &&
+                    control[name].element === this.element) {
+                    deleteProperty(control, name);
+                }
+
+                control = control.parent;
             }
+        }
+
+        /**
+         * Defines an INamedElement on every control up the control tree.
+         */
+        _define(name: string) {
+            var templateControl = this.templateControl;
+
+            if (!isNull(templateControl)) {
+                templateControl.name = name;
+            }
+
+            var control: any = this.parent,
+                namedElement = {
+                    element: this.element,
+                    control: templateControl
+                };
+
+            while (isObject(control)) {
+                var obj = control[name];
+
+                if (!isObject(obj)) {
+                    control[name] = namedElement;
+                }
+
+                control = control.parent;
+            }
+        }
+
+        _isPrecompiled() {
+            var control = this.parent;
+
+            while (!isNull(control)) {
+                if (control.type.indexOf(__COMPILED) !== -1) {
+                    return true;
+                }
+                control = control.parent;
+            }
+            return false;
         }
     }
 

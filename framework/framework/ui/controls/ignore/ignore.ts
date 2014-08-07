@@ -4,7 +4,7 @@ module plat.ui.controls {
          * Removes the innerHTML from the DOM and saves it.
          */
         setTemplate(): void {
-            this.innerTemplate = <DocumentFragment>this.dom.appendChildren(this.element.childNodes);
+            this.innerTemplate = this.dom.appendChildren(this.element.childNodes);
         }
 
         /**

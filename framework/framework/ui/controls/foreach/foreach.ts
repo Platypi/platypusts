@@ -9,6 +9,11 @@ module plat.ui.controls {
         context: Array<any>;
 
         /**
+         * This control needs to load before plat-bind.
+         */
+        priority = 120;
+
+        /**
          * The child controls
          */
         controls: Array<ITemplateControl>;
@@ -16,7 +21,7 @@ module plat.ui.controls {
         /**
          * Will fulfill whenever all items are loaded.
          */
-        itemsLoaded: async.IThenable<Array<void>>;
+        itemsLoaded: async.IThenable<void>;
 
         /**
          * The node length of the element's childNodes (innerHTML)
@@ -25,6 +30,14 @@ module plat.ui.controls {
 
         private __removeListener: IRemoveListener;
         private __currentAnimations: Array<IAnimationThenable<void>> = [];
+        private __resolveFn: () => void;
+
+        constructor() {
+            super();
+            this.itemsLoaded = new this.$Promise<void>((resolve) => {
+                this.__resolveFn = resolve;
+            });
+        }
 
         /**
          * Creates a bindable template with the element's childNodes (innerHTML) 
@@ -32,7 +45,6 @@ module plat.ui.controls {
          */
         setTemplate(): void {
             var childNodes: Array<Node> = Array.prototype.slice.call(this.element.childNodes);
-            this._blockLength = childNodes.length + 2;
             this.bindableTemplates.add('item', childNodes);
         }
 
@@ -89,6 +101,8 @@ module plat.ui.controls {
                 this.__removeListener();
                 this.__removeListener = null;
             }
+
+            this.__resolveFn = null;
         }
         
         /**
@@ -98,19 +112,31 @@ module plat.ui.controls {
          * @param animate Whether to animate the entering item
          */
         _addItem(item: DocumentFragment, animate?: boolean): void {
-            if (!isNode(item)) {
+            if (!isNode(item) ||
+                !isArray(this.context) ||
+                this.context.length === 0 ||
+                this.controls.length === 0) {
                 return;
             }
 
             var $animator = this.$Animator,
-                childNodes: Array<Element> = animate === true ? Array.prototype.slice.call(item.childNodes) : null,
+                childNodes: Array<Element>,
                 childNode: Element;
 
-            this.dom.insertBefore(this.element, item);
-
-            if (!animate) {
+            if (animate === true) {
+                childNodes = Array.prototype.slice.call(item.childNodes);
+                if (this._blockLength === 0) {
+                    this._blockLength = childNodes.length;
+                }
+            } else {
+                if (this._blockLength === 0) {
+                    this._blockLength = item.childNodes.length;
+                }
+                this.dom.insertBefore(this.element, item);
                 return;
             }
+
+            this.dom.insertBefore(this.element, item);
 
             var currentAnimations = this.__currentAnimations;
             while (childNodes.length > 0) {
@@ -181,7 +207,7 @@ module plat.ui.controls {
          * @param index The point in the array to start adding items.
          * @param animate whether to animate the new items
          */
-        _addItems(numberOfItems: number, index: number, animate?: boolean): async.IThenable<Array<void>> {
+        _addItems(numberOfItems: number, index: number, animate?: boolean): async.IThenable<void> {
             var bindableTemplates = this.bindableTemplates,
                 promises: Array<async.IThenable<void>> = [];
             
@@ -196,7 +222,24 @@ module plat.ui.controls {
                 }));
             }
 
-            this.itemsLoaded = this.$Promise.all(promises);
+            if (promises.length > 0) {
+                this.itemsLoaded = this.$Promise.all(promises).then<void>(() => {
+                    if (isFunction(this.__resolveFn)) {
+                        this.__resolveFn();
+                        this.__resolveFn = null;
+                    }
+                    return;
+                });
+            } else {
+                if (isFunction(this.__resolveFn)) {
+                    this.__resolveFn();
+                    this.__resolveFn = null;
+                }
+                this.itemsLoaded = new this.$Promise<void>((resolve) => {
+                    this.__resolveFn = resolve;
+                });
+            }
+
             return this.itemsLoaded;
         }
 
@@ -240,6 +283,10 @@ module plat.ui.controls {
                 first: {
                     value: index === 0,
                     type: 'observable'
+                },
+                last: {
+                    value: index === (this.context.length - 1),
+                    type: 'observable'
                 }
             };
         }
@@ -259,15 +306,21 @@ module plat.ui.controls {
          * @param ev The IArrayMethodInfo
          */
         _pop(ev: observable.IArrayMethodInfo<any>): void {
-            var startNode = this._blockLength * ev.newArray.length,
+            var blockLength = this._blockLength,
+                startNode: number,
+                animationPromise: plat.ui.IAnimationThenable<void>;
+
+            if (blockLength > 0) {
+                startNode = blockLength * ev.newArray.length;
                 animationPromise = this._animateItems(startNode, undefined, __Leave);
+            }
 
             if (isNull(animationPromise)) {
                 this._removeItems(1);
                 return;
             }
 
-            animationPromise.then(() => {
+            this.itemsLoaded = animationPromise.then(() => {
                 this._removeItems(1);
             });
         }

@@ -51,7 +51,8 @@
             var ContextManager: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
             ContextManager.defineGetter(this, 'uid', uniqueId('plat_'));
 
-            this._removeListener = this.$EventManagerStatic.on(this.uid, 'urlChanged', (ev: events.IDispatchEventInstance, utils: web.IUrlUtilsInstance) => {
+            this._removeListener = this.$EventManagerStatic.on(this.uid, 'urlChanged',
+                (ev: events.IDispatchEventInstance, utils: web.IUrlUtilsInstance) => {
                 postpone(() => {
                     this._routeChanged(ev, utils);
                 });
@@ -134,9 +135,9 @@
         goBack(length?: number): void {
             this.$Window.history.go(-length);
 
-            if (this.__history && this.__history.length > 1) {
-                var historyLength = this.__history.length;
-                this.__history = this.__history.slice(0, historyLength - length);
+            var history = this.__history;
+            if (isArray(history) && history.length > 1) {
+                this.__history = history.slice(0, history.length - length);
                 this.$Browser.url(this.__history.pop() || '');
             }
         }

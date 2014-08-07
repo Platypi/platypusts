@@ -15,7 +15,7 @@
          * Looks for a defaultRoute and initializes the loading 
          * of the view.
          */
-        loaded(): void {
+        _load(): void {
             var path = '',
                 options = this.options;
 
@@ -23,7 +23,7 @@
                 path = options.value.defaultRoute || '';
             }
 
-            super.loaded(path, {
+            super._load(path, {
                 replace: true
             });
         }

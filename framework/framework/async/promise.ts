@@ -149,8 +149,8 @@ module plat.async {
          * 
          * @param value The value to reject.
          */
-        static reject(error?: any): IThenable<void> {
-            return new Promise<void>((resolve: (value: any) => any, reject: (error: any) => any) => {
+        static reject(error?: any): IThenable<any> {
+            return new Promise<any>((resolve: (value: any) => any, reject: (error: any) => any) => {
                 reject(error);
             });
         }
@@ -608,6 +608,6 @@ module plat.async {
          * 
          * @param value The value to reject.
          */
-        reject(error: any): IThenable<void>;
+        reject(error: any): IThenable<any>;
     }
 }
