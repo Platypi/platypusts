@@ -156,7 +156,7 @@ function setInnerHtml(node: Node, html: string): Node {
 }
 
 function insertBefore(parent: Node, nodes: any, endNode?: Node): Array<Node> {
-    if (isNull(parent)) {
+    if (isNull(parent) || !isObject(nodes)) {
         return;
     } else if (isUndefined(endNode)) {
         endNode = null;
