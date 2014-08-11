@@ -59,7 +59,7 @@
                  * The minimum velocity a user must move after touch down to register 
                  * a swipe event.
                  */
-                minSwipeVelocity: 0.5
+                minSwipeVelocity: 0.8
             },
             /**
              * The default CSS styles applied to elements listening for custom DOM events. If using 
