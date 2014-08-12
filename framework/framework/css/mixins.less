@@ -140,7 +140,7 @@
     .border-top-left-radius(@radius; @webList);
 }
 .border-top-left-radius(@radius; @vendorList: @webList) when (@vendorList = @webkit) {
-    .vendor-loop(border-top-left-radius; @radius; @webkit);
+    .vendor-loop(border-top-left-radius; @radius; @webList);
     .vendor-loop(background-clip; padding-box; @webList);
 }
 .border-top-left-radius(@radius; @vendorList: @webList) when (@vendorList = @moz), (@vendorList = @vanilla) {
@@ -155,7 +155,7 @@
     .border-top-right-radius(@radius; @webList);
 }
 .border-top-right-radius(@radius; @vendorList: @webList) when (@vendorList = @webkit) {
-    .vendor-loop(border-top-right-radius; @radius; @webkit);
+    .vendor-loop(border-top-right-radius; @radius; @webList);
     .vendor-loop(background-clip; padding-box; @webList);
 }
 .border-top-right-radius(@radius; @vendorList: @webList) when (@vendorList = @moz), (@vendorList = @vanilla) {
@@ -170,7 +170,7 @@
     .border-bottom-left-radius(@radius; @webList);
 }
 .border-bottom-left-radius(@radius; @vendorList: @webList) when (@vendorList = @webkit) {
-    .vendor-loop(border-bottom-left-radius; @radius; @webkit);
+    .vendor-loop(border-bottom-left-radius; @radius; @webList);
     .vendor-loop(background-clip; padding-box; @webList);
 }
 .border-bottom-left-radius(@radius; @vendorList: @webList) when (@vendorList = @moz), (@vendorList = @vanilla) {
@@ -185,7 +185,7 @@
     .border-bottom-right-radius(@radius; @webList);
 }
 .border-bottom-right-radius(@radius; @vendorList: @webList) when (@vendorList = @webkit) {
-    .vendor-loop(border-bottom-right-radius; @radius; @webkit);
+    .vendor-loop(border-bottom-right-radius; @radius; @webList);
     .vendor-loop(background-clip; padding-box; @webList);
 }
 .border-bottom-right-radius(@radius; @vendorList: @webList) when (@vendorList = @moz), (@vendorList = @vanilla) {
@@ -197,10 +197,10 @@
     .vendor-loop(background-clip; padding-box; @webList);
 }
 .border-radius(@radius; @vendorList: @webList) when (@vendorList = @webkit) {
-    .vendor-loop(border-top-left-radius; @radius; @webkit);
-    .vendor-loop(border-top-right-radius; @radius; @webkit);
-    .vendor-loop(border-bottom-left-radius; @radius; @webkit);
-    .vendor-loop(border-bottom-right-radius; @radius; @webkit);
+    .vendor-loop(border-top-left-radius; @radius; @webList);
+    .vendor-loop(border-top-right-radius; @radius; @webList);
+    .vendor-loop(border-bottom-left-radius; @radius; @webList);
+    .vendor-loop(border-bottom-right-radius; @radius; @webList);
     .vendor-loop(background-clip; padding-box; @webList);
 }
 .border-radius(@radius; @vendorList: @webList) when (@vendorList = @moz), (@vendorList = @vanilla) {
