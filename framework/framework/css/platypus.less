@@ -1,21 +1,15 @@
-﻿@import 'animations';
-@import 'media';
-
-// Common
+﻿// Common
 
 html, body {
-    font-size: 14px;
+    font-size: @defaultFontSize;
     font-weight: 100;
-    width: 100%;
-    height: 100%;
-    padding: 0;
-    margin: 0;
+    .fill();
 }
 
 [plat-control="plat-routeport"],
 [plat-control="plat-viewport"] {
-    width: 100%;
-    height: 100%;
+    position: relative;
+    .fill();
 }
 
 [plat-hide] {
@@ -93,3 +87,6 @@ html, body {
         .animation-name(@fadeOut);
     }
 });
+
+@import 'animations';
+@import 'media';
