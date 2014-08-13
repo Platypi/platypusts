@@ -50,7 +50,7 @@ module plat.ui.controls {
                 return;
             }
 
-            this._url = options.url;
+            this._url = options.templateUrl;
 
             var templatePromise: async.IThenable<Template> = this.__templateControlCache.read(id);
             if (!isNull(templatePromise)) {
@@ -178,7 +178,7 @@ module plat.ui.controls {
          * An optional URL to specify a template 
          * instead of using the element's innerHTML.
          */
-        url: string;
+        templateUrl: string;
     }
 
     register.control(__Template, Template);
