@@ -1,6 +1,4 @@
-﻿@import 'variables';
-
-// Helper Methods
+﻿// Helper Methods
 
 .looper(@property; @value; @list; @counter) when (@counter > 0) {
     .looper(@property; @value; @list; (@counter - 1));
@@ -133,36 +131,89 @@
 
 // Border Radius
 
-.border-radius(@args) {
-    .border-radius(@args; @webMozList);
+.border-radius(@radius) {
+    .border-radius(@radius; @webList);
 }
-.border-radius(@args; @vendorList: @webMozList) when (@vendorList = @webkit) {
-    .vendor-loop(border-top-left-radius; @args; @webkit);
-    .vendor-loop(border-top-right-radius; @args; @webkit);
-    .vendor-loop(border-bottom-left-radius; @args; @webkit);
-    .vendor-loop(border-bottom-right-radius; @args; @webkit);
-    .vendor-loop(background-clip; padding-box; @webkit);
+.border-top-left-radius(@radius) {
+    .border-top-left-radius(@radius; @webList);
 }
-.border-radius(@args; @vendorList: @webMozList) when (@vendorList = @moz) {
-    .vendor-loop(border-top-left-radius; @args; @moz);
-    .vendor-loop(border-top-right-radius; @args; @moz);
-    .vendor-loop(border-bottom-left-radius; @args; @moz);
-    .vendor-loop(border-bottom-right-radius; @args; @moz);
-    .vendor-loop(background-clip; padding-box; @moz);
+.border-top-left-radius(@radius; @vendorList: @webList) when (@vendorList = @webkit) {
+    .vendor-loop(border-top-left-radius; @radius; @webList);
+    .vendor-loop(background-clip; padding-box; @webList);
 }
-.border-radius(@args; @vendorList: @webMozList) when (@vendorList = @vanilla) {
-    .vendor-loop(border-top-left-radius; @args; @vanilla);
-    .vendor-loop(border-top-right-radius; @args; @vanilla);
-    .vendor-loop(border-bottom-left-radius; @args; @vanilla);
-    .vendor-loop(border-bottom-right-radius; @args; @vanilla);
+.border-top-left-radius(@radius; @vendorList: @webList) when (@vendorList = @moz), (@vendorList = @vanilla) {
+    .vendor-loop(border-top-left-radius; @radius; @vanilla);
     .vendor-loop(background-clip; padding-box; @vanilla);
 }
-.border-radius(@args; @vendorList: @webMozList) when (default()) {
-    .vendor-loop(border-top-left-radius; @args; @webList);
-    .vendor-loop(border-top-right-radius; @args; @webList);
-    .vendor-loop(border-bottom-left-radius; @args; @webList);
-    .vendor-loop(border-bottom-right-radius; @args; @webList);
-    .vendor-loop(background-clip; padding-box; @vendorList);
+.border-top-left-radius(@radius; @vendorList: @webList) when (default()) {
+    .vendor-loop(border-top-left-radius; @radius; @webList);
+    .vendor-loop(background-clip; padding-box; @webList);
+}
+.border-top-right-radius(@radius) {
+    .border-top-right-radius(@radius; @webList);
+}
+.border-top-right-radius(@radius; @vendorList: @webList) when (@vendorList = @webkit) {
+    .vendor-loop(border-top-right-radius; @radius; @webList);
+    .vendor-loop(background-clip; padding-box; @webList);
+}
+.border-top-right-radius(@radius; @vendorList: @webList) when (@vendorList = @moz), (@vendorList = @vanilla) {
+    .vendor-loop(border-top-right-radius; @radius; @vanilla);
+    .vendor-loop(background-clip; padding-box; @vanilla);
+}
+.border-top-right-radius(@radius; @vendorList: @webList) when (default()) {
+    .vendor-loop(border-top-right-radius; @radius; @webList);
+    .vendor-loop(background-clip; padding-box; @webList);
+}
+.border-bottom-left-radius(@radius) {
+    .border-bottom-left-radius(@radius; @webList);
+}
+.border-bottom-left-radius(@radius; @vendorList: @webList) when (@vendorList = @webkit) {
+    .vendor-loop(border-bottom-left-radius; @radius; @webList);
+    .vendor-loop(background-clip; padding-box; @webList);
+}
+.border-bottom-left-radius(@radius; @vendorList: @webList) when (@vendorList = @moz), (@vendorList = @vanilla) {
+    .vendor-loop(border-bottom-left-radius; @radius; @vanilla);
+    .vendor-loop(background-clip; padding-box; @vanilla);
+}
+.border-bottom-left-radius(@radius; @vendorList: @webList) when (default()) {
+    .vendor-loop(border-bottom-left-radius; @radius; @webList);
+    .vendor-loop(background-clip; padding-box; @webList);
+}
+.border-bottom-right-radius(@radius) {
+    .border-bottom-right-radius(@radius; @webList);
+}
+.border-bottom-right-radius(@radius; @vendorList: @webList) when (@vendorList = @webkit) {
+    .vendor-loop(border-bottom-right-radius; @radius; @webList);
+    .vendor-loop(background-clip; padding-box; @webList);
+}
+.border-bottom-right-radius(@radius; @vendorList: @webList) when (@vendorList = @moz), (@vendorList = @vanilla) {
+    .vendor-loop(border-bottom-right-radius; @radius; @vanilla);
+    .vendor-loop(background-clip; padding-box; @vanilla);
+}
+.border-bottom-right-radius(@radius; @vendorList: @webList) when (default()) {
+    .vendor-loop(border-bottom-right-radius; @radius; @webList);
+    .vendor-loop(background-clip; padding-box; @webList);
+}
+.border-radius(@radius; @vendorList: @webList) when (@vendorList = @webkit) {
+    .vendor-loop(border-top-left-radius; @radius; @webList);
+    .vendor-loop(border-top-right-radius; @radius; @webList);
+    .vendor-loop(border-bottom-left-radius; @radius; @webList);
+    .vendor-loop(border-bottom-right-radius; @radius; @webList);
+    .vendor-loop(background-clip; padding-box; @webList);
+}
+.border-radius(@radius; @vendorList: @webList) when (@vendorList = @moz), (@vendorList = @vanilla) {
+    .vendor-loop(border-top-left-radius; @radius; @vanilla);
+    .vendor-loop(border-top-right-radius; @radius; @vanilla);
+    .vendor-loop(border-bottom-left-radius; @radius; @vanilla);
+    .vendor-loop(border-bottom-right-radius; @radius; @vanilla);
+    .vendor-loop(background-clip; padding-box; @vanilla);
+}
+.border-radius(@radius; @vendorList: @webList) when (default()) {
+    .vendor-loop(border-top-left-radius; @radius; @webList);
+    .vendor-loop(border-top-right-radius; @radius; @webList);
+    .vendor-loop(border-bottom-left-radius; @radius; @webList);
+    .vendor-loop(border-bottom-right-radius; @radius; @webList);
+    .vendor-loop(background-clip; padding-box; @webList);
 }
 
 // Box Shadows
@@ -434,3 +485,13 @@
     .vendor-loop(transition-timing-function; @function; @vendorList);
 }
 
+/// Misc
+
+.fill() {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+@import 'variables';

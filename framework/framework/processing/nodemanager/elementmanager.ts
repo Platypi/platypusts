@@ -359,13 +359,15 @@ module plat.processing {
                 uniqueIdentifiers = [];
 
                 if (name === 'plat-context') {
-                    childContext = $parser.parse(value);
-                    if (childContext.identifiers.length !== 1) {
-                        var $exception: IExceptionStatic = acquire(__ExceptionStatic);
-                        $exception.warn('Incorrect plat-context: ' +
-                            value + ', must contain a single identifier.', $exception.COMPILE);
+                    if (value !== '') {
+                        childContext = $parser.parse(value);
+                        if (childContext.identifiers.length !== 1) {
+                            var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                            $exception.warn('Incorrect plat-context: ' +
+                                value + ', must contain a single identifier.', $exception.COMPILE);
+                        }
+                        childIdentifier = childContext.identifiers[0];
                     }
-                    childIdentifier = childContext.identifiers[0];
                 } else if (name !== 'plat-control') {
                     hasMarkup = hasMarkupFn(value);
 

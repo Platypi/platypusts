@@ -1,7 +1,16 @@
-﻿@import 'animations';
-@import 'media';
+﻿// Common
 
-// Common
+html, body {
+    font-size: @defaultFontSize;
+    font-weight: 100;
+    .fill();
+}
+
+[plat-control="plat-routeport"],
+[plat-control="plat-viewport"] {
+    position: relative;
+    .fill();
+}
 
 [plat-hide] {
     display: none !important;
@@ -78,3 +87,6 @@
         .animation-name(@fadeOut);
     }
 });
+
+@import 'animations';
+@import 'media';
