@@ -232,6 +232,13 @@ module plat.controls {
         }
 
         /**
+         * Getter for button.
+         */
+        _getTextContent(): string {
+            return (<HTMLInputElement>this.element).textContent;
+        }
+
+        /**
          * Getter for input[type="file"]. Creates a partial IFile 
          * element if file is not supported.
          */
@@ -335,6 +342,33 @@ module plat.controls {
             }
 
             this.__setValue(newValue);
+        }
+
+        /**
+         * Setter for button
+         * 
+         * @param newValue The new value to set
+         * @param oldValue The previously bound value
+         * @param firstTime The context is being evaluated for the first time and 
+         * should thus change the property if null
+         */
+        _setTextContent(newValue: any, oldValue?: any, firstTime?: boolean): void {
+            if (this.__isSelf) {
+                return;
+            }
+
+            var element = this.element;
+            if (isNull(newValue)) {
+                newValue = '';
+                if (firstTime === true) {
+                    if (isNull((<HTMLInputElement>element).textContent)) {
+                        element.textContent = newValue;
+                    }
+                    this._propertyChanged();
+                }
+            }
+
+            element.textContent = newValue;
         }
 
         /**
@@ -537,6 +571,7 @@ module plat.controls {
                 case 'input':
                     switch ((<HTMLInputElement>element).type) {
                         case 'button':
+                            this._getter = this._getValue;
                             this._setter = this._setText;
                             break;
                         case 'checkbox':
@@ -566,6 +601,10 @@ module plat.controls {
                     break;
                 case 'select':
                     this.__initializeSelect();
+                    break;
+                case 'button':
+                    this._getter = this._getTextContent;
+                    this._setter = this._setTextContent;
                     break;
                 default:
                     if (isNull(this.templateControl)) {
