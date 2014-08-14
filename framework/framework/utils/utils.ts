@@ -137,6 +137,24 @@ module plat {
     }
 
     /**
+     * The Type for a util iterator callback method.
+     */
+    export interface IIterator<T, U> {
+        /**
+         * @param value The value for an object during an iteration.
+         * @param index The index where the value can be found.
+         * @param obj The object passed into the util method.
+         */
+        (value: T, index: number, obj: any): U;
+        /**
+         * @param value The value for an object during an iteration.
+         * @param key The key where the value can be found.
+         * @param obj The object passed into the util method.
+         */
+        (value: T, key: string, obj: any): U;
+    }
+
+    /**
      * The Type for referencing the '$Utils' injectable as a dependency.
      */
     export function IUtils(): IUtils {
