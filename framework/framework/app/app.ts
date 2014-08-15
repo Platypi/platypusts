@@ -504,4 +504,15 @@ module plat {
     export interface IRemoveListener {
         (): void;
     }
+
+    /**
+     * Defines a function that will be called whenever a property has changed.
+     */
+    export interface IPropertyChangedListener {
+        /**
+         * @param newValue The new value of the observed property.
+         * @param oldValue The previous value of the observed property.
+         */
+        (newValue: any, oldValue: any): void;
+    }
 }
