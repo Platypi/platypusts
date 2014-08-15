@@ -8,6 +8,8 @@ module plat.ui {
 
         addEventListener(element: Node, type: string, listener: ui.IGestureListener, useCapture?: boolean): IRemoveListener;
         addEventListener(element: Window, type: string, listener: ui.IGestureListener, useCapture?: boolean): IRemoveListener;
+        addEventListener(element: Node, type: string, listener: EventListener, useCapture?: boolean): IRemoveListener;
+        addEventListener(element: Window, type: string, listener: EventListener, useCapture?: boolean): IRemoveListener;
         addEventListener(element: any, type: string, listener: ui.IGestureListener, useCapture?: boolean) {
             return this.$DomEvents.addEventListener(element, type, listener, useCapture);
         }
@@ -105,7 +107,36 @@ module plat.ui {
          * of event propagation.
          */
         addEventListener(element: Node, type: string, listener: ui.IGestureListener, useCapture?: boolean): IRemoveListener;
+        /**
+         * Adds an event listener of the specified type to the specified element.
+         * 
+         * @param element The window object.
+         * @param type The type of event to listen to.
+         * @param listener The listener to fire when the event occurs.
+         * @param useCapture Whether to fire the event on the capture or the bubble phase 
+         * of event propagation.
+         */
         addEventListener(element: Window, type: string, listener: ui.IGestureListener, useCapture?: boolean): IRemoveListener;
+        /**
+         * Adds an event listener of the specified type to the specified element.
+         * 
+         * @param element The element to add the event listener to.
+         * @param type The type of event to listen to.
+         * @param listener The listener to fire when the event occurs.
+         * @param useCapture Whether to fire the event on the capture or the bubble phase 
+         * of event propagation.
+         */
+        addEventListener(element: Node, type: string, listener: EventListener, useCapture?: boolean): IRemoveListener;
+        /**
+         * Adds an event listener of the specified type to the specified element.
+         * 
+         * @param element The window object.
+         * @param type The type of event to listen to.
+         * @param listener The listener to fire when the event occurs.
+         * @param useCapture Whether to fire the event on the capture or the bubble phase 
+         * of event propagation.
+         */
+        addEventListener(element: Window, type: string, listener: EventListener, useCapture?: boolean): IRemoveListener;
 
         /**
          * Takes a Node Array and either adds it to the passed in Node,

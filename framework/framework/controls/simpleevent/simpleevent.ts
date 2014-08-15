@@ -10,11 +10,6 @@ module plat.controls {
         attribute: string;
 
         /**
-         * Our event handler bound to our own context.
-         */
-        _listener: EventListener = this._onEvent.bind(this);
-
-        /**
          * A parsed form of the expression found in the attribute's value.
          */
         _expression: Array<string> = [];
@@ -37,13 +32,6 @@ module plat.controls {
         }
 
         /**
-         * Disposes of the event listener.
-         */
-        dispose(): void {
-            this._listener = null;
-        }
-
-        /**
          * Sets the event listener.
          */
         _setListener(): void {
@@ -58,7 +46,7 @@ module plat.controls {
                 return;
             }
 
-            this.addEventListener(this.element, this.event, this._listener, false);
+            this.addEventListener(this.element, this.event, this._onEvent, false);
         }
 
         /**

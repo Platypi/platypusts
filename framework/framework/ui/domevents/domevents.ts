@@ -218,6 +218,8 @@
 
         addEventListener(element: Node, type: string, listener: IGestureListener, useCapture?: boolean): IRemoveListener;
         addEventListener(element: Window, type: string, listener: IGestureListener, useCapture?: boolean): IRemoveListener;
+        addEventListener(element: Node, type: string, listener: EventListener, useCapture?: boolean): IRemoveListener;
+        addEventListener(element: Window, type: string, listener: EventListener, useCapture?: boolean): IRemoveListener;
         addEventListener(element: any, type: string, listener: IGestureListener, useCapture?: boolean): IRemoveListener {
             var $compat = this.$Compat,
                 mappedGestures = $compat.mappedEvents,
@@ -1133,7 +1135,7 @@
                                     this.__focusedElement = null;
                                 }
                                 remover();
-                            });
+                            }, false);
                             return;
                     }
                     break;
@@ -1159,7 +1161,7 @@
                             this.__focusedElement = null;
                         }
                         remover();
-                    });
+                    }, false);
                     return;
                 default:
                     if (isFunction(focusedElement.blur)) {
@@ -1273,6 +1275,28 @@
          * @return {IRemoveListener} A function to remove the added event listener.
          */
         addEventListener(element: Window, type: string, listener: IGestureListener,
+            useCapture?: boolean): IRemoveListener;
+        /**
+         * Add an event listener for the specified event type on the specified element. 
+         * 
+         * @param element The node listening for the event.
+         * @param type The type of event being listened to.
+         * @param listener The listener to be fired.
+         * @param useCapture Whether to fire the event on the capture or bubble phase of propagation.
+         * @return {IRemoveListener} A function to remove the added event listener.
+         */
+        addEventListener(element: Node, type: string, listener: EventListener,
+            useCapture?: boolean): IRemoveListener;
+        /**
+         * Add an event listener for the specified event type on the specified element. 
+         * 
+         * @param element The window object.
+         * @param type The type of event being listened to.
+         * @param listener The listener to be fired.
+         * @param useCapture Whether to fire the event on the capture or bubble phase of propagation.
+         * @return {IRemoveListener} A function to remove the added event listener.
+         */
+        addEventListener(element: Window, type: string, listener: EventListener,
             useCapture?: boolean): IRemoveListener;
 
         /**
@@ -1635,7 +1659,7 @@
         /**
          * An EventListener with the argument as an IGestureEvent.
          */
-        (ev: IGestureEvent): void;
+        (ev?: IGestureEvent): void;
     }
 
     /**
