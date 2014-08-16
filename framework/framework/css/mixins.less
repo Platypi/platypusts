@@ -139,81 +139,75 @@
 }
 .border-top-left-radius(@radius; @vendorList: @webList) when (@vendorList = @webkit) {
     .vendor-loop(border-top-left-radius; @radius; @webList);
-    .vendor-loop(background-clip; padding-box; @webList);
 }
 .border-top-left-radius(@radius; @vendorList: @webList) when (@vendorList = @moz), (@vendorList = @vanilla) {
     .vendor-loop(border-top-left-radius; @radius; @vanilla);
-    .vendor-loop(background-clip; padding-box; @vanilla);
 }
 .border-top-left-radius(@radius; @vendorList: @webList) when (default()) {
     .vendor-loop(border-top-left-radius; @radius; @webList);
-    .vendor-loop(background-clip; padding-box; @webList);
 }
 .border-top-right-radius(@radius) {
     .border-top-right-radius(@radius; @webList);
 }
 .border-top-right-radius(@radius; @vendorList: @webList) when (@vendorList = @webkit) {
     .vendor-loop(border-top-right-radius; @radius; @webList);
-    .vendor-loop(background-clip; padding-box; @webList);
 }
 .border-top-right-radius(@radius; @vendorList: @webList) when (@vendorList = @moz), (@vendorList = @vanilla) {
     .vendor-loop(border-top-right-radius; @radius; @vanilla);
-    .vendor-loop(background-clip; padding-box; @vanilla);
 }
 .border-top-right-radius(@radius; @vendorList: @webList) when (default()) {
     .vendor-loop(border-top-right-radius; @radius; @webList);
-    .vendor-loop(background-clip; padding-box; @webList);
 }
 .border-bottom-left-radius(@radius) {
     .border-bottom-left-radius(@radius; @webList);
 }
 .border-bottom-left-radius(@radius; @vendorList: @webList) when (@vendorList = @webkit) {
     .vendor-loop(border-bottom-left-radius; @radius; @webList);
-    .vendor-loop(background-clip; padding-box; @webList);
 }
 .border-bottom-left-radius(@radius; @vendorList: @webList) when (@vendorList = @moz), (@vendorList = @vanilla) {
     .vendor-loop(border-bottom-left-radius; @radius; @vanilla);
-    .vendor-loop(background-clip; padding-box; @vanilla);
 }
 .border-bottom-left-radius(@radius; @vendorList: @webList) when (default()) {
     .vendor-loop(border-bottom-left-radius; @radius; @webList);
-    .vendor-loop(background-clip; padding-box; @webList);
 }
 .border-bottom-right-radius(@radius) {
     .border-bottom-right-radius(@radius; @webList);
 }
 .border-bottom-right-radius(@radius; @vendorList: @webList) when (@vendorList = @webkit) {
     .vendor-loop(border-bottom-right-radius; @radius; @webList);
-    .vendor-loop(background-clip; padding-box; @webList);
 }
 .border-bottom-right-radius(@radius; @vendorList: @webList) when (@vendorList = @moz), (@vendorList = @vanilla) {
     .vendor-loop(border-bottom-right-radius; @radius; @vanilla);
-    .vendor-loop(background-clip; padding-box; @vanilla);
 }
 .border-bottom-right-radius(@radius; @vendorList: @webList) when (default()) {
     .vendor-loop(border-bottom-right-radius; @radius; @webList);
-    .vendor-loop(background-clip; padding-box; @webList);
 }
 .border-radius(@radius; @vendorList: @webList) when (@vendorList = @webkit) {
     .vendor-loop(border-top-left-radius; @radius; @webList);
     .vendor-loop(border-top-right-radius; @radius; @webList);
     .vendor-loop(border-bottom-left-radius; @radius; @webList);
     .vendor-loop(border-bottom-right-radius; @radius; @webList);
-    .vendor-loop(background-clip; padding-box; @webList);
 }
 .border-radius(@radius; @vendorList: @webList) when (@vendorList = @moz), (@vendorList = @vanilla) {
     .vendor-loop(border-top-left-radius; @radius; @vanilla);
     .vendor-loop(border-top-right-radius; @radius; @vanilla);
     .vendor-loop(border-bottom-left-radius; @radius; @vanilla);
     .vendor-loop(border-bottom-right-radius; @radius; @vanilla);
-    .vendor-loop(background-clip; padding-box; @vanilla);
 }
 .border-radius(@radius; @vendorList: @webList) when (default()) {
     .vendor-loop(border-top-left-radius; @radius; @webList);
     .vendor-loop(border-top-right-radius; @radius; @webList);
     .vendor-loop(border-bottom-left-radius; @radius; @webList);
     .vendor-loop(border-bottom-right-radius; @radius; @webList);
-    .vendor-loop(background-clip; padding-box; @webList);
+}
+
+// Background Clip
+
+.background-clip(@box: border-box) {
+    .background-clip(@box; @webMozList);
+}
+.background-clip(@box; @vendorList: @webMozList) when (default()) {
+    .vendor-loop(background-clip; @box; @vendorList);
 }
 
 // Box Shadows
