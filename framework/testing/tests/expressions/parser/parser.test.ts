@@ -234,6 +234,16 @@ module tests.expressions.parser {
             fn: 'toEqual'
         },
         {
+            name: 'object literal with unary',
+            returns: {
+                x: 100,
+                y: -50
+            },
+            identifiers: [],
+            expression: '{ x: 100, y: 1 > +4 ? -10 : -50 }',
+            fn: 'toEqual'
+        },
+        {
             name: 'a ternary + array literal + function calls',
             returns: ['customers', 6],
             identifiers: ['barz.customers.value3', 'customers', 'test'],

@@ -366,19 +366,24 @@ module plat.expressions {
                 case '+':
                 case '-':
                     var outputQueue = this.__outputQueue,
-                        operatorStack = this.__operatorStack,
-                        outputQueueLength = outputQueue.length,
-                        operatorStackLength = operatorStack.length,
-                        topOutput = outputQueue[outputQueueLength - 1],
-                        topOperator = operatorStack[operatorStackLength - 1],
-                        topOutputIsOperator = isNull(topOutput) ? false : isOperator(topOutput.val),
-                        topOperatorIsOperator = isNull(topOperator) ? false : isOperator(topOperator.val),
-                        topOperatorIsNonUnary = topOperatorIsOperator && topOperator.args > 1;
+                        outputQueueLength = outputQueue.length;
 
-                    if ((outputQueueLength === 0 && operatorStackLength >= 0) ||
-                        !(outputQueueLength > 1 || operatorStackLength < 1 || !topOperatorIsNonUnary) ||
-                        (topOutputIsOperator && topOperatorIsOperator)) {
+                    if (outputQueueLength === 0 || isOperator(this.__previousChar)) {
                         return OPERATORS['u' + operator];
+                    } else {
+                        var operatorStack = this.__operatorStack,
+                            operatorStackLength = operatorStack.length,
+                            operatorStackEmpty = operatorStackLength === 0,
+                            topOutput = outputQueue[outputQueueLength - 1],
+                            topOperator = operatorStack[operatorStackLength - 1],
+                            topOutputIsOperator = isOperator(topOutput.val),
+                            topOperatorIsOperator = operatorStackEmpty ? false : isOperator(topOperator.val),
+                            topOperatorIsNonUnary = topOperatorIsOperator ? topOperator.args > 1 : false;
+
+                        if ((topOutputIsOperator && topOperatorIsOperator) ||
+                            !(outputQueueLength > 1 || operatorStackEmpty || !topOperatorIsNonUnary)) {
+                            return OPERATORS['u' + operator];
+                        }
                     }
                 default:
                     return OPERATORS[operator];
