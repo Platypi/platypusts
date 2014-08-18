@@ -365,25 +365,8 @@ module plat.expressions {
             switch (operator) {
                 case '+':
                 case '-':
-                    var outputQueue = this.__outputQueue,
-                        outputQueueLength = outputQueue.length;
-
-                    if (outputQueueLength === 0 || isOperator(this.__previousChar)) {
+                    if (this.__outputQueue.length === 0 || isOperator(this.__previousChar)) {
                         return OPERATORS['u' + operator];
-                    } else {
-                        var operatorStack = this.__operatorStack,
-                            operatorStackLength = operatorStack.length,
-                            operatorStackEmpty = operatorStackLength === 0,
-                            topOutput = outputQueue[outputQueueLength - 1],
-                            topOperator = operatorStack[operatorStackLength - 1],
-                            topOutputIsOperator = isOperator(topOutput.val),
-                            topOperatorIsOperator = operatorStackEmpty ? false : isOperator(topOperator.val),
-                            topOperatorIsNonUnary = topOperatorIsOperator ? topOperator.args > 1 : false;
-
-                        if ((topOutputIsOperator && topOperatorIsOperator) ||
-                            !(outputQueueLength > 1 || operatorStackEmpty || !topOperatorIsNonUnary)) {
-                            return OPERATORS['u' + operator];
-                        }
                     }
                 default:
                     return OPERATORS[operator];
