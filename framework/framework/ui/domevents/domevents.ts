@@ -509,9 +509,6 @@
                 this.__handleRelease(ev);
             }
 
-            // handle trackend events
-            this.__handleTrackEnd(ev);
-
             // handle swipe events
             if (this.__hasSwiped) {
                 this.__handleSwipe();
@@ -522,11 +519,16 @@
                 touchEnd = ev.timeStamp,
                 touchDown = this.__lastTouchDown;
 
-            // if the user moved their finger (for scroll) we do not want default or custom behaviour, 
+
+            // if the user moved their finger (for scroll) we handle $trackend and return,
             // else if they had their finger down too long to be considered a tap, we want to return
-            if (hasMoved || isNull(touchDown) || ((touchEnd - touchDown.timeStamp) > intervals.tapInterval)) {
+            if (hasMoved) {
+                this.__handleTrackEnd(ev);
                 this.__tapCount = 0;
-                return !hasMoved;
+                return false;
+            } else if (isNull(touchDown) || ((touchEnd - touchDown.timeStamp) > intervals.tapInterval)) {
+                this.__tapCount = 0;
+                return true;
             }
 
             var lastTouchUp = this.__lastTouchUp,
