@@ -1,6 +1,7 @@
 module plat {
     /**
-     * @name plat.acquire
+     * @name acquire
+     * @memberof plat
      * @kind function
      * @variation 0
      * @access public
@@ -9,7 +10,7 @@ module plat {
      * @description
      * Returns the requested injectable dependency.
      * 
-     * @typeparam {T} The type of the requested dependency.
+     * @typeparam T The type of the requested dependency.
      * 
      * @param {() => T} dependency The dependency Type to return.
      * 
@@ -17,7 +18,8 @@ module plat {
      */
     export function acquire<T>(dependency: () => T): T;
     /**
-     * @name plat.acquire
+     * @name acquire
+     * @memberof plat
      * @kind function
      * @variation 1
      * @access public
@@ -32,7 +34,8 @@ module plat {
      */
     export function acquire(dependency: Function): any;
     /**
-     * @name plat.acquire
+     * @name acquire
+     * @memberof plat
      * @kind function
      * @variation 2
      * @access public
@@ -47,7 +50,8 @@ module plat {
      */
     export function acquire(dependencies: Array<Function>): Array<any>;
     /**
-     * @name plat.acquire
+     * @name acquire
+     * @memberof plat
      * @kind function
      * @variation 3
      * @access public
@@ -62,7 +66,8 @@ module plat {
      */
     export function acquire(dependency: string): any;
     /**
-     * @name plat.acquire
+     * @name acquire
+     * @memberof plat
      * @kind function
      * @variation 4
      * @access public
@@ -77,7 +82,8 @@ module plat {
      */
     export function acquire(dependencies: Array<string>): Array<any>;
     /**
-     * @name plat.acquire
+     * @name acquire
+     * @memberof plat
      * @kind function
      * @variation 5
      * @access public
