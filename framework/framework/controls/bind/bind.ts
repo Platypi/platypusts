@@ -203,7 +203,7 @@ module plat.controls {
          * Used for input[type=button] and button.
          */
         _addButtonEventListener(): void {
-            this.addEventListener(this.element, '$tap', this._propertyChanged, false);
+            this.addEventListener(this.element, __$tap, this._propertyChanged, false);
         }
 
         /**

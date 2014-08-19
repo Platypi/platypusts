@@ -150,20 +150,21 @@
          * supported gestures.
          */
         _gestures: IGestures<string> = {
-            $tap: '$tap',
-            $dbltap: '$dbltap',
-            $hold: '$hold',
-            $release: '$release',
-            $swipe: '$swipe',
-            $swipeleft: '$swipeleft',
-            $swiperight: '$swiperight',
-            $swipeup: '$swipeup',
-            $swipedown: '$swipedown',
-            $track: '$track',
-            $trackleft: '$trackleft',
-            $trackright: '$trackright',
-            $trackup: '$trackup',
-            $trackdown: '$trackdown'
+            $tap: __$tap,
+            $dbltap: __$dbltap,
+            $hold: __$hold,
+            $release: __$release,
+            $swipe: __$swipe,
+            $swipeleft: __$swipeleft,
+            $swiperight: __$swiperight,
+            $swipeup: __$swipeup,
+            $swipedown: __$swipedown,
+            $track: __$track,
+            $trackleft: __$trackleft,
+            $trackright: __$trackright,
+            $trackup: __$trackup,
+            $trackdown: __$trackdown,
+            $trackend: __$trackend
         };
 
         /**
@@ -176,7 +177,8 @@
             $hold: 0,
             $release: 0,
             $swipe: 0,
-            $track: 0
+            $track: 0,
+            $trackend: 0
         };
 
         private __START = 'start';
@@ -258,7 +260,8 @@
                 countType = type;
 
             if (type.indexOf(trackGesture) !== -1) {
-                countType = trackGesture;
+                var trackend = gestures.$trackend;
+                countType = type === trackend ? trackend : trackGesture;
             } else if (type.indexOf(swipeGesture) !== -1) {
                 countType = swipeGesture;
             }
@@ -280,7 +283,8 @@
                 $hold: 0,
                 $release: 0,
                 $swipe: 0,
-                $track: 0
+                $track: 0,
+                $trackend: 0
             };
             this._isActive = false;
             this._subscribers = {};
@@ -496,7 +500,7 @@
                 return true;
             }
 
-            // return if the touch count was greater than 0, 
+            // return if the touch count was greater than 0 (should only happen with pointerevents), 
             // or handle release
             if (ev.touches.length > 0) {
                 ev.preventDefault();
@@ -515,11 +519,16 @@
                 touchEnd = ev.timeStamp,
                 touchDown = this.__lastTouchDown;
 
-            // if the user moved their finger (for scroll) we do not want default or custom behaviour, 
+
+            // if the user moved their finger (for scroll) we handle $trackend and return,
             // else if they had their finger down too long to be considered a tap, we want to return
-            if (hasMoved || isNull(touchDown) || ((touchEnd - touchDown.timeStamp) > intervals.tapInterval)) {
+            if (hasMoved) {
+                this.__handleTrackEnd(ev);
                 this.__tapCount = 0;
-                return !hasMoved;
+                return false;
+            } else if (isNull(touchDown) || ((touchEnd - touchDown.timeStamp) > intervals.tapInterval)) {
+                this.__tapCount = 0;
+                return true;
             }
 
             var lastTouchUp = this.__lastTouchUp,
@@ -647,6 +656,19 @@
                 ev.preventDefault();
                 trackDirectionDomEvent.trigger(ev);
             }
+        }
+        private __handleTrackEnd(ev: IPointerEvent): void {
+            if (this._gestureCount.$trackend <= 0) {
+                return;
+            }
+
+            var eventTarget = this.__capturedTarget || <ICustomElement>ev.target,
+                domEvent = this.__findFirstSubscriber(eventTarget, this._gestures.$trackend);
+            if (isNull(domEvent)) {
+                return;
+            }
+
+            domEvent.trigger(ev);
         }
         private __handleMappedEvent(ev: IExtendedEvent): void {
             var mappedType = ev.type,
@@ -1747,6 +1769,11 @@
          * The string type|number of events associated with the trackdown event.
          */
         $trackdown?: T;
+
+        /**
+         * The string type|number of events associated with the trackend event.
+         */
+        $trackend?: T;
     }
 
     /**
