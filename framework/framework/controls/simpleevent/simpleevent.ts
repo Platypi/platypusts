@@ -210,7 +210,7 @@ module plat.controls {
     }
 
     export class Tap extends SimpleEventControl {
-        event: string = '$tap';
+        event: string = __$tap;
     }
 
     export class Blur extends SimpleEventControl {
@@ -234,7 +234,7 @@ module plat.controls {
     }
 
     export class DblTap extends SimpleEventControl {
-        event: string = '$dbltap';
+        event: string = __$dbltap;
     }
 
     export class Focus extends SimpleEventControl {
@@ -242,67 +242,71 @@ module plat.controls {
     }
 
     export class TouchStart extends SimpleEventControl {
-        event: string = '$touchstart';
+        event: string = __$touchstart;
     }
 
     export class TouchEnd extends SimpleEventControl {
-        event: string = '$touchend';
+        event: string = __$touchend;
     }
 
     export class TouchMove extends SimpleEventControl {
-        event: string = '$touchmove';
+        event: string = __$touchmove;
     }
 
     export class TouchCancel extends SimpleEventControl {
-        event: string = '$touchcancel';
+        event: string = __$touchcancel;
     }
 
     export class Hold extends SimpleEventControl {
-        event: string = '$hold';
+        event: string = __$hold;
     }
 
     export class Release extends SimpleEventControl {
-        event: string = '$release';
+        event: string = __$release;
     }
 
     export class Swipe extends SimpleEventControl {
-        event: string = '$swipe';
+        event: string = __$swipe;
     }
 
     export class SwipeLeft extends SimpleEventControl {
-        event: string = '$swipeleft';
+        event: string = __$swipeleft;
     }
 
     export class SwipeRight extends SimpleEventControl {
-        event: string = '$swiperight';
+        event: string = __$swiperight;
     }
 
     export class SwipeUp extends SimpleEventControl {
-        event: string = '$swipeup';
+        event: string = __$swipeup;
     }
 
     export class SwipeDown extends SimpleEventControl {
-        event: string = '$swipedown';
+        event: string = __$swipedown;
     }
 
     export class Track extends SimpleEventControl {
-        event: string = '$track';
+        event: string = __$track;
     }
 
     export class TrackLeft extends SimpleEventControl {
-        event: string = '$trackleft';
+        event: string = __$trackleft;
     }
 
     export class TrackRight extends SimpleEventControl {
-        event: string = '$trackright';
+        event: string = __$trackright;
     }
 
     export class TrackUp extends SimpleEventControl {
-        event: string = '$trackup';
+        event: string = __$trackup;
     }
 
     export class TrackDown extends SimpleEventControl {
-        event: string = '$trackdown';
+        event: string = __$trackdown;
+    }
+
+    export class TrackEnd extends SimpleEventControl {
+        event: string = __$trackend;
     }
 
     export class Submit extends SimpleEventControl {
@@ -348,4 +352,5 @@ module plat.controls {
     register.control(__TrackRight, TrackRight);
     register.control(__TrackUp, TrackUp);
     register.control(__TrackDown, TrackDown);
+    register.control(__TrackEnd, TrackEnd);
 }
