@@ -1,44 +1,94 @@
 module plat {
     /**
+     * @name plat.acquire
+     * @kind function
+     * @variation 0
+     * @access public
+     * @static
+     * 
+     * @description
      * Returns the requested injectable dependency.
      * 
-     * @param dependency The dependency Type to return.
-     * @param {T} The requested dependency.
+     * @typeparam {T} The type of the requested dependency.
+     * 
+     * @param {() => T} dependency The dependency Type to return.
+     * 
+     * @returns T The requested dependency.
      */
     export function acquire<T>(dependency: () => T): T;
     /**
+     * @name plat.acquire
+     * @kind function
+     * @variation 1
+     * @access public
+     * @static
+     * 
+     * @description
      * Returns the requested injectable dependency.
      * 
-     * @param dependency The dependency Type to return.
-     * @param {any} The requested dependency.
+     * @param {Function} dependency The dependency Type to return.
+     * 
+     * @returns {any} The requested dependency.
      */
     export function acquire(dependency: Function): any;
     /**
+     * @name plat.acquire
+     * @kind function
+     * @variation 2
+     * @access public
+     * @static
+     * 
+     * @description
      * Returns the requested injectable dependency.
      * 
-     * @param dependency An array of Types specifying the injectable dependencies.
-     * @return {Array<any>} The dependencies, in the order they were requested.
+     * @param {Function} dependency An array of Types specifying the injectable dependencies.
+     * 
+     * @returns {Array<any>} The dependencies, in the order they were requested.
      */
     export function acquire(dependencies: Array<Function>): Array<any>;
     /**
+     * @name plat.acquire
+     * @kind function
+     * @variation 3
+     * @access public
+     * @static
+     * 
+     * @description
      * Returns the requested injectable dependency.
      * 
-     * @param dependency The injectable dependency type to return.
-     * @param {any} The requested dependency.
+     * @param {string} dependency The injectable dependency type to return.
+     * 
+     * @returns {any} The requested dependency.
      */
     export function acquire(dependency: string): any;
     /**
+     * @name plat.acquire
+     * @kind function
+     * @variation 4
+     * @access public
+     * @static
+     * 
+     * @description
      * Gathers dependencies and returns them as an array in the order they were requested.
      * 
-     * @param dependencies An array of strings specifying the injectable dependencies.
-     * @return {Array<any>} The dependencies, in the order they were requested.
+     * @param {Array<string>} dependencies An array of strings specifying the injectable dependencies.
+     * 
+     * @returns {Array<any>} The dependencies, in the order they were requested.
      */
     export function acquire(dependencies: Array<string>): Array<any>;
     /**
+     * @name plat.acquire
+     * @kind function
+     * @variation 5
+     * @access public
+     * @static
+     * 
+     * @description
      * Gathers dependencies and returns them as an array in the order they were requested.
      * 
-     * @param dependencies An array of strings or Functions specifying the injectable dependencies.
-     * @return {Array<any>} The dependencies, in the order they were requested.
+     * @param {Array<any>} dependencies An array of strings or Functions specifying the injectable dependencies.
+     * 
+     * @returns {Array<any>} The dependencies, in the order they were requested.
      */
     export function acquire(dependencies: Array<any>): Array<any>;
     export function acquire(dependencies: any) {
@@ -63,54 +113,5 @@ module plat {
         }
 
         return output;
-    }
-
-    /**
-     * Returns the requested dependency or gathers dependencies and passes them back 
-     * as an array in the order they were specified.
-     */
-    export interface IAcquire {
-        /**
-         * Returns the requested injectable dependency.
-         * 
-         * @param dependency The dependency Type to return.
-         * @param {T} The requested dependency.
-         */
-        <T>(dependency: () => T): T;
-        /**
-         * Returns the requested injectable dependency.
-         * 
-         * @param dependency The dependency Type to return.
-         * @param {any} The requested dependency.
-         */
-        (dependency: Function): any;
-        /**
-         * Returns the requested injectable dependency.
-         * 
-         * @param dependency An array of Types specifying the injectable dependencies.
-         * @return {Array<any>} The dependencies, in the order they were requested.
-         */
-        (dependencies: Array<Function>): Array<any>;
-        /**
-         * Returns the requested injectable dependency.
-         * 
-         * @param dependency The injectable dependency type to return.
-         * @param {any} The requested dependency.
-         */
-        (dependency: string): any;
-        /**
-         * Gathers dependencies and returns them as an array in the order they were requested.
-         * 
-         * @param dependencies An array of strings specifying the injectable dependencies.
-         * @return {Array<any>} The dependencies, in the order they were requested.
-         */
-        (dependencies: Array<string>): Array<any>;
-        /**
-         * Gathers dependencies and returns them as an array in the order they were requested.
-         * 
-         * @param dependencies An array of strings or Functions specifying the injectable dependencies.
-         * @return {Array<any>} The dependencies, in the order they were requested.
-         */
-        (dependencies: Array<any>): Array<any>;
     }
 }
