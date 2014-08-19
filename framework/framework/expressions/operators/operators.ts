@@ -224,12 +224,6 @@ var OPERATORS: plat.IObject<plat.expressions.ITokenDetails> = {
             var $exception: plat.IExceptionStatic = plat.acquire(__ExceptionStatic);
             $exception.fatal('Assignment operators are not supported', $exception.PARSE);
         }
-    },
-    '.': {
-        precedence: 2, associativity: 'ltr',
-        fn: (context: any, aliases: any,
-            a: (context: any, aliases: any) => any,
-            b: (context: any, aliases: any) => any): any => (<any>a)[b]
     }
 };
 

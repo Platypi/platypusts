@@ -3,12 +3,13 @@
         replaceWith = 'a';
         element: HTMLAnchorElement;
         initialize(): void {
-            if (isEmpty(this.element.href)) {
-                this.addEventListener(this.element, 'click', (ev: Event) => {
-                    if (isEmpty(this.element.href)) {
+            var element = this.element;
+            if (isEmpty(element.href)) {
+                this.addEventListener(element, 'click', (ev: Event) => {
+                    if (isEmpty(element.href)) {
                         ev.preventDefault();
                     }
-                });
+                }, false);
             }
         }
     }

@@ -29,12 +29,12 @@ module plat.controls {
         /**
          * The event listener attached to this element.
          */
-        _eventListener: () => void;
+        //_eventListener: () => void;
 
         /**
          * The event listener as a postponed function.
          */
-        _postponedEventListener: () => void;
+        //_postponedEventListener: () => void;
 
         /**
          * The expression to evaluate as the bound value.
@@ -139,8 +139,8 @@ module plat.controls {
          * Removes all of the element's event listeners.
          */
         dispose(): void {
-            this._eventListener = null;
-            this._postponedEventListener = null;
+            //this._eventListener = null;
+            //this._postponedEventListener = null;
             this._addEventType = null;
         }
 
@@ -149,34 +149,31 @@ module plat.controls {
          * Used for textarea and input[type=text].
          */
         _addTextEventListener(): void {
-            var composing = false,
-                timeout: IRemoveListener;
+            var element = this.element,
+                composing = false,
+                timeout: IRemoveListener,
+                eventListener = () => {
+                    if (composing) {
+                        return;
+                    }
 
-            this._eventListener = () => {
-                if (composing) {
-                    return;
-                }
+                    this._propertyChanged();
+                },
+                postponedEventListener = () => {
+                    if (isFunction(timeout)) {
+                        return;
+                    }
 
-                this._propertyChanged();
-            };
+                    timeout = postpone(() => {
+                        eventListener();
+                        timeout = null;
+                    });
+                };
 
-            this._postponedEventListener = () => {
-                if (isFunction(timeout)) {
-                    return;
-                }
-
-                timeout = postpone(() => {
-                    this._eventListener();
-                    timeout = null;
-                });
-            };
-
-            this._addEventListener('compositionstart', () => composing = true);
-
-            this._addEventListener('compositionend', () => composing = false);
-
-            this._addEventListener('keydown', (ev?: KeyboardEvent) => {
-                var key = ev.keyCode,
+            this.addEventListener(element, 'compositionstart', () => composing = true, false);
+            this.addEventListener(element, 'compositionend', () => composing = false, false);
+            this.addEventListener(element, 'keydown', (ev: Event) => {
+                var key = (<KeyboardEvent>ev).keyCode,
                     codes = KeyCodes;
 
                 if (key === codes.lwk ||
@@ -186,11 +183,11 @@ module plat.controls {
                     return;
                 }
 
-                this._postponedEventListener();
-            });
-            this._addEventListener('cut', null, true);
-            this._addEventListener('paste', null, true);
-            this._addEventListener('change');
+                postponedEventListener();
+            }, false);
+            this.addEventListener(element, 'cut', postponedEventListener, false);
+            this.addEventListener(element, 'paste', postponedEventListener, false);
+            this.addEventListener(element, 'change', eventListener, false);
         }
 
         /**
@@ -198,22 +195,15 @@ module plat.controls {
          * Used for select, input[type=radio], and input[type=range].
          */
         _addChangeEventListener(): void {
-            this._eventListener = this._propertyChanged.bind(this);
-            this._addEventListener('change');
+            this.addEventListener(this.element, 'change', this._propertyChanged, false);
         }
 
         /**
-         * Adds the event listener to the element.
-         * 
-         * @param event The event type
-         * @param listener The event listener
-         * @param postpone Whether or not to postpone the event listener
+         * Adds a $tap event as the event listener. 
+         * Used for input[type=button] and button.
          */
-        _addEventListener(event: string, listener?: () => void, postpone?: boolean): void {
-            listener = listener ||
-                (postpone === true ? this._postponedEventListener : this._eventListener);
-
-            this.addEventListener(this.element, event, listener, false);
+        _addButtonEventListener(): void {
+            this.addEventListener(this.element, '$tap', this._propertyChanged, false);
         }
 
         /**
@@ -342,33 +332,6 @@ module plat.controls {
             }
 
             this.__setValue(newValue);
-        }
-
-        /**
-         * Setter for button
-         * 
-         * @param newValue The new value to set
-         * @param oldValue The previously bound value
-         * @param firstTime The context is being evaluated for the first time and 
-         * should thus change the property if null
-         */
-        _setTextContent(newValue: any, oldValue?: any, firstTime?: boolean): void {
-            if (this.__isSelf) {
-                return;
-            }
-
-            var element = this.element;
-            if (isNull(newValue)) {
-                newValue = '';
-                if (firstTime === true) {
-                    if (isNull((<HTMLInputElement>element).textContent)) {
-                        element.textContent = newValue;
-                    }
-                    this._propertyChanged();
-                }
-            }
-
-            element.textContent = newValue;
         }
 
         /**
@@ -556,8 +519,11 @@ module plat.controls {
          * and sets the necessary handlers.
          */
         _determineType(): void {
+            if (!isNull(this.templateControl) && this._observedBindableProperty()) {
+                return;
+            }
+            
             var element = this.element;
-
             if (isNull(element)) {
                 return;
             }
@@ -571,8 +537,10 @@ module plat.controls {
                 case 'input':
                     switch ((<HTMLInputElement>element).type) {
                         case 'button':
+                        case 'submit':
+                        case 'reset':
+                            this._addEventType = this._addButtonEventListener;
                             this._getter = this._getValue;
-                            this._setter = this._setText;
                             break;
                         case 'checkbox':
                             this._addEventType = this._addChangeEventListener;
@@ -603,15 +571,8 @@ module plat.controls {
                     this.__initializeSelect();
                     break;
                 case 'button':
+                    this._addEventType = this._addButtonEventListener;
                     this._getter = this._getTextContent;
-                    this._setter = this._setTextContent;
-                    break;
-                default:
-                    if (isNull(this.templateControl)) {
-                        return;
-                    }
-
-                    this._observeBindableProperty();
                     break;
             }
         }
@@ -683,7 +644,7 @@ module plat.controls {
          * Checks if the associated Template Control is a BindablePropertyControl and 
          * initializes all listeners accordingly.
          */
-        _observeBindableProperty(): void {
+        _observedBindableProperty(): boolean {
             var templateControl = <ui.IBindablePropertyControl>this.templateControl;
 
             if (isFunction(templateControl.observeProperty) &&
@@ -694,7 +655,10 @@ module plat.controls {
                 });
 
                 this._setter = this.__setBindableProperty;
+                return true;
             }
+
+            return false;
         }
 
         private __setBindableProperty(newValue: any, oldValue?: any, firstTime?: boolean): void {
@@ -714,7 +678,7 @@ module plat.controls {
             element.value = newValue;
         }
 
-        private __initializeRadio() {
+        private __initializeRadio(): void {
             var element = this.element;
 
             this._addEventType = this._addChangeEventListener;
@@ -735,7 +699,7 @@ module plat.controls {
             element.setAttribute('value', '');
         }
 
-        private __initializeSelect() {
+        private __initializeSelect(): void {
             var element = <HTMLSelectElement>this.element,
                 multiple = element.multiple,
                 options = element.options,
