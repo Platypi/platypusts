@@ -16,7 +16,7 @@ module plat.ui {
          * @param control The ITemplateControl containing the new BindableTemplate object, used for data context 
          * inheritance for templates.
          * @param originalBindableTemplates An optional IBindableTemplates object to copy.
-         * @return {BindableTemplates} The newly instantiated BindableTemplates object.
+         * @returns {BindableTemplates} The newly instantiated BindableTemplates object.
          */
         static create(control: ITemplateControl, original?: IBindableTemplates): IBindableTemplates;
         static create(control: ITemplateControl, original?: BindableTemplates): IBindableTemplates {
@@ -308,7 +308,7 @@ module plat.ui {
          * @param control The ITemplateControl containing the new BindableTemplate object, used for data context
          * inheritance for templates.
          * @param originalBindableTemplates An optional IBindableTemplates object to copy.
-         * @return {BindableTemplates} The newly instantiated BindableTemplates object.
+         * @returns {BindableTemplates} The newly instantiated BindableTemplates object.
          */
         create(control: ITemplateControl, original?: IBindableTemplates): IBindableTemplates;
 

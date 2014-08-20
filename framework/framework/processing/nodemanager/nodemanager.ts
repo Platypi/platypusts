@@ -14,7 +14,7 @@ module plat.processing {
          * 
          * @static
          * @param expressions An IParsedExpression array to search for identifiers.
-         * @return {Array<string>} An array of identifiers.
+         * @returns {Array<string>} An array of identifiers.
          */
         static findUniqueIdentifiers(expressions: Array<expressions.IParsedExpression>): Array<string> {
             var length = expressions.length,
@@ -49,7 +49,7 @@ module plat.processing {
          * Determines if a string has the markup notation.
          * 
          * @param text The text string in which to search for markup.
-         * @return {Boolean} Indicates whether or not there is markup.
+         * @returns {Boolean} Indicates whether or not there is markup.
          */
         static hasMarkup(text: string): boolean {
             return NodeManager._markupRegex.test(text);
@@ -117,7 +117,7 @@ module plat.processing {
          * @static
          * @param expressions The IParsedExpression array to evaluate.
          * @param control The IControl used to parse the expressions.
-         * @return {string} The evaluated expressions.
+         * @returns {string} The evaluated expressions.
          */
         static build(expressions: Array<expressions.IParsedExpression>, control?: ui.ITemplateControl) {
             var text = '',
@@ -331,7 +331,7 @@ module plat.processing {
          * 
          * @static
          * @param expressions An IParsedExpression array to search for identifiers.
-         * @return {Array<string>} An array of identifiers.
+         * @returns {Array<string>} An array of identifiers.
          */
         findUniqueIdentifiers(expressions: Array<expressions.IParsedExpression>): Array<string>;
 
@@ -339,7 +339,7 @@ module plat.processing {
          * Determines if a string has the markup notation.
          * 
          * @param text The text string in which to search for markup.
-         * @return {Boolean} Indicates whether or not there is markup.
+         * @returns {Boolean} Indicates whether or not there is markup.
          */
         hasMarkup(text: string): boolean;
 
@@ -348,7 +348,7 @@ module plat.processing {
          * 
          * @static
          * @param text The text string to parse.
-         * @return {Array<IParsedExpression>}
+         * @returns {Array<IParsedExpression>}
          */
         findMarkup(text: string): Array<expressions.IParsedExpression>;
 
@@ -359,7 +359,7 @@ module plat.processing {
          * @static
          * @param expressions The IParsedExpression array to evaluate.
          * @param control The IControl used to parse the expressions.
-         * @return {string} The evaluated expressions.
+         * @returns {string} The evaluated expressions.
          */
         build(expressions: Array<expressions.IParsedExpression>, control?: ui.ITemplateControl): string;
 

@@ -328,7 +328,7 @@ module plat.processing {
          * 
          * @static
          * @param attributes A NamedNodeMap to compile into an INodeMap
-         * @return {INodeMap} The compiled NamedNodeMap
+         * @returns {INodeMap} The compiled NamedNodeMap
          */
         static _collectAttributes(attributes: NamedNodeMap): INodeMap {
             var nodes: Array<INode> = [],
@@ -410,7 +410,7 @@ module plat.processing {
          * 
          * @static
          * @param nodes The compiled INodes to be cloned.
-         * @return {INodeMap} The cloned array of INodes.
+         * @returns {INodeMap} The cloned array of INodes.
          */
         static _copyAttributeNodes(nodes: Array<INode>): Array<INode> {
             var newNodes: Array<INode> = [],
@@ -436,7 +436,7 @@ module plat.processing {
          * @param sourceNode The original INode.
          * @param node The new node used for cloning.
          * @param newControl An optional new control to associate with the cloned node.
-         * @return {INode} The clones INode.
+         * @returns {INode} The clones INode.
          */
         static _cloneNode(sourceNode: INode, node: Node, newControl?: ui.ITemplateControl): INode {
             return {
@@ -456,7 +456,7 @@ module plat.processing {
          * @param sourceMap The original INodeMap.
          * @param element The new Element used for cloning.
          * @param newControl An optional new control to associate with the element.
-         * @return {INodeMap} The cloned INodeMap.
+         * @returns {INodeMap} The cloned INodeMap.
          */
         static _cloneNodeMap(sourceMap: INodeMap, element: Element,
             parent: ui.ITemplateControl, newControl?: ui.ITemplateControl): INodeMap {

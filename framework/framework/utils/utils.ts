@@ -182,7 +182,7 @@ module plat {
          * @param ...sources[] Any number of objects with which to extend the 
          * destination object.
          * 
-         * @return {any} The extended destination object.
+         * @returns {any} The extended destination object.
          */
         extend(destination: any, ...sources: any[]): any;
 
@@ -196,7 +196,7 @@ module plat {
          * @param ...sources[] Any number of objects with which to extend the 
          * destination object.
          * 
-         * @return {any} The extended destination object.
+         * @returns {any} The extended destination object.
          */
         deepExtend(destination: any, ...sources: any[]): any;
 
@@ -215,7 +215,7 @@ module plat {
          * 
          * @param obj Anything.
          * 
-         * @return {boolean} True if obj is an object, false otherwise.
+         * @returns {boolean} True if obj is an object, false otherwise.
          */
         isObject(obj: any): boolean;
 
@@ -224,7 +224,7 @@ module plat {
          * 
          * @param obj Anything.
          * 
-         * @return {boolean} True if obj is the window, false otherwise.
+         * @returns {boolean} True if obj is the window, false otherwise.
          */
         isWindow(obj: any): boolean;
 
@@ -233,7 +233,7 @@ module plat {
          * 
          * @param obj Anything.
          * 
-         * @return {boolean} True if obj is the document, false otherwise.
+         * @returns {boolean} True if obj is the document, false otherwise.
          */
         isDocument(obj: any): boolean;
 
@@ -242,7 +242,7 @@ module plat {
          * 
          * @param obj Anything.
          * 
-         * @return {boolean} True if obj is a Node, false otherwise.
+         * @returns {boolean} True if obj is a Node, false otherwise.
          */
         isNode(obj: any): boolean;
 
@@ -251,7 +251,7 @@ module plat {
          * 
          * @param obj Anything.
          * 
-         * @return {boolean} True if obj is a DocumentFragment, false otherwise.
+         * @returns {boolean} True if obj is a DocumentFragment, false otherwise.
          */
         isDocumentFragment(obj: any): boolean;
 
@@ -260,7 +260,7 @@ module plat {
          * 
          * @param obj Anything.
          * 
-         * @return {boolean} True if obj is a string, false otherwise.
+         * @returns {boolean} True if obj is a string, false otherwise.
          */
         isString(obj: any): boolean;
 
@@ -269,7 +269,7 @@ module plat {
          * 
          * @param obj Anything.
          * 
-         * @return {boolean} True if obj is a RegExp object, false otherwise.
+         * @returns {boolean} True if obj is a RegExp object, false otherwise.
          */
         isRegExp(obj: any): boolean;
 
@@ -286,7 +286,7 @@ module plat {
          * 
          * @param obj Anything.
          * 
-         * @return {boolean} True if the object isEmpty (or null/undefined), 
+         * @returns {boolean} True if the object isEmpty (or null/undefined), 
          * false otherwise.
          */
         isEmpty(obj: any): boolean;
@@ -296,7 +296,7 @@ module plat {
          * 
          * @param obj Anything.
          * 
-         * @return {boolean} True if obj is a boolean, false otherwise.
+         * @returns {boolean} True if obj is a boolean, false otherwise.
          */
         isBoolean(obj: any): boolean;
 
@@ -305,7 +305,7 @@ module plat {
          * 
          * @param obj Anything.
          * 
-         * @return {boolean} True if obj is a number, false otherwise.
+         * @returns {boolean} True if obj is a number, false otherwise.
          */
         isNumber(obj: any): boolean;
 
@@ -314,7 +314,7 @@ module plat {
          * 
          * @param obj Anything.
          * 
-         * @return {boolean} True if obj is a function, false otherwise.
+         * @returns {boolean} True if obj is a function, false otherwise.
          */
         isFunction(obj: any): boolean;
 
@@ -323,7 +323,7 @@ module plat {
          * 
          * @param obj Anything.
          * 
-         * @return {boolean} True if obj is null or undefined, false otherwise.
+         * @returns {boolean} True if obj is null or undefined, false otherwise.
          */
         isNull(obj: any): boolean;
 
@@ -332,7 +332,7 @@ module plat {
          * 
          * @param obj Anything.
          * 
-         * @return {boolean} True if obj is undefined, false otherwise.
+         * @returns {boolean} True if obj is undefined, false otherwise.
          */
         isUndefined(obj: any): boolean;
 
@@ -341,7 +341,7 @@ module plat {
          * 
          * @param obj Anything.
          * 
-         * @return {boolean} True if obj is an Array, false otherwise.
+         * @returns {boolean} True if obj is an Array, false otherwise.
          */
         isArray(obj: any): boolean;
 
@@ -350,7 +350,7 @@ module plat {
          * 
          * @param obj Anything.
          * 
-         * @return {boolean} True if obj has array-like qualities (i.e. it is an
+         * @returns {boolean} True if obj has array-like qualities (i.e. it is an
          * Array, string, arguments, or NodeList), false otherwise.
          */
         isArrayLike(obj: any): boolean;
@@ -371,7 +371,7 @@ module plat {
          * should be kept, false otherwise.
          * @param context Optional context with which to call the iterator.
          * 
-         * @return {Array<T>} An array of objects which evaluated to true with the iterator.
+         * @returns {Array<T>} An array of objects which evaluated to true with the iterator.
          */
         filter<T>(array: Array<T>, iterator: (value: T, index: number, obj: any) => boolean, context?: any): Array<T>;
         /**
@@ -383,7 +383,7 @@ module plat {
          * should be kept, false otherwise.
          * @param context Optional context with which to call the iterator.
          * 
-         * @return {Array<T>} An array of objects which evaluated to true with the iterator.
+         * @returns {Array<T>} An array of objects which evaluated to true with the iterator.
          */
         filter<T>(obj: any, iterator: (value: T, key: any, obj: any) => boolean, context?: any): Array<T>;
 
@@ -393,7 +393,7 @@ module plat {
          * @param array The list used for searching for properties.
          * @param properties An object containing key/value pairs to match with obj's values.
          * 
-         * @return {Array<T>} The matched values in obj.
+         * @returns {Array<T>} The matched values in obj.
          * 
          * @example where([{foo: 'foo', bar: 'bar'}, {foo: 'bar', bar: 'foo'}], {foo: 'foo'});
          * //returns [{foo: 'bar', bar: 'bar'}]
@@ -405,7 +405,7 @@ module plat {
          * @param obj The list used for searching for properties.
          * @param properties An object containing key/value pairs to match with obj's values.
          * 
-         * @return {Array<T>} The matched values in obj.
+         * @returns {Array<T>} The matched values in obj.
          * 
          * @example where([{foo: 'foo', bar: 'bar'}, {foo: 'bar', bar: 'foo'}], {foo: 'foo'});
          * //returns [{foo: 'bar', bar: 'bar'}]
@@ -420,7 +420,7 @@ module plat {
          * @param iterator A method that takes in a value, index, and the object.
          * @param context An optional context to bind to the iterator.
          * 
-         * @return {Array<T>} The array.
+         * @returns {Array<T>} The array.
          */
         forEach<T>(array: Array<T>, iterator: (value: T, index: number, obj: any) => void, context?: any): Array<T>;
         /**
@@ -432,7 +432,7 @@ module plat {
          * @param iterator A method that takes in a value, key, and the object.
          * @param context An optional context to bind to the iterator.
          * 
-         * @return {IObject<T>} The object.
+         * @returns {IObject<T>} The object.
          */
         forEach<T>(obj: any, iterator: (value: T, key: string, obj: any) => void, context?: any): any;
 
@@ -445,7 +445,7 @@ module plat {
          * @param iterator The transformation function.
          * @param context An optional context to bind to the iterator.
          * 
-         * @return {Array<U>} The accumulated transformed values from the iterator.
+         * @returns {Array<U>} The accumulated transformed values from the iterator.
          */
         map<T, U>(array: Array<T>, iterator: (value: T, index: number, obj: any) => U, context?: any): Array<U>;
         /**
@@ -457,7 +457,7 @@ module plat {
          * @param iterator The transformation function.
          * @param context An optional context to bind to the iterator.
          * 
-         * @return {Array<U>} The accumulated transformed values from the iterator.
+         * @returns {Array<U>} The accumulated transformed values from the iterator.
          */
         map<T, U>(obj: any, iterator: (value: T, key: string, obj: any) => U, context?: any): Array<U>;
 
@@ -468,7 +468,7 @@ module plat {
          * @param obj An object.
          * @param key The property to 'pluck' from each value in obj.
          * 
-         * @return {Array<U>} An array of 'plucked' values from obj.
+         * @returns {Array<U>} An array of 'plucked' values from obj.
          */
         pluck<T, U>(obj: any, key: string): Array<U>;
 
@@ -480,7 +480,7 @@ module plat {
          * @param iterator A method with which to evaluate all the values in obj.
          * @param context An optional context to bind to the iterator.
          * 
-         * @return {boolean} True if any calls to iterator return true, false otherwise.
+         * @returns {boolean} True if any calls to iterator return true, false otherwise.
          */
         some<T>(array: Array<T>, iterator: (value: T, index: number, obj: any) => boolean, context?: any): boolean;
         /**
@@ -492,7 +492,7 @@ module plat {
          * @param iterator A method with which to evaluate all the values in obj.
          * @param context An optional context to bind to the iterator.
          * 
-         * @return {boolean} True if any calls to iterator return true, false otherwise.
+         * @returns {boolean} True if any calls to iterator return true, false otherwise.
          */
         some<T>(obj: any, iterator: (value: T, key: string, obj: any) => boolean, context?: any): boolean;
 
@@ -504,7 +504,7 @@ module plat {
          * @param args The arguments to apply to the method.
          * @param context An optional context to bind to the method.
          * 
-         * @return {plat.IRemoveListener} A function that will clear the timeout when called.
+         * @returns {plat.IRemoveListener} A function that will clear the timeout when called.
          */
         postpone(method: (...args: any[]) => void, args?: Array<any>, context?: any): IRemoveListener;
 
@@ -517,7 +517,7 @@ module plat {
          * @param args The arguments to apply to the method.
          * @param context An optional context to bind to the method.
          * 
-         * @return {plat.IRemoveListener} A function that will clear the timeout when called.
+         * @returns {plat.IRemoveListener} A function that will clear the timeout when called.
          */
         defer(method: (...args: any[]) => void, timeout: number, args?: Array<any>, context?: any): IRemoveListener;
 
@@ -527,7 +527,7 @@ module plat {
          * 
          * @param prefix A string prefix to prepend tothe unique ID.
          * 
-         * @return {string} The prefix-prepended unique id.
+         * @returns {string} The prefix-prepended unique id.
          */
         uniqueId(prefix?: string): string;
 
@@ -538,7 +538,7 @@ module plat {
          * 
          * @param str The spinal-case, dot.case, or snake_case string
          * 
-         * @return {string} The camelCase string
+         * @returns {string} The camelCase string
          * 
          * @example camelCase('plat-options'); // returns 'platOptions'
          */

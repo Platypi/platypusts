@@ -143,7 +143,7 @@ module plat.storage {
          * @param id The id of the new ICache.
          * @param options ICacheOptions for customizing the ICache.
          * 
-         * @return {ICache} The newly created ICache object.
+         * @returns {ICache} The newly created ICache object.
          */
         create<T>(id: string, options?: ICacheOptions): ICache<T>;
 
@@ -178,7 +178,7 @@ module plat.storage {
          * @param key The key to use for storage/retrieval of the object.
          * @param value The value to store with the associated key.
          * 
-         * @return {T} The value inserted into an ICache.
+         * @returns {T} The value inserted into an ICache.
          */
         put(key: string, value: T): T;
 
@@ -187,7 +187,7 @@ module plat.storage {
          * 
          * @param key The key to search for in an ICache.
          * 
-         * @return {T|undefined} The value found at the associated key. 
+         * @returns {T|undefined} The value found at the associated key. 
          * Returns undefined for an ICache miss.
          */
         read(key: string): T;

@@ -135,7 +135,7 @@ module plat.events {
          * @param uid A unique id to associate with the object registering the listener.
          * @param eventName The name of the event to listen to.
          * @param listener The method called when the DispatchEvent is fired.
-         * @return {IRemoveListener} A method for removing the listener.
+         * @returns {IRemoveListener} A method for removing the listener.
          */
         static on(uid: string, eventName: string, listener: (ev: IDispatchEventInstance, ...args: any[]) => void,
             context?: any): IRemoveListener {
@@ -448,7 +448,7 @@ module plat.events {
          * @param eventName='beforeNavigate' Specifies that this is a listener for the beforeNavigate event.
          * @param listener The method called when the beforeNavigate event is fired.
          * @param context Optional context with which the listener will be bound.
-         * @return {IRemoveListener} A method for removing the listener.
+         * @returns {IRemoveListener} A method for removing the listener.
          */
         on(uid: string, eventName: 'beforeNavigate',
             listener: (ev: INavigationEvent<any>) => void, context?: any): IRemoveListener;
@@ -462,7 +462,7 @@ module plat.events {
          * @param eventName='navigating' Specifies that this is a listener for the navigating event.
          * @param listener The method called when the navigating event is fired.
          * @param context Optional context with which the listener will be bound.
-         * @return {IRemoveListener} A method for removing the listener.
+         * @returns {IRemoveListener} A method for removing the listener.
          */
         on(uid: string, eventName: 'navigating',
             listener: (ev: INavigationEvent<any>) => void, context?: any): IRemoveListener;
@@ -475,7 +475,7 @@ module plat.events {
          * @param eventName='navigated' Specifies that this is a listener for the navigated event.
          * @param listener The method called when the navigated event is fired.
          * @param context Optional context with which the listener will be bound.
-         * @return {IRemoveListener} A method for removing the listener.
+         * @returns {IRemoveListener} A method for removing the listener.
          */
         on(uid: string, eventName: 'navigated',
             listener: (ev: INavigationEvent<any>) => void, context?: any): IRemoveListener;
@@ -487,7 +487,7 @@ module plat.events {
          * @param eventName The name of the event to listen to.
          * @param listener The method called when the NavigationEvent is fired.
          * @param context Optional context with which the listener will be bound.
-         * @return {IRemoveListener} A method for removing the listener.
+         * @returns {IRemoveListener} A method for removing the listener.
          */
         on(uid: string, eventName: string, listener: (ev: INavigationEvent<any>) => void,
             context?: any): IRemoveListener;
@@ -499,7 +499,7 @@ module plat.events {
          * @param eventName='ready' Specifies that the listener is for the ready event.
          * @param listener The method called when the app is ready to start.
          * @param context Optional context with which the listener will be bound.
-         * @return {IRemoveListener} A method for removing the listener.
+         * @returns {IRemoveListener} A method for removing the listener.
          */
         on(uid: string, eventName: 'ready', listener: (ev: ILifecycleEvent) => void,
             context?: any): IRemoveListener;
@@ -511,7 +511,7 @@ module plat.events {
          * @param eventName='suspend' Specifies the listener is for the suspend event.
          * @param listener The method called when the suspend event is fired.
          * @param context Optional context with which the listener will be bound.
-         * @return {IRemoveListener} A method for removing the listener.
+         * @returns {IRemoveListener} A method for removing the listener.
          */
         on(uid: string, eventName: 'suspend', listener: (ev: ILifecycleEvent) => void,
             context?: any): IRemoveListener;
@@ -523,7 +523,7 @@ module plat.events {
          * @param eventName='suspend' Specifies the listener is for the resume event.
          * @param listener The method called when the resume event is fired.
          * @param context Optional context with which the listener will be bound.
-         * @return {IRemoveListener} A method for removing the listener.
+         * @returns {IRemoveListener} A method for removing the listener.
          */
         on(uid: string, eventName: 'resume', listener: (ev: ILifecycleEvent) => void,
             context?: any): IRemoveListener;
@@ -535,7 +535,7 @@ module plat.events {
          * @param eventName='online' Specifies the listener is for the online event.
          * @param listener The method called when the online event is fired.
          * @param context Optional context with which the listener will be bound.
-         * @return {IRemoveListener} A method for removing the listener.
+         * @returns {IRemoveListener} A method for removing the listener.
          */
         on(uid: string, eventName: 'online', listener: (ev: ILifecycleEvent) => void,
             context?: any): IRemoveListener;
@@ -547,7 +547,7 @@ module plat.events {
          * @param eventName='offline' Specifies the listener is for the offline event.
          * @param listener The method called when the offline is fired.
          * @param context Optional context with which the listener will be bound.
-         * @return {IRemoveListener} A method for removing the listener.
+         * @returns {IRemoveListener} A method for removing the listener.
          */
         on(uid: string, eventName: 'offline', listener: (ev: ILifecycleEvent) => void,
             context?: any): IRemoveListener;
@@ -559,7 +559,7 @@ module plat.events {
          * @param eventName The name of the event to listen to.
          * @param listener The method called when the AlmEvent is fired.
          * @param context Optional context with which the listener will be bound.
-         * @return {IRemoveListener} A method for removing the listener.
+         * @returns {IRemoveListener} A method for removing the listener.
          */
         on(uid: string, eventName: string, listener: (ev: ILifecycleEvent) => void,
             context?: any): IRemoveListener;
@@ -571,7 +571,7 @@ module plat.events {
          * @param eventName The name of the event to listen to.
          * @param listener The method called when the ErrorEvent is fired.
          * @param context Optional context with which the listener will be bound.
-         * @return {IRemoveListener} A method for removing the listener.
+         * @returns {IRemoveListener} A method for removing the listener.
          */
         on(uid: string, eventName: 'error', listener: (ev: IErrorEvent<Error>) => void,
             context?: any): IRemoveListener;
@@ -583,7 +583,7 @@ module plat.events {
          * @param eventName The name of the event to listen to.
          * @param listener The method called when the ErrorEvent is fired.
          * @param context Optional context with which the listener will be bound.
-         * @return {IRemoveListener} A method for removing the listener.
+         * @returns {IRemoveListener} A method for removing the listener.
          */
         on(uid: string, eventName: string, listener: (ev: IErrorEvent<any>) => void,
             context?: any): IRemoveListener;
@@ -595,7 +595,7 @@ module plat.events {
          * @param eventName The name of the event to listen to.
          * @param listener The method called when the DispatchEvent is fired.
          * @param context Optional context with which the listener will be bound.
-         * @return {IRemoveListener} A method for removing the listener.
+         * @returns {IRemoveListener} A method for removing the listener.
          */
         on(uid: string, eventName: string, listener: (ev: IDispatchEventInstance, ...args: any[]) => void,
             context?: any): IRemoveListener;

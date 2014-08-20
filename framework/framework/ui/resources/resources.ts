@@ -190,7 +190,7 @@ module plat.ui {
          * @static
          * @param element The resources element to parse.
          * 
-         * @return {IObject<IResource>} The resources created 
+         * @returns {IObject<IResource>} The resources created 
          * using element.
          */
         static parseElement(element: Element): IObject<IResource> {
@@ -452,7 +452,7 @@ module plat.ui {
          * @static
          * @param element The resources element to parse.
          * 
-         * @return {IObject<IResource>} The resources created
+         * @returns {IObject<IResource>} The resources created
          * using element.
          */
         parseElement(element: Element): IObject<IResource>;

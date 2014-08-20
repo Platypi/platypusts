@@ -775,7 +775,7 @@ module plat {
          * 
          * @static
          * @param control The control with which to find the root.
-         * @return {ui.ITemplateControl}
+         * @returns {ui.ITemplateControl}
          */
         getRootControl(control: IControl): ui.ITemplateControl;
         getRootControl(control: ui.ITemplateControl): ui.ITemplateControl;
@@ -1148,7 +1148,7 @@ module plat {
              * @param listener The listener callback which will be pre-bound to the 
              * template control.
              * 
-             * @return {IRemoveListener} A method for removing the listener.
+             * @returns {IRemoveListener} A method for removing the listener.
              */
             observe(listener: (newValue: T, oldValue: T) => void): IRemoveListener;
         }

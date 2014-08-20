@@ -452,7 +452,7 @@ module plat.expressions {
          * @param index The current index in the expression string
          * @param isNumberLike Whether or not the character resembles a number
          * @param array A temporary array used to aggregate similar character types.
-         * @return {number} The new index in the expression string
+         * @returns {number} The new index in the expression string
          */
         _lookAhead(index: number, isNumberLike: boolean, array: Array<string>): number {
             var ch: string,

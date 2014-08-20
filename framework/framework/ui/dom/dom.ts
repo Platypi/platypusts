@@ -145,7 +145,7 @@ module plat.ui {
          * 
          * @param nodeList A Node Array to be appended to the root/DocumentFragment
          * 
-         * @return {Node} The root Node or a DocumentFragment.
+         * @returns {Node} The root Node or a DocumentFragment.
          */
         appendChildren(nodeList: Array<Node>): DocumentFragment;
         /**
@@ -156,7 +156,7 @@ module plat.ui {
          * @param nodeList A Node Array to be appended to the root/DocumentFragment
          * @param root An optional Node to append the nodeList.
          * 
-         * @return {Node} The root Node or a DocumentFragment.
+         * @returns {Node} The root Node or a DocumentFragment.
          */
         appendChildren(nodeList: NodeList): DocumentFragment;
         /**
@@ -167,7 +167,7 @@ module plat.ui {
          * @param nodeList A Node Array to be appended to the root/DocumentFragment
          * @param root An optional Node to append the nodeList.
          * 
-         * @return {Node} The root Node or a DocumentFragment.
+         * @returns {Node} The root Node or a DocumentFragment.
          */
         appendChildren(nodeList: Array<Node>, root?: Node): Node;
         /**
@@ -178,7 +178,7 @@ module plat.ui {
          * @param nodeList A NodeList to be appended to the root/DocumentFragment
          * @param root An optional Node to append the nodeList.
          * 
-         * @return {Node} The root Node or a DocumentFragment.
+         * @returns {Node} The root Node or a DocumentFragment.
          */
         appendChildren(nodeList: NodeList, root?: Node): Node;
 
@@ -212,7 +212,7 @@ module plat.ui {
          * @param node The Node to set innerHTML.
          * @param html HTML string to be put inside the node.
          * 
-         * @return {Node} The same node passed in, with innerHTML set.
+         * @returns {Node} The same node passed in, with innerHTML set.
          */
         setInnerHtml(node: Node, html: string): Node;
 
@@ -223,7 +223,7 @@ module plat.ui {
          * @param nodes The Node Array to insert into the parent.
          * @param endNode An optional endNode to use to insert nodes.
          * 
-         * @return {Array<Node>} An Array copy of nodes.
+         * @returns {Array<Node>} An Array copy of nodes.
          */
         insertBefore(parent: Node, nodes: Array<Node>, endNode?: Node): Array<Node>;
         /**
@@ -233,7 +233,7 @@ module plat.ui {
          * @param nodes The NodeList to insert into the parent.
          * @param endNode An optional endNode to use to insert nodes.
          * 
-         * @return {Array<Node>} An Array copy of nodes.
+         * @returns {Array<Node>} An Array copy of nodes.
          */
         insertBefore(parent: Node, nodes: NodeList, endNode?: Node): Array<Node>;
         /**
@@ -243,7 +243,7 @@ module plat.ui {
          * @param fragment The DocumentFragment to insert into the parent.
          * @param endNode An optional endNode to use to insert the fragment.
          * 
-         * @return {Array<Node>} An Array copy of the fragment's childNodes.
+         * @returns {Array<Node>} An Array copy of the fragment's childNodes.
          */
         insertBefore(parent: Node, fragment: DocumentFragment, endNode?: Node): Array<Node>;
 
@@ -253,7 +253,7 @@ module plat.ui {
          * 
          * @param node The Node to replace.
          * 
-         * @return {Array<Node>} A Node Array that represents the childNodes of the
+         * @returns {Array<Node>} A Node Array that represents the childNodes of the
          * given node.
          */
         replace(node: Node): Array<Node>;
@@ -266,7 +266,7 @@ module plat.ui {
          * @param newElement The HTMLElement populate with childNodes and add to the
          * element's parent.
          * 
-         * @return {HTMLElement} The replaced element (newElement).
+         * @returns {HTMLElement} The replaced element (newElement).
          */
         replaceWith(node: Node, newElement: HTMLElement): HTMLElement;
         /**
@@ -277,7 +277,7 @@ module plat.ui {
          * @param newElement The Element populate with childNodes and add to the
          * element's parent.
          * 
-         * @return {Element} The replaced element (newElement).
+         * @returns {Element} The replaced element (newElement).
          */
         replaceWith(node: Node, newElement: Element): Element;
         /**
@@ -288,7 +288,7 @@ module plat.ui {
          * @param newElement The Node populate with childNodes and add to the
          * node's parent.
          * 
-         * @return {Node} The replaced Node (newNode).
+         * @returns {Node} The replaced Node (newNode).
          */
         replaceWith(node: Node, newNode: Node): Node;
 
@@ -298,7 +298,7 @@ module plat.ui {
          * 
          * @param html The DOM string.
          * 
-         * @return {DocumentFragment} The serialized DOM.
+         * @returns {DocumentFragment} The serialized DOM.
          */
         serializeHtml(html?: string): DocumentFragment;
 

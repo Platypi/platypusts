@@ -146,6 +146,11 @@
       <DependentUpon>platypus.css</DependentUpon>
     </Content>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="css\mixins.css.map">
+      <DependentUpon>mixins.css</DependentUpon>
+    </Content>
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

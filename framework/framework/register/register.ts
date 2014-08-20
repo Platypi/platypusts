@@ -44,7 +44,7 @@ module plat.register {
      * @param injectableType The injectable type.
      * @param isStatic The injectable type is a static type.
      * 
-     * @return {register} The object that contains the register methods (for method chaining).
+     * @returns {register} The object that contains the register methods (for method chaining).
      */
     function add(obj: dependency.IInjectorObject<any>, name: string, Type: any, dependencies?: Array<any>,
         injectableType?: string, isStatic?: boolean): typeof register {
@@ -168,7 +168,7 @@ module plat.register {
      * plat.register.injectable.STATIC, plat.register.injectable.INSTANCE, plat.register.injectable.FACTORY, 
      * plat.register.injectable.CLASS (defaults to plat.register.injectable.SINGLETON).
      * 
-     * @return {register} The object that contains the register methods (for method chaining).
+     * @returns {register} The object that contains the register methods (for method chaining).
      * 
      * @example plat.register.injectable('$CacheFactory', [plat.expressions.IParser], 
      *  function(parser: plat.expressions.IParser) { return { ... }; });

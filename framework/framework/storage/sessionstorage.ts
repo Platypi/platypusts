@@ -35,7 +35,7 @@ module plat.storage {
          * Gets an item out of session storage with the assigned key.
          * 
          * @param key The key of the item to retrieve from sessionStorage.
-         * @return {T} The item retrieved from sessionStorage.
+         * @returns {T} The item retrieved from sessionStorage.
          */
         getItem<T>(key: string): T;
 
@@ -45,7 +45,7 @@ module plat.storage {
          * sessionStorage.
          * 
          * @param index The index used to retrieve the associated key.
-         * @return {string} The key at the given index.
+         * @returns {string} The key at the given index.
          */
         key(index: number): string;
 

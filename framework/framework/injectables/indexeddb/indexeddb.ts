@@ -41,7 +41,7 @@ module plat {
              * @param name The name of the object store to create.
              * @param options The IObjectStoreOptions associated with creating 
              * this object store.
-             * @return {ObjectStorePromise} The created ObjectStorePromise that resolves 
+             * @returns {ObjectStorePromise} The created ObjectStorePromise that resolves 
              * with the Db instance when the object store has been created.
              */
             createObjectStore(name: string, options?: IObjectStoreOptions): IObjectStorePromise;
@@ -60,7 +60,7 @@ module plat {
              * @param storeName The name of the object store or Array of names of 
              * object stores with which to perform the given transaction.
              * @param mode The type of transaction to perform. 
-             * @return {ITransactionPromise} The created TransactionPromise.
+             * @returns {ITransactionPromise} The created TransactionPromise.
              * 
              * @see {injectables.Transaction.Mode}.
              */
@@ -116,7 +116,7 @@ module plat {
              * @param name The name of the object store to create.
              * @param options The IObjectStoreOptions associated with creating 
              * this object store.
-             * @return {ObjectStorePromise} The created ObjectStorePromise that resolves 
+             * @returns {ObjectStorePromise} The created ObjectStorePromise that resolves 
              * with the Db instance when the object store has been created.
              */
             createObjectStore(name: string, options?: IObjectStoreOptions) {
@@ -162,7 +162,7 @@ module plat {
              * @param mode The type of transaction to perform. See 
              * injectables.Db.READONLY, injectables.Db.READWRITE,
              * injectables.Db.VERSIONCHANGE.
-             * @return {ITransactionPromise} The created TransactionPromise.
+             * @returns {ITransactionPromise} The created TransactionPromise.
              */
             transaction(storeName: string, mode: string): ITransactionPromise;
             transaction(storeNames: Array<string>, mode: string): ITransactionPromise;
@@ -293,7 +293,7 @@ module plat {
              * @param name The name of the index to create.
              * @param keyPath The key of the object to add the index to.
              * @param options The IObjectStoreIndexOptions to modify the creation of the index.
-             * @return {IIndex} The newly created Index.
+             * @returns {IIndex} The newly created Index.
              */
             createIndex(name: string, keyPath: string, options: IObjectStoreIndexOptions): IIndex;
 
@@ -311,7 +311,7 @@ module plat {
              * A wrapper for the IDBObjectStore index method.
              * 
              * @param key The key of the object to get.
-             * @return {IIndex} The index found with the given key.
+             * @returns {IIndex} The index found with the given key.
              */
             index(key: string): IIndex;
 
@@ -319,7 +319,7 @@ module plat {
              * A wrapper for the IDBObjectStore get method.
              * 
              * @param key The key of the object to get.
-             * @return {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
+             * @returns {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
              * that fulfills with the obtained object.
              */
             get(key: string): IDatabaseEventResultPromise;
@@ -329,7 +329,7 @@ module plat {
              * 
              * @param item The item to add
              * @param key The key of the object to add to.
-             * @return {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
+             * @returns {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
              * that fulfills with the obtained object.
              */
             add(item: any, key?: string): IDatabaseEventResultPromise;
@@ -338,7 +338,7 @@ module plat {
              * A wrapper for the IDBObjectStore delete method.
              * 
              * @param key The key of the object to delete.
-             * @return {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
+             * @returns {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
              * that fulfills with the request's result.
              */
             delete(key: string): IDatabaseEventResultPromise;
@@ -346,7 +346,7 @@ module plat {
             /**
              * A wrapper for the IDBObjectStore clear method.
              * 
-             * @return {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
+             * @returns {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
              * that fulfills with the request's result.
              */
             clear(): IDatabaseEventResultPromise;
@@ -355,7 +355,7 @@ module plat {
              * A wrapper for the IDBObjectStore put method.
              * 
              * @param key The key of the object to update.
-             * @return {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
+             * @returns {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
              * that fulfills with the request's result.
              */
             put(item: any, key?: string): IDatabaseEventResultPromise;
@@ -365,7 +365,7 @@ module plat {
              * 
              * @param range The IDBKeyRange to use as the cursor's range.
              * @param direction The direction of travel for the created cursor.
-             * @return {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
+             * @returns {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
              * that fulfills with a new injectables.Cursor instance.
              * 
              * @see {injectables.Cursor.Direction}.
@@ -456,7 +456,7 @@ module plat {
              * A wrapper for the IDBObjectStore index method.
              * 
              * @param key The key of the object to get.
-             * @return {IIndex} The index found with the given key.
+             * @returns {IIndex} The index found with the given key.
              */
             index(key: string) {
                 return new Index(this._store.index(key));
@@ -466,7 +466,7 @@ module plat {
              * A wrapper for the IDBObjectStore get method.
              * 
              * @param key The key of the object to get.
-             * @return {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
+             * @returns {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
              * that fulfills with the obtained object.
              */
             get(key: string) {
@@ -478,7 +478,7 @@ module plat {
              * 
              * @param item The item to add
              * @param key The key of the object to add to.
-             * @return {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
+             * @returns {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
              * that fulfills with the obtained object.
              */
             add(item: any, key?: string) {
@@ -489,7 +489,7 @@ module plat {
              * A wrapper for the IDBObjectStore delete method.
              * 
              * @param key The key of the object to delete.
-             * @return {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
+             * @returns {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
              * that fulfills with the request's result.
              */
             delete(key: string) {
@@ -499,7 +499,7 @@ module plat {
             /**
              * A wrapper for the IDBObjectStore clear method.
              * 
-             * @return {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
+             * @returns {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
              * that fulfills with the request's result.
              */
             clear() {
@@ -510,7 +510,7 @@ module plat {
              * A wrapper for the IDBObjectStore put method.
              * 
              * @param key The key of the object to update.
-             * @return {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
+             * @returns {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
              * that fulfills with the request's result.
              */
             put(item: any, key?: string) {
@@ -522,7 +522,7 @@ module plat {
              * 
              * @param range The IDBKeyRange to use as the cursor's range.
              * @param direction The direction of travel for the created cursor.
-             * @return {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
+             * @returns {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
              * that fulfills with a new injectables.Cursor instance.
              * 
              * @see {injectables.Cursor.Direction}.
@@ -610,7 +610,7 @@ module plat {
              * A wrapper for the IDBTransaction's method objectStore.
              * 
              * @param storeName The name of the object store trying to be accessed.
-             * @return {IObjectStorePromise} The newly created ObjectStorePromise.
+             * @returns {IObjectStorePromise} The newly created ObjectStorePromise.
              */
             objectStore(storeName: string): IObjectStorePromise;
         }
@@ -677,7 +677,7 @@ module plat {
              * A wrapper for the IDBTransaction's method objectStore.
              * 
              * @param storeName The name of the object store trying to be accessed.
-             * @return {IObjectStorePromise} The newly created ObjectStorePromise.
+             * @returns {IObjectStorePromise} The newly created ObjectStorePromise.
              */
             objectStore(storeName: string) {
                 var objectStore = this._transaction.objectStore(storeName);
@@ -705,7 +705,7 @@ module plat {
              * @param key The key to specify a specific record set. If not specified or null,
              * all records are included. Can be specified by IDBKeyRange, in which case the 
              * function retreives the first existing value in that range.
-             * @return {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
+             * @returns {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
              * that fulfills with the number of records within a key range.
              */
             count(key?: any): IDatabaseEventResultPromise;
@@ -716,7 +716,7 @@ module plat {
              * @param key The key to specify a specific record set. If not specified or null,
              * all records are included. Can be specified by IDBKeyRange, in which case the 
              * function retreives the first existing value in that range.
-             * @return {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
+             * @returns {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
              * that fulfills with either the value in the referenced object store that 
              * corresponds to the given key or the first corresponding value, if key is a key range.
              */
@@ -728,7 +728,7 @@ module plat {
              * @param key The key to specify a specific record set. If not specified or null,
              * all records are included. Can be specified by IDBKeyRange, in which case the 
              * function retreives the first existing value in that range.
-             * @return {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
+             * @returns {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
              * that fulfills with either the given key or the primary key, if key is a key range.
              */
             getKey(key: any): IDatabaseEventResultPromise;
@@ -738,7 +738,7 @@ module plat {
              * 
              * @param range The IDBKeyRange to use as the cursor's range.
              * @param direction The direction of travel for the created cursor.
-             * @return {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
+             * @returns {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
              * that fulfills with a new injectables.Cursor instance.
              * 
              * @see {injectables.Cursor.Direction}.
@@ -761,7 +761,7 @@ module plat {
              * @param key The key to specify a specific record set. If not specified or null,
              * all records are included. Can be specified by IDBKeyRange, in which case the 
              * function retreives the first existing value in that range.
-             * @return {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
+             * @returns {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
              * that fulfills with the number of records within a key range.
              */
             count(key?: any) {
@@ -774,7 +774,7 @@ module plat {
              * @param key The key to specify a specific record set. If not specified or null,
              * all records are included. Can be specified by IDBKeyRange, in which case the 
              * function retreives the first existing value in that range.
-             * @return {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
+             * @returns {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
              * that fulfills with either the value in the referenced object store that 
              * corresponds to the given key or the first corresponding value, if key is a key range.
              */
@@ -788,7 +788,7 @@ module plat {
              * @param key The key to specify a specific record set. If not specified or null,
              * all records are included. Can be specified by IDBKeyRange, in which case the 
              * function retreives the first existing value in that range.
-             * @return {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
+             * @returns {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
              * that fulfills with either the given key or the primary key, if key is a key range.
              */
             getKey(key: any) {
@@ -800,7 +800,7 @@ module plat {
              * 
              * @param range The IDBKeyRange to use as the cursor's range.
              * @param direction The direction of travel for the created cursor.
-             * @return {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
+             * @returns {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
              * that fulfills with a new injectables.Cursor instance.
              * 
              * @see {injectables.Cursor.Direction}.
@@ -917,7 +917,7 @@ module plat {
              * A wrapper for the IDBObjectStore index method.
              * 
              * @param key The key of the object to get.
-             * @return {IIndex} The index found with the given key.
+             * @returns {IIndex} The index found with the given key.
              */
             index(key: string): IIndex;
 
@@ -925,7 +925,7 @@ module plat {
              * A wrapper for the IDBObjectStore get method.
              * 
              * @param key The key of the object to get.
-             * @return {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
+             * @returns {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
              * that fulfills with the obtained object.
              */
             get(key: string): IDatabaseEventResultPromise;
@@ -935,7 +935,7 @@ module plat {
              * 
              * @param item The item to add
              * @param key The key of the object to add to.
-             * @return {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
+             * @returns {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
              * that fulfills with the obtained object.
              */
             add(item: any, key?: string): IDatabaseEventResultPromise;
@@ -944,7 +944,7 @@ module plat {
              * A wrapper for the IDBObjectStore delete method.
              * 
              * @param key The key of the record to delete.
-             * @return {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
+             * @returns {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
              * that fulfills with the request's result.
              */
             delete(key: string): IDatabaseEventResultPromise;
@@ -952,7 +952,7 @@ module plat {
             /**
              * A wrapper for the IDBObjectStore clear method.
              * 
-             * @return {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
+             * @returns {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
              * that fulfills with the request's result.
              */
             clear(): IDatabaseEventResultPromise;
@@ -961,7 +961,7 @@ module plat {
              * A wrapper for the IDBObjectStore put method.
              * 
              * @param key The key of the object to update.
-             * @return {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
+             * @returns {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
              * that fulfills with the request's result.
              */
             put(item: any, key?: string): IDatabaseEventResultPromise;
@@ -971,7 +971,7 @@ module plat {
              * 
              * @param range The IDBKeyRange to use as the cursor's range.
              * @param direction The direction of travel for the created cursor.
-             * @return {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
+             * @returns {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
              * that fulfills with a new injectables.Cursor instance.
              * 
              * @see {injectables.Cursor.Direction}.
@@ -1061,7 +1061,7 @@ module plat {
              * A wrapper for the IDBObjectStore index method.
              * 
              * @param key The key of the object to get.
-             * @return {IIndex} The index found with the given key.
+             * @returns {IIndex} The index found with the given key.
              */
             index(key: string) {
                 return this._store.index(key);
@@ -1071,7 +1071,7 @@ module plat {
              * A wrapper for the IDBObjectStore get method.
              * 
              * @param key The key of the object to get.
-             * @return {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
+             * @returns {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
              * that fulfills with the obtained object.
              */
             get(key: string) {
@@ -1083,7 +1083,7 @@ module plat {
              * 
              * @param item The item to add
              * @param key The key of the object to add to.
-             * @return {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
+             * @returns {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
              * that fulfills with the obtained object.
              */
             add(item: any, key?: string) {
@@ -1094,7 +1094,7 @@ module plat {
              * A wrapper for the IDBObjectStore delete method.
              * 
              * @param key The key of the record to delete.
-             * @return {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
+             * @returns {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
              * that fulfills with the request's result.
              */
             delete(key: string) {
@@ -1104,7 +1104,7 @@ module plat {
             /**
              * A wrapper for the IDBObjectStore clear method.
              * 
-             * @return {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
+             * @returns {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
              * that fulfills with the request's result.
              */
             clear() {
@@ -1115,7 +1115,7 @@ module plat {
              * A wrapper for the IDBObjectStore put method.
              * 
              * @param key The key of the object to update.
-             * @return {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
+             * @returns {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
              * that fulfills with the request's result.
              */
             put(item: any, key?: string) {
@@ -1127,7 +1127,7 @@ module plat {
              * 
              * @param range The IDBKeyRange to use as the cursor's range.
              * @param direction The direction of travel for the created cursor.
-             * @return {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
+             * @returns {IDatabaseEventResultPromise} The created DatabaseEventResultPromise 
              * that fulfills with a new injectables.Cursor instance.
              * 
              * @see {injectables.Cursor.Direction}.
@@ -1216,7 +1216,7 @@ module plat {
              * has just been deleted, a new record is created.
              * 
              * @param value The value to store at the current position.
-             * @return {IDatabaseEventResultPromise} An IDatabaseEventResultPromise that 
+             * @returns {IDatabaseEventResultPromise} An IDatabaseEventResultPromise that 
              * fulfills with the request's result.
              */
             update(value: any): IDatabaseEventResultPromise;
@@ -1371,7 +1371,7 @@ module plat {
              * has just been deleted, a new record is created.
              * 
              * @param value The value to store at the current position.
-             * @return {IDatabaseEventResultPromise} An IDatabaseEventResultPromise that 
+             * @returns {IDatabaseEventResultPromise} An IDatabaseEventResultPromise that 
              * fulfills with the request's result.
              */
             update(value: any) {
@@ -1418,7 +1418,7 @@ module plat {
              * A wrapper for the IDBTransaction's method objectStore.
              * 
              * @param storeName The name of the object store trying to be accessed.
-             * @return {IObjectStorePromise} The newly created ObjectStorePromise.
+             * @returns {IObjectStorePromise} The newly created ObjectStorePromise.
              */
             objectStore(storeName: string): IObjectStorePromise;
         }
@@ -1470,7 +1470,7 @@ module plat {
              * A wrapper for the IDBTransaction's method objectStore.
              * 
              * @param storeName The name of the object store trying to be accessed.
-             * @return {IObjectStorePromise} The newly created ObjectStorePromise.
+             * @returns {IObjectStorePromise} The newly created ObjectStorePromise.
              */
             objectStore(storeName: string) {
                 var objectStore = this._transaction.objectStore(storeName);
@@ -1590,7 +1590,7 @@ module plat {
              * that event.
              * @param onUpgradeNeeded The onupgradeneeded callback for modifying 
              * the database schema.
-             * @return {IDatabasePromise} The DatabasePromise that resolves 
+             * @returns {IDatabasePromise} The DatabasePromise that resolves 
              * with a new Db instance.
              */
             open(name: string, version: number, onUpgradeNeeded: (db: Db) => void): IDatabasePromise;
@@ -1599,7 +1599,7 @@ module plat {
              * Deletes the instance of the database specified by the name.
              * 
              * @param name The name of the database to delete.
-             * @return {IDatabasePromise} The DatabasePromise that resolves 
+             * @returns {IDatabasePromise} The DatabasePromise that resolves 
              * with null when the specified database has been successfully deleted.
              */
             deleteDatabase(name: string): IDatabasePromise;
@@ -1610,7 +1610,7 @@ module plat {
              * 
              * @param first The first value to compare.
              * @param second The second value to compare with the first.
-             * @return {number} Returns -1 if {first} is less than {second}, 
+             * @returns {number} Returns -1 if {first} is less than {second}, 
              * 0 if {first} is equal to {second}, and 1 if {first} is greater 
              * than {second}.
              */
@@ -1637,7 +1637,7 @@ module plat {
              * that event.
              * @param onUpgradeNeeded The onupgradeneeded callback for modifying 
              * the database schema.
-             * @return {IDatabasePromise} The DatabasePromise that resolves 
+             * @returns {IDatabasePromise} The DatabasePromise that resolves 
              * with a new Db instance.
              */
             open(name: string, version?: number, onUpgradeNeeded?: (db: Db) => void): IDatabasePromise {
@@ -1679,7 +1679,7 @@ module plat {
              * Deletes the instance of the database specified by the name.
              * 
              * @param name The name of the database to delete.
-             * @return {IDatabasePromise} The DatabasePromise that resolves 
+             * @returns {IDatabasePromise} The DatabasePromise that resolves 
              * when the specified database has been successfully deleted.
              */
             deleteDatabase(name: string) {
@@ -1708,7 +1708,7 @@ module plat {
              * 
              * @param first The first value to compare.
              * @param second The second value to compare with the first.
-             * @return {number} Returns -1 if {first} is less than {second}, 
+             * @returns {number} Returns -1 if {first} is less than {second}, 
              * 0 if {first} is equal to {second}, and 1 if {first} is greater 
              * than {second}.
              */

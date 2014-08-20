@@ -1283,7 +1283,7 @@
          * @param type The type of event being listened to.
          * @param listener The listener to be fired.
          * @param useCapture Whether to fire the event on the capture or bubble phase of propagation.
-         * @return {IRemoveListener} A function to remove the added event listener.
+         * @returns {IRemoveListener} A function to remove the added event listener.
          */
         addEventListener(element: Node, type: string, listener: IGestureListener,
             useCapture?: boolean): IRemoveListener;
@@ -1294,7 +1294,7 @@
          * @param type The type of event being listened to.
          * @param listener The listener to be fired.
          * @param useCapture Whether to fire the event on the capture or bubble phase of propagation.
-         * @return {IRemoveListener} A function to remove the added event listener.
+         * @returns {IRemoveListener} A function to remove the added event listener.
          */
         addEventListener(element: Window, type: string, listener: IGestureListener,
             useCapture?: boolean): IRemoveListener;
@@ -1305,7 +1305,7 @@
          * @param type The type of event being listened to.
          * @param listener The listener to be fired.
          * @param useCapture Whether to fire the event on the capture or bubble phase of propagation.
-         * @return {IRemoveListener} A function to remove the added event listener.
+         * @returns {IRemoveListener} A function to remove the added event listener.
          */
         addEventListener(element: Node, type: string, listener: EventListener,
             useCapture?: boolean): IRemoveListener;
@@ -1316,7 +1316,7 @@
          * @param type The type of event being listened to.
          * @param listener The listener to be fired.
          * @param useCapture Whether to fire the event on the capture or bubble phase of propagation.
-         * @return {IRemoveListener} A function to remove the added event listener.
+         * @returns {IRemoveListener} A function to remove the added event listener.
          */
         addEventListener(element: Window, type: string, listener: EventListener,
             useCapture?: boolean): IRemoveListener;

@@ -81,7 +81,7 @@ declare module plat {
         * plat.register.injectable.STATIC, plat.register.injectable.INSTANCE, plat.register.injectable.FACTORY,
         * plat.register.injectable.CLASS (defaults to plat.register.injectable.SINGLETON).
         *
-        * @return {register} The object that contains the register methods (for method chaining).
+        * @returns {register} The object that contains the register methods (for method chaining).
         *
         * @example plat.register.injectable('$CacheFactory', [plat.expressions.IParser],
         *  function(parser: plat.expressions.IParser) { return { ... }; });
@@ -290,7 +290,7 @@ declare module plat {
     * Returns the requested injectable dependency.
     *
     * @param dependency An array of Types specifying the injectable dependencies.
-    * @return {Array<any>} The dependencies, in the order they were requested.
+    * @returns {Array<any>} The dependencies, in the order they were requested.
     */
     function acquire(dependencies: Function[]): any[];
     /**
@@ -304,14 +304,14 @@ declare module plat {
     * Gathers dependencies and returns them as an array in the order they were requested.
     *
     * @param dependencies An array of strings specifying the injectable dependencies.
-    * @return {Array<any>} The dependencies, in the order they were requested.
+    * @returns {Array<any>} The dependencies, in the order they were requested.
     */
     function acquire(dependencies: string[]): any[];
     /**
     * Gathers dependencies and returns them as an array in the order they were requested.
     *
     * @param dependencies An array of strings or Functions specifying the injectable dependencies.
-    * @return {Array<any>} The dependencies, in the order they were requested.
+    * @returns {Array<any>} The dependencies, in the order they were requested.
     */
     function acquire(dependencies: any[]): any[];
     /**
@@ -337,7 +337,7 @@ declare module plat {
         * Returns the requested injectable dependency.
         *
         * @param dependency An array of Types specifying the injectable dependencies.
-        * @return {Array<any>} The dependencies, in the order they were requested.
+        * @returns {Array<any>} The dependencies, in the order they were requested.
         */
         (dependencies: Function[]): any[];
         /**
@@ -351,14 +351,14 @@ declare module plat {
         * Gathers dependencies and returns them as an array in the order they were requested.
         *
         * @param dependencies An array of strings specifying the injectable dependencies.
-        * @return {Array<any>} The dependencies, in the order they were requested.
+        * @returns {Array<any>} The dependencies, in the order they were requested.
         */
         (dependencies: string[]): any[];
         /**
         * Gathers dependencies and returns them as an array in the order they were requested.
         *
         * @param dependencies An array of strings or Functions specifying the injectable dependencies.
-        * @return {Array<any>} The dependencies, in the order they were requested.
+        * @returns {Array<any>} The dependencies, in the order they were requested.
         */
         (dependencies: any[]): any[];
     }
@@ -758,7 +758,7 @@ declare module plat {
         * @param ...sources[] Any number of objects with which to extend the
         * destination object.
         *
-        * @return {any} The extended destination object.
+        * @returns {any} The extended destination object.
         */
         extend(destination: any, ...sources: any[]): any;
         /**
@@ -771,7 +771,7 @@ declare module plat {
         * @param ...sources[] Any number of objects with which to extend the
         * destination object.
         *
-        * @return {any} The extended destination object.
+        * @returns {any} The extended destination object.
         */
         deepExtend(destination: any, ...sources: any[]): any;
         /**
@@ -788,7 +788,7 @@ declare module plat {
         *
         * @param obj Anything.
         *
-        * @return {boolean} True if obj is an object, false otherwise.
+        * @returns {boolean} True if obj is an object, false otherwise.
         */
         isObject(obj: any): boolean;
         /**
@@ -796,7 +796,7 @@ declare module plat {
         *
         * @param obj Anything.
         *
-        * @return {boolean} True if obj is the window, false otherwise.
+        * @returns {boolean} True if obj is the window, false otherwise.
         */
         isWindow(obj: any): boolean;
         /**
@@ -804,7 +804,7 @@ declare module plat {
         *
         * @param obj Anything.
         *
-        * @return {boolean} True if obj is the document, false otherwise.
+        * @returns {boolean} True if obj is the document, false otherwise.
         */
         isDocument(obj: any): boolean;
         /**
@@ -812,7 +812,7 @@ declare module plat {
         *
         * @param obj Anything.
         *
-        * @return {boolean} True if obj is a Node, false otherwise.
+        * @returns {boolean} True if obj is a Node, false otherwise.
         */
         isNode(obj: any): boolean;
         /**
@@ -820,7 +820,7 @@ declare module plat {
         *
         * @param obj Anything.
         *
-        * @return {boolean} True if obj is a DocumentFragment, false otherwise.
+        * @returns {boolean} True if obj is a DocumentFragment, false otherwise.
         */
         isDocumentFragment(obj: any): boolean;
         /**
@@ -828,7 +828,7 @@ declare module plat {
         *
         * @param obj Anything.
         *
-        * @return {boolean} True if obj is a string, false otherwise.
+        * @returns {boolean} True if obj is a string, false otherwise.
         */
         isString(obj: any): boolean;
         /**
@@ -836,7 +836,7 @@ declare module plat {
         *
         * @param obj Anything.
         *
-        * @return {boolean} True if obj is a RegExp object, false otherwise.
+        * @returns {boolean} True if obj is a RegExp object, false otherwise.
         */
         isRegExp(obj: any): boolean;
         /**
@@ -851,7 +851,7 @@ declare module plat {
         *
         * @param obj Anything.
         *
-        * @return {boolean} True if the object isEmpty (or null/undefined),
+        * @returns {boolean} True if the object isEmpty (or null/undefined),
         * false otherwise.
         */
         isEmpty(obj: any): boolean;
@@ -860,7 +860,7 @@ declare module plat {
         *
         * @param obj Anything.
         *
-        * @return {boolean} True if obj is a boolean, false otherwise.
+        * @returns {boolean} True if obj is a boolean, false otherwise.
         */
         isBoolean(obj: any): boolean;
         /**
@@ -868,7 +868,7 @@ declare module plat {
         *
         * @param obj Anything.
         *
-        * @return {boolean} True if obj is a number, false otherwise.
+        * @returns {boolean} True if obj is a number, false otherwise.
         */
         isNumber(obj: any): boolean;
         /**
@@ -876,7 +876,7 @@ declare module plat {
         *
         * @param obj Anything.
         *
-        * @return {boolean} True if obj is a function, false otherwise.
+        * @returns {boolean} True if obj is a function, false otherwise.
         */
         isFunction(obj: any): boolean;
         /**
@@ -884,7 +884,7 @@ declare module plat {
         *
         * @param obj Anything.
         *
-        * @return {boolean} True if obj is null or undefined, false otherwise.
+        * @returns {boolean} True if obj is null or undefined, false otherwise.
         */
         isNull(obj: any): boolean;
         /**
@@ -892,7 +892,7 @@ declare module plat {
         *
         * @param obj Anything.
         *
-        * @return {boolean} True if obj is undefined, false otherwise.
+        * @returns {boolean} True if obj is undefined, false otherwise.
         */
         isUndefined(obj: any): boolean;
         /**
@@ -900,7 +900,7 @@ declare module plat {
         *
         * @param obj Anything.
         *
-        * @return {boolean} True if obj is an Array, false otherwise.
+        * @returns {boolean} True if obj is an Array, false otherwise.
         */
         isArray(obj: any): boolean;
         /**
@@ -908,7 +908,7 @@ declare module plat {
         *
         * @param obj Anything.
         *
-        * @return {boolean} True if obj has array-like qualities (i.e. it is an
+        * @returns {boolean} True if obj has array-like qualities (i.e. it is an
         * Array, string, arguments, or NodeList), false otherwise.
         */
         isArrayLike(obj: any): boolean;
@@ -927,7 +927,7 @@ declare module plat {
         * should be kept, false otherwise.
         * @param context Optional context with which to call the iterator.
         *
-        * @return {Array<T>} An array of objects which evaluated to true with the iterator.
+        * @returns {Array<T>} An array of objects which evaluated to true with the iterator.
         */
         filter<T>(array: T[], iterator: (value: T, index: number, obj: any) => boolean, context?: any): T[];
         /**
@@ -939,7 +939,7 @@ declare module plat {
         * should be kept, false otherwise.
         * @param context Optional context with which to call the iterator.
         *
-        * @return {Array<T>} An array of objects which evaluated to true with the iterator.
+        * @returns {Array<T>} An array of objects which evaluated to true with the iterator.
         */
         filter<T>(obj: any, iterator: (value: T, key: any, obj: any) => boolean, context?: any): T[];
         /**
@@ -948,7 +948,7 @@ declare module plat {
         * @param array The list used for searching for properties.
         * @param properties An object containing key/value pairs to match with obj's values.
         *
-        * @return {Array<T>} The matched values in obj.
+        * @returns {Array<T>} The matched values in obj.
         *
         * @example where([{foo: 'foo', bar: 'bar'}, {foo: 'bar', bar: 'foo'}], {foo: 'foo'});
         * //returns [{foo: 'bar', bar: 'bar'}]
@@ -960,7 +960,7 @@ declare module plat {
         * @param obj The list used for searching for properties.
         * @param properties An object containing key/value pairs to match with obj's values.
         *
-        * @return {Array<T>} The matched values in obj.
+        * @returns {Array<T>} The matched values in obj.
         *
         * @example where([{foo: 'foo', bar: 'bar'}, {foo: 'bar', bar: 'foo'}], {foo: 'foo'});
         * //returns [{foo: 'bar', bar: 'bar'}]
@@ -974,7 +974,7 @@ declare module plat {
         * @param iterator A method that takes in a value, index, and the object.
         * @param context An optional context to bind to the iterator.
         *
-        * @return {Array<T>} The array.
+        * @returns {Array<T>} The array.
         */
         forEach<T>(array: T[], iterator: (value: T, index: number, obj: any) => void, context?: any): T[];
         /**
@@ -986,7 +986,7 @@ declare module plat {
         * @param iterator A method that takes in a value, key, and the object.
         * @param context An optional context to bind to the iterator.
         *
-        * @return {IObject<T>} The object.
+        * @returns {IObject<T>} The object.
         */
         forEach<T>(obj: any, iterator: (value: T, key: string, obj: any) => void, context?: any): any;
         /**
@@ -998,7 +998,7 @@ declare module plat {
         * @param iterator The transformation function.
         * @param context An optional context to bind to the iterator.
         *
-        * @return {Array<U>} The accumulated transformed values from the iterator.
+        * @returns {Array<U>} The accumulated transformed values from the iterator.
         */
         map<T, U>(array: T[], iterator: (value: T, index: number, obj: any) => U, context?: any): U[];
         /**
@@ -1010,7 +1010,7 @@ declare module plat {
         * @param iterator The transformation function.
         * @param context An optional context to bind to the iterator.
         *
-        * @return {Array<U>} The accumulated transformed values from the iterator.
+        * @returns {Array<U>} The accumulated transformed values from the iterator.
         */
         map<T, U>(obj: any, iterator: (value: T, key: string, obj: any) => U, context?: any): U[];
         /**
@@ -1020,7 +1020,7 @@ declare module plat {
         * @param obj An object.
         * @param key The property to 'pluck' from each value in obj.
         *
-        * @return {Array<U>} An array of 'plucked' values from obj.
+        * @returns {Array<U>} An array of 'plucked' values from obj.
         */
         pluck<T, U>(obj: any, key: string): U[];
         /**
@@ -1031,7 +1031,7 @@ declare module plat {
         * @param iterator A method with which to evaluate all the values in obj.
         * @param context An optional context to bind to the iterator.
         *
-        * @return {boolean} True if any calls to iterator return true, false otherwise.
+        * @returns {boolean} True if any calls to iterator return true, false otherwise.
         */
         some<T>(array: T[], iterator: (value: T, index: number, obj: any) => boolean, context?: any): boolean;
         /**
@@ -1043,7 +1043,7 @@ declare module plat {
         * @param iterator A method with which to evaluate all the values in obj.
         * @param context An optional context to bind to the iterator.
         *
-        * @return {boolean} True if any calls to iterator return true, false otherwise.
+        * @returns {boolean} True if any calls to iterator return true, false otherwise.
         */
         some<T>(obj: any, iterator: (value: T, key: string, obj: any) => boolean, context?: any): boolean;
         /**
@@ -1054,7 +1054,7 @@ declare module plat {
         * @param args The arguments to apply to the method.
         * @param context An optional context to bind to the method.
         *
-        * @return {() => void} A function that will clear the timeout when called.
+        * @returns {() => void} A function that will clear the timeout when called.
         */
         postpone(method: (...args: any[]) => void, args?: any[], context?: any): () => void;
         /**
@@ -1066,7 +1066,7 @@ declare module plat {
         * @param args The arguments to apply to the method.
         * @param context An optional context to bind to the method.
         *
-        * @return {() => void} A function that will clear the timeout when called.
+        * @returns {() => void} A function that will clear the timeout when called.
         */
         defer(method: (...args: any[]) => void, timeout: number, args?: any[], context?: any): () => void;
         /**
@@ -1075,7 +1075,7 @@ declare module plat {
         *
         * @param prefix A string prefix to prepend tothe unique ID.
         *
-        * @return {string} The prefix-prepended unique id.
+        * @returns {string} The prefix-prepended unique id.
         */
         uniqueId(prefix?: string): string;
         /**
@@ -1085,7 +1085,7 @@ declare module plat {
         *
         * @param str The spinal-case, dot.case, or snake_case string
         *
-        * @return {string} The camelCase string
+        * @returns {string} The camelCase string
         *
         * @example camelCase('plat-options'); // returns 'platOptions'
         */
@@ -1304,7 +1304,7 @@ declare module plat {
             * @param index The current index in the expression string
             * @param isNumberLike Whether or not the character resembles a number
             * @param array A temporary array used to aggregate similar character types.
-            * @return {number} The new index in the expression string
+            * @returns {number} The new index in the expression string
             */
             public _lookAhead(index: number, isNumberLike: boolean, array: string[]): number;
             /**
@@ -2633,7 +2633,7 @@ declare module plat {
             *
             * @param options The IAjaxOptions for either the XMLHttpRequest
             * or the JSONP callback.
-            * @return {AjaxPromise} A promise, when fulfilled or rejected,
+            * @returns {AjaxPromise} A promise, when fulfilled or rejected,
             * will return an IAjaxResponse object, with the response being a parsed
             * JSON object (assuming valid JSON).
             */
@@ -2665,7 +2665,7 @@ declare module plat {
             *
             * @param options The IAjaxOptions for either the XMLHttpRequest
             * or the JSONP callback.
-            * @return {AjaxPromise} A promise, when fulfilled
+            * @returns {AjaxPromise} A promise, when fulfilled
             * or rejected, will return an IAjaxResponse object.
             */
             ajax<R>(options: IHttpConfig): IAjaxPromise<R>;
@@ -2673,7 +2673,7 @@ declare module plat {
             * A direct method to force a cross-domain JSONP request.
             *
             * @param options The IJsonpOptions
-            * @return {AjaxPromise} A promise, when fulfilled
+            * @returns {AjaxPromise} A promise, when fulfilled
             * or rejected, will return an IAjaxResponse object.
             */
             jsonp? <R>(options: IJsonpConfig): IAjaxPromise<R>;
@@ -2683,7 +2683,7 @@ declare module plat {
             *
             * @param options The IAjaxOptions for either the XMLHttpRequest
             * or the JSONP callback.
-            * @return {AjaxPromise} A promise, when fulfilled or rejected,
+            * @returns {AjaxPromise} A promise, when fulfilled or rejected,
             * will return an IAjaxResponse object, with the response being a parsed
             * JSON object (assuming valid JSON).
             */
@@ -2757,7 +2757,7 @@ declare module plat {
             * @param id The id of the new ICache.
             * @param options ICacheOptions for customizing the ICache.
             *
-            * @return {ICache} The newly created ICache object.
+            * @returns {ICache} The newly created ICache object.
             */
             create<T>(id: string, options?: ICacheOptions): ICache<T>;
             /**
@@ -2788,7 +2788,7 @@ declare module plat {
             * @param key The key to use for storage/retrieval of the object.
             * @param value The value to store with the associated key.
             *
-            * @return {T} The value inserted into an ICache.
+            * @returns {T} The value inserted into an ICache.
             */
             put(key: string, value: T): T;
             /**
@@ -2796,7 +2796,7 @@ declare module plat {
             *
             * @param key The key to search for in an ICache.
             *
-            * @return {T|undefined} The value found at the associated key.
+            * @returns {T|undefined} The value found at the associated key.
             * Returns undefined for an ICache miss.
             */
             read(key: string): T;
@@ -2922,7 +2922,7 @@ declare module plat {
             * Gets an item out of storage with the assigned key.
             *
             * @param key The key of the item to retrieve from storage.
-            * @return {T} The item retrieved from storage.
+            * @returns {T} The item retrieved from storage.
             */
             getItem<T>(key: string): T;
             /**
@@ -2931,7 +2931,7 @@ declare module plat {
             * storage.
             *
             * @param index The index used to retrieve the associated key.
-            * @return {string} The key at the given index.
+            * @returns {string} The key at the given index.
             */
             key(index: number): string;
             /**
@@ -2975,7 +2975,7 @@ declare module plat {
             * Gets an item out of local storage with the assigned key.
             *
             * @param key The key of the item to retrieve from localStorage.
-            * @return {T} The item retrieved from localStorage.
+            * @returns {T} The item retrieved from localStorage.
             */
             getItem<T>(key: string): T;
             /**
@@ -2984,7 +2984,7 @@ declare module plat {
             * localStorage.
             *
             * @param index The index used to retrieve the associated key.
-            * @return {string} The key at the given index.
+            * @returns {string} The key at the given index.
             */
             key(index: number): string;
             /**
@@ -3028,7 +3028,7 @@ declare module plat {
             * Gets an item out of session storage with the assigned key.
             *
             * @param key The key of the item to retrieve from sessionStorage.
-            * @return {T} The item retrieved from sessionStorage.
+            * @returns {T} The item retrieved from sessionStorage.
             */
             getItem<T>(key: string): T;
             /**
@@ -3037,7 +3037,7 @@ declare module plat {
             * sessionStorage.
             *
             * @param index The index used to retrieve the associated key.
-            * @return {string} The key at the given index.
+            * @returns {string} The key at the given index.
             */
             key(index: number): string;
             /**
@@ -3462,7 +3462,7 @@ declare module plat {
             * @param listener The listener callback which will be pre-bound to the
             * template control.
             *
-            * @return {IRemoveListener} A method for removing the listener.
+            * @returns {IRemoveListener} A method for removing the listener.
             */
             observe(listener: (newValue: T, oldValue: T) => void): IRemoveListener;
         }
@@ -3643,7 +3643,7 @@ declare module plat {
             * @param uid A unique id to associate with the object registering the listener.
             * @param eventName The name of the event to listen to.
             * @param listener The method called when the DispatchEvent is fired.
-            * @return {IRemoveListener} A method for removing the listener.
+            * @returns {IRemoveListener} A method for removing the listener.
             */
             static on(uid: string, eventName: string, listener: (ev: IDispatchEventInstance, ...args: any[]) => void, context?: any): IRemoveListener;
             /**
@@ -3786,7 +3786,7 @@ declare module plat {
             * @param eventName='beforeNavigate' Specifies that this is a listener for the beforeNavigate event.
             * @param listener The method called when the beforeNavigate event is fired.
             * @param context Optional context with which the listener will be bound.
-            * @return {IRemoveListener} A method for removing the listener.
+            * @returns {IRemoveListener} A method for removing the listener.
             */
             on(uid: string, eventName: 'beforeNavigate', listener: (ev: INavigationEvent<any>) => void, context?: any): IRemoveListener;
             /**
@@ -3799,7 +3799,7 @@ declare module plat {
             * @param eventName='navigating' Specifies that this is a listener for the navigating event.
             * @param listener The method called when the navigating event is fired.
             * @param context Optional context with which the listener will be bound.
-            * @return {IRemoveListener} A method for removing the listener.
+            * @returns {IRemoveListener} A method for removing the listener.
             */
             on(uid: string, eventName: 'navigating', listener: (ev: INavigationEvent<any>) => void, context?: any): IRemoveListener;
             /**
@@ -3811,7 +3811,7 @@ declare module plat {
             * @param eventName='navigated' Specifies that this is a listener for the navigated event.
             * @param listener The method called when the navigated event is fired.
             * @param context Optional context with which the listener will be bound.
-            * @return {IRemoveListener} A method for removing the listener.
+            * @returns {IRemoveListener} A method for removing the listener.
             */
             on(uid: string, eventName: 'navigated', listener: (ev: INavigationEvent<any>) => void, context?: any): IRemoveListener;
             /**
@@ -3822,7 +3822,7 @@ declare module plat {
             * @param eventName The name of the event to listen to.
             * @param listener The method called when the NavigationEvent is fired.
             * @param context Optional context with which the listener will be bound.
-            * @return {IRemoveListener} A method for removing the listener.
+            * @returns {IRemoveListener} A method for removing the listener.
             */
             on(uid: string, eventName: string, listener: (ev: INavigationEvent<any>) => void, context?: any): IRemoveListener;
             /**
@@ -3833,7 +3833,7 @@ declare module plat {
             * @param eventName='ready' Specifies that the listener is for the ready event.
             * @param listener The method called when the app is ready to start.
             * @param context Optional context with which the listener will be bound.
-            * @return {IRemoveListener} A method for removing the listener.
+            * @returns {IRemoveListener} A method for removing the listener.
             */
             on(uid: string, eventName: 'ready', listener: (ev: ILifecycleEvent) => void, context?: any): IRemoveListener;
             /**
@@ -3844,7 +3844,7 @@ declare module plat {
             * @param eventName='suspend' Specifies the listener is for the suspend event.
             * @param listener The method called when the suspend event is fired.
             * @param context Optional context with which the listener will be bound.
-            * @return {IRemoveListener} A method for removing the listener.
+            * @returns {IRemoveListener} A method for removing the listener.
             */
             on(uid: string, eventName: 'suspend', listener: (ev: ILifecycleEvent) => void, context?: any): IRemoveListener;
             /**
@@ -3855,7 +3855,7 @@ declare module plat {
             * @param eventName='suspend' Specifies the listener is for the resume event.
             * @param listener The method called when the resume event is fired.
             * @param context Optional context with which the listener will be bound.
-            * @return {IRemoveListener} A method for removing the listener.
+            * @returns {IRemoveListener} A method for removing the listener.
             */
             on(uid: string, eventName: 'resume', listener: (ev: ILifecycleEvent) => void, context?: any): IRemoveListener;
             /**
@@ -3866,7 +3866,7 @@ declare module plat {
             * @param eventName='online' Specifies the listener is for the online event.
             * @param listener The method called when the online event is fired.
             * @param context Optional context with which the listener will be bound.
-            * @return {IRemoveListener} A method for removing the listener.
+            * @returns {IRemoveListener} A method for removing the listener.
             */
             on(uid: string, eventName: 'online', listener: (ev: ILifecycleEvent) => void, context?: any): IRemoveListener;
             /**
@@ -3877,7 +3877,7 @@ declare module plat {
             * @param eventName='offline' Specifies the listener is for the offline event.
             * @param listener The method called when the offline is fired.
             * @param context Optional context with which the listener will be bound.
-            * @return {IRemoveListener} A method for removing the listener.
+            * @returns {IRemoveListener} A method for removing the listener.
             */
             on(uid: string, eventName: 'offline', listener: (ev: ILifecycleEvent) => void, context?: any): IRemoveListener;
             /**
@@ -3888,7 +3888,7 @@ declare module plat {
             * @param eventName The name of the event to listen to.
             * @param listener The method called when the AlmEvent is fired.
             * @param context Optional context with which the listener will be bound.
-            * @return {IRemoveListener} A method for removing the listener.
+            * @returns {IRemoveListener} A method for removing the listener.
             */
             on(uid: string, eventName: string, listener: (ev: ILifecycleEvent) => void, context?: any): IRemoveListener;
             /**
@@ -3899,7 +3899,7 @@ declare module plat {
             * @param eventName The name of the event to listen to.
             * @param listener The method called when the ErrorEvent is fired.
             * @param context Optional context with which the listener will be bound.
-            * @return {IRemoveListener} A method for removing the listener.
+            * @returns {IRemoveListener} A method for removing the listener.
             */
             on(uid: string, eventName: 'error', listener: (ev: IErrorEvent<Error>) => void, context?: any): IRemoveListener;
             /**
@@ -3910,7 +3910,7 @@ declare module plat {
             * @param eventName The name of the event to listen to.
             * @param listener The method called when the ErrorEvent is fired.
             * @param context Optional context with which the listener will be bound.
-            * @return {IRemoveListener} A method for removing the listener.
+            * @returns {IRemoveListener} A method for removing the listener.
             */
             on(uid: string, eventName: string, listener: (ev: IErrorEvent<any>) => void, context?: any): IRemoveListener;
             /**
@@ -3921,7 +3921,7 @@ declare module plat {
             * @param eventName The name of the event to listen to.
             * @param listener The method called when the DispatchEvent is fired.
             * @param context Optional context with which the listener will be bound.
-            * @return {IRemoveListener} A method for removing the listener.
+            * @returns {IRemoveListener} A method for removing the listener.
             */
             on(uid: string, eventName: string, listener: (ev: IDispatchEventInstance, ...args: any[]) => void, context?: any): IRemoveListener;
             /**
@@ -4510,7 +4510,7 @@ declare module plat {
         *
         * @static
         * @param control The control with which to find the root.
-        * @return {ui.ITemplateControl}
+        * @returns {ui.ITemplateControl}
         */
         getRootControl(control: IControl): ui.ITemplateControl;
         getRootControl(control: ui.ITemplateControl): ui.ITemplateControl;
@@ -6539,7 +6539,7 @@ declare module plat {
             * @param nodeList A Node Array to be appended to the root/DocumentFragment
             * @param root An optional Node to append the nodeList.
             *
-            * @return {Node} The root Node or a DocumentFragment.
+            * @returns {Node} The root Node or a DocumentFragment.
             */
             appendChildren(nodeList: Node[], root?: Node): Node;
             /**
@@ -6550,7 +6550,7 @@ declare module plat {
             * @param nodeList A NodeList to be appended to the root/DocumentFragment
             * @param root An optional Node to append the nodeList.
             *
-            * @return {Node} The root Node or a DocumentFragment.
+            * @returns {Node} The root Node or a DocumentFragment.
             */
             appendChildren(nodeList: NodeList, root?: Node): Node;
             /**
@@ -6581,7 +6581,7 @@ declare module plat {
             * @param node The Node to set innerHTML.
             * @param html HTML string to be put inside the node.
             *
-            * @return {Node} The same node passed in, with innerHTML set.
+            * @returns {Node} The same node passed in, with innerHTML set.
             */
             setInnerHtml(node: Node, html: string): Node;
             /**
@@ -6591,7 +6591,7 @@ declare module plat {
             * @param nodes The Node Array to insert into the parent.
             * @param endNode An optional endNode to use to insert nodes.
             *
-            * @return {Array<Node>} An Array copy of nodes.
+            * @returns {Array<Node>} An Array copy of nodes.
             */
             insertBefore(parent: Node, nodes: Node[], endNode?: Node): Node[];
             /**
@@ -6601,7 +6601,7 @@ declare module plat {
             * @param nodes The NodeList to insert into the parent.
             * @param endNode An optional endNode to use to insert nodes.
             *
-            * @return {Array<Node>} An Array copy of nodes.
+            * @returns {Array<Node>} An Array copy of nodes.
             */
             insertBefore(parent: Node, nodes: NodeList, endNode?: Node): Node[];
             /**
@@ -6611,7 +6611,7 @@ declare module plat {
             * @param fragment The DocumentFragment to insert into the parent.
             * @param endNode An optional endNode to use to insert the fragment.
             *
-            * @return {Array<Node>} An Array copy of the fragment's childNodes.
+            * @returns {Array<Node>} An Array copy of the fragment's childNodes.
             */
             insertBefore(parent: Node, fragment: DocumentFragment, endNode?: Node): Node[];
             /**
@@ -6620,7 +6620,7 @@ declare module plat {
             *
             * @param node The Node to replace.
             *
-            * @return {Array<Node>} A Node Array that represents the childNodes of the
+            * @returns {Array<Node>} A Node Array that represents the childNodes of the
             * given node.
             */
             replace(node: Node): Node[];
@@ -6632,7 +6632,7 @@ declare module plat {
             * @param newElement The HTMLElement populate with childNodes and add to the
             * element's parent.
             *
-            * @return {HTMLElement} The replaced element (newElement).
+            * @returns {HTMLElement} The replaced element (newElement).
             */
             replaceWith(node: Node, newElement: HTMLElement): HTMLElement;
             /**
@@ -6643,7 +6643,7 @@ declare module plat {
             * @param newElement The Element populate with childNodes and add to the
             * element's parent.
             *
-            * @return {Element} The replaced element (newElement).
+            * @returns {Element} The replaced element (newElement).
             */
             replaceWith(node: Node, newElement: Element): Element;
             /**
@@ -6654,7 +6654,7 @@ declare module plat {
             * @param newElement The Node populate with childNodes and add to the
             * node's parent.
             *
-            * @return {Node} The replaced Node (newNode).
+            * @returns {Node} The replaced Node (newNode).
             */
             replaceWith(node: Node, newNode: Node): Node;
             /**
@@ -6663,7 +6663,7 @@ declare module plat {
             *
             * @param html The DOM string.
             *
-            * @return {DocumentFragment} The serialized DOM.
+            * @returns {DocumentFragment} The serialized DOM.
             */
             serializeHtml(html?: string): DocumentFragment;
             /**
@@ -6753,7 +6753,7 @@ declare module plat {
             * @param control The ITemplateControl containing the new BindableTemplate object, used for data context
             * inheritance for templates.
             * @param originalBindableTemplates An optional IBindableTemplates object to copy.
-            * @return {BindableTemplates} The newly instantiated BindableTemplates object.
+            * @returns {BindableTemplates} The newly instantiated BindableTemplates object.
             */
             static create(control: ITemplateControl, original?: IBindableTemplates): IBindableTemplates;
             /**
@@ -6830,7 +6830,7 @@ declare module plat {
             * @param control The ITemplateControl containing the new BindableTemplate object, used for data context
             * inheritance for templates.
             * @param originalBindableTemplates An optional IBindableTemplates object to copy.
-            * @return {BindableTemplates} The newly instantiated BindableTemplates object.
+            * @returns {BindableTemplates} The newly instantiated BindableTemplates object.
             */
             create(control: ITemplateControl, original?: IBindableTemplates): IBindableTemplates;
             /**
@@ -7072,7 +7072,7 @@ declare module plat {
             * @static
             * @param element The resources element to parse.
             *
-            * @return {IObject<IResource>} The resources created
+            * @returns {IObject<IResource>} The resources created
             * using element.
             */
             static parseElement(element: Element): IObject<IResource>;
@@ -7168,7 +7168,7 @@ declare module plat {
             * @static
             * @param element The resources element to parse.
             *
-            * @return {IObject<IResource>} The resources created
+            * @returns {IObject<IResource>} The resources created
             * using element.
             */
             parseElement(element: Element): IObject<IResource>;
@@ -7438,7 +7438,7 @@ declare module plat {
             * @param type The type of event being listened to.
             * @param listener The listener to be fired.
             * @param useCapture Whether to fire the event on the capture or bubble phase of propagation.
-            * @return {IRemoveListener} A function to remove the added event listener.
+            * @returns {IRemoveListener} A function to remove the added event listener.
             */
             addEventListener(element: Node, type: string, listener: IGestureListener, useCapture?: boolean): IRemoveListener;
             /**
@@ -7448,7 +7448,7 @@ declare module plat {
             * @param type The type of event being listened to.
             * @param listener The listener to be fired.
             * @param useCapture Whether to fire the event on the capture or bubble phase of propagation.
-            * @return {IRemoveListener} A function to remove the added event listener.
+            * @returns {IRemoveListener} A function to remove the added event listener.
             */
             addEventListener(element: Window, type: string, listener: IGestureListener, useCapture?: boolean): IRemoveListener;
             /**
@@ -8917,14 +8917,14 @@ declare module plat {
             *
             * @static
             * @param expressions An IParsedExpression array to search for identifiers.
-            * @return {Array<string>} An array of identifiers.
+            * @returns {Array<string>} An array of identifiers.
             */
             static findUniqueIdentifiers(expressions: expressions.IParsedExpression[]): string[];
             /**
             * Determines if a string has the markup notation.
             *
             * @param text The text string in which to search for markup.
-            * @return {Boolean} Indicates whether or not there is markup.
+            * @returns {Boolean} Indicates whether or not there is markup.
             */
             static hasMarkup(text: string): boolean;
             /**
@@ -8941,7 +8941,7 @@ declare module plat {
             * @static
             * @param expressions The IParsedExpression array to evaluate.
             * @param control The IControl used to parse the expressions.
-            * @return {string} The evaluated expressions.
+            * @returns {string} The evaluated expressions.
             */
             static build(expressions: expressions.IParsedExpression[], control?: ui.ITemplateControl): string;
             /**
@@ -8991,14 +8991,14 @@ declare module plat {
             *
             * @static
             * @param expressions An IParsedExpression array to search for identifiers.
-            * @return {Array<string>} An array of identifiers.
+            * @returns {Array<string>} An array of identifiers.
             */
             findUniqueIdentifiers(expressions: expressions.IParsedExpression[]): string[];
             /**
             * Determines if a string has the markup notation.
             *
             * @param text The text string in which to search for markup.
-            * @return {Boolean} Indicates whether or not there is markup.
+            * @returns {Boolean} Indicates whether or not there is markup.
             */
             hasMarkup(text: string): boolean;
             /**
@@ -9006,7 +9006,7 @@ declare module plat {
             *
             * @static
             * @param text The text string to parse.
-            * @return {Array<IParsedExpression>}
+            * @returns {Array<IParsedExpression>}
             */
             findMarkup(text: string): expressions.IParsedExpression[];
             /**
@@ -9016,7 +9016,7 @@ declare module plat {
             * @static
             * @param expressions The IParsedExpression array to evaluate.
             * @param control The IControl used to parse the expressions.
-            * @return {string} The evaluated expressions.
+            * @returns {string} The evaluated expressions.
             */
             build(expressions: expressions.IParsedExpression[], control?: ui.ITemplateControl): string;
             /**
@@ -9211,7 +9211,7 @@ declare module plat {
             *
             * @static
             * @param attributes A NamedNodeMap to compile into an INodeMap
-            * @return {INodeMap} The compiled NamedNodeMap
+            * @returns {INodeMap} The compiled NamedNodeMap
             */
             static _collectAttributes(attributes: NamedNodeMap): INodeMap;
             /**
@@ -9219,7 +9219,7 @@ declare module plat {
             *
             * @static
             * @param nodes The compiled INodes to be cloned.
-            * @return {INodeMap} The cloned array of INodes.
+            * @returns {INodeMap} The cloned array of INodes.
             */
             static _copyAttributeNodes(nodes: INode[]): INode[];
             /**
@@ -9229,7 +9229,7 @@ declare module plat {
             * @param sourceNode The original INode.
             * @param node The new node used for cloning.
             * @param newControl An optional new control to associate with the cloned node.
-            * @return {INode} The clones INode.
+            * @returns {INode} The clones INode.
             */
             static _cloneNode(sourceNode: INode, node: Node, newControl?: ui.ITemplateControl): INode;
             /**
@@ -9239,7 +9239,7 @@ declare module plat {
             * @param sourceMap The original INodeMap.
             * @param element The new Element used for cloning.
             * @param newControl An optional new control to associate with the element.
-            * @return {INodeMap} The cloned INodeMap.
+            * @returns {INodeMap} The cloned INodeMap.
             */
             static _cloneNodeMap(sourceMap: INodeMap, element: Element, parent: ui.ITemplateControl, newControl?: ui.ITemplateControl): INodeMap;
             public $Promise: async.IPromise;
@@ -10010,7 +10010,7 @@ declare module plat {
         *
         * @param name='beforeNavigate' The name of the event, cooinciding with the beforeNavigate event.
         * @param listener The method called when the beforeNavigate event is fired.
-        * @return {IRemoveListener} A method for removing the listener.
+        * @returns {IRemoveListener} A method for removing the listener.
         */
         public on(name: 'beforeNavigate', listener: (ev: events.INavigationEvent<any>) => void): IRemoveListener;
         /**
@@ -10020,7 +10020,7 @@ declare module plat {
         *
         * @param name='navigating' The name of the event, cooinciding with the navigating event.
         * @param listener The method called when the navigating event is fired.
-        * @return {IRemoveListener} A method for removing the listener.
+        * @returns {IRemoveListener} A method for removing the listener.
         */
         public on(name: 'navigating', listener: (ev: events.INavigationEvent<any>) => void): IRemoveListener;
         /**
@@ -10030,7 +10030,7 @@ declare module plat {
         *
         * @param name='navigated' The name of the event, cooinciding with the navigated event.
         * @param listener The method called when the navigated event is fired.
-        * @return {IRemoveListener} A method for removing the listener.
+        * @returns {IRemoveListener} A method for removing the listener.
         */
         public on(name: 'navigated', listener: (ev: events.INavigationEvent<any>) => void): IRemoveListener;
         /**
@@ -10040,7 +10040,7 @@ declare module plat {
         * @param eventName='routeChange' This specifies that the listener is for a routeChange event.
         * @param listener The method called when the routeChange is fired. The route argument will contain
         * a parsed route.
-        * @return {IRemoveListener} A method for removing the listener.
+        * @returns {IRemoveListener} A method for removing the listener.
         */
         public on(name: 'routeChanged', listener: (ev: events.INavigationEvent<web.IRoute<any>>) => void): IRemoveListener;
         /**
@@ -10049,7 +10049,7 @@ declare module plat {
         *
         * @param name The name of the event, cooinciding with the NavigationEvent name.
         * @param listener The method called when the NavigationEvent is fired.
-        * @return {IRemoveListener} A method for removing the listener.
+        * @returns {IRemoveListener} A method for removing the listener.
         */
         public on(name: string, listener: (ev: events.INavigationEvent<any>) => void): IRemoveListener;
         /**
@@ -10157,7 +10157,7 @@ declare module plat {
         *
         * @param name='beforeNavigate' The name of the event, cooinciding with the beforeNavigate event.
         * @param listener The method called when the beforeNavigate event is fired.
-        * @return {IRemoveListener} A method for removing the listener.
+        * @returns {IRemoveListener} A method for removing the listener.
         */
         on(name: 'beforeNavigate', listener: (ev: events.INavigationEvent<any>) => void): IRemoveListener;
         /**
@@ -10167,7 +10167,7 @@ declare module plat {
         *
         * @param name='navigating' The name of the event, cooinciding with the navigating event.
         * @param listener The method called when the navigating event is fired.
-        * @return {IRemoveListener} A method for removing the listener.
+        * @returns {IRemoveListener} A method for removing the listener.
         */
         on(name: 'navigating', listener: (ev: events.INavigationEvent<any>) => void): IRemoveListener;
         /**
@@ -10177,7 +10177,7 @@ declare module plat {
         *
         * @param name='navigated' The name of the event, cooinciding with the navigated event.
         * @param listener The method called when the navigated event is fired.
-        * @return {IRemoveListener} A method for removing the listener.
+        * @returns {IRemoveListener} A method for removing the listener.
         */
         on(name: 'navigated', listener: (ev: events.INavigationEvent<any>) => void): IRemoveListener;
         /**
@@ -10187,7 +10187,7 @@ declare module plat {
         * @param eventName='routeChange' This specifies that the listener is for a routeChange event.
         * @param listener The method called when the routeChange is fired. The route argument will contain
         * a parsed route.
-        * @return {IRemoveListener} A method for removing the listener.
+        * @returns {IRemoveListener} A method for removing the listener.
         */
         on(name: 'routeChanged', listener: (ev: events.INavigationEvent<web.IRoute<any>>) => void): IRemoveListener;
         /**
@@ -10196,7 +10196,7 @@ declare module plat {
         *
         * @param name The name of the event, cooinciding with the NavigationEvent name.
         * @param listener The method called when the NavigationEvent is fired.
-        * @return {IRemoveListener} A method for removing the listener.
+        * @returns {IRemoveListener} A method for removing the listener.
         */
         on(name: string, listener: (ev: events.INavigationEvent<any>) => void): IRemoveListener;
         /**
@@ -10205,7 +10205,7 @@ declare module plat {
         *
         * @param name The name of the event, cooinciding with the DispatchEvent name.
         * @param listener The method called when the DispatchEvent is fired.
-        * @return {IRemoveListener} A method for removing the listener.
+        * @returns {IRemoveListener} A method for removing the listener.
         */
         on(name: string, listener: (ev: events.IDispatchEventInstance, ...args: any[]) => void): IRemoveListener;
         /**

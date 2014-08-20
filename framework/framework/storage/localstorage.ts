@@ -35,7 +35,7 @@ module plat.storage {
          * Gets an item out of local storage with the assigned key.
          * 
          * @param key The key of the item to retrieve from localStorage.
-         * @return {T} The item retrieved from localStorage.
+         * @returns {T} The item retrieved from localStorage.
          */
         getItem<T>(key: string): T;
 
@@ -45,7 +45,7 @@ module plat.storage {
          * localStorage.
          * 
          * @param index The index used to retrieve the associated key.
-         * @return {string} The key at the given index.
+         * @returns {string} The key at the given index.
          */
         key(index: number): string;
 

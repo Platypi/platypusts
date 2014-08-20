@@ -267,7 +267,7 @@ var KEYWORDS: plat.IObject<any> = {
  * Checks if a string is in the DELIMITERS array.
  * 
  * @param key The string to index into the DELIMITERS array.
- * @return {Boolean}
+ * @returns {Boolean}
  */
 function isDelimiter(key: string): boolean {
     return !isNull(DELIMITERS[key]);
@@ -278,7 +278,7 @@ function isDelimiter(key: string): boolean {
  * Checks if a string is in the ACCESSORS array.
  * 
  * @param key The string to index into the ACCESSORS array.
- * @return {Boolean}
+ * @returns {Boolean}
  */
 function isAccessor(key: string): boolean {
     return !isNull(ACCESSORS[key]);
@@ -289,7 +289,7 @@ function isAccessor(key: string): boolean {
  * Checks if a string is in the OPERATORS array.
  * 
  * @param key The string to index into the OPERATORS array.
- * @return {Boolean}
+ * @returns {Boolean}
  */
 function isOperator(key: string): boolean {
     return !isNull(OPERATORS[key]);
@@ -300,7 +300,7 @@ function isOperator(key: string): boolean {
  * Checks if a string is in the KEYWORDS array.
  * 
  * @param key The string to index into the KEYWORDS array.
- * @return {Boolean}
+ * @returns {Boolean}
  */
 function isKeyword(key: string): boolean {
     return !isUndefined(KEYWORDS[key]);
