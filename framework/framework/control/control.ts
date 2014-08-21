@@ -1,5 +1,12 @@
 module plat {
     /**
+     * @name Control
+     * @memberof plat
+     * @kind class
+     * 
+     * @implements {plat.IControl}
+     * 
+     * @description
      * Used for facilitating data and DOM manipulation. Contains lifecycle events 
      * as well as properties for communicating with other controls. This is the base
      * class for all types of controls.
