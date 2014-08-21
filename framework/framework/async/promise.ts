@@ -321,18 +321,18 @@ module plat.async {
 
         /**
          * @name __invokeCallback
-         * @memberof plat.async.IPromise
+         * @memberof plat.async.Promise
          * @kind function
          * @access private
          * @static
          *
          * @description
-         * Invokes the resolve function for a promise. Handles error catching.
+         * Invokes a callback for a promise with the specified detail.
          * 
-         * @typeparam R The return type of the input {@link plat.async.Promise|Promise}.
-         * 
-         * @param {plat.async.IResolveFunction<R>} The resolve function to invoke.
-         * @param {plat.async.Promise<R>} The promise on which to invoke the resolve function.
+         * @param {plat.async.State} settled The state of the promise.
+         * @param {any} promise The promise object.
+         * @param {(response: any) => void} callback The callback to invoke.
+         * @param {any} detail The details to pass to the callback.
          * 
          * @returns {void}
          */
@@ -369,6 +369,21 @@ module plat.async {
             }
         }
 
+        /**
+         * @name __publish
+         * @memberof plat.async.Promise
+         * @kind function
+         * @access private
+         * @static
+         *
+         * @description
+         * Publishes the promise details to all the subscribers for a promise.
+         * 
+         * @param {any} promise The promise object.
+         * @param {plat.async.State} settled The state of the promise.
+         * 
+         * @returns {void}
+         */
         private static __publish(promise: Promise<any>, settled: State): void {
             var subscribers = promise.__subscribers,
                 detail = promise.__detail,
@@ -385,14 +400,57 @@ module plat.async {
             promise.__subscribers = null;
         }
 
+        /**
+         * @name __publishFulfillment
+         * @memberof plat.async.Promise
+         * @kind function
+         * @access private
+         * @static
+         *
+         * @description
+         * Publishes a promises that has been fulfilled.
+         * 
+         * @param {any} promise The promise object.
+         * 
+         * @returns {void}
+         */
         private static __publishFulfillment(promise: any): void {
             Promise.__publish(promise, promise.__state = State.FULFILLED);
         }
 
+        /**
+         * @name __publishRejection
+         * @memberof plat.async.Promise
+         * @kind function
+         * @access private
+         * @static
+         *
+         * @description
+         * Publishes a promises that has been rejected.
+         * 
+         * @param {any} promise The promise object.
+         * 
+         * @returns {void}
+         */
         private static __publishRejection(promise: any): void {
             Promise.__publish(promise, promise.__state = State.REJECTED);
         }
 
+        /**
+         * @name __reject
+         * @memberof plat.async.Promise
+         * @kind function
+         * @access private
+         * @static
+         *
+         * @description
+         * Asynchronously rejects a promise
+         * 
+         * @param {any} promise The promise object.
+         * @param {any} reason The detail of the rejected promise.
+         * 
+         * @returns {void}
+         */
         private static __reject(promise: any, reason: any): void {
             if (promise.__state !== State.PENDING) {
                 return;
@@ -403,7 +461,24 @@ module plat.async {
             Promise.config.async(Promise.__publishRejection, promise);
         }
 
-        private static __fulfill<T>(promise: any, value: any): void {
+        /**
+         * @name __fulfill
+         * @memberof plat.async.Promise
+         * @kind function
+         * @access private
+         * @static
+         *
+         * @description
+         * Asynchronously fulfills a promise
+         * 
+         * @typeparam R The return type of the promise.
+         * 
+         * @param {plat.async.Promise<R>} promise The promise object.
+         * @param {any} value The detail of the fulfilled promise.
+         * 
+         * @returns {void}
+         */
+        private static __fulfill<R>(promise: Promise<R>, value: any): void {
             if (promise.__state !== State.PENDING) {
                 return;
             }
@@ -413,6 +488,23 @@ module plat.async {
             Promise.config.async(Promise.__publishFulfillment, promise);
         }
 
+        /**
+         * @name __resolve
+         * @memberof plat.async.Promise
+         * @kind function
+         * @access private
+         * @static
+         *
+         * @description
+         * Asynchronously fulfills a promise, allowing for promise chaining.
+         * 
+         * @typeparam R The return type of the promise.
+         * 
+         * @param {plat.async.Promise<R>} promise The promise object.
+         * @param {any} value The detail of the fulfilled promise.
+         * 
+         * @returns {void}
+         */
         private static __resolve<R>(promise: Promise<R>, value: any): void {
             if (promise === value) {
                 Promise.__fulfill(promise, value);
@@ -421,43 +513,55 @@ module plat.async {
             }
         }
 
-        private static __handleThenable<R>(promise: Promise<any>, value: Promise<any>): boolean {
-            var then: typeof Promise.prototype.then = null,
-                resolved: boolean;
+        /**
+         * @name __handleThenable
+         * @memberof plat.async.Promise
+         * @kind function
+         * @access private
+         * @static
+         *
+         * @description
+         * Handles chaining promises together, when a promise is returned from within a then handler.
+         * 
+         * @typeparam R The return type of the promise.
+         * 
+         * @param {plat.async.Promise<R>} promise The promise object.
+         * @param {plat.async.Promise<R>} value The next promise to await.
+         * 
+         * @returns {boolean} Whether or not the value passed in is a promise.
+         */
+        private static __handleThenable<R>(promise: Promise<R>, value: Promise<R>): boolean {
+            var resolved: boolean;
 
             try {
                 if (promise === value) {
                     var $exception: IExceptionStatic = acquire(__ExceptionStatic);
-                    $exception.fatal(new TypeError('A promises callback cannot return that same promise.'),
+                    $exception.fatal(new TypeError('A promises callback cannot return the same promise.'),
                         $exception.PROMISE);
                 }
 
-                if (isObject(value) || isFunction(value)) {
-                    then = value.then;
+                if(isPromise(value)) {
+                    value.then.call(value, (val: any) => {
+                        if (resolved) {
+                            return true;
+                        }
+                        resolved = true;
 
-                    if (isFunction(then)) {
-                        then.call(value, (val: any) => {
-                            if (resolved) {
-                                return true;
-                            }
-                            resolved = true;
+                        if (value !== val) {
+                            Promise.__resolve<R>(promise, val);
+                        } else {
+                            Promise.__fulfill<R>(promise, val);
+                        }
+                    }, (val: any) => {
+                        if (resolved) {
+                            return true;
+                        }
+                        resolved = true;
 
-                            if (value !== val) {
-                                Promise.__resolve<R>(promise, val);
-                            } else {
-                                Promise.__fulfill<R>(promise, val);
-                            }
-                        }, (val: any) => {
-                            if (resolved) {
-                                return true;
-                            }
-                            resolved = true;
+                        Promise.__reject(promise, val);
+                    });
 
-                            Promise.__reject(promise, val);
-                        });
-
-                        return true;
-                    }
+                    return true;
                 }
             } catch (error) {
                 if (resolved) {
@@ -470,8 +574,27 @@ module plat.async {
             return false;
         }
 
+        /**
+         * @name __subscribe
+         * @memberof plat.async.Promise
+         * @kind function
+         * @access private
+         * @static
+         *
+         * @description
+         * Adds a child promise to the parent's subscribers.
+         * 
+         * @typeparam R The return type of the promise.
+         * 
+         * @param {plat.async.Promise<any>} parent The parent promise.
+         * @param {plat.async.Promise<any>} value The child promise.
+         * @param {(success: any) => any} onFullfilled The fulfilled method for the child.
+         * @param {(error: any) => any} onRejected The rejected method for the child.
+         * 
+         * @returns {void}
+         */
         private static __subscribe(parent: Promise<any>, child: IThenable<any>,
-            onFulfilled: (success: any) => any, onRejected?: (error: any) => any): void {
+            onFulfilled: (success: any) => any, onRejected: (error: any) => any): void {
             var subscribers = parent.__subscribers;
             var length = subscribers.length;
 
