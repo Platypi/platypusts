@@ -36,7 +36,8 @@ module plat.ui.controls {
         itemsLoaded: async.IThenable<void>;
 
         private __removeListener: IRemoveListener;
-        private __isGrouped: boolean = false;
+        private __isGrouped = false;
+        private __isNativeSelect = false;
         private __group: string;
         private __defaultOption: HTMLOptionElement;
         private __resolveFn: () => void;
@@ -54,8 +55,17 @@ module plat.ui.controls {
          */
         setTemplate(): void {
             var $document = this.$Document,
-                platOptions = this.options.value,
-                option = $document.createElement('option');
+                options = this.options || <observable.IObservableProperty<ISelectOptions>>{},
+                platOptions = options.value || <ISelectOptions>{},
+                option = $document.createElement('option'),
+                value = platOptions.value,
+                textContent = platOptions.textContent;
+
+            // check if the element should be treated as a normal select.
+            if (isUndefined(value) && isUndefined(textContent)) {
+                this.__isNativeSelect = true;
+                return;
+            }
 
             if (!isNull(platOptions.group)) {
                 var group = this.__group = platOptions.group,
@@ -65,9 +75,6 @@ module plat.ui.controls {
 
                 this.bindableTemplates.add('group', optionGroup);
             }
-
-            var value = platOptions.value,
-                textContent = platOptions.textContent;
 
             if (!isString(value) || isEmpty(value)) {
                 value = undefined;
@@ -91,7 +98,7 @@ module plat.ui.controls {
          * @param oldValue The old array context.
          */
         contextChanged(newValue?: Array<any>, oldValue?: Array<any>): void {
-            if (!isArray(newValue)) {
+            if (this.__isNativeSelect || !isArray(newValue)) {
                 return;
             }
 
@@ -119,17 +126,25 @@ module plat.ui.controls {
          * the options accordingly.
          */
         loaded(): void {
+            if (this.__isNativeSelect) {
+                return;
+            }
+
+            var options = this.options || <observable.IObservableProperty<ISelectOptions>>{},
+                platOptions = options.value || <ISelectOptions>{};
+            if (isUndefined(platOptions.value) && isUndefined(platOptions.textContent)) {
+                this.__isNativeSelect = true;
+                return;
+            }
+
             var context = this.context,
                 element = this.element,
-                firstElementChild = element.firstElementChild,
-                group = this.options.value.group;
-
+                firstElementChild = element.firstElementChild;
             if (isNode(firstElementChild) && firstElementChild.nodeName.toLowerCase() === 'option') {
                 this.__defaultOption = <HTMLOptionElement>firstElementChild.cloneNode(true);
             }
 
-            this.__isGrouped = !isNull(group);
-            this.__group = group;
+            this.__isGrouped = !isNull((this.__group = platOptions.group));
 
             if (!isArray(context)) {
                 return;
