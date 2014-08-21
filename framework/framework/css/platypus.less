@@ -65,29 +65,5 @@ html, body {
 #Animations > .slideAndFade();
 #Animations > .slideAndFade(@slideOutFadeOut; out; left);
 
-.media1400({
-    [plat-control="plat-viewport"].plat-enter {
-        .animation-name(@slideInFadeIn);
-        .animation-duration(750ms);
-        .animation-fill-mode(forwards);
-    }
-
-    [plat-control="plat-viewport"].plat-leave {
-        .animation-name(@slideOutFadeOut);
-        .animation-duration(500ms);
-        .animation-fill-mode(forwards);
-    }
-});
-     
-.media800({
-    [plat-control="plat-viewport"].plat-enter {
-        .animation-name(@fadeIn);
-    }
-
-    [plat-control="plat-viewport"].plat-leave {
-        .animation-name(@fadeOut);
-    }
-});
-
 @import 'animations';
 @import 'media';
