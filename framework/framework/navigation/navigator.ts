@@ -23,7 +23,7 @@ module plat.navigation {
 
             event = this._sendEvent('beforeNavigate', Constructor, null, parameter, options, true);
 
-            if (event.canceled) {
+            if (event.cancelled) {
                 return;
             }
 
@@ -101,7 +101,7 @@ module plat.navigation {
 
             var event = this._sendEvent('beforeNavigate', viewControl, viewControl.type, parameter, options, true);
 
-            if (event.canceled) {
+            if (event.cancelled) {
                 return;
             }
 

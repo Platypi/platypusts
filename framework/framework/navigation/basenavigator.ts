@@ -53,7 +53,7 @@
          * @param target The target of the event, could be a view control or a route depending upon the navigator and 
          * event name.
          * @param options The IBaseNavigationOptions used during navigation
-         * @param cancelable Whether or not the event can be canceled, preventing further navigation.
+         * @param cancelable Whether or not the event can be cancelled, preventing further navigation.
          */
         _sendEvent(name: string, target: any, type: string, parameter: any,
             options: IBaseNavigationOptions, cancelable: boolean): events.INavigationEvent<any> {

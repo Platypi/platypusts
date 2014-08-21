@@ -29,7 +29,7 @@
         target: any;
         type: string;
         cancelable: boolean = true;
-        canceled: boolean = false;
+        cancelled: boolean = false;
 
         initialize(name: string, sender: any, direction?: string, eventOptions?: INavigationEventOptions<P>) {
             super.initialize(name, sender, this.$EventManagerStatic.DIRECT);
@@ -41,7 +41,7 @@
 
         cancel() {
             if (this.cancelable) {
-                this.canceled = true;
+                this.cancelled = true;
 
                 (<any>this.$EventManagerStatic.propagatingEvents)[this.name] = false;
             }
@@ -105,15 +105,15 @@
         sender: any;
 
         /**
-         * States whether or not this event is able to be canceled. Some navigation events can be 
-         * canceled, preventing further navigation.
+         * States whether or not this event is able to be cancelled. Some navigation events can be 
+         * cancelled, preventing further navigation.
          */
         cancelable?: boolean;
 
         /**
-         * States whether or not this event has been canceled.
+         * States whether or not this event has been cancelled.
          */
-        canceled?: boolean;
+        cancelled?: boolean;
 
         /**
          * If the event is cancelable (ev.cancelable), calling this method will cancel the event.
@@ -168,8 +168,8 @@
         type: string;
 
         /**
-         * States whether or not this event is able to be canceled. Some navigation events can be 
-         * canceled, preventing further navigation.
+         * States whether or not this event is able to be cancelled. Some navigation events can be 
+         * cancelled, preventing further navigation.
          */
         cancelable?: boolean;
     }

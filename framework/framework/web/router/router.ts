@@ -118,7 +118,7 @@
                 cancelable: true
             });
 
-            if (event.canceled) {
+            if (event.cancelled) {
                 return false;
             }
 

@@ -1384,7 +1384,7 @@ module plat.async {
      * @implements {plat.async.IAjaxPromise}
      * 
      * @description
-     * Describes a type of {@link plat.async.Promise|Promise} that fulfills with an {@link plat.async.IAjaxResponse|IAjaxResponse} and can be optionally canceled.
+     * Describes a type of {@link plat.async.Promise|Promise} that fulfills with an {@link plat.async.IAjaxResponse|IAjaxResponse} and can be optionally cancelled.
      * 
      * @typeparam R The type of the response object in the {@link plat.async.IAjaxResponse|IAjaxResponse}.
      */
@@ -1719,7 +1719,7 @@ module plat.async {
      * @extends {plat.async.IAjaxThenable}
      * 
      * @description
-     * Describes a type of {@link plat.async.IPromise|IPromise} that fulfills with an {@link plat.async.IAjaxResponse|IAjaxResponse} and can be optionally canceled.
+     * Describes a type of {@link plat.async.IPromise|IPromise} that fulfills with an {@link plat.async.IAjaxResponse|IAjaxResponse} and can be optionally cancelled.
      * 
      * @typeparam R The type of the response object in the {@link plat.async.IAjaxResponse|IAjaxResponse}.
      */
