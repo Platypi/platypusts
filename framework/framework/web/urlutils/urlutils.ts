@@ -54,7 +54,7 @@
         username: string;
         password: string;
         origin: string;
-        query: IObject<string>;
+        query: any;
 
         /**
          * Handle the initial URL and get the base URL if necessary.
@@ -117,7 +117,7 @@
                 : '/' + element.pathname;
             }
 
-            define(this, 'pathname', path, true, true);
+            define(this, 'pathname', path.split('?')[0], true, true);
             define(this, 'query', UrlUtils.__getQuery(this.search), true, true);
         }
 
@@ -166,7 +166,8 @@
         port: string;
 
         /**
-         * The additional path value in the associated URL preceded by a '/'.
+         * The additional path value in the associated URL preceded by a '/'. 
+         * Removes the query string.
          */
         pathname: string;
 
@@ -198,7 +199,7 @@
         /**
          * An object containing keyed query arguments from the associated URL.
          */
-        query?: IObject<string>;
+        query?: any;
 
         /**
          * Initiializes this IUrlUtils and defines its properties using 
