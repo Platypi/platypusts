@@ -792,8 +792,15 @@ module plat.async {
     }
 
     /**
+     * @name IThenable
+     * @memberof plat.async
+     * @kind interface
+     * 
+     * @description
      * Describes a chaining function that fulfills when the previous link is complete and is 
      * able to be caught in the case of an error.
+     * 
+     * @typeparam R The return type of the thenable.
      */
     export interface IThenable<R> {
         /**

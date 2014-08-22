@@ -12,21 +12,76 @@ module plat {
      * class for all types of controls.
      */
     export class Control implements IControl {
+        /**
+         * @name $Parser
+         * @memberof plat.Control
+         * @kind property
+         * @access public
+         * @static
+         * 
+         * @type {plat.expressions.IParser}
+         * 
+         * @description
+         * Reference to the {@link plat.expressions.IParser|IParser} injectable.
+         */
         static $Parser: expressions.IParser;
+
+        /**
+         * @name $ContextManagerStatic
+         * @memberof plat.Control
+         * @kind property
+         * @access public
+         * @static
+         * 
+         * @type {plat.observable.IContextManagerStatic}
+         * 
+         * @description
+         * Reference to the {@link plat.observable.IContextManagerStatic|IContextManagerStatic} injectable.
+         */
         static $ContextManagerStatic: observable.IContextManagerStatic;
+
+        /**
+         * @name $EventManagerStatic
+         * @memberof plat.Control
+         * @kind property
+         * @access public
+         * @static
+         * 
+         * @type {plat.events.IEventManagerStatic}
+         * 
+         * @description
+         * Reference to the {@link plat.events.IEventManagerStatic|IEventManagerStatic} injectable.
+         */
         static $EventManagerStatic: events.IEventManagerStatic;
 
         /**
+         * @name __eventListeners
+         * @memberof plat.Control
+         * @kind property
+         * @access private
+         * @static
+         * 
+         * @type {plat.IObject<Array<plat.IRemoveListener>>}
+         * 
+         * @description
          * An object containing all controls' registered event listeners.
          */
         private static __eventListeners: IObject<Array<IRemoveListener>> = {};
 
         /**
+         * @name getRootControl
+         * @memberof plat.Control
+         * @kind function
+         * @access public
+         * @static
+         * 
+         * @description
          * Finds the ancestor control for the given control that contains the root 
          * context.
          * 
-         * @static
-         * @param control The control with which to find the root.
+         * @param {plat.IControl control The control with which to find the root.
+         * 
+         * @returns {plat.ui.ITemplateControl} The root control.
          */
         static getRootControl(control: IControl): ui.ITemplateControl;
         static getRootControl(control: ui.ITemplateControl) {
@@ -48,10 +103,18 @@ module plat {
         }
 
         /**
+         * @name load
+         * @memberof plat.Control
+         * @kind function
+         * @access public
+         * @static
+         * 
+         * @description
          * Given a control, calls the loaded method for the control if it exists.
          * 
-         * @static
-         * @param control The control to load.
+         * @param {plat.IControl} control The control to load.
+         * 
+         * @returns {void}
          */
         static load(control: IControl): void {
             if (isNull(control)) {
@@ -81,11 +144,19 @@ module plat {
         }
 
         /**
+         * @name dispose
+         * @memberof plat.Control
+         * @kind function
+         * @access public
+         * @static
+         * 
+         * @description
          * Disposes all the necessary memory for a control. Uses specific dispose 
          * methods related to a control's constructor if necessary.
          * 
-         * @static
-         * @param control The Control to dispose.
+         * @param {plat.IControl} control The {@link plat.Control|Control} to dispose.
+         * 
+         * @returns {void}
          */
         static dispose(control: IControl): void {
             var ctrl = <any>control;
@@ -111,11 +182,19 @@ module plat {
         }
 
         /**
+         * @name removeParent
+         * @memberof plat.Control
+         * @kind function
+         * @access public
+         * @static
+         * 
+         * @description
          * Splices a control from its parent's controls list. Sets the control's parent 
          * to null.
          * 
-         * @static
-         * @param control The control whose parent will be removed.
+         * @param {plat.IControl} control The control whose parent will be removed.
+         * 
+         * @returns {void}
          */
         static removeParent(control: IControl): void {
             if (isNull(control)) {
@@ -139,10 +218,18 @@ module plat {
         }
 
         /**
+         * @name removeEventListeners
+         * @memberof plat.Control
+         * @kind function
+         * @access public
+         * @static
+         * 
+         * @description
          * Removes all event listeners for a control with the given uid.
          * 
-         * @static
-         * @param control The control having its event listeners removed.
+         * @param {plat.IControl} control The control having its event listeners removed.
+         * 
+         * @returns {void}
          */
         static removeEventListeners(control: IControl): void {
             if (isNull(control)) {
@@ -164,21 +251,36 @@ module plat {
         }
 
         /**
-         * Returns a new instance of Control.
-         * 
+         * @name getInstance
+         * @memberof plat.Control
+         * @kind function
+         * @access public
          * @static
+         * 
+         * @description
+         * Returns a new instance of {@link plat.Control|Control}.
+         * 
+         * @returns {plat.IControl} The newly instantiated control.
          */
         static getInstance(): IControl {
             return new Control();
         }
 
         /**
+         * @name __addRemoveListener
+         * @memberof plat.Control
+         * @kind function
+         * @access private
+         * @static
+         * 
+         * @description
          * Adds a function to remove an event listener for the control specified 
          * by its uid.
          * 
-         * @static
-         * @param uid The uid of the control associated with the remove function.
-         * @param listener The remove function to add.
+         * @param {string} uid The uid of the control associated with the remove function.
+         * @param {plat.IRemoveListener} listener The remove function to add.
+         * 
+         * @returns {void}
          */
         private static __addRemoveListener(uid: string, listener: IRemoveListener): void {
             var removeListeners = Control.__eventListeners;
@@ -191,6 +293,21 @@ module plat {
             removeListeners[uid] = [listener];
         }
 
+        /**
+         * @name __spliceRemoveListener
+         * @memberof plat.Control
+         * @kind function
+         * @access private
+         * @static
+         * 
+         * @description
+         * Removes a {@link plat.IRemoveListener|IRemoveListener} from a control's listeners.
+         * 
+         * @param {string} uid The uid of the control associated with the remove function.
+         * @param {plat.IRemoveListener} listener The remove function to add.
+         * 
+         * @returns {void}
+         */
         private static __spliceRemoveListener(uid: string, listener: IRemoveListener): void {
             var removeListeners = Control.__eventListeners,
                 controlListeners = removeListeners[uid];
@@ -205,12 +322,29 @@ module plat {
             }
         }
 
-        private static __getControls(control: IControl, method: string, key: string): Array<IControl> {
+        /**
+         * @name __getControls
+         * @memberof plat.Control
+         * @kind function
+         * @access private
+         * @static
+         * 
+         * @description
+         * Gets controls that have a specific key/value string pair.
+         * 
+         * 
+         * @param {plat.IControl} control The at which to start searching for key/value pairs.
+         * @param {string} key The key to search for on all the controls in the tree.
+         * @param {string} value The expected value used to find similar controls.
+         * 
+         * @returns {Array<plat.IControl>} The controls matching the input key/value pair.
+         */
+        private static __getControls(control: IControl, key: string, value: string): Array<IControl> {
             var controls: Array<IControl> = [],
                 root = Control.getRootControl(control),
                 child: IControl;
 
-            if (!isNull(root) && (<any>root)[method] === key) {
+            if (!isNull(root) && (<any>root)[key] === value) {
                 controls.push(root);
             }
 
@@ -226,7 +360,7 @@ module plat {
             while (queue.length > 0) {
                 child = queue.shift();
 
-                if ((<any>child)[method] === key) {
+                if ((<any>child)[key] === value) {
                     controls.push(child);
                 }
 
@@ -241,21 +375,56 @@ module plat {
         }
 
         /**
+         * @name uid
+         * @memberof plat.Control
+         * @kind property
+         * @access public
+         * @readonly
+         * 
+         * @type {string}
+         * 
+         * @description
          * A unique id, created during instantiation and found on every IControl.
          */
         uid: string;
 
         /**
+         * @name name
+         * @memberof plat.Control
+         * @kind property
+         * @access public
+         * @readonly
+         * 
+         * @type {string}
+         * 
+         * @description
          * The name of an IControl.
          */
         name: string;
 
         /**
+         * @name type
+         * @memberof plat.Control
+         * @kind property
+         * @access public
+         * @readonly
+         * 
+         * @type {string}
+         * 
+         * @description
          * The type of an IControl.
          */
         type: string;
 
         /**
+         * @name priority
+         * @memberof plat.Control
+         * @kind property
+         * @access public
+         * 
+         * @type {number}
+         * 
+         * @description
          * Specifies the priority of the control. The purpose of 
          * this is so that controls like plat-bind can have a higher 
          * priority than plat-tap. The plat-bind will be initialized 
@@ -265,41 +434,82 @@ module plat {
         priority = 0;
 
         /**
-         * The parent control that created this control. If this control does not implement ui.IBaseViewControl
-         * then it will inherit its context from the parent.
+         * @name parent
+         * @memberof plat.Control
+         * @kind property
+         * @access public
+         * @readonly
+         * 
+         * @type {plat.ui.ITemplateControl}
+         * 
+         * @description
+         * The parent control that created this control.
          */
         parent: ui.ITemplateControl;
 
         /**
-         * The HTMLElement that represents this IControl. Should only be modified by controls that implement 
-         * ui.ITemplateControl. During initialize the control should populate this element with what it wishes
+         * @name element
+         * @memberof plat.Control
+         * @kind property
+         * @access public
+         * 
+         * @type {HTMLElement}
+         * 
+         * @description
+         * The HTMLElement that represents this {@link plat.Control|Control}. Should only be modified by controls that implement 
+         * {plat.ui.ITemplateControl|ITemplateControl}. During initialize the control should populate this element with what it wishes
          * to render to the user. 
          * 
+         * @remarks
          * When there is innerHTML in the element prior to instantiating the control:
          *     The element will include the innerHTML
          * When the control implements templateString or templateUrl:
          *     The serialized DOM will be auto-generated and included in the element. Any
          *     innerHTML will be stored in the innerTemplate property on the control.
-         *    
-         * After an IControl is initialized its element will be compiled.
+         * After an {@link plat.IControl|IControl} is initialized its element will be compiled.
          */
         element: HTMLElement;
 
         /**
-         * The attributes object representing all the attributes for an IControl's element. All attributes are 
+         * @name attributes
+         * @memberof plat.Control
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.ui.IAttributesInstance}
+         * 
+         * @description
+         * The attributes object representing all the attributes for a {@link plat.Control|Control's} element. All attributes are 
          * converted from dash notation to camelCase.
          */
         attributes: ui.IAttributesInstance;
 
         /**
+         * @name dom
+         * @memberof plat.Control
+         * @kind property
+         * @access public
+         * @readonly
+         * 
+         * @type {plat.ui.IDom}
+         * 
+         * @description
          * Contains DOM helper methods for manipulating this control's element.
          */
         dom: ui.IDom = acquire(__Dom);
 
         /**
+         * @name constructor
+         * @memberof plat.Control
+         * @kind function
+         * @access public
+         * 
+         * @description
          * The constructor for a control. Any injectables specified during control registration will be
          * passed into the constructor as arguments as long as the control is instantiated with its associated
          * injector.
+         * 
+         * @returns {plat.Control}
          */
         constructor() {
             var ContextManager: observable.IContextManagerStatic = Control.$ContextManagerStatic ||
@@ -308,42 +518,88 @@ module plat {
         }
 
         /**
+         * @name initialize
+         * @memberof plat.Control
+         * @kind function
+         * @access public
+         * @virtual
+         * 
+         * @description
          * The initialize event method for a control. In this method a control should initialize all the necessary 
          * variables. This method is typically only necessary for view controls. If a control does not implement 
-         * ui.IBaseViewControl then it is not safe to access, observe, or modify the context property in this method.
-         * A view control should call services/set context in this method in order to fire the loaded event. No control 
-         * will be loaded until the view control has specified a context.
+         * {@link plat.ui.IBaseViewControl|IBaseViewControl} then it is not safe to access, observe, or modify 
+         * the context property in this method. A view control should call services/set context in this method in 
+         * order to fire the loaded event. No control will be loaded until the view control has specified a context.
+         * 
+         * @returns {void}
          */
         initialize() { }
 
         /**
+         * @name loaded
+         * @memberof plat.Control
+         * @kind function
+         * @access public
+         * @virtual
+         * 
+         * @description
          * The loaded event method for a control. This event is fired after a control has been loaded,
          * meaning all of its children have also been loaded and initial DOM has been created and populated. It is now 
          * safe for all controls to access, observe, and modify the context property.
+         * 
+         * @returns {void}
          */
         loaded() { }
 
         /**
+         * @name getControlsByName
+         * @memberof plat.Control
+         * @kind function
+         * @access public
+         * 
+         * @description
          * Retrieves all the controls with the specified name.
          * 
-         * @param name The string name with which to populate the returned controls array.
+         * @param {string} name The string name with which to populate the returned controls array.
+         * 
+         * @returns {Array<plat.IControl>} The controls that match the input name.
          */
         getControlsByName(name: string): Array<IControl> {
             return Control.__getControls(this, 'name', name);
         }
 
         /**
+         * @name getControlsByType
+         * @memberof plat.Control
+         * @kind function
+         * @access public
+         * @variation 0
+         * 
+         * @description
          * Retrieves all the controls of the specified type.
          * 
-         * @param type The type used to find controls (e.g. 'plat-foreach')
+         * @typeparam {plat.Control} T The type of control to be returned in an Array.
+         * 
+         * @param {string} type The type used to find controls (e.g. 'plat-foreach')
+         * 
+         * @returns {Array<T>} The controls matching the input type.
          */
         getControlsByType<T extends Control>(type: string): Array<T>;
         /**
+         * @name getControlsByType
+         * @memberof plat.Control
+         * @kind function
+         * @access public
+         * @variation 1
+         * 
+         * @description
          * Retrieves all the controls of the specified type.
          * 
-         * @param Constructor The constructor used to find controls.
+         * @typeparam {plat.Control} T The type of control to be returned in an Array.
          * 
-         * @example this.getControlsByType<ui.controls.ForEach>(ui.controls.ForEach)
+         * @param {new () => T} Constructor The constructor used to find controls.
+         * 
+         * @returns {Array<T>} The controls matching the input type.
          */
         getControlsByType<T extends Control>(Constructor: new () => T): Array<T>;
         getControlsByType(type: any) {
@@ -354,49 +610,45 @@ module plat {
         }
 
         /**
+         * @name addEventListener
+         * @memberof plat.Control
+         * @kind function
+         * @access public
+         * @variation 0
+         * 
+         * @description
          * Adds an event listener of the specified type to the specified element. Removal of the 
          * event is handled automatically upon disposal.
          * 
-         * @param element The element to add the event listener to.
-         * @param type The type of event to listen to.
-         * @param listener The listener to fire when the event occurs.
-         * @param useCapture Whether to fire the event on the capture or the bubble phase 
+         * @param {EventTarget} element The element to add the event listener to.
+         * @param {string} type The type of event to listen to.
+         * @param {plat.ui.IGestureListener} listener The listener to fire when the event occurs.
+         * @param {boolean} useCapture? Whether to fire the event on the capture or the bubble phase 
          * of event propagation.
+         * 
+         * @returns {plat.IRemoveListener} A function to call in order to stop listening to the event.
          */
-        addEventListener(element: Node, type: string, listener: ui.IGestureListener, useCapture?: boolean): IRemoveListener;
+        addEventListener(element: EventTarget, type: string, listener: ui.IGestureListener, useCapture?: boolean): IRemoveListener;
         /**
+         * @name addEventListener
+         * @memberof plat.Control
+         * @kind function
+         * @access public
+         * @variation 1
+         * 
+         * @description
          * Adds an event listener of the specified type to the specified element. Removal of the 
          * event is handled automatically upon disposal.
          * 
-         * @param element The window object.
-         * @param type The type of event to listen to.
-         * @param listener The listener to fire when the event occurs.
-         * @param useCapture Whether to fire the event on the capture or the bubble phase 
+         * @param {EventTarget} element The element to add the event listener to.
+         * @param {string}  type The type of event to listen to.
+         * @param {EventListener} listener The listener to fire when the event occurs.
+         * @param {boolean} useCapture? Whether to fire the event on the capture or the bubble phase 
          * of event propagation.
-         */
-        addEventListener(element: Window, type: string, listener: ui.IGestureListener, useCapture?: boolean): IRemoveListener;
-        /**
-         * Adds an event listener of the specified type to the specified element. Removal of the 
-         * event is handled automatically upon disposal.
          * 
-         * @param element The element to add the event listener to.
-         * @param type The type of event to listen to.
-         * @param listener The listener to fire when the event occurs.
-         * @param useCapture Whether to fire the event on the capture or the bubble phase 
-         * of event propagation.
+         * @returns {plat.IRemoveListener} A function to call in order to stop listening to the event.
          */
-        addEventListener(element: Node, type: string, listener: EventListener, useCapture?: boolean): IRemoveListener;
-        /**
-         * Adds an event listener of the specified type to the specified element. Removal of the 
-         * event is handled automatically upon disposal.
-         * 
-         * @param element The window object.
-         * @param type The type of event to listen to.
-         * @param listener The listener to fire when the event occurs.
-         * @param useCapture Whether to fire the event on the capture or the bubble phase 
-         * of event propagation.
-         */
-        addEventListener(element: Window, type: string, listener: EventListener, useCapture?: boolean): IRemoveListener;
+        addEventListener(element: EventTarget, type: string, listener: EventListener, useCapture?: boolean): IRemoveListener;
         addEventListener(element: any, type: string, listener: ui.IGestureListener, useCapture?: boolean): IRemoveListener {
             if (!isFunction(listener)) {
                 var Exception: IExceptionStatic = acquire(__ExceptionStatic);
@@ -417,23 +669,45 @@ module plat {
         }
 
         /**
-         * Allows an IControl to observe any property on its context and receive updates when
+         * @name observe
+         * @memberof plat.Control
+         * @kind function
+         * @access public
+         * @variation 0
+         * 
+         * @description
+         * Allows a {@link plat.Control|Control} to observe any property on its context and receive updates when
          * the property is changed.
          * 
-         * @param context The immediate parent object containing the property.
-         * @param property The property identifier to watch for changes.
-         * @param listener The method called when the property is changed. This method will have its 'this'
+         * @typeparam T The type of object to observe.
+         * 
+         * @param {any} context The immediate parent object containing the property.
+         * @param {string} property The property identifier to watch for changes.
+         * @param {(value: T, oldValue: T) => void} listener The method called when the property is changed. This method will have its 'this'
          * context set to the control instance.
+         * 
+         * @returns {plat.IRemoveListener} A function to call in order to stop observing the property.
          */
-        observe<T>(context: any, property: string, listener: (value: T, oldValue: any) => void): IRemoveListener;
+        observe<T>(context: any, property: string, listener: (value: T, oldValue: T) => void): IRemoveListener;
         /**
-         * Allows an IControl to observe any property on its context and receive updates when
+         * @name observe
+         * @memberof plat.Control
+         * @kind function
+         * @access public
+         * @variation 1
+         * 
+         * @description
+         * Allows a {@link plat.Control|Control} to observe any property on its context and receive updates when
          * the property is changed.
          * 
-         * @param context The immediate parent array containing the property.
-         * @param property The index to watch for changes.
-         * @param listener The method called when the property is changed. This method will have its 'this'
+         * @typeparam T The type of object to observe.
+         * 
+         * @param {any} context The immediate parent object containing the property.
+         * @param {number} property The property identifier to watch for changes.
+         * @param {(value: T, oldValue: T) => void} listener The method called when the property is changed. This method will have its 'this'
          * context set to the control instance.
+         * 
+         * @returns {plat.IRemoveListener} A function to call in order to stop observing the property.
          */
         observe<T>(context: any, property: number, listener: (value: T, oldValue: T) => void): IRemoveListener;
         observe(context: any, property: any, listener: (value: any, oldValue: any) => void): IRemoveListener {
@@ -462,27 +736,49 @@ module plat {
         }
 
         /**
-         * Allows an IControl to observe an array and receive updates when certain array-changing methods are called.
+         * @name observeArray
+         * @memberof plat.Control
+         * @kind function
+         * @access public
+         * @variation 0
+         * 
+         * @description
+         * Allows a {@link plat.Control|Control} to observe an array and receive updates when certain array-changing methods are called.
          * The methods watched are push, pop, shift, sort, splice, reverse, and unshift. This method does not watch
          * every item in the array.
          * 
-         * @param context The immediate parent object containing the array as a property.
-         * @param property The array property identifier to watch for changes.
-         * @param listener The method called when an array-changing method is called. This method will have its 'this'
+         * @typeparam T The type of the Array to observe.
+         * 
+         * @param {any} context The immediate parent object containing the array as a property.
+         * @param {string} property The array property identifier to watch for changes.
+         * @param {(ev: plat.observable.IArrayMethodInfo<T>) => void} listener The method called when an array-changing method is called. This method will have its 'this'
          * context set to the control instance.
+         * 
+         * @returns {plat.IRemoveListener} A function to call in order to stop observing the array.
          */
         observeArray<T>(context: any, property: string, listener: (ev: observable.IArrayMethodInfo<T>) => void): IRemoveListener;
         /**
-         * Allows an IControl to observe an array and receive updates when certain array-changing methods are called.
+         * @name observeArray
+         * @memberof plat.Control
+         * @kind function
+         * @access public
+         * @variation 1
+         * 
+         * @description
+         * Allows a {@link plat.Control|Control} to observe an array and receive updates when certain array-changing methods are called.
          * The methods watched are push, pop, shift, sort, splice, reverse, and unshift. This method does not watch
          * every item in the array.
          * 
-         * @param context The immediate parent array containing the array as a property.
-         * @param property The index on the parent array, specifying the array to watch for changes.
-         * @param listener The method called when an array-changing method is called. This method will have its 'this'
+         * @typeparam T The type of the Array to observe.
+         * 
+         * @param {any} context The immediate parent object containing the array as a property.
+         * @param {number} property The array property identifier to watch for changes.
+         * @param {(ev: plat.observable.IArrayMethodInfo<T>) => void} listener The method called when an array-changing method is called. This method will have its 'this'
          * context set to the control instance.
+         * 
+         * @returns {plat.IRemoveListener} A function to call in order to stop observing the array.
          */
-        observeArray<T>(context: Array<T>, property: number, listener: (ev: observable.IArrayMethodInfo<T>) => void): IRemoveListener;
+        observeArray<T>(context: any, property: number, listener: (ev: observable.IArrayMethodInfo<T>) => void): IRemoveListener;
         observeArray(context: any, property: any, listener: (ev: observable.IArrayMethodInfo<any>) => void): IRemoveListener {
             if (isNull(context) || !context.hasOwnProperty(property)) {
                 return noop;
@@ -534,11 +830,19 @@ module plat {
         }
 
         /**
+         * @name observeExpression
+         * @memberof plat.Control
+         * @kind function
+         * @access public
+         * @variation 0
+         * 
+         * @description
          * Parses an expression string and observes any associated identifiers. When an identifier
          * value changes, the listener will be called.
          * 
-         * @param expression The expression string to watch for changes.
-         * @param listener The listener to call when the expression identifer values change.
+         * @param {string} expression The expression string to watch for changes.
+         * @param {(value: any, oldValue: any) => void} listener The listener to call when the expression identifer values change.
+         * 
          */
         observeExpression(expression: string, listener: (value: any, oldValue: any) => void): IRemoveListener;
         /**
@@ -938,18 +1242,7 @@ module plat {
          * @param useCapture Whether to fire the event on the capture or the bubble phase 
          * of event propagation.
          */
-        addEventListener? (element: Node, type: string, listener: ui.IGestureListener, useCapture?: boolean): IRemoveListener;
-        /**
-         * Adds an event listener of the specified type to the specified element. Removal of the 
-         * event is handled automatically upon disposal.
-         * 
-         * @param element The window object.
-         * @param type The type of event to listen to.
-         * @param listener The listener to fire when the event occurs.
-         * @param useCapture Whether to fire the event on the capture or the bubble phase 
-         * of event propagation.
-         */
-        addEventListener? (element: Window, type: string, listener: ui.IGestureListener, useCapture?: boolean): IRemoveListener;
+        addEventListener? (element: EventTarget, type: string, listener: ui.IGestureListener, useCapture?: boolean): IRemoveListener;
         /**
          * Adds an event listener of the specified type to the specified element. Removal of the 
          * event is handled automatically upon disposal.
@@ -960,18 +1253,7 @@ module plat {
          * @param useCapture Whether to fire the event on the capture or the bubble phase 
          * of event propagation.
          */
-        addEventListener? (element: Node, type: string, listener: EventListener, useCapture?: boolean): IRemoveListener;
-        /**
-         * Adds an event listener of the specified type to the specified element. Removal of the 
-         * event is handled automatically upon disposal.
-         * 
-         * @param element The window object.
-         * @param type The type of event to listen to.
-         * @param listener The listener to fire when the event occurs.
-         * @param useCapture Whether to fire the event on the capture or the bubble phase 
-         * of event propagation.
-         */
-        addEventListener? (element: Window, type: string, listener: EventListener, useCapture?: boolean): IRemoveListener;
+        addEventListener? (element: EventTarget, type: string, listener: EventListener, useCapture?: boolean): IRemoveListener;
 
         /**
          * Allows an IControl to observe any property on its context and receive updates when
