@@ -61,7 +61,7 @@
         _beforeRouteChange(ev: events.INavigationEvent<web.IRoute<any>>): void {
             var event = this._sendEvent('beforeNavigate', ev.target, ev.type, ev.parameter, ev.options, true);
 
-            if (event.canceled) {
+            if (event.cancelled) {
                 ev.cancel();
             }
         }

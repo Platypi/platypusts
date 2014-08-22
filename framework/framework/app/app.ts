@@ -19,6 +19,9 @@ module plat {
          * @static
          * 
          * @type {plat.ICompat}
+         * 
+         * @description
+         * Reference to the {@link plat.ICompat|ICompat} injectable.
          */
         static $Compat: ICompat;
 
@@ -30,6 +33,9 @@ module plat {
          * @static
          * 
          * @type {plat.events.IEventManagerStatic}
+         * 
+         * @description
+         * Reference to the {@link plat.events.IEventManagerStatic|IEventManagerStatic} injectable.
          */
         static $EventManagerStatic: events.IEventManagerStatic;
 
@@ -41,6 +47,9 @@ module plat {
          * @static
          * 
          * @type {Document}
+         * 
+         * @description
+         * Reference to the Document injectable.
          */
         static $Document: Document;
 
@@ -52,6 +61,9 @@ module plat {
          * @static
          * 
          * @type {plat.processing.ICompiler}
+         * 
+         * @description
+         * Reference to the {@link plat.processing.ICompiler|ICompiler} injectable.
          */
         static $Compiler: processing.ICompiler;
 
@@ -63,6 +75,9 @@ module plat {
          * @static
          * 
          * @type {plat.events.ILifecycleEventStatic}
+         * 
+         * @description
+         * Reference to the {@link plat.events.ILifecycleEventStatic|ILifecycleEventStatic} injectable.
          */
         static $LifecycleEventStatic: events.ILifecycleEventStatic;
 

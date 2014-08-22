@@ -187,7 +187,7 @@
     }
 
     /**
-     * Describes a type of Promise that fulfills with an IAjaxResponse and can be optionally canceled.
+     * Describes a type of Promise that fulfills with an IAjaxResponse and can be optionally cancelled.
      */
     export class AnimationPromise extends async.Promise<void> implements IAnimationPromise {
         private __animationInstance: IBaseAnimation;
@@ -284,7 +284,7 @@
     }
 
     /**
-     * Describes a type of IPromise that fulfills when an animation is finished and can be optionally canceled.
+     * Describes a type of IPromise that fulfills when an animation is finished and can be optionally cancelled.
      */
     export interface IAnimationPromise extends IAnimationThenable<void> {
         /**

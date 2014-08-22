@@ -2411,7 +2411,7 @@ declare module plat {
         interface IAjaxError extends Error, IAjaxResponse<any> {
         }
         /**
-        * Describes a type of Promise that fulfills with an IAjaxResponse and can be optionally canceled.
+        * Describes a type of Promise that fulfills with an IAjaxResponse and can be optionally cancelled.
         */
         class AjaxPromise<R> extends Promise<IAjaxResponse<R>> implements IAjaxPromise<R> {
             public $Window: Window;
@@ -2485,7 +2485,7 @@ declare module plat {
             catch<U>(onRejected: (error: any) => U): IAjaxThenable<U>;
         }
         /**
-        * Describes a type of IPromise that fulfills with an IAjaxResponse and can be optionally canceled.
+        * Describes a type of IPromise that fulfills with an IAjaxResponse and can be optionally cancelled.
         */
         interface IAjaxPromise<R> extends IAjaxThenable<IAjaxResponse<R>> {
             /**
@@ -4007,7 +4007,7 @@ declare module plat {
             public target: any;
             public type: string;
             public cancelable: boolean;
-            public canceled: boolean;
+            public cancelled: boolean;
             public initialize(name: string, sender: any, direction?: string, eventOptions?: INavigationEventOptions<P>): void;
             public cancel(): void;
         }
@@ -4056,14 +4056,14 @@ declare module plat {
             */
             sender: any;
             /**
-            * States whether or not this event is able to be canceled. Some navigation events can be
-            * canceled, preventing further navigation.
+            * States whether or not this event is able to be cancelled. Some navigation events can be
+            * cancelled, preventing further navigation.
             */
             cancelable?: boolean;
             /**
-            * States whether or not this event has been canceled.
+            * States whether or not this event has been cancelled.
             */
-            canceled?: boolean;
+            cancelled?: boolean;
             /**
             * If the event is cancelable (ev.cancelable), calling this method will cancel the event.
             */
@@ -4111,8 +4111,8 @@ declare module plat {
             */
             type: string;
             /**
-            * States whether or not this event is able to be canceled. Some navigation events can be
-            * canceled, preventing further navigation.
+            * States whether or not this event is able to be cancelled. Some navigation events can be
+            * cancelled, preventing further navigation.
             */
             cancelable?: boolean;
         }
@@ -7938,7 +7938,7 @@ declare module plat {
             promise?: IAnimationThenable<any>;
         }
         /**
-        * Describes a type of Promise that fulfills with an IAjaxResponse and can be optionally canceled.
+        * Describes a type of Promise that fulfills with an IAjaxResponse and can be optionally cancelled.
         */
         class AnimationPromise extends async.Promise<void> implements IAnimationPromise {
             private __animationInstance;
@@ -8009,7 +8009,7 @@ declare module plat {
             catch<U>(onRejected: (error: any) => U): IAnimationThenable<U>;
         }
         /**
-        * Describes a type of IPromise that fulfills when an animation is finished and can be optionally canceled.
+        * Describes a type of IPromise that fulfills when an animation is finished and can be optionally cancelled.
         */
         interface IAnimationPromise extends IAnimationThenable<void> {
             /**
@@ -9637,7 +9637,7 @@ declare module plat {
             * @param target The target of the event, could be a view control or a route depending upon the navigator and
             * event name.
             * @param options The IBaseNavigationOptions used during navigation
-            * @param cancelable Whether or not the event can be canceled, preventing further navigation.
+            * @param cancelable Whether or not the event can be cancelled, preventing further navigation.
             */
             public _sendEvent(name: string, target: any, type: string, parameter: any, options: IBaseNavigationOptions, cancelable: boolean): events.INavigationEvent<any>;
         }
