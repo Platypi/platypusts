@@ -3,14 +3,14 @@
      * A simple Css Animation class that places the 'plat-transition' class on an 
      * element, checks for transition properties, and waits for the transition to end.
      */
-    export class SimpleCssTransition extends CssAnimation implements ISimpleCssAnimation {
+    export class SimpleCssTransition extends CssAnimation implements ISimpleCssTransition {
         $Window: Window = acquire(__Window);
 
         /**
          * A JavaScript object with key value pairs for adjusting transition values. 
          * (i.e. { width: '800px' } would set the element's width to 800px.
          */
-        options: any;
+        options: plat.IObject<string>;
 
         /**
          * The class name added to the animated element.
@@ -61,20 +61,36 @@
                 keys = Object.keys(options),
                 length = keys.length,
                 key: any,
+                currentProperty: string,
+                newProperty: string,
                 unchanged = 0;
 
             for (var i = 0; i < length; ++i) {
                 key = keys[i];
-                if (style[key] === options[key]) {
+                currentProperty = style[key];
+                newProperty = options[key];
+                if (!isString(newProperty)) {
                     unchanged++;
-                } else {
-                    style[key] = options[key];
+                    continue;
+                }
+
+                style[key] = newProperty;
+                if (currentProperty === style[key]) {
+                    unchanged++;
                 }
             }
 
-            return unchanged !== length;
+            return unchanged < length;
         }
     }
 
     register.animation(__SimpleTransition, SimpleCssTransition);
+
+    export interface ISimpleCssTransition extends ISimpleCssAnimation {
+        /**
+         * A JavaScript object with key value pairs for adjusting transition values. 
+         * (i.e. { width: '800px' } would set the element's width to '800px'.
+         */
+        options: plat.IObject<string>;
+    }
 }
