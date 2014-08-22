@@ -31,7 +31,7 @@
             this.error = error;
         }
     }
-    
+
     /**
      * The Type for referencing the '$ErrorEventStatic' injectable as a dependency.
      */
@@ -41,7 +41,7 @@
     }
 
     register.injectable(__ErrorEventStatic, IErrorEventStatic, [__EventManagerStatic], __STATIC);
-    
+
     /**
      * The intended external interface for the $ErrorEventStatic injectable.
      */
@@ -65,7 +65,7 @@
          * The error being dispatched.
          */
         error: E;
-        
+
         /**
          * @param name The name of the event.
          * @param sender The sender of the event.

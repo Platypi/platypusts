@@ -189,7 +189,7 @@ module plat.async {
          * @access public
          * @static
          * @variation 0
-         *
+         * 
          * @description
          * Returns a promise that fulfills as soon as any of the promises fulfill,
          * or rejects as soon as any of the promises reject (whichever happens first).
@@ -209,7 +209,7 @@ module plat.async {
          * @access public
          * @static
          * @variation 1
-         *
+         * 
          * @description
          * Returns a promise that fulfills as soon as any of the promises fulfill,
          * or rejects as soon as any of the promises reject (whichever happens first).
@@ -249,7 +249,7 @@ module plat.async {
          * @kind function
          * @access public
          * @static
-         *
+         * 
          * @description
          * Returns a promise that resolves with the input value.
          * 
@@ -271,7 +271,7 @@ module plat.async {
          * @kind function
          * @access public
          * @static
-         *
+         * 
          * @description
          * Returns a promise that rejects with the input value.
          * 
@@ -291,7 +291,7 @@ module plat.async {
          * @kind function
          * @access private
          * @static
-         *
+         * 
          * @description
          * Invokes the resolve function for a promise. Handles error catching.
          * 
@@ -325,7 +325,7 @@ module plat.async {
          * @kind function
          * @access private
          * @static
-         *
+         * 
          * @description
          * Invokes a callback for a promise with the specified detail.
          * 
@@ -375,7 +375,7 @@ module plat.async {
          * @kind function
          * @access private
          * @static
-         *
+         * 
          * @description
          * Publishes the promise details to all the subscribers for a promise.
          * 
@@ -406,7 +406,7 @@ module plat.async {
          * @kind function
          * @access private
          * @static
-         *
+         * 
          * @description
          * Publishes a promises that has been fulfilled.
          * 
@@ -424,7 +424,7 @@ module plat.async {
          * @kind function
          * @access private
          * @static
-         *
+         * 
          * @description
          * Publishes a promises that has been rejected.
          * 
@@ -442,7 +442,7 @@ module plat.async {
          * @kind function
          * @access private
          * @static
-         *
+         * 
          * @description
          * Asynchronously rejects a promise
          * 
@@ -467,7 +467,7 @@ module plat.async {
          * @kind function
          * @access private
          * @static
-         *
+         * 
          * @description
          * Asynchronously fulfills a promise
          * 
@@ -494,7 +494,7 @@ module plat.async {
          * @kind function
          * @access private
          * @static
-         *
+         * 
          * @description
          * Asynchronously fulfills a promise, allowing for promise chaining.
          * 
@@ -519,7 +519,7 @@ module plat.async {
          * @kind function
          * @access private
          * @static
-         *
+         * 
          * @description
          * Handles chaining promises together, when a promise is returned from within a then handler.
          * 
@@ -580,7 +580,7 @@ module plat.async {
          * @kind function
          * @access private
          * @static
-         *
+         * 
          * @description
          * Adds a child promise to the parent's subscribers.
          * 
@@ -608,7 +608,7 @@ module plat.async {
          * @memberof plat.async.Promise
          * @kind function
          * @access public
-         *
+         * 
          * @description
          * An ES6 implementation of the Promise API. Useful for asynchronous programming.
          * Takes in 2 generic types corresponding to the fullfilled success and error types. 
@@ -722,7 +722,7 @@ module plat.async {
         then<U>(onFulfilled: (success: R) => U, onRejected?: (error: any) => U): IThenable<U>;
         then<U>(onFulfilled: (success: R) => any, onRejected?: (error: any) => any): IThenable<U> {
             var promise = this;
-            
+
             var thenPromise = <IThenable<U>>new (<any>this).constructor(() => { }, this);
 
             if (this.__state) {
@@ -938,7 +938,7 @@ module plat.async {
             process.nextTick(flush);
         };
     }
-    
+
     function useMutationObserver(): () => void {
         var observer = new BrowserMutationObserver(flush),
             $document = acquire(__Document),
@@ -1042,7 +1042,7 @@ module plat.async {
          * @memberof plat.async.IPromise
          * @kind function
          * @access public
-         *
+         * 
          * @description
          * An ES6 implementation of the Promise API. Useful for asynchronous programming.
          * Takes in 2 generic types corresponding to the fullfilled success and error types. 
@@ -1063,19 +1063,19 @@ module plat.async {
          * @access public
          * @static
          * @variation 0
-         *
+         * 
          * @description
          * Returns a promise that fulfills when every item in the array is fulfilled.
          * Casts arguments to promises if necessary. The result argument of the
          * returned promise is an array containing the fulfillment result arguments
          * in-order. The rejection argument is the rejection argument of the
          * first-rejected promise.
-         *
+         * 
          * @typeparam R The return type of the promises.
-         *
+         * 
          * @param {Array<plat.async.IThenable<R>>} promises An array of promises, although every argument is potentially
          * cast to a promise meaning not every item in the array needs to be a promise.
-         *
+         * 
          * @returns {plat.async.IThenable<Array<R>>} A promise that resolves after all the input promises resolve.
          */
         all<R>(promises: Array<IThenable<R>>): IThenable<Array<R>>;
@@ -1128,7 +1128,7 @@ module plat.async {
          * @access public
          * @static
          * @variation 0
-         *
+         * 
          * @description
          * Returns a promise that fulfills as soon as any of the promises fulfill,
          * or rejects as soon as any of the promises reject (whichever happens first).
@@ -1148,7 +1148,7 @@ module plat.async {
          * @access public
          * @static
          * @variation 1
-         *
+         * 
          * @description
          * Returns a promise that fulfills as soon as any of the promises fulfill,
          * or rejects as soon as any of the promises reject (whichever happens first).
@@ -1169,7 +1169,7 @@ module plat.async {
          * @kind function
          * @access public
          * @static
-         *
+         * 
          * @description
          * Returns a promise that resolves with the input value.
          * 
@@ -1187,7 +1187,7 @@ module plat.async {
          * @kind function
          * @access public
          * @static
-         *
+         * 
          * @description
          * Returns a promise that rejects with the input value.
          * 

@@ -5,7 +5,7 @@ module plat.events {
         sender: any;
         name: string;
         direction: string;
-        
+
         initialize(name: string, sender: any, direction?: string): void;
         initialize(name: string, sender: any, direction?: 'up'): void;
         initialize(name: string, sender: any, direction?: 'down'): void;
@@ -44,7 +44,7 @@ module plat.events {
          * The object that initiated the event.
          */
         sender: any;
-        
+
         /**
          * The name of the event.
          */

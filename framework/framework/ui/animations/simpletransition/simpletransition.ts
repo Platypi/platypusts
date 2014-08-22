@@ -78,4 +78,3 @@
 
     register.animation(__SimpleTransition, SimpleCssTransition);
 }
- 

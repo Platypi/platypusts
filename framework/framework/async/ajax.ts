@@ -90,7 +90,7 @@ module plat.async {
          * The injectable instance of type Document
          */
         $Document: Document = acquire(__Document);
-        
+
         /**
          * @name $config
          * @memberof plat.async.HttpRequest
@@ -484,7 +484,7 @@ module plat.async {
                 }
             }, { __http: this });
         }
-        
+
         /**
          * @name _invalidOptions
          * @memberof plat.async.HttpRequest
@@ -509,7 +509,7 @@ module plat.async {
                 }));
             });
         }
-        
+
         /**
          * @name _formatResponse
          * @memberof plat.async.HttpRequest
@@ -1577,7 +1577,7 @@ module plat.async {
             return <IAjaxThenable<U>><any>super.catch<U>(onRejected);
         }
     }
-    
+
     /**
      * @name IAjaxThenable
      * @memberof plat.async

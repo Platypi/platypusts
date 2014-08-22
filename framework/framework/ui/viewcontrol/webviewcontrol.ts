@@ -44,7 +44,7 @@
          */
         title = '';
 
-        
+
         /**
          * The title of the page, corresponds to the content of the description meta element in the HTML head.
          */

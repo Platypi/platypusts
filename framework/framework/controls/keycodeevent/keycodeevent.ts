@@ -111,7 +111,7 @@ module plat.controls {
             }
 
             var expression = (<any>this.attributes)[attr].trim();
-            
+
             if (expression[0] === '{') {
                 var eventObject: IKeyboardEventInput = this.evaluateExpression(expression) ||
                     { method: '', key: null },

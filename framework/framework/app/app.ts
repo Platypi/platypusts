@@ -275,7 +275,7 @@ module plat {
                 app.ready(ev);
             }
         }
-        
+
         /**
          * @name __addPlatCss
          * @memberof plat.App
@@ -986,7 +986,7 @@ module plat {
          */
         [key: string]: T
     }
-    
+
     /**
      * @name IRemoveListener
      * @memberof plat

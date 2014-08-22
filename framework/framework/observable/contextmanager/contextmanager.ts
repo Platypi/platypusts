@@ -10,7 +10,7 @@ module plat.observable {
          * A set of functions to be fired when a particular observed array is mutated.
          */
         static observedArrayListeners: IObject<IObject<Array<(ev: IArrayMethodInfo<any>) => void>>> = {};
-        
+
         /**
          * Gets the ContextManager associated to the given control. If no 
          * ContextManager exists, one is created for that control.
@@ -393,7 +393,7 @@ module plat.observable {
                 $compat = this.$Compat,
                 proto = $compat.proto,
                 setProto = $compat.setProto;
-            
+
             if (isArray(oldArray)) {
                 if (setProto) {
                     (<any>Object).setPrototypeOf(oldArray, Object.create(Array.prototype));
