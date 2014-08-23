@@ -969,7 +969,7 @@ module plat {
      * @description
      * Interface for an object where every key has the same typed value.
      * 
-     * @typeparam T The type of each value in the object.
+     * @typeparam {any} T The type of each value in the object.
      */
     export interface IObject<T> {
         /**

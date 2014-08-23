@@ -679,7 +679,7 @@ module plat {
          * Allows a {@link plat.Control|Control} to observe any property on its context and receive updates when
          * the property is changed.
          * 
-         * @typeparam T The type of object to observe.
+         * @typeparam {any} T The type of object to observe.
          * 
          * @param {any} context The immediate parent object containing the property.
          * @param {string} property The property identifier to watch for changes.
@@ -700,7 +700,7 @@ module plat {
          * Allows a {@link plat.Control|Control} to observe any property on its context and receive updates when
          * the property is changed.
          * 
-         * @typeparam T The type of object to observe.
+         * @typeparam {any} T The type of object to observe.
          * 
          * @param {any} context The immediate parent object containing the property.
          * @param {number} property The property identifier to watch for changes.
@@ -747,7 +747,7 @@ module plat {
          * The methods watched are push, pop, shift, sort, splice, reverse, and unshift. This method does not watch
          * every item in the array.
          * 
-         * @typeparam T The type of the Array to observe.
+         * @typeparam {any} T The type of the Array to observe.
          * 
          * @param {any} context The immediate parent object containing the array as a property.
          * @param {string} property The array property identifier to watch for changes.
@@ -769,7 +769,7 @@ module plat {
          * The methods watched are push, pop, shift, sort, splice, reverse, and unshift. This method does not watch
          * every item in the array.
          * 
-         * @typeparam T The type of the Array to observe.
+         * @typeparam {any} T The type of the Array to observe.
          * 
          * @param {any} context The immediate parent object containing the array as a property.
          * @param {number} property The array property identifier to watch for changes.
@@ -1532,7 +1532,7 @@ module plat {
          * Allows a {@link plat.Control|Control} to observe any property on its context and receive updates when
          * the property is changed.
          * 
-         * @typeparam T The type of object to observe.
+         * @typeparam {any} T The type of object to observe.
          * 
          * @param {any} context The immediate parent object containing the property.
          * @param {string} property The property identifier to watch for changes.
@@ -1553,7 +1553,7 @@ module plat {
          * Allows a {@link plat.Control|Control} to observe any property on its context and receive updates when
          * the property is changed.
          * 
-         * @typeparam T The type of object to observe.
+         * @typeparam {any} T The type of object to observe.
          * 
          * @param {any} context The immediate parent object containing the property.
          * @param {number} property The property identifier to watch for changes.
@@ -1576,7 +1576,7 @@ module plat {
          * The methods watched are push, pop, shift, sort, splice, reverse, and unshift. This method does not watch
          * every item in the array.
          * 
-         * @typeparam T The type of the Array to observe.
+         * @typeparam {any} T The type of the Array to observe.
          * 
          * @param {any} context The immediate parent object containing the array as a property.
          * @param {string} property The array property identifier to watch for changes.
@@ -1598,7 +1598,7 @@ module plat {
          * The methods watched are push, pop, shift, sort, splice, reverse, and unshift. This method does not watch
          * every item in the array.
          * 
-         * @typeparam T The type of the Array to observe.
+         * @typeparam {any} T The type of the Array to observe.
          * 
          * @param {any} context The immediate parent object containing the array as a property.
          * @param {number} property The array property identifier to watch for changes.
@@ -1819,7 +1819,7 @@ module plat {
          * The generic type corresponds to the type of object created when the attribute 
          * expression is evaluated.
          * 
-         * @typeparam T The type of the value obtained from the attribute's expression.
+         * @typeparam {any} T The type of the value obtained from the attribute's expression.
          */
         export interface IObservableProperty<T> {
             /**
