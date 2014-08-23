@@ -1,10 +1,44 @@
 ﻿module plat.web {
     /**
-     * A class that deals with obtaining detailed information about an 
+     * @name UrlUtils
+     * @memberof plat.web
+     * @kind class
+     * 
+     * @implements {plat.web.IUrlUtilsInstance}
+     * 
+     * @description
+     * Deals with obtaining detailed information about an 
      * associated URL.
      */
     export class UrlUtils implements IUrlUtilsInstance {
+        /**
+         * @name __urlUtilsElement
+         * @memberof plat.web.UrlUtils
+         * @kind property
+         * @access private
+         * @static
+         * 
+         * @type {HTMLAnchorElement}
+         * 
+         * @description
+         * Helps with URL initialization through it's href attribute.
+         */
         private static __urlUtilsElement: HTMLAnchorElement;
+        /**
+         * @name __getQuery
+         * @memberof plat.web.UrlUtils
+         * @kind function
+         * @access private
+         * @static
+         *
+         * @description
+         * Creates a query object out of the URL's query search string.
+         * 
+         * @param {string} The URL's query search string.
+         * 
+         * @returns {plat.IObject<string>} An object consisting of key-value pairs 
+         * representing the query string.
+         */
         private static __getQuery(search: string): IObject<string> {
             if (isEmpty(search)) {
                 return;
@@ -25,9 +59,18 @@
         }
 
         /**
-         * Obtains the base URL for doing STATE type routing
+         * @name __getBaseUrl
+         * @memberof plat.web.UrlUtils
+         * @kind function
+         * @access private
+         * @static
+         *
+         * @description
+         * Obtains the base URL for the app/site for doing STATE type routing.
          * 
-         * @param url The initial URL passed into the Browser.
+         * @param {string} The initial URL passed into the Browser.
+         * 
+         * @returns {string} The base URL.
          */
         private static __getBaseUrl(url: string): string {
             var colon = url.substring(url.indexOf(':')),
@@ -43,13 +86,101 @@
         $Regex: expressions.IRegex = acquire(__Regex);
         $BrowserConfig: IBrowserConfig = acquire(__BrowserConfig);
 
+        /**
+         * @name href
+         * @memberof plat.web.UrlUtils
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * The whole associated URL.
+         */
         href: string;
+        /**
+         * @name protocol
+         * @memberof plat.web.UrlUtils
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * The protocol scheme of the URL, including the final ':' of the associated URL.
+         */
         protocol: string;
+        /**
+         * @name host
+         * @memberof plat.web.UrlUtils
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * The hostname and port of the associated URL.
+         */
         host: string;
+        /**
+         * @name hostname
+         * @memberof plat.web.UrlUtils
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * The domain of the associated URL.
+         */
         hostname: string;
+        /**
+         * @name port
+         * @memberof plat.web.UrlUtils
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * The port number of the associated URL.
+         */
         port: string;
+        /**
+         * @name pathname
+         * @memberof plat.web.UrlUtils
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * The additional path value in the associated URL preceded by a '/'.
+         */
         pathname: string;
+        /**
+         * @name search
+         * @memberof plat.web.UrlUtils
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * A '?' followed by the included parameters in the associated URL.
+         */
         search: string;
+        /**
+         * @name hash
+         * @memberof plat.web.UrlUtils
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * A '#' followed by the included hash fragments in the associated URL.
+         */
         hash: string;
         username: string;
         password: string;
@@ -141,46 +272,118 @@
      */
     export interface IUrlUtilsInstance {
         /**
+         * @name href
+         * @memberof plat.web.IUrlUtilsInstance
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
          * The whole associated URL.
          */
         href: string;
 
         /**
+         * @name protocol
+         * @memberof plat.web.IUrlUtilsInstance
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
          * The protocol scheme of the URL, including the final ':' of the associated URL.
          */
         protocol: string;
 
         /**
+         * @name host
+         * @memberof plat.web.IUrlUtilsInstance
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
          * The hostname and port of the associated URL.
          */
         host: string;
 
         /**
-         * The domain of the associated uRL.
+         * @name hostname
+         * @memberof plat.web.IUrlUtilsInstance
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * The domain of the associated URL.
          */
         hostname: string;
 
         /**
+         * @name port
+         * @memberof plat.web.IUrlUtilsInstance
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
          * The port number of the associated URL.
          */
         port: string;
 
         /**
+         * @name pathname
+         * @memberof plat.web.IUrlUtilsInstance
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
          * The additional path value in the associated URL preceded by a '/'.
          */
         pathname: string;
 
         /**
+         * @name search
+         * @memberof plat.web.IUrlUtilsInstance
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
          * A '?' followed by the included parameters in the associated URL.
          */
         search: string;
 
         /**
+         * @name hash
+         * @memberof plat.web.IUrlUtilsInstance
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
          * A '#' followed by the included hash fragments in the associated URL.
          */
         hash: string;
 
         /**
+         * @name username
+         * @memberof plat.web.IUrlUtilsInstance
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
          * The username specified before the domain name in the associated URL.
          */
         username?: string;
