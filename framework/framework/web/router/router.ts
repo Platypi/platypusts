@@ -539,7 +539,7 @@
         /**
          * An object containing query string key/value pairs.
          */
-        query?: IObject<string>;
+        query?: any;
     }
 }
 

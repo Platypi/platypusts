@@ -23,7 +23,7 @@ module plat.storage {
                 fragment.appendChild(value.cloneNode(true));
                 value = fragment;
             }
-            
+
             return this.$Promise.resolve<DocumentFragment>(value);
         }
 

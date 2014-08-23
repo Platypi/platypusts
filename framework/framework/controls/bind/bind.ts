@@ -29,12 +29,12 @@ module plat.controls {
         /**
          * The event listener attached to this element.
          */
-        //_eventListener: () => void;
+        // _eventListener: () => void;
 
         /**
          * The event listener as a postponed function.
          */
-        //_postponedEventListener: () => void;
+        // _postponedEventListener: () => void;
 
         /**
          * The expression to evaluate as the bound value.
@@ -139,8 +139,8 @@ module plat.controls {
          * Removes all of the element's event listeners.
          */
         dispose(): void {
-            //this._eventListener = null;
-            //this._postponedEventListener = null;
+            // this._eventListener = null;
+            // this._postponedEventListener = null;
             this._addEventType = null;
         }
 
@@ -522,7 +522,7 @@ module plat.controls {
             if (!isNull(this.templateControl) && this._observedBindableProperty()) {
                 return;
             }
-            
+
             var element = this.element;
             if (isNull(element)) {
                 return;

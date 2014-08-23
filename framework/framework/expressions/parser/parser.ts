@@ -18,7 +18,7 @@ module plat.expressions {
 
         parse(input: string): IParsedExpression {
             var parsedObject = this.__cache[input];
-            
+
             if (!isNull(parsedObject)) {
                 return parsedObject;
             }
@@ -357,7 +357,7 @@ module plat.expressions {
                 hasIdentifierIndexer = !isNull(identifierIndexer),
                 context = codeArray.pop(),
                 token = tokens[index];
-            
+
             if (hasIdentifierIndexer && identifierIndexer[0] === '@') {
                 codeStr = '(' + this.__indexIntoContext.toString() + ')(' + context + ',' + codeStr + ')';
                 identifiers.push(identifierIndexer);
@@ -506,7 +506,7 @@ module plat.expressions {
                 }
             }
         }
-        
+
         /**
          * Remove duplicate identifiers.
          */
@@ -526,7 +526,7 @@ module plat.expressions {
 
             this.__identifiers = uniqueIdentifiers;
         }
-        
+
         /**
          * Check if the 'val' property is equal to a particular character.
          * 
@@ -541,7 +541,7 @@ module plat.expressions {
             }
             return char.indexOf(obj.val) !== -1;
         }
-        
+
         /**
          * Check if the 'val' property is not equal to a particular character.
          * 

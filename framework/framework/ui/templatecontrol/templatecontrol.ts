@@ -212,7 +212,7 @@ module plat.ui {
             control.root = null;
             control.innerTemplate = null;
         }
-        
+
         /**
          * Loads the control tree depth first (visit children, then visit self).
          * 
@@ -232,7 +232,7 @@ module plat.ui {
                     child.loaded();
                 }
             }
-            
+
             control.loaded();
         }
 
@@ -1076,7 +1076,7 @@ module plat.ui {
          * @param context The object to locate on the root control's context.
          */
         getAbsoluteIdentifier? (context: any): string;
-        
+
         /**
          * Finds the associated resources and builds a context object containing
          * the values. Returns the object.

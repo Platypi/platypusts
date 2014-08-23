@@ -50,7 +50,7 @@
                 listeners[i](newValue, oldValue);
             }
         }
-        
+
         /**
          * Removes references to the listeners 
          * defined externally.

@@ -264,7 +264,7 @@ module plat.dependency {
                         name + ' at index ' +
                         index + ' is undefined, did you forgot to include a file?');
                 }
-                
+
                 throw new TypeError('Could not resolve dependency ' +
                     dependency.substring(9, dependency.indexOf('(')) +
                     ' for ' +

@@ -104,7 +104,7 @@ module plat.ui.controls {
 
             this.__resolveFn = null;
         }
-        
+
         /**
          * Adds an item to the ForEach's element.
          * 
@@ -210,7 +210,7 @@ module plat.ui.controls {
         _addItems(numberOfItems: number, index: number, animate?: boolean): async.IThenable<void> {
             var bindableTemplates = this.bindableTemplates,
                 promises: Array<async.IThenable<void>> = [];
-            
+
             for (var i = 0; i < numberOfItems; ++i, ++index) {
                 promises.push(bindableTemplates.bind('item', index, this._getAliases(index)).then((fragment: DocumentFragment) => {
                     this._addItem(fragment, animate);
@@ -299,7 +299,7 @@ module plat.ui.controls {
         _push(ev: observable.IArrayMethodInfo<any>): void {
             this._addItems(ev.arguments.length, ev.oldArray.length, true);
         }
-        
+
         /**
          * Handles items being popped off the array.
          * 
@@ -324,7 +324,7 @@ module plat.ui.controls {
                 this._removeItems(1);
             });
         }
-        
+
         /**
          * Handles items being shifted off the array.
          * 
@@ -333,7 +333,7 @@ module plat.ui.controls {
         _shift(ev: observable.IArrayMethodInfo<any>): void {
             this._removeItems(1);
         }
-        
+
         /**
          * Handles adding/removing items when an array is spliced.
          * 
@@ -349,7 +349,7 @@ module plat.ui.controls {
                 this._removeItems(oldLength - newLength);
             }
         }
-        
+
         /**
          * Handles items being unshifted into the array.
          * 
@@ -358,7 +358,7 @@ module plat.ui.controls {
         _unshift(ev: observable.IArrayMethodInfo<any>): void {
             this._addItems(ev.arguments.length, ev.oldArray.length);
         }
-        
+
         /**
          * Handles when the array is sorted.
          * 
@@ -366,7 +366,7 @@ module plat.ui.controls {
          */
         _sort(ev: observable.IArrayMethodInfo<any>): void {
         }
-        
+
         /**
          * Handles when the array is reversed.
          * 

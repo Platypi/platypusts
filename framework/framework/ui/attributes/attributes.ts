@@ -39,7 +39,7 @@ module plat.ui {
                 listeners.splice(length, 1);
             };
         }
-        
+
         /**
          * Used to show an attribute has been changed and forces listeners to be fired.
          * 

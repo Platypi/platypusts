@@ -577,7 +577,7 @@
                 domEvent.trigger(ev);
                 return;
             }
-            
+
             // setTimeout for tap delay in case of 
             // dbltap zoom
             this.__tapTimeout = setTimeout(() => {
@@ -585,7 +585,7 @@
                 this.__tapCount = 0;
                 this.__tapTimeout = null;
             }, DomEvents.config.intervals.dblTapZoomDelay);
-            
+
         }
         private __handleDbltap(ev: IPointerEvent): void {
             this.__tapCount = 0;
@@ -1067,7 +1067,7 @@
             var $document = this.$Document,
                 styleClasses: Array<IDefaultStyle>,
                 classLength: number;
-            
+
             if (this.$Compat.platCss) {
                 return;
             } else if (!isNull($document.styleSheets) && $document.styleSheets.length > 0) {
@@ -1804,7 +1804,7 @@
          * The x-coordinate.
          */
         x: number;
-        
+
         /**
          * The y-coordinate
          */

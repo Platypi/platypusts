@@ -197,7 +197,7 @@ module plat.ui {
             manager.clone(template, $managerCache.read(this.control.uid), nodeMap);
             return $managerCache.read(child.uid).bindAndLoad();
         }
-        
+
         /**
          * Creates the template's compiled, bound control and INodeMap and initiates 
          * the compilation of the template.

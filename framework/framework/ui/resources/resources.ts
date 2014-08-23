@@ -132,8 +132,7 @@ module plat.ui {
                 controlResources = Resources.__controlResources,
                 length = aliases.length,
                 alias: string;
-                
-            
+
             for (var i = 0; i < length; ++i) {
                 alias = aliases[i];
 
@@ -144,7 +143,7 @@ module plat.ui {
                 (<any>resourcesInstance)[alias] = resources[alias] = Resources.create(control,
                     (<any>resourcesInstance)[alias]);
             }
-            
+
             resourcesInstance.__bound = true;
         }
 
@@ -182,7 +181,7 @@ module plat.ui {
 
             Resources._removeListeners(resources.__controlInstance);
         }
-        
+
         /**
          * Parses a resources Element and creates 
          * an IObject<IResource> with its element children.

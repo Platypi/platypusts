@@ -133,7 +133,7 @@ module plat.processing {
 
             manager.nodeMap = nodeMap;
             manager.parent = parent;
-            
+
             if (!isNull(parent)) {
                 parent.children.push(manager);
             }
