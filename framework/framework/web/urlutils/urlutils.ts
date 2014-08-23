@@ -305,7 +305,8 @@
          * @access public
          * 
          * @description
-         * Handle parsing the initial URL and obtain the base URL if necessary.
+         * The constructor for a {@link plat.web.UrlUtils|UrlUtils} instance. 
+         * Handles parsing the initial URL and obtain the base URL if necessary.
          * 
          * @returns {plat.web.UrlUtils} A {@link plat.web.UrlUtils|UrlUtils} instance.
          */

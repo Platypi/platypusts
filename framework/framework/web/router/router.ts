@@ -236,7 +236,7 @@
          * @access public
          * 
          * @description
-         * Assigns a uid and subscribes to the 'urlChanged' event.
+         * The constructor for a {@link plat.web.Router|Router}. Assigns a uid and subscribes to the 'urlChanged' event.
          * 
          * @returns {plat.web.Router} A {@link plat.web.Router|Router} instance.
          */
