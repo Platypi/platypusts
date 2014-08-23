@@ -1,157 +1,707 @@
 module plat {
     /**
+     * @name Utils
+     * @memberof plat
+     * @kind class
+     * 
+     * @implements {plat.IUtils}
+     * 
+     * @description
      * An extensible class defining common utilities and helper functions.
      */
     export class Utils implements IUtils {
+        /**
+         * @name noop
+         * @memberof plat.Utils
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * An empty method for quickly creating dummy objects.
+         * 
+         * @returns {void}
+         */
         noop(): void { }
 
+        /**
+         * @name extend
+         * @memberof plat.Utils
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Allows you to extend the properties of an object with any number 
+         * of other objects. If objects share properties, the last object in the
+         * arguments will take precedence. This method is only a shallow copy of
+         * all the source objects to the destination object.
+         * 
+         * @param {any} destination The destination object to extend.
+         * @param {Array<any>} ...sources Any number of objects with which to extend the 
+         * destination object.
+         * 
+         * @returns {any} The extended destination object.
+         */
         extend(destination: any, ...sources: any[]): any {
             return extend.apply(null, [destination].concat(sources));
         }
 
+        /**
+         * @name deepExtend
+         * @memberof plat.Utils
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Allows you to extend the properties of an object with any number 
+         * of other objects. If objects share properties, the last object in the
+         * arguments will take precedence. This method is a deep copy of
+         * all the source objects to the destination object.
+         * 
+         * @param {any} destination The destination object to extend.
+         * @param {Array<any>} ...sources Any number of objects with which to extend the 
+         * destination object.
+         * 
+         * @returns {any} The extended destination object.
+         */
         deepExtend(destination: any, ...sources: any[]): any {
             return extend.apply(null, [true, destination].concat(sources));
         }
 
+        /**
+         * @name clone
+         * @memberof plat.Utils
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Creates a copy of the passed-in object. If deep is true it will 
+         * be a deep copy (duplicate), else nested objects/arrays will be copied by reference
+         * and not duplicated.
+         * 
+         * @typeparam {any} T The type of object being cloned.
+         * 
+         * @param {T} obj The object to clone.
+         * @param {boolean} deep? Whether or not it is a deep clone.
+         * 
+         * @returns {T} The cloned object.
+         */
         clone<T>(obj: T, deep?: boolean): T {
             return _clone(obj, deep);
         }
 
+        /**
+         * @name isObject
+         * @memberof plat.Utils
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Takes in anything and determines if it is a type of Object.
+         * 
+         * @param {any} obj Anything.
+         * 
+         * @returns {boolean} True if obj is an object, false otherwise.
+         */
         isObject(obj: any): boolean {
             return isObject(obj);
         }
 
+        /**
+         * @name isWindow
+         * @memberof plat.Utils
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Takes in anything and determines if it is a window object.
+         * 
+         * @param {any} obj Anything.
+         * 
+         * @returns {boolean} True if obj is the window, false otherwise.
+         */
         isWindow(obj: any): boolean {
             return isWindow(obj);
         }
 
+        /**
+         * @name isDocument
+         * @memberof plat.Utils
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Takes in anything and determines if it is a document object.
+         * 
+         * @param {any} obj Anything.
+         * 
+         * @returns {boolean} True if obj is the document, false otherwise.
+         */
         isDocument(obj: any): boolean {
             return isDocument(obj);
         }
 
+        /**
+         * @name isNode
+         * @memberof plat.Utils
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Takes in anything and determines if it is a Node.
+         * 
+         * @param {any} obj Anything.
+         * 
+         * @returns {boolean} True if obj is a Node, false otherwise.
+         */
         isNode(obj: any): boolean {
             return isNode(obj);
         }
 
+        /**
+         * @name isDocumentFragment
+         * @memberof plat.Utils
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Takes in anything and determines if it is a DocumentFragment.
+         * 
+         * @param {any} obj Anything.
+         * 
+         * @returns {boolean} True if obj is a DocumentFragment, false otherwise.
+         */
         isDocumentFragment(obj: any): boolean {
             return isDocumentFragment(obj);
         }
 
+        /**
+         * @name isString
+         * @memberof plat.Utils
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Takes in anything and determines if it is a string.
+         * 
+         * @param {any} obj Anything.
+         * 
+         * @returns {boolean} True if obj is a string, false otherwise.
+         */
         isString(obj: any): boolean {
             return isString(obj);
         }
 
+        /**
+         * @name isRegExp
+         * @memberof plat.Utils
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Takes in anything and determines if it is a RegExp object.
+         * 
+         * @param {any} obj Anything.
+         * 
+         * @returns {boolean} True if obj is a RegExp object, false otherwise.
+         */
         isRegExp(obj: any): boolean {
             return isRegExp(obj);
         }
 
+        /**
+         * @name isPromise
+         * @memberof plat.Utils
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Takes in anything and determines if it is a Promise object.
+         * 
+         * @param {any} obj Anything.
+         * 
+         * @returns {boolean} True if obj is a Promise object, false otherwise.
+         */
         isPromise(obj: any): boolean {
             return isPromise(obj);
         }
 
+        /**
+         * @name isEmpty
+         * @memberof plat.Utils
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Takes in anything and determines if it is empty. Useful for
+         * checking for empty strings, arrays, or objects without keys.
+         * 
+         * @param {any} obj Anything.
+         * 
+         * @returns {boolean} True if the object isEmpty (or null/undefined), 
+         * false otherwise.
+         */
         isEmpty(obj: any): boolean {
             return isEmpty(obj);
         }
 
+        /**
+         * @name isBoolean
+         * @memberof plat.Utils
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Takes in anything and determines if it is a boolean.
+         * 
+         * @param {any} obj Anything.
+         * 
+         * @returns {boolean} True if obj is a boolean, false otherwise.
+         */
         isBoolean(obj: any): boolean {
             return isBoolean(obj);
         }
 
+        /**
+         * @name isNumber
+         * @memberof plat.Utils
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Takes in anything and determines if it is a number.
+         * 
+         * @param {any} obj Anything.
+         * 
+         * @returns {boolean} True if obj is a number, false otherwise.
+         */
         isNumber(obj: any): boolean {
             return isNumber(obj);
         }
 
+        /**
+         * @name isFunction
+         * @memberof plat.Utils
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Takes in anything and determines if it is a function.
+         * 
+         * @param {any} obj Anything.
+         * 
+         * @returns {boolean} True if obj is a function, false otherwise.
+         */
         isFunction(obj: any): boolean {
             return isFunction(obj);
         }
 
+        /**
+         * @name isNull
+         * @memberof plat.Utils
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Takes in anything and determines if it is null or undefined.
+         * 
+         * @param {any} obj Anything.
+         * 
+         * @returns {boolean} True if obj is null or undefined, false otherwise.
+         */
         isNull(obj: any): boolean {
             return isNull(obj);
         }
 
+        /**
+         * @name isUndefined
+         * @memberof plat.Utils
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Takes in anything and determines if it is undefined.
+         * 
+         * @param {any} obj Anything.
+         * 
+         * @returns {boolean} True if obj is undefined, false otherwise.
+         */
         isUndefined(obj: any): boolean {
             return isUndefined(obj);
         }
 
+        /**
+         * @name isArray
+         * @memberof plat.Utils
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Takes in anything and determines if it is an Array.
+         * 
+         * @param {any} obj Anything.
+         * 
+         * @returns {boolean} True if obj is an Array, false otherwise.
+         */
         isArray(obj: any): boolean {
             return isArray(obj);
         }
 
+        /**
+         * @name isArrayLike
+         * @memberof plat.Utils
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Takes in anything and determines if it has array-like qualities.
+         * 
+         * @param {any} obj Anything.
+         * 
+         * @returns {boolean} True if obj has array-like qualities (i.e. it is an
+         * Array, string, arguments, or NodeList), false otherwise.
+         */
         isArrayLike(obj: any): boolean {
             return isArrayLike(obj);
         }
 
+        /**
+         * @name isDate
+         * @memberof plat.Utils
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Takes in anything and determines if it is a Date object.
+         * 
+         * @param {any} obj Anything.
+         * 
+         * @returns {boolean} True if obj is a Date object, false otherwise.
+         */
         isDate(obj: any): boolean {
             return isDate(obj);
         }
 
+        /**
+         * @name filter
+         * @memberof plat.Utils
+         * @kind function
+         * @access public
+         * @variation 0
+         * 
+         * @description
+         * Takes in an array and a function to evaluate the properties in the array.
+         * Returns a filtered array of objects resulting from evaluating the function.
+         * 
+         * @typeparam {any} T The type of objects contained in the Array being filtered.
+         * 
+         * @param {Array<T>} array The Array to filter.
+         * @param {(value: T, index: number, obj: any) => boolean} iterator The iterator function to call with array's properties. 
+         * Returns true if the property should be kept, false otherwise.
+         * @param {any} context? Optional context with which to call the iterator.
+         * 
+         * @returns {Array<T>} An array of objects which evaluated to true with the iterator.
+         */
         filter<T>(array: Array<T>, iterator: (value: T, index: number, obj: any) => boolean, context?: any): Array<T>;
+        /**
+         * @name filter
+         * @memberof plat.Utils
+         * @kind function
+         * @access public
+         * @variation 1
+         * 
+         * @description
+         * Takes in an object/array and a function to evaluate the properties in the object/array.
+         * Returns a filtered array of objects resulting from evaluating the function.
+         * 
+         * @typeparam {any} T The type of objects contained in the Object/Array being filtered.
+         * 
+         * @param {any} obj The object to filter.
+         * @param {(value: T, index: number, obj: any) => boolean} iterator The iterator function to call with array's properties. 
+         * Returns true if the property should be kept, false otherwise.
+         * @param {any} context? Optional context with which to call the iterator.
+         * 
+         * @returns {Array<T>} An array of objects which evaluated to true with the iterator.
+         */
         filter<T>(obj: any, iterator: (value: T, key: any, obj: any) => boolean, context?: any): Array<T>;
         filter<T>(obj: any, iterator: (value: T, key: any, obj: any) => boolean, context?: any): Array<T> {
             return filter(obj, iterator, context);
         }
 
+        /**
+         * @name where
+         * @memberof plat.Utils
+         * @kind function
+         * @access public
+         * @variation 0
+         * 
+         * @description
+         * Takes in a list and object containing key/value pairs to search for in the list.
+         * 
+         * @typeparam {any} T The type of objects contained in the input Array.
+         * 
+         * @param {Array<T>} array The list used for searching for properties.
+         * @param {any} properties An object containing key/value pairs to match with obj's values.
+         * 
+         * @returns {Array<T>} The matched values in obj.
+         */
         where<T>(array: Array<T>, properties: any): Array<T>;
+        /**
+         * @name where
+         * @memberof plat.Utils
+         * @kind function
+         * @access public
+         * @variation 1
+         * 
+         * @description
+         * Takes in a list and object containing key/value pairs to search for in the list.
+         * 
+         * @typeparam {any} T The type of objects contained in the input Object.
+         * 
+         * @param {any} obj The object used for searching for properties.
+         * @param {any} properties An object containing key/value pairs to match with obj's values.
+         * 
+         * @returns {Array<T>} The matched values in obj.
+         */
         where<T>(obj: any, properties: any): Array<T>;
         where(obj: any, properties: any): Array<any> {
             return where(obj, properties);
         }
 
+        /**
+         * @name forEach
+         * @memberof plat.Utils
+         * @kind function
+         * @access public
+         * @variation 0
+         * 
+         * @description
+         * Takes in an Array and a function to iterate over. Calls the iterator function with every property
+         * in the Array, then returns the object.
+         * 
+         * @typeparam {any} T The type of objects contained in the input Array.
+         * 
+         * @param {Array<T>} array An Array.
+         * @param {(value: T, index: number, obj: any) => void} iterator A method that takes in a value, index, and the object.
+         * @param {any} context? An optional context to bind to the iterator.
+         * 
+         * @returns {Array<T>} The array.
+         */
         forEach<T>(array: Array<T>, iterator: (value: T, index: number, obj: any) => void, context?: any): Array<T>;
+        /**
+         * @name forEach
+         * @memberof plat.Utils
+         * @kind function
+         * @access public
+         * @variation 1
+         * 
+         * @description
+         * Takes in an Array and a function to iterate over. Calls the iterator function with every property
+         * in the Array, then returns the object.
+         * 
+         * @typeparam {any} T The type of objects contained in the input Object.
+         * 
+         * @param {any} obj An object.
+         * @param {(value: T, index: number, obj: any) => void} iterator A method that takes in a value, index, and the object.
+         * @param {any} context? An optional context to bind to the iterator.
+         * 
+         * @returns {any} The input Object.
+         */
         forEach<T>(obj: any, iterator: (value: T, key: string, obj: any) => void, context?: any): any;
         forEach<T>(obj: any, iterator: (value: T, key: any, obj: any) => void, context?: any): any {
             return forEach(obj, iterator, context);
         }
 
+        /**
+         * @name map
+         * @memberof plat.Utils
+         * @kind function
+         * @access public
+         * @variation 0
+         * 
+         * @description
+         * Takes in an object and an iterator function. Calls the iterator with all the values in the object. The 
+         * iterator can transform the object and return it. The returned values will be pushed to an Array and 
+         * returned.
+         * 
+         * @typeparam {any} T The type of objects contained in the input Array.
+         * @typeparam {any} U The type of objects contained in the transformed output Array.
+         * 
+         * @param {Array<T>} array An Array.
+         * @param {(value: T, index: number, obj: any) => U} iterator The transformation function.
+         * @param {any} context? An optional context to bind to the iterator.
+         * 
+         * @returns {Array<U>} The accumulated transformed values from the iterator.
+         */
         map<T, U>(array: Array<T>, iterator: (value: T, index: number, obj: any) => U, context?: any): Array<U>;
+        /**
+         * @name map
+         * @memberof plat.Utils
+         * @kind function
+         * @access public
+         * @variation 1
+         * 
+         * @description
+         * Takes in an object and an iterator function. Calls the iterator with all the values in the object. The 
+         * iterator can transform the object and return it. The returned values will be pushed to an Array and 
+         * returned.
+         * 
+         * @typeparam {any} T The type of objects contained in the input Object/Array.
+         * @typeparam {any} U The type of objects contained in the transformed output Array.
+         * 
+         * @param {Array<T>} obj An Object.
+         * @param {(value: T, index: number, obj: any) => U} iterator The transformation function.
+         * @param {any} context? An optional context to bind to the iterator.
+         * 
+         * @returns {Array<U>} The accumulated transformed values from the iterator.
+         */
         map<T, U>(obj: any, iterator: (value: T, key: string, obj: any) => U, context?: any): Array<U>;
         map<T, U>(obj: any, iterator: (value: T, key: any, obj: any) => U, context?: any): Array<U> {
             return map<T, U>(obj, iterator, context);
         }
 
+        /**
+         * @name pluck
+         * @memberof plat.Utils
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Takes in an object and a property to extract from all of the object's values. Returns an array of
+         * the 'plucked' values.
+         * 
+         * @typeparam {any} T The type of objects contained in the input Object/Array.
+         * @typeparam {any} U The type of objects contained in the transformed output Array.
+         * 
+         * @param {any} obj An object.
+         * @param {string} key The property to 'pluck' from each value in obj.
+         * 
+         * @returns {Array<U>} An array of 'plucked' values from obj.
+         */
         pluck<T, U>(obj: any, key: string): Array<U> {
             return map<T, U>(obj, (value) => (<any>value)[key]);
         }
 
+        /**
+         * @name some
+         * @memberof plat.Utils
+         * @kind function
+         * @access public
+         * @variation 0
+         * 
+         * @description
+         * Takes in an array and an iterator. Evaluates all the values in the array with the iterator.
+         * Returns true if any of the iterators return true, otherwise returns false.
+         * 
+         * @typeparam {any} T The type of objects contained in the input Array.
+         * 
+         * @param {Array<T>} array An array.
+         * @param {(value: T, index: number, obj: any) => boolean} iterator A method with which to evaluate all the values in obj.
+         * @param {any} context? An optional context to bind to the iterator.
+         * 
+         * @returns {boolean} True if any calls to iterator return true, false otherwise.
+         */
         some<T>(array: Array<T>, iterator: (value: T, index: number, obj: any) => boolean, context?: any): boolean;
+        /**
+         * @name some
+         * @memberof plat.Utils
+         * @kind function
+         * @access public
+         * @variation 1
+         * 
+         * @description
+         * Takes in an array and an iterator. Evaluates all the values in the array with the iterator.
+         * Returns true if any of the iterators return true, otherwise returns false.
+         * 
+         * @typeparam {any} T The type of objects contained in the input Object/Array.
+         * 
+         * @param {Array<T>} obj An object.
+         * @param {(value: T, index: number, obj: any) => boolean} iterator A method with which to evaluate all the values in obj.
+         * @param {any} context? An optional context to bind to the iterator.
+         * 
+         * @returns {boolean} True if any calls to iterator return true, false otherwise.
+         */
         some<T>(obj: any, iterator: (value: T, key: string, obj: any) => boolean, context?: any): boolean;
         some<T>(obj: any, iterator: (value: T, key: any, obj: any) => boolean, context?: any): boolean {
             return some<T>(obj, iterator, context);
         }
 
+        /**
+         * @name postpone
+         * @memberof plat.Utils
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Takes in a method and array of arguments to pass to that method. Delays calling the method until 
+         * after the current call stack is clear. Equivalent to a setTimeout with a timeout of 0.
+         * 
+         * @param {(...args: Array<any>) => void} method The method to call.
+         * @param {Array<any>} args? The arguments to apply to the method.
+         * @param {any} context? An optional context to bind to the method.
+         * 
+         * @returns {plat.IRemoveListener} A function that will clear the timeout when called.
+         */
         postpone(method: (...args: any[]) => void, args?: Array<any>, context?: any) {
             return defer(method, 0, args, context);
         }
 
+        /**
+         * @name defer
+         * @memberof plat.Utils
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Takes in a method and array of arguments to pass to that method. Delays calling the method until 
+         * after the current call stack is clear. Equivalent to a setTimeout with the specified timeout value.
+         * 
+         * @param {(...args: Array<any>) => void} method The method to call.
+         * @param {number} timeout The time (in milliseconds) to delay before calling the provided method
+         * @param {Array<any>} args? The arguments to apply to the method.
+         * @param {any} context? An optional context to bind to the method.
+         * 
+         * @returns {plat.IRemoveListener} A function that will clear the timeout when called.
+         */
         defer(method: (...args: any[]) => void, timeout: number, args?: Array<any>, context?: any) {
             return defer(method, timeout, args, context);
         }
 
+        /**
+         * @name uniqueId
+         * @memberof plat.Utils
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Takes in a prefix and returns a unique identifier string with the prefix preprended. If no prefix
+         * is specified, none will be prepended.
+         * 
+         * @param {string} prefix? A string prefix to prepend tothe unique ID.
+         * 
+         * @returns {string} The prefix-prepended unique ID.
+         */
         uniqueId(prefix?: string) {
             return uniqueId(prefix);
         }
 
+        /**
+         * @name camelCase
+         * @memberof plat.Utils
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Takes in a spinal-case, dot.case, or snake_case string and returns 
+         * a camelCase string. Also can turn a string into camelCase with space 
+         * as a delimeter.
+         * 
+         * @param {string} str The spinal-case, dot.case, or snake_case string.
+         * 
+         * @returns {string} The camelCase string.
+         */
         camelCase(str: string) {
             return camelCase(str);
         }
-    }
-
-    /**
-     * The Type for a util iterator callback method.
-     */
-    export interface IIterator<T, U> {
-        /**
-         * @param value The value for an object during an iteration.
-         * @param index The index where the value can be found.
-         * @param obj The object passed into the util method.
-         */
-        (value: T, index: number, obj: any): U;
-        /**
-         * @param value The value for an object during an iteration.
-         * @param key The key where the value can be found.
-         * @param obj The object passed into the util method.
-         */
-        (value: T, key: string, obj: any): U;
     }
 
     /**
@@ -164,22 +714,41 @@ module plat {
     register.injectable(__Utils, IUtils);
 
     /**
+     * @name IUtils
+     * @memberof plat
+     * @kind interface
+     * 
+     * @description
      * An object defining common utilities and helper functions.
      */
     export interface IUtils {
         /**
+         * @name noop
+         * @memberof plat.IUtils
+         * @kind function
+         * @access public
+         * 
+         * @description
          * An empty method for quickly creating dummy objects.
+         * 
+         * @returns {void}
          */
         noop(): void;
 
         /**
+         * @name extend
+         * @memberof plat.IUtils
+         * @kind function
+         * @access public
+         * 
+         * @description
          * Allows you to extend the properties of an object with any number 
          * of other objects. If objects share properties, the last object in the
          * arguments will take precedence. This method is only a shallow copy of
          * all the source objects to the destination object.
          * 
-         * @param destination The destination object to extend.
-         * @param ...sources[] Any number of objects with which to extend the 
+         * @param {any} destination The destination object to extend.
+         * @param {Array<any>} ...sources Any number of objects with which to extend the 
          * destination object.
          * 
          * @returns {any} The extended destination object.
@@ -187,13 +756,19 @@ module plat {
         extend(destination: any, ...sources: any[]): any;
 
         /**
+         * @name deepExtend
+         * @memberof plat.IUtils
+         * @kind function
+         * @access public
+         * 
+         * @description
          * Allows you to extend the properties of an object with any number 
          * of other objects. If objects share properties, the last object in the
          * arguments will take precedence. This method is a deep copy of
          * all the source objects to the destination object.
          * 
-         * @param destination The destination object to extend.
-         * @param ...sources[] Any number of objects with which to extend the 
+         * @param {any} destination The destination object to extend.
+         * @param {Array<any>} ...sources Any number of objects with which to extend the 
          * destination object.
          * 
          * @returns {any} The extended destination object.
@@ -201,90 +776,156 @@ module plat {
         deepExtend(destination: any, ...sources: any[]): any;
 
         /**
+         * @name clone
+         * @memberof plat.IUtils
+         * @kind function
+         * @access public
+         * 
+         * @description
          * Creates a copy of the passed-in object. If deep is true it will 
          * be a deep copy (duplicate), else nested objects/arrays will be copied by reference
          * and not duplicated.
          * 
-         * @param obj The object to clone.
-         * @param deep Whether or not it is a deep clone.
+         * @typeparam {any} T The type of object being cloned.
+         * 
+         * @param {T} obj The object to clone.
+         * @param {boolean} deep? Whether or not it is a deep clone.
+         * 
+         * @returns {T} The cloned object.
          */
         clone<T>(obj: T, deep?: boolean): T;
 
         /**
+         * @name isObject
+         * @memberof plat.IUtils
+         * @kind function
+         * @access public
+         * 
+         * @description
          * Takes in anything and determines if it is a type of Object.
          * 
-         * @param obj Anything.
+         * @param {any} obj Anything.
          * 
          * @returns {boolean} True if obj is an object, false otherwise.
          */
         isObject(obj: any): boolean;
 
         /**
+         * @name isWindow
+         * @memberof plat.IUtils
+         * @kind function
+         * @access public
+         * 
+         * @description
          * Takes in anything and determines if it is a window object.
          * 
-         * @param obj Anything.
+         * @param {any} obj Anything.
          * 
          * @returns {boolean} True if obj is the window, false otherwise.
          */
         isWindow(obj: any): boolean;
 
         /**
+         * @name isDocument
+         * @memberof plat.IUtils
+         * @kind function
+         * @access public
+         * 
+         * @description
          * Takes in anything and determines if it is a document object.
          * 
-         * @param obj Anything.
+         * @param {any} obj Anything.
          * 
          * @returns {boolean} True if obj is the document, false otherwise.
          */
         isDocument(obj: any): boolean;
 
         /**
+         * @name isNode
+         * @memberof plat.IUtils
+         * @kind function
+         * @access public
+         * 
+         * @description
          * Takes in anything and determines if it is a Node.
          * 
-         * @param obj Anything.
+         * @param {any} obj Anything.
          * 
          * @returns {boolean} True if obj is a Node, false otherwise.
          */
         isNode(obj: any): boolean;
 
         /**
+         * @name isDocumentFragment
+         * @memberof plat.IUtils
+         * @kind function
+         * @access public
+         * 
+         * @description
          * Takes in anything and determines if it is a DocumentFragment.
          * 
-         * @param obj Anything.
+         * @param {any} obj Anything.
          * 
          * @returns {boolean} True if obj is a DocumentFragment, false otherwise.
          */
         isDocumentFragment(obj: any): boolean;
 
         /**
+         * @name isString
+         * @memberof plat.IUtils
+         * @kind function
+         * @access public
+         * 
+         * @description
          * Takes in anything and determines if it is a string.
          * 
-         * @param obj Anything.
+         * @param {any} obj Anything.
          * 
          * @returns {boolean} True if obj is a string, false otherwise.
          */
         isString(obj: any): boolean;
 
         /**
+         * @name isRegExp
+         * @memberof plat.IUtils
+         * @kind function
+         * @access public
+         * 
+         * @description
          * Takes in anything and determines if it is a RegExp object.
          * 
-         * @param obj Anything.
+         * @param {any} obj Anything.
          * 
          * @returns {boolean} True if obj is a RegExp object, false otherwise.
          */
         isRegExp(obj: any): boolean;
 
         /**
+         * @name isPromise
+         * @memberof plat.IUtils
+         * @kind function
+         * @access public
+         * 
+         * @description
          * Takes in anything and determines if it is a Promise object.
          * 
-         * @param obj Anything.
+         * @param {any} obj Anything.
+         * 
+         * @returns {boolean} True if obj is a Promise object, false otherwise.
          */
         isPromise(obj: any): boolean;
 
         /**
+         * @name isEmpty
+         * @memberof plat.IUtils
+         * @kind function
+         * @access public
+         * 
+         * @description
          * Takes in anything and determines if it is empty. Useful for
          * checking for empty strings, arrays, or objects without keys.
          * 
-         * @param obj Anything.
+         * @param {any} obj Anything.
          * 
          * @returns {boolean} True if the object isEmpty (or null/undefined), 
          * false otherwise.
@@ -292,63 +933,105 @@ module plat {
         isEmpty(obj: any): boolean;
 
         /**
+         * @name isBoolean
+         * @memberof plat.IUtils
+         * @kind function
+         * @access public
+         * 
+         * @description
          * Takes in anything and determines if it is a boolean.
          * 
-         * @param obj Anything.
+         * @param {any} obj Anything.
          * 
          * @returns {boolean} True if obj is a boolean, false otherwise.
          */
         isBoolean(obj: any): boolean;
 
         /**
+         * @name isNumber
+         * @memberof plat.IUtils
+         * @kind function
+         * @access public
+         * 
+         * @description
          * Takes in anything and determines if it is a number.
          * 
-         * @param obj Anything.
+         * @param {any} obj Anything.
          * 
          * @returns {boolean} True if obj is a number, false otherwise.
          */
         isNumber(obj: any): boolean;
 
         /**
+         * @name isFunction
+         * @memberof plat.IUtils
+         * @kind function
+         * @access public
+         * 
+         * @description
          * Takes in anything and determines if it is a function.
          * 
-         * @param obj Anything.
+         * @param {any} obj Anything.
          * 
          * @returns {boolean} True if obj is a function, false otherwise.
          */
         isFunction(obj: any): boolean;
 
         /**
+         * @name isNull
+         * @memberof plat.IUtils
+         * @kind function
+         * @access public
+         * 
+         * @description
          * Takes in anything and determines if it is null or undefined.
          * 
-         * @param obj Anything.
+         * @param {any} obj Anything.
          * 
          * @returns {boolean} True if obj is null or undefined, false otherwise.
          */
         isNull(obj: any): boolean;
 
         /**
+         * @name isUndefined
+         * @memberof plat.IUtils
+         * @kind function
+         * @access public
+         * 
+         * @description
          * Takes in anything and determines if it is undefined.
          * 
-         * @param obj Anything.
+         * @param {any} obj Anything.
          * 
          * @returns {boolean} True if obj is undefined, false otherwise.
          */
         isUndefined(obj: any): boolean;
 
         /**
+         * @name isArray
+         * @memberof plat.IUtils
+         * @kind function
+         * @access public
+         * 
+         * @description
          * Takes in anything and determines if it is an Array.
          * 
-         * @param obj Anything.
+         * @param {any} obj Anything.
          * 
          * @returns {boolean} True if obj is an Array, false otherwise.
          */
         isArray(obj: any): boolean;
 
         /**
+         * @name isArrayLike
+         * @memberof plat.IUtils
+         * @kind function
+         * @access public
+         * 
+         * @description
          * Takes in anything and determines if it has array-like qualities.
          * 
-         * @param obj Anything.
+         * @param {any} obj Anything.
          * 
          * @returns {boolean} True if obj has array-like qualities (i.e. it is an
          * Array, string, arguments, or NodeList), false otherwise.
@@ -356,192 +1039,361 @@ module plat {
         isArrayLike(obj: any): boolean;
 
         /**
+         * @name isDate
+         * @memberof plat.IUtils
+         * @kind function
+         * @access public
+         * 
+         * @description
          * Takes in anything and determines if it is a Date object.
          * 
-         * @param obj Anything.
+         * @param {any} obj Anything.
+         * 
+         * @returns {boolean} True if obj is a Date object, false otherwise.
          */
         isDate(obj: any): boolean;
 
         /**
+         * @name filter
+         * @memberof plat.IUtils
+         * @kind function
+         * @access public
+         * @variation 0
+         * 
+         * @description
          * Takes in an array and a function to evaluate the properties in the array.
          * Returns a filtered array of objects resulting from evaluating the function.
          * 
-         * @param array The Array to filter.
-         * @param iterator The iterator function to call with array's properties. Returns true if the property
-         * should be kept, false otherwise.
-         * @param context Optional context with which to call the iterator.
+         * @typeparam {any} T The type of objects contained in the Array being filtered.
+         * 
+         * @param {Array<T>} array The Array to filter.
+         * @param {(value: T, index: number, obj: any) => boolean} iterator The iterator function to call with array's properties.
+         * Returns true if the property should be kept, false otherwise.
+         * @param {any} context? Optional context with which to call the iterator.
          * 
          * @returns {Array<T>} An array of objects which evaluated to true with the iterator.
          */
         filter<T>(array: Array<T>, iterator: (value: T, index: number, obj: any) => boolean, context?: any): Array<T>;
         /**
+         * @name filter
+         * @memberof plat.IUtils
+         * @kind function
+         * @access public
+         * @variation 1
+         * 
+         * @description
          * Takes in an object/array and a function to evaluate the properties in the object/array.
          * Returns a filtered array of objects resulting from evaluating the function.
          * 
-         * @param obj The object to filter.
-         * @param iterator The iterator function to call with obj's properties. Returns true if the property
-         * should be kept, false otherwise.
-         * @param context Optional context with which to call the iterator.
+         * @typeparam {any} T The type of objects contained in the Object/Array being filtered.
+         * 
+         * @param {any} obj The object to filter.
+         * @param {(value: T, index: number, obj: any) => boolean} iterator The iterator function to call with array's properties. 
+         * Returns true if the property should be kept, false otherwise.
+         * @param {any} context? Optional context with which to call the iterator.
          * 
          * @returns {Array<T>} An array of objects which evaluated to true with the iterator.
          */
         filter<T>(obj: any, iterator: (value: T, key: any, obj: any) => boolean, context?: any): Array<T>;
 
         /**
+         * @name where
+         * @memberof plat.IUtils
+         * @kind function
+         * @access public
+         * @variation 0
+         * 
+         * @description
          * Takes in a list and object containing key/value pairs to search for in the list.
          * 
-         * @param array The list used for searching for properties.
-         * @param properties An object containing key/value pairs to match with obj's values.
+         * @typeparam {any} T The type of objects contained in the input Array.
+         * 
+         * @param {Array<T>} array The list used for searching for properties.
+         * @param {any} properties An object containing key/value pairs to match with obj's values.
          * 
          * @returns {Array<T>} The matched values in obj.
-         * 
-         * @example where([{foo: 'foo', bar: 'bar'}, {foo: 'bar', bar: 'foo'}], {foo: 'foo'});
-         * //returns [{foo: 'bar', bar: 'bar'}]
          */
         where<T>(array: Array<T>, properties: any): Array<T>;
         /**
-         * Takes in a list and object containing key/value pairs to search for on the obj.
+         * @name where
+         * @memberof plat.IUtils
+         * @kind function
+         * @access public
+         * @variation 1
          * 
-         * @param obj The list used for searching for properties.
-         * @param properties An object containing key/value pairs to match with obj's values.
+         * @description
+         * Takes in a list and object containing key/value pairs to search for in the list.
+         * 
+         * @typeparam {any} T The type of objects contained in the input Object.
+         * 
+         * @param {any} obj The object used for searching for properties.
+         * @param {any} properties An object containing key/value pairs to match with obj's values.
          * 
          * @returns {Array<T>} The matched values in obj.
-         * 
-         * @example where([{foo: 'foo', bar: 'bar'}, {foo: 'bar', bar: 'foo'}], {foo: 'foo'});
-         * //returns [{foo: 'bar', bar: 'bar'}]
          */
         where<T>(obj: any, properties: any): Array<T>;
 
         /**
+         * @name forEach
+         * @memberof plat.IUtils
+         * @kind function
+         * @access public
+         * @variation 0
+         * 
+         * @description
          * Takes in an Array and a function to iterate over. Calls the iterator function with every property
          * in the Array, then returns the object.
          * 
-         * @param obj An Array.
-         * @param iterator A method that takes in a value, index, and the object.
-         * @param context An optional context to bind to the iterator.
+         * @typeparam {any} T The type of objects contained in the input Array.
+         * 
+         * @param {Array<T>} array An Array.
+         * @param {(value: T, index: number, obj: any) => void} iterator A method that takes in a value, index, and the object.
+         * @param {any} context? An optional context to bind to the iterator.
          * 
          * @returns {Array<T>} The array.
          */
         forEach<T>(array: Array<T>, iterator: (value: T, index: number, obj: any) => void, context?: any): Array<T>;
         /**
-         * Takes in an object and a function to iterate over. Calls the iterator function with every property
-         * in the object, then returns the object. If the object is Array-like (e.g. a String), it will be treated as though 
-         * it is an Array.
+         * @name forEach
+         * @memberof plat.IUtils
+         * @kind function
+         * @access public
+         * @variation 1
          * 
-         * @param obj An object.
-         * @param iterator A method that takes in a value, key, and the object.
-         * @param context An optional context to bind to the iterator.
+         * @description
+         * Takes in an Array and a function to iterate over. Calls the iterator function with every property
+         * in the Array, then returns the object.
          * 
-         * @returns {IObject<T>} The object.
+         * @typeparam {any} T The type of objects contained in the input Object.
+         * 
+         * @param {any} obj An object.
+         * @param {(value: T, index: number, obj: any) => void} iterator A method that takes in a value, index, and the object.
+         * @param {any} context? An optional context to bind to the iterator.
+         * 
+         * @returns {any} The input Object.
          */
         forEach<T>(obj: any, iterator: (value: T, key: string, obj: any) => void, context?: any): any;
 
         /**
+         * @name map
+         * @memberof plat.IUtils
+         * @kind function
+         * @access public
+         * @variation 0
+         * 
+         * @description
          * Takes in an object and an iterator function. Calls the iterator with all the values in the object. The 
          * iterator can transform the object and return it. The returned values will be pushed to an Array and 
          * returned.
          * 
-         * @param array An Array.
-         * @param iterator The transformation function.
-         * @param context An optional context to bind to the iterator.
+         * @typeparam {any} T The type of objects contained in the input Array.
+         * @typeparam {any} U The type of objects contained in the transformed output Array.
+         * 
+         * @param {Array<T>} array An Array.
+         * @param {(value: T, index: number, obj: any) => U} iterator The transformation function.
+         * @param {any} context? An optional context to bind to the iterator.
          * 
          * @returns {Array<U>} The accumulated transformed values from the iterator.
          */
         map<T, U>(array: Array<T>, iterator: (value: T, index: number, obj: any) => U, context?: any): Array<U>;
         /**
+         * @name map
+         * @memberof plat.IUtils
+         * @kind function
+         * @access public
+         * @variation 1
+         * 
+         * @description
          * Takes in an object and an iterator function. Calls the iterator with all the values in the object. The 
          * iterator can transform the object and return it. The returned values will be pushed to an Array and 
          * returned.
          * 
-         * @param obj An object/array.
-         * @param iterator The transformation function.
-         * @param context An optional context to bind to the iterator.
+         * @typeparam {any} T The type of objects contained in the input Object/Array.
+         * @typeparam {any} U The type of objects contained in the transformed output Array.
+         * 
+         * @param {Array<T>} obj An Object.
+         * @param {(value: T, index: number, obj: any) => U} iterator The transformation function.
+         * @param {any} context? An optional context to bind to the iterator.
          * 
          * @returns {Array<U>} The accumulated transformed values from the iterator.
          */
         map<T, U>(obj: any, iterator: (value: T, key: string, obj: any) => U, context?: any): Array<U>;
 
         /**
+         * @name pluck
+         * @memberof plat.IUtils
+         * @kind function
+         * @access public
+         * 
+         * @description
          * Takes in an object and a property to extract from all of the object's values. Returns an array of
          * the 'plucked' values.
          * 
-         * @param obj An object.
-         * @param key The property to 'pluck' from each value in obj.
+         * @typeparam {any} T The type of objects contained in the input Object/Array.
+         * @typeparam {any} U The type of objects contained in the transformed output Array.
+         * 
+         * @param {any} obj An object.
+         * @param {string} key The property to 'pluck' from each value in obj.
          * 
          * @returns {Array<U>} An array of 'plucked' values from obj.
          */
         pluck<T, U>(obj: any, key: string): Array<U>;
 
         /**
+         * @name some
+         * @memberof plat.IUtils
+         * @kind function
+         * @access public
+         * @variation 0
+         * 
+         * @description
          * Takes in an array and an iterator. Evaluates all the values in the array with the iterator.
          * Returns true if any of the iterators return true, otherwise returns false.
          * 
-         * @param array An array.
-         * @param iterator A method with which to evaluate all the values in obj.
-         * @param context An optional context to bind to the iterator.
+         * @typeparam {any} T The type of objects contained in the input Array.
+         * 
+         * @param {Array<T>} array An array.
+         * @param {(value: T, index: number, obj: any) => boolean} iterator A method with which to evaluate all the values in obj.
+         * @param {any} context? An optional context to bind to the iterator.
          * 
          * @returns {boolean} True if any calls to iterator return true, false otherwise.
          */
         some<T>(array: Array<T>, iterator: (value: T, index: number, obj: any) => boolean, context?: any): boolean;
         /**
-         * Takes in an object and an iterator. Evaluates all the values in the object with the iterator.
-         * Returns true if any of the iterators return true, otherwise returns false. If the object is Array-like 
-         * (e.g. a String), it will be treated as though it is an Array.
+         * @name some
+         * @memberof plat.IUtils
+         * @kind function
+         * @access public
+         * @variation 1
          * 
-         * @param obj An object.
-         * @param iterator A method with which to evaluate all the values in obj.
-         * @param context An optional context to bind to the iterator.
+         * @description
+         * Takes in an array and an iterator. Evaluates all the values in the array with the iterator.
+         * Returns true if any of the iterators return true, otherwise returns false.
+         * 
+         * @typeparam {any} T The type of objects contained in the input Object/Array.
+         * 
+         * @param {Array<T>} obj An object.
+         * @param {(value: T, index: number, obj: any) => boolean} iterator A method with which to evaluate all the values in obj.
+         * @param {any} context? An optional context to bind to the iterator.
          * 
          * @returns {boolean} True if any calls to iterator return true, false otherwise.
          */
         some<T>(obj: any, iterator: (value: T, key: string, obj: any) => boolean, context?: any): boolean;
 
         /**
+         * @name postpone
+         * @memberof plat.IUtils
+         * @kind function
+         * @access public
+         * 
+         * @description
          * Takes in a method and array of arguments to pass to that method. Delays calling the method until 
          * after the current call stack is clear. Equivalent to a setTimeout with a timeout of 0.
          * 
-         * @param method The method to call.
-         * @param args The arguments to apply to the method.
-         * @param context An optional context to bind to the method.
+         * @param {(...args: Array<any>) => void} method The method to call.
+         * @param {Array<any>} args? The arguments to apply to the method.
+         * @param {any} context? An optional context to bind to the method.
          * 
          * @returns {plat.IRemoveListener} A function that will clear the timeout when called.
          */
         postpone(method: (...args: any[]) => void, args?: Array<any>, context?: any): IRemoveListener;
 
         /**
-         * Takes in a method and array of arguments to pass to that method. Delays calling the method until 
-         * after the current call stack is clear. Equivalent to a setTimeout with a timeout of 0.
+         * @name defer
+         * @memberof plat.IUtils
+         * @kind function
+         * @access public
          * 
-         * @param method The method to call.
-         * @param timeout The time (in milliseconds) to delay before calling the provided method
-         * @param args The arguments to apply to the method.
-         * @param context An optional context to bind to the method.
+         * @description
+         * Takes in a method and array of arguments to pass to that method. Delays calling the method until 
+         * after the current call stack is clear. Equivalent to a setTimeout with the specified timeout value.
+         * 
+         * @param {(...args: Array<any>) => void} method The method to call.
+         * @param {number} timeout The time (in milliseconds) to delay before calling the provided method
+         * @param {Array<any>} args? The arguments to apply to the method.
+         * @param {any} context? An optional context to bind to the method.
          * 
          * @returns {plat.IRemoveListener} A function that will clear the timeout when called.
          */
         defer(method: (...args: any[]) => void, timeout: number, args?: Array<any>, context?: any): IRemoveListener;
 
         /**
+         * @name uniqueId
+         * @memberof plat.IUtils
+         * @kind function
+         * @access public
+         * 
+         * @description
          * Takes in a prefix and returns a unique identifier string with the prefix preprended. If no prefix
          * is specified, none will be prepended.
          * 
-         * @param prefix A string prefix to prepend tothe unique ID.
+         * @param {string} prefix? A string prefix to prepend tothe unique ID.
          * 
-         * @returns {string} The prefix-prepended unique id.
+         * @returns {string} The prefix-prepended unique ID.
          */
         uniqueId(prefix?: string): string;
 
         /**
+         * @name camelCase
+         * @memberof plat.IUtils
+         * @kind function
+         * @access public
+         * 
+         * @description
          * Takes in a spinal-case, dot.case, or snake_case string and returns 
          * a camelCase string. Also can turn a string into camelCase with space 
          * as a delimeter.
          * 
-         * @param str The spinal-case, dot.case, or snake_case string
+         * @param {string} str The spinal-case, dot.case, or snake_case string.
          * 
-         * @returns {string} The camelCase string
-         * 
-         * @example camelCase('plat-options'); // returns 'platOptions'
+         * @returns {string} The camelCase string.
          */
         camelCase(str: string): string;
+    }
+
+    /**
+     * @name IIterator
+     * @memberof plat
+     * @kind interface
+     * 
+     * @description
+     * The Type for a {@link plat.Utils|Utils} iterator callback method.
+     * 
+     * @typeparam {any} T The value type used in the iterator callback.
+     * @typeparam {any} U The return type of the iterator callback.
+     */
+    export interface IIterator<T, U> {
+        /**
+         * @memberof plat.IIterator
+         * @kind function
+         * @access public
+         * @static
+         * 
+         * @description
+         * A method signature for {@link plat.IIterator|IIterator}.
+         * 
+         * @param {T} value The value for an object during an iteration.
+         * @param {number} index The index where the value can be found.
+         * @param {any} obj The object passed into the util method.
+         * 
+         * @returns {U} The returned value.
+         */
+        (value: T, index: number, obj: any): U;
+        /**
+         * @memberof plat.IIterator
+         * @kind function
+         * @access public
+         * @static
+         * 
+         * @description
+         * A method signature for {@link plat.IIterator|IIterator}.
+         * 
+         * @param {T} value The value for an object during an iteration.
+         * @param {string} key The key where the value can be found.
+         * @param {any} obj The object passed into the util method.
+         * 
+         * @returns {U} The returned value.
+         */
+        (value: T, key: string, obj: any): U;
     }
 }
