@@ -30,7 +30,7 @@
          * @kind function
          * @access private
          * @static
-         *
+         * 
          * @description
          * Creates a query object out of the URL's query search string.
          * 

@@ -10,7 +10,7 @@ module plat {
      * @description
      * Returns the requested injectable dependency.
      * 
-     * @typeparam T The type of the requested dependency.
+     * @typeparam {any} T The type of the requested dependency.
      * 
      * @param {() => T} dependency The dependency Type to return.
      * 
