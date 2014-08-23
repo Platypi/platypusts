@@ -618,7 +618,7 @@ module plat.async {
          * 
          * @param {plat.async.IResolveFunction<R>} resolveFunction A IResolveFunction for fulfilling/rejecting the Promise.
          * 
-         * @returns {plat.async.IThenable<R>} A promise object.
+         * @returns {plat.async.Promise<R>} A promise object.
          */
         constructor(resolveFunction: IResolveFunction<R>) {
             var $exception: IExceptionStatic;
