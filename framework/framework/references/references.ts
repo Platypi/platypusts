@@ -1,7 +1,7 @@
 ﻿/* tslint:disable:no-unused-variable */
-    /*
-     * Injectables
-     */
+/*
+ * Injectables
+ */
 var __AppStatic = '$AppStatic',
     __App = '$App',
     __Http = '$Http',
@@ -156,5 +156,6 @@ var __AppStatic = '$AppStatic',
     __BOUND_PREFIX = '-@',
     __START_NODE = ': start node',
     __END_NODE = ': end node',
-    __JS = 'js';
+    __JS = 'js',
+    __noopInjector = 'noop';
 /* tslint:enable:no-unused-variable */
