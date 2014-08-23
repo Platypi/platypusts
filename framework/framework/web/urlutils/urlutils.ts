@@ -307,7 +307,7 @@
          * @description
          * Handle parsing the initial URL and obtain the base URL if necessary.
          * 
-         * @returns {plat.web.UrlUtils} A UrlUtils instance.
+         * @returns {plat.web.UrlUtils} A {@link plat.web.UrlUtils|UrlUtils} instance.
          */
         constructor() {
             var $config = this.$BrowserConfig;
@@ -411,6 +411,11 @@
     register.injectable(__UrlUtilsInstance, IUrlUtilsInstance, null, __INSTANCE);
 
     /**
+     * @name IUrlUtilsInstance
+     * @memberof plat.web
+     * @kind interface
+     * 
+     * @description
      * Defines an object that deals with obtaining detailed information about an 
      * associated URL.
      */
