@@ -7,7 +7,7 @@ module plat.async {
      * @implements {plat.async.IThenable}
      * 
      * @description
-     * Takes in a generic typs corresponding to the fullfilled success type. 
+     * Takes in a generic type corresponding to the fullfilled success type. 
      * 
      * @typeparam R The return type of the promise.
      */
@@ -275,7 +275,7 @@ module plat.async {
          * @description
          * Returns a promise that rejects with the input value.
          * 
-         * @param {any} value The value to reject.
+         * @param {any} error The value to reject.
          * 
          * @returns {plat.async.IThenable<any>} A promise that will reject with the error.
          */
@@ -297,8 +297,8 @@ module plat.async {
          * 
          * @typeparam R The return type of the input {@link plat.async.Promise|Promise}.
          * 
-         * @param {plat.async.IResolveFunction<R>} The resolve function to invoke.
-         * @param {plat.async.Promise<R>} The promise on which to invoke the resolve function.
+         * @param {plat.async.IResolveFunction<R>} resolveFunction The resolve function to invoke.
+         * @param {plat.async.Promise<R>} promise The promise on which to invoke the resolve function.
          * 
          * @returns {void}
          */
@@ -540,7 +540,7 @@ module plat.async {
                         $exception.PROMISE);
                 }
 
-                if(isPromise(value)) {
+                if (isPromise(value)) {
                     value.then.call(value, (val: any) => {
                         if (resolved) {
                             return true;
