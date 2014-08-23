@@ -5,13 +5,14 @@
      * @kind class
      * 
      * @extends {plat.ui.BaseViewControl}
+     * @implements {plat.ui.IWebViewControl}
      * 
      * @description
      * A control used in a {@link plat.ui.controls.Routeport|Routeport} for simulated page navigation. The 
      * control has navigation events that are called when navigating to and from the control.
      * It also provides functionality for setting the title of a page.
      */
-    export class WebViewControl extends BaseViewControl {
+    export class WebViewControl extends BaseViewControl implements IWebViewControl {
         /**
          * @name titleElement
          * @memberof plat.ui.WebViewControl
@@ -171,7 +172,6 @@
          * @memberof plat.ui.WebViewControl
          * @kind function
          * @access public
-         * @static
          * 
          * @description
          * Allows the {@link plat.ui.WebViewControl|WebViewControl} set its title programmatically and 
