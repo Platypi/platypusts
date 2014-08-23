@@ -102,6 +102,7 @@
          * @memberof plat.web.Router
          * @kind property
          * @access public
+         * @readonly
          * 
          * @type {string}
          * 
@@ -229,7 +230,15 @@
         private __history: Array<string>;
 
         /**
+         * @name constructor
+         * @memberof plat.web.Router
+         * @kind function
+         * @access public
+         * 
+         * @description
          * Assigns a uid and subscribes to the 'urlChanged' event.
+         * 
+         * @returns {plat.web.Router} A {@link plat.web.Router|Router} instance.
          */
         constructor() {
             var ContextManager: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
@@ -253,6 +262,21 @@
             }
         }
 
+        /**
+         * @name registerRoutes
+         * @memberof plat.web.Router
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Registers route strings/RegExps and associates them with a control type.
+         * 
+         * @param {string} type The control type with which to associate the routes.
+         * @param {Array<any>} routes An array of strings or RegExp expressions to associate with 
+         * the control type.
+         * 
+         * @returns {void}
+         */
         registerRoutes(type: string, routes: Array<any>): void {
             if (!isArray(routes)) {
                 return;
@@ -266,6 +290,22 @@
             }
         }
 
+        /**
+         * @name route
+         * @memberof plat.web.Router
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Formats a url path given the parameters and query string, then changes the 
+         * url to that path.
+         * 
+         * @param {string} path The route path to navigate to.
+         * @param {plat.web.IRouteNavigationOptions} options? The {@link plat.web.IRouteNavigationOptions|IRouteNavigationOptions}  
+         * included with this route.
+         * 
+         * @returns {boolean} Whether or not the route operation was a success.
+         */
         route(path: string, options?: IRouteNavigationOptions): boolean {
             options = options || <IRouteNavigationOptions>{};
 
@@ -316,6 +356,19 @@
             return true;
         }
 
+        /**
+         * @name goBack
+         * @memberof plat.web.Router
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Navigates back in the history.
+         * 
+         * @param {number} length? The number of entries to go back in the history.
+         * 
+         * @returns {void}
+         */
         goBack(length?: number): void {
             this.$Window.history.go(-length);
 
@@ -327,12 +380,21 @@
         }
 
         /**
+         * @name _buildRoute
+         * @memberof plat.web.Router
+         * @kind function
+         * @access protected
+         * 
+         * @description
          * Builds a valid route with a valid query string to use for navigation.
          * 
-         * @param routeParameter The route portion of the navigation path. Used to 
-         * match with a registered WebViewControl.
-         * @param query The route query object if passed into the 
-         * IRouteNavigationOptions.
+         * @param {string} routeParameter The route portion of the navigation path. Used to 
+         * match with a registered {@link plat.ui.WebViewControl|WebViewControl}.
+         * @param {plat.IObject<string>} query The route query object if passed into the 
+         * {@link plat.web.IRouteNavigationOptions|IRouteNavigationOptions}.
+         * 
+         * @returns {{ route: string; match: plat.web.IMatchedRoute; }} An object containing 
+         * both the fully evaluated route and the corresponding {@link plat.web.IMatchedRoute|IMatchedRoute}.
          */
         _buildRoute(routeParameter: string, query: IObject<string>): { route: string; match: IMatchedRoute; } {
             var queryStr = this._buildQueryString(query);
@@ -356,10 +418,18 @@
         }
 
         /**
-         * Builds the query string if a query object was passed into 
-         * the IRouteNavigationOptions.
+         * @name _buildQueryString
+         * @memberof plat.web.Router
+         * @kind function
+         * @access protected
          * 
-         * @param query The query object passed in.
+         * @description
+         * Builds the query string if a query object was passed into 
+         * the {@link plat.web.IRouteNavigationOptions|IRouteNavigationOptions}.
+         * 
+         * @param {plat.IObject<string>} query The query object passed in.
+         * 
+         * @returns {string} The built query string.
          */
         _buildQueryString(query: IObject<string>): string {
             var queryStr: Array<string> = [];
@@ -382,12 +452,20 @@
         }
 
         /**
+         * @name _routeChanged
+         * @memberof plat.web.Router
+         * @kind function
+         * @access protected
+         * 
+         * @description
          * The method called when the route function is invoked 
          * or on a 'urlChanged' event.
          * 
-         * @param ev The 'urlChanged' event object.
-         * @param utils The IUrlUtils created for the invoked 
-         * route function.
+         * @param {plat.events.IDispatchEventInstance} ev The 'urlChanged' event object.
+         * @param {plat.web.IUrlUtilsInstance} utils The {@link plat.web.IUrlUtils|IUrlUtils} 
+         * created for the invoked route function.
+         * 
+         * @returns {void}
          */
         _routeChanged(ev: events.IDispatchEventInstance, utils: web.IUrlUtilsInstance): void {
             var matchedRoute = this._match(utils);
@@ -413,12 +491,20 @@
         }
 
         /**
-         * Registers a WebViewControl's route.
+         * @name _registerRoute
+         * @memberof plat.web.Router
+         * @kind function
+         * @access protected
          * 
-         * @param route Can be either a string or RegExp.
-         * @param injector The injector for the WebViewControl defined by 
-         * the type.
-         * @param type The control type.
+         * @description
+         * Registers a {@link plat.ui.WebViewControl|WebViewControl's} route.
+         * 
+         * @param {any} route Can be either a string or RegExp.
+         * @param {plat.dependency.IInjector<plat.ui.IBaseViewControl>} injector The injector for the 
+         * {@link plat.ui.WebViewControl|WebViewControl} defined by the type.
+         * @param {string} type The control type.
+         * 
+         * @returns {void}
          */
         _registerRoute(route: any, injector: dependency.IInjector<ui.IBaseViewControl>, type: string): void {
             var regexp = isRegExp(route),
@@ -458,11 +544,20 @@
         }
 
         /**
+         * @name _getRouteParameters
+         * @memberof plat.web.Router
+         * @kind function
+         * @access protected
+         * 
+         * @description
          * Parses the route and pulls out route parameters. Then 
          * converts them to regular expressions to match for 
          * routing.
          * 
-         * @param route The route to parse.
+         * @param {string} route The route to parse.
+         * 
+         * @returns {plat.web.IRouteMatcher} The object used to match a 
+         * route with a {@link plat.ui.BaseViewControl|BaseViewControl's} injector.
          */
         _getRouteParameters(route: string): IRouteMatcher {
             var $regex = this.$Regex,
@@ -505,8 +600,20 @@
         }
 
         /**
+         * @name _match
+         * @memberof plat.web.Router
+         * @kind function
+         * @access protected
+         * 
+         * @description
          * Matches a route to a registered route using the 
          * registered route's regular expression.
+         * 
+         * @param {plat.web.IUrlUtilsInstance} utils The utility used to obtain 
+         * the url fragment and the url query.
+         * 
+         * @returns {plat.web.IMatchedRoute} The matched route with the matched control 
+         * injector.
          */
         _match(utils: web.IUrlUtilsInstance): IMatchedRoute {
             var routes = this._routes,
@@ -587,9 +694,18 @@
         }
 
         /**
-         * Trims the first and last slash on the pathname and returns it.
+         * @name _getUrlFragment
+         * @memberof plat.web.Router
+         * @kind function
+         * @access protected
          * 
-         * @param utils The IUrlUtils associated with this route function.
+         * @description
+         * Trims the first and last slash on the URL pathname and returns it.
+         * 
+         * @param {plat.web.IUrlUtilsInstance} utils The utility used to obtain 
+         * the url fragment.
+         * 
+         * @returns {string} The trimmed URL pathname.
          */
         _getUrlFragment(utils: web.IUrlUtilsInstance): string {
             return utils.pathname.replace(this.__pathSlashRegex, '');
@@ -606,47 +722,101 @@
     register.injectable(__Router, IRouter);
 
     /**
+     * @name IRouter
+     * @memberof plat.web
+     * @kind interface
+     * 
+     * @description
      * Describes the object that handles route registration and navigation 
-     * to and from IWebViewControls within the Routeport.
+     * to and from {@link plat.ui.IWebViewControl|IWebViewControls} within a 
+     * {@link plat.ui.controls.Routeport|Routeport}.
      */
     export interface IRouter {
         /**
+         * @name uid
+         * @memberof plat.web.IRouter
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
          * A unique string identifier.
          */
         uid: string;
 
         /**
-         * Registers route strings/RegExp and associates them with a control type.
+         * @name registerRoutes
+         * @memberof plat.web.IRouter
+         * @kind function
+         * @access public
          * 
-         * @param type The control type with which to associate the routes.
-         * @param routes An array of strings or RegExp expressions to associate with 
+         * @description
+         * Registers route strings/RegExps and associates them with a control type.
+         * 
+         * @param {string} type The control type with which to associate the routes.
+         * @param {Array<any>} routes An array of strings or RegExp expressions to associate with 
          * the control type.
+         * 
+         * @returns {void}
          */
         registerRoutes(type: string, routes: Array<any>): void;
 
         /**
+         * @name route
+         * @memberof plat.web.IRouter
+         * @kind function
+         * @access public
+         * 
+         * @description
          * Formats a url path given the parameters and query string, then changes the 
          * url to that path.
          * 
-         * @param path The route path to navigate to.
-         * @param options The IRouteNavigationOptions included with this route.
+         * @param {string} path The route path to navigate to.
+         * @param {plat.web.IRouteNavigationOptions} options? The {@link plat.web.IRouteNavigationOptions|IRouteNavigationOptions}  
+         * included with this route.
+         * 
+         * @returns {boolean} Whether or not the route operation was a success.
          */
         route(path: string, options?: web.IRouteNavigationOptions): boolean;
 
         /**
+         * @name goBack
+         * @memberof plat.web.IRouter
+         * @kind function
+         * @access public
+         * 
+         * @description
          * Navigates back in the history.
          * 
-         * @param length The number of entries to go back in the history.
+         * @param {number} length? The number of entries to go back in the history.
+         * 
+         * @returns {void}
          */
         goBack(length?: number): void;
     }
 
     /**
+     * @name IRouteNavigationOptions
+     * @memberof plat.web
+     * @kind interface
+     * 
+     * @extends {plat.navigation.IBaseNavigationOptions}
+     * 
+     * @description
      * Options that you can submit to the router in order
      * to customize navigation.
      */
     export interface IRouteNavigationOptions extends navigation.IBaseNavigationOptions {
         /**
+         * @name query
+         * @memberof plat.web.IRouteNavigationOptions
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.IObject<string>}
+         * 
+         * @description
          * An object that includes the query parameters to be inserted into the route 
          * as the query string.
          */
@@ -654,58 +824,139 @@
     }
 
     /**
+     * @name IRouteMatcher
+     * @memberof plat.web
+     * @kind interface
+     * 
+     * @description
      * Used by the navigator for matching a route with 
-     * a view control injector.
+     * a {@link plat.ui.IBaseViewControl|IBaseViewControl's} injector.
      */
     export interface IRouteMatcher {
         /**
-         * The IBaseViewControl injector.
+         * @name injector
+         * @memberof plat.web.IRouteMatcher
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.dependency.IInjector<plat.ui.IBaseViewControl>}
+         * 
+         * @description
+         * The {@link plat.ui.IBaseViewControl|IBaseViewControl} injector.
          */
         injector?: dependency.IInjector<ui.IBaseViewControl>;
 
         /**
-         * The type of IBaseViewControl
+         * @name type
+         * @memberof plat.web.IRouteMatcher
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * The type of {@link plat.ui.IBaseViewControl|IBaseViewControl}.
          */
         type?: string;
 
         /**
+         * @name regex
+         * @memberof plat.web.IRouteMatcher
+         * @kind property
+         * @access public
+         * 
+         * @type {RegExp}
+         * 
+         * @description
          * A regular expression to match with the url.
          */
         regex: RegExp;
 
         /**
-         * Route arguments used to create IRouteParameters 
+         * @name args
+         * @memberof plat.web.IRouteMatcher
+         * @kind property
+         * @access public
+         * 
+         * @type {Array<string>}
+         * 
+         * @description
+         * Route arguments used to create route parameters  
          * in the event of a url match.
          */
         args: Array<string>;
     }
 
     /**
-     * Extends IRoute to provide a control injector that matches 
-     * the given IRoute.
+     * @name IMatchedRoute
+     * @memberof plat.web
+     * @kind interface
+     * 
+     * @description
+     * Provides a {@link plat.dependency.IInjector<plat.ui.IBaseViewControl>|IInjector<IBaseViewControl>} that matches 
+     * the given {@link plat.web.IRoute|IRoute}.
      */
     export interface IMatchedRoute {
         /**
-         * The associated view control injector for the route.
+         * @name injector
+         * @memberof plat.web.IMatchedRoute
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.dependency.IInjector<plat.ui.IBaseViewControl>}
+         * 
+         * @description
+         * The associated {@link plat.dependency.IInjector<plat.ui.IBaseViewControl>|IInjector<IBaseViewControl>} for the route.
          */
         injector: dependency.IInjector<ui.IBaseViewControl>;
 
         /**
-         * The type of IBaseViewControl
+         * @name type
+         * @memberof plat.web.IMatchedRoute
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * The type of {@link plat.ui.IBaseViewControl|IBaseViewControl}.
          */
         type: string;
 
         /**
-         * The route associated with the injector
+         * @name route
+         * @memberof plat.web.IMatchedRoute
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.web.IRoute<any>}
+         * 
+         * @description
+         * The route associated with this object's injector.
          */
         route?: IRoute<any>;
     }
 
     /**
+     * @name IRoute
+     * @memberof plat.web
+     * @kind interface
+     * 
+     * @typeparam {{}} T The type of the defined parameters matched with this route.
+     * 
+     * @description
      * Contains the parsed properties of a url.
      */
     export interface IRoute<T extends {}> {
         /**
+         * @name parameters
+         * @memberof plat.web.IRoute
+         * @kind property
+         * @access public
+         * 
+         * @type {T}
+         * 
+         * @description
          * The defined parameters that were matched with the route. 
          * When a route is registered, the registrant can specify named 
          * route parameters. Those parameters will appear in this object 
@@ -714,6 +965,13 @@
         parameters: T;
 
         /**
+         * @name path
+         * @memberof plat.web.IRoute
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
          * This property will always exist and will be equal to the full
          * route for navigation (only the path from root, not including 
          * the query string).
@@ -721,6 +979,13 @@
         path: string;
 
         /**
+         * @name query
+         * @memberof plat.web.IRoute
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
          * An object containing query string key/value pairs.
          */
         query?: any;
