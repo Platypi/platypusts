@@ -92,9 +92,17 @@ module plat.expressions {
                         case '+':
                         case '-':
                             if (args === 1) {
-                                token = 'u' + token;
+                                this.__handleOperator('u' + token, args);
+                                break;
                             }
                         default:
+                            // check if string literal
+                            if (args === 0) {
+                                codeStr = this.__convertPrimitive(i, token, args);
+                                codeArray.push(codeStr);
+                                break;
+                            }
+
                             this.__handleOperator(token, args);
                             break;
                     }
@@ -614,7 +622,7 @@ module plat.expressions {
          * @param context The primary context for evaluation.
          * @param aliases An object containing resource alias values. All keys must begin with '@'.
          */
-        evaluate(context: any, aliases?: any): any;
+        evaluate(context?: any, aliases?: any): any;
 
         /**
          * The original expression string.

@@ -1,47 +1,231 @@
 ﻿module plat.web {
     /**
+     * @name Router
+     * @memberof plat.web
+     * @kind class
+     * 
+     * @implements {plat.web.IRouter}
+     * 
+     * @description
      * The class that handles route registration and navigation 
-     * to and from IViewControls within the Routeport.
+     * to and from {@link plat.ui.IViewControl|IViewControls} within the 
+     * {@link plat.ui.controls.Routeport|Routeport}.
      */
     export class Router implements IRouter {
+        /**
+         * @name $Browser
+         * @memberof plat.web.Router
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.web.IBrowser}
+         * 
+         * @description
+         * Reference to the {@link plat.web.IBrowser|IBrowser} injectable.
+         */
         $Browser: IBrowser = acquire(__Browser);
+        /**
+         * @name $BrowserConfig
+         * @memberof plat.web.Router
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.web.IBrowserConfig}
+         * 
+         * @description
+         * Reference to the {@link plat.web.IBrowserConfig|IBrowserConfig} injectable.
+         */
         $BrowserConfig: IBrowserConfig = acquire(__BrowserConfig);
+        /**
+         * @name $EventManagerStatic
+         * @memberof plat.web.Router
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.events.IEventManagerStatic}
+         * 
+         * @description
+         * Reference to the {@link plat.events.IEventManagerStatic|IEventManagerStatic} injectable.
+         */
         $EventManagerStatic: events.IEventManagerStatic = acquire(__EventManagerStatic);
+        /**
+         * @name $NavigationEventStatic
+         * @memberof plat.web.Router
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.events.INavigationEventStatic}
+         * 
+         * @description
+         * Reference to the {@link plat.events.INavigationEventStatic|INavigationEventStatic} injectable.
+         */
         $NavigationEventStatic: events.INavigationEventStatic = acquire(__NavigationEventStatic);
+        /**
+         * @name $Compat
+         * @memberof plat.web.Router
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.ICompat}
+         * 
+         * @description
+         * Reference to the {@link plat.ICompat|ICompat} injectable.
+         */
         $Compat: ICompat = acquire(__Compat);
+        /**
+         * @name $Regex
+         * @memberof plat.web.Router
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.expressions.IRegex}
+         * 
+         * @description
+         * Reference to the {@link plat.expressions.IRegex|IRegex} injectable.
+         */
         $Regex: expressions.IRegex = acquire(__Regex);
+        /**
+         * @name $Window
+         * @memberof plat.web.Router
+         * @kind property
+         * @access public
+         * 
+         * @type {Window}
+         * 
+         * @description
+         * Reference to the Window injectable.
+         */
         $Window: Window = acquire(__Window);
 
+        /**
+         * @name uid
+         * @memberof plat.web.Router
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * A unique string identifier.
+         */
         uid: string;
 
         /**
-         * The registered routes (as IRouteMatchers) for matching 
+         * @name _routes
+         * @memberof plat.web.Router
+         * @kind property
+         * @access protected
+         * 
+         * @type {Array<plat.web.IRouteMatcher>}
+         * 
+         * @description
+         * The registered routes (as {@link plat.web.IRouteMatcher|IRouteMatchers}) for matching 
          * on route change.
          */
         _routes: Array<IRouteMatcher> = [];
 
         /**
+         * @name _removeListener
+         * @memberof plat.web.Router
+         * @kind property
+         * @access protected
+         * 
+         * @type {plat.IRemoveListener}
+         * 
+         * @description
          * The function to stop listening to the 'urlChanged' event.
          */
         _removeListener: IRemoveListener;
 
         /**
-         * The registered default route ('') converted into an IMatchedRoute. 
+         * @name _defaultRoute
+         * @memberof plat.web.Router
+         * @kind property
+         * @access protected
+         * 
+         * @type {plat.web.IMatchedRoute}
+         * 
+         * @description
+         * The registered default route ('') converted into an {@link plat.web.IMatchedRoute|IMatchedRoute}. 
          * The default route is used whenever a specified route/url is not matched.
          */
         _defaultRoute: IMatchedRoute;
 
         /**
-         * The registered base route ('/') converted into an IMatchedRoute. 
-         * The base route is the first route navigated to in the Routeport if a 
-         * defaultRoute is not specified in its plat-options.
+         * @name _baseRoute
+         * @memberof plat.web.Router
+         * @kind property
+         * @access protected
+         * 
+         * @type {plat.web.IMatchedRoute}
+         * 
+         * @description
+         * The registered base route ('/') converted into an {@link plat.web.IMatchedRoute|IMatchedRoute}. 
+         * The base route is the first route navigated to in the {@link plat.ui.controls.Routeport|Routeport} if a 
+         * default route is not specified in its plat-options.
          */
         _baseRoute: IMatchedRoute;
 
+        /**
+         * @name __escapeRegex
+         * @memberof plat.web.Router
+         * @kind property
+         * @access private
+         * 
+         * @type {RegExp}
+         * 
+         * @description
+         * A regular expression for finding invalid characters in a route string.
+         */
         private __escapeRegex = this.$Regex.escapeRouteRegex;
+        /**
+         * @name __optionalRegex
+         * @memberof plat.web.Router
+         * @kind property
+         * @access private
+         * 
+         * @type {RegExp}
+         * 
+         * @description
+         * A regular expression for finding optional parameters in a route string.
+         */
         private __optionalRegex = this.$Regex.optionalRouteRegex;
+        /**
+         * @name __pathSlashRegex
+         * @memberof plat.web.Router
+         * @kind property
+         * @access private
+         * 
+         * @type {RegExp}
+         * 
+         * @description
+         * A regular expression for finding forward slashes at the beginning or end of 
+         * an expression.
+         */
         private __pathSlashRegex = /^\/|\/$/g;
+        /**
+         * @name __firstRoute
+         * @memberof plat.web.Router
+         * @kind property
+         * @access private
+         * 
+         * @type {boolean}
+         * 
+         * @description
+         * States whether the specified route is the first attempt at routing.
+         */
         private __firstRoute = true;
+        /**
+         * @name __history
+         * @memberof plat.web.Router
+         * @kind property
+         * @access private
+         * 
+         * @type {Array<string>}
+         * 
+         * @description
+         * A virtual history stack used in IE based MS apps.
+         */
         private __history: Array<string>;
 
         /**
