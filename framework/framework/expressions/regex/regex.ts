@@ -10,6 +10,7 @@
         protocolRegex: RegExp = /:\/\//;
         invalidVariableRegex: RegExp = /[^a-zA-Z0-9@_$]/;
         fileNameRegex: RegExp = /.*(?:\/|\\)/;
+        shiftedKeyRegex: RegExp = /[A-Z!@#$%^&*()_+}{":?><|~]/;
 
         get newLineRegex(): RegExp {
             return /\r|\n/g;
@@ -199,5 +200,7 @@
          * Grabs the file name from a file path.
          */
         fileNameRegex: RegExp;
+
+        shiftedKeyRegex: RegExp;
     }
 }
