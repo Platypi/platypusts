@@ -221,6 +221,27 @@ module tests.expressions.parser {
             fn: 'toBe'
         },
         {
+            name: 'multi-entry object literal',
+            returns: {
+                test: 'test',
+                test2: 'test2'
+            },
+            identifiers: [],
+            expression: '{ test: "test", test2: "test2" }',
+            fn: 'toEqual'
+        },
+        {
+            name: 'multi-entry object literal with string operators',
+            returns: {
+                test: '!',
+                test2: 'boss',
+                test3: '-'
+            },
+            identifiers: [],
+            expression: '{ test: "!", test2: "boss", test3: "-" }',
+            fn: 'toEqual'
+        },
+        {
             name: 'nested object literals',
             returns: {
                 test: {
