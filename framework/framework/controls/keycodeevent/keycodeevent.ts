@@ -1,5 +1,15 @@
 module plat.controls {
-    // keyboard events
+    /**
+     * @name KeyCodes
+     * @memberof plat.controls
+     * @kind property
+     * @access public
+     * 
+     * @type {any}
+     * 
+     * @description
+     * A mapping of all keys to their equivalent keyCode.
+     */
     export var KeyCodes = {
         'backspace': 8,
         'tab': 9,
@@ -97,6 +107,19 @@ module plat.controls {
         '"': 222, 'double quote': 222
     };
 
+    var shifted = /[A-Z!@#$%^&*()_+}{":?><|~]/;
+
+    /**
+     * @name ElementPropertyControl
+     * @memberof plat.controls
+     * @kind class
+     * 
+     * @extends {plat.controls.SimpleEventControl}
+     * @implements {plat.controls.IKeyCodeEventControl}
+     * 
+     * @description
+     * Base class used for setting the property of an element (e.g. href for anchor elements).
+     */
     export class KeyCodeEventControl extends SimpleEventControl implements IKeyCodeEventControl {
         keyCodes: IObject<{ shifted?: boolean; }>;
 
@@ -124,7 +147,7 @@ module plat.controls {
                     (<any>this.attributes)[attr] = eventObject.method;
 
                     this._setKeyCodes();
-                    super._setListener();
+                    this._setListener();
                     return;
                 }
 
@@ -136,7 +159,7 @@ module plat.controls {
             }
 
             this._setKeyCodes();
-            super._setListener();
+            this._setListener();
         }
 
         /**
@@ -146,10 +169,17 @@ module plat.controls {
          * @param ev The keyboard event object.
          */
         _onEvent(ev: KeyboardEvent): void {
-            var keyCodes = this.keyCodes;
+            var keyCodes = this.keyCodes,
+                code: { shifted?: boolean };
 
-            if (isEmpty(keyCodes) || !isUndefined(keyCodes[ev.keyCode])) {
+            if (isEmpty(keyCodes)) {
                 super._onEvent(ev);
+            } else if (!isUndefined(keyCodes[ev.keyCode])) {
+                code = keyCodes[ev.keyCode];
+
+                if (!code.shifted || ev.shiftKey) {
+                    super._onEvent(ev);
+                }
             }
         }
 
@@ -163,16 +193,18 @@ module plat.controls {
         _setKeyCodes(keys: Array<string> = []): void {
             var length = keys.length,
                 key: string,
-                keyCodes = this.keyCodes;
+                keyCodes = this.keyCodes,
+                index: string;
 
-            if (!isArray(keyCodes)) {
+            if (!isObject(keyCodes)) {
                 keyCodes = this.keyCodes = {};
             }
 
             for (var i = 0; i < length; ++i) {
                 key = keys[i];
+                index = isNumber(key) ? key : (<any>KeyCodes)[key.toLowerCase()];
 
-                keyCodes[isNumber(key) ? key : (<any>KeyCodes)[key]] = {};
+                keyCodes[index] = { shifted: shifted.test(key) };
             }
         }
     }

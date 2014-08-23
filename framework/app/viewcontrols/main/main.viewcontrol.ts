@@ -27,6 +27,10 @@ module app {
             console.log(context.password);
             console.log('');
         }
+
+        keyDown() {
+            console.log('pressed');
+        }
     }
 
     plat.register.viewControl('viewcontrol', MainViewControl, null, ['']);
