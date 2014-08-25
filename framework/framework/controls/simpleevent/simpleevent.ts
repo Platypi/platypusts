@@ -383,7 +383,7 @@ module plat.controls {
          */
         event: string = __$tap;
     }
-    
+
     /**
      * @name Blur
      * @memberof plat.controls
@@ -408,7 +408,7 @@ module plat.controls {
          */
         event: string = 'blur';
     }
-    
+
     /**
      * @name Change
      * @memberof plat.controls
@@ -433,7 +433,7 @@ module plat.controls {
          */
         event: string = 'change';
     }
-    
+
     /**
      * @name Copy
      * @memberof plat.controls
@@ -458,7 +458,7 @@ module plat.controls {
          */
         event: string = 'copy';
     }
-    
+
     /**
      * @name Cut
      * @memberof plat.controls
@@ -483,7 +483,7 @@ module plat.controls {
          */
         event: string = 'cut';
     }
-    
+
     /**
      * @name Paste
      * @memberof plat.controls
@@ -508,7 +508,7 @@ module plat.controls {
          */
         event: string = 'paste';
     }
-    
+
     /**
      * @name DblTap
      * @memberof plat.controls
@@ -533,7 +533,7 @@ module plat.controls {
          */
         event: string = __$dbltap;
     }
-    
+
     /**
      * @name Focus
      * @memberof plat.controls
@@ -558,7 +558,7 @@ module plat.controls {
          */
         event: string = 'focus';
     }
-    
+
     /**
      * @name TouchStart
      * @memberof plat.controls
@@ -583,7 +583,7 @@ module plat.controls {
          */
         event: string = __$touchstart;
     }
-    
+
     /**
      * @name TouchEnd
      * @memberof plat.controls
@@ -608,7 +608,7 @@ module plat.controls {
          */
         event: string = __$touchend;
     }
-    
+
     /**
      * @name TouchMove
      * @memberof plat.controls
@@ -633,7 +633,7 @@ module plat.controls {
          */
         event: string = __$touchmove;
     }
-    
+
     /**
      * @name TouchCancel
      * @memberof plat.controls
@@ -658,7 +658,7 @@ module plat.controls {
          */
         event: string = __$touchcancel;
     }
-    
+
     /**
      * @name Hold
      * @memberof plat.controls
@@ -683,7 +683,7 @@ module plat.controls {
          */
         event: string = __$hold;
     }
-    
+
     /**
      * @name Release
      * @memberof plat.controls
@@ -708,7 +708,7 @@ module plat.controls {
          */
         event: string = __$release;
     }
-    
+
     /**
      * @name Swipe
      * @memberof plat.controls
@@ -733,7 +733,7 @@ module plat.controls {
          */
         event: string = __$swipe;
     }
-    
+
     /**
      * @name SwipeLeft
      * @memberof plat.controls
@@ -758,7 +758,7 @@ module plat.controls {
          */
         event: string = __$swipeleft;
     }
-    
+
     /**
      * @name SwipeRight
      * @memberof plat.controls
@@ -783,7 +783,7 @@ module plat.controls {
          */
         event: string = __$swiperight;
     }
-    
+
     /**
      * @name SwipeUp
      * @memberof plat.controls
@@ -808,7 +808,7 @@ module plat.controls {
          */
         event: string = __$swipeup;
     }
-    
+
     /**
      * @name SwipeDown
      * @memberof plat.controls
@@ -833,7 +833,7 @@ module plat.controls {
          */
         event: string = __$swipedown;
     }
-    
+
     /**
      * @name Track
      * @memberof plat.controls
@@ -858,7 +858,7 @@ module plat.controls {
          */
         event: string = __$track;
     }
-    
+
     /**
      * @name TrackLeft
      * @memberof plat.controls
@@ -883,7 +883,7 @@ module plat.controls {
          */
         event: string = __$trackleft;
     }
-    
+
     /**
      * @name TrackRight
      * @memberof plat.controls
@@ -908,7 +908,7 @@ module plat.controls {
          */
         event: string = __$trackright;
     }
-    
+
     /**
      * @name TrackUp
      * @memberof plat.controls
@@ -933,7 +933,7 @@ module plat.controls {
          */
         event: string = __$trackup;
     }
-    
+
     /**
      * @name TrackDown
      * @memberof plat.controls
@@ -958,7 +958,7 @@ module plat.controls {
          */
         event: string = __$trackdown;
     }
-    
+
     /**
      * @name TrackEnd
      * @memberof plat.controls
@@ -983,7 +983,7 @@ module plat.controls {
          */
         event: string = __$trackend;
     }
-    
+
     /**
      * @name Submit
      * @memberof plat.controls

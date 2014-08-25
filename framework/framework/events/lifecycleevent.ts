@@ -62,7 +62,7 @@
     register.injectable(__LifecycleEventStatic, ILifecycleEventStatic, null, __STATIC);
 
     /**
-     * @name IErrorEventStatic
+     * @name ILifecycleEventStatic
      * @memberof plat.events
      * @kind interface
      * 
@@ -72,7 +72,7 @@
     export interface ILifecycleEventStatic {
         /**
          * @name dispatch
-         * @memberof plat.events.ILifecycleEvent
+         * @memberof plat.events.ILifecycleEventStatic
          * @kind function
          * @access public
          * @static

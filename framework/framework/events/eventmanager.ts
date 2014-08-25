@@ -1,5 +1,11 @@
 module plat.events {
     /**
+     * @name EventManager
+     * @memberof plat.events
+     * @kind class
+     * @access public
+     * 
+     * @description
      * Event object for a control dispatch event. Contains information about the type of event.
      * Propagation of the event always starts at the sender, allowing a control to both 
      * initialize and consume an event. If a consumer of an event throws an error while 
@@ -7,41 +13,174 @@ module plat.events {
      * not stop propagation of the event.
      */
     export class EventManager {
+        /**
+         * @name $Compat
+         * @memberof plat.events.EventManager
+         * @kind property
+         * @access public
+         * @static
+         * 
+         * @type {plat.ICompat}
+         * 
+         * @description
+         * Reference to the {@link plat.ICompat|ICompat} injectable.
+         */
         static $Compat: ICompat;
+
+        /**
+         * @name $Document
+         * @memberof plat.events.EventManager
+         * @kind property
+         * @access public
+         * @static
+         * 
+         * @type {Document}
+         * 
+         * @description
+         * Reference to the {@link plat.Document|Document} injectable.
+         */
         static $Document: Document;
+
+        /**
+         * @name $Window
+         * @memberof plat.events.EventManager
+         * @kind property
+         * @access public
+         * @static
+         * 
+         * @type {Window}
+         * 
+         * @description
+         * Reference to the {@link plat.Window|Window} injectable.
+         */
         static $Window: Window;
+
+        /**
+         * @name $Dom
+         * @memberof plat.events.EventManager
+         * @kind property
+         * @access public
+         * @static
+         * 
+         * @type {plat.ui.IDom}
+         * 
+         * @description
+         * Reference to the {@link plat.ui.IDom|IDom} injectable.
+         */
         static $Dom: ui.IDom;
 
         /**
+         * @name UP
+         * @memberof plat.events.EventManager
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         * 
+         * @type {string}
+         * 
+         * @description
          * An upward-moving event will start at the sender and move 
          * up the parent chain.
          */
         static UP = 'up';
 
         /**
+         * @name DOWN
+         * @memberof plat.events.EventManager
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         * 
+         * @type {string}
+         * 
+         * @description
          * A downward-moving event will start at the sender and move 
          * to its children and beyond.
          */
         static DOWN = 'down';
 
         /**
+         * @name DIRECT
+         * @memberof plat.events.EventManager
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         * 
+         * @type {string}
+         * 
+         * @description
          * Goes through all listeners for an event name, ignoring order.
          */
         static DIRECT = 'direct';
 
         /**
+         * @name propagatingEvents
+         * @memberof plat.events.EventManager
+         * @kind property
+         * @access public
+         * @static
+         * 
+         * @type {plat.IObject<boolean>}
+         * 
+         * @description
          * Keeps track of which events are currently propagating.
          */
         static propagatingEvents: IObject<boolean> = {};
 
+        /**
+         * @name __eventsListeners
+         * @memberof plat.events.EventManager
+         * @kind property
+         * @access private
+         * @static
+         * 
+         * @type {plat.IObject<plat.events.IEventsListener>}
+         * 
+         * @description
+         * Holds all the {@link plat.events.IEventsListener|event listeners} keyed by uid.
+         */
         private static __eventsListeners: IObject<IEventsListener> = {};
+
+        /**
+         * @name __lifecycleEventListeners
+         * @memberof plat.events.EventManager
+         * @kind property
+         * @access private
+         * @static
+         * 
+         * @type {Array<{ name: string; value: () => void; }>}
+         * 
+         * @description
+         * Holds all the event listeners for the application lifefycle events.
+         */
         private static __lifecycleEventListeners: Array<{ name: string; value: () => void; }> = [];
+
+        /**
+         * @name __initialized
+         * @memberof plat.events.EventManager
+         * @kind property
+         * @access private
+         * @static
+         * 
+         * @type {boolean}
+         * 
+         * @description
+         * whether or not the event manager has been initialized.
+         */
         private static __initialized = false;
 
         /**
-         * Initializes the EventManager, creating the initial ALM event listeners.
-         * 
+         * @name initialize
+         * @memberof plat.events.EventManager
+         * @kind function
+         * @access public
          * @static
+         * 
+         * @description
+         * Initializes the {@link plat.events.EventManager|EventManager}, creating the initial ALM event listeners.
          */
         static initialize(): void {
             if (EventManager.__initialized) {

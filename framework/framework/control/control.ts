@@ -1198,7 +1198,7 @@ module plat {
 
         /**
          * @name dispose
-         * @memberof plat.IControl
+         * @memberof plat.IControlFactory
          * @kind function
          * @access public
          * @static
@@ -1803,6 +1803,7 @@ module plat {
         /**
          * @name IObservableProperty
          * @memberof plat.observable
+         * @access public
          * @kind interface
          * 
          * @description
@@ -1825,6 +1826,7 @@ module plat {
             /**
              * @name value
              * @memberof plat.observable.IObservableProperty
+             * @access public
              * @kind property
              * 
              * @type {T}
@@ -1837,6 +1839,7 @@ module plat {
             /**
              * @name observe
              * @memberof plat.observable.IObservableProperty
+             * @access public
              * @kind function
              * 
              * @description

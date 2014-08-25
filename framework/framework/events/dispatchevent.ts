@@ -3,6 +3,7 @@ module plat.events {
      * @name DispatchEvent
      * @memberof plat.events
      * @kind class
+     * @access public
      * 
      * @implements {plat.events.IDispatchEventInstance}
      * 
@@ -169,9 +170,10 @@ module plat.events {
     register.injectable(__DispatchEventInstance, IDispatchEventInstance, null, __INSTANCE);
 
     /**
-     * @name IDispatchEvent
+     * @name IDispatchEventInstance
      * @memberof plat.events
      * @kind interface
+     * @access public
      * 
      * @description
      * Describes an event that propagates through a control tree. 

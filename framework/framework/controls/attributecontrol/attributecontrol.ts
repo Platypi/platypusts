@@ -3,6 +3,7 @@ module plat.controls {
      * @name AttributeControl
      * @memberof plat.controls
      * @kind class
+     * @access public
      * 
      * @extends {plat.Control}
      * @implements {plat.controls.IAttributeControl}
@@ -119,6 +120,7 @@ module plat.controls {
      * @name IAttributeControl
      * @memberof plat.controls
      * @kind interface
+     * @access public
      * 
      * @extends {plat.IControl}
      * 
