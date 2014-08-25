@@ -32,6 +32,15 @@ var animationInjectors: plat.dependency.IInjectorObject<plat.ui.IBaseAnimation> 
  */
 var jsAnimationInjectors: plat.dependency.IInjectorObject<plat.ui.IBaseAnimation> = {};
 
+/**
+ * @name register
+ * @memberof plat
+ * @kind namespace
+ * @access public
+ * 
+ * @description
+ * Holds all the classes and interfaces related to registering components for platypus.
+ */
 module plat.register {
     /**
      * Generic function for creating an Injector and adding it to an IInjectorObject.

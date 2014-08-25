@@ -1,4 +1,13 @@
-﻿module plat.web {
+﻿/**
+ * @name web
+ * @memberof plat
+ * @kind namespace
+ * @access public
+ * 
+ * @description
+ * Holds classes and interfaces related to web components in platypus.
+ */
+module plat.web {
     /**
      * @name Browser
      * @memberof plat.web

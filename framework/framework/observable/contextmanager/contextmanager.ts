@@ -1,3 +1,12 @@
+/**
+ * @name observable
+ * @memberof plat
+ * @kind namespace
+ * @access public
+ * 
+ * @description
+ * Holds all classes and interfaces related to observable components in platypus.
+ */
 module plat.observable {
     var arrayMethods = ['push', 'pop', 'reverse', 'shift', 'sort', 'splice', 'unshift'];
 

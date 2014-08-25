@@ -1,3 +1,12 @@
+/**
+ * @name controls
+ * @memberof plat
+ * @kind namespace
+ * @access public
+ * 
+ * @description
+ * Holds all classes and interfaces related to attribute control components in platypus.
+ */
 module plat.controls {
     /**
      * @name AttributeControl

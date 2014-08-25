@@ -1,3 +1,12 @@
+/**
+ * @name dependency
+ * @memberof plat
+ * @kind namespace
+ * @access public
+ *  
+ * @description
+ * Holds classes and interfaces related to dependency injection components in platypus.
+ */
 module plat.dependency {
     /**
      * @name Injector

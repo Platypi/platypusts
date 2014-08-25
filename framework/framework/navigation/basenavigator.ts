@@ -1,4 +1,13 @@
-﻿module plat.navigation {
+﻿/**
+ * @name navigation
+ * @memberof plat
+ * @kind namespace
+ * @access public
+ * 
+ * @description
+ * Holds classes and interfaces related to navigation in platypus.
+ */
+module plat.navigation {
     /**
      * A class that defines the base Navigation properties and methods.
      */

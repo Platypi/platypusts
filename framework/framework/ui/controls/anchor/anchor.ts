@@ -1,4 +1,13 @@
-﻿module plat.ui.controls {
+﻿/**
+ * @name controls
+ * @memberof plat.ui
+ * @kind namespace
+ * @access public
+ * 
+ * @description
+ * Holds classes and interfaces related to UI control components in platypus.
+ */
+module plat.ui.controls {
     class Anchor extends TemplateControl {
         replaceWith = 'a';
         element: HTMLAnchorElement;

@@ -1,3 +1,12 @@
+/**
+ * @name expressions
+ * @memberof plat
+ * @kind namespace
+ * @access public
+ * 
+ * @description
+ * Holds classes and interfaces related to expression handling in platypus.
+ */
 module plat.expressions {
     /**
      * Parses javascript expression strings and creates IParsedExpressions.

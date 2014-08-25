@@ -1,3 +1,12 @@
+/**
+ * @name events
+ * @memberof plat
+ * @kind namespace
+ * @access public
+ * 
+ * @description
+ * Holds classes and interfaces related to event management components in platypus.
+ */
 module plat.events {
     /**
      * @name DispatchEvent

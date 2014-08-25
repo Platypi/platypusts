@@ -1,3 +1,12 @@
+/**
+ * @name storage
+ * @memberof plat
+ * @kind namespace
+ * @access public
+ * 
+ * @description
+ * Holds classes and interfaces related to storage in platypus.
+ */
 module plat.storage {
     var caches: IObject<Cache<any>> = {};
     var internalCaches: any = {};

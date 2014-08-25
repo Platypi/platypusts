@@ -1,4 +1,13 @@
-﻿module plat.ui.animations {
+﻿/**
+ * @name animations
+ * @memberof plat.ui
+ * @kind namespace
+ * @access public
+ * 
+ * @description
+ * Holds all the classes and interfaces related to UI animations components for platypus.
+ */
+module plat.ui.animations {
     /**
      * A simple Css Animation class that places the 'plat-animation' class on an 
      * element, checks for animation properties, and waits for the animation to end.

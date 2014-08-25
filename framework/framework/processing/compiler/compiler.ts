@@ -1,3 +1,12 @@
+/**
+ * @name processing
+ * @memberof plat
+ * @kind namespace
+ * @access public
+ * 
+ * @description
+ * Holds classes and interfaces related to Document processing in platypus.
+ */
 module plat.processing {
     /**
      * Responsible for iterating through the DOM and collecting controls.

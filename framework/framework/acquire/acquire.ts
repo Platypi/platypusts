@@ -1,3 +1,11 @@
+/**
+ * @name plat
+ * @kind namespace
+ * @access public
+ * 
+ * @description
+ * The entry point into the platypus library.
+ */
 module plat {
     /**
      * @name acquire

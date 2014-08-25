@@ -6,11 +6,7 @@ module plat.events {
      * @access public
      * 
      * @description
-     * Event object for a control dispatch event. Contains information about the type of event.
-     * Propagation of the event always starts at the sender, allowing a control to both 
-     * initialize and consume an event. If a consumer of an event throws an error while 
-     * handling the event it will be logged to the app using exception.warn. Errors will 
-     * not stop propagation of the event.
+     * Manages dispatching events, handling all propagating events as well as any error handling.
      */
     export class EventManager {
         /**
@@ -181,6 +177,8 @@ module plat.events {
          * 
          * @description
          * Initializes the {@link plat.events.EventManager|EventManager}, creating the initial ALM event listeners.
+         * 
+         * @returns {void}
          */
         static initialize(): void {
             if (EventManager.__initialized) {
@@ -256,25 +254,41 @@ module plat.events {
         }
 
         /**
+         * @name dispose
+         * @memberof plat.events.EventManager
+         * @kind function
+         * @access public
+         * @static
+         * 
+         * @description
          * Removes all event listeners for a given uid. Useful for garbage collection when 
          * certain objects that listen to events go out of scope.
          * 
-         * @static
-         * @param uid The uid for which the event listeners will be removed.
+         * @param {string} uid The uid for which the event listeners will be removed.'
+         * 
+         * @returns {void}
          */
         static dispose(uid: string): void {
             deleteProperty(EventManager.__eventsListeners, uid);
         }
 
         /**
-         * Registers a listener for a DispatchEvent. The listener will be called when a DispatchEvent is 
+         * @name on
+         * @memberof plat.events.EventManager
+         * @kind function
+         * @access public
+         * @static
+         * 
+         * @description
+         * Registers a listener for a {@link plat.events.DispatchEvent|DispatchEvent}. The listener will be called when a {@link plat.events.DispatchEvent|DispatchEvent} is 
          * propagating over the given uid. Any number of listeners can exist for a single event name.
          * 
-         * @static
-         * @param uid A unique id to associate with the object registering the listener.
-         * @param eventName The name of the event to listen to.
-         * @param listener The method called when the DispatchEvent is fired.
-         * @returns {IRemoveListener} A method for removing the listener.
+         * @param {string} uid A unique id to associate with the object registering the listener.
+         * @param {string} eventName The name of the event to listen to.
+         * @param {(ev: IDispatchEventInstance, ...args: any[]) => void} listener The method called when the event is fired.
+         * @param {any} context? The context with which to call the listener method.
+         * 
+         * @returns {plat.IRemoveListener} A method for removing the listener.
          */
         static on(uid: string, eventName: string, listener: (ev: IDispatchEventInstance, ...args: any[]) => void,
             context?: any): IRemoveListener {
@@ -302,58 +316,83 @@ module plat.events {
             };
         }
 
+        
         /**
+         * @name dispatch
+         * @memberof plat.events.EventManager
+         * @kind function
+         * @access public
+         * @static
+         * 
+         * @description
          * Looks for listeners to a given event name, and fires the listeners using the specified
          * event direction.
          * 
-         * @static
-         * @param name The name of the event.
-         * @param sender The object sending the event.
-         * @param direction The direction in which to send the event.
-         * @param args The arguments to send to the listeners.
+         * @param {string} name The name of the event.
+         * @param {any} sender The object sending the event.
+         * @param {string} direction='up' Equivalent to {@link plat.events.EventManager.UP|EventManager.UP}.
+         * @param {Array<any>} args? The arguments to send to the listeners.
          * 
-         * @see EventManager.direction
-         */
-        static dispatch(name: string, sender: any, direction: string, args?: Array<any>): void;
-        /**
-         * Looks for listeners to a given event name, and fires the listeners using the specified
-         * event direction.
-         * 
-         * @static
-         * @param name The name of the event.
-         * @param sender The object sending the event.
-         * @param direction='up' Equivalent to EventManager.direction.UP.
-         * @param args The arguments to send to the listeners.
-         * 
-         * @see EventManager.direction
+         * @returns {void}
          */
         static dispatch(name: string, sender: any, direction: 'up', args?: Array<any>): void;
         /**
+         * @name dispatch
+         * @memberof plat.events.EventManager
+         * @kind function
+         * @access public
+         * @static
+         * 
+         * @description
          * Looks for listeners to a given event name, and fires the listeners using the specified
          * event direction.
          * 
-         * @static
-         * @param name The name of the event.
-         * @param sender The object sending the event.
-         * @param direction='down' Equivalent to EventManager.direction.DOWN.
-         * @param args The arguments to send to the listeners.
+         * @param {string} name The name of the event.
+         * @param {any} sender The object sending the event.
+         * @param {string} direction='down' Equivalent to {@link plat.events.EventManager.DOWN|EventManager.DOWN}.
+         * @param {Array<any>} args? The arguments to send to the listeners.
          * 
-         * @see EventManager.direction
+         * @returns {void}
          */
         static dispatch(name: string, sender: any, direction: 'down', args?: Array<any>): void;
         /**
+         * @name dispatch
+         * @memberof plat.events.EventManager
+         * @kind function
+         * @access public
+         * @static
+         * 
+         * @description
          * Looks for listeners to a given event name, and fires the listeners using the specified
          * event direction.
          * 
-         * @static
-         * @param name The name of the event.
-         * @param sender The object sending the event.
-         * @param direction='direct' Equivalent to EventManager.direction.DIRECT.
-         * @param args The arguments to send to the listeners.
+         * @param {string} name The name of the event.
+         * @param {any} sender The object sending the event.
+         * @param {string} direction='direct' Equivalent to {@link plat.events.EventManager.DIRECT|EventManager.DIRECT}.
+         * @param {Array<any>} args? The arguments to send to the listeners.
          * 
-         * @see EventManager.direction
+         * @returns {void}
          */
         static dispatch(name: string, sender: any, direction: 'direct', args?: Array<any>): void;
+        /**
+         * @name dispatch
+         * @memberof plat.events.EventManager
+         * @kind function
+         * @access public
+         * @static
+         * 
+         * @description
+         * Looks for listeners to a given event name, and fires the listeners using the specified
+         * event direction.
+         * 
+         * @param {string} name The name of the event.
+         * @param {any} sender The object sending the event.
+         * @param {string} direction The direction in which to send the event.
+         * @param {Array<any>} args? The arguments to send to the listeners.
+         * 
+         * @returns {void}
+         */
+        static dispatch(name: string, sender: any, direction: string, args?: Array<any>): void;
         static dispatch(name: string, sender: any, direction: string, args?: Array<any>) {
             var $dispatchEvent: IDispatchEventInstance = acquire(__DispatchEventInstance);
             $dispatchEvent.initialize(name, sender, direction);
@@ -361,9 +400,18 @@ module plat.events {
         }
 
         /**
+         * @name hasDirection
+         * @memberof plat.events.EventManager
+         * @kind function
+         * @access public
+         * @static
+         * 
+         * @description
          * Returns whether or not the given string is a registered direction.
          * 
-         * @param direction The direction of the event
+         * @param {string} direction The direction of the event
+         * 
+         * @returns {boolean} Whether or not the direction is valid.
          */
         static hasDirection(direction: string): boolean {
             return (direction === EventManager.UP ||
@@ -372,10 +420,19 @@ module plat.events {
         }
 
         /**
+         * @name sendEvent
+         * @memberof plat.events.EventManager
+         * @kind function
+         * @access public
+         * @static
+         * 
+         * @description
          * Determines the appropriate direction and dispatches the event accordingly.
          * 
-         * @param event The IDispatchEvent to send
-         * @param args The arguments associated with the event
+         * @param {plat.events.IDispatchEventInstance} event The {@link plat.events.DispatchEvent|DispatchEvent} to send
+         * @param {Array<any>} args The arguments associated with the event
+         * 
+         * @returns {void}
          */
         static sendEvent(event: IDispatchEventInstance, args?: Array<any>): void {
             var name = event.name,
@@ -402,10 +459,19 @@ module plat.events {
         }
 
         /**
+         * @name _dispatchUp
+         * @memberof plat.events.EventManager
+         * @kind function
+         * @access protected
+         * @static
+         * 
+         * @description
          * Dispatches the event up the control chain.
          * 
-         * @param event The event being dispatched.
-         * @param args The arguments associated with the event.
+         * @param {plat.events.IDispatchEventInstance} event The event being dispatched.
+         * @param {Array<any>} args The arguments associated with the event.
+         * 
+         * @returns {void}
          */
         static _dispatchUp(event: IDispatchEventInstance, args: Array<any>): void {
             var name = event.name,
@@ -421,10 +487,19 @@ module plat.events {
         }
 
         /**
+         * @name _dispatchDown
+         * @memberof plat.events.EventManager
+         * @kind function
+         * @access protected
+         * @static
+         * 
+         * @description
          * Dispatches the event down the control chain.
          * 
-         * @param event The event being dispatched.
-         * @param args The arguments associated with the event.
+         * @param {plat.events.IDispatchEventInstance} event The event being dispatched.
+         * @param {Array<any>} args The arguments associated with the event.
+         * 
+         * @returns {void}
          */
         static _dispatchDown(event: IDispatchEventInstance, args: Array<any>): void {
             var controls: Array<IControl> = [],
@@ -451,10 +526,19 @@ module plat.events {
         }
 
         /**
-         * Dispatches the event directly to all control's listening.
+         * @name _dispatchDirect
+         * @memberof plat.events.EventManager
+         * @kind function
+         * @access protected
+         * @static
          * 
-         * @param event The event being dispatched.
-         * @param args The arguments associated with the event.
+         * @description
+         * Dispatches the event directly to all listeners.
+         * 
+         * @param {plat.events.IDispatchEventInstance} event The event being dispatched.
+         * @param {Array<any>} args The arguments associated with the event.
+         * 
+         * @returns {void}
          */
         static _dispatchDirect(event: IDispatchEventInstance, args: Array<any>): void {
             var uids = Object.keys(EventManager.__eventsListeners),
@@ -477,6 +561,22 @@ module plat.events {
             }
         }
 
+        /**
+         * @name __executeEvent
+         * @memberof plat.events.EventManager
+         * @kind function
+         * @access private
+         * @static
+         * 
+         * @description
+         * Dispatches the event to the listeners for the given uid.
+         * 
+         * @param {string} uid The uid used to find the event listeners.
+         * @param {plat.events.IDispatchEventInstance} The event.
+         * @param {Array<any>} args The arguments to send to the listeners.
+         * 
+         * @returns {void}
+         */
         private static __executeEvent(uid: string, ev: IDispatchEventInstance, args: Array<any>): void {
             var eventsListener = EventManager.__eventsListeners[uid];
 
@@ -493,6 +593,23 @@ module plat.events {
             EventManager.__callListeners(context, ev, listeners, args);
         }
 
+        /**
+         * @name __callListeners
+         * @memberof plat.events.EventManager
+         * @kind function
+         * @access private
+         * @static
+         * 
+         * @description
+         * Calls event listeners with the given context, event, and arguments.
+         * 
+         * @param {any} context The context with which to call the listeners.
+         * @param {plat.events.IDispatchEventInstance} The event.
+         * @param {Array<(ev: IDispatchEventInstance, ...args: any[]) => void>} The event listeners.
+         * @param {Array<any>} args The arguments to send to the listeners.
+         * 
+         * @returns {void}
+         */
         private static __callListeners(context: any, ev: IDispatchEventInstance,
             listeners: Array<(ev: IDispatchEventInstance, ...args: any[]) => void>, args: Array<any>): void {
             var name = ev.name,
@@ -535,198 +652,429 @@ module plat.events {
     ], __STATIC);
 
     /**
-     * Event object for a control dispatch event. Contains information about the type of event.
-     * Propagation of the event always starts at the sender, allowing a control to both 
-     * initialize and consume an event. If a consumer of an event throws an error while 
-     * handling the event it will be logged to the app using exception.warn. Errors will 
-     * not stop propagation of the event.
+     * @name IEventManagerStatic
+     * @memberof plat.events
+     * @kind interface
+     * @access public
+     * 
+     * @description
+     * Manages dispatching events, handling all propagating events as well as any error handling.
      */
     export interface IEventManagerStatic {
         /**
-         * An upward-moving event will start at the sender and move 
+         * @name $Compat
+         * @memberof plat.events.IEventManagerStatic
+         * @kind property
+         * @access public
+         * @static
+         *
+         * @type {plat.ICompat}
+         *
+         * @description
+         * Reference to the {@link plat.ICompat|ICompat} injectable.
+         */
+        $Compat: ICompat;
+
+        /**
+         * @name $Document
+         * @memberof plat.events.IEventManagerStatic
+         * @kind property
+         * @access public
+         * @static
+         *
+         * @type {Document}
+         *
+         * @description
+         * Reference to the {@link plat.Document|Document} injectable.
+         */
+        $Document: Document;
+
+        /**
+         * @name $Window
+         * @memberof plat.events.IEventManagerStatic
+         * @kind property
+         * @access public
+         * @static
+         *
+         * @type {Window}
+         *
+         * @description
+         * Reference to the {@link plat.Window|Window} injectable.
+         */
+        $Window: Window;
+
+        /**
+         * @name $Dom
+         * @memberof plat.events.IEventManagerStatic
+         * @kind property
+         * @access public
+         * @static
+         *
+         * @type {plat.ui.IDom}
+         *
+         * @description
+         * Reference to the {@link plat.ui.IDom|IDom} injectable.
+         */
+        $Dom: ui.IDom;
+
+        /**
+         * @name UP
+         * @memberof plat.events.IEventManagerStatic
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         *
+         * @type {string}
+         *
+         * @description
+         * An upward-moving event will start at the sender and move
          * up the parent chain.
          */
         UP: string;
 
         /**
+         * @name DOWN
+         * @memberof plat.events.IEventManagerStatic
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         *
+         * @type {string}
+         *
+         * @description
          * A downward-moving event will start at the sender and move
          * to its children and beyond.
          */
         DOWN: string;
 
         /**
+         * @name DIRECT
+         * @memberof plat.events.IEventManagerStatic
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         *
+         * @type {string}
+         *
+         * @description
          * Goes through all listeners for an event name, ignoring order.
          */
         DIRECT: string;
 
         /**
+         * @name propagatingEvents
+         * @memberof plat.events.IEventManagerStatic
+         * @kind property
+         * @access public
+         * @static
+         *
+         * @type {plat.IObject<boolean>}
+         *
+         * @description
          * Keeps track of which events are currently propagating.
          */
-        propagatingEvents: {};
+        propagatingEvents: IObject<boolean>;
 
         /**
-         * Initializes the EventManager, creating the initial ALM event listeners.
+         * @name initialize
+         * @memberof plat.events.IEventManagerStatic
+         * @kind function
+         * @access public
+         * @static
+         * 
+         * @description
+         * Initializes the {@link plat.events.EventManager|EventManager}, creating the initial ALM event listeners.
+         * 
+         * @returns {void}
          */
         initialize(): void;
 
         /**
-         * Removes all event listeners for a given uid. Useful for garbage collection when
+         * @name dispose
+         * @memberof plat.events.IEventManagerStatic
+         * @kind function
+         * @access public
+         * @static
+         * 
+         * @description
+         * Removes all event listeners for a given uid. Useful for garbage collection when 
          * certain objects that listen to events go out of scope.
          * 
-         * @param uid The uid for which the event listeners will be removed.
+         * @param {string} uid The uid for which the event listeners will be removed.'
+         * 
+         * @returns {void}
          */
         dispose(uid: string): void;
 
         /**
+         * @name on
+         * @memberof plat.events.IEventManagerStatic
+         * @kind function
+         * @access public
+         * @static
+         * @variation 0
+         * 
+         * @description
          * Registers a listener for the beforeNavigate Event. The listener will be called when the beforeNavigate 
          * event is propagating over the given uid. Any number of listeners can exist for a single event name. The 
          * listener can chose to cancel the event using ev.cancel(), preventing any navigation as well as further 
          * calls to event listeners.
          * 
-         * @param uid A unique id to associate with the object registering the listener.
-         * @param eventName='beforeNavigate' Specifies that this is a listener for the beforeNavigate event.
-         * @param listener The method called when the beforeNavigate event is fired.
-         * @param context Optional context with which the listener will be bound.
-         * @returns {IRemoveListener} A method for removing the listener.
+         * @param {string} uid A unique id to associate with the object registering the listener.
+         * @param {string} eventName='beforeNavigate' The name of the event to listen to.
+         * @param {(ev: plat.events.INavigationEvent<any>) => void} listener The method called when the event is fired.
+         * @param {any} context? The context with which to call the listener method.
+         * 
+         * @returns {plat.IRemoveListener} A method for removing the listener.
          */
         on(uid: string, eventName: 'beforeNavigate',
             listener: (ev: INavigationEvent<any>) => void, context?: any): IRemoveListener;
         /**
+         * @name on
+         * @memberof plat.events.IEventManagerStatic
+         * @kind function
+         * @access public
+         * @static
+         * @variation 1
+         * 
+         * @description
          * Registers a listener for the navigating Event. The listener will be called when the navigating 
          * event is propagating over the given uid. Any number of listeners can exist for a single event name.
          * The listener can chose to cancel the event using ev.cancel(), preventing any navigation as well as further 
          * calls to event listeners.
          * 
-         * @param uid A unique id to associate with the object registering the listener.
-         * @param eventName='navigating' Specifies that this is a listener for the navigating event.
-         * @param listener The method called when the navigating event is fired.
-         * @param context Optional context with which the listener will be bound.
-         * @returns {IRemoveListener} A method for removing the listener.
+         * @param {string} uid A unique id to associate with the object registering the listener.
+         * @param {string} eventName='navigating' Specifies that this is a listener for the navigating event.
+         * @param {(ev: plat.events.INavigationEvent<any>) => void} listener The method called when the event is fired.
+         * @param {any} context? The context with which to call the listener method.
+         * 
+         * @returns {plat.IRemoveListener} A method for removing the listener.
          */
         on(uid: string, eventName: 'navigating',
             listener: (ev: INavigationEvent<any>) => void, context?: any): IRemoveListener;
         /**
+         * @name on
+         * @memberof plat.events.IEventManagerStatic
+         * @kind function
+         * @access public
+         * @static
+         * @variation 2
+         * 
+         * @description
          * Registers a listener for the navigated Event. The listener will be called when the navigated 
          * event is propagating over the given uid. Any number of listeners can exist for a single event name.
          * The listener cannot cancel the event.
          * 
-         * @param uid A unique id to associate with the object registering the listener.
-         * @param eventName='navigated' Specifies that this is a listener for the navigated event.
-         * @param listener The method called when the navigated event is fired.
-         * @param context Optional context with which the listener will be bound.
-         * @returns {IRemoveListener} A method for removing the listener.
+         * @param {string} uid A unique id to associate with the object registering the listener.
+         * @param {string} eventName='navigated' Specifies that this is a listener for the navigated event.
+         * @param {(ev: plat.events.INavigationEvent<any>) => void} listener The method called when the event is fired.
+         * @param {any} context? The context with which to call the listener method.
+         * 
+         * @returns {plat.IRemoveListener} A method for removing the listener.
          */
         on(uid: string, eventName: 'navigated',
             listener: (ev: INavigationEvent<any>) => void, context?: any): IRemoveListener;
         /**
+         * @name on
+         * @memberof plat.events.IEventManagerStatic
+         * @kind function
+         * @access public
+         * @static
+         * @variation 3
+         * 
+         * @description
          * Registers a listener for a NavigationEvent. The listener will be called when a NavigationEvent is
          * propagating over the given uid. Any number of listeners can exist for a single event name.
          * 
-         * @param uid A unique id to associate with the object registering the listener.
-         * @param eventName The name of the event to listen to.
-         * @param listener The method called when the NavigationEvent is fired.
-         * @param context Optional context with which the listener will be bound.
-         * @returns {IRemoveListener} A method for removing the listener.
+         * @param {string} uid A unique id to associate with the object registering the listener.
+         * @param {string} eventName The name of the event to listen to.
+         * @param {(ev: plat.events.INavigationEvent<any>) => void} listener The method called when the event is fired.
+         * @param {any} context? The context with which to call the listener method.
+         * 
+         * @returns {plat.IRemoveListener} A method for removing the listener.
          */
         on(uid: string, eventName: string, listener: (ev: INavigationEvent<any>) => void,
             context?: any): IRemoveListener;
         /**
+         * @name on
+         * @memberof plat.events.IEventManagerStatic
+         * @kind function
+         * @access public
+         * @static
+         * @variation 4
+         * 
+         * @description
          * Registers a listener for the ready AlmEvent. The ready event will be called when the app 
          * is ready to start.
          * 
-         * @param uid A unique id to associate with the object registering the listener.
-         * @param eventName='ready' Specifies that the listener is for the ready event.
-         * @param listener The method called when the app is ready to start.
-         * @param context Optional context with which the listener will be bound.
-         * @returns {IRemoveListener} A method for removing the listener.
+         * @param {string} uid A unique id to associate with the object registering the listener.
+         * @param {string} eventName='ready' Specifies that the listener is for the ready event.
+         * @param {(ev: plat.events.ILifecycleEvent) => void} listener The method called when the event is fired.
+         * @param {any} context? The context with which to call the listener method.
+         * 
+         * @returns {plat.IRemoveListener} A method for removing the listener.
          */
         on(uid: string, eventName: 'ready', listener: (ev: ILifecycleEvent) => void,
             context?: any): IRemoveListener;
         /**
+         * @name on
+         * @memberof plat.events.IEventManagerStatic
+         * @kind function
+         * @access public
+         * @static
+         * @variation 5
+         * 
+         * @description
          * Registers a listener for the suspend AlmEvent. The listener will be called when an app 
          * is being suspended.
          * 
-         * @param uid A unique id to associate with the object registering the listener.
-         * @param eventName='suspend' Specifies the listener is for the suspend event.
-         * @param listener The method called when the suspend event is fired.
-         * @param context Optional context with which the listener will be bound.
-         * @returns {IRemoveListener} A method for removing the listener.
+         * @param {string} uid A unique id to associate with the object registering the listener.
+         * @param {string} eventName='suspend' Specifies the listener is for the suspend event.
+         * @param {(ev: plat.events.ILifecycleEvent) => void} listener The method called when the event is fired.
+         * @param {any} context? The context with which to call the listener method.
+         * 
+         * @returns {plat.IRemoveListener} A method for removing the listener.
          */
         on(uid: string, eventName: 'suspend', listener: (ev: ILifecycleEvent) => void,
             context?: any): IRemoveListener;
         /**
+         * @name on
+         * @memberof plat.events.IEventManagerStatic
+         * @kind function
+         * @access public
+         * @static
+         * @variation 6
+         * 
+         * @description
          * Registers a listener for the resume AlmEvent. The listener will be called when an app 
          * is being resumeed.
          * 
-         * @param uid A unique id to associate with the object registering the listener.
-         * @param eventName='suspend' Specifies the listener is for the resume event.
-         * @param listener The method called when the resume event is fired.
-         * @param context Optional context with which the listener will be bound.
-         * @returns {IRemoveListener} A method for removing the listener.
+         * @param {string} uid A unique id to associate with the object registering the listener.
+         * @param {string} eventName='suspend' Specifies the listener is for the resume event.
+         * @param {(ev: plat.events.ILifecycleEvent) => void} listener The method called when the event is fired.
+         * @param {any} context? The context with which to call the listener method.
+         * 
+         * @returns {plat.IRemoveListener} A method for removing the listener.
          */
         on(uid: string, eventName: 'resume', listener: (ev: ILifecycleEvent) => void,
             context?: any): IRemoveListener;
         /**
+         * @name on
+         * @memberof plat.events.IEventManagerStatic
+         * @kind function
+         * @access public
+         * @static
+         * @variation 7
+         * 
+         * @description
          * Registers a listener for the online AlmEvent. This event fires when the app's network 
          * connection changes to be online.
          * 
-         * @param uid A unique id to associate with the object registering the listener.
-         * @param eventName='online' Specifies the listener is for the online event.
-         * @param listener The method called when the online event is fired.
-         * @param context Optional context with which the listener will be bound.
-         * @returns {IRemoveListener} A method for removing the listener.
+         * @param {string} uid A unique id to associate with the object registering the listener.
+         * @param {string} eventName='online' Specifies the listener is for the online event.
+         * @param {(ev: plat.events.ILifecycleEvent) => void} listener The method called when the event is fired.
+         * @param {any} context? The context with which to call the listener method.
+         * 
+         * @returns {plat.IRemoveListener} A method for removing the listener.
          */
         on(uid: string, eventName: 'online', listener: (ev: ILifecycleEvent) => void,
             context?: any): IRemoveListener;
         /**
+         * @name on
+         * @memberof plat.events.IEventManagerStatic
+         * @kind function
+         * @access public
+         * @static
+         * @variation 8
+         * 
+         * @description
          * Registers a listener for the offline AlmEvent. This event fires when the app's network 
          * connection changes to be offline.
          * 
-         * @param uid A unique id to associate with the object registering the listener.
-         * @param eventName='offline' Specifies the listener is for the offline event.
-         * @param listener The method called when the offline is fired.
-         * @param context Optional context with which the listener will be bound.
-         * @returns {IRemoveListener} A method for removing the listener.
+         * @param {string} uid A unique id to associate with the object registering the listener.
+         * @param {string} eventName='offline' Specifies the listener is for the offline event.
+         * @param {(ev: plat.events.ILifecycleEvent) => void} listener The method called when the event is fired.
+         * @param {any} context? The context with which to call the listener method.
+         * 
+         * @returns {plat.IRemoveListener} A method for removing the listener.
          */
         on(uid: string, eventName: 'offline', listener: (ev: ILifecycleEvent) => void,
             context?: any): IRemoveListener;
         /**
+         * @name on
+         * @memberof plat.events.IEventManagerStatic
+         * @kind function
+         * @access public
+         * @static
+         * @variation 9
+         * 
+         * @description
          * Registers a listener for an AlmEvent. The listener will be called when an AlmEvent is
          * propagating over the given uid. Any number of listeners can exist for a single event name.
          * 
-         * @param uid A unique id to associate with the object registering the listener.
-         * @param eventName The name of the event to listen to.
-         * @param listener The method called when the AlmEvent is fired.
-         * @param context Optional context with which the listener will be bound.
-         * @returns {IRemoveListener} A method for removing the listener.
+         * @param {string} uid A unique id to associate with the object registering the listener.
+         * @param {string} eventName The name of the event to listen to.
+         * @param {(ev: plat.events.ILifecycleEvent) => void} listener The method called when the event is fired.
+         * @param {any} context? The context with which to call the listener method.
+         * 
+         * @returns {plat.IRemoveListener} A method for removing the listener.
          */
         on(uid: string, eventName: string, listener: (ev: ILifecycleEvent) => void,
             context?: any): IRemoveListener;
         /**
+         * @name on
+         * @memberof plat.events.IEventManagerStatic
+         * @kind function
+         * @access public
+         * @static
+         * @variation 10
+         * 
+         * @description
          * Registers a listener for a ErrorEvent. The listener will be called when a ErrorEvent is
          * propagating over the given uid. Any number of listeners can exist for a single event name.
          * 
-         * @param uid A unique id to associate with the object registering the listener.
-         * @param eventName The name of the event to listen to.
-         * @param listener The method called when the ErrorEvent is fired.
-         * @param context Optional context with which the listener will be bound.
-         * @returns {IRemoveListener} A method for removing the listener.
+         * @param {string} uid A unique id to associate with the object registering the listener.
+         * @param {string} eventName The name of the event to listen to.
+         * @param {(ev: plat.events.IErrorEvent<Error>) => void} listener The method called when the event is fired.
+         * @param {any} context? The context with which to call the listener method.
+         * 
+         * @returns {plat.IRemoveListener} A method for removing the listener.
          */
         on(uid: string, eventName: 'error', listener: (ev: IErrorEvent<Error>) => void,
             context?: any): IRemoveListener;
         /**
+         * @name on
+         * @memberof plat.events.IEventManagerStatic
+         * @kind function
+         * @access public
+         * @static
+         * @variation 11
+         * 
+         * @description
          * Registers a listener for a ErrorEvent. The listener will be called when a ErrorEvent is
          * propagating over the given uid. Any number of listeners can exist for a single event name.
          * 
-         * @param uid A unique id to associate with the object registering the listener.
-         * @param eventName The name of the event to listen to.
-         * @param listener The method called when the ErrorEvent is fired.
-         * @param context Optional context with which the listener will be bound.
-         * @returns {IRemoveListener} A method for removing the listener.
+         * @param {string} uid A unique id to associate with the object registering the listener.
+         * @param {string} eventName The name of the event to listen to.
+         * @param {(ev: plat.events.IErrorEvent<any>) => void} listener The method called when the event is fired.
+         * @param {any} context? The context with which to call the listener method.
+         * 
+         * @returns {plat.IRemoveListener} A method for removing the listener.
          */
         on(uid: string, eventName: string, listener: (ev: IErrorEvent<any>) => void,
             context?: any): IRemoveListener;
         /**
+         * @name on
+         * @memberof plat.events.IEventManagerStatic
+         * @kind function
+         * @access public
+         * @static
+         * @variation 12
+         * 
+         * @description
          * Registers a listener for a DispatchEvent. The listener will be called when a DispatchEvent is
          * propagating over the given uid. Any number of listeners can exist for a single event name.
          * 

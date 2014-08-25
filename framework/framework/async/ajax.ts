@@ -1,3 +1,12 @@
+/**
+ * @name async
+ * @memberof plat
+ * @kind namespace
+ * @access public
+ * 
+ * @description
+ * Holds all classes and interfaces related to async components in platypus.
+ */
 module plat.async {
     /**
      * @name HttpRequest

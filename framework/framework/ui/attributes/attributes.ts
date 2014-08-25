@@ -1,3 +1,12 @@
+/**
+ * @name ui
+ * @memberof plat
+ * @kind namespace
+ * @access public
+ * 
+ * @description
+ * Holds all the classes and interfaces related to UI components for platypus.
+ */
 module plat.ui {
     /**
      * The class that stores the information about an Element's attribute NamedNodeMap.
