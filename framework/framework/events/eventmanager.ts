@@ -1078,88 +1078,161 @@ module plat.events {
          * Registers a listener for a DispatchEvent. The listener will be called when a DispatchEvent is
          * propagating over the given uid. Any number of listeners can exist for a single event name.
          * 
-         * @param uid A unique id to associate with the object registering the listener.
-         * @param eventName The name of the event to listen to.
-         * @param listener The method called when the DispatchEvent is fired.
-         * @param context Optional context with which the listener will be bound.
-         * @returns {IRemoveListener} A method for removing the listener.
+         * @param {string} uid A unique id to associate with the object registering the listener.
+         * @param {string} eventName The name of the event to listen to.
+         * @param {(ev: plat.events.IDispatchEventInstance, ...args: any[]) => void} listener The method called when the event is fired.
+         * @param {any} context? The context with which to call the listener method.
+         * 
+         * @returns {plat.IRemoveListener} A method for removing the listener.
          */
         on(uid: string, eventName: string, listener: (ev: IDispatchEventInstance, ...args: any[]) => void,
             context?: any): IRemoveListener;
 
         /**
+         * @name dispatch
+         * @memberof plat.events.IEventManagerStatic
+         * @kind function
+         * @access public
+         * @static
+         *
+         * @description
          * Looks for listeners to a given event name, and fires the listeners using the specified
          * event direction.
-         * 
-         * @static
-         * @param name The name of the event.
-         * @param sender The object sending the event.
-         * @param direction='up' Equivalent to EventManager.direction.UP.
-         * @param args The arguments to send to the listeners.
-         * 
-         * @see EventManager.direction
+         *
+         * @param {string} name The name of the event.
+         * @param {any} sender The object sending the event.
+         * @param {string} direction='up' Equivalent to {@link plat.events.EventManager.UP|EventManager.UP}.
+         * @param {Array<any>} args? The arguments to send to the listeners.
+         *
+         * @returns {void}
          */
         dispatch(name: string, sender: any, direction: 'up', args?: Array<any>): void;
         /**
+         * @name dispatch
+         * @memberof plat.events.IEventManagerStatic
+         * @kind function
+         * @access public
+         * @static
+         *
+         * @description
          * Looks for listeners to a given event name, and fires the listeners using the specified
          * event direction.
-         * 
-         * @static
-         * @param name The name of the event.
-         * @param sender The object sending the event.
-         * @param direction='down' Equivalent to EventManager.direction.DOWN.
-         * @param args The arguments to send to the listeners.
-         * 
-         * @see EventManager.direction
+         *
+         * @param {string} name The name of the event.
+         * @param {any} sender The object sending the event.
+         * @param {string} direction='down' Equivalent to {@link plat.events.EventManager.DOWN|EventManager.DOWN}.
+         * @param {Array<any>} args? The arguments to send to the listeners.
+         *
+         * @returns {void}
          */
         dispatch(name: string, sender: any, direction: 'down', args?: Array<any>): void;
         /**
+         * @name dispatch
+         * @memberof plat.events.IEventManagerStatic
+         * @kind function
+         * @access public
+         * @static
+         *
+         * @description
          * Looks for listeners to a given event name, and fires the listeners using the specified
          * event direction.
-         * 
-         * @static
-         * @param name The name of the event.
-         * @param sender The object sending the event.
-         * @param direction='direct' Equivalent to EventManager.direction.DIRECT.
-         * @param args The arguments to send to the listeners.
-         * 
-         * @see EventManager.direction
+         *
+         * @param {string} name The name of the event.
+         * @param {any} sender The object sending the event.
+         * @param {string} direction='direct' Equivalent to {@link plat.events.EventManager.DIRECT|EventManager.DIRECT}.
+         * @param {Array<any>} args? The arguments to send to the listeners.
+         *
+         * @returns {void}
          */
         dispatch(name: string, sender: any, direction: 'direct', args?: Array<any>): void;
         /**
+         * @name dispatch
+         * @memberof plat.events.IEventManagerStatic
+         * @kind function
+         * @access public
+         * @static
+         *
+         * @description
          * Looks for listeners to a given event name, and fires the listeners using the specified
          * event direction.
-         * 
-         * @static
-         * @param name The name of the event.
-         * @param sender The object sending the event.
-         * @param direction The direction in which to send the event.
-         * @param args The arguments to send to the listeners.
-         * 
-         * @see EventManager.direction
+         *
+         * @param {string} name The name of the event.
+         * @param {any} sender The object sending the event.
+         * @param {string} direction The direction in which to send the event.
+         * @param {Array<any>} args? The arguments to send to the listeners.
+         *
+         * @returns {void}
          */
         dispatch(name: string, sender: any, direction: string, args?: Array<any>): void;
 
         /**
+         * @name hasDirection
+         * @memberof plat.events.IEventManagerStatic
+         * @kind function
+         * @access public
+         * @static
+         * 
+         * @description
          * Returns whether or not the given string is a registered direction.
+         * 
+         * @param {string} direction The direction of the event
+         * 
+         * @returns {boolean} Whether or not the direction is valid.
          */
         hasDirection(direction: string): boolean;
 
         /**
+         * @name sendEvent
+         * @memberof plat.events.IEventManagerStatic
+         * @kind function
+         * @access public
+         * @static
+         * 
+         * @description
          * Determines the appropriate direction and dispatches the event accordingly.
+         * 
+         * @param {plat.events.IDispatchEventInstance} event The {@link plat.events.DispatchEvent|DispatchEvent} to send
+         * @param {Array<any>} args The arguments associated with the event
+         * 
+         * @returns {void}
          */
         sendEvent(event: IDispatchEventInstance, args?: Array<any>): void;
     }
 
     /**
-     * Describes an object that contains event listeners.
+     * @name IEventsListener
+     * @memberof plat.events
+     * @kind interface
+     * @access public
+     * 
+     * @description
+     * An object that contains event listeners.
      */
     interface IEventsListener {
         /**
+         * @name listeners
+         * @memberof plat.events.IEventsListener
+         * @kind property
+         * @access public
+         * @static
+         *
+         * @type {plat.IObject<Array<(ev: plat.events.IDispatchEventInstance, ...args: any[]) => void>>}
+         *
+         * @description
          * An IObject of listener arrays, keyed by event name.
          */
         listeners: IObject<Array<(ev: IDispatchEventInstance, ...args: any[]) => void>>;
+        
         /**
+         * @name context
+         * @memberof plat.events.IEventsListener
+         * @kind property
+         * @access public
+         * @static
+         *
+         * @type {any}
+         *
+         * @description
          * The context with which to call each event listener.
          */
         context: any;
