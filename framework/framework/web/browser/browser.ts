@@ -145,7 +145,7 @@
 
         /**
          * @name constructor
-         * @memberof plat.web.Router
+         * @memberof plat.web.Browser
          * @kind function
          * @access public
          * 

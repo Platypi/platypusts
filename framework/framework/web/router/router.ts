@@ -972,6 +972,7 @@
          * 
          * @type {string}
          * 
+         * @description
          * This property will always exist and will be equal to the full
          * route for navigation (only the path from root, not including 
          * the query string).
@@ -986,6 +987,7 @@
          * 
          * @type {string}
          * 
+         * @description
          * An object containing query string key/value pairs.
          */
         query?: any;
