@@ -1,6 +1,6 @@
 ﻿module plat.events {
     /**
-     * @name DispatchEvent
+     * @name ErrorEvent
      * @memberof plat.events
      * @kind class
      * 
@@ -81,6 +81,8 @@
          * @param {any} sender The sender of the event.
          * @param {string} direction='direct' Equivalent to {@link plat.events.EventManager.DIRECT|EventManager.DIRECT}.
          * @param {E} error The error that occurred, resulting in the event.
+         * 
+         * @returns {void}
          */
         initialize(name: string, sender: any, direction?: 'direct', error?: E): void;
         /**
@@ -96,6 +98,8 @@
          * @param {any} sender The sender of the event.
          * @param {string} direction This is always a direct event.
          * @param {E} error The error that occurred, resulting in the event.
+         * 
+         * @returns {void}
          */
         initialize(name: string, sender: any, direction?: string, error?: E): void;
         initialize(name: string, sender: any, direction?: string, error?: E) {
@@ -146,9 +150,9 @@
     }
 
     /**
-     * @name DispatchEvent
+     * @name IErrorEvent
      * @memberof plat.events
-     * @kind class
+     * @kind interface
      * 
      * @extends {plat.events.IDispatchEventInstance}
      * 
@@ -187,6 +191,8 @@
          * @param {any} sender The sender of the event.
          * @param {string} direction='direct' Equivalent to {@link plat.events.EventManager.DIRECT|EventManager.DIRECT}.
          * @param {E} error The error that occurred, resulting in the event.
+         * 
+         * @returns {void}
          */
         initialize(name: string, sender: any, direction?: 'direct', error?: E): void;
         /**
@@ -202,6 +208,8 @@
          * @param {any} sender The sender of the event.
          * @param {string} direction This is always a direct event.
          * @param {E} error The error that occurred, resulting in the event.
+         * 
+         * @returns {void}
          */
         initialize(name: string, sender: any, direction?: string, error?: E): void;
     }
