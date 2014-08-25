@@ -91,7 +91,8 @@
                 element = WebViewControl.descriptionElement = <HTMLMetaElement>$document.head.querySelector('meta[name="description"]');
 
                 if (!isNode(element)) {
-                    element = WebViewControl.descriptionElement = <HTMLMetaElement>$document.head.appendChild($document.createElement('meta'));
+                    element = WebViewControl.descriptionElement =
+                        <HTMLMetaElement>$document.head.appendChild($document.createElement('meta'));
                     element.setAttribute('name', 'description');
                 }
             }
