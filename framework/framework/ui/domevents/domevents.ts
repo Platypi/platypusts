@@ -2064,8 +2064,7 @@
                 return;
             }
 
-            var remover: IRemoveListener,
-                $document: Document;
+            var remover: IRemoveListener;
             switch (nodeName.toLowerCase()) {
                 case 'input':
                     switch (target.type) {
@@ -2082,9 +2081,8 @@
                             if (isFunction(focusedElement.blur)) {
                                 focusedElement.blur();
                             }
-                            $document = this.$Document;
                             postpone(() => {
-                                if ($document.body.contains(target)) {
+                                if (this.$Document.body.contains(target)) {
                                     target.click();
                                 }
                             });
@@ -2108,9 +2106,8 @@
                     if (isFunction(focusedElement.blur)) {
                         focusedElement.blur();
                     }
-                    $document = this.$Document;
                     postpone(() => {
-                        if ($document.body.contains(target)) {
+                        if (this.$Document.body.contains(target)) {
                             target.click();
                         }
                     });
@@ -2129,6 +2126,11 @@
                     if (isFunction(focusedElement.blur)) {
                         focusedElement.blur();
                     }
+                    postpone(() => {
+                        if (this.$Document.body.contains(target) && isFunction(target.click)) {
+                            target.click();
+                        }
+                    });
                     break;
             }
 
