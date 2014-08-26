@@ -1,6 +1,16 @@
 /* tslint:disable:no-unused-variable */
 /**
- * An object used to create ITokenDetails for every operator.
+ * @name OPERATORS
+ * @memberof plat.expressions
+ * @kind property
+ * @access private
+ * @static
+ * @readonly
+ * 
+ * @type {plat.IObject<plat.expressions.ITokenDetails>}
+ * 
+ * @description
+ * An object used to create {@link plat.expressions.ITokenDetails|ITokenDetails} for every operator.
  */
 var OPERATORS: plat.IObject<plat.expressions.ITokenDetails> = {
     'u+': {
@@ -228,7 +238,17 @@ var OPERATORS: plat.IObject<plat.expressions.ITokenDetails> = {
 };
 
 /**
- * An object used to create ITokenDetails for every accessor.
+ * @name ACCESSORS
+ * @memberof plat.expressions
+ * @kind property
+ * @access private
+ * @static
+ * @readonly
+ * 
+ * @type {plat.IObject<plat.expressions.ITokenDetails>}
+ * 
+ * @description
+ * An object used to create {@link plat.expressions.ITokenDetails|ITokenDetails} for every accessor.
  */
 var ACCESSORS: plat.IObject<plat.expressions.ITokenDetails> = {
     '()': { precedence: 2, associativity: null, fn: null },
@@ -238,7 +258,17 @@ var ACCESSORS: plat.IObject<plat.expressions.ITokenDetails> = {
 };
 
 /**
- * An object used to create ITokenDetails for every delimiter.
+ * @name DELIMITERS
+ * @memberof plat.expressions
+ * @kind property
+ * @access private
+ * @static
+ * @readonly
+ * 
+ * @type {plat.IObject<plat.expressions.ITokenDetails>}
+ * 
+ * @description
+ * An object used to create {@link plat.expressions.ITokenDetails|ITokenDetails} for every delimiter.
  */
 var DELIMITERS: plat.IObject<plat.expressions.ITokenDetails> = {
     '{': { precedence: 1, associativity: null, fn: null },
@@ -254,6 +284,16 @@ var DELIMITERS: plat.IObject<plat.expressions.ITokenDetails> = {
 };
 
 /**
+ * @name KEYWORDS
+ * @memberof plat.expressions
+ * @kind property
+ * @access private
+ * @static
+ * @readonly
+ * 
+ * @type {plat.IObject<plat.expressions.ITokenDetails>}
+ * 
+ * @description
  * An object used to get literal values from string values of false, true, and undefined
  */
 var KEYWORDS: plat.IObject<any> = {
@@ -264,10 +304,18 @@ var KEYWORDS: plat.IObject<any> = {
 };
 
 /**
- * Checks if a string is in the DELIMITERS array.
+ * @name isDelimiter
+ * @memberof plat.expressions
+ * @kind function
+ * @access private
+ * @static
  * 
- * @param key The string to index into the DELIMITERS array.
- * @returns {Boolean}
+ * @description
+ * Checks if a string is in the {@link plat.expressions.DELIMITERS|DELIMITERS} array.
+ * 
+ * @param {string} key The string to index into the DELIMITERS array.
+ * 
+ * @returns {boolean} Whether or not the key is a delimiter.
  */
 function isDelimiter(key: string): boolean {
     return !isNull(DELIMITERS[key]);
@@ -275,10 +323,18 @@ function isDelimiter(key: string): boolean {
 
 
 /**
- * Checks if a string is in the ACCESSORS array.
+ * @name isAccessor
+ * @memberof plat.expressions
+ * @kind function
+ * @access private
+ * @static
  * 
- * @param key The string to index into the ACCESSORS array.
- * @returns {Boolean}
+ * @description
+ * Checks if a string is in the {@link plat.expressions.ACCESSORS|ACCESSORS} array.
+ * 
+ * @param {string} key The string to index into the ACCESSORS array.
+ * 
+ * @returns {boolean} Whether or not the key is a accessor.
  */
 function isAccessor(key: string): boolean {
     return !isNull(ACCESSORS[key]);
@@ -286,10 +342,18 @@ function isAccessor(key: string): boolean {
 
 
 /**
- * Checks if a string is in the OPERATORS array.
+ * @name isOperator
+ * @memberof plat.expressions
+ * @kind function
+ * @access private
+ * @static
  * 
- * @param key The string to index into the OPERATORS array.
- * @returns {Boolean}
+ * @description
+ * Checks if a string is in the {@link plat.expressions.OPERATORS|OPERATORS} array.
+ * 
+ * @param {string} key The string to index into the OPERATORS array.
+ * 
+ * @returns {boolean} Whether or not the key is a operator.
  */
 function isOperator(key: string): boolean {
     return !isNull(OPERATORS[key]);
@@ -297,10 +361,18 @@ function isOperator(key: string): boolean {
 
 
 /**
- * Checks if a string is in the KEYWORDS array.
+ * @name isKeyword
+ * @memberof plat.expressions
+ * @kind function
+ * @access private
+ * @static
  * 
- * @param key The string to index into the KEYWORDS array.
- * @returns {Boolean}
+ * @description
+ * Checks if a string is in the {@link plat.expressions.KEYWORDS|KEYWORDS} array.
+ * 
+ * @param {string} key The string to index into the KEYWORDS array.
+ * 
+ * @returns {boolean} Whether or not the key is a keyword.
  */
 function isKeyword(key: string): boolean {
     return !isUndefined(KEYWORDS[key]);
