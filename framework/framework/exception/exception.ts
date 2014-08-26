@@ -1,33 +1,66 @@
 module plat {
     /**
+     * @name Exception
+     * @memberof plat
+     * @kind class
+     * @access public
+     * 
+     * @description
      * Manages the throwing and consuming of errors and warnings.
      */
     export class Exception {
         /**
+         * @name warn
+         * @memberof plat.Exception
+         * @kind function
+         * @access public
+         * @static
+         * 
+         * @description
          * Method for sending a warning to all listeners. Will 
          * not throw an error.
          * 
-         * @param message The message to be sent to the listeners.
-         * @param type Denotes the type of fatal exception.
+         * @param {string} message The message to be sent to the listeners.
+         * @param {number} type? Denotes the type of fatal exception.
+         * 
+         * @returns {void}
          */
         static warn(message: string, type?: number): void {
             raise(message, type, false);
         }
 
         /**
+         * @name fatal
+         * @memberof plat.Exception
+         * @kind function
+         * @access public
+         * @static
+         * 
+         * @description
          * Method for sending a fatal error to all listeners. Will
          * throw an error.
          * 
-         * @param error The Error to be sent to all the listeners.
-         * @param type Denotes the type of fatal exception. 
+         * @param {Error} error The Error to be sent to all the listeners.
+         * @param {number} type? Denotes the type of fatal exception. 
+         * 
+         * @returns {void}
          */
         static fatal(error: Error, type?: number): void;
         /**
+         * @name fatal
+         * @memberof plat.Exception
+         * @kind function
+         * @access public
+         * @static
+         * 
+         * @description
          * Method for sending a fatal message to all listeners. Will
          * throw an error.
          * 
-         * @param message The message to be sent to all the listeners.
-         * @param type Denotes the type of fatal exception.
+         * @param {string} message The message to be sent to all the listeners.
+         * @param {number} type? Denotes the type of fatal exception. 
+         * 
+         * @returns {void}
          */
         static fatal(message: string, type?: number): void;
         static fatal(message: any, type?: number) {
@@ -35,55 +68,197 @@ module plat {
         }
 
         /**
-         * Exception Type
+         * @name PARSE
+         * @memberof plat.Exception
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         * 
+         * @type {number}
+         * 
+         * @description
+         * Exception Type for parsing exceptions
          */
         static PARSE = 0;
+
         /**
-         * Exception Type
+         * @name COMPILE
+         * @memberof plat.Exception
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         * 
+         * @type {number}
+         * 
+         * @description
+         * Exception Type for compiling exceptions
          */
         static COMPILE = 1;
+
         /**
-         * Exception Type
+         * @name BIND
+         * @memberof plat.Exception
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         * 
+         * @type {number}
+         * 
+         * @description
+         * Exception Type for binding exceptions
          */
         static BIND = 2;
+
         /**
-         * Exception Type
+         * @name NAME
+         * @memberof plat.Exception
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         * 
+         * @type {number}
+         * 
+         * @description
+         * Exception Type for name exceptions
          */
         static NAME = 3;
+
         /**
-         * Exception Type
+         * @name NAVIGATION
+         * @memberof plat.Exception
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         * 
+         * @type {number}
+         * 
+         * @description
+         * Exception Type for navigation exceptions
          */
         static NAVIGATION = 4;
+
         /**
-         * Exception Type
+         * @name TEMPLATE
+         * @memberof plat.Exception
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         * 
+         * @type {number}
+         * 
+         * @description
+         * Exception Type for template exceptions
          */
         static TEMPLATE = 5;
+
         /**
-         * Exception Type
+         * @name AJAX
+         * @memberof plat.Exception
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         * 
+         * @type {number}
+         * 
+         * @description
+         * Exception Type for ajax exceptions
          */
         static AJAX = 6;
+
         /**
-         * Exception Type
+         * @name CONTEXT
+         * @memberof plat.Exception
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         * 
+         * @type {number}
+         * 
+         * @description
+         * Exception Type for context exceptions
          */
         static CONTEXT = 7;
+
         /**
-         * Exception Type
+         * @name EVENT
+         * @memberof plat.Exception
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         * 
+         * @type {number}
+         * 
+         * @description
+         * Exception Type for event exceptions
          */
         static EVENT = 8;
+
         /**
-         * Exception Type
+         * @name INJECTABLE
+         * @memberof plat.Exception
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         * 
+         * @type {number}
+         * 
+         * @description
+         * Exception Type for injectable exceptions
          */
         static INJECTABLE = 9;
+
         /**
-         * Exception Type
+         * @name COMPAT
+         * @memberof plat.Exception
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         * 
+         * @type {number}
+         * 
+         * @description
+         * Exception Type for compat exceptions
          */
         static COMPAT = 10;
+
         /**
-         * Exception Type
+         * @name PROMISE
+         * @memberof plat.Exception
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         * 
+         * @type {number}
+         * 
+         * @description
+         * Exception Type for promise exceptions
          */
         static PROMISE = 11;
+
         /**
-         * Animation Type
+         * @name ANIMATION
+         * @memberof plat.Exception
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         * 
+         * @type {number}
+         * 
+         * @description
+         * Exception Type for animation exceptions
          */
         static ANIMATION = 12;
     }
@@ -98,106 +273,374 @@ module plat {
     register.injectable(__ExceptionStatic, IExceptionStatic, null, __STATIC);
 
     /**
-     * The intended external interface for the '$ExceptionStatic' injectable.
+     * @name IExceptionStatic
+     * @memberof plat
+     * @kind interface
+     * @access public
+     * 
+     * @description
+     * Manages the throwing and consuming of errors and warnings.
      */
     export interface IExceptionStatic {
         /**
-         * Method for sending a warning to all listeners. Will
+         * @name warn
+         * @memberof plat.IExceptionStatic
+         * @kind function
+         * @access public
+         * @static
+         * 
+         * @description
+         * Method for sending a warning to all listeners. Will 
          * not throw an error.
          * 
-         * @param message The message to be sent to the listeners.
-         * @param type Denotes the type of fatal exception.
+         * @param {string} message The message to be sent to the listeners.
+         * @param {number} type? Denotes the type of fatal exception.
+         * 
+         * @returns {void}
          */
         warn(message: string, type?: number): void;
 
         /**
+         * @name fatal
+         * @memberof plat.IExceptionStatic
+         * @kind function
+         * @access public
+         * @static
+         *
+         * @description
          * Method for sending a fatal error to all listeners. Will
          * throw an error.
-         * 
-         * @param error The Error to be sent to all the listeners.
-         * @param type Denotes the type of fatal exception.
+         *
+         * @param {Error} error The Error to be sent to all the listeners.
+         * @param {number} type? Denotes the type of fatal exception.
+         *
+         * @returns {void}
          */
         fatal(error: Error, type?: number): void;
         /**
+         * @name fatal
+         * @memberof plat.IExceptionStatic
+         * @kind function
+         * @access public
+         * @static
+         *
+         * @description
          * Method for sending a fatal message to all listeners. Will
          * throw an error.
-         * 
-         * @param message The message to be sent to all the listeners.
-         * @param type Denotes the type of fatal exception.
+         *
+         * @param {string} message The message to be sent to all the listeners.
+         * @param {number} type? Denotes the type of fatal exception.
+         *
+         * @returns {void}
          */
         fatal(message: string, type?: number): void;
 
         /**
-         * Exception Type
+         * @name PARSE
+         * @memberof plat.IExceptionStatic
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         * 
+         * @type {number}
+         * 
+         * @description
+         * Exception Type for parsing exceptions
          */
         PARSE: number;
+
         /**
-         * Exception Type
+         * @name COMPILE
+         * @memberof plat.IExceptionStatic
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         *
+         * @type {number}
+         *
+         * @description
+         * Exception Type for compiling exceptions
          */
         COMPILE: number;
+
         /**
-         * Exception Type
+         * @name BIND
+         * @memberof plat.IExceptionStatic
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         *
+         * @type {number}
+         *
+         * @description
+         * Exception Type for binding exceptions
          */
         BIND: number;
+
         /**
-         * Exception Type
+         * @name NAME
+         * @memberof plat.IExceptionStatic
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         *
+         * @type {number}
+         *
+         * @description
+         * Exception Type for name exceptions
          */
         NAME: number;
+
         /**
-         * Exception Type
+         * @name NAVIGATION
+         * @memberof plat.IExceptionStatic
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         *
+         * @type {number}
+         *
+         * @description
+         * Exception Type for navigation exceptions
          */
         NAVIGATION: number;
+
         /**
-         * Exception Type
+         * @name TEMPLATE
+         * @memberof plat.IExceptionStatic
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         *
+         * @type {number}
+         *
+         * @description
+         * Exception Type for template exceptions
          */
         TEMPLATE: number;
+
         /**
-         * Exception Type
+         * @name AJAX
+         * @memberof plat.IExceptionStatic
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         *
+         * @type {number}
+         *
+         * @description
+         * Exception Type for ajax exceptions
          */
         AJAX: number;
+
         /**
-         * Exception Type
+         * @name CONTEXT
+         * @memberof plat.IExceptionStatic
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         *
+         * @type {number}
+         *
+         * @description
+         * Exception Type for context exceptions
          */
         CONTEXT: number;
+
         /**
-         * Exception Type
+         * @name EVENT
+         * @memberof plat.IExceptionStatic
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         *
+         * @type {number}
+         *
+         * @description
+         * Exception Type for event exceptions
          */
         EVENT: number;
+
         /**
-         * Exception Type
+         * @name INJECTABLE
+         * @memberof plat.IExceptionStatic
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         *
+         * @type {number}
+         *
+         * @description
+         * Exception Type for injectable exceptions
          */
         INJECTABLE: number;
+
         /**
-         * Exception Type
+         * @name COMPAT
+         * @memberof plat.IExceptionStatic
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         *
+         * @type {number}
+         *
+         * @description
+         * Exception Type for compat exceptions
          */
         COMPAT: number;
+
         /**
-         * Exception Type
+         * @name PROMISE
+         * @memberof plat.IExceptionStatic
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         *
+         * @type {number}
+         *
+         * @description
+         * Exception Type for promise exceptions
          */
         PROMISE: number;
+
         /**
-         * Animation Type
+         * @name ANIMATION
+         * @memberof plat.IExceptionStatic
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         *
+         * @type {number}
+         *
+         * @description
+         * Exception Type for animation exceptions
          */
         ANIMATION: number;
     }
 
-    class PlatException {
+    /**
+     * @name PlatException
+     * @memberof plat
+     * @kind class
+     * @exported false
+     * @access private
+     * 
+     * @implements {Error}
+     * 
+     * @description
+     * A class for exceptions with platypus-specific names
+     */
+    class PlatException implements Error {
+        /**
+         * @name constructor
+         * @memberof plat.PlatException
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Creates a new {@link plat.PlatException|PlatException}
+         * 
+         * @param {string} message The message for the exception
+         * @param {string} name The name of the exception
+         * 
+         * @returns {PlatException} The new exception object.
+         */
         constructor(public message: string, public name: string) { }
     }
 
-    class PlatError {
-        message: string;
+    /**
+     * @name PlatError
+     * @memberof plat
+     * @kind class
+     * @exported false
+     * @access private
+     * 
+     * @implements {Error}
+     * 
+     * @description
+     * A class for errors with platypus-specific names
+     */
+    class PlatError implements Error {
+        /**
+         * @name name
+         * @memberof plat.PlatError
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * The name of the error.
+         */
         name = 'PlatError';
-        constructor(message?: string) {
+
+        /**
+         * @name constructor
+         * @memberof plat.PlatError
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Creates a new {@link plat.PlatError|PlatError}
+         * 
+         * @param {string} message? The message for the exception
+         * 
+         * @returns {PlatError} The new error object.
+         */
+        constructor(public message?: string) {
             this.message = message || '';
         }
     }
 
-    function setPrototypes(platError?: any): void {
+    /**
+     * @name setPrototypes
+     * @memberof plat
+     * @kind function
+     * @access private
+     * @exported false
+     * 
+     * @description
+     * Sets the {@link plat.PlatException|PlatException} and {@link plat.PlatError|PlatError} prototypes to the passed in Error type
+     * 
+     * @typeparam {Error} T The type of platError.
+     * 
+     * @param {T} platError The prototype of the Error.
+     * 
+     * @returns {void}
+     */
+    function setPrototypes<T extends Error>(platError?: T): void {
         PlatError.prototype = platError || Error.prototype;
         PlatException.prototype = new PlatError();
     }
 
+    /**
+     * @name raise
+     * @memberof plat
+     * @kind function
+     * @access private
+     * @exported false
+     * 
+     * @description
+     * Dispatches error events, and throws an Error if it is fatal.
+     * 
+     * @param {any} message Either a string or error to raise.
+     * @param {boolean} isFatal? Whether or not the error is fatal.
+     * 
+     * @returns {void}
+     */
     function raise(message: any, type: number, isFatal?: boolean): void {
         var error: Error;
 
