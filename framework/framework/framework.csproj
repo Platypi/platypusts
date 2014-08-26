@@ -96,61 +96,6 @@
     <TypeScriptCompile Include="web\urlutils\urlutils.ts" />
     <TypeScriptCompile Include="window\window.ts" />
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="css\animations.css">
-      <DependentUpon>animations.less</DependentUpon>
-    </Content>
-    <Content Include="css\animations.min.css">
-      <DependentUpon>animations.css</DependentUpon>
-    </Content>
-    <Content Include="css\media.css">
-      <DependentUpon>media.less</DependentUpon>
-    </Content>
-    <Content Include="css\media.min.css">
-      <DependentUpon>media.css</DependentUpon>
-    </Content>
-    <Content Include="css\mixins.css">
-      <DependentUpon>mixins.less</DependentUpon>
-    </Content>
-    <Content Include="css\mixins.min.css">
-      <DependentUpon>mixins.css</DependentUpon>
-    </Content>
-    <Content Include="css\platypus.css">
-      <DependentUpon>platypus.less</DependentUpon>
-    </Content>
-    <Content Include="css\platypus.less" />
-    <Content Include="css\platypus.min.css">
-      <DependentUpon>platypus.css</DependentUpon>
-    </Content>
-    <Content Include="css\variables.css">
-      <DependentUpon>variables.less</DependentUpon>
-    </Content>
-    <Content Include="css\variables.min.css">
-      <DependentUpon>variables.css</DependentUpon>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="css\mixins.less" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="css\variables.less" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="css\animations.less" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="css\media.less" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="css\platypus.css.map">
-      <DependentUpon>platypus.css</DependentUpon>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="css\mixins.css.map">
-      <DependentUpon>mixins.css</DependentUpon>
-    </Content>
-  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
