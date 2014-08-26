@@ -304,6 +304,10 @@ function removeNode(node: Node): void {
 }
 
 function addClass(element: HTMLElement, className: string): void {
+    if (!isString(className) || className === '') {
+        return;
+    }
+
     if (isUndefined(element.classList)) {
         if (isEmpty(element.className)) {
             element.className = className;
@@ -318,6 +322,10 @@ function addClass(element: HTMLElement, className: string): void {
 }
 
 function removeClass(element: HTMLElement, className: string): void {
+    if (!isString(className) || className === '') {
+        return;
+    }
+
     if (isUndefined(element.classList)) {
         if (element.className === className) {
             element.className = '';
@@ -333,6 +341,10 @@ function removeClass(element: HTMLElement, className: string): void {
 }
 
 function toggleClass(element: HTMLElement, className: string): void {
+    if (!isString(className) || className === '') {
+        return;
+    }
+
     if (isUndefined(element.classList)) {
         var name = element.className;
         if (name === '') {
@@ -356,6 +368,10 @@ function toggleClass(element: HTMLElement, className: string): void {
 }
 
 function hasClass(element: HTMLElement, className: string): boolean {
+    if (!isString(className) || className === '') {
+        return;
+    }
+
     if (isUndefined(element.classList)) {
         var name = element.className;
         if (name === '') {
