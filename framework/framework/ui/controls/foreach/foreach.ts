@@ -645,15 +645,16 @@ module plat.ui.controls {
          * @param {number} startNode The starting childNode of the ForEach to animate
          * @param {number} endNode The ending childNode of the ForEach to animate
          * @param {string} key The animation key/type
-         * @param {boolean} cancel Whether or not the animation should cancel all current animations
+         * @param {boolean} cancel? Whether or not the animation should cancel all current animations. 
+         * Defaults to true.
          * 
          * @returns {plat.ui.IAnimationThenable<void>} A promise that resolves when all animations are complete.
          */
-        _animateItems(startNode: number, endNode: number, key: string, cancel: boolean = true): IAnimationThenable<void> {
+        _animateItems(startNode: number, endNode: number, key: string, cancel?: boolean): IAnimationThenable<void> {
             var currentAnimations = this.__currentAnimations,
                 length = currentAnimations.length;
 
-            if (length === 0 || !cancel) {
+            if (length === 0 || cancel === false) {
                 return this.__handleAnimation(startNode, endNode, key);
             }
 
