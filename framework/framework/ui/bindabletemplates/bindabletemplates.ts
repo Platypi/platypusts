@@ -341,7 +341,7 @@ module plat.ui {
          * easily insert the template into the DOM (without iterating over childNodes). This object
          * may contain a template promise.
          */
-        templates: {};
+        templates: IObject<async.IThenable<DocumentFragment>>;
 
         /**
          * Method for linking a new template to a data context and returning a clone of the template, 
