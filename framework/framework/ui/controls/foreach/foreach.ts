@@ -58,7 +58,7 @@ module plat.ui.controls {
          * @type {number}
          * 
          * @description
-         * The load priority of the control (needs to load before plat-bind).
+         * The load priority of the control (needs to load before a {@link plat.controls.Bind|Bind} control).
          */
         priority = 120;
 
