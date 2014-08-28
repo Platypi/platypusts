@@ -1452,7 +1452,7 @@ module plat.async {
          * The constructor method for the {@link plat.async.AjaxPromise}.
          * 
          * @param {plat.async.IAjaxResolveFunction} resolveFunction The promise resolve function.
-         * @param promise The promise object to allow for cancelling the {@link plat.async.AjaxPromise}.
+         * @param {any} promise The promise object to allow for cancelling the {@link plat.async.AjaxPromise}.
          * 
          * @returns {plat.async.AjaxPromise}
          */
@@ -1512,6 +1512,8 @@ module plat.async {
          * If undefined the next onFulfilled method in the promise chain will be called.
          * @param {(error: plat.async.IAjaxError) => plat.async.IAjaxThenable<U>} onRejected A method called when/if the promise rejects. 
          * If undefined the next onRejected method in the promise chain will be called.
+         * 
+         * @returns {plat.async.IAjaxThenable<U>}
          */
         then<U>(onFulfilled: (success: IAjaxResponse<R>) => U,
             onRejected?: (error: IAjaxError) => any): IAjaxThenable<U>;
@@ -1532,6 +1534,8 @@ module plat.async {
          * If undefined the next onFulfilled method in the promise chain will be called.
          * @param {(error: plat.async.IAjaxError) => U} onRejected A method called when/if the promise rejects. 
          * If undefined the next onRejected method in the promise chain will be called.
+         * 
+         * @returns {plat.async.IAjaxThenable<U>}
          */
         then<U>(onFulfilled: (success: IAjaxResponse<R>) => IThenable<U>,
             onRejected?: (error: IAjaxError) => IThenable<U>): IAjaxThenable<U>;
@@ -1552,6 +1556,8 @@ module plat.async {
          * If undefined the next onFulfilled method in the promise chain will be called.
          * @param {(error: plat.async.IAjaxError) => plat.async.IAjaxThenable<U>} onRejected A method called when/if the promise rejects. 
          * If undefined the next onRejected method in the promise chain will be called.
+         * 
+         * @returns {plat.async.IAjaxThenable<U>}
          */
         then<U>(onFulfilled: (success: IAjaxResponse<R>) => IThenable<U>,
             onRejected?: (error: IAjaxError) => any): IAjaxThenable<U>;
@@ -1572,6 +1578,8 @@ module plat.async {
          * If undefined the next onFulfilled method in the promise chain will be called.
          * @param {(error: plat.async.IAjaxError) => U} onRejected A method called when/if the promise rejects. 
          * If undefined the next onRejected method in the promise chain will be called.
+         * 
+         * @returns {plat.async.IAjaxThenable<U>}
          */
         then<U>(onFulfilled: (success: IAjaxResponse<R>) => U,
             onRejected?: (error: IAjaxError) => IThenable<U>): IAjaxThenable<U>;
@@ -1580,7 +1588,41 @@ module plat.async {
             return <IAjaxThenable<U>><any>super.then<U>(onFulfilled, onRejected);
         }
 
+        /**
+         * @name catch
+         * @memberof plat.async.AjaxPromise
+         * @kind function
+         * @access public
+         * @variation 0
+         * 
+         * @description
+         * A wrapper method for {@link plat.async.Promise|Promise.then(undefined, onRejected);}
+         * 
+         * @typeparam {any} U The return type of the returned promise.
+         * 
+         * @param {(error: any) => plat.async.IAjaxThenable<U>} onRejected A method called when/if the promise rejects. If undefined the next
+         * onRejected method in the promise chain will be called.
+         * 
+         * @returns {plat.async.IAjaxThenable<U>} A promise that resolves with the input type parameter U.
+         */
         catch<U>(onRejected: (error: any) => IAjaxThenable<U>): IAjaxThenable<U>;
+        /**
+         * @name catch
+         * @memberof plat.async.AjaxPromise
+         * @kind function
+         * @access public
+         * @variation 1
+         * 
+         * @description
+         * A wrapper method for {@link plat.async.Promise|Promise.then(undefined, onRejected);}
+         * 
+         * @typeparam {any} U The return type of the returned promise.
+         * 
+         * @param {(error: any) => U} onRejected A method called when/if the promise rejects. If undefined the next
+         * onRejected method in the promise chain will be called.
+         * 
+         * @returns {plat.async.IAjaxThenable<U>} A promise that resolves with the input type parameter U.
+         */
         catch<U>(onRejected: (error: any) => U): IAjaxThenable<U>;
         catch<U>(onRejected: (error: any) => any): IAjaxThenable<U> {
             return <IAjaxThenable<U>><any>super.catch<U>(onRejected);

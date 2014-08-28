@@ -817,7 +817,7 @@ module plat.async {
          * 
          * @param {(success: R) => plat.async.IThenable<U>} onFulfilled A method called when/if the promise fulills. If undefined the next
          * onFulfilled method in the promise chain will be called.
-         * @param {(error: any) => plat.async.IThenable<U>} onRejected A method called when/if the promise rejects. If undefined the next
+         * @param {(error: any) => plat.async.IThenable<U>} onRejected? A method called when/if the promise rejects. If undefined the next
          * onRejected method in the promise chain will be called.
          * 
          * @returns {plat.async.IThenable<U>} A promise that resolves with the input type parameter U.
@@ -837,7 +837,7 @@ module plat.async {
          * 
          * @param {(success: R) => plat.async.IThenable<U>} onFulfilled A method called when/if the promise fulills. If undefined the next
          * onFulfilled method in the promise chain will be called.
-         * @param {(error: any) => U} onRejected A method called when/if the promise rejects. If undefined the next
+         * @param {(error: any) => U} onRejected? A method called when/if the promise rejects. If undefined the next
          * onRejected method in the promise chain will be called.
          * 
          * @returns {plat.async.IThenable<U>} A promise that resolves with the input type parameter U.
@@ -857,7 +857,7 @@ module plat.async {
          * 
          * @param {(success: R) => U} onFulfilled A method called when/if the promise fulills. If undefined the next
          * onFulfilled method in the promise chain will be called.
-         * @param {(error: any) => plat.async.IThenable<U>} onRejected A method called when/if the promise rejects. If undefined the next
+         * @param {(error: any) => plat.async.IThenable<U>} onRejected? A method called when/if the promise rejects. If undefined the next
          * onRejected method in the promise chain will be called.
          * 
          * @returns {plat.async.IThenable<U>} A promise that resolves with the input type parameter U.
@@ -877,7 +877,7 @@ module plat.async {
          * 
          * @param {(success: R) => U} onFulfilled A method called when/if the promise fulills. If undefined the next
          * onFulfilled method in the promise chain will be called.
-         * @param {(error: any) => U} onRejected A method called when/if the promise rejects. If undefined the next
+         * @param {(error: any) => U} onRejected? A method called when/if the promise rejects. If undefined the next
          * onRejected method in the promise chain will be called.
          * 
          * @returns {plat.async.IThenable<U>} A promise that resolves with the input type parameter U.

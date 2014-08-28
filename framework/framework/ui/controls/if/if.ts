@@ -17,12 +17,12 @@ module plat.ui.controls {
          * @kind property
          * @access public
          * 
-         * @type {plat.ui.IAnimator}
+         * @type {plat.ui.animations.IAnimator}
          * 
          * @description
-         * Reference to the {@link plat.ui.IAnimator|IAnimator} injectable.
+         * Reference to the {@link plat.ui.animations.IAnimator|IAnimator} injectable.
          */
-        $Animator: IAnimator = acquire(__Animator);
+        $Animator: animations.IAnimator = acquire(__Animator);
 
         /**
          * @name options
@@ -107,24 +107,24 @@ module plat.ui.controls {
          * @kind property
          * @access private
          * 
-         * @type {plat.ui.IAnimationThenable<void>}
+         * @type {plat.ui.animations.IAnimationThenable<void>}
          * 
          * @description
          * A promise that resolves when the leave animation is finished.
          */
-        private __leaveAnimation: IAnimationThenable<void>;
+        private __leaveAnimation: animations.IAnimationThenable<void>;
         /**
          * @name __enterAnimation
          * @memberof plat.ui.controls.If
          * @kind property
          * @access private
          * 
-         * @type {plat.ui.IAnimationThenable<void>}
+         * @type {plat.ui.animations.IAnimationThenable<void>}
          * 
          * @description
          * A promise that resolves when the entrance animation is finished.
          */
-        private __enterAnimation: IAnimationThenable<void>;
+        private __enterAnimation: animations.IAnimationThenable<void>;
 
         /**
          * @name constructor

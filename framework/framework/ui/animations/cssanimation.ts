@@ -1,15 +1,64 @@
-﻿module plat.ui {
+﻿module plat.ui.animations {
     /**
+     * @name CssAnimation
+     * @memberof plat.ui.animations
+     * @kind class
+     * 
+     * @extends {plat.ui.animations.BaseAnimation}
+     * @implements {plat.ui.animations.ICssAnimation}
+     * 
+     * @description
      * A class representing a single CSS animation for a single element.
      */
     export class CssAnimation extends BaseAnimation implements ICssAnimation {
+        /**
+         * @name __animationEvents
+         * @memberof plat.ui.animations.CssAnimation
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.IAnimationEvents}
+         * 
+         * @description
+         * A set of browser compatible CSS animation events capable of being listened to.
+         */
         private __animationEvents: IAnimationEvents = this.$Compat.animationEvents;
+        /**
+         * @name __subscribers
+         * @memberof plat.ui.animations.CssAnimation
+         * @kind property
+         * @access public
+         * 
+         * @type {Array<() => void>}
+         * 
+         * @description
+         * A collection of animation event subscriptions used for chaining.
+         */
         private __subscribers: Array<() => void> = [];
+        /**
+         * @name __removeListener
+         * @memberof plat.ui.animations.CssAnimation
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.IRemoveListener}
+         * 
+         * @description
+         * The function to stop listening to the current event/animation in occurrence.
+         */
         private __removeListener: IRemoveListener;
 
         /**
+         * @name dispose
+         * @memberof plat.ui.animations.CssAnimation
+         * @kind function
+         * @access public
+         * 
+         * @description
          * A function for reverting any modifications or changes that may have been made as a 
          * result of this animation.
+         * 
+         * @returns {void}
          */
         dispose(): void {
             if (isFunction(this.__removeListener)) {
@@ -19,43 +68,90 @@
             this.__subscribers = [];
             super.dispose();
         }
-
+        
         /**
+         * @name animationStart
+         * @memberof plat.ui.animations.CssAnimation
+         * @kind function
+         * @access public
+         * 
+         * @description
          * A function to listen to the start of an animation event.
          * 
-         * @param listener The function to call when the animation begins.
+         * @param {() => void} listener The function to call when the animation begins.
+         * 
+         * @returns {plat.ui.animations.ICssAnimation} This instance (for chaining).
          */
         animationStart(listener: () => void): ICssAnimation {
             return this.__addEventListener(this.__animationEvents.$animationStart, listener);
         }
-
+        
         /**
+         * @name transitionStart
+         * @memberof plat.ui.animations.CssAnimation
+         * @kind function
+         * @access public
+         * 
+         * @description
          * A function to listen to the start of a transition event.
          * 
-         * @param listener The function to call when the transition begins.
+         * @param {() => void} listener The function to call when the transition begins.
+         * 
+         * @returns {plat.ui.animations.ICssAnimation} This instance (for chaining).
          */
         transitionStart(listener: () => void): ICssAnimation {
             return this.__addEventListener(this.__animationEvents.$transitionStart, listener);
         }
-
+        
         /**
+         * @name animationEnd
+         * @memberof plat.ui.animations.CssAnimation
+         * @kind function
+         * @access public
+         * 
+         * @description
          * A function to listen to the end of an animation event.
          * 
-         * @param listener The function to call when the animation ends.
+         * @param {() => void} listener The function to call when the animation ends.
+         * 
+         * @returns {plat.ui.animations.ICssAnimation} This instance (for chaining).
          */
         animationEnd(listener: () => void): ICssAnimation {
             return this.__addEventListener(this.__animationEvents.$animationEnd, listener);
         }
-
+        
         /**
+         * @name animationEnd
+         * @memberof plat.ui.animations.CssAnimation
+         * @kind function
+         * @access public
+         * 
+         * @description
          * A function to listen to the end of a transition event.
          * 
-         * @param listener The function to call when the transition ends.
+         * @param {() => void} listener The function to call when the transition ends.
+         * 
+         * @returns {plat.ui.animations.ICssAnimation} This instance (for chaining).
          */
         transitionEnd(listener: () => void): ICssAnimation {
             return this.__addEventListener(this.__animationEvents.$transitionEnd, listener);
         }
-
+        
+        /**
+         * @name __addEventListener
+         * @memberof plat.ui.animations.CssAnimation
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Adds the listener for the desired event and handles subscription management and 
+         * chaining.
+         * 
+         * @param {string} event The event to subscribe to.
+         * @param {() => void} listener The function to call when the event fires.
+         * 
+         * @returns {plat.ui.animations.ICssAnimation} This instance (for chaining).
+         */
         private __addEventListener(event: string, listener: () => void): ICssAnimation {
             var subscribers = this.__subscribers,
                 subscriber = () => {
@@ -87,36 +183,75 @@
             return this;
         }
     }
-
+    
     /**
+     * @name ICssAnimation
+     * @memberof plat.ui.animations
+     * @kind interface
+     * 
+     * @extends {plat.ui.animations.IBaseAnimation}
+     * 
+     * @description
      * Describes an object representing a single CSS animation for a single element.
      */
     export interface ICssAnimation extends IBaseAnimation {
         /**
+         * @name animationStart
+         * @memberof plat.ui.animations.ICssAnimation
+         * @kind function
+         * @access public
+         * 
+         * @description
          * A function to listen to the start of an animation event.
          * 
-         * @param listener The function to call when the animation begins.
+         * @param {() => void} listener The function to call when the animation begins.
+         * 
+         * @returns {plat.ui.animations.ICssAnimation} This instance (for chaining).
          */
         animationStart(listener: () => void): ICssAnimation;
-
+        
         /**
+         * @name transitionStart
+         * @memberof plat.ui.animations.ICssAnimation
+         * @kind function
+         * @access public
+         * 
+         * @description
          * A function to listen to the start of a transition event.
          * 
-         * @param listener The function to call when the transition begins.
+         * @param {() => void} listener The function to call when the transition begins.
+         * 
+         * @returns {plat.ui.animations.ICssAnimation} This instance (for chaining).
          */
         transitionStart(listener: () => void): ICssAnimation;
-
+        
         /**
+         * @name animationEnd
+         * @memberof plat.ui.animations.ICssAnimation
+         * @kind function
+         * @access public
+         * 
+         * @description
          * A function to listen to the end of an animation event.
          * 
-         * @param listener The function to call when the animation ends.
+         * @param {() => void} listener The function to call when the animation ends.
+         * 
+         * @returns {plat.ui.animations.ICssAnimation} This instance (for chaining).
          */
         animationEnd(listener: () => void): ICssAnimation;
-
+        
         /**
+         * @name animationEnd
+         * @memberof plat.ui.animations.ICssAnimation
+         * @kind function
+         * @access public
+         * 
+         * @description
          * A function to listen to the end of a transition event.
          * 
-         * @param listener The function to call when the transition ends.
+         * @param {() => void} listener The function to call when the transition ends.
+         * 
+         * @returns {plat.ui.animations.ICssAnimation} This instance (for chaining).
          */
         transitionEnd(listener: () => void): ICssAnimation;
     }

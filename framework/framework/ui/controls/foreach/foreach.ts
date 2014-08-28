@@ -17,12 +17,12 @@ module plat.ui.controls {
          * @kind property
          * @access public
          * 
-         * @type {plat.ui.IAnimator}
+         * @type {plat.ui.animations.IAnimator}
          * 
          * @description
-         * Reference to the {@link plat.ui.IAnimator|IAnimator} injectable.
+         * Reference to the {@link plat.ui.animations.IAnimator|IAnimator} injectable.
          */
-        $Animator: IAnimator = acquire(__Animator);
+        $Animator: animations.IAnimator = acquire(__Animator);
         /**
          * @name $Promise
          * @memberof plat.ui.controls.ForEach
@@ -119,12 +119,12 @@ module plat.ui.controls {
          * @kind property
          * @access private
          * 
-         * @type {Array<plat.ui.IAnimationThenable<void>>}
+         * @type {Array<plat.ui.animations.IAnimationThenable<void>>}
          * 
          * @description
          * An array to aggregate all current animation promises.
          */
-        private __currentAnimations: Array<IAnimationThenable<void>> = [];
+        private __currentAnimations: Array<animations.IAnimationThenable<void>> = [];
         /**
          * @name __resolveFn
          * @memberof plat.ui.controls.ForEach
@@ -528,7 +528,7 @@ module plat.ui.controls {
         _pop(ev: observable.IArrayMethodInfo<any>): void {
             var blockLength = this._blockLength,
                 startNode: number,
-                animationPromise: plat.ui.IAnimationThenable<void>;
+                animationPromise: plat.ui.animations.IAnimationThenable<void>;
 
             if (blockLength > 0) {
                 startNode = blockLength * ev.newArray.length;
@@ -648,9 +648,9 @@ module plat.ui.controls {
          * @param {boolean} cancel? Whether or not the animation should cancel all current animations. 
          * Defaults to true.
          * 
-         * @returns {plat.ui.IAnimationThenable<void>} A promise that resolves when all animations are complete.
+         * @returns {plat.ui.animations.IAnimationThenable<void>} A promise that resolves when all animations are complete.
          */
-        _animateItems(startNode: number, endNode: number, key: string, cancel?: boolean): IAnimationThenable<void> {
+        _animateItems(startNode: number, endNode: number, key: string, cancel?: boolean): animations.IAnimationThenable<void> {
             var currentAnimations = this.__currentAnimations,
                 length = currentAnimations.length;
 
@@ -658,12 +658,12 @@ module plat.ui.controls {
                 return this.__handleAnimation(startNode, endNode, key);
             }
 
-            var animationPromises: Array<IAnimationThenable<void>> = [];
+            var animationPromises: Array<animations.IAnimationThenable<void>> = [];
             while (length-- > 0) {
                 animationPromises.push(currentAnimations[length].cancel());
             }
 
-            return <IAnimationThenable<void>>this.$Promise.all(animationPromises).then(() => {
+            return <animations.IAnimationThenable<void>>this.$Promise.all(animationPromises).then(() => {
                 return this.__handleAnimation(startNode, endNode, key);
             });
         }
@@ -681,14 +681,14 @@ module plat.ui.controls {
          * @param {number} endNode The ending childNode of the ForEach to animate
          * @param {string} key The animation key/type
          * 
-         * @returns {plat.ui.IAnimationThenable<void>} The last element node's animation promise.
+         * @returns {plat.ui.animations.IAnimationThenable<void>} The last element node's animation promise.
          */
-        private __handleAnimation(startNode: number, endNode: number, key: string): IAnimationThenable<void> {
+        private __handleAnimation(startNode: number, endNode: number, key: string): animations.IAnimationThenable<void> {
             var nodes: Array<Node> = Array.prototype.slice.call(this.element.childNodes, startNode, endNode),
                 node: Node,
                 $animator = this.$Animator,
                 currentAnimations = this.__currentAnimations,
-                animationPromise: IAnimationThenable<void>;
+                animationPromise: animations.IAnimationThenable<void>;
 
             while (nodes.length > 0) {
                 node = nodes.shift();

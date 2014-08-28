@@ -25,12 +25,12 @@ var staticInjectors: plat.dependency.IInjectorObject<plat.dependency.IInjector<a
 /**
  * An IInjectorObject of animations. Can be either CSS or JS implementations.
  */
-var animationInjectors: plat.dependency.IInjectorObject<plat.ui.IBaseAnimation> = {};
+var animationInjectors: plat.dependency.IInjectorObject<plat.ui.animations.IBaseAnimation> = {};
 
 /**
  * An IInjectorObject of animations. Should only contain JS implementations.
  */
-var jsAnimationInjectors: plat.dependency.IInjectorObject<plat.ui.IBaseAnimation> = {};
+var jsAnimationInjectors: plat.dependency.IInjectorObject<plat.ui.animations.IBaseAnimation> = {};
 
 /**
  * @name register
@@ -248,7 +248,7 @@ module plat.register {
      * instantiation.
      * @param animationType The type of animation. Both the intended type and default value are plat.register.animation.CSS.
      */
-    export function animation(name: string, Type: new (...args: any[]) => ui.ICssAnimation,
+    export function animation(name: string, Type: new (...args: any[]) => ui.animations.ICssAnimation,
         dependencies?: Array<any>, animationType?: 'css'): typeof register;
     /**
      * Adds a CSS animation denoted by its name. If you wish to also support legacy browsers, make sure to register a 
@@ -260,7 +260,7 @@ module plat.register {
      * instantiation.
      * @param animationType The type of animation. Both the intended type and default value are plat.register.animation.CSS.
      */
-    export function animation(name: string, Type: new (...args: any[]) => ui.ICssAnimation,
+    export function animation(name: string, Type: new (...args: any[]) => ui.animations.ICssAnimation,
         dependencies?: Array<any>, animationType?: string): typeof register;
     /**
      * Adds a JS animation denoted by its name. If  Intended to be used when JS animation implementations for legacy browsers 
@@ -272,7 +272,7 @@ module plat.register {
      * instantiation.
      * @param animationType The type of animation. The intended type is plat.register.animation.JS.
      */
-    export function animation(name: string, Type: new (...args: any[]) => ui.IJsAnimation,
+    export function animation(name: string, Type: new (...args: any[]) => ui.animations.IJsAnimation,
         dependencies: Array<any>, animationType: 'js'): typeof register;
     /**
      * Adds a JS animation denoted by its name. If  Intended to be used when JS animation implementations for legacy browsers 
@@ -284,9 +284,9 @@ module plat.register {
      * instantiation.
      * @param animationType The type of animation. The intended type is plat.register.animation.JS.
      */
-    export function animation(name: string, Type: new (...args: any[]) => ui.IJsAnimation,
+    export function animation(name: string, Type: new (...args: any[]) => ui.animations.IJsAnimation,
         dependencies: Array<any>, animationType: string): typeof register;
-    export function animation(name: string, Type: new (...args: any[]) => ui.IBaseAnimation,
+    export function animation(name: string, Type: new (...args: any[]) => ui.animations.IBaseAnimation,
         dependencies?: Array<any>, animationType?: string): typeof register {
         if (!isString(animationType)) {
             animationType = __CSS;

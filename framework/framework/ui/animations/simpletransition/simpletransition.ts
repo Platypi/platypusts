@@ -1,22 +1,68 @@
 ﻿module plat.ui.animations {
     /**
-     * A simple Css Animation class that places the 'plat-transition' class on an 
+     * @name SimpleCssAnimation
+     * @memberof plat.ui.animations
+     * @kind class
+     * 
+     * @extends {plat.ui.animations.CssAnimation}
+     * @implements {plat.ui.animations.ISimpleCssTransition}
+     * 
+     * @description
+     * A simple CSS Animation class that places the 'plat-transition' class on an 
      * element, checks for transition properties, and waits for the transition to end.
      */
     export class SimpleCssTransition extends CssAnimation implements ISimpleCssTransition {
+        /**
+         * @name $Window
+         * @memberof plat.ui.animations.SimpleCssTransition
+         * @kind property
+         * @access public
+         * 
+         * @type {Window}
+         * 
+         * @description
+         * Reference to the Window injectable.
+         */
         $Window: Window = acquire(__Window);
 
         /**
+         * @name options
+         * @memberof plat.ui.animations.SimpleCssTransition
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.IObject<string>}
+         * 
+         * @description
          * A JavaScript object with key value pairs for adjusting transition values. 
          * (e.g. { width: '800px' } would set the element's width to 800px.
          */
-        options: plat.IObject<string>;
+        options: IObject<string>;
 
         /**
+         * @name className
+         * @memberof plat.ui.animations.SimpleCssTransition
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
          * The class name added to the animated element.
          */
         className = __SimpleTransition;
 
+        /**
+         * @name initialize
+         * @memberof plat.ui.animations.SimpleCssTransition
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * A function denoting the start of the animation.
+         * 
+         * @returns {void}
+         */
         start(): void {
             var transitionId = this.$Compat.animationEvents.$transition,
                 element = this.element,
@@ -47,13 +93,33 @@
             endFn();
         }
 
+        /**
+         * @name cancel
+         * @memberof plat.ui.animations.SimpleCssTransition
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * A function to be called to let it be known the animation is being cancelled.
+         * 
+         * @returns {void}
+         */
         cancel(): void {
             removeClass(this.element, this.className);
             super.cancel();
         }
 
         /**
-         * Animate the element based on the options passed in
+         * @name _animate
+         * @memberof plat.ui.animations.SimpleCssTransition
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Animate the element based on the options passed in.
+         * 
+         * @returns {boolean} Whether or not the element is going to animate with the options passed in. 
+         * If false, the control should begin cleaning up.
          */
         _animate(): boolean {
             var style = this.element.style || {},
@@ -86,10 +152,29 @@
 
     register.animation(__SimpleTransition, SimpleCssTransition);
 
+    /**
+     * @name ISimpleCssTransition
+     * @memberof plat.ui.animations
+     * @kind interface
+     * 
+     * @extends {plat.ui.animations.ISimpleCssAnimation}
+     * 
+     * @description
+     * An object that allows for transitioned changes to an Element's style based on  
+     * options passed in.
+     */
     export interface ISimpleCssTransition extends ISimpleCssAnimation {
         /**
+         * @name options
+         * @memberof plat.ui.animations.ISimpleCssTransition
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.IObject<string>}
+         * 
+         * @description
          * A JavaScript object with key value pairs for adjusting transition values. 
-         * (e.g. { width: '800px' } would set the element's width to '800px'.
+         * (e.g. { width: '800px' } would set the element's width to 800px.
          */
         options: plat.IObject<string>;
     }

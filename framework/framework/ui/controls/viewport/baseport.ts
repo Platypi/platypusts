@@ -4,8 +4,8 @@
      * @memberof plat.ui.controls
      * @kind class
      * 
-     * @implements {plat.ui.controls.IBaseport}
      * @extends {plat.ui.TemplateControl}
+     * @implements {plat.ui.controls.IBaseport}
      * 
      * @description
      * A {@link plat.ui.TemplateControl|TemplateControl} that acts as a base for all 
@@ -54,12 +54,12 @@
          * @kind property
          * @access public
          * 
-         * @type {plat.ui.IAnimator}
+         * @type {plat.ui.animations.IAnimator}
          * 
          * @description
-         * Reference to the {@link plat.ui.IAnimator|IAnimator} injectable.
+         * Reference to the {@link plat.ui.animations.IAnimator|IAnimator} injectable.
          */
-        $Animator: IAnimator = acquire(__Animator);
+        $Animator: animations.IAnimator = acquire(__Animator);
         /**
          * @name $Promise
          * @memberof plat.ui.controls.Baseport
