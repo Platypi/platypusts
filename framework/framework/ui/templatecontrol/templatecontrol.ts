@@ -725,7 +725,7 @@ module plat.ui {
          * @description
          * Specifies the absolute path from where the context was created to this IControl's context.
          * Used by the {@link plat.observable.ContextManager|ContextManager} for maintaining context parity 
-         * (i.e. 'context.childContextProperty.grandChildContextProperty').
+         * (e.g. 'context.childContextProperty.grandChildContextProperty').
          */
         absoluteContextPath: string = null;
 
@@ -934,8 +934,8 @@ module plat.ui {
          * property can be any property that works with document.createElement(). If the control's element had 
          * attributes (as well as attribute IControls), those attributes will be carried to the swapped element. The default 
          * replaceWith is 'any,' meaning it will default to a 'div' in the case that the control type is used as the 
-         * element's nodename (i.e. <plat-foreach plat-context="..."></plat-foreach>), but will maintain whatever element type 
-         * is used otherwise (i.e. <tr plat-control="plat-foreach" plat-context="..."></tr>).
+         * element's nodename (e.g. <plat-foreach plat-context="..."></plat-foreach>), but will maintain whatever element type 
+         * is used otherwise (e.g. <tr plat-control="plat-foreach" plat-context="..."></tr>).
          */
         replaceWith = 'any';
 
@@ -1484,7 +1484,7 @@ module plat.ui {
          * @description
          * Specifies the absolute path from where the context was created to this IControl's context.
          * Used by the {@link plat.observable.ContextManager|ContextManager} for maintaining context parity 
-         * (i.e. 'context.childContextProperty.grandChildContextProperty').
+         * (e.g. 'context.childContextProperty.grandChildContextProperty').
          */
         absoluteContextPath?: string;
 
@@ -1693,8 +1693,8 @@ module plat.ui {
          * property can be any property that works with document.createElement(). If the control's element had 
          * attributes (as well as attribute IControls), those attributes will be carried to the swapped element. The default 
          * replaceWith is 'any,' meaning it will default to a 'div' in the case that the control type is used as the 
-         * element's nodename (i.e. <plat-foreach plat-context="..."></plat-foreach>), but will maintain whatever element type 
-         * is used otherwise (i.e. <tr plat-control="plat-foreach" plat-context="..."></tr>).
+         * element's nodename (e.g. <plat-foreach plat-context="..."></plat-foreach>), but will maintain whatever element type 
+         * is used otherwise (e.g. <tr plat-control="plat-foreach" plat-context="..."></tr>).
          */
         replaceWith?: string;
 

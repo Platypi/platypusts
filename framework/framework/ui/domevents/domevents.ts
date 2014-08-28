@@ -92,7 +92,7 @@
                 /**
                  * An array of string styles to be placed on an element to allow for the 
                  * best touch experience. In the format 'CSS identifier: value'
-                 * (i.e. 'width : 100px')
+                 * (e.g. 'width : 100px')
                  */
                 styles: [
                     '-moz-user-select: none',
@@ -116,7 +116,7 @@
                  * An array of string styles that block touch action scrolling, zooming, etc. 
                  * Primarily useful on elements such as a canvas.
                  * In the format 'CSS identifier: value'
-                 * (i.e. 'width : 100px')
+                 * (e.g. 'width : 100px')
                  */
                 styles: [
                     '-ms-touch-action: none',
@@ -3740,7 +3740,7 @@
          * @description
          * An array of string styles in the format:
          * CSS identifier : value
-         * (i.e. 'width : 100px')
+         * (e.g. 'width : 100px')
          */
         styles: Array<string>;
     }

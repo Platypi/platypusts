@@ -496,7 +496,7 @@ module plat.expressions {
         /**
          * Looks ahead in the expression until it comes to the ending 
          * character to try and complete a particular sequence 
-         * (i.e. - a string literal).
+         * (e.g. - a string literal).
          * 
          * @param char The starting character
          * @param endChar The ending character

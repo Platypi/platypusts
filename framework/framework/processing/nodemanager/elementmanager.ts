@@ -1018,14 +1018,14 @@ module plat.processing {
                 key = camelCase(node.nodeName),
                 attribute = <Attr>node.node,
                 value = NodeManager.build(node.expressions, parent),
-                attributes: ui.IAttributesInstance,
+                attributes: ui.Attributes,
                 oldValue: any;
 
             for (var i = 0; i < length; ++i) {
-                attributes = controls[i].attributes;
+                attributes = <ui.Attributes>controls[i].attributes;
                 oldValue = (<any>attributes)[key];
                 (<any>attributes)[key] = value;
-                attributes.attributeChanged(key, value, oldValue);
+                attributes._attributeChanged(key, value, oldValue);
             }
 
             if (!this.replace) {

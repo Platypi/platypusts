@@ -1511,12 +1511,12 @@ module plat {
             constructor(public errorCode: number, message?: string) {
                 switch (errorCode) {
                     case 8:
-                        this.message = 'ABORT_ERR: A request was aborted. i.e., through' +
+                        this.message = 'ABORT_ERR: A request was aborted. e.g., through' +
                         ' a call to IDBTransaction.abort.';
                         break;
                     case 4:
                         this.message = 'CONSTRAINT_ERR: A mutation operation in the transaction' +
-                        ' failed because a constraint was not satisfied. i.e., an object,' +
+                        ' failed because a constraint was not satisfied. e.g., an object,' +
                         ' such as an object store or index, already exists and a request attempted' +
                         ' to create a new one.';
                         break;
@@ -1535,7 +1535,7 @@ module plat {
                         break;
                     case 3:
                         this.message = 'NOT_FOUND_ERR: The operation failed because the requested' +
-                        ' database object could not be found; i.e., an object store did not' +
+                        ' database object could not be found; e.g., an object store did not' +
                         ' exist but was being opened.';
                         break;
                     case 11:
@@ -1558,7 +1558,7 @@ module plat {
                     case 1:
                         this.message = 'UNKNOWN_ERR: The operation failed for reasons unrelated' +
                         ' to the database itself, and it is not covered by any other error code --' +
-                        ' i.e., a failure due to disk IO errors.';
+                        ' e.g., a failure due to disk IO errors.';
                         break;
                     case 12:
                         this.message = 'VER_ERR: A request to open a database with a version lower' +

@@ -9,15 +9,61 @@
  */
 module plat.ui {
     /**
-     * The class that stores the information about an Element's attribute NamedNodeMap.
+     * @name Attributes
+     * @memberof plat.ui
+     * @kind class
+     * 
+     * @implements {plat.ui.IAttributesInstance}
+     * 
+     * @description
+     * The class that stores the information about an Element's attributes (NamedNodeMap).
      * Methods are implemented to allow you to observe for changes on an attribute.
      * 
+     * @remarks
      * Attributes for this object are converted from dash-notation to camelCase notation.
      */
     export class Attributes implements IAttributesInstance {
+        /**
+         * @name __listeners
+         * @memberof plat.ui.Attributes
+         * @kind property
+         * @access private
+         * 
+         * @type {plat.IObject<Array<plat.IPropertyChangedListener>>}
+         * 
+         * @description
+         * The set of functions added externally that listens 
+         * for attribute changes.
+         */
         private __listeners: IObject<Array<(newValue: any, oldValue?: any) => void>> = {};
+        /**
+         * @name __control
+         * @memberof plat.ui.Attributes
+         * @kind property
+         * @access private
+         * 
+         * @type {plat.IControl}
+         * 
+         * @description
+         * The control tied to this instance.
+         */
         private __control: IControl;
 
+        /**
+         * @name initialize
+         * @memberof plat.ui.Attributes
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Initializes this instance with a {@link plat.IControl|IControl} and the camelCased 
+         * attribute properties and their values.
+         * 
+         * @param {plat.IControl} control The function that acts as a listener.
+         * @param {plat.IObject<string>} attributes The camelCased attribute properties and their values.
+         * 
+         * @returns {void}
+         */
         initialize(control: IControl, attributes: IObject<string>): void {
             this.__control = control;
 
@@ -33,6 +79,20 @@ module plat.ui {
             }
         }
 
+        /**
+         * @name observe
+         * @memberof plat.ui.Attributes
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Provides a way to observe an attribute for changes.
+         * 
+         * @param {string} key The attribute to observe for changes (e.g. 'src').
+         * @param {plat.IPropertyChangedListener} listener The listener function to be called when the attribute changes.
+         * 
+         * @returns {plat.IRemoveListener} A function to stop observing this attribute for changes.
+         */
         observe(key: string, listener: (newValue: any, oldValue?: any) => void): IRemoveListener {
             var listeners = this.__listeners[camelCase(key)];
 
@@ -48,15 +108,23 @@ module plat.ui {
                 listeners.splice(length, 1);
             };
         }
-
+        
         /**
+         * @name _attributeChanged
+         * @memberof plat.ui.Attributes
+         * @kind function
+         * @access protected
+         * 
+         * @description
          * Used to show an attribute has been changed and forces listeners to be fired.
          * 
-         * @param key The attribute being observed for changes (e.g. 'platOptions').
-         * @param newValue The new value of the attribute.
-         * @param oldValue The previous value of the attribute.
+         * @param {string} key The attribute being observed for changes (e.g. 'src').
+         * @param {any} newValue The new value of the attribute.
+         * @param {any} oldValue The previous value of the attribute.
+         * 
+         * @returns {void}
          */
-        attributeChanged(key: string, newValue: any, oldValue: any): void {
+        _attributeChanged(key: string, newValue: any, oldValue: any): void {
             var control = this.__control,
                 listeners = this.__listeners[camelCase(key)],
                 length = listeners.length;
@@ -75,39 +143,48 @@ module plat.ui {
     }
 
     register.injectable(__AttributesInstance, IAttributesInstance, null, __INSTANCE);
-
+    
     /**
+     * @name IAttributesInstance
+     * @memberof plat.ui
+     * @kind interface
+     * 
+     * @description
      * Describes an object that stores the information about an Element's attribute NamedNodeMap.
      * Methods are implemented to allow you to observe for changes on an attribute.
-     * 
-     * Attributes for this object are converted from dash-notation to camelCase notation.
      */
     export interface IAttributesInstance {
         /**
-         * Stores the information about an Element's attribute NamedNodeMap, and allows a control to observe 
-         * for changes on an attribute. The interface takes in a generic type, allowing ITemplateControls 
-         * to specify an interface for their plat-options.
+         * @name initialize
+         * @memberof plat.ui.IAttributesInstance
+         * @kind function
+         * @access public
          * 
-         * Attributes for this object are converted from dash-notation to camelCase notation. 'plat-options' are 
-         * parsed and stored as an object on this object, all other attributes are stored with their string values.
+         * @description
+         * Initializes this instance with a {@link plat.IControl|IControl} and the camelCased 
+         * attribute properties and their values.
+         * 
+         * @param {plat.IControl} control The function that acts as a listener.
+         * @param {plat.IObject<string>} attributes The camelCased attribute properties and their values.
+         * 
+         * @returns {void}
          */
         initialize(control: IControl, attributes: IObject<string>): void;
 
         /**
+         * @name observe
+         * @memberof plat.ui.IAttributesInstance
+         * @kind function
+         * @access public
+         * 
+         * @description
          * Provides a way to observe an attribute for changes.
          * 
-         * @param key The attribute to observe for changes.
-         * @param listener The listener function to be called when the attribute changes.
+         * @param {string} key The attribute to observe for changes (e.g. 'src').
+         * @param {plat.IPropertyChangedListener} listener The listener function to be called when the attribute changes.
+         * 
+         * @returns {plat.IRemoveListener} A function to stop observing this attribute for changes.
          */
         observe(key: string, listener: (newValue: any, oldValue: any) => void): IRemoveListener;
-
-        /**
-         * Used to show an attribute has been changed and forces listeners to be fired.
-         * 
-         * @param key The attribute being observed for changes (e.g. 'platOptions').
-         * @param newValue The new value of the attribute.
-         * @param oldValue The previous value of the attribute.
-         */
-        attributeChanged(key: string, newValue: any, oldValue: any): void;
     }
 }

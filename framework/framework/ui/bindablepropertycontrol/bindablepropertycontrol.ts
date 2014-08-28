@@ -9,7 +9,7 @@
      * 
      * @description
      * An extended {@link plat.ui.TemplateControl|TemplateControl} that allows for the binding of a value to 
-     * another listening control (i.e. {@link plat.controls.Bind|plat-bind} control).
+     * another listening control (e.g. {@link plat.controls.Bind|plat-bind} control).
      */
     export class BindablePropertyControl extends TemplateControl implements IBindablePropertyControl {
         /**

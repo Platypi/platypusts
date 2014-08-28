@@ -8,7 +8,7 @@
 
         /**
          * A JavaScript object with key value pairs for adjusting transition values. 
-         * (i.e. { width: '800px' } would set the element's width to 800px.
+         * (e.g. { width: '800px' } would set the element's width to 800px.
          */
         options: plat.IObject<string>;
 
@@ -89,7 +89,7 @@
     export interface ISimpleCssTransition extends ISimpleCssAnimation {
         /**
          * A JavaScript object with key value pairs for adjusting transition values. 
-         * (i.e. { width: '800px' } would set the element's width to '800px'.
+         * (e.g. { width: '800px' } would set the element's width to '800px'.
          */
         options: plat.IObject<string>;
     }

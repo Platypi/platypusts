@@ -152,7 +152,7 @@
         initialUrlRegex: RegExp;
 
         /**
-         * Finds a protocol delimeter in a string (i.e. ://)
+         * Finds a protocol delimeter in a string (e.g. ://)
          */
         protocolRegex: RegExp;
 
