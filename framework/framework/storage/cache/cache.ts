@@ -8,7 +8,34 @@
  * Holds classes and interfaces related to storage in platypus.
  */
 module plat.storage {
+    /**
+     * @name caches
+     * @memberof plat.storage
+     * @kind property
+     * @access private
+     * @static
+     * @exported false
+     * 
+     * @type {plat.IObject<plat.storage.Cache<any>>}
+     * 
+     * @description
+     * The keyed collection of all created {@link plat.storage.ICache|ICaches} in the 
+     * {@link plat.storage.ICacheFactory|ICacheFactory}.
+     */
     var caches: IObject<Cache<any>> = {};
+    /**
+     * @name internalCaches
+     * @memberof plat.storage
+     * @kind property
+     * @access private
+     * @static
+     * @exported false
+     * 
+     * @type {any}
+     * 
+     * @description
+     * Internal storage for all the items stored in each {@link plat.storage.ICache|ICache}.
+     */
     var internalCaches: any = {};
 
     /**
@@ -19,8 +46,8 @@ module plat.storage {
      * @implements {plat.storage.ICache<T>}
      * 
      * @description
-     * A Cache class, for use with the $CacheFactory injectable. Used for storing objects.
-     * Takes in a generic type corresponding to the type of objects it contains.
+     * A Cache class, for use with the {@link plat.storage.ICacheFactory|ICacheFactory} injectable. 
+     * Used for storing objects. Takes in a generic type corresponding to the type of objects it contains.
      * 
      * @typeparam {any} T The type of objects stored in the cache.
      */

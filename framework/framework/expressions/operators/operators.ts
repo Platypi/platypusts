@@ -6,6 +6,7 @@
  * @access private
  * @static
  * @readonly
+ * @exported false
  * 
  * @type {plat.IObject<plat.expressions.ITokenDetails>}
  * 
@@ -244,6 +245,7 @@ var OPERATORS: plat.IObject<plat.expressions.ITokenDetails> = {
  * @access private
  * @static
  * @readonly
+ * @exported false
  * 
  * @type {plat.IObject<plat.expressions.ITokenDetails>}
  * 
@@ -264,6 +266,7 @@ var ACCESSORS: plat.IObject<plat.expressions.ITokenDetails> = {
  * @access private
  * @static
  * @readonly
+ * @exported false
  * 
  * @type {plat.IObject<plat.expressions.ITokenDetails>}
  * 
@@ -290,6 +293,7 @@ var DELIMITERS: plat.IObject<plat.expressions.ITokenDetails> = {
  * @access private
  * @static
  * @readonly
+ * @exported false
  * 
  * @type {plat.IObject<plat.expressions.ITokenDetails>}
  * 
@@ -309,6 +313,7 @@ var KEYWORDS: plat.IObject<any> = {
  * @kind function
  * @access private
  * @static
+ * @exported false
  * 
  * @description
  * Checks if a string is in the {@link plat.expressions.DELIMITERS|DELIMITERS} array.
@@ -328,6 +333,7 @@ function isDelimiter(key: string): boolean {
  * @kind function
  * @access private
  * @static
+ * @exported false
  * 
  * @description
  * Checks if a string is in the {@link plat.expressions.ACCESSORS|ACCESSORS} array.
@@ -347,6 +353,7 @@ function isAccessor(key: string): boolean {
  * @kind function
  * @access private
  * @static
+ * @exported false
  * 
  * @description
  * Checks if a string is in the {@link plat.expressions.OPERATORS|OPERATORS} array.
@@ -366,6 +373,7 @@ function isOperator(key: string): boolean {
  * @kind function
  * @access private
  * @static
+ * @exported false
  * 
  * @description
  * Checks if a string is in the {@link plat.expressions.KEYWORDS|KEYWORDS} array.
