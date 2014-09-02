@@ -485,7 +485,7 @@ module plat.processing {
          * @param {plat.processing.IElementManager} parentManager The parent 
          * {@link plat.processing.IElementManager|IElementManager} for the clone.
          * 
-         * @returns {number} The number of nodes to advance while traversing is in progress.
+         * @returns {number} The number of nodes to advance while node traversal is in progress.
          */
         clone(newNode: Node, parentManager: IElementManager): number {
             return 1;
@@ -733,7 +733,7 @@ module plat.processing {
          * @param {plat.processing.IElementManager} parentManager The parent 
          * {@link plat.processing.IElementManager|IElementManager} for the clone.
          * 
-         * @returns {number} The number of nodes to advance while traversing is in progress.
+         * @returns {number} The number of nodes to advance while node traversal is in progress.
          */
         clone? (newNode: Node, parentManager: IElementManager): number;
 

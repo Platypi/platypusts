@@ -715,6 +715,21 @@ module plat.ui {
         context: any = null;
 
         /**
+         * @name name
+         * @memberof plat.ui.TemplateControl
+         * @kind property
+         * @access public
+         * @readonly
+         * 
+         * @type {string}
+         * 
+         * @description
+         * The name of a {@link plat.ui.ITemplateControl|ITemplateControl} if a {@link plat.controls.Name|Name} 
+         * control is involved.
+         */
+        name: string;
+
+        /**
          * @name absoluteContextPath
          * @memberof plat.ui.TemplateControl
          * @kind property
@@ -1472,6 +1487,21 @@ module plat.ui {
          * The context of an {@link plat.ui.ITemplateControl|ITemplateControl}, used for inheritance and data-binding.
          */
         context?: any;
+
+        /**
+         * @name name
+         * @memberof plat.ui.ITemplateControl
+         * @kind property
+         * @access public
+         * @readonly
+         * 
+         * @type {string}
+         * 
+         * @description
+         * The name of a {@link plat.ui.ITemplateControl|ITemplateControl} if a {@link plat.controls.Name|Name} 
+         * control is involved and placed on its element.
+         */
+        name?: string;
 
         /**
          * @name absoluteContextPath
