@@ -683,8 +683,8 @@ module plat {
          * 
          * @param {any} context The immediate parent object containing the property.
          * @param {string} property The property identifier to watch for changes.
-         * @param {(value: T, oldValue: T) => void} listener The method called when the property is changed. This method will have its 'this'
-         * context set to the control instance.
+         * @param {(value: T, oldValue: T) => void} listener The method called when the property is changed. This method 
+         * will have its 'this' context set to the control instance.
          * 
          * @returns {plat.IRemoveListener} A function to call in order to stop observing the property.
          */
@@ -704,8 +704,8 @@ module plat {
          * 
          * @param {any} context The immediate parent object containing the property.
          * @param {number} property The property identifier to watch for changes.
-         * @param {(value: T, oldValue: T) => void} listener The method called when the property is changed. This method will have its 'this'
-         * context set to the control instance.
+         * @param {(value: T, oldValue: T) => void} listener The method called when the property is changed. This method 
+         * will have its 'this' context set to the control instance.
          * 
          * @returns {plat.IRemoveListener} A function to call in order to stop observing the property.
          */
@@ -751,8 +751,8 @@ module plat {
          * 
          * @param {any} context The immediate parent object containing the array as a property.
          * @param {string} property The array property identifier to watch for changes.
-         * @param {(ev: plat.observable.IArrayMethodInfo<T>) => void} listener The method called when an array-changing method is called. This method will have its 'this'
-         * context set to the control instance.
+         * @param {(ev: plat.observable.IArrayMethodInfo<T>) => void} listener The method called when an array-changing method is called. 
+         * This method will have its 'this' context set to the control instance.
          * 
          * @returns {plat.IRemoveListener} A function to call in order to stop observing the array.
          */
@@ -773,8 +773,8 @@ module plat {
          * 
          * @param {any} context The immediate parent object containing the array as a property.
          * @param {number} property The array property identifier to watch for changes.
-         * @param {(ev: plat.observable.IArrayMethodInfo<T>) => void} listener The method called when an array-changing method is called. This method will have its 'this'
-         * context set to the control instance.
+         * @param {(ev: plat.observable.IArrayMethodInfo<T>) => void} listener The method called when an array-changing method is called. 
+         * This method will have its 'this' context set to the control instance.
          * 
          * @returns {plat.IRemoveListener} A function to call in order to stop observing the array.
          */
@@ -1106,11 +1106,13 @@ module plat {
          * @access public
          * 
          * @description
-         * Registers a listener for a {@link plat.events.DispatchEvent|DispatchEvent}. The listener will be called when a {@link plat.events.DispatchEvent|DispatchEvent} is 
-         * propagating over the control. Any number of listeners can exist for a single event name.
+         * Registers a listener for a {@link plat.events.DispatchEvent|DispatchEvent}. The listener will be called when a 
+         * {@link plat.events.DispatchEvent|DispatchEvent} is propagating over the control. Any number of listeners can exist 
+         * for a single event name.
          * 
          * @param {string} name The name of the event, cooinciding with the {@link plat.events.DispatchEvent|DispatchEvent} name.
-         * @param {(ev: plat.events.IDispatchEventInstance, ...args: Array<any>) => void} listener The method called when the {@link plat.events.DispatchEvent|DispatchEvent} is fired.
+         * @param {(ev: plat.events.IDispatchEventInstance, ...args: Array<any>) => void} listener The method called when the 
+         * {@link plat.events.DispatchEvent|DispatchEvent} is fired.
          * 
          * @returns {plat.IRemoveListener} A function to call in order to stop listening for this event.
          */
@@ -1536,8 +1538,8 @@ module plat {
          * 
          * @param {any} context The immediate parent object containing the property.
          * @param {string} property The property identifier to watch for changes.
-         * @param {(value: T, oldValue: T) => void} listener The method called when the property is changed. This method will have its 'this'
-         * context set to the control instance.
+         * @param {(value: T, oldValue: T) => void} listener The method called when the property is changed. 
+         * This method will have its 'this' context set to the control instance.
          * 
          * @returns {plat.IRemoveListener} A function to call in order to stop observing the property.
          */
@@ -1557,8 +1559,8 @@ module plat {
          * 
          * @param {any} context The immediate parent object containing the property.
          * @param {number} property The property identifier to watch for changes.
-         * @param {(value: T, oldValue: T) => void} listener The method called when the property is changed. This method will have its 'this'
-         * context set to the control instance.
+         * @param {(value: T, oldValue: T) => void} listener The method called when the property is changed. 
+         * This method will have its 'this' context set to the control instance.
          * 
          * @returns {plat.IRemoveListener} A function to call in order to stop observing the property.
          */
@@ -1580,8 +1582,8 @@ module plat {
          * 
          * @param {any} context The immediate parent object containing the array as a property.
          * @param {string} property The array property identifier to watch for changes.
-         * @param {(ev: plat.observable.IArrayMethodInfo<T>) => void} listener The method called when an array-changing method is called. This method will have its 'this'
-         * context set to the control instance.
+         * @param {(ev: plat.observable.IArrayMethodInfo<T>) => void} listener The method called when an array-changing method is called. 
+         * This method will have its 'this' context set to the control instance.
          * 
          * @returns {plat.IRemoveListener} A function to call in order to stop observing the array.
          */
@@ -1602,8 +1604,8 @@ module plat {
          * 
          * @param {any} context The immediate parent object containing the array as a property.
          * @param {number} property The array property identifier to watch for changes.
-         * @param {(ev: plat.observable.IArrayMethodInfo<T>) => void} listener The method called when an array-changing method is called. This method will have its 'this'
-         * context set to the control instance.
+         * @param {(ev: plat.observable.IArrayMethodInfo<T>) => void} listener The method called when an array-changing method is called. 
+         * This method will have its 'this' context set to the control instance.
          * 
          * @returns {plat.IRemoveListener} A function to call in order to stop observing the array.
          */
@@ -1773,11 +1775,13 @@ module plat {
          * @access public
          * 
          * @description
-         * Registers a listener for a {@link plat.events.DispatchEvent|DispatchEvent}. The listener will be called when a {@link plat.events.DispatchEvent|DispatchEvent} is 
-         * propagating over the control. Any number of listeners can exist for a single event name.
+         * Registers a listener for a {@link plat.events.DispatchEvent|DispatchEvent}. The listener will be called when a 
+         * {@link plat.events.DispatchEvent|DispatchEvent} is propagating over the control. Any number of listeners can 
+         * exist for a single event name.
          * 
          * @param {string} name The name of the event, cooinciding with the {@link plat.events.DispatchEvent|DispatchEvent} name.
-         * @param {(ev: plat.events.IDispatchEventInstance, ...args: Array<any>) => void} listener The method called when the {@link plat.events.DispatchEvent|DispatchEvent} is fired.
+         * @param {(ev: plat.events.IDispatchEventInstance, ...args: Array<any>) => void} listener The method called when the 
+         * {@link plat.events.DispatchEvent|DispatchEvent} is fired.
          * 
          * @returns {plat.IRemoveListener} A function to call in order to stop listening for this event.
          */
