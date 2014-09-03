@@ -560,32 +560,28 @@ module plat.ui {
                 return <any>Promise.reject(null);
             }
 
-            template = templateCache.read(templateUrl);
-
             var $exception: IExceptionStatic;
 
-            return templateCache.put(templateUrl, template).catch((error) => {
+            return templateCache.put(templateUrl, templateCache.read(templateUrl).catch((error) => {
                 if (isNull(error)) {
                     return TemplateControl.$Http.ajax<string>({ url: templateUrl });
                 }
             }).then<DocumentFragment>((success) => {
                 if (isDocumentFragment(success)) {
-                    return Promise.resolve(<DocumentFragment>(<any>success));
+                    return templateCache.put(templateUrl, <any>success);
                 } else if (!isObject(success) || !isString(success.response)) {
                     $exception = acquire(__ExceptionStatic);
                     $exception.warn('No template found at ' + templateUrl, $exception.AJAX);
-                    return Promise.resolve(dom.serializeHtml());
+                    return templateCache.put(templateUrl, dom.serializeHtml());
                 }
 
                 var templateString = success.response;
 
                 if (isEmpty(templateString.trim())) {
-                    return Promise.resolve(dom.serializeHtml());
+                    return templateCache.put(templateUrl, dom.serializeHtml());
                 }
 
-                template = dom.serializeHtml(templateString);
-
-                return templateCache.put(templateUrl, template);
+                return templateCache.put(templateUrl, dom.serializeHtml(templateString));
             }).catch((error) => {
                 postpone(() => {
                     $exception = acquire(__ExceptionStatic);
@@ -593,7 +589,7 @@ module plat.ui {
                         $exception.TEMPLATE);
                 });
                 return error;
-            });
+            }));
         }
 
         /**
