@@ -1,6 +1,6 @@
 ﻿module plat.ui.animations {
     /**
-     * @name SimpleCssAnimation
+     * @name SimpleCssTransition
      * @memberof plat.ui.animations
      * @kind class
      * 
