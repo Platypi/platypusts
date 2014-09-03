@@ -1,5 +1,4 @@
 module plat.controls {
-
     /**
      * @name Name
      * @memberof plat.controls

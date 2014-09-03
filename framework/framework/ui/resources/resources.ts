@@ -169,38 +169,25 @@ module plat.ui {
          * @kind function
          * @access public
          * @static
-         * @variation 0
          * 
          * @description
          * Binds the resources in a resource instance. This involves injecting 
          * the injectable resources, creating object/observable resources, and
          * binding functions to the associated control's instance.
          * 
-         * @param {plat.ui.IResources} resourcesInstance The instance of the IResources object.
+         * @param {plat.ui.IResources} resourcesInstance The instance of the 
+         * {@link plat.ui.IResources|IResources} object to bind.
          * 
          * @returns {void}
          */
         static bindResources(resourcesInstance: IResources): void;
-        /**
-         * @name bindResources
-         * @memberof plat.ui.Resources
-         * @kind function
-         * @access public
-         * @static
-         * @variation 1
-         * 
-         * @description
-         * Binds the resources in a resource instance. This involves injecting 
-         * the injectable resources, creating object/observable resources, and
-         * binding functions to the associated control's instance.
-         * 
-         * @param {plat.ui.Resources} resourcesInstance The Resources  instance.
-         * 
-         * @returns {void}
-         */
         static bindResources(resourcesInstance: Resources): void {
-            var resources = resourcesInstance.__resources,
-                control = resourcesInstance.__controlInstance,
+            var resources = resourcesInstance.__resources;
+            if (isNull(resources)) {
+                return;
+            }
+
+            var control = resourcesInstance.__controlInstance,
                 aliases = Object.keys(resources),
                 controlResources = Resources.__controlResources,
                 length = aliases.length,
@@ -731,7 +718,6 @@ module plat.ui {
          * @kind function
          * @access public
          * @static
-         * @variation 0
          * 
          * @description
          * Binds the resources in a resource instance. This involves injecting 
@@ -743,24 +729,6 @@ module plat.ui {
          * @returns {void}
          */
         bindResources(resourcesInstance: IResources): void;
-        /**
-         * @name bindResources
-         * @memberof plat.ui.IResourcesFactory
-         * @kind function
-         * @access public
-         * @static
-         * @variation 1
-         * 
-         * @description
-         * Binds the resources in a resource instance. This involves injecting 
-         * the injectable resources, creating object/observable resources, and
-         * binding functions to the associated control's instance.
-         * 
-         * @param {plat.ui.Resources} resourcesInstance The Resources  instance.
-         * 
-         * @returns {void}
-         */
-        bindResources(resourcesInstance: Resources): void;
 
         /**
          * @name dispose

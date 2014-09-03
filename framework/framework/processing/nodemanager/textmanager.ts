@@ -123,7 +123,8 @@ module plat.processing {
          * @type {string}
          * 
          * @description
-         * Specifies the type for this {@link plat.processing.INodeManager|INodeManager}.
+         * Specifies the type for this {@link plat.processing.INodeManager|INodeManager}. 
+         * It's value is "text".
          */
         type = 'text';
         
@@ -140,7 +141,7 @@ module plat.processing {
          * @param {plat.processing.IElementManager} parentManager The parent {@link plat.processing.IElementManager|IElementManager} 
          * for the clone.
          * 
-         * @returns {number} The number of nodes to advance while traversing is in progress (returns 1).
+         * @returns {number} The number of nodes to advance while node traversal is in progress (returns 1).
          */
         clone(newNode: Node, parentManager: IElementManager): number {
             TextManager._clone(this, newNode, parentManager);

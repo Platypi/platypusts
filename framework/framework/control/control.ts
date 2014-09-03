@@ -84,22 +84,21 @@ module plat {
          * @returns {plat.ui.ITemplateControl} The root control.
          */
         static getRootControl(control: IControl): ui.ITemplateControl;
-        static getRootControl(control: ui.ITemplateControl) {
+        static getRootControl(control: ui.ITemplateControl): ui.ITemplateControl {
             if (isNull(control)) {
                 return control;
+            } else if (!isNull(control.root)) {
+                return control.root;
             }
 
-            var root = control;
-
-            while (!(isNull(root.parent) || root.hasOwnContext)) {
-                if (!isNull(root.root)) {
-                    root = root.root;
-                    break;
+            while (!(isNull(control.parent) || control.hasOwnContext)) {
+                if (!isNull(control.root)) {
+                    return control.root;
                 }
-                root = root.parent;
+                control = control.parent;
             }
 
-            return root;
+            return control;
         }
 
         /**
@@ -387,20 +386,6 @@ module plat {
          * A unique id, created during instantiation and found on every {@link plat.Control|Control}.
          */
         uid: string;
-
-        /**
-         * @name name
-         * @memberof plat.Control
-         * @kind property
-         * @access public
-         * @readonly
-         * 
-         * @type {string}
-         * 
-         * @description
-         * The name of a {@link plat.Control|Control}.
-         */
-        name: string;
 
         /**
          * @name type
@@ -1287,20 +1272,6 @@ module plat {
          * A unique id, created during instantiation and found on every {@link plat.Control|Control}.
          */
         uid: string;
-
-        /**
-         * @name name
-         * @memberof plat.IControl
-         * @kind property
-         * @access public
-         * @readonly
-         * 
-         * @type {string}
-         * 
-         * @description
-         * The name of a {@link plat.Control|Control}.
-         */
-        name?: string;
 
         /**
          * @name type
