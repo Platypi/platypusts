@@ -563,7 +563,8 @@ module plat.ui {
             template = templateCache.read(templateUrl);
 
             var $exception: IExceptionStatic;
-            return Promise.cast<DocumentFragment>(template).catch((error) => {
+
+            return templateCache.put(templateUrl, template).catch((error) => {
                 if (isNull(error)) {
                     return TemplateControl.$Http.ajax<string>({ url: templateUrl });
                 }
