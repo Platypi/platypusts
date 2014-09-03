@@ -600,7 +600,7 @@
          * @description
          * Retrieve the type of touch events for this browser and create the default gesture style.
          * 
-         * @returns {plat.ui.DomEvents} The {@link plat.ui.DomEvents|DomEvents} instance.
+         * @returns {plat.ui.DomEvents}
          */
         constructor() {
             this.__getTypes();
@@ -2532,7 +2532,7 @@
          * @param {Node} element The associated element.
          * @param {string} event The associated event.
          * 
-         * @returns {plat.ui.CustomDomEvent} A {@link plat.ui.CustomDomEvent|CustomDomEvent} instance.
+         * @returns {plat.ui.CustomDomEvent}
          */
         constructor(element: Node, event: string);
         /**

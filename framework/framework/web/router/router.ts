@@ -238,7 +238,7 @@
          * @description
          * The constructor for a {@link plat.web.Router|Router}. Assigns a uid and subscribes to the 'urlChanged' event.
          * 
-         * @returns {plat.web.Router} A {@link plat.web.Router|Router} instance.
+         * @returns {plat.web.Router}
          */
         constructor() {
             var ContextManager: observable.IContextManagerStatic = acquire(__ContextManagerStatic);

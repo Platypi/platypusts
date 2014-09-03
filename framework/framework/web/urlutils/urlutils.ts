@@ -308,7 +308,7 @@
          * The constructor for a {@link plat.web.UrlUtils|UrlUtils} instance. 
          * Handles parsing the initial URL and obtain the base URL if necessary.
          * 
-         * @returns {plat.web.UrlUtils} A {@link plat.web.UrlUtils|UrlUtils} instance.
+         * @returns {plat.web.UrlUtils}
          */
         constructor() {
             var $config = this.$BrowserConfig;

@@ -9,35 +9,198 @@
  */
 module plat.navigation {
     /**
-     * A class that defines the base Navigation properties and methods.
+     * @name BaseNavigator
+     * @memberof plat.navigation
+     * @kind class
+     * 
+     * @implements {plat.navigation.IBaseNavigator}
+     * 
+     * @description
+     * A class that defines the base navigation properties and methods.
      */
     export class BaseNavigator implements IBaseNavigator {
+        /**
+         * @name $EventManagerStatic
+         * @memberof plat.navigation.BaseNavigator
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.events.IEventManagerStatic}
+         * 
+         * @description
+         * Reference to the {@link plat.events.IEventManagerStatic|IEventManagerStatic} injectable.
+         */
         $EventManagerStatic: events.IEventManagerStatic = acquire(__EventManagerStatic);
+        /**
+         * @name $NavigationEventStatic
+         * @memberof plat.navigation.BaseNavigator
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.events.INavigationEventStatic}
+         * 
+         * @description
+         * Reference to the {@link plat.events.INavigationEventStatic|INavigationEventStatic} injectable.
+         */
         $NavigationEventStatic: events.INavigationEventStatic = acquire(__NavigationEventStatic);
+        /**
+         * @name $BaseViewControlFactory
+         * @memberof plat.navigation.BaseNavigator
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.ui.IBaseViewControlFactory}
+         * 
+         * @description
+         * Reference to the {@link plat.ui.IBaseViewControlFactory|IBaseViewControlFactory} injectable.
+         */
         $BaseViewControlFactory: ui.IBaseViewControlFactory = acquire(__BaseViewControlFactory);
+        /**
+         * @name $ContextManagerStatic
+         * @memberof plat.navigation.BaseNavigator
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.observable.IContextManagerStatic}
+         * 
+         * @description
+         * Reference to the {@link plat.observable.IContextManagerStatic|IContextManagerStatic} injectable.
+         */
         $ContextManagerStatic: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
 
+        /**
+         * @name uid
+         * @memberof plat.navigation.BaseNavigator
+         * @kind property
+         * @access public
+         * @readonly
+         * 
+         * @type {string}
+         * 
+         * @description
+         * A unique ID used to identify this navigator.
+         */
         uid: string;
+        /**
+         * @name baseport
+         * @memberof plat.navigation.BaseNavigator
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.ui.controls.IBaseport}
+         * 
+         * @description
+         * Every navigator will have an {@link plat.ui.controls.IBaseport|IBaseport} with which to communicate and 
+         * facilitate navigation.
+         */
         baseport: ui.controls.IBaseport;
+        /**
+         * @name currentState
+         * @memberof plat.navigation.BaseNavigator
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.navigation.IBaseNavigationState}
+         * 
+         * @description
+         * Specifies the current state of navigation. This state should contain 
+         * enough information for it to be pushed onto the history stack when 
+         * necessary.
+         */
         currentState: IBaseNavigationState;
+        /**
+         * @name navigating
+         * @memberof plat.navigation.BaseNavigator
+         * @kind property
+         * @access public
+         * 
+         * @type {boolean}
+         * 
+         * @description
+         * Set to true during "navigate" (i.e. while navigation is in progress), set to false during 
+         * "navigated" (i.e. after a navigation has successfully occurred).
+         */
         navigating: boolean;
 
         /**
-         * Define unique id and subscribe to the 'goBack' event
+         * @name constructor
+         * @memberof plat.navigation.BaseNavigator
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * The constructor for a {@link plat.navigation.BaseNavigator|BaseNavigator}. 
+         * Defines a unique id and subscribes to the "goBack" event.
+         * 
+         * @returns {plat.navigation.BaseNavigator}
          */
         constructor() {
-            this.$ContextManagerStatic.defineGetter(this, 'uid', uniqueId('plat_'));
-            this.$EventManagerStatic.on(this.uid, 'goBack', this.goBack, this);
+            var uid = uniqueId('plat_');
+            this.$ContextManagerStatic.defineGetter(this, 'uid', uid);
+            this.$EventManagerStatic.on(uid, 'goBack', this.goBack, this);
         }
-
+        
+        /**
+         * @name initialize
+         * @memberof plat.navigation.BaseNavigator
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Initializes this navigator. The {plat.ui.controls.IBaseport|IBaseport} will call this method and pass 
+         * itself in so the navigator can store it and use it to facilitate navigation.
+         * 
+         * @param {plat.ui.controls.IBaseport} baseport The {plat.ui.controls.IBaseport|IBaseport} 
+         * associated with this {@link plat.navigation.IBaseNavigator|IBaseNavigator}.
+         * 
+         * @returns {void}
+         */
         initialize(baseport: ui.controls.IBaseport): void {
             this.baseport = baseport;
         }
-
-        navigate(navigationParameter: any, options: IBaseNavigationOptions): void {
+        
+        /**
+         * @name navigate
+         * @memberof plat.navigation.BaseNavigator
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Allows an {@link plat.ui.IBaseViewControl|IBaseViewControl} to navigate to another 
+         * {@link plat.ui.IBaseViewControl|IBaseViewControl}. Also allows for
+         * navigation parameters to be sent to the new {@link plat.ui.IBaseViewControl|IBaseViewControl}.
+         * 
+         * @param {any} navigationParameter? An optional navigation parameter to send to the next 
+         * {@link plat.ui.IBaseViewControl|IBaseViewControl}.
+         * @param {plat.navigation.IBaseNavigationOptions} options? Optional 
+         * {@link plat.navigation.IBaseNavigationOptions|IBaseNavigationOptions} used for navigation.
+         * 
+         * @returns {void}
+         */
+        navigate(navigationParameter?: any, options?: IBaseNavigationOptions): void {
             this.navigating = true;
         }
-
+        
+        /**
+         * @name navigated
+         * @memberof plat.navigation.BaseNavigator
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Called by the {plat.ui.controls.IBaseport|IBaseport} to make the 
+         * {@link plat.navigation.IBaseNavigator|IBaseNavigator} aware of a successful 
+         * navigation. The {@link plat.navigation.IBaseNavigator|IBaseNavigator} will 
+         * in-turn send the app.navigated event.
+         * 
+         * @param {plat.ui.IBaseViewControl} control The {@link plat.ui.IBaseViewControl|IBaseViewControl} 
+         * to which the navigation occurred.
+         * @param {any} parameter The navigation parameter sent to the control.
+         * @param {plat.navigation.IBaseNavigationOptions} options The 
+         * {@link plat.navigation.IBaseNavigationOptions|IBaseNavigationOptions} used during navigation.
+         * 
+         * @returns {void}
+         */
         navigated(control: ui.IBaseViewControl, parameter: any, options: IBaseNavigationOptions): void {
             this.currentState = {
                 control: control
@@ -49,20 +212,56 @@ module plat.navigation {
 
             this._sendEvent('navigated', control, control.type, parameter, options, false);
         }
-
-        goBack(options?: IBaseBackNavigationOptions): void { }
-
-        dispose(): void { }
-
+        
         /**
-         * Sends a NavigationEvent with the given parameters.  The 'sender' property of the event will be the 
-         * navigator.
+         * @name goBack
+         * @memberof plat.navigation.BaseNavigator
+         * @kind function
+         * @access public
          * 
-         * @param name The name of the event to send.
-         * @param target The target of the event, could be a view control or a route depending upon the navigator and 
-         * event name.
-         * @param options The IBaseNavigationOptions used during navigation
-         * @param cancelable Whether or not the event can be cancelled, preventing further navigation.
+         * @description
+         * Every navigator must implement this method, defining what happens when an 
+         * {@link plat.ui.IBaseViewControl|IBaseViewControl} wants to go back.
+         * 
+         * @param {plat.navigation.IBaseBackNavigationOptions} options? Optional backwards navigation options of type 
+         * {@link plat.navigation.IBaseBackNavigationOptions|IBaseBackNavigationOptions}.
+         * 
+         * @returns {void}
+         */
+        goBack(options?: IBaseBackNavigationOptions): void { }
+        
+        /**
+         * @name dispose
+         * @memberof plat.navigation.BaseNavigator
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Cleans up memory.
+         * 
+         * @returns {void}
+         */
+        dispose(): void { }
+        
+        /**
+         * @name _sendEvent
+         * @memberof plat.navigation.BaseNavigator
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Sends an {@link plat.events.INavigationEvent|INavigationEvent} with the given parameters. 
+         * The 'sender' property of the event will be this navigator.
+         * 
+         * @param {string} name The name of the event to send.
+         * @param {any} target The target of the event, could be an {@link plat.ui.IBaseViewControl|IBaseViewControl} 
+         * or a route depending upon this navigator and event name.
+         * @param {plat.navigation.IBaseNavigationOptions} options The 
+         * {@link plat.navigation.IBaseNavigationOptions|IBaseNavigationOptions} used during navigation
+         * @param {boolean} cancelable Whether or not the event can be cancelled, preventing further navigation.
+         * 
+         * @returns {plat.events.INavigationEvent<any>} The {@link plat.events.INavigationEvent|INavigationEvent} to 
+         * dispatch.
          */
         _sendEvent(name: string, target: any, type: string, parameter: any,
             options: IBaseNavigationOptions, cancelable: boolean): events.INavigationEvent<any> {
@@ -77,26 +276,51 @@ module plat.navigation {
     }
 
     /**
-     * Defines the methods that a Navigator must implement.
+     * @name IBaseNavigator
+     * @memberof plat.navigation
+     * @kind interface
+     * 
+     * @description
+     * Defines the methods that a type of navigator must implement.
      */
     export interface IBaseNavigator {
         /**
-         * A unique identifier used to identify this navigator.
+         * @name uid
+         * @memberof plat.navigation.IBaseNavigator
+         * @kind property
+         * @access public
+         * @readonly
+         * 
+         * @type {string}
+         * 
+         * @description
+         * A unique ID used to identify this navigator.
          */
         uid: string;
 
         /**
-         * Every navigator will have a viewport with which to communicate and 
+         * @name baseport
+         * @memberof plat.navigation.IBaseNavigator
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.ui.controls.IBaseport}
+         * 
+         * @description
+         * Every navigator will have an {@link plat.ui.controls.IBaseport|IBaseport} with which to communicate and 
          * facilitate navigation.
          */
         baseport: ui.controls.IBaseport;
 
         /**
-         * Set to true during navigate, set to false during navigated.
-         */
-        navigating: boolean;
-
-        /**
+         * @name currentState
+         * @memberof plat.navigation.IBaseNavigator
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.navigation.IBaseNavigationState}
+         * 
+         * @description
          * Specifies the current state of navigation. This state should contain 
          * enough information for it to be pushed onto the history stack when 
          * necessary.
@@ -104,77 +328,178 @@ module plat.navigation {
         currentState: IBaseNavigationState;
 
         /**
-         * Initializes a Navigator. The viewport will call this method and pass itself in so 
-         * the navigator can store it and use it to facilitate navigation. Also subscribes to 
-         * 'routeChanged' and 'beforeRouteChange' events in the case of a RoutingNavigator.
+         * @name navigating
+         * @memberof plat.navigation.IBaseNavigator
+         * @kind property
+         * @access public
          * 
-         * @param baseport The baseport instance this navigator will be attached to.
+         * @type {boolean}
+         * 
+         * @description
+         * Set to true during "navigate" (i.e. while navigation is in progress), set to false during 
+         * "navigated" (i.e. after a navigation has successfully occurred).
+         */
+        navigating: boolean;
+
+        /**
+         * @name initialize
+         * @memberof plat.navigation.IBaseNavigator
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Initializes this navigator. The {plat.ui.controls.IBaseport|IBaseport} will call this method and pass 
+         * itself in so the navigator can store it and use it to facilitate navigation.
+         * 
+         * @param {plat.ui.controls.IBaseport} baseport The {plat.ui.controls.IBaseport|IBaseport} 
+         * associated with this {@link plat.navigation.IBaseNavigator|IBaseNavigator}.
+         * 
+         * @returns {void}
          */
         initialize(baseport: ui.controls.IBaseport): void;
 
         /**
-         * Allows a ui.IBaseViewControl to navigate to another ui.IBaseViewControl. Also allows for
-         * navigation parameters to be sent to the new ui.IBaseViewControl.
+         * @name navigate
+         * @memberof plat.navigation.IBaseNavigator
+         * @kind function
+         * @access public
          * 
-         * @param navigationParameter An optional navigation parameter to send to the next ui.IBaseViewControl.
-         * @param options Optional IBaseNavigationOptions used for navigation.
+         * @description
+         * Allows an {@link plat.ui.IBaseViewControl|IBaseViewControl} to navigate to another 
+         * {@link plat.ui.IBaseViewControl|IBaseViewControl}. Also allows for
+         * navigation parameters to be sent to the new {@link plat.ui.IBaseViewControl|IBaseViewControl}.
+         * 
+         * @param {any} navigationParameter? An optional navigation parameter to send to the next 
+         * {@link plat.ui.IBaseViewControl|IBaseViewControl}.
+         * @param {plat.navigation.IBaseNavigationOptions} options? Optional 
+         * {@link plat.navigation.IBaseNavigationOptions|IBaseNavigationOptions} used for navigation.
+         * 
+         * @returns {void}
          */
-        navigate(navigationParameter: any, options?: IBaseNavigationOptions): void;
+        navigate(navigationParameter?: any, options?: IBaseNavigationOptions): void;
 
         /**
-         * Called by the Viewport to make the Navigator aware of a successful navigation. The Navigator will
-         * in-turn call the app.navigated event.
+         * @name navigated
+         * @memberof plat.navigation.IBaseNavigator
+         * @kind function
+         * @access public
          * 
-         * @param control The ui.IBaseViewControl to which the navigation occurred.
-         * @param parameter The navigation parameter sent to the control.
-         * @param options The INavigationOptions used during navigation.
+         * @description
+         * Called by the {plat.ui.controls.IBaseport|IBaseport} to make the 
+         * {@link plat.navigation.IBaseNavigator|IBaseNavigator} aware of a successful 
+         * navigation. The {@link plat.navigation.IBaseNavigator|IBaseNavigator} will 
+         * in-turn send the app.navigated event.
+         * 
+         * @param {plat.ui.IBaseViewControl} control The {@link plat.ui.IBaseViewControl|IBaseViewControl} 
+         * to which the navigation occurred.
+         * @param {any} parameter The navigation parameter sent to the control.
+         * @param {plat.navigation.IBaseNavigationOptions} options The 
+         * {@link plat.navigation.IBaseNavigationOptions|IBaseNavigationOptions} used during navigation.
+         * 
+         * @returns {void}
          */
         navigated(control: ui.IBaseViewControl, parameter: any, options: IBaseNavigationOptions): void;
 
         /**
-         * Every navigator must implement this method, defining what happens when a view 
-         * control wants to go back.
+         * @name goBack
+         * @memberof plat.navigation.IBaseNavigator
+         * @kind function
+         * @access public
          * 
-         * @param options Optional backwards navigation options of type IBaseBackNavigationOptions.
+         * @description
+         * Every navigator must implement this method, defining what happens when an 
+         * {@link plat.ui.IBaseViewControl|IBaseViewControl} wants to go back.
+         * 
+         * @param {plat.navigation.IBaseBackNavigationOptions} options? Optional backwards navigation options of type 
+         * {@link plat.navigation.IBaseBackNavigationOptions|IBaseBackNavigationOptions}.
+         * 
+         * @returns {void}
          */
         goBack(options?: IBaseBackNavigationOptions): void;
 
         /**
-         * Clean up memory
+         * @name dispose
+         * @memberof plat.navigation.IBaseNavigator
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Cleans up memory.
+         * 
+         * @returns {void}
          */
         dispose(): void;
     }
-
+    
     /**
-     * Options that you can submit to the navigator in order
+     * @name IBaseNavigationOptions
+     * @memberof plat.navigation
+     * @kind interface
+     * 
+     * @description
+     * Options that you can submit to an {@link plat.navigation.IBaseNavigator|IBaseNavigator} in order 
      * to customize navigation.
      */
     export interface IBaseNavigationOptions {
         /**
-         * Allows a ui.IBaseViewControl to leave itself out of the 
+         * @name replace
+         * @memberof plat.navigation.IBaseNavigationOptions
+         * @kind property
+         * @access public
+         * 
+         * @type {boolean}
+         * 
+         * @description
+         * Allows an {@link plat.ui.IBaseViewControl|IBaseViewControl} to leave itself out of the 
          * navigation history.
          */
         replace?: boolean;
     }
-
+    
     /**
-     * Options that you can submit to the navigator during a backward
+     * @name IBaseBackNavigationOptions
+     * @memberof plat.navigation
+     * @kind interface
+     * 
+     * @description
+     * Options that you can submit to an {@link plat.navigation.IBaseNavigator|IBaseNavigator} during a backward
      * navigation in order to customize the navigation.
      */
     export interface IBaseBackNavigationOptions {
         /**
-         * Lets the Navigator know to navigate back a specific length 
+         * @name length
+         * @memberof plat.navigation.IBaseBackNavigationOptions
+         * @kind property
+         * @access public
+         * 
+         * @type {number}
+         * 
+         * @description
+         * Lets the {@link plat.navigation.IBaseNavigator|IBaseNavigator} know to navigate back a specific length 
          * in history.
          */
         length?: number;
     }
-
+    
     /**
-     * Defines the base interface needing to be implemented in the history.
+     * @name IBaseNavigationState
+     * @memberof plat.navigation
+     * @kind interface
+     * 
+     * @description
+     * Defines the base interface that needs to be implemented in the navigation history.
      */
     export interface IBaseNavigationState {
         /**
-         * The view control associated with a history entry.
+         * @name control
+         * @memberof plat.navigation.IBaseNavigationState
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.ui.IBaseViewControl}
+         * 
+         * @description
+         * The {@link plat.ui.IBaseViewControl|IBaseViewControl} associated with a history entry.
          */
         control: ui.IBaseViewControl;
     }

@@ -161,7 +161,7 @@ module plat.web {
          * @description
          * The constructor for a {@link plat.web.Browser|Browser}. Assigns a uid and subscribes to the 'beforeLoad' event.
          * 
-         * @returns {plat.web.Browser} A {@link plat.web.Browser|Browser} instance.
+         * @returns {plat.web.Browser}
          */
         constructor() {
             var ContextManager: observable.IContextManagerStatic = acquire(__ContextManagerStatic);

@@ -1,20 +1,79 @@
 module plat.navigation {
     /**
-     * The Navigator class allows ui.IViewControls to navigate within a Viewport.
-     * Every Viewport has its own Navigator instance, allowing multiple navigators to 
+     * @name Navigator
+     * @memberof plat.navigation
+     * @kind class
+     * 
+     * @extends plat.navigation.BaseNavigator
+     * @implements {plat.navigation.INavigatorInstance}
+     * 
+     * @description
+     * Allows {@link plat.ui.IBaseViewControl|IBaseViewControl} to navigate within a 
+     * {@link plat.ui.controls.Viewport|Viewport}. Every {@link plat.ui.controls.Viewport|Viewport} 
+     * has its own {@link plat.navigation.Navigator|Navigator} instance, allowing multiple navigators to 
      * coexist in one app.
      */
     export class Navigator extends BaseNavigator implements INavigatorInstance {
+        /**
+         * @name history
+         * @memberof plat.navigation.Navigator
+         * @kind property
+         * @access public
+         * 
+         * @type {Array<plat.navigation.IBaseNavigationState>}
+         * 
+         * @description
+         * Contains the navigation history stack for the associated {@link plat.ui.controls.Viewport|Viewport}.
+         */
         history: Array<IBaseNavigationState> = [];
-
-        navigate(Constructor?: new (...args: any[]) => ui.IViewControl, options?: INavigationOptions): void;
-        navigate(injector?: dependency.IInjector<ui.IViewControl>, options?: INavigationOptions): void;
-        navigate(Constructor?: any, options?: INavigationOptions) {
+        
+        /**
+         * @name navigate
+         * @memberof plat.navigation.Navigator
+         * @kind function
+         * @access public
+         * @variation 0
+         * 
+         * @description
+         * Allows an {@link plat.ui.IBaseViewControl|IBaseViewControl} to navigate to another 
+         * {@link plat.ui.IBaseViewControl|IBaseViewControl}. Also allows for
+         * navigation parameters to be sent along with the navigation.
+         * 
+         * @param {new (...args: any[]) => ui.IBaseViewControl} Constructor The Constructor for the new 
+         * {@link plat.ui.IBaseViewControl|IBaseViewControl}. This navigator will find the injector for 
+         * the Constructor and create a new instance of the control.
+         * @param {plat.navigation.INavigationOptions} options? Optional 
+         * {@link plat.navigation.INavigationOptions|INavigationOptions} used for navigation.
+         * 
+         * @returns {void}
+         */
+        navigate(Constructor: new (...args: any[]) => ui.IBaseViewControl, options?: INavigationOptions): void;
+        /**
+         * @name navigate
+         * @memberof plat.navigation.Navigator
+         * @kind function
+         * @access public
+         * @variation 1
+         * 
+         * @description
+         * Allows an {@link plat.ui.IBaseViewControl|IBaseViewControl} to navigate to another 
+         * {@link plat.ui.IBaseViewControl|IBaseViewControl}. Also allows for
+         * navigation parameters to be sent along with the navigation.
+         * 
+         * @param {new (...args: any[]) => plat.ui.IBaseViewControl} injector The {@link plat.dependency.IInjector|IInjector} 
+         * for the new {@link plat.ui.IBaseViewControl|IBaseViewControl}. This navigator will create a new instance of the control.
+         * @param {plat.navigation.INavigationOptions} options? Optional 
+         * {@link plat.navigation.INavigationOptions|INavigationOptions} used for navigation.
+         * 
+         * @returns {void}
+         */
+        navigate(injector: dependency.IInjector<ui.IBaseViewControl>, options?: INavigationOptions): void;
+        navigate(Constructor: any, options?: INavigationOptions): void {
             options = options || <IBaseNavigationOptions>{};
 
             var state = this.currentState || <IBaseNavigationState>{},
                 viewControl = state.control,
-                injector: dependency.IInjector<ui.IViewControl>,
+                injector: dependency.IInjector<ui.IBaseViewControl>,
                 key: string,
                 parameter = options.parameter,
                 event: events.INavigationEvent<any>,
@@ -85,10 +144,28 @@ module plat.navigation {
                 baseport.navigateTo(event);
             });
         }
-
+        
+        /**
+         * @name goBack
+         * @memberof plat.navigation.Navigator
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Returns to the last visited {@link plat.ui.IBaseViewControl|IBaseViewControl}.
+         * 
+         * @param {plat.navigation.IBackNavigationOptions} options? Optional 
+         * {@link plat.navigation.IBackNavigationOptions|IBackNavigationOptions} allowing the 
+         * {@link plat.ui.IBaseViewControl|IBaseViewControl} to customize navigation. Enables 
+         * navigating back to a specified point in history as well as specifying a new templateUrl 
+         * to use at the next {@link plat.ui.IBaseViewControl|IBaseViewControl}.
+         * 
+         * @returns {void}
+         */
         goBack(options?: IBackNavigationOptions): void {
             options = options || {};
-            var viewControl = this.currentState.control,
+            var currentState = this.currentState || <IBaseNavigationState>{},
+                viewControl = currentState.control,
                 length = isNumber(options.length) ? options.length : 1,
                 Constructor = options.ViewControl,
                 parameter = options.parameter,
@@ -96,7 +173,12 @@ module plat.navigation {
                 baseport = this.baseport;
 
             if (history.length === 0) {
-                this.$EventManagerStatic.dispatch('shutdown', this, this.$EventManagerStatic.DIRECT);
+                var $EventManager = this.$EventManagerStatic;
+                $EventManager.dispatch('shutdown', this, $EventManager.DIRECT);
+            }
+
+            if (isNull(viewControl)) {
+                return;
             }
 
             var event = this._sendEvent('beforeNavigate', viewControl, viewControl.type, parameter, options, true);
@@ -128,7 +210,7 @@ module plat.navigation {
             baseport.navigateFrom(viewControl).then(() => {
                 this.$BaseViewControlFactory.dispose(viewControl);
 
-                var last: IBaseNavigationState = this._goBackLength(length);
+                var last = this._goBackLength(length);
 
                 if (isNull(last)) {
                     return;
@@ -144,16 +226,39 @@ module plat.navigation {
                 baseport.navigateTo(event);
             }).catch((error) => {
                 postpone(() => {
-                    var Exception: IExceptionStatic = acquire(__ExceptionStatic);
-                    Exception.fatal(error, Exception.NAVIGATION);
+                    $exception = acquire(__ExceptionStatic);
+                    $exception.fatal(error, $exception.NAVIGATION);
                 });
             });
         }
-
+        
+        /**
+         * @name goBack
+         * @memberof plat.navigation.Navigator
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Lets the caller know if there are {@link plat.ui.IBaseViewControl|IBaseViewControl} in the history, 
+         * meaning the caller is safe to perform a backward navigation.
+         * 
+         * @returns {boolean} Whether or not a backwards navigation can occur.
+         */
         canGoBack(): boolean {
             return this.history.length > 0;
         }
-
+        
+        /**
+         * @name clearHistory
+         * @memberof plat.navigation.Navigator
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Clears the navigation history, disposing all the controls.
+         * 
+         * @returns {void}
+         */
         clearHistory(): void {
             var history = this.history,
                 dispose = this.$BaseViewControlFactory.dispose;
@@ -162,23 +267,28 @@ module plat.navigation {
                 dispose(history.pop().control);
             }
         }
-
+        
         /**
+         * @name _findInHistory
+         * @memberof plat.navigation.Navigator
+         * @kind function
+         * @access protected
+         * 
+         * @description
          * Finds the given constructor in the history stack. Returns the index in the history where
          * the constructor is found, or -1 if no constructor is found.
          * 
-         * @param Constructor The view control constructor to search for in the history stack.
+         * @param {new (...args: any[]) => plat.ui.IBaseViewControl} Constructor The 
+         * {@link plat.ui.IBaseViewControl|IBaseViewControl} constructor to search for in the history stack.
+         * 
+         * @returns {number} The index in the history where the input Constructor was found.
          */
-        _findInHistory(Constructor: new (...args: any[]) => ui.IViewControl): number {
+        _findInHistory(Constructor: new (...args: any[]) => ui.IBaseViewControl): number {
             var history = this.history,
-                length = history.length - 1,
-                index = -1,
-                control: any;
+                index = -1;
 
-            for (var i = length; i >= 0; --i) {
-                control = history[i].control;
-
-                if (control.constructor === Constructor) {
+            for (var i = (history.length - 1); i >= 0; --i) {
+                if (history[i].control.constructor === Constructor) {
                     index = i;
                     break;
                 }
@@ -186,11 +296,23 @@ module plat.navigation {
 
             return index;
         }
-
+        
         /**
-         * This method takes in a length and navigates back in the history, returning the view control 
-         * associated with length + 1 entries back in the history.  It disposes all the view controls 
-         * encapsulated in the length.
+         * @name _goBackLength
+         * @memberof plat.navigation.Navigator
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * This method takes in a length and navigates back in the history, returning the 
+         * {@link plat.ui.IBaseViewControl|IBaseViewControl} associated with length + 1 entries 
+         * back in the history.  It disposes all the {@link plat.ui.IBaseViewControl|IBaseViewControls} 
+         * encapsulated in the length, but does not dispose the current {@link plat.ui.IBaseViewControl|IBaseViewControls}.
+         * 
+         * @param {number} length The number of entries to go back in the history stack.
+         * 
+         * @returns {plat.navigation.IBaseNavigationState} The new current navigation state as a 
+         * {@link plat.navigation.IBaseNavigationState|IBaseNavigationState}.
          */
         _goBackLength(length?: number): IBaseNavigationState {
             length = isNumber(length) ? length : 1;
@@ -219,75 +341,187 @@ module plat.navigation {
     }
 
     register.injectable(__NavigatorInstance, INavigatorInstance, null, __INSTANCE);
-
+    
     /**
-     * An object implementing INavigator allows ui.IViewControls to implement methods 
-     * used to navigate within a Viewport.
+     * @name INavigatorInstance
+     * @memberof plat.navigation
+     * @kind interface
+     * 
+     * @extends {plat.navigation.IBaseNavigator}
+     * 
+     * @description
+     * An object that allows {@link plat.ui.IBaseViewControl|IBaseViewControl} to implement methods 
+     * used to navigate within a {@link plat.ui.controls.Viewport|Viewport}.
      */
     export interface INavigatorInstance extends IBaseNavigator {
         /**
-         * Contains the navigation history stack for the associated Viewport.
+         * @name history
+         * @memberof plat.navigation.INavigatorInstance
+         * @kind property
+         * @access public
+         * 
+         * @type {Array<plat.navigation.IBaseNavigationState>}
+         * 
+         * @description
+         * Contains the navigation history stack for the associated {@link plat.ui.controls.Viewport|Viewport}.
          */
         history: Array<IBaseNavigationState>;
-
+        
         /**
-         * Allows a ui.IViewControl to navigate to another ui.IViewControl. Also allows for
-         * navigation parameters to be sent to the new ui.IViewControl.
+         * @name navigate
+         * @memberof plat.navigation.INavigatorInstance
+         * @kind function
+         * @access public
+         * @variation 0
          * 
-         * @param Constructor The Constructor for the new ui.IViewControl. The Navigator will find the injector 
-         * for the Constructor and create a new instance of the control.
-         * @param options Optional IBaseNavigationOptions used for Navigation.
+         * @description
+         * Allows an {@link plat.ui.IBaseViewControl|IBaseViewControl} to navigate to another 
+         * {@link plat.ui.IBaseViewControl|IBaseViewControl}. Also allows for
+         * navigation parameters to be sent along with the navigation.
+         * 
+         * @param {new (...args: any[]) => ui.IBaseViewControl} Constructor The Constructor for the new 
+         * {@link plat.ui.IBaseViewControl|IBaseViewControl}. This navigator will find the injector for 
+         * the Constructor and create a new instance of the control.
+         * @param {plat.navigation.INavigationOptions} options? Optional 
+         * {@link plat.navigation.INavigationOptions|INavigationOptions} used for navigation.
+         * 
+         * @returns {void}
          */
-        navigate(Constructor?: new (...args: any[]) => ui.IViewControl, options?: INavigationOptions): void;
-        navigate(injector?: dependency.IInjector<ui.IViewControl>, options?: INavigationOptions): void;
-
+        navigate(Constructor: new (...args: any[]) => ui.IBaseViewControl, options?: INavigationOptions): void;
         /**
-         * Returns to the last visited ui.IViewControl.
+         * @name navigate
+         * @memberof plat.navigation.INavigatorInstance
+         * @kind function
+         * @access public
+         * @variation 1
          * 
-         * @param options Optional IBackNavigationOptions allowing the ui.IViewControl
-         * to customize navigation. Enables navigating back to a specified point in history as well
-         * as specifying a new templateUrl to use at the next ui.IViewControl.
+         * @description
+         * Allows an {@link plat.ui.IBaseViewControl|IBaseViewControl} to navigate to another 
+         * {@link plat.ui.IBaseViewControl|IBaseViewControl}. Also allows for
+         * navigation parameters to be sent along with the navigation.
+         * 
+         * @param {new (...args: any[]) => plat.ui.IBaseViewControl} injector The {@link plat.dependency.IInjector|IInjector} 
+         * for the new {@link plat.ui.IBaseViewControl|IBaseViewControl}. This navigator will create a new instance of the control.
+         * @param {plat.navigation.INavigationOptions} options? Optional 
+         * {@link plat.navigation.INavigationOptions|INavigationOptions} used for navigation.
+         * 
+         * @returns {void}
+         */
+        navigate(injector: dependency.IInjector<ui.IBaseViewControl>, options?: INavigationOptions): void;
+        
+        /**
+         * @name goBack
+         * @memberof plat.navigation.INavigatorInstance
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Returns to the last visited {@link plat.ui.IBaseViewControl|IBaseViewControl}.
+         * 
+         * @param {plat.navigation.IBackNavigationOptions} options? Optional 
+         * {@link plat.navigation.IBackNavigationOptions|IBackNavigationOptions} allowing the 
+         * {@link plat.ui.IBaseViewControl|IBaseViewControl} to customize navigation. Enables 
+         * navigating back to a specified point in history as well as specifying a new templateUrl 
+         * to use at the next {@link plat.ui.IBaseViewControl|IBaseViewControl}.
+         * 
+         * @returns {void}
          */
         goBack(options?: IBackNavigationOptions): void;
-
+        
         /**
-         * Lets the caller know if there are ui.IViewControls in the history, meaning the caller
-         * is safe to perform a backward navigation.
+         * @name goBack
+         * @memberof plat.navigation.INavigatorInstance
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Lets the caller know if there are {@link plat.ui.IBaseViewControl|IBaseViewControl} in the history, 
+         * meaning the caller is safe to perform a backward navigation.
+         * 
+         * @returns {boolean} Whether or not a backwards navigation can occur.
          */
         canGoBack(): boolean;
-
+        
         /**
+         * @name clearHistory
+         * @memberof plat.navigation.INavigatorInstance
+         * @kind function
+         * @access public
+         * 
+         * @description
          * Clears the navigation history, disposing all the controls.
+         * 
+         * @returns {void}
          */
         clearHistory(): void;
     }
-
+    
     /**
-     * Options that you can submit to the Navigator in order
+     * @name INavigationOptions
+     * @memberof plat.navigation
+     * @kind interface
+     * 
+     * @extends {plat.navigation.IBaseNavigationOptions}
+     * 
+     * @description
+     * Options that you can submit to an {@link plat.navigation.INavigatorInstance|INavigatorInstance} in order 
      * to customize navigation.
      */
     export interface INavigationOptions extends IBaseNavigationOptions {
         /**
-         * An optional parameter to send to the next ui.IViewControl.
+         * @name parameter
+         * @memberof plat.navigation.INavigationOptions
+         * @kind property
+         * @access public
+         * 
+         * @type {any}
+         * 
+         * @description
+         * An optional parameter to send to the next {@link plat.ui.IBaseViewControl|IBaseViewControl}.
          */
         parameter?: any;
     }
-
+    
     /**
-     * Options that you can submit to the Navigator during a backward
+     * @name IBackNavigationOptions
+     * @memberof plat.navigation
+     * @kind interface
+     * 
+     * @extends {plat.navigation.IBaseBackNavigationOptions}
+     * 
+     * @description
+     * Options that you can submit to an {@link plat.navigation.INavigatorInstance|INavigatorInstance} during a backward 
      * navigation in order to customize the navigation.
      */
     export interface IBackNavigationOptions extends IBaseBackNavigationOptions {
         /**
-         * An optional parameter to send to the next ui.IViewControl.
+         * @name parameter
+         * @memberof plat.navigation.IBackNavigationOptions
+         * @kind property
+         * @access public
+         * 
+         * @type {any}
+         * 
+         * @description
+         * An optional parameter to send to the next {@link plat.ui.IBaseViewControl|IBaseViewControl}.
          */
         parameter?: any;
+        
         /**
-         * A ui.IViewControl Constructor that the Navigator will
-         * use to navigate. The Navigator will search for an instance 
-         * of the ui.IViewControl in its history and navigate to it.
+         * @name ViewControl
+         * @memberof plat.navigation.IBackNavigationOptions
+         * @kind property
+         * @access public
+         * 
+         * @type {new (...args: any[]) => plat.ui.IBaseViewControl}
+         * 
+         * @description
+         * An {@link plat.ui.IBaseViewControl|IBaseViewControl} Constructor that the 
+         * {@link plat.navigation.INavigatorInstance|INavigatorInstance} will use to navigate. 
+         * The {@link plat.navigation.INavigatorInstance|INavigatorInstance} will search for an instance 
+         * of the {@link plat.ui.IBaseViewControl|IBaseViewControl} in its history and navigate to it.
          */
-        ViewControl?: new (...args: any[]) => ui.IViewControl;
+        ViewControl?: new (...args: any[]) => ui.IBaseViewControl;
     }
 }
 
