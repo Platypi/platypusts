@@ -386,26 +386,6 @@ module plat.ui {
          * @kind function
          * @access public
          * @static
-         * @variation 0
-         * 
-         * @description
-         * Notifies a control that its context has been changed by 
-         * calling the "control.contextChanged" method if it exists.
-         * 
-         * @param {plat.IControl} control The control whose context changed.
-         * @param {any} newValue The new value of the control's context.
-         * @param {any} oldValue The old value of the control's context.
-         * 
-         * @returns {void}
-         */
-        static contextChanged(control: IControl, newValue: any, oldValue: any): void;
-        /**
-         * @name contextChanged
-         * @memberof plat.ui.TemplateControl
-         * @kind function
-         * @access public
-         * @static
-         * @variation 1
          * 
          * @description
          * Notifies a control that its context has been changed by 
@@ -1329,26 +1309,6 @@ module plat.ui {
          * @kind function
          * @access public
          * @static
-         * @variation 0
-         * 
-         * @description
-         * Notifies a control that its context has been changed by 
-         * calling the "control.contextChanged" method if it exists.
-         * 
-         * @param {plat.IControl} control The control whose context changed.
-         * @param {any} newValue The new value of the control's context.
-         * @param {any} oldValue The old value of the control's context.
-         * 
-         * @returns {void}
-         */
-        contextChanged(control: IControl, newValue: any, oldValue: any): void;
-        /**
-         * @name contextChanged
-         * @memberof plat.ui.ITemplateControlFactory
-         * @kind function
-         * @access public
-         * @static
-         * @variation 1
          * 
          * @description
          * Notifies a control that its context has been changed by 

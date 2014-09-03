@@ -8,27 +8,64 @@
  * Holds all classes and interfaces related to observable components in platypus.
  */
 module plat.observable {
-    var arrayMethods = ['push', 'pop', 'reverse', 'shift', 'sort', 'splice', 'unshift'];
-
     /**
-     * Manages observable properties on control.
-     * Facilitates in data-binding and managing context inheritance.
+     * @name arrayMethods
+     * @memberof plat.observable
+     * @kind property
+     * @access private
+     * @static
+     * @exported false
+     * 
+     * @type {Array<string>}
+     * 
+     * @description
+     * The array methods to be overwritten if it is to be observed.
+     */
+    var arrayMethods = ['push', 'pop', 'reverse', 'shift', 'sort', 'splice', 'unshift'];
+    
+    /**
+     * @name ContextManager
+     * @memberof plat.observable
+     * @kind class
+     * 
+     * @implements {plat.observable.IContextManager}
+     * 
+     * @description
+     * A class for managing both context inheritance and observable properties on controls and 
+     * facilitating in data-binding.
      */
     export class ContextManager implements IContextManager {
         /**
+         * @name observedArrayListeners
+         * @memberof plat.observable.ContextManager
+         * @kind property
+         * @access public
+         * @static
+         * 
+         * @type {plat.IObject<plat.IObject<Array<(ev: plat.observable.IArrayMethodInfo<any>) => void>>>}
+         * 
+         * @description
          * A set of functions to be fired when a particular observed array is mutated.
          */
         static observedArrayListeners: IObject<IObject<Array<(ev: IArrayMethodInfo<any>) => void>>> = {};
-
+        
         /**
-         * Gets the ContextManager associated to the given control. If no 
-         * ContextManager exists, one is created for that control.
-         * 
+         * @name getManager
+         * @memberof plat.observable.ContextManager
+         * @kind function
+         * @access public
          * @static
-         * @param control The control on which to locate the ContextManager
+         * 
+         * @description
+         * Gets the {@link plat.observable.IContextManager|IContextManager} associated to the given control. If no 
+         * {@link plat.observable.IContextManager|IContextManager} exists, one is created for that control.
+         * 
+         * @param {plat.IControl} control The control on which to locate the {@link plat.observable.IContextManager|IContextManager}.
+         * 
+         * @returns {plat.observable.IContextManager} The {@link plat.observable.IContextManager|IContextManager} 
+         * associated with the input control.
          */
-        static getManager(control: IControl): IContextManager;
-        static getManager(control: any): IContextManager {
+        static getManager(control: IControl): IContextManager {
             var contextManager: IContextManager,
                 managers = ContextManager.__managers,
                 uid = control.uid,
@@ -44,17 +81,25 @@ module plat.observable {
 
             return contextManager;
         }
-
+        
         /**
-         * Removes all the listeners for a given control's uid.
-         * 
+         * @name dispose
+         * @memberof plat.observable.ContextManager
+         * @kind function
+         * @access public
          * @static
-         * @param control The control whose manager is being disposed.
-         * @param persist Whether or not the control's context needs to 
+         * 
+         * @description
+         * Removes all the listeners for a given control's unique ID.
+         * 
+         * @param {plat.IControl} control The control whose manager is being disposed.
+         * @param {boolean} persist? Whether or not the control's context needs to 
          * be persisted post-disposal or can be set to null.
+         * 
+         * @returns {void}
          */
         static dispose(control: IControl, persist?: boolean): void;
-        static dispose(control: ui.ITemplateControl, persist?: boolean) {
+        static dispose(control: ui.ITemplateControl, persist?: boolean): void {
             if (isNull(control)) {
                 return;
             }
@@ -71,22 +116,19 @@ module plat.observable {
             }
 
             var keys = Object.keys(identifiers),
-                identifier: string,
                 listeners: Array<IRemoveListener>;
 
             while (keys.length > 0) {
-                identifier = keys.shift();
-                listeners = identifiers[identifier];
+                listeners = identifiers[keys.shift()];
                 while (listeners.length > 0) {
                     listeners.shift()();
                 }
             }
 
-            var arrayListeners = ContextManager.observedArrayListeners,
-                remove = ContextManager.removeArrayListeners;
+            keys = Object.keys(ContextManager.observedArrayListeners);
 
-            keys = Object.keys(arrayListeners);
-            length = keys.length;
+            var remove = ContextManager.removeArrayListeners,
+                length = keys.length;
 
             for (var i = 0; i < length; ++i) {
                 remove(keys[i], uid);
@@ -95,16 +137,25 @@ module plat.observable {
             deleteProperty(controls, uid);
 
             if (!isNull(control.context)) {
-                ContextManager.defineProperty(control, 'context', persist ? _clone(control.context, true) : null, true, true);
+                ContextManager.defineProperty(control, 'context',
+                    persist === true ? _clone(control.context, true) : null, true, true);
             }
         }
-
+        
         /**
+         * @name removeArrayListeners
+         * @memberof plat.observable.ContextManager
+         * @kind function
+         * @access public
+         * @static
+         * 
+         * @description
          * Removes all listeners for an Array associated with a given uid.
          * 
-         * @static
-         * @param absoluteIdentifier The identifier used to locate the array.
-         * @param uid The uid used to search for listeners.
+         * @param {string} absoluteIdentifier The identifier used to locate the array.
+         * @param {string} uid The uid used to search for listeners.
+         * 
+         * @returns {void}
          */
         static removeArrayListeners(absoluteIdentifier: string, uid: string): void {
             var listeners = ContextManager.observedArrayListeners[absoluteIdentifier];
@@ -113,20 +164,29 @@ module plat.observable {
                 deleteProperty(listeners, uid);
             }
         }
-
+        
         /**
+         * @name getContext
+         * @memberof plat.observable.ContextManager
+         * @kind function
+         * @access public
+         * @static
+         * 
+         * @description
          * Safely retrieves the local context given a root context and an Array of
          * property strings.
          * 
-         * @static
-         * @param rootContext The root object in which to find a local context.
-         * @param split The string array containing properties used to index into
+         * @param {any} rootContext The root object in which to find a local context.
+         * @param {Array<string>} split The string array containing properties used to index into 
          * the rootContext.
+         * 
+         * @returns {any} The narrowed down context.
          */
         static getContext(rootContext: any, split: Array<string>): any {
             if (isNull(rootContext)) {
                 return rootContext;
             }
+
             split = split.slice(0);
             while (split.length > 0) {
                 rootContext = rootContext[split.shift()];
@@ -137,53 +197,78 @@ module plat.observable {
 
             return rootContext;
         }
-
+        
         /**
+         * @name defineProperty
+         * @memberof plat.observable.ContextManager
+         * @kind function
+         * @access public
+         * @static
+         * 
+         * @description
          * Defines an object property with the associated value. Useful for unobserving objects.
          * 
-         * @param obj The object on which to define the property.
-         * @param key The property key.
-         * @param value The value used to define the property.
-         * @param enumerable Whether or not the property should be enumerable (able to be iterated 
+         * @param {any} obj The object on which to define the property.
+         * @param {string} key The property key.
+         * @param {any} value The value used to define the property.
+         * @param {boolean} enumerable? Whether or not the property should be enumerable (able to be iterated 
          * over in a loop)
-         * @param configurable Whether or not the property is able to be reconfigured.
+         * @param {boolean} configurable? Whether or not the property is able to be reconfigured.
+         * 
+         * @returns {void}
          */
         static defineProperty(obj: any, key: string, value: any, enumerable?: boolean, configurable?: boolean): void {
             Object.defineProperty(obj, key, {
                 value: value,
-                enumerable: !!enumerable,
-                configurable: !!configurable
+                enumerable: enumerable === true,
+                configurable: configurable === true
             });
         }
-
+        
         /**
-         * Defines an object property with only a getter function. Useful for creating constant values 
-         * or overwriting constant values.
+         * @name defineGetter
+         * @memberof plat.observable.ContextManager
+         * @kind function
+         * @access public
+         * @static
          * 
-         * @param obj The object on which to define the property.
-         * @param key The property key.
-         * @param value The value used to define the property.
-         * @param enumerable Whether or not the property should be enumerable (able to be iterated 
+         * @description
+         * Defines an object property with the associated value. Useful for unobserving objects.
+         * 
+         * @param {any} obj The object on which to define the property.
+         * @param {string} key The property key.
+         * @param {any} value The value used to define the property.
+         * @param {boolean} enumerable? Whether or not the property should be enumerable (able to be iterated 
          * over in a loop)
-         * @param configurable Whether or not the property is able to be reconfigured.
+         * @param {boolean} configurable? Whether or not the property is able to be reconfigured.
+         * 
+         * @returns {void}
          */
         static defineGetter(obj: any, key: string, value: any, enumerable?: boolean, configurable?: boolean): void {
             Object.defineProperty(obj, key, {
                 get: () => value,
-                enumerable: !!enumerable,
-                configurable: !!configurable
+                enumerable: enumerable === true,
+                configurable: configurable === true
             });
         }
-
+        
         /**
+         * @name pushRemoveListener
+         * @memberof plat.observable.ContextManager
+         * @kind function
+         * @access public
+         * @static
+         * 
+         * @description
          * Pushes the function for removing an observed property upon adding the property.
          * 
-         * @static
-         * @param identifer The identifier for which the remove listener is being pushed.
-         * @param uid The uid of the control observing the identifier.
-         * @param listener The function for removing the observed property.
+         * @param {string} identifer The identifier for which the remove listener is being pushed.
+         * @param {string} uid The unique ID of the control observing the identifier.
+         * @param {plat.IRemoveListener} listener The function for removing the observed property.
+         * 
+         * @returns {void}
          */
-        static pushRemoveListener(identifier: string, uid: string, listener: IRemoveListener) {
+        static pushRemoveListener(identifier: string, uid: string, listener: IRemoveListener): void {
             var controls = ContextManager.__controls,
                 control = controls[uid],
                 listeners: Array<IRemoveListener>;
@@ -200,24 +285,29 @@ module plat.observable {
 
             listeners.push(listener);
         }
-
+        
         /**
-         * Removes a specified identifier from being observed for a given set of control uids.
-         * 
+         * @name removeIdentifier
+         * @memberof plat.observable.ContextManager
+         * @kind function
+         * @access public
          * @static
-         * @param uids The set of uids for which to remove the specified identifier.
-         * @param identifier The identifier to stop observing.
+         * 
+         * @description
+         * Removes a specified identifier from being observed for a given set of control IDs.
+         * 
+         * @param {Array<string>} uids The set of unique Ids for which to remove the specified identifier.
+         * @param {string} identifier The identifier to stop observing.
+         * 
+         * @returns {void}
          */
         static removeIdentifier(uids: Array<string>, identifier: string): void {
             var length = uids.length,
                 controls = ContextManager.__controls,
-                uid: string,
                 identifiers: IObject<Array<IRemoveListener>>;
 
             for (var i = 0; i < length; ++i) {
-                uid = uids[i];
-
-                identifiers = controls[uid];
+                identifiers = controls[uids[i]];
 
                 if (isNull(identifiers)) {
                     continue;
@@ -226,20 +316,27 @@ module plat.observable {
                 deleteProperty(identifiers, identifier);
             }
         }
-
+        
         /**
+         * @name createContext
+         * @memberof plat.observable.ContextManager
+         * @kind function
+         * @access public
+         * @static
+         * 
+         * @description
          * Ensures that an identifier path will exist on a given control. Will create 
          * objects/arrays if necessary.
          * 
-         * @param control The control on which to create the context.
-         * @param identifier The period-delimited identifier string used to create 
+         * @param {plat.ui.ITemplateControl} control The {@link plat.ui.ITemplateControl|ITemplateControl} 
+         * on which to create the context.
+         * @param {string} identifier The period-delimited identifier string used to create 
          * the context path.
+         * 
+         * @returns {any} The newly created context object.
          */
-        static createContext(control: ui.ITemplateControl, identifier: string) {
-            var split = identifier.split('.'),
-                property: string,
-                temp: any,
-                context = control.context;
+        static createContext(control: ui.ITemplateControl, identifier: string): any {
+            var context = control.context;
 
             if (!isObject(context)) {
                 if (isNull(context)) {
@@ -248,9 +345,13 @@ module plat.observable {
                     var Exception: IExceptionStatic = acquire(__ExceptionStatic);
                     Exception.warn('A child control is trying to create a child context that has ' +
                         'a parent control with a primitive type context', Exception.BIND);
-                    return {};
+                    return;
                 }
             }
+
+            var split = identifier.split('.'),
+                property: string,
+                temp: any;
 
             while (split.length > 0) {
                 property = split.shift();
@@ -270,19 +371,134 @@ module plat.observable {
 
             return context;
         }
-
+        
+        /**
+         * @name __managers
+         * @memberof plat.observable.ContextManager
+         * @kind property
+         * @access private
+         * @static
+         * 
+         * @type {plat.IObject<plat.observable.IContextManager>}
+         * 
+         * @description
+         * An object for quickly accessing a previously created {@link plat.observable.IContextManager|IContextManager}.
+         */
         private static __managers: IObject<IContextManager> = {};
+        /**
+         * @name __controls
+         * @memberof plat.observable.ContextManager
+         * @kind property
+         * @access private
+         * @static
+         * 
+         * @type {plat.IObject<plat.IObject<Array<plat.IRemoveListener>>>}
+         * 
+         * @description
+         * An object for storing functions to remove listeners for observed identifiers.
+         */
         private static __controls: IObject<IObject<Array<IRemoveListener>>> = {};
-
+        
+        /**
+         * @name $Compat
+         * @memberof plat.observable.ContextManager
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.ICompat}
+         * 
+         * @description
+         * Reference to the {@link plat.ICompat|ICompat} injectable.
+         */
         $Compat: ICompat = acquire(__Compat);
-
+        
+        /**
+         * @name context
+         * @memberof plat.observable.ContextManager
+         * @kind property
+         * @access public
+         * 
+         * @type {any}
+         * 
+         * @description
+         * The root context associated with and to be managed by this 
+         * {@link plat.observable.IContextManager|IContextManager}.
+         */
         context: any;
-
+        
+        /**
+         * @name __identifiers
+         * @memberof plat.observable.ContextManager
+         * @kind property
+         * @access private
+         * 
+         * @type {plat.IObject<Array<plat.observable.IListener>>}
+         * 
+         * @description
+         * An object for quickly accessing callbacks associated with a given identifier.
+         */
         private __identifiers: IObject<Array<IListener>> = {};
+        /**
+         * @name __identifierHash
+         * @memberof plat.observable.ContextManager
+         * @kind property
+         * @access private
+         * 
+         * @type {plat.IObject<Array<string>>}
+         * 
+         * @description
+         * An object for quickly accessing child context associations (helps with 
+         * notifying child properties).
+         */
         private __identifierHash: IObject<Array<string>> = {};
+        /**
+         * @name __lengthListeners
+         * @memberof plat.observable.ContextManager
+         * @kind property
+         * @access private
+         * 
+         * @type {plat.IObject<plat.observable.IListener>}
+         * 
+         * @description
+         * An object for storing listeners for Array length changes.
+         */
         private __lengthListeners: IObject<IListener> = {};
+        /**
+         * @name __contextObjects
+         * @memberof plat.observable.ContextManager
+         * @kind property
+         * @access private
+         * 
+         * @type {plat.IObject<any>}
+         * 
+         * @description
+         * An object for quickly accessing previously accessed or observed objects and properties.
+         */
         private __contextObjects: IObject<any> = {};
-        private __isArrayFunction: boolean = false;
+        /**
+         * @name __isArrayFunction
+         * @memberof plat.observable.ContextManager
+         * @kind property
+         * @access private
+         * 
+         * @type {boolean}
+         * 
+         * @description
+         * Whether or not the property currently being modified is due to an observed array function.
+         */
+        private __isArrayFunction = false;
+        /**
+         * @name __observedIdentifier
+         * @memberof plat.observable.ContextManager
+         * @kind property
+         * @access private
+         * 
+         * @type {string}
+         * 
+         * @description
+         * If attempting to observe a property that is already being observed, this will be set to the 
+         * already observed identifier.
+         */
         private __observedIdentifier: string;
 
         getContext(split: Array<string>): any {
@@ -303,10 +519,10 @@ module plat.observable {
 
             var split = absoluteIdentifier.split('.'),
                 key = split.pop(),
-                context = this.context,
                 hasIdentifier = this._hasIdentifier(absoluteIdentifier),
                 hasObservableListener = !isNull(observableListener),
-                join = key;
+                join: string,
+                context: any;
 
             if (split.length > 0) {
                 join = split.join('.');
@@ -314,6 +530,9 @@ module plat.observable {
                 if (isNull(context)) {
                     context = this.__contextObjects[join] = this._getImmediateContext(join);
                 }
+            } else {
+                join = key;
+                context = this.context;
             }
 
             if (!isObject(context)) {

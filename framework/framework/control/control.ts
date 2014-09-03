@@ -84,7 +84,7 @@ module plat {
          * @returns {plat.ui.ITemplateControl} The root control.
          */
         static getRootControl(control: IControl): ui.ITemplateControl;
-        static getRootControl(control: ui.ITemplateControl) {
+        static getRootControl(control: ui.ITemplateControl): ui.ITemplateControl {
             if (isNull(control)) {
                 return control;
             } else if (!isNull(control.root)) {
