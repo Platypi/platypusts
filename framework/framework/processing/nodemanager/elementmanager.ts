@@ -953,7 +953,7 @@ module plat.processing {
                 if (inheritsContext && !isNull(childContext)) {
                     if (childContext[0] === '@') {
                         var split = childContext.split('.'),
-                            alias = split.shift().substr(1),
+                            alias = split.shift().slice(1),
                             resourceObj = $TemplateControlFactory.findResource(uiControl, alias),
                             $exception: IExceptionStatic;
 

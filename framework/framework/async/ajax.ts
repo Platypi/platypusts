@@ -244,10 +244,10 @@ module plat.async {
                     }
 
                     $document.head.removeChild(scriptTag);
-                    if (!isUndefined(oldValue)) {
-                        $window[jsonpCallback] = oldValue;
-                    } else {
+                    if (isUndefined(oldValue)) {
                         deleteProperty($window, jsonpCallback);
+                    } else {
+                        $window[jsonpCallback] = oldValue;
                     }
 
                     // call callback

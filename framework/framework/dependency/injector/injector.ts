@@ -433,7 +433,7 @@ module plat.dependency {
                 }
 
                 throw new TypeError('Could not resolve dependency ' +
-                    dependency.substring(9, dependency.indexOf('(')) +
+                    dependency.slice(9, dependency.indexOf('(')) +
                     ' for ' +
                     name +
                     '. Are you using a static injectable Type?');

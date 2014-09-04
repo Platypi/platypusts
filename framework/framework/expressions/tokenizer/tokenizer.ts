@@ -134,7 +134,7 @@ module plat.expressions {
          * Takes in an expression string and outputs a tokenized collection of 
          * {@link plat.expressions.IToken|ITokens}.
          * 
-         * @param {string} input The expression string to tokenize.
+         * @param {string} input The JavaScript expression string to tokenize.
          * 
          * @returns {Array<plat.expressions.IToken>} The tokenized collection of 
          * {@link plat.expressions.IToken|ITokens}.
@@ -387,7 +387,7 @@ module plat.expressions {
          * 
          * @description
          * Check if the "val" property on an {@link plat.expressions.IToken|IToken} 
-         * is equal to a particular character.
+         * is present in a particular character string.
          * 
          * @param {plat.expressions.IToken} obj The {@link plat.expressions.IToken|IToken} 
          * with the "val" property to compare.
@@ -405,14 +405,14 @@ module plat.expressions {
         }
         
         /**
-         * @name _isValEqual
+         * @name _isValUnequal
          * @memberof plat.expressions.Tokenizer
          * @kind function
          * @access protected
          * 
          * @description
          * Check if the "val" property on an {@link plat.expressions.IToken|IToken} 
-         * is not equal to a particular character.
+         * is not present in a particular character string.
          * 
          * @param {plat.expressions.IToken} obj The {@link plat.expressions.IToken|IToken} 
          * with the "val" property to compare.
@@ -1101,10 +1101,10 @@ module plat.expressions {
             while (!isNull(topOperator) &&
                 isValUnequal(topOperator, '([') &&
                 (this._isStringValidVariable(topOperator.val) ||
-                isValEqual(topOperator.val, '[].') ||
+                isValEqual(topOperator.val, '.[]') ||
                 isAccessor(topOperator.val))) {
                 fnToken = operatorStack.shift();
-                if (!(fnToken.args !== -1 || isValEqual(fnToken, '[].'))) {
+                if (!(fnToken.args !== -1 || isValEqual(fnToken, '.[]'))) {
                     fnToken.args = -2;
                 }
                 outputQueue.push(fnToken);
@@ -1149,7 +1149,7 @@ module plat.expressions {
          * Takes in an expression string and outputs a tokenized collection of 
          * {@link plat.expressions.IToken|ITokens}.
          * 
-         * @param {string} input The expression string to tokenize.
+         * @param {string} input The JavaScript expression string to tokenize.
          * 
          * @returns {Array<plat.expressions.IToken>} The tokenized collection of 
          * {@link plat.expressions.IToken|ITokens}.

@@ -358,7 +358,7 @@ function camelCase(str: string): string {
         return str;
     }
 
-    str = str.charAt(0).toLowerCase() + str.substr(1);
+    str = str.charAt(0).toLowerCase() + str.slice(1);
     camelCaseRegex = camelCaseRegex || (<plat.expressions.IRegex>plat.acquire(__Regex)).camelCaseRegex;
 
     return str.replace(camelCaseRegex,

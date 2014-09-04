@@ -533,7 +533,7 @@
                 return;
             } else {
                 if (route[0] === '/') {
-                    route = (<string>route).substr(1);
+                    route = (<string>route).slice(1);
                 }
                 routeParameters = this._getRouteParameters(route);
                 routeParameters.injector = injector;
@@ -579,12 +579,12 @@
                 var length = regexArgs.length;
 
                 for (var i = 0; i < length; ++i) {
-                    args.push(regexArgs[i].substr(1));
+                    args.push(regexArgs[i].slice(1));
                 }
             }
 
             if (!isNull(wildcard)) {
-                var wildCardName = wildcard[0].substr(1);
+                var wildCardName = wildcard[0].slice(1);
 
                 if (isEmpty(wildCardName)) {
                     wildCardName = 'wildcard';

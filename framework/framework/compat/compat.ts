@@ -398,7 +398,7 @@
             this.vendorPrefix = {
                 lowerCase: prefix,
                 css: prefix === '' ? '' : '-' + prefix + '-',
-                js: prefix[0].toUpperCase() + prefix.substr(1)
+                js: prefix[0].toUpperCase() + prefix.slice(1)
             };
 
             if (prefix === 'webkit') {

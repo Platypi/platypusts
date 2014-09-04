@@ -75,7 +75,7 @@
             control.setter();
 
             var path = element.pathname;
-            path = (path.charAt(0) === '/') ? path.substr(1) : path;
+            path = (path.charAt(0) === '/') ? path.slice(1) : path;
 
             expect(path).toBe('foo');
         });

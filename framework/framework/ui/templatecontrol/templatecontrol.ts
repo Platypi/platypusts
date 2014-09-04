@@ -201,7 +201,7 @@ module plat.ui {
                 alias = aliases[i];
 
                 if (alias[0] === '@') {
-                    alias = alias.substr(1);
+                    alias = alias.slice(1);
                 }
 
                 if (!isNull(resources[alias])) {
@@ -261,7 +261,7 @@ module plat.ui {
             }
 
             if (alias[0] === '@') {
-                alias = alias.substr(1);
+                alias = alias.slice(1);
             }
 
             if (alias === 'rootContext') {
