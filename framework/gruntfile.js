@@ -9,7 +9,10 @@ module.exports = exports = function load(grunt) {
                 dest: [
                     './platypus.ts'
                 ],
-                disableLint: true
+                disableLint: true,
+                preSave: function (data, done) {
+                    done(data);
+                }
             }
         },
         pkg: grunt.file.readJSON('package.json')
