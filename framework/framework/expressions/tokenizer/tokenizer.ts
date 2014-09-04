@@ -7,8 +7,8 @@ module plat.expressions {
      * @implements {plat.expressions.ITokenizer}
      * 
      * @description
-     * Responsible for taking a javascript expression string and
-     * finding all its tokens (i.e. delimiters, operators, etc).
+     * A class that is responsible for taking in a JavaScript expression string and
+     * finding all of its tokens (i.e. delimiters, operators, etc).
      */
     export class Tokenizer implements ITokenizer {
         /**
