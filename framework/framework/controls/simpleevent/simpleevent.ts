@@ -281,7 +281,7 @@ module plat.controls {
 
                 if (arg[0] === '@') {
                     exec = $regex.aliasRegex.exec(arg);
-                    aliases[!isNull(exec) ? exec[0] : arg.substr(1)] = true;
+                    aliases[!isNull(exec) ? exec[0] : arg.slice(1)] = true;
                 }
             }
 

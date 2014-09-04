@@ -899,7 +899,7 @@ module plat {
                 if (identifier.indexOf('this') === 0) {
                     identifier = identifier.slice(5);
                 } else if (identifier[0] === '@') {
-                    alias = split[0].substr(1);
+                    alias = split[0].slice(1);
                     identifier = identifier.replace('@' + alias, 'resources.' + alias + '.value');
 
                     if (!isNull(resources[alias])) {

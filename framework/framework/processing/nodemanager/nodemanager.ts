@@ -141,17 +141,17 @@ module plat.processing {
 
             while ((start = text.indexOf(__startSymbol)) !== -1 && (end = text.indexOf(__endSymbol)) !== -1) {
                 if (start !== 0) {
-                    parsedExpressions.push(wrapExpression(text.substring(0, start)));
+                    parsedExpressions.push(wrapExpression(text.slice(0, start)));
                 }
 
                 // incremement with while loop instead of just += 2 for nested object literal case.
                 while (text[++end] === '}') { }
 
-                substring = text.substring(start + 2, end - 2);
+                substring = text.slice(start + 2, end - 2);
 
                 // check for one-time databinding
                 if (substring[0] === '=') {
-                    substring = substring.substr(1).trim();
+                    substring = substring.slice(1).trim();
                     expression = $parser.parse(substring);
                     expression = {
                         expression: expression.expression,
@@ -165,11 +165,11 @@ module plat.processing {
                     parsedExpressions.push($parser.parse(substring.trim()));
                 }
 
-                text = text.substr(end);
+                text = text.slice(end);
             }
 
             if (start > -1 && end >= 0) {
-                parsedExpressions.push(wrapExpression(text.substring(end)));
+                parsedExpressions.push(wrapExpression(text.slice(end)));
             } else if (text !== '') {
                 parsedExpressions.push(wrapExpression(text));
             }
@@ -280,7 +280,7 @@ module plat.processing {
                 if (identifier[0] === '@') {
                     // we found an alias
                     split = identifier.split('.');
-                    alias = split.shift().substr(1);
+                    alias = split.shift().slice(1);
 
                     if (split.length > 0) {
                         absoluteIdentifier = '.' + split.join('.');
