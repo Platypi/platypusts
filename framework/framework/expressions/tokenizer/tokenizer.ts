@@ -1063,6 +1063,11 @@ module plat.expressions {
                 }
 
                 firstArrayVal = operatorStack[0].val;
+                if (firstArrayVal === '.') {
+                    outputQueue.push(operatorStack.shift());
+                    continue;
+                }
+
                 firstArrayOperator = OPERATORS[firstArrayVal];
                 if (!(isNull(firstArrayOperator) ||
                     !(firstArrayOperator.precedence < operatorPrecedence ||
