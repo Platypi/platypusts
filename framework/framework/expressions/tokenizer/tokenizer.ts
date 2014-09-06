@@ -1051,17 +1051,14 @@ module plat.expressions {
                 operatorStack = this.__operatorStack,
                 outputQueue = this.__outputQueue,
                 firstArrayOperator: ITokenDetails,
-                firstArrayVal: any,
-                firstArrayObj: IToken;
+                firstArrayVal: any;
 
-            while (!determined) {
-                firstArrayObj = operatorStack[0];
+            if (operatorStack.length === 0) {
+                operatorStack.unshift({ val: operator, args: operatorFn.fn.length - 2 });
+                return;
+            }
 
-                if (isNull(firstArrayObj)) {
-                    operatorStack.unshift({ val: operator, args: operatorFn.fn.length - 2 });
-                    return;
-                }
-
+            do {
                 firstArrayVal = operatorStack[0].val;
                 if (firstArrayVal === '.') {
                     outputQueue.push(operatorStack.shift());
@@ -1075,9 +1072,11 @@ module plat.expressions {
                     outputQueue.push(operatorStack.shift());
                 } else {
                     operatorStack.unshift({ val: operator, args: operatorFn.fn.length - 2 });
-                    determined = true;
+                    return;
                 }
-            }
+            } while (operatorStack.length > 0);
+
+            operatorStack.unshift({ val: operator, args: operatorFn.fn.length - 2 });
         }
         /**
          * @name __removeFnFromStack
