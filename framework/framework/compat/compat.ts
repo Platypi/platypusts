@@ -279,13 +279,52 @@
         vendorPrefix: IVendorPrefix;
 
         /**
+         * @name IE
+         * @memberof plat.Compat
+         * @kind property
+         * @access public
+         * 
+         * @type {number}
+         * 
+         * @description
+         * The version of Internet Explorer being used. If not Internet Explorer, the value is undefined.
+         */
+        IE: number;
+
+        /**
+         * @name ANDROID
+         * @memberof plat.Compat
+         * @kind property
+         * @access public
+         * 
+         * @type {number}
+         * 
+         * @description
+         * The version of Android being used. If not Android, the value is undefined.
+         */
+        ANDROID: number;
+
+        /**
+         * @name __events
+         * @memberof plat.Compat
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.IObject<boolean>}
+         * 
+         * @description
+         * An object containing all event lookups.
+         */
+        private __events: IObject<boolean> = {};
+
+        /**
          * @name constructor
          * @memberof plat.Compat
          * @kind function
          * @access public
          * 
          * @description
-         * Define everything
+         * Define everything.
          * 
          * @returns {void}
          */
@@ -295,6 +334,35 @@
             this.__defineAnimationEvents();
             this.__determineCss();
         }
+        
+        /**
+         * @name hasEvent
+         * @memberof plat.Compat
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Check whether or not an event exists.
+         * 
+         * @param {string} event The event to check the existence of.
+         * 
+         * @returns {boolean} Whether or not the event exists.
+         */
+        hasEvent(event: string): boolean {
+            var events = this.__events,
+                eventExists = events[event];
+
+            if (isUndefined(eventExists)) {
+                var element = this.$Document.createElement('div');
+                if (event === 'input' && this.IE === 9) {
+                    eventExists = events[event] = false;
+                } else {
+                    eventExists = events[event] = !isUndefined((<any>element)[('on' + event)]);
+                }
+            }
+
+            return eventExists;
+        }
 
         /**
          * @name __defineBooleans
@@ -303,16 +371,18 @@
          * @access private
          * 
          * @description
-         * Define booleans
+         * Define booleans.
          * 
          * @returns {void}
          */
         private __defineBooleans(): void {
             var $window = this.$Window,
-                navigator = $window.navigator,
+                navigator = $window.navigator || <Navigator>{},
+                userAgent = (navigator.userAgent || '').toLowerCase(),
                 history = $window.history,
                 def = (<any>$window).define,
-                msA = (<any>$window).MSApp;
+                msA = (<any>$window).MSApp,
+                android = parseInt((<any>/android (\d+)/.exec(userAgent) || [])[1], 10);
 
             this.isCompatible = isFunction(Object.defineProperty) && isFunction(this.$Document.querySelector);
             this.cordova = !isNull((<any>$window).cordova);
@@ -327,6 +397,17 @@
             this.hasTouchEvents = !isUndefined((<any>$window).ontouchstart);
             this.hasPointerEvents = !!navigator.pointerEnabled;
             this.hasMsPointerEvents = !!navigator.msPointerEnabled;
+
+            if (isNumber(android)) {
+                this.ANDROID = android;
+                return;
+            }
+
+            var ie = parseInt((<any>/msie (\d+)/.exec(userAgent) || [])[1], 10) ||
+                parseInt((<any>(/trident\/.*; rv:(\d+)/.exec(userAgent) || []))[1], 10);
+            if (isNumber(ie)) {
+                this.IE = ie;
+            }
         }
 
         /**
@@ -740,6 +821,47 @@
          * An object containing information regarding any potential vendor prefix.
          */
         vendorPrefix: IVendorPrefix;
+
+        /**
+         * @name IE
+         * @memberof plat.ICompat
+         * @kind property
+         * @access public
+         * 
+         * @type {number}
+         * 
+         * @description
+         * The version of Internet Explorer being used. If not Internet Explorer, the value is undefined.
+         */
+        IE: number;
+
+        /**
+         * @name ANDROID
+         * @memberof plat.ICompat
+         * @kind property
+         * @access public
+         * 
+         * @type {number}
+         * 
+         * @description
+         * The version of Android being used. If not Android, the value is undefined.
+         */
+        ANDROID: number;
+
+        /**
+         * @name hasEvent
+         * @memberof plat.ICompat
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Check whether or not an event exists.
+         * 
+         * @param {string} event The event to check the existence of.
+         * 
+         * @returns {boolean} Whether or not the event exists.
+         */
+        hasEvent(event: string): boolean;
     }
 
     /**

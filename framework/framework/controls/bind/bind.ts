@@ -39,6 +39,20 @@ module plat.controls {
         $ContextManagerStatic: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
 
         /**
+         * @name $Compat
+         * @memberof plat.controls.Bind
+         * @kind property
+         * @access public
+         * @static
+         * 
+         * @type {plat.ICompat}
+         * 
+         * @description
+         * Reference to the {@link plat.ICompat|ICompat} injectable.
+         */
+        $Compat: ICompat = acquire(__Compat);
+
+        /**
          * @name $document
          * @memberof plat.controls.Bind
          * @kind property
@@ -317,6 +331,7 @@ module plat.controls {
          */
         _addTextEventListener(): void {
             var element = this.element,
+                $compat = this.$Compat,
                 composing = false,
                 timeout: IRemoveListener,
                 eventListener = () => {
@@ -337,23 +352,34 @@ module plat.controls {
                     });
                 };
 
-            this.addEventListener(element, 'compositionstart', () => composing = true, false);
-            this.addEventListener(element, 'compositionend', () => composing = false, false);
-            this.addEventListener(element, 'keydown', (ev: Event) => {
-                var key = (<KeyboardEvent>ev).keyCode,
-                    codes = KeyCodes;
+            if (isUndefined($compat.ANDROID)) {
+                this.addEventListener(element, 'compositionstart', () => (composing = true), false);
+                this.addEventListener(element, 'compositionend', () => {
+                    composing = false;
+                    eventListener();
+                }, false);
+            }
 
-                if (key === codes.lwk ||
-                    key === codes.rwk ||
-                    (key > 15 && key < 28) ||
-                    (key > 32 && key < 41)) {
-                    return;
-                }
+            if ($compat.hasEvent('input')) {
+                this.addEventListener(element, 'input', eventListener, false);
+            } else {
+                this.addEventListener(element, 'keydown', (ev: Event) => {
+                    var key = (<KeyboardEvent>ev).keyCode,
+                        codes = KeyCodes;
 
-                postponedEventListener();
-            }, false);
-            this.addEventListener(element, 'cut', postponedEventListener, false);
-            this.addEventListener(element, 'paste', postponedEventListener, false);
+                    if (key === codes.lwk ||
+                        key === codes.rwk ||
+                        (key > 15 && key < 28) ||
+                        (key > 32 && key < 41)) {
+                        return;
+                    }
+
+                    postponedEventListener();
+                }, false);
+                this.addEventListener(element, 'cut', postponedEventListener, false);
+                this.addEventListener(element, 'paste', postponedEventListener, false);
+            }
+
             this.addEventListener(element, 'change', eventListener, false);
         }
 
