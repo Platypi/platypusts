@@ -369,8 +369,8 @@ module plat.controls {
 
                     if (key === codes.lwk ||
                         key === codes.rwk ||
-                        (key > 15 && key < 28) ||
-                        (key > 32 && key < 41)) {
+                        (key >= codes.shift && key <= codes.escape) ||
+                        (key > codes.space && key <= codes.down)) {
                         return;
                     }
 
