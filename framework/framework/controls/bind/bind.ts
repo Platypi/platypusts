@@ -363,8 +363,8 @@ module plat.controls {
             if ($compat.hasEvent('input')) {
                 this.addEventListener(element, 'input', eventListener, false);
             } else {
-                this.addEventListener(element, 'keydown', (ev: Event) => {
-                    var key = (<KeyboardEvent>ev).keyCode,
+                this.addEventListener(element, 'keydown', (ev: KeyboardEvent) => {
+                    var key = ev.keyCode,
                         codes = KeyCodes;
 
                     if (key === codes.lwk ||
