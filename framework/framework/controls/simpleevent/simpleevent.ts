@@ -324,7 +324,7 @@ module plat.controls {
     /**
      * @name ISimpleEventControl
      * @memberof plat.controls
-     * @kind class
+     * @kind interface
      * 
      * @extends {plat.controls.IAttributeControl}
      * 

@@ -151,7 +151,7 @@ module plat.controls {
     /**
      * @name ISetAttributeControl
      * @memberof plat.controls
-     * @kind class
+     * @kind interface
      * 
      * @extends {plat.controls.IAttributeControl}
      * 
