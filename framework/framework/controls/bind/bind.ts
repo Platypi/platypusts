@@ -363,14 +363,14 @@ module plat.controls {
             if ($compat.hasEvent('input')) {
                 this.addEventListener(element, 'input', eventListener, false);
             } else {
-                this.addEventListener(element, 'keydown', (ev: Event) => {
-                    var key = (<KeyboardEvent>ev).keyCode,
+                this.addEventListener(element, 'keydown', (ev: KeyboardEvent) => {
+                    var key = ev.keyCode,
                         codes = KeyCodes;
 
                     if (key === codes.lwk ||
                         key === codes.rwk ||
-                        (key > 15 && key < 28) ||
-                        (key > 32 && key < 41)) {
+                        (key >= codes.shift && key <= codes.escape) ||
+                        (key > codes.space && key <= codes.down)) {
                         return;
                     }
 
