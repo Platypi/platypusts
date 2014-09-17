@@ -808,7 +808,7 @@ module plat.processing {
          * @type {Array<plat.expressions.IParsedExpression>}
          * 
          * @description
-         * Any {@link plat.expressions.IParsedExpressions|IParsedExpressions} contained in the Node.
+         * Any {@link plat.expressions.IParsedExpression|IParsedExpressions} contained in the Node.
          */
         expressions?: Array<expressions.IParsedExpression>;
         
