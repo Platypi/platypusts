@@ -46,7 +46,7 @@ module plat.processing {
          * @type {plat.ui.ITemplateControlFactory}
          * 
          * @description
-         * Reference to the {@link ui.ITemplateControlFactory|ITemplateControlFactory} injectable.
+         * Reference to the {@link plat.ui.ITemplateControlFactory|ITemplateControlFactory} injectable.
          */
         static $TemplateControlFactory: ui.ITemplateControlFactory;
         
