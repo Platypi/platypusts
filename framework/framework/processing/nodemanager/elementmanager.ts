@@ -443,7 +443,7 @@ module plat.processing {
          * 
          * @description
          * Iterates over the attributes (NamedNodeMap), creating an {@link plat.processing.INodeMap|INodeMap}. 
-         * This map will contain injectors for all the {@link plat.IControls|IControls} as well as parsed expressions 
+         * This map will contain injectors for all the {@link plat.IControl|IControls} as well as parsed expressions 
          * and identifiers found for each Attribute (useful for data binding).
          * 
          * @param {NamedNodeMap} attributes The attributes used to create the {@link plat.processing.INodeMap|INodeMap}.
