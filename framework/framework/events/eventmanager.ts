@@ -47,7 +47,7 @@ module plat.events {
          * @type {Window}
          * 
          * @description
-         * Reference to the {@link plat.Window|Window} injectable.
+         * Reference to the Window injectable.
          */
         static $Window: Window;
 
@@ -699,7 +699,7 @@ module plat.events {
          * @type {Window}
          *
          * @description
-         * Reference to the {@link plat.Window|Window} injectable.
+         * Reference to the Window injectable.
          */
         $Window: Window;
 
