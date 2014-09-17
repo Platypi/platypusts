@@ -33,7 +33,7 @@ module plat.events {
          * @type {Document}
          * 
          * @description
-         * Reference to the {@link plat.Document|Document} injectable.
+         * Reference to the Document injectable.
          */
         static $Document: Document;
 
@@ -685,7 +685,7 @@ module plat.events {
          * @type {Document}
          *
          * @description
-         * Reference to the {@link plat.Document|Document} injectable.
+         * Reference to the Document injectable.
          */
         $Document: Document;
 
