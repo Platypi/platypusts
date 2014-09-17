@@ -3,7 +3,7 @@
      * A class used by the Navigator to dispatch Navigation events. Allows anyone to listen 
      * for navigation events and respond to them, even canceling them if necessary.
      * 
-     * @generic P Corresponds to the type of event parameter.
+     * @typeparam {any} P Corresponds to the type of event parameter.
      */
     export class NavigationEvent<P> extends DispatchEvent implements INavigationEvent<P> {
         static $EventManagerStatic: IEventManagerStatic;
@@ -65,7 +65,7 @@
         /**
          * Dispatches an event with the specified target type.
          * 
-         * @generic P Corresponds to the type of the event parameter.
+         * @typeparam {any} P Corresponds to the type of the event parameter.
          * 
          * @param name The name of the event (e.g. 'beforeNavigate')
          * @param sender The object sending the event.

@@ -1140,7 +1140,7 @@ module plat.expressions {
      * 
      * @description
      * Describes an object used to find tokens for an expression and create 
-     * {@link plat.expressions.ITokens|ITokens}.
+     * {@link plat.expressions.IToken|ITokens}.
      */
     export interface ITokenizer {
         /**

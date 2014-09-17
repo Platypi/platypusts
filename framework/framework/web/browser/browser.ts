@@ -252,12 +252,12 @@ module plat.web {
          * @access public
          * 
          * @description
-         * Creates a new {@link plat.web.IUrlUtils|IUrlUtils} object.
+         * Creates a new {@link plat.web.IUrlUtilsInstance|IUrlUtilsInstance} object.
          * 
          * @param url? The URL to associate with the new {@link plat.web.UrlUtils|UrlUtils} 
          * instance.
          * 
-         * @returns {@link plat.web.IUrlUtils|IUrlUtils} The new {@link plat.web.IUrlUtils|IUrlUtils} object.
+         * @returns {@link plat.web.IUrlUtilsInstance|IUrlUtilsInstance} The new {@link plat.web.IUrlUtilsInstance|IUrlUtilsInstance} object.
          */
         urlUtils(url?: string): IUrlUtilsInstance {
             url = url || this.url();
