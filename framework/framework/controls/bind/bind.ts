@@ -1120,7 +1120,7 @@ module plat.controls {
          * @access private
          * 
          * @description
-         * Checks to see if a {@link plat.ui.control.Select|Select} is loading items.
+         * Checks to see if a {@link plat.ui.controls.Select|Select} is loading items.
          * 
          * @returns {boolean} Whether or not the select is loading items.
          */
