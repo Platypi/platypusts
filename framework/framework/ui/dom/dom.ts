@@ -1030,7 +1030,7 @@ module plat.ui {
      * @description
      * An interface for describing an Element with an ICustomElementProperty attached. Primarily 
      * used for element interaction with {@link plat.ui.DomEvents|DomEvents} and the 
-     * {@link plat.ui.Animator|Animator}.
+     * {@link plat.ui.animations.Animator|Animator}.
      */
     export interface ICustomElement extends HTMLElement {
         /**
