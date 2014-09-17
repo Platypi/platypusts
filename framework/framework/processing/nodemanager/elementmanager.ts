@@ -886,7 +886,7 @@ module plat.processing {
          * 
          * @description
          * Initializes both the manager itself and all the controls associated to the manager's 
-         * {@link plat.processing.NodeMap|NodeMap}.
+         * {@link plat.processing.INodeMap|INodeMap}.
          * 
          * @param {plat.processing.INodeMap} nodeMap A map of the nodes (element and attributes) 
          * associated with this {@link plat.processing.IElementManager|IElementManager}.
@@ -1824,7 +1824,7 @@ module plat.processing {
          * 
          * @description
          * Initializes both the manager itself and all the controls associated to the manager's 
-         * {@link plat.processing.NodeMap|NodeMap}.
+         * {@link plat.processing.INodeMap|INodeMap}.
          * 
          * @param {plat.processing.INodeMap} nodeMap A map of the nodes (element and attributes) 
          * associated with this {@link plat.processing.IElementManager|IElementManager}.
