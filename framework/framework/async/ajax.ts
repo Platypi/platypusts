@@ -2184,13 +2184,13 @@ module plat.async {
          * 
          * @description
          * A wrapper method for the Http class that creates and executes a new Http with
-         * the specified {@link plat.async.IAjaxOptions|IAjaxOptions}. This function will check if 
+         * the specified {@link plat.async.IHttpConfig|IHttpConfig}. This function will check if 
          * XMLHttpRequest level 2 is present, and will default to JSONP if it isn't and 
          * the request is cross-domain.
          * 
          * @typeparam {any} R The type of the {@link plat.async.IAjaxPromise|IAjaxPromise}
          * 
-         * @param {plat.async.IHttpConfig} options The {@link plat.async.IAjaxOptions|IAjaxOptions} for either the XMLHttpRequest 
+         * @param {plat.async.IHttpConfig} options The {@link plat.async.IHttpConfig|IHttpConfig} for either the XMLHttpRequest 
          * or the JSONP callback.
          * 
          * @returns {plat.async.IAjaxPromise} A promise, when fulfilled
@@ -2297,13 +2297,13 @@ module plat.async {
          * 
          * @description
          * A wrapper method for the Http class that creates and executes a new Http with
-         * the specified {@link plat.async.IAjaxOptions|IAjaxOptions}. This function will check if 
+         * the specified {@link plat.async.IHttpConfig|IHttpConfig}. This function will check if 
          * XMLHttpRequest level 2 is present, and will default to JSONP if it isn't and 
          * the request is cross-domain.
          * 
          * @typeparam {any} R The type of the {@link plat.async.IAjaxPromise|IAjaxPromise}
          * 
-         * @param {plat.async.IHttpConfig} options The {@link plat.async.IAjaxOptions|IAjaxOptions} for either the XMLHttpRequest 
+         * @param {plat.async.IHttpConfig} options The {@link plat.async.IHttpConfig|IHttpConfig} for either the XMLHttpRequest 
          * or the JSONP callback.
          * 
          * @returns {plat.async.AjaxPromise} A promise, when fulfilled
