@@ -1,5 +1,6 @@
 ﻿/* tslint:disable:no-unused-variable */
 var __nodeNameRegex = /<([\w:]+)/,
+    __whiteSpaceRegex = /\s+/g,
     __option = [1, '<select multiple="multiple">', '</select>'],
     __table = [1, '<table>', '</table>'],
     __tableData = [3, '<table><tbody><tr>', '</tr></tbody></table>'],
@@ -304,85 +305,139 @@ function removeNode(node: Node): void {
 }
 
 function addClass(element: HTMLElement, className: string): void {
-    if (!isString(className) || className === '') {
+    var cName = (element || <HTMLElement>{}).className;
+    if (!isString(cName) || !isString(className) || className === '') {
         return;
     }
 
+    var split = className.split(__whiteSpaceRegex),
+        name: string;
     if (isUndefined(element.classList)) {
-        if (isEmpty(element.className)) {
+        if (isEmpty(cName)) {
             element.className = className;
             return;
         }
 
-        element.className += ' ' + className;
+        while (split.length > 0) {
+            name = split.shift();
+            if (name !== '') {
+                element.className += ' ' + name;
+            }
+        }
         return;
     }
 
-    element.classList.add(className);
+    while (split.length > 0) {
+        name = split.shift();
+        if (name !== '') {
+            element.classList.add(name);
+        }
+    }
 }
 
 function removeClass(element: HTMLElement, className: string): void {
-    if (!isString(className) || className === '') {
+    var cName = (element || <HTMLElement>{}).className;
+    if (!isString(cName) || !isString(className) || className === '') {
         return;
     }
 
+    var split = className.split(__whiteSpaceRegex),
+        name: string;
     if (isUndefined(element.classList)) {
-        if (element.className === className) {
+        if (cName === className) {
             element.className = '';
             return;
         }
 
-        element.className = element.className
-            .replace(new RegExp('^' + className + '\\s|\\s' + className + '$|\\s' + className + '|' + className + '\\s', 'g'), '');
+        while (split.length > 0) {
+            name = split.shift();
+            if (name !== '') {
+                element.className = cName = cName
+                    .replace(new RegExp('^' + name + '\\s|\\s' + name + '$|\\s' + name + '|' + name + '\\s', 'g'), '');
+            }
+        }
         return;
     }
 
-    element.classList.remove(className);
+    while (split.length > 0) {
+        name = split.shift();
+        if (name !== '') {
+            element.classList.remove(name);
+        }
+    }
 }
 
 function toggleClass(element: HTMLElement, className: string): void {
-    if (!isString(className) || className === '') {
+    var cName = (element || <HTMLElement>{}).className;
+    if (!isString(cName) || !isString(className) || className === '') {
         return;
     }
 
+    var split = className.split(__whiteSpaceRegex),
+        name: string;
     if (isUndefined(element.classList)) {
-        var name = element.className;
-        if (name === '') {
+        var classNameRegex: RegExp;
+        if (cName === '') {
             element.className = className;
-        } else if (name === className) {
+        } else if (cName === className) {
             element.className = '';
             return;
         }
 
-        var classNameRegex = new RegExp('^' + className + '\\s|\\s' + className + '$|\\s' + className + '|' + className + '\\s', 'g');
-        if (classNameRegex.test(name)) {
-            element.className = name.replace(classNameRegex, '');
-            return;
-        }
+        while (split.length > 0) {
+            name = split.shift();
+            if (name !== '') {
+                classNameRegex = new RegExp('^' + name + '\\s|\\s' + name + '$|\\s' + name + '|' + name + '\\s', 'g');
+                if (classNameRegex.test(cName)) {
+                    element.className = cName = cName.replace(classNameRegex, '');
+                    continue;
+                }
 
-        element.className += ' ' + className;
+                element.className += ' ' + name;
+            }
+        }
         return;
     }
 
-    element.classList.toggle(className);
+    while (split.length > 0) {
+        name = split.shift();
+        if (name !== '') {
+            element.classList.toggle(name);
+        }
+    }
 }
 
 function hasClass(element: HTMLElement, className: string): boolean {
-    if (!isString(className) || className === '') {
-        return;
+    var cName = (element || <HTMLElement>{}).className;
+    if (!isString(cName) || !isString(className) || className === '') {
+        return false;
     }
 
+    var split = className.split(__whiteSpaceRegex);
     if (isUndefined(element.classList)) {
-        var name = element.className;
-        if (name === '') {
+        if (cName === '') {
             return false;
-        } else if (name === className) {
+        } else if (cName === className) {
             return true;
         }
 
-        return new RegExp('^' + className + '\\s|\\s' + className + '$|\\s' + className + '|' + className + '\\s', 'g').test(name);
+        var name: string;
+        while (split.length > 0) {
+            name = split.shift();
+            if (!(name === '' || new RegExp('^' + name + '\\s|\\s' + name + '$|\\s' + name + '|' + name + '\\s', 'g').test(cName))) {
+                return false;
+            }
+        }
+        return true;
     }
 
-    return element.classList.contains(className);
+    while (split.length > 0) {
+        name = split.shift();
+        if (!(name === '' || element.classList.contains(name))) {
+            return false;
+        }
+    }
+
+    return true;
 }
 /* tslint:enable:no-unused-variable */

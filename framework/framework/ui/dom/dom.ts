@@ -445,17 +445,17 @@ module plat.ui {
          * @access public
          * 
          * @description
-         * Adds a class to the specified element.
+         * Adds a class or multiple classes to the specified element.
          * 
          * @param {Element} element The element to which the class name is being added.
-         * @param {string} className The class name to add to the element.
+         * @param {string} className The class name or space delimited class names to add to the element.
          * 
          * @returns {void}
          */
         addClass(element: Element, className: string): void {
             return addClass(<HTMLElement>element, className);
         }
-
+        
         /**
          * @name removeClass
          * @memberof plat.ui.Dom
@@ -463,17 +463,17 @@ module plat.ui {
          * @access public
          * 
          * @description
-         * Removes a class from the specified element.
+         * Removes a class or multiple classes from the specified element.
          * 
          * @param {Element} element The element from which the class name is being removed.
-         * @param {string} className The class name to remove from the element.
+         * @param {string} className The class name or space delimited class names to remove from the element.
          * 
          * @returns {void}
          */
         removeClass(element: Element, className: string): void {
             return removeClass(<HTMLElement>element, className);
         }
-
+        
         /**
          * @name toggleClass
          * @memberof plat.ui.Dom
@@ -481,17 +481,17 @@ module plat.ui {
          * @access public
          * 
          * @description
-         * Toggles a class from the specified element.
+         * Toggles a class or multiple classes from the specified element.
          * 
          * @param {Element} element The element on which the class name is being toggled.
-         * @param {string} className The class name to toggle on the element.
+         * @param {string} className The class name or space delimited class names to toggle on the element.
          * 
          * @returns {void}
          */
         toggleClass(element: Element, className: string): void {
             return toggleClass(<HTMLElement>element, className);
         }
-
+        
         /**
          * @name hasClass
          * @memberof plat.ui.Dom
@@ -499,12 +499,13 @@ module plat.ui {
          * @access public
          * 
          * @description
-         * Returns whether or not an element has a particular class assigned to it.
+         * Returns whether or not an element has a particular class or classes assigned to it.
          * 
          * @param {Element} element The element on which the class name is being checked.
-         * @param {string} className The class name to check on the element.
+         * @param {string} className The class name or space delimited class names to check on the element.
          * 
-         * @returns {void}
+         * @returns {boolean} Whether or not the element has the class name or all of the class names 
+         * specified in the className argument.
          */
         hasClass(element: Element, className: string): boolean {
             return hasClass(<HTMLElement>element, className);
@@ -924,10 +925,10 @@ module plat.ui {
          * @access public
          * 
          * @description
-         * Adds a class to the specified element.
+         * Adds a class or multiple classes to the specified element.
          * 
          * @param {Element} element The element to which the class name is being added.
-         * @param {string} className The class name to add to the element.
+         * @param {string} className The class name or space delimited class names to add to the element.
          * 
          * @returns {void}
          */
@@ -940,10 +941,10 @@ module plat.ui {
          * @access public
          * 
          * @description
-         * Removes a class from the specified element.
+         * Removes a class or multiple classes from the specified element.
          * 
          * @param {Element} element The element from which the class name is being removed.
-         * @param {string} className The class name to remove from the element.
+         * @param {string} className The class name or space delimited class names to remove from the element.
          * 
          * @returns {void}
          */
@@ -956,10 +957,10 @@ module plat.ui {
          * @access public
          * 
          * @description
-         * Toggles a class from the specified element.
+         * Toggles a class or multiple classes from the specified element.
          * 
          * @param {Element} element The element on which the class name is being toggled.
-         * @param {string} className The class name to toggle on the element.
+         * @param {string} className The class name or space delimited class names to toggle on the element.
          * 
          * @returns {void}
          */
@@ -972,14 +973,15 @@ module plat.ui {
          * @access public
          * 
          * @description
-         * Returns whether or not an element has a particular class assigned to it.
+         * Returns whether or not an element has a particular class or classes assigned to it.
          * 
          * @param {Element} element The element on which the class name is being checked.
-         * @param {string} className The class name to check on the element.
+         * @param {string} className The class name or space delimited class names to check on the element.
          * 
-         * @returns {void}
+         * @returns {boolean} Whether or not the element has the class name or all of the class names 
+         * specified in the className argument.
          */
-        hasClass(element: Element, className: string): void;
+        hasClass(element: Element, className: string): boolean;
     }
 
     /**
