@@ -168,3 +168,4 @@ $RECYCLE.BIN/
 !*.less
 !*.ts
 /framework/node_modules
+/framework/platypus.ts
