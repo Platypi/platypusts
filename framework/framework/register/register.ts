@@ -412,7 +412,7 @@ module plat.register {
         export var CSS = __CSS;
         
         /**
-         * @name CSS
+         * @name JS
          * @memberof plat.register.animation
          * @kind property
          * @access public
