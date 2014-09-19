@@ -56,11 +56,11 @@ var OPERATORS: plat.IObject<plat.expressions.ITokenDetails> = {
     },
     '?': {
         precedence: 15, associativity: 'rtl',
-        fn: (context: any, aliases: any): void => undefined
+        fn: (): void => undefined
     },
     ':': {
         precedence: 15, associativity: 'rtl',
-        fn: (context: any, aliases: any): void => undefined
+        fn: (): void => undefined
     },
     '>': {
         precedence: 8, associativity: 'ltr',

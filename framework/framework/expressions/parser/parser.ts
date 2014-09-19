@@ -186,7 +186,6 @@ module plat.expressions {
                 length = tokens.length,
                 tempIdentifiers = this.__tempIdentifiers,
                 codeArray = this.__codeArray,
-                codeStr = '',
                 useLocalContext = false,
                 tokenObj: IToken,
                 token: any,
@@ -223,40 +222,36 @@ module plat.expressions {
                     }
                 // check if its an operator
                 } else if (isOperator(token)) {
-                    switch (token) {
-                        case '?':
-                            this.__handleQuestion();
-                            break;
-                        case ':':
-                            this.__handleColon();
-                            break;
-                        case '+':
-                        case '-':
-                            if (args === 1) {
-                                this.__handleOperator('u' + token, args);
+                    // check if string literal
+                    if (args === 0) {
+                        codeArray.push(this.__convertPrimitive(index, token, args));
+                    } else {
+                        switch (token) {
+                            case '?':
+                                this.__handleQuestion();
                                 break;
-                            }
-                        default:
-                            // check if string literal
-                            if (args === 0) {
-                                codeStr = this.__convertPrimitive(index, token, args);
-                                codeArray.push(codeStr);
+                            case ':':
+                                this.__handleColon();
                                 break;
-                            }
-
-                            this.__handleOperator(token, args);
-                            break;
+                            case '+':
+                            case '-':
+                                if (args === 1) {
+                                    token = 'u' + token;
+                                }
+                            default:
+                                this.__handleOperator(token, args);
+                                break;
+                        }
                     }
                 // its either function, object, or primitive
                 } else {
                     // potential function or object to index into
                     if (args < 0) {
-                        codeStr = this.__convertFunction(index, token, useLocalContext);
+                        codeArray.push(this.__convertFunction(index, token, useLocalContext));
                     // primitive
                     } else {
-                        codeStr = this.__convertPrimitive(index, token, args);
+                        codeArray.push(this.__convertPrimitive(index, token, args));
                     }
-                    codeArray.push(codeStr);
                 }
             }
 

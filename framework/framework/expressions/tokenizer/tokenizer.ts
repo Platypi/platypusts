@@ -934,7 +934,7 @@ module plat.expressions {
                 this._popStackForVal(topOperator, '?', 'Ternary mismatch');
 
                 outputQueue.push(operatorStack.shift());
-                operatorStack.unshift({ val: char, args: 0 });
+                operatorStack.unshift({ val: char, args: -2 });
             } else if (lastColonCharacter === '{') {
                 var objArgCount = this.__objArgCount,
                     outputLast = outputQueue.length - 1;
@@ -1196,10 +1196,10 @@ module plat.expressions {
          * of arguments for a function if it is the token.
          * 
          * @remarks
-         * If -2: Denotes a function name unless indexed into with [].
+         * If -2: Denotes a function name unless indexed into with [] or a ternary expression.
          * If -1: Denotes a variable or empty array literal.
          * If 0: Denotes a number, keyword, object indexer (.[]), string literal,
-         *  function with 0 arguments, ternary expression, or empty object literal
+         *  function with 0 arguments, or empty object literal
          * If 1: Denotes a function type with 1 argument, a property on an object literal,
          *  an object literal with 1 property, or an array literal with 1 entry.
          * If > 1: Denotes a function type with args arguments, an object literal with

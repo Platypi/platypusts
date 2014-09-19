@@ -433,6 +433,13 @@ module tests.expressions.parser {
             fn: 'toEqual'
         },
         {
+            name: 'a string literal in a ternary',
+            returns: '?',
+            identifiers: [],
+            expression: '1 === 1 ? "?" : "@"',
+            fn: 'toBe'
+        },
+        {
             name: 'a resource in object literal',
             returns: { condition: 'high ' },
             identifiers: ['@five'],
