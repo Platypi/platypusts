@@ -231,7 +231,7 @@
          * {@link plat.ui.IBaseViewControl|IBaseViewControl} navigation can occur.
          * 
          * @param {plat.events.INavigationEvent<plat.web.IRoute<any>>} ev The 
-         * {@link plat.navigation.INavigationEvent|INavigationEvent} containing information regarding 
+         * {@link plat.events.INavigationEvent|INavigationEvent} containing information regarding 
          * the {@link plat.ui.IBaseViewControl|IBaseViewControl}, the routing information, 
          * and the {@link plat.web.Router|Router}.
          * 
