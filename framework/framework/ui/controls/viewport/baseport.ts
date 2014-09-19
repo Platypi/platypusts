@@ -178,7 +178,7 @@
                 };
 
             node.setAttribute('plat-control', controlType);
-            node.className = controlType;
+            node.className = 'plat-viewcontrol';
             element.appendChild(node);
 
             this.$Animator.animate(this.element, __Enter);
