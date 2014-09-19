@@ -462,7 +462,7 @@
          * or on a 'urlChanged' event.
          * 
          * @param {plat.events.IDispatchEventInstance} ev The 'urlChanged' event object.
-         * @param {plat.web.IUrlUtilsInstance} utils The {@link plat.web.IUrlUtils|IUrlUtils} 
+         * @param {plat.web.IUrlUtilsInstance} utils The {@link plat.web.IUrlUtilsInstance|IUrlUtilsInstance} 
          * created for the invoked route function.
          * 
          * @returns {void}
