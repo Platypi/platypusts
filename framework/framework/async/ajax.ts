@@ -234,7 +234,7 @@ module plat.async {
                     jsonpCallback = this.jsonpCallback,
                     jsonpIdentifier = options.jsonpIdentifier || 'callback';
 
-                scriptTag.src = url + '?' + jsonpIdentifier + '=' + jsonpCallback;
+                scriptTag.src = url + ((url.indexOf('?') > -1) ? '&' : '?') + jsonpIdentifier + '=' + jsonpCallback;
 
                 var oldValue = $window[jsonpCallback];
                 $window[jsonpCallback] = (response: any) => {
