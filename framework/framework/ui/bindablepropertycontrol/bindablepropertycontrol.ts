@@ -55,6 +55,7 @@
          * @memberof plat.ui.BindablePropertyControl
          * @kind function
          * @access public
+         * @virtual
          * 
          * @description
          * A function that lets this control know when the context's value of the bindable 
@@ -144,6 +145,7 @@
          * @memberof plat.ui.IBindablePropertyControl
          * @kind function
          * @access public
+         * @virtual
          * 
          * @description
          * A function that lets this control know when the context's value of the bindable 
