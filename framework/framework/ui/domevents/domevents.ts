@@ -685,7 +685,8 @@
                 mappingExists = !isNull(mappedType),
                 mappedRemoveListener = noop,
                 mappedTouchRemoveListener = noop,
-                gestures = this._gestures;
+                gestures = this._gestures,
+                listenerRemoved = false;
 
             if (mappingExists) {
                 (<any>this.__reverseMap)[mappedType] = type;
@@ -705,6 +706,11 @@
 
             if (!isUndefined(element['on' + type]) || isUndefined((<any>gestures)[type]) || mappingExists) {
                 return () => {
+                    if (listenerRemoved) {
+                        return;
+                    }
+
+                    listenerRemoved = true;
                     mappedRemoveListener();
                     mappedTouchRemoveListener();
                     element.removeEventListener(type, listener, useCapture);
@@ -726,6 +732,11 @@
             this.__registerElement(element, type);
 
             return () => {
+                if (listenerRemoved) {
+                    return;
+                }
+
+                listenerRemoved = true;
                 this.__removeEventListener(element, type, listener, useCapture);
             };
         }
