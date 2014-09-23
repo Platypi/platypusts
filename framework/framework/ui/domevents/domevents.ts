@@ -2173,9 +2173,11 @@
                     return false;
                 };
 
-            $document.addEventListener('click', preventDefault, true);
-            $document.addEventListener('mousedown', preventDefault, true);
-            $document.addEventListener('mouseup', preventDefault, true);
+            postpone(() => {
+                $document.addEventListener('click', preventDefault, true);
+                $document.addEventListener('mousedown', preventDefault, true);
+                $document.addEventListener('mouseup', preventDefault, true);
+            });
         }
         /**
          * @name __removeSelections
