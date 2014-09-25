@@ -595,4 +595,103 @@ module plat.dependency {
          */
         name: string;
     }
+
+    /**
+     * @name injectors
+     * @memberof plat.dependency
+     * @kind namespace
+     * @access public
+     *  
+     * @description
+     * Publically exposes all the dependency injector objects.
+     */
+    export module injectors {
+        /**
+         * @name control
+         * @memberof plat.dependency.injectors
+         * @kind property
+         * @access public
+         * @static
+         * 
+         * @type {plat.dependency.IInjectorObject<plat.IControl>}
+         * 
+         * @description
+         * An {@link plat.dependency.IInjectorObject|IInjectorObject} of {@link plat.IControl|IControls}. 
+         * Contains all the registered controls for an application.
+         */
+        export var control = controlInjectors;
+
+        /**
+         * @name viewControl
+         * @memberof plat.dependency.injectors
+         * @kind property
+         * @access public
+         * @static
+         * 
+         * @type {plat.dependency.IInjectorObject<plat.ui.IBaseViewControl>}
+         * 
+         * @description
+         * An {@link plat.dependency.IInjectorObject|IInjectorObject} of {@link plat.ui.IBaseViewControl|IBaseViewControls}. 
+         * Contains all the registered view controls for an application.
+         */
+        export var viewControl = viewControlInjectors;
+
+        /**
+         * @name injectable
+         * @memberof plat.dependency.injectors
+         * @kind property
+         * @access public
+         * @static
+         * 
+         * @type {plat.dependency.IInjectorObject<plat.dependency.IInjector<any>>}
+         * 
+         * @description
+         * An {@link plat.dependency.IInjectorObject|IInjectorObject} of objects. Contains all the registered 
+         * injectables for an application.
+         */
+        export var injectable = injectableInjectors;
+
+        /**
+         * @name staticInjectable
+         * @memberof plat.dependency.injectors
+         * @kind property
+         * @access public
+         * @static
+         * 
+         * @type {plat.dependency.IInjectorObject<plat.dependency.IInjector<any>>}
+         * 
+         * @description
+         * An {@link plat.dependency.IInjectorObject|IInjectorObject} of static objects. Contains all the registered 
+         * static injectables for an application. Once the injectables have been injected, they are removed from this object.
+         */
+        export var staticInjectable = staticInjectors;
+
+        /**
+         * @name animation
+         * @memberof plat.dependency.injectors
+         * @kind property
+         * @access public
+         * @static
+         * 
+         * @type {plat.dependency.IInjectorObject<plat.ui.animations.IBaseAnimation>}
+         * 
+         * @description
+         * An {@link plat.dependency.IInjectorObject|IInjectorObject} of animations. Can be either CSS or JS implementations.
+         */
+        export var animation = animationInjectors;
+        
+        /**
+         * @name jsAnimation
+         * @memberof plat.dependency.injectors
+         * @kind property
+         * @access public
+         * @static
+         * 
+         * @type {plat.dependency.IInjectorObject<plat.ui.animations.IBaseAnimation>}
+         * 
+         * @description
+         * An {@link plat.dependency.IInjectorObject|IInjectorObject}  of animations. Should only contain JS implementations.
+         */
+        export var jsAnimation = jsAnimationInjectors;
+    }
 }

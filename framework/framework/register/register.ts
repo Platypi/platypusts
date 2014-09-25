@@ -427,96 +427,9 @@ module plat.register {
     }
 }
 
-/**
- * @name controlInjectors
- * @memberof plat.register
- * @kind property
- * @access private
- * @static
- * @exported false
- * 
- * @type {plat.dependency.IInjectorObject<plat.IControl>}
- * 
- * @description
- * An {@link plat.dependency.IInjectorObject|IInjectorObject} of {@link plat.IControl|IControls}. 
- * Contains all the registered controls for an application.
- */
 var controlInjectors: plat.dependency.IInjectorObject<plat.IControl> = {};
-
-/**
- * @name viewControlInjectors
- * @memberof plat.register
- * @kind property
- * @access private
- * @static
- * @exported false
- * 
- * @type {plat.dependency.IInjectorObject<plat.ui.IBaseViewControl>}
- * 
- * @description
- * An {@link plat.dependency.IInjectorObject|IInjectorObject} of {@link plat.ui.IBaseViewControl|IBaseViewControls}. 
- * Contains all the registered view controls for an application.
- */
 var viewControlInjectors: plat.dependency.IInjectorObject<plat.ui.IBaseViewControl> = {};
-
-/**
- * @name injectableInjectors
- * @memberof plat.register
- * @kind property
- * @access private
- * @static
- * @exported false
- * 
- * @type {plat.dependency.IInjectorObject<plat.dependency.IInjector<any>>}
- * 
- * @description
- * An {@link plat.dependency.IInjectorObject|IInjectorObject} of objects. Contains all the registered 
- * injectables for an application.
- */
 var injectableInjectors: plat.dependency.IInjectorObject<plat.dependency.IInjector<any>> = {};
-
-/**
- * @name staticInjectors
- * @memberof plat.register
- * @kind property
- * @access private
- * @static
- * @exported false
- * 
- * @type {plat.dependency.IInjectorObject<plat.dependency.IInjector<any>>}
- * 
- * @description
- * An {@link plat.dependency.IInjectorObject|IInjectorObject} of static objects. Contains all the registered 
- * static injectables for an application.
- */
 var staticInjectors: plat.dependency.IInjectorObject<plat.dependency.IInjector<any>> = {};
-
-/**
- * @name animationInjectors
- * @memberof plat.register
- * @kind property
- * @access private
- * @static
- * @exported false
- * 
- * @type {plat.dependency.IInjectorObject<plat.ui.animations.IBaseAnimation>}
- * 
- * @description
- * An {@link plat.dependency.IInjectorObject|IInjectorObject} of animations. Can be either CSS or JS implementations.
- */
 var animationInjectors: plat.dependency.IInjectorObject<plat.ui.animations.IBaseAnimation> = {};
-
-/**
- * @name jsAnimationInjectors
- * @memberof plat.register
- * @kind property
- * @access private
- * @static
- * @exported false
- * 
- * @type {plat.dependency.IInjectorObject<plat.ui.animations.IBaseAnimation>}
- * 
- * @description
- * An IInjectorObject of animations. Should only contain JS implementations.
- */
 var jsAnimationInjectors: plat.dependency.IInjectorObject<plat.ui.animations.IBaseAnimation> = {};

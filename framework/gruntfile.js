@@ -1,3 +1,26 @@
+function stripDocs(data) {
+    var linkRegex = /\{@link (.*?)[|](.*?)\}/g;
+
+    data = data.replace(linkRegex, function(value, qualifiedPath, linkValue, index, content) {
+        return linkValue;
+    });
+
+    var lines = data.split(/\r\n|\n/g),
+        out = [];
+
+    lines.forEach(function (line) {       
+        if(line.trim() === '*') {
+            return;
+        } else if (line.indexOf('* @') === -1) {
+            out.push(line);
+        } else if (line.indexOf('@param') > -1) {
+            out.push(line);
+        }
+    });
+
+    return out.join('\r\n');
+}
+
 module.exports = exports = function load(grunt) {
     var config = {
         bundle: {
@@ -11,7 +34,7 @@ module.exports = exports = function load(grunt) {
                 ],
                 disableLint: true,
                 preSave: function (data, done) {
-                    done(data);
+                    done(stripDocs(data));
                 }
             },
             require: {
@@ -24,7 +47,7 @@ module.exports = exports = function load(grunt) {
                 ],
                 disableLint: true,
                 preSave: function (data, done) {
-                    done(data + 'export = plat;\n');
+                    done(stripDocs(data) + 'export = plat;\r\n');
                 }
             }
         },
