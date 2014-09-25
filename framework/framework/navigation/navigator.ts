@@ -60,6 +60,26 @@ module plat.navigation {
          * {@link plat.ui.IBaseViewControl|IBaseViewControl}. Also allows for
          * navigation parameters to be sent along with the navigation.
          * 
+         * @param {string} name The name for the new {@link plat.ui.IBaseViewControl|IBaseViewControl}. 
+         * The name is associated to the value used when the view control was registered.
+         * @param {plat.navigation.INavigationOptions} options? Optional 
+         * {@link plat.navigation.INavigationOptions|INavigationOptions} used for navigation.
+         * 
+         * @returns {void}
+         */
+        navigate(name: string, options?: INavigationOptions): void;
+        /**
+         * @name navigate
+         * @memberof plat.navigation.Navigator
+         * @kind function
+         * @access public
+         * @variation 2
+         * 
+         * @description
+         * Allows an {@link plat.ui.IBaseViewControl|IBaseViewControl} to navigate to another 
+         * {@link plat.ui.IBaseViewControl|IBaseViewControl}. Also allows for
+         * navigation parameters to be sent along with the navigation.
+         * 
          * @param {new (...args: any[]) => plat.ui.IBaseViewControl} injector The {@link plat.dependency.IInjector|IInjector} 
          * for the new {@link plat.ui.IBaseViewControl|IBaseViewControl}. This navigator will create a new instance of the control.
          * @param {plat.navigation.INavigationOptions} options? Optional 
@@ -98,6 +118,8 @@ module plat.navigation {
             if (isFunction(Constructor.inject)) {
                 injector = Constructor;
                 key = (<dependency.IInjector<any>>Constructor).name;
+            } else if (isString(Constructor)) {
+                injector = viewControlInjectors[Constructor];
             } else {
                 var keys = Object.keys(viewControlInjectors),
                     control: dependency.IInjector<ui.IViewControl>;
@@ -394,6 +416,26 @@ module plat.navigation {
          * @kind function
          * @access public
          * @variation 1
+         * 
+         * @description
+         * Allows an {@link plat.ui.IBaseViewControl|IBaseViewControl} to navigate to another 
+         * {@link plat.ui.IBaseViewControl|IBaseViewControl}. Also allows for
+         * navigation parameters to be sent along with the navigation.
+         * 
+         * @param {string} name The name for the new {@link plat.ui.IBaseViewControl|IBaseViewControl}. 
+         * The name is associated to the value used when the view control was registered.
+         * @param {plat.navigation.INavigationOptions} options? Optional 
+         * {@link plat.navigation.INavigationOptions|INavigationOptions} used for navigation.
+         * 
+         * @returns {void}
+         */
+        navigate(name: string, options?: INavigationOptions): void;
+        /**
+         * @name navigate
+         * @memberof plat.navigation.INavigatorInstance
+         * @kind function
+         * @access public
+         * @variation 2
          * 
          * @description
          * Allows an {@link plat.ui.IBaseViewControl|IBaseViewControl} to navigate to another 
