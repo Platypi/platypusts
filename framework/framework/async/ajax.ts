@@ -2167,13 +2167,13 @@ module plat.async {
          * Provides Content-Type mappings for Http POST requests.
          */
         contentType: IHttpContentType = {
-            ENCODED_FORM: 'application/x-www-form-urlencoded;charset=utf-8;',
-            JSON: 'application/json;charset=utf-8;',
-            MULTIPART_FORM: 'multipart/form-data;',
-            OCTET_STREAM: 'application/octet-stream;charset=utf-8;',
-            XML: 'application/xml;charset=utf-8;',
-            PLAIN_TEXT: 'text/plain;',
-            HTML: 'text/html;'
+            ENCODED_FORM: 'application/x-www-form-urlencoded;charset=utf-8',
+            JSON: 'application/json;charset=utf-8',
+            MULTIPART_FORM: 'multipart/form-data',
+            OCTET_STREAM: 'application/octet-stream;charset=utf-8',
+            XML: 'application/xml;charset=utf-8',
+            PLAIN_TEXT: 'text/plain',
+            HTML: 'text/html'
         };
 
         /**
