@@ -119,7 +119,7 @@ module plat.navigation {
                 injector = Constructor;
                 key = (<dependency.IInjector<any>>Constructor).name;
             } else if (isString(Constructor)) {
-                injector = viewControlInjectors[Constructor];
+                injector = viewControlInjectors[(key = Constructor)];
             } else {
                 var keys = Object.keys(viewControlInjectors),
                     control: dependency.IInjector<ui.IViewControl>;
