@@ -2132,7 +2132,7 @@ module plat.async {
             withCredentials: false,
             timeout: null,
             jsonpIdentifier: 'callback',
-            contentType: 'application/json;charset=utf-8;'
+            contentType: 'application/json;charset=utf-8'
         };
 
         /**
