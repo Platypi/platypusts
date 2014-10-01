@@ -515,18 +515,6 @@
          */
         private __focusedElement: HTMLInputElement;
         /**
-         * @name __mappedEventListener
-         * @memberof plat.ui.DomEvents
-         * @kind property
-         * @access private
-         * 
-         * @type {EventListener}
-         * 
-         * @description
-         * An EventListener with a bound context for registering mapped events.
-         */
-        private __mappedEventListener: EventListener = this.__handleMappedEvent.bind(this);
-        /**
          * @name __reverseMap
          * @memberof plat.ui.DomEvents
          * @kind property
@@ -1656,11 +1644,13 @@
          * @returns {plat.IRemoveListener} A function for removing the added mapped listener.
          */
         private __addMappedEvent(mappedEvent: string, useCapture?: boolean): IRemoveListener {
-            var $document = this.$Document;
-            $document.addEventListener(mappedEvent, this.__mappedEventListener, useCapture);
+            var $document = this.$Document,
+                mappedEventListener = this.__handleMappedEvent.bind(this);
+
+            $document.addEventListener(mappedEvent, mappedEventListener, useCapture);
 
             return () => {
-                $document.removeEventListener(mappedEvent, this.__mappedEventListener, useCapture);
+                $document.removeEventListener(mappedEvent, mappedEventListener, useCapture);
             };
         }
         /**
