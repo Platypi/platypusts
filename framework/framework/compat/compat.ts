@@ -250,7 +250,7 @@
          * @description
          * An object containing the correctly mapped touch events for the browser.
          */
-        mappedEvents: IMappedEvents;
+        mappedEvents: IMappedTouchEvents;
 
         /**
          * @name animationEvents
@@ -794,7 +794,7 @@
          * @description
          * An object containing the correctly mapped touch events for the browser.
          */
-        mappedEvents: IMappedEvents;
+        mappedEvents: IMappedTouchEvents;
 
         /**
          * @name animationEvents
@@ -865,16 +865,82 @@
     }
 
     /**
-     * @name IMappedEvents
+     * @name ITouchMapping
      * @memberof plat
      * @kind interface
      * 
-     * @extends {plat.IObject}
+     * @extends {plat.IObject<T>}
+     * 
+     * @typeparam T The type of value being mapped to touch events.
      * 
      * @description
      * Describes an object containing the correctly mapped touch events for the browser.
      */
-    export interface IMappedEvents extends IObject<string> {
+    export interface ITouchMapping<T> extends IObject<T> {
+        /**
+         * @name $touchstart
+         * @memberof plat.ITouchMapping
+         * @kind property
+         * @access public
+         * 
+         * @type {T}
+         * 
+         * @description
+         * An event type for touch start.
+         */
+        $touchstart: T;
+
+        /**
+         * @name $touchend
+         * @memberof plat.ITouchMapping
+         * @kind property
+         * @access public
+         * 
+         * @type {T}
+         * 
+         * @description
+         * An event type for touch end.
+         */
+        $touchend: T;
+
+        /**
+         * @name $touchmove
+         * @memberof plat.ITouchMapping
+         * @kind property
+         * @access public
+         * 
+         * @type {T}
+         * 
+         * @description
+         * An event type for touch move.
+         */
+        $touchmove: T;
+
+        /**
+         * @name $touchcancel
+         * @memberof plat.ITouchMapping
+         * @kind property
+         * @access public
+         * 
+         * @type {T}
+         * 
+         * @description
+         * An event type for touch cancel.
+         */
+        $touchcancel: T;
+    }
+
+    /**
+     * @name IMappedEvents
+     * @memberof plat
+     * @kind interface
+     * 
+     * @extends {plat.ITouchMapping<string>}
+     * 
+     * @description
+     * Describes an object containing the correctly mapped touch events for the browser.
+     */
+    export interface IMappedTouchEvents extends ITouchMapping<string> {
         /**
          * @name $touchstart
          * @memberof plat.IMappedEvents

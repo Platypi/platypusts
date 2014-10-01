@@ -527,6 +527,24 @@
          */
         private __reverseMap = {};
         /**
+         * @name __mappedCount
+         * @memberof plat.ui.DomEvents
+         * @kind property
+         * @access protected
+         * 
+         * @type {plat.ITouchMapping<number>}
+         * 
+         * @description
+         * An object containing the number of currently active mapped touch 
+         * events of each type.
+         */
+        private __mappedCount: ITouchMapping<number> = {
+            $touchstart: 0,
+            $touchmove: 0,
+            $touchend: 0,
+            $touchcancel: 0
+        };
+        /**
          * @name __swipeSubscribers
          * @memberof plat.ui.DomEvents
          * @kind property
@@ -671,22 +689,30 @@
                 mappedGestures = $compat.mappedEvents,
                 mappedType = mappedGestures[type],
                 mappingExists = !isNull(mappedType),
+                mappedCount = this.__mappedCount,
                 mappedRemoveListener = noop,
                 mappedTouchRemoveListener = noop,
                 gestures = this._gestures,
                 listenerRemoved = false;
 
             if (mappingExists) {
+                var count = mappedCount[type];
                 (<any>this.__reverseMap)[mappedType] = type;
                 this.__registerElement(element, type);
-                mappedRemoveListener = this.__addMappedEvent(mappedType, useCapture);
+                mappedCount[type]++;
+                if (count === 0) {
+                    mappedRemoveListener = this.__addMappedEvent(mappedType, useCapture);
+                }
+
                 if ($compat.hasTouchEvents) {
                     mappedType = mappedType
                         .replace('touch', 'mouse')
                         .replace('start', 'down')
                         .replace('end', 'up');
                     (<any>this.__reverseMap)[mappedType] = type;
-                    mappedTouchRemoveListener = this.__addMappedEvent(mappedType, useCapture);
+                    if (count === 0) {
+                        mappedTouchRemoveListener = this.__addMappedEvent(mappedType, useCapture);
+                    }
                 }
             }
 
@@ -696,6 +722,8 @@
                 return () => {
                     if (listenerRemoved) {
                         return;
+                    } else if (mappingExists && mappedCount[type] > 0) {
+                        mappedCount[type]--;
                     }
 
                     listenerRemoved = true;
@@ -751,6 +779,12 @@
                 $swipe: 0,
                 $track: 0,
                 $trackend: 0
+            };
+            this.__mappedCount = {
+                $touchstart: 0,
+                $touchmove: 0,
+                $touchend: 0,
+                $touchcancel: 0
             };
             this._isActive = false;
             this._subscribers = {};
