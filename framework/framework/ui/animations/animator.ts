@@ -60,7 +60,7 @@
          * 
          * @param {Element} element The Element to be animated.
          * @param {string} key The identifier specifying the type of animation.
-         * @param {any} options Specified options for the animation.
+         * @param {any} options? Specified options for the animation.
          * 
          * @returns {plat.ui.animations.IAnimationPromise} A promise that resolves when the animation is finished.
          */
