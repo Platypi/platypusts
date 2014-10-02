@@ -515,6 +515,18 @@
          */
         private __focusedElement: HTMLInputElement;
         /**
+         * @name __reverseMap
+         * @memberof plat.ui.DomEvents
+         * @kind property
+         * @access private
+         * 
+         * @type {{}}
+         * 
+         * @description
+         * A hash map for mapping custom events to standard events.
+         */
+        private __reverseMap = {};
+        /**
          * @name __mappedEventListener
          * @memberof plat.ui.DomEvents
          * @kind property
@@ -527,17 +539,23 @@
          */
         private __mappedEventListener: EventListener = this.__handleMappedEvent.bind(this);
         /**
-         * @name __reverseMap
+         * @name __mappedCount
          * @memberof plat.ui.DomEvents
          * @kind property
-         * @access private
+         * @access protected
          * 
-         * @type {{}}
+         * @type {plat.ITouchMapping<number>}
          * 
          * @description
-         * A hash map for mapping custom events to standard events.
+         * An object containing the number of currently active mapped touch 
+         * events of each type.
          */
-        private __reverseMap = {};
+        private __mappedCount: ITouchMapping<number> = {
+            $touchstart: 0,
+            $touchmove: 0,
+            $touchend: 0,
+            $touchcancel: 0
+        };
         /**
          * @name __swipeSubscribers
          * @memberof plat.ui.DomEvents
@@ -683,22 +701,26 @@
                 mappedGestures = $compat.mappedEvents,
                 mappedType = mappedGestures[type],
                 mappingExists = !isNull(mappedType),
+                mappedCount = this.__mappedCount,
                 mappedRemoveListener = noop,
                 mappedTouchRemoveListener = noop,
                 gestures = this._gestures,
                 listenerRemoved = false;
 
             if (mappingExists) {
+                var count = mappedCount[type];
                 (<any>this.__reverseMap)[mappedType] = type;
                 this.__registerElement(element, type);
-                mappedRemoveListener = this.__addMappedEvent(mappedType, useCapture);
+                mappedCount[type]++;
+                mappedRemoveListener = this.__addMappedEvent(count, mappedType, useCapture);
+
                 if ($compat.hasTouchEvents) {
                     mappedType = mappedType
                         .replace('touch', 'mouse')
                         .replace('start', 'down')
                         .replace('end', 'up');
                     (<any>this.__reverseMap)[mappedType] = type;
-                    mappedTouchRemoveListener = this.__addMappedEvent(mappedType, useCapture);
+                    mappedTouchRemoveListener = this.__addMappedEvent(count, mappedType, useCapture);
                 }
             }
 
@@ -710,9 +732,17 @@
                         return;
                     }
 
+                    var currentCount = mappedCount[type];
+                    if (mappingExists && currentCount > 0) {
+                        currentCount = mappedCount[type]--;
+                    }
+
+                    if (currentCount === 0) {
+                        mappedRemoveListener();
+                        mappedTouchRemoveListener();
+                    }
+
                     listenerRemoved = true;
-                    mappedRemoveListener();
-                    mappedTouchRemoveListener();
                     element.removeEventListener(type, listener, useCapture);
                 };
             }
@@ -763,6 +793,12 @@
                 $swipe: 0,
                 $track: 0,
                 $trackend: 0
+            };
+            this.__mappedCount = {
+                $touchstart: 0,
+                $touchmove: 0,
+                $touchend: 0,
+                $touchcancel: 0
             };
             this._isActive = false;
             this._subscribers = {};
@@ -1650,14 +1686,18 @@
          * @description
          * Adds a listener for listening to a standard event and mapping it to a custom event.
          * 
+         * @param {number} count The number of mapped events registered.
          * @param {string} mappedEvent The mapped event type.
          * @param {boolean} useCapture? Whether the mapped event listener is fired on the capture or bubble phase.
          * 
          * @returns {plat.IRemoveListener} A function for removing the added mapped listener.
          */
-        private __addMappedEvent(mappedEvent: string, useCapture?: boolean): IRemoveListener {
+        private __addMappedEvent(count: number, mappedEvent: string, useCapture?: boolean): IRemoveListener {
             var $document = this.$Document;
-            $document.addEventListener(mappedEvent, this.__mappedEventListener, useCapture);
+
+            if (count === 0) {
+                $document.addEventListener(mappedEvent, this.__mappedEventListener, useCapture);
+            }
 
             return () => {
                 $document.removeEventListener(mappedEvent, this.__mappedEventListener, useCapture);
@@ -1690,7 +1730,8 @@
                 countType = type;
 
             if (type.indexOf(trackGesture) !== -1) {
-                countType = trackGesture;
+                var trackend = gestures.$trackend;
+                countType = type === trackend ? trackend : trackGesture;
             } else if (type.indexOf(swipeGesture) !== -1) {
                 countType = swipeGesture;
             }

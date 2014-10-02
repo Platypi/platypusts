@@ -589,14 +589,14 @@ module plat.controls {
 
                 if (firstTime === true) {
                     if (isNull((<HTMLInputElement>this.element).value)) {
-                        this.__setValue(newValue);
+                        this._setValue(newValue);
                     }
                     this._propertyChanged();
                     return;
                 }
             }
 
-            this.__setValue(newValue);
+            this._setValue(newValue);
         }
 
         /**
@@ -625,14 +625,14 @@ module plat.controls {
 
                 if (firstTime === true) {
                     if (isEmpty((<HTMLInputElement>this.element).value)) {
-                        this.__setValue(newValue);
+                        this._setValue(newValue);
                     }
                     this._propertyChanged();
                     return;
                 }
             }
 
-            this.__setValue(newValue);
+            this._setValue(newValue);
         }
 
         /**
@@ -709,7 +709,7 @@ module plat.controls {
         _setSelectedIndex(newValue: any, oldValue?: any, firstTime?: boolean): void {
             if (this.__isSelf) {
                 return;
-            } else if (firstTime === true && this.__checkAsynchronousSelect()) {
+            } else if (firstTime === true && this._checkAsynchronousSelect()) {
                 if (isNull(newValue)) {
                     this._propertyChanged();
                 }
@@ -776,7 +776,7 @@ module plat.controls {
         _setSelectedIndices(newValue: any, oldValue?: any, firstTime?: boolean): void {
             if (this.__isSelf) {
                 return;
-            } else if (firstTime === true && this.__checkAsynchronousSelect()) {
+            } else if (firstTime === true && this._checkAsynchronousSelect()) {
                 return;
             }
 
@@ -832,7 +832,7 @@ module plat.controls {
          * @returns {void}
          */
         _determineType(): void {
-            if (!isNull(this.templateControl) && this._observedBindableProperty()) {
+            if (!isNull(this.templateControl) && this._observingBindableProperty()) {
                 return;
             }
 
@@ -861,7 +861,7 @@ module plat.controls {
                             this._setter = this._setChecked;
                             break;
                         case 'radio':
-                            this.__initializeRadio();
+                            this._initializeRadio();
                             break;
                         case 'range':
                             this._addEventType = this._addChangeEventListener;
@@ -881,7 +881,7 @@ module plat.controls {
                     }
                     break;
                 case 'select':
-                    this.__initializeSelect();
+                    this._initializeSelect();
                     break;
                 case 'button':
                     this._addEventType = this._addButtonEventListener;
@@ -970,94 +970,17 @@ module plat.controls {
         }
 
         /**
-         * @name _observedBindableProperty
+         * @name _initializeRadio
          * @memberof plat.controls.Bind
          * @kind function
          * @access protected
-         * 
-         * @description
-         * Checks if the associated {@link plat.ui.TemplateControl|TemplateControl} is a 
-         * {@link plat.ui.BindablePropertyControl|BindablePropertyControl} and 
-         * initializes all listeners accordingly.
-         * 
-         * @returns {boolean} Whether or not the associated {@link plat.ui.TemplateControl|TemplateControl} 
-         * is a {@link plat.ui.BindablePropertyControl|BindablePropertyControl}
-         */
-        _observedBindableProperty(): boolean {
-            var templateControl = <ui.IBindablePropertyControl>this.templateControl;
-
-            if (isFunction(templateControl.observeProperty) &&
-                isFunction(templateControl.setProperty)) {
-                templateControl.observeProperty((newValue: any) => {
-                    this._getter = () => newValue;
-                    this._propertyChanged();
-                });
-
-                this._setter = this.__setBindableProperty;
-                return true;
-            }
-
-            return false;
-        }
-
-        /**
-         * @name __setBindableProperty
-         * @memberof plat.controls.Bind
-         * @kind function
-         * @access private
-         * 
-         * @description
-         * Sets the value on a {@link plat.ui.BindablePropertyControl|BindablePropertyControl}.
-         * 
-         * @param {any} newValue The new value to set
-         * @param {any} oldValue? The previously bound value
-         * @param {boolean} firstTime? The context is being evaluated for the first time and 
-         * should thus change the property if null
-         * 
-         * @returns {void}
-         */
-        private __setBindableProperty(newValue: any, oldValue?: any, firstTime?: boolean): void {
-            if (this.__isSelf) {
-                return;
-            }
-
-            (<ui.IBindablePropertyControl>this.templateControl).setProperty(newValue, oldValue, firstTime);
-        }
-
-        /**
-         * @name __setValue
-         * @memberof plat.controls.Bind
-         * @kind function
-         * @access private
-         * 
-         * @description
-         * Sets the value on an element.
-         * 
-         * @param {any} newValue The new value to set
-         * 
-         * @returns {void}
-         */
-        private __setValue(newValue: any): void {
-            var element = <HTMLInputElement>this.element;
-            if (element.value === newValue) {
-                return;
-            }
-
-            element.value = newValue;
-        }
-
-        /**
-         * @name __setValue
-         * @memberof plat.controls.Bind
-         * @kind function
-         * @access private
          * 
          * @description
          * Normalizes input[type="radio"] for cross-browser compatibility.
          * 
          * @returns {void}
          */
-        private __initializeRadio(): void {
+        _initializeRadio(): void {
             var element = this.element;
 
             this._addEventType = this._addChangeEventListener;
@@ -1079,17 +1002,17 @@ module plat.controls {
         }
 
         /**
-         * @name __initializeSelect
+         * @name _initializeSelect
          * @memberof plat.controls.Bind
          * @kind function
-         * @access private
+         * @access protected
          * 
          * @description
          * Normalizes HTMLSelectElements for cross-browser compatibility.
          * 
          * @returns {void}
          */
-        private __initializeSelect(): void {
+        _initializeSelect(): void {
             var element = <HTMLSelectElement>this.element,
                 multiple = element.multiple,
                 options = element.options,
@@ -1114,17 +1037,17 @@ module plat.controls {
         }
 
         /**
-         * @name __checkAsynchronousSelect
+         * @name _checkAsynchronousSelect
          * @memberof plat.controls.Bind
          * @kind function
-         * @access private
+         * @access protected
          * 
          * @description
-         * Checks to see if a {@link plat.ui.controls.Select|Select} is loading items.
+         * Checks to see if a {@link plat.ui.controls.Select|Select} or {@link plat.ui.controls.ForEach|ForEach} is loading items.
          * 
          * @returns {boolean} Whether or not the select is loading items.
          */
-        private __checkAsynchronousSelect(): boolean {
+        _checkAsynchronousSelect(): boolean {
             var select = <ui.controls.Select>this.templateControl;
             if (!isNull(select) && (select.type === __Select || select.type === __ForEach) && isPromise(select.itemsLoaded)) {
                 var split = select.absoluteContextPath.split('.'),
@@ -1145,6 +1068,83 @@ module plat.controls {
             }
 
             return false;
+        }
+
+        /**
+         * @name _observingBindableProperty
+         * @memberof plat.controls.Bind
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Checks if the associated {@link plat.ui.TemplateControl|TemplateControl} is a 
+         * {@link plat.ui.BindablePropertyControl|BindablePropertyControl} and 
+         * initializes all listeners accordingly.
+         * 
+         * @returns {boolean} Whether or not the associated {@link plat.ui.TemplateControl|TemplateControl} 
+         * is an {@link plat.ui.IBindablePropertyControl|IBindablePropertyControl}
+         */
+        _observingBindableProperty(): boolean {
+            var templateControl = <ui.IBindablePropertyControl>this.templateControl;
+
+            if (isFunction(templateControl.observeProperty) &&
+                isFunction(templateControl.setProperty)) {
+                templateControl.observeProperty((newValue: any) => {
+                    this._getter = () => newValue;
+                    this._propertyChanged();
+                });
+
+                this._setter = this._setBindableProperty;
+                return true;
+            }
+
+            return false;
+        }
+
+        /**
+         * @name _setBindableProperty
+         * @memberof plat.controls.Bind
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Sets the value on a {@link plat.ui.BindablePropertyControl|BindablePropertyControl}.
+         * 
+         * @param {any} newValue The new value to set
+         * @param {any} oldValue? The previously bound value
+         * @param {boolean} firstTime? The context is being evaluated for the first time and 
+         * should thus change the property if null
+         * 
+         * @returns {void}
+         */
+        _setBindableProperty(newValue: any, oldValue?: any, firstTime?: boolean): void {
+            if (this.__isSelf || newValue === oldValue) {
+                return;
+            }
+
+            (<ui.IBindablePropertyControl>this.templateControl).setProperty(newValue, oldValue, firstTime);
+        }
+
+        /**
+         * @name _setValue
+         * @memberof plat.controls.Bind
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Sets the value on an element.
+         * 
+         * @param {any} newValue The new value to set
+         * 
+         * @returns {void}
+         */
+        _setValue(newValue: any): void {
+            var element = <HTMLInputElement>this.element;
+            if (element.value === newValue) {
+                return;
+            }
+
+            element.value = newValue;
         }
     }
 

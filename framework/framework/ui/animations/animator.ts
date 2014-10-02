@@ -60,13 +60,13 @@
          * 
          * @param {Element} element The Element to be animated.
          * @param {string} key The identifier specifying the type of animation.
-         * @param {any} options Specified options for the animation.
+         * @param {any} options? Specified options for the animation.
          * 
          * @returns {plat.ui.animations.IAnimationPromise} A promise that resolves when the animation is finished.
          */
         animate(element: Element, key: string, options?: any): IAnimationPromise {
             if (!isNode(element) || element.nodeType !== Node.ELEMENT_NODE || this.__parentIsAnimating(element)) {
-                return this.__resolvePromise();
+                return this.resolve();
             }
 
             var $compat = this.$Compat,
@@ -76,7 +76,7 @@
 
             if (!$compat.animationSupported || isUndefined(animation)) {
                 if (isUndefined(jsAnimation)) {
-                    return this.__resolvePromise();
+                    return this.resolve();
                 }
 
                 animationInstance = jsAnimation.inject();
@@ -107,6 +107,24 @@
             }
 
             return (animationObj.promise = animationPromise);
+        }
+
+        /**
+         * @name resolve
+         * @memberof plat.ui.animations.Animator
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Immediately resolves an empty {@link plat.ui.animations.AnimationPromise|AnimationPromise}.
+         * 
+         * @returns {plat.ui.animations.IAnimationThenable<void>} The immediately resolved 
+         * {@link plat.ui.animations.AnimationPromise|AnimationPromise}.
+         */
+        resolve(): IAnimationThenable<void> {
+            return new AnimationPromise((resolve) => {
+                resolve();
+            });
         }
         
         /**
@@ -223,24 +241,6 @@
                 }
             }
         }
-        
-        /**
-         * @name __resolvePromise
-         * @memberof plat.ui.animations.Animator
-         * @kind function
-         * @access private
-         * 
-         * @description
-         * Immediately resolves an empty {@link plat.ui.animations.AnimationPromise|AnimationPromise}.
-         * 
-         * @returns {plat.ui.animations.IAnimationThenable<void>} The immediately resolved 
-         * {@link plat.ui.animations.AnimationPromise|AnimationPromise}.
-         */
-        private __resolvePromise(): IAnimationThenable<void> {
-            return new AnimationPromise((resolve) => {
-                resolve();
-            });
-        }
     }
 
     /**
@@ -277,6 +277,20 @@
          * @returns {plat.ui.animations.IAnimationPromise} A promise that resolves when the animation is finished.
          */
         animate(element: Element, key: string, options?: any): IAnimationPromise;
+
+        /**
+         * @name resolve
+         * @memberof plat.ui.animations.Animator
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Immediately resolves an empty {@link plat.ui.animations.AnimationPromise|AnimationPromise}.
+         * 
+         * @returns {plat.ui.animations.IAnimationThenable<void>} The immediately resolved 
+         * {@link plat.ui.animations.AnimationPromise|AnimationPromise}.
+         */
+        resolve(): IAnimationThenable<void>;
     }
     
     /**
