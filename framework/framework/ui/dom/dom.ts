@@ -298,6 +298,23 @@ module plat.ui {
          * @returns {Array<Node>} An Array copy of the fragment's childNodes.
          */
         insertBefore(parent: Node, fragment: DocumentFragment, endNode?: Node): Array<Node>;
+        /**
+         * @name insertBefore
+         * @memberof plat.ui.Dom
+         * @kind function
+         * @access public
+         * @variation 3
+         * 
+         * @description
+         * Inserts a Node before the designated end Node.
+         * 
+         * @param {Node} parent The parent node into which to insert nodes.
+         * @param {Node} node The Node to insert into the parent.
+         * @param {Node} endNode? An optional endNode to use to insert nodes.
+         * 
+         * @returns {Array<Node>} An Array copy of the fragment's childNodes.
+         */
+        insertBefore(parent: Node, node: Node, endNode?: Node): Array<Node>;
         insertBefore(parent: Node, nodes: any, endNode?: Node): Array<Node> {
             return insertBefore(parent, nodes, endNode);
         }
@@ -792,6 +809,23 @@ module plat.ui {
          * @returns {Array<Node>} An Array copy of the fragment's childNodes.
          */
         insertBefore(parent: Node, fragment: DocumentFragment, endNode?: Node): Array<Node>;
+        /**
+         * @name insertBefore
+         * @memberof plat.ui.IDom
+         * @kind function
+         * @access public
+         * @variation 3
+         * 
+         * @description
+         * Inserts a Node before the designated end Node.
+         * 
+         * @param {Node} parent The parent node into which to insert nodes.
+         * @param {Node} node The Node to insert into the parent.
+         * @param {Node} endNode? An optional endNode to use to insert nodes.
+         * 
+         * @returns {Array<Node>} An Array copy of the fragment's childNodes.
+         */
+        insertBefore(parent: Node, node: Node, endNode?: Node): Array<Node>;
 
         /**
          * @name replace
