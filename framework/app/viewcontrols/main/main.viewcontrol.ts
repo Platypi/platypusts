@@ -4,7 +4,8 @@ module app {
         templateUrl = 'viewcontrols/main/main.viewcontrol.html';
         context = {
             text: <string>null,
-            password: <string>null
+            password: <string>null,
+            keydown: ''
         };
 
         text: plat.controls.INamedElement<HTMLElement, void>;
@@ -29,7 +30,7 @@ module app {
         }
 
         keyDown() {
-            console.log('pressed');
+            console.log(this.context.keydown);
         }
     }
 
