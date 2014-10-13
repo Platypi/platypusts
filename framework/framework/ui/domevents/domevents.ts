@@ -107,22 +107,22 @@
                     'touch-action: manipulation'
                 ]
             }, {
-                /**
-                 * The className that will be used to define the custom style for 
-                 * blocking touch action scrolling, zooming, etc on the element.
-                 */
-                className: 'plat-no-touch-action',
-                /**
-                 * An array of string styles that block touch action scrolling, zooming, etc. 
-                 * Primarily useful on elements such as a canvas.
-                 * In the format 'CSS identifier: value'
-                 * (e.g. 'width : 100px')
-                 */
-                styles: [
-                    '-ms-touch-action: none',
-                    'touch-action: none'
-                ]
-            }]
+                    /**
+                     * The className that will be used to define the custom style for 
+                     * blocking touch action scrolling, zooming, etc on the element.
+                     */
+                    className: 'plat-no-touch-action',
+                    /**
+                     * An array of string styles that block touch action scrolling, zooming, etc. 
+                     * Primarily useful on elements such as a canvas.
+                     * In the format 'CSS identifier: value'
+                     * (e.g. 'width : 100px')
+                     */
+                    styles: [
+                        '-ms-touch-action: none',
+                        'touch-action: none'
+                    ]
+                }]
         };
 
         /**
@@ -950,7 +950,7 @@
 
             var lastMove = this.__lastMoveEvent,
                 direction = ev.direction = isNull(lastMove) ? this.__getDirection(x - lastX, y - lastY) :
-                    this.__getDirection(x - lastMove.clientX, y - lastMove.clientY);
+                this.__getDirection(x - lastMove.clientX, y - lastMove.clientY);
 
             if (this.__checkForOriginChanged(direction)) {
                 ev.preventDefault();
@@ -993,6 +993,8 @@
                 if (eventType === 'touchend') {
                     this.__preventClickFromTouch();
                 }
+
+                this.__resetTouchEnd();
                 return;
             } else if (eventType !== 'mouseup') {
                 if (eventType === 'touchend') {
@@ -1029,11 +1031,7 @@
             // (should potentially only happen with pointerevents), else 
             // handle release
             if (this.__cancelRegex.test(eventType) || ev.touches.length > 0) {
-                this.__tapCount = 0;
-                this.__hasRelease = false;
-                this.__hasSwiped = false;
-                this.__pointerHash = {};
-                this.__pointerEvents = [];
+                this.__resetTouchEnd();
                 return true;
             } else if (this.__hasRelease) {
                 this.__handleRelease(ev);
@@ -1084,6 +1082,24 @@
             return true;
         }
 
+        /**
+         * @name __resetTouchEnd
+         * @memberof plat.ui.DomEvents
+         * @kind function
+         * @access private
+         *
+         * @description
+         * A function for resetting all values potentially modified during the touch event sequence.
+         *
+         * @returns {void}
+         */
+        private __resetTouchEnd(): void {
+            this.__tapCount = 0;
+            this._inTouch = this.__hasRelease = this.__hasSwiped = false;
+            this.__pointerHash = {};
+            this.__pointerEvents = [];
+        }
+
         // gesture handling methods
 
         /**
@@ -1091,12 +1107,12 @@
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * A function for handling and firing tap events.
-         * 
+         *
          * @param {plat.ui.IPointerEvent} ev The touch end event object.
-         * 
+         *
          * @returns {void}
          */
         private __handleTap(ev: IPointerEvent): void {
