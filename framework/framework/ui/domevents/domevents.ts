@@ -989,7 +989,7 @@
 
             // return immediately if there were multiple touches present
             if (this.__touchCount > 1) {
-                if (eventType === 'touchend') {
+                if (this.__touchCount && eventType === 'touchend') {
                     this.__preventClickFromTouch();
                 }
 
