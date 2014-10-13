@@ -481,7 +481,7 @@ module plat.async {
                             reject(new AjaxError({
                                 response: 'Request timed out in ' + timeout + 'ms for ' + options.url,
                                 status: xhr.status,
-                                getAllResponseHeaders: xhr.getAllResponseHeaders,
+                                getAllResponseHeaders: () => { return xhr.getAllResponseHeaders(); },
                                 xhr: xhr
                             }));
 
@@ -568,7 +568,7 @@ module plat.async {
             return {
                 response: response,
                 status: status,
-                getAllResponseHeaders: xhr.getAllResponseHeaders,
+                getAllResponseHeaders: () => { return xhr.getAllResponseHeaders(); },
                 xhr: xhr
             };
         }
