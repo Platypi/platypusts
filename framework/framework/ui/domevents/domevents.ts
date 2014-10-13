@@ -985,8 +985,7 @@
          */
         _onTouchEnd(ev: IPointerEvent): boolean {
             var eventType = ev.type,
-                hasMoved = this.__hasMoved,
-                inTouch = this._inTouch;
+                hasMoved = this.__hasMoved;
 
             // return immediately if there were multiple touches present
             if (this.__touchCount > 1) {
@@ -1006,13 +1005,14 @@
                         this.__preventClickFromTouch();
                     } else {
                         ev.preventDefault();
-                        if (inTouch === true) {
+                    if (this._inTouch === true) {
                             this.__handleInput(target);
                         }
                     }
-                    this._inTouch = false;
                 }
-            } else if (!isUndefined(inTouch)) {
+
+                this._inTouch = false;
+            } else if (!isUndefined(this._inTouch)) {
                 ev.preventDefault();
                 return false;
             }
