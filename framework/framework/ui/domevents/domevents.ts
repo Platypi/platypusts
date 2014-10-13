@@ -853,8 +853,7 @@
             this.__hasMoved = false;
 
             if ((this.__touchCount = ev.touches.length) > 1) {
-                ev.preventDefault();
-                return false;
+                return;
             }
 
             this.__registerType(this.__MOVE);
@@ -924,8 +923,7 @@
             // return immediately if there are multiple touches present, or 
             // if it is a mouse event and currently in a touch
             if (this.__touchCount > 1 || (this._inTouch === true && ev.type === 'mousemove')) {
-                ev.preventDefault();
-                return false;
+                return;
             }
 
             this.__standardizeEventObject(ev);
@@ -992,14 +990,11 @@
 
             // return immediately if there were multiple touches present
             if (this.__touchCount > 1) {
-                ev.preventDefault();
                 if (eventType === 'touchend') {
                     this.__preventClickFromTouch();
                 }
-                return false;
-            }
-
-            if (eventType !== 'mouseup') {
+                return;
+            } else if (eventType !== 'mouseup') {
                 if (eventType === 'touchend') {
                     var target = <HTMLInputElement>ev.target;
                     if (hasMoved) {
@@ -1030,19 +1025,16 @@
 
             this.__standardizeEventObject(ev);
 
-            // check for cancel event,
-            if (this.__cancelRegex.test(eventType)) {
+            // check for cancel event, or return if the touch count was greater than 0 
+            // (should potentially only happen with pointerevents), else 
+            // handle release
+            if (this.__cancelRegex.test(eventType) || ev.touches.length > 0) {
                 this.__tapCount = 0;
                 this.__hasRelease = false;
                 this.__hasSwiped = false;
+                this.__pointerHash = {};
+                this.__pointerEvents = [];
                 return true;
-            }
-
-            // return if the touch count was greater than 0 (should only happen with pointerevents), 
-            // or handle release
-            if (ev.touches.length > 0) {
-                ev.preventDefault();
-                return false;
             } else if (this.__hasRelease) {
                 this.__handleRelease(ev);
             }
