@@ -619,6 +619,7 @@ module plat.ui {
                 Control.dispose(controls[i]);
             }
 
+            Control.removeEventListeners(control);
             TemplateControl.removeElement(control);
 
             TemplateControl.$ResourcesFactory.dispose(control, true);

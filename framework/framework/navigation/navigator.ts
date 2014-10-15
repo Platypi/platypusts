@@ -166,7 +166,61 @@ module plat.navigation {
                 baseport.navigateTo(event);
             });
         }
-        
+
+        /**
+         * @name goTo
+         * @memberof plat.navigation.Navigator
+         * @kind function
+         * @access public
+         * @variation 0
+         * 
+         * @description
+         * Allows an {@link plat.ui.IBaseViewControl|IBaseViewControl} to navigate to another 
+         * {@link plat.ui.IBaseViewControl|IBaseViewControl}. Also allows for
+         * navigation parameters to be sent along with the navigation. Will navigate back to a ViewControl 
+         * in the history if possible.
+         * 
+         * @param {new (...args: any[]) => ui.IBaseViewControl} Constructor The Constructor for the new 
+         * {@link plat.ui.IBaseViewControl|IBaseViewControl}. This navigator will find the injector for 
+         * the Constructor and create a new instance of the control.
+         * @param {plat.navigation.INavigationOptions} options? Optional 
+         * {@link plat.navigation.INavigationOptions|INavigationOptions} used for navigation.
+         * 
+         * @returns {void}
+         */
+        goTo(Constructor: new (...args: any[]) => ui.IBaseViewControl, options?: INavigationOptions): void;
+        /**
+         * @name goTo
+         * @memberof plat.navigation.Navigator
+         * @kind function
+         * @access public
+         * @variation 1
+         * 
+         * @description
+         * Allows an {@link plat.ui.IBaseViewControl|IBaseViewControl} to navigate to another 
+         * {@link plat.ui.IBaseViewControl|IBaseViewControl}. Also allows for
+         * navigation parameters to be sent along with the navigation. Will navigate back to a ViewControl 
+         * in the history if possible.
+         * 
+         * @param {string} name The name for the new {@link plat.ui.IBaseViewControl|IBaseViewControl}. 
+         * The name is associated to the value used when the view control was registered.
+         * @param {plat.navigation.INavigationOptions} options? Optional 
+         * {@link plat.navigation.INavigationOptions|INavigationOptions} used for navigation.
+         * 
+         * @returns {void}
+         */
+        goTo(name: string, options?: INavigationOptions): void;
+        goTo(Constructor: any, options?: INavigationOptions) {
+            if (this._findInHistory(Constructor)) {
+                this.goBack({
+                    parameter: options.parameter,
+                    ViewControl: Constructor
+                });
+            } else {
+                this.navigate(Constructor, options);
+            }
+        }
+
         /**
          * @name goBack
          * @memberof plat.navigation.Navigator
@@ -185,12 +239,12 @@ module plat.navigation {
          * @returns {void}
          */
         goBack(options?: IBackNavigationOptions): void {
-            options = options || {};
-            var currentState = this.currentState || <IBaseNavigationState>{},
+            var opts: IBackNavigationOptions = options || {},
+                currentState = this.currentState || <IBaseNavigationState>{},
                 viewControl = currentState.control,
-                length = isNumber(options.length) ? options.length : 1,
-                Constructor = options.ViewControl,
-                parameter = options.parameter,
+                length = isNumber(opts.length) ? opts.length : 1,
+                Constructor = opts.ViewControl,
+                parameter = opts.parameter,
                 history = this.history,
                 baseport = this.baseport;
 
@@ -289,12 +343,13 @@ module plat.navigation {
                 dispose(history.pop().control);
             }
         }
-        
+
         /**
          * @name _findInHistory
          * @memberof plat.navigation.Navigator
          * @kind function
          * @access protected
+         * @variation 0
          * 
          * @description
          * Finds the given constructor in the history stack. Returns the index in the history where
@@ -305,14 +360,41 @@ module plat.navigation {
          * 
          * @returns {number} The index in the history where the input Constructor was found.
          */
-        _findInHistory(Constructor: new (...args: any[]) => ui.IBaseViewControl): number {
+        _findInHistory(Constructor: new (...args: any[]) => ui.IBaseViewControl): number;
+        /**
+         * @name _findInHistory
+         * @memberof plat.navigation.Navigator
+         * @kind function
+         * @access protected
+         * @variation 1
+         * 
+         * @description
+         * Finds the given constructor in the history stack. Returns the index in the history where
+         * the constructor is found, or -1 if no constructor is found.
+         * 
+         * @param {new (...args: any[]) => plat.ui.IBaseViewControl} Constructor The 
+         * {@link plat.ui.IBaseViewControl|IBaseViewControl} constructor to search for in the history stack.
+         * 
+         * @returns {number} The index in the history where the input Constructor was found.
+         */
+        _findInHistory(Constructor: string): number;
+        _findInHistory(Constructor: any): number {
             var history = this.history,
                 index = -1;
 
-            for (var i = (history.length - 1); i >= 0; --i) {
-                if (history[i].control.constructor === Constructor) {
-                    index = i;
-                    break;
+            if (isFunction(Constructor)) {
+                for (var i = (history.length - 1); i >= 0; --i) {
+                    if (history[i].control.constructor === Constructor) {
+                        index = i;
+                        break;
+                    }
+                }
+            } else if (isString(Constructor)) {
+                for (var i = (history.length - 1); i >= 0; --i) {
+                    if (history[i].control.type === Constructor) {
+                        index = i;
+                        break;
+                    }
                 }
             }
 
@@ -452,6 +534,50 @@ module plat.navigation {
         navigate(injector: dependency.IInjector<ui.IBaseViewControl>, options?: INavigationOptions): void;
         
         /**
+         * @name goTo
+         * @memberof plat.navigation.INavigatorInstance
+         * @kind function
+         * @access public
+         * @variation 0
+         * 
+         * @description
+         * Allows an {@link plat.ui.IBaseViewControl|IBaseViewControl} to navigate to another 
+         * {@link plat.ui.IBaseViewControl|IBaseViewControl}. Also allows for
+         * navigation parameters to be sent along with the navigation. Will navigate back to a ViewControl 
+         * in the history if possible.
+         * 
+         * @param {new (...args: any[]) => ui.IBaseViewControl} Constructor The Constructor for the new 
+         * {@link plat.ui.IBaseViewControl|IBaseViewControl}. This navigator will find the injector for 
+         * the Constructor and create a new instance of the control.
+         * @param {plat.navigation.INavigationOptions} options? Optional 
+         * {@link plat.navigation.INavigationOptions|INavigationOptions} used for navigation.
+         * 
+         * @returns {void}
+         */
+        goTo(Constructor: new (...args: any[]) => ui.IBaseViewControl, options?: INavigationOptions): void;
+        /**
+         * @name goTo
+         * @memberof plat.navigation.INavigatorInstance
+         * @kind function
+         * @access public
+         * @variation 1
+         * 
+         * @description
+         * Allows an {@link plat.ui.IBaseViewControl|IBaseViewControl} to navigate to another 
+         * {@link plat.ui.IBaseViewControl|IBaseViewControl}. Also allows for
+         * navigation parameters to be sent along with the navigation. Will navigate back to a ViewControl 
+         * in the history if possible.
+         * 
+         * @param {string} name The name for the new {@link plat.ui.IBaseViewControl|IBaseViewControl}. 
+         * The name is associated to the value used when the view control was registered.
+         * @param {plat.navigation.INavigationOptions} options? Optional 
+         * {@link plat.navigation.INavigationOptions|INavigationOptions} used for navigation.
+         * 
+         * @returns {void}
+         */
+        goTo(name: string, options?: INavigationOptions): void;
+
+        /**
          * @name goBack
          * @memberof plat.navigation.INavigatorInstance
          * @kind function
@@ -548,7 +674,7 @@ module plat.navigation {
          * An optional parameter to send to the next {@link plat.ui.IBaseViewControl|IBaseViewControl}.
          */
         parameter?: any;
-        
+
         /**
          * @name ViewControl
          * @memberof plat.navigation.IBackNavigationOptions
