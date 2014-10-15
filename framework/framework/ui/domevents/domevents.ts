@@ -730,16 +730,19 @@
                 return () => {
                     if (listenerRemoved) {
                         return;
-                    }
+                    } else if (mappingExists) {
+                        var currentCount = mappedCount[type];
+                        if (isNumber(currentCount)) {
+                            if (currentCount > 0) {
+                                currentCount = --mappedCount[type];
+                            }
 
-                    var currentCount = mappedCount[type];
-                    if (mappingExists && currentCount > 0) {
-                        currentCount = mappedCount[type]--;
-                    }
-
-                    if (currentCount === 0) {
-                        mappedRemoveListener();
-                        mappedTouchRemoveListener();
+                            if (currentCount === 0) {
+                                mappedRemoveListener();
+                                mappedTouchRemoveListener();
+                            }
+                        }
+                        this.__unregisterElement(element, type);
                     }
 
                     listenerRemoved = true;
