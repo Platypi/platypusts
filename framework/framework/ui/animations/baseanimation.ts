@@ -80,6 +80,7 @@
          * @memberof plat.ui.animations.BaseAnimation
          * @kind function
          * @access public
+         * @virtual
          * 
          * @description
          * A function for initializing the animation or any of its properties before start.
@@ -93,6 +94,7 @@
          * @memberof plat.ui.animations.BaseAnimation
          * @kind function
          * @access public
+         * @virtual
          * 
          * @description
          * A function denoting the start of the animation.
@@ -102,7 +104,7 @@
         start(): void { }
         
         /**
-         * @name end
+         * @name done
          * @memberof plat.ui.animations.BaseAnimation
          * @kind function
          * @access public
@@ -112,9 +114,10 @@
          * 
          * @returns {void}
          */
-        end(): void {
+        done(): void {
             if (isFunction(this.__resolve)) {
                 this.__resolve();
+                this.__resolve = null;
             }
             this.dispose();
         }
@@ -124,21 +127,21 @@
          * @memberof plat.ui.animations.BaseAnimation
          * @kind function
          * @access public
+         * @virtual
          * 
          * @description
          * A function to be called to let it be known the animation is being cancelled.
          * 
          * @returns {void}
          */
-        cancel(): void {
-            this.end();
-        }
+        cancel(): void { }
         
         /**
          * @name dispose
          * @memberof plat.ui.animations.BaseAnimation
          * @kind function
          * @access public
+         * @virtual
          * 
          * @description
          * A function for reverting any modifications or changes that may have been made as a 
@@ -146,9 +149,7 @@
          * 
          * @returns {void}
          */
-        dispose(): void {
-            this.__resolve = null;
-        }
+        dispose(): void { }
         
         /**
          * @name _init
@@ -173,7 +174,6 @@
             return new AnimationPromise((resolve) => {
                 this.__resolve = resolve;
                 this.initialize();
-                this.start();
             }, { __animationInstance: this });
         }
     }
@@ -231,6 +231,7 @@
          * @memberof plat.ui.animations.IBaseAnimation
          * @kind function
          * @access public
+         * @virtual
          * 
          * @description
          * A function for initializing the animation or any of its properties before start.
@@ -244,6 +245,7 @@
          * @memberof plat.ui.animations.IBaseAnimation
          * @kind function
          * @access public
+         * @virtual
          * 
          * @description
          * A function denoting the start of the animation.
@@ -253,7 +255,7 @@
         start(): void;
 
         /**
-         * @name end
+         * @name done
          * @memberof plat.ui.animations.IBaseAnimation
          * @kind function
          * @access public
@@ -263,13 +265,14 @@
          * 
          * @returns {void}
          */
-        end(): void;
+        done(): void;
 
         /**
          * @name cancel
          * @memberof plat.ui.animations.IBaseAnimation
          * @kind function
          * @access public
+         * @virtual
          * 
          * @description
          * A function to be called to let it be known the animation is being cancelled.
@@ -283,6 +286,7 @@
          * @memberof plat.ui.animations.IBaseAnimation
          * @kind function
          * @access public
+         * @virtual
          * 
          * @description
          * A function for reverting any modifications or changes that may have been made as a 

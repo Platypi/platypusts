@@ -66,7 +66,6 @@
                 this.__removeListener = null;
             }
             this.__subscribers = [];
-            super.dispose();
         }
         
         /**

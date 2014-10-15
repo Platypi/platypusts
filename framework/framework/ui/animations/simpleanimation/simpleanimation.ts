@@ -54,6 +54,21 @@ module plat.ui.animations {
          * @access public
          * 
          * @description
+         * Adds the class to start the animation.
+         * 
+         * @returns {void}
+         */
+        initialize(): void {
+            addClass(this.element, this.className);
+        }
+
+        /**
+         * @name start
+         * @memberof plat.ui.animations.SimpleCssAnimation
+         * @kind function
+         * @access public
+         * 
+         * @description
          * A function denoting the start of the animation.
          * 
          * @returns {void}
@@ -61,23 +76,20 @@ module plat.ui.animations {
         start(): void {
             var animationId = this.$Compat.animationEvents.$animation,
                 element = this.element,
-                className = this.className;
-
-            addClass(element, className);
-
-            var computedStyle = this.$Window.getComputedStyle(element),
+                computedStyle = this.$Window.getComputedStyle(element),
                 animationName = computedStyle[<any>(animationId + 'Name')];
+
             if (animationName === '' ||
                 animationName === 'none' ||
                 computedStyle[<any>(animationId + 'PlayState')] === 'paused') {
-                removeClass(element, className);
-                this.end();
+                removeClass(element, this.className);
+                this.done();
                 return;
             }
 
             this.animationEnd(() => {
-                removeClass(element, className);
-                this.end();
+                removeClass(element, this.className);
+                this.done();
             });
         }
 
@@ -88,13 +100,13 @@ module plat.ui.animations {
          * @access public
          * 
          * @description
-         * A function to be called to let it be known the animation is being cancelled.
+         * A function to be called to let it be known the animation is being cancelled. 
+         * Removes the class to end the animation.
          * 
          * @returns {void}
          */
         cancel(): void {
             removeClass(this.element, this.className);
-            super.cancel();
         }
     }
 

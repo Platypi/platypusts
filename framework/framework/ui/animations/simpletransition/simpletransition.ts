@@ -51,9 +51,37 @@
          * The class name added to the animated element.
          */
         className = __SimpleTransition;
+        
+        /**
+         * @name _started
+         * @memberof plat.ui.animations.SimpleCssTransition
+         * @kind property
+         * @access protected
+         * 
+         * @type {boolean}
+         * 
+         * @description
+         * Denotes whether or not the animation was ever started.
+         */
+        _started = false;
 
         /**
          * @name initialize
+         * @memberof plat.ui.animations.SimpleCssTransition
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Adds the class to enable the transition.
+         * 
+         * @returns {void}
+         */
+        initialize(): void {
+            addClass(this.element, this.className);
+        }
+
+        /**
+         * @name start
          * @memberof plat.ui.animations.SimpleCssTransition
          * @kind function
          * @access public
@@ -66,17 +94,16 @@
         start(): void {
             var transitionId = this.$Compat.animationEvents.$transition,
                 element = this.element,
-                className = this.className,
                 endFn = () => {
-                    removeClass(element, className);
-                    this.end();
-                };
-
-            addClass(element, className);
-
-            var computedStyle = this.$Window.getComputedStyle(element),
+                    removeClass(element, this.className);
+                    this.done();
+                },
+                computedStyle = this.$Window.getComputedStyle(element),
                 transitionProperty = computedStyle[<any>(transitionId + 'Property')],
                 transitionDuration = computedStyle[<any>(transitionId + 'Duration')];
+
+            this._started = true;
+
             if (transitionProperty === '' || transitionProperty === 'none' ||
                 transitionDuration === '' || transitionDuration === '0s') {
                 this._animate();
@@ -106,7 +133,12 @@
          */
         cancel(): void {
             removeClass(this.element, this.className);
-            super.cancel();
+
+            if (this._started) {
+                return;
+            }
+
+            this._animate();
         }
 
         /**
@@ -125,14 +157,13 @@
             var style = this.element.style || {},
                 options = this.options || {},
                 keys = Object.keys(options),
-                length = keys.length,
                 key: any,
                 currentProperty: string,
                 newProperty: string,
                 unchanged = 0;
 
-            for (var i = 0; i < length; ++i) {
-                key = keys[i];
+            while (keys.length > 0) {
+                key = keys.shift();
                 currentProperty = style[key];
                 newProperty = options[key];
                 if (!isString(newProperty)) {

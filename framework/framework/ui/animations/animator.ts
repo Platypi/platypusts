@@ -65,7 +65,7 @@
          * @returns {plat.ui.animations.IAnimationPromise} A promise that resolves when the animation is finished.
          */
         animate(element: Element, key: string, options?: any): IAnimationPromise {
-            if (!isNode(element) || element.nodeType !== Node.ELEMENT_NODE || this.__parentIsAnimating(element)) {
+            if (!isNode(element) || element.nodeType !== Node.ELEMENT_NODE) {
                 return this.resolve();
             }
 
@@ -92,21 +92,28 @@
                 animationInstance = animation.inject();
             }
 
-            var id = this.__setAnimationId(element, animationInstance);
-            this.__stopChildAnimations(element, id);
-            var animationObj = this._elements[id],
-                animationPromise = (<BaseAnimation>animationInstance)._init(element, options).then(() => {
-                    animationObj.promise = null;
-                    animationObj.animationEnd();
-                });
+            var parentAnimating = this.__parentIsAnimating(element),
+                id = this.__setAnimationId(element, animationInstance),
+                animatedElement = this._elements[id],
+                animationPromise: IAnimationThenable<void> = (<BaseAnimation>animationInstance)._init(element, options);
 
-            if (!isNull(animationObj.promise)) {
-                return animationObj.promise.then(() => {
+            if (parentAnimating) {
+                animatedElement.animationEnd(true);
+            } else {
+                this.__stopChildAnimations(element);
+                animationPromise = animationPromise.then(() => {
+                    animatedElement.promise = null;
+                    animatedElement.animationEnd();
+                });
+            }
+
+            if (!isNull(animatedElement.promise)) {
+                return animatedElement.promise.then(() => {
                     return animationPromise;
                 });
             }
 
-            return (animationObj.promise = animationPromise);
+            return (animatedElement.promise = animationPromise);
         }
 
         /**
@@ -179,11 +186,14 @@
                 id = plat.animation;
             }
 
-            var animationObj = elements[id],
-                removeListener = (reanimating?: boolean) => {
-                if (reanimating === true) {
+            var animatedElement = elements[id],
+                removeListener = (cancel?: boolean, reanimating?: boolean) => {
+                if (cancel === true) {
                     animationInstance.cancel();
-                    return;
+                    if (reanimating === true) {
+                        return;
+                    }
+                    animationInstance.done();
                 }
 
                 removeClass(<HTMLElement>element, __Animating);
@@ -194,14 +204,14 @@
                 }
             };
 
-            if (isUndefined(animationObj)) {
+            if (isUndefined(animatedElement)) {
                 addClass(<HTMLElement>element, __Animating);
                 elements[id] = {
                     animationEnd: removeListener
                 };
             } else {
-                animationObj.animationEnd(true);
-                animationObj.animationEnd = removeListener;
+                animatedElement.animationEnd(true, true);
+                animatedElement.animationEnd = removeListener;
             }
 
             return id;
@@ -217,27 +227,28 @@
          * Forces child nodes of an animating element to stop animating.
          * 
          * @param {Element} element The element being animated.
-         * @param {string} id The animation ID.
          * 
          * @returns {void}
          */
-        private __stopChildAnimations(element: Element, id: string): void {
+        private __stopChildAnimations(element: Element): void {
             var elements = this._elements,
-                animatedElements = Array.prototype.slice.call(element.querySelectorAll('.' + __Animating)),
-                length = animatedElements.length,
-                animatedElement: ICustomElement,
-                plat: ICustomElementProperty;
+                customAnimationElements = Array.prototype.slice.call(element.querySelectorAll('.' + __Animating)),
+                customAnimationElement: ICustomElement,
+                animatedElement: IAnimatedElement,
+                plat: ICustomElementProperty,
+                id: string;
 
-            while (length-- > 0) {
-                animatedElement = animatedElements[length];
-                plat = animatedElement.__plat;
-                if (isUndefined(plat) || isUndefined(plat.animation)) {
+            while (customAnimationElements.length > 0) {
+                customAnimationElement = customAnimationElements.pop();
+                plat = customAnimationElement.__plat || <ICustomElementProperty>{};
+                id = plat.animation;
+                if (isNull(id)) {
                     continue;
                 }
 
-                id = plat.animation;
-                if (isFunction(elements[id])) {
-                    elements[id].animationEnd();
+                animatedElement = elements[id] || <IAnimatedElement>{};
+                if (isFunction(animatedElement.animationEnd)) {
+                    animatedElement.animationEnd(true);
                 }
             }
         }
@@ -311,12 +322,13 @@
          * @description
          * The function called at the conclusion of the animation.
          * 
-         * @param {boolean} reanimated? Specifies whether the element is being reanimated while 
-         * in a current animation.
+         * @param {boolean} cancel? Specifies whether the animation is being cancelled.
+         * @param {boolean} reanimating? Specifies whether the element is being reanimated while 
+         * in a current animation. Cancel must be set to true for reanimation to take effect.
          * 
          * @returns {void}
          */
-        animationEnd: (reanimated?: boolean) => void;
+        animationEnd: (cancel?: boolean, reanimating?: boolean) => void;
 
         /**
          * @name promise
@@ -411,7 +423,7 @@
         cancel(): IAnimationPromise {
             if (!isNull(this.__animationInstance)) {
                 this.__animationInstance.cancel();
-                this.__animationInstance.end();
+                this.__animationInstance.done();
             }
 
             return this;
