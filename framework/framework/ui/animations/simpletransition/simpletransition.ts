@@ -157,6 +157,7 @@
             var style = this.element.style || {},
                 options = this.options || {},
                 keys = Object.keys(options),
+                length = keys.length,
                 key: any,
                 currentProperty: string,
                 newProperty: string,

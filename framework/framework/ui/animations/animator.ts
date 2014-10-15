@@ -105,6 +105,7 @@
                     animatedElement.promise = null;
                     animatedElement.animationEnd();
                 });
+                animationInstance.start();
             }
 
             if (!isNull(animatedElement.promise)) {
