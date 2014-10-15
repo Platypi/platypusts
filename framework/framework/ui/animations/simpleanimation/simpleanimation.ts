@@ -82,13 +82,11 @@ module plat.ui.animations {
             if (animationName === '' ||
                 animationName === 'none' ||
                 computedStyle[<any>(animationId + 'PlayState')] === 'paused') {
-                removeClass(element, this.className);
                 this.done();
                 return;
             }
 
             this.animationEnd(() => {
-                removeClass(element, this.className);
                 this.done();
             });
         }
@@ -101,12 +99,16 @@ module plat.ui.animations {
          * 
          * @description
          * A function to be called to let it be known the animation is being cancelled. 
-         * Removes the class to end the animation.
+         * Replaces the animation class with the animation class and "-cancel" appended to it 
+         * to allow it to jump to final state.
          * 
          * @returns {void}
          */
         cancel(): void {
-            removeClass(this.element, this.className);
+            var element = this.element,
+                className = this.className;
+            removeClass(element, className);
+            addClass(element, className + __CANCEL_SUFFIX);
         }
     }
 
