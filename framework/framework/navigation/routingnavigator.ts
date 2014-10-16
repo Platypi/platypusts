@@ -349,7 +349,7 @@
      * @description
      * Defines the route type interface implemented for current state and last state.
      */
-    export interface IRouteNavigationState extends IBaseNavigationState {
+    export interface IRouteNavigationState extends INavigationState {
         /**
          * @name route
          * @memberof plat.navigation.RoutingNavigator

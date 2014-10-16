@@ -31,6 +31,7 @@ module plat.navigation {
          * Reference to the {@link plat.events.IEventManagerStatic|IEventManagerStatic} injectable.
          */
         $EventManagerStatic: events.IEventManagerStatic = acquire(__EventManagerStatic);
+
         /**
          * @name $NavigationEventStatic
          * @memberof plat.navigation.BaseNavigator
@@ -43,6 +44,7 @@ module plat.navigation {
          * Reference to the {@link plat.events.INavigationEventStatic|INavigationEventStatic} injectable.
          */
         $NavigationEventStatic: events.INavigationEventStatic = acquire(__NavigationEventStatic);
+
         /**
          * @name $BaseViewControlFactory
          * @memberof plat.navigation.BaseNavigator
@@ -55,6 +57,7 @@ module plat.navigation {
          * Reference to the {@link plat.ui.IBaseViewControlFactory|IBaseViewControlFactory} injectable.
          */
         $BaseViewControlFactory: ui.IBaseViewControlFactory = acquire(__BaseViewControlFactory);
+
         /**
          * @name $ContextManagerStatic
          * @memberof plat.navigation.BaseNavigator
@@ -81,6 +84,7 @@ module plat.navigation {
          * A unique ID used to identify this navigator.
          */
         uid: string;
+
         /**
          * @name baseport
          * @memberof plat.navigation.BaseNavigator
@@ -94,6 +98,7 @@ module plat.navigation {
          * facilitate navigation.
          */
         baseport: ui.controls.IBaseport;
+
         /**
          * @name currentState
          * @memberof plat.navigation.BaseNavigator
@@ -107,7 +112,8 @@ module plat.navigation {
          * enough information for it to be pushed onto the history stack when 
          * necessary.
          */
-        currentState: IBaseNavigationState;
+        currentState: INavigationState;
+
         /**
          * @name navigating
          * @memberof plat.navigation.BaseNavigator
@@ -202,10 +208,6 @@ module plat.navigation {
          * @returns {void}
          */
         navigated(control: ui.IBaseViewControl, parameter: any, options: IBaseNavigationOptions): void {
-            this.currentState = {
-                control: control
-            };
-
             this.navigating = false;
             control.navigator = this;
             control.navigatedTo(parameter);
@@ -325,7 +327,7 @@ module plat.navigation {
          * enough information for it to be pushed onto the history stack when 
          * necessary.
          */
-        currentState: IBaseNavigationState;
+        currentState: INavigationState;
 
         /**
          * @name navigating
@@ -479,28 +481,5 @@ module plat.navigation {
          * in history.
          */
         length?: number;
-    }
-    
-    /**
-     * @name IBaseNavigationState
-     * @memberof plat.navigation
-     * @kind interface
-     * 
-     * @description
-     * Defines the base interface that needs to be implemented in the navigation history.
-     */
-    export interface IBaseNavigationState {
-        /**
-         * @name control
-         * @memberof plat.navigation.IBaseNavigationState
-         * @kind property
-         * @access public
-         * 
-         * @type {plat.ui.IBaseViewControl}
-         * 
-         * @description
-         * The {@link plat.ui.IBaseViewControl|IBaseViewControl} associated with a history entry.
-         */
-        control: ui.IBaseViewControl;
     }
 }
