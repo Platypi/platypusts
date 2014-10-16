@@ -562,12 +562,12 @@
          * @kind property
          * @access private
          * 
-         * @type {{ master: plat.ui.IDomEventInstance; directional: plat.ui.IDomEventInstance }}
+         * @type {{ master: plat.ui.IDomEventInstance; directional: plat.ui.IDomEventInstance; }}
          * 
          * @description
          * A set of subscribers for the swipe gesture.
          */
-        private __swipeSubscribers: { master: IDomEventInstance; directional: IDomEventInstance };
+        private __swipeSubscribers: { master: IDomEventInstance; directional: IDomEventInstance; };
         /**
          * @name __pointerHash
          * @memberof plat.ui.DomEvents
@@ -714,7 +714,7 @@
                 mappedCount[type]++;
                 mappedRemoveListener = this.__addMappedEvent(count, mappedType, useCapture);
 
-                if ($compat.hasTouchEvents) {
+                if ($compat.hasTouchEvents && !this.__cancelRegex.test(mappedType)) {
                     mappedType = mappedType
                         .replace('touch', 'mouse')
                         .replace('start', 'down')
@@ -1508,17 +1508,18 @@
                     (<any>subscriber)[type].count++;
                 }
                 subscriber.gestureCount++;
-            } else {
-                var newSubscriber = { gestureCount: 1 };
-                $domEvent = new CustomDomEvent(element, type);
-                (<any>newSubscriber)[type] = $domEvent;
-                this._subscribers[id] = newSubscriber;
-
-                if (!isUndefined((<HTMLElement>element).className)) {
-                    addClass(<HTMLElement>element, DomEvents.config.styleConfig[0].className);
-                }
-                this.__removeSelections(element);
+                return;
             }
+
+            var newSubscriber = { gestureCount: 1 };
+            $domEvent = new CustomDomEvent(element, type);
+            (<any>newSubscriber)[type] = $domEvent;
+            this._subscribers[id] = newSubscriber;
+
+            if (!isUndefined((<HTMLElement>element).className)) {
+                addClass(<HTMLElement>element, DomEvents.config.styleConfig[0].className);
+            }
+            this.__removeSelections(element);
         }
         /**
          * @name __unregisterElement
