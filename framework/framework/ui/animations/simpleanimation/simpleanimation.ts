@@ -59,7 +59,17 @@ module plat.ui.animations {
          * @returns {void}
          */
         initialize(): void {
-            addClass(this.element, this.className);
+            var element = this.element,
+                className = this.className,
+                hasClassName = hasClass(element, className);
+
+            removeClass(element, className + ' ' + className + __END_SUFFIX);
+            if (hasClassName) {
+                postpone(addClass, [element, className]);
+                return;
+            }
+
+            addClass(element, className);
         }
 
         /**
@@ -76,17 +86,22 @@ module plat.ui.animations {
         start(): void {
             var animationId = this.$Compat.animationEvents.$animation,
                 element = this.element,
+                className = this.className,
                 computedStyle = this.$Window.getComputedStyle(element),
                 animationName = computedStyle[<any>(animationId + 'Name')];
 
             if (animationName === '' ||
                 animationName === 'none' ||
                 computedStyle[<any>(animationId + 'PlayState')] === 'paused') {
+                removeClass(element, className);
+                addClass(element, className + __END_SUFFIX);
                 this.done();
                 return;
             }
 
             this.animationEnd(() => {
+                removeClass(element, className);
+                addClass(element, className + __END_SUFFIX);
                 this.done();
             });
         }
@@ -108,7 +123,7 @@ module plat.ui.animations {
             var element = this.element,
                 className = this.className;
             removeClass(element, className);
-            addClass(element, className + __CANCEL_SUFFIX);
+            addClass(element, className + __END_SUFFIX);
         }
     }
 
