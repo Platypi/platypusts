@@ -86,20 +86,6 @@ module plat.navigation {
         uid: string;
 
         /**
-         * @name baseport
-         * @memberof plat.navigation.BaseNavigator
-         * @kind property
-         * @access public
-         * 
-         * @type {plat.ui.controls.IBaseport}
-         * 
-         * @description
-         * Every navigator will have an {@link plat.ui.controls.IBaseport|IBaseport} with which to communicate and 
-         * facilitate navigation.
-         */
-        baseport: ui.controls.IBaseport;
-
-        /**
          * @name currentState
          * @memberof plat.navigation.BaseNavigator
          * @kind property
@@ -143,27 +129,27 @@ module plat.navigation {
         constructor() {
             var uid = uniqueId('plat_');
             this.$ContextManagerStatic.defineGetter(this, 'uid', uid);
-            this.$EventManagerStatic.on(uid, 'goBack', this.goBack, this);
+            this.$EventManagerStatic.on(uid, 'backbutton', this.backButtonPressed, this);
         }
         
         /**
-         * @name initialize
+         * @name registerPort
          * @memberof plat.navigation.BaseNavigator
          * @kind function
          * @access public
+         * @virtual
          * 
          * @description
-         * Initializes this navigator. The {plat.ui.controls.IBaseport|IBaseport} will call this method and pass 
-         * itself in so the navigator can store it and use it to facilitate navigation.
+         * Registers an {plat.ui.controls.IBaseport|IBaseport} with this navigator. The IBaseport will call this method and pass 
+         * itself in so the navigator can store it and use it to facilitate navigation. Every navigator must implement this method 
+         * in order to store the baseport.
          * 
          * @param {plat.ui.controls.IBaseport} baseport The {plat.ui.controls.IBaseport|IBaseport} 
          * associated with this {@link plat.navigation.IBaseNavigator|IBaseNavigator}.
          * 
          * @returns {void}
          */
-        initialize(baseport: ui.controls.IBaseport): void {
-            this.baseport = baseport;
-        }
+        registerPort(baseport: ui.controls.IBaseport): void { }
         
         /**
          * @name navigate
@@ -231,7 +217,24 @@ module plat.navigation {
          * @returns {void}
          */
         goBack(options?: IBaseBackNavigationOptions): void { }
-        
+
+        /**
+         * @name backButtonPressed
+         * @memberof plat.navigation.BaseNavigator
+         * @kind function
+         * @access public
+         * @virtual
+         * 
+         * @description
+         * Every navigator can implement this method, defining what happens when the hard back button has been pressed 
+         * on a device. By default this method will call the goBack method.
+         * 
+         * @returns {void}
+         */
+        backButtonPressed(): void {
+            this.goBack();
+        }
+
         /**
          * @name dispose
          * @memberof plat.navigation.BaseNavigator
@@ -301,20 +304,6 @@ module plat.navigation {
         uid: string;
 
         /**
-         * @name baseport
-         * @memberof plat.navigation.IBaseNavigator
-         * @kind property
-         * @access public
-         * 
-         * @type {plat.ui.controls.IBaseport}
-         * 
-         * @description
-         * Every navigator will have an {@link plat.ui.controls.IBaseport|IBaseport} with which to communicate and 
-         * facilitate navigation.
-         */
-        baseport: ui.controls.IBaseport;
-
-        /**
          * @name currentState
          * @memberof plat.navigation.IBaseNavigator
          * @kind property
@@ -344,13 +333,13 @@ module plat.navigation {
         navigating: boolean;
 
         /**
-         * @name initialize
+         * @name registerPort
          * @memberof plat.navigation.IBaseNavigator
          * @kind function
          * @access public
          * 
          * @description
-         * Initializes this navigator. The {plat.ui.controls.IBaseport|IBaseport} will call this method and pass 
+         * Registers an {plat.ui.controls.IBaseport|IBaseport} with this navigator. The IBaseport will call this method and pass 
          * itself in so the navigator can store it and use it to facilitate navigation.
          * 
          * @param {plat.ui.controls.IBaseport} baseport The {plat.ui.controls.IBaseport|IBaseport} 
@@ -358,7 +347,7 @@ module plat.navigation {
          * 
          * @returns {void}
          */
-        initialize(baseport: ui.controls.IBaseport): void;
+        registerPort(baseport: ui.controls.IBaseport): void;
 
         /**
          * @name navigate
@@ -418,6 +407,21 @@ module plat.navigation {
          * @returns {void}
          */
         goBack(options?: IBaseBackNavigationOptions): void;
+
+        /**
+         * @name backButtonPressed
+         * @memberof plat.navigation.IBaseNavigator
+         * @kind function
+         * @access public
+         * @virtual
+         * 
+         * @description
+         * Every navigator can implement this method, defining what happens when the hard back button has been pressed 
+         * on a device. By default this method will call the goBack method.
+         * 
+         * @returns {void}
+         */
+        backButtonPressed(): void;
 
         /**
          * @name dispose

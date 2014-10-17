@@ -50,7 +50,21 @@
          * The routing information for the {@link plat.ui.controls.Routeport|Routeport's} current state.
          */
         currentState: IRouteNavigationState;
-        
+
+        /**
+         * @name routeport
+         * @memberof plat.navigation.RoutingNavigator
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.ui.controls.IBaseport}
+         * 
+         * @description
+         * Every navigator will have an {@link plat.ui.controls.IBaseport|IBaseport} with which to communicate and 
+         * facilitate navigation.
+         */
+        routeport: ui.controls.IBaseport;
+
         /**
          * @name __removeListeners
          * @memberof plat.navigation.RoutingNavigator
@@ -93,7 +107,7 @@
          * @returns {void}
          */
         initialize(baseport: ui.controls.IBaseport): void {
-            super.initialize(baseport);
+            super.registerPort(baseport);
 
             var removeListeners = this.__removeListeners,
                 $EventManager = this.$EventManagerStatic,
@@ -241,7 +255,7 @@
             var state = this.currentState || <IRouteNavigationState>{},
                 viewControl = state.control,
                 injector = ev.target,
-                baseport = this.baseport;
+                baseport = this.routeport;
 
             if (isNull(injector)) {
                 return;
@@ -251,7 +265,7 @@
             baseport.navigateFrom(viewControl).then(() => {
                 this.$BaseViewControlFactory.dispose(viewControl);
                 baseport.navigateTo(ev);
-            }).catch((error) => {
+            }).catch((error: any) => {
                 postpone(() => {
                     var Exception: IExceptionStatic = acquire(__ExceptionStatic);
                     Exception.fatal(error, Exception.NAVIGATION);

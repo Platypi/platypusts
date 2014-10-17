@@ -15,6 +15,36 @@ module plat.navigation {
      */
     export class Navigator extends BaseNavigator implements INavigatorInstance {
         /**
+         * @name __mainNavigator
+         * @memberof plat.navigation.Navigator
+         * @kind property
+         * @access private
+         * @static
+         * 
+         * @type {plat.navigator.INavigatorInstance}
+         * 
+         * @description
+         * Stores the instance of the main navigator. Unless otherwise specified, the main 
+         * navigator is the first instantiated navigator.
+         */
+        private static __mainNavigator: INavigatorInstance;
+
+        /**
+         * @name __mainNavigatorFound
+         * @memberof plat.navigation.Navigator
+         * @kind property
+         * @access private
+         * @static
+         * 
+         * @type {boolean}
+         * 
+         * @description
+         * Indicates whether or not a main navigator has been found. Main navigators respond to backbutton 
+         * events.
+         */
+        private static __mainNavigatorFound: boolean = false;
+
+        /**
          * @name history
          * @memberof plat.navigation.Navigator
          * @kind property
@@ -41,6 +71,54 @@ module plat.navigation {
          * necessary.
          */
         currentState: INavigationState;
+
+        /**
+         * @name viewport
+         * @memberof plat.navigation.Navigator
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.ui.controls.IBaseport}
+         * 
+         * @description
+         * Every navigator will have an {@link plat.ui.controls.IBaseport|IBaseport} with which to communicate and 
+         * facilitate navigation.
+         */
+        viewport: ui.controls.IBaseport;
+
+        /**
+         * @name registerPort
+         * @memberof plat.navigation.Navigator
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Registers an {plat.ui.controls.Viewport|Viewport} with this navigator. 
+         * The {plat.ui.controls.Viewport|Viewport} will call this method and pass 
+         * itself in so the navigator can store it and use it to facilitate navigation.
+         * 
+         * @param {plat.ui.controls.Viewport} viewport The {plat.ui.controls.Viewport|Viewport} 
+         * associated with this {@link plat.navigation.INavigator|INavigator}.
+         * @param {boolean} main? Whether or not this 
+         * 
+         * @returns {void}
+         */
+        registerPort(viewport: ui.controls.IBaseport, main?: boolean): void {
+            if (isNull(Navigator.__mainNavigator)) {
+                Navigator.__mainNavigator = this;
+            } else if (main) {
+                if (!Navigator.__mainNavigatorFound) {
+                    this.$EventManagerStatic.dispose(Navigator.__mainNavigator.uid);
+                    Navigator.__mainNavigatorFound = true;
+                }
+
+                Navigator.__mainNavigator = this;
+            } else {
+                this.$EventManagerStatic.dispose(this.uid);
+            }
+
+            this.viewport = viewport;
+        }
 
         /**
          * @name navigate
@@ -113,7 +191,7 @@ module plat.navigation {
                 parameter = options.parameter,
                 initialize = options.initialize === true,
                 event: events.INavigationEvent<any>,
-                baseport = this.baseport,
+                baseport = this.viewport,
                 BaseViewControlFactory = this.$BaseViewControlFactory,
                 index = -1;
 
@@ -124,7 +202,6 @@ module plat.navigation {
             }
 
             this.navigating = true;
-            BaseViewControlFactory.detach(viewControl);
 
             if (isObject(parameter)) {
                 parameter = _clone(parameter, true);
@@ -211,7 +288,7 @@ module plat.navigation {
                 Constructor = opts.ViewControl,
                 parameter = opts.parameter,
                 history = this.history,
-                baseport = this.baseport;
+                baseport = this.viewport;
 
             if (history.length === 0) {
                 var $EventManager = this.$EventManagerStatic;
@@ -273,6 +350,22 @@ module plat.navigation {
             });
         }
         
+        /**
+         * @name backButtonPressed
+         * @memberof plat.navigation.Navigator
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Looks for a backButtonPressed event on the current view control and uses it if it exists. Otherwise calls goBack if 
+         * this navigator is the main navigator.
+         * 
+         * @returns {void}
+         */
+        backButtonPressed(): void {
+            this.viewport.backButtonPressed();
+        }
+
         /**
          * @name goBack
          * @memberof plat.navigation.Navigator
@@ -448,6 +541,35 @@ module plat.navigation {
          */
         history: Array<INavigationState>;
         
+        /**
+         * @name currentState
+         * @memberof plat.navigation.INavigator
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.navigation.INavigationState}
+         * 
+         * @description
+         * Specifies the current state of navigation. This state should contain 
+         * enough information for it to be pushed onto the history stack when 
+         * necessary.
+         */
+        currentState: INavigationState;
+
+        /**
+         * @name viewport
+         * @memberof plat.navigation.INavigator
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.ui.controls.IBaseport}
+         * 
+         * @description
+         * Every navigator will have an {@link plat.ui.controls.IBaseport|IBaseport} with which to communicate and 
+         * facilitate navigation.
+         */
+        viewport: ui.controls.IBaseport;
+
         /**
          * @name navigate
          * @memberof plat.navigation.INavigatorInstance

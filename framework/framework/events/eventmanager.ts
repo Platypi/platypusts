@@ -239,7 +239,7 @@ module plat.events {
                 lifecycleListeners.push({
                     name: 'backbutton',
                     value: () => {
-                        dispatch('goBack', EventManager);
+                        dispatch('backbutton', EventManager);
                     }
                 });
 
