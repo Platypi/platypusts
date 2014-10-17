@@ -212,7 +212,7 @@ module plat.navigation {
             if (isFunction(Constructor.inject)) {
                 injector = Constructor;
                 key = (<dependency.IInjector<any>>Constructor).name;
-            } else if (initialize && (index = this._findInHistory(Constructor)) > -1) {
+            } else if (!initialize && (index = this._findInHistory(Constructor)) > -1) {
                 injector = <any>this.history[index].control;
             } else if (isString(Constructor)) {
                 injector = viewControlInjectors[(key = Constructor)];
