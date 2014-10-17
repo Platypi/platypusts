@@ -63,17 +63,17 @@
         options: any;
         
         /**
-         * @name __resolve
+         * @name _resolve
          * @memberof plat.ui.animations.BaseAnimation
          * @kind property
-         * @access private
+         * @access protected
          * 
          * @type {() => void}
          * 
          * @description
          * The resolve function for the end of the animation.
          */
-        private __resolve: () => void;
+        _resolve: () => void;
 
         /**
          * @name initialize
@@ -115,9 +115,9 @@
          * @returns {void}
          */
         done(): void {
-            if (isFunction(this.__resolve)) {
-                this.__resolve();
-                this.__resolve = null;
+            if (isFunction(this._resolve)) {
+                this._resolve();
+                this._resolve = null;
             }
             this.dispose();
         }
@@ -172,7 +172,7 @@
             this.options = options;
 
             return new AnimationPromise((resolve) => {
-                this.__resolve = resolve;
+                this._resolve = resolve;
                 this.initialize();
             }, { __animationInstance: this });
         }
