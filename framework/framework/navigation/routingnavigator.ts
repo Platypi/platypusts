@@ -25,6 +25,7 @@
          * Reference to the {@link plat.web.IRouter|IRouter} injectable.
          */
         $Router: web.IRouter = acquire(__Router);
+
         /**
          * @name $Window
          * @memberof plat.navigation.RoutingNavigator
@@ -91,7 +92,7 @@
         private __historyLength = 0;
         
         /**
-         * @name initialize
+         * @name registerPort
          * @memberof plat.navigation.RoutingNavigator
          * @kind function
          * @access public
@@ -101,13 +102,13 @@
          * itself in so the navigator can store it and use it to facilitate navigation. Also subscribes to 
          * 'routeChanged' and 'beforeRouteChange' events.
          * 
-         * @param {plat.ui.controls.IBaseport} baseport The {plat.ui.controls.Routeport|Routeport} 
+         * @param {plat.ui.controls.IBaseport} routeport The {plat.ui.controls.Routeport|Routeport} 
          * associated with this {@link plat.navigation.IRoutingNavigator|IRoutingNavigator}.
          * 
          * @returns {void}
          */
-        initialize(baseport: ui.controls.IBaseport): void {
-            super.registerPort(baseport);
+        registerPort(routeport: ui.controls.IBaseport): void {
+            this.routeport = routeport;
 
             var removeListeners = this.__removeListeners,
                 $EventManager = this.$EventManagerStatic,
@@ -151,16 +152,19 @@
          * @description
          * Called by the {@link plat.ui.controls.Routeport|Routeport} to make the Navigator aware of a successful navigation.
          * 
-         * @param {plat.ui.IBaseViewControl} control The {@link plat.ui.IBaseViewControl|IBaseViewControl} to which the 
+         * @param {plat.ui.IWebViewControl} control The {@link plat.ui.IWebViewControl|IWebViewControl} to which the 
          * navigation occurred.
          * @param {plat.web.IRoute<any>} parameter The navigation parameter sent to the control.
          * @param {plat.web.IRouteNavigationOptions} options The options used during navigation.
          * 
          * @returns {void}
          */
-        navigated(control: ui.IBaseViewControl, parameter: web.IRoute<any>, options: web.IRouteNavigationOptions): void {
+        navigated(control: ui.IWebViewControl, parameter: web.IRoute<any>, options: web.IRouteNavigationOptions): void {
+            this.currentState = {
+                control: control,
+                route: parameter
+            };
             super.navigated(control, parameter, options);
-            this.currentState.route = parameter;
         }
         
         /**
@@ -296,6 +300,37 @@
      */
     export interface IRoutingNavigator extends IBaseNavigator {
         /**
+         * @name currentState
+         * @memberof plat.navigation.IRoutingNavigator
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.navigation.IRouteNavigationState}
+         * 
+         * @description
+         * The routing information for the {@link plat.ui.controls.Routeport|Routeport's} current state.
+         */
+        currentState: IRouteNavigationState;
+
+        /**
+         * @name registerPort
+         * @memberof plat.navigation.IRoutingNavigator
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Initializes this navigator. The {plat.ui.controls.Routeport|Routeport} will call this method and pass 
+         * itself in so the navigator can store it and use it to facilitate navigation. Also subscribes to 
+         * 'routeChanged' and 'beforeRouteChange' events.
+         * 
+         * @param {plat.ui.controls.IBaseport} routeport The {plat.ui.controls.Routeport|Routeport} 
+         * associated with this {@link plat.navigation.IRoutingNavigator|IRoutingNavigator}.
+         * 
+         * @returns {void}
+         */
+        registerPort(routeport: ui.controls.IBaseport): void;
+
+        /**
          * @name navigate
          * @memberof plat.navigation.IRoutingNavigator
          * @kind function
@@ -324,14 +359,14 @@
          * @description
          * Called by the {@link plat.ui.controls.Routeport|Routeport} to make the Navigator aware of a successful navigation.
          * 
-         * @param {plat.ui.IBaseViewControl} control The {@link plat.ui.IBaseViewControl|IBaseViewControl} to which the 
+         * @param {plat.ui.IWebViewControl} control The {@link plat.ui.IWebViewControl|IWebViewControl} to which the 
          * navigation occurred.
          * @param {plat.web.IRoute<any>} parameter The navigation parameter sent to the control.
          * @param {plat.web.IRouteNavigationOptions} options The options used during navigation.
          * 
          * @returns {void}
          */
-        navigated(control: ui.IBaseViewControl, parameter: web.IRoute<any>, options: web.IRouteNavigationOptions): void;
+        navigated(control: ui.IWebViewControl, parameter: web.IRoute<any>, options: web.IRouteNavigationOptions): void;
 
         /**
          * @name goBack
@@ -358,12 +393,23 @@
      * @memberof plat.navigation
      * @kind interface
      * 
-     * @extends {plat.navigation.IBaseNavigationState}
-     * 
      * @description
      * Defines the route type interface implemented for current state and last state.
      */
-    export interface IRouteNavigationState extends INavigationState {
+    export interface IRouteNavigationState {
+        /**
+         * @name control
+         * @memberof plat.navigation.IRouteNavigationStateNavigationState
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.ui.IWebViewControl}
+         * 
+         * @description
+         * The {@link plat.ui.IWebViewControl|IWebViewControl} associated with a history entry.
+         */
+        control: ui.IWebViewControl;
+
         /**
          * @name route
          * @memberof plat.navigation.RoutingNavigator
