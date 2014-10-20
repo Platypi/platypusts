@@ -21,6 +21,7 @@ module app {
 
         goBack() {
             this.navigator.goBack({
+                ViewControl: MainViewControl,
                 parameter: true
             });
         }
