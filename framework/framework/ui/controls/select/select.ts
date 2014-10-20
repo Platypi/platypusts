@@ -117,17 +117,17 @@ module plat.ui.controls {
         itemsLoaded: async.IThenable<void>;
 
         /**
-         * @name __removeListener
+         * @name __listenerSet
          * @memberof plat.ui.controls.Select
          * @kind property
          * @access private
          * 
-         * @type {plat.IRemoveListener}
+         * @type {boolean}
          * 
          * @description
-         * A function to stop listening to Array context mutations.
+         * Whether or not the Array listener has been set.
          */
-        private __removeListener: IRemoveListener;
+        private __listenerSet: boolean;
         /**
          * @name __isGrouped
          * @memberof plat.ui.controls.Select
@@ -281,14 +281,7 @@ module plat.ui.controls {
             var newLength = isArray(newValue) ? newValue.length : 0,
                 oldLength = isArray(oldValue) ? oldValue.length : 0;
 
-            if (isNull(this.__removeListener)) {
-                this.__removeListener = this.observeArray(this, 'context',
-                (ev?: observable.IArrayMethodInfo<any>) => {
-                    if (isFunction((<any>this)['_' + ev.method])) {
-                        (<any>this)['_' + ev.method](ev);
-                    }
-                });
-            }
+            this._setListener();
 
             if (newLength > oldLength) {
                 this._addItems(newLength - oldLength, oldLength);
@@ -335,12 +328,7 @@ module plat.ui.controls {
             }
 
             this._addItems(context.length, 0);
-
-            this.__removeListener = this.observeArray(this, 'context', (ev?: observable.IArrayMethodInfo<any>) => {
-                if (isFunction((<any>this)['_' + ev.method])) {
-                    (<any>this)['_' + ev.method](ev);
-                }
-            });
+            this._setListener();
         }
 
         /**
@@ -350,18 +338,52 @@ module plat.ui.controls {
          * @access public
          * 
          * @description
-         * Stops observing the array context.
+         * Removes any potentially held memory.
          * 
          * @returns {void}
          */
         dispose(): void {
-            if (isFunction(this.__removeListener)) {
-                this.__removeListener();
-                this.__removeListener = null;
-            }
-
             this.__resolveFn = null;
             this.__defaultOption = null;
+        }
+
+        /**
+         * @name _setListener
+         * @memberof plat.ui.controls.Select
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Sets a listener for the changes to the array.
+         * 
+         * @returns {void}
+         */
+        _setListener(): void {
+            if (!this.__listenerSet) {
+                this.observeArray(this, 'context', this._executeEvent);
+                this.__listenerSet = true;
+            }
+        }
+
+        /**
+         * @name _executeEvent
+         * @memberof plat.ui.controls.Select
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Receives an event when a method has been called on an array and maps the array 
+         * method to its associated method handler.
+         * 
+         * @param {plat.observable.IArrayMethodInfo<any>} ev The Array mutation event information.
+         * 
+         * @returns {void}
+         */
+        _executeEvent(ev: observable.IArrayMethodInfo<any>): void {
+            var method = '_' + ev.method;
+            if (isFunction((<any>this)[method])) {
+                (<any>this)[method](ev);
+            }
         }
 
         /**

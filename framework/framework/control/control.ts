@@ -797,18 +797,17 @@ module plat {
 
             var contextManager = ContextManager.getManager(Control.getRootControl(this)),
                 uid = this.uid,
+                removeListener = contextManager.observeArray(uid, callback, absoluteIdentifier, array, null),
                 removeCallback = contextManager.observe(absoluteIdentifier, {
                     listener: (newValue: Array<any>, oldValue: Array<any>) => {
                         removeListener();
                         removeListener = contextManager.observeArray(uid, callback, absoluteIdentifier, newValue, oldValue);
                     },
                     uid: uid
-                }),
-                removeListener = contextManager.observeArray(uid, callback, absoluteIdentifier, array, null);
+                });
 
             // need to call callback if 
             return () => {
-                ContextManager.removeArrayListeners(absoluteIdentifier, uid);
                 removeListener();
                 removeCallback();
             };

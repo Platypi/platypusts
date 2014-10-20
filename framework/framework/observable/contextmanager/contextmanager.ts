@@ -125,15 +125,6 @@ module plat.observable {
                 }
             }
 
-            keys = Object.keys(ContextManager.observedArrayListeners);
-
-            var remove = ContextManager.removeArrayListeners,
-                length = keys.length;
-
-            for (var i = 0; i < length; ++i) {
-                remove(keys[i], uid);
-            }
-
             deleteProperty(controls, uid);
 
             if (!isNull(control.context)) {
@@ -284,6 +275,40 @@ module plat.observable {
             }
 
             listeners.push(listener);
+        }
+        
+        /**
+         * @name spliceRemoveListener
+         * @memberof plat.observable.ContextManager
+         * @kind function
+         * @access public
+         * @static
+         * 
+         * @description
+         * Splices a given function for removing an observed property.
+         * 
+         * @param {string} identifer The identifier for which the remove listener is being spliced.
+         * @param {string} uid The unique ID of the control observing the identifier.
+         * @param {plat.IRemoveListener} listener The function for removing the observed property.
+         * 
+         * @returns {void}
+         */
+        static spliceRemoveListener(identifier: string, uid: string, listener: IRemoveListener): void {
+            var controls = ContextManager.__controls,
+                control = controls[uid],
+                listeners: Array<IRemoveListener>;
+
+            if (isNull(control)) {
+                return;
+            }
+
+            listeners = control[identifier];
+
+            if (isNull(listeners)) {
+                return;
+            }
+
+            listeners.splice(listeners.indexOf(listener), 1);
         }
         
         /**
@@ -701,10 +726,11 @@ module plat.observable {
                 absoluteIdentifier = this.__observedIdentifier;
             }
 
-            var observedArrayCallbacks = ContextManager.observedArrayListeners[absoluteIdentifier];
+            var observedArrayListeners = ContextManager.observedArrayListeners,
+                observedArrayCallbacks = observedArrayListeners[absoluteIdentifier];
 
             if (isNull(observedArrayCallbacks)) {
-                observedArrayCallbacks = ContextManager.observedArrayListeners[absoluteIdentifier] = {};
+                observedArrayCallbacks = observedArrayListeners[absoluteIdentifier] = {};
             }
 
             var arrayCallbacks = observedArrayCallbacks[uid];
@@ -713,11 +739,24 @@ module plat.observable {
                 arrayCallbacks = observedArrayCallbacks[uid] = [];
             }
 
-            var removeListener = () => {
+            var listenerRemoved = false,
+                removeListener = () => {
+                if (listenerRemoved) {
+                    return;
+                }
+                listenerRemoved = true;
+                ContextManager.spliceRemoveListener(absoluteIdentifier, uid, removeListener);
                 arrayCallbacks.splice(arrayCallbacks.indexOf(listener), 1);
+                if (arrayCallbacks.length === 0) {
+                    deleteProperty(observedArrayCallbacks, uid);
+                    if (isEmpty(observedArrayCallbacks)) {
+                        deleteProperty(observedArrayListeners, absoluteIdentifier);
+                    }
+                }
             };
 
             arrayCallbacks.push(listener);
+            ContextManager.pushRemoveListener(absoluteIdentifier, uid, removeListener);
 
             if (proto) {
                 var obj = Object.create(Array.prototype);
@@ -1531,6 +1570,24 @@ module plat.observable {
          * @returns {void}
          */
         pushRemoveListener(identifier: string, uid: string, listener: IRemoveListener): void;
+
+        /**
+         * @name spliceRemoveListener
+         * @memberof plat.observable.ContextManager
+         * @kind function
+         * @access public
+         * @static
+         *
+         * @description
+         * Splices a given function for removing an observed property.
+         *
+         * @param {string} identifer The identifier for which the remove listener is being spliced.
+         * @param {string} uid The unique ID of the control observing the identifier.
+         * @param {plat.IRemoveListener} listener The function for removing the observed property.
+         *
+         * @returns {void}
+         */
+        spliceRemoveListener(identifier: string, uid: string, listener: IRemoveListener): void
 
         /**
          * @name removeIdentifier

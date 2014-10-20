@@ -102,17 +102,17 @@ module plat.ui.controls {
         _blockLength = 0;
 
         /**
-         * @name __removeListener
+         * @name __listenerSet
          * @memberof plat.ui.controls.ForEach
          * @kind property
          * @access private
          * 
-         * @type {plat.IRemoveListener}
+         * @type {boolean}
          * 
          * @description
-         * A function to stop listening for array (context) mutations.
+         * Whether or not the Array listener has been set.
          */
-        private __removeListener: IRemoveListener;
+        private __listenerSet = false;
         /**
          * @name __currentAnimations
          * @memberof plat.ui.controls.ForEach
@@ -188,13 +188,11 @@ module plat.ui.controls {
          * @returns {void}
          */
         contextChanged(newValue?: Array<any>, oldValue?: Array<any>): void {
-            if (isNull(this.__removeListener)) {
-                this._setListener();
-            }
-
             if (!isArray(newValue)) {
                 return;
             }
+
+            this._setListener();
 
             if (newValue.length === 0) {
                 this._removeItems(this.controls.length);
@@ -240,16 +238,11 @@ module plat.ui.controls {
          * @access public
          * 
          * @description
-         * Removes the Array context mutation listener
+         * Removes any potentially held memory.
          * 
          * @returns {void}
          */
         dispose(): void {
-            if (isFunction(this.__removeListener)) {
-                this.__removeListener();
-                this.__removeListener = null;
-            }
-
             this.__resolveFn = null;
         }
 
@@ -356,7 +349,10 @@ module plat.ui.controls {
          * @returns {void}
          */
         _setListener(): void {
-            this.__removeListener = this.observeArray(this, 'context', this._executeEvent);
+            if (!this.__listenerSet) {
+                this.observeArray(this, 'context', this._executeEvent);
+                this.__listenerSet = true;
+            }
         }
 
         /**

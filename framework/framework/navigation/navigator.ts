@@ -97,8 +97,7 @@ module plat.navigation {
                 key: string,
                 parameter = options.parameter,
                 event: events.INavigationEvent<any>,
-                baseport = this.baseport,
-                BaseViewControlFactory = this.$BaseViewControlFactory;
+                baseport = this.baseport;
 
             event = this._sendEvent('beforeNavigate', Constructor, null, parameter, options, true);
 
@@ -107,7 +106,6 @@ module plat.navigation {
             }
 
             this.navigating = true;
-            BaseViewControlFactory.detach(viewControl);
 
             if (isObject(parameter)) {
                 parameter = _clone(parameter, true);
@@ -144,7 +142,7 @@ module plat.navigation {
 
             if (!isNull(viewControl)) {
                 baseport.navigateFrom(viewControl).then(() => {
-                    BaseViewControlFactory.detach(viewControl);
+                    this.$BaseViewControlFactory.detach(viewControl);
 
                     if (!options.replace) {
                         this.history.push({ control: viewControl });
