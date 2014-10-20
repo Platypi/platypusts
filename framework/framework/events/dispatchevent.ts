@@ -77,6 +77,19 @@ module plat.events {
         direction: string;
 
         /**
+         * @name stopped
+         * @memberof plat.events.DispatchEvent
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * Whether or not the event propagation was stopped.
+         */
+        stopped: boolean = false;
+
+        /**
          * @name initialize
          * @memberof plat.events.DispatchEvent
          * @kind function
@@ -146,7 +159,7 @@ module plat.events {
         initialize(name: string, sender: any, direction?: string): void;
         initialize(name: string, sender: any, direction?: string) {
             this.name = name;
-            this.direction = direction || this.$EventManagerStatic.DIRECT;
+            this.direction = direction || this.$EventManagerStatic.UP;
             this.sender = sender;
         }
 
@@ -164,6 +177,7 @@ module plat.events {
          */
         stopPropagation(): void {
             if (this.direction === this.$EventManagerStatic.UP) {
+                this.stopped = true;
                 (<any>this.$EventManagerStatic.propagatingEvents)[this.name] = false;
             }
         }
@@ -230,6 +244,19 @@ module plat.events {
          * The event direction this object is using for propagation.
          */
         direction: string;
+
+        /**
+         * @name stopped
+         * @memberof plat.events.IDispatchEventInstance
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * Whether or not the event propagation was stopped.
+         */
+        stopped: boolean;
 
         /**
          * @name initialize

@@ -12,6 +12,67 @@ module plat.ui.controls {
      */
     export class Viewport extends Baseport {
         /**
+         * @name __endViewports
+         * @memberof plat.ui.controls.Viewport
+         * @kind property
+         * @access private
+         * @static
+         * 
+         * @type {plat.events.IEventManagerStatic}
+         * 
+         * @description
+         * Contains all the bottom-level viewports.
+         */
+        private static __endViewports: Array<Viewport> = [];
+
+        /**
+         * @name __addViewport
+         * @memberof plat.ui.controls.Viewport
+         * @kind function
+         * @access private
+         * @static
+         * 
+         * @description
+         * Adds a viewport to the end viewports array if necessary. Keeps track of all viewports so that 
+         * the end viewports array only contains the bottom-level viewports.
+         * 
+         * @returns {void}
+         */
+        private static __addViewport(viewport: Viewport): void {
+            var ports = Viewport.__endViewports,
+                control: ITemplateControl = viewport,
+                type = viewport.type,
+                index: number;
+
+            while (!isNull(control)) {
+                if (control.type === type) {
+                    index = ports.indexOf(<Viewport>control);
+
+                    if (index > -1) {
+                        ports.splice(index, 1);
+                    }
+                }
+
+                control = control.parent;
+            }
+
+            ports.push(viewport);
+        }
+
+        /**
+         * @name $EventManagerStatic
+         * @memberof plat.ui.controls.Viewport
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.events.IEventManagerStatic}
+         * 
+         * @description
+         * Reference to the {@link plat.events.IEventManagerStatic|IEventManagerStatic} injectable.
+         */
+        $EventManagerStatic: events.IEventManagerStatic = plat.acquire(__EventManagerStatic);
+
+        /**
          * @name options
          * @memberof plat.ui.controls.Viewport
          * @kind property
@@ -38,6 +99,49 @@ module plat.ui.controls {
          * from one to another.
          */
         navigator: navigation.INavigatorInstance;
+
+        /**
+         * @name backButtonPressed
+         * @memberof plat.ui.controls.Viewport
+         * @kind function
+         * @access public
+         * @virtual
+         * 
+         * @description
+         * Propagates an event up from the bottom of the view-tree, allowing the backbutton 
+         * event to be handled by any view control. If no view control handles the event, the 
+         * default functionality is to call {@link plat.navigation.Navigator.goBack|navigator.goBack()}.
+         * 
+         * @returns {void}
+         */
+        backButtonPressed(): void {
+            var viewports = Viewport.__endViewports,
+                length = viewports.length,
+                viewport: Viewport,
+                child: IViewControl,
+                sendEvent = this.$EventManagerStatic.sendEvent,
+                ev: events.IDispatchEventInstance = plat.acquire(__DispatchEventInstance);
+
+            ev.initialize('backButtonPressed', this);
+
+            for (var i = 0; i < length; ++i) {
+                viewport = viewports[i];
+                child = viewport.controls[0];
+
+                if (isObject(child)) {
+                    ev.sender = child;
+                    sendEvent(ev);
+
+                    if (ev.stopped) {
+                        break;
+                    }
+                }
+            }
+
+            if (!ev.stopped) {
+                super.backButtonPressed();
+            }
+        }
 
         /**
          * @name _load
@@ -71,6 +175,8 @@ module plat.ui.controls {
                 return;
             }
 
+            Viewport.__addViewport(this);
+
             super._load(injector);
         }
     }
@@ -97,6 +203,20 @@ module plat.ui.controls {
          * {@link plat.ui.IViewControl|IViewControl} to initially navigate to.
          */
         defaultView: string;
+
+        /**
+         * @name main
+         * @memberof plat.ui.controls.IViewportOptions
+         * @kind property
+         * @access public
+         * 
+         * @type {boolean}
+         * 
+         * @description
+         * Whether or not this viewport is a main viewport. Main viewports handle 
+         * backbutton events.
+         */
+        main?: string;
     }
 
     register.control(__Viewport, Viewport, [__NavigatorInstance]);

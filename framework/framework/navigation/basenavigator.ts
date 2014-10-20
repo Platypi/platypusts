@@ -31,6 +31,7 @@ module plat.navigation {
          * Reference to the {@link plat.events.IEventManagerStatic|IEventManagerStatic} injectable.
          */
         $EventManagerStatic: events.IEventManagerStatic = acquire(__EventManagerStatic);
+
         /**
          * @name $NavigationEventStatic
          * @memberof plat.navigation.BaseNavigator
@@ -43,6 +44,7 @@ module plat.navigation {
          * Reference to the {@link plat.events.INavigationEventStatic|INavigationEventStatic} injectable.
          */
         $NavigationEventStatic: events.INavigationEventStatic = acquire(__NavigationEventStatic);
+
         /**
          * @name $BaseViewControlFactory
          * @memberof plat.navigation.BaseNavigator
@@ -55,6 +57,7 @@ module plat.navigation {
          * Reference to the {@link plat.ui.IBaseViewControlFactory|IBaseViewControlFactory} injectable.
          */
         $BaseViewControlFactory: ui.IBaseViewControlFactory = acquire(__BaseViewControlFactory);
+
         /**
          * @name $ContextManagerStatic
          * @memberof plat.navigation.BaseNavigator
@@ -81,19 +84,7 @@ module plat.navigation {
          * A unique ID used to identify this navigator.
          */
         uid: string;
-        /**
-         * @name baseport
-         * @memberof plat.navigation.BaseNavigator
-         * @kind property
-         * @access public
-         * 
-         * @type {plat.ui.controls.IBaseport}
-         * 
-         * @description
-         * Every navigator will have an {@link plat.ui.controls.IBaseport|IBaseport} with which to communicate and 
-         * facilitate navigation.
-         */
-        baseport: ui.controls.IBaseport;
+
         /**
          * @name currentState
          * @memberof plat.navigation.BaseNavigator
@@ -107,7 +98,8 @@ module plat.navigation {
          * enough information for it to be pushed onto the history stack when 
          * necessary.
          */
-        currentState: IBaseNavigationState;
+        currentState: INavigationState;
+
         /**
          * @name navigating
          * @memberof plat.navigation.BaseNavigator
@@ -137,27 +129,27 @@ module plat.navigation {
         constructor() {
             var uid = uniqueId('plat_');
             this.$ContextManagerStatic.defineGetter(this, 'uid', uid);
-            this.$EventManagerStatic.on(uid, 'goBack', this.goBack, this);
+            this.$EventManagerStatic.on(uid, 'backbutton', this.backButtonPressed, this);
         }
         
         /**
-         * @name initialize
+         * @name registerPort
          * @memberof plat.navigation.BaseNavigator
          * @kind function
          * @access public
+         * @virtual
          * 
          * @description
-         * Initializes this navigator. The {plat.ui.controls.IBaseport|IBaseport} will call this method and pass 
-         * itself in so the navigator can store it and use it to facilitate navigation.
+         * Registers an {plat.ui.controls.IBaseport|IBaseport} with this navigator. The IBaseport will call this method and pass 
+         * itself in so the navigator can store it and use it to facilitate navigation. Every navigator must implement this method 
+         * in order to store the baseport.
          * 
          * @param {plat.ui.controls.IBaseport} baseport The {plat.ui.controls.IBaseport|IBaseport} 
          * associated with this {@link plat.navigation.IBaseNavigator|IBaseNavigator}.
          * 
          * @returns {void}
          */
-        initialize(baseport: ui.controls.IBaseport): void {
-            this.baseport = baseport;
-        }
+        registerPort(baseport: ui.controls.IBaseport): void { }
         
         /**
          * @name navigate
@@ -202,10 +194,6 @@ module plat.navigation {
          * @returns {void}
          */
         navigated(control: ui.IBaseViewControl, parameter: any, options: IBaseNavigationOptions): void {
-            this.currentState = {
-                control: control
-            };
-
             this.navigating = false;
             control.navigator = this;
             control.navigatedTo(parameter);
@@ -229,7 +217,24 @@ module plat.navigation {
          * @returns {void}
          */
         goBack(options?: IBaseBackNavigationOptions): void { }
-        
+
+        /**
+         * @name backButtonPressed
+         * @memberof plat.navigation.BaseNavigator
+         * @kind function
+         * @access public
+         * @virtual
+         * 
+         * @description
+         * Every navigator can implement this method, defining what happens when the hard back button has been pressed 
+         * on a device. By default this method will call the goBack method.
+         * 
+         * @returns {void}
+         */
+        backButtonPressed(): void {
+            this.goBack();
+        }
+
         /**
          * @name dispose
          * @memberof plat.navigation.BaseNavigator
@@ -299,20 +304,6 @@ module plat.navigation {
         uid: string;
 
         /**
-         * @name baseport
-         * @memberof plat.navigation.IBaseNavigator
-         * @kind property
-         * @access public
-         * 
-         * @type {plat.ui.controls.IBaseport}
-         * 
-         * @description
-         * Every navigator will have an {@link plat.ui.controls.IBaseport|IBaseport} with which to communicate and 
-         * facilitate navigation.
-         */
-        baseport: ui.controls.IBaseport;
-
-        /**
          * @name currentState
          * @memberof plat.navigation.IBaseNavigator
          * @kind property
@@ -325,7 +316,7 @@ module plat.navigation {
          * enough information for it to be pushed onto the history stack when 
          * necessary.
          */
-        currentState: IBaseNavigationState;
+        currentState: INavigationState;
 
         /**
          * @name navigating
@@ -342,13 +333,13 @@ module plat.navigation {
         navigating: boolean;
 
         /**
-         * @name initialize
+         * @name registerPort
          * @memberof plat.navigation.IBaseNavigator
          * @kind function
          * @access public
          * 
          * @description
-         * Initializes this navigator. The {plat.ui.controls.IBaseport|IBaseport} will call this method and pass 
+         * Registers an {plat.ui.controls.IBaseport|IBaseport} with this navigator. The IBaseport will call this method and pass 
          * itself in so the navigator can store it and use it to facilitate navigation.
          * 
          * @param {plat.ui.controls.IBaseport} baseport The {plat.ui.controls.IBaseport|IBaseport} 
@@ -356,7 +347,7 @@ module plat.navigation {
          * 
          * @returns {void}
          */
-        initialize(baseport: ui.controls.IBaseport): void;
+        registerPort(baseport: ui.controls.IBaseport): void;
 
         /**
          * @name navigate
@@ -416,6 +407,21 @@ module plat.navigation {
          * @returns {void}
          */
         goBack(options?: IBaseBackNavigationOptions): void;
+
+        /**
+         * @name backButtonPressed
+         * @memberof plat.navigation.IBaseNavigator
+         * @kind function
+         * @access public
+         * @virtual
+         * 
+         * @description
+         * Every navigator can implement this method, defining what happens when the hard back button has been pressed 
+         * on a device. By default this method will call the goBack method.
+         * 
+         * @returns {void}
+         */
+        backButtonPressed(): void;
 
         /**
          * @name dispose
@@ -479,28 +485,5 @@ module plat.navigation {
          * in history.
          */
         length?: number;
-    }
-    
-    /**
-     * @name IBaseNavigationState
-     * @memberof plat.navigation
-     * @kind interface
-     * 
-     * @description
-     * Defines the base interface that needs to be implemented in the navigation history.
-     */
-    export interface IBaseNavigationState {
-        /**
-         * @name control
-         * @memberof plat.navigation.IBaseNavigationState
-         * @kind property
-         * @access public
-         * 
-         * @type {plat.ui.IBaseViewControl}
-         * 
-         * @description
-         * The {@link plat.ui.IBaseViewControl|IBaseViewControl} associated with a history entry.
-         */
-        control: ui.IBaseViewControl;
     }
 }

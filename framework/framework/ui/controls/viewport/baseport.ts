@@ -200,7 +200,23 @@
 
             manager.setUiControlTemplate();
         }
-        
+
+        /**
+         * @name backButtonPressed
+         * @memberof plat.ui.controls.Baseport
+         * @kind function
+         * @access public
+         * @virtual
+         * 
+         * @description
+         * Implements the functionality for when the hard backbutton is pressed on a device.
+         * 
+         * @returns {void}
+         */
+        backButtonPressed() {
+            this.navigator.goBack();
+        }
+
         /**
          * @name navigateFrom
          * @memberof plat.ui.controls.Baseport
@@ -244,7 +260,7 @@
          */
         _load(navigationParameter?: any, options?: navigation.IBaseNavigationOptions): void {
             var navigator = this.navigator;
-            navigator.initialize(this);
+            navigator.registerPort(this);
             navigator.navigate(navigationParameter, options);
         }
     }
@@ -309,6 +325,20 @@
          * away.
          */
         navigateFrom(fromControl: IBaseViewControl): async.IThenable<void>;
+
+        /**
+         * @name backButtonPressed
+         * @memberof plat.ui.controls.IBaseport
+         * @kind function
+         * @access public
+         * @virtual
+         * 
+         * @description
+         * Implements the functionality for when the hard backbutton is pressed on a device.
+         * 
+         * @returns {void}
+         */
+        backButtonPressed(): void;
     }
 
     /**
