@@ -991,7 +991,7 @@ module plat {
          * always start with the sender, so the sender can both produce and consume the same
          * event.
          * 
-         * @param {string} name The name of the event to send, cooincides with the name used in the
+         * @param {string} name The name of the event to send, coincides with the name used in the
          * control.on() method.
          * @param {string} direction='up' Equivalent to {@link plat.events.EventManager.UP|EventManager.UP}
          * @param {Array<any>} ...args Any number of arguments to send to all the listeners.
@@ -1013,7 +1013,7 @@ module plat {
          * always start with the sender, so the sender can both produce and consume the same
          * event.
          * 
-         * @param {string} name The name of the event to send, cooincides with the name used in the
+         * @param {string} name The name of the event to send, coincides with the name used in the
          * control.on() method.
          * @param {string} direction='down' Equivalent to {@link plat.events.EventManager.DOWN|EventManager.DOWN}
          * @param {Array<any>} ...args Any number of arguments to send to all the listeners.
@@ -1035,7 +1035,7 @@ module plat {
          * always start with the sender, so the sender can both produce and consume the same
          * event.
          * 
-         * @param {string} name The name of the event to send, cooincides with the name used in the
+         * @param {string} name The name of the event to send, coincides with the name used in the
          * control.on() method.
          * @param {string} direction='direct' Equivalent to {@link plat.events.EventManager.DIRECT|EventManager.DIRECT}
          * @param {Array<any>} ...args Any number of arguments to send to all the listeners.
@@ -1057,7 +1057,7 @@ module plat {
          * always start with the sender, so the sender can both produce and consume the same
          * event.
          * 
-         * @param {string} name The name of the event to send, cooincides with the name used in the
+         * @param {string} name The name of the event to send, coincides with the name used in the
          * control.on() method.
          * @param {string} direction The direction in which to send the event.
          * @param {Array<any>} ...args Any number of arguments to send to all the listeners.
@@ -1663,7 +1663,7 @@ module plat {
          * always start with the sender, so the sender can both produce and consume the same
          * event.
          * 
-         * @param {string} name The name of the event to send, cooincides with the name used in the
+         * @param {string} name The name of the event to send, coincides with the name used in the
          * control.on() method.
          * @param {string} direction='up' Equivalent to {@link plat.events.EventManager.UP|EventManager.UP}
          * @param {Array<any>} ...args Any number of arguments to send to all the listeners.
@@ -1685,7 +1685,7 @@ module plat {
          * always start with the sender, so the sender can both produce and consume the same
          * event.
          * 
-         * @param {string} name The name of the event to send, cooincides with the name used in the
+         * @param {string} name The name of the event to send, coincides with the name used in the
          * control.on() method.
          * @param {string} direction='down' Equivalent to {@link plat.events.EventManager.DOWN|EventManager.DOWN}
          * @param {Array<any>} ...args Any number of arguments to send to all the listeners.
@@ -1707,7 +1707,7 @@ module plat {
          * always start with the sender, so the sender can both produce and consume the same
          * event.
          * 
-         * @param {string} name The name of the event to send, cooincides with the name used in the
+         * @param {string} name The name of the event to send, coincides with the name used in the
          * control.on() method.
          * @param {string} direction='direct' Equivalent to {@link plat.events.EventManager.DIRECT|EventManager.DIRECT}
          * @param {Array<any>} ...args Any number of arguments to send to all the listeners.
@@ -1729,7 +1729,7 @@ module plat {
          * always start with the sender, so the sender can both produce and consume the same
          * event.
          * 
-         * @param {string} name The name of the event to send, cooincides with the name used in the
+         * @param {string} name The name of the event to send, coincides with the name used in the
          * control.on() method.
          * @param {string} direction The direction in which to send the event.
          * @param {Array<any>} ...args Any number of arguments to send to all the listeners.
