@@ -1,27 +1,35 @@
 module app {
     var count = 0;
 
-    export class MainViewControl extends plat.ui.WebViewControl {
+    export class MainViewControl extends plat.ui.ViewControl {
         title = 'Main';
         templateUrl = 'viewcontrols/main/main.viewcontrol.html';
         context = {
             text: <string>null,
             password: <string>null,
-            keydown: ''
+            keydown: '',
+            count: 0
         };
-        count: number;
         text: plat.controls.INamedElement<HTMLElement, void>;
         password: plat.controls.INamedElement<HTMLElement, void>;
 
-        setTemplate() {
-            this.count = count;
-            if (count++ === 2) {
-                var port = this.element.querySelector('plat-viewport');
-                this.element.removeChild(port);
-            }
+        navigate() {
+            this.navigator.navigate(MainViewControl, {
+                initialize: true
+            });
         }
 
-        navigatedTo(route: plat.web.IRoute<any>) {
+        goBack() {
+            this.navigator.goBack({
+                parameter: true
+            });
+        }
+
+        navigatedTo(param: any) {
+            console.log(this.navigator.history.length);
+            if (!param) {
+                this.context.count = ++count;
+            }
             //if (route.path.length === 0) {
             //    return;
             //}
@@ -30,14 +38,11 @@ module app {
         }
 
         loaded() {
-            this.on('backButtonPressed', this.backButtonPressed);
-            if (count === 3) {
-                this.dispatchEvent('backbutton', 'direct');
-            }
+
         }
 
         backButtonPressed(ev: plat.events.IDispatchEventInstance) {
-            console.log('Here: ' + this.count);
+            console.log('Here: ' + this.context.count);
         }
 
         foo() {
@@ -52,5 +57,13 @@ module app {
         }
     }
 
-    plat.register.viewControl('viewcontrol', MainViewControl, null, ['']);
+    plat.register.viewControl('viewcontrol', (<any>MainViewControl), null, ['']);
+
+    class App extends plat.App {
+        error(ev: plat.events.IErrorEvent<any>) {
+            console.log(ev.error);
+        }
+    }
+
+    plat.register.app('app', App);
 }

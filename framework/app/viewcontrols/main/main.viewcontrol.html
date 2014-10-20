@@ -9,4 +9,11 @@
 
 <input type="text" plat-bind="keydown" plat-keypress="{ key: '!', method: 'keyDown' }" />
 
-<plat-viewport plat-options="{ defaultView: 'viewcontrol'}"></plat-viewport>
+<button plat-tap="navigate">Navigate</button>
+<button plat-tap="goBack">Back</button>
+
+<div>
+    Count = {{count}}
+</div>
+
+<!--<plat-viewport plat-options="{ defaultView: 'viewcontrol'}"></plat-viewport>-->

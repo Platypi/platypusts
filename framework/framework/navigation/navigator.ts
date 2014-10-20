@@ -212,8 +212,14 @@ module plat.navigation {
             if (isFunction(Constructor.inject)) {
                 injector = Constructor;
                 key = (<dependency.IInjector<any>>Constructor).name;
-            } else if (!initialize && (index = this._findInHistory(Constructor)) > -1) {
-                injector = <any>this.history[index].control;
+            } else if (!initialize && ((index = this._findInHistory(Constructor)) > -1 || this.isCurrentState(Constructor))) {
+                if (this.isCurrentState(Constructor)) {
+                    injector = <any>viewControl;
+                } else {
+                    injector = <any>this.history[index].control;
+                }
+
+                key = (<any>injector).type;
             } else if (isString(Constructor)) {
                 injector = viewControlInjectors[(key = Constructor)];
             } else {
@@ -264,6 +270,50 @@ module plat.navigation {
         }
 
         /**
+         * @name isCurrentState
+         * @memberof plat.navigation.Navigator
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Returns whether or not the current state matches the input Constructor.
+         * 
+         * @param {new (...args: any[]) => plat.ui.IBaseViewControl} Constructor The 
+         * {@link plat.ui.IBaseViewControl|IBaseViewControl} constructor to match in the current state.
+         * 
+         * @returns {boolean} Whether or not the input Constructor matches the current state.
+         */
+        isCurrentState(Constructor: new (...args: any[]) => ui.IBaseViewControl): boolean;
+        /**
+         * @name isCurrentState
+         * @memberof plat.navigation.Navigator
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Returns whether or not the current state matches the input type.
+         * 
+         * @param {string} type The 
+         * {@link plat.ui.IBaseViewControl|IBaseViewControl} type to match in the current state.
+         * 
+         * @returns {boolean} Whether or not the input type matches the current state.
+         */
+        isCurrentState(type: string): boolean;
+        isCurrentState(Constructor: any): boolean {
+            if (isNull(this.currentState)) {
+                return false;
+            }
+
+            var viewControl = this.currentState.control;
+
+            if (isString(Constructor)) {
+                return viewControl.type === Constructor;
+            }
+
+            return viewControl.constructor === Constructor;
+        }
+
+        /**
          * @name goBack
          * @memberof plat.navigation.Navigator
          * @kind function
@@ -283,11 +333,13 @@ module plat.navigation {
         goBack(options?: IBackNavigationOptions): void {
             var opts: IBackNavigationOptions = options || {},
                 currentState = this.currentState || <INavigationState>{},
+                history = this.history,
                 viewControl = currentState.control,
+                indexInHistory = this._findInHistory(viewControl.type),
+                inHistory = indexInHistory > -1,
                 length = isNumber(opts.length) ? opts.length : 1,
                 Constructor = opts.ViewControl,
                 parameter = opts.parameter,
-                history = this.history,
                 baseport = this.viewport;
 
             if (history.length === 0) {
@@ -326,7 +378,11 @@ module plat.navigation {
             }
 
             baseport.navigateFrom(viewControl).then(() => {
-                this.$BaseViewControlFactory.dispose(viewControl);
+                if (inHistory) {
+                    this.$BaseViewControlFactory.detach(viewControl);
+                } else {
+                    this.$BaseViewControlFactory.dispose(viewControl);
+                }
 
                 var last = this._goBackLength(length);
 
