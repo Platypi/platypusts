@@ -208,12 +208,16 @@
          * @param {plat.IPropertyChangedListener} listener The listener added by the Template Control.
          */
         _addListener(listener: (newValue: any, oldValue: any) => void): IRemoveListener {
-            var listeners = this._listeners,
-                index = listeners.length;
+            var listeners = this._listeners;
 
             listeners.push(listener);
 
             return () => {
+                var index = listeners.indexOf(listener);
+                if (index === -1) {
+                    return;
+                }
+
                 listeners.splice(index, 1);
             };
         }

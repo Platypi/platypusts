@@ -100,12 +100,15 @@ module plat.ui {
                 return noop;
             }
 
-            var length = listeners.length;
-
             listeners.push(listener);
 
             return () => {
-                listeners.splice(length, 1);
+                var index = listeners.indexOf(listener);
+                if (index === -1) {
+                    return;
+                }
+
+                listeners.splice(index, 1);
             };
         }
         
