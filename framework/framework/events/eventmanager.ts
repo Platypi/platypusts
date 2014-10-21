@@ -309,9 +309,12 @@ module plat.events {
 
             eventListeners.push(listener);
 
-            var index = eventListeners.length - 1;
-
             return () => {
+                var index = eventListeners.indexOf(listener);
+                if (index === -1) {
+                    return;
+                }
+
                 eventListeners.splice(index, 1);
             };
         }

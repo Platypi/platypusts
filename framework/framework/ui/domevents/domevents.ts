@@ -1631,19 +1631,23 @@
          */
         private __updatePointers(ev: IPointerEvent, remove: boolean): void {
             var id = ev.pointerId,
-                pointer = this.__pointerHash[id];
+                pointer = this.__pointerHash[id],
+                index: number;
 
             if (remove) {
                 if (!isUndefined(pointer)) {
-                    this.__pointerEvents.splice(this.__pointerEvents.indexOf(pointer), 1);
+                    index = this.__pointerEvents.indexOf(pointer);
+                    if (index > -1) {
+                        this.__pointerEvents.splice(index, 1);
+                    }
                     deleteProperty(this.__pointerHash, id);
                 }
             } else {
                 ev.identifier = ev.pointerId;
-                if (isUndefined(pointer)) {
+                if (isUndefined(pointer) || (index = this.__pointerEvents.indexOf(pointer)) < 0) {
                     this.__pointerEvents.push(ev);
                 } else {
-                    this.__pointerEvents.splice(this.__pointerEvents.indexOf(pointer), 1, ev);
+                    this.__pointerEvents.splice(index, 1, ev);
                 }
 
                 this.__pointerHash[id] = ev;

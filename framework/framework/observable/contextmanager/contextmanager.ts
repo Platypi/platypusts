@@ -308,7 +308,12 @@ module plat.observable {
                 return;
             }
 
-            listeners.splice(listeners.indexOf(listener), 1);
+            var index = listeners.indexOf(listener);
+            if (index === -1) {
+                return;
+            }
+
+            listeners.splice(index, 1);
         }
         
         /**
@@ -744,9 +749,16 @@ module plat.observable {
                 if (listenerRemoved) {
                     return;
                 }
+
                 listenerRemoved = true;
                 ContextManager.spliceRemoveListener(absoluteIdentifier, uid, removeListener);
-                arrayCallbacks.splice(arrayCallbacks.indexOf(listener), 1);
+
+                var index = arrayCallbacks.indexOf(listener);
+                if (index === -1) {
+                    return;
+                }
+
+                arrayCallbacks.splice(index, 1);
                 if (arrayCallbacks.length === 0) {
                     deleteProperty(observedArrayCallbacks, uid);
                     if (isEmpty(observedArrayCallbacks)) {
@@ -1161,7 +1173,12 @@ module plat.observable {
             }
 
             // splice the observed listener
-            callbacks.splice(callbacks.indexOf(listener), 1);
+            var index = callbacks.indexOf(listener);
+            if (index === -1) {
+                return;
+            }
+
+            callbacks.splice(index, 1);
 
             if (isEmpty(this.__identifiers[identifier])) {
                 deleteProperty(this.__identifierHash, identifier);

@@ -40,13 +40,17 @@
          * @returns {plat.IRemoveListener} A function to stop listening for property changes.
          */
         observeProperty(listener: (newValue: any, oldValue?: any) => void): IRemoveListener {
-            var listeners = this._listeners,
-                length = listener.length;
+            var listeners = this._listeners;
 
             listeners.push(listener);
 
             return () => {
-                listeners.splice(length, 1);
+                var index = listeners.indexOf(listener);
+                if (index === -1) {
+                    return;
+                }
+
+                listeners.splice(index, 1);
             };
         }
         
