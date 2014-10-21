@@ -61,6 +61,14 @@ module app {
     plat.register.viewControl('viewcontrol', (<any>MainViewControl), null, ['']);
 
     class App extends plat.App {
+        //ready(ev: plat.events.ILifecycleEvent) {
+        //    ev.cancel();
+
+        //    setTimeout(() => {
+        //        this.load();
+        //    }, 5000);
+        //}
+
         error(ev: plat.events.IErrorEvent<any>) {
             console.log(ev.error);
         }
