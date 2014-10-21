@@ -154,7 +154,7 @@
          */
         constructor() {
             super();
-            this.on('navigated', () => {
+            this.on(__navigated, () => {
                 if (isEmpty(this.title)) {
                     this.title = '';
                 }

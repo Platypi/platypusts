@@ -194,7 +194,7 @@ module plat.async {
 
             if (xDomain) {
                 this.xhr = null;
-                this.jsonpCallback = options.jsonpCallback || uniqueId('plat_callback');
+                this.jsonpCallback = options.jsonpCallback || uniqueId(__JSONP_CALLBACK);
                 return this.executeJsonp();
             }
 

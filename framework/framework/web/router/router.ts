@@ -242,9 +242,9 @@
          */
         constructor() {
             var ContextManager: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
-            ContextManager.defineGetter(this, 'uid', uniqueId('plat_'));
+            ContextManager.defineGetter(this, 'uid', uniqueId(__Plat));
 
-            this._removeListener = this.$EventManagerStatic.on(this.uid, 'urlChanged',
+            this._removeListener = this.$EventManagerStatic.on(this.uid, __urlChanged,
                 (ev: events.IDispatchEventInstance, utils: web.IUrlUtilsInstance) => {
                 postpone(() => {
                     this._routeChanged(ev, utils);
@@ -334,7 +334,7 @@
             route = build.route;
             match = build.match;
 
-            var event = this.$NavigationEventStatic.dispatch('beforeRouteChange', this, {
+            var event = this.$NavigationEventStatic.dispatch(__beforeRouteChange, this, {
                 parameter: match.route,
                 target: match.injector,
                 type: match.type,
@@ -481,7 +481,7 @@
                 this.__history.push(matchedRoute.route.path);
             }
 
-            this.$NavigationEventStatic.dispatch('routeChanged', this, {
+            this.$NavigationEventStatic.dispatch(__routeChanged, this, {
                 parameter: matchedRoute.route,
                 target: matchedRoute.injector,
                 type: matchedRoute.type,

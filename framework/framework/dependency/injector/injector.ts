@@ -93,7 +93,7 @@ module plat.dependency {
          * @returns {plat.dependency.IInjector<any>} The dependency
          */
         static getDependency(dependency: any): IInjector<any> {
-            if (isNull(dependency) || dependency === __noopInjector) {
+            if (isNull(dependency) || dependency === __NOOP_INJECTOR) {
                 return Injector.__noop();
             } else if (Injector.isInjector(dependency)) {
                 return dependency;
@@ -181,7 +181,7 @@ module plat.dependency {
          */
         private static __getInjectorName(dependency: any): string {
             if (isNull(dependency)) {
-                return __noopInjector;
+                return __NOOP_INJECTOR;
             } else if (isString(dependency)) {
                 return dependency;
             } else if (dependency === window) {
@@ -208,7 +208,7 @@ module plat.dependency {
                 }
             }
 
-            return __noopInjector;
+            return __NOOP_INJECTOR;
         }
 
         /**
@@ -298,7 +298,7 @@ module plat.dependency {
         private static __wrap(value: any): IInjector<any> {
             return {
                 inject: () => value,
-                name: 'wrapped',
+                name: __WRAPPED_INJECTOR,
                 __dependencies: [],
                 Constructor: value
             };
@@ -319,8 +319,8 @@ module plat.dependency {
         private static __noop(): IInjector<any> {
             return {
                 inject: noop,
-                type: __noopInjector,
-                name: __noopInjector,
+                type: __NOOP_INJECTOR,
+                name: __NOOP_INJECTOR,
                 __dependencies: [],
                 Constructor: <any>noop
             };
@@ -420,7 +420,7 @@ module plat.dependency {
          */
         constructor(public name: string, public Constructor: new () => T, dependencies?: Array<any>, public type: string = null) {
             var deps = this.__dependencies = Injector.convertDependencies(dependencies),
-                index = deps.indexOf(__noopInjector),
+                index = deps.indexOf(__NOOP_INJECTOR),
                 circularReference: string;
 
             if (index > -1) {

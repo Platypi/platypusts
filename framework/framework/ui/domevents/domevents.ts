@@ -246,21 +246,21 @@
          * supported gestures.
          */
         _gestures: IGestures<string> = {
-            $tap: __$tap,
-            $dbltap: __$dbltap,
-            $hold: __$hold,
-            $release: __$release,
-            $swipe: __$swipe,
-            $swipeleft: __$swipeleft,
-            $swiperight: __$swiperight,
-            $swipeup: __$swipeup,
-            $swipedown: __$swipedown,
-            $track: __$track,
-            $trackleft: __$trackleft,
-            $trackright: __$trackright,
-            $trackup: __$trackup,
-            $trackdown: __$trackdown,
-            $trackend: __$trackend
+            $tap: __tap,
+            $dbltap: __dbltap,
+            $hold: __hold,
+            $release: __release,
+            $swipe: __swipe,
+            $swipeleft: __swipeleft,
+            $swiperight: __swiperight,
+            $swipeup: __swipeup,
+            $swipedown: __swipedown,
+            $track: __track,
+            $trackleft: __trackleft,
+            $trackright: __trackright,
+            $trackup: __trackup,
+            $trackdown: __trackdown,
+            $trackend: __trackend
         };
 
         /**

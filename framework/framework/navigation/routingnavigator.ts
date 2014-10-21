@@ -114,8 +114,8 @@
                 $EventManager = this.$EventManagerStatic,
                 uid = this.uid;
 
-            removeListeners.push($EventManager.on(uid, 'routeChanged', this._onRouteChanged, this));
-            removeListeners.push($EventManager.on(uid, 'beforeRouteChange', this._beforeRouteChange, this));
+            removeListeners.push($EventManager.on(uid, __routeChanged, this._onRouteChanged, this));
+            removeListeners.push($EventManager.on(uid, __beforeRouteChange, this._beforeRouteChange, this));
         }
         
         /**
@@ -190,7 +190,7 @@
             this.__historyLength -= 2;
 
             if (this.__historyLength < 0) {
-                this.$EventManagerStatic.dispatch('shutdown', this, this.$EventManagerStatic.DIRECT);
+                this.$EventManagerStatic.dispatch(__shutdown, this, this.$EventManagerStatic.DIRECT);
             }
 
             this.$Router.goBack((isNumber(options.length) ? options.length : 1));
@@ -231,7 +231,7 @@
          * @returns {void}
          */
         _beforeRouteChange(ev: events.INavigationEvent<web.IRoute<any>>): void {
-            var event = this._sendEvent('beforeNavigate', ev.target, ev.type, ev.parameter, ev.options, true);
+            var event = this._sendEvent(__beforeNavigate, ev.target, ev.type, ev.parameter, ev.options, true);
 
             if (event.cancelled) {
                 ev.cancel();

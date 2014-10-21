@@ -122,7 +122,7 @@ module plat.ui.controls {
                 sendEvent = this.$EventManagerStatic.sendEvent,
                 ev: events.IDispatchEventInstance = plat.acquire(__DispatchEventInstance);
 
-            ev.initialize('backButtonPressed', this);
+            ev.initialize(__backButtonPressed, this);
 
             for (var i = 0; i < length; ++i) {
                 viewport = viewports[i];

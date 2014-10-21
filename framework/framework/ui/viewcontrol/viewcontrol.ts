@@ -40,9 +40,10 @@ module plat.ui {
          */
         constructor() {
             super();
-            
-            if(isFunction((<any>this).backButtonPressed)) {
-                this.on('backButtonPressed', (<any>this).backButtonPressed);
+            var backButtonPressed = (<any>this)[__backButtonPressed];
+
+            if (isFunction(backButtonPressed)) {
+                this.on(__backButtonPressed, backButtonPressed);
             }
         }
     }

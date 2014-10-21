@@ -585,7 +585,7 @@ module plat {
          * @description
          * The name of the error.
          */
-        name = 'PlatError';
+        name = __platError;
 
         /**
          * @name constructor
@@ -652,34 +652,34 @@ module plat {
         error = new PlatException(message, '');
         switch (type) {
             case Exception.PARSE:
-                error.name = 'ParsingError';
+                error.name = __parseError;
                 break;
             case Exception.BIND:
-                error.name = 'BindingError';
+                error.name = __bindError;
                 break;
             case Exception.COMPILE:
-                error.name = 'CompilingError';
+                error.name = __compileError;
                 break;
             case Exception.NAME:
-                error.name = 'PlatNameError';
+                error.name = __nameError;
                 break;
             case Exception.NAVIGATION:
-                error.name = 'NavigatingError';
+                error.name = __navigationError;
                 break;
             case Exception.TEMPLATE:
-                error.name = 'TemplatingError';
+                error.name = __templateError;
                 break;
             case Exception.CONTEXT:
-                error.name = 'ContextError';
+                error.name = __contextError;
                 break;
             case Exception.EVENT:
-                error.name = 'DispatchEventError';
+                error.name = __eventError;
                 break;
             case Exception.INJECTABLE:
-                error.name = 'InjectableError';
+                error.name = __injectableError;
                 break;
             case Exception.COMPAT:
-                error.name = 'CompatibilityError';
+                error.name = __compatError;
                 break;
             default:
                 error = new PlatError(message);
@@ -700,7 +700,7 @@ module plat {
 
         var ErrorEvent: events.IErrorEventStatic = acquire(__ErrorEventStatic);
 
-        ErrorEvent.dispatch('error', Exception, error);
+        ErrorEvent.dispatch(__error, Exception, error);
 
         if (isFatal) {
             throw error;

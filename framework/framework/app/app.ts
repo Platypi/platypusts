@@ -105,9 +105,9 @@ module plat {
 
             var $EventManagerStatic = App.$EventManagerStatic;
 
-            $EventManagerStatic.dispose('__app__');
-            $EventManagerStatic.on('__app__', 'ready', App.__ready);
-            $EventManagerStatic.on('__app__', 'shutdown', App.__shutdown);
+            $EventManagerStatic.dispose(__APP);
+            $EventManagerStatic.on(__APP, __ready, App.__ready);
+            $EventManagerStatic.on(__APP, __shutdown, App.__shutdown);
             $EventManagerStatic.initialize();
         }
 
@@ -138,7 +138,7 @@ module plat {
                     dispatch = $LifecycleEventStatic.dispatch;
 
                 postpone(() => {
-                    dispatch('ready', $LifecycleEventStatic, true);
+                    dispatch(__ready, $LifecycleEventStatic, true);
                 });
             }
         }
@@ -164,7 +164,7 @@ module plat {
                 body = App.$Document.body,
                 head = App.$Document.head;
 
-            $LifecycleEventStatic.dispatch('beforeLoad', App);
+            $LifecycleEventStatic.dispatch(__beforeLoad, App);
 
             if (isNull(node)) {
                 $compiler.compile(head);
@@ -265,11 +265,11 @@ module plat {
                 App.app = app = (<dependency.IInjector<any>>(<any>app)).inject();
             }
 
-            app.on('suspend', app.suspend);
-            app.on('resume', app.resume);
-            app.on('online', app.online);
-            app.on('offline', app.offline);
-            app.on('error', app.error);
+            app.on(__suspend, app.suspend);
+            app.on(__resume, app.resume);
+            app.on(__online, app.online);
+            app.on(__offline, app.offline);
+            app.on(__error, app.error);
 
             if (isFunction(app.ready)) {
                 app.ready(ev);
@@ -332,7 +332,7 @@ module plat {
          */
         constructor() {
             var ContextManager: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
-            ContextManager.defineGetter(this, 'uid', uniqueId('plat_'));
+            ContextManager.defineGetter(this, 'uid', uniqueId(__Plat));
         }
 
         /**

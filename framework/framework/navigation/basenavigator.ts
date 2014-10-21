@@ -112,9 +112,9 @@ module plat.navigation {
          * @returns {plat.navigation.BaseNavigator}
          */
         constructor() {
-            var uid = uniqueId('plat_');
+            var uid = uniqueId(__Plat);
             this.$ContextManagerStatic.defineGetter(this, 'uid', uid);
-            this.$EventManagerStatic.on(uid, 'backbutton', this.backButtonPressed, this);
+            this.$EventManagerStatic.on(uid, __backButton, this.backButtonPressed, this);
         }
         
         /**
@@ -183,7 +183,7 @@ module plat.navigation {
             control.navigator = this;
             control.navigatedTo(parameter);
 
-            this._sendEvent('navigated', control, control.type, parameter, options, false);
+            this._sendEvent(__navigated, control, control.type, parameter, options, false);
         }
         
         /**

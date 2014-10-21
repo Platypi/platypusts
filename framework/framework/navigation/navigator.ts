@@ -194,7 +194,7 @@ module plat.navigation {
                 baseport = this.viewport,
                 index = -1;
 
-            event = this._sendEvent('beforeNavigate', Constructor, null, parameter, options, true);
+            event = this._sendEvent(__beforeNavigate, Constructor, null, parameter, options, true);
 
             if (event.cancelled) {
                 return;
@@ -343,14 +343,14 @@ module plat.navigation {
 
             if (history.length === 0) {
                 var $EventManager = this.$EventManagerStatic;
-                $EventManager.dispatch('shutdown', this, $EventManager.DIRECT);
+                $EventManager.dispatch(__shutdown, this, $EventManager.DIRECT);
             }
 
             if (isNull(viewControl)) {
                 return;
             }
 
-            var event = this._sendEvent('beforeNavigate', viewControl, viewControl.type, parameter, options, true);
+            var event = this._sendEvent(__beforeNavigate, viewControl, viewControl.type, parameter, options, true);
 
             if (event.cancelled) {
                 return;

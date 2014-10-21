@@ -381,7 +381,7 @@ module plat.controls {
          * @description
          * The event name.
          */
-        event: string = __$tap;
+        event: string = __tap;
     }
 
     /**
@@ -531,7 +531,7 @@ module plat.controls {
          * @description
          * The event name.
          */
-        event: string = __$dbltap;
+        event: string = __dbltap;
     }
 
     /**
@@ -581,7 +581,7 @@ module plat.controls {
          * @description
          * The event name.
          */
-        event: string = __$touchstart;
+        event: string = __touchstart;
     }
 
     /**
@@ -606,7 +606,7 @@ module plat.controls {
          * @description
          * The event name.
          */
-        event: string = __$touchend;
+        event: string = __touchend;
     }
 
     /**
@@ -631,7 +631,7 @@ module plat.controls {
          * @description
          * The event name.
          */
-        event: string = __$touchmove;
+        event: string = __touchmove;
     }
 
     /**
@@ -656,7 +656,7 @@ module plat.controls {
          * @description
          * The event name.
          */
-        event: string = __$touchcancel;
+        event: string = __touchcancel;
     }
 
     /**
@@ -681,7 +681,7 @@ module plat.controls {
          * @description
          * The event name.
          */
-        event: string = __$hold;
+        event: string = __hold;
     }
 
     /**
@@ -706,7 +706,7 @@ module plat.controls {
          * @description
          * The event name.
          */
-        event: string = __$release;
+        event: string = __release;
     }
 
     /**
@@ -731,7 +731,7 @@ module plat.controls {
          * @description
          * The event name.
          */
-        event: string = __$swipe;
+        event: string = __swipe;
     }
 
     /**
@@ -756,7 +756,7 @@ module plat.controls {
          * @description
          * The event name.
          */
-        event: string = __$swipeleft;
+        event: string = __swipeleft;
     }
 
     /**
@@ -781,7 +781,7 @@ module plat.controls {
          * @description
          * The event name.
          */
-        event: string = __$swiperight;
+        event: string = __swiperight;
     }
 
     /**
@@ -806,7 +806,7 @@ module plat.controls {
          * @description
          * The event name.
          */
-        event: string = __$swipeup;
+        event: string = __swipeup;
     }
 
     /**
@@ -831,7 +831,7 @@ module plat.controls {
          * @description
          * The event name.
          */
-        event: string = __$swipedown;
+        event: string = __swipedown;
     }
 
     /**
@@ -856,7 +856,7 @@ module plat.controls {
          * @description
          * The event name.
          */
-        event: string = __$track;
+        event: string = __track;
     }
 
     /**
@@ -881,7 +881,7 @@ module plat.controls {
          * @description
          * The event name.
          */
-        event: string = __$trackleft;
+        event: string = __trackleft;
     }
 
     /**
@@ -906,7 +906,7 @@ module plat.controls {
          * @description
          * The event name.
          */
-        event: string = __$trackright;
+        event: string = __trackright;
     }
 
     /**
@@ -931,7 +931,7 @@ module plat.controls {
          * @description
          * The event name.
          */
-        event: string = __$trackup;
+        event: string = __trackup;
     }
 
     /**
@@ -956,7 +956,7 @@ module plat.controls {
          * @description
          * The event name.
          */
-        event: string = __$trackdown;
+        event: string = __trackdown;
     }
 
     /**
@@ -981,7 +981,7 @@ module plat.controls {
          * @description
          * The event name.
          */
-        event: string = __$trackend;
+        event: string = __trackend;
     }
 
     /**

@@ -165,8 +165,8 @@ module plat.web {
          */
         constructor() {
             var ContextManager: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
-            ContextManager.defineGetter(this, 'uid', uniqueId('plat_'));
-            this.$EventManagerStatic.on(this.uid, 'beforeLoad', this.initialize, this);
+            ContextManager.defineGetter(this, 'uid', uniqueId(__Plat));
+            this.$EventManagerStatic.on(this.uid, __beforeLoad, this.initialize, this);
         }
 
         /**
@@ -212,10 +212,10 @@ module plat.web {
                     this.url($config.baseUrl, true);
                 }
 
-                $dom.addEventListener($window, 'popstate', changed, false);
+                $dom.addEventListener($window, __POPSTATE, changed, false);
             }
 
-            $dom.addEventListener($window, 'hashchange', changed, false);
+            $dom.addEventListener($window, __HASHCHANGE, changed, false);
 
             this.__initializing = false;
         }
@@ -330,7 +330,7 @@ module plat.web {
             this.__lastUrl = url;
 
             var $manager = this.$EventManagerStatic;
-            $manager.dispatch('urlChanged',
+            $manager.dispatch(__urlChanged,
                 this,
                 $manager.DIRECT,
                 [this.urlUtils()]);

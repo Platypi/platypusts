@@ -201,7 +201,7 @@ module plat.events {
             }
 
             if ($compat.cordova) {
-                var eventNames = ['resume', 'online', 'offline'],
+                var eventNames = [__resume, __online, __offline],
                     event: string;
 
                 length = eventNames.length;
@@ -219,36 +219,36 @@ module plat.events {
                 }
 
                 lifecycleListeners.push({
-                    name: 'pause',
+                    name: __pause,
                     value: () => {
-                        dispatch('suspend', EventManager);
+                        dispatch(__suspend, EventManager);
                     }
                 });
 
-                $dom.addEventListener($document, 'pause', lifecycleListeners[lifecycleListeners.length - 1].value, false);
+                $dom.addEventListener($document, __pause, lifecycleListeners[lifecycleListeners.length - 1].value, false);
 
                 lifecycleListeners.push({
-                    name: 'deviceReady',
+                    name: __deviceReady,
                     value: () => {
-                        dispatch('ready', EventManager);
+                        dispatch(__ready, EventManager);
                     }
                 });
 
-                $dom.addEventListener($document, 'deviceReady', lifecycleListeners[lifecycleListeners.length - 1].value, false);
+                $dom.addEventListener($document, __deviceReady, lifecycleListeners[lifecycleListeners.length - 1].value, false);
 
                 lifecycleListeners.push({
-                    name: 'backbutton',
+                    name: __backButton,
                     value: () => {
-                        dispatch('backbutton', EventManager);
+                        dispatch(__backButton, EventManager);
                     }
                 });
 
-                $dom.addEventListener($document, 'backbutton', lifecycleListeners[lifecycleListeners.length - 1].value, false);
+                $dom.addEventListener($document, __backButton, lifecycleListeners[lifecycleListeners.length - 1].value, false);
             } else if ($compat.amd) {
                 return;
             } else {
                 $dom.addEventListener(EventManager.$Window, 'load', () => {
-                    dispatch('ready', EventManager, true);
+                    dispatch(__ready, EventManager, true);
                 });
             }
         }

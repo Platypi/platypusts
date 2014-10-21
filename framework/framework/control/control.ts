@@ -499,7 +499,7 @@ module plat {
         constructor() {
             var ContextManager: observable.IContextManagerStatic = Control.$ContextManagerStatic ||
                 acquire(__ContextManagerStatic);
-            ContextManager.defineGetter(this, 'uid', uniqueId('plat_'));
+            ContextManager.defineGetter(this, 'uid', uniqueId(__Plat));
         }
 
         /**

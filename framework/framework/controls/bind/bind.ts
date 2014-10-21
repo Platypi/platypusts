@@ -412,7 +412,7 @@ module plat.controls {
          * @returns {void}
          */
         _addButtonEventListener(): void {
-            this.addEventListener(this.element, __$tap, this._propertyChanged, false);
+            this.addEventListener(this.element, __tap, this._propertyChanged, false);
         }
 
         /**

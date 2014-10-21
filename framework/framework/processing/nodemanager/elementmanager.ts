@@ -354,7 +354,7 @@ module plat.processing {
                     control.type = nodeName;
 
                     if (!isString(control.uid)) {
-                        control.uid = uniqueId('plat_');
+                        control.uid = uniqueId(__Plat);
                     }
 
                     control.templateControl = templateControl;
@@ -1328,7 +1328,7 @@ module plat.processing {
                 replace = this.replace = (uiControl.replaceWith === null || uiControl.replaceWith === '');
 
             if (!isString(uid)) {
-                uid = uiControl.uid = uniqueId('plat_');
+                uid = uiControl.uid = uniqueId(__Plat);
             }
 
             ElementManager.$ManagerCache.put(uid, this);
