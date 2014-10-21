@@ -86,21 +86,6 @@ module plat.navigation {
         uid: string;
 
         /**
-         * @name currentState
-         * @memberof plat.navigation.BaseNavigator
-         * @kind property
-         * @access public
-         * 
-         * @type {plat.navigation.IBaseNavigationState}
-         * 
-         * @description
-         * Specifies the current state of navigation. This state should contain 
-         * enough information for it to be pushed onto the history stack when 
-         * necessary.
-         */
-        currentState: INavigationState;
-
-        /**
          * @name navigating
          * @memberof plat.navigation.BaseNavigator
          * @kind property
@@ -302,21 +287,6 @@ module plat.navigation {
          * A unique ID used to identify this navigator.
          */
         uid: string;
-
-        /**
-         * @name currentState
-         * @memberof plat.navigation.IBaseNavigator
-         * @kind property
-         * @access public
-         * 
-         * @type {plat.navigation.IBaseNavigationState}
-         * 
-         * @description
-         * Specifies the current state of navigation. This state should contain 
-         * enough information for it to be pushed onto the history stack when 
-         * necessary.
-         */
-        currentState: INavigationState;
 
         /**
          * @name navigating
