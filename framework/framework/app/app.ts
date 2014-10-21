@@ -138,7 +138,7 @@ module plat {
                     dispatch = $LifecycleEventStatic.dispatch;
 
                 postpone(() => {
-                    dispatch('ready', $LifecycleEventStatic);
+                    dispatch('ready', $LifecycleEventStatic, true);
                 });
             }
         }
@@ -221,7 +221,7 @@ module plat {
                 App.__registerAppEvents(ev);
             }
 
-            if (!App.$Compat.amd) {
+            if (!ev.cancelled) {
                 App.load();
             }
         }
