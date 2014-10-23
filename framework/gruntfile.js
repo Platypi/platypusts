@@ -67,9 +67,8 @@ module.exports = exports = function load(grunt) {
                             .slice(0, -2)
                             .concat([
                                 '',
-                                'declare module \'plat\' {',
-                                '    var out: typeof plat;',
-                                '    export = out;',
+                                'declare module \'platypus\' {',
+                                '    export = plat;',
                                 '}',
                                 ''
                             ])
