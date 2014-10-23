@@ -1,15 +1,15 @@
 ﻿module tests.controls.attributeControlFactory {
-    var AttributeControlFactory = plat.acquire(plat.controls.IAttributeControlFactory);
+    var AttributeControlFactory = plat.acquire(plat.IAttributeControlFactory);
 
     describe('AttributeControlFactory Tests', () => {
-        var control: plat.controls.IAttributeControl;
+        var control: plat.IAttributeControl;
 
         beforeEach(() => {
             control = AttributeControlFactory.getInstance();
         });
 
         it('should test getInstance', () => {
-            expect(control instanceof plat.controls.AttributeControl).toBe(true);
+            expect(control instanceof plat.AttributeControl).toBe(true);
         });
 
         it('should test dispose', () => {

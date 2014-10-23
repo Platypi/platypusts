@@ -4,7 +4,7 @@ module plat.controls {
      * @memberof plat.controls
      * @kind class
      * 
-     * @extends {plat.controls.AttributeControl}
+     * @extends {plat.AttributeControl}
      * 
      * @description
      * Facilitates two-way databinding for HTMLInputElements, HTMLSelectElements, and HTMLTextAreaElements.

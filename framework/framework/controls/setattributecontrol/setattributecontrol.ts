@@ -4,11 +4,11 @@ module plat.controls {
      * @memberof plat.controls
      * @kind class
      * 
-     * @extends {plat.controls.AttributeControl}
+     * @extends {plat.AttributeControl}
      * @implements {plat.controls.ISetAttributeControl}
      * 
      * @description
-     * An {@link plat.controls.AttributeControl|AttributeControl} that deals with binding to a specified property on its element.
+     * An {@link plat.AttributeControl|AttributeControl} that deals with binding to a specified property on its element.
      */
     export class SetAttributeControl extends AttributeControl implements ISetAttributeControl {
         /**
@@ -153,10 +153,10 @@ module plat.controls {
      * @memberof plat.controls
      * @kind interface
      * 
-     * @extends {plat.controls.IAttributeControl}
+     * @extends {plat.IAttributeControl}
      * 
      * @description
-     * An {@link plat.controls.IAttributeControl|IAttributeControl} that deals with binding to a specified property on its element.
+     * An {@link plat.IAttributeControl|IAttributeControl} that deals with binding to a specified property on its element.
      */
     export interface ISetAttributeControl extends IAttributeControl {
         /**

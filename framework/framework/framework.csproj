@@ -22,7 +22,7 @@
     <TypeScriptCompile Include="async\ajax.ts" />
     <TypeScriptCompile Include="async\promise.ts" />
     <TypeScriptCompile Include="compat\compat.ts" />
-    <TypeScriptCompile Include="controls\attributecontrol\attributecontrol.ts" />
+    <TypeScriptCompile Include="attributecontrol\attributecontrol.ts" />
     <TypeScriptCompile Include="controls\bind\bind.ts" />
     <TypeScriptCompile Include="controls\elementpropertycontrol\elementpropertycontrol.ts" />
     <TypeScriptCompile Include="controls\keycodeevent\keycodeevent.ts" />

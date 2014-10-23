@@ -4,7 +4,7 @@ module plat.controls {
      * @memberof plat.controls
      * @kind class
      * 
-     * @extends {plat.controls.AttributeControl}
+     * @extends {plat.AttributeControl}
      * 
      * @description
      * Allows for assigning a name to an Element or {@link plat.ui.TemplateControl|TemplateControl} and referencing it 

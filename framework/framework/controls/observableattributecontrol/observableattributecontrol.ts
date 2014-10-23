@@ -4,11 +4,11 @@
      * @memberof plat.controls
      * @kind class
      * 
-     * @extends {plat.controls.AttributeControl}
+     * @extends {plat.AttributeControl}
      * @implements {plat.controls.IObservableAttributeControl}
      * 
      * @description
-     * An {@link plat.controls.AttributeControl|AttributeControl} that deals with observing changes for a specified property.
+     * An {@link plat.AttributeControl|AttributeControl} that deals with observing changes for a specified property.
      */
     export class ObservableAttributeControl extends AttributeControl implements IObservableAttributeControl {
         /**
@@ -272,10 +272,10 @@
      * @memberof plat.controls
      * @kind interface
      * 
-     * @extends {plat.controls.IAttributeControl}
+     * @extends {plat.IAttributeControl}
      * 
      * @description
-     * An {@link plat.controls.IAttributeControl|IAttributeControl} that deals with observing changes for a specified property.
+     * An {@link plat.IAttributeControl|IAttributeControl} that deals with observing changes for a specified property.
      */
     export interface IObservableAttributeControl extends IAttributeControl {
         /**

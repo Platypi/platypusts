@@ -7,7 +7,7 @@
  * @description
  * Holds all classes and interfaces related to attribute control components in platypus.
  */
-module plat.controls {
+module plat {
     /**
      * @name AttributeControl
      * @memberof plat.controls
@@ -15,7 +15,7 @@ module plat.controls {
      * @access public
      * 
      * @extends {plat.Control}
-     * @implements {plat.controls.IAttributeControl}
+     * @implements {plat.IAttributeControl}
      * 
      * @description
      * A type of control that can be used as an attribute but will 
@@ -24,7 +24,7 @@ module plat.controls {
     export class AttributeControl extends Control implements IAttributeControl {
         /**
          * @name dispose
-         * @memberof plat.controls.AttributeControl
+         * @memberof plat.AttributeControl
          * @kind function
          * @access public
          * @static
@@ -33,7 +33,7 @@ module plat.controls {
          * Method for disposing an attribute control. Removes any 
          * necessary objects from the control.
          * 
-         * @param {plat.IAttributeControl} control The {@link plat.controls.AttributeControl|AttributeControl} to dispose.
+         * @param {plat.IAttributeControl} control The {@link plat.AttributeControl|AttributeControl} to dispose.
          * 
          * @returns {void}
          */
@@ -45,13 +45,13 @@ module plat.controls {
 
         /**
          * @name getInstance
-         * @memberof plat.controls.AttributeControl
+         * @memberof plat.AttributeControl
          * @kind function
          * @access public
          * @static
          * 
          * @description
-         * Returns a new instance of {@link plat.controls.AttributeControl|AttributeControl}.
+         * Returns a new instance of {@link plat.AttributeControl|AttributeControl}.
          * 
          * @returns {plat.IAttributeControl}
          */
@@ -61,7 +61,7 @@ module plat.controls {
 
         /**
          * @name templateControl
-         * @memberof plat.controls.AttributeControl
+         * @memberof plat.AttributeControl
          * @kind property
          * @access public
          * 
@@ -90,12 +90,12 @@ module plat.controls {
      * @kind interface
      * 
      * @description
-     * Creates and manages instances of {@link plat.controls.IAttributeControl|IAttributeControl}.
+     * Creates and manages instances of {@link plat.IAttributeControl|IAttributeControl}.
      */
     export interface IAttributeControlFactory {
         /**
          * @name dispose
-         * @memberof plat.controls.IAttributeControlFactory
+         * @memberof plat.IAttributeControlFactory
          * @kind function
          * @access public
          * @static
@@ -104,7 +104,7 @@ module plat.controls {
          * Method for disposing an attribute control. Removes any 
          * necessary objects from the control.
          * 
-         * @param {plat.IAttributeControl} control The {@link plat.controls.AttributeControl|AttributeControl} to dispose.
+         * @param {plat.IAttributeControl} control The {@link plat.AttributeControl|AttributeControl} to dispose.
          * 
          * @returns {void}
          */
@@ -112,13 +112,13 @@ module plat.controls {
 
         /**
          * @name getInstance
-         * @memberof plat.controls.IAttributeControlFactory
+         * @memberof plat.IAttributeControlFactory
          * @kind function
          * @access public
          * @static
          * 
          * @description
-         * Returns a new instance of {@link plat.controls.AttributeControl|AttributeControl}.
+         * Returns a new instance of {@link plat.AttributeControl|AttributeControl}.
          * 
          * @returns {plat.IAttributeControl}
          */
@@ -140,7 +140,7 @@ module plat.controls {
     export interface IAttributeControl extends IControl {
         /**
          * @name templateControl
-         * @memberof plat.controls.IAttributeControl
+         * @memberof plat.IAttributeControl
          * @kind property
          * @access public
          * 

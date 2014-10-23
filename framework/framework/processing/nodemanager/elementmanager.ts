@@ -329,7 +329,7 @@ module plat.processing {
                 newAttributes: ui.IAttributesInstance,
                 node: INode,
                 injector: dependency.IInjector<IControl>,
-                control: controls.IAttributeControl,
+                control: IAttributeControl,
                 newNodes: Array<INode> = [],
                 length = nodes.length,
                 nodeName: string,
@@ -342,7 +342,7 @@ module plat.processing {
                 control = null;
 
                 if (!isNull(injector)) {
-                    control = <controls.IAttributeControl>injector.inject();
+                    control = <IAttributeControl>injector.inject();
                     node.control = control;
                     control.parent = parent;
                     control.element = <HTMLElement>element;
@@ -384,8 +384,8 @@ module plat.processing {
 
             if (!isClone) {
                 nodes.sort((a, b) => {
-                    var aControl = <controls.IAttributeControl>a.control,
-                        bControl = <controls.IAttributeControl>b.control;
+                    var aControl = <IAttributeControl>a.control,
+                        bControl = <IAttributeControl>b.control;
 
                     if (isNull(aControl)) {
                         return 1;
@@ -401,7 +401,7 @@ module plat.processing {
 
                 for (i = 0; i < length; ++i) {
                     node = nodes[i];
-                    control = <controls.IAttributeControl>node.control;
+                    control = <IAttributeControl>node.control;
 
                     if (!isNull(control)) {
                         if (!isNull(parent)) {
@@ -1136,7 +1136,7 @@ module plat.processing {
             }
 
             return this.$Promise.all(promises).then(() => {
-                this._loadControls(<Array<controls.IAttributeControl>>controls, this.getUiControl());
+                this._loadControls(<Array<IAttributeControl>>controls, this.getUiControl());
             }).catch((error: any) => {
                 postpone(() => {
                     var $exception: IExceptionStatic = acquire(__ExceptionStatic);
@@ -1240,15 +1240,15 @@ module plat.processing {
          * {@link plat.processing.IElementManager|IElementManager} and 
          * attaches the corresponding {@link plat.ui.ITemplateControl|ITemplateControl} if available.
          * 
-         * @param {Array<plat.controls.IAttributeControl>} controls The array of attribute based controls to load.
+         * @param {Array<plat.IAttributeControl>} controls The array of attribute based controls to load.
          * @param {plat.ui.ITemplateControl} templateControl The {@link plat.ui.ITemplateControl|ITemplateControl} 
          * associated with this manager.
          * 
          * @returns {void}
          */
-        _loadControls(controls: Array<controls.IAttributeControl>, templateControl: ui.ITemplateControl): void {
+        _loadControls(controls: Array<IAttributeControl>, templateControl: ui.ITemplateControl): void {
             var length = controls.length,
-                control: controls.IAttributeControl,
+                control: IAttributeControl,
                 load = this.$ControlFactory.load,
                 templateControlLoaded = isNull(templateControl),
                 templateControlPriority: number,

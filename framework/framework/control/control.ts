@@ -163,7 +163,7 @@ module plat {
             if (isNull(ctrl)) {
                 return;
             } else if (!isUndefined(ctrl.templateControl)) {
-                controls.AttributeControl.dispose(ctrl);
+                AttributeControl.dispose(ctrl);
                 return;
             } else if (ctrl.hasOwnContext) {
                 ui.ViewControl.dispose(ctrl);

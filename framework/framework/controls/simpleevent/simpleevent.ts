@@ -4,11 +4,11 @@ module plat.controls {
      * @memberof plat.controls
      * @kind class
      * 
-     * @extends {plat.controls.AttributeControl}
+     * @extends {plat.AttributeControl}
      * @implements {plat.controls.ISimpleEventControl}
      * 
      * @description
-     * An {@link plat.controls.AttributeControl|AttributeControl} that binds to a specified DOM event handler.
+     * An {@link plat.AttributeControl|AttributeControl} that binds to a specified DOM event handler.
      */
     export class SimpleEventControl extends AttributeControl implements ISimpleEventControl {
         /**
@@ -326,10 +326,10 @@ module plat.controls {
      * @memberof plat.controls
      * @kind interface
      * 
-     * @extends {plat.controls.IAttributeControl}
+     * @extends {plat.IAttributeControl}
      * 
      * @description
-     * An {@link plat.controls.IAttributeControl|IAttributeControl} that binds to a specified DOM event handler.
+     * An {@link plat.IAttributeControl|IAttributeControl} that binds to a specified DOM event handler.
      */
     export interface ISimpleEventControl extends IAttributeControl {
         /**
