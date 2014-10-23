@@ -518,7 +518,6 @@ module plat.dependency {
      * @name IInjectorObject
      * @memberof plat.dependency
      * @kind interface
-     * @access public
      * 
      * @description
      * An object whose values are all {@link plat.dependency.IInjector|IInjectors}.
@@ -528,7 +527,7 @@ module plat.dependency {
     /**
      * @name IInjector
      * @memberof plat.dependency
-     * @kind class
+     * @kind interface
      * 
      * @description
      * The IInjector interface is used for dependency injection. You can create an injector object,
