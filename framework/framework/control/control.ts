@@ -1098,8 +1098,7 @@ module plat {
          * @returns {plat.IRemoveListener} A function to call in order to stop listening for this event.
          */
         on(name: string, listener: (ev: events.IDispatchEventInstance, ...args: any[]) => void): IRemoveListener {
-            var manager = Control.$EventManagerStatic;
-            return manager.on(this.uid, name, listener, this);
+            return Control.$EventManagerStatic.on(this.uid, name, listener, this);
         }
 
         /**
