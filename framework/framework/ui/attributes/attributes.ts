@@ -23,6 +23,8 @@ module plat.ui {
      * Attributes for this object are converted from dash-notation to camelCase notation.
      */
     export class Attributes implements IAttributesInstance {
+        [property: string]: any;
+
         /**
          * @name __listeners
          * @memberof plat.ui.Attributes
@@ -157,6 +159,8 @@ module plat.ui {
      * Methods are implemented to allow you to observe for changes on an attribute.
      */
     export interface IAttributesInstance {
+        [property: string]: any;
+
         /**
          * @name initialize
          * @memberof plat.ui.IAttributesInstance

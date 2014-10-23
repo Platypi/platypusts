@@ -353,9 +353,7 @@ module plat {
                 return controls;
             }
 
-            var queue: Array<IControl> = [];
-            queue = queue.concat(children);
-
+            var queue = (<Array<IControl>>[]).concat(children);
             while (queue.length > 0) {
                 child = queue.shift();
 
@@ -973,8 +971,7 @@ module plat {
          */
         evaluateExpression(expression: expressions.IParsedExpression, aliases?: any): any;
         evaluateExpression(expression: any, aliases?: any): any {
-            var TemplateControl = ui.TemplateControl;
-            return TemplateControl.evaluateExpression(expression, this.parent, aliases);
+            return ui.TemplateControl.evaluateExpression(expression, this.parent, aliases);
         }
 
         /**
