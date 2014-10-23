@@ -11,6 +11,10 @@ module plat {
         (<any>window).plat = plat;
     }
 
+    if (!isUndefined(window) && isUndefined((<any>window).module)) {
+        (<any>window).module = {};
+    }
+
     /**
      * @name acquire
      * @memberof plat
