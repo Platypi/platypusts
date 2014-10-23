@@ -7,6 +7,10 @@
  * The entry point into the platypus library.
  */
 module plat {
+    if (!isUndefined(window) && isUndefined((<any>window).plat)) {
+        (<any>window).plat = plat;
+    }
+
     /**
      * @name acquire
      * @memberof plat

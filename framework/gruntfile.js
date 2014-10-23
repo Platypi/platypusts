@@ -32,22 +32,79 @@ module.exports = exports = function load(grunt) {
                 dest: [
                     './platypus.ts'
                 ],
-                disableLint: true,
-                preSave: function (data, done) {
-                    done(stripDocs(data));
-                }
+                disableLint: true
+            }
+        },
+        clean: {
+            before: {
+                force: true,
+                src: [
+                    'dist/'
+                ]
             },
-            require: {
-                rootModule: 'plat',
-                license: './license.txt',
-                version: '<%= pkg.version %>',
-                src: './app/index.html',
-                dest: [
-                    './platypus.ts'
+            after: {
+                force: true,
+                src: [
+                    'platypus.ts'
+                ]
+            }
+        },
+        copy: {
+            main: {
+                options: {
+                    process: function (data) {
+                        return stripDocs(data) + 'export = plat;\r\n';
+                    }
+                },
+                src: 'platypus.ts',
+                dest: 'dist/platypus.ts'
+            },
+            node: {
+                options: {
+                    process: function (data) {
+                        return data
+                            .split(/\r\n|\n/)
+                            .slice(0, -2)
+                            .concat([
+                                '',
+                                'declare module \'plat\' {',
+                                '    var out: typeof plat;',
+                                '    export = out;',
+                                '}',
+                                ''
+                            ])
+                            .join('\r\n');
+                    }
+                },
+                src: 'dist/platypus.d.ts',
+                dest: 'dist/platypus-node.d.ts'
+            }
+        },
+        ts: {
+            main: {
+                options: {
+                    target: 'es5',
+                    module: 'commonjs',
+                    sourceMap: true,
+                    declaration: true,
+                    removeComments: false
+                },
+                src: [
+                    'dist/platypus.ts'
                 ],
-                disableLint: true,
-                preSave: function (data, done) {
-                    done(stripDocs(data) + 'export = plat;\r\n');
+                out: 'dist/platypus.js'
+            }
+        },
+        uglify: {
+            main: {
+                options: {
+                    sourceMapIn: 'dist/platypus.js.map',
+                    sourceMap: 'dist/platypus.js.map'
+                },
+                files: {
+                    'dist/platypus.js': [
+                        'dist/platypus.js'
+                    ]
                 }
             }
         },
@@ -55,9 +112,12 @@ module.exports = exports = function load(grunt) {
     };
     
     grunt.initConfig(config);
+    grunt.loadNpmTasks('grunt-contrib-clean');
+    grunt.loadNpmTasks('grunt-contrib-copy');
+    grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-ts-bundle');
+    grunt.loadNpmTasks('grunt-ts');
+
     // By default, run all tests.
-    grunt.registerTask('default', ['bundle:main']);
-    grunt.registerTask('main', ['bundle:main']);
-    grunt.registerTask('require', ['bundle:require']);
+    grunt.registerTask('default', ['clean', 'bundle', 'copy:main', 'ts', 'uglify', 'copy:node', 'clean:after']);
 };
