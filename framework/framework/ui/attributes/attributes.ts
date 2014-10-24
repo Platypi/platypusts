@@ -102,6 +102,7 @@ module plat.ui {
                 return noop;
             }
 
+            listener = listener.bind(this.__control);
             listeners.push(listener);
 
             return () => {
@@ -130,12 +131,11 @@ module plat.ui {
          * @returns {void}
          */
         _attributeChanged(key: string, newValue: any, oldValue: any): void {
-            var control = this.__control,
-                listeners = this.__listeners[camelCase(key)],
+            var listeners = this.__listeners[camelCase(key)],
                 length = listeners.length;
 
             for (var i = 0; i < length; ++i) {
-                listeners[i].call(control, newValue, oldValue);
+                listeners[i](newValue, oldValue);
             }
         }
     }

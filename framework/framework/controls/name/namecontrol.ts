@@ -43,7 +43,7 @@ module plat.controls {
          */
         initialize(): void {
             var attr = camelCase(this.type),
-                name = (<any>this.attributes)[attr];
+                name = this.attributes[attr];
 
             if (isEmpty(name) || this._isPrecompiled()) {
                 return;

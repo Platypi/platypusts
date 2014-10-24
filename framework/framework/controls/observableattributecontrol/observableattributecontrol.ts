@@ -89,6 +89,19 @@
          * The function to stop listening for property changes.
          */
         _removeListener: IRemoveListener;
+        
+        /**
+         * @name _boundAddListener
+         * @memberof plat.controls.ObservableAttributeControl
+         * @kind property
+         * @access protected
+         * 
+         * @type {(listener: (newValue: any, oldValue: any) => void) => IRemoveListener}
+         * 
+         * @description
+         * The _addListener function bound to this control.
+         */
+        _boundAddListener = this._addListener.bind(this);
 
         /**
          * @name initialize
@@ -167,8 +180,9 @@
 
             this.$ContextManagerStatic.defineGetter(templateControl, this.property, <observable.IObservableProperty<any>>{
                 value: value,
-                observe: this._addListener.bind(this)
+                observe: this._boundAddListener
             }, true, true);
+
             this._callListeners(value, oldValue);
         }
 
@@ -188,11 +202,10 @@
          */
         _callListeners(newValue: any, oldValue: any): void {
             var listeners = this._listeners,
-                length = listeners.length,
-                templateControl = this.templateControl;
+                length = listeners.length;
 
             for (var i = 0; i < length; ++i) {
-                listeners[i].call(templateControl, newValue, oldValue);
+                listeners[i](newValue, oldValue);
             }
         }
 
@@ -210,6 +223,7 @@
         _addListener(listener: (newValue: any, oldValue: any) => void): IRemoveListener {
             var listeners = this._listeners;
 
+            listener = listener.bind(this.templateControl);
             listeners.push(listener);
 
             return () => {
@@ -234,14 +248,11 @@
          * @returns {any}
          */
         _getValue(): any {
-            var expression = (<any>this.attributes)[this.attribute],
-                templateControl = this.templateControl;
-
-            if (isNull(templateControl)) {
+            if (isNull(this.templateControl)) {
                 return;
             }
 
-            return this.evaluateExpression(expression);
+            return this.evaluateExpression(this.attributes[this.attribute]);
         }
 
         /**
@@ -256,14 +267,11 @@
          * @returns {void}
          */
         _observeProperty(): void {
-            var expression = (<any>this.attributes)[this.attribute],
-                templateControl = this.templateControl;
-
-            if (isNull(templateControl)) {
+            if (isNull(this.templateControl)) {
                 return;
             }
 
-            this._removeListener = this.observeExpression(expression, this._setProperty);
+            this._removeListener = this.observeExpression(this.attributes[this.attribute], this._setProperty);
         }
     }
 

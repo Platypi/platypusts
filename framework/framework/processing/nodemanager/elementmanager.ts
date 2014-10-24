@@ -1162,8 +1162,9 @@ module plat.processing {
          * @returns {void}
          */
         observeRootContext(root: ui.ITemplateControl, loadMethod: () => async.IThenable<void>): void {
+            loadMethod = loadMethod.bind(this);
             if (!isNull(root.context)) {
-                this.loadedPromise = loadMethod.call(this);
+                this.loadedPromise = loadMethod();
                 return;
             }
 
@@ -1171,7 +1172,7 @@ module plat.processing {
                 var removeListener = this.$ContextManagerStatic.getManager(root).observe('context', {
                     listener: () => {
                         removeListener();
-                        loadMethod.call(this).then(resolve);
+                        loadMethod().then(resolve);
                     },
                     uid: root.uid
                 });

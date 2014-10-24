@@ -163,7 +163,7 @@ module plat.controls {
                 return;
             }
 
-            var expression = (<any>this.attributes)[attr].trim();
+            var expression = this.attributes[attr].trim();
 
             if (expression[0] === '{') {
                 var eventObject: IKeyboardEventInput = this.evaluateExpression(expression) ||
@@ -174,7 +174,7 @@ module plat.controls {
                 this._parseArgs(eventObject.method);
 
                 if (isNull(key) && isNull(keys)) {
-                    (<any>this.attributes)[attr] = eventObject.method;
+                    this.attributes[attr] = eventObject.method;
 
                     this._setKeyCodes();
                     super._setListener();

@@ -25,7 +25,7 @@ module plat.controls {
         setter(): void {
             var element = this.element,
                 elementProperty = this.property,
-                expression = (<any>this.attributes)[this.attribute];
+                expression = this.attributes[this.attribute];
 
             if (isEmpty(expression) || isNull(element)) {
                 return;

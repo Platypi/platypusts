@@ -232,7 +232,7 @@ module plat.controls {
             }
 
             var attr = camelCase(this.type),
-                expression = this._expression = this.$Parser.parse((<any>this.attributes)[attr]);
+                expression = this._expression = this.$Parser.parse(this.attributes[attr]);
 
             var identifiers = expression.identifiers;
 
@@ -989,7 +989,7 @@ module plat.controls {
 
             if (!element.hasAttribute('name')) {
                 var attr = camelCase(this.type),
-                    expression = (<any>this.attributes)[attr];
+                    expression = this.attributes[attr];
 
                 element.setAttribute('name', expression);
             }

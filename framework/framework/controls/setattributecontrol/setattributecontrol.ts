@@ -124,7 +124,7 @@ module plat.controls {
          * @returns {void}
          */
         setter(): void {
-            var expression = (<any>this.attributes)[this.attribute];
+            var expression = this.attributes[this.attribute];
 
             postpone(() => {
                 if (!isNode(this.element)) {
@@ -351,7 +351,7 @@ module plat.controls {
          * @returns {void}
          */
         setter(): void {
-            var expression = (<any>this.attributes)[this.attribute];
+            var expression = this.attributes[this.attribute];
 
             postpone(() => {
                 if (!isNode(this.element)) {
@@ -429,7 +429,7 @@ module plat.controls {
          * @returns {void}
          */
         setter(): void {
-            var expression: string = (<any>this.attributes)[this.attribute];
+            var expression: string = this.attributes[this.attribute];
 
             if (isEmpty(expression)) {
                 return;

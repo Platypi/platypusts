@@ -457,11 +457,11 @@ module plat.ui {
             var control = this._createBoundControl(key, template, contextId, resources),
                 nodeMap = this._createNodeMap(control, template, contextId),
                 disposed = false,
-                dispose = control.dispose;
+                dispose = isFunction(control.dispose) ? control.dispose.bind(control) : noop;
 
             control.dispose = () => {
                 disposed = true;
-                dispose.call(control);
+                dispose();
                 control.dispose = dispose;
             };
 

@@ -43,7 +43,7 @@ function cfg(config: any) {
             '../framework/events/navigationevent.js',
             '../framework/events/errorevent.js',
             '../framework/control/control.js',
-            '../framework/controls/attributecontrol/attributecontrol.js',
+            '../framework/attributecontrol/attributecontrol.js',
             '../framework/ui/templatecontrol/templatecontrol.js',
             '../framework/ui/viewcontrol/baseviewcontrol.js',
             '../framework/ui/viewcontrol/viewcontrol.js',

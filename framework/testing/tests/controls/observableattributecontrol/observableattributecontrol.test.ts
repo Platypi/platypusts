@@ -65,7 +65,7 @@
 
         it('should test observe', () => {
             var called = 0,
-                spy = spyOn(control, '_addListener'),
+                spy = spyOn(control, '_boundAddListener'),
                 observeExpressionSpy = spyOn(control, 'observeExpression');
 
             spy.and.callThrough();
@@ -89,7 +89,7 @@
 
         it('should test observe and called the remove callback', () => {
             var called = 0,
-                spy = spyOn(control, '_addListener'),
+                spy = spyOn(control, '_boundAddListener'),
                 observeExpressionSpy = spyOn(control, 'observeExpression');
 
             spy.and.callThrough();

@@ -852,11 +852,18 @@ module plat {
                 return noop;
             }
 
+            var control: ui.TemplateControl = !isNull((<ui.TemplateControl>(<any>this)).resources) ?
+                <ui.TemplateControl>(<any>this) :
+                <ui.TemplateControl>this.parent;
+
+            if (isNull(control) || !isString(control.absoluteContextPath)) {
+                return noop;
+            }
+
+            listener = listener.bind(this);
+
             var parsedExpression: expressions.IParsedExpression = isString(expression) ? Control.$Parser.parse(expression) : expression,
                 aliases = parsedExpression.aliases,
-                control: ui.TemplateControl = !isNull((<ui.TemplateControl>(<any>this)).resources) ?
-                    <ui.TemplateControl>(<any>this) :
-                    <ui.TemplateControl>this.parent,
                 alias: string,
                 length = aliases.length,
                 resources: IObject<observable.IContextManager> = {},
@@ -866,10 +873,6 @@ module plat {
                 findResource = TemplateControl.findResource,
                 evaluateExpression = TemplateControl.evaluateExpression,
                 i: number;
-
-            if (isNull(control) || !isString(control.absoluteContextPath)) {
-                return noop;
-            }
 
             for (i = 0; i < length; ++i) {
                 alias = aliases[i];
@@ -923,7 +926,7 @@ module plat {
                     uid: uid,
                     listener: () => {
                         var value = evaluateExpression(parsedExpression, control);
-                        listener.call(this, value, oldValue);
+                        listener(value, oldValue);
                         oldValue = value;
                     }
                 }));

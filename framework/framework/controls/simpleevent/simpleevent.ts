@@ -126,7 +126,7 @@ module plat.controls {
                 return;
             }
 
-            this._parseArgs((<any>this.attributes)[attr]);
+            this._parseArgs(this.attributes[attr]);
 
             if (isNull(this._expression)) {
                 return;
