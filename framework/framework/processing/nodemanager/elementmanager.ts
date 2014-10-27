@@ -708,6 +708,7 @@ module plat.processing {
          * The child managers for this manager.
          */
         children: Array<INodeManager> = [];
+
         /**
          * @name type
          * @memberof plat.processing.ElementManager
@@ -721,6 +722,7 @@ module plat.processing {
          * It's value is "element".
          */
         type = 'element';
+
         /**
          * @name replace
          * @memberof plat.processing.ElementManager
@@ -734,6 +736,7 @@ module plat.processing {
          * replaceWith property set to null or empty string.
          */
         replace = false;
+
         /**
          * @name hasOwnContext
          * @memberof plat.processing.ElementManager
@@ -747,6 +750,7 @@ module plat.processing {
          * or inherits it from a parent.
          */
         hasOwnContext = false;
+
         /**
          * @name replaceNodeLength
          * @memberof plat.processing.ElementManager
@@ -760,6 +764,7 @@ module plat.processing {
          * out of the parent's childNodes.
          */
         replaceNodeLength: number;
+
         /**
          * @name loadedPromise
          * @memberof plat.processing.ElementManager
@@ -773,6 +778,21 @@ module plat.processing {
          * when the control is loaded to avoid loading its parent control first.
          */
         loadedPromise: async.IThenable<void>;
+
+        /**
+         * @name contextPromise
+         * @memberof plat.processing.ElementManager
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.async.IThenable<void>}
+         * 
+         * @description
+         * In the event that a control does not have its own context, we need a promise to fullfill 
+         * when the control's context has been set.
+         */
+        contextPromise: async.IThenable<void>;
+
         /**
          * @name templatePromise
          * @memberof plat.processing.ElementManager
@@ -982,28 +1002,28 @@ module plat.processing {
 
                 contextManager = getManager(uiControl.root);
 
+                var awaitContext = false;
+
                 if (inheritsContext) {
                     uiControl.context = contextManager.getContext(absoluteContextPath.split('.'));
+                    awaitContext = isUndefined(uiControl.context);
                 } else {
                     absoluteContextPath = 'context';
                 }
 
-                (<any>uiControl).zCC__plat = contextManager.observe(absoluteContextPath, {
-                    uid: uiControl.uid,
-                    listener: (newValue, oldValue) => {
-                        uiControl.context = newValue;
-                    }
-                });
-
-                $TemplateControlFactory.setAbsoluteContextPath(uiControl, absoluteContextPath);
-                $TemplateControlFactory.setContextResources(uiControl);
-                ElementManager.$ResourcesFactory.bindResources(uiControl.resources);
-
-                if (!this.replace) {
-                    var element = uiControl.element;
-                    if (!isNull(element) && isFunction(element.removeAttribute)) {
-                        element.removeAttribute(__Hide);
-                    }
+                if (awaitContext) {
+                    this.contextPromise = new this.$Promise<void>((resolve, reject) => {
+                        contextManager.observe(absoluteContextPath, {
+                            uid: uiControl.uid,
+                            listener: (newValue, oldValue) => {
+                                uiControl.context = newValue;
+                                this._beforeLoad(uiControl, absoluteContextPath);
+                                resolve();
+                            }
+                        });
+                    });
+                } else {
+                    this._beforeLoad(uiControl, absoluteContextPath);
                 }
             }
 
@@ -1011,7 +1031,7 @@ module plat.processing {
 
             return controls;
         }
-        
+
         /**
          * @name setUiControlTemplate
          * @memberof plat.processing.ElementManager
@@ -1117,25 +1137,18 @@ module plat.processing {
          * child manager's controls have been bound and loaded.
          */
         bindAndLoad(): async.IThenable<void> {
-            var children = this.children,
-                length = children.length,
-                child: IElementManager,
-                promises: Array<async.IThenable<void>> = [],
-                controls = this.bind();
+            var controls = this.bind(),
+                promise: async.IThenable<void[]>;
 
-            for (var i = 0; i < length; ++i) {
-                child = <IElementManager>children[i];
-
-                if (child.hasOwnContext) {
-                    promises.push(child.loadedPromise);
-                } else if (!isUndefined(child.children)) {
-                    promises.push(child.bindAndLoad());
-                } else {
-                    child.bind();
-                }
+            if (isPromise(this.contextPromise)) {
+                promise = this.contextPromise.then(() => {
+                    return this._bindChildren();
+                });
+            } else {
+                promise = this._bindChildren();
             }
 
-            return this.$Promise.all(promises).then(() => {
+            return promise.then(() => {
                 this._loadControls(<Array<IAttributeControl>>controls, this.getUiControl());
             }).catch((error: any) => {
                 postpone(() => {
@@ -1144,7 +1157,7 @@ module plat.processing {
                 });
             });
         }
-        
+
         /**
          * @name observeRootContext
          * @memberof plat.processing.ElementManager
@@ -1183,7 +1196,78 @@ module plat.processing {
                 });
             });
         }
-        
+
+        /**
+         * @name _beforeLoad
+         * @memberof plat.processing.ElementManager
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Finalizes all the properties on an {@link plat.ui.ITemplateControl|ITemplateControl} 
+         * before loading.
+         * 
+         * @param {plat.ui.ITemplateControl} uiControl The control to finalize.
+         * @param {string} absoluteContextPath The absoluteContextPath of the uiControl.
+         * 
+         * @returns {void}
+         */
+        _beforeLoad(uiControl: ui.ITemplateControl, absoluteContextPath: string): void {
+            var contextManager = this.$ContextManagerStatic.getManager(uiControl.root),
+                $TemplateControlFactory = this.$TemplateControlFactory;
+
+            (<any>uiControl).zCC__plat = contextManager.observe(absoluteContextPath, {
+                uid: uiControl.uid,
+                listener: (newValue, oldValue) => {
+                    uiControl.context = newValue;
+                }
+            });
+
+            $TemplateControlFactory.setAbsoluteContextPath(uiControl, absoluteContextPath);
+            $TemplateControlFactory.setContextResources(uiControl);
+            ElementManager.$ResourcesFactory.bindResources(uiControl.resources);
+
+            if (!this.replace) {
+                var element = uiControl.element;
+                if (!isNull(element) && isFunction(element.removeAttribute)) {
+                    element.removeAttribute(__Hide);
+                }
+            }
+        }
+
+        /**
+         * @name _bindChildren
+         * @memberof plat.processing.ElementManager
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Binds context to the DOM and calls bindAndLoad on all children.
+         * 
+         * @returns {plat.async.IThenable<void[]>} A promise that resolves when this manager's controls and all 
+         * child manager's controls have been bound and loaded.
+         */
+        _bindChildren(): async.IThenable<void[]> {
+            var children = this.children,
+                length = children.length,
+                child: IElementManager,
+                promises: Array<async.IThenable<void>> = [];
+
+            for (var i = 0; i < length; ++i) {
+                child = <IElementManager>children[i];
+
+                if (child.hasOwnContext) {
+                    promises.push(child.loadedPromise);
+                } else if (!isUndefined(child.children)) {
+                    promises.push(child.bindAndLoad());
+                } else {
+                    child.bind();
+                }
+            }
+
+            return this.$Promise.all(promises);
+        }
+
         /**
          * @name _observeControlIdentifiers
          * @memberof plat.processing.ElementManager
@@ -1785,6 +1869,20 @@ module plat.processing {
          * when the control is loaded to avoid loading its parent control first.
          */
         loadedPromise: async.IThenable<void>;
+
+        /**
+         * @name contextPromise
+         * @memberof plat.processing.IElementManager
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.async.IThenable<void>}
+         * 
+         * @description
+         * In the event that a control does not have its own context, we need a promise to fullfill 
+         * when the control's context has been set.
+         */
+        contextPromise: async.IThenable<void>;
 
         /**
          * @name templatePromise
