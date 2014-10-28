@@ -1013,9 +1013,13 @@ module plat.processing {
 
                 if (awaitContext) {
                     this.contextPromise = new this.$Promise<void>((resolve, reject) => {
-                        contextManager.observe(absoluteContextPath, {
+                        var removeListener = contextManager.observe(absoluteContextPath, {
                             uid: uiControl.uid,
                             listener: (newValue, oldValue) => {
+                                if (isUndefined(newValue)) {
+                                    return;
+                                }
+                                removeListener();
                                 uiControl.context = newValue;
                                 this._beforeLoad(uiControl, absoluteContextPath);
                                 resolve();
