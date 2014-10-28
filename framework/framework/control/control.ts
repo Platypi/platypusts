@@ -166,16 +166,19 @@ module plat {
                 AttributeControl.dispose(ctrl);
                 return;
             } else if (ctrl.hasOwnContext) {
-                ui.ViewControl.dispose(ctrl);
+                ui.BaseViewControl.dispose(ctrl);
                 return;
             } else if (ctrl.controls) {
                 ui.TemplateControl.dispose(ctrl);
                 return;
             }
 
+            if (isFunction(control.dispose)) {
+                control.dispose();
+            }
+
             Control.removeEventListeners(control);
             Control.$ContextManagerStatic.dispose(control);
-            control.dispose();
             control.element = null;
             Control.removeParent(control);
         }
