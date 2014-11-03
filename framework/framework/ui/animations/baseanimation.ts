@@ -170,10 +170,14 @@
             this.element = <HTMLElement>element;
             this.options = options;
 
-            return new AnimationPromise((resolve) => {
+            var promise = new AnimationPromise((resolve) => {
                 this._resolve = resolve;
                 this.initialize();
-            }, { __animationInstance: this });
+            });
+
+            promise.initialize(this);
+
+            return promise;
         }
     }
 

@@ -62,9 +62,9 @@
          * @param {string} key The identifier specifying the type of animation.
          * @param {any} options? Specified options for the animation.
          * 
-         * @returns {plat.ui.animations.IAnimationPromise} A promise that resolves when the animation is finished.
+         * @returns {plat.ui.animations.IAnimationThenable<void>} A promise that resolves when the animation is finished.
          */
-        animate(element: Element, key: string, options?: any): IAnimationPromise {
+        animate(element: Element, key: string, options?: any): IAnimationThenable<void> {
             if (!isNode(element) || element.nodeType !== Node.ELEMENT_NODE) {
                 return this.resolve();
             }
@@ -137,10 +137,10 @@
          * @description
          * Immediately resolves an empty {@link plat.ui.animations.AnimationPromise|AnimationPromise}.
          * 
-         * @returns {plat.ui.animations.IAnimationThenable<void>} The immediately resolved 
+         * @returns {plat.ui.animations.IAnimationPromise} The immediately resolved 
          * {@link plat.ui.animations.AnimationPromise|AnimationPromise}.
          */
-        resolve(): IAnimationThenable<void> {
+        resolve(): IAnimationPromise {
             return new AnimationPromise((resolve) => {
                 resolve();
             });
@@ -307,9 +307,9 @@
          * @param {string} key The identifier specifying the type of animation.
          * @param {any} options Specified options for the animation.
          * 
-         * @returns {plat.ui.animations.IAnimationPromise} A promise that resolves when the animation is finished.
+         * @returns {plat.ui.animations.IAnimationThenable<void>} A promise that resolves when the animation is finished.
          */
-        animate(element: Element, key: string, options?: any): IAnimationPromise;
+        animate(element: Element, key: string, options?: any): IAnimationThenable<void>;
 
         /**
          * @name resolve
@@ -320,10 +320,10 @@
          * @description
          * Immediately resolves an empty {@link plat.ui.animations.AnimationPromise|AnimationPromise}.
          * 
-         * @returns {plat.ui.animations.IAnimationThenable<void>} The immediately resolved 
+         * @returns {plat.ui.animations.IAnimationPromise} The immediately resolved 
          * {@link plat.ui.animations.AnimationPromise|AnimationPromise}.
          */
-        resolve(): IAnimationThenable<void>;
+        resolve(): IAnimationPromise;
     }
 
     /**
@@ -428,6 +428,25 @@
             super(resolveFunction);
             if (!isNull(promise)) {
                 this.__animationInstance = promise.__animationInstance;
+            }
+        }
+
+        /**
+         * @name initialize
+         * @memberof plat.ui.animations.AnimationPromise
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Initializes the promise, providing it with the {@link plat.ui.animations.IBaseAnimation} instance.
+         * 
+         * @param {plat.ui.animations.IBaseAnimation} instance The animation instance for this promise.
+         * 
+         * @returns {void}
+         */
+        initialize(instance: IBaseAnimation): void {
+            if (isObject(instance) && isNull(this.__animationInstance)) {
+                this.__animationInstance = instance;
             }
         }
 
@@ -754,6 +773,21 @@
      * finished and can be optionally cancelled.
      */
     export interface IAnimationPromise extends IAnimationThenable<void> {
+        /**
+         * @name initialize
+         * @memberof plat.ui.animations.IAnimationPromise
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Initializes the promise, providing it with the {@link plat.ui.animations.IBaseAnimation} instance.
+         * 
+         * @param {plat.ui.animations.IBaseAnimation} instance The animation instance for this promise.
+         * 
+         * @returns {void}
+         */
+        initialize(instance: IBaseAnimation): void
+
         /**
          * @name cancel
          * @memberof plat.ui.animations.IAnimationPromise
