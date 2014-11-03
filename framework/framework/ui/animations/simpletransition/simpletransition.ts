@@ -51,7 +51,22 @@
          * The class name added to the animated element.
          */
         className = __SimpleTransition;
-        
+
+        /**
+         * @name _modifiedProperties
+         * @memberof plat.ui.animations.SimpleCssTransition
+         * @kind property
+         * @access protected
+         * 
+         * @type {plat.IObject<string>}
+         * 
+         * @description
+         * A JavaScript object containing all modified properties as a result 
+         * of this animation. Used in the case of a disposal to reset the changed 
+         * properties.
+         */
+        _modifiedProperties: IObject<string> = {};
+
         /**
          * @name _started
          * @memberof plat.ui.animations.SimpleCssTransition
@@ -142,6 +157,29 @@
         }
 
         /**
+         * @name dispose
+         * @memberof plat.ui.animations.SimpleCssTransition
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * A function to be called to reset the last transition to its previous state.
+         * 
+         * @returns {void}
+         */
+        dispose(): void {
+            var style = this.element.style || {},
+                modifiedProperties = this._modifiedProperties,
+                keys = Object.keys(modifiedProperties),
+                key: any;
+
+            while (keys.length > 0) {
+                key = keys.pop();
+                style[key] = modifiedProperties[key];
+            }
+        }
+
+        /**
          * @name _animate
          * @memberof plat.ui.animations.SimpleCssTransition
          * @kind function
@@ -159,6 +197,7 @@
                 keys = Object.keys(options),
                 length = keys.length,
                 key: any,
+                modifiedProperties = this._modifiedProperties,
                 currentProperty: string,
                 newProperty: string,
                 unchanged = 0;
@@ -175,6 +214,8 @@
                 style[key] = newProperty;
                 if (currentProperty === style[key]) {
                     unchanged++;
+                } else {
+                    modifiedProperties[key] = currentProperty;
                 }
             }
 

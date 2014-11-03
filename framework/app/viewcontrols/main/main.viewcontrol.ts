@@ -34,7 +34,7 @@ module app {
             // if (route.path.length === 0) {
             //     return;
             // }
-               
+
             // this.title = route.path.replace(/\//g, ' ');
         }
 

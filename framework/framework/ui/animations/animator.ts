@@ -35,7 +35,7 @@
          * All elements currently being animated.
          */
         _elements: IObject<IAnimatedElement> = {};
-        
+
         /**
          * @name __cssWarning
          * @memberof plat.ui.animations.Animator
@@ -48,7 +48,7 @@
          * Indicates if a warning regarding our CSS was previously fired.
          */
         private __cssWarning = false;
-        
+
         /**
          * @name animate
          * @memberof plat.ui.animations.Animator
@@ -83,7 +83,7 @@
             } else {
                 if (!(this.__cssWarning || $compat.platCss)) {
                     var $exception: IExceptionStatic = acquire(__ExceptionStatic);
-                    $exception.warn('CSS animation occurring and platypus.css was not found prior to platypus.js. If you ' +
+                    $exception.warn('CSS animation occurring and platypus.css was not loaded. If you ' +
                         'intend to use platypus.css, please move it before platypus.js inside your head or body declaration.',
                         $exception.ANIMATION);
                     this.__cssWarning = true;
@@ -92,28 +92,39 @@
                 animationInstance = animation.inject();
             }
 
-            var parentAnimating = this.__parentIsAnimating(element),
+            var animatingParentId = this.__parentIsAnimating(element),
                 id = this.__setAnimationId(element, animationInstance),
-                animatedElement = this._elements[id],
-                animationPromise: IAnimationThenable<void> = (<BaseAnimation>animationInstance)._init(element, options);
+                animatedElement = this._elements[id];
 
-            if (parentAnimating) {
+            if (!isNull(animatingParentId)) {
                 animatedElement.animationEnd(true);
-            } else {
-                this.__stopChildAnimations(element);
-                animationPromise = animationPromise.then(() => {
-                    animatedElement.promise = null;
-                    animatedElement.animationEnd();
-                });
-                animationInstance.start();
+
+                var parent = this._elements[animatingParentId];
+                if (isPromise(parent.promise)) {
+                    return new AnimationPromise((resolve) => {
+                        parent.promise.then(() => {
+                            resolve();
+                        });
+                    });
+                }
+
+                return this.resolve();
             }
 
-            if (!isNull(animatedElement.promise)) {
+            this.__stopChildAnimations(element);
+            var animationPromise = (<BaseAnimation>animationInstance)._init(element, options).then(() => {
+                animatedElement.promise = null;
+                animatedElement.animationEnd();
+            });
+
+            if (isPromise(animatedElement.promise)) {
                 return animatedElement.promise.then(() => {
-                    return animationPromise;
+                    animationInstance.start();
+                    return (animatedElement.promise = animationPromise);
                 });
             }
 
+            animationInstance.start();
             return (animatedElement.promise = animationPromise);
         }
 
@@ -134,7 +145,7 @@
                 resolve();
             });
         }
-        
+
         /**
          * @name __parentIsAnimating
          * @memberof plat.ui.animations.Animator
@@ -146,18 +157,28 @@
          * 
          * @param {Node} element The element whose parents we need to check.
          * 
-         * @returns {boolean} Whether or not animating parents were found.
+         * @returns {string} The animating parent's ID if one exists.
          */
-        private __parentIsAnimating(element: Node): boolean {
+        private __parentIsAnimating(element: Node): string {
+            var animationId: string;
             while (!isDocument(element = element.parentNode) && element.nodeType === Node.ELEMENT_NODE) {
                 if (hasClass(<HTMLElement>element, __Animating)) {
-                    return true;
+                    animationId = ((<ICustomElement>element).__plat || {}).animation;
+                    if (isString(animationId)) {
+                        if (!isNull(this._elements[animationId])) {
+                            return animationId;
+                        }
+
+                        deleteProperty((<ICustomElement>element).__plat, 'animation');
+                        if (isEmpty(plat)) {
+                            deleteProperty(element, '__plat');
+                        }
+                        removeClass(<HTMLElement>element, __Animating);
+                    }
                 }
             }
-
-            return false;
         }
-        
+
         /**
          * @name __setAnimationId
          * @memberof plat.ui.animations.Animator
@@ -189,21 +210,21 @@
 
             var animatedElement = elements[id],
                 removeListener = (cancel?: boolean, reanimating?: boolean) => {
-                if (cancel === true) {
-                    animationInstance.cancel();
-                    if (reanimating === true) {
-                        return;
+                    if (cancel === true) {
+                        animationInstance.cancel();
+                        if (reanimating === true) {
+                            return;
+                        }
+                        animationInstance.done();
                     }
-                    animationInstance.done();
-                }
 
-                removeClass(<HTMLElement>element, __Animating);
-                deleteProperty(elements, id);
-                deleteProperty(plat, 'animation');
-                if (isEmpty(plat)) {
-                    deleteProperty(element, '__plat');
-                }
-            };
+                    removeClass(<HTMLElement>element, __Animating);
+                    deleteProperty(elements, id);
+                    deleteProperty(plat, 'animation');
+                    if (isEmpty(plat)) {
+                        deleteProperty(element, '__plat');
+                    }
+                };
 
             if (isUndefined(animatedElement)) {
                 addClass(<HTMLElement>element, __Animating);
@@ -217,7 +238,7 @@
 
             return id;
         }
-        
+
         /**
          * @name __stopChildAnimations
          * @memberof plat.ui.animations.Animator
@@ -304,7 +325,7 @@
          */
         resolve(): IAnimationThenable<void>;
     }
-    
+
     /**
      * @name IAnimatedElement
      * @memberof plat.ui.animations
@@ -344,7 +365,7 @@
          */
         promise?: IAnimationThenable<any>;
     }
-    
+
     /**
      * @name AnimationPromise
      * @memberof plat.ui.animations
@@ -422,9 +443,37 @@
          * @returns {plat.ui.animations.AnimationPromise} This promise instance.
          */
         cancel(): IAnimationPromise {
-            if (!isNull(this.__animationInstance)) {
-                this.__animationInstance.cancel();
-                this.__animationInstance.done();
+            var animationInstance = this.__animationInstance;
+            if (!isNull(animationInstance)) {
+                if (isFunction(animationInstance.cancel)) {
+                    animationInstance.cancel();
+                }
+                if (isFunction(animationInstance.done)) {
+                    animationInstance.done();
+                }
+            }
+
+            return this;
+        }
+
+        /**
+         * @name dispose
+         * @memberof plat.ui.animations.AnimationPromise
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * A method to dispose the associated animation in order to remove any end states 
+         * as determined by the animation class itself.
+         * 
+         * @returns {plat.ui.animations.AnimationPromise} This promise instance.
+         */
+        dispose(): IAnimationPromise {
+            var animationInstance = this.__animationInstance;
+            if (!isNull(animationInstance)) {
+                if (isFunction(animationInstance.dispose)) {
+                    animationInstance.dispose();
+                }
             }
 
             return this;
@@ -487,7 +536,7 @@
          * @returns {plat.ui.animations.IAnimationThenable<U>}
          */
         then<U>(onFulfilled: (success: void) => async.IThenable<U>): IAnimationThenable<U>;
-        then<U>(onFulfilled: (success: void) => any): IAnimationThenable<U>  {
+        then<U>(onFulfilled: (success: void) => any): IAnimationThenable<U> {
             return <IAnimationThenable<U>><any>super.then<U>(onFulfilled);
         }
 
@@ -558,6 +607,20 @@
          * @returns {plat.ui.animations.AnimationPromise} This promise instance.
          */
         cancel(): IAnimationPromise;
+
+        /**
+         * @name dispose
+         * @memberof plat.ui.animations.IAnimationThenable
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * A method to dispose the associated animation in order to remove any end states 
+         * as determined by the animation class itself.
+         * 
+         * @returns {plat.ui.animations.AnimationPromise} This promise instance.
+         */
+        dispose(): IAnimationPromise;
 
         /**
          * @name then
@@ -678,7 +741,7 @@
          */
         catch<U>(onRejected: (error: any) => U): IAnimationThenable<U>;
     }
-    
+
     /**
      * @name IAnimationPromise
      * @memberof plat.ui.animations
@@ -703,6 +766,20 @@
          * @returns {plat.ui.animations.AnimationPromise} This promise instance.
          */
         cancel(): IAnimationPromise;
+
+        /**
+         * @name dispose
+         * @memberof plat.ui.animations.IAnimationPromise
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * A method to dispose the associated animation in order to remove any end states 
+         * as determined by the animation class itself.
+         * 
+         * @returns {plat.ui.animations.AnimationPromise} This promise instance.
+         */
+        dispose(): IAnimationPromise;
 
         /**
          * @name then

@@ -87,6 +87,19 @@
         navigator: navigation.IBaseNavigator;
 
         /**
+         * @name _animationPromise
+         * @memberof plat.ui.controls.Baseport
+         * @kind property
+         * @access protected
+         * 
+         * @type {plat.ui.animations.IAnimationPromise}
+         * 
+         * @description
+         * A promise used for disposing the end state of the previous animation prior to starting a new one.
+         */
+        _animationPromise: animations.IAnimationPromise;
+
+        /**
          * @name constructor
          * @memberof plat.ui.controls.Baseport
          * @kind function
@@ -120,7 +133,7 @@
             this.dom.clearNode(this.element);
             this._load();
         }
-        
+
         /**
          * @name dispose
          * @memberof plat.ui.controls.Baseport
@@ -135,7 +148,7 @@
         dispose() {
             this.navigator.dispose();
         }
-        
+
         /**
          * @name navigateTo
          * @memberof plat.ui.controls.Baseport
@@ -162,7 +175,7 @@
                 injectedControl = newControl ? control.inject() : control,
                 replaceType = injectedControl.replaceWith,
                 node = (isEmpty(replaceType) || replaceType === 'any') ? this.$Document.createElement('div') :
-                    <HTMLElement>this.$Document.createElement(replaceType),
+                <HTMLElement>this.$Document.createElement(replaceType),
                 attributes: IObject<string> = {},
                 nodeMap: processing.INodeMap = {
                     element: node,
@@ -181,7 +194,13 @@
             node.className = 'plat-viewcontrol';
             element.appendChild(node);
 
-            this.$Animator.animate(this.element, __Enter);
+
+            var animationPromise = this._animationPromise;
+            if (!isNull(animationPromise)) {
+                animationPromise.dispose();
+            }
+
+            this._animationPromise = this.$Animator.animate(this.element, __Enter);
 
             var viewportManager = this.$ManagerCache.read(this.uid),
                 manager = this.$ElementManagerFactory.getInstance(),
@@ -239,7 +258,13 @@
             }
 
             fromControl.navigatingFrom();
-            return this.$Animator.animate(this.element, __Leave);
+
+            var animationPromise = this._animationPromise;
+            if (!isNull(animationPromise)) {
+                animationPromise.dispose();
+            }
+
+            return (this._animationPromise = this.$Animator.animate(this.element, __Leave));
         }
 
         /**
@@ -377,7 +402,7 @@
          * The navigation parameter.
          */
         parameter: any;
-        
+
         /**
          * @name parameter
          * @memberof plat.ui.controls.IBaseportNavigateToOptions

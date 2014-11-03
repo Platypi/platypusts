@@ -114,7 +114,7 @@ module plat.ui.animations {
          * 
          * @description
          * A function to be called to let it be known the animation is being cancelled. 
-         * Replaces the animation class with the animation class and "-cancel" appended to it 
+         * Replaces the animation class with the animation class and "-end" appended to it 
          * to allow it to jump to final state.
          * 
          * @returns {void}
@@ -125,10 +125,26 @@ module plat.ui.animations {
             removeClass(element, className);
             addClass(element, className + __END_SUFFIX);
         }
+
+        /**
+         * @name dispose
+         * @memberof plat.ui.animations.SimpleCssAnimation
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * A function to remove the end state from the element. Can be useful when combining 
+         * multiple types of animations on the same element.
+         * 
+         * @returns {void}
+         */
+        dispose(): void {
+            removeClass(this.element, this.className + __END_SUFFIX);
+        }
     }
 
     register.animation(__SimpleAnimation, SimpleCssAnimation);
-    
+
     /**
      * @name ISimpleCssAnimation
      * @memberof plat.ui.animations
@@ -182,7 +198,7 @@ module plat.ui.animations {
     }
 
     register.animation(__FadeIn, FadeIn);
-    
+
     /**
      * @name FadeOut
      * @memberof plat.ui.animations
@@ -209,7 +225,7 @@ module plat.ui.animations {
     }
 
     register.animation(__FadeOut, FadeOut);
-    
+
     /**
      * @name Enter
      * @memberof plat.ui.animations
@@ -236,7 +252,7 @@ module plat.ui.animations {
     }
 
     register.animation(__Enter, Enter);
-    
+
     /**
      * @name Leave
      * @memberof plat.ui.animations

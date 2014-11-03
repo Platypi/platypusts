@@ -61,7 +61,7 @@
          * Specified options for the animation.
          */
         options: any;
-        
+
         /**
          * @name _resolve
          * @memberof plat.ui.animations.BaseAnimation
@@ -88,7 +88,7 @@
          * @returns {void}
          */
         initialize(): void { }
-        
+
         /**
          * @name start
          * @memberof plat.ui.animations.BaseAnimation
@@ -102,7 +102,7 @@
          * @returns {void}
          */
         start(): void { }
-        
+
         /**
          * @name done
          * @memberof plat.ui.animations.BaseAnimation
@@ -119,9 +119,8 @@
                 this._resolve();
                 this._resolve = null;
             }
-            this.dispose();
         }
-        
+
         /**
          * @name cancel
          * @memberof plat.ui.animations.BaseAnimation
@@ -135,7 +134,7 @@
          * @returns {void}
          */
         cancel(): void { }
-        
+
         /**
          * @name dispose
          * @memberof plat.ui.animations.BaseAnimation
@@ -150,7 +149,7 @@
          * @returns {void}
          */
         dispose(): void { }
-        
+
         /**
          * @name _init
          * @memberof plat.ui.animations.BaseAnimation
