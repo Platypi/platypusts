@@ -12,7 +12,6 @@ module plat.async {
      * @name HttpRequest
      * @memberof plat.async
      * @kind class
-     * @exported false
      * 
      * @implements {plat.async.IHttpRequest}
      * 
@@ -21,7 +20,7 @@ module plat.async {
      * sending AJAX requests to a server. This class does not support 
      * synchronous requests.
      */
-    class HttpRequest implements IHttpRequest {
+    export class HttpRequest implements IHttpRequest {
         /**
          * @name clearTimeout
          * @memberof plat.async.HttpRequest
@@ -227,7 +226,7 @@ module plat.async {
                 this.jsonpCallback = options.jsonpCallback || uniqueId('plat_callback');
             }
 
-            return new AjaxPromise((resolve, reject) => {
+            var promise = new AjaxPromise((resolve, reject) => {
                 var $window = <any>this.$Window,
                     $document = this.$Document,
                     scriptTag = $document.createElement('script'),
@@ -275,7 +274,11 @@ module plat.async {
                         }, timeout - 1);
                     });
                 }
-            }, { __http: this });
+            });
+
+            promise.initialize(this);
+
+            return promise;
         }
 
         /**
@@ -340,158 +343,161 @@ module plat.async {
             var xhr = this.xhr,
                 options = this.__options,
                 method = options.method,
-                url = options.url;
+                url = options.url,
+                promise = new AjaxPromise((resolve, reject) => {
+                    xhr.onreadystatechange = () => {
+                        var success = this._xhrOnReadyStateChange();
 
-            return new AjaxPromise((resolve, reject) => {
-                xhr.onreadystatechange = () => {
-                    var success = this._xhrOnReadyStateChange();
+                        if (isNull(success)) {
+                            return;
+                        }
 
-                    if (isNull(success)) {
-                        return;
+                        var response = this._formatResponse(options.responseType, success);
+
+                        if (success) {
+                            resolve(response);
+                        } else {
+                            reject(new AjaxError(response));
+                        }
+
+                        this.xhr = options = null;
+                    };
+
+                    if (!isString(method)) {
+                        var Exception: IExceptionStatic = acquire(__ExceptionStatic);
+                        Exception.warn('AjaxOptions method was not of type string. Defaulting to "GET".', Exception.AJAX);
+                        method = 'GET';
                     }
 
-                    var response = this._formatResponse(options.responseType, success);
-
-                    if (success) {
-                        resolve(response);
-                    } else {
-                        reject(new AjaxError(response));
-                    }
-
-                    this.xhr = options = null;
-                };
-
-                if (!isString(method)) {
-                    var Exception: IExceptionStatic = acquire(__ExceptionStatic);
-                    Exception.warn('AjaxOptions method was not of type string. Defaulting to "GET".', Exception.AJAX);
-                    method = 'GET';
-                }
-
-                xhr.open(
-                    method.toUpperCase(),
-                    url,
+                    xhr.open(
+                        method.toUpperCase(),
+                        url,
                     // synchronous XHR not supported
-                    true,
-                    options.user,
-                    options.password
-                    );
+                        true,
+                        options.user,
+                        options.password
+                        );
 
-                var responseType = options.responseType;
-                if (!(this.__fileSupported || responseType === '' || responseType === 'text')) {
-                    responseType = '';
-                }
+                    var responseType = options.responseType;
+                    if (!(this.__fileSupported || responseType === '' || responseType === 'text')) {
+                        responseType = '';
+                    }
 
-                xhr.responseType = responseType;
-                xhr.withCredentials = options.withCredentials;
+                    xhr.responseType = responseType;
+                    xhr.withCredentials = options.withCredentials;
 
-                var mimeType = options.overrideMimeType,
-                    data = options.data;
+                    var mimeType = options.overrideMimeType,
+                        data = options.data;
 
-                if (isString(mimeType) && !isEmpty(mimeType)) {
-                    xhr.overrideMimeType(mimeType);
-                }
+                    if (isString(mimeType) && !isEmpty(mimeType)) {
+                        xhr.overrideMimeType(mimeType);
+                    }
 
-                if (isNull(data) || data === '') {
-                    // no data exists so set headers and send request
-                    this.__setHeaders();
-                    xhr.send();
-                } else {
-                    var transforms = options.transforms || [],
-                        length = transforms.length,
-                        contentType = options.contentType,
-                        contentTypeExists = isString(contentType) && !isEmpty(contentType);
-
-                    if (length > 0) {
-                        // if data transforms defined, assume they're going to take care of 
-                        // any and all transformations.
-                        for (var i = 0; i < length; ++i) {
-                            data = transforms[i](data, xhr);
-                        }
-
-                        // if contentType exists, assume they did not set it in 
-                        // their headers as well
-                        if (contentTypeExists) {
-                            xhr.setRequestHeader('Content-Type', contentType);
-                        }
-
+                    if (isNull(data) || data === '') {
+                        // no data exists so set headers and send request
                         this.__setHeaders();
-                        xhr.send(data);
-                    } else if (isObject(data)) {
-                        // if isObject and contentType exists we want to transform the data
-                        if (contentTypeExists) {
-                            var contentTypeLower = contentType.toLowerCase();
-                            if (contentTypeLower.indexOf('x-www-form-urlencoded') !== -1) {
-                                // perform an encoded form transformation
-                                data = this.__serializeFormData();
-                                // set Content-Type header because we're assuming they didn't set it 
-                                // in their headers object
+                        xhr.send();
+                    } else {
+                        var transforms = options.transforms || [],
+                            length = transforms.length,
+                            contentType = options.contentType,
+                            contentTypeExists = isString(contentType) && !isEmpty(contentType);
+
+                        if (length > 0) {
+                            // if data transforms defined, assume they're going to take care of 
+                            // any and all transformations.
+                            for (var i = 0; i < length; ++i) {
+                                data = transforms[i](data, xhr);
+                            }
+
+                            // if contentType exists, assume they did not set it in 
+                            // their headers as well
+                            if (contentTypeExists) {
                                 xhr.setRequestHeader('Content-Type', contentType);
-                                this.__setHeaders();
-                                xhr.send(data);
-                            } else if (contentTypeLower.indexOf('multipart/form-data') !== -1) {
-                                // need to check if File is a supported object
-                                if (this.__fileSupported) {
-                                    // use FormData
-                                    data = this.__appendFormData();
-                                    // do not set the Content-Type header due to modern browsers 
-                                    // setting special headers for multipart/form-data
+                            }
+
+                            this.__setHeaders();
+                            xhr.send(data);
+                        } else if (isObject(data)) {
+                            // if isObject and contentType exists we want to transform the data
+                            if (contentTypeExists) {
+                                var contentTypeLower = contentType.toLowerCase();
+                                if (contentTypeLower.indexOf('x-www-form-urlencoded') !== -1) {
+                                    // perform an encoded form transformation
+                                    data = this.__serializeFormData();
+                                    // set Content-Type header because we're assuming they didn't set it 
+                                    // in their headers object
+                                    xhr.setRequestHeader('Content-Type', contentType);
                                     this.__setHeaders();
                                     xhr.send(data);
+                                } else if (contentTypeLower.indexOf('multipart/form-data') !== -1) {
+                                    // need to check if File is a supported object
+                                    if (this.__fileSupported) {
+                                        // use FormData
+                                        data = this.__appendFormData();
+                                        // do not set the Content-Type header due to modern browsers 
+                                        // setting special headers for multipart/form-data
+                                        this.__setHeaders();
+                                        xhr.send(data);
+                                    } else {
+                                        // use iframe trick for older browsers (do not send a request)
+                                        // this case is the reason for this giant, terrible, nested if-else statement
+                                        this.__submitFramedFormData().then((response) => {
+                                            resolve(response);
+                                        }, () => {
+                                                this.xhr = null;
+                                            });
+                                    }
                                 } else {
-                                    // use iframe trick for older browsers (do not send a request)
-                                    // this case is the reason for this giant, terrible, nested if-else statement
-                                    this.__submitFramedFormData().then((response) => {
-                                        resolve(response);
-                                    }, () => {
-                                        this.xhr = null;
-                                    });
+                                    // assume stringification is possible
+                                    data = JSON.stringify(data);
+                                    // set Content-Type header because we're assuming they didn't set it 
+                                    // in their headers object
+                                    xhr.setRequestHeader('Content-Type', contentType);
+                                    this.__setHeaders();
+                                    xhr.send(data);
                                 }
                             } else {
-                                // assume stringification is possible
-                                data = JSON.stringify(data);
-                                // set Content-Type header because we're assuming they didn't set it 
-                                // in their headers object
-                                xhr.setRequestHeader('Content-Type', contentType);
+                                // contentType does not exist so simply set defined headers and send raw data
                                 this.__setHeaders();
                                 xhr.send(data);
                             }
                         } else {
-                            // contentType does not exist so simply set defined headers and send raw data
+                            // if contentType exists set Content-Type header because we're assuming they didn't set it 
+                            // in their headers object
+                            if (contentTypeExists) {
+                                xhr.setRequestHeader('Content-Type', contentType);
+                            }
+
                             this.__setHeaders();
                             xhr.send(data);
                         }
-                    } else {
-                        // if contentType exists set Content-Type header because we're assuming they didn't set it 
-                        // in their headers object
-                        if (contentTypeExists) {
-                            xhr.setRequestHeader('Content-Type', contentType);
-                        }
-
-                        this.__setHeaders();
-                        xhr.send(data);
                     }
-                }
 
-                var timeout = options.timeout;
-                if (isNumber(timeout) && timeout > 0) {
-                    // we first postpone to avoid always timing out when debugging, though this is not
-                    // a foolproof method.
-                    this.clearTimeout = postpone(() => {
-                        this.clearTimeout = defer(() => {
-                            reject(new AjaxError({
-                                response: 'Request timed out in ' + timeout + 'ms for ' + options.url,
-                                status: xhr.status,
-                                getAllResponseHeaders: () => { return xhr.getAllResponseHeaders(); },
-                                xhr: xhr
-                            }));
+                    var timeout = options.timeout;
+                    if (isNumber(timeout) && timeout > 0) {
+                        // we first postpone to avoid always timing out when debugging, though this is not
+                        // a foolproof method.
+                        this.clearTimeout = postpone(() => {
+                            this.clearTimeout = defer(() => {
+                                reject(new AjaxError({
+                                    response: 'Request timed out in ' + timeout + 'ms for ' + options.url,
+                                    status: xhr.status,
+                                    getAllResponseHeaders: () => { return xhr.getAllResponseHeaders(); },
+                                    xhr: xhr
+                                }));
 
-                            xhr.onreadystatechange = null;
-                            xhr.abort();
-                            this.xhr = null;
-                        }, timeout - 1);
-                    });
-                }
-            }, { __http: this });
+                                xhr.onreadystatechange = null;
+                                xhr.abort();
+                                this.xhr = null;
+                            }, timeout - 1);
+                        });
+                    }
+                });
+
+            promise.initialize(this);
+
+            return promise;
         }
 
         /**
@@ -818,13 +824,51 @@ module plat.async {
      * @name IHttpRequest
      * @memberof plat.async
      * @kind interface
-     * @exported false
      * 
      * @description
      * IHttpRequest provides a wrapper for the XMLHttpRequest object. Allows for
      * sending AJAX requests to a server.
      */
-    interface IHttpRequest {
+    export interface IHttpRequest {
+        /**
+         * @name clearTimeout
+         * @memberof plat.async.IHttpRequest
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.IRemoveListener}
+         * 
+         * @description
+         * The timeout ID associated with the specified timeout
+         */
+        clearTimeout?: plat.IRemoveListener;
+
+        /**
+         * @name xhr
+         * @memberof plat.async.IHttpRequest
+         * @kind property
+         * @access public
+         * 
+         * @type {XMLHttpRequest}
+         * 
+         * @description
+         * The created XMLHttpRequest
+         */
+        xhr?: XMLHttpRequest;
+
+        /**
+         * @name jsonpCallback
+         * @memberof plat.async.IHttpRequest
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * The JSONP callback name
+         */
+        jsonpCallback?: string;
+
         /**
          * @name execute
          * @memberof plat.async.IHttpRequest
@@ -1424,7 +1468,7 @@ module plat.async {
          * @description
          * The {@link plat.async.HttpRequest|HttpRequest} object.
          */
-        private __http: HttpRequest;
+        private __http: IHttpRequest;
 
         /**
          * @name constructor
@@ -1465,13 +1509,33 @@ module plat.async {
         }
 
         /**
+         * @name initialize
+         * @memberof plat.async.AjaxPromise
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * A method to initialize this {@link plat.async.AjaxPromise|AjaxPromise}, passing it the
+         * associated {@link plat.async.IHttpRequest|IHttpRequest}.
+         * 
+         * @param {plat.async.IHttpRequest} http The http request for this promise.
+         * 
+         * @returns {void}
+         */
+        initialize(http: IHttpRequest) {
+            if (isObject(http) && isNull(this.__http)) {
+                this.__http = http;
+            }
+        }
+
+        /**
          * @name cancel
          * @memberof plat.async.AjaxPromise
          * @kind function
          * @access public
          * 
          * @description
-         * A method to cancel the AJAX call associated with this {@link plat.async.AjaxPromise}.
+         * A method to cancel the AJAX call associated with this {@link plat.async.AjaxPromise|AjaxPromise}.
          * 
          * @returns {void}
          */
@@ -1775,6 +1839,22 @@ module plat.async {
      * @typeparam {any} R The type of the response object in the {@link plat.async.IAjaxResponse|IAjaxResponse}.
      */
     export interface IAjaxPromise<R> extends IAjaxThenable<IAjaxResponse<R>> {
+        /**
+         * @name initialize
+         * @memberof plat.async.IAjaxPromise
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * A method to initialize this {@link plat.async.AjaxPromise|AjaxPromise}, passing it the
+         * associated {@link plat.async.IHttpRequest|IHttpRequest}.
+         * 
+         * @param {plat.async.IHttpRequest} http The http request for this promise.
+         * 
+         * @returns {void}
+         */
+        initialize(http: IHttpRequest): void;
+
         /**
          * @name cancel
          * @memberof plat.async.IAjaxPromise

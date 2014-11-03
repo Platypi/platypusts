@@ -162,10 +162,10 @@ $RECYCLE.BIN/
 coverage
 node_modules
 reporter
-typings
-/framework/framework/*
+typings/
 .tscache
 dist
 
+!gruntfile.js
 !*.less
 !*.ts
