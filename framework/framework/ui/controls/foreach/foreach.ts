@@ -654,7 +654,7 @@ module plat.ui.controls {
                 return this.__handleAnimation(startNode, endNode, key);
             }
 
-            var animationPromises: Array<animations.IAnimationThenable<void>> = [];
+            var animationPromises: Array<animations.IAnimationThenable<animations.IParentAnimationFn>> = [];
             while (length-- > 0) {
                 animationPromises.push(currentAnimations[length].cancel());
             }

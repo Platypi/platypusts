@@ -92,12 +92,12 @@
          * @kind property
          * @access protected
          * 
-         * @type {plat.ui.animations.IAnimationPromise}
+         * @type {plat.ui.animations.IAnimationThenable<plat.ui.animations.IParentAnimationFn>}
          * 
          * @description
          * A promise used for disposing the end state of the previous animation prior to starting a new one.
          */
-        _animationPromise: animations.IAnimationPromise;
+        _animationPromise: animations.IAnimationThenable<animations.IParentAnimationFn>;
 
         /**
          * @name constructor
@@ -249,12 +249,12 @@
          * @param {plat.ui.IBaseViewControl} fromControl The {@link plat.ui.IBaseViewControl|IBaseViewControl} 
          * being navigated away from.
          * 
-         * @returns {plat.async.IThenable<void>} A promise that resolves when the current view is done animating 
-         * away.
+         * @returns {plat.animations.IAnimationThenable<plat.ui.animations.IParentAnimationFn>} A promise that 
+         * resolves when the current view is done animating away.
          */
-        navigateFrom(fromControl: IBaseViewControl): async.IThenable<void> {
+        navigateFrom(fromControl: IBaseViewControl): animations.IAnimationThenable<animations.IParentAnimationFn> {
             if (isNull(fromControl) || !isFunction(fromControl.navigatingFrom)) {
-                return this.$Promise.resolve<void>(null);
+                return this.$Animator.resolve();
             }
 
             fromControl.navigatingFrom();
@@ -346,10 +346,10 @@
          * @param {plat.ui.IBaseViewControl} fromControl The {@link plat.ui.IBaseViewControl|IBaseViewControl} 
          * being navigated away from.
          * 
-         * @returns {plat.async.IThenable<void>} A promise that resolves when the current view is done animating 
-         * away.
+         * @returns {plat.animations.IAnimationThenable<plat.ui.animations.IParentAnimationFn>} A promise that resolves 
+         * when the current view is done animating away.
          */
-        navigateFrom(fromControl: IBaseViewControl): async.IThenable<void>;
+        navigateFrom(fromControl: IBaseViewControl): animations.IAnimationThenable<animations.IParentAnimationFn>;
 
         /**
          * @name backButtonPressed
