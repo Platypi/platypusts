@@ -59,6 +59,23 @@ module.exports = exports = function load(grunt) {
                 src: 'platypus.ts',
                 dest: 'dist/platypus.ts'
             },
+            bower: {
+                options: {
+                    process: function (data) {
+                        return data
+                            .split(/\r\n|\n/)
+                            .map(function (line, index, lines) {
+                                if (line.trim()[0] === '*') {
+                                    return ' ' + line;
+                                }
+
+                                return line;
+                            }).join('\r\n');
+                    }
+                },
+                src: 'dist/platypus.d.ts',
+                dest: 'dist/platypus.d.ts'
+            }, 
             node: {
                 options: {
                     process: function (data) {
@@ -118,5 +135,5 @@ module.exports = exports = function load(grunt) {
     grunt.loadNpmTasks('grunt-ts');
 
     // By default, run all tests.
-    grunt.registerTask('default', ['clean', 'bundle', 'copy:main', 'ts', 'uglify', 'copy:node', 'clean:after']);
+    grunt.registerTask('default', ['clean', 'bundle', 'copy:main', 'ts', 'uglify', 'copy:bower', 'copy:node', 'clean:after']);
 };
