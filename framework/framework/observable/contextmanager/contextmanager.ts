@@ -673,7 +673,7 @@ module plat.observable {
 
             return removeCallback;
         }
-        
+
         /**
          * @name observeArray
          * @memberof plat.observable.ContextManager
@@ -704,16 +704,7 @@ module plat.observable {
                 setProto = $compat.setProto;
 
             if (isArray(oldArray)) {
-                if (setProto) {
-                    (<any>Object).setPrototypeOf(oldArray, Object.create(Array.prototype));
-                } else if (proto) {
-                    (<any>oldArray).__proto__ = Object.create(Array.prototype);
-                } else {
-                    for (i = 0; i < length; ++i) {
-                        method = arrayMethods[i];
-                        (<any>oldArray)[method] = (<any>Array.prototype)[method];
-                    }
-                }
+                this._restoreArray(oldArray);
             }
 
             if (isNull(array)) {
@@ -746,52 +737,31 @@ module plat.observable {
 
             var listenerRemoved = false,
                 removeListener = () => {
-                if (listenerRemoved) {
-                    return;
-                }
-
-                listenerRemoved = true;
-                ContextManager.spliceRemoveListener(absoluteIdentifier, uid, removeListener);
-
-                var index = arrayCallbacks.indexOf(listener);
-                if (index === -1) {
-                    return;
-                }
-
-                arrayCallbacks.splice(index, 1);
-                if (arrayCallbacks.length === 0) {
-                    deleteProperty(observedArrayCallbacks, uid);
-                    if (isEmpty(observedArrayCallbacks)) {
-                        deleteProperty(observedArrayListeners, absoluteIdentifier);
+                    if (listenerRemoved) {
+                        return;
                     }
-                }
-            };
+
+                    listenerRemoved = true;
+                    ContextManager.spliceRemoveListener(absoluteIdentifier, uid, removeListener);
+
+                    var index = arrayCallbacks.indexOf(listener);
+                    if (index === -1) {
+                        return;
+                    }
+
+                    arrayCallbacks.splice(index, 1);
+                    if (arrayCallbacks.length === 0) {
+                        deleteProperty(observedArrayCallbacks, uid);
+                        if (isEmpty(observedArrayCallbacks)) {
+                            deleteProperty(observedArrayListeners, absoluteIdentifier);
+                        }
+                    }
+                };
 
             arrayCallbacks.push(listener);
             ContextManager.pushRemoveListener(absoluteIdentifier, uid, removeListener);
 
-            if (proto) {
-                var obj = Object.create(Array.prototype);
-
-                for (i = 0; i < length; ++i) {
-                    method = arrayMethods[i];
-                    obj[method] = this._overwriteArrayFunction(absoluteIdentifier, method);
-                }
-
-                if (setProto) {
-                    (<any>Object).setPrototypeOf(array, obj);
-                } else {
-                    (<any>array).__proto__ = obj;
-                }
-
-                return removeListener;
-            }
-
-            for (i = 0; i < length; ++i) {
-                method = arrayMethods[i];
-                ContextManager.defineProperty(array, method,
-                    this._overwriteArrayFunction(absoluteIdentifier, method), false, true);
-            }
+            this._overwriteArray(absoluteIdentifier, array);
 
             return removeListener;
         }
@@ -814,6 +784,81 @@ module plat.observable {
             this.__contextObjects = {};
         }
         
+        /**
+         * @name _restoreArray
+         * @memberof plat.observable.ContextManager
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Restores an array to use Array.prototype instead of listener functions. 
+         * 
+         * @param {Array<any>} array The array to restore.
+         * 
+         * @returns {void}
+         */
+        _restoreArray(array: Array<any>) {
+            var $compat = this.$Compat;
+
+            if ($compat.setProto) {
+                (<any>Object).setPrototypeOf(array, Object.create(Array.prototype));
+            } else if ($compat.proto) {
+                (<any>array).__proto__ = Object.create(Array.prototype);
+            } else {
+                var length = arrayMethods.length,
+                    method: string;
+
+                for (var i = 0; i < length; ++i) {
+                    method = arrayMethods[i];
+                    (<any>array)[method] = (<any>Array.prototype)[method];
+                }
+            }
+        }
+
+        /**
+         * @name _overwriteArray
+         * @memberof plat.observable.ContextManager
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Overwrites an Array's prototype to observe mutation functions.
+         * 
+         * @param {string} absoluteIdentifier The identifier for the Array off context.
+         * @param {Array<any>} array The array to overwrite.
+         * 
+         * @returns {void}
+         */
+        _overwriteArray(absoluteIdentifier: string, array: Array<any>) {
+            var $compat = this.$Compat,
+                length = arrayMethods.length,
+                method: string,
+                i: number;
+
+            if ($compat.proto) {
+                var obj = Object.create(Array.prototype);
+
+                for (i = 0; i < length; ++i) {
+                    method = arrayMethods[i];
+                    obj[method] = this._overwriteArrayFunction(absoluteIdentifier, method);
+                }
+
+                if ($compat.setProto) {
+                    (<any>Object).setPrototypeOf(array, obj);
+                } else {
+                    (<any>array).__proto__ = obj;
+                }
+
+                return;
+            }
+
+            for (i = 0; i < length; ++i) {
+                method = arrayMethods[i];
+                ContextManager.defineProperty(array, method,
+                    this._overwriteArrayFunction(absoluteIdentifier, method), false, true);
+            }
+        }
+
         /**
          * @name _getImmediateContext
          * @memberof plat.observable.ContextManager
