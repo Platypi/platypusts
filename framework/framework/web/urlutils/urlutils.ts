@@ -344,15 +344,17 @@
 
             var element = UrlUtils.__urlUtilsElement ||
                 (UrlUtils.__urlUtilsElement = this.$Document.createElement('a')),
-                define = this.$ContextManagerStatic.defineGetter;
+                define = this.$ContextManagerStatic.defineGetter,
+                $BrowserConfig = this.$BrowserConfig;
 
             // always make local urls relative to start page.
             if (url[0] === '/') {
                 url = url.slice(1);
             }
 
+            // Always append the baseUrl if this is not a full-url
             if (!this.$Regex.fullUrlRegex.test(url)) {
-                url = this.$BrowserConfig.baseUrl + url;
+                url = $BrowserConfig.baseUrl + url;
             }
 
             element.setAttribute('href', url);
@@ -379,15 +381,15 @@
 
             var path: string;
 
-            if (!isEmpty(this.$BrowserConfig.baseUrl)) {
-                path = url.replace(this.$BrowserConfig.baseUrl, '/');
+            if (!isEmpty($BrowserConfig.baseUrl)) {
+                path = url.replace($BrowserConfig.baseUrl, '/');
             } else {
                 path = (element.pathname.charAt(0) === '/')
                 ? element.pathname
                 : '/' + element.pathname;
             }
 
-            define(this, 'pathname', path.split('?')[0], true, true);
+            define(this, 'pathname', path.split('?')[0].split('#')[0], true, true);
             define(this, 'query', UrlUtils.__getQuery(this.search), true, true);
         }
 

@@ -62,15 +62,27 @@ module plat.ui.controls {
          * @returns {void}
          */
         initialize(): void {
-            var element = this.element;
+            var element = this.element,
+                $browserConfig = this.$browserConfig,
+                baseUrl = $browserConfig.baseUrl.slice(0, -1),
+                usingHash = $browserConfig.routingType === $browserConfig.HASH,
+                prefix = $browserConfig.hashPrefix;
 
             this.addEventListener(element, 'click', (ev: Event) => {
-                var href = element.href;
+                var href = element.href || '';
+
+                if (href.indexOf(baseUrl) === -1) {
+                    return;
+                }
 
                 ev.preventDefault();
 
                 if (isEmpty(href)) {
                     return;
+                }
+
+                if (usingHash && href.indexOf('#') === -1) {
+                    href = baseUrl + '/#' + prefix + href.replace(baseUrl, '');
                 }
 
                 this.$browser.url(href);
