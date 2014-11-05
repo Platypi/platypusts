@@ -73,10 +73,11 @@
          * @returns {string} The base URL.
          */
         private static __getBaseUrl(url: string): string {
-            var colon = url.slice(url.indexOf(':')),
-                next = colon.slice(colon.search(/\w+/));
+            if (isUndefined((<any>window.location).origin)) {
+                (<any>window.location).origin = window.location.protocol + "//" + window.location.host;
+            }
 
-            return url.slice(0, url.indexOf('/', url.indexOf(next))) + '/';
+            return (<any>window.location).origin + '/';
         }
 
         /**
@@ -348,6 +349,10 @@
             // always make local urls relative to start page.
             if (url[0] === '/') {
                 url = url.slice(1);
+            }
+
+            if (!this.$Regex.fullUrlRegex.test(url)) {
+                url = this.$BrowserConfig.baseUrl + url;
             }
 
             element.setAttribute('href', url);

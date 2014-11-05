@@ -33,6 +33,7 @@ module plat.ui.controls {
          * Replaces the {@link plat.ui.controls.Anchor|Anchor's} element with a native anchor tag.
          */
         replaceWith = 'a';
+
         /**
          * @name element
          * @memberof plat.ui.controls.Anchor
@@ -45,6 +46,10 @@ module plat.ui.controls {
          * The control's anchor element.
          */
         element: HTMLAnchorElement;
+
+        $browserConfig: plat.web.IBrowserConfig = acquire(__BrowserConfig);
+        $browser: plat.web.IBrowser = acquire(__Browser);
+
         /**
          * @name initialize
          * @memberof plat.ui.controls.Anchor
@@ -58,13 +63,18 @@ module plat.ui.controls {
          */
         initialize(): void {
             var element = this.element;
-            if (isEmpty(element.href)) {
-                this.addEventListener(element, 'click', (ev: Event) => {
-                    if (isEmpty(element.href)) {
-                        ev.preventDefault();
-                    }
-                }, false);
-            }
+
+            this.addEventListener(element, 'click', (ev: Event) => {
+                var href = element.href;
+
+                ev.preventDefault();
+
+                if (isEmpty(href)) {
+                    return;
+                }
+
+                this.$browser.url(href);
+            }, false);
         }
     }
 
