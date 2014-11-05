@@ -208,10 +208,6 @@ module plat.web {
             }
 
             if ($compat.pushState) {
-                if ($config.routingType === $config.STATE) {
-                    //this.url($config.baseUrl, true);
-                }
-
                 $dom.addEventListener($window, __POPSTATE, changed, false);
             }
 
@@ -321,9 +317,12 @@ module plat.web {
             }
 
             this.__currentUrl = null;
-            var url = this.url();
+            var url = this.url(),
+                $config = Browser.config;
 
-            if (this.__lastUrl === url) {
+            if (this.__lastUrl === url ||
+                ($config.routingType === $config.STATE &&
+                url.indexOf(this.__lastUrl + '#') > -1)) {
                 return;
             }
 
