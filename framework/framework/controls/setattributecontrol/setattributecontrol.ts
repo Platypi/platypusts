@@ -436,7 +436,7 @@ module plat.controls {
             }
 
             var attributes = expression.split(';'),
-                elementStyle = this.element.style,
+                elementStyle = this.element.style || {},
                 length = attributes.length,
                 splitStyles: Array<string>,
                 styleType: string,
@@ -444,13 +444,18 @@ module plat.controls {
 
             for (var i = 0; i < length; ++i) {
                 splitStyles = attributes[i].split(':');
-                if (splitStyles.length === 2) {
-                    styleType = camelCase(splitStyles[0].trim());
-                    styleValue = splitStyles[1].trim();
 
-                    if (!isUndefined((<any>elementStyle)[styleType])) {
-                        (<any>elementStyle)[styleType] = styleValue;
-                    }
+                if (splitStyles.length < 2) {
+                    continue;
+                } else if (splitStyles.length > 2) {
+                    splitStyles = [splitStyles.shift(), splitStyles.join(':')];
+                }
+
+                styleType = camelCase(splitStyles[0].trim());
+                styleValue = splitStyles[1].trim();
+
+                if (!isUndefined((<any>elementStyle)[styleType])) {
+                    (<any>elementStyle)[styleType] = styleValue;
                 }
             }
         }
