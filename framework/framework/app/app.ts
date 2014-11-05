@@ -167,20 +167,25 @@ module plat {
             $LifecycleEventStatic.dispatch(__beforeLoad, App);
 
             if (isNull(node)) {
-                $compiler.compile(head);
                 body.setAttribute(__Hide, '');
-                $compiler.compile(body);
-                body.removeAttribute(__Hide);
+                postpone(() => {
+                    $compiler.compile(head);
+                    $compiler.compile(body);
+                    body.removeAttribute(__Hide);
+                });
                 return;
             }
 
             if (isFunction((<Element>node).setAttribute)) {
                 (<Element>node).setAttribute(__Hide, '');
-                $compiler.compile(node);
-                (<Element>node).removeAttribute(__Hide);
-            } else {
-                $compiler.compile(node);
+                postpone(() => {
+                    $compiler.compile(node);
+                    (<Element>node).removeAttribute(__Hide);
+                });
+                return;
             }
+
+            $compiler.compile(node);
         }
 
         /**
