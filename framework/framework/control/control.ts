@@ -459,7 +459,7 @@ module plat {
          * 
          * @description
          * The HTMLElement that represents this {@link plat.Control|Control}. Should only be modified by controls that implement 
-         * {plat.ui.ITemplateControl|ITemplateControl}. During initialize the control should populate this element with what it wishes
+         * {@link plat.ui.ITemplateControl|ITemplateControl}. During initialize the control should populate this element with what it wishes
          * to render to the user. 
          * 
          * @remarks
@@ -1348,7 +1348,7 @@ module plat {
          * 
          * @description
          * The HTMLElement that represents this {@link plat.Control|Control}. Should only be modified by controls that implement 
-         * {plat.ui.ITemplateControl|ITemplateControl}. During initialize the control should populate this element with what it wishes
+         * {@link plat.ui.ITemplateControl|ITemplateControl}. During initialize the control should populate this element with what it wishes
          * to render to the user. 
          * 
          * @remarks

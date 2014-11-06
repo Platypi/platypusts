@@ -290,7 +290,7 @@ module plat.ui {
 
             return templatePromise.then((result: DocumentFragment) => {
                 return this._bindTemplate(key, <DocumentFragment>result.cloneNode(true), relativeIdentifier, resources);
-            }, (error: any) => {
+            }).then(null, (error: any) => {
                 postpone(() => {
                     $exception = acquire(__ExceptionStatic);
                     $exception.fatal(error, $exception.BIND);

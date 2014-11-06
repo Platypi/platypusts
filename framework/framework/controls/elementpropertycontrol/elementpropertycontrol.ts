@@ -61,6 +61,40 @@ module plat.controls {
          * Used to set the element's href property.
          */
         property: string = 'href';
+
+        /**
+         * @name templateControl
+         * @memberof plat.controls.Href
+         * @kind property
+         * @access public
+         * @readonly
+         * 
+         * @type {string}
+         * 
+         * @description
+         * The TemplateControl for a plat-href is an {@link plat.ui.controls.Anchor|Anchor} control.
+         */
+        templateControl: ui.controls.Anchor;
+
+        /**
+         * @name setter
+         * @memberof plat.controls.Href
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Sets the href property, then calls the {@link plat.ui.controls.Anchor|Anchor} control to 
+         * normalize the href.
+         * 
+         * @returns {void}
+         */
+        setter() {
+            super.setter();
+
+            if (isFunction(this.templateControl.setHref)) {
+                this.templateControl.setHref();
+            }
+        }
     }
 
     /**

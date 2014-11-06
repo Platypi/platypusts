@@ -12,7 +12,6 @@ module plat.ui.controls {
      * @name Anchor
      * @memberof plat.ui.controls
      * @kind class
-     * @exported false
      * 
      * @extends {plat.ui.TemplateControl}
      * 
@@ -20,7 +19,7 @@ module plat.ui.controls {
      * A {@link plat.ui.TemplateControl|TemplateControl} for adding additonal 
      * functionality to a native HTML anchor tag.
      */
-    class Anchor extends TemplateControl {
+    export class Anchor extends TemplateControl {
         /**
          * @name replaceWith
          * @memberof plat.ui.controls.Anchor
@@ -47,7 +46,30 @@ module plat.ui.controls {
          */
         element: HTMLAnchorElement;
 
+        /**
+         * @name $browserConfig
+         * @memberof plat.ui.controls.Anchor
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.web.IBrowserConfig}
+         * 
+         * @description
+         * The {@link plat.web.IBrowserConfig|IBrowserConfig} injectable instance
+         */
         $browserConfig: plat.web.IBrowserConfig = acquire(__BrowserConfig);
+
+        /**
+         * @name $browser
+         * @memberof plat.ui.controls.Anchor
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.web.IBrowser}
+         * 
+         * @description
+         * The {@link plat.web.IBrowser|IBrowser} injectable instance
+         */
         $browser: plat.web.IBrowser = acquire(__Browser);
 
         /**
@@ -57,21 +79,19 @@ module plat.ui.controls {
          * @access public
          * 
          * @description
-         * Prevents default on the anchor tag if the href attribute is left empty.
+         * Prevents default on the anchor tag if the href attribute is left empty, also normalizes internal links.
          * 
          * @returns {void}
          */
         initialize(): void {
             var element = this.element,
                 $browserConfig = this.$browserConfig,
-                baseUrl = $browserConfig.baseUrl.slice(0, -1),
-                usingHash = $browserConfig.routingType === $browserConfig.HASH,
-                prefix = $browserConfig.hashPrefix;
+                baseUrl = $browserConfig.baseUrl.slice(0, -1);
 
             this.addEventListener(element, 'click', (ev: Event) => {
-                var href = element.href || '';
+                var href = this.getHref();
 
-                if (href.indexOf(baseUrl) === -1) {
+                if (isUndefined(href)) {
                     return;
                 }
 
@@ -81,12 +101,79 @@ module plat.ui.controls {
                     return;
                 }
 
-                if (usingHash && href.indexOf('#') === -1) {
-                    href = baseUrl + '/#' + prefix + href.replace(baseUrl, '');
-                }
-
                 this.$browser.url(href);
             }, false);
+        }
+
+        /**
+         * @name loaded
+         * @memberof plat.ui.controls.Anchor
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Calls to normalize the href for internal links.
+         * 
+         * @returns {void}
+         */
+        loaded(): void {
+            this.setHref();
+        }
+
+        /**
+         * @name setHref
+         * @memberof plat.ui.controls.Anchor
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Calls to normalizes the href for internal links and resets the href is necessary.
+         * 
+         * @returns {void}
+         */
+        setHref(): void {
+            var href = this.getHref();
+
+            if (!isEmpty(href)) {
+                this.element.href = href;
+            }
+        }
+
+        /**
+         * @name getHref
+         * @memberof plat.ui.controls.Anchor
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Normalizes the href for internal links, ignores external links.
+         * 
+         * @returns {string} The href, normalized.
+         */
+        getHref(): string {
+            var element = this.element,
+                href = element.href || '',
+                $browserConfig = this.$browserConfig,
+                baseUrl = $browserConfig.baseUrl.slice(0, -1),
+                routingType = $browserConfig.routingType,
+                usingHash = routingType !== $browserConfig.STATE,
+                prefix = $browserConfig.hashPrefix;
+
+            if (href.indexOf(baseUrl) === -1) {
+                return;
+            }
+
+            if (isEmpty(href)) {
+                return href;
+            }
+
+            if (usingHash && href.indexOf('#') === -1) {
+                href = baseUrl + '/#' + prefix + href.replace(baseUrl, '');
+            } else if (!usingHash && href.indexOf(baseUrl + '/#') > -1) {
+                href = baseUrl + href.replace(baseUrl, '').slice(2 + prefix.length);
+            }
+
+            return href;
         }
     }
 

@@ -696,6 +696,9 @@ module plat {
             for (var i = 0; i < length; ++i) {
                 (<any>error)[properties[i]] = message[properties[i]];
             }
+
+            (<any>error).stack = message.stack;
+            (<any>error).code = message.code;
         }
 
         var ErrorEvent: events.IErrorEventStatic = acquire(__ErrorEventStatic);
@@ -703,6 +706,10 @@ module plat {
         ErrorEvent.dispatch(__error, Exception, error);
 
         if (isFatal) {
+            if (message instanceof Error) {
+                throw message;
+            }
+
             throw error;
         }
     }
