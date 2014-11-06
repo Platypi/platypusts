@@ -104,7 +104,7 @@
 
                 var parent = this._elements[animatingParentId];
                 if (isPromise(parent.promise)) {
-                    return animationInstance.instantiate(element, options).then(() => {
+                    return animationPromise.then(() => {
                         return () => {
                             return parent.promise;
                         };
