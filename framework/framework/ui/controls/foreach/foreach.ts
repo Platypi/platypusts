@@ -219,18 +219,16 @@ module plat.ui.controls {
          * 
          * @returns {void}
          */
-        loaded(): async.IThenable<void> {
+        loaded(): void {
             var context = this.context;
 
             if (!isArray(context)) {
                 return;
             }
 
-            var promise = this._addItems(context.length, 0);
+            this._addItems(context.length, 0);
 
             this._setListener();
-
-            return promise;
         }
 
         /**
