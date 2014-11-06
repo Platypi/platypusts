@@ -95,14 +95,14 @@ module plat.ui.animations {
                 computedStyle[<any>(animationId + 'PlayState')] === 'paused') {
                 removeClass(element, className);
                 addClass(element, className + __END_SUFFIX);
-                this.done();
+                this.end();
                 return;
             }
 
             this.animationEnd(() => {
                 removeClass(element, className);
                 addClass(element, className + __END_SUFFIX);
-                this.done();
+                this.end();
             });
         }
 

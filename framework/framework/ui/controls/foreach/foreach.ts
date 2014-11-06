@@ -119,12 +119,12 @@ module plat.ui.controls {
          * @kind property
          * @access private
          * 
-         * @type {Array<plat.ui.animations.IAnimationThenable<void>>}
+         * @type {Array<plat.ui.animations.IAnimationThenable<any>>}
          * 
          * @description
          * An array to aggregate all current animation promises.
          */
-        private __currentAnimations: Array<animations.IAnimationThenable<void>> = [];
+        private __currentAnimations: Array<animations.IAnimationThenable<any>> = [];
         /**
          * @name __resolveFn
          * @memberof plat.ui.controls.ForEach
@@ -656,7 +656,7 @@ module plat.ui.controls {
                 return this.__handleAnimation(startNode, endNode, key);
             }
 
-            var animationPromises: Array<animations.IAnimationThenable<animations.IParentAnimationFn>> = [];
+            var animationPromises: Array<animations.IAnimatingThenable> = [];
             while (length-- > 0) {
                 animationPromises.push(currentAnimations[length].cancel());
             }

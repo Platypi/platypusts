@@ -104,7 +104,7 @@
         start(): void { }
 
         /**
-         * @name done
+         * @name end
          * @memberof plat.ui.animations.BaseAnimation
          * @kind function
          * @access public
@@ -114,7 +114,7 @@
          * 
          * @returns {void}
          */
-        done(): void {
+        end(): void {
             if (isFunction(this._resolve)) {
                 this._resolve();
                 this._resolve = null;
@@ -166,7 +166,7 @@
          * @returns {plat.ui.animations.IAnimationPromise} The promise that will resolve when the 
          * animation is complete and end() is called.
          */
-        _init(element: Element, options?: any): IAnimationPromise {
+        _init(element: Element, options?: any): IAnimatingThenable {
             this.element = <HTMLElement>element;
             this.options = options;
 
@@ -258,7 +258,7 @@
         start(): void;
 
         /**
-         * @name done
+         * @name end
          * @memberof plat.ui.animations.IBaseAnimation
          * @kind function
          * @access public
@@ -268,7 +268,7 @@
          * 
          * @returns {void}
          */
-        done(): void;
+        end(): void;
 
         /**
          * @name cancel

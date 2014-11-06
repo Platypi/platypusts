@@ -97,7 +97,7 @@
          * @description
          * A promise used for disposing the end state of the previous animation prior to starting a new one.
          */
-        _animationPromise: animations.IAnimationThenable<animations.IParentAnimationFn>;
+        _animationPromise: animations.IAnimationThenable<animations.IGetAnimatingThenable>;
 
         /**
          * @name constructor
@@ -252,7 +252,7 @@
          * @returns {plat.animations.IAnimationThenable<plat.ui.animations.IParentAnimationFn>} A promise that 
          * resolves when the current view is done animating away.
          */
-        navigateFrom(fromControl: IBaseViewControl): animations.IAnimationThenable<animations.IParentAnimationFn> {
+        navigateFrom(fromControl: IBaseViewControl): animations.IAnimationThenable<animations.IGetAnimatingThenable> {
             if (isNull(fromControl) || !isFunction(fromControl.navigatingFrom)) {
                 return this.$Animator.resolve();
             }
@@ -349,7 +349,7 @@
          * @returns {plat.animations.IAnimationThenable<plat.ui.animations.IParentAnimationFn>} A promise that resolves 
          * when the current view is done animating away.
          */
-        navigateFrom(fromControl: IBaseViewControl): animations.IAnimationThenable<animations.IParentAnimationFn>;
+        navigateFrom(fromControl: IBaseViewControl): animations.IAnimationThenable<animations.IGetAnimatingThenable>;
 
         /**
          * @name backButtonPressed
