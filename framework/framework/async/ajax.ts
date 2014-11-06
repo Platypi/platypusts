@@ -66,10 +66,10 @@ module plat.async {
          * @kind property
          * @access public
          * 
-         * @type {web.IBrowser}
+         * @type {plat.web.IBrowser}
          * 
          * @description
-         * The plat.IBrowser injectable instance
+         * The plat.web.IBrowser injectable instance
          */
         $Browser: web.IBrowser = acquire(__Browser);
 

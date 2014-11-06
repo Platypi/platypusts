@@ -124,6 +124,19 @@
          * Determines if a character is correlated with a shifted key code.
          */
         shiftedKeyRegex = /[A-Z!@#$%^&*()_+}{":?><|~]/;
+
+        /**
+         * @name fullUrlRegex
+         * @memberof plat.expressions.Regex
+         * @kind property
+         * @access public
+         * 
+         * @type {RegExp}
+         * 
+         * @description
+         * Determines if a url is relative or absolute.
+         */
+        fullUrlRegex = /^(?:[a-z]+:)?\/\//i;
         
         /**
          * @name newLineRegex
@@ -598,5 +611,18 @@
          * Determines if a character is correlated with a shifted key code.
          */
         shiftedKeyRegex: RegExp;
+
+        /**
+         * @name fullUrlRegex
+         * @memberof plat.expressions.IRegex
+         * @kind property
+         * @access public
+         * 
+         * @type {RegExp}
+         * 
+         * @description
+         * Determines if a url is relative or absolute.
+         */
+        fullUrlRegex: RegExp;
     }
 }

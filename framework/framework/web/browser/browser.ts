@@ -208,10 +208,6 @@ module plat.web {
             }
 
             if ($compat.pushState) {
-                if ($config.routingType === $config.STATE) {
-                    this.url($config.baseUrl, true);
-                }
-
                 $dom.addEventListener($window, __POPSTATE, changed, false);
             }
 
@@ -239,9 +235,9 @@ module plat.web {
             var location = this.$Window.location;
 
             if (isString(url) && this.__lastUrl !== url) {
-                this.__lastUrl = url;
                 this._setUrl(url, replace);
             }
+
             return this.__currentUrl || location.href;
         }
 
@@ -321,9 +317,12 @@ module plat.web {
             }
 
             this.__currentUrl = null;
-            var url = this.url();
+            var url = this.url(),
+                $config = Browser.config;
 
-            if (this.__lastUrl === url) {
+            if (this.__lastUrl === url ||
+                ($config.routingType === $config.STATE &&
+                url.indexOf(this.__lastUrl + '#') > -1)) {
                 return;
             }
 
@@ -355,6 +354,12 @@ module plat.web {
         _setUrl(url: string, replace?: boolean): void {
             url = this._formatUrl(url);
             if (this.$Compat.pushState) {
+
+                // make sure URL is absolute
+                if (!this.$Regex.fullUrlRegex.test(url) && url[0] !== '/') {
+                    url = '/' + url;
+                }
+
                 if (replace) {
                     history.replaceState(null, '', url);
                 } else {
