@@ -167,9 +167,11 @@ module plat.ui.controls {
                 return href;
             }
 
+            var urlWithHash = baseUrl + '/#';
+
             if (usingHash && href.indexOf('#') === -1) {
-                href = baseUrl + '/#' + prefix + href.replace(baseUrl, '');
-            } else if (!usingHash && href.indexOf(baseUrl + '/#') > -1) {
+                href = urlWithHash + prefix + href.replace(baseUrl, '');
+            } else if (!usingHash && href.indexOf(urlWithHash) > -1 && href !== urlWithHash) {
                 href = baseUrl + href.replace(baseUrl, '').slice(2 + prefix.length);
             }
 
