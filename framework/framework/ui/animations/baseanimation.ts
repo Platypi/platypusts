@@ -151,14 +151,14 @@
         dispose(): void { }
 
         /**
-         * @name _init
+         * @name instantiate
          * @memberof plat.ui.animations.BaseAnimation
          * @kind function
-         * @access protected
+         * @access public
          * 
          * @description
-         * Initializes the element and key properties of this animation and passes in the function 
-         * to resolve when finished.
+         * Initializes the element and key properties of this animation and grabs a 
+         * reference to its resolve function.
          * 
          * @param {Element} element The element on which the animation will occur.
          * @param {any} options Specified options for the animation.
@@ -166,7 +166,7 @@
          * @returns {plat.ui.animations.IAnimationPromise} The promise that will resolve when the 
          * animation is complete and end() is called.
          */
-        _init(element: Element, options?: any): IAnimatingThenable {
+        instantiate(element: Element, options?: any): IAnimatingThenable {
             this.element = <HTMLElement>element;
             this.options = options;
 
@@ -298,5 +298,22 @@
          * @returns {void}
          */
         dispose(): void;
+
+        /**
+         * @name instantiate
+         * @memberof plat.ui.animations.BaseAnimation
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Initializes the element and key properties of this animation.
+         * 
+         * @param {Element} element The element on which the animation will occur.
+         * @param {any} options Specified options for the animation.
+         * 
+         * @returns {plat.ui.animations.IAnimationPromise} The promise that will resolve when the 
+         * animation is complete and end() is called.
+         */
+        instantiate(element: Element, options?: any): IAnimatingThenable;
     }
 }

@@ -92,9 +92,11 @@
                 animationInstance = animation.inject();
             }
 
-            var animationPromise: IAnimationThenable<any> = (<BaseAnimation>animationInstance)._init(element, options),
-                animatingParentId = this.__parentIsAnimating(element),
+            var animatingParentId = this.__parentIsAnimating(element),
                 id = this.__setAnimationId(element, animationInstance),
+                // instantiate needs to be called after __setAnimationId in the case that 
+                // the same element is animating while in an animation
+                animationPromise: IAnimationThenable<any> = animationInstance.instantiate(element, options),
                 animatedElement = this._elements[id];
 
             if (!isNull(animatingParentId)) {
@@ -102,7 +104,7 @@
 
                 var parent = this._elements[animatingParentId];
                 if (isPromise(parent.promise)) {
-                    return animationPromise.then(() => {
+                    return animationInstance.instantiate(element, options).then(() => {
                         return () => {
                             return parent.promise;
                         };
@@ -220,10 +222,10 @@
                 removeListener = (cancel?: boolean, reanimating?: boolean) => {
                     if (cancel === true) {
                         animationInstance.cancel();
+                        animationInstance.end();
                         if (reanimating === true) {
                             return;
                         }
-                        animationInstance.end();
                     }
 
                     removeClass(<HTMLElement>element, __Animating);
