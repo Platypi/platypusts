@@ -55,6 +55,20 @@ module plat {
         static $EventManagerStatic: events.IEventManagerStatic;
 
         /**
+         * @name $Promise
+         * @memberof plat.Control
+         * @kind property
+         * @access public
+         * @static
+         * 
+         * @type {plat.async.IPromise}
+         * 
+         * @description
+         * Reference to the {@link plat.async.IPromise|IPromise} injectable.
+         */
+        static $Promise: async.IPromise;
+
+        /**
          * @name __eventListeners
          * @memberof plat.Control
          * @kind property
@@ -113,9 +127,9 @@ module plat {
          * 
          * @param {plat.IControl} control The control to load.
          * 
-         * @returns {void}
+         * @returns {plat.async.IThenable<void>} A Promise that resolves when the control has loaded.
          */
-        static load(control: IControl): void {
+        static load(control: IControl): async.IThenable<void> {
             if (isNull(control)) {
                 return;
             }
@@ -138,8 +152,10 @@ module plat {
             }
 
             if (isFunction(control.loaded)) {
-                control.loaded();
+                return Control.$Promise.cast(control.loaded());
             }
+
+            return Control.$Promise.resolve(null);
         }
 
         /**
@@ -1129,17 +1145,20 @@ module plat {
     export function IControlFactory(
         $Parser?: expressions.IParser,
         $ContextManagerStatic?: observable.IContextManagerStatic,
-        $EventManagerStatic?: events.IEventManagerStatic): IControlFactory {
+        $EventManagerStatic?: events.IEventManagerStatic,
+        $Promise?: async.IPromise): IControlFactory {
             Control.$Parser = $Parser;
             Control.$ContextManagerStatic = $ContextManagerStatic;
             Control.$EventManagerStatic = $EventManagerStatic;
+            Control.$Promise = $Promise;
             return Control;
     }
 
     register.injectable(__ControlFactory, IControlFactory, [
         __Parser,
         __ContextManagerStatic,
-        __EventManagerStatic
+        __EventManagerStatic,
+        __Promise
     ], __FACTORY);
 
     /**
@@ -1180,9 +1199,9 @@ module plat {
          * 
          * @param {plat.IControl} control The control to load.
          * 
-         * @returns {void}
+         * @returns {plat.async.IThenable<void>} A promise that resolves when the control has loaded.
          */
-        load(control: IControl): void;
+        load(control: IControl): async.IThenable<void>;
 
         /**
          * @name dispose
@@ -1400,9 +1419,9 @@ module plat {
          * meaning all of its children have also been loaded and initial DOM has been created and populated. It is now 
          * safe for all controls to access, observe, and modify the context property.
          * 
-         * @returns {void}
+         * @returns {any} Can return a Promise, which will delay loading further controls until resolved.
          */
-        loaded? (): void;
+        loaded? (): any;
 
         /**
          * @name getControlsByName

@@ -1153,7 +1153,7 @@ module plat.processing {
             }
 
             return promise.then(() => {
-                this._loadControls(<Array<IAttributeControl>>controls, this.getUiControl());
+                return this._loadControls(<Array<IAttributeControl>>controls, this.getUiControl());
             }).catch((error: any) => {
                 postpone(() => {
                     var $exception: IExceptionStatic = acquire(__ExceptionStatic);
@@ -1335,11 +1335,12 @@ module plat.processing {
          * 
          * @returns {void}
          */
-        _loadControls(controls: Array<IAttributeControl>, templateControl: ui.ITemplateControl): void {
+        _loadControls(controls: Array<IAttributeControl>, templateControl: ui.ITemplateControl): async.IThenable<void> {
             var length = controls.length,
                 control: IAttributeControl,
                 load = this.$ControlFactory.load,
                 templateControlLoaded = isNull(templateControl),
+                promise: async.IThenable<void>,
                 templateControlPriority: number,
                 i: number;
 
@@ -1358,15 +1359,17 @@ module plat.processing {
 
                 if (!templateControlLoaded && templateControlPriority > control.priority) {
                     templateControlLoaded = true;
-                    load(templateControl);
+                    promise = load(templateControl);
                 }
 
                 load(control);
             }
 
             if (!templateControlLoaded) {
-                load(templateControl);
+                promise = load(templateControl);
             }
+
+            return promise;
         }
         
         /**
