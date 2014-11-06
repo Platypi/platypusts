@@ -1631,7 +1631,8 @@
          */
         private __updatePointers(ev: IPointerEvent, remove: boolean): void {
             var id = ev.pointerId,
-                pointer = this.__pointerHash[id],
+                pointerHash = this.__pointerHash,
+                pointer = pointerHash[id],
                 index: number;
 
             if (remove) {
@@ -1643,6 +1644,11 @@
                     deleteProperty(this.__pointerHash, id);
                 }
             } else {
+                if (id === 1 && !isEmpty(pointerHash)) {
+                    // this is a mouse movement while mid touch
+                    return;
+                }
+
                 ev.identifier = ev.pointerId;
                 if (isUndefined(pointer) || (index = this.__pointerEvents.indexOf(pointer)) < 0) {
                     this.__pointerEvents.push(ev);
@@ -1650,7 +1656,7 @@
                     this.__pointerEvents.splice(index, 1, ev);
                 }
 
-                this.__pointerHash[id] = ev;
+                pointerHash[id] = ev;
             }
         }
 
