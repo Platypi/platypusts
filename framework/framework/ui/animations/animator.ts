@@ -62,10 +62,9 @@
          * @param {string} key The identifier specifying the type of animation.
          * @param {any} options? Specified options for the animation.
          * 
-         * @returns {plat.ui.animations.IAnimationThenable<plat.ui.animations.IParentAnimationFn>} 
-         * A promise that resolves when the animation is finished.
+         * @returns {plat.ui.animations.IAnimatingThenable} A promise that resolves when the animation is finished.
          */
-        animate(element: Element, key: string, options?: any): IAnimationThenable<IParentAnimationFn> {
+        animate(element: Element, key: string, options?: any): IAnimatingThenable {
             if (!isNode(element) || element.nodeType !== Node.ELEMENT_NODE) {
                 return this.resolve();
             }
@@ -142,10 +141,10 @@
          * @description
          * Immediately resolves an empty {@link plat.ui.animations.AnimationPromise|AnimationPromise}.
          * 
-         * @returns {plat.ui.animations.IAnimationThenable<plat.ui.animations.IParentAnimationFn>} The immediately resolved 
+         * @returns {plat.ui.animations.IAnimatingThenable} The immediately resolved 
          * {@link plat.ui.animations.AnimationPromise|AnimationPromise}.
          */
-        resolve(): IAnimationThenable<IParentAnimationFn> {
+        resolve(): IAnimatingThenable {
             var animationPromise = new AnimationPromise((resolve) => {
                 resolve(() => {
                     return animationPromise;
@@ -224,7 +223,7 @@
                         if (reanimating === true) {
                             return;
                         }
-                        animationInstance.done();
+                        animationInstance.end();
                     }
 
                     removeClass(<HTMLElement>element, __Animating);
@@ -316,10 +315,9 @@
          * @param {string} key The identifier specifying the type of animation.
          * @param {any} options Specified options for the animation.
          * 
-         * @returns {plat.ui.animations.IAnimationThenable<plat.ui.animations.IParentAnimationFn>} 
-         * A promise that resolves when the animation is finished.
+         * @returns {plat.ui.animations.IAnimatingThenable} A promise that resolves when the animation is finished.
          */
-        animate(element: Element, key: string, options?: any): IAnimationThenable<IParentAnimationFn>;
+        animate(element: Element, key: string, options?: any): IAnimatingThenable;
 
         /**
          * @name resolve
@@ -330,10 +328,10 @@
          * @description
          * Immediately resolves an empty {@link plat.ui.animations.AnimationPromise|AnimationPromise}.
          * 
-         * @returns {plat.ui.animations.IAnimationThenable<plat.ui.animations.IParentAnimationFn>} The immediately resolved 
+         * @returns {plat.ui.animations.IAnimatingThenable} The immediately resolved 
          * {@link plat.ui.animations.AnimationPromise|AnimationPromise}.
          */
-        resolve(): IAnimationThenable<IParentAnimationFn>;
+        resolve(): IAnimatingThenable;
     }
 
     /**
@@ -377,22 +375,22 @@
     }
 
     /**
-     * @name IParentAnimationFn
+     * @name IGetAnimatingThenable
      * @memberof plat.ui.animations
      * @kind interface
      * 
      * @description
-     * Describes a function used to obtain an animating parent element's animation promise.
+     * Describes a function used to obtain an animating parent element's animation thenable.
      */
-    export interface IParentAnimationFn {
+    export interface IGetAnimatingThenable {
         /**
-         * @memberof plat.ui.animations.IParentAnimationFn
+         * @memberof plat.ui.animations.IGetAnimatingThenable
          * @kind function
          * @access public
          * @static
          * 
          * @description
-         * The method signature for {@link plat.ui.animations.IParentAnimationFn|IParentAnimationFn}.
+         * The method signature for {@link plat.ui.animations.IGetAnimatingThenable|IGetAnimatingThenable}.
          * 
          * @returns {plat.ui.animations.IAnimationThenable<void>}
          */
@@ -405,12 +403,15 @@
      * @kind class
      * 
      * @extends {plat.async.Promise<plat.ui.animations.IParentAnimationFn>}
-     * @implements {plat.ui.animations.IAnimationPromise}
+     * @implements {plat.ui.animations.IAnimatingThenable}
      * 
      * @description
-     * Describes a type of {@link plat.async.Promise|Promise} that can be optionally cancelled.
+     * Describes a type of {@link plat.async.Promise|Promise} that can be optionally cancelled and/or disposed of. 
+     * Further, in the case where it may have a parent that is animating (which will cause it to immediately cancel and fulfill 
+     * itself, it resolves with a {@link plat.ui.animations.IGetAnimatingThenable|IGetAnimatingThenable} for acccessing 
+     * the {@link plat.ui.animations.IAnimationThenable|IAnimationThenable} of the animating parent element.
      */
-    export class AnimationPromise extends async.Promise<IParentAnimationFn> implements IAnimationPromise {
+    export class AnimationPromise extends async.Promise<IGetAnimatingThenable> implements IAnimatingThenable {
         /**
          * @name __animationInstance
          * @memberof plat.ui.animations.AnimationPromise
@@ -439,7 +440,7 @@
          * 
          * @returns {plat.ui.animations.AnimationPromise}
          */
-        constructor(resolveFunction: (resolve: (value?: IParentAnimationFn) => any) => void);
+        constructor(resolveFunction: (resolve: (value?: IGetAnimatingThenable) => any) => void);
         /**
          * @name constructor
          * @memberof plat.ui.animations.AnimationPromise
@@ -456,8 +457,8 @@
          * 
          * @returns {plat.ui.animations.AnimationPromise}
          */
-        constructor(resolveFunction: (resolve: (value?: IParentAnimationFn) => any) => void, promise: any);
-        constructor(resolveFunction: (resolve: (value?: IParentAnimationFn) => any) => void, promise?: any) {
+        constructor(resolveFunction: (resolve: (value?: IGetAnimatingThenable) => any) => void, promise: any);
+        constructor(resolveFunction: (resolve: (value?: IGetAnimatingThenable) => any) => void, promise?: any) {
             super(resolveFunction);
             if (!isNull(promise)) {
                 this.__animationInstance = promise.__animationInstance;
@@ -494,14 +495,14 @@
          * 
          * @returns {plat.ui.animations.AnimationPromise} This promise instance.
          */
-        cancel(): IAnimationPromise {
+        cancel(): IAnimatingThenable {
             var animationInstance = this.__animationInstance;
             if (!isNull(animationInstance)) {
                 if (isFunction(animationInstance.cancel)) {
                     animationInstance.cancel();
                 }
-                if (isFunction(animationInstance.done)) {
-                    animationInstance.done();
+                if (isFunction(animationInstance.end)) {
+                    animationInstance.end();
                 }
             }
 
@@ -520,7 +521,7 @@
          * 
          * @returns {plat.ui.animations.AnimationPromise} This promise instance.
          */
-        dispose(): IAnimationPromise {
+        dispose(): IAnimatingThenable {
             var animationInstance = this.__animationInstance;
             if (!isNull(animationInstance)) {
                 if (isFunction(animationInstance.dispose)) {
@@ -549,7 +550,7 @@
          * 
          * @returns {plat.ui.animations.IAnimationThenable<U>}
          */
-        then<U>(onFulfilled: (success: IParentAnimationFn) => U): IAnimationThenable<U>;
+        then<U>(onFulfilled: (success: IGetAnimatingThenable) => U): IAnimationThenable<U>;
         /**
          * @name then
          * @memberof plat.ui.animations.AnimationPromise
@@ -569,7 +570,7 @@
          * 
          * @returns {plat.ui.animations.IAnimationThenable<U>}
          */
-        then<U>(onFulfilled: (success: IParentAnimationFn) => IAnimationThenable<U>): IAnimationThenable<U>;
+        then<U>(onFulfilled: (success: IGetAnimatingThenable) => IAnimationThenable<U>): IAnimationThenable<U>;
         /**
          * @name then
          * @memberof plat.ui.animations.AnimationPromise
@@ -589,8 +590,8 @@
          * 
          * @returns {plat.ui.animations.IAnimationThenable<U>}
          */
-        then<U>(onFulfilled: (success: IParentAnimationFn) => async.IThenable<U>): IAnimationThenable<U>;
-        then<U>(onFulfilled: (success: IParentAnimationFn) => any): IAnimationThenable<U> {
+        then<U>(onFulfilled: (success: IGetAnimatingThenable) => async.IThenable<U>): IAnimationThenable<U>;
+        then<U>(onFulfilled: (success: IGetAnimatingThenable) => any): IAnimationThenable<U> {
             return <IAnimationThenable<U>><any>super.then<U>(onFulfilled);
         }
 
@@ -650,6 +651,21 @@
      */
     export interface IAnimationThenable<R> extends async.IThenable<R> {
         /**
+         * @name initialize
+         * @memberof plat.ui.animations.IAnimationThenable
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Initializes the promise, providing it with the {@link plat.ui.animations.IBaseAnimation} instance.
+         * 
+         * @param {plat.ui.animations.IBaseAnimation} instance The animation instance for this promise.
+         * 
+         * @returns {void}
+         */
+        initialize? (instance: IBaseAnimation): void;
+
+        /**
          * @name cancel
          * @memberof plat.ui.animations.IAnimationThenable
          * @kind function
@@ -660,7 +676,7 @@
          * 
          * @returns {plat.ui.animations.AnimationPromise} This promise instance.
          */
-        cancel(): IAnimationPromise;
+        cancel(): IAnimationThenable<R>;
 
         /**
          * @name dispose
@@ -674,7 +690,7 @@
          * 
          * @returns {plat.ui.animations.AnimationPromise} This promise instance.
          */
-        dispose(): IAnimationPromise;
+        dispose(): IAnimationThenable<R>;
 
         /**
          * @name then
@@ -797,117 +813,18 @@
     }
 
     /**
-     * @name IAnimationPromise
+     * @name IAnimatingThenable
      * @memberof plat.ui.animations
      * @kind interface
      * 
-     * @extends {plat.ui.animations.IAnimationThenable<void>}
+     * @extends {plat.ui.animations.IAnimationThenable<plat.ui.animations.IGetAnimatingThenable>}
      * 
      * @description
-     * Describes a type of {@link plat.async.IPromise|IPromise} that fulfills when an animation is 
-     * finished and can be optionally cancelled.
+     * Describes a type of {@link plat.async.IPromise|IPromise} that resolves when an animation is 
+     * finished. It can be optionally cancelled and/or disposed of. Further, in the case where it may have 
+     * a parent that is animating (which will cause it to immediately cancel and fulfill itself, it resolves  
+     * with a {@link plat.ui.animations.IGetAnimatingThenable|IGetAnimatingThenable} for acccessing 
+     * the {@link plat.ui.animations.IAnimationThenable|IAnimationThenable} of the animating parent element.
      */
-    export interface IAnimationPromise extends IAnimationThenable<IParentAnimationFn> {
-        /**
-         * @name initialize
-         * @memberof plat.ui.animations.IAnimationPromise
-         * @kind function
-         * @access public
-         * 
-         * @description
-         * Initializes the promise, providing it with the {@link plat.ui.animations.IBaseAnimation} instance.
-         * 
-         * @param {plat.ui.animations.IBaseAnimation} instance The animation instance for this promise.
-         * 
-         * @returns {void}
-         */
-        initialize(instance: IBaseAnimation): void;
-
-        /**
-         * @name cancel
-         * @memberof plat.ui.animations.IAnimationPromise
-         * @kind function
-         * @access public
-         * 
-         * @description
-         * A method to cancel the associated animation.
-         * 
-         * @returns {plat.ui.animations.AnimationPromise} This promise instance.
-         */
-        cancel(): IAnimationPromise;
-
-        /**
-         * @name dispose
-         * @memberof plat.ui.animations.IAnimationPromise
-         * @kind function
-         * @access public
-         * 
-         * @description
-         * A method to dispose the associated animation in order to remove any end states 
-         * as determined by the animation class itself.
-         * 
-         * @returns {plat.ui.animations.AnimationPromise} This promise instance.
-         */
-        dispose(): IAnimationPromise;
-
-        /**
-         * @name then
-         * @memberof plat.ui.animations.IAnimationPromise
-         * @kind function
-         * @access public
-         * @variation 0
-         * 
-         * @description
-         * Takes in two methods, called when/if the promise fulfills.
-         * 
-         * @typeparam {any} U The type of the object returned from the fulfill callbacks, which will be carried to the 
-         * next then method in the promise chain.
-         * 
-         * @param {(success: plat.ui.animations.IParentAnimationFn) => U} onFulfilled A method called when/if the promise fulfills. 
-         * If undefined the next onFulfilled method in the promise chain will be called.
-         * 
-         * @returns {plat.ui.animations.IAnimationThenable<U>}
-         */
-        then<U>(onFulfilled: (success: IParentAnimationFn) => U): IAnimationThenable<U>;
-        /**
-         * @name then
-         * @memberof plat.ui.animations.AnimationPromise
-         * @kind function
-         * @access public
-         * @variation 1
-         * 
-         * @description
-         * Takes in two methods, called when/if the promise fulfills.
-         * 
-         * @typeparam {any} U The type of the object returned from the fulfill callbacks, which will be carried to the 
-         * next then method in the promise chain.
-         * 
-         * @param {(success: plat.ui.animations.IParentAnimationFn) => plat.ui.animations.IAnimationThenable<U>} onFulfilled 
-         * A method called when/if the promise fulfills. 
-         * If undefined the next onFulfilled method in the promise chain will be called.
-         * 
-         * @returns {plat.ui.animations.IAnimationThenable<U>}
-         */
-        then<U>(onFulfilled: (success: IParentAnimationFn) => IAnimationThenable<U>): IAnimationThenable<U>;
-        /**
-         * @name then
-         * @memberof plat.ui.animations.AnimationPromise
-         * @kind function
-         * @access public
-         * @variation 2
-         * 
-         * @description
-         * Takes in two methods, called when/if the promise fulfills.
-         * 
-         * @typeparam {any} U The type of the object returned from the fulfill callbacks, which will be carried to the 
-         * next then method in the promise chain.
-         * 
-         * @param {(success: plat.ui.animations.IParentAnimationFn) => plat.async.IThenable<U>} onFulfilled 
-         * A method called when/if the promise fulfills. 
-         * If undefined the next onFulfilled method in the promise chain will be called.
-         * 
-         * @returns {plat.ui.animations.IAnimationThenable<U>}
-         */
-        then<U>(onFulfilled: (success: IParentAnimationFn) => async.IThenable<U>): IAnimationThenable<U>;
-    }
+    export interface IAnimatingThenable extends IAnimationThenable<IGetAnimatingThenable> { }
 }

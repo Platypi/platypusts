@@ -56,7 +56,7 @@ module plat.navigation {
          * Contains the navigation history stack for the associated {@link plat.ui.controls.Viewport|Viewport}.
          */
         history: Array<INavigationState> = [];
-        
+
         /**
          * @name currentState
          * @memberof plat.navigation.Navigator
@@ -119,7 +119,7 @@ module plat.navigation {
 
             this.viewport = viewport;
         }
-        
+
         /**
          * @name navigate
          * @memberof plat.navigation.Navigator
@@ -253,11 +253,11 @@ module plat.navigation {
 
                     baseport.navigateTo(event);
                 }).catch((error) => {
-                    postpone(() => {
-                        var Exception: IExceptionStatic = acquire(__ExceptionStatic);
-                        Exception.fatal(error, Exception.NAVIGATION);
+                        postpone(() => {
+                            var Exception: IExceptionStatic = acquire(__ExceptionStatic);
+                            Exception.fatal(error, Exception.NAVIGATION);
+                        });
                     });
-                });
 
                 return;
             }
@@ -307,7 +307,7 @@ module plat.navigation {
 
             if (isString(Constructor)) {
                 return viewControl.type === Constructor;
-        }
+            }
 
             return viewControl.constructor === Constructor;
         }
@@ -380,7 +380,7 @@ module plat.navigation {
                 if (inHistory) {
                     this.$BaseViewControlFactory.detach(viewControl);
                 } else {
-                this.$BaseViewControlFactory.dispose(viewControl);
+                    this.$BaseViewControlFactory.dispose(viewControl);
                 }
 
                 var last = this._goBackLength(length);
@@ -398,13 +398,13 @@ module plat.navigation {
 
                 baseport.navigateTo(event);
             }).catch((error) => {
-                postpone(() => {
-                    $exception = acquire(__ExceptionStatic);
-                    $exception.fatal(error, $exception.NAVIGATION);
+                    postpone(() => {
+                        $exception = acquire(__ExceptionStatic);
+                        $exception.fatal(error, $exception.NAVIGATION);
+                    });
                 });
-            });
         }
-        
+
         /**
          * @name backButtonPressed
          * @memberof plat.navigation.Navigator
@@ -436,7 +436,7 @@ module plat.navigation {
         canGoBack(): boolean {
             return this.history.length > 0;
         }
-        
+
         /**
          * @name clearHistory
          * @memberof plat.navigation.Navigator
@@ -501,17 +501,18 @@ module plat.navigation {
         _findInHistory(Constructor: string): number;
         _findInHistory(Constructor: any): number {
             var history = this.history,
-                index = -1;
+                index = -1,
+                i: number;
 
             if (isFunction(Constructor)) {
-                for (var i = (history.length - 1); i >= 0; --i) {
+                for (i = (history.length - 1); i >= 0; --i) {
                     if (history[i].control.constructor === Constructor) {
                         index = i;
                         break;
                     }
                 }
             } else if (isString(Constructor)) {
-                for (var i = (history.length - 1); i >= 0; --i) {
+                for (i = (history.length - 1); i >= 0; --i) {
                     if (history[i].control.type === Constructor) {
                         index = i;
                         break;
@@ -521,7 +522,7 @@ module plat.navigation {
 
             return index;
         }
-        
+
         /**
          * @name _goBackLength
          * @memberof plat.navigation.Navigator
@@ -570,7 +571,7 @@ module plat.navigation {
     }
 
     register.injectable(__NavigatorInstance, INavigatorInstance, null, __INSTANCE);
-    
+
     /**
      * @name INavigatorInstance
      * @memberof plat.navigation
@@ -595,7 +596,7 @@ module plat.navigation {
          * Contains the navigation history stack for the associated {@link plat.ui.controls.Viewport|Viewport}.
          */
         history: Array<INavigationState>;
-        
+
         /**
          * @name currentState
          * @memberof plat.navigation.INavigator
@@ -624,7 +625,7 @@ module plat.navigation {
          * facilitate navigation.
          */
         viewport: ui.controls.IBaseport;
-        
+
         /**
          * @name navigate
          * @memberof plat.navigation.INavigatorInstance
@@ -686,7 +687,7 @@ module plat.navigation {
          * @returns {void}
          */
         navigate(injector: dependency.IInjector<ui.IBaseViewControl>, options?: INavigationOptions): void;
-        
+
         /**
          * @name goBack
          * @memberof plat.navigation.INavigatorInstance
@@ -705,7 +706,7 @@ module plat.navigation {
          * @returns {void}
          */
         goBack(options?: IBackNavigationOptions): void;
-        
+
         /**
          * @name goBack
          * @memberof plat.navigation.INavigatorInstance
@@ -719,7 +720,7 @@ module plat.navigation {
          * @returns {boolean} Whether or not a backwards navigation can occur.
          */
         canGoBack(): boolean;
-        
+
         /**
          * @name clearHistory
          * @memberof plat.navigation.INavigatorInstance
@@ -733,7 +734,7 @@ module plat.navigation {
          */
         clearHistory(): void;
     }
-    
+
     /**
      * @name INavigationOptions
      * @memberof plat.navigation
@@ -772,7 +773,7 @@ module plat.navigation {
          */
         initialize?: boolean;
     }
-    
+
     /**
      * @name IBackNavigationOptions
      * @memberof plat.navigation

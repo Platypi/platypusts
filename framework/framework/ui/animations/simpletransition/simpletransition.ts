@@ -111,7 +111,7 @@
                 element = this.element,
                 endFn = () => {
                     removeClass(element, this.className);
-                    this.done();
+                    this.end();
                 },
                 computedStyle = this.$Window.getComputedStyle(element),
                 transitionProperty = computedStyle[<any>(transitionId + 'Property')],
