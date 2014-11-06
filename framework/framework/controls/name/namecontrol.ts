@@ -1,17 +1,49 @@
 module plat.controls {
+    /**
+     * @name Name
+     * @memberof plat.controls
+     * @kind class
+     * 
+     * @extends {plat.AttributeControl}
+     * 
+     * @description
+     * Allows for assigning a name to an Element or {@link plat.ui.TemplateControl|TemplateControl} and referencing it 
+     * from parent controls.
+     * 
+     * @remarks
+     * This control is useful for avoiding query selectors since it will store itself on all of its ancestor controls using 
+     * the associated name.
+     */
     export class Name extends AttributeControl {
         /**
-         * The property name on the root control to set as the INamedElement.
+         * @name _label
+         * @memberof plat.controls.Name
+         * @kind property
+         * @access protected
+         * @static
+         * 
+         * @type {string}
+         * 
+         * @description
+         * The property name on the ancestor controls to set as the {@link plat.controls.INamedElement|INamedElement}.
          */
         _label: string;
 
         /**
-         * Finds the root control and defines the property specified by the 
-         * attribute value as the INamedElement.
+         * @name initialize
+         * @memberof plat.controls.Name
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Defines the property specified by the attribute value as the {@link plat.controls.INamedElement|INamedElement} 
+         * on all the ancestor controls, ignoring those that already have the property defined.
+         * 
+         * @returns {void}
          */
         initialize(): void {
             var attr = camelCase(this.type),
-                name = (<any>this.attributes)[attr];
+                name = this.attributes[attr];
 
             if (isEmpty(name) || this._isPrecompiled()) {
                 return;
@@ -22,7 +54,15 @@ module plat.controls {
         }
 
         /**
-         * Removes the INamedElement from the root control.
+         * @name dispose
+         * @memberof plat.controls.Name
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Removes the {@link plat.controls.INamedElement|INamedElement} from the ancestor controls.
+         * 
+         * @returns {void}
          */
         dispose(): void {
             var name = this._label,
@@ -40,9 +80,20 @@ module plat.controls {
         }
 
         /**
-         * Defines an INamedElement on every control up the control tree.
+         * @name _define
+         * @memberof plat.controls.Name
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Defines the property specified by the attribute value as the {@link plat.controls.INamedElement|INamedElement} 
+         * on all the ancestor controls, ignoring those that already have the property defined.
+         * 
+         * @param {string} name The name to define on all the ancestor controls.
+         * 
+         * @returns {void}
          */
-        _define(name: string) {
+        _define(name: string): void {
             var templateControl = this.templateControl;
 
             if (!isNull(templateControl)) {
@@ -66,7 +117,21 @@ module plat.controls {
             }
         }
 
-        _isPrecompiled() {
+        /**
+         * @name _isPrecompiled
+         * @memberof plat.controls.Name
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Determines whether or not this control is part of a pre-compiled control tree. In the event 
+         * that it is, it shouldn't set itself on the ancestor controls.
+         * 
+         * @param {string} name The name to define on all the ancestor controls.
+         * 
+         * @returns {void}
+         */
+        _isPrecompiled(): boolean {
             var control = this.parent;
 
             while (!isNull(control)) {
@@ -82,17 +147,39 @@ module plat.controls {
     register.control(__Name, Name);
 
     /**
+     * @name INamedElement
+     * @memberof plat.controls
+     * @kind interface
+     * 
+     * @description
      * Defines the object added to a root control when an HTML element has 
      * a plat-name attribute. If the element corresponds to a registered 
      * control, the control will be included in the object.
+     * 
+     * @typeparam {Element} E The type of element that is named.
+     * @typeparam {any} C The type of control that is named.
      */
     export interface INamedElement<E extends Element, C> {
         /**
+         * @name element
+         * @memberof plat.controls.INamedElement
+         * @kind property
+         * 
+         * @type {E}
+         * 
+         * @description
          * The element on which the plat-name is specified.
          */
         element: E;
 
         /**
+         * @name control
+         * @memberof plat.controls.INamedElement
+         * @kind property
+         * 
+         * @type {C}
+         * 
+         * @description
          * The template control on the associated element, if one 
          * exists.
          */

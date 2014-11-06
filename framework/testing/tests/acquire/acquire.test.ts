@@ -91,7 +91,7 @@ module tests.acquire {
             compare: toBe(plat.Control)
         }, {
             name: __AttributeControlFactory,
-            compare: toBe(plat.controls.AttributeControl)
+            compare: toBe(plat.AttributeControl)
         }, {
             name: __Document,
             compare: toBe(document)

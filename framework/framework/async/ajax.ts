@@ -1,50 +1,173 @@
+/**
+ * @name async
+ * @memberof plat
+ * @kind namespace
+ * @access public
+ * 
+ * @description
+ * Holds all classes and interfaces related to async components in platypus.
+ */
 module plat.async {
     /**
-     * HttpRequest provides a wrapper for the XmlHttpRequest object. Allows for
+     * @name HttpRequest
+     * @memberof plat.async
+     * @kind class
+     * 
+     * @implements {plat.async.IHttpRequest}
+     * 
+     * @description
+     * HttpRequest provides a wrapper for the XMLHttpRequest object. Allows for
      * sending AJAX requests to a server. This class does not support 
      * synchronous requests.
      */
-    class HttpRequest implements IHttpRequest {
+    export class HttpRequest implements IHttpRequest {
         /**
+         * @name clearTimeout
+         * @memberof plat.async.HttpRequest
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.IRemoveListener}
+         * 
+         * @description
          * The timeout ID associated with the specified timeout
          */
-        clearTimeout: () => void;
+        clearTimeout: plat.IRemoveListener;
+
         /**
+         * @name xhr
+         * @memberof plat.async.HttpRequest
+         * @kind property
+         * @access public
+         * 
+         * @type {XMLHttpRequest}
+         * 
+         * @description
          * The created XMLHttpRequest
          */
         xhr: XMLHttpRequest;
+
         /**
+         * @name jsonpCallback
+         * @memberof plat.async.HttpRequest
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
          * The JSONP callback name
          */
         jsonpCallback: string;
 
         /**
-         * The plat.IBrowser injectable instance
+         * @name $Browser
+         * @memberof plat.async.HttpRequest
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.web.IBrowser}
+         * 
+         * @description
+         * The plat.web.IBrowser injectable instance
          */
         $Browser: web.IBrowser = acquire(__Browser);
+
         /**
+         * @name $Window
+         * @memberof plat.async.HttpRequest
+         * @kind property
+         * @access public
+         * 
+         * @type {Window}
+         * 
+         * @description
          * The injectable instance of type Window
          */
         $Window: Window = acquire(__Window);
+
         /**
+         * @name $Document
+         * @memberof plat.async.HttpRequest
+         * @kind property
+         * @access public
+         * 
+         * @type {Document}
+         * 
+         * @description
          * The injectable instance of type Document
          */
         $Document: Document = acquire(__Document);
+
         /**
+         * @name $config
+         * @memberof plat.async.HttpRequest
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.async.IHttpConfig}
+         * 
+         * @description
          * The configuration for an HTTP Request
          */
         $config: IHttpConfig = acquire(__HttpConfig);
 
+        /**
+         * @name __fileSupported
+         * @memberof plat.async.HttpRequest
+         * @kind property
+         * @access private
+         * 
+         * @type {boolean}
+         * 
+         * @description
+         * Whether or not the browser supports the File API.
+         */
         private __fileSupported = (<ICompat>acquire(__Compat)).fileSupported;
+
+        /**
+         * @name __options
+         * @memberof plat.async.HttpRequest
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.async.IHttpConfig}
+         * 
+         * @description
+         * The configuration for the specific HTTP Request
+         */
         private __options: IHttpConfig;
 
         /**
-         * @param options The IHttpConfigStatic used to customize this HttpRequest.
+         * @name constructor
+         * @memberof plat.async.HttpRequest
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * The constructor for a {@link plat.async.HttpRequest|HttpRequest}.
+         * 
+         * @param {plat.async.IHttpConfig} options The IHttpConfigStatic used to customize this HttpRequest.
+         * 
+         * @returns {plat.async.HttpRequest}
          */
         constructor(options: IHttpConfig) {
             this.__options = extend({}, this.$config, options);
         }
 
+        /**
+         * @name execute
+         * @memberof plat.async.HttpRequest
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Executes an XMLHttpRequest and resolves an {@link plat.async.IAjaxPromise|IAjaxPromise} upon completion.
+         * 
+         * @typeparam {any} R The response type for the XMLHttpRequest object.
+         * 
+         * @returns {plat.async.IAjaxPromise} A promise that fulfills when the XMLHttpRequest is done. 
+         */
         execute<R>(): IAjaxPromise<R> {
             var options = this.__options,
                 url = options.url;
@@ -70,13 +193,26 @@ module plat.async {
 
             if (xDomain) {
                 this.xhr = null;
-                this.jsonpCallback = options.jsonpCallback || uniqueId('plat_callback');
+                this.jsonpCallback = options.jsonpCallback || uniqueId(__JSONP_CALLBACK);
                 return this.executeJsonp();
             }
 
             return this._sendXhrRequest();
         }
 
+        /**
+         * @name executeJsonp
+         * @memberof plat.async.HttpRequest
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Executes an JSONP request and resolves an {@link plat.async.IAjaxPromise|IAjaxPromise} upon completion.
+         * 
+         * @typeparam {any} R The response type for the JSONP callback parameter.
+         * 
+         * @returns {plat.async.IAjaxPromise} A promise that fulfills when the JSONP request is done. 
+         */
         executeJsonp<R>(): IAjaxPromise<R> {
             var options = this.__options,
                 url = options.url;
@@ -90,14 +226,14 @@ module plat.async {
                 this.jsonpCallback = options.jsonpCallback || uniqueId('plat_callback');
             }
 
-            return new AjaxPromise((resolve, reject) => {
+            var promise = new AjaxPromise((resolve, reject) => {
                 var $window = <any>this.$Window,
                     $document = this.$Document,
                     scriptTag = $document.createElement('script'),
                     jsonpCallback = this.jsonpCallback,
                     jsonpIdentifier = options.jsonpIdentifier || 'callback';
 
-                scriptTag.src = url + '?' + jsonpIdentifier + '=' + jsonpCallback;
+                scriptTag.src = url + ((url.indexOf('?') > -1) ? '&' : '?') + jsonpIdentifier + '=' + jsonpCallback;
 
                 var oldValue = $window[jsonpCallback];
                 $window[jsonpCallback] = (response: any) => {
@@ -107,10 +243,10 @@ module plat.async {
                     }
 
                     $document.head.removeChild(scriptTag);
-                    if (!isUndefined(oldValue)) {
-                        $window[jsonpCallback] = oldValue;
-                    } else {
+                    if (isUndefined(oldValue)) {
                         deleteProperty($window, jsonpCallback);
+                    } else {
+                        $window[jsonpCallback] = oldValue;
                     }
 
                     // call callback
@@ -138,13 +274,23 @@ module plat.async {
                         }, timeout - 1);
                     });
                 }
-            }, { __http: this });
+            });
+
+            promise.initialize(this);
+
+            return promise;
         }
 
         /**
+         * @name _xhrOnReadyStateChange
+         * @memberof plat.async.HttpRequest
+         * @kind function
+         * @access protected
+         * 
+         * @description
          * A wrapper for the XMLHttpRequest's onReadyStateChanged callback.
          * 
-         * @return {bool} Waits for the readyState to be complete and then 
+         * @returns {boolean} Waits for the readyState to be complete and then 
          * return true in the case of a success and false in the case of 
          * an error.
          */
@@ -181,175 +327,190 @@ module plat.async {
         }
 
         /**
+         * @name _sendXhrRequest
+         * @memberof plat.async.HttpRequest
+         * @kind function
+         * @access protected
+         * 
+         * @description
          * The function that initializes and sends the XMLHttpRequest.
          * 
-         * @return {Promise<IAjaxResponse>} A promise that fulfills with the 
-         * formatted IAjaxResponse and rejects if there is a problem with an 
-         * IAjaxError.
+         * @returns {plat.async.IAjaxPromise} A promise that fulfills with the 
+         * formatted {@link plat.async.IAjaxResponse|IAjaxResponse} and rejects if there is a problem with an 
+         * {@link plat.async.IAjaxError|IAjaxError}.
          */
         _sendXhrRequest(): IAjaxPromise<any> {
             var xhr = this.xhr,
                 options = this.__options,
                 method = options.method,
-                url = options.url;
+                url = options.url,
+                promise = new AjaxPromise((resolve, reject) => {
+                    xhr.onreadystatechange = () => {
+                        var success = this._xhrOnReadyStateChange();
 
-            return new AjaxPromise((resolve, reject) => {
-                xhr.onreadystatechange = () => {
-                    var success = this._xhrOnReadyStateChange();
+                        if (isNull(success)) {
+                            return;
+                        }
 
-                    if (isNull(success)) {
-                        return;
+                        var response = this._formatResponse(options.responseType, success);
+
+                        if (success) {
+                            resolve(response);
+                        } else {
+                            reject(new AjaxError(response));
+                        }
+
+                        this.xhr = options = null;
+                    };
+
+                    if (!isString(method)) {
+                        var Exception: IExceptionStatic = acquire(__ExceptionStatic);
+                        Exception.warn('AjaxOptions method was not of type string. Defaulting to "GET".', Exception.AJAX);
+                        method = 'GET';
                     }
 
-                    var response = this._formatResponse(options.responseType, success);
-
-                    if (success) {
-                        resolve(response);
-                    } else {
-                        reject(new AjaxError(response));
-                    }
-
-                    this.xhr = options = null;
-                };
-
-                if (!isString(method)) {
-                    var Exception: IExceptionStatic = acquire(__ExceptionStatic);
-                    Exception.warn('AjaxOptions method was not of type string. Defaulting to "GET".', Exception.AJAX);
-                    method = 'GET';
-                }
-
-                xhr.open(
-                    method.toUpperCase(),
-                    url,
+                    xhr.open(
+                        method.toUpperCase(),
+                        url,
                     // synchronous XHR not supported
-                    true,
-                    options.user,
-                    options.password
-                    );
+                        true,
+                        options.user,
+                        options.password
+                        );
 
-                var responseType = options.responseType;
-                if (!(this.__fileSupported || responseType === '' || responseType === 'text')) {
-                    responseType = '';
-                }
+                    var responseType = options.responseType;
+                    if (!(this.__fileSupported || responseType === '' || responseType === 'text')) {
+                        responseType = '';
+                    }
 
-                xhr.responseType = responseType;
-                xhr.withCredentials = options.withCredentials;
+                    xhr.responseType = responseType;
+                    xhr.withCredentials = options.withCredentials;
 
-                var mimeType = options.overrideMimeType,
-                    data = options.data;
+                    var mimeType = options.overrideMimeType,
+                        data = options.data;
 
-                if (isString(mimeType) && !isEmpty(mimeType)) {
-                    xhr.overrideMimeType(mimeType);
-                }
+                    if (isString(mimeType) && !isEmpty(mimeType)) {
+                        xhr.overrideMimeType(mimeType);
+                    }
 
-                if (isNull(data) || data === '') {
-                    // no data exists so set headers and send request
-                    this.__setHeaders();
-                    xhr.send();
-                } else {
-                    var transforms = options.transforms || [],
-                        length = transforms.length,
-                        contentType = options.contentType,
-                        contentTypeExists = isString(contentType) && !isEmpty(contentType);
-
-                    if (length > 0) {
-                        // if data transforms defined, assume they're going to take care of 
-                        // any and all transformations.
-                        for (var i = 0; i < length; ++i) {
-                            data = transforms[i](data, xhr);
-                        }
-
-                        // if contentType exists, assume they did not set it in 
-                        // their headers as well
-                        if (contentTypeExists) {
-                            xhr.setRequestHeader('Content-Type', contentType);
-                        }
-
+                    if (isNull(data) || data === '') {
+                        // no data exists so set headers and send request
                         this.__setHeaders();
-                        xhr.send(data);
-                    } else if (isObject(data)) {
-                        // if isObject and contentType exists we want to transform the data
-                        if (contentTypeExists) {
-                            var contentTypeLower = contentType.toLowerCase();
-                            if (contentTypeLower.indexOf('x-www-form-urlencoded') !== -1) {
-                                // perform an encoded form transformation
-                                data = this.__serializeFormData();
-                                // set Content-Type header because we're assuming they didn't set it 
-                                // in their headers object
+                        xhr.send();
+                    } else {
+                        var transforms = options.transforms || [],
+                            length = transforms.length,
+                            contentType = options.contentType,
+                            contentTypeExists = isString(contentType) && !isEmpty(contentType);
+
+                        if (length > 0) {
+                            // if data transforms defined, assume they're going to take care of 
+                            // any and all transformations.
+                            for (var i = 0; i < length; ++i) {
+                                data = transforms[i](data, xhr);
+                            }
+
+                            // if contentType exists, assume they did not set it in 
+                            // their headers as well
+                            if (contentTypeExists) {
                                 xhr.setRequestHeader('Content-Type', contentType);
-                                this.__setHeaders();
-                                xhr.send(data);
-                            } else if (contentTypeLower.indexOf('multipart/form-data') !== -1) {
-                                // need to check if File is a supported object
-                                if (this.__fileSupported) {
-                                    // use FormData
-                                    data = this.__appendFormData();
-                                    // do not set the Content-Type header due to modern browsers 
-                                    // setting special headers for multipart/form-data
+                            }
+
+                            this.__setHeaders();
+                            xhr.send(data);
+                        } else if (isObject(data)) {
+                            // if isObject and contentType exists we want to transform the data
+                            if (contentTypeExists) {
+                                var contentTypeLower = contentType.toLowerCase();
+                                if (contentTypeLower.indexOf('x-www-form-urlencoded') !== -1) {
+                                    // perform an encoded form transformation
+                                    data = this.__serializeFormData();
+                                    // set Content-Type header because we're assuming they didn't set it 
+                                    // in their headers object
+                                    xhr.setRequestHeader('Content-Type', contentType);
                                     this.__setHeaders();
                                     xhr.send(data);
+                                } else if (contentTypeLower.indexOf('multipart/form-data') !== -1) {
+                                    // need to check if File is a supported object
+                                    if (this.__fileSupported) {
+                                        // use FormData
+                                        data = this.__appendFormData();
+                                        // do not set the Content-Type header due to modern browsers 
+                                        // setting special headers for multipart/form-data
+                                        this.__setHeaders();
+                                        xhr.send(data);
+                                    } else {
+                                        // use iframe trick for older browsers (do not send a request)
+                                        // this case is the reason for this giant, terrible, nested if-else statement
+                                        this.__submitFramedFormData().then((response) => {
+                                            resolve(response);
+                                        }, () => {
+                                                this.xhr = null;
+                                            });
+                                    }
                                 } else {
-                                    // use iframe trick for older browsers (do not send a request)
-                                    // this case is the reason for this giant, terrible, nested if-else statement
-                                    this.__submitFramedFormData().then((response) => {
-                                        resolve(response);
-                                    }, () => {
-                                        this.xhr = null;
-                                    });
+                                    // assume stringification is possible
+                                    data = JSON.stringify(data);
+                                    // set Content-Type header because we're assuming they didn't set it 
+                                    // in their headers object
+                                    xhr.setRequestHeader('Content-Type', contentType);
+                                    this.__setHeaders();
+                                    xhr.send(data);
                                 }
                             } else {
-                                // assume stringification is possible
-                                data = JSON.stringify(data);
-                                // set Content-Type header because we're assuming they didn't set it 
-                                // in their headers object
-                                xhr.setRequestHeader('Content-Type', contentType);
+                                // contentType does not exist so simply set defined headers and send raw data
                                 this.__setHeaders();
                                 xhr.send(data);
                             }
                         } else {
-                            // contentType does not exist so simply set defined headers and send raw data
+                            // if contentType exists set Content-Type header because we're assuming they didn't set it 
+                            // in their headers object
+                            if (contentTypeExists) {
+                                xhr.setRequestHeader('Content-Type', contentType);
+                            }
+
                             this.__setHeaders();
                             xhr.send(data);
                         }
-                    } else {
-                        // if contentType exists set Content-Type header because we're assuming they didn't set it 
-                        // in their headers object
-                        if (contentTypeExists) {
-                            xhr.setRequestHeader('Content-Type', contentType);
-                        }
-
-                        this.__setHeaders();
-                        xhr.send(data);
                     }
-                }
 
-                var timeout = options.timeout;
-                if (isNumber(timeout) && timeout > 0) {
-                    // we first postpone to avoid always timing out when debugging, though this is not
-                    // a foolproof method.
-                    this.clearTimeout = postpone(() => {
-                        this.clearTimeout = defer(() => {
-                            reject(new AjaxError({
-                                response: 'Request timed out in ' + timeout + 'ms for ' + options.url,
-                                status: xhr.status,
-                                getAllResponseHeaders: xhr.getAllResponseHeaders,
-                                xhr: xhr
-                            }));
+                    var timeout = options.timeout;
+                    if (isNumber(timeout) && timeout > 0) {
+                        // we first postpone to avoid always timing out when debugging, though this is not
+                        // a foolproof method.
+                        this.clearTimeout = postpone(() => {
+                            this.clearTimeout = defer(() => {
+                                reject(new AjaxError({
+                                    response: 'Request timed out in ' + timeout + 'ms for ' + options.url,
+                                    status: xhr.status,
+                                    getAllResponseHeaders: () => { return xhr.getAllResponseHeaders(); },
+                                    xhr: xhr
+                                }));
 
-                            xhr.onreadystatechange = null;
-                            xhr.abort();
-                            this.xhr = null;
-                        }, timeout - 1);
-                    });
-                }
-            }, { __http: this });
+                                xhr.onreadystatechange = null;
+                                xhr.abort();
+                                this.xhr = null;
+                            }, timeout - 1);
+                        });
+                    }
+                });
+
+            promise.initialize(this);
+
+            return promise;
         }
-        
+
         /**
+         * @name _invalidOptions
+         * @memberof plat.async.HttpRequest
+         * @kind function
+         * @access protected
+         * 
+         * @description
          * Returns a promise that is immediately rejected due to an error.
          * 
-         * @return {Promise<IAjaxResponse>} A promise that immediately rejects 
-         * with an IAjaxError
+         * @returns {plat.async.IAjaxPromise} A promise that immediately rejects 
+         * with an {@link plat.async.IAjaxError|IAjaxError}
          */
         _invalidOptions(): IAjaxPromise<any> {
             return new AjaxPromise((resolve, reject) => {
@@ -363,13 +524,20 @@ module plat.async {
                 }));
             });
         }
-        
+
         /**
+         * @name _formatResponse
+         * @memberof plat.async.HttpRequest
+         * @kind function
+         * @access protected
+         * 
+         * @description
          * The function that formats the response from the XMLHttpRequest.
          * 
-         * @param responseType The user designated responseType
-         * @param success Signifies if the response was a success
-         * @return {IAjaxResponse} The IAjaxResponse to be returned to 
+         * @param {string} responseType The user designated responseType
+         * @param {boolean} success Signifies if the response was a success
+         * 
+         * @returns {IAjaxResponse<any>} The {@link plat.async.IAjaxResponse|IAjaxResponse} to be returned to 
          * the requester.
          */
         _formatResponse(responseType: string, success: boolean): IAjaxResponse<any> {
@@ -406,11 +574,22 @@ module plat.async {
             return {
                 response: response,
                 status: status,
-                getAllResponseHeaders: xhr.getAllResponseHeaders,
+                getAllResponseHeaders: () => { return xhr.getAllResponseHeaders(); },
                 xhr: xhr
             };
         }
 
+        /**
+         * @name __setHeaders
+         * @memberof plat.async.HttpRequest
+         * @kind function
+         * @access private
+         * 
+         * @description
+         * Sets the headers for an XMLHttpRequest
+         * 
+         * @returns {void}
+         */
         private __setHeaders(): void {
             var headers = this.__options.headers,
                 keys = Object.keys(headers || {}),
@@ -424,6 +603,18 @@ module plat.async {
                 xhr.setRequestHeader(key, headers[key]);
             }
         }
+
+        /**
+         * @name __serializeFormData
+         * @memberof plat.async.HttpRequest
+         * @kind function
+         * @access private
+         * 
+         * @description
+         * Serializes multipart form data in an XMLHttpRequest as a string.
+         * 
+         * @returns {string}
+         */
         private __serializeFormData(): string {
             var data = this.__options.data,
                 keys = Object.keys(data),
@@ -448,6 +639,18 @@ module plat.async {
 
             return formBuffer.join('&').replace(/%20/g, '+');
         }
+
+        /**
+         * @name __appendFormData
+         * @memberof plat.async.HttpRequest
+         * @kind function
+         * @access private
+         * 
+         * @description
+         * Creates FormData to add to the XMLHttpRequest.
+         * 
+         * @returns {FormData}
+         */
         private __appendFormData(): FormData {
             var data = this.__options.data,
                 formData = new FormData(),
@@ -476,6 +679,18 @@ module plat.async {
 
             return formData;
         }
+
+        /**
+         * @name __submitFramedFormData
+         * @memberof plat.async.HttpRequest
+         * @kind function
+         * @access private
+         * 
+         * @description
+         * Handles submitting multipart form data using an iframe.
+         * 
+         * @returns {plat.async.IThenable} A promise that fulfills after the form data is submitted.
+         */
         private __submitFramedFormData(): IThenable<IAjaxResponse<any>> {
             var options = this.__options,
                 data = options.data,
@@ -529,6 +744,18 @@ module plat.async {
                 form.submit();
             });
         }
+
+        /**
+         * @name __createInput
+         * @memberof plat.async.HttpRequest
+         * @kind function
+         * @access private
+         * 
+         * @description
+         * Creates input for form data submissions.
+         * 
+         * @returns {HTMLInputElement}
+         */
         private __createInput(key: string, val: any): HTMLInputElement {
             var $document = this.$Document,
                 $exception: IExceptionStatic,
@@ -594,59 +821,165 @@ module plat.async {
     }
 
     /**
-     * Describes an object that provides a wrapper for either the XmlHttpRequest object 
-     * or a JSONP callback. Allows for sending AJAX requests to a server.
+     * @name IHttpRequest
+     * @memberof plat.async
+     * @kind interface
+     * 
+     * @description
+     * IHttpRequest provides a wrapper for the XMLHttpRequest object. Allows for
+     * sending AJAX requests to a server.
      */
-    interface IHttpRequest {
+    export interface IHttpRequest {
         /**
-         * Performs either the XmlHttpRequest or the JSONP callback and returns an AjaxPromise. 
-         * The Promise is fulfilled or rejected when either the XmlHttpRequest returns or the 
-         * JSONP callback is fired.
+         * @name clearTimeout
+         * @memberof plat.async.IHttpRequest
+         * @kind property
+         * @access public
          * 
-         * @return {IAjaxPromise} A promise that fulfills/rejects
-         * when either the XmlHttpRequest returns (Response statuses >= 200 and < 300 are a success.
-         * Other response statuses are failures) or the JSONP callback is fired.
+         * @type {plat.IRemoveListener}
+         * 
+         * @description
+         * The timeout ID associated with the specified timeout
+         */
+        clearTimeout?: plat.IRemoveListener;
+
+        /**
+         * @name xhr
+         * @memberof plat.async.IHttpRequest
+         * @kind property
+         * @access public
+         * 
+         * @type {XMLHttpRequest}
+         * 
+         * @description
+         * The created XMLHttpRequest
+         */
+        xhr?: XMLHttpRequest;
+
+        /**
+         * @name jsonpCallback
+         * @memberof plat.async.IHttpRequest
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * The JSONP callback name
+         */
+        jsonpCallback?: string;
+
+        /**
+         * @name execute
+         * @memberof plat.async.IHttpRequest
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Executes an XMLHttpRequest and resolves an {@link plat.async.IAjaxPromise|IAjaxPromise} upon completion.
+         * 
+         * @typeparam {any} R The response type for the XMLHttpRequest object.
+         * 
+         * @returns {plat.async.IAjaxPromise} A promise that fulfills when the XMLHttpRequest is done. 
          */
         execute<R>(): IAjaxPromise<R>;
 
         /**
-         * Adds the script tag and processes the callback for the JSONP. The AjaxPromise from 
-         * the ajax or jsonp call is fulfilled or rejected when the JSONP callback is called.
+         * @name executeJsonp
+         * @memberof plat.async.IHttpRequest
+         * @kind function
+         * @access public
          * 
-         * @return {IAjaxPromise} A promise that fulfills with the 
-         * JSONP callback and rejects if there is a problem.
+         * @description
+         * Executes an JSONP request and resolves an {@link plat.async.IAjaxPromise|IAjaxPromise} upon completion.
+         * 
+         * @typeparam {any} R The response type for the JSONP callback parameter.
+         * 
+         * @returns {plat.async.IAjaxPromise} A promise that fulfills when the JSONP request is done. 
          */
         executeJsonp<R>(): IAjaxPromise<R>;
     }
 
     /**
+     * @name IHttpConfig
+     * @memberof plat.async
+     * @kind interface
+     * 
+     * @extends {plat.async.IJsonpConfig}
+     * 
+     * @description
      * Describes an object which contains Ajax configuration properties.
      */
     export interface IHttpConfig extends IJsonpConfig {
         /**
+         * @name method
+         * @memberof plat.async.IHttpConfig
+         * @kind property
+         * @access public
+         * @optional
+         * 
+         * @type {string}
+         * 
+         * @description
          * The HTTP method type of XmlHttpRequest such as 'GET', 'POST', 'PUT', 
          * 'DELETE', etc. Ignored for non-HTTP urls. Defaults to 'GET'.
          */
         method?: string;
 
         /**
+         * @name timeout
+         * @memberof plat.async.IHttpConfig
+         * @kind property
+         * @access public
+         * @optional
+         * 
+         * @type {number}
+         * 
+         * @description
          * The number of milliseconds a request can take before 
          * automatically being terminated. A value of 0 
-         * means there is no timeout. 
+         * means there is no timeout.
          */
         timeout?: number;
 
         /**
+         * @name user
+         * @memberof plat.async.IHttpConfig
+         * @kind property
+         * @access public
+         * @optional
+         * 
+         * @type {string}
+         * 
+         * @description
          * An optional user string for the XmlHttpRequest
          */
         user?: string;
 
         /**
+         * @name password
+         * @memberof plat.async.IHttpConfig
+         * @kind property
+         * @access public
+         * @optional
+         * 
+         * @type {string}
+         * 
+         * @description
          * An optional password string for the XmlHttpRequest
          */
         password?: string;
 
         /**
+         * @name responseType
+         * @memberof plat.async.IHttpConfig
+         * @kind property
+         * @access public
+         * @optional
+         * 
+         * @type {string}
+         * 
+         * @description
          * The XMLHttpRequestResponseType. The response should 
          * still be checked when received due to browser 
          * incompatibilities. If a browser does not support a 
@@ -659,6 +992,15 @@ module plat.async {
         responseType?: string;
 
         /**
+         * @name contentType
+         * @memberof plat.async.IHttpConfig
+         * @kind property
+         * @access public
+         * @optional
+         * 
+         * @type {string}
+         * 
+         * @description
          * The Content-Type header for XMLHttpRequest when 
          * data is being sent. The default is 
          * 'application/json;charset=utf-8;'.
@@ -666,17 +1008,44 @@ module plat.async {
         contentType?: string;
 
         /**
+         * @name overrideMimeType
+         * @memberof plat.async.IHttpConfig
+         * @kind property
+         * @access public
+         * @optional
+         * 
+         * @type {string}
+         * 
+         * @description
          * A string to override the MIME type returned by the server.
          */
         overrideMimeType?: string;
 
         /**
+         * @name headers
+         * @memberof plat.async.IHttpConfig
+         * @kind property
+         * @access public
+         * @optional
+         * 
+         * @type {any}
+         * 
+         * @description
          * A key/value pair object where the key is a DOMString header key
          * and the value is the DOMString header value.
          */
         headers?: any;
 
         /**
+         * @name withCredentials
+         * @memberof plat.async.IHttpConfig
+         * @kind property
+         * @access public
+         * @optional
+         * 
+         * @type {boolean}
+         * 
+         * @description
          * Indicates whether or not cross-site Access-Control requests 
          * should be made using credentials such as cookies or 
          * authorization headers. The default is false.
@@ -684,17 +1053,44 @@ module plat.async {
         withCredentials?: boolean;
 
         /**
+         * @name data
+         * @memberof plat.async.IHttpConfig
+         * @kind property
+         * @access public
+         * @optional
+         * 
+         * @type {any}
+         * 
+         * @description
          * The request payload
          */
         data?: any;
 
         /**
+         * @name transforms
+         * @memberof plat.async.IHttpConfig
+         * @kind property
+         * @access public
+         * @optional
+         * 
+         * @type {plat.async.IHttpTransformFunction}
+         * 
+         * @description
          * An array of data transform functions that fire in order and consecutively 
          * pass the returned result from one function to the next.
          */
-        transforms?: Array<(data: any, xhr: XMLHttpRequest) => any>;
+        transforms?: Array<IHttpTransformFunction>;
 
         /**
+         * @name isCrossDomain
+         * @memberof plat.async.IHttpConfig
+         * @kind property
+         * @access public
+         * @optional
+         * 
+         * @type {boolean}
+         * 
+         * @description
          * Forces a JSONP, cross-domain request when set to true.
          * The default is false.
          */
@@ -702,17 +1098,64 @@ module plat.async {
     }
 
     /**
+     * @name IHttpTransformFunction
+     * @memberof plat.async
+     * @kind interface
+     * 
+     * @description
+     * A function that is used to transform XMLHttpRequest data.
+     */
+    export interface IHttpTransformFunction {
+        /**
+         * @memberof plat.async.IHttpTransformFunction
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * The method signature for {@link plat.async.IHttpTransformFunction|IHttpTransformFunction}.
+         * 
+         * @param {any} data The data for the XMLHttpRequest.
+         * @param {XMLHttpRequest} xhr The XMLHttpRequest for the data.
+         * 
+         * @returns {any} The transformed data.
+         */
+        (data: any, xhr: XMLHttpRequest): any;
+    }
+
+    /**
+     * @name IJsonpConfig
+     * @memberof plat.async
+     * @kind interface
+     * 
+     * @description
      * Describes an object which contains JSONP configuration properties.
      */
     export interface IJsonpConfig {
         /**
+         * @name url
+         * @memberof plat.async.IJsonpConfig
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
          * The url for the JSONP callback 
-         * (without the ?{callback}={callback_name} parameter in the url) 
+         * (without the `?{callback}={callback_name}` parameter in the url) 
          * or for the XmlHttpRequest.
          */
         url: string;
 
         /**
+         * @name jsonpIdentifier
+         * @memberof plat.async.IJsonpConfig
+         * @kind property
+         * @access public
+         * @optional
+         * 
+         * @type {string}
+         * 
+         * @description
          * The identifier the server uses to get the name of the JSONP
          * callback. The default is 'callback' as seen in 
          * http://www.platyfi.com/data?callback=plat_fnName.
@@ -720,6 +1163,15 @@ module plat.async {
         jsonpIdentifier?: string;
 
         /**
+         * @name jsonpCallback
+         * @memberof plat.async.IJsonpConfig
+         * @kind property
+         * @access public
+         * @optional
+         * 
+         * @type {string}
+         * 
+         * @description
          * A specified name for the JSONP callback (in case the server has 
          * it hardcoded and/or does not get it from the given url). The 
          * default is a unique plat id generated separately for 
@@ -730,10 +1182,25 @@ module plat.async {
     }
 
     /**
+     * @name IAjaxResponse
+     * @memberof plat.async
+     * @kind interface
+     * 
+     * @description
      * Describes an object that is the response to an AJAX request.
+     * 
+     * @typeparam {any} R The type of the AJAX response.
      */
     export interface IAjaxResponse<R> {
         /**
+         * @name response
+         * @memberof plat.async.IAjaxResponse
+         * @kind property
+         * @access public
+         * 
+         * @type {R}
+         * 
+         * @description
          * The AJAX response or responseText. The response should 
          * be checked when received due to browser 
          * incompatibilities with responseType. If a browser does 
@@ -743,39 +1210,178 @@ module plat.async {
         response: R;
 
         /**
+         * @name status
+         * @memberof plat.async.IAjaxResponse
+         * @kind property
+         * @access public
+         * 
+         * @type {number}
+         * 
+         * @description
          * The XHR status. Resolves as 200 for JSONP.
          */
         status: number;
 
         /**
+         * @name getAllResponseHeaders
+         * @memberof plat.async.IAjaxResponse
+         * @kind function
+         * @access public
+         * 
+         * @description
          * A method for getting the XHR response headers.
+         * 
+         * @returns {void}
          */
         getAllResponseHeaders?: () => string;
 
         /**
+         * @name xhr
+         * @memberof plat.async.IAjaxResponse
+         * @kind property
+         * @access public
+         * @optional
+         * 
+         * @type {XMLHttpRequest}
+         * 
+         * @description
          * The XMLHttpRequest object associated with the AJAX call
          */
         xhr?: XMLHttpRequest;
     }
 
     /**
+     * @name IAjaxResolveFunction
+     * @memberof plat.async
+     * @kind interface
+     * 
+     * @description
      * Describes the AjaxPromise's resolve function
+     * 
+     * @typeparam {any} R The type of the {@link plat.async.IAjaxResponse|IAjaxResponse} object.
      */
     export interface IAjaxResolveFunction<R> {
+        /**
+         * @memberof plat.async.IAjaxResolveFunction
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * The method signature for an {@link plat.async.IAjaxResolveFunction|IAjaxResolveFunction}.
+         * 
+         * @param {(value?: plat.async.IAjaxResponse<R>) => any} resolve The function to call when the 
+         * AJAX call has successfully fulfilled.
+         * @param {(reason?: plat.async.IAjaxError) => any} reject The function to call when the 
+         * AJAX call fails.
+         * 
+         * @returns {void}
+         */
         (resolve: (value?: IAjaxResponse<R>) => any, reject: (reason?: IAjaxError) => any): void;
     }
 
     /**
-     * A class that forms an Error object with an IAjaxResponse.
+     * @name AjaxError
+     * @memberof plat.async
+     * @kind class
+     * @exported false
+     * 
+     * @implements {plat.async.IAjaxError}
+     * 
+     * @description
+     * A class that forms an Error object with an {@link plat.async.IAjaxResponse|IAjaxResponse}.
      */
     class AjaxError implements IAjaxError {
+        /**
+         * @name name
+         * @memberof plat.async.AjaxError
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * The name of the Error ('AjaxError')
+         */
         name: string = 'AjaxError';
+
+        /**
+         * @name message
+         * @memberof plat.async.AjaxError
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * The Error message
+         */
         message: string;
+
+        /**
+         * @name response
+         * @memberof plat.async.AjaxError
+         * @kind property
+         * @access public
+         * 
+         * @type {any}
+         * 
+         * @description
+         * The response from the XMLHttpRequest
+         */
         response: any;
+
+        /**
+         * @name status
+         * @memberof plat.async.AjaxError
+         * @kind property
+         * @access public
+         * 
+         * @type {number}
+         * 
+         * @description
+         * The status code from the XMLHttpRequest
+         */
         status: number;
+
+        /**
+         * @name getAllResponseHeaders
+         * @memberof plat.async.AjaxError
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * A method for getting the XHR response headers.
+         * 
+         * @returns {void}
+         */
         getAllResponseHeaders: () => string;
+
+        /**
+         * @name xhr
+         * @memberof plat.async.AjaxError
+         * @kind property
+         * @access public
+         * 
+         * @type {XMLHttpRequest}
+         * 
+         * @description
+         * The XMLHttpRequest object associated with the AJAX call
+         */
         xhr: XMLHttpRequest;
 
+        /**
+         * @name constructor
+         * @memberof plat.async.AjaxError
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * The constructor for an {@link plat.async.AjaxError|AjaxError}.
+         * 
+         * @param {plat.async.IAjaxResponse} response The {@link plat.async.IAjaxResponse|IAjaxResponse} object.
+         * 
+         * @returns {plat.async.AjaxError}
+         */
         constructor(response: IAjaxResponse<any>) {
             Error.apply(this);
             this.response = this.message = response.response;
@@ -784,6 +1390,17 @@ module plat.async {
             this.xhr = response.xhr;
         }
 
+        /**
+         * @name toString
+         * @memberof plat.async.AjaxError
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Outputs a formatted string describing the {@link plat.async.AjaxError|AjaxError}.
+         * 
+         * @returns {string}
+         */
         toString(): string {
             var response = this.response,
                 responseText = response;
@@ -800,16 +1417,90 @@ module plat.async {
     (<any>AjaxError).prototype = Error.prototype;
 
     /**
-     * Describes an object that forms an Error object with an IAjaxResponse.
+     * @name IAjaxError
+     * @memberof plat.async
+     * @kind interface
+     * 
+     * @implements {plat.async.IAjaxResponse}
+     * 
+     * @description
+     * Describes an object that forms an Error object with an {@link plat.async.IAjaxResponse|IAjaxResponse}.
      */
     export interface IAjaxError extends Error, IAjaxResponse<any> { }
 
     /**
-     * Describes a type of Promise that fulfills with an IAjaxResponse and can be optionally canceled.
+     * @name AjaxPromise
+     * @memberof plat.async
+     * @kind class
+     * 
+     * @extends {plat.async.Promise}
+     * @implements {plat.async.IAjaxPromise}
+     * 
+     * @description
+     * Describes a type of {@link plat.async.Promise|Promise} that fulfills with an {@link plat.async.IAjaxResponse|IAjaxResponse} and can be optionally cancelled.
+     * 
+     * @typeparam {any} R The type of the response object in the {@link plat.async.IAjaxResponse|IAjaxResponse}.
      */
     export class AjaxPromise<R> extends Promise<IAjaxResponse<R>> implements IAjaxPromise<R> {
+        /**
+         * @name $Window
+         * @memberof plat.async.AjaxPromise
+         * @kind property
+         * @access public
+         * @readonly
+         * 
+         * @type {Window}
+         * 
+         * @description
+         * The Window object.
+         */
         $Window: Window = acquire(__Window);
-        private __http: HttpRequest;
+
+        /**
+         * @name __http
+         * @memberof plat.async.AjaxPromise
+         * @kind property
+         * @access private
+         * @readonly
+         * 
+         * @type {plat.async.HttpRequest}
+         * 
+         * @description
+         * The {@link plat.async.HttpRequest|HttpRequest} object.
+         */
+        private __http: IHttpRequest;
+
+        /**
+         * @name constructor
+         * @memberof plat.async.AjaxPromise
+         * @kind function
+         * @access public
+         * @variation 0
+         * 
+         * @description
+         * The constructor method for the {@link plat.async.AjaxPromise}.
+         * 
+         * @param {plat.async.IAjaxResolveFunction} resolveFunction The promise resolve function.
+         * 
+         * @returns {plat.async.AjaxPromise}
+         */
+        constructor(resolveFunction: IAjaxResolveFunction<R>);
+        /**
+         * @name constructor
+         * @memberof plat.async.AjaxPromise
+         * @kind function
+         * @access public
+         * @variation 1
+         * 
+         * @description
+         * The constructor method for the {@link plat.async.AjaxPromise}.
+         * 
+         * @param {plat.async.IAjaxResolveFunction} resolveFunction The promise resolve function.
+         * @param {any} promise The promise object to allow for cancelling the {@link plat.async.AjaxPromise}.
+         * 
+         * @returns {plat.async.AjaxPromise}
+         */
+        constructor(resolveFunction: IAjaxResolveFunction<R>, promise: any);
         constructor(resolveFunction: IAjaxResolveFunction<R>, promise?: any) {
             super(resolveFunction);
             if (!isNull(promise)) {
@@ -817,6 +1508,37 @@ module plat.async {
             }
         }
 
+        /**
+         * @name initialize
+         * @memberof plat.async.AjaxPromise
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * A method to initialize this {@link plat.async.AjaxPromise|AjaxPromise}, passing it the
+         * associated {@link plat.async.IHttpRequest|IHttpRequest}.
+         * 
+         * @param {plat.async.IHttpRequest} http The http request for this promise.
+         * 
+         * @returns {void}
+         */
+        initialize(http: IHttpRequest) {
+            if (isObject(http) && isNull(this.__http)) {
+                this.__http = http;
+            }
+        }
+
+        /**
+         * @name cancel
+         * @memberof plat.async.AjaxPromise
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * A method to cancel the AJAX call associated with this {@link plat.async.AjaxPromise|AjaxPromise}.
+         * 
+         * @returns {void}
+         */
         cancel(): void {
             var http = this.__http,
                 xhr = http.xhr,
@@ -837,12 +1559,92 @@ module plat.async {
             (<any>this).__subscribers = [];
         }
 
+        /**
+         * @name then
+         * @memberof plat.async.AjaxPromise
+         * @kind function
+         * @access public
+         * @variation 0
+         * 
+         * @description
+         * Takes in two methods, called when/if the promise fulfills/rejects.
+         * 
+         * @typeparam {any} U The type of the object returned from the fulfill/reject callbacks, which will be carried to the 
+         * next then method in the promise chain.
+         * 
+         * @param {(success: plat.async.IAjaxResponse<R>) => plat.async.IAjaxThenable<U>} onFulfilled A method called when/if the promise fulfills. 
+         * If undefined the next onFulfilled method in the promise chain will be called.
+         * @param {(error: plat.async.IAjaxError) => plat.async.IAjaxThenable<U>} onRejected A method called when/if the promise rejects. 
+         * If undefined the next onRejected method in the promise chain will be called.
+         * 
+         * @returns {plat.async.IAjaxThenable<U>}
+         */
         then<U>(onFulfilled: (success: IAjaxResponse<R>) => U,
             onRejected?: (error: IAjaxError) => any): IAjaxThenable<U>;
+        /**
+         * @name then
+         * @memberof plat.async.AjaxPromise
+         * @kind function
+         * @access public
+         * @variation 1
+         * 
+         * @description
+         * Takes in two methods, called when/if the promise fulfills/rejects.
+         * 
+         * @typeparam {any} U The type of the object returned from the fulfill/reject callbacks, which will be carried to the 
+         * next then method in the promise chain.
+         * 
+         * @param {(success: plat.async.IAjaxResponse<R>) => plat.async.IAjaxThenable<U>} onFulfilled A method called when/if the promise fulfills. 
+         * If undefined the next onFulfilled method in the promise chain will be called.
+         * @param {(error: plat.async.IAjaxError) => U} onRejected A method called when/if the promise rejects. 
+         * If undefined the next onRejected method in the promise chain will be called.
+         * 
+         * @returns {plat.async.IAjaxThenable<U>}
+         */
         then<U>(onFulfilled: (success: IAjaxResponse<R>) => IThenable<U>,
             onRejected?: (error: IAjaxError) => IThenable<U>): IAjaxThenable<U>;
+        /**
+         * @name then
+         * @memberof plat.async.AjaxPromise
+         * @kind function
+         * @access public
+         * @variation 2
+         * 
+         * @description
+         * Takes in two methods, called when/if the promise fulfills/rejects.
+         * 
+         * @typeparam {any} U The type of the object returned from the fulfill/reject callbacks, which will be carried to the 
+         * next then method in the promise chain.
+         * 
+         * @param {(success: plat.async.IAjaxResponse<R>) => U} onFulfilled A method called when/if the promise fulfills. 
+         * If undefined the next onFulfilled method in the promise chain will be called.
+         * @param {(error: plat.async.IAjaxError) => plat.async.IAjaxThenable<U>} onRejected A method called when/if the promise rejects. 
+         * If undefined the next onRejected method in the promise chain will be called.
+         * 
+         * @returns {plat.async.IAjaxThenable<U>}
+         */
         then<U>(onFulfilled: (success: IAjaxResponse<R>) => IThenable<U>,
             onRejected?: (error: IAjaxError) => any): IAjaxThenable<U>;
+        /**
+         * @name then
+         * @memberof plat.async.AjaxPromise
+         * @kind function
+         * @access public
+         * @variation 3
+         * 
+         * @description
+         * Takes in two methods, called when/if the promise fulfills/rejects.
+         * 
+         * @typeparam {any} U The type of the object returned from the fulfill/reject callbacks, which will be carried to the 
+         * next then method in the promise chain.
+         * 
+         * @param {(success: plat.async.IAjaxResponse<R>) => U} onFulfilled A method called when/if the promise fulfills. 
+         * If undefined the next onFulfilled method in the promise chain will be called.
+         * @param {(error: plat.async.IAjaxError) => U} onRejected A method called when/if the promise rejects. 
+         * If undefined the next onRejected method in the promise chain will be called.
+         * 
+         * @returns {plat.async.IAjaxThenable<U>}
+         */
         then<U>(onFulfilled: (success: IAjaxResponse<R>) => U,
             onRejected?: (error: IAjaxError) => IThenable<U>): IAjaxThenable<U>;
         then<U>(onFulfilled: (success: IAjaxResponse<R>) => U,
@@ -850,210 +1652,555 @@ module plat.async {
             return <IAjaxThenable<U>><any>super.then<U>(onFulfilled, onRejected);
         }
 
+        /**
+         * @name catch
+         * @memberof plat.async.AjaxPromise
+         * @kind function
+         * @access public
+         * @variation 0
+         * 
+         * @description
+         * A wrapper method for {@link plat.async.Promise|Promise.then(undefined, onRejected);}
+         * 
+         * @typeparam {any} U The return type of the returned promise.
+         * 
+         * @param {(error: any) => plat.async.IAjaxThenable<U>} onRejected A method called when/if the promise rejects. If undefined the next
+         * onRejected method in the promise chain will be called.
+         * 
+         * @returns {plat.async.IAjaxThenable<U>} A promise that resolves with the input type parameter U.
+         */
         catch<U>(onRejected: (error: any) => IAjaxThenable<U>): IAjaxThenable<U>;
+        /**
+         * @name catch
+         * @memberof plat.async.AjaxPromise
+         * @kind function
+         * @access public
+         * @variation 1
+         * 
+         * @description
+         * A wrapper method for {@link plat.async.Promise|Promise.then(undefined, onRejected);}
+         * 
+         * @typeparam {any} U The return type of the returned promise.
+         * 
+         * @param {(error: any) => U} onRejected A method called when/if the promise rejects. If undefined the next
+         * onRejected method in the promise chain will be called.
+         * 
+         * @returns {plat.async.IAjaxThenable<U>} A promise that resolves with the input type parameter U.
+         */
         catch<U>(onRejected: (error: any) => U): IAjaxThenable<U>;
         catch<U>(onRejected: (error: any) => any): IAjaxThenable<U> {
             return <IAjaxThenable<U>><any>super.catch<U>(onRejected);
         }
     }
-    
+
     /**
-     * Describes a type of IThenable that can optionally cancel it's associated AJAX call.
+     * @name IAjaxThenable
+     * @memberof plat.async
+     * @kind interface
+     * 
+     * @extends {plat.async.IThenable}
+     * 
+     * @description 
+     * Describes a type of {@link plat.async.IThenable|IThenable} that can optionally cancel it's associated AJAX call.
+     * 
+     * @typeparam {any} R The return type for the {@link plat.async.IThenable|IThenable}.
      */
     export interface IAjaxThenable<R> extends IThenable<R> {
         /**
-         * A method to cancel the AJAX call associated with this AjaxPromise.
+         * @name cancel
+         * @memberof plat.async.IAjaxThenable
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * A method to cancel the AJAX call associated with this {@link plat.async.AjaxPromise}.
+         * 
+         * @returns {void}
          */
         cancel(): void;
 
         /**
+         * @name then
+         * @memberof plat.async.IAjaxThenable
+         * @kind function
+         * @access public
+         * @variation 0
+         * 
+         * @description
          * Takes in two methods, called when/if the promise fulfills/rejects.
          * 
-         * @param onFulfilled A method called when/if the promise fulills. If undefined the next
-         * onFulfilled method in the promise chain will be called.
-         * @param onRejected A method called when/if the promise rejects. If undefined the next
-         * onRejected method in the promise chain will be called.
+         * @typeparam {any} U The type of the object returned from the fulfill/reject callbacks, which will be carried to the 
+         * next then method in the promise chain.
+         * 
+         * @param {(success: R) => plat.async.IAjaxThenable<U>} onFulfilled A method called when/if the promise fulfills. 
+         * If undefined the next onFulfilled method in the promise chain will be called.
+         * @param {(error: any) => plat.async.IAjaxThenable<U>} onRejected A method called when/if the promise rejects. 
+         * If undefined the next onRejected method in the promise chain will be called.
          */
         then<U>(onFulfilled: (success: R) => IThenable<U>, onRejected?: (error: any) => IThenable<U>): IAjaxThenable<U>;
         /**
+         * @name then
+         * @memberof plat.async.IAjaxThenable
+         * @kind function
+         * @access public
+         * @variation 1
+         * 
+         * @description
          * Takes in two methods, called when/if the promise fulfills/rejects.
          * 
-         * @param onFulfilled A method called when/if the promise fulills. If undefined the next
-         * onFulfilled method in the promise chain will be called.
-         * @param onRejected A method called when/if the promise rejects. If undefined the next
-         * onRejected method in the promise chain will be called.
+         * @typeparam {any} U The type of the object returned from the fulfill/reject callbacks, which will be carried to the 
+         * next then method in the promise chain.
+         * 
+         * @param {(success: R) => plat.async.IAjaxThenable<U>} onFulfilled A method called when/if the promise fulfills. 
+         * If undefined the next onFulfilled method in the promise chain will be called.
+         * @param {(error: any) => U} onRejected A method called when/if the promise rejects. 
+         * If undefined the next onRejected method in the promise chain will be called.
          */
         then<U>(onFulfilled: (success: R) => IThenable<U>, onRejected?: (error: any) => U): IAjaxThenable<U>;
         /**
+         * @name then
+         * @memberof plat.async.IAjaxThenable
+         * @kind function
+         * @access public
+         * @variation 2
+         * 
+         * @description
          * Takes in two methods, called when/if the promise fulfills/rejects.
          * 
-         * @param onFulfilled A method called when/if the promise fulills. If undefined the next
-         * onFulfilled method in the promise chain will be called.
-         * @param onRejected A method called when/if the promise rejects. If undefined the next
-         * onRejected method in the promise chain will be called.
+         * @typeparam {any} U The type of the object returned from the fulfill/reject callbacks, which will be carried to the 
+         * next then method in the promise chain.
+         * 
+         * @param {(success: R) => U} onFulfilled A method called when/if the promise fulfills. 
+         * If undefined the next onFulfilled method in the promise chain will be called.
+         * @param {(error: any) => plat.async.IAjaxThenable<U>} onRejected A method called when/if the promise rejects. 
+         * If undefined the next onRejected method in the promise chain will be called.
          */
         then<U>(onFulfilled: (success: R) => U, onRejected?: (error: any) => IThenable<U>): IAjaxThenable<U>;
         /**
+         * @name then
+         * @memberof plat.async.IAjaxThenable
+         * @kind function
+         * @access public
+         * @variation 3
+         * 
+         * @description
          * Takes in two methods, called when/if the promise fulfills/rejects.
          * 
-         * @param onFulfilled A method called when/if the promise fulills. If undefined the next
-         * onFulfilled method in the promise chain will be called.
-         * @param onRejected A method called when/if the promise rejects. If undefined the next
-         * onRejected method in the promise chain will be called.
+         * @typeparam {any} U The type of the object returned from the fulfill/reject callbacks, which will be carried to the 
+         * next then method in the promise chain.
+         * 
+         * @param {(success: R) => U} onFulfilled A method called when/if the promise fulfills. 
+         * If undefined the next onFulfilled method in the promise chain will be called.
+         * @param {(error: any) => U} onRejected A method called when/if the promise rejects. 
+         * If undefined the next onRejected method in the promise chain will be called.
          */
         then<U>(onFulfilled: (success: R) => U, onRejected?: (error: any) => U): IAjaxThenable<U>;
 
         /**
-         * A wrapper method for Promise.then(undefined, onRejected);
+         * @name catch
+         * @memberof plat.async.IAjaxThenable
+         * @kind function
+         * @access public
+         * @variation 0
          * 
-         * @param onRejected A method called when/if the promise rejects. If undefined the next
-         * onRejected method in the promise chain will be called.
+         * @description
+         * A wrapper method for {@link plat.async.Promise|Promise.then(undefined, onRejected);}
+         * 
+         * @param {(error: any) => plat.async.IAjaxThenable<U>} onRejected A method called when/if the promise rejects. 
+         * If undefined the next onRejected method in the promise chain will be called.
          */
         catch<U>(onRejected: (error: any) => IThenable<U>): IAjaxThenable<U>;
         /**
-         * A wrapper method for Promise.then(undefined, onRejected);
+         * @name catch
+         * @memberof plat.async.IAjaxThenable
+         * @kind function
+         * @access public
+         * @variation 1
          * 
-         * @param onRejected A method called when/if the promise rejects. If undefined the next
-         * onRejected method in the promise chain will be called.
+         * @description
+         * A wrapper method for {@link plat.async.Promise|Promise.then(undefined, onRejected);}
+         * 
+         * @param {(error: any) => U} onRejected A method called when/if the promise rejects. 
+         * If undefined the next onRejected method in the promise chain will be called.
          */
         catch<U>(onRejected: (error: any) => U): IAjaxThenable<U>;
     }
 
     /**
-     * Describes a type of IPromise that fulfills with an IAjaxResponse and can be optionally canceled.
+     * @name IAjaxPromise
+     * @memberof plat.async
+     * @kind interface
+     * 
+     * @extends {plat.async.IAjaxThenable}
+     * 
+     * @description
+     * Describes a type of {@link plat.async.IPromise|IPromise} that fulfills with an {@link plat.async.IAjaxResponse|IAjaxResponse} and can be optionally cancelled.
+     * 
+     * @typeparam {any} R The type of the response object in the {@link plat.async.IAjaxResponse|IAjaxResponse}.
      */
     export interface IAjaxPromise<R> extends IAjaxThenable<IAjaxResponse<R>> {
         /**
-         * A method to cancel the AJAX call associated with this AjaxPromise.
+         * @name initialize
+         * @memberof plat.async.IAjaxPromise
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * A method to initialize this {@link plat.async.AjaxPromise|AjaxPromise}, passing it the
+         * associated {@link plat.async.IHttpRequest|IHttpRequest}.
+         * 
+         * @param {plat.async.IHttpRequest} http The http request for this promise.
+         * 
+         * @returns {void}
+         */
+        initialize(http: IHttpRequest): void;
+
+        /**
+         * @name cancel
+         * @memberof plat.async.IAjaxPromise
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * A method to cancel the AJAX call associated with this {@link plat.async.AjaxPromise}.
+         * 
+         * @returns {void}
          */
         cancel(): void;
-        
+
         /**
+         * @name then
+         * @memberof plat.async.IAjaxPromise
+         * @kind function
+         * @access public
+         * @variation 0
+         * 
+         * @description
          * Takes in two methods, called when/if the promise fulfills/rejects.
          * 
-         * @param onFulfilled A method called when/if the promise fulills. If undefined the next
-         * onFulfilled method in the promise chain will be called.
-         * @param onRejected A method called when/if the promise rejects. If undefined the next
-         * onRejected method in the promise chain will be called.
+         * @typeparam {any} U The type of the object returned from the fulfill/reject callbacks, which will be carried to the 
+         * next then method in the promise chain.
+         * 
+         * @param {(success: plat.async.IAjaxResponse<R>) => plat.async.IAjaxThenable<U>} onFulfilled A method called when/if the promise fulfills. 
+         * If undefined the next onFulfilled method in the promise chain will be called.
+         * @param {(error: plat.async.IAjaxError) => plat.async.IAjaxThenable<U>} onRejected A method called when/if the promise rejects. 
+         * If undefined the next onRejected method in the promise chain will be called.
          */
-        then<U>(onFulfilled: (success: IAjaxResponse<R>) => U,
-            onRejected?: (error: IAjaxError) => any): IAjaxThenable<U>;
+        then<U>(onFulfilled: (success: IAjaxResponse<R>) => IAjaxThenable<U>, onRejected?: (error: IAjaxError) => IAjaxThenable<U>): IAjaxThenable<U>;
         /**
+         * @name then
+         * @memberof plat.async.IAjaxPromise
+         * @kind function
+         * @access public
+         * @variation 1
+         * 
+         * @description
          * Takes in two methods, called when/if the promise fulfills/rejects.
          * 
-         * @param onFulfilled A method called when/if the promise fulills. If undefined the next
-         * onFulfilled method in the promise chain will be called.
-         * @param onRejected A method called when/if the promise rejects. If undefined the next
-         * onRejected method in the promise chain will be called.
+         * @typeparam {any} U The type of the object returned from the fulfill/reject callbacks, which will be carried to the 
+         * next then method in the promise chain.
+         * 
+         * @param {(success: plat.async.IAjaxResponse<R>) => plat.async.IAjaxThenable<U>} onFulfilled A method called when/if the promise fulfills. 
+         * If undefined the next onFulfilled method in the promise chain will be called.
+         * @param {(error: plat.async.IAjaxError) => U} onRejected A method called when/if the promise rejects. 
+         * If undefined the next onRejected method in the promise chain will be called.
          */
-        then<U>(onFulfilled: (success: IAjaxResponse<R>) => IThenable<U>,
-            onRejected?: (error: IAjaxError) => IThenable<U>): IAjaxThenable<U>;
+        then<U>(onFulfilled: (success: IAjaxResponse<R>) => IAjaxThenable<U>, onRejected?: (error: IAjaxError) => U): IAjaxThenable<U>;
         /**
+         * @name then
+         * @memberof plat.async.IAjaxPromise
+         * @kind function
+         * @access public
+         * @variation 2
+         * 
+         * @description
          * Takes in two methods, called when/if the promise fulfills/rejects.
          * 
-         * @param onFulfilled A method called when/if the promise fulills. If undefined the next
-         * onFulfilled method in the promise chain will be called.
-         * @param onRejected A method called when/if the promise rejects. If undefined the next
-         * onRejected method in the promise chain will be called.
+         * @typeparam {any} U The type of the object returned from the fulfill/reject callbacks, which will be carried to the 
+         * next then method in the promise chain.
+         * 
+         * @param {(success: plat.async.IAjaxResponse<R>) => U} onFulfilled A method called when/if the promise fulfills. 
+         * If undefined the next onFulfilled method in the promise chain will be called.
+         * @param {(error: plat.async.IAjaxError) => plat.async.IAjaxThenable<U>} onRejected A method called when/if the promise rejects. 
+         * If undefined the next onRejected method in the promise chain will be called.
          */
-        then<U>(onFulfilled: (success: IAjaxResponse<R>) => IThenable<U>,
-            onRejected?: (error: IAjaxError) => any): IAjaxThenable<U>;
+        then<U>(onFulfilled: (success: IAjaxResponse<R>) => U, onRejected?: (error: IAjaxError) => IAjaxThenable<U>): IAjaxThenable<U>;
         /**
+         * @name then
+         * @memberof plat.async.IAjaxPromise
+         * @kind function
+         * @access public
+         * @variation 3
+         * 
+         * @description
          * Takes in two methods, called when/if the promise fulfills/rejects.
          * 
-         * @param onFulfilled A method called when/if the promise fulills. If undefined the next
-         * onFulfilled method in the promise chain will be called.
-         * @param onRejected A method called when/if the promise rejects. If undefined the next
-         * onRejected method in the promise chain will be called.
+         * @typeparam {any} U The type of the object returned from the fulfill/reject callbacks, which will be carried to the 
+         * next then method in the promise chain.
+         * 
+         * @param {(success: plat.async.IAjaxResponse<R>) => U} onFulfilled A method called when/if the promise fulfills. 
+         * If undefined the next onFulfilled method in the promise chain will be called.
+         * @param {(error: plat.async.IAjaxError) => U} onRejected A method called when/if the promise rejects. 
+         * If undefined the next onRejected method in the promise chain will be called.
          */
-        then<U>(onFulfilled: (success: IAjaxResponse<R>) => U,
-            onRejected?: (error: IAjaxError) => IThenable<U>): IAjaxThenable<U>;
+        then<U>(onFulfilled: (success: IAjaxResponse<R>) => U, onRejected?: (error: IAjaxError) => U): IAjaxThenable<U>;
+
+        /**
+         * @name catch
+         * @memberof plat.async.IAjaxPromise
+         * @kind function
+         * @access public
+         * @variation 0
+         * 
+         * @description
+         * A wrapper method for {@link plat.async.Promise|Promise.then(undefined, onRejected);}
+         * 
+         * @param {(error: plat.async.IAjaxError) => plat.async.IAjaxThenable<U>} onRejected A method called when/if the promise rejects. 
+         * If undefined the next onRejected method in the promise chain will be called.
+         */
+        catch<U>(onRejected: (error: IAjaxError) => IAjaxThenable<U>): IAjaxThenable<U>;
+        /**
+         * @name catch
+         * @memberof plat.async.IAjaxPromise
+         * @kind function
+         * @access public
+         * @variation 1
+         * 
+         * @description
+         * A wrapper method for {@link plat.async.Promise|Promise.then(undefined, onRejected);}
+         * 
+         * @param {(error: plat.async.IAjaxError) => U} onRejected A method called when/if the promise rejects. 
+         * If undefined the next onRejected method in the promise chain will be called.
+         */
+        catch<U>(onRejected: (error: IAjaxError) => U): IAjaxThenable<U>;
     }
 
     /**
-     * Describes an object that provides value mappings for
-     * XMLHttpRequestResponseTypes
+     * @name IHttpResponseType
+     * @memberof plat.async
+     * @kind interface
+     * 
+     * @description
+     * Describes an object that provides value mappings for XMLHttpRequestResponseTypes
      */
     export interface IHttpResponseType {
         /**
+         * @name DEFAULT
+         * @memberof plat.async.IHttpResponseType
+         * @kind property
+         * @access public
+         * @readonly
+         * 
+         * @type {string}
+         * 
+         * @description
          * The default response type (empty string)
          */
         DEFAULT: string;
 
         /**
+         * @name ARRAYBUFFER
+         * @memberof plat.async.IHttpResponseType
+         * @kind property
+         * @access public
+         * @readonly
+         * 
+         * @type {string}
+         * 
+         * @description
          * The arrayBuffer type ('arrayBuffer')
          */
         ARRAYBUFFER: string;
 
         /**
+         * @name BLOB
+         * @memberof plat.async.IHttpResponseType
+         * @kind property
+         * @access public
+         * @readonly
+         * 
+         * @type {string}
+         * 
+         * @description
          * The blob type ('blob')
          */
         BLOB: string;
 
         /**
+         * @name DOCUMENT
+         * @memberof plat.async.IHttpResponseType
+         * @kind property
+         * @access public
+         * @readonly
+         * 
+         * @type {string}
+         * 
+         * @description
          * The document type ('document')
          */
         DOCUMENT: string;
 
         /**
+         * @name JSON
+         * @memberof plat.async.IHttpResponseType
+         * @kind property
+         * @access public
+         * @readonly
+         * 
+         * @type {string}
+         * 
+         * @description
          * The json type ('json')
          */
         JSON: string;
 
         /**
+         * @name TEXT
+         * @memberof plat.async.IHttpResponseType
+         * @kind property
+         * @access public
+         * @readonly
+         * 
+         * @type {string}
+         * 
+         * @description
          * The text type ('text')
          */
         TEXT: string;
     }
 
     /**
+     * @name IHttpContentType
+     * @memberof plat.async
+     * @kind interface
+     * 
+     * @description
      * Describes an object that provides Content-Type mappings for Http POST requests.
      */
     export interface IHttpContentType {
         /**
+         * @name ENCODED_FORM
+         * @memberof plat.async.IHttpContentType
+         * @kind property
+         * @access public
+         * @readonly
+         * 
+         * @type {string}
+         * 
+         * @description
          * Standard denotation for form encoded data. All objects are converted 
          * to string key-value pairs.
          */
         ENCODED_FORM: string;
 
         /**
+         * @name JSON
+         * @memberof plat.async.IHttpContentType
+         * @kind property
+         * @access public
+         * @readonly
+         * 
+         * @type {string}
+         * 
+         * @description
          * Standard denotation for JavaScript Object Notation (JSON).
          */
         JSON: string;
 
         /**
+         * @name MULTIPART_FORM
+         * @memberof plat.async.IHttpContentType
+         * @kind property
+         * @access public
+         * @readonly
+         * 
+         * @type {string}
+         * 
+         * @description
          * Standard denotation for a multi-part Webform. Associated with 
          * an entype of 'multipart/form-data'.
          */
         MULTIPART_FORM: string;
 
         /**
+         * @name OCTET_STREAM
+         * @memberof plat.async.IHttpContentType
+         * @kind property
+         * @access public
+         * @readonly
+         * 
+         * @type {string}
+         * 
+         * @description
          * Standard denotation for arbitrary binary data.
          */
         OCTET_STREAM: string;
 
         /**
+         * @name XML
+         * @memberof plat.async.IHttpContentType
+         * @kind property
+         * @access public
+         * @readonly
+         * 
+         * @type {string}
+         * 
+         * @description
          * Standard denotation for XML files.
          */
         XML: string;
 
         /**
+         * @name PLAIN_TEXT
+         * @memberof plat.async.IHttpContentType
+         * @kind property
+         * @access public
+         * @readonly
+         * 
+         * @type {string}
+         * 
+         * @description
          * Standard denotation for textual data.
          */
         PLAIN_TEXT: string;
 
         /**
+         * @name HTML
+         * @memberof plat.async.IHttpContentType
+         * @kind property
+         * @access public
+         * @readonly
+         * 
+         * @type {string}
+         * 
+         * @description
          * Standard denotation for HTML.
          */
         HTML: string;
     }
 
     /**
+     * @name Http
+     * @memberof plat.async
+     * @kind class
+     * 
+     * @implements {plat.async.IHttp}
+     * 
+     * @description
      * The instantiated class of the injectable for making 
      * AJAX requests.
      */
     export class Http implements IHttp {
         /**
+         * @name config
+         * @memberof plat.async.Http
+         * @kind property
+         * @access public
+         * @static
+         * 
+         * @type {plat.async.IHttpConfig}
+         * 
+         * @description
          * Default Http config
          */
         static config: IHttpConfig = {
@@ -1065,11 +2212,19 @@ module plat.async {
             withCredentials: false,
             timeout: null,
             jsonpIdentifier: 'callback',
-            contentType: 'application/json;charset=utf-8;'
+            contentType: 'application/json;charset=utf-8'
         };
 
         /**
-         * HttpResponseType mapping
+         * @name responseType
+         * @memberof plat.async.Http
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.async.IHttpResponseType}
+         * 
+         * @description
+         * Provides value mappings for XMLHttpRequestResponseTypes
          */
         responseType: IHttpResponseType = {
             DEFAULT: '',
@@ -1081,49 +2236,87 @@ module plat.async {
         };
 
         /**
-         * Common HttpContentType mappings
+         * @name contentType
+         * @memberof plat.async.Http
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.async.IHttpContentType}
+         * 
+         * @description
+         * Provides Content-Type mappings for Http POST requests.
          */
         contentType: IHttpContentType = {
-            ENCODED_FORM: 'application/x-www-form-urlencoded;charset=utf-8;',
-            JSON: 'application/json;charset=utf-8;',
-            MULTIPART_FORM: 'multipart/form-data;',
-            OCTET_STREAM: 'application/octet-stream;charset=utf-8;',
-            XML: 'application/xml;charset=utf-8;',
-            PLAIN_TEXT: 'text/plain;',
-            HTML: 'text/html;'
+            ENCODED_FORM: 'application/x-www-form-urlencoded;charset=utf-8',
+            JSON: 'application/json;charset=utf-8',
+            MULTIPART_FORM: 'multipart/form-data',
+            OCTET_STREAM: 'application/octet-stream;charset=utf-8',
+            XML: 'application/xml;charset=utf-8',
+            PLAIN_TEXT: 'text/plain',
+            HTML: 'text/html'
         };
 
         /**
+         * @name ajax
+         * @memberof plat.async.Http
+         * @kind function
+         * @access public
+         * 
+         * @description
          * A wrapper method for the Http class that creates and executes a new Http with
-         * the specified IAjaxOptions. This function will check if 
+         * the specified {@link plat.async.IHttpConfig|IHttpConfig}. This function will check if 
          * XMLHttpRequest level 2 is present, and will default to JSONP if it isn't and 
          * the request is cross-domain.
          * 
-         * @param options The IAjaxOptions for either the XMLHttpRequest 
+         * @typeparam {any} R The type of the {@link plat.async.IAjaxPromise|IAjaxPromise}
+         * 
+         * @param {plat.async.IHttpConfig} options The {@link plat.async.IHttpConfig|IHttpConfig} for either the XMLHttpRequest 
          * or the JSONP callback.
+         * 
+         * @returns {plat.async.IAjaxPromise} A promise, when fulfilled
+         * or rejected, will return an {@link plat.async.IAjaxResponse|IAjaxResponse} object.
          */
         ajax<R>(options: IHttpConfig): IAjaxPromise<R> {
             return new HttpRequest(options).execute<R>();
         }
 
         /**
+         * @name jsonp
+         * @memberof plat.async.Http
+         * @kind function
+         * @access public
+         * 
+         * @description
          * A direct method to force a cross-domain JSONP request.
          * 
-         * @param options The IJsonpOptions 
+         * @typeparam {any} R The type of the {@link plat.async.IAjaxPromise|IAjaxPromise}
+         * 
+         * @param {plat.async.IJsonpConfig} options The {@link plat.async.IJsonpConfig|IJsonpConfig} 
+         * 
+         * @returns {plat.async.IAjaxPromise} A promise, when fulfilled or rejected, will return an 
+         * {@link plat.async.IAjaxResponse|IAjaxResponse} object.
          */
         jsonp<R>(options: IJsonpConfig): IAjaxPromise<R> {
             return new HttpRequest(options).executeJsonp<R>();
         }
 
         /**
-         * Makes an ajax request, specifying responseType: 
-         * responseType.JSON.
+         * @name json
+         * @memberof plat.async.Http
+         * @kind function
+         * @access public
          * 
-         * @param options The IAjaxOptions for either the XMLHttpRequest 
-         * or the JSONP callback.
-         * @return {AjaxPromise} A promise, when fulfilled or rejected, 
-         * will return an IAjaxResponse object, with the response being a parsed 
-         * JSON object (assuming valid JSON).
+         * @description
+         * Makes an ajax request, specifying responseType: 'json'.
+         * 
+         * @typeparam {any} R The type of the {@link plat.async.IAjaxPromise|IAjaxPromise}
+         * 
+         * @param {plat.async.IHttpConfig} options The {@link plat.async.IHttpConfig|IHttpConfig} 
+         * for either the XMLHttpRequest or the JSONP callback.
+         * 
+         * @returns {plat.async.IAjaxPromise} A promise, when fulfilled or rejected, 
+         * will return an {@link plat.async.IAjaxResponse|IAjaxResponse} object, with the response 
+         * being a parsed JSON object (assuming valid JSON).
          */
         json<R>(options: IHttpConfig): IAjaxPromise<R> {
             return new HttpRequest(extend({}, options, { responseType: 'json' })).execute<R>();
@@ -1140,52 +2333,99 @@ module plat.async {
     register.injectable(__Http, IHttp);
 
     /**
-     * Describes the interface for the Ajax injectable for making both 
-     * XMLHttpRequests and JSONP requests.
+     * @name IHttp
+     * @memberof plat.async
+     * @kind interface
+     * 
+     * @description
+     * The interface of the injectable for making 
+     * AJAX requests.
      */
     export interface IHttp {
         /**
-         * Describes an object that provides value mappings for
+         * @name responseType
+         * @memberof plat.async.IHttp
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.async.IHttpResponseType}
+         * 
+         * @description
+         * Provides value mappings for
          * XMLHttpRequestResponseTypes
          */
         responseType: IHttpResponseType;
 
         /**
-         * Describes an object that provides Content-Type mappings for Http POST requests.
+         * @name contentType
+         * @memberof plat.async.IHttp
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.async.IHttpContentType}
+         * 
+         * @description
+         * Provides Content-Type mappings for Http POST requests.
          */
         contentType: IHttpContentType;
 
         /**
+         * @name ajax
+         * @memberof plat.async.IHttp
+         * @kind function
+         * @access public
+         * 
+         * @description
          * A wrapper method for the Http class that creates and executes a new Http with
-         * the specified IAjaxOptions. This function will check if 
+         * the specified {@link plat.async.IHttpConfig|IHttpConfig}. This function will check if 
          * XMLHttpRequest level 2 is present, and will default to JSONP if it isn't and 
          * the request is cross-domain.
          * 
-         * @param options The IAjaxOptions for either the XMLHttpRequest 
+         * @typeparam {any} R The type of the {@link plat.async.IAjaxPromise|IAjaxPromise}
+         * 
+         * @param {plat.async.IHttpConfig} options The {@link plat.async.IHttpConfig|IHttpConfig} for either the XMLHttpRequest 
          * or the JSONP callback.
-         * @return {AjaxPromise} A promise, when fulfilled
-         * or rejected, will return an IAjaxResponse object.
+         * 
+         * @returns {plat.async.AjaxPromise} A promise, when fulfilled
+         * or rejected, will return an {@link plat.async.IAjaxResponse|IAjaxResponse} object.
          */
         ajax<R>(options: IHttpConfig): IAjaxPromise<R>;
 
         /**
+         * @name jsonp
+         * @memberof plat.async.IHttp
+         * @kind function
+         * @access public
+         * 
+         * @description
          * A direct method to force a cross-domain JSONP request.
          * 
-         * @param options The IJsonpOptions 
-         * @return {AjaxPromise} A promise, when fulfilled
-         * or rejected, will return an IAjaxResponse object.
+         * @typeparam {any} R The type of the {@link plat.async.IAjaxPromise|IAjaxPromise}
+         * 
+         * @param {plat.async.IJsonpConfig} options The {@link plat.async.IJsonpConfig|IJsonpConfig} 
+         * 
+         * @returns {plat.async.IAjaxPromise} A promise, when fulfilled or rejected, will return an 
+         * {@link plat.async.IAjaxResponse|IAjaxResponse} object.
          */
         jsonp? <R>(options: IJsonpConfig): IAjaxPromise<R>;
 
         /**
-         * Makes an ajax request, specifying responseType: 
-         * 'json'.
+         * @name json
+         * @memberof plat.async.IHttp
+         * @kind function
+         * @access public
          * 
-         * @param options The IAjaxOptions for either the XMLHttpRequest 
-         * or the JSONP callback.
-         * @return {AjaxPromise} A promise, when fulfilled or rejected, 
-         * will return an IAjaxResponse object, with the response being a parsed 
-         * JSON object (assuming valid JSON).
+         * @description
+         * Makes an ajax request, specifying responseType: 'json'.
+         * 
+         * @typeparam {any} R The type of the {@link plat.async.IAjaxPromise|IAjaxPromise}
+         * 
+         * @param {plat.async.IHttpConfig} options The {@link plat.async.IHttpConfig|IHttpConfig} 
+         * for either the XMLHttpRequest or the JSONP callback.
+         * 
+         * @returns {plat.async.IAjaxPromise} A promise, when fulfilled or rejected, 
+         * will return an {@link plat.async.IAjaxResponse|IAjaxResponse} object, with the response 
+         * being a parsed JSON object (assuming valid JSON).
          */
         json? <R>(options: IHttpConfig): IAjaxPromise<R>;
     }

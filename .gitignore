@@ -155,16 +155,17 @@ $RECYCLE.BIN/
 # Mac desktop service store files
 .DS_Store
 
-# TypeScript compiled files
+# TypeScript
 *.js
 *.js.map
 
-/framework/testing/coverage
-/framework/testing/node_modules
-/framework/testing/reporter
-/framework/testing/typings
-/framework/framework/*
+coverage
+node_modules
+reporter
+typings/
+.tscache
+dist
 
+!gruntfile.js
 !*.less
 !*.ts
-/framework/node_modules

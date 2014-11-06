@@ -9,7 +9,7 @@ module plat {
          * Attempts to acquire position information of the device.
          * 
          * @param positionOptions Optional IGeolocationPositionOptions for configuring the acquisition.
-         * @return {async.IThenable<IGeolocationPosition, IGeolocationPositionError>} A promise,
+         * @returns {async.IThenable<IGeolocationPosition, IGeolocationPositionError>} A promise,
          * resolving when the position is found, and rejecting in the event of a position error.
          */
         getCurrentPosition(positionOptions?: IGeolocationPositionOptions)
@@ -27,7 +27,7 @@ module plat {
          * @param errorCallback A method that receives IGeolocationPositionError updates from the geolocation service.
          * @param positionOptions Optional IGeolocationPositionOptions for configuring the acquisition.
          * 
-         * @return {IRemoveListener} A method for removing the watch listener when the app wants to stop listening for position updates.
+         * @returns {IRemoveListener} A method for removing the watch listener when the app wants to stop listening for position updates.
          */
         watchPosition(updateCallback: (position: IGeolocationPosition) => void,
             errorCallback?: (error: PositionError) => void,
@@ -63,7 +63,7 @@ module plat {
          * Attempts to acquire position information of the device.
          * 
          * @param positionOptions Optional IGeolocationPositionOptions for configuring the acquisition.
-         * @return {async.IThenable<IGeolocationPosition, IGeolocationPositionError>} A promise,
+         * @returns {async.IThenable<IGeolocationPosition, IGeolocationPositionError>} A promise,
          * resolving when the position is found, and rejecting in the event of a position error.
          */
         getCurrentPosition(positionOptions?: IGeolocationPositionOptions):
@@ -77,7 +77,7 @@ module plat {
          * @param errorCallback A method that receives IGeolocationPositionError updates from the geolocation service.
          * @param positionOptions Optional IGeolocationPositionOptions for configuring the acquisition.
          * 
-         * @return {IRemoveListener} A method for removing the watch listener when the app wants to stop listening for position updates.
+         * @returns {IRemoveListener} A method for removing the watch listener when the app wants to stop listening for position updates.
          */
         watchPosition(updateCallback: (position: IGeolocationPosition) => void,
             errorCallback?: (error: IGeolocationPositionError) => void, positionOptions?: IGeolocationPositionOptions): IRemoveListener;

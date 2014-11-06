@@ -6,9 +6,6 @@
 
     <title>PlatypusJS SPA Testing</title>
 
-    <!-- CSS -->
-    <link href="../framework/css/platypus.css" rel="stylesheet" />
-
     <!-- ts-bundle-start -->
     <!-- Global References -->
     <script src="../framework/references/references.js"></script>
@@ -59,9 +56,9 @@
     <script src="../framework/storage/sessionstorage.js"></script>
 
     <!-- Expressions -->
-    <script src="../framework/expressions/operators/operators.js"></script>
     <script src="../framework/expressions/tokenizer/tokenizer.js"></script>
     <script src="../framework/expressions/parser/parser.js"></script>
+    <script src="../framework/expressions/operators/operators.js"></script>
 
     <!-- Observable -->
     <script src="../framework/observable/contextmanager/contextmanager.js"></script>
@@ -75,7 +72,7 @@
 
     <!-- Control Classes -->
     <script src="../framework/control/control.js"></script>
-    <script src="../framework/controls/attributecontrol/attributecontrol.js"></script>
+    <script src="../framework/attributecontrol/attributecontrol.js"></script>
     <script src="../framework/ui/templatecontrol/templatecontrol.js"></script>
     <script src="../framework/ui/bindablepropertycontrol/bindablepropertycontrol.js"></script>
     <script src="../framework/ui/viewcontrol/baseviewcontrol.js"></script>
@@ -109,6 +106,7 @@
     <script src="../framework/ui/animations/cssanimation.js"></script>
     <script src="../framework/ui/animations/jsAnimation.js"></script>
     <script src="../framework/ui/animations/simpleanimation/simpleanimation.js"></script>
+    <script src="../framework/ui/animations/simpletransition/simpletransition.js"></script>
 
     <!-- Controls -->
     <script src="../framework/controls/name/namecontrol.js"></script>
@@ -131,13 +129,15 @@
     <script src="../framework/ui/controls/if/if.js"></script>
     <script src="../framework/ui/controls/anchor/anchor.js"></script>
 
+    <!-- App -->
     <script src="../framework/app/app.js"></script>
     <!-- ts-bundle-end -->
+
     <!-- Test App -->
     <link href="viewcontrols/main/main.viewcontrol.css" rel="stylesheet" />
     <script src="viewcontrols/main/main.viewcontrol.js"></script>
 </head>
 <body>
-    <plat-routeport></plat-routeport>
+    <plat-viewport plat-options="{ defaultView: 'viewcontrol'}"></plat-viewport>
 </body>
 </html>

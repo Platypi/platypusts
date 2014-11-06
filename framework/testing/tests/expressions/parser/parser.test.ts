@@ -221,6 +221,27 @@ module tests.expressions.parser {
             fn: 'toBe'
         },
         {
+            name: 'multi-entry object literal',
+            returns: {
+                test: 'test',
+                test2: 'test2'
+            },
+            identifiers: [],
+            expression: '{ test: "test", test2: "test2" }',
+            fn: 'toEqual'
+        },
+        {
+            name: 'multi-entry object literal with string operators',
+            returns: {
+                test: '!',
+                test2: 'boss',
+                test3: '-'
+            },
+            identifiers: [],
+            expression: '{ test: "!", test2: "boss", test3: "-" }',
+            fn: 'toEqual'
+        },
+        {
             name: 'nested object literals',
             returns: {
                 test: {
@@ -231,6 +252,16 @@ module tests.expressions.parser {
             },
             identifiers: [],
             expression: '{ test: { test: { test: 1 } } }',
+            fn: 'toEqual'
+        },
+        {
+            name: 'object literal with unary',
+            returns: {
+                x: 100,
+                y: -50
+            },
+            identifiers: [],
+            expression: '{ x: 100, y: 1 > +4 ? -10 : -50 }',
             fn: 'toEqual'
         },
         {
@@ -400,6 +431,13 @@ module tests.expressions.parser {
             identifiers: [],
             expression: '["slice"]',
             fn: 'toEqual'
+        },
+        {
+            name: 'a string literal in a ternary',
+            returns: '?',
+            identifiers: [],
+            expression: '1 === 1 ? "?" : "@"',
+            fn: 'toBe'
         },
         {
             name: 'a resource in object literal',

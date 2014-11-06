@@ -1,5 +1,15 @@
 module plat.controls {
-    // keyboard events
+    /**
+     * @name KeyCodes
+     * @memberof plat.controls
+     * @kind property
+     * @access public
+     * 
+     * @type {any}
+     * 
+     * @description
+     * A mapping of all keys to their equivalent keyCode.
+     */
     export var KeyCodes = {
         'backspace': 8,
         'tab': 9,
@@ -97,12 +107,55 @@ module plat.controls {
         '"': 222, 'double quote': 222
     };
 
+    /**
+     * @name KeyCodeEventControl
+     * @memberof plat.controls
+     * @kind class
+     * 
+     * @extends {plat.controls.SimpleEventControl}
+     * @implements {plat.controls.IKeyCodeEventControl}
+     * 
+     * @description
+     * Base class used for filtering keys on KeyboardEvents.
+     */
     export class KeyCodeEventControl extends SimpleEventControl implements IKeyCodeEventControl {
-        keyCodes: IObject<{ shifted?: boolean; }>;
+        /**
+         * @name $Regex
+         * @memberof plat.controls.KeyCodeEventControl
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.expressions.IRegex}
+         * 
+         * @description
+         * Reference to the {@link plat.expressions.IRegex|IRegex} injectable.
+         */
+        $Regex: plat.expressions.IRegex = plat.acquire(__Regex);
 
         /**
-         * Checks if the IKeyboardEventInput is an expression object 
+         * @name keyCodes
+         * @memberof plat.controls.KeyCodeEventControl
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.IObject<{ shifted: boolean; }>}
+         * 
+         * @description
+         * Holds the key mappings to filter for in a KeyboardEvent.
+         */
+        keyCodes: IObject<{ shifted: boolean; }>;
+
+        /**
+         * @name _setListener
+         * @memberof plat.controls.KeyCodeEventControl
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Checks if the {@link plat.controls.IKeyboardEventInput|IKeyboardEventInput} is an expression object 
          * and sets the necessary listener.
+         * 
+         * @returns {void}
          */
         _setListener(): void {
             var attr = this.attribute;
@@ -110,8 +163,8 @@ module plat.controls {
                 return;
             }
 
-            var expression = (<any>this.attributes)[attr].trim();
-            
+            var expression = this.attributes[attr].trim();
+
             if (expression[0] === '{') {
                 var eventObject: IKeyboardEventInput = this.evaluateExpression(expression) ||
                     { method: '', key: null },
@@ -121,7 +174,7 @@ module plat.controls {
                 this._parseArgs(eventObject.method);
 
                 if (isNull(key) && isNull(keys)) {
-                    (<any>this.attributes)[attr] = eventObject.method;
+                    this.attributes[attr] = eventObject.method;
 
                     this._setKeyCodes();
                     super._setListener();
@@ -130,7 +183,7 @@ module plat.controls {
 
                 keys = isArray(keys) ? keys : [key];
                 this._setKeyCodes(keys);
-                this.addEventListener(this.element, this.event, this._listener, false);
+                this.addEventListener(this.element, this.event, this._onEvent, false);
 
                 return;
             }
@@ -140,97 +193,197 @@ module plat.controls {
         }
 
         /**
+         * @name _onEvent
+         * @memberof plat.controls.KeyCodeEventControl
+         * @kind function
+         * @access protected
+         * 
+         * @description
          * Matches the event's keyCode if necessary and then handles the event if 
          * a match is found or if there are no filter keyCodes.
          * 
-         * @param ev The keyboard event object.
+         * @param {KeyboardEvent} ev The keyboard event object.
+         * 
+         * @returns {void}
          */
         _onEvent(ev: KeyboardEvent): void {
-            var keyCodes = this.keyCodes;
+            var keyCodes = this.keyCodes,
+                code: { shifted?: boolean };
 
-            if (isEmpty(keyCodes) || !isUndefined(keyCodes[ev.keyCode])) {
+            if (isEmpty(keyCodes)) {
                 super._onEvent(ev);
+            } else if (!isUndefined(keyCodes[ev.keyCode])) {
+                code = keyCodes[ev.keyCode];
+
+                if (!code.shifted || ev.shiftKey) {
+                    super._onEvent(ev);
+                }
             }
         }
 
         /**
-         * Sets the defined key codes as they correspond to 
-         * the KeyCodes map.
+         * @name _setKeyCodes
+         * @memberof plat.controls.KeyCodeEventControl
+         * @kind function
+         * @access protected
          * 
-         * @param keys The array of defined keys to satisfy the 
+         * @description
+         * Sets the defined key codes as they correspond to 
+         * the {@link plat.controls.KeyCodes|KeyCodes} map.
+         * 
+         * @param {Array<string>} keys? The array of defined keys to satisfy the 
          * key press condition.
+         * 
+         * @returns {void}
          */
-        _setKeyCodes(keys: Array<string> = []): void {
+        _setKeyCodes(keys?: Array<string>): void {
+            if (!isArray(keys)) {
+                keys = [];
+            }
+
             var length = keys.length,
                 key: string,
-                keyCodes = this.keyCodes;
+                keyCodes = this.keyCodes,
+                index: string,
+                shifted = this.$Regex.shiftedKeyRegex;
 
-            if (!isArray(keyCodes)) {
+            if (!isObject(keyCodes)) {
                 keyCodes = this.keyCodes = {};
             }
 
             for (var i = 0; i < length; ++i) {
                 key = keys[i];
+                index = isNumber(key) ? key : (<any>KeyCodes)[key.toLowerCase()];
 
-                keyCodes[isNumber(key) ? key : (<any>KeyCodes)[key]] = {};
+                keyCodes[index] = { shifted: shifted.test(key) };
             }
         }
     }
 
     /**
-     * Describes an attribute object that binds to specified key code scenarios.
+     * @name IKeyCodeEventControl
+     * @memberof plat.controls
+     * @kind interface
+     * 
+     * @extends {plat.controls.ISimpleEventControl}
+     * 
+     * @description
+     * An attribute object that binds to specified key code scenarios.
      */
     export interface IKeyCodeEventControl extends ISimpleEventControl {
         /**
-         * An object keyed by keyCode with options as key values.
+         * @name keyCodes
+         * @memberof plat.controls.IKeyCodeEventControl
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.IObject<{ shifted: boolean; }>}
+         * 
+         * @description
+         * Holds the key mappings to filter for in a KeyboardEvent.
          */
-        keyCodes: IObject<{ shifted?: boolean; }>;
+        keyCodes: IObject<{ shifted: boolean; }>;
     }
 
     /**
-     * The available options for plat.controls.KeyCodeEventControl.
+     * @name IKeyboardEventInput
+     * @memberof plat.controls
+     * @kind interface
+     * 
+     * @description
+     * The available options for {@link plat.controls.KeyCodeEventControl|KeyCodeEventControl}.
      */
     export interface IKeyboardEventInput {
         /**
-         * The method to call when the 
-         * condition is satisfied.
+         * @name method
+         * @memberof plat.controls.IKeyboardEventInput
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * The method to call when the condition is satisfied.
          */
         method: string;
 
         /**
-         * The key to satisfy the press 
-         * condition. Can be specified 
-         * either as a numeric key code 
-         * or a string representation 
-         * as seen by the KeyCodes mapping.
+         * @name key
+         * @memberof plat.controls.IKeyboardEventInput
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * The key to satisfy the press condition. Can be specified either as a numeric key code 
+         * or a string representation as seen by the KeyCodes mapping.
          */
         key?: string;
 
         /**
-         * An optional array of keys 
-         * if more than one key can 
-         * satisfy the condition.
+         * @name keys
+         * @memberof plat.controls.IKeyboardEventInput
+         * @kind property
+         * @access public
+         * 
+         * @type {Array<string>}
+         * 
+         * @description
+         * An optional array of keys if more than one key can satisfy the condition.
          */
         keys?: Array<string>;
     }
 
+    /**
+     * @name KeyDown
+     * @memberof plat.controls
+     * @kind class
+     * 
+     * @extends {plat.controls.KeyCodeEventControl}
+     * 
+     * @description
+     * Used for filtering keys on keydown events.
+     */
     export class KeyDown extends KeyCodeEventControl {
         /**
-         * The event name.
-         */
-        event: string = 'keydown';
-    }
-
-    export class KeyPress extends KeyCodeEventControl {
-        /**
-         * The event name.
-         */
-        event: string = 'keydown';
-
-        /**
-         * Filters only 'printing keys' (a-z, 0-9, and special characters)
+         * @name event
+         * @memberof plat.controls.KeyDown
+         * @kind property
+         * @access public
          * 
-         * @param ev The keyboard event object.
+         * @type {string}
+         * 
+         * @description
+         * The event name.
+         */
+        event: string = 'keydown';
+
+        /**
+         * @name cancelEvent
+         * @memberof plat.controls.KeyDown
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.IRemoveListener}
+         * 
+         * @description
+         * The a method to remove the currently postponed event.
+         */
+        cancelEvent: IRemoveListener = noop;
+
+        /**
+         * @name _onEvent
+         * @memberof plat.controls.KeyDown
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Delays execution of the event
+         * 
+         * @param {KeyboardEvent} ev The KeyboardEvent object.
+         * 
+         * @returns {void}
          */
         _onEvent(ev: KeyboardEvent): void {
             var keyCode = ev.keyCode;
@@ -238,13 +391,128 @@ module plat.controls {
             if ((keyCode >= 48 && keyCode <= 90) ||
                 (keyCode >= 186) ||
                 (keyCode >= 96 && keyCode <= 111)) {
-                super._onEvent(ev);
+                this.cancelEvent = postpone(() => {
+                    super._onEvent(ev);
+                });
             }
+        }
+
+        /**
+         * @name dispose
+         * @memberof plat.controls.KeyDown
+         * @kind function
+         * 
+         * @description
+         * Calls to cancel an event if it is in progress.
+         * 
+         * @returns {void}
+         */
+        dispose() {
+            this.cancelEvent();
+
+            this.cancelEvent = null;
         }
     }
 
+    /**
+     * @name KeyPress
+     * @memberof plat.controls
+     * @kind class
+     * 
+     * @extends {plat.controls.KeyCodeEventControl}
+     * 
+     * @description
+     * Used for filtering only printing keys (a-z, A-Z, 0-9, and special characters) on keydown events.
+     */
+    export class KeyPress extends KeyCodeEventControl {
+        /**
+         * @name event
+         * @memberof plat.controls.KeyPress
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * The event name.
+         */
+        event: string = 'keydown';
+
+        /**
+         * @name cancelEvent
+         * @memberof plat.controls.KeyPress
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.IRemoveListener}
+         * 
+         * @description
+         * The a method to remove the currently postponed event.
+         */
+        cancelEvent: IRemoveListener = noop;
+
+        /**
+         * @name _onEvent
+         * @memberof plat.controls.KeyPress
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Filters only 'printing keys' (a-z, A-Z, 0-9, and special characters)
+         * 
+         * @param {KeyboardEvent} ev The KeyboardEvent object.
+         * 
+         * @returns {void}
+         */
+        _onEvent(ev: KeyboardEvent): void {
+            var keyCode = ev.keyCode;
+
+            if ((keyCode >= 48 && keyCode <= 90) ||
+                (keyCode >= 186) ||
+                (keyCode >= 96 && keyCode <= 111)) {
+                this.cancelEvent = postpone(() => {
+                    super._onEvent(ev);
+                });
+            }
+        }
+
+        /**
+         * @name dispose
+         * @memberof plat.controls.KeyPress
+         * @kind function
+         * 
+         * @description
+         * Calls to cancel an event if it is in progress.
+         * 
+         * @returns {void}
+         */
+        dispose() {
+            this.cancelEvent();
+
+            this.cancelEvent = null;
+        }
+    }
+
+    /**
+     * @name KeyUp
+     * @memberof plat.controls
+     * @kind class
+     * 
+     * @extends {plat.controls.KeyCodeEventControl}
+     * 
+     * @description
+     * Used for filtering keys on keyup events.
+     */
     export class KeyUp extends KeyCodeEventControl {
         /**
+         * @name event
+         * @memberof plat.controls.KeyDown
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
          * The event name.
          */
         event: string = 'keyup';

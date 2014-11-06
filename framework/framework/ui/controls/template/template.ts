@@ -1,37 +1,155 @@
 module plat.ui.controls {
+    /**
+     * @name Template
+     * @memberof plat.ui.controls
+     * @kind class
+     * 
+     * @extends {plat.ui.TemplateControl}
+     * 
+     * @description
+     * A {@link plat.ui.TemplateControl|TemplateControl} for easily reusing a 
+     * defined HTML template.
+     */
     export class Template extends TemplateControl {
+        /**
+         * @name $Promise
+         * @memberof plat.ui.controls.Template
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.async.IPromise}
+         * 
+         * @description
+         * Reference to the {@link plat.async.IPromise|IPromise} injectable.
+         */
         $Promise: async.IPromise = acquire(__Promise);
+        /**
+         * @name $TemplateCache
+         * @memberof plat.ui.controls.Template
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.storage.ITemplateCache}
+         * 
+         * @description
+         * Reference to an injectable for storing HTML templates.
+         */
         $TemplateCache: storage.ITemplateCache = acquire(__TemplateCache);
+        /**
+         * @name $Document
+         * @memberof plat.ui.controls.Template
+         * @kind property
+         * @access public
+         * 
+         * @type {Document}
+         * 
+         * @description
+         * Reference to the Document injectable.
+         */
         $Document: Document = acquire(__Document);
 
         /**
+         * @name replaceWith
+         * @memberof plat.ui.controls.Template
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
          * Removes the <plat-template> node from the DOM
          */
         replaceWith: string = null;
 
         /**
-         * The evaluated plat-options object.
+         * @name options
+         * @memberof plat.ui.controls.Template
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.observable.IObservableProperty<plat.ui.controls.ITemplateOptions>}
+         * 
+         * @description
+         * The evaluated {@link plat.controls.Options|plat-options} object.
          */
         options: observable.IObservableProperty<ITemplateOptions>;
-
+        
         /**
+         * @name _id
+         * @memberof plat.ui.controls.Template
+         * @kind property
+         * @access protected
+         * 
+         * @type {string}
+         * 
+         * @description
          * The unique ID used to reference a particular 
          * template.
          */
         _id: string;
-
+        
         /**
+         * @name _url
+         * @memberof plat.ui.controls.Template
+         * @kind property
+         * @access protected
+         * 
+         * @type {string}
+         * 
+         * @description
          * The optional URL associated with this 
          * particular template.
          */
         _url: string;
-
-        private __isFirst: boolean = false;
+        
+        /**
+         * @name __isFirst
+         * @memberof plat.ui.controls.Template
+         * @kind property
+         * @access private
+         * 
+         * @type {string}
+         * 
+         * @description
+         * Whether or not this is the first instance of the control, 
+         * specifying that it defines the template to copy.
+         */
+        private __isFirst = false;
+        /**
+         * @name __templatePromise
+         * @memberof plat.ui.controls.Template
+         * @kind property
+         * @access private
+         * 
+         * @type {plat.async.IThenable<plat.ui.controls.Template>}
+         * 
+         * @description
+         * A promise that resolves when the template is retrieved and ready.
+         */
         private __templatePromise: async.IThenable<Template>;
+        /**
+         * @name __templateControlCache
+         * @memberof plat.ui.controls.Template
+         * @kind property
+         * @access private
+         * 
+         * @type {plat.storage.ICache<any>}
+         * 
+         * @description
+         * HTML template storage for all instances of this control.
+         */
         private __templateControlCache: storage.ICache<any>;
 
         /**
-         * Creates the Template control cache
+         * @name constructor
+         * @memberof plat.ui.controls.Template
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * The constructor for a {@link plat.ui.controls.Template|Template}. Creates the control cache.
+         * 
+         * @returns {plat.ui.controls.Template} A {@link plat.ui.controls.Template|Template} instance.
          */
         constructor() {
             super();
@@ -40,7 +158,15 @@ module plat.ui.controls {
         }
 
         /**
+         * @name initialize
+         * @memberof plat.ui.controls.Template
+         * @kind function
+         * @access public
+         * 
+         * @description
          * Initializes the creation of the template.
+         * 
+         * @returns {void}
          */
         initialize(): void {
             var id = this._id = this.options.value.id,
@@ -50,7 +176,7 @@ module plat.ui.controls {
                 return;
             }
 
-            this._url = options.url;
+            this._url = options.templateUrl;
 
             var templatePromise: async.IThenable<Template> = this.__templateControlCache.read(id);
             if (!isNull(templatePromise)) {
@@ -61,30 +187,54 @@ module plat.ui.controls {
             this.__isFirst = true;
             this._initializeTemplate();
         }
-
+        
         /**
+         * @name loaded
+         * @memberof plat.ui.controls.Template
+         * @kind function
+         * @access public
+         * 
+         * @description
          * Decides if this is a template definition or 
          * a template instance.
+         * 
+         * @returns {void}
          */
         loaded(): void {
             if (!this.__isFirst) {
                 this._waitForTemplateControl(this.__templatePromise);
             }
         }
-
+        
         /**
+         * @name dispose
+         * @memberof plat.ui.controls.Template
+         * @kind function
+         * @access public
+         * 
+         * @description
          * Removes the template from the template cache.
+         * 
+         * @returns {void}
          */
         dispose(): void {
             if (this.__isFirst) {
                 this.__templateControlCache.dispose();
             }
         }
-
+        
         /**
+         * @name _initializeTemplate
+         * @memberof plat.ui.controls.Template
+         * @kind function
+         * @access protected
+         * 
+         * @description
          * Determines whether a URL or innerHTML is being used, 
          * creates the bindable template, and stores the template 
          * in a template cache for later use.
+         * 
+         * @returns {void}
          */
         _initializeTemplate(): void {
             var id = this._id;
@@ -123,14 +273,22 @@ module plat.ui.controls {
 
             this.__templateControlCache.put(id, controlPromise);
         }
-
+        
         /**
+         * @name _waitForTemplateControl
+         * @memberof plat.ui.controls.Template
+         * @kind function
+         * @access protected
+         * 
+         * @description
          * Waits for the template promise to resolve, then initializes 
          * the binding of the bindable template and places it into the 
          * DOM.
          * 
-         * @param templatePromise The promise associated with the first 
-         * instance of the template with this ID.
+         * @param {plat.async.IThenable<plat.ui.controls.Template>} templatePromise The promise 
+         * associated with the first instance of the control with this ID.
+         * 
+         * @returns {void}
          */
         _waitForTemplateControl(templatePromise: async.IThenable<Template>): void {
             var $exception: IExceptionStatic;
@@ -156,29 +314,65 @@ module plat.ui.controls {
                 });
             });
         }
-
+        
+        /**
+         * @name __mapBindableTemplates
+         * @memberof plat.ui.controls.Template
+         * @kind function
+         * @access private
+         * 
+         * @description
+         * Maps the bindable templates cache and html templates of the first 
+         * control with the proper ID to this control's bindable templates.
+         * 
+         * @param {plat.ui.controls.Template} control The first of the controls 
+         * with this corresponding ID that defined the HTML template to reuse.
+         * 
+         * @returns {void}
+         */
         private __mapBindableTemplates(control: Template): void {
-            (<BindableTemplates>this.bindableTemplates)._cache =
-                (<BindableTemplates>control.bindableTemplates)._cache;
-            this.bindableTemplates.templates = control.bindableTemplates.templates;
+            var bindableTemplates = <BindableTemplates>this.bindableTemplates;
+            bindableTemplates._cache = (<BindableTemplates>control.bindableTemplates)._cache;
+            bindableTemplates.templates = control.bindableTemplates.templates;
         }
     }
 
     /**
-     * The available options for plat.ui.controls.Template.
+     * @name ITemplateOptions
+     * @memberof plat.ui.controls
+     * @kind interface
+     * 
+     * @description
+     * The available {@link plat.controls.Options|options} for the {@link plat.ui.controls.Template|Template} control.
      */
     export interface ITemplateOptions {
         /**
+         * @name id
+         * @memberof plat.ui.controls.ITemplateOptions
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
          * The unique ID used to label a template 
          * and use it as DOM.
          */
         id: string;
 
         /**
+         * @name templateUrl
+         * @memberof plat.ui.controls.ITemplateOptions
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
          * An optional URL to specify a template 
          * instead of using the element's innerHTML.
          */
-        url: string;
+        templateUrl: string;
     }
 
     register.control(__Template, Template);

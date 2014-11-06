@@ -1,13 +1,40 @@
+/**
+ * @name dependency
+ * @memberof plat
+ * @kind namespace
+ * @access public
+ *  
+ * @description
+ * Holds classes and interfaces related to dependency injection components in platypus.
+ */
 module plat.dependency {
     /**
+     * @name Injector
+     * @memberof plat.dependency
+     * @kind class
+     * 
+     * @implements {plat.dependency.IInjector}
+     * 
+     * @description
      * The Injector class is used for dependency injection. You can create an injector object,
      * specify dependencies and a constructor for your component. When the injector object is
      * 'injected' it will create a new instance of your component and pass in the dependencies
      * to the constructor.
+     * 
+     * @typeparam {any} T The type of object that will be returned when the inject method is invoked.
      */
     export class Injector<T> implements IInjector<T> {
         /**
+         * @name initialize
+         * @memberof plat.dependency.Injector
+         * @kind function
+         * @access public
+         * @static
+         * 
+         * @description
          * Initializes all static injectors.
+         * 
+         * @returns {void}
          */
         static initialize(): void {
             var injectors = staticInjectors,
@@ -22,10 +49,19 @@ module plat.dependency {
         }
 
         /**
+         * @name getDependencies
+         * @memberof plat.dependency.Injector
+         * @kind function
+         * @access public
+         * @static
+         * 
+         * @description
          * Gathers and returns the array of listed dependencies.
          * 
-         * @param dependencies The array of dependencies specified 
+         * @param {Array<any>} dependencies The array of dependencies specified 
          * by either their Constructor or their registered name.
+         * 
+         * @returns {Array<plat.dependency.IInjecor<any>>} The dependencies
          */
         static getDependencies(dependencies: Array<any>): Array<IInjector<any>> {
             if (isNull(dependencies) || isEmpty(dependencies)) {
@@ -43,12 +79,21 @@ module plat.dependency {
         }
 
         /**
+         * @name getDependency
+         * @memberof plat.dependency.Injector
+         * @kind function
+         * @access public
+         * @static
+         * 
+         * @description
          * Finds and returns the dependency.
          * 
-         * @param dependency an object/string used to find the dependency.
+         * @param {any} dependency an object/string used to find the dependency.
+         * 
+         * @returns {plat.dependency.IInjector<any>} The dependency
          */
         static getDependency(dependency: any): IInjector<any> {
-            if (isNull(dependency) || dependency === 'noop') {
+            if (isNull(dependency) || dependency === __NOOP_INJECTOR) {
                 return Injector.__noop();
             } else if (Injector.isInjector(dependency)) {
                 return dependency;
@@ -58,12 +103,21 @@ module plat.dependency {
         }
 
         /**
+         * @name convertDependencies
+         * @memberof plat.dependency.Injector
+         * @kind function
+         * @access public
+         * @static
+         * 
+         * @description
          * Converts dependencies specified by their Constructors into 
          * equivalent dependencies specified by their registered string 
          * name.
          * 
-         * @param dependencies The array of dependencies specified 
+         * @param {Array<any>} dependencies The array of dependencies specified 
          * by either their Constructor or their registered name.
+         * 
+         * @returns {Array<string>} The dependency strings.
          */
         static convertDependencies(dependencies: Array<any>): Array<string> {
             if (!isArray(dependencies)) {
@@ -91,9 +145,18 @@ module plat.dependency {
         }
 
         /**
+         * @name isInjector
+         * @memberof plat.dependency.Injector
+         * @kind function
+         * @access public
+         * @static
+         * 
+         * @description
          * Checks if the object being passed in fulfills the requirements for being an Injector.
          * 
-         * @param dependency The object to check.
+         * @param {plat.dependency.Injector<any>} dependency The object to check.
+         * 
+         * @returns {boolean} Whether or not the object passed in is an injector.
          */
         static isInjector(dependency: Injector<any>): boolean {
             return isFunction(dependency.inject) &&
@@ -102,9 +165,23 @@ module plat.dependency {
                 !isUndefined(dependency.Constructor);
         }
 
+        /**
+         * @name __getInjectorName
+         * @memberof plat.dependency.Injector
+         * @kind function
+         * @access private
+         * @static
+         * 
+         * @description
+         * Gets the string name related to an injector.
+         * 
+         * @param {any} dependency The object to search for.
+         * 
+         * @returns {string} The string injector name
+         */
         private static __getInjectorName(dependency: any): string {
             if (isNull(dependency)) {
-                return 'noop';
+                return __NOOP_INJECTOR;
             } else if (isString(dependency)) {
                 return dependency;
             } else if (dependency === window) {
@@ -131,10 +208,25 @@ module plat.dependency {
                 }
             }
 
-            return 'noop';
+            return __NOOP_INJECTOR;
         }
 
-        private static __construct(Constructor: any, args: Array<any>, pattern: string): any {
+        /**
+         * @name __construct
+         * @memberof plat.dependency.Injector
+         * @kind function
+         * @access private
+         * @static
+         * 
+         * @description
+         * Calls the injector's constructor with the associated dependencies.
+         * 
+         * @param {any} Constructor The Constructor to call.
+         * @param {Array<any>} args The arguments to pass to the constructor.
+         * 
+         * @returns {any} The instantiated constructor.
+         */
+        private static __construct(Constructor: any, args: Array<any>): any {
             if (isNull(Constructor) || isNull(Constructor.prototype)) {
                 return Constructor;
             }
@@ -148,6 +240,20 @@ module plat.dependency {
             return obj;
         }
 
+        /**
+         * @name __locateInjector
+         * @memberof plat.dependency.Injector
+         * @kind function
+         * @access private
+         * @static
+         * 
+         * @description
+         * Finds an injector object with the associated constructor.
+         * 
+         * @param {any} Constructor The Constructor to locate.
+         * 
+         * @returns {any} The located injector.
+         */
         private static __locateInjector(Constructor: any): any {
             if (isNull(Constructor)) {
                 return;
@@ -175,26 +281,66 @@ module plat.dependency {
             return Injector.__wrap(Constructor);
         }
 
+        /**
+         * @name __wrap
+         * @memberof plat.dependency.Injector
+         * @kind function
+         * @access private
+         * @static
+         * 
+         * @description
+         * Once an injector is injected, it is wrapped to prevent further injection.
+         * 
+         * @param {any} value The injected value.
+         * 
+         * @returns {plat.dependency.IInjector<any>} The wrapped injector.
+         */
         private static __wrap(value: any): IInjector<any> {
             return {
                 inject: () => value,
-                name: 'wrapped',
+                name: __WRAPPED_INJECTOR,
                 __dependencies: [],
                 Constructor: value
             };
         }
 
+        /**
+         * @name __noop
+         * @memberof plat.dependency.Injector
+         * @kind function
+         * @access private
+         * @static
+         * 
+         * @description
+         * Returns an empty injector object.
+         * 
+         * @returns {plat.dependency.IInjector<any>} The noop injector.
+         */
         private static __noop(): IInjector<any> {
             return {
                 inject: noop,
-                type: 'noop',
-                name: 'noop',
+                type: __NOOP_INJECTOR,
+                name: __NOOP_INJECTOR,
                 __dependencies: [],
                 Constructor: <any>noop
             };
         }
 
-        private static __findCircularReferences(injector: Injector<any>) {
+        /**
+         * @name __findCircularReferences
+         * @memberof plat.dependency.Injector
+         * @kind function
+         * @access private
+         * @static
+         * 
+         * @description
+         * Determines if there is a circular dependency in a dependency tree.
+         * 
+         * @param {plat.dependency.Injector<any>} injector The starting point for the dependency tree search.
+         * 
+         * @returns {string} The end of the circular dependency chain, if one exists.
+         */
+        private static __findCircularReferences(injector: Injector<any>): string {
             if (!(isObject(injector) && isArray(injector.__dependencies))) {
                 return;
             }
@@ -240,20 +386,41 @@ module plat.dependency {
             }
         }
 
+        /**
+         * @name __dependencies
+         * @memberof plat.dependency.Injector
+         * @kind property
+         * @access private
+         * 
+         * @type {Array<string>}
+         * 
+         * @description
+         * The dependencies for this injector
+         */
         private __dependencies: Array<string>;
 
         /**
-         * @param name The name of the injected type.
-         * @param dependencies An array of strings specifying the injectable dependencies for the 
-         * associated constructor.
-         * @param Constructor The constructor method for the component requiring the dependency 
+         * @name constructor
+         * @memberof plat.dependency.Injector
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * The constructor for an injector. Converts any non-string dependencies to strings to support mocking Injectors during runtime.
+         * 
+         * @param {string} name The name of the injected type.
+         * @param {new () => T} Constructor The constructor method for the component requiring the dependency 
          * injection.
-         * @param type The type of injector, used for injectables specifying a injectableType of 
+         * @param {Array<any>} dependencies An array of strings specifying the injectable dependencies for the 
+         * associated constructor.
+         * @param {string} type The type of injector, used for injectables specifying a injectableType of 
          * STATIC, SINGLETON, FACTORY, INSTANCE, or CLASS. The default is SINGLETON.
+         * 
+         * @returns {plat.dependency.Injector}
          */
         constructor(public name: string, public Constructor: new () => T, dependencies?: Array<any>, public type: string = null) {
             var deps = this.__dependencies = Injector.convertDependencies(dependencies),
-                index = deps.indexOf('noop'),
+                index = deps.indexOf(__NOOP_INJECTOR),
                 circularReference: string;
 
             if (index > -1) {
@@ -264,9 +431,9 @@ module plat.dependency {
                         name + ' at index ' +
                         index + ' is undefined, did you forgot to include a file?');
                 }
-                
+
                 throw new TypeError('Could not resolve dependency ' +
-                    dependency.substring(9, dependency.indexOf('(')) +
+                    dependency.slice(9, dependency.indexOf('(')) +
                     ' for ' +
                     name +
                     '. Are you using a static injectable Type?');
@@ -286,10 +453,18 @@ module plat.dependency {
         }
 
         /**
+         * @name inject
+         * @memberof plat.dependency.Injector
+         * @kind function
+         * @access public
+         * 
+         * @description
          * Gathers the dependencies for the Injector object and creates a new instance of the 
          * Constructor, passing in the dependencies in the order they were specified. If the 
          * Injector contains a Constructor for an injectable and the Constructor is registered 
          * as a SINGLE type it will only inject that injectable once.
+         * 
+         * @returns {T} The injected object
          */
         inject(): T {
             var toInject: any = [],
@@ -305,7 +480,7 @@ module plat.dependency {
                 toInject.push(dependency.inject());
             }
 
-            injectable = <T>Injector.__construct(this.Constructor, toInject, type);
+            injectable = <T>Injector.__construct(this.Constructor, toInject);
 
             if (type === __SINGLETON || type === __FACTORY ||
                 type === __STATIC || type === __CLASS) {
@@ -316,8 +491,16 @@ module plat.dependency {
         }
 
         /**
+         * @name _wrapInjector
+         * @memberof plat.dependency.Injector
+         * @kind function
+         * @access protected
+         * 
+         * @description
          * Wraps the injector with the instantiated value in the case of a 
          * SINGLE or STATIC type so that it does not re-instantiate.
+         * 
+         * @param {any} value The value to wrap
          */
         _wrapInjector(value: any): IInjector<any> {
             var name = this.name;
@@ -332,36 +515,182 @@ module plat.dependency {
     }
 
     /**
-     * An object whose values are all IInjectors.
+     * @name IInjectorObject
+     * @memberof plat.dependency
+     * @kind interface
+     * 
+     * @description
+     * An object whose values are all {@link plat.dependency.IInjector|IInjectors}.
      */
     export interface IInjectorObject<T> extends IObject<IInjector<T>> { }
 
     /**
-     * Describes an object that handles dependency-injection for a Constructor.
+     * @name IInjector
+     * @memberof plat.dependency
+     * @kind interface
+     * 
+     * @description
+     * The IInjector interface is used for dependency injection. You can create an injector object,
+     * specify dependencies and a constructor for your component. When the injector object is
+     * 'injected' it will create a new instance of your component and pass in the dependencies
+     * to the constructor.
+     * 
+     * @typeparam {any} T The type of object that will be returned when the inject method is invoked.
      */
     export interface IInjector<T> {
         /**
+         * @name inject
+         * @memberof plat.dependency.IInjector
+         * @kind function
+         * @access public
+         * 
+         * @description
          * Gathers the dependencies for the IInjector object and creates a new instance of the 
          * Constructor, passing in the dependencies in the order they were specified. If the 
-         * Injector contains a Constructor for an injectable it will only inject that injectable
-         * once.
+         * Injector contains a Constructor for an injectable and the Constructor is registered 
+         * as a SINGLE type it will only inject that injectable once.
+         * 
+         * @returns {T} The injected object
          */
         inject(): T;
 
         /**
+         * @name Constructor
+         * @memberof plat.dependency.IInjector
+         * @kind property
+         * @access public
+         * 
+         * @type {new () => T}
+         * 
+         * @description
          * The constructor method for the component requiring the dependency injection.
          */
         Constructor: new () => T;
 
         /**
+         * @name type
+         * @memberof plat.dependency.IInjector
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
          * The type of injector, used for injectables specifying a register.injectableType of 
          * STATIC, SINGLE, or MULTI. The default is SINGLE.
          */
         type?: string;
 
         /**
+         * @name name
+         * @memberof plat.dependency.IInjector
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
          * The name registered for the injector.
          */
         name: string;
+    }
+
+    /**
+     * @name injectors
+     * @memberof plat.dependency
+     * @kind namespace
+     * @access public
+     *  
+     * @description
+     * Publically exposes all the dependency injector objects.
+     */
+    export module injectors {
+        /**
+         * @name control
+         * @memberof plat.dependency.injectors
+         * @kind property
+         * @access public
+         * @static
+         * 
+         * @type {plat.dependency.IInjectorObject<plat.IControl>}
+         * 
+         * @description
+         * An {@link plat.dependency.IInjectorObject|IInjectorObject} of {@link plat.IControl|IControls}. 
+         * Contains all the registered controls for an application.
+         */
+        export var control = controlInjectors;
+
+        /**
+         * @name viewControl
+         * @memberof plat.dependency.injectors
+         * @kind property
+         * @access public
+         * @static
+         * 
+         * @type {plat.dependency.IInjectorObject<plat.ui.IBaseViewControl>}
+         * 
+         * @description
+         * An {@link plat.dependency.IInjectorObject|IInjectorObject} of {@link plat.ui.IBaseViewControl|IBaseViewControls}. 
+         * Contains all the registered view controls for an application.
+         */
+        export var viewControl = viewControlInjectors;
+
+        /**
+         * @name injectable
+         * @memberof plat.dependency.injectors
+         * @kind property
+         * @access public
+         * @static
+         * 
+         * @type {plat.dependency.IInjectorObject<plat.dependency.IInjector<any>>}
+         * 
+         * @description
+         * An {@link plat.dependency.IInjectorObject|IInjectorObject} of objects. Contains all the registered 
+         * injectables for an application.
+         */
+        export var injectable = injectableInjectors;
+
+        /**
+         * @name staticInjectable
+         * @memberof plat.dependency.injectors
+         * @kind property
+         * @access public
+         * @static
+         * 
+         * @type {plat.dependency.IInjectorObject<plat.dependency.IInjector<any>>}
+         * 
+         * @description
+         * An {@link plat.dependency.IInjectorObject|IInjectorObject} of static objects. Contains all the registered 
+         * static injectables for an application. Once the injectables have been injected, they are removed from this object.
+         */
+        export var staticInjectable = staticInjectors;
+
+        /**
+         * @name animation
+         * @memberof plat.dependency.injectors
+         * @kind property
+         * @access public
+         * @static
+         * 
+         * @type {plat.dependency.IInjectorObject<plat.ui.animations.IBaseAnimation>}
+         * 
+         * @description
+         * An {@link plat.dependency.IInjectorObject|IInjectorObject} of animations. Can be either CSS or JS implementations.
+         */
+        export var animation = animationInjectors;
+        
+        /**
+         * @name jsAnimation
+         * @memberof plat.dependency.injectors
+         * @kind property
+         * @access public
+         * @static
+         * 
+         * @type {plat.dependency.IInjectorObject<plat.ui.animations.IBaseAnimation>}
+         * 
+         * @description
+         * An {@link plat.dependency.IInjectorObject|IInjectorObject}  of animations. Should only contain JS implementations.
+         */
+        export var jsAnimation = jsAnimationInjectors;
     }
 }

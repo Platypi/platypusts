@@ -75,10 +75,10 @@ module tests.expressions.tokenizer {
                 { val: '>', args: 2 },
                 { val: 'test', args: -1 },
                 { val: '!', args: 1 },
-                { val: '?', args: 0 },
+                { val: '?', args: -2 },
                 { val: 'fudge', args: -2 },
                 { val: '()', args: 0 },
-                { val: ':', args: 0 }
+                { val: ':', args: -2 }
             ]
         },
         {
@@ -94,14 +94,14 @@ module tests.expressions.tokenizer {
                 { val: '>', args: 2 },
                 { val: 'fudge', args: -2 },
                 { val: '()', args: 0 },
-                { val: '?', args: 0 },
+                { val: '?', args: -2 },
                 { val: 'test', args: 1 },
                 { val: 'test', args: -1 },
                 { val: '{}', args: 1 },
-                { val: ':', args: 0 },
-                { val: '?', args: 0 },
+                { val: ':', args: -2 },
+                { val: '?', args: -2 },
                 { val: 'arrayTest', args: -1 },
-                { val: ':', args: 0 }
+                { val: ':', args: -2 }
             ]
         },
         {
@@ -128,9 +128,9 @@ module tests.expressions.tokenizer {
                 { val: 1, args: 0 },
                 { val: '<', args: 2 },
                 { val: 0, args: 0 },
-                { val: '?', args: 0 },
+                { val: '?', args: -2 },
                 { val: 1, args: 0 },
-                { val: ':', args: 0 },
+                { val: ':', args: -2 },
                 { val: '[]', args: 0 }
             ]
         },
@@ -157,7 +157,7 @@ module tests.expressions.tokenizer {
                 { val: '()', args: 0 },
                 { val: ' hello', args: 0 },
                 { val: '+', args: 2 },
-                { val: '?', args: 0 },
+                { val: '?', args: -2 },
                 { val: 'baz', args: -2 },
                 { val: '()', args: 0 },
                 { val: ' world ', args: 0 },
@@ -166,7 +166,7 @@ module tests.expressions.tokenizer {
                 { val: 0, args: 0 },
                 { val: '[]', args: 0 },
                 { val: '+', args: 2 },
-                { val: ':', args: 0 }
+                { val: ':', args: -2 }
             ]
         },
         {
@@ -231,10 +231,10 @@ module tests.expressions.tokenizer {
                 { val: 4, args: 0 },
                 { val: '>', args: 2 },
                 { val: 'test', args: -1 },
-                { val: '?', args: 0 },
+                { val: '?', args: -2 },
                 { val: 0, args: 0 },
                 { val: '[]', args: 1 },
-                { val: ':', args: 0 }
+                { val: ':', args: -2 }
             ]
         },
         {
@@ -271,7 +271,7 @@ module tests.expressions.tokenizer {
                 { val: 4, args: 0 },
                 { val: '>', args: 2 },
                 { val: 'test', args: -1 },
-                { val: '?', args: 0 },
+                { val: '?', args: -2 },
                 { val: 'test', args: -1 },
                 { val: 'hello', args: 0 },
                 { val: '==', args: 2 },
@@ -287,10 +287,10 @@ module tests.expressions.tokenizer {
                 { val: '.', args: 0 },
                 { val: '()', args: 3 },
                 { val: '[]', args: 2 },
-                { val: '?', args: 0 },
+                { val: '?', args: -2 },
                 { val: 0, args: 0 },
-                { val: ':', args: 0 },
-                { val: ':', args: 0 }
+                { val: ':', args: -2 },
+                { val: ':', args: -2 }
             ]
         },
         {
@@ -302,10 +302,10 @@ module tests.expressions.tokenizer {
                 { val: '===', args: 2 },
                 { val: 1, args: 0 },
                 { val: '[]', args: 1 },
-                { val: '?', args: 0 },
+                { val: '?', args: -2 },
                 { val: 0, args: 0 },
                 { val: '[]', args: 1 },
-                { val: ':', args: 0 }
+                { val: ':', args: -2 }
             ]
         },
         {
@@ -341,10 +341,10 @@ module tests.expressions.tokenizer {
                 { val: '===', args: 2 },
                 { val: 'true', args: -1 },
                 { val: '[]', args: 1 },
-                { val: '?', args: 0 },
+                { val: '?', args: -2 },
                 { val: 'false', args: -1 },
                 { val: '[]', args: 1 },
-                { val: ':', args: 0 }
+                { val: ':', args: -2 }
             ]
         },
         {

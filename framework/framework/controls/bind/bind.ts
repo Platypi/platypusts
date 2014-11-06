@@ -1,10 +1,89 @@
+/**
+ * @name controls
+ * @memberof plat
+ * @kind namespace
+ * @access public
+ * 
+ * @description
+ * Holds all classes and interfaces related to attribute control components in platypus.
+ */
 module plat.controls {
+    /**
+     * @name Bind
+     * @memberof plat.controls
+     * @kind class
+     * 
+     * @extends {plat.AttributeControl}
+     * 
+     * @description
+     * Facilitates two-way databinding for HTMLInputElements, HTMLSelectElements, and HTMLTextAreaElements.
+     */
     export class Bind extends AttributeControl {
+        /**
+         * @name $Parser
+         * @memberof plat.controls.Bind
+         * @kind property
+         * @access public
+         * @static
+         * 
+         * @type {plat.expressions.IParser}
+         * 
+         * @description
+         * Reference to the {@link plat.expressions.IParser|IParser} injectable.
+         */
         $Parser: expressions.IParser = acquire(__Parser);
+
+        /**
+         * @name $ContextManagerStatic
+         * @memberof plat.controls.Bind
+         * @kind property
+         * @access public
+         * @static
+         * 
+         * @type {plat.observable.IContextManagerStatic}
+         * 
+         * @description
+         * Reference to the {@link plat.observable.IContextManagerStatic|IContextManagerStatic} injectable.
+         */
         $ContextManagerStatic: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
+
+        /**
+         * @name $Compat
+         * @memberof plat.controls.Bind
+         * @kind property
+         * @access public
+         * @static
+         * 
+         * @type {plat.ICompat}
+         * 
+         * @description
+         * Reference to the {@link plat.ICompat|ICompat} injectable.
+         */
+        $Compat: ICompat = acquire(__Compat);
+
+        /**
+         * @name $document
+         * @memberof plat.controls.Bind
+         * @kind property
+         * @access public
+         * @static
+         * 
+         * @type {Document}
+         * 
+         * @description
+         * Reference to the Document injectable.
+         */
         $document: Document = acquire(__Document);
 
         /**
+         * @name priority
+         * @memberof plat.controls.Bind
+         * @kind property
+         * @access public
+         * 
+         * @type {number}
+         * 
+         * @description
          * The priority of Bind is set high to take precede 
          * other controls that may be listening to the same 
          * event.
@@ -12,60 +91,149 @@ module plat.controls {
         priority: number = 100;
 
         /**
+         * @name _addEventType
+         * @memberof plat.controls.Bind
+         * @kind function
+         * @access protected
+         * 
+         * @description
          * The function used to add the proper event based on the input type.
+         * 
+         * @returns {void}
          */
         _addEventType: () => void;
 
         /**
+         * @name _getter
+         * @memberof plat.controls.Bind
+         * @kind function
+         * @access protected
+         * 
+         * @description
          * The function used to get the bound value.
+         * 
+         * @returns {any} The bound value.
          */
         _getter: () => any;
 
         /**
+         * @name _setter
+         * @memberof plat.controls.Bind
+         * @kind function
+         * @access protected
+         * 
+         * @description
          * The function used to set the bound value.
+         * 
+         * @returns {void}
          */
         _setter: (newValue: any, oldValue?: any, firstTime?: boolean) => void;
 
         /**
-         * The event listener attached to this element.
-         */
-        _eventListener: () => void;
-
-        /**
-         * The event listener as a postponed function.
-         */
-        _postponedEventListener: () => void;
-
-        /**
+         * @name _expression
+         * @memberof plat.controls.Bind
+         * @kind property
+         * @access protected
+         * 
+         * @type {plat.expressions.IParsedExpression}
+         * 
+         * @description
          * The expression to evaluate as the bound value.
          */
         _expression: expressions.IParsedExpression;
 
         /**
+         * @name _contextExpression
+         * @memberof plat.controls.Bind
+         * @kind property
+         * @access protected
+         * 
+         * @type {plat.expressions.IParsedExpression}
+         * 
+         * @description
          * The IParsedExpression used to evaluate the context 
          * of the bound property.
          */
         _contextExpression: expressions.IParsedExpression;
 
         /**
+         * @name _property
+         * @memberof plat.controls.Bind
+         * @kind property
+         * @access protected
+         * 
+         * @type {string}
+         * 
+         * @description
          * The bound property name.
          */
         _property: string;
 
+        /**
+         * @name __fileSupported
+         * @memberof plat.controls.Bind
+         * @kind property
+         * @access private
+         * 
+         * @type {boolean}
+         * 
+         * @description
+         * Whether or not the File API is supported.
+         */
         private __fileSupported = (<ICompat>acquire(__Compat)).fileSupported;
+
+        /**
+         * @name __fileNameRegex
+         * @memberof plat.controls.Bind
+         * @kind property
+         * @access private
+         * 
+         * @type {RegExp}
+         * 
+         * @description
+         * Used to grab a filename from input[type="file"].
+         */
         private __fileNameRegex = (<expressions.IRegex>acquire(__Regex)).fileNameRegex;
+
+        /**
+         * @name __isSelf
+         * @memberof plat.controls.Bind
+         * @kind property
+         * @access private
+         * 
+         * @type {boolean}
+         * 
+         * @description
+         * Used to denote that a property change happened from within this control.
+         */
         private __isSelf = false;
 
         /**
+         * @name initialize
+         * @memberof plat.controls.Bind
+         * @kind function
+         * @access public
+         * 
+         * @description
          * Determines the type of Element being bound to 
          * and sets the necessary handlers.
+         * 
+         * @returns {void}
          */
         initialize(): void {
             this._determineType();
         }
 
         /**
+         * @name loaded
+         * @memberof plat.controls.Bind
+         * @kind function
+         * @access public
+         * 
+         * @description
          * Parses and watches the expression being bound to.
+         * 
+         * @returns {void}
          */
         loaded(): void {
             if (isNull(this.parent) || isNull(this.element)) {
@@ -73,7 +241,7 @@ module plat.controls {
             }
 
             var attr = camelCase(this.type),
-                expression = this._expression = this.$Parser.parse((<any>this.attributes)[attr]);
+                expression = this._expression = this.$Parser.parse(this.attributes[attr]);
 
             var identifiers = expression.identifiers;
 
@@ -129,111 +297,190 @@ module plat.controls {
         }
 
         /**
+         * @name contextChanged
+         * @memberof plat.controls.Bind
+         * @kind function
+         * @access public
+         * 
+         * @description
          * Re-observes the expression with the new context.
+         * 
+         * @returns {void}
          */
         contextChanged(): void {
             this._watchExpression();
         }
 
         /**
+         * @name dispose
+         * @memberof plat.controls.Bind
+         * @kind function
+         * @access public
+         * 
+         * @description
          * Removes all of the element's event listeners.
+         * 
+         * @returns {void}
          */
         dispose(): void {
-            this._eventListener = null;
-            this._postponedEventListener = null;
             this._addEventType = null;
         }
 
         /**
+         * @name _addTextEventListener
+         * @memberof plat.controls.Bind
+         * @kind function
+         * @access protected
+         * 
+         * @description
          * Adds a text event as the event listener. 
          * Used for textarea and input[type=text].
+         * 
+         * @returns {void}
          */
         _addTextEventListener(): void {
-            var composing = false,
-                timeout: IRemoveListener;
+            var element = this.element,
+                $compat = this.$Compat,
+                composing = false,
+                timeout: IRemoveListener,
+                eventListener = () => {
+                    if (composing) {
+                        return;
+                    }
 
-            this._eventListener = () => {
-                if (composing) {
-                    return;
-                }
+                    this._propertyChanged();
+                },
+                postponedEventListener = () => {
+                    if (isFunction(timeout)) {
+                        return;
+                    }
 
-                this._propertyChanged();
-            };
+                    timeout = postpone(() => {
+                        eventListener();
+                        timeout = null;
+                    });
+                };
 
-            this._postponedEventListener = () => {
-                if (isFunction(timeout)) {
-                    return;
-                }
+            if (isUndefined($compat.ANDROID)) {
+                this.addEventListener(element, 'compositionstart', () => (composing = true), false);
+                this.addEventListener(element, 'compositionend', () => {
+                    composing = false;
+                    eventListener();
+                }, false);
+            }
 
-                timeout = postpone(() => {
-                    this._eventListener();
-                    timeout = null;
-                });
-            };
+            if ($compat.hasEvent('input')) {
+                this.addEventListener(element, 'input', eventListener, false);
+            } else {
+                this.addEventListener(element, 'keydown', (ev: KeyboardEvent) => {
+                    var key = ev.keyCode,
+                        codes = KeyCodes;
 
-            this._addEventListener('compositionstart', () => composing = true);
+                    if (key === codes.lwk ||
+                        key === codes.rwk ||
+                        (key >= codes.shift && key <= codes.escape) ||
+                        (key > codes.space && key <= codes.down)) {
+                        return;
+                    }
 
-            this._addEventListener('compositionend', () => composing = false);
+                    postponedEventListener();
+                }, false);
+                this.addEventListener(element, 'cut', postponedEventListener, false);
+                this.addEventListener(element, 'paste', postponedEventListener, false);
+            }
 
-            this._addEventListener('keydown', (ev?: KeyboardEvent) => {
-                var key = ev.keyCode,
-                    codes = KeyCodes;
-
-                if (key === codes.lwk ||
-                    key === codes.rwk ||
-                    (key > 15 && key < 28) ||
-                    (key > 32 && key < 41)) {
-                    return;
-                }
-
-                this._postponedEventListener();
-            });
-            this._addEventListener('cut', null, true);
-            this._addEventListener('paste', null, true);
-            this._addEventListener('change');
+            this.addEventListener(element, 'change', eventListener, false);
         }
 
         /**
+         * @name _addChangeEventListener
+         * @memberof plat.controls.Bind
+         * @kind function
+         * @access protected
+         * 
+         * @description
          * Adds a change event as the event listener. 
          * Used for select, input[type=radio], and input[type=range].
+         * 
+         * @returns {void}
          */
         _addChangeEventListener(): void {
-            this._eventListener = this._propertyChanged.bind(this);
-            this._addEventListener('change');
+            this.addEventListener(this.element, 'change', this._propertyChanged, false);
         }
 
         /**
-         * Adds the event listener to the element.
+         * @name _addButtonEventListener
+         * @memberof plat.controls.Bind
+         * @kind function
+         * @access protected
          * 
-         * @param event The event type
-         * @param listener The event listener
-         * @param postpone Whether or not to postpone the event listener
+         * @description
+         * Adds a $tap event as the event listener. 
+         * Used for input[type=button] and button.
+         * 
+         * @returns {void}
          */
-        _addEventListener(event: string, listener?: () => void, postpone?: boolean): void {
-            listener = listener ||
-                (postpone === true ? this._postponedEventListener : this._eventListener);
-
-            this.addEventListener(this.element, event, listener, false);
+        _addButtonEventListener(): void {
+            this.addEventListener(this.element, __tap, this._propertyChanged, false);
         }
 
         /**
+         * @name _getChecked
+         * @memberof plat.controls.Bind
+         * @kind function
+         * @access protected
+         * 
+         * @description
          * Getter for input[type=checkbox] and input[type=radio]
+         * 
+         * @returns {boolean} Whether or not the input element is checked
          */
         _getChecked(): boolean {
             return (<HTMLInputElement>this.element).checked;
         }
 
         /**
+         * @name _getValue
+         * @memberof plat.controls.Bind
+         * @kind function
+         * @access protected
+         * 
+         * @description
          * Getter for input[type=text], input[type=range], 
          * textarea, and select.
+         * 
+         * @returns {string} The input value
          */
         _getValue(): string {
             return (<HTMLInputElement>this.element).value;
         }
 
         /**
+         * @name _getTextContent
+         * @memberof plat.controls.Bind
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Getter for button.
+         * 
+         * @returns {string} The button textContent
+         */
+        _getTextContent(): string {
+            return (<HTMLInputElement>this.element).textContent;
+        }
+
+        /**
+         * @name _getFile
+         * @memberof plat.controls.Bind
+         * @kind function
+         * @access protected
+         * 
+         * @description
          * Getter for input[type="file"]. Creates a partial IFile 
          * element if file is not supported.
+         * 
+         * @returns {plat.controls.IFile} The input file
          */
         _getFile(): IFile {
             var element = <HTMLInputElement>this.element,
@@ -256,7 +503,15 @@ module plat.controls {
         }
 
         /**
+         * @name _getFiles
+         * @memberof plat.controls.Bind
+         * @kind function
+         * @access protected
+         * 
+         * @description
          * Getter for input[type="file"]-multiple
+         * 
+         * @returns {Array<plat.controls.IFile>} The input files
          */
         _getFiles(): Array<IFile> {
             var element = <HTMLInputElement>this.element;
@@ -290,7 +545,15 @@ module plat.controls {
         }
 
         /**
+         * @name _getSelectedValues
+         * @memberof plat.controls.Bind
+         * @kind function
+         * @access protected
+         * 
+         * @description
          * Getter for select-multiple
+         * 
+         * @returns {Array<string>} The selected values
          */
         _getSelectedValues(): Array<string> {
             var options = (<HTMLSelectElement>this.element).options,
@@ -309,13 +572,21 @@ module plat.controls {
         }
 
         /**
+         * @name _setText
+         * @memberof plat.controls.Bind
+         * @kind function
+         * @access protected
+         * 
+         * @description
          * Setter for textarea, input[type=text], 
          * and input[type=button], and select
          * 
-         * @param newValue The new value to set
-         * @param oldValue The previously bound value
-         * @param firstTime The context is being evaluated for the first time and 
+         * @param {any} newValue The new value to set
+         * @param {any} oldValue? The previously bound value
+         * @param {boolean} firstTime? The context is being evaluated for the first time and 
          * should thus change the property if null
+         * 
+         * @returns {void}
          */
         _setText(newValue: any, oldValue?: any, firstTime?: boolean): void {
             if (this.__isSelf) {
@@ -327,23 +598,31 @@ module plat.controls {
 
                 if (firstTime === true) {
                     if (isNull((<HTMLInputElement>this.element).value)) {
-                        this.__setValue(newValue);
+                        this._setValue(newValue);
                     }
                     this._propertyChanged();
                     return;
                 }
             }
 
-            this.__setValue(newValue);
+            this._setValue(newValue);
         }
 
         /**
+         * @name _setRange
+         * @memberof plat.controls.Bind
+         * @kind function
+         * @access protected
+         * 
+         * @description
          * Setter for input[type=range]
          * 
-         * @param newValue The new value to set
-         * @param oldValue The previously bound value
-         * @param firstTime The context is being evaluated for the first time and 
+         * @param {any} newValue The new value to set
+         * @param {any} oldValue? The previously bound value
+         * @param {boolean} firstTime? The context is being evaluated for the first time and 
          * should thus change the property if null
+         * 
+         * @returns {void}
          */
         _setRange(newValue: any, oldValue?: any, firstTime?: boolean): void {
             if (this.__isSelf) {
@@ -355,23 +634,31 @@ module plat.controls {
 
                 if (firstTime === true) {
                     if (isEmpty((<HTMLInputElement>this.element).value)) {
-                        this.__setValue(newValue);
+                        this._setValue(newValue);
                     }
                     this._propertyChanged();
                     return;
                 }
             }
 
-            this.__setValue(newValue);
+            this._setValue(newValue);
         }
 
         /**
+         * @name _setChecked
+         * @memberof plat.controls.Bind
+         * @kind function
+         * @access protected
+         * 
+         * @description
          * Setter for input[type=checkbox]
          * 
-         * @param newValue The new value to set
-         * @param oldValue The previously bound value
-         * @param firstTime The context is being evaluated for the first time and 
+         * @param {any} newValue The new value to set
+         * @param {any} oldValue? The previously bound value
+         * @param {boolean} firstTime? The context is being evaluated for the first time and 
          * should thus change the property if null
+         * 
+         * @returns {void}
          */
         _setChecked(newValue: any, oldValue?: any, firstTime?: boolean): void {
             if (this.__isSelf) {
@@ -388,9 +675,17 @@ module plat.controls {
         }
 
         /**
+         * @name _setRadio
+         * @memberof plat.controls.Bind
+         * @kind function
+         * @access protected
+         * 
+         * @description
          * Setter for input[type=radio]
          * 
-         * @param newValue The new value to set
+         * @param {any} newValue The new value to set
+         * 
+         * @returns {void}
          */
         _setRadio(newValue: any): void {
             var element = (<HTMLInputElement>this.element);
@@ -405,17 +700,25 @@ module plat.controls {
         }
 
         /**
+         * @name _setSelectedIndex
+         * @memberof plat.controls.Bind
+         * @kind function
+         * @access protected
+         * 
+         * @description
          * Setter for select
          * 
-         * @param newValue The new value to set
-         * @param oldValue The previously bound value
-         * @param firstTime The context is being evaluated for the first time and 
+         * @param {any} newValue The new value to set
+         * @param {any} oldValue? The previously bound value
+         * @param {boolean} firstTime? The context is being evaluated for the first time and 
          * should thus change the property if null
+         * 
+         * @returns {void}
          */
         _setSelectedIndex(newValue: any, oldValue?: any, firstTime?: boolean): void {
             if (this.__isSelf) {
                 return;
-            } else if (firstTime === true && this.__checkAsynchronousSelect()) {
+            } else if (firstTime === true && this._checkAsynchronousSelect()) {
                 if (isNull(newValue)) {
                     this._propertyChanged();
                 }
@@ -464,17 +767,25 @@ module plat.controls {
         }
 
         /**
+         * @name _setSelectedIndices
+         * @memberof plat.controls.Bind
+         * @kind function
+         * @access protected
+         * 
+         * @description
          * Setter for select-multiple
          * 
-         * @param newValue The new value to set
-         * @param oldValue The previously bound value
-         * @param firstTime The context is being evaluated for the first time and 
+         * @param {any} newValue The new value to set
+         * @param {any} oldValue? The previously bound value
+         * @param {boolean} firstTime? The context is being evaluated for the first time and 
          * should thus change the property if null
+         * 
+         * @returns {void}
          */
         _setSelectedIndices(newValue: any, oldValue?: any, firstTime?: boolean): void {
             if (this.__isSelf) {
                 return;
-            } else if (firstTime === true && this.__checkAsynchronousSelect()) {
+            } else if (firstTime === true && this._checkAsynchronousSelect()) {
                 return;
             }
 
@@ -518,12 +829,23 @@ module plat.controls {
         }
 
         /**
+         * @name _determineType
+         * @memberof plat.controls.Bind
+         * @kind function
+         * @access protected
+         * 
+         * @description
          * Determines the type of Element being bound to 
          * and sets the necessary handlers.
+         * 
+         * @returns {void}
          */
         _determineType(): void {
-            var element = this.element;
+            if (!isNull(this.templateControl) && this._observingBindableProperty()) {
+                return;
+            }
 
+            var element = this.element;
             if (isNull(element)) {
                 return;
             }
@@ -537,7 +859,10 @@ module plat.controls {
                 case 'input':
                     switch ((<HTMLInputElement>element).type) {
                         case 'button':
-                            this._setter = this._setText;
+                        case 'submit':
+                        case 'reset':
+                            this._addEventType = this._addButtonEventListener;
+                            this._getter = this._getValue;
                             break;
                         case 'checkbox':
                             this._addEventType = this._addChangeEventListener;
@@ -545,7 +870,7 @@ module plat.controls {
                             this._setter = this._setChecked;
                             break;
                         case 'radio':
-                            this.__initializeRadio();
+                            this._initializeRadio();
                             break;
                         case 'range':
                             this._addEventType = this._addChangeEventListener;
@@ -565,20 +890,25 @@ module plat.controls {
                     }
                     break;
                 case 'select':
-                    this.__initializeSelect();
+                    this._initializeSelect();
                     break;
-                default:
-                    if (isNull(this.templateControl)) {
-                        return;
-                    }
-
-                    this._observeBindableProperty();
+                case 'button':
+                    this._addEventType = this._addButtonEventListener;
+                    this._getter = this._getTextContent;
                     break;
             }
         }
 
         /**
+         * @name _watchExpression
+         * @memberof plat.controls.Bind
+         * @kind function
+         * @access protected
+         * 
+         * @description
          * Observes the expression to bind to.
+         * 
+         * @returns {void}
          */
         _watchExpression(): void {
             var contextExpression = this._contextExpression,
@@ -617,8 +947,16 @@ module plat.controls {
         }
 
         /**
+         * @name _propertyChanged
+         * @memberof plat.controls.Bind
+         * @kind function
+         * @access protected
+         * 
+         * @description
          * Sets the context property being bound to when the 
          * element's property is changed.
+         * 
+         * @returns {void}
          */
         _propertyChanged(): void {
             if (isNull(this._contextExpression)) {
@@ -641,41 +979,17 @@ module plat.controls {
         }
 
         /**
-         * Checks if the associated Template Control is a BindablePropertyControl and 
-         * initializes all listeners accordingly.
+         * @name _initializeRadio
+         * @memberof plat.controls.Bind
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Normalizes input[type="radio"] for cross-browser compatibility.
+         * 
+         * @returns {void}
          */
-        _observeBindableProperty(): void {
-            var templateControl = <ui.IBindablePropertyControl>this.templateControl;
-
-            if (isFunction(templateControl.observeProperty) &&
-                isFunction(templateControl.setProperty)) {
-                templateControl.observeProperty((newValue: any) => {
-                    this._getter = () => newValue;
-                    this._propertyChanged();
-                });
-
-                this._setter = this.__setBindableProperty;
-            }
-        }
-
-        private __setBindableProperty(newValue: any, oldValue?: any, firstTime?: boolean): void {
-            if (this.__isSelf) {
-                return;
-            }
-
-            (<ui.IBindablePropertyControl>this.templateControl).setProperty(newValue, oldValue, firstTime);
-        }
-
-        private __setValue(newValue: any): void {
-            var element = <HTMLInputElement>this.element;
-            if (element.value === newValue) {
-                return;
-            }
-
-            element.value = newValue;
-        }
-
-        private __initializeRadio() {
+        _initializeRadio(): void {
             var element = this.element;
 
             this._addEventType = this._addChangeEventListener;
@@ -684,7 +998,7 @@ module plat.controls {
 
             if (!element.hasAttribute('name')) {
                 var attr = camelCase(this.type),
-                    expression = (<any>this.attributes)[attr];
+                    expression = this.attributes[attr];
 
                 element.setAttribute('name', expression);
             }
@@ -696,7 +1010,18 @@ module plat.controls {
             element.setAttribute('value', '');
         }
 
-        private __initializeSelect() {
+        /**
+         * @name _initializeSelect
+         * @memberof plat.controls.Bind
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Normalizes HTMLSelectElements for cross-browser compatibility.
+         * 
+         * @returns {void}
+         */
+        _initializeSelect(): void {
             var element = <HTMLSelectElement>this.element,
                 multiple = element.multiple,
                 options = element.options,
@@ -720,7 +1045,18 @@ module plat.controls {
             }
         }
 
-        private __checkAsynchronousSelect(): boolean {
+        /**
+         * @name _checkAsynchronousSelect
+         * @memberof plat.controls.Bind
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Checks to see if a {@link plat.ui.controls.Select|Select} or {@link plat.ui.controls.ForEach|ForEach} is loading items.
+         * 
+         * @returns {boolean} Whether or not the select is loading items.
+         */
+        _checkAsynchronousSelect(): boolean {
             var select = <ui.controls.Select>this.templateControl;
             if (!isNull(select) && (select.type === __Select || select.type === __ForEach) && isPromise(select.itemsLoaded)) {
                 var split = select.absoluteContextPath.split('.'),
@@ -742,17 +1078,110 @@ module plat.controls {
 
             return false;
         }
+
+        /**
+         * @name _observingBindableProperty
+         * @memberof plat.controls.Bind
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Checks if the associated {@link plat.ui.TemplateControl|TemplateControl} is a 
+         * {@link plat.ui.BindablePropertyControl|BindablePropertyControl} and 
+         * initializes all listeners accordingly.
+         * 
+         * @returns {boolean} Whether or not the associated {@link plat.ui.TemplateControl|TemplateControl} 
+         * is an {@link plat.ui.IBindablePropertyControl|IBindablePropertyControl}
+         */
+        _observingBindableProperty(): boolean {
+            var templateControl = <ui.IBindablePropertyControl>this.templateControl;
+
+            if (isFunction(templateControl.observeProperty) &&
+                isFunction(templateControl.setProperty)) {
+                templateControl.observeProperty((newValue: any) => {
+                    this._getter = () => newValue;
+                    this._propertyChanged();
+                });
+
+                this._setter = this._setBindableProperty;
+                return true;
+            }
+
+            return false;
+        }
+
+        /**
+         * @name _setBindableProperty
+         * @memberof plat.controls.Bind
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Sets the value on a {@link plat.ui.BindablePropertyControl|BindablePropertyControl}.
+         * 
+         * @param {any} newValue The new value to set
+         * @param {any} oldValue? The previously bound value
+         * @param {boolean} firstTime? The context is being evaluated for the first time and 
+         * should thus change the property if null
+         * 
+         * @returns {void}
+         */
+        _setBindableProperty(newValue: any, oldValue?: any, firstTime?: boolean): void {
+            if (this.__isSelf || newValue === oldValue) {
+                return;
+            }
+
+            (<ui.IBindablePropertyControl>this.templateControl).setProperty(newValue, oldValue, firstTime);
+        }
+
+        /**
+         * @name _setValue
+         * @memberof plat.controls.Bind
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Sets the value on an element.
+         * 
+         * @param {any} newValue The new value to set
+         * 
+         * @returns {void}
+         */
+        _setValue(newValue: any): void {
+            var element = <HTMLInputElement>this.element;
+            if (element.value === newValue) {
+                return;
+            }
+
+            element.value = newValue;
+        }
     }
 
     register.control(__Bind, Bind);
 
     /**
+     * @name IFile
+     * @memberof plat.controls
+     * @kind interface
+     * 
+     * @extends {File}
+     * 
+     * @description
      * A file interface for browsers that do not support the 
      * File API.
      */
     export interface IFile extends File {
         /**
-         * An absolute path to the file. The property is not added supported to 
+         * @name string
+         * @memberof plat.controls.IFile
+         * @kind property
+         * @access public
+         * @readonly
+         * 
+         * @type {string}
+         * 
+         * @description
+         * An absolute path to the file. The property is not added to 
          * File types.
          */
         path?: string;
