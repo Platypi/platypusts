@@ -193,15 +193,13 @@ module plat.web {
 
             this.__initializing = true;
 
+            acquire(__UrlUtilsInstance);
+
             var url = this.url(),
                 trimmedUrl = url.replace(this.$Regex.initialUrlRegex, '/'),
                 changed = this._urlChanged.bind(this),
                 $dom = this.$Dom,
                 $window = this.$Window;
-
-            if (isEmpty($config.baseUrl)) {
-                acquire(__UrlUtilsInstance);
-            }
 
             if (trimmedUrl !== url) {
                 this.url(trimmedUrl, true);

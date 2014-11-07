@@ -27,7 +27,6 @@ module app {
         }
 
         navigatedTo(param: any) {
-            console.log(this.navigator.history.length);
             if (!param) {
                 this.context.count = ++count;
             }
@@ -69,10 +68,18 @@ module app {
         //    }, 5000);
         //}
 
+        constructor($browserConfig: plat.web.IBrowserConfig) {
+            super();
+
+            $browserConfig.baseUrl = 'app';
+        }
+
         error(ev: plat.events.IErrorEvent<any>) {
             console.log(ev.error);
         }
     }
 
-    plat.register.app('app', App);
+    plat.register.app('app', App, [
+        plat.web.IBrowserConfig
+    ]);
 }

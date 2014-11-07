@@ -313,11 +313,22 @@
          */
         constructor() {
             var $config = this.$BrowserConfig;
-            if (isEmpty($config.baseUrl)) {
+            if (isEmpty($config.baseUrl) || !this.$Regex.fullUrlRegex.test($config.baseUrl)) {
                 var url = this.$Window.location.href,
-                    trimmedUrl = url.replace(this.$Regex.initialUrlRegex, '/');
+                    trimmedUrl = url.replace(this.$Regex.initialUrlRegex, '/'),
+                    baseUrl = $config.baseUrl;
 
-                $config.baseUrl = UrlUtils.__getBaseUrl(trimmedUrl);
+                if (isString(baseUrl)) {
+                    if (baseUrl.indexOf('/') === 0) {
+                        baseUrl = baseUrl.slice(1);
+                    }
+
+                    if (baseUrl[baseUrl.length - 1] !== '/') {
+                        baseUrl += '/';
+                    }
+                }
+
+                $config.baseUrl = UrlUtils.__getBaseUrl(trimmedUrl) + baseUrl;
             }
         }
 
