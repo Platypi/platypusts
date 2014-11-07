@@ -1,6 +1,6 @@
 {
   "name": "framework",
-  "version": "0.9.3-build.4",
+  "version": "0.9.3",
   "description": "",
   "main": "gruntfile.js",
   "devDependencies": {

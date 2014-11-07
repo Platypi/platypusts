@@ -77,7 +77,7 @@
                 (<any>window.location).origin = window.location.protocol + "//" + window.location.host;
             }
 
-            return (<any>window.location).origin + '/';
+            return (<any>window.location).origin.split('?')[0].split('#')[0] + '/';
         }
 
         /**
@@ -317,11 +317,7 @@
                 var url = this.$Window.location.href,
                     trimmedUrl = url.replace(this.$Regex.initialUrlRegex, '/');
 
-                if ($config.routingType === $config.HASH) {
-                    $config.baseUrl = trimmedUrl.replace(/#.*/, '');
-                } else {
-                    $config.baseUrl = UrlUtils.__getBaseUrl(trimmedUrl);
-                }
+                $config.baseUrl = UrlUtils.__getBaseUrl(trimmedUrl);
             }
         }
 

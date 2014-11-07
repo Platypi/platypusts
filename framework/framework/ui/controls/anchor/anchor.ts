@@ -57,7 +57,7 @@ module plat.ui.controls {
          * @description
          * The {@link plat.web.IBrowserConfig|IBrowserConfig} injectable instance
          */
-        $browserConfig: plat.web.IBrowserConfig = acquire(__BrowserConfig);
+        $browserConfig: web.IBrowserConfig = acquire(__BrowserConfig);
 
         /**
          * @name $browser
@@ -70,7 +70,20 @@ module plat.ui.controls {
          * @description
          * The {@link plat.web.IBrowser|IBrowser} injectable instance
          */
-        $browser: plat.web.IBrowser = acquire(__Browser);
+        $browser: web.IBrowser = acquire(__Browser);
+
+        /**
+         * @name options
+         * @memberof plat.ui.controls.Anchor
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.observable.IObservableProperty<{ ignore?: boolean; }>}
+         * 
+         * @description
+         * The options for Anchor, if ignore is true, anchor will ignore changing the url.
+         */
+        options: observable.IObservableProperty<{ ignore?: boolean; }>;
 
         /**
          * @name initialize
@@ -132,6 +145,12 @@ module plat.ui.controls {
          * @returns {void}
          */
         setHref(): void {
+            var options = this.options;
+
+            if (isObject(options) && options.value.ignore) {
+                return;
+            }
+
             var href = this.getHref();
 
             if (!isEmpty(href)) {
@@ -151,6 +170,12 @@ module plat.ui.controls {
          * @returns {string} The href, normalized.
          */
         getHref(): string {
+            var options = this.options;
+
+            if (isObject(options) && options.value.ignore) {
+                return;
+            }
+
             var element = this.element,
                 href = element.href || '',
                 $browserConfig = this.$browserConfig,
