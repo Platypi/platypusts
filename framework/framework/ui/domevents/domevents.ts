@@ -181,6 +181,19 @@
         _inTouch: boolean;
 
         /**
+         * @name _inMouse
+         * @memberof plat.ui.DomEvents
+         * @kind property
+         * @access protected
+         * 
+         * @type {boolean}
+         * 
+         * @description
+         * Whether or not the user is using mouse when touch events are present.
+         */
+        _inMouse = false;
+
+        /**
          * @name _subscribers
          * @memberof plat.ui.DomEvents
          * @kind property
@@ -269,13 +282,13 @@
          * @kind property
          * @access protected
          * 
-         * @type {plat.ui.IGestures<number>}
+         * @type {plat.ui.IBaseGestures<number>}
          * 
          * @description
          * An object containing the number of currently active 
-         * events of each type.
+         * events of each base type.
          */
-        _gestureCount: IGestures<number> = {
+        _gestureCount: IBaseGestures<number> = {
             $tap: 0,
             $dbltap: 0,
             $hold: 0,
@@ -836,35 +849,40 @@
          * @returns {boolean} Prevents default and stops propagation if false is returned.
          */
         _onTouchStart(ev: IPointerEvent): boolean {
-            var isTouch = ev.type !== 'mousedown';
+            if (this.__touchCount++ > 0) {
+                return;
+            }
 
-            if (isTouch) {
+            if (ev.type !== 'mousedown') {
                 this._inTouch = true;
             } else if (this._inTouch === true) {
                 // return immediately if mouse event and currently in a touch
                 ev.preventDefault();
                 return false;
+            } else if (this.$Compat.hasTouchEvents) {
+                this._inMouse = true;
             }
 
-            // set any captured target back to null
-            this.__capturedTarget = null;
-
-            this.__standardizeEventObject(ev);
-
-            this.__lastTouchDown = this.__swipeOrigin = ev;
-            this.__lastMoveEvent = null;
+            // set any captured target and last move back to null
+            this.__capturedTarget = this.__lastMoveEvent = null;
             this.__hasMoved = false;
 
-            if ((this.__touchCount = ev.touches.length) > 1) {
+            ev = this.__standardizeEventObject(ev);
+            if (isNull(ev)) {
                 return;
             }
 
-            this.__registerType(this.__MOVE);
-            this.__detectingMove = true;
+            this.__lastTouchDown = this.__swipeOrigin = ev;
 
             var gestureCount = this._gestureCount,
                 noHolds = gestureCount.$hold <= 0,
                 noRelease = gestureCount.$release <= 0;
+
+            // if any moving events registered, register move
+            if (gestureCount.$track > 0 || gestureCount.$trackend > 0 || gestureCount.$swipe > 0) {
+                this.__registerType(this.__MOVE);
+                this.__detectingMove = true;
+            }
 
             // return if no hold or release events are registered
             if (noHolds && noRelease) {
@@ -920,16 +938,21 @@
          * @returns {boolean} Prevents default and stops propagation if false is returned.
          */
         _onMove(ev: IPointerEvent): boolean {
+            var $compat = this.$Compat;
+
             // clear hold event
             this.__clearHold();
 
             // return immediately if there are multiple touches present, or 
             // if it is a mouse event and currently in a touch
-            if (this.__touchCount > 1 || (this._inTouch === true && ev.type === 'mousemove')) {
-                return;
+            if (this._inTouch === true && ev.type === 'mousemove') {
+                return true;
             }
 
-            this.__standardizeEventObject(ev);
+            ev = this.__standardizeEventObject(ev);
+            if (isNull(ev)) {
+                return;
+            }
 
             var gestureCount = this._gestureCount,
                 noTracking = gestureCount.$track <= 0,
@@ -955,7 +978,7 @@
                 direction = ev.direction = isNull(lastMove) ? this.__getDirection(x - lastX, y - lastY) :
                 this.__getDirection(x - lastMove.clientX, y - lastMove.clientY);
 
-            if (this.__checkForOriginChanged(direction)) {
+            if (this.__checkForOriginChanged(direction) && $compat.ANDROID) {
                 ev.preventDefault();
             }
 
@@ -990,25 +1013,22 @@
             var eventType = ev.type,
                 hasMoved = this.__hasMoved;
 
-            // return immediately if there were multiple touches present
-            if (this.__touchCount > 1) {
-                if (this.__touchCount && eventType === 'touchend') {
-                    this.__preventClickFromTouch();
-                }
-
-                this.__resetTouchEnd();
-                return;
-            } else if (eventType !== 'mouseup') {
+            if (eventType !== 'mouseup') {
+                // all non mouse cases
                 if (eventType === 'touchend') {
                     var target = <HTMLInputElement>ev.target;
                     if (hasMoved) {
-                        ev.preventDefault();
+                        if (ev.cancelable === true) {
+                            ev.preventDefault();
+                        }
                         this.__preventClickFromTouch();
                     } else if (this.__isFocused(target)) {
                         this.__preventClickFromTouch();
                     } else {
-                        ev.preventDefault();
-                    if (this._inTouch === true) {
+                        if (ev.cancelable === true) {
+                            ev.preventDefault();
+                        }
+                        if (this._inTouch === true) {
                             this.__handleInput(target);
                         }
                     }
@@ -1016,27 +1036,35 @@
 
                 this._inTouch = false;
             } else if (!isUndefined(this._inTouch)) {
-                ev.preventDefault();
-                return false;
+                if (!this._inMouse) {
+                    // this is case where touchend fired and now 
+                    // mouse end is also being fired
+                    if (ev.cancelable === true) {
+                        ev.preventDefault();
+                    }
+                    return false;
+                }
+                this._inMouse = false;
             }
 
-            // clear hold event
-            this.__clearHold();
-
-            if (this.__detectingMove) {
-                this.__unregisterType(this.__MOVE);
-                this.__detectingMove = false;
-            }
-
-            this.__standardizeEventObject(ev);
-
-            // check for cancel event, or return if the touch count was greater than 0 
-            // (should potentially only happen with pointerevents), else 
-            // handle release
-            if (this.__cancelRegex.test(eventType) || ev.touches.length > 0) {
-                this.__resetTouchEnd();
+            // check for cancel event
+            if (this.__cancelRegex.test(eventType)) {
+                this.__handleCanceled(ev);
                 return true;
-            } else if (this.__hasRelease) {
+            }
+
+            // standardizeEventObject creates touches
+            ev = this.__standardizeEventObject(ev);
+            if (isNull(ev)) {
+                return;
+            }
+
+            this.__clearTempStates();
+
+            this.__touchCount = ev.touches.length;
+
+            // handle release event
+            if (this.__hasRelease) {
                 this.__handleRelease(ev);
             }
 
@@ -1049,7 +1077,6 @@
                 intervals = config.intervals,
                 touchEnd = ev.timeStamp,
                 touchDown = this.__lastTouchDown;
-
 
             // if the user moved their finger (for scroll) we handle $trackend and return,
             // else if they had their finger down too long to be considered a tap, we want to return
@@ -1086,6 +1113,26 @@
         }
 
         /**
+         * @name __clearTempStates
+         * @memberof plat.ui.DomEvents
+         * @kind function
+         * @access private
+         *
+         * @description
+         * Clears all temporary states like move and hold events.
+         *
+         * @returns {void}
+         */
+        private __clearTempStates(): void {
+            // clear hold event
+            this.__clearHold();
+            if (this.__detectingMove) {
+                this.__unregisterType(this.__MOVE);
+                this.__detectingMove = false;
+            }
+        }
+
+        /**
          * @name __resetTouchEnd
          * @memberof plat.ui.DomEvents
          * @kind function
@@ -1097,14 +1144,40 @@
          * @returns {void}
          */
         private __resetTouchEnd(): void {
-            this.__tapCount = 0;
+            this.__tapCount = this.__touchCount = 0;
             this._inTouch = this.__hasRelease = this.__hasSwiped = false;
             this.__pointerHash = {};
             this.__pointerEvents = [];
+            this.__capturedTarget = null;
         }
 
         // gesture handling methods
 
+        /**
+         * @name __handleCanceled
+         * @memberof plat.ui.DomEvents
+         * @kind function
+         * @access private
+         *
+         * @description
+         * A function for handling when gestures are canceled via the Browser.
+         *
+         * @param {plat.ui.IPointerEvent} ev The touch cancel event object.
+         *
+         * @returns {void}
+         */
+        private __handleCanceled(ev: IPointerEvent): void {
+            var touches = ev.touches || this.__pointerEvents,
+                index = this.__getTouchIndex(touches);
+
+            ev = index >= 0 ? touches[index] : this.__standardizeEventObject(ev);
+
+            if (this.__hasMoved) {
+                this.__handleTrackEnd(ev);
+            }
+
+            this.__resetTouchEnd();
+        }
         /**
          * @name __handleTap
          * @memberof plat.ui.DomEvents
@@ -1253,20 +1326,27 @@
          */
         private __handleTrack(ev: IPointerEvent): void {
             var trackGesture = this._gestures.$track,
+                isAndroid = this.$Compat.ANDROID,
                 direction = ev.direction,
                 trackDirectionGesture = trackGesture + direction,
                 eventTarget = this.__capturedTarget || <ICustomElement>ev.target,
                 trackDomEvent = this.__findFirstSubscriber(eventTarget, trackGesture),
-                trackDirectionDomEvent = this.__findFirstSubscriber(eventTarget, trackDirectionGesture);
+                trackDomEventExists = !isNull(trackDomEvent),
+                trackDirectionDomEvent = this.__findFirstSubscriber(eventTarget, trackDirectionGesture),
+                trackDirectionDomEventExists = !isNull(trackDirectionDomEvent);
 
-            if (!isNull(trackDomEvent)) {
-                ev.preventDefault();
-                trackDomEvent.trigger(ev);
-            }
+            if (trackDomEventExists || trackDirectionDomEventExists) {
+                if (this.$Compat.ANDROID) {
+                    ev.preventDefault();
+                }
 
-            if (!isNull(trackDirectionDomEvent)) {
-                ev.preventDefault();
-                trackDirectionDomEvent.trigger(ev);
+                if (trackDomEventExists) {
+                    trackDomEvent.trigger(ev);
+                }
+
+                if (trackDirectionDomEventExists) {
+                    trackDirectionDomEvent.trigger(ev);
+                }
             }
         }
         /**
@@ -1317,7 +1397,10 @@
                 return;
             }
 
-            this.__standardizeEventObject(ev);
+            ev = this.__standardizeEventObject(ev);
+            if (isNull(ev)) {
+                return;
+            }
             domEvent.trigger(ev);
         }
 
@@ -1577,25 +1660,12 @@
             var eventType = ev.type,
                 $compat = this.$Compat;
 
-            if ($compat.hasPointerEvents) {
-                if (eventType === 'pointerdown') {
-                    this.__setCapture(ev.target);
-                }
-
+            if ($compat.hasPointerEvents || $compat.hasMsPointerEvents) {
                 this.__updatePointers(ev, this.__pointerEndRegex.test(eventType));
-            } else if ($compat.hasMsPointerEvents) {
-                if (eventType === 'MSPointerDown') {
-                    this.__setCapture(ev.target);
-                }
-
-                this.__updatePointers(ev, this.__pointerEndRegex.test(eventType));
-            } else if (eventType === 'mousedown') {
-                ev.pointerType = 'mouse';
-                this.__setCapture(ev.target);
-            } else {
-                // do not need to set catpure for touchstart events
-                ev.pointerType = eventType.indexOf('mouse') === -1 ? 'touch' : 'mouse';
+                return;
             }
+
+            ev.pointerType = eventType.indexOf('mouse') === -1 ? 'touch' : 'mouse';
         }
         /**
          * @name __setCapture
@@ -1803,34 +1873,69 @@
          * 
          * @param {plat.ui.IExtendedEvent} ev The event object to be standardized.
          * 
-         * @returns {void}
+         * @returns {plat.ui.IExtendedEvent} The potentially new Event object
          */
-        private __standardizeEventObject(ev: IExtendedEvent): void {
+        private __standardizeEventObject(ev: IExtendedEvent): IExtendedEvent {
             this.__setTouchPoint(ev);
 
-            ev.touches = ev.touches || this.__pointerEvents;
+            var isStart = this._startEvents.indexOf(ev.type) !== -1,
+                touches = ev.touches = ev.touches || this.__pointerEvents,
+                cTouches = ev.changedTouches,
+                changedTouchesExist = !isUndefined(cTouches),
+                changedTouches = changedTouchesExist ? cTouches : [];
 
-            var evtObj = ev;
-            if (isUndefined(ev.clientX)) {
-                if (ev.touches.length > 0) {
-                    evtObj = ev.touches[0];
-                } else if (((<any>ev).changedTouches || []).length > 0) {
-                    evtObj = (<any>ev).changedTouches[0];
+            if (changedTouchesExist) {
+                if (isStart) {
+                    ev = changedTouches[0];
+                    ev.touches = touches;
+                } else {
+                    var changedTouchIndex = this.__getTouchIndex(changedTouches);
+                    if (changedTouchIndex >= 0) {
+                        ev = changedTouches[changedTouchIndex];
+                        ev.touches = touches;
+                    } else if (this.__getTouchIndex(touches) >= 0) {
+                        // we want to return null because our point of interest is in touches 
+                        // but was not in changedTouches so it is still playing a part on the page
+                        return null;
+                    }
                 }
-
-                ev.clientX = evtObj.clientX;
-                ev.clientY = evtObj.clientY;
             }
 
-            if (isUndefined(ev.offsetX) || !isNull(this.__capturedTarget)) {
-                ev.offset = this.__getOffset(ev);
-                return;
+            if (isStart) {
+                this.__setCapture(ev.target);
             }
 
-            ev.offset = {
-                x: ev.offsetX,
-                y: ev.offsetY
-            };
+            ev.offset = this.__getOffset(ev);
+
+            return ev;
+        }
+        /**
+         * @name __getTouchIndex
+         * @memberof plat.ui.DomEvents
+         * @kind function
+         * @access private
+         * 
+         * @description
+         * Searches through the input array looking for the primary 
+         * touch down index.
+         * 
+         * @param {Array<plat.ui.IExtendedEvent>} ev The array of touch event objects 
+         * to search through.
+         * 
+         * @returns {number} The array index where the touch down was found or -1 if 
+         * not found.
+         */
+        private __getTouchIndex(touches: Array<IExtendedEvent>): number {
+            var identifier = (this.__lastTouchDown || <IExtendedEvent>{}).identifier,
+                length = touches.length;
+
+            for (var i = 0; i < length; ++i) {
+                if (touches[i].identifier === identifier) {
+                    return i;
+                }
+            }
+
+            return -1;
         }
         /**
          * @name __getOffset
@@ -1851,6 +1956,11 @@
                 return {
                     x: ev.clientX,
                     y: ev.clientY
+                };
+            } else if (!isUndefined(ev.offsetX) && target === ev.target) {
+                return {
+                    x: ev.offsetX,
+                    y: ev.offsetY
                 };
             }
 
@@ -2087,13 +2197,13 @@
                 style = '.' + styleClass.className + ' { ',
                 textContent = '';
 
-                styleLength = styles.length;
+            styleLength = styles.length;
 
-                for (var j = 0; j < styleLength; ++j) {
-                    textContent += styles[j] + ';';
-                }
+            for (var j = 0; j < styleLength; ++j) {
+                textContent += styles[j] + ';';
+            }
 
-                style += textContent + ' } ';
+            style += textContent + ' } ';
 
             return style;
         }
@@ -3071,6 +3181,33 @@
          * may slightly differ depending on the browser implementation.
          */
         touches?: Array<IExtendedEvent>;
+
+        /**
+         * @name changedTouches
+         * @memberof plat.ui.IExtendedEvent
+         * @kind property
+         * @access public
+         * 
+         * @type {Array<plat.ui.IExtendedEvent>}
+         * 
+         * @description
+         * An array containing all recently changed touch points. This should not be present on 
+         * the triggered custom event.
+         */
+        changedTouches?: Array<IExtendedEvent>;
+
+        /**
+         * @name identifier
+         * @memberof plat.ui.IPointerEvent
+         * @kind property
+         * @access public
+         * 
+         * @type {number}
+         * 
+         * @description
+         * A unique touch identifier.
+         */
+        identifier?: number;
     }
 
     /**
@@ -3110,19 +3247,6 @@
          * A unique touch identifier.
          */
         pointerId?: number;
-
-        /**
-         * @name identifier
-         * @memberof plat.ui.IPointerEvent
-         * @kind property
-         * @access public
-         * 
-         * @type {number}
-         * 
-         * @description
-         * A unique touch identifier.
-         */
-        identifier?: number;
     }
 
     /**
@@ -3344,29 +3468,107 @@
     }
 
     /**
-     * @name IEventSubscriber
+     * @name IBaseGestures
      * @memberof plat.ui
      * @kind interface
      * 
-     * @extends {plat.ui.IGestures<plat.ui.IDomEventInstance>}
-     * 
      * @description
-     * Describes an object to keep track of a single 
-     * element's registered custom event types.
+     * Describes an object containing information 
+     * regarding our base custom events.
+     * 
+     * @typeparam {any} T The type of objects/primitives contained in this object.
      */
-    export interface IEventSubscriber extends IGestures<IDomEventInstance> {
+    export interface IBaseGestures<T> {
         /**
-         * @name gestureCount
-         * @memberof plat.ui.IEventSubscriber
+         * @name $tap
+         * @memberof plat.ui.IBaseGestures
          * @kind property
          * @access public
          * 
-         * @type {number}
+         * @type {T}
          * 
          * @description
-         * The total registered gesture count for the associated element.
+         * The string type|number of events associated with the tap event.
          */
-        gestureCount: number;
+        $tap?: T;
+
+        /**
+         * @name $dbltap
+         * @memberof plat.ui.IBaseGestures
+         * @kind property
+         * @access public
+         * 
+         * @type {T}
+         * 
+         * @description
+         * The string type|number of events associated with the dbltap event.
+         */
+        $dbltap?: T;
+
+        /**
+         * @name $hold
+         * @memberof plat.ui.IBaseGestures
+         * @kind property
+         * @access public
+         * 
+         * @type {T}
+         * 
+         * @description
+         * The string type|number of events associated with the hold event.
+         */
+        $hold?: T;
+
+        /**
+         * @name $release
+         * @memberof plat.ui.IBaseGestures
+         * @kind property
+         * @access public
+         * 
+         * @type {T}
+         * 
+         * @description
+         * The string type|number of events associated with the release event.
+         */
+        $release?: T;
+
+        /**
+         * @name $swipe
+         * @memberof plat.ui.IBaseGestures
+         * @kind property
+         * @access public
+         * 
+         * @type {T}
+         * 
+         * @description
+         * The string type|number of events associated with the swipe event.
+         */
+        $swipe?: T;
+
+        /**
+         * @name $track
+         * @memberof plat.ui.IBaseGestures
+         * @kind property
+         * @access public
+         * 
+         * @type {T}
+         * 
+         * @description
+         * The string type|number of events associated with the track event.
+         */
+        $track?: T;
+
+        /**
+         * @name $trackend
+         * @memberof plat.ui.IBaseGestures
+         * @kind property
+         * @access public
+         * 
+         * @type {T}
+         * 
+         * @description
+         * The string type|number of events associated with the trackend event.
+         */
+        $trackend?: T;
     }
 
     /**
@@ -3380,72 +3582,7 @@
      * 
      * @typeparam {any} T The type of objects/primitives contained in this object.
      */
-    export interface IGestures<T> {
-        /**
-         * @name $tap
-         * @memberof plat.ui.IGestures
-         * @kind property
-         * @access public
-         * 
-         * @type {T}
-         * 
-         * @description
-         * The string type|number of events associated with the tap event.
-         */
-        $tap?: T;
-
-        /**
-         * @name $dbltap
-         * @memberof plat.ui.IGestures
-         * @kind property
-         * @access public
-         * 
-         * @type {T}
-         * 
-         * @description
-         * The string type|number of events associated with the dbltap event.
-         */
-        $dbltap?: T;
-
-        /**
-         * @name $hold
-         * @memberof plat.ui.IGestures
-         * @kind property
-         * @access public
-         * 
-         * @type {T}
-         * 
-         * @description
-         * The string type|number of events associated with the hold event.
-         */
-        $hold?: T;
-
-        /**
-         * @name $release
-         * @memberof plat.ui.IGestures
-         * @kind property
-         * @access public
-         * 
-         * @type {T}
-         * 
-         * @description
-         * The string type|number of events associated with the release event.
-         */
-        $release?: T;
-
-        /**
-         * @name $swipe
-         * @memberof plat.ui.IGestures
-         * @kind property
-         * @access public
-         * 
-         * @type {T}
-         * 
-         * @description
-         * The string type|number of events associated with the swipe event.
-         */
-        $swipe?: T;
-
+    export interface IGestures<T> extends IBaseGestures<T> {
         /**
          * @name $swipeleft
          * @memberof plat.ui.IGestures
@@ -3499,19 +3636,6 @@
         $swipedown?: T;
 
         /**
-         * @name $track
-         * @memberof plat.ui.IGestures
-         * @kind property
-         * @access public
-         * 
-         * @type {T}
-         * 
-         * @description
-         * The string type|number of events associated with the track event.
-         */
-        $track?: T;
-
-        /**
          * @name $trackleft
          * @memberof plat.ui.IGestures
          * @kind property
@@ -3562,19 +3686,32 @@
          * The string type|number of events associated with the trackdown event.
          */
         $trackdown?: T;
+    }
 
+    /**
+     * @name IEventSubscriber
+     * @memberof plat.ui
+     * @kind interface
+     * 
+     * @extends {plat.ui.IGestures<plat.ui.IDomEventInstance>}
+     * 
+     * @description
+     * Describes an object to keep track of a single 
+     * element's registered custom event types.
+     */
+    export interface IEventSubscriber extends IGestures<IDomEventInstance> {
         /**
-         * @name $trackend
-         * @memberof plat.ui.IGestures
+         * @name gestureCount
+         * @memberof plat.ui.IEventSubscriber
          * @kind property
          * @access public
          * 
-         * @type {T}
+         * @type {number}
          * 
          * @description
-         * The string type|number of events associated with the trackend event.
+         * The total registered gesture count for the associated element.
          */
-        $trackend?: T;
+        gestureCount: number;
     }
 
     /**
