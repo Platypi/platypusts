@@ -618,7 +618,7 @@
          */
         private __listeners: ICustomEventListener = {
             start: this._onTouchStart.bind(this),
-            move: this._onMove.bind(this),
+            move: this._onTouchMove.bind(this),
             end: this._onTouchEnd.bind(this)
         };
 
@@ -925,7 +925,7 @@
         }
 
         /**
-         * @name _onMove
+         * @name _onTouchMove
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access protected
@@ -937,7 +937,7 @@
          * 
          * @returns {boolean} Prevents default and stops propagation if false is returned.
          */
-        _onMove(ev: IPointerEvent): boolean {
+        _onTouchMove(ev: IPointerEvent): boolean {
             var $compat = this.$Compat;
 
             // clear hold event
@@ -970,7 +970,7 @@
             }
 
             // if no move events or no tracking events and the user hasn't moved the minimum swipe distance
-            if ((gestureCount.$swipe <= 0 && noTracking) || (noTracking && !minMove)) {
+            if (noTracking && (!minMove || gestureCount.$swipe <= 0)) {
                 return true;
             }
 
@@ -1016,6 +1016,8 @@
             if (eventType !== 'mouseup') {
                 // all non mouse cases
                 if (eventType === 'touchend') {
+                    // all to handle a strange issue when touch clicking certain types 
+                    // of DOM elements
                     var target = <HTMLInputElement>ev.target;
                     if (hasMoved) {
                         if (ev.cancelable === true) {
@@ -1171,6 +1173,7 @@
                 index = this.__getTouchIndex(touches);
 
             ev = index >= 0 ? touches[index] : this.__standardizeEventObject(ev);
+            this.__clearTempStates();
             this.__handleTrackEnd(ev);
             this.__resetTouchEnd();
         }
@@ -1322,7 +1325,6 @@
          */
         private __handleTrack(ev: IPointerEvent): void {
             var trackGesture = this._gestures.$track,
-                isAndroid = this.$Compat.ANDROID,
                 direction = ev.direction,
                 trackDirectionGesture = trackGesture + direction,
                 eventTarget = this.__capturedTarget || <ICustomElement>ev.target,
