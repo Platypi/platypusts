@@ -1171,11 +1171,7 @@
                 index = this.__getTouchIndex(touches);
 
             ev = index >= 0 ? touches[index] : this.__standardizeEventObject(ev);
-
-            if (this.__hasMoved) {
-                this.__handleTrackEnd(ev);
-            }
-
+            this.__handleTrackEnd(ev);
             this.__resetTouchEnd();
         }
         /**
