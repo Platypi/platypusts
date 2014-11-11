@@ -56,12 +56,12 @@
              */
             distances: {
                 /**
-                 * The minimum distance a user must move after touch down to register 
+                 * The minimum distance in pixels a user must move after touch down to register 
                  * it as a scroll instead of a tap.
                  */
-                minScrollDistance: 5,
+                minScrollDistance: 3,
                 /**
-                 * The maximum distance between consecutive taps a user is allowed to 
+                 * The maximum distance in pixels between consecutive taps a user is allowed to 
                  * register a dbltap event.
                  */
                 maxDblTapDistance: 20
@@ -72,7 +72,7 @@
              */
             velocities: {
                 /**
-                 * The minimum velocity a user must move after touch down to register 
+                 * The minimum velocity in pixels/ms a user must move after touch down to register 
                  * a swipe event.
                  */
                 minSwipeVelocity: 0.8
@@ -575,12 +575,12 @@
          * @kind property
          * @access private
          * 
-         * @type {{ master: plat.ui.IDomEventInstance; directional: plat.ui.IDomEventInstance; }}
+         * @type {Array<plat.ui.IDomEventInstance>}
          * 
          * @description
-         * A set of subscribers for the swipe gesture.
+         * An array of subscribers for the swipe gesture.
          */
-        private __swipeSubscribers: { master: IDomEventInstance; directional: IDomEventInstance; };
+        private __swipeSubscribers: Array<IDomEventInstance>;
         /**
          * @name __pointerHash
          * @memberof plat.ui.DomEvents
@@ -891,7 +891,8 @@
 
             var holdInterval = DomEvents.config.intervals.holdInterval,
                 domEvent: IDomEventInstance,
-                subscribeFn: () => void;
+                subscribeFn: () => void,
+                domEventFound = false;
 
             if (noHolds) {
                 this.__hasRelease = false;
@@ -901,23 +902,27 @@
                 return;
             } else if (noRelease) {
                 domEvent = this.__findFirstSubscriber(<ICustomElement>ev.target, this._gestures.$hold);
-                subscribeFn = () => {
-                    domEvent.trigger(ev);
-                    this.__holdTimeout = null;
-                };
+                if ((domEventFound = !isNull(domEvent))) {
+                    subscribeFn = () => {
+                        domEvent.trigger(ev);
+                        this.__holdTimeout = null;
+                    };
+                }
             } else {
                 this.__hasRelease = false;
                 // has both hold and release events registered
                 domEvent = this.__findFirstSubscriber(<ICustomElement>ev.target, this._gestures.$hold);
-                subscribeFn = () => {
-                    domEvent.trigger(ev);
-                    this.__hasRelease = true;
-                    this.__holdTimeout = null;
-                };
+                if ((domEventFound = !isNull(domEvent))) {
+                    subscribeFn = () => {
+                        domEvent.trigger(ev);
+                        this.__hasRelease = true;
+                        this.__holdTimeout = null;
+                    };
+                }
             }
 
             // set timeout to fire the subscribeFn
-            if (!isNull(domEvent)) {
+            if (domEventFound) {
                 this.__holdTimeout = setTimeout(subscribeFn, holdInterval);
             }
 
@@ -938,8 +943,6 @@
          * @returns {boolean} Prevents default and stops propagation if false is returned.
          */
         _onTouchMove(ev: IPointerEvent): boolean {
-            var $compat = this.$Compat;
-
             // clear hold event
             this.__clearHold();
 
@@ -956,35 +959,34 @@
 
             var gestureCount = this._gestureCount,
                 noTracking = gestureCount.$track <= 0,
+                noSwiping = gestureCount.$swipe <= 0,
                 config = DomEvents.config,
                 swipeOrigin = this.__swipeOrigin,
                 x = ev.clientX,
                 y = ev.clientY,
                 lastX = swipeOrigin.clientX,
                 lastY = swipeOrigin.clientY,
-                minMove = this.__getDistance(lastX, x, lastY, y) >= config.distances.minScrollDistance;
+                minMove = this.__hasMoved || (this.__getDistance(lastX, x, lastY, y) >= config.distances.minScrollDistance);
 
-            // if minimum distance moved
-            if (minMove) {
-                this.__hasMoved = true;
-            }
-
-            // if no move events or no tracking events and the user hasn't moved the minimum swipe distance
-            if (noTracking && (!minMove || gestureCount.$swipe <= 0)) {
+            // if minimum distance not met or no moving events return
+            if (!minMove || (noTracking && noSwiping)) {
                 return true;
             }
 
-            var lastMove = this.__lastMoveEvent,
-                direction = ev.direction = isNull(lastMove) ? this.__getDirection(x - lastX, y - lastY) :
-                this.__getDirection(x - lastMove.clientX, y - lastMove.clientY);
+            this.__hasMoved = true;
 
-            if (this.__checkForOriginChanged(direction) && $compat.ANDROID) {
-                ev.preventDefault();
-            }
+            var lastMove = this.__lastMoveEvent || swipeOrigin,
+                direction = ev.direction = this.__getDirection(x - lastMove.clientX, y - lastMove.clientY);
+
+            this.__checkForOriginChanged(direction);
 
             var velocity = ev.velocity = this.__getVelocity(x - swipeOrigin.clientX, y - swipeOrigin.clientY,
                 ev.timeStamp - swipeOrigin.timeStamp);
-            this.__hasSwiped = (this.__isHorizontal(direction) ? velocity.x : velocity.y) >= config.velocities.minSwipeVelocity;
+
+            // if swiping events exist
+            if (!noSwiping) {
+                this.__hasSwiped = (this.__isHorizontal(direction) ? velocity.x : velocity.y) >= config.velocities.minSwipeVelocity;
+            }
 
             // if tracking events exist
             if (!noTracking) {
@@ -1174,7 +1176,9 @@
 
             ev = index >= 0 ? touches[index] : this.__standardizeEventObject(ev);
             this.__clearTempStates();
-            this.__handleTrackEnd(ev);
+            if (this.__hasMoved) {
+                this.__handleTrackEnd(ev);
+            }
             this.__resetTouchEnd();
         }
         /**
@@ -1294,16 +1298,9 @@
                 return;
             }
 
-            var swipeSubscribers = this.__swipeSubscribers,
-                swipeDomEvent = swipeSubscribers.master,
-                swipeDirectionDomEvent = swipeSubscribers.directional;
-
-            if (!isNull(swipeDomEvent)) {
-                swipeDomEvent.trigger(lastMove);
-            }
-
-            if (!isNull(swipeDirectionDomEvent)) {
-                swipeDirectionDomEvent.trigger(lastMove);
+            var swipeSubscribers = this.__swipeSubscribers || [];
+            while (swipeSubscribers.length > 0) {
+                swipeSubscribers.pop().trigger(lastMove);
             }
 
             this.__hasSwiped = false;
@@ -1328,22 +1325,15 @@
                 direction = ev.direction,
                 trackDirectionGesture = trackGesture + direction,
                 eventTarget = this.__capturedTarget || <ICustomElement>ev.target,
-                trackDomEvent = this.__findFirstSubscriber(eventTarget, trackGesture),
-                trackDomEventExists = !isNull(trackDomEvent),
-                trackDirectionDomEvent = this.__findFirstSubscriber(eventTarget, trackDirectionGesture),
-                trackDirectionDomEventExists = !isNull(trackDirectionDomEvent);
+                domEvents = this.__findFirstSubscribers(eventTarget, [trackGesture, (trackGesture + direction)]);
 
-            if (trackDomEventExists || trackDirectionDomEventExists) {
+            if (domEvents.length > 0) {
                 if (this.$Compat.ANDROID) {
                     ev.preventDefault();
                 }
 
-                if (trackDomEventExists) {
-                    trackDomEvent.trigger(ev);
-                }
-
-                if (trackDirectionDomEventExists) {
-                    trackDirectionDomEvent.trigger(ev);
+                while (domEvents.length > 0) {
+                    domEvents.pop().trigger(ev);
                 }
             }
         }
@@ -1399,6 +1389,7 @@
             if (isNull(ev)) {
                 return;
             }
+
             domEvent.trigger(ev);
         }
 
@@ -1767,6 +1758,53 @@
                 return domEvent;
             } while (!isNull(eventTarget = <ICustomElement>eventTarget.parentNode));
         }
+
+        /**
+         * @name __findFirstSubscriber
+         * @memberof plat.ui.DomEvents
+         * @kind function
+         * @access private
+         * 
+         * @description
+         * Searches from the EventTarget up the DOM tree looking for all elements with the 
+         * registered event types.
+         * 
+         * @param {plat.ui.ICustomElement} eventTarget The current target of the touch event.
+         * @param {Array<string>} types An array of the types of events being searched for.
+         * 
+         * @returns {Array<plat.ui.IDomEventInstance>} The found {@link plat.ui.IDomEventInstance|IDomEventInstances} associated 
+         * with the first found element in the tree and the corresponding event type. Used to trigger the events at their lowest 
+         * points in the DOM tree.
+         */
+        private __findFirstSubscribers(eventTarget: ICustomElement, types: Array<string>): Array<IDomEventInstance> {
+            var plat: ICustomElementProperty,
+                subscriber: IEventSubscriber,
+                subscriberKeys: Array<string>,
+                subscriberKey: string,
+                domEvents: Array<IDomEventInstance> = [],
+                index: number;
+
+            do {
+                plat = eventTarget.__plat;
+                if (isUndefined(plat) || isUndefined(plat.domEvent)) {
+                    continue;
+                }
+
+                subscriber = this._subscribers[plat.domEvent];
+                subscriberKeys = Object.keys(subscriber);
+                while (subscriberKeys.length > 0) {
+                    subscriberKey = subscriberKeys.pop();
+                    index = types.indexOf(subscriberKey);
+                    if (index !== -1) {
+                        domEvents.push((<any>subscriber)[subscriberKey]);
+                        types.splice(index, 1);
+                    }
+                }
+
+            } while (types.length > 0 && !isNull(eventTarget = <ICustomElement>eventTarget.parentNode));
+
+            return domEvents;
+        }
         /**
          * @name __addMappedEvent
          * @memberof plat.ui.DomEvents
@@ -2072,24 +2110,29 @@
          * 
          * @param {string} direction The current direction of movement.
          * 
-         * @returns {boolean} Whether or not the origin point has changed.
+         * @returns {void}
          */
-        private __checkForOriginChanged(direction: string): boolean {
+        private __checkForOriginChanged(direction: string): void {
             var lastMove = this.__lastMoveEvent;
             if (isNull(lastMove)) {
                 this.__hasSwiped = false;
-                return this.__checkForRegisteredSwipe(direction);
+                if (this._gestureCount.$swipe > 0) {
+                    this.__setRegisteredSwipes(direction);
+                }
+                return;
             }
 
             var swipeDirection = lastMove.direction;
             if (swipeDirection === direction) {
-                return false;
+                return;
             }
 
             this.__swipeOrigin = lastMove;
 
             this.__hasSwiped = false;
-            return this.__checkForRegisteredSwipe(direction);
+            if (this._gestureCount.$swipe > 0) {
+                this.__setRegisteredSwipes(direction);
+            }
         }
         /**
          * @name __checkForRegisteredSwipe
@@ -2102,21 +2145,13 @@
          * 
          * @param {string} direction The current direction of movement.
          * 
-         * @returns {boolean} Whether or not a registerd swipe event exists.
+         * @returns {void}
          */
-        private __checkForRegisteredSwipe(direction: string): boolean {
+        private __setRegisteredSwipes(direction: string): void {
             var swipeTarget = <ICustomElement>this.__swipeOrigin.target,
-                swipeGesture = this._gestures.$swipe,
-                swipeDirectionGesture = swipeGesture + direction,
-                domEventSwipe = this.__findFirstSubscriber(swipeTarget, swipeGesture),
-                domEventSwipeDirection = this.__findFirstSubscriber(swipeTarget, swipeDirectionGesture);
+                swipeGesture = this._gestures.$swipe;
 
-            this.__swipeSubscribers = {
-                master: domEventSwipe,
-                directional: domEventSwipeDirection
-            };
-
-            return !isNull(domEventSwipe) || !isNull(domEventSwipeDirection);
+            this.__swipeSubscribers = this.__findFirstSubscribers(swipeTarget, [swipeGesture, (swipeGesture + direction)]);
         }
         /**
          * @name __isHorizontal
