@@ -539,6 +539,18 @@ module plat {
             return map<any, any>(obj, iterator, context);
         }
 
+        mapAsync<T, R>(obj: any, iterator: (value: T, key: any, obj: any) => plat.async.IThenable<R>, context?: any): plat.async.IThenable<Array<R>> {
+            return mapAsync(obj, iterator, context);
+        }
+
+        mapAsyncInOrder<T, R>(array: Array<T>, iterator: (value: T, index: number, list: Array<T>) => plat.async.IThenable<R>, context?: any): plat.async.IThenable<Array<R>> {
+            return mapAsyncInOrder(array, iterator, context);
+        }
+
+        mapAsyncInDescendingOrder<T, R>(array: Array<T>, iterator: (value: T, index: number, list: Array<T>) => plat.async.IThenable<R>, context?: any): plat.async.IThenable<Array<R>> {
+            return mapAsyncInDescendingOrder(array, iterator, context);
+        }
+
         /**
          * @name pluck
          * @memberof plat.Utils
@@ -1180,6 +1192,12 @@ module plat {
          */
         map<T, R>(obj: IObject<T>, iterator: IObjectIterator<T, R>, context?: any): Array<R>;
 
+        mapAsync<T, R>(obj: any, iterator: (value: T, key: any, obj: any) => plat.async.IThenable<R>, context?: any): plat.async.IThenable<Array<R>>;
+
+        mapAsyncInOrder<T, R>(array: Array<T>, iterator: (value: T, index: number, list: Array<T>) => plat.async.IThenable<R>, context?: any): plat.async.IThenable<Array<R>>;
+
+        mapAsyncInDescendingOrder<T, R>(array: Array<T>, iterator: (value: T, index: number, list: Array<T>) => plat.async.IThenable<R>, context?: any): plat.async.IThenable<Array<R>>;
+
         /**
          * @name pluck
          * @memberof plat.IUtils
@@ -1318,7 +1336,7 @@ module plat {
      * @kind interface
      * 
      * @description
-     * The Type for a {@link plat.IUtils|IUtils} iterator callback method.
+     * The Type for a {@link plat.IUtils|IUtils} list iterator callback method.
      * 
      * @typeparam {any} T The value passed into the iterator.
      * @typeparam {any} R The return type of the iterator.
@@ -1348,7 +1366,7 @@ module plat {
      * @kind interface
      * 
      * @description
-     * The Type for a {@link plat.IUtils|IUtils} iterator callback method.
+     * The Type for a {@link plat.IUtils|IUtils} object iterator callback method.
      * 
      * @typeparam {any} T The value passed into the iterator.
      * @typeparam {any} R The return type of the iterator.
@@ -1365,10 +1383,41 @@ module plat {
          * 
          * @param {T} value The value for an object during an iteration.
          * @param {string} key The key where the value can be found.
-         * @param {any} obj The object passed into the util method.
+         * @param {plat.IObject<T>} obj The object passed into the util method.
          * 
-         * @returns {U} The returned value.
+         * @returns {R} The returned value.
          */
         (value: T, key: string, obj: IObject<T>): R;
+    }
+
+    /**
+     * @name IReduceIterator
+     * @memberof plat
+     * @kind interface
+     * 
+     * @description
+     * The Type for a {@link plat.IUtils|IUtils} reduce iterator callback method.
+     * 
+     * @typeparam {any} T The value passed into the iterator.
+     * @typeparam {any} R The return type of the iterator.
+     */
+    interface ReduceIterator<T, R> {
+        /**
+         * @memberof plat.IReduceIterator
+         * @kind function
+         * @access public
+         * @static
+         * 
+         * @description
+         * A method signature for {@link plat.IReduceIterator|IReduceIterator}.
+         * 
+         * @param {R} previousValue The last returned value in the reduce cycle.
+         * @param {T} currentValue The current value in the reduce array.
+         * @param {number} index The current index in the reduce array.
+         * @param {Array<T>} The array passed into the reduce method.
+         * 
+         * @returns {R} The returned value.
+         */
+        (previousValue: R, curr: T, index: number, list: Array<T>): R;
     }
 }

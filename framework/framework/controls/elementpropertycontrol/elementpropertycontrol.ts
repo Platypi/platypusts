@@ -91,8 +91,10 @@ module plat.controls {
         setter() {
             super.setter();
 
-            if (isFunction(this.templateControl.setHref)) {
-                this.templateControl.setHref();
+            var templateControl: ui.controls.Anchor = this.templateControl;
+
+            if (isObject(templateControl) && isFunction(templateControl.setHref)) {
+                templateControl.setHref();
             }
         }
     }

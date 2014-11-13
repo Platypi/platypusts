@@ -255,7 +255,7 @@ module plat.async {
          * 
          * @typeparam {any} R The value with which to resolve the promise.
          * 
-         * @param {R} value The value to resolve.
+         * @param {R} value? The value to resolve.
          * 
          * @returns {plat.async.IThenable<R>} A promise that will resolve with the associated value.
          */
@@ -1175,11 +1175,11 @@ module plat.async {
          * 
          * @typeparam {any} R The value with which to resolve the promise.
          * 
-         * @param {R} value The value to resolve.
+         * @param {R} value? The value to resolve.
          * 
          * @returns {plat.async.IThenable<R>} A promise that will resolve with the associated value.
          */
-        resolve<R>(value: R): IThenable<R>;
+        resolve<R>(value?: R): IThenable<R>;
 
         /**
          * @name reject

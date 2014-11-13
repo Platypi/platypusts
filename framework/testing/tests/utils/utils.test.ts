@@ -8,7 +8,8 @@ module tests.utils {
         expected: any;
     }
 
-    var utils = plat.acquire(plat.IUtils);
+    var utils = plat.acquire(plat.IUtils),
+        Promise = plat.acquire(plat.async.IPromise);
 
     function isTrue(obj) {
         return obj === true;
@@ -443,8 +444,6 @@ module tests.utils {
             }
         ];
 
-
-
     describe('Utils Tests', () => {
         toBeTests.forEach((test) => {
             it('should test ' + test.name, () => {
@@ -621,7 +620,7 @@ module tests.utils {
         it('should test forEach with a string', () => {
             var spy = spyOn(utils, 'noop');
 
-            utils.forEach('foo', utils.noop);
+            utils.forEach(<any>'foo', utils.noop);
 
             expect(spy.calls.count()).toBe(3);
             expect(spy.calls.mostRecent().args).toEqual(['o', 2, 'foo']);
@@ -630,7 +629,7 @@ module tests.utils {
         it('should test some with a string and return false', () => {
             var spy = spyOn(utils, 'noop');
 
-            expect(utils.some('foo', <any>utils.noop)).toBe(false);
+            expect(utils.some(<any>'foo', <any>utils.noop)).toBe(false);
 
             expect(spy.calls.count()).toBe(3);
             expect(spy.calls.mostRecent().args).toEqual(['o', 2, 'foo']);
@@ -676,6 +675,63 @@ module tests.utils {
                 uid = utils.uniqueId(rand);
 
             expect(uid).toBe(rand + '00');
+        });
+
+        it('should test mapAsync', (done) => {
+            var array = [1, 2, 3, 4, 5],
+                temp: number;
+
+            utils.mapAsync(array, (value: number, key, obj) => {
+                temp = value;
+                return new Promise((resolve) => {
+                    setTimeout(() => {
+                        expect(temp).toEqual(array[array.length - 1]);
+                        resolve(value + 1);
+                    }, value);
+                });
+            })
+                .then((results) => {
+                    expect(results).toEqual([2, 3, 4, 5, 6]);
+                    done();
+                });
+        });
+
+        it('should test mapAsyncInOrder', (done) => {
+            var array = [1, 2, 3, 4, 5],
+                temp: number;
+
+            utils.mapAsyncInOrder(array, (value: number, key, obj) => {
+                temp = value;
+                return new Promise((resolve) => {
+                    setTimeout(() => {
+                        expect(temp).toEqual(value);
+                        resolve(value + 1);
+                    }, value);
+                });
+            })
+                .then((results) => {
+                    expect(results).toEqual([2, 3, 4, 5, 6]);
+                    done();
+                });
+        });
+
+        it('should test mapAsyncInDescendingOrder', (done) => {
+            var array = [1, 2, 3, 4, 5],
+                temp: number;
+
+            utils.mapAsyncInDescendingOrder(array, (value: number, key, obj) => {
+                temp = value;
+                return new Promise((resolve) => {
+                    setTimeout(() => {
+                        expect(temp).toEqual(value);
+                        resolve(value + 1);
+                    }, value);
+                });
+            })
+                .then((results) => {
+                    expect(results).toEqual([6, 5, 4, 3, 2]);
+                    done();
+                });
         });
     });
 }

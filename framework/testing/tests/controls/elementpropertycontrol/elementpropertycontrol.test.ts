@@ -73,11 +73,7 @@
             expect(element.href).toBe('');
 
             control.setter();
-
-            var path = element.pathname;
-            path = (path.charAt(0) === '/') ? path.slice(1) : path;
-
-            expect(path).toBe('foo');
+            expect(element.pathname.slice(-3)).toBe('foo');
         });
     });
 }

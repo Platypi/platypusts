@@ -203,7 +203,7 @@ function where(obj: any, properties: any): Array<any> {
             => (<any>value)[key] !== property));
 }
 
-function forEach<T>(array: Array <T>, iterator: (value: T, index: number, obj: any) => void, context?: any): Array < T>;
+function forEach<T>(array: Array <T>, iterator: (value: T, index: number, obj: any) => void, context?: any): Array <T>;
 function forEach<T>(obj: any, iterator: (value: T, key: string, obj: any) => void, context?: any): any;
 function forEach<T>(obj: any, iterator: (value: T, key: any, obj: any) => void, context?: any): any {
     if (isNull(obj) || !(isObject(obj) || isArrayLike(obj))) {
@@ -232,8 +232,8 @@ function forEach<T>(obj: any, iterator: (value: T, key: any, obj: any) => void, 
     return obj;
 }
 
-function map<T, U>(obj: any, iterator: (value: T, key: any, obj: any) => U, context?: any): Array<U> {
-    var arr: Array<U> = [];
+function map<T, R>(obj: any, iterator: (value: T, key: any, obj: any) => R, context?: any): Array<R> {
+    var arr: Array<R> = [];
 
     if (isNull(obj)) {
         return arr;
@@ -248,6 +248,52 @@ function map<T, U>(obj: any, iterator: (value: T, key: any, obj: any) => U, cont
     });
 
     return arr;
+}
+
+var Promise: plat.async.IPromise;
+
+function mapAsync<T, R>(obj: any, iterator: (value: T, key: any, obj: any) => plat.async.IThenable<R>, context?: any): plat.async.IThenable<Array<R>> {
+    Promise = Promise || plat.acquire(__Promise);
+
+    return Promise.all(map(obj, iterator, context));
+}
+
+function mapAsyncInOrder<T, R>(array: Array<T>, iterator: (value: T, index: number, list: Array<T>) => plat.async.IThenable<R>, context?: any): plat.async.IThenable<Array<R>> {
+    Promise = Promise || plat.acquire(__Promise);
+    var initialValue = Promise.resolve<Array<R>>([]);
+
+    if (!isArray(array)) {
+        return initialValue;
+    }
+
+    iterator = iterator.bind(context);
+
+    return array.reduce<plat.async.IThenable<Array<R>>>((previousValue, nextValue, nextIndex, array) => {
+        return previousValue.then((items) => {
+            return iterator(nextValue, nextIndex, array).then((moreItems) => {
+                return items.concat(moreItems);
+            });
+        });
+    }, initialValue);
+}
+
+function mapAsyncInDescendingOrder<T, R>(array: Array<T>, iterator: (value: T, index: number, list: Array<T>) => plat.async.IThenable<R>, context?: any): plat.async.IThenable<Array<R>> {
+    Promise = Promise || plat.acquire(__Promise);
+    var initialValue = Promise.resolve<Array<R>>([]);
+
+    if (!isArray(array)) {
+        return initialValue;
+    }
+
+    iterator = iterator.bind(context);
+
+    return array.reduceRight<plat.async.IThenable<Array<R>>>((previousValue, nextValue, nextIndex, array) => {
+        return previousValue.then((items) => {
+            return iterator(nextValue, nextIndex, array).then((moreItems) => {
+                return items.concat(moreItems);
+            });
+        });
+    }, initialValue);
 }
 
 function pluck<T, U>(obj: any, key: string): Array<U> {
