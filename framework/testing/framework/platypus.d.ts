@@ -20,7 +20,7 @@ declare module plat {
          * @param {new (...args: any[]) => plat.IApp} Type The constructor for the IApp.
          * @param {Array<any>} dependencies? An array of strings representing the dependencies needed for the app injector.
          */
-        function app(name: string, Type: new (...args: any[]) => IApp, dependencies?: any[]): typeof register;
+        function app(name: string, Type: new(...args: any[]) => IApp, dependencies?: any[]): typeof register;
         /**
          * Registers an IControl with the framework. The framework will instantiate the
          * IControl when needed. The dependencies array corresponds to injectables that
@@ -30,7 +30,7 @@ declare module plat {
          * @param {Array<any>} dependencies? An array of strings representing the dependencies needed for the IControl
          * injector.
          */
-        function control(name: string, Type: new (...args: any[]) => IControl, dependencies?: any[]): typeof register;
+        function control(name: string, Type: new(...args: any[]) => IControl, dependencies?: any[]): typeof register;
         /**
          * Registers an IViewControl with the framework. The framework will
          * instantiate the control when needed. The dependencies array corresponds to injectables that will be
@@ -41,7 +41,7 @@ declare module plat {
          * @param {Array<any>} dependencies? An optional array of strings representing the dependencies needed for the
          * IViewControl injector.
          */
-        function viewControl(name: string, Type: new (...args: any[]) => ui.IViewControl, dependencies?: any[]): typeof register;
+        function viewControl(name: string, Type: new(...args: any[]) => ui.IViewControl, dependencies?: any[]): typeof register;
         /**
          * Registers an WebViewControl with the framework. The framework will instantiate the
          * control when needed. The dependencies array corresponds to injectables that will be passed into the Constructor of the control.
@@ -53,7 +53,7 @@ declare module plat {
          * @param {Array<any>} routes? Optional route strings (or regular expressions) used for matching a URL to the
          * registered WebViewControl.
          */
-        function viewControl(name: string, Type: new (...args: any[]) => ui.IWebViewControl, dependencies: any[], routes: any[]): typeof register;
+        function viewControl(name: string, Type: new(...args: any[]) => ui.IWebViewControl, dependencies: any[], routes: any[]): typeof register;
         /**
          * Registers an injectable with the framework. Injectables are objects that can be used for dependency injection into other objects.
          * The dependencies array corresponds to injectables that will be passed into the Constructor of the injectable.
@@ -68,7 +68,7 @@ declare module plat {
          * plat.register.injectable('$CacheFactory', [plat.expressions.IParser], Cache);
          * plat.register.injectable('database', MyDatabase, null, plat.register.injectable.INSTANCE);
          */
-        function injectable(name: string, Type: new (...args: any[]) => any, dependencies?: any[], injectableType?: string): typeof register;
+        function injectable(name: string, Type: new(...args: any[]) => any, dependencies?: any[], injectableType?: string): typeof register;
         /**
          * Registers an injectable with the framework. Injectables are objects that can be used for dependency injection into other objects.
          * The dependencies array corresponds to injectables that will be passed into the Constructor of the injectable.
@@ -127,8 +127,8 @@ declare module plat {
          * @param {string} animationType The type of animation. Both the intended type and default value are
          * CSS.
          */
-        function animation(name: string, Type: new (...args: any[]) => ui.animations.ICssAnimation, dependencies?: any[], animationType?: 'css'): typeof register;
-        function animation(name: string, Type: new (...args: any[]) => ui.animations.ICssAnimation, dependencies?: any[], animationType?: string): typeof register;
+        function animation(name: string, Type: new(...args: any[]) => ui.animations.ICssAnimation, dependencies?: any[], animationType?: 'css'): typeof register;
+        function animation(name: string, Type: new(...args: any[]) => ui.animations.ICssAnimation, dependencies?: any[], animationType?: string): typeof register;
         /**
          * Adds a JS animation denoted by its name. If  Intended to be used when JS animation implementations for legacy browsers
          * is desired.
@@ -139,8 +139,8 @@ declare module plat {
          * @param {string} animationType The type of animation. Both the intended type and default value are
          * JS.
          */
-        function animation(name: string, Type: new (...args: any[]) => ui.animations.IJsAnimation, dependencies: any[], animationType: 'js'): typeof register;
-        function animation(name: string, Type: new (...args: any[]) => ui.animations.IJsAnimation, dependencies: any[], animationType: string): typeof register;
+        function animation(name: string, Type: new(...args: any[]) => ui.animations.IJsAnimation, dependencies: any[], animationType: 'js'): typeof register;
+        function animation(name: string, Type: new(...args: any[]) => ui.animations.IJsAnimation, dependencies: any[], animationType: string): typeof register;
         /**
          * Contains constants for animation type.
          */
@@ -167,7 +167,7 @@ declare module plat {
          */
         class Injector<T> implements IInjector<T> {
             public name: string;
-            public Constructor: new () => T;
+            public Constructor: new() => T;
             public type: string;
             /**
              * Initializes all static injectors.
@@ -241,7 +241,7 @@ declare module plat {
              * @param {string} type The type of injector, used for injectables specifying a injectableType of
              * STATIC, SINGLETON, FACTORY, INSTANCE, or CLASS. The default is SINGLETON.
              */
-            constructor(name: string, Constructor: new () => T, dependencies?: any[], type?: string);
+            constructor(name: string, Constructor: new() => T, dependencies?: any[], type?: string);
             /**
              * Gathers the dependencies for the Injector object and creates a new instance of the
              * Constructor, passing in the dependencies in the order they were specified. If the
@@ -278,7 +278,7 @@ declare module plat {
             /**
              * The constructor method for the component requiring the dependency injection.
              */
-            Constructor: new () => T;
+            Constructor: new() => T;
             /**
              * The type of injector, used for injectables specifying a register.injectableType of
              * STATIC, SINGLE, or MULTI. The default is SINGLE.
@@ -1018,8 +1018,41 @@ declare module plat {
          * @param {any} context? An optional context to bind to the iterator.
          */
         public map<T, R>(obj: IObject<T>, iterator: IObjectIterator<T, R>, context?: any): R[];
-        public mapAsync<T, R>(obj: any, iterator: (value: T, key: any, obj: any) => async.IThenable<R>, context?: any): async.IThenable<R[]>;
-        public mapAsyncInOrder<T, R>(array: T[], iterator: (value: T, index: number, list: T[]) => async.IThenable<R>, context?: any): async.IThenable<R[]>;
+        /**
+         * Takes in an array and an iterator function. Calls the iterator with all the values in the array. The
+         * iterator can return a promise the will resolve with the mapped value. The returned values will be pushed
+         * to an Array. A promise is returned that will resolve when all the iterators have resolved.
+         * @param {Array<T>} array An array.
+         * @param {plat.IListIterator<T, plat.async.IThenable<R>>} iterator The transformation function.
+         * @param {any} context? An optional context to bind to the iterator.
+         */
+        public mapAsync<T, R>(array: T[], iterator: IListIterator<T, async.IThenable<R>>, context?: any): async.IThenable<R[]>;
+        /**
+         * Takes in an object and an iterator function. Calls the iterator with all the values in the object. The
+         * iterator can return a promise the will resolve with the mapped value. The returned values will be pushed
+         * to an Array. A promise is returned that will resolve when all the iterators have resolved.
+         * @param {plat.IObject<T>} obj An Object.
+         * @param {plat.IObjectIterator<T, plat.async.IThenable<R>>} iterator The transformation function.
+         * @param {any} context? An optional context to bind to the iterator.
+         */
+        public mapAsync<T, R>(obj: IObject<T>, iterator: IObjectIterator<T, async.IThenable<R>>, context?: any): async.IThenable<R[]>;
+        /**
+         * Takes in an array and an iterator function. Calls the iterator with all the values in the array. The
+         * iterator can return a promise the will resolve with the mapped value. The next value in the array will not be passed to
+         * the iterator until the previous promise fulfills.
+         * @param {Array<T>} array An Array.
+         * @param {plat.IListIterator<T, plat.async.IThenable<R>>} iterator The transformation function.
+         * @param {any} context? An optional context to bind to the iterator.
+         */
+        public mapAsyncInOrder<T, R>(array: T[], iterator: IListIterator<T, async.IThenable<R>>, context?: any): async.IThenable<R[]>;
+        /**
+         * Takes in an array and an iterator function. Calls the iterator with all the values in the array in descending order. The
+         * iterator can return a promise the will resolve with the mapped value. The next value in the array will not be passed to
+         * the iterator until the previous promise fulfills.
+         * @param {Array<T>} array An Array.
+         * @param {plat.IListIterator<T, plat.async.IThenable<R>>} iterator The transformation function.
+         * @param {any} context? An optional context to bind to the iterator.
+         */
         public mapAsyncInDescendingOrder<T, R>(array: T[], iterator: (value: T, index: number, list: T[]) => async.IThenable<R>, context?: any): async.IThenable<R[]>;
         /**
          * Takes in an object and a property to extract from all of the object's values. Returns an array of
@@ -1244,7 +1277,7 @@ declare module plat {
          */
         forEach<T>(obj: IObject<T>, iterator: IObjectIterator<T, void>, context?: any): IObject<T>;
         /**
-         * Takes in an object and an iterator function. Calls the iterator with all the values in the object. The
+         * Takes in an array and an iterator function. Calls the iterator with all the values in the array. The
          * iterator can transform the object and return it. The returned values will be pushed to an Array and
          * returned.
          * @param {Array<T>} array An Array.
@@ -1257,12 +1290,45 @@ declare module plat {
          * iterator can transform the object and return it. The returned values will be pushed to an Array and
          * returned.
          * @param {plat.IObject<T>} obj An Object.
-         * @param {(value: T, index: number, obj: any) => U} iterator The transformation function.
+         * @param {plat.IObjectIterator<T, R>} iterator The transformation function.
          * @param {any} context? An optional context to bind to the iterator.
          */
         map<T, R>(obj: IObject<T>, iterator: IObjectIterator<T, R>, context?: any): R[];
-        mapAsync<T, R>(obj: any, iterator: (value: T, key: any, obj: any) => async.IThenable<R>, context?: any): async.IThenable<R[]>;
-        mapAsyncInOrder<T, R>(array: T[], iterator: (value: T, index: number, list: T[]) => async.IThenable<R>, context?: any): async.IThenable<R[]>;
+        /**
+         * Takes in an array and an iterator function. Calls the iterator with all the values in the array. The
+         * iterator can return a promise the will resolve with the mapped value. The returned values will be pushed
+         * to an Array. A promise is returned that will resolve when all the iterators have resolved.
+         * @param {Array<T>} array An array.
+         * @param {plat.IListIterator<T, plat.async.IThenable<R>>} iterator The transformation function.
+         * @param {any} context? An optional context to bind to the iterator.
+         */
+        mapAsync<T, R>(array: T[], iterator: IListIterator<T, async.IThenable<R>>, context?: any): async.IThenable<R[]>;
+        /**
+         * Takes in an object and an iterator function. Calls the iterator with all the values in the object. The
+         * iterator can return a promise the will resolve with the mapped value. The returned values will be pushed
+         * to an Array. A promise is returned that will resolve when all the iterators have resolved.
+         * @param {plat.IObject<T>} obj An Object.
+         * @param {plat.IObjectIterator<T, plat.async.IThenable<R>>} iterator The transformation function.
+         * @param {any} context? An optional context to bind to the iterator.
+         */
+        mapAsync<T, R>(obj: IObject<T>, iterator: IObjectIterator<T, async.IThenable<R>>, context?: any): async.IThenable<R[]>;
+        /**
+         * Takes in an array and an iterator function. Calls the iterator with all the values in the array. The
+         * iterator can return a promise the will resolve with the mapped value. The next value in the array will not be passed to
+         * the iterator until the previous promise fulfills.
+         * @param {Array<T>} array An Array.
+         * @param {plat.IListIterator<T, plat.async.IThenable<R>>} iterator The transformation function.
+         * @param {any} context? An optional context to bind to the iterator.
+         */
+        mapAsyncInOrder<T, R>(array: T[], iterator: IListIterator<T, async.IThenable<R>>, context?: any): async.IThenable<R[]>;
+        /**
+         * Takes in an array and an iterator function. Calls the iterator with all the values in the array in descending order. The
+         * iterator can return a promise the will resolve with the mapped value. The next value in the array will not be passed to
+         * the iterator until the previous promise fulfills.
+         * @param {Array<T>} array An Array.
+         * @param {plat.IListIterator<T, plat.async.IThenable<R>>} iterator The transformation function.
+         * @param {any} context? An optional context to bind to the iterator.
+         */
         mapAsyncInDescendingOrder<T, R>(array: T[], iterator: (value: T, index: number, list: T[]) => async.IThenable<R>, context?: any): async.IThenable<R[]>;
         /**
          * Takes in an object and a property to extract from all of the object's values. Returns an array of
@@ -1409,7 +1475,7 @@ declare module plat {
             /**
              * A regular expression for matching or removing all newline characters.
              */
-            public newLineRegex: RegExp;
+            public newLineRegex : RegExp;
             /**
              * Finds optional parameters in a route string.
              * // outputs ['(/foo)', '/foo']
@@ -1417,7 +1483,7 @@ declare module plat {
              * // outputs ['(/foo)', '/foo']
              * exec('(/foo))');
              */
-            public optionalRouteRegex: RegExp;
+            public optionalRouteRegex : RegExp;
             /**
              * Finds named parameters in a route string.
              * // outputs [':foo']
@@ -1425,19 +1491,19 @@ declare module plat {
              * // outputs [':foo']
              * exec('(/:foo)/bar');
              */
-            public namedParameterRouteRegex: RegExp;
+            public namedParameterRouteRegex : RegExp;
             /**
              * Finds an alphanumeric wildcard match in a route string.
              * // outputs ['*bar']
              * exec('/foo/*bar/baz');
              */
-            public wildcardRouteRegex: RegExp;
+            public wildcardRouteRegex : RegExp;
             /**
              * Finds invalid characters in a route string.
              * // outputs ['?']
              * exec('/foo/bar?query=baz');
              */
-            public escapeRouteRegex: RegExp;
+            public escapeRouteRegex : RegExp;
             /**
              * Finds delimeters for spinal-case, snake_case, and dot.case.
              * useful for converting to camelCase. Also can turn a string
@@ -1451,17 +1517,17 @@ declare module plat {
              * // outputs [' W', ' ', 'W']
              * exec('Hello World');
              */
-            public camelCaseRegex: RegExp;
+            public camelCaseRegex : RegExp;
             /**
              * Finds all whitespace and newline characters
              * not in string literals. Needs to be combined
              * with string replace function using $1 argument.
              */
-            public whiteSpaceRegex: RegExp;
+            public whiteSpaceRegex : RegExp;
             /**
              * Finds all single and double quotes.
              */
-            public quotationRegex: RegExp;
+            public quotationRegex : RegExp;
             /**
              * The constructor for a Regex. Creates the markup regular expression.
              */
@@ -2998,7 +3064,7 @@ declare module plat {
              * The error type (U) should extend Error in order to get proper stack tracing.
              * @param {plat.async.IResolveFunction<R>} resolveFunction A IResolveFunction for fulfilling/rejecting the Promise.
              */
-            new <R>(resolveFunction: IResolveFunction<R>): IThenable<R>;
+            new<R>(resolveFunction: IResolveFunction<R>): IThenable<R>;
             /**
              * Returns a promise that fulfills when every item in the array is fulfilled.
              * Casts arguments to promises if necessary. The result argument of the
@@ -3933,7 +3999,7 @@ declare module plat {
             /**
              * Returns the number of items in storage.
              */
-            public length: number;
+            public length : number;
             /**
              * Clears storage, deleting all of its keys.
              */
@@ -5524,7 +5590,7 @@ declare module plat {
          * Retrieves all the controls of the specified type.
          * @param {new () => T} Constructor The constructor used to find controls.
          */
-        public getControlsByType<T extends Control>(Constructor: new () => T): T[];
+        public getControlsByType<T extends Control>(Constructor: new() => T): T[];
         /**
          * Adds an event listener of the specified type to the specified element. Removal of the
          * event is handled automatically upon disposal.
@@ -5788,7 +5854,7 @@ declare module plat {
          * Retrieves all the controls of the specified type.
          * @param {new () => T} Constructor The constructor used to find controls.
          */
-        getControlsByType? <T extends IControl>(Constructor: new () => T): T[];
+        getControlsByType? <T extends IControl>(Constructor: new() => T): T[];
         /**
          * Adds an event listener of the specified type to the specified element. Removal of the
          * event is handled automatically upon disposal.
@@ -11496,7 +11562,7 @@ declare module plat {
              * @param {plat.navigation.INavigationOptions} options? Optional
              * INavigationOptions used for navigation.
              */
-            public navigate(Constructor: new (...args: any[]) => ui.IBaseViewControl, options?: INavigationOptions): void;
+            public navigate(Constructor: new(...args: any[]) => ui.IBaseViewControl, options?: INavigationOptions): void;
             /**
              * Allows an IBaseViewControl to navigate to another
              * IBaseViewControl. Also allows for
@@ -11522,7 +11588,7 @@ declare module plat {
              * @param {new (...args: any[]) => plat.ui.IBaseViewControl} Constructor The
              * IBaseViewControl constructor to match in the current state.
              */
-            public isCurrentState(Constructor: new (...args: any[]) => ui.IBaseViewControl): boolean;
+            public isCurrentState(Constructor: new(...args: any[]) => ui.IBaseViewControl): boolean;
             /**
              * Returns whether or not the current state matches the input type.
              * @param {string} type The
@@ -11559,7 +11625,7 @@ declare module plat {
              * @param {new (...args: any[]) => plat.ui.IBaseViewControl} Constructor The
              * IBaseViewControl constructor to search for in the history stack.
              */
-            public _findInHistory(Constructor: new (...args: any[]) => ui.IBaseViewControl): number;
+            public _findInHistory(Constructor: new(...args: any[]) => ui.IBaseViewControl): number;
             /**
              * Finds the given constructor in the history stack. Returns the index in the history where
              * the constructor is found, or -1 if no constructor is found.
@@ -11611,7 +11677,7 @@ declare module plat {
              * @param {plat.navigation.INavigationOptions} options? Optional
              * INavigationOptions used for navigation.
              */
-            navigate(Constructor: new (...args: any[]) => ui.IBaseViewControl, options?: INavigationOptions): void;
+            navigate(Constructor: new(...args: any[]) => ui.IBaseViewControl, options?: INavigationOptions): void;
             /**
              * Allows an IBaseViewControl to navigate to another
              * IBaseViewControl. Also allows for
@@ -11680,7 +11746,7 @@ declare module plat {
              * The INavigatorInstance will search for an instance
              * of the IBaseViewControl in its history and navigate to it.
              */
-            ViewControl?: new (...args: any[]) => ui.IBaseViewControl;
+            ViewControl?: new(...args: any[]) => ui.IBaseViewControl;
         }
         /**
          * Defines the base interface that needs to be implemented in the navigation history.

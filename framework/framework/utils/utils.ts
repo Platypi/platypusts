@@ -539,14 +539,98 @@ module plat {
             return map<any, any>(obj, iterator, context);
         }
 
+        /**
+         * @name mapAsync
+         * @memberof plat.Utils
+         * @kind function
+         * @access public
+         * @variation 0
+         * 
+         * @description
+         * Takes in an array and an iterator function. Calls the iterator with all the values in the array. The 
+         * iterator can return a promise the will resolve with the mapped value. The returned values will be pushed 
+         * to an Array. A promise is returned that will resolve when all the iterators have resolved.
+         * 
+         * @typeparam {any} T The type of objects contained in the input Array.
+         * @typeparam {any} R The type of objects contained in the transformed output Array.
+         * 
+         * @param {Array<T>} array An array.
+         * @param {plat.IListIterator<T, plat.async.IThenable<R>>} iterator The transformation function.
+         * @param {any} context? An optional context to bind to the iterator.
+         * 
+         * @returns {plat.async.IThenable<Array<R>>} The accumulated transformed values from the iterator.
+         */
+        mapAsync<T, R>(array: Array<T>, iterator: IListIterator<T, async.IThenable<R>>, context?: any): async.IThenable<Array<R>>;
+        /**
+         * @name mapAsync
+         * @memberof plat.Utils
+         * @kind function
+         * @access public
+         * @variation 1
+         * 
+         * @description
+         * Takes in an object and an iterator function. Calls the iterator with all the values in the object. The 
+         * iterator can return a promise the will resolve with the mapped value. The returned values will be pushed 
+         * to an Array. A promise is returned that will resolve when all the iterators have resolved.
+         * 
+         * @typeparam {any} T The type of objects contained in the input Object.
+         * @typeparam {any} R The type of objects contained in the transformed output Array.
+         * 
+         * @param {plat.IObject<T>} obj An Object.
+         * @param {plat.IObjectIterator<T, plat.async.IThenable<R>>} iterator The transformation function.
+         * @param {any} context? An optional context to bind to the iterator.
+         * 
+         * @returns {plat.async.IThenable<Array<R>>} The accumulated transformed values from the iterator.
+         */
+        mapAsync<T, R>(obj: IObject<T>, iterator: IObjectIterator<T, async.IThenable<R>>, context?: any): plat.async.IThenable<Array<R>>;
         mapAsync<T, R>(obj: any, iterator: (value: T, key: any, obj: any) => plat.async.IThenable<R>, context?: any): plat.async.IThenable<Array<R>> {
             return mapAsync(obj, iterator, context);
         }
 
-        mapAsyncInOrder<T, R>(array: Array<T>, iterator: (value: T, index: number, list: Array<T>) => plat.async.IThenable<R>, context?: any): plat.async.IThenable<Array<R>> {
+        /**
+         * @name mapAsyncInOrder
+         * @memberof plat.Utils
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Takes in an array and an iterator function. Calls the iterator with all the values in the array. The 
+         * iterator can return a promise the will resolve with the mapped value. The next value in the array will not be passed to 
+         * the iterator until the previous promise fulfills.
+         * 
+         * @typeparam {any} T The type of objects contained in the input Array.
+         * @typeparam {any} R The type of objects contained in the transformed output Array.
+         * 
+         * @param {Array<T>} array An Array.
+         * @param {plat.IListIterator<T, plat.async.IThenable<R>>} iterator The transformation function.
+         * @param {any} context? An optional context to bind to the iterator.
+         * 
+         * @returns {plat.async.IThenable<Array<R>>} The accumulated transformed values from the iterator.
+         */
+        mapAsyncInOrder<T, R>(array: Array<T>, iterator: IListIterator<T, async.IThenable<R>>, context?: any): plat.async.IThenable<Array<R>> {
             return mapAsyncInOrder(array, iterator, context);
         }
 
+        /**
+         * @name mapAsyncInDescendingOrder
+         * @memberof plat.Utils
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Takes in an array and an iterator function. Calls the iterator with all the values in the array in descending order. The 
+         * iterator can return a promise the will resolve with the mapped value. The next value in the array will not be passed to 
+         * the iterator until the previous promise fulfills.
+         * 
+         * @typeparam {any} T The type of objects contained in the input Array.
+         * @typeparam {any} R The type of objects contained in the transformed output Array.
+         * 
+         * @param {Array<T>} array An Array.
+         * @param {plat.IListIterator<T, plat.async.IThenable<R>>} iterator The transformation function.
+         * @param {any} context? An optional context to bind to the iterator.
+         * 
+         * @returns {plat.async.IThenable<Array<R>>} The accumulated transformed values from the iterator.
+         */
         mapAsyncInDescendingOrder<T, R>(array: Array<T>, iterator: (value: T, index: number, list: Array<T>) => plat.async.IThenable<R>, context?: any): plat.async.IThenable<Array<R>> {
             return mapAsyncInDescendingOrder(array, iterator, context);
         }
@@ -1155,7 +1239,7 @@ module plat {
          * @variation 0
          * 
          * @description
-         * Takes in an object and an iterator function. Calls the iterator with all the values in the object. The 
+         * Takes in an array and an iterator function. Calls the iterator with all the values in the array. The 
          * iterator can transform the object and return it. The returned values will be pushed to an Array and 
          * returned.
          * 
@@ -1181,21 +1265,104 @@ module plat {
          * iterator can transform the object and return it. The returned values will be pushed to an Array and 
          * returned.
          * 
-         * @typeparam {any} T The type of objects contained in the input Object/Array.
+         * @typeparam {any} T The type of objects contained in the input Object.
          * @typeparam {any} R The type of objects contained in the transformed output Array.
          * 
          * @param {plat.IObject<T>} obj An Object.
-         * @param {(value: T, index: number, obj: any) => U} iterator The transformation function.
+         * @param {plat.IObjectIterator<T, R>} iterator The transformation function.
          * @param {any} context? An optional context to bind to the iterator.
          * 
-         * @returns {Array<U>} The accumulated transformed values from the iterator.
+         * @returns {Array<R>} The accumulated transformed values from the iterator.
          */
         map<T, R>(obj: IObject<T>, iterator: IObjectIterator<T, R>, context?: any): Array<R>;
 
-        mapAsync<T, R>(obj: any, iterator: (value: T, key: any, obj: any) => plat.async.IThenable<R>, context?: any): plat.async.IThenable<Array<R>>;
+        /**
+         * @name mapAsync
+         * @memberof plat.IUtils
+         * @kind function
+         * @access public
+         * @variation 0
+         * 
+         * @description
+         * Takes in an array and an iterator function. Calls the iterator with all the values in the array. The 
+         * iterator can return a promise the will resolve with the mapped value. The returned values will be pushed 
+         * to an Array. A promise is returned that will resolve when all the iterators have resolved.
+         * 
+         * @typeparam {any} T The type of objects contained in the input Array.
+         * @typeparam {any} R The type of objects contained in the transformed output Array.
+         * 
+         * @param {Array<T>} array An array.
+         * @param {plat.IListIterator<T, plat.async.IThenable<R>>} iterator The transformation function.
+         * @param {any} context? An optional context to bind to the iterator.
+         * 
+         * @returns {plat.async.IThenable<Array<R>>} The accumulated transformed values from the iterator.
+         */
+        mapAsync<T, R>(array: Array<T>, iterator: IListIterator<T, async.IThenable<R>>, context?: any): async.IThenable<Array<R>>;
+        /**
+         * @name mapAsync
+         * @memberof plat.IUtils
+         * @kind function
+         * @access public
+         * @variation 1
+         * 
+         * @description
+         * Takes in an object and an iterator function. Calls the iterator with all the values in the object. The 
+         * iterator can return a promise the will resolve with the mapped value. The returned values will be pushed 
+         * to an Array. A promise is returned that will resolve when all the iterators have resolved.
+         * 
+         * @typeparam {any} T The type of objects contained in the input Object.
+         * @typeparam {any} R The type of objects contained in the transformed output Array.
+         * 
+         * @param {plat.IObject<T>} obj An Object.
+         * @param {plat.IObjectIterator<T, plat.async.IThenable<R>>} iterator The transformation function.
+         * @param {any} context? An optional context to bind to the iterator.
+         * 
+         * @returns {plat.async.IThenable<Array<R>>} The accumulated transformed values from the iterator.
+         */
+        mapAsync<T, R>(obj: IObject<T>, iterator: IObjectIterator<T, async.IThenable<R>>, context?: any): plat.async.IThenable<Array<R>>;
 
-        mapAsyncInOrder<T, R>(array: Array<T>, iterator: (value: T, index: number, list: Array<T>) => plat.async.IThenable<R>, context?: any): plat.async.IThenable<Array<R>>;
+        /**
+         * @name mapAsyncInOrder
+         * @memberof plat.IUtils
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Takes in an array and an iterator function. Calls the iterator with all the values in the array. The 
+         * iterator can return a promise the will resolve with the mapped value. The next value in the array will not be passed to 
+         * the iterator until the previous promise fulfills.
+         * 
+         * @typeparam {any} T The type of objects contained in the input Array.
+         * @typeparam {any} R The type of objects contained in the transformed output Array.
+         * 
+         * @param {Array<T>} array An Array.
+         * @param {plat.IListIterator<T, plat.async.IThenable<R>>} iterator The transformation function.
+         * @param {any} context? An optional context to bind to the iterator.
+         * 
+         * @returns {plat.async.IThenable<Array<R>>} The accumulated transformed values from the iterator.
+         */
+        mapAsyncInOrder<T, R>(array: Array<T>, iterator: IListIterator<T, async.IThenable<R>>, context?: any): plat.async.IThenable<Array<R>>;
 
+        /**
+         * @name mapAsyncInDescendingOrder
+         * @memberof plat.IUtils
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Takes in an array and an iterator function. Calls the iterator with all the values in the array in descending order. The 
+         * iterator can return a promise the will resolve with the mapped value. The next value in the array will not be passed to 
+         * the iterator until the previous promise fulfills.
+         * 
+         * @typeparam {any} T The type of objects contained in the input Array.
+         * @typeparam {any} R The type of objects contained in the transformed output Array.
+         * 
+         * @param {Array<T>} array An Array.
+         * @param {plat.IListIterator<T, plat.async.IThenable<R>>} iterator The transformation function.
+         * @param {any} context? An optional context to bind to the iterator.
+         * 
+         * @returns {plat.async.IThenable<Array<R>>} The accumulated transformed values from the iterator.
+         */
         mapAsyncInDescendingOrder<T, R>(array: Array<T>, iterator: (value: T, index: number, list: Array<T>) => plat.async.IThenable<R>, context?: any): plat.async.IThenable<Array<R>>;
 
         /**
@@ -1388,36 +1555,5 @@ module plat {
          * @returns {R} The returned value.
          */
         (value: T, key: string, obj: IObject<T>): R;
-    }
-
-    /**
-     * @name IReduceIterator
-     * @memberof plat
-     * @kind interface
-     * 
-     * @description
-     * The Type for a {@link plat.IUtils|IUtils} reduce iterator callback method.
-     * 
-     * @typeparam {any} T The value passed into the iterator.
-     * @typeparam {any} R The return type of the iterator.
-     */
-    interface ReduceIterator<T, R> {
-        /**
-         * @memberof plat.IReduceIterator
-         * @kind function
-         * @access public
-         * @static
-         * 
-         * @description
-         * A method signature for {@link plat.IReduceIterator|IReduceIterator}.
-         * 
-         * @param {R} previousValue The last returned value in the reduce cycle.
-         * @param {T} currentValue The current value in the reduce array.
-         * @param {number} index The current index in the reduce array.
-         * @param {Array<T>} The array passed into the reduce method.
-         * 
-         * @returns {R} The returned value.
-         */
-        (previousValue: R, curr: T, index: number, list: Array<T>): R;
     }
 }

@@ -696,19 +696,45 @@ module tests.utils {
                 });
         });
 
+        it('should test mapAsync with an Object', (done) => {
+            var obj: plat.IObject<number> = {
+                a: 1,
+                b: 2,
+                c: 3,
+                d: 4,
+                e: 5
+            }, temp: number, keys = Object.keys(obj);
+
+            utils.mapAsync(obj, function (value, key, obj) {
+                temp = value;
+                expect(this).toEqual(2);
+                return new Promise((resolve) => {
+                    setTimeout(() => {
+                        expect(temp).toEqual(obj[keys[keys.length - 1]]);
+                        resolve(value + 1);
+                    }, value);
+                });
+            }, 2)
+                .then((results) => {
+                    expect(results).toEqual([2, 3, 4, 5, 6]);
+                    done();
+                });
+        });
+
         it('should test mapAsyncInOrder', (done) => {
             var array = [1, 2, 3, 4, 5],
                 temp: number;
 
-            utils.mapAsyncInOrder(array, (value: number, key, obj) => {
+            utils.mapAsyncInOrder(array, function (value: number, key, obj) {
                 temp = value;
+                expect(this).toEqual(2);
                 return new Promise((resolve) => {
                     setTimeout(() => {
                         expect(temp).toEqual(value);
                         resolve(value + 1);
                     }, value);
                 });
-            })
+            }, 2)
                 .then((results) => {
                     expect(results).toEqual([2, 3, 4, 5, 6]);
                     done();
@@ -719,15 +745,16 @@ module tests.utils {
             var array = [1, 2, 3, 4, 5],
                 temp: number;
 
-            utils.mapAsyncInDescendingOrder(array, (value: number, key, obj) => {
+            utils.mapAsyncInDescendingOrder(array, function (value: number, key, obj) {
                 temp = value;
+                expect(this).toEqual(2);
                 return new Promise((resolve) => {
                     setTimeout(() => {
                         expect(temp).toEqual(value);
                         resolve(value + 1);
                     }, value);
                 });
-            })
+            }, 2)
                 .then((results) => {
                     expect(results).toEqual([6, 5, 4, 3, 2]);
                     done();
