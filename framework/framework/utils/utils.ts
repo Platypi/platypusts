@@ -395,13 +395,13 @@ module plat {
          * @typeparam {any} T The type of objects contained in the Array being filtered.
          * 
          * @param {Array<T>} array The Array to filter.
-         * @param {(value: T, index: number, obj: any) => boolean} iterator The iterator function to call with array's properties. 
+         * @param {plat.IListIterator<T, boolean>} iterator The iterator function to call with array's properties. 
          * Returns true if the property should be kept, false otherwise.
          * @param {any} context? Optional context with which to call the iterator.
          * 
          * @returns {Array<T>} An array of objects which evaluated to true with the iterator.
          */
-        filter<T>(array: Array<T>, iterator: (value: T, index: number, obj: any) => boolean, context?: any): Array<T>;
+        filter<T>(array: Array<T>, iterator: IListIterator<T, boolean>, context?: any): Array<T>;
         /**
          * @name filter
          * @memberof plat.Utils
@@ -415,15 +415,15 @@ module plat {
          * 
          * @typeparam {any} T The type of objects contained in the Object/Array being filtered.
          * 
-         * @param {any} obj The object to filter.
-         * @param {(value: T, index: number, obj: any) => boolean} iterator The iterator function to call with array's properties. 
+         * @param {plat.IObject<T>} obj The object to filter.
+         * @param {plat.IObjectIterator<T, boolean>} iterator The iterator function to call with array's properties. 
          * Returns true if the property should be kept, false otherwise.
          * @param {any} context? Optional context with which to call the iterator.
          * 
          * @returns {Array<T>} An array of objects which evaluated to true with the iterator.
          */
-        filter<T>(obj: any, iterator: (value: T, key: any, obj: any) => boolean, context?: any): Array<T>;
-        filter<T>(obj: any, iterator: (value: T, key: any, obj: any) => boolean, context?: any): Array<T> {
+        filter<T>(obj: IObject<T>, iterator: IObjectIterator<T, boolean>, context?: any): Array<T>;
+        filter(obj: any, iterator: (value: any, key: any, obj: any) => boolean, context?: any): Array<any> {
             return filter(obj, iterator, context);
         }
 
@@ -432,7 +432,6 @@ module plat {
          * @memberof plat.Utils
          * @kind function
          * @access public
-         * @variation 0
          * 
          * @description
          * Takes in a list and object containing key/value pairs to search for in the list.
@@ -444,27 +443,8 @@ module plat {
          * 
          * @returns {Array<T>} The matched values in obj.
          */
-        where<T>(array: Array<T>, properties: any): Array<T>;
-        /**
-         * @name where
-         * @memberof plat.Utils
-         * @kind function
-         * @access public
-         * @variation 1
-         * 
-         * @description
-         * Takes in a list and object containing key/value pairs to search for in the list.
-         * 
-         * @typeparam {any} T The type of objects contained in the input Object.
-         * 
-         * @param {any} obj The object used for searching for properties.
-         * @param {any} properties An object containing key/value pairs to match with obj's values.
-         * 
-         * @returns {Array<T>} The matched values in obj.
-         */
-        where<T>(obj: any, properties: any): Array<T>;
-        where(obj: any, properties: any): Array<any> {
-            return where(obj, properties);
+        where<T, U extends {}>(array: Array<T>, properties: U): Array<T> {
+            return where(array, properties);
         }
 
         /**
@@ -481,12 +461,12 @@ module plat {
          * @typeparam {any} T The type of objects contained in the input Array.
          * 
          * @param {Array<T>} array An Array.
-         * @param {(value: T, index: number, obj: any) => void} iterator A method that takes in a value, index, and the object.
+         * @param {plat.IListIterator<T, void>} iterator A method that takes in a value, index, and the object.
          * @param {any} context? An optional context to bind to the iterator.
          * 
          * @returns {Array<T>} The array.
          */
-        forEach<T>(array: Array<T>, iterator: (value: T, index: number, obj: any) => void, context?: any): Array<T>;
+        forEach<T>(array: Array<T>, iterator: IListIterator<T, void>, context?: any): Array<T>;
         /**
          * @name forEach
          * @memberof plat.Utils
@@ -500,14 +480,14 @@ module plat {
          * 
          * @typeparam {any} T The type of objects contained in the input Object.
          * 
-         * @param {any} obj An object.
-         * @param {(value: T, index: number, obj: any) => void} iterator A method that takes in a value, index, and the object.
+         * @param {plat.IObject<T>} obj An object.
+         * @param {plat.IObjectIterator<T, void>} iterator A method that takes in a value, index, and the object.
          * @param {any} context? An optional context to bind to the iterator.
          * 
          * @returns {any} The input Object.
          */
-        forEach<T>(obj: any, iterator: (value: T, key: string, obj: any) => void, context?: any): any;
-        forEach<T>(obj: any, iterator: (value: T, key: any, obj: any) => void, context?: any): any {
+        forEach<T>(obj: IObject<T>, iterator: IObjectIterator<T, void>, context?: any): IObject<T>;
+        forEach(obj: any, iterator: (value: any, key: any, obj: any) => void, context?: any): any {
             return forEach(obj, iterator, context);
         }
 
@@ -524,15 +504,15 @@ module plat {
          * returned.
          * 
          * @typeparam {any} T The type of objects contained in the input Array.
-         * @typeparam {any} U The type of objects contained in the transformed output Array.
+         * @typeparam {any} R The type of objects contained in the transformed output Array.
          * 
          * @param {Array<T>} array An Array.
-         * @param {(value: T, index: number, obj: any) => U} iterator The transformation function.
+         * @param {plat.IListIterator<T, R>} iterator The transformation function.
          * @param {any} context? An optional context to bind to the iterator.
          * 
-         * @returns {Array<U>} The accumulated transformed values from the iterator.
+         * @returns {Array<R>} The accumulated transformed values from the iterator.
          */
-        map<T, U>(array: Array<T>, iterator: (value: T, index: number, obj: any) => U, context?: any): Array<U>;
+        map<T, R>(array: Array<T>, iterator: IListIterator<T, R>, context?: any): Array<R>;
         /**
          * @name map
          * @memberof plat.Utils
@@ -546,17 +526,17 @@ module plat {
          * returned.
          * 
          * @typeparam {any} T The type of objects contained in the input Object/Array.
-         * @typeparam {any} U The type of objects contained in the transformed output Array.
+         * @typeparam {any} R The type of objects contained in the transformed output Array.
          * 
-         * @param {Array<T>} obj An Object.
+         * @param {plat.IObject<T>} obj An Object.
          * @param {(value: T, index: number, obj: any) => U} iterator The transformation function.
          * @param {any} context? An optional context to bind to the iterator.
          * 
          * @returns {Array<U>} The accumulated transformed values from the iterator.
          */
-        map<T, U>(obj: any, iterator: (value: T, key: string, obj: any) => U, context?: any): Array<U>;
-        map<T, U>(obj: any, iterator: (value: T, key: any, obj: any) => U, context?: any): Array<U> {
-            return map<T, U>(obj, iterator, context);
+        map<T, R>(obj: IObject<T>, iterator: IObjectIterator<T, R>, context?: any): Array<R>;
+        map(obj: any, iterator: (value: any, key: any, obj: any) => any, context?: any): Array<any> {
+            return map<any, any>(obj, iterator, context);
         }
 
         /**
@@ -577,8 +557,8 @@ module plat {
          * 
          * @returns {Array<U>} An array of 'plucked' values from obj.
          */
-        pluck<T, U>(obj: any, key: string): Array<U> {
-            return map<T, U>(obj, (value) => (<any>value)[key]);
+        pluck<T extends {}>(obj: Array<T>, key: string): Array<any> {
+            return map<T, any>(obj, (value) => (<any>value)[key]);
         }
 
         /**
@@ -595,12 +575,12 @@ module plat {
          * @typeparam {any} T The type of objects contained in the input Array.
          * 
          * @param {Array<T>} array An array.
-         * @param {(value: T, index: number, obj: any) => boolean} iterator A method with which to evaluate all the values in obj.
+         * @param {plat.IListIterator<T, boolean>} iterator A method with which to evaluate all the values in obj.
          * @param {any} context? An optional context to bind to the iterator.
          * 
          * @returns {boolean} True if any calls to iterator return true, false otherwise.
          */
-        some<T>(array: Array<T>, iterator: (value: T, index: number, obj: any) => boolean, context?: any): boolean;
+        some<T>(array: Array<T>, iterator: IListIterator<T, boolean>, context?: any): boolean;
         /**
          * @name some
          * @memberof plat.Utils
@@ -614,15 +594,15 @@ module plat {
          * 
          * @typeparam {any} T The type of objects contained in the input Object/Array.
          * 
-         * @param {Array<T>} obj An object.
-         * @param {(value: T, index: number, obj: any) => boolean} iterator A method with which to evaluate all the values in obj.
+         * @param {plat.IObject<T>} obj An object.
+         * @param {plat.IObjectIterator<T, boolean>} iterator A method with which to evaluate all the values in obj.
          * @param {any} context? An optional context to bind to the iterator.
          * 
          * @returns {boolean} True if any calls to iterator return true, false otherwise.
          */
-        some<T>(obj: any, iterator: (value: T, key: string, obj: any) => boolean, context?: any): boolean;
-        some<T>(obj: any, iterator: (value: T, key: any, obj: any) => boolean, context?: any): boolean {
-            return some<T>(obj, iterator, context);
+        some<T>(obj: IObject<T>, iterator: IObjectIterator<T, boolean>, context?: any): boolean;
+        some(obj: any, iterator: (value: any, key: any, obj: any) => boolean, context?: any): boolean {
+            return some(obj, iterator, context);
         }
 
         /**
@@ -1067,13 +1047,13 @@ module plat {
          * @typeparam {any} T The type of objects contained in the Array being filtered.
          * 
          * @param {Array<T>} array The Array to filter.
-         * @param {(value: T, index: number, obj: any) => boolean} iterator The iterator function to call with array's properties.
+         * @param {plat.IListIterator<T, boolean>} iterator The iterator function to call with array's properties. 
          * Returns true if the property should be kept, false otherwise.
          * @param {any} context? Optional context with which to call the iterator.
          * 
          * @returns {Array<T>} An array of objects which evaluated to true with the iterator.
          */
-        filter<T>(array: Array<T>, iterator: (value: T, index: number, obj: any) => boolean, context?: any): Array<T>;
+        filter<T>(array: Array<T>, iterator: IListIterator<T, boolean>, context?: any): Array<T>;
         /**
          * @name filter
          * @memberof plat.IUtils
@@ -1087,21 +1067,20 @@ module plat {
          * 
          * @typeparam {any} T The type of objects contained in the Object/Array being filtered.
          * 
-         * @param {any} obj The object to filter.
-         * @param {(value: T, index: number, obj: any) => boolean} iterator The iterator function to call with array's properties. 
+         * @param {plat.IObject<T>} obj The object to filter.
+         * @param {plat.IObjectIterator<T, boolean>} iterator The iterator function to call with array's properties. 
          * Returns true if the property should be kept, false otherwise.
          * @param {any} context? Optional context with which to call the iterator.
          * 
          * @returns {Array<T>} An array of objects which evaluated to true with the iterator.
          */
-        filter<T>(obj: any, iterator: (value: T, key: any, obj: any) => boolean, context?: any): Array<T>;
+        filter<T>(obj: IObject<T>, iterator: IObjectIterator<T, boolean>, context?: any): Array<T>;
 
         /**
          * @name where
          * @memberof plat.IUtils
          * @kind function
          * @access public
-         * @variation 0
          * 
          * @description
          * Takes in a list and object containing key/value pairs to search for in the list.
@@ -1113,25 +1092,7 @@ module plat {
          * 
          * @returns {Array<T>} The matched values in obj.
          */
-        where<T>(array: Array<T>, properties: any): Array<T>;
-        /**
-         * @name where
-         * @memberof plat.IUtils
-         * @kind function
-         * @access public
-         * @variation 1
-         * 
-         * @description
-         * Takes in a list and object containing key/value pairs to search for in the list.
-         * 
-         * @typeparam {any} T The type of objects contained in the input Object.
-         * 
-         * @param {any} obj The object used for searching for properties.
-         * @param {any} properties An object containing key/value pairs to match with obj's values.
-         * 
-         * @returns {Array<T>} The matched values in obj.
-         */
-        where<T>(obj: any, properties: any): Array<T>;
+        where<T, U extends {}>(array: Array<T>, properties: U): Array<T>
 
         /**
          * @name forEach
@@ -1147,12 +1108,12 @@ module plat {
          * @typeparam {any} T The type of objects contained in the input Array.
          * 
          * @param {Array<T>} array An Array.
-         * @param {(value: T, index: number, obj: any) => void} iterator A method that takes in a value, index, and the object.
+         * @param {plat.IListIterator<T, void>} iterator A method that takes in a value, index, and the object.
          * @param {any} context? An optional context to bind to the iterator.
          * 
          * @returns {Array<T>} The array.
          */
-        forEach<T>(array: Array<T>, iterator: (value: T, index: number, obj: any) => void, context?: any): Array<T>;
+        forEach<T>(array: Array<T>, iterator: IListIterator<T, void>, context?: any): Array<T>;
         /**
          * @name forEach
          * @memberof plat.IUtils
@@ -1166,13 +1127,13 @@ module plat {
          * 
          * @typeparam {any} T The type of objects contained in the input Object.
          * 
-         * @param {any} obj An object.
-         * @param {(value: T, index: number, obj: any) => void} iterator A method that takes in a value, index, and the object.
+         * @param {plat.IObject<T>} obj An object.
+         * @param {plat.IObjectIterator<T, void>} iterator A method that takes in a value, index, and the object.
          * @param {any} context? An optional context to bind to the iterator.
          * 
          * @returns {any} The input Object.
          */
-        forEach<T>(obj: any, iterator: (value: T, key: string, obj: any) => void, context?: any): any;
+        forEach<T>(obj: IObject<T>, iterator: IObjectIterator<T, void>, context?: any): IObject<T>;
 
         /**
          * @name map
@@ -1187,15 +1148,15 @@ module plat {
          * returned.
          * 
          * @typeparam {any} T The type of objects contained in the input Array.
-         * @typeparam {any} U The type of objects contained in the transformed output Array.
+         * @typeparam {any} R The type of objects contained in the transformed output Array.
          * 
          * @param {Array<T>} array An Array.
-         * @param {(value: T, index: number, obj: any) => U} iterator The transformation function.
+         * @param {plat.IListIterator<T, R>} iterator The transformation function.
          * @param {any} context? An optional context to bind to the iterator.
          * 
-         * @returns {Array<U>} The accumulated transformed values from the iterator.
+         * @returns {Array<R>} The accumulated transformed values from the iterator.
          */
-        map<T, U>(array: Array<T>, iterator: (value: T, index: number, obj: any) => U, context?: any): Array<U>;
+        map<T, R>(array: Array<T>, iterator: IListIterator<T, R>, context?: any): Array<R>;
         /**
          * @name map
          * @memberof plat.IUtils
@@ -1209,15 +1170,15 @@ module plat {
          * returned.
          * 
          * @typeparam {any} T The type of objects contained in the input Object/Array.
-         * @typeparam {any} U The type of objects contained in the transformed output Array.
+         * @typeparam {any} R The type of objects contained in the transformed output Array.
          * 
-         * @param {Array<T>} obj An Object.
+         * @param {plat.IObject<T>} obj An Object.
          * @param {(value: T, index: number, obj: any) => U} iterator The transformation function.
          * @param {any} context? An optional context to bind to the iterator.
          * 
          * @returns {Array<U>} The accumulated transformed values from the iterator.
          */
-        map<T, U>(obj: any, iterator: (value: T, key: string, obj: any) => U, context?: any): Array<U>;
+        map<T, R>(obj: IObject<T>, iterator: IObjectIterator<T, R>, context?: any): Array<R>;
 
         /**
          * @name pluck
@@ -1237,7 +1198,7 @@ module plat {
          * 
          * @returns {Array<U>} An array of 'plucked' values from obj.
          */
-        pluck<T, U>(obj: any, key: string): Array<U>;
+        pluck<T extends {}>(obj: Array<T>, key: string): Array<any>;
 
         /**
          * @name some
@@ -1253,12 +1214,12 @@ module plat {
          * @typeparam {any} T The type of objects contained in the input Array.
          * 
          * @param {Array<T>} array An array.
-         * @param {(value: T, index: number, obj: any) => boolean} iterator A method with which to evaluate all the values in obj.
+         * @param {plat.IListIterator<T, boolean>} iterator A method with which to evaluate all the values in obj.
          * @param {any} context? An optional context to bind to the iterator.
          * 
          * @returns {boolean} True if any calls to iterator return true, false otherwise.
          */
-        some<T>(array: Array<T>, iterator: (value: T, index: number, obj: any) => boolean, context?: any): boolean;
+        some<T>(array: Array<T>, iterator: IListIterator<T, boolean>, context?: any): boolean;
         /**
          * @name some
          * @memberof plat.IUtils
@@ -1272,13 +1233,13 @@ module plat {
          * 
          * @typeparam {any} T The type of objects contained in the input Object/Array.
          * 
-         * @param {Array<T>} obj An object.
-         * @param {(value: T, index: number, obj: any) => boolean} iterator A method with which to evaluate all the values in obj.
+         * @param {plat.IObject<T>} obj An object.
+         * @param {plat.IObjectIterator<T, boolean>} iterator A method with which to evaluate all the values in obj.
          * @param {any} context? An optional context to bind to the iterator.
          * 
          * @returns {boolean} True if any calls to iterator return true, false otherwise.
          */
-        some<T>(obj: any, iterator: (value: T, key: string, obj: any) => boolean, context?: any): boolean;
+        some<T>(obj: IObject<T>, iterator: IObjectIterator<T, boolean>, context?: any): boolean;
 
         /**
          * @name postpone
@@ -1352,41 +1313,55 @@ module plat {
     }
 
     /**
-     * @name IIterator
+     * @name IListIterator
      * @memberof plat
      * @kind interface
      * 
      * @description
-     * The Type for a {@link plat.Utils|Utils} iterator callback method.
+     * The Type for a {@link plat.IUtils|IUtils} iterator callback method.
      * 
-     * @typeparam {any} T The value type used in the iterator callback.
-     * @typeparam {any} U The return type of the iterator callback.
+     * @typeparam {any} T The value passed into the iterator.
+     * @typeparam {any} R The return type of the iterator.
      */
-    export interface IIterator<T, U> {
+    export interface IListIterator<T, R> {
         /**
-         * @memberof plat.IIterator
+         * @memberof plat.IListIterator
          * @kind function
          * @access public
          * @static
          * 
          * @description
-         * A method signature for {@link plat.IIterator|IIterator}.
+         * A method signature for {@link plat.IListIterator|IListIterator}.
          * 
          * @param {T} value The value for an object during an iteration.
          * @param {number} index The index where the value can be found.
-         * @param {any} obj The object passed into the util method.
+         * @param {Array<T>} list The array passed into the util method.
          * 
-         * @returns {U} The returned value.
+         * @returns {R} The returned value.
          */
-        (value: T, index: number, obj: any): U;
+        (value: T, index: number, list: Array<T>): R;
+    }
+
+    /**
+     * @name IObjectIterator
+     * @memberof plat
+     * @kind interface
+     * 
+     * @description
+     * The Type for a {@link plat.IUtils|IUtils} iterator callback method.
+     * 
+     * @typeparam {any} T The value passed into the iterator.
+     * @typeparam {any} R The return type of the iterator.
+     */
+    export interface IObjectIterator<T, R> {
         /**
-         * @memberof plat.IIterator
+         * @memberof plat.IObjectIterator
          * @kind function
          * @access public
          * @static
          * 
          * @description
-         * A method signature for {@link plat.IIterator|IIterator}.
+         * A method signature for {@link plat.IObjectIterator|IObjectIterator}.
          * 
          * @param {T} value The value for an object during an iteration.
          * @param {string} key The key where the value can be found.
@@ -1394,6 +1369,6 @@ module plat {
          * 
          * @returns {U} The returned value.
          */
-        (value: T, key: string, obj: any): U;
+        (value: T, key: string, obj: IObject<T>): R;
     }
 }
