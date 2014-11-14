@@ -328,8 +328,8 @@
          * 
          * @returns {void}
          */
-        initialize(name: string, sender: any, direction?: 'direct', eventOptions?: INavigationEventOptions<P>);
-        initialize(name: string, sender: any, direction?: string, eventOptions?: INavigationEventOptions<P>);
+        initialize(name: string, sender: any, direction?: 'direct', eventOptions?: INavigationEventOptions<P>): void;
+        initialize(name: string, sender: any, direction?: string, eventOptions?: INavigationEventOptions<P>): void;
 
         /**
          * @name cancel

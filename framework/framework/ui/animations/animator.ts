@@ -148,8 +148,8 @@
          */
         resolve(): IAnimatingThenable {
             var animationPromise = new AnimationPromise((resolve) => {
-                resolve(() => {
-                    return animationPromise;
+                resolve(<IGetAnimatingThenable>() => {
+                    return <IAnimationThenable<void>><any>animationPromise;
                 });
             });
 

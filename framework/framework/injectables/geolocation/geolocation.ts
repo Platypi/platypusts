@@ -95,10 +95,10 @@ module plat {
         coordinates: IGeolocationPositionCoordinates;
 
         /**
-         * A DOMTimeStamp in milliseconds, representing when the position
+         * A Date, representing when the position
          * was acquired.
          */
-        timestamp: number;
+        timestamp: Date;
     }
 
     /**
