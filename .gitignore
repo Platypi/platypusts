@@ -169,3 +169,9 @@ dist
 !gruntfile.js
 !*.less
 !*.ts
+
+framework/*.html
+framework/*/*.html
+framework/*/*/*.html
+framework/*/*/*/*.html
+framework/*/*/*/*/*.html
