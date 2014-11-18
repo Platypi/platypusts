@@ -1,6 +1,6 @@
 module app {
     var count = 0,
-        html = '<plat-resources><injectable alias="utils">$Utils</injectable></plat-resources>{{@utils.isString("foo")}} {{@utils2.isString()}} {{@utils3.isString("foo")}} {{@obj.value}}';
+        html = '<plat-resources><injectable alias="utils">$Utils</injectable><literal alias="str">"test"</literal></plat-resources>{{@utils.isString("foo")}} {{@utils2.isString()}} {{@utils3.isString("foo")}} {{@obj.value}} {{@str}} {{@lit}}';
 
     export class MainViewControl extends plat.ui.ViewControl {
         title = 'Main';
@@ -57,6 +57,10 @@ module app {
                 obj: {
                     type: 'object',
                     value: { value: 'foo' }
+                },
+                lit: {
+                    type: 'literal',
+                    value: 'lit'
                 }
             }).then((clone) => {
                 this.element.appendChild(clone);

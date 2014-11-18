@@ -89,6 +89,20 @@ module plat.ui {
         static OBSERVABLE: string = __OBSERVABLE_RESOURCE;
 
         /**
+         * @name LITERAL
+         * @memberof plat.ui.Resources
+         * @kind property
+         * @access public
+         * @static
+         * 
+         * @type {string}
+         * 
+         * @description
+         * The literal resource type token.
+         */
+        static LITERAL: string = __LITERAL_RESOURCE;
+
+        /**
          * @name FUNCTION
          * @memberof plat.ui.Resources
          * @kind property
@@ -167,6 +181,8 @@ module plat.ui {
                     if (isString(value)) {
                         resource.value = control.evaluateExpression(value);
                     }
+                    break;
+                case __LITERAL_RESOURCE:
                     break;
                 case __FUNCTION_RESOURCE:
                     value = resource.value;
@@ -357,7 +373,7 @@ module plat.ui {
                 if (isEmpty(text)) {
                     continue;
                 }
-                resource.value = (nodeName === __INJECTABLE_RESOURCE) ?
+                resource.value = (nodeName === __INJECTABLE_RESOURCE || nodeName === __LITERAL_RESOURCE) ?
                     text.replace(quotationRegex, '') : text;
 
                 resource.type = nodeName;
@@ -480,7 +496,7 @@ module plat.ui {
          * @description
          * A list of all resource types.
          */
-        private static __resourceTypes = [__INJECTABLE_RESOURCE, __OBJECT_RESOURCE, __OBSERVABLE_RESOURCE, __FUNCTION_RESOURCE];
+        private static __resourceTypes = [__INJECTABLE_RESOURCE, __OBJECT_RESOURCE, __OBSERVABLE_RESOURCE, __FUNCTION_RESOURCE, __LITERAL_RESOURCE];
 
         /**
          * @name __observableResourceRemoveListeners
@@ -777,6 +793,20 @@ module plat.ui {
          * The observable resource type token.
          */
         OBSERVABLE: string;
+
+        /**
+         * @name LITERAL
+         * @memberof plat.ui.IResourcesFactory
+         * @kind property
+         * @access public
+         * @static
+         *
+         * @type {string}
+         *
+         * @description
+         * The literal resource type token.
+         */
+        LITERAL: string;
 
         /**
          * @name FUNCTION
