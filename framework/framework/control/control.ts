@@ -803,7 +803,7 @@ module plat {
                 ContextManager = Control.$ContextManagerStatic;
 
             if (isNull(absoluteIdentifier)) {
-                if (property === 'context') {
+                if (property === __CONTEXT) {
                     absoluteIdentifier = (<ui.ITemplateControl>control).absoluteContextPath;
                 } else {
                     return noop;
@@ -897,7 +897,7 @@ module plat {
                 alias = aliases[i];
 
                 var resourceObj = findResource(control, alias);
-                if (!isNull(resourceObj) && resourceObj.resource.type === 'observable') {
+                if (!isNull(resourceObj) && resourceObj.resource.type === __OBSERVABLE_RESOURCE) {
                     resources[alias] = getManager(resourceObj.control);
                 }
             }

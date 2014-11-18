@@ -96,22 +96,22 @@ module plat.ui {
             var value: any;
 
             switch (resource.type.toLowerCase()) {
-                case 'injectable':
+                case __INJECTABLE_RESOURCE:
                     var injector = injectableInjectors[resource.value];
                     if (!isNull(injector)) {
                         resource.value = injector.inject();
                     }
                     break;
-                case 'observable':
+                case __OBSERVABLE_RESOURCE:
                     Resources._observeResource(control, resource);
                     break;
-                case 'object':
+                case __OBJECT_RESOURCE:
                     value = resource.value;
                     if (isString(value)) {
                         resource.value = control.evaluateExpression(value);
                     }
                     break;
-                case 'function':
+                case __FUNCTION_RESOURCE:
                     value = resource.value;
                     if (isString(value)) {
                         value = (<any>control)[value];
@@ -150,11 +150,11 @@ module plat.ui {
             control.resources.add({
                 context: {
                     value: control.context,
-                    type: 'observable'
+                    type: __OBSERVABLE_RESOURCE
                 },
                 control: {
                     value: control,
-                    type: 'object'
+                    type: __FUNCTION_RESOURCE
                 }
             });
 
@@ -242,7 +242,7 @@ module plat.ui {
                 key = keys[i];
                 resource = (<any>resources)[key];
 
-                if (!isNull(resource) && resource.type === 'observable') {
+                if (!isNull(resource) && resource.type === __OBSERVABLE_RESOURCE) {
                     define(resources, key, persist ? _clone(resource, true) : null, true, true);
                 }
             }
@@ -290,7 +290,7 @@ module plat.ui {
                 attrs = child.attributes;
                 resource = <IResource>{};
 
-                attr = attrs.getNamedItem('alias');
+                attr = attrs.getNamedItem(__ALIAS);
                 if (isNull(attr)) {
                     continue;
                 }
@@ -300,7 +300,7 @@ module plat.ui {
                 if (isEmpty(text)) {
                     continue;
                 }
-                resource.value = (nodeName === 'injectable') ?
+                resource.value = (nodeName === __INJECTABLE_RESOURCE) ?
                     text.replace(quotationRegex, '') : text;
 
                 resource.type = nodeName;
@@ -409,7 +409,7 @@ module plat.ui {
          * @description
          * A list of resources to place on a control.
          */
-        private static __controlResources = ['control', 'context', 'root', 'rootContext'];
+        private static __controlResources = [__CONTROL_RESOURCE, __CONTEXT_RESOURCE, __ROOT_RESOURCE, __ROOT_CONTEXT_RESOURCE];
         /**
          * @name __resourceTypes
          * @memberof plat.ui.Resources
@@ -422,7 +422,7 @@ module plat.ui {
          * @description
          * A list of all resource types.
          */
-        private static __resourceTypes = ['injectable', 'object', 'observable', 'function'];
+        private static __resourceTypes = [__INJECTABLE_RESOURCE, __OBJECT_RESOURCE, __OBSERVABLE_RESOURCE, __FUNCTION_RESOURCE];
         /**
          * @name __observableResourceRemoveListeners
          * @memberof plat.ui.Resources
@@ -456,13 +456,13 @@ module plat.ui {
             control.resources.add({
                 root: {
                     value: control,
-                    type: 'object',
-                    alias: 'root'
+                    type: __OBJECT_RESOURCE,
+                    alias: __ROOT_RESOURCE
                 },
                 rootContext: {
                     value: control.context,
-                    type: 'observable',
-                    alias: 'rootContext'
+                    type: __OBSERVABLE_RESOURCE,
+                    alias: __ROOT_CONTEXT_RESOURCE
                 }
             });
         }

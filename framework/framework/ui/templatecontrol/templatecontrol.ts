@@ -264,13 +264,13 @@ module plat.ui {
                 alias = alias.slice(1);
             }
 
-            if (alias === 'rootContext') {
+            if (alias === __ROOT_CONTEXT_RESOURCE) {
                 control = Control.getRootControl(control);
                 return {
                     resource: (<any>control.resources)[alias],
                     control: control
                 };
-            } else if (alias === 'context' || alias === 'control') {
+            } else if (alias === __CONTEXT_RESOURCE || alias === __CONTROL_RESOURCE) {
                 return {
                     resource: (<any>control.resources)[alias],
                     control: control
@@ -340,8 +340,8 @@ module plat.ui {
             TemplateControl.$ManagerCache.remove(uid);
             Control.removeParent(control);
 
-            define(control, 'context', null, true, true);
-            define(control, 'resources', null, true, true);
+            define(control, __CONTEXT, null, true, true);
+            define(control, __RESOURCES, null, true, true);
             control.attributes = null;
             control.bindableTemplates = null;
             control.controls = [];
@@ -434,7 +434,7 @@ module plat.ui {
                 if (isNull((<any>control.resources).rootContext)) {
                     control.resources.add({
                         root: {
-                            type: 'observable',
+                            type: __OBSERVABLE_RESOURCE,
                             value: value
                         }
                     });
@@ -446,7 +446,7 @@ module plat.ui {
             if (isNull((<any>control.resources).context)) {
                 control.resources.add({
                     context: {
-                        type: 'observable',
+                        type: __OBSERVABLE_RESOURCE,
                         value: value
                     }
                 });

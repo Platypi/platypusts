@@ -262,7 +262,7 @@ module plat.controls {
                 var alias = expression.aliases[0],
                     resourceObj = this.parent.findResource(alias);
 
-                if (isNull(resourceObj) || resourceObj.resource.type !== 'observable') {
+                if (isNull(resourceObj) || resourceObj.resource.type !== __OBSERVABLE_RESOURCE) {
                     return;
                 }
 

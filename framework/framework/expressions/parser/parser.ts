@@ -261,7 +261,7 @@ module plat.expressions {
             this._makeIdentifiersUnique();
 
             var parsedExpression: IParsedExpression = {
-                evaluate: <(context: any, aliases?: any) => any>new Function('context', 'aliases',
+                evaluate: <(context: any, aliases?: any) => any>new Function(__CONTEXT, __ALIASES,
                     'var initialContext;' +
                     'return ' + (codeArray.length === 0 ? ('"' + expression + '"') : codeArray.join('')) + ';'),
                 expression: expression,

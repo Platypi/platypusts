@@ -9,7 +9,8 @@ module app {
             text: <string>null,
             password: <string>null,
             keydown: '',
-            count: 0
+            count: 0,
+            arr: [1, 2, 3, 4, 5]
         };
         text: plat.controls.INamedElement<HTMLElement, void>;
         password: plat.controls.INamedElement<HTMLElement, void>;

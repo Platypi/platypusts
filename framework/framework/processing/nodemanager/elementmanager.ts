@@ -977,7 +977,7 @@ module plat.processing {
                     childContext = nodeMap.childContext,
                     getManager = this.$ContextManagerStatic.getManager,
                     contextManager: observable.IContextManager,
-                    absoluteContextPath = isNull(parent) ? 'context' : parent.absoluteContextPath,
+                    absoluteContextPath = isNull(parent) ? __CONTEXT : parent.absoluteContextPath,
                     $TemplateControlFactory = this.$TemplateControlFactory,
                     inheritsContext = !uiControl.hasOwnContext;
 
@@ -992,7 +992,7 @@ module plat.processing {
 
                         if (isObject(resourceObj)) {
                             var resource = resourceObj.resource;
-                            if (isObject(resource) && resource.type === 'observable') {
+                            if (isObject(resource) && resource.type === __OBSERVABLE_RESOURCE) {
                                 absoluteContextPath = 'resources.' + alias + '.value' + (split.length > 0 ? ('.' + split.join('.')) : '');
                                 uiControl.root = resourceObj.control;
                             } else {
@@ -1021,7 +1021,7 @@ module plat.processing {
                     uiControl.context = contextManager.getContext(absoluteContextPath.split('.'));
                     awaitContext = isUndefined(uiControl.context);
                 } else {
-                    absoluteContextPath = 'context';
+                    absoluteContextPath = __CONTEXT;
                 }
 
                 if (awaitContext) {
@@ -1205,7 +1205,7 @@ module plat.processing {
             }
 
             this.loadedPromise = new this.$Promise<void>((resolve) => {
-                var removeListener = this.$ContextManagerStatic.getManager(root).observe('context', {
+                var removeListener = this.$ContextManagerStatic.getManager(root).observe(__CONTEXT, {
                     listener: () => {
                         removeListener();
                         loadMethod().then(resolve);

@@ -105,7 +105,7 @@ var __prefix = '$',
     __Template = __Plat + 'template',
     __Routeport = __Plat + 'routeport',
     __Viewport = __Plat + 'viewport',
-    __Context = __Plat + 'context',
+    __Context = __Plat + __CONTEXT,
 
     /**
      * Lifecycle events
@@ -212,5 +212,19 @@ var __prefix = '$',
     __JSONP_CALLBACK = 'plat_callback',
     __JS = 'js',
     __NOOP_INJECTOR = 'noop',
-    __APP = '__app__';
+    __APP = '__app__',
+    __CONTEXT = 'context',
+    __RESOURCE = 'resource',
+    __RESOURCES = __RESOURCE + 'es',
+    __ALIAS = 'alias',
+    __ALIASES = __ALIAS + 'es',
+    __OBSERVABLE_RESOURCE = 'observable',
+    __INJECTABLE_RESOURCE = 'injectable',
+    __OBJECT_RESOURCE = 'object',
+    __FUNCTION_RESOURCE = 'function',
+    __PRIMITIVE_RESOURCE = 'primitive',
+    __ROOT_RESOURCE = 'root',
+    __ROOT_CONTEXT_RESOURCE = 'rootContext',
+    __CONTROL_RESOURCE = 'control',
+    __CONTEXT_RESOURCE = __CONTEXT;
 /* tslint:enable:no-unused-variable */

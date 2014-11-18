@@ -350,7 +350,7 @@ module plat.ui.controls {
          */
         _setListener(): void {
             if (!this.__listenerSet) {
-                this.observeArray(this, 'context', this._executeEvent);
+                this.observeArray(this, __CONTEXT, this._executeEvent);
                 this.__listenerSet = true;
             }
         }
@@ -470,23 +470,23 @@ module plat.ui.controls {
             return {
                 index: {
                     value: index,
-                    type: 'observable'
+                    type: __OBSERVABLE_RESOURCE
                 },
                 even: {
                     value: isEven,
-                    type: 'observable'
+                    type: __OBSERVABLE_RESOURCE
                 },
                 odd: {
                     value: !isEven,
-                    type: 'observable'
+                    type: __OBSERVABLE_RESOURCE
                 },
                 first: {
                     value: index === 0,
-                    type: 'observable'
+                    type: __OBSERVABLE_RESOURCE
                 },
                 last: {
                     value: index === (this.context.length - 1),
-                    type: 'observable'
+                    type: __OBSERVABLE_RESOURCE
                 }
             };
         }

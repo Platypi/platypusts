@@ -292,7 +292,7 @@ module plat.processing {
                         resourceObj = resources[alias] = control.findResource(alias);
                     }
 
-                    if (!isNull(resourceObj) && !isNull(resourceObj.resource) && resourceObj.resource.type === 'observable') {
+                    if (!isNull(resourceObj) && !isNull(resourceObj.resource) && resourceObj.resource.type === __OBSERVABLE_RESOURCE) {
                         manager = $contextManager.getManager(resources[alias].control);
                         absoluteIdentifier = 'resources.' + alias + '.value' + absoluteIdentifier;
                     } else {

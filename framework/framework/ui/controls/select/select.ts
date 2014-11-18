@@ -360,7 +360,7 @@ module plat.ui.controls {
          */
         _setListener(): void {
             if (!this.__listenerSet) {
-                this.observeArray(this, 'context', this._executeEvent);
+                this.observeArray(this, __CONTEXT, this._executeEvent);
                 this.__listenerSet = true;
             }
         }
