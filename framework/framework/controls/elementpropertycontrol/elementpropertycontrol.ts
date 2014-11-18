@@ -72,9 +72,9 @@ module plat.controls {
          * @type {string}
          * 
          * @description
-         * The TemplateControl for a plat-href is an {@link plat.ui.controls.Anchor|Anchor} control.
+         * The TemplateControl for a plat-href is an {@link plat.ui.controls.Link|Link} control.
          */
-        templateControl: ui.controls.Anchor;
+        templateControl: ui.controls.Link;
 
         /**
          * @name setter
@@ -83,7 +83,7 @@ module plat.controls {
          * @access public
          * 
          * @description
-         * Sets the href property, then calls the {@link plat.ui.controls.Anchor|Anchor} control to 
+         * Sets the href property, then calls the {@link plat.ui.controls.Link|Link} control to 
          * normalize the href.
          * 
          * @returns {void}
@@ -91,7 +91,7 @@ module plat.controls {
         setter() {
             super.setter();
 
-            var templateControl: ui.controls.Anchor = this.templateControl;
+            var templateControl: ui.controls.Link = this.templateControl;
 
             if (isObject(templateControl) && isFunction(templateControl.setHref)) {
                 templateControl.setHref();

@@ -322,13 +322,17 @@
                     if (baseUrl.indexOf('/') === 0) {
                         baseUrl = baseUrl.slice(1);
                     }
-
-                    if (baseUrl[baseUrl.length - 1] !== '/') {
-                        baseUrl += '/';
-                    }
+                } else {
+                    baseUrl = '';
                 }
 
-                $config.baseUrl = UrlUtils.__getBaseUrl(trimmedUrl) + baseUrl;
+                baseUrl = UrlUtils.__getBaseUrl(trimmedUrl) + baseUrl;
+
+                while (baseUrl[baseUrl.length - 1] === '/') {
+                    baseUrl = baseUrl.slice(0, -1);
+                }
+
+                $config.baseUrl = baseUrl + '/';
             }
         }
 

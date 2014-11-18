@@ -351,6 +351,14 @@ module plat.web {
          */
         _setUrl(url: string, replace?: boolean): void {
             url = this._formatUrl(url);
+
+            var utils = this.urlUtils(url);
+
+            if (utils.href.indexOf(Browser.config.baseUrl) === -1) {
+                location.href = url;
+                return;
+            }
+
             if (this.$Compat.pushState) {
 
                 // make sure URL is absolute
@@ -392,7 +400,7 @@ module plat.web {
          */
         _formatUrl(url: string): string {
             var $config = Browser.config;
-            if ($config.routingType === $config.HASH) {
+            if (url.indexOf($config.baseUrl) > -1 && $config.routingType === $config.HASH) {
                 var hasProtocol = url.indexOf(this.urlUtils().protocol) !== -1,
                     prefix = $config.hashPrefix || '',
                     hashRegex = new RegExp('#' + prefix + '|#/');

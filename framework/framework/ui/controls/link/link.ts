@@ -9,7 +9,7 @@
  */
 module plat.ui.controls {
     /**
-     * @name Anchor
+     * @name Link
      * @memberof plat.ui.controls
      * @kind class
      * 
@@ -19,23 +19,23 @@ module plat.ui.controls {
      * A {@link plat.ui.TemplateControl|TemplateControl} for adding additonal 
      * functionality to a native HTML anchor tag.
      */
-    export class Anchor extends TemplateControl {
+    export class Link extends TemplateControl {
         /**
          * @name replaceWith
-         * @memberof plat.ui.controls.Anchor
+         * @memberof plat.ui.controls.Link
          * @kind property
          * @access public
          * 
          * @type {string}
          * 
          * @description
-         * Replaces the {@link plat.ui.controls.Anchor|Anchor's} element with a native anchor tag.
+         * Replaces the {@link plat.ui.controls.Link|Link's} element with a native anchor tag.
          */
         replaceWith = 'a';
 
         /**
          * @name element
-         * @memberof plat.ui.controls.Anchor
+         * @memberof plat.ui.controls.Link
          * @kind property
          * @access public
          * 
@@ -47,8 +47,21 @@ module plat.ui.controls {
         element: HTMLAnchorElement;
 
         /**
+         * @name removeClickListener
+         * @memberof plat.ui.controls.Link
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.IRemoveListener}
+         * 
+         * @description
+         * The a method for removing the click event listener for this control's element.
+         */
+        removeClickListener: IRemoveListener = noop;
+
+        /**
          * @name $browserConfig
-         * @memberof plat.ui.controls.Anchor
+         * @memberof plat.ui.controls.Link
          * @kind property
          * @access public
          * 
@@ -61,7 +74,7 @@ module plat.ui.controls {
 
         /**
          * @name $browser
-         * @memberof plat.ui.controls.Anchor
+         * @memberof plat.ui.controls.Link
          * @kind property
          * @access public
          * 
@@ -74,7 +87,7 @@ module plat.ui.controls {
 
         /**
          * @name options
-         * @memberof plat.ui.controls.Anchor
+         * @memberof plat.ui.controls.Link
          * @kind property
          * @access public
          * 
@@ -87,7 +100,7 @@ module plat.ui.controls {
 
         /**
          * @name initialize
-         * @memberof plat.ui.controls.Anchor
+         * @memberof plat.ui.controls.Link
          * @kind function
          * @access public
          * 
@@ -97,11 +110,14 @@ module plat.ui.controls {
          * @returns {void}
          */
         initialize(): void {
-            var element = this.element,
-                $browserConfig = this.$browserConfig,
-                baseUrl = $browserConfig.baseUrl.slice(0, -1);
+            var element = this.element;
 
-            this.addEventListener(element, 'click', (ev: Event) => {
+            this.removeClickListener = this.addEventListener(element, 'click', (ev: Event) => {
+                ev.preventDefault();
+                this.removeClickListener();
+            });
+
+            this.addEventListener(element, __tap, (ev: Event) => {
                 var href = this.getHref();
 
                 if (isUndefined(href)) {
@@ -115,12 +131,42 @@ module plat.ui.controls {
                 }
 
                 this.$browser.url(href);
+                this.removeClickListener();
+                element.addEventListener('click', this.getListener(element));
             }, false);
+
+
+        }
+
+        /**
+         * @name getListener
+         * @memberof plat.ui.controls.Link
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Returns a click event listener. Also handles disposing of the listener.
+         * 
+         * @returns {(ev: Event) => void} The click event listener.
+         */
+        getListener(element: HTMLAnchorElement) {
+            var listener = (ev: Event) => {
+                ev.preventDefault();
+                this.removeClickListener();
+                cancel();
+                element.removeEventListener('click', listener);
+            };
+
+            var cancel = defer(() => {
+                element.removeEventListener('click', listener);
+            }, 3000);
+
+            return listener;
         }
 
         /**
          * @name loaded
-         * @memberof plat.ui.controls.Anchor
+         * @memberof plat.ui.controls.Link
          * @kind function
          * @access public
          * 
@@ -135,7 +181,7 @@ module plat.ui.controls {
 
         /**
          * @name setHref
-         * @memberof plat.ui.controls.Anchor
+         * @memberof plat.ui.controls.Link
          * @kind function
          * @access public
          * 
@@ -160,7 +206,7 @@ module plat.ui.controls {
 
         /**
          * @name getHref
-         * @memberof plat.ui.controls.Anchor
+         * @memberof plat.ui.controls.Link
          * @kind function
          * @access public
          * 
@@ -184,11 +230,7 @@ module plat.ui.controls {
                 usingHash = routingType !== $browserConfig.STATE,
                 prefix = $browserConfig.hashPrefix;
 
-            if (href.indexOf(baseUrl) === -1) {
-                return;
-            }
-
-            if (isEmpty(href)) {
+            if (isEmpty(href) || href.indexOf(baseUrl) === -1) {
                 return href;
             }
 
@@ -204,5 +246,5 @@ module plat.ui.controls {
         }
     }
 
-    register.control(__Anchor, Anchor);
+    register.control(__Link, Link);
 }
