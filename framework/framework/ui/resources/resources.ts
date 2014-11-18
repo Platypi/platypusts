@@ -47,6 +47,62 @@ module plat.ui {
      */
     export class Resources implements IResources {
         /**
+         * @name INJECTABLE
+         * @memberof plat.ui.Resources
+         * @kind property
+         * @access public
+         * @static
+         * 
+         * @type {string}
+         * 
+         * @description
+         * The injectable resource type token.
+         */
+        static INJECTABLE: string = __INJECTABLE_RESOURCE;
+
+        /**
+         * @name OBJECT
+         * @memberof plat.ui.Resources
+         * @kind property
+         * @access public
+         * @static
+         * 
+         * @type {string}
+         * 
+         * @description
+         * The object resource type token.
+         */
+        static OBJECT: string = __OBJECT_RESOURCE;
+
+        /**
+         * @name OBSERVABLE
+         * @memberof plat.ui.Resources
+         * @kind property
+         * @access public
+         * @static
+         * 
+         * @type {string}
+         * 
+         * @description
+         * The observable resource type token.
+         */
+        static OBSERVABLE: string = __OBSERVABLE_RESOURCE;
+
+        /**
+         * @name FUNCTION
+         * @memberof plat.ui.Resources
+         * @kind property
+         * @access public
+         * @static
+         * 
+         * @type {string}
+         * 
+         * @description
+         * The function resource type token.
+         */
+        static FUNCTION: string = __FUNCTION_RESOURCE;
+
+        /**
          * @name $ContextManagerStatic
          * @memberof plat.ui.Resources
          * @kind property
@@ -59,6 +115,7 @@ module plat.ui {
          * Reference to the {@link plat.observable.IContextManagerStatic|IContextManagerStatic} injectable.
          */
         static $ContextManagerStatic: observable.IContextManagerStatic;
+
         /**
          * @name $Regex
          * @memberof plat.ui.Resources
@@ -410,6 +467,7 @@ module plat.ui {
          * A list of resources to place on a control.
          */
         private static __controlResources = [__CONTROL_RESOURCE, __CONTEXT_RESOURCE, __ROOT_RESOURCE, __ROOT_CONTEXT_RESOURCE];
+
         /**
          * @name __resourceTypes
          * @memberof plat.ui.Resources
@@ -423,6 +481,7 @@ module plat.ui {
          * A list of all resource types.
          */
         private static __resourceTypes = [__INJECTABLE_RESOURCE, __OBJECT_RESOURCE, __OBSERVABLE_RESOURCE, __FUNCTION_RESOURCE];
+
         /**
          * @name __observableResourceRemoveListeners
          * @memberof plat.ui.Resources
@@ -677,6 +736,62 @@ module plat.ui {
      * Creates and manages {@link plat.ui.IResources|IResources} for {@link plat.ui.ITemplateControl|ITemplateControls}.
      */
     export interface IResourcesFactory {
+        /**
+         * @name INJECTABLE
+         * @memberof plat.ui.IResourcesFactory
+         * @kind property
+         * @access public
+         * @static
+         *
+         * @type {string}
+         *
+         * @description
+         * The injectable resource type token.
+         */
+        INJECTABLE: string;
+
+        /**
+         * @name OBJECT
+         * @memberof plat.ui.IResourcesFactory
+         * @kind property
+         * @access public
+         * @static
+         *
+         * @type {string}
+         *
+         * @description
+         * The object resource type token.
+         */
+        OBJECT: string;
+
+        /**
+         * @name OBSERVABLE
+         * @memberof plat.ui.IResourcesFactory
+         * @kind property
+         * @access public
+         * @static
+         *
+         * @type {string}
+         *
+         * @description
+         * The observable resource type token.
+         */
+        OBSERVABLE: string;
+
+        /**
+         * @name FUNCTION
+         * @memberof plat.ui.IResourcesFactory
+         * @kind property
+         * @access public
+         * @static
+         *
+         * @type {string}
+         *
+         * @description
+         * The function resource type token.
+         */
+        FUNCTION: string;
+
         /**
          * @name create
          * @memberof plat.ui.IResourcesFactory
