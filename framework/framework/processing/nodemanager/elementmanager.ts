@@ -697,6 +697,19 @@ module plat.processing {
         $TemplateControlFactory: ui.ITemplateControlFactory = acquire(__TemplateControlFactory);
 
         /**
+         * @name $BindableTeampltesFactory
+         * @memberof plat.processing.ElementManager
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.ui.IBindableTemplatesFactory}
+         * 
+         * @description
+         * Reference to the {@link plat.ui.IBindableTemplatesFactory|IBindableTemplatesFactory} injectable.
+         */
+        $BindableTeampltesFactory: ui.IBindableTemplatesFactory = acquire(__BindableTemplatesFactory);
+
+        /**
          * @name children
          * @memberof plat.processing.ElementManager
          * @kind property
@@ -1064,7 +1077,13 @@ module plat.processing {
                 }, (error) => {
                     this.templatePromise = null;
                     if (isNull(error)) {
-                        this._initializeControl(control, error);
+                        var template: DocumentFragment = error;
+
+                        if (this.$BindableTeampltesFactory.isBoundControl(control)) {
+                            template = <DocumentFragment>appendChildren(control.element.childNodes);
+                        }
+
+                        this._initializeControl(control, template);
                     } else {
                         postpone(() => {
                             var $exception: IExceptionStatic = acquire(__ExceptionStatic);

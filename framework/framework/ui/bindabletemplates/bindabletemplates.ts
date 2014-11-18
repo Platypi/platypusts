@@ -97,6 +97,35 @@ module plat.ui {
         }
 
         /**
+         * @name isBoundControl
+         * @memberof plat.ui.BindableTemplates
+         * @kind function
+         * @access public
+         * @static
+         * 
+         * @description
+         * Determines whether or not a control was created using bindableTemplates.
+         * 
+         * @static
+         * @param {plat.ui.ITemplateControl} control The potential bound control.
+         * 
+         * @returns {boolean} Whether or not the control is a bound control.
+         */
+        static isBoundControl(control: ITemplateControl): boolean {
+            if (isNull(control)) {
+                return false;
+            }
+
+            var parent = control.parent;
+
+            if (isNull(parent)) {
+                return false;
+            }
+
+            return control.type.indexOf(parent.type + __BOUND_PREFIX) === 0;
+        }
+
+        /**
          * @name $ResourcesFactory
          * @memberof plat.ui.BindableTemplates
          * @kind property
@@ -638,11 +667,18 @@ module plat.ui {
             var $TemplateControlFactory = this.$TemplateControlFactory,
                 control = $TemplateControlFactory.getInstance(),
                 $ResourcesFactory = this.$ResourcesFactory,
-                parent = this.control;
+                parent = this.control,
+                compiledManager = this._cache[key],
+                _resources = $ResourcesFactory.getInstance();
 
-            var _resources = $ResourcesFactory.getInstance();
+            if (isObject(compiledManager)) {
+                var compiledControl = compiledManager.getUiControl();
 
-            _resources.initialize(control, resources);
+                _resources.initialize(control, compiledControl.resources);
+                _resources.add(resources);
+            } else {
+                _resources.initialize(control, resources);
+            }
 
             control.resources = _resources;
             $ResourcesFactory.addControlResources(control);
@@ -733,6 +769,23 @@ module plat.ui {
          * @returns {void}
          */
         dispose(control: ITemplateControl): void;
+
+        /**
+         * @name isBoundControl
+         * @memberof plat.ui.IBindableTemplatesFactory
+         * @kind function
+         * @access public
+         * @static
+         *
+         * @description
+         * Determines whether or not a control was created using bindableTemplates.
+         *
+         * @static
+         * @param {plat.ui.ITemplateControl} control The potential bound control.
+         *
+         * @returns {boolean} Whether or not the control is a bound control.
+         */
+        isBoundControl(control: ITemplateControl): boolean
     }
 
     /**

@@ -1,5 +1,6 @@
 module app {
-    var count = 0;
+    var count = 0,
+        html = '<plat-resources><injectable alias="utils">$Utils</injectable></plat-resources>{{@utils.isString("foo")}} {{@utils2.isString()}} {{@utils3.isString("foo")}} {{@obj.value}}';
 
     export class MainViewControl extends plat.ui.ViewControl {
         title = 'Main';
@@ -42,7 +43,23 @@ module app {
         }
 
         loaded() {
-
+            this.bindableTemplates.add('t', this.dom.serializeHtml(html));
+            this.bindableTemplates.bind('t', null, {
+                utils2: {
+                    type: 'injectable',
+                    value: '$Utils'
+                },
+                utils3: {
+                    type: 'injectable',
+                    value: plat.acquire(plat.IUtils)
+                },
+                obj: {
+                    type: 'object',
+                    value: { value: 'foo' }
+                }
+            }).then((clone) => {
+                this.element.appendChild(clone);
+            });
         }
 
         backButtonPressed(ev: plat.events.IDispatchEventInstance) {
