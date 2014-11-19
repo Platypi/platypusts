@@ -77,7 +77,7 @@ module plat {
 
     /**
      * @name IAttributeControlFactory
-     * @memberof plat.controls
+     * @memberof plat
      * @kind interface
      * 
      * @description
