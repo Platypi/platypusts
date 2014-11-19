@@ -1,7 +1,7 @@
 module plat {
     /**
      * @name AttributeControl
-     * @memberof plat.controls
+     * @memberof plat
      * @kind class
      * @access public
      * 
