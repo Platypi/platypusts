@@ -65,7 +65,7 @@
          * of this animation. Used in the case of a disposal to reset the changed 
          * properties.
          */
-        _modifiedProperties: IObject<string> = {};
+        protected _modifiedProperties: IObject<string> = {};
 
         /**
          * @name _started
@@ -78,7 +78,7 @@
          * @description
          * Denotes whether or not the animation was ever started.
          */
-        _started = false;
+        protected _started = false;
 
         /**
          * @name initialize
@@ -191,7 +191,7 @@
          * @returns {boolean} Whether or not the element is going to animate with the options passed in. 
          * If false, the control should begin cleaning up.
          */
-        _animate(): boolean {
+        protected _animate(): boolean {
             var style = this.element.style || {},
                 options = this.options || {},
                 keys = Object.keys(options),

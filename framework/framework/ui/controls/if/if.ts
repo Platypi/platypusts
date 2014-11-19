@@ -253,7 +253,7 @@ module plat.ui.controls {
          * 
          * @returns {void}
          */
-        _setter(options: IIfOptions): async.IThenable<void> {
+        protected _setter(options: IIfOptions): async.IThenable<void> {
             var value = !!options.condition,
                 promise: async.IThenable<void>;
 
@@ -298,7 +298,7 @@ module plat.ui.controls {
          * 
          * @returns {void}
          */
-        _addItem(): async.IThenable<void> {
+        protected _addItem(): async.IThenable<void> {
             var commentNode = this.commentNode,
                 parentNode = commentNode.parentNode;
 
@@ -334,7 +334,7 @@ module plat.ui.controls {
          * 
          * @returns {void}
          */
-        _removeItem(): void {
+        protected _removeItem(): void {
             var element = this.element;
 
             if (this.__firstTime) {

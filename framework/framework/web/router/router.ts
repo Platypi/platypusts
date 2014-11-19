@@ -123,7 +123,7 @@
          * The registered routes (as {@link plat.web.IRouteMatcher|IRouteMatchers}) for matching 
          * on route change.
          */
-        _routes: Array<IRouteMatcher> = [];
+        protected _routes: Array<IRouteMatcher> = [];
 
         /**
          * @name _removeListener
@@ -136,7 +136,7 @@
          * @description
          * The function to stop listening to the 'urlChanged' event.
          */
-        _removeListener: IRemoveListener;
+        protected _removeListener: IRemoveListener;
 
         /**
          * @name _defaultRoute
@@ -150,7 +150,7 @@
          * The registered default route ('') converted into an {@link plat.web.IMatchedRoute|IMatchedRoute}. 
          * The default route is used whenever a specified route/url is not matched.
          */
-        _defaultRoute: IMatchedRoute;
+        protected _defaultRoute: IMatchedRoute;
 
         /**
          * @name _baseRoute
@@ -165,7 +165,7 @@
          * The base route is the first route navigated to in the {@link plat.ui.controls.Routeport|Routeport} if a 
          * default route is not specified in its plat-options.
          */
-        _baseRoute: IMatchedRoute;
+        protected _baseRoute: IMatchedRoute;
 
         /**
          * @name __escapeRegex
@@ -396,7 +396,7 @@
          * @returns {{ route: string; match: plat.web.IMatchedRoute; }} An object containing 
          * both the fully evaluated route and the corresponding {@link plat.web.IMatchedRoute|IMatchedRoute}.
          */
-        _buildRoute(routeParameter: string, query: IObject<string>): { route: string; match: IMatchedRoute; } {
+        protected _buildRoute(routeParameter: string, query: IObject<string>): { route: string; match: IMatchedRoute; } {
             var queryStr = this._buildQueryString(query);
 
             if (!isString(routeParameter)) {
@@ -431,7 +431,7 @@
          * 
          * @returns {string} The built query string.
          */
-        _buildQueryString(query: IObject<string>): string {
+        protected _buildQueryString(query: IObject<string>): string {
             var queryStr: Array<string> = [];
 
             if (!isObject(query)) {
@@ -467,7 +467,7 @@
          * 
          * @returns {void}
          */
-        _routeChanged(ev: events.IDispatchEventInstance, utils: web.IUrlUtilsInstance): void {
+        protected _routeChanged(ev: events.IDispatchEventInstance, utils: web.IUrlUtilsInstance): void {
             var matchedRoute = this._match(utils);
 
             if (isNull(matchedRoute)) {
@@ -506,7 +506,7 @@
          * 
          * @returns {void}
          */
-        _registerRoute(route: any, injector: dependency.IInjector<ui.IBaseViewControl>, type: string): void {
+        protected _registerRoute(route: any, injector: dependency.IInjector<ui.IBaseViewControl>, type: string): void {
             var regexp = isRegExp(route),
                 routeParameters: IRouteMatcher;
 
@@ -559,7 +559,7 @@
          * @returns {plat.web.IRouteMatcher} The object used to match a 
          * route with a {@link plat.ui.BaseViewControl|BaseViewControl's} injector.
          */
-        _getRouteParameters(route: string): IRouteMatcher {
+        protected _getRouteParameters(route: string): IRouteMatcher {
             var $regex = this.$Regex,
                 namedRegex = $regex.namedParameterRouteRegex,
                 escapeRegex = this.__escapeRegex,
@@ -615,7 +615,7 @@
          * @returns {plat.web.IMatchedRoute} The matched route with the matched control 
          * injector.
          */
-        _match(utils: web.IUrlUtilsInstance): IMatchedRoute {
+        protected _match(utils: web.IUrlUtilsInstance): IMatchedRoute {
             var routes = this._routes,
                 url = this._getUrlFragment(utils),
                 route: IRouteMatcher,
@@ -707,7 +707,7 @@
          * 
          * @returns {string} The trimmed URL pathname.
          */
-        _getUrlFragment(utils: web.IUrlUtilsInstance): string {
+        protected _getUrlFragment(utils: web.IUrlUtilsInstance): string {
             return utils.pathname.replace(this.__pathSlashRegex, '');
         }
     }

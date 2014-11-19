@@ -97,7 +97,7 @@
          * @description
          * A promise used for disposing the end state of the previous animation prior to starting a new one.
          */
-        _animationPromise: animations.IAnimationThenable<animations.IGetAnimatingThenable>;
+        protected _animationPromise: animations.IAnimationThenable<animations.IGetAnimatingThenable>;
 
         /**
          * @name constructor
@@ -283,7 +283,7 @@
          * 
          * @returns {void}
          */
-        _load(navigationParameter?: any, options?: navigation.IBaseNavigationOptions): void {
+        protected _load(navigationParameter?: any, options?: navigation.IBaseNavigationOptions): void {
             var navigator = this.navigator;
             navigator.registerPort(this);
             navigator.navigate(navigationParameter, options);

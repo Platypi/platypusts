@@ -99,7 +99,7 @@ module plat.ui.controls {
          * @description
          * The node length of the element's childNodes (innerHTML).
          */
-        _blockLength = 0;
+        protected _blockLength = 0;
 
         /**
          * @name __listenerSet
@@ -260,7 +260,7 @@ module plat.ui.controls {
          * 
          * @returns {void}
          */
-        _addItem(item: DocumentFragment, animate?: boolean): void {
+        protected _addItem(item: DocumentFragment, animate?: boolean): void {
             if (!isNode(item) ||
                 !isArray(this.context) ||
                 this.context.length === 0 ||
@@ -309,7 +309,7 @@ module plat.ui.controls {
          * 
          * @returns {void}
          */
-        _removeItem(): void {
+        protected _removeItem(): void {
             var controls = this.controls,
                 length = controls.length - 1;
 
@@ -328,7 +328,7 @@ module plat.ui.controls {
          * 
          * @returns {void}
          */
-        _updateResources(): void {
+        protected _updateResources(): void {
             var controls = this.controls,
                 length = controls.length;
 
@@ -348,7 +348,7 @@ module plat.ui.controls {
          * 
          * @returns {void}
          */
-        _setListener(): void {
+        protected _setListener(): void {
             if (!this.__listenerSet) {
                 this.observeArray(this, __CONTEXT, this._executeEvent);
                 this.__listenerSet = true;
@@ -369,7 +369,7 @@ module plat.ui.controls {
          * 
          * @returns {void}
          */
-        _executeEvent(ev: observable.IArrayMethodInfo<any>): void {
+        protected _executeEvent(ev: observable.IArrayMethodInfo<any>): void {
             var method = '_' + ev.method;
             if (isFunction((<any>this)[method])) {
                 (<any>this)[method](ev);
@@ -392,7 +392,7 @@ module plat.ui.controls {
          * 
          * @returns {plat.async.IThenable<void>} The itemsLoaded promise.
          */
-        _addItems(numberOfItems: number, index: number, animate?: boolean): async.IThenable<void> {
+        protected _addItems(numberOfItems: number, index: number, animate?: boolean): async.IThenable<void> {
             var bindableTemplates = this.bindableTemplates,
                 promises: Array<async.IThenable<void>> = [];
 
@@ -440,7 +440,7 @@ module plat.ui.controls {
          * 
          * @returns {void}
          */
-        _removeItems(numberOfItems: number): void {
+        protected _removeItems(numberOfItems: number): void {
             for (var i = 0; i < numberOfItems; ++i) {
                 this._removeItem();
             }
@@ -465,7 +465,7 @@ module plat.ui.controls {
          * 
          * @returns {plat.IObject<plat.ui.IResource>} An object consisting of {@link plat.ui.IResource|IResources}.
          */
-        _getAliases(index: number): IObject<IResource> {
+        protected _getAliases(index: number): IObject<IResource> {
             var isEven = (index & 1) === 0;
             return {
                 index: {
@@ -504,7 +504,7 @@ module plat.ui.controls {
          * 
          * @returns {void}
          */
-        _push(ev: observable.IArrayMethodInfo<any>): void {
+        protected _push(ev: observable.IArrayMethodInfo<any>): void {
             this._addItems(ev.arguments.length, ev.oldArray.length, true);
         }
 
@@ -521,7 +521,7 @@ module plat.ui.controls {
          * 
          * @returns {void}
          */
-        _pop(ev: observable.IArrayMethodInfo<any>): void {
+        protected _pop(ev: observable.IArrayMethodInfo<any>): void {
             var blockLength = this._blockLength,
                 startNode: number,
                 animationPromise: plat.ui.animations.IAnimationThenable<void>;
@@ -554,7 +554,7 @@ module plat.ui.controls {
          * 
          * @returns {void}
          */
-        _shift(ev: observable.IArrayMethodInfo<any>): void {
+        protected _shift(ev: observable.IArrayMethodInfo<any>): void {
             this._removeItems(1);
         }
 
@@ -571,7 +571,7 @@ module plat.ui.controls {
          * 
          * @returns {void}
          */
-        _splice(ev: observable.IArrayMethodInfo<any>): void {
+        protected _splice(ev: observable.IArrayMethodInfo<any>): void {
             var oldLength = this.controls.length,
                 newLength = ev.newArray.length;
 
@@ -595,7 +595,7 @@ module plat.ui.controls {
          * 
          * @returns {void}
          */
-        _unshift(ev: observable.IArrayMethodInfo<any>): void {
+        protected _unshift(ev: observable.IArrayMethodInfo<any>): void {
             this._addItems(ev.arguments.length, ev.oldArray.length);
         }
 
@@ -612,7 +612,7 @@ module plat.ui.controls {
          * 
          * @returns {void}
          */
-        _sort(ev: observable.IArrayMethodInfo<any>): void { }
+        protected _sort(ev: observable.IArrayMethodInfo<any>): void { }
 
         /**
          * @name _reverse
@@ -627,7 +627,7 @@ module plat.ui.controls {
          * 
          * @returns {void}
          */
-        _reverse(ev: observable.IArrayMethodInfo<any>): void { }
+        protected _reverse(ev: observable.IArrayMethodInfo<any>): void { }
 
         /**
          * @name _animateItems
@@ -646,7 +646,7 @@ module plat.ui.controls {
          * 
          * @returns {plat.ui.animations.IAnimationThenable<void>} A promise that resolves when all animations are complete.
          */
-        _animateItems(startNode: number, endNode: number, key: string, cancel?: boolean): animations.IAnimationThenable<void> {
+        protected _animateItems(startNode: number, endNode: number, key: string, cancel?: boolean): animations.IAnimationThenable<void> {
             var currentAnimations = this.__currentAnimations,
                 length = currentAnimations.length;
 

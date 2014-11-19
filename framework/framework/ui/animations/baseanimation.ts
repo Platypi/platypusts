@@ -73,7 +73,7 @@
          * @description
          * The resolve function for the end of the animation.
          */
-        _resolve: () => void;
+        protected _resolve: () => void;
 
         /**
          * @name initialize

@@ -26,6 +26,7 @@
          * The title of the HTML web page.
          */
         static titleElement: HTMLTitleElement;
+
         /**
          * @name descriptionElement
          * @memberof plat.ui.WebViewControl

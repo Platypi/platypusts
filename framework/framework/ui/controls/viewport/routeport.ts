@@ -50,7 +50,7 @@
          * 
          * @returns {void}
          */
-        _load(): void {
+        protected _load(): void {
             var path = '',
                 options = this.options;
 

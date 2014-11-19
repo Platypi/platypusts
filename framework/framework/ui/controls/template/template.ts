@@ -86,7 +86,7 @@ module plat.ui.controls {
          * The unique ID used to reference a particular 
          * template.
          */
-        _id: string;
+        protected _id: string;
         
         /**
          * @name _url
@@ -100,7 +100,7 @@ module plat.ui.controls {
          * The optional URL associated with this 
          * particular template.
          */
-        _url: string;
+        protected _url: string;
         
         /**
          * @name __isFirst
@@ -236,7 +236,7 @@ module plat.ui.controls {
          * 
          * @returns {void}
          */
-        _initializeTemplate(): void {
+        protected _initializeTemplate(): void {
             var id = this._id;
 
             if (isNull(id)) {
@@ -290,7 +290,7 @@ module plat.ui.controls {
          * 
          * @returns {void}
          */
-        _waitForTemplateControl(templatePromise: async.IThenable<Template>): void {
+        protected _waitForTemplateControl(templatePromise: async.IThenable<Template>): void {
             var $exception: IExceptionStatic;
             templatePromise.then((templateControl: Template) => {
                 if (!(isNull(this._url) || (this._url === templateControl._url))) {
@@ -331,8 +331,8 @@ module plat.ui.controls {
          * @returns {void}
          */
         private __mapBindableTemplates(control: Template): void {
-            var bindableTemplates = <BindableTemplates>this.bindableTemplates;
-            bindableTemplates._cache = (<BindableTemplates>control.bindableTemplates)._cache;
+            var bindableTemplates = this.bindableTemplates;
+            bindableTemplates.cache = control.bindableTemplates.cache;
             bindableTemplates.templates = control.bindableTemplates.templates;
         }
     }

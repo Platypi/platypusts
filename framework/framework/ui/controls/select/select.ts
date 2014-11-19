@@ -358,7 +358,7 @@ module plat.ui.controls {
          * 
          * @returns {void}
          */
-        _setListener(): void {
+        protected _setListener(): void {
             if (!this.__listenerSet) {
                 this.observeArray(this, __CONTEXT, this._executeEvent);
                 this.__listenerSet = true;
@@ -379,7 +379,7 @@ module plat.ui.controls {
          * 
          * @returns {void}
          */
-        _executeEvent(ev: observable.IArrayMethodInfo<any>): void {
+        protected _executeEvent(ev: observable.IArrayMethodInfo<any>): void {
             var method = '_' + ev.method;
             if (isFunction((<any>this)[method])) {
                 (<any>this)[method](ev);
@@ -401,7 +401,7 @@ module plat.ui.controls {
          * 
          * @returns {plat.async.IThenable<void>} The itemsLoaded promise.
          */
-        _addItems(numberOfItems: number, length: number): async.IThenable<void> {
+        protected _addItems(numberOfItems: number, length: number): async.IThenable<void> {
             var index = length,
                 item: any,
                 bindableTemplates = this.bindableTemplates,
@@ -452,7 +452,7 @@ module plat.ui.controls {
          * @returns {plat.async.IThenable<void>} A promise that resolves when the option 
          * or optgroup has successfully be inserted.
          */
-        _insertOptions(index: number, item: any, optionClone: DocumentFragment): async.IThenable<any> {
+        protected _insertOptions(index: number, item: any, optionClone: DocumentFragment): async.IThenable<any> {
             var element = this.element;
             if (this.__isGrouped) {
                 var groups = this.groups,
@@ -496,7 +496,7 @@ module plat.ui.controls {
          * 
          * @returns {void}
          */
-        _removeItem(index: number): void {
+        protected _removeItem(index: number): void {
             if (index < 0) {
                 return;
             }
@@ -518,7 +518,7 @@ module plat.ui.controls {
          * 
          * @returns {void}
          */
-        _removeItems(numberOfItems: number): void {
+        protected _removeItems(numberOfItems: number): void {
             var controls = this.controls,
                 length = controls.length - 1;
 
@@ -541,7 +541,7 @@ module plat.ui.controls {
          * 
          * @returns {void}
          */
-        _itemRemoved(ev: observable.IArrayMethodInfo<any>): void {
+        protected _itemRemoved(ev: observable.IArrayMethodInfo<any>): void {
             if (ev.oldArray.length === 0) {
                 return;
             } else if (this.__isGrouped) {
@@ -564,7 +564,7 @@ module plat.ui.controls {
          * 
          * @returns {void}
          */
-        _resetSelect(): void {
+        protected _resetSelect(): void {
             var itemLength = this.context.length,
                 element = this.element,
                 nodeLength = element.childNodes.length;
@@ -592,7 +592,7 @@ module plat.ui.controls {
          * 
          * @returns {void}
          */
-        _push(ev: observable.IArrayMethodInfo<any>): void {
+        protected _push(ev: observable.IArrayMethodInfo<any>): void {
             this._addItems(ev.arguments.length, ev.oldArray.length);
         }
 
@@ -610,7 +610,7 @@ module plat.ui.controls {
          * 
          * @returns {void}
          */
-        _pop(ev: observable.IArrayMethodInfo<any>): void {
+        protected _pop(ev: observable.IArrayMethodInfo<any>): void {
             this._itemRemoved(ev);
         }
         
@@ -628,7 +628,7 @@ module plat.ui.controls {
          * 
          * @returns {void}
          */
-        _shift(ev: observable.IArrayMethodInfo<any>): void {
+        protected _shift(ev: observable.IArrayMethodInfo<any>): void {
             this._itemRemoved(ev);
         }
         
@@ -646,7 +646,7 @@ module plat.ui.controls {
          * 
          * @returns {void}
          */
-        _splice(ev: observable.IArrayMethodInfo<any>): void {
+        protected _splice(ev: observable.IArrayMethodInfo<any>): void {
             if (this.__isGrouped) {
                 this._resetSelect();
                 return;
@@ -676,7 +676,7 @@ module plat.ui.controls {
          * 
          * @returns {void}
          */
-        _unshift(ev: observable.IArrayMethodInfo<any>): void {
+        protected _unshift(ev: observable.IArrayMethodInfo<any>): void {
             if (this.__isGrouped) {
                 this._resetSelect();
                 return;
@@ -699,7 +699,7 @@ module plat.ui.controls {
          * 
          * @returns {void}
          */
-        _sort(ev: observable.IArrayMethodInfo<any>): void {
+        protected _sort(ev: observable.IArrayMethodInfo<any>): void {
             if (this.__isGrouped) {
                 this._resetSelect();
             }
@@ -719,7 +719,7 @@ module plat.ui.controls {
          * 
          * @returns {void}
          */
-        _reverse(ev: observable.IArrayMethodInfo<any>): void {
+        protected _reverse(ev: observable.IArrayMethodInfo<any>): void {
             if (this.__isGrouped) {
                 this._resetSelect();
             }

@@ -50,6 +50,7 @@
                  */
                 dblTapZoomDelay: 0
             },
+
             /**
              * An object containing the different minimum/maximum distances that govern the behavior of certain 
              * custom DOM events.
@@ -66,6 +67,7 @@
                  */
                 maxDblTapDistance: 20
             },
+
             /**
              * An object containing the different minimum/maximum velocities that govern the behavior of certain 
              * custom DOM events.
@@ -77,6 +79,7 @@
                  */
                 minSwipeVelocity: 0.8
             },
+
             /**
              * The default CSS styles applied to elements listening for custom DOM events. If using 
              * platypus.css, you must overwrite the styles in platypus.css or create your own and 
@@ -108,16 +111,16 @@
                 ]
             }, {
                     /**
-                     * The className that will be used to define the custom style for 
-                     * blocking touch action scrolling, zooming, etc on the element.
-                     */
+                        * The className that will be used to define the custom style for 
+                        * blocking touch action scrolling, zooming, etc on the element.
+                        */
                     className: 'plat-no-touch-action',
                     /**
-                     * An array of string styles that block touch action scrolling, zooming, etc. 
-                     * Primarily useful on elements such as a canvas.
-                     * In the format 'CSS identifier: value'
-                     * (e.g. 'width : 100px')
-                     */
+                        * An array of string styles that block touch action scrolling, zooming, etc. 
+                        * Primarily useful on elements such as a canvas.
+                        * In the format 'CSS identifier: value'
+                        * (e.g. 'width : 100px')
+                        */
                     styles: [
                         '-ms-touch-action: none',
                         'touch-action: none'
@@ -165,7 +168,7 @@
          * They become active at least one element on the current 
          * page is listening for a custom event.
          */
-        _isActive: boolean;
+        protected _isActive: boolean;
 
         /**
          * @name _inTouch
@@ -178,7 +181,7 @@
          * @description
          * Whether or not the user is currently touching the screen.
          */
-        _inTouch: boolean;
+        protected _inTouch: boolean;
 
         /**
          * @name _inMouse
@@ -191,7 +194,7 @@
          * @description
          * Whether or not the user is using mouse when touch events are present.
          */
-        _inMouse = false;
+        protected _inMouse = false;
 
         /**
          * @name _subscribers
@@ -205,7 +208,7 @@
          * An object with keyed subscribers that keep track of all of the 
          * events registered on a particular element.
          */
-        _subscribers: IObject<IEventSubscriber> = {};
+        protected _subscribers: IObject<IEventSubscriber> = {};
 
         /**
          * @name _startEvents
@@ -218,7 +221,7 @@
          * @description
          * The touch start events defined by this browser.
          */
-        _startEvents: Array<string>;
+        protected _startEvents: Array<string>;
 
         /**
          * @name _moveEvents
@@ -231,7 +234,7 @@
          * @description
          * The touch move events defined by this browser.
          */
-        _moveEvents: Array<string>;
+        protected _moveEvents: Array<string>;
 
         /**
          * @name _endEvents
@@ -244,7 +247,7 @@
          * @description
          * The touch end events defined by this browser.
          */
-        _endEvents: Array<string>;
+        protected _endEvents: Array<string>;
 
         /**
          * @name _gestures
@@ -258,7 +261,7 @@
          * An object containing the event types for all of the 
          * supported gestures.
          */
-        _gestures: IGestures<string> = {
+        protected _gestures: IGestures<string> = {
             $tap: __tap,
             $dbltap: __dbltap,
             $hold: __hold,
@@ -288,7 +291,7 @@
          * An object containing the number of currently active 
          * events of each base type.
          */
-        _gestureCount: IBaseGestures<number> = {
+        protected _gestureCount: IBaseGestures<number> = {
             $tap: 0,
             $dbltap: 0,
             $hold: 0,
@@ -848,7 +851,7 @@
          * 
          * @returns {boolean} Prevents default and stops propagation if false is returned.
          */
-        _onTouchStart(ev: IPointerEvent): boolean {
+        protected _onTouchStart(ev: IPointerEvent): boolean {
             if (this.__touchCount++ > 0) {
                 return;
             }
@@ -941,7 +944,7 @@
          * 
          * @returns {boolean} Prevents default and stops propagation if false is returned.
          */
-        _onTouchMove(ev: IPointerEvent): boolean {
+        protected _onTouchMove(ev: IPointerEvent): boolean {
             // clear hold event
             this.__clearHold();
 
@@ -1007,7 +1010,7 @@
          * 
          * @returns {boolean} Prevents default and stops propagation if false is returned.
          */
-        _onTouchEnd(ev: IPointerEvent): boolean {
+        protected _onTouchEnd(ev: IPointerEvent): boolean {
             var eventType = ev.type,
                 hasMoved = this.__hasMoved;
 
@@ -1177,6 +1180,7 @@
             }
             this.__resetTouchEnd();
         }
+
         /**
          * @name __handleTap
          * @memberof plat.ui.DomEvents
@@ -1220,6 +1224,7 @@
                 this.__tapTimeout = null;
             }, DomEvents.config.intervals.dblTapZoomDelay);
         }
+
         /**
          * @name __handleDbltap
          * @memberof plat.ui.DomEvents
@@ -1254,6 +1259,7 @@
             // set touch count to -1 to prevent repeated fire on sequential taps
             this.__tapCount = -1;
         }
+
         /**
          * @name __handleRelease
          * @memberof plat.ui.DomEvents
@@ -1275,6 +1281,7 @@
 
             this.__hasRelease = false;
         }
+
         /**
          * @name __handleSwipe
          * @memberof plat.ui.DomEvents
@@ -1303,6 +1310,7 @@
             this.__lastMoveEvent = null;
             this.__swipeSubscribers = null;
         }
+
         /**
          * @name __handleTrack
          * @memberof plat.ui.DomEvents
@@ -1333,6 +1341,7 @@
                 }
             }
         }
+
         /**
          * @name __handleTrackEnd
          * @memberof plat.ui.DomEvents
@@ -1359,6 +1368,7 @@
 
             domEvent.trigger(ev);
         }
+
         /**
          * @name __handleMappedEvent
          * @memberof plat.ui.DomEvents
@@ -1423,6 +1433,7 @@
             this._moveEvents = [touchEvents.$touchmove];
             this._endEvents = isNull(cancelEvent) ? [touchEvents.$touchend] : [touchEvents.$touchend, cancelEvent];
         }
+
         /**
          * @name __registerTypes
          * @memberof plat.ui.DomEvents
@@ -1438,6 +1449,7 @@
             this.__registerType(this.__START);
             this.__registerType(this.__END);
         }
+
         /**
          * @name __unregisterTypes
          * @memberof plat.ui.DomEvents
@@ -1454,6 +1466,7 @@
             this.__unregisterType(this.__MOVE);
             this.__unregisterType(this.__END);
         }
+
         /**
          * @name __registerType
          * @memberof plat.ui.DomEvents
@@ -1491,6 +1504,7 @@
                 $document.addEventListener(events[index], listener, false);
             }
         }
+
         /**
          * @name __unregisterType
          * @memberof plat.ui.DomEvents
@@ -1528,6 +1542,7 @@
                 $document.removeEventListener(events[index], listener, false);
             }
         }
+
         /**
          * @name __registerElement
          * @memberof plat.ui.DomEvents
@@ -1589,6 +1604,7 @@
             }
             this.__removeSelections(element);
         }
+
         /**
          * @name __unregisterElement
          * @memberof plat.ui.DomEvents
@@ -1628,6 +1644,7 @@
                 this.__removeElement(element);
             }
         }
+
         /**
          * @name __setTouchPoint
          * @memberof plat.ui.DomEvents
@@ -1652,6 +1669,7 @@
 
             ev.pointerType = eventType.indexOf('mouse') === -1 ? 'touch' : 'mouse';
         }
+
         /**
          * @name __setCapture
          * @memberof plat.ui.DomEvents
@@ -1670,6 +1688,7 @@
                 this.__capturedTarget = <ICustomElement>target;
             }
         }
+
         /**
          * @name __updatePointers
          * @memberof plat.ui.DomEvents
@@ -1801,6 +1820,7 @@
 
             return domEvents;
         }
+
         /**
          * @name __addMappedEvent
          * @memberof plat.ui.DomEvents
@@ -1827,6 +1847,7 @@
                 $document.removeEventListener(mappedEvent, this.__mappedEventListener, useCapture);
             };
         }
+
         /**
          * @name __removeEventListener
          * @memberof plat.ui.DomEvents
@@ -1863,6 +1884,7 @@
             (<any>this._gestureCount)[countType]--;
             this.__unregisterElement(element, type);
         }
+
         /**
          * @name __removeElement
          * @memberof plat.ui.DomEvents
@@ -1894,6 +1916,7 @@
                 this.dispose();
             }
         }
+
         /**
          * @name __standardizeEventObject
          * @memberof plat.ui.DomEvents
@@ -1943,6 +1966,7 @@
 
             return ev;
         }
+
         /**
          * @name __getTouchIndex
          * @memberof plat.ui.DomEvents
@@ -1971,6 +1995,7 @@
 
             return -1;
         }
+
         /**
          * @name __getOffset
          * @memberof plat.ui.DomEvents
@@ -2010,6 +2035,7 @@
                 y: (ev.clientY - y)
             };
         }
+
         /**
          * @name __clearHold
          * @memberof plat.ui.DomEvents
@@ -2051,6 +2077,7 @@
                 y = Math.abs(y2 - y1);
             return Math.sqrt((x * x) + (y * y));
         }
+
         /**
          * @name __getVelocity
          * @memberof plat.ui.DomEvents
@@ -2072,6 +2099,7 @@
                 y: Math.abs(dy / dt) || 0
             };
         }
+
         /**
          * @name __getDirection
          * @memberof plat.ui.DomEvents
@@ -2100,6 +2128,7 @@
                 primary: (distanceX === distanceY ? (lastDirection.primary || 'none') : (distanceX > distanceY ? horizontal : vertical))
             };
         }
+
         /**
          * @name __checkForOriginChanged
          * @memberof plat.ui.DomEvents
@@ -2131,6 +2160,7 @@
             this.__hasSwiped = false;
             return true;
         }
+
         /**
          * @name __checkForRegisteredSwipe
          * @memberof plat.ui.DomEvents
@@ -2163,6 +2193,7 @@
 
             this.__swipeSubscribers = this.__findFirstSubscribers(swipeTarget, events);
         }
+
         /**
          * @name __isHorizontal
          * @memberof plat.ui.DomEvents
@@ -2179,6 +2210,7 @@
         private __isHorizontal(direction: string): boolean {
             return direction === 'left' || direction === 'right';
         }
+
         /**
          * @name __appendGestureStyle
          * @memberof plat.ui.DomEvents
@@ -2220,6 +2252,7 @@
             style.textContent = textContent;
             head.appendChild(style);
         }
+
         /**
          * @name __createStyle
          * @memberof plat.ui.DomEvents
@@ -2250,6 +2283,7 @@
 
             return style;
         }
+
         /**
          * @name __isFocused
          * @memberof plat.ui.DomEvents
@@ -2266,6 +2300,7 @@
         private __isFocused(target: EventTarget): boolean {
             return target === this.__focusedElement;
         }
+
         /**
          * @name __handleInput
          * @memberof plat.ui.DomEvents
@@ -2364,6 +2399,7 @@
             this.__focusedElement = null;
             return;
         }
+
         /**
          * @name __preventClickFromTouch
          * @memberof plat.ui.DomEvents
@@ -2406,6 +2442,7 @@
                 $document.addEventListener('mouseup', preventDefault, true);
             });
         }
+
         /**
          * @name __removeSelections
          * @memberof plat.ui.DomEvents
@@ -2431,6 +2468,7 @@
                 element.addEventListener('dragstart', this.__preventDefault, false);
             }
         }
+
         /**
          * @name __returnSelections
          * @memberof plat.ui.DomEvents
@@ -2456,6 +2494,7 @@
                 element.removeEventListener('dragstart', this.__preventDefault, false);
             }
         }
+
         /**
          * @name __preventDefault
          * @memberof plat.ui.DomEvents
@@ -2639,6 +2678,7 @@
          * The node or window object associated with this {@link plat.ui.IDomEventInstance|IDomEventInstance} object.
          */
         element: any;
+
         /**
          * @name event
          * @memberof plat.ui.DomEvent
@@ -3024,6 +3064,7 @@
          * The touch start event.
          */
         start: EventListener;
+
         /**
          * @name end
          * @memberof plat.ui.ICustomEventListener
@@ -3036,6 +3077,7 @@
          * The touch end event.
          */
         end: EventListener;
+
         /**
          * @name move
          * @memberof plat.ui.ICustomEventListener

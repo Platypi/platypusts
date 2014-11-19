@@ -309,7 +309,7 @@ module plat.web {
          * 
          * @returns {void}
          */
-        _urlChanged(): void {
+        protected _urlChanged(): void {
             if (this.__initializing) {
                 return;
             }
@@ -349,7 +349,7 @@ module plat.web {
          * 
          * @returns {void}
          */
-        _setUrl(url: string, replace?: boolean): void {
+        protected _setUrl(url: string, replace?: boolean): void {
             url = this._formatUrl(url);
 
             var utils = this.urlUtils(url);
@@ -398,7 +398,7 @@ module plat.web {
          * 
          * @returns {string} The formatted URL.
          */
-        _formatUrl(url: string): string {
+        protected _formatUrl(url: string): string {
             var $config = Browser.config;
             if (url.indexOf($config.baseUrl) > -1 && $config.routingType === $config.HASH) {
                 var hasProtocol = url.indexOf(this.urlUtils().protocol) !== -1,

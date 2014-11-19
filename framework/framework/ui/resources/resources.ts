@@ -414,7 +414,7 @@ module plat.ui {
          * 
          * @returns {void}
          */
-        static _observeResource(control: ITemplateControl, resource: IResource): void {
+        protected static _observeResource(control: ITemplateControl, resource: IResource): void {
             var value = resource.value,
                 uid = control.uid,
                 removeListeners = Resources.__observableResourceRemoveListeners[uid];
@@ -451,7 +451,7 @@ module plat.ui {
          * 
          * @returns {void}
          */
-        static _removeListeners(control: ITemplateControl): void {
+        protected static _removeListeners(control: ITemplateControl): void {
             if (isNull(control)) {
                 return;
             }

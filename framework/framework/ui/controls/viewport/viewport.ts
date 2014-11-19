@@ -155,7 +155,7 @@ module plat.ui.controls {
          * 
          * @returns {void}
          */
-        _load(): void {
+        protected _load(): void {
             var $exception: IExceptionStatic;
             if (isNull(this.options)) {
                 $exception = acquire(__ExceptionStatic);

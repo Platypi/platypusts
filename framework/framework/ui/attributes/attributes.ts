@@ -130,7 +130,7 @@ module plat.ui {
          * 
          * @returns {void}
          */
-        _attributeChanged(key: string, newValue: any, oldValue: any): void {
+        protected _attributeChanged(key: string, newValue: any, oldValue: any): void {
             var listeners = this.__listeners[camelCase(key)],
                 length = listeners.length;
 

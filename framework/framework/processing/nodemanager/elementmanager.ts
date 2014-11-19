@@ -1606,9 +1606,10 @@ module plat.processing {
 
             for (var i = 0; i < length; ++i) {
                 attributes = <ui.Attributes>controls[i].attributes;
-                oldValue = (<any>attributes)[key];
-                (<any>attributes)[key] = value;
-                attributes._attributeChanged(key, value, oldValue);
+                oldValue = attributes[key];
+                attributes[key] = value;
+
+                (<any>attributes)._attributeChanged(key, value, oldValue);
             }
 
             if (!this.replace) {

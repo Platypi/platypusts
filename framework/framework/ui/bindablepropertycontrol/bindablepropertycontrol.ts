@@ -24,7 +24,7 @@
          * The set of functions added externally that listens 
          * for property changes.
          */
-        _listeners: Array<(newValue: any, oldValue?: any) => void> = [];
+        protected _listeners: Array<(newValue: any, oldValue?: any) => void> = [];
 
         /**
          * @name observeProperty

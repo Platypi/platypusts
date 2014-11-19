@@ -34,7 +34,7 @@
          * @description
          * All elements currently being animated.
          */
-        _elements: IObject<IAnimatedElement> = {};
+        protected _elements: IObject<IAnimatedElement> = {};
 
         /**
          * @name __cssWarning

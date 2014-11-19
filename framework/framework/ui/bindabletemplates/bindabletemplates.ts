@@ -62,7 +62,7 @@ module plat.ui {
 
             if (!isNull(original)) {
                 bindableTemplates.templates = original.templates;
-                bindableTemplates._cache = original._cache;
+                bindableTemplates.cache = original.cache;
             }
 
             return bindableTemplates;
@@ -226,10 +226,10 @@ module plat.ui {
         templates: IObject<async.IThenable<DocumentFragment>> = {};
 
         /**
-         * @name _cache
+         * @name cache
          * @memberof plat.ui.BindableTemplates
          * @kind property
-         * @access protected
+         * @access public
          * 
          * @type {plat.IObject<plat.processing.IElementManager>}
          * 
@@ -237,7 +237,7 @@ module plat.ui {
          * A keyed cache of {@link plat.processing.IElementManager|IElementManagers} that represent the roots of compiled templates 
          * created by this instance.
          */
-        _cache: IObject<processing.IElementManager> = {};
+        cache: IObject<processing.IElementManager> = {};
 
         /**
          * @name __compiledControls
@@ -459,7 +459,7 @@ module plat.ui {
 
             this.__compiledControls = [];
             this.control = null;
-            this._cache = {};
+            this.cache = {};
             this.templates = {};
         }
         
@@ -481,7 +481,7 @@ module plat.ui {
          * 
          * @returns {plat.async.IThenable<DocumentFragment>} A promise that resolves when the template is bound.
          */
-        _bindTemplate(key: string, template: DocumentFragment, contextId: string,
+        protected _bindTemplate(key: string, template: DocumentFragment, contextId: string,
             resources: IObject<IResource>): async.IThenable<DocumentFragment> {
             var control = this._createBoundControl(key, template, contextId, resources),
                 nodeMap = this._createNodeMap(control, template, contextId),
@@ -532,8 +532,8 @@ module plat.ui {
          * @returns {plat.async.IThenable<void>} A promise that resolves when the control's 
          * {@link plat.processing.IElementManager|IElementManager} is bound and loaded.
          */
-        _bindNodeMap(nodeMap: processing.INodeMap, key: string): async.IThenable<void> {
-            var manager = this._cache[key],
+        protected _bindNodeMap(nodeMap: processing.INodeMap, key: string): async.IThenable<void> {
+            var manager = this.cache[key],
                 child = nodeMap.uiControlNode.control,
                 template = nodeMap.element,
                 $managerCache = this.$ManagerCache;
@@ -559,7 +559,7 @@ module plat.ui {
          * 
          * @returns {void}
          */
-        _compile(key: string, template: DocumentFragment): void {
+        protected _compile(key: string, template: DocumentFragment): void {
             var control = this._createBoundControl(key + __COMPILED, template),
                 nodeMap = this._createNodeMap(control, template);
 
@@ -584,7 +584,7 @@ module plat.ui {
          * 
          * @returns {void}
          */
-        _compileNodeMap(control: ITemplateControl, nodeMap: processing.INodeMap, key: string): void {
+        protected _compileNodeMap(control: ITemplateControl, nodeMap: processing.INodeMap, key: string): void {
             var manager = this.$ElementManagerFactory.getInstance(),
                 promises: Array<async.IThenable<void>> = [];
 
@@ -592,7 +592,7 @@ module plat.ui {
             manager.initialize(nodeMap, null);
             manager.setUiControlTemplate();
 
-            this._cache[key] = manager;
+            this.cache[key] = manager;
 
             promises.push(manager.fulfillTemplate());
 
@@ -628,7 +628,7 @@ module plat.ui {
          * 
          * @returns {plat.processing.INodeMap} The newly created {@link plat.processing.INodeMap|INodeMap}.
          */
-        _createNodeMap(uiControl: ITemplateControl, template: Node, childContext?: string): processing.INodeMap {
+        protected _createNodeMap(uiControl: ITemplateControl, template: Node, childContext?: string): processing.INodeMap {
             return {
                 element: <HTMLElement>template,
                 attributes: {},
@@ -662,13 +662,13 @@ module plat.ui {
          * 
          * @returns {plat.ui.ITemplateControl} The newly created {@link plat.ui.ITemplateControl|ITemplateControl}.
          */
-        _createBoundControl(key: string, template: DocumentFragment,
+        protected _createBoundControl(key: string, template: DocumentFragment,
             relativeIdentifier?: string, resources?: IObject<IResource>): ITemplateControl {
             var $TemplateControlFactory = this.$TemplateControlFactory,
                 control = $TemplateControlFactory.getInstance(),
                 $ResourcesFactory = this.$ResourcesFactory,
                 parent = this.control,
-                compiledManager = this._cache[key],
+                compiledManager = this.cache[key],
                 _resources = $ResourcesFactory.getInstance();
 
             if (isObject(compiledManager)) {
@@ -802,6 +802,20 @@ module plat.ui {
      * separate those templates and reuse them accordingly.
      */
     export interface IBindableTemplates {
+        /**
+         * @name cache
+         * @memberof plat.ui.IBindableTemplates
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.IObject<plat.processing.IElementManager>}
+         * 
+         * @description
+         * A keyed cache of {@link plat.processing.IElementManager|IElementManagers} that represent the roots of compiled templates 
+         * created by this instance.
+         */
+        cache: IObject<processing.IElementManager>;
+
         /**
          * @name control
          * @memberof plat.ui.IBindableTemplates
