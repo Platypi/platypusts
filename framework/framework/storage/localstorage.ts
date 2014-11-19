@@ -12,7 +12,7 @@ module plat.storage {
      */
     export class LocalStorage extends BaseStorage implements ILocalStorage {
         constructor() {
-            super((<Window>plat.acquire(__Window)).localStorage;
+            super((<Window>plat.acquire(__Window)).localStorage);
         }
     }
 

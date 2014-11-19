@@ -513,8 +513,10 @@ module plat.processing {
         $ContextManagerStatic?: observable.IContextManagerStatic,
         $Parser?: expressions.IParser,
         $TemplateControlFactory?: ui.ITemplateControlFactory): INodeManagerStatic {
-            NodeManager._markupRegex = $Regex.markupRegex;
-            NodeManager._newLineRegex = $Regex.newLineRegex;
+            // NOTE: This is not advised by TypeScript, but we want to do this.
+            (<any>NodeManager)._markupRegex = $Regex.markupRegex;
+            (<any>NodeManager)._newLineRegex = $Regex.newLineRegex;
+
             NodeManager.$ContextManagerStatic = $ContextManagerStatic;
             NodeManager.$Parser = $Parser;
             NodeManager.$TemplateControlFactory = $TemplateControlFactory;

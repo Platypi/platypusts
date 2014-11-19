@@ -12,7 +12,7 @@ module plat.storage {
      */
     export class SessionStorage extends BaseStorage implements ISessionStorage {
         constructor() {
-            super((<Window>plat.acquire(__Window)).localStorage;
+            super((<Window>plat.acquire(__Window)).sessionStorage);
         }
     }
 
