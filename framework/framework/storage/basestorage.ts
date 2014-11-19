@@ -10,6 +10,21 @@ module plat.storage {
      * A base class for storing data with a designated storage type.
      */
     export class BaseStorage implements IBaseStorage {
+        [key: string]: any;
+
+        /**
+         * @name _storage
+         * @memberof plat.storage.LocalStorage
+         * @kind property
+         * @access protected
+         * 
+         * @type {Storage}
+         * 
+         * @description
+         * Reference to HTML5 localStorage.
+         */
+        protected _storage: Storage;
+        
         /**
          * @name constructor
          * @memberof plat.storage.BaseStorage
@@ -21,9 +36,11 @@ module plat.storage {
          * 
          * @returns {plat.storage.BaseStorage}
          */
-        constructor() {
-            forEach((<Storage>(<any>this).__storage), (value, key) => {
-                (<any>this)[key] = value;
+        constructor(storage: Storage) {
+            this._storage = storage;
+
+            forEach(storage, (value, key) => {
+                this[key] = value;
             });
         }
 
@@ -40,7 +57,7 @@ module plat.storage {
          * Returns the number of items in storage.
          */
         get length(): number {
-            return (<Storage>(<any>this).__storage).length;
+            return this._storage.length;
         }
         
         /**
@@ -55,7 +72,7 @@ module plat.storage {
          * @returns {void}
          */
         clear(): void {
-            (<Storage>(<any>this).__storage).clear();
+            this._storage.clear();
         }
         
         /**
@@ -74,7 +91,7 @@ module plat.storage {
          * @returns {T} The item retrieved from storage.
          */
         getItem<T>(key: string): T {
-            return (<Storage>(<any>this).__storage).getItem(key);
+            return this._storage.getItem(key);
         }
         
         /**
@@ -93,7 +110,7 @@ module plat.storage {
          * @returns {string} The key at the given index.
          */
         key(index: number): string {
-            return (<Storage>(<any>this).__storage).key(index);
+            return this._storage.key(index);
         }
         
         /**
@@ -111,7 +128,7 @@ module plat.storage {
          * @returns {void}
          */
         removeItem(key: string): void {
-            (<Storage>(<any>this).__storage).removeItem(key);
+            this._storage.removeItem(key);
         }
         
         /**
@@ -129,8 +146,8 @@ module plat.storage {
          * @returns {void}
          */
         setItem(key: string, data: any): void {
-            (<Storage>(<any>this).__storage).setItem(key, data);
-            (<any>this)[key] = this.getItem(key);
+            this._storage.setItem(key, data);
+            this[key] = this.getItem(key);
         }
     }
     
@@ -143,6 +160,8 @@ module plat.storage {
      * An object designed for storing data with a designated storage type.
      */
     export interface IBaseStorage {
+        [key: string]: any;
+
         /**
          * @name length
          * @memberof plat.storage.IBaseStorage

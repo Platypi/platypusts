@@ -74,7 +74,7 @@ module plat.controls {
          * @description
          * A parsed form of the expression found in the attribute's value.
          */
-        _expression: Array<string> = [];
+        protected _expression: Array<string> = [];
 
         /**
          * @name _aliases
@@ -87,7 +87,7 @@ module plat.controls {
          * @description
          * An array of the aliases used in the expression.
          */
-        _aliases: Array<string> = [];
+        protected _aliases: Array<string> = [];
 
         /**
          * @name loaded
@@ -120,7 +120,7 @@ module plat.controls {
          * 
          * @returns {void}
          */
-        _setListener(): void {
+        protected _setListener(): void {
             var attr = this.attribute;
             if (isEmpty(this.event) || isEmpty(attr)) {
                 return;
@@ -149,7 +149,7 @@ module plat.controls {
          * 
          * @returns {{ control: ui.ITemplateControl; value: any; }} The instance of the specified function.
          */
-        _findListener(identifier: string): { control: ui.ITemplateControl; value: any; } {
+        protected _findListener(identifier: string): { control: ui.ITemplateControl; value: any; } {
             var control: ui.ITemplateControl = <any>this,
                 expression = this.$Parser.parse(identifier),
                 value: any;
@@ -185,7 +185,7 @@ module plat.controls {
          * @returns {{ fn: () => void; control: ui.ITemplateControl; args: Array<expressions.IParsedExpression>; }} 
          * The function to call and the associated arguments, as well as the control context with which to call the function.
          */
-        _buildExpression(): { fn: () => void; control: ui.ITemplateControl; args: Array<expressions.IParsedExpression>; } {
+        protected _buildExpression(): { fn: () => void; control: ui.ITemplateControl; args: Array<expressions.IParsedExpression>; } {
             var expression = this._expression.slice(0),
                 hasParent = !isNull(this.parent),
                 aliases = hasParent ? this.parent.getResources(this._aliases) : null,
@@ -240,7 +240,7 @@ module plat.controls {
          * 
          * @returns {void}
          */
-        _onEvent(ev: Event): void {
+        protected _onEvent(ev: Event): void {
             var expression = this._buildExpression(),
                 fn = expression.fn,
                 control = expression.control,
@@ -269,7 +269,7 @@ module plat.controls {
          * 
          * @returns {Array<string>} The aliases.
          */
-        _findAliases(args: Array<string>): Array<string> {
+        protected _findAliases(args: Array<string>): Array<string> {
             var length = args.length,
                 arg: string,
                 exec: RegExpExecArray,
@@ -302,7 +302,7 @@ module plat.controls {
          * 
          * @returns {void}
          */
-        _parseArgs(expression: string): void {
+        protected _parseArgs(expression: string): void {
             var exec = this.$Regex.argumentRegex.exec(expression),
                 haveArgs = !isNull(exec);
 
@@ -1020,7 +1020,7 @@ module plat.controls {
          * 
          * @param {Event} ev The event object.
          */
-        _onEvent(ev: Event): void {
+        protected _onEvent(ev: Event): void {
             if (!this.element.hasAttribute('action')) {
                 ev.preventDefault();
             }

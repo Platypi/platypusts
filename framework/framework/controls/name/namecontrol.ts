@@ -27,7 +27,7 @@ module plat.controls {
          * @description
          * The property name on the ancestor controls to set as the {@link plat.controls.INamedElement|INamedElement}.
          */
-        _label: string;
+        protected _label: string;
 
         /**
          * @name initialize
@@ -93,7 +93,7 @@ module plat.controls {
          * 
          * @returns {void}
          */
-        _define(name: string): void {
+        protected _define(name: string): void {
             var templateControl = this.templateControl;
 
             if (!isNull(templateControl)) {
@@ -131,7 +131,7 @@ module plat.controls {
          * 
          * @returns {void}
          */
-        _isPrecompiled(): boolean {
+        protected _isPrecompiled(): boolean {
             var control = this.parent;
 
             while (!isNull(control)) {

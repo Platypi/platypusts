@@ -1,7 +1,7 @@
 module plat {
     /**
      * @name AttributeControl
-     * @memberof plat.controls
+     * @memberof plat
      * @kind class
      * @access public
      * 
@@ -118,7 +118,7 @@ module plat {
 
     /**
      * @name IAttributeControl
-     * @memberof plat.controls
+     * @memberof plat
      * @kind interface
      * @access public
      * 

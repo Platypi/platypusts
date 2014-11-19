@@ -22,7 +22,7 @@ module plat.expressions {
          * @description
          * The input string to tokenize.
          */
-        _input: string;
+        protected _input: string;
         
         /**
          * @name __previousChar
@@ -243,7 +243,7 @@ module plat.expressions {
          * 
          * @returns {boolean} Whether or not the character corresponds with its type.
          */
-        _checkType(char: string, isNumberLike: boolean): boolean {
+        protected _checkType(char: string, isNumberLike: boolean): boolean {
             if (isNumberLike) {
                 return this._isNumeric(char);
             }
@@ -266,7 +266,7 @@ module plat.expressions {
          * 
          * @returns {string} The grouped characters.
          */
-        _lookAhead(char: string, index: number, isNumberLike: boolean): string {
+        protected _lookAhead(char: string, index: number, isNumberLike: boolean): string {
             var ch: string,
                 input = this._input,
                 maxLength = input.length;
@@ -298,7 +298,7 @@ module plat.expressions {
          * 
          * @returns {string} The completed current operator.
          */
-        _lookAheadForOperatorFn(char: string, index: number): string {
+        protected _lookAheadForOperatorFn(char: string, index: number): string {
             var ch: string,
                 fn = char,
                 input = this._input,
@@ -336,7 +336,7 @@ module plat.expressions {
          * @returns {string} The resultant inner character string between 
          * the first character and end character being looked ahead for.
          */
-        _lookAheadForDelimiter(endChar: string, index: number): string {
+        protected _lookAheadForDelimiter(endChar: string, index: number): string {
             var char = '',
                 ch: string,
                 input = this._input,
@@ -366,7 +366,7 @@ module plat.expressions {
          * 
          * @returns {void}
          */
-        _popStackForVal(topOperator: IToken, char: string, error: string): void {
+        protected _popStackForVal(topOperator: IToken, char: string, error: string): void {
             var outputQueue = this.__outputQueue,
                 operatorStack = this.__operatorStack;
 
@@ -395,7 +395,7 @@ module plat.expressions {
          * 
          * @returns {boolean} Whether or not the val is equal to the input character.
          */
-        _isValEqual(obj: IToken, char: string): boolean {
+        protected _isValEqual(obj: IToken, char: string): boolean {
             if (isNull(obj) || isNull(obj.val)) {
                 return isNull(char);
             } else if (obj.val === '') {
@@ -420,7 +420,7 @@ module plat.expressions {
          * 
          * @returns {boolean} Whether or not the val is not equal to the input character.
          */
-        _isValUnequal(obj: IToken, char: string): boolean {
+        protected _isValUnequal(obj: IToken, char: string): boolean {
             if (isNull(obj) || isNull(obj.val)) {
                 return !isNull(char);
             } else if (obj.val === '') {
@@ -440,7 +440,7 @@ module plat.expressions {
          * 
          * @returns {void}
          */
-        _resetTokenizer(): void {
+        protected _resetTokenizer(): void {
             this._input = null;
             this.__previousChar = '';
             this.__outputQueue = [];
@@ -464,7 +464,7 @@ module plat.expressions {
          * 
          * @returns {void}
          */
-        _throwError(error: string): void {
+        protected _throwError(error: string): void {
             var $exception: IExceptionStatic = acquire(__ExceptionStatic);
             $exception.fatal(error + ' in ' + this._input, $exception.PARSE);
         }
@@ -482,7 +482,7 @@ module plat.expressions {
          * 
          * @returns {boolean} Whether or not the character is numeric.
          */
-        _isNumeric(char: string): boolean {
+        protected _isNumeric(char: string): boolean {
             return ('0' <= char && char <= '9');
         }
         
@@ -499,7 +499,7 @@ module plat.expressions {
          * 
          * @returns {boolean} Whether or not the character is a space.
          */
-        _isSpace(char: string): boolean {
+        protected _isSpace(char: string): boolean {
             return (char === ' ' ||
                 char === '\r' ||
                 char === '\n' ||
@@ -521,7 +521,7 @@ module plat.expressions {
          * 
          * @returns {boolean} Whether or not the character is alphanumeric.
          */
-        _isAlphaNumeric(char: string): boolean {
+        protected _isAlphaNumeric(char: string): boolean {
             return ('a' <= char && char <= 'z' ||
                 'A' <= char && char <= 'Z' ||
                 '0' <= char && char <= '9' ||
@@ -544,7 +544,7 @@ module plat.expressions {
          * @returns {boolean} Whether or not the input string could be a valid 
          * JavaScript variable.
          */
-        _isStringValidVariable(input: string): boolean {
+        protected _isStringValidVariable(input: string): boolean {
             return !this.__variableRegex.test(input);
         }
 

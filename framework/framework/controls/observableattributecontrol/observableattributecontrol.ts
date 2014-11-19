@@ -75,7 +75,7 @@
          * The set of functions added by the Template Control that listens 
          * for property changes.
          */
-        _listeners: Array<(newValue: any, oldValue?: any) => void> = [];
+        protected _listeners: Array<(newValue: any, oldValue?: any) => void> = [];
 
         /**
          * @name _removeListener
@@ -88,7 +88,7 @@
          * @description
          * The function to stop listening for property changes.
          */
-        _removeListener: IRemoveListener;
+        protected _removeListener: IRemoveListener;
         
         /**
          * @name _boundAddListener
@@ -101,7 +101,7 @@
          * @description
          * The _addListener function bound to this control.
          */
-        _boundAddListener = this._addListener.bind(this);
+        protected _boundAddListener = this._addListener.bind(this);
 
         /**
          * @name initialize
@@ -171,7 +171,7 @@
          * 
          * @returns {void}
          */
-        _setProperty(value: any, oldValue?: any): void {
+        protected _setProperty(value: any, oldValue?: any): void {
             var templateControl = this.templateControl;
 
             if (isNull(templateControl)) {
@@ -200,7 +200,7 @@
          * 
          * @returns {void}
          */
-        _callListeners(newValue: any, oldValue: any): void {
+        protected _callListeners(newValue: any, oldValue: any): void {
             var listeners = this._listeners,
                 length = listeners.length;
 
@@ -220,7 +220,7 @@
          * 
          * @param {plat.IPropertyChangedListener} listener The listener added by the Template Control.
          */
-        _addListener(listener: (newValue: any, oldValue: any) => void): IRemoveListener {
+        protected _addListener(listener: (newValue: any, oldValue: any) => void): IRemoveListener {
             var listeners = this._listeners;
 
             listener = listener.bind(this.templateControl);
@@ -247,7 +247,7 @@
          * 
          * @returns {any}
          */
-        _getValue(): any {
+        protected _getValue(): any {
             if (isNull(this.templateControl)) {
                 return;
             }
@@ -266,7 +266,7 @@
          * 
          * @returns {void}
          */
-        _observeProperty(): void {
+        protected _observeProperty(): void {
             if (isNull(this.templateControl)) {
                 return;
             }

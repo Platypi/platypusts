@@ -450,7 +450,7 @@ module plat.processing {
          * 
          * @returns {plat.processing.INodeMap} The compiled {@link plat.processing.INodeMap|INodeMap}.
          */
-        static _collectAttributes(attributes: NamedNodeMap): INodeMap {
+        protected static _collectAttributes(attributes: NamedNodeMap): INodeMap {
             var nodes: Array<INode> = [],
                 attribute: Attr,
                 name: string,
@@ -540,7 +540,7 @@ module plat.processing {
          * 
          * @returns {Array<plat.processing.INode>} The cloned array of {@link plat.processing.INode|INodes}.
          */
-        static _copyAttributeNodes(nodes: Array<INode>): Array<INode> {
+        protected static _copyAttributeNodes(nodes: Array<INode>): Array<INode> {
             var newNodes: Array<INode> = [],
                 length = nodes.length,
                 node: INode;
@@ -573,7 +573,7 @@ module plat.processing {
          * 
          * @returns {plat.processing.INode} The cloned {@link plat.processing.INode|INode}.
          */
-        static _cloneNode(sourceNode: INode, node: Node, newControl?: ui.ITemplateControl): INode {
+        protected static _cloneNode(sourceNode: INode, node: Node, newControl?: ui.ITemplateControl): INode {
             return {
                 control: newControl,
                 injector: sourceNode.injector,
@@ -603,7 +603,7 @@ module plat.processing {
          * 
          * @returns {plat.processing.INodeMap} The cloned {@link plat.processing.INodeMap|INodeMap}.
          */
-        static _cloneNodeMap(sourceMap: INodeMap, element: Element,
+        protected static _cloneNodeMap(sourceMap: INodeMap, element: Element,
             parent: ui.ITemplateControl, newControl?: ui.ITemplateControl): INodeMap {
             var hasControl = sourceMap.hasControl,
                 nodeMap: INodeMap = {
@@ -1235,7 +1235,7 @@ module plat.processing {
          * 
          * @returns {void}
          */
-        _beforeLoad(uiControl: ui.ITemplateControl, absoluteContextPath: string): void {
+        protected _beforeLoad(uiControl: ui.ITemplateControl, absoluteContextPath: string): void {
             var contextManager = this.$ContextManagerStatic.getManager(uiControl.root),
                 $TemplateControlFactory = this.$TemplateControlFactory;
 
@@ -1270,7 +1270,7 @@ module plat.processing {
          * @returns {plat.async.IThenable<void[]>} A promise that resolves when this manager's controls and all 
          * child manager's controls have been bound and loaded.
          */
-        _bindChildren(): async.IThenable<void[]> {
+        protected _bindChildren(): async.IThenable<void[]> {
             var children = this.children,
                 length = children.length,
                 child: IElementManager,
@@ -1307,7 +1307,7 @@ module plat.processing {
          * 
          * @returns {void}
          */
-        _observeControlIdentifiers(nodes: Array<INode>, parent: ui.ITemplateControl, controls: Array<IControl>): void {
+        protected _observeControlIdentifiers(nodes: Array<INode>, parent: ui.ITemplateControl, controls: Array<IControl>): void {
             var length = nodes.length,
                 bindings: Array<INode> = [],
                 attributeChanged = this._attributeChanged,
@@ -1354,7 +1354,7 @@ module plat.processing {
          * 
          * @returns {void}
          */
-        _loadControls(controls: Array<IAttributeControl>, templateControl: ui.ITemplateControl): async.IThenable<void> {
+        protected _loadControls(controls: Array<IAttributeControl>, templateControl: ui.ITemplateControl): async.IThenable<void> {
             var length = controls.length,
                 control: IAttributeControl,
                 load = this.$ControlFactory.load,
@@ -1403,7 +1403,7 @@ module plat.processing {
          * @returns {plat.async.IThenable<void>} A promise that fulfills when this manager and 
          * its associated controls are bound and loaded.
          */
-        _fulfillAndLoad(): async.IThenable<void> {
+        protected _fulfillAndLoad(): async.IThenable<void> {
             return this.fulfillTemplate().then(() => {
                 return this.bindAndLoad();
             }).catch((error) => {
@@ -1426,7 +1426,7 @@ module plat.processing {
          * 
          * @returns {void}
          */
-        _populateUiControl(): void {
+        protected _populateUiControl(): void {
             var nodeMap = this.nodeMap,
                 parent = this.getParentControl(),
                 controlNode = nodeMap.uiControlNode,
@@ -1498,7 +1498,7 @@ module plat.processing {
          * 
          * @returns {void}
          */
-        _replaceElement(control: ui.ITemplateControl, nodeMap: INodeMap): void {
+        protected _replaceElement(control: ui.ITemplateControl, nodeMap: INodeMap): void {
             var element = nodeMap.element,
                 parentNode = element.parentNode,
                 $document = ElementManager.$Document,
@@ -1534,7 +1534,7 @@ module plat.processing {
          * 
          * @returns {void}
          */
-        _initializeControl(uiControl: ui.ITemplateControl, template: DocumentFragment): void {
+        protected _initializeControl(uiControl: ui.ITemplateControl, template: DocumentFragment): void {
             var element = this.nodeMap.element,
                 // have to check if null since isNull checks for undefined case
                 replaceElement = this.replace,
@@ -1597,7 +1597,7 @@ module plat.processing {
          * 
          * @returns {void}
          */
-        _attributeChanged(node: INode, parent: ui.ITemplateControl, controls: Array<IControl>): void {
+        protected _attributeChanged(node: INode, parent: ui.ITemplateControl, controls: Array<IControl>): void {
             var length = controls.length,
                 key = camelCase(node.nodeName),
                 value = NodeManager.build(node.expressions, parent),
@@ -1628,7 +1628,7 @@ module plat.processing {
          * @returns {plat.async.IThenable<void>} A promise that fullfills when all 
          * child managers have fullfilled their templates.
          */
-        _fulfillChildTemplates(): async.IThenable<void> {
+        protected _fulfillChildTemplates(): async.IThenable<void> {
             var children = this.children,
                 child: IElementManager,
                 length = children.length,

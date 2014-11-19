@@ -797,7 +797,7 @@ module plat.observable {
          * 
          * @returns {void}
          */
-        _restoreArray(array: Array<any>) {
+        protected _restoreArray(array: Array<any>) {
             var $compat = this.$Compat;
 
             if ($compat.setProto) {
@@ -829,7 +829,7 @@ module plat.observable {
          * 
          * @returns {void}
          */
-        _overwriteArray(absoluteIdentifier: string, array: Array<any>) {
+        protected _overwriteArray(absoluteIdentifier: string, array: Array<any>) {
             var $compat = this.$Compat,
                 length = arrayMethods.length,
                 method: string,
@@ -873,7 +873,7 @@ module plat.observable {
          * 
          * @returns {any} The immediate context denoted by the identifier.
          */
-        _getImmediateContext(identifier: string): any {
+        protected _getImmediateContext(identifier: string): any {
             if (isNull(this.__identifiers[identifier])) {
                 this.observe(identifier, null);
             }
@@ -908,7 +908,7 @@ module plat.observable {
          * @returns {{ newValue: any; oldValue: any; }} An object containing the old value and new value of a 
          * property upon a potential context change.
          */
-        _getValues(split: Array<string>, newRootContext: any, oldRootContext: any): { newValue: any; oldValue: any; } {
+        protected _getValues(split: Array<string>, newRootContext: any, oldRootContext: any): { newValue: any; oldValue: any; } {
             var property: string,
                 doNew = true,
                 doOld = true;
@@ -968,7 +968,7 @@ module plat.observable {
          * 
          * @returns {void}
          */
-        _notifyChildProperties(identifier: string, newValue: any, oldValue: any): void {
+        protected _notifyChildProperties(identifier: string, newValue: any, oldValue: any): void {
             var mappings = this.__identifierHash[identifier];
 
             if (isNull(mappings)) {
@@ -1080,7 +1080,7 @@ module plat.observable {
          * 
          * @returns {plat.IRemoveListener} A function for removing the given listener for the given absoluteIdentifier.
          */
-        _addObservableListener(absoluteIdentifier: string, observableListener: IListener): IRemoveListener {
+        protected _addObservableListener(absoluteIdentifier: string, observableListener: IListener): IRemoveListener {
             var remove = () => {
                     this._removeCallback(absoluteIdentifier, observableListener);
                 },
@@ -1126,7 +1126,7 @@ module plat.observable {
          * 
          * @returns {void}
          */
-        _define(identifier: string, immediateContext: any, key: string): void {
+        protected _define(identifier: string, immediateContext: any, key: string): void {
             if (isObject(immediateContext[key])) {
                 this.__defineObject(identifier, immediateContext, key);
             } else {
@@ -1149,7 +1149,7 @@ module plat.observable {
          * @returns {(...args: any[]) => any} A function that acts as an intercept for an observed 
          * array function.
          */
-        _overwriteArrayFunction(absoluteIdentifier: string, method: string): (...args: any[]) => any {
+        protected _overwriteArrayFunction(absoluteIdentifier: string, method: string): (...args: any[]) => any {
             var callbackObjects = ContextManager.observedArrayListeners[absoluteIdentifier],
                 _this = this;
 
@@ -1211,7 +1211,7 @@ module plat.observable {
          * 
          * @returns {void}
          */
-        _removeCallback(identifier: string, listener: IListener): void {
+        protected _removeCallback(identifier: string, listener: IListener): void {
             var callbacks = this.__identifiers[identifier];
             if (isNull(callbacks)) {
                 return;
@@ -1245,7 +1245,7 @@ module plat.observable {
          * 
          * @returns {boolean} Whether or not the identiifer is already being observed.
          */
-        _hasIdentifier(identifier: string): boolean {
+        protected _hasIdentifier(identifier: string): boolean {
             return !isEmpty(this.__identifiers[identifier]);
         }
         
@@ -1267,7 +1267,7 @@ module plat.observable {
          * 
          * @returns {void}
          */
-        _execute(identifier: string, value: any, oldValue: any): void {
+        protected _execute(identifier: string, value: any, oldValue: any): void {
             var observableListeners = this.__identifiers[identifier];
 
             if (isUndefined(value)) {

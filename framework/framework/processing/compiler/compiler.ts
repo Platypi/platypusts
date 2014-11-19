@@ -183,7 +183,7 @@ module plat.processing {
          * @param nodes The NodeList to be compiled. 
          * @param manager The parent Element Manager for the given array of nodes.
          */
-        _compileNodes(nodes: Array<Node>, manager: IElementManager): void {
+        protected _compileNodes(nodes: Array<Node>, manager: IElementManager): void {
             var length = nodes.length,
                 node: Node,
                 newManager: IElementManager,

@@ -253,7 +253,7 @@ module plat.navigation {
          * @returns {plat.events.INavigationEvent<any>} The {@link plat.events.INavigationEvent|INavigationEvent} to 
          * dispatch.
          */
-        _sendEvent(name: string, target: any, type: string, parameter: any,
+        protected _sendEvent(name: string, target: any, type: string, parameter: any,
             options: IBaseNavigationOptions, cancelable: boolean): events.INavigationEvent<any> {
             return this.$NavigationEventStatic.dispatch(name, this, {
                 target: target,

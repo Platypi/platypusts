@@ -93,12 +93,12 @@ module plat.navigation {
          * @access public
          * 
          * @description
-         * Registers an {plat.ui.controls.Viewport|Viewport} with this navigator. 
-         * The {plat.ui.controls.Viewport|Viewport} will call this method and pass 
+         * Registers an {@link plat.ui.controls.Viewport|Viewport} with this navigator. 
+         * The {@link plat.ui.controls.Viewport|Viewport} will call this method and pass 
          * itself in so the navigator can store it and use it to facilitate navigation.
          * 
-         * @param {plat.ui.controls.Viewport} viewport The {plat.ui.controls.Viewport|Viewport} 
-         * associated with this {@link plat.navigation.INavigator|INavigator}.
+         * @param {@link plat.ui.controls.Viewport|Viewport} viewport The {@link plat.ui.controls.Viewport|Viewport} 
+         * associated with this {@link plat.navigation.INavigatorInstance|INavigatorInstance}.
          * @param {boolean} main? Whether or not this 
          * 
          * @returns {void}
@@ -481,7 +481,7 @@ module plat.navigation {
          * 
          * @returns {number} The index in the history where the input Constructor was found.
          */
-        _findInHistory(Constructor: new (...args: any[]) => ui.IBaseViewControl): number;
+        protected _findInHistory(Constructor: new (...args: any[]) => ui.IBaseViewControl): number;
         /**
          * @name _findInHistory
          * @memberof plat.navigation.Navigator
@@ -498,8 +498,8 @@ module plat.navigation {
          * 
          * @returns {number} The index in the history where the input Constructor was found.
          */
-        _findInHistory(Constructor: string): number;
-        _findInHistory(Constructor: any): number {
+        protected _findInHistory(Constructor: string): number;
+        protected _findInHistory(Constructor: any): number {
             var history = this.history,
                 index = -1,
                 i: number;
@@ -540,7 +540,7 @@ module plat.navigation {
          * @returns {plat.navigation.INavigationState} The new current navigation state as a 
          * {@link plat.navigation.INavigationState|INavigationState}.
          */
-        _goBackLength(length?: number): INavigationState {
+        protected _goBackLength(length?: number): INavigationState {
             length = isNumber(length) ? length : 1;
 
             var last: INavigationState,
@@ -599,7 +599,7 @@ module plat.navigation {
 
         /**
          * @name currentState
-         * @memberof plat.navigation.INavigator
+         * @memberof plat.navigation.INavigatorInstance
          * @kind property
          * @access public
          * 
@@ -614,7 +614,7 @@ module plat.navigation {
 
         /**
          * @name viewport
-         * @memberof plat.navigation.INavigator
+         * @memberof plat.navigation.INavigatorInstance
          * @kind property
          * @access public
          * 

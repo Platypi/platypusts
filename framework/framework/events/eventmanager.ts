@@ -476,7 +476,7 @@ module plat.events {
          * 
          * @returns {void}
          */
-        static _dispatchUp(event: IDispatchEventInstance, args: Array<any>): void {
+        protected static _dispatchUp(event: IDispatchEventInstance, args: Array<any>): void {
             var name = event.name,
                 parent = event.sender;
 
@@ -504,7 +504,7 @@ module plat.events {
          * 
          * @returns {void}
          */
-        static _dispatchDown(event: IDispatchEventInstance, args: Array<any>): void {
+        protected static _dispatchDown(event: IDispatchEventInstance, args: Array<any>): void {
             var controls: Array<IControl> = [],
                 control: IControl,
                 name = event.name;
@@ -543,7 +543,7 @@ module plat.events {
          * 
          * @returns {void}
          */
-        static _dispatchDirect(event: IDispatchEventInstance, args: Array<any>): void {
+        protected static _dispatchDirect(event: IDispatchEventInstance, args: Array<any>): void {
             var uids = Object.keys(EventManager.__eventsListeners),
                 length = uids.length,
                 name = event.name,

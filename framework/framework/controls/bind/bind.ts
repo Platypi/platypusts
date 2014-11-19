@@ -101,7 +101,7 @@ module plat.controls {
          * 
          * @returns {void}
          */
-        _addEventType: () => void;
+        protected _addEventType: () => void;
 
         /**
          * @name _getter
@@ -114,7 +114,7 @@ module plat.controls {
          * 
          * @returns {any} The bound value.
          */
-        _getter: () => any;
+        protected _getter: () => any;
 
         /**
          * @name _setter
@@ -127,7 +127,7 @@ module plat.controls {
          * 
          * @returns {void}
          */
-        _setter: (newValue: any, oldValue?: any, firstTime?: boolean) => void;
+        protected _setter: (newValue: any, oldValue?: any, firstTime?: boolean) => void;
 
         /**
          * @name _expression
@@ -140,7 +140,7 @@ module plat.controls {
          * @description
          * The expression to evaluate as the bound value.
          */
-        _expression: expressions.IParsedExpression;
+        protected _expression: expressions.IParsedExpression;
 
         /**
          * @name _contextExpression
@@ -154,7 +154,7 @@ module plat.controls {
          * The IParsedExpression used to evaluate the context 
          * of the bound property.
          */
-        _contextExpression: expressions.IParsedExpression;
+        protected _contextExpression: expressions.IParsedExpression;
 
         /**
          * @name _property
@@ -167,7 +167,7 @@ module plat.controls {
          * @description
          * The bound property name.
          */
-        _property: string;
+        protected _property: string;
 
         /**
          * @name __fileSupported
@@ -338,7 +338,7 @@ module plat.controls {
          * 
          * @returns {void}
          */
-        _addTextEventListener(): void {
+        protected _addTextEventListener(): void {
             var element = this.element,
                 $compat = this.$Compat,
                 composing = false,
@@ -404,7 +404,7 @@ module plat.controls {
          * 
          * @returns {void}
          */
-        _addChangeEventListener(): void {
+        protected _addChangeEventListener(): void {
             this.addEventListener(this.element, 'change', this._propertyChanged, false);
         }
 
@@ -420,7 +420,7 @@ module plat.controls {
          * 
          * @returns {void}
          */
-        _addButtonEventListener(): void {
+        protected _addButtonEventListener(): void {
             this.addEventListener(this.element, __tap, this._propertyChanged, false);
         }
 
@@ -435,7 +435,7 @@ module plat.controls {
          * 
          * @returns {boolean} Whether or not the input element is checked
          */
-        _getChecked(): boolean {
+        protected _getChecked(): boolean {
             return (<HTMLInputElement>this.element).checked;
         }
 
@@ -451,7 +451,7 @@ module plat.controls {
          * 
          * @returns {string} The input value
          */
-        _getValue(): string {
+        protected _getValue(): string {
             return (<HTMLInputElement>this.element).value;
         }
 
@@ -466,7 +466,7 @@ module plat.controls {
          * 
          * @returns {string} The button textContent
          */
-        _getTextContent(): string {
+        protected _getTextContent(): string {
             return (<HTMLInputElement>this.element).textContent;
         }
 
@@ -482,7 +482,7 @@ module plat.controls {
          * 
          * @returns {plat.controls.IFile} The input file
          */
-        _getFile(): IFile {
+        protected _getFile(): IFile {
             var element = <HTMLInputElement>this.element,
                 value = element.value;
 
@@ -513,7 +513,7 @@ module plat.controls {
          * 
          * @returns {Array<plat.controls.IFile>} The input files
          */
-        _getFiles(): Array<IFile> {
+        protected _getFiles(): Array<IFile> {
             var element = <HTMLInputElement>this.element;
 
             if (this.__fileSupported) {
@@ -555,7 +555,7 @@ module plat.controls {
          * 
          * @returns {Array<string>} The selected values
          */
-        _getSelectedValues(): Array<string> {
+        protected _getSelectedValues(): Array<string> {
             var options = (<HTMLSelectElement>this.element).options,
                 length = options.length,
                 option: HTMLOptionElement,
@@ -588,7 +588,7 @@ module plat.controls {
          * 
          * @returns {void}
          */
-        _setText(newValue: any, oldValue?: any, firstTime?: boolean): void {
+        protected _setText(newValue: any, oldValue?: any, firstTime?: boolean): void {
             if (this.__isSelf) {
                 return;
             }
@@ -624,7 +624,7 @@ module plat.controls {
          * 
          * @returns {void}
          */
-        _setRange(newValue: any, oldValue?: any, firstTime?: boolean): void {
+        protected _setRange(newValue: any, oldValue?: any, firstTime?: boolean): void {
             if (this.__isSelf) {
                 return;
             }
@@ -660,7 +660,7 @@ module plat.controls {
          * 
          * @returns {void}
          */
-        _setChecked(newValue: any, oldValue?: any, firstTime?: boolean): void {
+        protected _setChecked(newValue: any, oldValue?: any, firstTime?: boolean): void {
             if (this.__isSelf) {
                 return;
             } else if (!isBoolean(newValue)) {
@@ -687,7 +687,7 @@ module plat.controls {
          * 
          * @returns {void}
          */
-        _setRadio(newValue: any): void {
+        protected _setRadio(newValue: any): void {
             var element = (<HTMLInputElement>this.element);
             if (this.__isSelf) {
                 return;
@@ -715,7 +715,7 @@ module plat.controls {
          * 
          * @returns {void}
          */
-        _setSelectedIndex(newValue: any, oldValue?: any, firstTime?: boolean): void {
+        protected _setSelectedIndex(newValue: any, oldValue?: any, firstTime?: boolean): void {
             if (this.__isSelf) {
                 return;
             } else if (firstTime === true && this._checkAsynchronousSelect()) {
@@ -782,7 +782,7 @@ module plat.controls {
          * 
          * @returns {void}
          */
-        _setSelectedIndices(newValue: any, oldValue?: any, firstTime?: boolean): void {
+        protected _setSelectedIndices(newValue: any, oldValue?: any, firstTime?: boolean): void {
             if (this.__isSelf) {
                 return;
             } else if (firstTime === true && this._checkAsynchronousSelect()) {
@@ -840,7 +840,7 @@ module plat.controls {
          * 
          * @returns {void}
          */
-        _determineType(): void {
+        protected _determineType(): void {
             if (!isNull(this.templateControl) && this._observingBindableProperty()) {
                 return;
             }
@@ -910,7 +910,7 @@ module plat.controls {
          * 
          * @returns {void}
          */
-        _watchExpression(): void {
+        protected _watchExpression(): void {
             var contextExpression = this._contextExpression,
                 context = this.evaluateExpression(contextExpression);
 
@@ -958,7 +958,7 @@ module plat.controls {
          * 
          * @returns {void}
          */
-        _propertyChanged(): void {
+        protected _propertyChanged(): void {
             if (isNull(this._contextExpression)) {
                 return;
             }
@@ -989,7 +989,7 @@ module plat.controls {
          * 
          * @returns {void}
          */
-        _initializeRadio(): void {
+        protected _initializeRadio(): void {
             var element = this.element;
 
             this._addEventType = this._addChangeEventListener;
@@ -1021,7 +1021,7 @@ module plat.controls {
          * 
          * @returns {void}
          */
-        _initializeSelect(): void {
+        protected _initializeSelect(): void {
             var element = <HTMLSelectElement>this.element,
                 multiple = element.multiple,
                 options = element.options,
@@ -1056,7 +1056,7 @@ module plat.controls {
          * 
          * @returns {boolean} Whether or not the select is loading items.
          */
-        _checkAsynchronousSelect(): boolean {
+        protected _checkAsynchronousSelect(): boolean {
             var select = <ui.controls.Select>this.templateControl;
             if (!isNull(select) && (select.type === __Select || select.type === __ForEach) && isPromise(select.itemsLoaded)) {
                 var split = select.absoluteContextPath.split('.'),
@@ -1093,7 +1093,7 @@ module plat.controls {
          * @returns {boolean} Whether or not the associated {@link plat.ui.TemplateControl|TemplateControl} 
          * is an {@link plat.ui.IBindablePropertyControl|IBindablePropertyControl}
          */
-        _observingBindableProperty(): boolean {
+        protected _observingBindableProperty(): boolean {
             var templateControl = <ui.IBindablePropertyControl>this.templateControl;
 
             if (isFunction(templateControl.observeProperty) &&
@@ -1126,7 +1126,7 @@ module plat.controls {
          * 
          * @returns {void}
          */
-        _setBindableProperty(newValue: any, oldValue?: any, firstTime?: boolean): void {
+        protected _setBindableProperty(newValue: any, oldValue?: any, firstTime?: boolean): void {
             if (this.__isSelf || newValue === oldValue) {
                 return;
             }
@@ -1147,7 +1147,7 @@ module plat.controls {
          * 
          * @returns {void}
          */
-        _setValue(newValue: any): void {
+        protected _setValue(newValue: any): void {
             var element = <HTMLInputElement>this.element;
             if (element.value === newValue) {
                 return;

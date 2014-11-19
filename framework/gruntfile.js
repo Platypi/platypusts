@@ -134,7 +134,7 @@ module.exports = exports = function load(grunt) {
     grunt.loadNpmTasks('grunt-ts-bundle');
     grunt.loadNpmTasks('grunt-ts');
 
-    grunt.registerTask('docs', ['bundle'])
+    grunt.registerTask('docs', ['clean:after', 'bundle'])
 
     // By default, run all tests.
     grunt.registerTask('default', ['clean', 'bundle', 'copy:main', 'ts', 'uglify', 'copy:bower', 'copy:node', 'clean:after']);

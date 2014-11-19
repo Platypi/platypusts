@@ -70,7 +70,7 @@ module plat.processing {
          * 
          * @returns {plat.processing.INodeMap} The cloned {@link plat.processing.INodeMap|INodeMap}.
          */
-        static _cloneNodeMap(sourceMap: INodeMap, newNode: Node): INodeMap {
+        protected static _cloneNodeMap(sourceMap: INodeMap, newNode: Node): INodeMap {
             var node = sourceMap.nodes[0],
                 nodeMap: INodeMap = {
                     nodes: [{
@@ -100,7 +100,7 @@ module plat.processing {
          * 
          * @returns {plat.processing.ITextManager} The cloned {@link plat.processing.ITextManager|ITextManager}.
          */
-        static _clone(sourceManager: INodeManager, node: Node, parent: IElementManager): ITextManager {
+        protected static _clone(sourceManager: INodeManager, node: Node, parent: IElementManager): ITextManager {
             var map = sourceManager.nodeMap,
                 manager = new TextManager();
 
@@ -188,7 +188,7 @@ module plat.processing {
          * 
          * @returns {void}
          */
-        _setText(node: Node, control: ui.ITemplateControl, expressions: Array<expressions.IParsedExpression>): void {
+        protected _setText(node: Node, control: ui.ITemplateControl, expressions: Array<expressions.IParsedExpression>): void {
             control = control || <ui.ITemplateControl>{};
             node.nodeValue = NodeManager.build(expressions, control);
         }

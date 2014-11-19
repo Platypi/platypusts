@@ -157,7 +157,7 @@ module plat.controls {
          * 
          * @returns {void}
          */
-        _setListener(): void {
+        protected _setListener(): void {
             var attr = this.attribute;
             if (isEmpty(this.event) || isEmpty(attr)) {
                 return;
@@ -206,7 +206,7 @@ module plat.controls {
          * 
          * @returns {void}
          */
-        _onEvent(ev: KeyboardEvent): void {
+        protected _onEvent(ev: KeyboardEvent): void {
             var keyCodes = this.keyCodes,
                 code: { shifted?: boolean };
 
@@ -236,7 +236,7 @@ module plat.controls {
          * 
          * @returns {void}
          */
-        _setKeyCodes(keys?: Array<string>): void {
+        protected _setKeyCodes(keys?: Array<string>): void {
             if (!isArray(keys)) {
                 keys = [];
             }

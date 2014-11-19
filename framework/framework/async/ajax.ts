@@ -294,7 +294,7 @@ module plat.async {
          * return true in the case of a success and false in the case of 
          * an error.
          */
-        _xhrOnReadyStateChange(): boolean {
+        protected _xhrOnReadyStateChange(): boolean {
             var xhr = this.xhr;
             if (xhr.readyState === 4) {
                 var status = xhr.status;
@@ -339,7 +339,7 @@ module plat.async {
          * formatted {@link plat.async.IAjaxResponse|IAjaxResponse} and rejects if there is a problem with an 
          * {@link plat.async.IAjaxError|IAjaxError}.
          */
-        _sendXhrRequest(): IAjaxPromise<any> {
+        protected _sendXhrRequest(): IAjaxPromise<any> {
             var xhr = this.xhr,
                 options = this.__options,
                 method = options.method,
@@ -512,7 +512,7 @@ module plat.async {
          * @returns {plat.async.IAjaxPromise} A promise that immediately rejects 
          * with an {@link plat.async.IAjaxError|IAjaxError}
          */
-        _invalidOptions(): IAjaxPromise<any> {
+        protected _invalidOptions(): IAjaxPromise<any> {
             return new AjaxPromise((resolve, reject) => {
                 var exceptionFactory: IExceptionStatic = acquire(__ExceptionStatic);
                 exceptionFactory.warn('Attempting a request without specifying a url', exceptionFactory.AJAX);
@@ -540,7 +540,7 @@ module plat.async {
          * @returns {IAjaxResponse<any>} The {@link plat.async.IAjaxResponse|IAjaxResponse} to be returned to 
          * the requester.
          */
-        _formatResponse(responseType: string, success: boolean): IAjaxResponse<any> {
+        protected _formatResponse(responseType: string, success: boolean): IAjaxResponse<any> {
             var xhr = this.xhr,
                 status = xhr.status,
                 response = xhr.response;

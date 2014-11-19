@@ -331,7 +331,7 @@ module plat.processing {
          * @description
          * A regular expression for finding markup
          */
-        static _markupRegex: RegExp;
+        protected static _markupRegex: RegExp;
         
         /**
          * @name _newLineRegex
@@ -345,7 +345,7 @@ module plat.processing {
          * @description
          * A regular expression for finding newline characters.
          */
-        static _newLineRegex: RegExp;
+        protected static _newLineRegex: RegExp;
         
         /**
          * @name _wrapExpression
@@ -361,7 +361,7 @@ module plat.processing {
          * 
          * @returns {plat.expressions.IParsedExpression} The wrapped, static expression.
          */
-        static _wrapExpression(text: string): expressions.IParsedExpression {
+        protected static _wrapExpression(text: string): expressions.IParsedExpression {
             return {
                 evaluate: () => text,
                 identifiers: [],

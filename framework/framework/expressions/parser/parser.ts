@@ -181,7 +181,7 @@ module plat.expressions {
          * @returns {plat.expressions.IParsedExpression} The parsed expression containing detailed 
          * information about the expression as well as a way to evaluate its value.
          */
-        _evaluate(expression: string): IParsedExpression {
+        protected _evaluate(expression: string): IParsedExpression {
             var tokens = this._tokens,
                 length = tokens.length,
                 tempIdentifiers = this.__tempIdentifiers,
@@ -771,7 +771,7 @@ module plat.expressions {
          * @returns {plat.expressions.IToken} The next {@link plat.expressions.IToken|IToken} 
          * in the {@link plat.expressions.IToken|IToken} array.
          */
-        _peek(index: number): IToken {
+        protected _peek(index: number): IToken {
             return this._tokens[index + 1];
         }
         
@@ -790,7 +790,7 @@ module plat.expressions {
          * @returns {plat.expressions.IToken} The previous {@link plat.expressions.IToken|IToken} 
          * in the {@link plat.expressions.IToken|IToken} array.
          */
-        _lookBack(index: number): IToken {
+        protected _lookBack(index: number): IToken {
             return this._tokens[index - 1];
         }
         
@@ -805,7 +805,7 @@ module plat.expressions {
          * 
          * @returns {void}
          */
-        _popRemainingIdentifiers(): void {
+        protected _popRemainingIdentifiers(): void {
             var identifiers = this.__identifiers,
                 tempIdentifiers = this.__tempIdentifiers,
                 last: string;
@@ -829,7 +829,7 @@ module plat.expressions {
          * 
          * @returns {void}
          */
-        _makeIdentifiersUnique(): void {
+        protected _makeIdentifiersUnique(): void {
             var identifiers = this.__identifiers,
                 uniqueIdentifiers: Array<string> = [],
                 uniqueIdentifierObject: IObject<boolean> = {},
@@ -862,7 +862,7 @@ module plat.expressions {
          * 
          * @returns {boolean} Whether or not the val is equal to the input character.
          */
-        _isValEqual(obj: IToken, char: string): boolean {
+        protected _isValEqual(obj: IToken, char: string): boolean {
             if (isNull(obj) || isNull(obj.val)) {
                 return isNull(char);
             } else if (obj.val === '') {
@@ -887,7 +887,7 @@ module plat.expressions {
          * 
          * @returns {boolean} Whether or not the val is not equal to the input character.
          */
-        _isValUnequal(obj: any, char: string): boolean {
+        protected _isValUnequal(obj: any, char: string): boolean {
             if (isNull(obj) || isNull(obj.val)) {
                 return !isNull(char);
             } else if (obj.val === '') {
@@ -907,7 +907,7 @@ module plat.expressions {
          * 
          * @returns {void}
          */
-        _resetParser(): void {
+        protected _resetParser(): void {
             this._tokens = [];
             this.__codeArray = [];
             this.__identifiers = [];
@@ -928,7 +928,7 @@ module plat.expressions {
          * 
          * @returns {void}
          */
-        _throwError(error: string): void {
+        protected _throwError(error: string): void {
             var $exception: IExceptionStatic = acquire(__ExceptionStatic);
             $exception.fatal(error, $exception.PARSE);
         }

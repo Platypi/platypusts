@@ -230,7 +230,7 @@
          * 
          * @returns {void}
          */
-        _beforeRouteChange(ev: events.INavigationEvent<web.IRoute<any>>): void {
+        protected _beforeRouteChange(ev: events.INavigationEvent<web.IRoute<any>>): void {
             var event = this._sendEvent(__beforeNavigate, ev.target, ev.type, ev.parameter, ev.options, true);
 
             if (event.cancelled) {
@@ -255,7 +255,7 @@
          * 
          * @returns {void}
          */
-        _onRouteChanged(ev: events.INavigationEvent<web.IRoute<any>>): void {
+        protected _onRouteChanged(ev: events.INavigationEvent<web.IRoute<any>>): void {
             var state = this.currentState || <IRouteNavigationState>{},
                 viewControl = state.control,
                 injector = ev.target,
@@ -399,7 +399,7 @@
     export interface IRouteNavigationState {
         /**
          * @name control
-         * @memberof plat.navigation.IRouteNavigationStateNavigationState
+         * @memberof plat.navigation.IRouteNavigationState
          * @kind property
          * @access public
          * 
@@ -412,7 +412,7 @@
 
         /**
          * @name route
-         * @memberof plat.navigation.RoutingNavigator
+         * @memberof plat.navigation.IRouteNavigationState
          * @kind property
          * @access public
          * 
