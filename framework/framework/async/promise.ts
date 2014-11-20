@@ -160,29 +160,6 @@ module plat.async {
         }
 
         /**
-         * @name cast
-         * @memberof plat.async.Promise
-         * @kind function
-         * @access public
-         * @static
-         * 
-         * @description
-         * Creates a promise that fulfills to the passed in object. If the
-         * passed-in object is a promise it returns the promise.
-         * 
-         * @typeparam {any} R The type of the input object to cast to a promise.
-         * 
-         * @param object The object to cast to a Promise.
-         */
-        static cast<R>(object?: R): Promise<R> {
-            if (isObject(object) && (<any>object).constructor === Promise) {
-                return <Promise<R>>(<any>object);
-            }
-
-            return new Promise<R>((resolve: (value: R) => any) => resolve(object));
-        }
-
-        /**
          * @name race
          * @memberof plat.async.Promise
          * @kind function
@@ -1017,7 +994,6 @@ module plat.async {
     export function IPromise($Window?: any): IPromise {
         if (!isNull($Window.Promise) &&
             isFunction($Window.Promise.all) &&
-            isFunction($Window.Promise.cast) &&
             isFunction($Window.Promise.race) &&
             isFunction($Window.Promise.resolve) &&
             isFunction($Window.Promise.reject)) {
@@ -1101,25 +1077,6 @@ module plat.async {
          * @returns {plat.async.IThenable<Array<R>>} A promise that resolves after all the input promises resolve.
          */
         all<R>(promises: Array<R>): IThenable<Array<R>>;
-
-        /**
-         * @name cast
-         * @memberof plat.async.IPromise
-         * @kind function
-         * @access public
-         * @static
-         * 
-         * @description
-         * Creates a promise that fulfills to the passed in object. If the
-         * passed-in object is a promise it returns the promise.
-         * 
-         * @typeparam {any} R The type of the input object to cast to a promise.
-         * 
-         * @param {R} object The object to cast to a Promise.
-         * 
-         * @returns {plat.async.IThenable<R>} The cast promise.
-         */
-        cast<R>(object?: R): IThenable<R>;
 
         /**
          * @name race
