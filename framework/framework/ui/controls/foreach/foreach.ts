@@ -114,7 +114,7 @@ module plat.ui.controls {
          * can overwrite these with the {@link plat.ui.controls.IForEachOptions|options} for 
          * the foreach control. 
          */
-        _aliases: IForEachAliasOptions = {
+        protected _aliases: IForEachAliasOptions = {
             index: __forEachAliasOptions.index,
             even: __forEachAliasOptions.even,
             odd: __forEachAliasOptions.odd,
