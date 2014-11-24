@@ -89,6 +89,40 @@ module plat.ui.controls {
         itemsLoaded: async.IThenable<void>;
 
         /**
+         * @name options
+         * @memberof plat.ui.controls.ForEach
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.observable.IObservableProperty<plat.ui.controls.IForEachAliasOptions>}
+         * 
+         * @description
+         * The {@link plat.ui.controls.IForEachOptions|options} for the foreach control. 
+         */
+        options: observable.IObservableProperty<IForEachOptions>;
+
+        /**
+         * @name _aliases
+         * @memberof plat.ui.controls.ForEach
+         * @kind property
+         * @access protected
+         * 
+         * @type {plat.ui.controls.IForEachAliasOptions}
+         * 
+         * @description
+         * Used to hold the alias tokens for the built-in foreach aliases. You 
+         * can overwrite these with the {@link plat.ui.controls.IForEachOptions|options} for 
+         * the foreach control. 
+         */
+        _aliases: IForEachAliasOptions = {
+            index: __forEachAliasOptions.index,
+            even: __forEachAliasOptions.even,
+            odd: __forEachAliasOptions.odd,
+            first: __forEachAliasOptions.first,
+            last: __forEachAliasOptions.last
+        };
+
+        /**
          * @name _blockLength
          * @memberof plat.ui.controls.ForEach
          * @kind property
@@ -199,6 +233,7 @@ module plat.ui.controls {
                 return;
             }
 
+            this._setAliases();
             this._executeEvent({
                 method: 'splice',
                 arguments: null,
@@ -226,6 +261,7 @@ module plat.ui.controls {
                 return;
             }
 
+            this._setAliases();
             this._addItems(context.length, 0);
 
             this._setListener();
@@ -244,6 +280,39 @@ module plat.ui.controls {
          */
         dispose(): void {
             this.__resolveFn = null;
+        }
+
+        /**
+         * @name _setAliases
+         * @memberof plat.ui.controls.ForEach
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Sets the alias tokens to use for all the items in the foreach context array.
+         * 
+         * @returns {void}
+         */
+        _setAliases() {
+            var options = this.options;
+
+            if (!(isObject(options) && isObject(options.value) && isObject(options.value.aliases))) {
+                return;
+            }
+
+            var aliases = options.value.aliases,
+                keys = Object.keys(this._aliases),
+                length = keys.length,
+                _aliases = this._aliases,
+                value: string;
+
+            for (var i = 0; i < length; ++i) {
+                value = aliases[keys[i]];
+
+                if (isString(value)) {
+                    _aliases[keys[i]] = value;
+                }
+            }
         }
 
         /**
@@ -466,29 +535,37 @@ module plat.ui.controls {
          * @returns {plat.IObject<plat.ui.IResource>} An object consisting of {@link plat.ui.IResource|IResources}.
          */
         _getAliases(index: number): IObject<IResource> {
-            var isEven = (index & 1) === 0;
-            return {
-                index: {
-                    value: index,
-                    type: __OBSERVABLE_RESOURCE
-                },
-                even: {
-                    value: isEven,
-                    type: __OBSERVABLE_RESOURCE
-                },
-                odd: {
-                    value: !isEven,
-                    type: __OBSERVABLE_RESOURCE
-                },
-                first: {
-                    value: index === 0,
-                    type: __OBSERVABLE_RESOURCE
-                },
-                last: {
-                    value: index === (this.context.length - 1),
-                    type: __OBSERVABLE_RESOURCE
-                }
+            var isEven = (index & 1) === 0,
+                aliases: IObject<ui.IResource> = {},
+                _aliases = this._aliases,
+                type = __OBSERVABLE_RESOURCE;
+
+            aliases[_aliases.index] = {
+                value: index,
+                type: type
             };
+
+            aliases[_aliases.even] = {
+                value: isEven,
+                type: type
+            };
+
+            aliases[_aliases.odd] = {
+                value: !isEven,
+                type: type
+            };
+
+            aliases[_aliases.first] = {
+                value: index === 0,
+                type: type
+            };
+
+            aliases[_aliases.last] = {
+                value: index === (this.context.length - 1),
+                type: type
+            };
+
+            return aliases;
         }
 
         /**
@@ -701,4 +778,109 @@ module plat.ui.controls {
     }
 
     register.control(__ForEach, ForEach);
+
+    /**
+     * @name IForEachOptions
+     * @memberof plat.ui.controls
+     * @kind interface
+     * 
+     * @description
+     * The {@link plat.observable.IObservableProperty|options} object for the 
+     * {@link plat.ui.controls.ForEach|ForEach} control.
+     */
+    export interface IForEachOptions {
+        /**
+         * @name aliases
+         * @memberof plat.ui.controls.IForEachOptions
+         * @kind property
+         * 
+         * @type {plat.ui.controls.IForEachAliasOptions}
+         * 
+         * @description
+         * Used to specify alternative alias tokens for the built-in foreach aliases.
+         */
+        aliases: IForEachAliasOptions;
+    }
+
+    /**
+     * @name IForEachAliasOptions
+     * @memberof plat.ui.controls
+     * @kind interface
+     * 
+     * @extends {plat.IObject<string>}
+     * 
+     * @description
+     * The alias tokens for the {@link plat.ui.controls.IForEachOptions|ForEach options} object for the 
+     * {@link plat.ui.controls.ForEach|ForEach} control.
+     */
+    export interface IForEachAliasOptions extends IObject<string> {
+        /**
+         * @name index
+         * @memberof plat.ui.controls.IForEachAliasOptions
+         * @kind property
+         * 
+         * @type {string}
+         * 
+         * @description
+         * Used to specify an alternative alias for the index in a {@link plat.ui.controls.ForEach|ForEach} 
+         * item template.
+         */
+        index: string;
+
+        
+        /**
+         * @name even
+         * @memberof plat.ui.controls.IForEachAliasOptions
+         * @kind property
+         * 
+         * @type {string}
+         * 
+         * @description
+         * Used to specify an alternative alias for the even in a {@link plat.ui.controls.ForEach|ForEach} 
+         * item template.
+         */
+        even: string;
+
+        
+        /**
+         * @name odd
+         * @memberof plat.ui.controls.IForEachAliasOptions
+         * @kind property
+         * 
+         * @type {string}
+         * 
+         * @description
+         * Used to specify an alternative alias for the odd in a {@link plat.ui.controls.ForEach|ForEach} 
+         * item template.
+         */
+        odd: string;
+
+        
+        /**
+         * @name first
+         * @memberof plat.ui.controls.IForEachAliasOptions
+         * @kind property
+         * 
+         * @type {string}
+         * 
+         * @description
+         * Used to specify an alternative alias for the first in a {@link plat.ui.controls.ForEach|ForEach} 
+         * item template.
+         */
+        first: string;
+
+        
+        /**
+         * @name last
+         * @memberof plat.ui.controls.IForEachAliasOptions
+         * @kind property
+         * 
+         * @type {string}
+         * 
+         * @description
+         * Used to specify an alternative alias for the last in a {@link plat.ui.controls.ForEach|ForEach} 
+         * item template.
+         */
+        last: string;
+    }
 }
