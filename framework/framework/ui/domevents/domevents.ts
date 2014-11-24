@@ -1016,22 +1016,26 @@
                 if (eventType === 'touchend') {
                     // all to handle a strange issue when touch clicking certain types 
                     // of DOM elements
-                    var target = <HTMLInputElement>ev.target;
                     if (hasMoved) {
                         if (ev.cancelable === true) {
                             ev.preventDefault();
                         }
-                        this.__preventClickFromTouch();
-                    } else if (this.__isFocused(target)) {
-                        this.__preventClickFromTouch();
-                    } else {
+                    } else if (this._inTouch === true) {
+                        // handInput must be called prior to preventClickFromTouch due to an 
+                        // order of operations
+                        this.__handleInput(<HTMLInputElement>ev.target);
                         if (ev.cancelable === true) {
                             ev.preventDefault();
                         }
-                        if (this._inTouch === true) {
-                            this.__handleInput(target);
+                    } else {
+                        this.__preventClickFromTouch();
+                        if (ev.cancelable === true) {
+                            ev.preventDefault();
                         }
+                        return;
                     }
+
+                    this.__preventClickFromTouch();
                 }
 
                 this._inTouch = false;
@@ -2328,7 +2332,6 @@
                     break;
                 case 'a':
                 case 'button':
-                case 'select':
                 case 'label':
                     if (isFunction(focusedElement.blur)) {
                         focusedElement.blur();
@@ -2349,6 +2352,20 @@
                         remover();
                     }, false);
                     return;
+                case 'select':
+                    if (isFunction(focusedElement.blur)) {
+                        focusedElement.blur();
+                    }
+                    postpone(() => {
+                        var $document = this.$Document;
+                        if ($document.body.contains(target)) {
+                            var event = this.$Document.createEvent('MouseEvents');
+                            event.initMouseEvent('mousedown', false, false, null, null, null,
+                                null, null, null, null, null, null, null, null, null);
+                            target.dispatchEvent(event);
+                        }
+                    });
+                    break;
                 default:
                     if (isFunction(focusedElement.blur)) {
                         focusedElement.blur();
@@ -2362,7 +2379,6 @@
             }
 
             this.__focusedElement = null;
-            return;
         }
         /**
          * @name __preventClickFromTouch
