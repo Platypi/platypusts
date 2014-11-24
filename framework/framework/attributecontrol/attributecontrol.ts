@@ -118,7 +118,7 @@ module plat {
 
     /**
      * @name IAttributeControl
-     * @memberof plat.controls
+     * @memberof plat
      * @kind interface
      * @access public
      * 
