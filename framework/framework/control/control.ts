@@ -152,7 +152,7 @@ module plat {
             }
 
             if (isFunction(control.loaded)) {
-                return Control.$Promise.cast(control.loaded());
+                return Control.$Promise.resolve(control.loaded());
             }
 
             return Control.$Promise.resolve(null);

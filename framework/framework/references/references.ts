@@ -189,6 +189,16 @@ var __prefix = '$',
     __injectableError = 'Injectable' + __errorSuffix,
     __compatError = 'Compatibility' + __errorSuffix,
 
+    /**
+     * ForEach aliases
+     */
+    __forEachAliasOptions = {
+        index: 'index',
+        even: 'even',
+        odd: 'odd',
+        first: 'first',
+        last: 'last'
+    },
 
     /**
      * Constants

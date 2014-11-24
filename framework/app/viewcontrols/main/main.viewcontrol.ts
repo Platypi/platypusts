@@ -10,7 +10,12 @@ module app {
             password: <string>null,
             keydown: '',
             count: 0,
-            arr: [1, 2, 3, 4, 5]
+            arr: [1, 2, 3, 4, 5],
+            nested: [
+                ['foo', 'bar', 'baz'],
+                ['quux'],
+                ['foobar', 'bazquux']
+            ]
         };
         text: plat.controls.INamedElement<HTMLElement, void>;
         password: plat.controls.INamedElement<HTMLElement, void>;
