@@ -338,11 +338,10 @@
                 parameter: match.route,
                 target: match.injector,
                 type: match.type,
-                options: null,
-                cancelable: true
+                options: null
             });
 
-            if (event.cancelled) {
+            if (event.defaultPrevented) {
                 return false;
             }
 
@@ -485,8 +484,7 @@
                 parameter: matchedRoute.route,
                 target: matchedRoute.injector,
                 type: matchedRoute.type,
-                options: null,
-                cancelable: false
+                options: null
             });
         }
 

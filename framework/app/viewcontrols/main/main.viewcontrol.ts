@@ -105,6 +105,14 @@ module app {
             $browserConfig.baseUrl = 'app';
         }
 
+        ready(ev: plat.events.ILifecycleEvent) {
+            ev.preventDefault();
+
+            setTimeout(() => {
+                this.load();
+            }, 1000);
+        }
+
         error(ev: plat.events.IErrorEvent<any>) {
             console.log(ev.error);
         }

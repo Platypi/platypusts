@@ -231,10 +231,10 @@
          * @returns {void}
          */
         protected _beforeRouteChange(ev: events.INavigationEvent<web.IRoute<any>>): void {
-            var event = this._sendEvent(__beforeNavigate, ev.target, ev.type, ev.parameter, ev.options, true);
+            var event = this._sendEvent(__beforeNavigate, ev.target, ev.type, ev.parameter, ev.options);
 
-            if (event.cancelled) {
-                ev.cancel();
+            if (event.defaultPrevented) {
+                ev.preventDefault();
             }
         }
         

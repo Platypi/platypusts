@@ -194,9 +194,9 @@ module plat.navigation {
                 baseport = this.viewport,
                 index = -1;
 
-            event = this._sendEvent(__beforeNavigate, Constructor, null, parameter, options, true);
+            event = this._sendEvent(__beforeNavigate, Constructor, null, parameter, options);
 
-            if (event.cancelled) {
+            if (event.defaultPrevented) {
                 return;
             }
 
@@ -350,9 +350,9 @@ module plat.navigation {
                 return;
             }
 
-            var event = this._sendEvent(__beforeNavigate, viewControl, viewControl.type, parameter, options, true);
+            var event = this._sendEvent(__beforeNavigate, viewControl, viewControl.type, parameter, options);
 
-            if (event.cancelled) {
+            if (event.defaultPrevented) {
                 return;
             }
 
