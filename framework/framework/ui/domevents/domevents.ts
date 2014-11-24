@@ -2359,7 +2359,7 @@
                     postpone(() => {
                         var $document = this.$Document;
                         if ($document.body.contains(target)) {
-                            var event = this.$Document.createEvent('MouseEvents');
+                            var event = <MouseEvent>$document.createEvent('MouseEvents');
                             event.initMouseEvent('mousedown', false, false, null, null, null,
                                 null, null, null, null, null, null, null, null, null);
                             target.dispatchEvent(event);
