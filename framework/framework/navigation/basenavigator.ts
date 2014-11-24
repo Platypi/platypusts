@@ -183,7 +183,7 @@ module plat.navigation {
             control.navigator = this;
             control.navigatedTo(parameter);
 
-            this._sendEvent(__navigated, control, control.type, parameter, options, false);
+            this._sendEvent(__navigated, control, control.type, parameter, options);
         }
         
         /**
@@ -248,19 +248,17 @@ module plat.navigation {
          * or a route depending upon this navigator and event name.
          * @param {plat.navigation.IBaseNavigationOptions} options The 
          * {@link plat.navigation.IBaseNavigationOptions|IBaseNavigationOptions} used during navigation
-         * @param {boolean} cancelable Whether or not the event can be cancelled, preventing further navigation.
          * 
          * @returns {plat.events.INavigationEvent<any>} The {@link plat.events.INavigationEvent|INavigationEvent} to 
          * dispatch.
          */
         _sendEvent(name: string, target: any, type: string, parameter: any,
-            options: IBaseNavigationOptions, cancelable: boolean): events.INavigationEvent<any> {
+            options: IBaseNavigationOptions): events.INavigationEvent<any> {
             return this.$NavigationEventStatic.dispatch(name, this, {
                 target: target,
                 type: type,
                 parameter: parameter,
-                options: options,
-                cancelable: cancelable
+                options: options
             });
         }
     }

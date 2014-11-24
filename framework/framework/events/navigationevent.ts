@@ -109,33 +109,6 @@
         type: string;
 
         /**
-         * @name cancelable
-         * @memberof plat.events.NavigationEvent
-         * @kind property
-         * @access public
-         * 
-         * @type {boolean}
-         * 
-         * @description
-         * States whether or not this event is able to be cancelled. Some navigation events can be 
-         * cancelled, preventing further navigation.
-         */
-        cancelable: boolean = true;
-
-        /**
-         * @name cancelled
-         * @memberof plat.events.NavigationEvent
-         * @kind property
-         * @access public
-         * 
-         * @type {boolean}
-         * 
-         * @description
-         * States whether or not this event has been cancelled.
-         */
-        cancelled: boolean = false;
-
-        /**
          * @name initialize
          * @memberof plat.events.NavigationEvent
          * @kind function
@@ -158,25 +131,6 @@
             this.options = eventOptions.options;
             this.target = eventOptions.target;
             this.type = eventOptions.type;
-        }
-
-        /**
-         * @name cancel
-         * @memberof plat.events.NavigationEvent
-         * @kind function
-         * @access public
-         * 
-         * @description
-         * If the event is {@link plat.events.NavigationEvent.cancelable|cancelable}, calling this method will cancel the event.
-         * 
-         * @returns {void}
-         */
-        cancel(): void {
-            if (this.cancelable) {
-                this.cancelled = true;
-
-                (<any>this.$EventManagerStatic.propagatingEvents)[this.name] = false;
-            }
         }
     }
 
@@ -287,33 +241,6 @@
         type: string;
 
         /**
-         * @name cancelable
-         * @memberof plat.events.INavigationEvent
-         * @kind property
-         * @access public
-         * 
-         * @type {boolean}
-         * 
-         * @description
-         * States whether or not this event is able to be cancelled. Some navigation events can be 
-         * cancelled, preventing further navigation.
-         */
-        cancelable: boolean;
-
-        /**
-         * @name cancelled
-         * @memberof plat.events.INavigationEvent
-         * @kind property
-         * @access public
-         * 
-         * @type {boolean}
-         * 
-         * @description
-         * States whether or not this event has been cancelled.
-         */
-        cancelled: boolean;
-
-        /**
          * @name initialize
          * @memberof plat.events.INavigationEvent
          * @kind function
@@ -330,19 +257,6 @@
          */
         initialize(name: string, sender: any, direction?: 'direct', eventOptions?: INavigationEventOptions<P>): void;
         initialize(name: string, sender: any, direction?: string, eventOptions?: INavigationEventOptions<P>): void;
-
-        /**
-         * @name cancel
-         * @memberof plat.events.INavigationEvent
-         * @kind function
-         * @access public
-         * 
-         * @description
-         * If the event is {@link plat.events.INavigationEvent.cancelable|cancelable}, calling this method will cancel the event.
-         * 
-         * @returns {void}
-         */
-        cancel(): void;
     }
 
     /**
@@ -408,19 +322,5 @@
          * Specifies the type of {@link plat.ui.IBaseViewControl|IBaseViewControl} for the event.
          */
         type: string;
-
-        /**
-         * @name cancelable
-         * @memberof plat.events.INavigationEventOptions
-         * @kind property
-         * @access public
-         * 
-         * @type {boolean}
-         * 
-         * @description
-         * States whether or not this event is able to be cancelled. Some navigation events can be 
-         * cancelled, preventing further navigation.
-         */
-        cancelable?: boolean;
     }
 }

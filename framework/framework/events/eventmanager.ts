@@ -248,7 +248,7 @@ module plat.events {
                 return;
             } else {
                 $dom.addEventListener(EventManager.$Window, 'load', () => {
-                    dispatch(__ready, EventManager, true);
+                    dispatch(__ready, EventManager);
                 });
             }
         }

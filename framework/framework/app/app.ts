@@ -138,7 +138,7 @@ module plat {
                     dispatch = $LifecycleEventStatic.dispatch;
 
                 postpone(() => {
-                    dispatch(__ready, $LifecycleEventStatic, true);
+                    dispatch(__ready, $LifecycleEventStatic);
                 });
             }
         }
@@ -226,7 +226,7 @@ module plat {
                 App.__registerAppEvents(ev);
             }
 
-            if (!ev.cancelled) {
+            if (!ev.defaultPrevented) {
                 App.load();
             }
         }
@@ -467,7 +467,7 @@ module plat {
          * @description
          * Registers a listener for a beforeNavigate event. The listener will be called when a beforeNavigate 
          * event is propagating over the app. Any number of listeners can exist for a single event name. 
-         * This event is cancelable using the {@link plat.events.INavigationEvent.cancel|ev.cancel()} method, 
+         * This event is cancelable using the {@link plat.events.IDispatchEventInstance.preventDefault|ev.preventDefault()} method, 
          * and thereby preventing the navigation.
          * 
          * @param {string} name='beforeNavigate' The name of the event, cooinciding with the beforeNavigate event.
@@ -486,7 +486,7 @@ module plat {
          * @description
          * Registers a listener for a navigating event. The listener will be called when a navigating 
          * event is propagating over the app. Any number of listeners can exist for a single event name. 
-         * This event is cancelable using the {@link plat.events.INavigationEvent.cancel|ev.cancel()} method, 
+         * This event is cancelable using the {@link plat.events.IDispatchEventInstance.preventDefault|ev.preventDefault()} method, 
          * and thereby preventing the navigation.
          * 
          * @param {string} name='navigating' The name of the event, cooinciding with the navigating event.
@@ -845,7 +845,7 @@ module plat {
          * @description
          * Registers a listener for a beforeNavigate event. The listener will be called when a beforeNavigate 
          * event is propagating over the app. Any number of listeners can exist for a single event name. 
-         * This event is cancelable using the {@link plat.events.INavigationEvent.cancel|ev.cancel()} method, 
+         * This event is cancelable using the {@link plat.events.IDispatchEventInstance.preventDefault|ev.preventDefault()} method, 
          * and thereby preventing the navigation.
          * 
          * @param {string} name='beforeNavigate' The name of the event, cooinciding with the beforeNavigate event.
@@ -864,7 +864,7 @@ module plat {
          * @description
          * Registers a listener for a navigating event. The listener will be called when a navigating 
          * event is propagating over the app. Any number of listeners can exist for a single event name. 
-         * This event is cancelable using the {@link plat.events.INavigationEvent.cancel|ev.cancel()} method, 
+         * This event is cancelable using the {@link plat.events.IDispatchEventInstance.preventDefault|ev.preventDefault()} method, 
          * and thereby preventing the navigation.
          * 
          * @param {string} name='navigating' The name of the event, cooinciding with the navigating event.

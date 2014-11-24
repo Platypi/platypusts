@@ -38,6 +38,19 @@ module plat.events {
         $EventManagerStatic: IEventManagerStatic = acquire(__EventManagerStatic);
 
         /**
+         * @name $ContextManagerStatic
+         * @memberof plat.events.DispatchEvent
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.events.IContextManagerStatic}
+         * 
+         * @description
+         * Reference to the {@link plat.events.IContextManagerStatic|IContextManagerStatic} injectable.
+         */
+        $ContextManagerStatic: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
+
+        /**
          * @name sender
          * @memberof plat.events.DispatchEvent
          * @kind property
@@ -75,6 +88,22 @@ module plat.events {
          * The event direction this object is using for propagation.
          */
         direction: string;
+
+        /**
+         * @name defaultPrevented
+         * @memberof plat.events.DispatchEvent
+         * @kind property
+         * @access public
+         * @readonly
+         * 
+         * @type {string}
+         * 
+         * @description
+         * Whether or not preventDefault() was called on the event. Senders of the 
+         * event can check this property to know if they should carry out a default 
+         * action as a result of the event.
+         */
+        defaultPrevented: boolean = false;
 
         /**
          * @name stopped
@@ -164,6 +193,23 @@ module plat.events {
         }
 
         /**
+         * @name preventDefault
+         * @memberof plat.events.DispatchEvent
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Cancels the default action (if there is one) for an event. Does not affect propagation.
+         * 
+         * @returns {void}
+         */
+        preventDefault(): void {
+            if (!this.defaultPrevented) {
+                this.$ContextManagerStatic.defineGetter(this, 'defaultPrevented', true);
+            }
+        }
+
+        /**
          * @name stopPropagation
          * @memberof plat.events.DispatchEvent
          * @kind function
@@ -246,6 +292,22 @@ module plat.events {
         direction: string;
 
         /**
+         * @name defaultPrevented
+         * @memberof plat.events.IDispatchEventInstance
+         * @kind property
+         * @access public
+         * @readonly
+         * 
+         * @type {string}
+         * 
+         * @description
+         * Whether or not preventDefault() was called on the event. Senders of the 
+         * event can check this property to know if they should carry out a default 
+         * action as a result of the event.
+         */
+        defaultPrevented: boolean;
+
+        /**
          * @name stopped
          * @memberof plat.events.IDispatchEventInstance
          * @kind property
@@ -326,6 +388,19 @@ module plat.events {
          * @returns {void}
          */
         initialize(name: string, sender: any, direction?: string): void;
+
+        /**
+         * @name preventDefault
+         * @memberof plat.events.IDispatchEventInstance
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Cancels the default action (if there is one) for an event. Does not affect propagation.
+         * 
+         * @returns {void}
+         */
+        preventDefault(): void;
 
         /**
          * @name stopPropagation
