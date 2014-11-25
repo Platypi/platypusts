@@ -20,7 +20,7 @@ module plat.controls {
          * @type {string}
          * 
          * @description
-         * The property to set on the associated template control.
+         * The property to set on the associated element.
          */
         property: string = '';
 
@@ -127,7 +127,10 @@ module plat.controls {
             var expression = this.attributes[this.attribute];
 
             postpone(() => {
-                if (!isNode(this.element)) {
+                var element = this.element,
+                    property = this.property;
+
+                if (!isNode(element)) {
                     return;
                 }
 
@@ -136,13 +139,13 @@ module plat.controls {
                     case '0':
                     case 'null':
                     case '':
-                        this.element.setAttribute(this.property, '');
-                        (<any>this.element)[this.property] = false;
-                        this.element.removeAttribute(this.property);
+                        element.setAttribute(property, '');
+                        (<any>element)[property] = false;
+                        element.removeAttribute(property);
                         break;
                     default:
-                        this.element.setAttribute(this.property, this.property);
-                        (<any>this.element)[this.property] = true;
+                        element.setAttribute(property, property);
+                        (<any>element)[property] = true;
                 }
             });
         }
@@ -320,9 +323,48 @@ module plat.controls {
          * @type {string}
          * 
          * @description
-         * The property to set on the associated template control.
+         * The property to set on the associated element.
          */
-        property: string = __Hide;
+        property: string = 'display';
+        
+        /**
+         * @name value
+         * @memberof plat.controls.Visible
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * The value to associate with the property.
+         */
+        value: string = 'none';
+        
+        /**
+         * @name importance
+         * @memberof plat.controls.Visible
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * The importance to set on the property.
+         */
+        importance: string = 'important';
+        
+        /**
+         * @name _initialValue
+         * @memberof plat.controls.Visible
+         * @kind property
+         * @access protected
+         * 
+         * @type {string}
+         * 
+         * @description
+         * The initial value of the property to be set.
+         */
+        _initialValue: string;
 
         /**
          * @name initialize
@@ -336,7 +378,9 @@ module plat.controls {
          * @returns {void}
          */
         initialize(): void {
-            this.__hide();
+            var style = this.element.style || {};
+            this._initialValue = (<CSSStyleDeclaration>style).getPropertyValue(this.property);
+            this._setValue(this.value, this.importance);
         }
 
         /**
@@ -363,46 +407,37 @@ module plat.controls {
                     case '0':
                     case 'null':
                     case '':
-                        this.__hide();
+                        this._setValue(this.value, this.importance);
                         break;
                     default:
-                        this.__show();
+                        this._setValue(this._initialValue);
                 }
             });
         }
 
         /**
-         * @name __hide
+         * @name _setValue
          * @memberof plat.controls.Visible
          * @kind function
-         * @access private
+         * @access protected
          * 
          * @description
-         * Hides the element.
+         * Sets the value of the property element with the given importance. If the 
+         * value is null or empty string, the property will be removed.
+         * 
+         * @param {string} value The value to set.
+         * @param {string} importance? The priority or importance level to set.
          * 
          * @returns {void}
          */
-        private __hide(): void {
-            if (!this.element.hasAttribute(this.property)) {
-                this.element.setAttribute(this.property, '');
+        _setValue(value: string, importance?: string): void {
+            var style = this.element.style || { setProperty: noop, removeProperty: noop };
+            if (isEmpty(value)) {
+                (<CSSStyleDeclaration>style).removeProperty(this.property);
+                return;
             }
-        }
 
-        /**
-         * @name __show
-         * @memberof plat.controls.Visible
-         * @kind function
-         * @access private
-         * 
-         * @description
-         * Shows the element.
-         * 
-         * @returns {void}
-         */
-        private __show(): void {
-            if (this.element.hasAttribute(this.property)) {
-                this.element.removeAttribute(this.property);
-            }
+            (<CSSStyleDeclaration>style).setProperty(this.property, value, importance);
         }
     }
 
