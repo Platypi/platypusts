@@ -136,7 +136,7 @@
          * @description
          * Determines if a url is relative or absolute.
          */
-        fullUrlRegex = /^(?:[a-z]+:)?\/\//i;
+        fullUrlRegex = /^(?:[a-z0-9\-]+:)?(?:\/\/)?/i;
         
         /**
          * @name newLineRegex

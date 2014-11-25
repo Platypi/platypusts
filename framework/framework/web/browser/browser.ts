@@ -196,7 +196,7 @@ module plat.web {
             acquire(__UrlUtilsInstance);
 
             var url = this.url(),
-                trimmedUrl = url.replace(this.$Regex.initialUrlRegex, '/'),
+                trimmedUrl = url,
                 changed = this._urlChanged.bind(this),
                 $dom = this.$Dom,
                 $window = this.$Window;
