@@ -554,7 +554,7 @@ module plat.observable {
                 context = this.__contextObjects[join];
 
             if (isNull(context)) {
-                context = this.__contextObjects[join] = this._getImmediateContext(join);
+                context = this.__contextObjects[join] = this._getImmediateContext(split);
             }
 
             return context;
@@ -592,7 +592,7 @@ module plat.observable {
                 join = split.join('.');
                 context = this.__contextObjects[join];
                 if (isNull(context)) {
-                    context = this.__contextObjects[join] = this._getImmediateContext(join);
+                    context = this.__contextObjects[join] = this._observeImmediateContext(split, join);
                 }
             } else {
                 join = key;
@@ -874,20 +874,15 @@ module plat.observable {
          * @access protected
          * 
          * @description
-         * Gets the immediate context of identifier by splitting on "." 
-         * and observes the objects along the way.
+         * Gets the immediate context of identifier by splitting on ".".
          * 
-         * @param {string} identifier The identifier being observed.
+         * @param {Array<string>} split The string array containing properties used to index into
+         * the context.
          * 
          * @returns {any} The immediate context denoted by the identifier.
          */
-        _getImmediateContext(identifier: string): any {
-            if (isNull(this.__identifiers[identifier])) {
-                this.observe(identifier, null);
-            }
-
-            var split = identifier.split('.'),
-                context = this.context;
+        _getImmediateContext(split: Array<string>): any {
+            var context = this.context;
 
             while (split.length > 0) {
                 context = context[split.shift()];
@@ -897,6 +892,30 @@ module plat.observable {
             }
 
             return context;
+        }
+
+        /**
+         * @name _observeImmediateContext
+         * @memberof plat.observable.ContextManager
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Gets the immediate context of identifier by splitting on "." 
+         * and observes the objects along the way.
+         * 
+         * @param {Array<string>} split The identifier's split string array containing properties 
+         * used to index into the context.
+         * @param {string} identifier The identifier being observed.
+         * 
+         * @returns {any} The immediate context denoted by the identifier.
+         */
+        _observeImmediateContext(split: Array<string>, identifier: string): any {
+            if (isNull(this.__identifiers[identifier])) {
+                this.observe(identifier, null);
+            }
+
+            return this._getImmediateContext(split);
         }
 
         /**

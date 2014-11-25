@@ -24,20 +24,8 @@
             expect(exception).toBe(false);
         });
 
-
-        it('should test cast', (done) => {
-            var numPromise = Promise.cast(2),
-                promise: plat.async.IThenable<any> = Promise.cast(Promise.resolve(4)),
-                result: Array<number>;
-
-            Promise.all<number>([numPromise, promise]).then((success) => {
-                expect(success).toEqual([2, 4]);
-                done();
-            });
-        });
-
         it('should test race', (done) => {
-            var numPromise = Promise.cast(2),
+            var numPromise: plat.async.IThenable<number> = new Promise((resolve) => { setTimeout(() => resolve(2), 0, 0); }),
                 promise: plat.async.IThenable<any> = new Promise((resolve) => { setTimeout(resolve, 0, 4); }),
                 result: number;
 
