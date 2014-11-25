@@ -40,7 +40,6 @@ module plat.processing {
                         nodes: [{
                             node: node,
                             expressions: expressions,
-                            identifiers: NodeManager.findUniqueIdentifiers(expressions),
                         }]
                     };
 
@@ -54,7 +53,7 @@ module plat.processing {
 
             return manager;
         }
-        
+
         /**
          * @name _cloneNodeMap
          * @memberof plat.processing.TextManager
@@ -74,7 +73,6 @@ module plat.processing {
             var node = sourceMap.nodes[0],
                 nodeMap: INodeMap = {
                     nodes: [{
-                        identifiers: node.identifiers,
                         expressions: node.expressions,
                         nodeName: node.nodeName,
                         node: newNode
@@ -82,7 +80,7 @@ module plat.processing {
                 };
             return nodeMap;
         }
-        
+
         /**
          * @name _clone
          * @memberof plat.processing.TextManager
@@ -113,7 +111,7 @@ module plat.processing {
 
             return manager;
         }
-        
+
         /**
          * @name type
          * @memberof plat.processing.TextManager
@@ -127,7 +125,7 @@ module plat.processing {
          * It's value is "text".
          */
         type = 'text';
-        
+
         /**
          * @name clone
          * @memberof plat.processing.TextManager
@@ -147,7 +145,7 @@ module plat.processing {
             TextManager._clone(this, newNode, parentManager);
             return 1;
         }
-        
+
         /**
          * @name bind
          * @memberof plat.processing.TextManager
@@ -165,12 +163,12 @@ module plat.processing {
                 textNode = node.node,
                 expressions = node.expressions;
 
-            NodeManager.observeIdentifiers(node.identifiers, parent,
+            NodeManager.observeExpressions(node.expressions, parent,
                 this._setText.bind(this, textNode, parent, expressions));
 
             this._setText(textNode, parent, expressions);
         }
-        
+
         /**
          * @name _setText
          * @memberof plat.processing.TextManager
@@ -189,8 +187,7 @@ module plat.processing {
          * @returns {void}
          */
         _setText(node: Node, control: ui.ITemplateControl, expressions: Array<expressions.IParsedExpression>): void {
-            control = control || <ui.ITemplateControl>{};
-            node.nodeValue = NodeManager.build(expressions, control);
+            node.nodeValue = NodeManager.build(expressions, (control || <ui.ITemplateControl>{}));
         }
     }
 
@@ -202,7 +199,7 @@ module plat.processing {
     }
 
     register.injectable(__TextManagerFactory, ITextManagerFactory, null, __FACTORY);
-    
+
     /**
      * @name ITextManagerFactory
      * @memberof plat.processing
@@ -233,7 +230,7 @@ module plat.processing {
          */
         create(node: Node, parent?: IElementManager): ITextManager;
     }
-    
+
     /**
      * @name ITextManager
      * @memberof plat.processing
@@ -261,7 +258,7 @@ module plat.processing {
          * @returns {number} The number of nodes to advance while traversing is in progress.
          */
         clone(newNode: Node, parentManager: IElementManager): number;
-        
+
         /**
          * @name bind
          * @memberof plat.processing.ITextManager

@@ -62,7 +62,7 @@ module plat.processing {
          * Reference to the {@link plat.ui.IBindableTemplatesFactory|IBindableTemplatesFactory} injectable.
          */
         static $BindableTemplatesFactory: ui.IBindableTemplatesFactory;
-        
+
         /**
          * @name create
          * @memberof plat.processing.ElementManager
@@ -124,7 +124,7 @@ module plat.processing {
                 var replacementType = uiControl.replaceWith,
                     replaceWithDiv = replacementType === 'any' && noControlAttribute;
                 if (!isEmpty(replacementType) && (replacementType !== 'any' || replaceWithDiv) &&
-                        replacementType.toLowerCase() !== nodeName) {
+                    replacementType.toLowerCase() !== nodeName) {
                     if (replaceWithDiv) {
                         replacementType = 'div';
                     }
@@ -153,7 +153,7 @@ module plat.processing {
 
             return manager;
         }
-        
+
         /**
          * @name locateResources
          * @memberof plat.processing.ElementManager
@@ -183,7 +183,7 @@ module plat.processing {
 
             return null;
         }
-        
+
         /**
          * @name clone
          * @memberof plat.processing.ElementManager
@@ -237,7 +237,7 @@ module plat.processing {
 
             return manager;
         }
-        
+
         /**
          * @name cloneUiControl
          * @memberof plat.processing.ElementManager
@@ -288,7 +288,7 @@ module plat.processing {
 
             return newUiControl;
         }
-        
+
         /**
          * @name createAttributeControls
          * @memberof plat.processing.ElementManager
@@ -364,7 +364,6 @@ module plat.processing {
                     newNodes.push({
                         control: control,
                         expressions: node.expressions,
-                        identifiers: node.identifiers,
                         node: !attributes ? null : (attributes.getNamedItem(nodeName) || attributes.getNamedItem('data-' + nodeName)),
                         nodeName: nodeName,
                         injector: injector
@@ -417,7 +416,7 @@ module plat.processing {
 
             return newNodes;
         }
-        
+
         /**
          * @name getInstance
          * @memberof plat.processing.ElementManager
@@ -433,7 +432,7 @@ module plat.processing {
         static getInstance(): IElementManager {
             return new ElementManager();
         }
-        
+
         /**
          * @name _collectAttributes
          * @memberof plat.processing.ElementManager
@@ -460,23 +459,19 @@ module plat.processing {
                 hasMarkup: boolean,
                 hasMarkupFn = NodeManager.hasMarkup,
                 findMarkup = NodeManager.findMarkup,
-                findUniqueIdentifiers = NodeManager.findUniqueIdentifiers,
                 $parser = NodeManager.$Parser,
                 build = NodeManager.build,
                 expressions: Array<expressions.IParsedExpression>,
                 hasControl = false,
                 injector: dependency.IInjector<IControl>,
                 length = attributes.length,
-                controlAttributes: IObject<string> = {},
-                uniqueIdentifiers: Array<string>;
+                controlAttributes: IObject<string> = {};
 
             for (var i = 0; i < length; ++i) {
                 attribute = attributes[i];
                 value = attribute.value;
                 name = attribute.name.replace(/^data-/i, '').toLowerCase();
                 injector = controlInjectors[name] || viewControlInjectors[name];
-                expressions = [];
-                uniqueIdentifiers = [];
 
                 if (name === 'plat-context') {
                     if (value !== '') {
@@ -490,14 +485,7 @@ module plat.processing {
                     }
                 } else if (name !== 'plat-control') {
                     hasMarkup = hasMarkupFn(value);
-
-                    if (hasMarkup) {
-                        expressions = findMarkup(value);
-                        uniqueIdentifiers = findUniqueIdentifiers(expressions);
-                        if (uniqueIdentifiers.length === 0) {
-                            attribute.value = value = build(expressions);
-                        }
-                    }
+                    expressions = hasMarkup ? findMarkup(value) : [];
 
                     if (!hasControl && (hasMarkup || !isNull(injector))) {
                         hasControl = true;
@@ -508,7 +496,6 @@ module plat.processing {
                         node: attribute,
                         nodeName: name,
                         expressions: expressions,
-                        identifiers: uniqueIdentifiers,
                         injector: injector
                     });
                 }
@@ -524,7 +511,7 @@ module plat.processing {
                 hasControl: hasControl
             };
         }
-        
+
         /**
          * @name _copyAttributeNodes
          * @memberof plat.processing.ElementManager
@@ -548,7 +535,6 @@ module plat.processing {
             for (var i = 0; i < length; ++i) {
                 node = nodes[i];
                 newNodes.push({
-                    identifiers: node.identifiers,
                     expressions: node.expressions,
                     nodeName: node.nodeName
                 });
@@ -556,7 +542,7 @@ module plat.processing {
 
             return newNodes;
         }
-        
+
         /**
          * @name _cloneNode
          * @memberof plat.processing.ElementManager
@@ -577,13 +563,12 @@ module plat.processing {
             return {
                 control: newControl,
                 injector: sourceNode.injector,
-                identifiers: sourceNode.identifiers,
                 expressions: sourceNode.expressions,
                 node: node,
                 nodeName: sourceNode.nodeName
             };
         }
-        
+
         /**
          * @name _cloneNodeMap
          * @memberof plat.processing.ElementManager
@@ -622,7 +607,7 @@ module plat.processing {
 
             return nodeMap;
         }
-        
+
         /**
          * @name $Promise
          * @memberof plat.processing.ElementManager
@@ -819,7 +804,7 @@ module plat.processing {
          * and its HTML needs to be asynchronously obtained.
          */
         templatePromise: async.IThenable<void>;
-        
+
         /**
          * @name clone
          * @memberof plat.processing.ElementManager
@@ -910,7 +895,7 @@ module plat.processing {
 
             return 1;
         }
-        
+
         /**
          * @name initialize
          * @memberof plat.processing.ElementManager
@@ -952,7 +937,7 @@ module plat.processing {
                 control.initialize();
             }
         }
-        
+
         /**
          * @name bind
          * @memberof plat.processing.ElementManager
@@ -1075,22 +1060,22 @@ module plat.processing {
                     this.templatePromise = null;
                     this._initializeControl(control, <DocumentFragment>template.cloneNode(true));
                 }, (error) => {
-                    this.templatePromise = null;
-                    if (isNull(error)) {
-                        var template: DocumentFragment = error;
+                        this.templatePromise = null;
+                        if (isNull(error)) {
+                            var template: DocumentFragment = error;
 
-                        if (this.$BindableTeampltesFactory.isBoundControl(control)) {
-                            template = <DocumentFragment>appendChildren(control.element.childNodes);
+                            if (this.$BindableTeampltesFactory.isBoundControl(control)) {
+                                template = <DocumentFragment>appendChildren(control.element.childNodes);
+                            }
+
+                            this._initializeControl(control, template);
+                        } else {
+                            postpone(() => {
+                                var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                                $exception.fatal(error, $exception.COMPILE);
+                            });
                         }
-
-                        this._initializeControl(control, template);
-                    } else {
-                        postpone(() => {
-                            var $exception: IExceptionStatic = acquire(__ExceptionStatic);
-                            $exception.fatal(error, $exception.COMPILE);
-                        });
-                    }
-                });
+                    });
 
                 return;
             }
@@ -1101,7 +1086,7 @@ module plat.processing {
 
             this.bindAndLoad();
         }
-        
+
         /**
          * @name getUiControl
          * @memberof plat.processing.ElementManager
@@ -1123,7 +1108,7 @@ module plat.processing {
 
             return uiControlNode.control;
         }
-        
+
         /**
          * @name fulfillTemplate
          * @memberof plat.processing.ElementManager
@@ -1146,7 +1131,7 @@ module plat.processing {
 
             return this._fulfillChildTemplates();
         }
-        
+
         /**
          * @name bindAndLoad
          * @memberof plat.processing.ElementManager
@@ -1174,11 +1159,11 @@ module plat.processing {
             return promise.then(() => {
                 return this._loadControls(<Array<IAttributeControl>>controls, this.getUiControl());
             }).catch((error: any) => {
-                postpone(() => {
-                    var $exception: IExceptionStatic = acquire(__ExceptionStatic);
-                    $exception.fatal(error, $exception.BIND);
+                    postpone(() => {
+                        var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                        $exception.fatal(error, $exception.BIND);
+                    });
                 });
-            });
         }
 
         /**
@@ -1213,11 +1198,11 @@ module plat.processing {
                     uid: root.uid
                 });
             }).catch((error) => {
-                postpone(() => {
-                    var $exception: IExceptionStatic = acquire(__ExceptionStatic);
-                    $exception.fatal(error, $exception.BIND);
+                    postpone(() => {
+                        var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                        $exception.fatal(error, $exception.BIND);
+                    });
                 });
-            });
         }
 
         /**
@@ -1320,8 +1305,8 @@ module plat.processing {
                 node = nodes[i];
                 control = node.control;
 
-                if (hasParent && node.identifiers.length > 0) {
-                    NodeManager.observeIdentifiers(node.identifiers, parent,
+                if (hasParent && node.expressions.length > 0) {
+                    NodeManager.observeExpressions(node.expressions, parent,
                         attributeChanged.bind(this, node, parent, controls));
                     bindings.push(node);
                 }
@@ -1336,7 +1321,7 @@ module plat.processing {
                 this._attributeChanged(bindings[i], parent, controls);
             }
         }
-        
+
         /**
          * @name _loadControls
          * @memberof plat.processing.ElementManager
@@ -1390,7 +1375,7 @@ module plat.processing {
 
             return promise;
         }
-        
+
         /**
          * @name _fulfillAndLoad
          * @memberof plat.processing.ElementManager
@@ -1407,13 +1392,13 @@ module plat.processing {
             return this.fulfillTemplate().then(() => {
                 return this.bindAndLoad();
             }).catch((error) => {
-                postpone(() => {
-                    var $exception: IExceptionStatic = acquire(__ExceptionStatic);
-                    $exception.fatal(error, $exception.BIND);
+                    postpone(() => {
+                        var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                        $exception.fatal(error, $exception.BIND);
+                    });
                 });
-            });
         }
-        
+
         /**
          * @name _populateUiControl
          * @memberof plat.processing.ElementManager
@@ -1471,7 +1456,7 @@ module plat.processing {
             uiControl.type = controlNode.nodeName;
 
             uiControl.bindableTemplates = uiControl.bindableTemplates ||
-                ElementManager.$BindableTemplatesFactory.create(uiControl);
+            ElementManager.$BindableTemplatesFactory.create(uiControl);
 
             if (childNodes.length > 0 && (!isEmpty(uiControl.templateString) || !isEmpty(uiControl.templateUrl))) {
                 uiControl.innerTemplate = <DocumentFragment>appendChildren(childNodes);
@@ -1481,7 +1466,7 @@ module plat.processing {
                 this._replaceElement(uiControl, nodeMap);
             }
         }
-        
+
         /**
          * @name _replaceElement
          * @memberof plat.processing.ElementManager
@@ -1517,7 +1502,7 @@ module plat.processing {
 
             control.element = nodeMap.element = null;
         }
-        
+
         /**
          * @name _initializeControl
          * @memberof plat.processing.ElementManager
@@ -1580,7 +1565,7 @@ module plat.processing {
                 this._fulfillAndLoad();
             }
         }
-        
+
         /**
          * @name _attributeChanged
          * @memberof plat.processing.ElementManager
@@ -1615,7 +1600,7 @@ module plat.processing {
                 (<Attr>node.node).value = value;
             }
         }
-        
+
         /**
          * @name _fulfillChildTemplates
          * @memberof plat.processing.ElementManager
@@ -1658,11 +1643,11 @@ module plat.processing {
         $ManagerCache?: storage.ICache<IElementManager>,
         $ResourcesFactory?: ui.IResourcesFactory,
         $BindableTemplatesFactory?: ui.IBindableTemplatesFactory): IElementManagerFactory {
-            ElementManager.$Document = $Document;
-            ElementManager.$ManagerCache = $ManagerCache;
-            ElementManager.$ResourcesFactory = $ResourcesFactory;
-            ElementManager.$BindableTemplatesFactory = $BindableTemplatesFactory;
-            return ElementManager;
+        ElementManager.$Document = $Document;
+        ElementManager.$ManagerCache = $ManagerCache;
+        ElementManager.$ResourcesFactory = $ResourcesFactory;
+        ElementManager.$BindableTemplatesFactory = $BindableTemplatesFactory;
+        return ElementManager;
     }
 
     register.injectable(__ElementManagerFactory, IElementManagerFactory, [
@@ -1671,7 +1656,7 @@ module plat.processing {
         __ResourcesFactory,
         __BindableTemplatesFactory
     ], __FACTORY);
-    
+
     /**
      * @name IElementManagerFactory
      * @memberof plat.processing
@@ -1800,7 +1785,7 @@ module plat.processing {
          */
         getInstance(): IElementManager;
     }
-    
+
     /**
      * @name IElementManager
      * @memberof plat.processing
@@ -1866,7 +1851,7 @@ module plat.processing {
          * or inherits it from a parent.
          */
         hasOwnContext: boolean;
-        
+
         /**
          * @name isClone
          * @memberof plat.processing.IElementManager

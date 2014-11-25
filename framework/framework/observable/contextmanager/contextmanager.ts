@@ -22,7 +22,7 @@ module plat.observable {
      * The array methods to be overwritten if it is to be observed.
      */
     var arrayMethods = ['push', 'pop', 'reverse', 'shift', 'sort', 'splice', 'unshift'];
-    
+
     /**
      * @name ContextManager
      * @memberof plat.observable
@@ -48,7 +48,7 @@ module plat.observable {
          * A set of functions to be fired when a particular observed array is mutated.
          */
         static observedArrayListeners: IObject<IObject<Array<(ev: IArrayMethodInfo<any>) => void>>> = {};
-        
+
         /**
          * @name getManager
          * @memberof plat.observable.ContextManager
@@ -81,7 +81,7 @@ module plat.observable {
 
             return contextManager;
         }
-        
+
         /**
          * @name dispose
          * @memberof plat.observable.ContextManager
@@ -132,7 +132,7 @@ module plat.observable {
                     persist === true ? _clone(control.context, true) : null, true, true);
             }
         }
-        
+
         /**
          * @name removeArrayListeners
          * @memberof plat.observable.ContextManager
@@ -155,7 +155,7 @@ module plat.observable {
                 deleteProperty(listeners, uid);
             }
         }
-        
+
         /**
          * @name getContext
          * @memberof plat.observable.ContextManager
@@ -188,7 +188,7 @@ module plat.observable {
 
             return rootContext;
         }
-        
+
         /**
          * @name defineProperty
          * @memberof plat.observable.ContextManager
@@ -215,7 +215,7 @@ module plat.observable {
                 configurable: configurable === true
             });
         }
-        
+
         /**
          * @name defineGetter
          * @memberof plat.observable.ContextManager
@@ -242,7 +242,7 @@ module plat.observable {
                 configurable: configurable === true
             });
         }
-        
+
         /**
          * @name pushRemoveListener
          * @memberof plat.observable.ContextManager
@@ -276,7 +276,7 @@ module plat.observable {
 
             listeners.push(listener);
         }
-        
+
         /**
          * @name spliceRemoveListener
          * @memberof plat.observable.ContextManager
@@ -314,8 +314,11 @@ module plat.observable {
             }
 
             listeners.splice(index, 1);
+            if (listeners.length === 0) {
+                deleteProperty(control, identifier);
+            }
         }
-        
+
         /**
          * @name removeIdentifier
          * @memberof plat.observable.ContextManager
@@ -346,7 +349,7 @@ module plat.observable {
                 deleteProperty(identifiers, identifier);
             }
         }
-        
+
         /**
          * @name createContext
          * @memberof plat.observable.ContextManager
@@ -401,7 +404,7 @@ module plat.observable {
 
             return context;
         }
-        
+
         /**
          * @name __managers
          * @memberof plat.observable.ContextManager
@@ -428,7 +431,7 @@ module plat.observable {
          * An object for storing functions to remove listeners for observed identifiers.
          */
         private static __controls: IObject<IObject<Array<IRemoveListener>>> = {};
-        
+
         /**
          * @name $Compat
          * @memberof plat.observable.ContextManager
@@ -441,7 +444,7 @@ module plat.observable {
          * Reference to the {@link plat.ICompat|ICompat} injectable.
          */
         $Compat: ICompat = acquire(__Compat);
-        
+
         /**
          * @name context
          * @memberof plat.observable.ContextManager
@@ -455,7 +458,7 @@ module plat.observable {
          * {@link plat.observable.IContextManager|IContextManager}.
          */
         context: any;
-        
+
         /**
          * @name __identifiers
          * @memberof plat.observable.ContextManager
@@ -530,7 +533,7 @@ module plat.observable {
          * already observed identifier.
          */
         private __observedIdentifier: string;
-        
+
         /**
          * @name getContext
          * @memberof plat.observable.ContextManager
@@ -556,7 +559,7 @@ module plat.observable {
 
             return context;
         }
-        
+
         /**
          * @name observe
          * @memberof plat.observable.ContextManager
@@ -600,7 +603,7 @@ module plat.observable {
                 if (hasObservableListener) {
                     if (key === 'length') {
                         this.__lengthListeners[absoluteIdentifier] = observableListener;
-                        ContextManager.pushRemoveListener(absoluteIdentifier, uid, () => {
+                        ContextManager.pushRemoveListener(absoluteIdentifier, observableListener.uid, () => {
                             deleteProperty(this.__lengthListeners, absoluteIdentifier);
                         });
                     }
@@ -641,8 +644,7 @@ module plat.observable {
             if (!hasIdentifier) {
                 if (key === 'length' && isArray(context)) {
                     var property = split.pop(),
-                        parentContext = this.getContext(split),
-                        uid = observableListener.uid;
+                        parentContext = this.getContext(split);
 
                     this.__observedIdentifier = null;
                     access(parentContext, property);
@@ -652,6 +654,11 @@ module plat.observable {
                     }
 
                     var removeObservableListener = removeCallback,
+                        removeListener = noop,
+                        removeArrayObserve = noop;
+
+                    if (hasObservableListener) {
+                        var uid = observableListener.uid;
                         removeListener = this.observeArray(uid, noop, join, context, null),
                         removeArrayObserve = this.observe(join, {
                             uid: uid,
@@ -660,6 +667,7 @@ module plat.observable {
                                 removeListener = this.observeArray(uid, noop, join, newValue, oldValue);
                             }
                         });
+                    }
 
                     removeCallback = () => {
                         removeObservableListener();
@@ -765,7 +773,7 @@ module plat.observable {
 
             return removeListener;
         }
-        
+
         /**
          * @name dispose
          * @memberof plat.observable.ContextManager
@@ -783,7 +791,7 @@ module plat.observable {
             this.__identifierHash = {};
             this.__contextObjects = {};
         }
-        
+
         /**
          * @name _restoreArray
          * @memberof plat.observable.ContextManager
@@ -890,7 +898,7 @@ module plat.observable {
 
             return context;
         }
-        
+
         /**
          * @name _getValues
          * @memberof plat.observable.ContextManager
@@ -951,7 +959,7 @@ module plat.observable {
                 oldValue: oldValue
             };
         }
-        
+
         /**
          * @name _notifyChildProperties
          * @memberof plat.observable.ContextManager
@@ -1064,7 +1072,7 @@ module plat.observable {
 
             values = null;
         }
-        
+
         /**
          * @name _addObservableListener
          * @memberof plat.observable.ContextManager
@@ -1081,10 +1089,7 @@ module plat.observable {
          * @returns {plat.IRemoveListener} A function for removing the given listener for the given absoluteIdentifier.
          */
         _addObservableListener(absoluteIdentifier: string, observableListener: IListener): IRemoveListener {
-            var remove = () => {
-                    this._removeCallback(absoluteIdentifier, observableListener);
-                },
-                split = absoluteIdentifier.split('.'),
+            var split = absoluteIdentifier.split('.'),
                 property = split.pop(),
                 isLength = property === 'length',
                 context: any;
@@ -1105,11 +1110,16 @@ module plat.observable {
 
             this.__add(absoluteIdentifier, observableListener);
 
-            ContextManager.pushRemoveListener(absoluteIdentifier, observableListener.uid, remove);
+            var uid = observableListener.uid,
+                remove = () => {
+                    ContextManager.spliceRemoveListener(absoluteIdentifier, uid, remove);
+                    this._removeCallback(absoluteIdentifier, observableListener);
+                };
 
+            ContextManager.pushRemoveListener(absoluteIdentifier, uid, remove);
             return remove;
         }
-        
+
         /**
          * @name _define
          * @memberof plat.observable.ContextManager
@@ -1133,7 +1143,7 @@ module plat.observable {
                 this.__definePrimitive(identifier, immediateContext, key);
             }
         }
-        
+
         /**
          * @name _overwriteArrayFunction
          * @memberof plat.observable.ContextManager
@@ -1196,7 +1206,7 @@ module plat.observable {
                 return returnValue;
             };
         }
-        
+
         /**
          * @name _removeCallback
          * @memberof plat.observable.ContextManager
@@ -1230,7 +1240,7 @@ module plat.observable {
                 deleteProperty(this.__contextObjects, identifier);
             }
         }
-        
+
         /**
          * @name _hasIdentifier
          * @memberof plat.observable.ContextManager
@@ -1248,7 +1258,7 @@ module plat.observable {
         _hasIdentifier(identifier: string): boolean {
             return !isEmpty(this.__identifiers[identifier]);
         }
-        
+
         /**
          * @name _execute
          * @memberof plat.observable.ContextManager
@@ -1280,11 +1290,18 @@ module plat.observable {
                 return;
             }
 
-            for (var i = 0; i < observableListeners.length; ++i) {
+            var length = observableListeners.length,
+                newLength = length,
+                i = 0;
+
+            while (i < length) {
                 observableListeners[i].listener(value, oldValue);
+                newLength = observableListeners.length;
+                i += newLength - length + 1;
+                length = newLength;
             }
         }
-        
+
         /**
          * @name __defineObject
          * @memberof plat.observable.ContextManager
@@ -1322,15 +1339,15 @@ module plat.observable {
                         return;
                     }
 
-                    var hash = this.__identifierHash[identifier],
-                        childPropertiesLength = isArray(hash) ? hash.length : 0;
-
+                    var childPropertiesLength = (this.__identifierHash[identifier] || []).length;
                     this._execute(identifier, value, oldValue);
                     if (childPropertiesLength > 0) {
                         this._notifyChildProperties(identifier, value, oldValue);
                     }
 
-                    if (!isObject(value)) {
+                    if (isEmpty(this.__identifiers[identifier])) {
+                        ContextManager.defineProperty(immediateContext, key, value, true, true);
+                    } else if (!isObject(value)) {
                         this.__definePrimitive(identifier, immediateContext, key);
                     }
                 }
@@ -1378,17 +1395,17 @@ module plat.observable {
                         return;
                     }
 
-                    if (isObject(value)) {
-                        var childPropertiesLength = this.__identifierHash[identifier].length;
-                        this._execute(identifier, newValue, oldValue);
+                    var childPropertiesLength = (this.__identifierHash[identifier] || []).length;
+                    this._execute(identifier, newValue, oldValue);
+                    if (isEmpty(this.__identifiers[identifier])) {
+                        ContextManager.defineProperty(immediateContext, key, value, true, true);
+                        return;
+                    } else if (isObject(value)) {
                         this.__defineObject(identifier, immediateContext, key);
                         if (childPropertiesLength > 0) {
                             this._notifyChildProperties(identifier, newValue, oldValue);
                         }
-                    } else if (isDefined) {
-                        this._execute(identifier, newValue, oldValue);
-                    } else {
-                        this._execute(identifier, newValue, oldValue);
+                    } else if (!isDefined) {
                         this.__definePrimitive(identifier, immediateContext, key);
                         isDefined = true;
                     }
@@ -1421,7 +1438,7 @@ module plat.observable {
 
             this.__addHashValues(identifier);
         }
-        
+
         /**
          * @name __addHashValues
          * @memberof plat.observable.ContextManager
@@ -1649,7 +1666,7 @@ module plat.observable {
          *
          * @returns {void}
          */
-        spliceRemoveListener(identifier: string, uid: string, listener: IRemoveListener): void
+        spliceRemoveListener(identifier: string, uid: string, listener: IRemoveListener): void;
 
         /**
          * @name removeIdentifier
@@ -1688,7 +1705,7 @@ module plat.observable {
          */
         createContext(control: ui.ITemplateControl, identifier: string): any;
     }
-    
+
     /**
      * @name IContextManager
      * @memberof plat.observable
@@ -1783,7 +1800,7 @@ module plat.observable {
          */
         dispose(): void;
     }
-    
+
     /**
      * @name IListener
      * @memberof plat.observable
@@ -1809,7 +1826,7 @@ module plat.observable {
          * @returns {void}
          */
         listener(value: any, oldValue: any): void;
-        
+
         /**
          * @name uid
          * @memberof plat.observable.IListener
@@ -1823,7 +1840,7 @@ module plat.observable {
          */
         uid: string;
     }
-    
+
     /**
      * @name IArrayMethodInfo
      * @memberof plat.observable
@@ -1850,7 +1867,7 @@ module plat.observable {
          * and 'unshift'
          */
         method: string;
-        
+
         /**
          * @name returnValue
          * @memberof plat.observable.IArrayMethodInfo
@@ -1863,7 +1880,7 @@ module plat.observable {
          * The value returned from the called function.
          */
         returnValue: any;
-        
+
         /**
          * @name oldArray
          * @memberof plat.observable.IArrayMethodInfo
@@ -1876,7 +1893,7 @@ module plat.observable {
          * The previous value of the array.
          */
         oldArray: Array<T>;
-        
+
         /**
          * @name newArray
          * @memberof plat.observable.IArrayMethodInfo
@@ -1889,7 +1906,7 @@ module plat.observable {
          * The new value of the array.
          */
         newArray: Array<T>;
-        
+
         /**
          * @name arguments
          * @memberof plat.observable.IArrayMethodInfo

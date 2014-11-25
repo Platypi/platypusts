@@ -45,7 +45,7 @@ module plat.expressions {
          * A single expression's token representation created by a {@link plat.expressions.ITokenizer|ITokenizer}.
          */
         _tokens: Array<IToken> = [];
-        
+
         /**
          * @name __cache
          * @memberof plat.expressions.Parser
@@ -142,7 +142,7 @@ module plat.expressions {
 
             return parsedObject;
         }
-        
+
         /**
          * @name clearCache
          * @memberof plat.expressions.Parser
@@ -166,7 +166,7 @@ module plat.expressions {
 
             this.__cache = {};
         }
-        
+
         /**
          * @name _evaluate
          * @memberof plat.expressions.Parser
@@ -211,7 +211,7 @@ module plat.expressions {
                             if (args < 0) {
                                 codeArray.push('[]');
                                 tempIdentifiers.push('.');
-                            // handle array literal
+                                // handle array literal
                             } else if (args > 0) {
                                 codeArray.push(this.__convertArrayLiteral(args));
                                 tempIdentifiers.push('.');
@@ -220,7 +220,7 @@ module plat.expressions {
                             }
                             break;
                     }
-                // check if its an operator
+                    // check if its an operator
                 } else if (isOperator(token)) {
                     // check if string literal
                     if (args === 0) {
@@ -243,12 +243,12 @@ module plat.expressions {
                                 break;
                         }
                     }
-                // its either function, object, or primitive
+                    // its either function, object, or primitive
                 } else {
                     // potential function or object to index into
                     if (args < 0) {
                         codeArray.push(this.__convertFunction(index, token, useLocalContext));
-                    // primitive
+                        // primitive
                     } else {
                         codeArray.push(this.__convertPrimitive(index, token, args));
                     }
@@ -274,7 +274,7 @@ module plat.expressions {
 
             return parsedExpression;
         }
-        
+
         /**
          * @name __convertPrimitive
          * @memberof plat.expressions.Parser
@@ -503,7 +503,7 @@ module plat.expressions {
                     if (!(lastIndex < 0 || tempIdentifiers[lastIndex] === '.' || identifierFnName === '')) {
                         tempIdentifiers[lastIndex] += '.' + identifierFnName;
                         identifiers.push(tempIdentifiers.pop());
-                    // check fn name is not null, pushed an identifier, and the context is not an array literal
+                        // check fn name is not null, pushed an identifier, and the context is not an array literal
                     } else if (!(identifierFnName === '' ||
                         !pushedIdentifier ||
                         context[0] === '[' ||
@@ -608,7 +608,7 @@ module plat.expressions {
 
             return useLocalContext;
         }
-        
+
         /**
          * @name __handleQuestion
          * @memberof plat.expressions.Parser
@@ -707,9 +707,9 @@ module plat.expressions {
 
             codeArray.push(
                 '(' + OPERATORS[token].fn.toString() + ')(context, aliases,' + tempStr.slice(0, tempStr.length - 1) + ')'
-            );
+                );
         }
-        
+
         /**
          * @name __findInitialContext
          * @memberof plat.expressions.Parser
@@ -774,7 +774,7 @@ module plat.expressions {
         _peek(index: number): IToken {
             return this._tokens[index + 1];
         }
-        
+
         /**
          * @name _lookBack
          * @memberof plat.expressions.Parser
@@ -793,7 +793,7 @@ module plat.expressions {
         _lookBack(index: number): IToken {
             return this._tokens[index - 1];
         }
-        
+
         /**
          * @name _popRemainingIdentifiers
          * @memberof plat.expressions.Parser
@@ -817,7 +817,7 @@ module plat.expressions {
                 }
             }
         }
-        
+
         /**
          * @name _makeIdentifiersUnique
          * @memberof plat.expressions.Parser
@@ -845,7 +845,7 @@ module plat.expressions {
 
             this.__identifiers = uniqueIdentifiers;
         }
-        
+
         /**
          * @name _isValEqual
          * @memberof plat.expressions.Parser
@@ -870,7 +870,7 @@ module plat.expressions {
             }
             return char.indexOf(obj.val) !== -1;
         }
-        
+
         /**
          * @name _isValUnequal
          * @memberof plat.expressions.Parser
@@ -895,7 +895,7 @@ module plat.expressions {
             }
             return char.indexOf(obj.val) === -1;
         }
-        
+
         /**
          * @name _resetParser
          * @memberof plat.expressions.Parser
@@ -914,7 +914,7 @@ module plat.expressions {
             this.__tempIdentifiers = [];
             this.__aliases = {};
         }
-        
+
         /**
          * @name _throwError
          * @memberof plat.expressions.Parser
@@ -942,7 +942,7 @@ module plat.expressions {
     }
 
     register.injectable(__Parser, IParser);
-    
+
     /**
      * @name IParser
      * @memberof plat.expressions
@@ -986,7 +986,7 @@ module plat.expressions {
          */
         clearCache(key?: string): void;
     }
-    
+
     /**
      * @name IParsedExpression
      * @memberof plat.expressions
@@ -1025,7 +1025,7 @@ module plat.expressions {
          * The original expression string.
          */
         expression: string;
-        
+
         /**
          * @name identifiers
          * @memberof plat.expressions.IParsedExpression
@@ -1039,7 +1039,7 @@ module plat.expressions {
          * properties to watch on a context.
          */
         identifiers: Array<string>;
-        
+
         /**
          * @name aliases
          * @memberof plat.expressions.IParsedExpression
@@ -1053,7 +1053,7 @@ module plat.expressions {
          * {@link plat.expressions.IParsedExpression|IParsedExpression}.
          */
         aliases: Array<string>;
-        
+
         /**
          * @name oneTime
          * @memberof plat.expressions.IParsedExpression
