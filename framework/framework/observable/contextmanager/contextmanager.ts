@@ -542,7 +542,7 @@ module plat.observable {
          * 
          * @description
          * Safely retrieves the local context for this manager given an Array of
-         * property strings.
+         * property strings and observes it if not found.
          * 
          * @param {Array<string>} split The string array containing properties used to index into
          * the context.
@@ -554,7 +554,7 @@ module plat.observable {
                 context = this.__contextObjects[join];
 
             if (isNull(context)) {
-                context = this.__contextObjects[join] = this._getImmediateContext(split);
+                context = this.__contextObjects[join] = this._observeImmediateContext(split, join);
             }
 
             return context;
