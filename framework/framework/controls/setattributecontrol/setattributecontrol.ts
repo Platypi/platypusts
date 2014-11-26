@@ -362,7 +362,7 @@ module plat.controls {
          * @description
          * The initial value of the property to be set.
          */
-        _initialValue = '';
+        protected _initialValue = '';
 
         /**
          * @name initialize
@@ -434,7 +434,7 @@ module plat.controls {
          * 
          * @returns {void}
          */
-        _setValue(value: string, importance?: string): void {
+        protected _setValue(value: string, importance?: string): void {
             var property = this.property,
                 style: CSSStyleDeclaration = this.element.style || <any>{
                     setProperty: noop,
