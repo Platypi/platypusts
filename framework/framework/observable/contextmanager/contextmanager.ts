@@ -1358,13 +1358,14 @@ module plat.observable {
                         return;
                     }
 
-                    var childPropertiesLength = (this.__identifierHash[identifier] || []).length;
+                    var childPropertiesExist = (this.__identifierHash[identifier] || []).length > 0;
                     this._execute(identifier, value, oldValue);
-                    if (childPropertiesLength > 0) {
+
+                    if (childPropertiesExist) {
                         this._notifyChildProperties(identifier, value, oldValue);
                     }
 
-                    if (isEmpty(this.__identifiers[identifier])) {
+                    if (!childPropertiesExist && isEmpty(this.__identifiers[identifier])) {
                         ContextManager.defineProperty(immediateContext, key, value, true, true);
                     } else if (!isObject(value)) {
                         this.__definePrimitive(identifier, immediateContext, key);
@@ -1414,14 +1415,14 @@ module plat.observable {
                         return;
                     }
 
-                    var childPropertiesLength = (this.__identifierHash[identifier] || []).length;
+                    var childPropertiesExist = (this.__identifierHash[identifier] || []).length > 0;
                     this._execute(identifier, newValue, oldValue);
-                    if (isEmpty(this.__identifiers[identifier])) {
+
+                    if (!childPropertiesExist && isEmpty(this.__identifiers[identifier])) {
                         ContextManager.defineProperty(immediateContext, key, value, true, true);
-                        return;
                     } else if (isObject(value)) {
                         this.__defineObject(identifier, immediateContext, key);
-                        if (childPropertiesLength > 0) {
+                        if (childPropertiesExist) {
                             this._notifyChildProperties(identifier, newValue, oldValue);
                         }
                     } else if (!isDefined) {
