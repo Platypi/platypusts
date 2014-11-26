@@ -362,7 +362,7 @@ module plat.controls {
          * @description
          * The initial value of the property to be set.
          */
-        _initialValue: string;
+        _initialValue = '';
 
         /**
          * @name initialize
@@ -376,9 +376,16 @@ module plat.controls {
          * @returns {void}
          */
         initialize(): void {
-            var style = this.element.style || { getPropertyValue: noop };
-            this._initialValue = (<CSSStyleDeclaration>style).getPropertyValue(this.property);
+            var style = this.element.style || { getPropertyValue: noop },
+                initialValue = (<CSSStyleDeclaration>style).getPropertyValue(this.property);
+
             this._setValue(this.value, this.importance);
+
+            if (isEmpty(initialValue) || initialValue === 'none') {
+                return;
+            }
+
+            this._initialValue = initialValue;
         }
 
         /**
