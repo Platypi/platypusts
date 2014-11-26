@@ -376,8 +376,8 @@ module plat.controls {
          * @returns {void}
          */
         initialize(): void {
-            var style = this.element.style || { getPropertyValue: noop },
-                initialValue = (<CSSStyleDeclaration>style).getPropertyValue(this.property);
+            var style: CSSStyleDeclaration = this.element.style || <any>{ getPropertyValue: noop },
+                initialValue = style.getPropertyValue(this.property);
 
             this._setValue(this.value, this.importance);
 
@@ -436,23 +436,23 @@ module plat.controls {
          */
         _setValue(value: string, importance?: string): void {
             var property = this.property,
-                style = this.element.style || {
+                style: CSSStyleDeclaration = this.element.style || <any>{
                     setProperty: noop,
                     removeProperty: noop,
                     getPropertyValue: noop,
                     getPropertyPriority: noop
                 },
-                currentVal = (<CSSStyleDeclaration>style).getPropertyValue(property),
-                currentPriority = (<CSSStyleDeclaration>style).getPropertyPriority(property);
+                currentVal = style.getPropertyValue(property),
+                currentPriority = style.getPropertyPriority(property);
 
             if (value === currentVal && importance === currentPriority) {
                 return;
             } else if (isEmpty(value)) {
-                (<CSSStyleDeclaration>style).removeProperty(property);
+                style.removeProperty(property);
                 return;
             }
 
-            (<CSSStyleDeclaration>style).setProperty(property, value, importance);
+            style.setProperty(property, value, importance);
         }
     }
 
