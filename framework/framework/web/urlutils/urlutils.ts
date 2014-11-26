@@ -73,11 +73,20 @@
          * @returns {string} The base URL.
          */
         private static __getBaseUrl(url: string): string {
-            if (isUndefined((<any>window.location).origin)) {
-                (<any>window.location).origin = window.location.protocol + "//" + window.location.host;
+            var $Regex = acquire(__Regex),
+                origin = (<any>window.location).origin,
+                protocol = window.location.protocol,
+                host = window.location.host;
+
+            if (protocol === 'file:' || protocol.indexOf('wmapp') > -1) {
+                origin = window.location.href;
+            } else if(isUndefined(origin)) {
+                origin = window.location.protocol + "//" + window.location.host;
             }
 
-            return (<any>window.location).origin.split('?')[0].split('#')[0] + '/';
+            origin = origin.replace($Regex.initialUrlRegex, '');
+
+            return origin.split('?')[0].split('#')[0] + '/';
         }
 
         /**
@@ -376,11 +385,6 @@
             url = element.href;
 
             var protocol = element.protocol ? element.protocol.replace(/:$/, '') : '';
-
-            // cordova adds //www for some urls, so we want to take those out.
-            if (protocol.indexOf('http') === -1 && protocol.indexOf('ms-appx') === -1) {
-                url = url.replace('//', '');
-            }
 
             define(this, 'href', url, true, true);
             define(this, 'protocol', element.protocol ? element.protocol.replace(/:$/, '') : '', true, true);
