@@ -124,8 +124,6 @@ module plat.controls {
          * @returns {void}
          */
         setter(): void {
-            var expression = this.attributes[this.attribute];
-
             postpone(() => {
                 var element = this.element,
                     property = this.property;
@@ -134,7 +132,7 @@ module plat.controls {
                     return;
                 }
 
-                switch (expression) {
+                switch (this.attributes[this.attribute]) {
                     case 'false':
                     case '0':
                     case 'null':
@@ -326,7 +324,7 @@ module plat.controls {
          * The property to set on the associated element.
          */
         property: string = 'display';
-        
+
         /**
          * @name value
          * @memberof plat.controls.Visible
@@ -339,7 +337,7 @@ module plat.controls {
          * The value to associate with the property.
          */
         value: string = 'none';
-        
+
         /**
          * @name importance
          * @memberof plat.controls.Visible
@@ -352,7 +350,7 @@ module plat.controls {
          * The importance to set on the property.
          */
         importance: string = 'important';
-        
+
         /**
          * @name _initialValue
          * @memberof plat.controls.Visible
@@ -378,7 +376,7 @@ module plat.controls {
          * @returns {void}
          */
         initialize(): void {
-            var style = this.element.style || {};
+            var style = this.element.style || { getPropertyValue: noop };
             this._initialValue = (<CSSStyleDeclaration>style).getPropertyValue(this.property);
             this._setValue(this.value, this.importance);
         }
@@ -395,14 +393,12 @@ module plat.controls {
          * @returns {void}
          */
         setter(): void {
-            var expression = this.attributes[this.attribute];
-
             postpone(() => {
                 if (!isNode(this.element)) {
                     return;
                 }
 
-                switch (expression) {
+                switch (this.attributes[this.attribute]) {
                     case 'false':
                     case '0':
                     case 'null':
@@ -411,6 +407,7 @@ module plat.controls {
                         break;
                     default:
                         this._setValue(this._initialValue);
+                        break;
                 }
             });
         }
@@ -431,13 +428,24 @@ module plat.controls {
          * @returns {void}
          */
         _setValue(value: string, importance?: string): void {
-            var style = this.element.style || { setProperty: noop, removeProperty: noop };
-            if (isEmpty(value)) {
-                (<CSSStyleDeclaration>style).removeProperty(this.property);
+            var property = this.property,
+                style = this.element.style || {
+                    setProperty: noop,
+                    removeProperty: noop,
+                    getPropertyValue: noop,
+                    getPropertyPriority: noop
+                },
+                currentVal = (<CSSStyleDeclaration>style).getPropertyValue(property),
+                currentPriority = (<CSSStyleDeclaration>style).getPropertyPriority(property);
+
+            if (value === currentVal && importance === currentPriority) {
+                return;
+            } else if (isEmpty(value)) {
+                (<CSSStyleDeclaration>style).removeProperty(property);
                 return;
             }
 
-            (<CSSStyleDeclaration>style).setProperty(this.property, value, importance);
+            (<CSSStyleDeclaration>style).setProperty(property, value, importance);
         }
     }
 
