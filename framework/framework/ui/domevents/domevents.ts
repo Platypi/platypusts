@@ -964,14 +964,19 @@
                 x = ev.clientX,
                 y = ev.clientY,
                 minMove = this.__hasMoved ||
-                    (this.__getDistance(swipeOrigin.clientX, x, swipeOrigin.clientY, y) >= config.distances.minScrollDistance);
+                (this.__getDistance(swipeOrigin.clientX, x, swipeOrigin.clientY, y) >= config.distances.minScrollDistance);
 
-            // if minimum distance not met or no moving events return
-            if (!minMove || (noTracking && noSwiping)) {
+            // if minimum distance not met
+            if (!minMove) {
                 return true;
             }
 
             this.__hasMoved = true;
+
+            // if no moving events return
+            if (noTracking && noSwiping) {
+                return true;
+            }
 
             var lastMove = this.__lastMoveEvent || swipeOrigin,
                 direction = ev.direction = this.__getDirection(x - lastMove.clientX, y - lastMove.clientY),
