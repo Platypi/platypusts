@@ -1209,7 +1209,7 @@
                 return;
             }
 
-            // fire tap event immediately if no dbltap zoom
+            // fire tap event immediately if no dbltap zoom delay 
             // or a mouse is being used
             if (DomEvents.config.intervals.dblTapZoomDelay <= 0 ||
                 ev.pointerType === 'mouse' || ev.type === 'mouseup') {
@@ -3065,8 +3065,6 @@
      * @memberof plat.ui
      * @kind interface
      * 
-     * @extends {Event}
-     * 
      * @description
      * An extended event object containing coordinate, time, and target info.
      */
@@ -3144,7 +3142,7 @@
      * @memberof plat.ui
      * @kind interface
      * 
-     * @extends {plat.ui.IBaseEvent}
+     * @extends {Event}
      * 
      * @description
      * An extended event object potentially containing coordinate and movement information.
