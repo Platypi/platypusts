@@ -407,30 +407,30 @@
          */
         private __touchCount = 0;
         /**
-         * @name __tapTimeout
+         * @name __cancelDeferredTap
          * @memberof plat.ui.DomEvents
          * @kind property
          * @access private
          * 
-         * @type {number}
+         * @type {plat.IRemoveListener}
          * 
          * @description
-         * A timeout ID given in the case that a tap delay was needed for 
+         * A function to remove a deferred tap given the case that a tap delay was needed for 
          * something such as a double tap to zoom feature.
          */
-        private __tapTimeout: number;
+        private __cancelDeferredTap = noop;
         /**
-         * @name __holdTimeout
+         * @name __cancelDeferredHold
          * @memberof plat.ui.DomEvents
          * @kind property
          * @access private
          * 
-         * @type {number}
+         * @type {plat.IRemoveListener}
          * 
          * @description
-         * A timeout ID for removing a registered hold event.
+         * A function for removing a deferred hold event.
          */
-        private __holdTimeout: number;
+        private __cancelDeferredHold = noop;
         /**
          * @name __cancelRegex
          * @memberof plat.ui.DomEvents
@@ -821,18 +821,11 @@
             this.__pointerEvents = [];
             this.__pointerHash = {};
             this.__reverseMap = {};
-            this.__tapCount = 0;
-            this.__touchCount = 0;
-            this.__detectingMove = false;
-            this.__hasMoved = false;
-            this.__hasRelease = false;
-            this.__hasSwiped = false;
-            this.__swipeOrigin = null;
-            this.__lastMoveEvent = null;
-            this.__lastTouchDown = null;
-            this.__lastTouchUp = null;
-            this.__capturedTarget = null;
-            this.__focusedElement = null;
+            this.__tapCount = this.__touchCount = 0;
+            this.__detectingMove = this.__hasMoved = this.__hasRelease = this.__hasSwiped = false;
+            this.__lastMoveEvent = this.__lastTouchDown = this.__lastTouchUp = null;
+            this.__swipeOrigin = this.__capturedTarget = this.__focusedElement = null;
+            this.__cancelDeferredHold = this.__cancelDeferredTap = noop;
         }
 
         /**
@@ -901,7 +894,7 @@
 
             if (noHolds) {
                 this.__hasRelease = false;
-                this.__holdTimeout = setTimeout(() => {
+                this.__cancelDeferredHold = defer(() => {
                     this.__hasRelease = true;
                 }, holdInterval);
                 return true;
@@ -910,7 +903,7 @@
                 if ((domEventFound = !isNull(domEvent))) {
                     subscribeFn = () => {
                         domEvent.trigger(ev);
-                        this.__holdTimeout = null;
+                        this.__cancelDeferredHold = noop;
                     };
                 }
             } else {
@@ -921,14 +914,14 @@
                     subscribeFn = () => {
                         domEvent.trigger(ev);
                         this.__hasRelease = true;
-                        this.__holdTimeout = null;
+                        this.__cancelDeferredHold = noop;
                     };
                 }
             }
 
             // set timeout to fire the subscribeFn
             if (domEventFound) {
-                this.__holdTimeout = setTimeout(subscribeFn, holdInterval);
+                this.__cancelDeferredHold = defer(subscribeFn, holdInterval);
             }
         }
 
@@ -947,7 +940,8 @@
          */
         _onTouchMove(ev: IPointerEvent): boolean {
             // clear hold event
-            this.__clearHold();
+            this.__cancelDeferredHold();
+            this.__cancelDeferredHold = noop;
 
             // return immediately if there are multiple touches present, or 
             // if it is a mouse event and currently in a touch
@@ -1134,7 +1128,9 @@
          */
         private __clearTempStates(): void {
             // clear hold event
-            this.__clearHold();
+            this.__cancelDeferredHold();
+            this.__cancelDeferredHold = noop;
+
             if (this.__detectingMove) {
                 this.__unregisterType(this.__MOVE);
                 this.__detectingMove = false;
@@ -1221,12 +1217,12 @@
                 return;
             }
 
-            // setTimeout for tap delay in case of 
+            // defer for tap delay in case of something like desired 
             // dbltap zoom
-            this.__tapTimeout = setTimeout(() => {
+            this.__cancelDeferredTap = defer(() => {
                 domEvent.trigger(ev);
                 this.__tapCount = 0;
-                this.__tapTimeout = null;
+                this.__cancelDeferredTap = noop;
             }, DomEvents.config.intervals.dblTapZoomDelay);
         }
         /**
@@ -1245,10 +1241,8 @@
         private __handleDbltap(ev: IPointerEvent): void {
             this.__tapCount = 0;
 
-            if (!isNull(this.__tapTimeout)) {
-                clearTimeout(this.__tapTimeout);
-                this.__tapTimeout = null;
-            }
+            this.__cancelDeferredTap();
+            this.__cancelDeferredTap = noop;
 
             if (this._gestureCount.$dbltap <= 0) {
                 return;
@@ -2024,23 +2018,6 @@
                 x: (ev.clientX - x),
                 y: (ev.clientY - y)
             };
-        }
-        /**
-         * @name __clearHold
-         * @memberof plat.ui.DomEvents
-         * @kind function
-         * @access private
-         * 
-         * @description
-         * Clears the hold events setTimeout.
-         * 
-         * @returns {void}
-         */
-        private __clearHold(): void {
-            if (!isNull(this.__holdTimeout)) {
-                clearTimeout(this.__holdTimeout);
-                this.__holdTimeout = null;
-            }
         }
 
         // utility methods
