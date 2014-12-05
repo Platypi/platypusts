@@ -3061,7 +3061,7 @@
     }
 
     /**
-     * @name IBaseEvent
+     * @name IBaseEventProperties
      * @memberof plat.ui
      * @kind interface
      * 
