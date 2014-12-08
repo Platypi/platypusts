@@ -868,7 +868,7 @@ module plat.ui.controls {
          * Used to specify an alternative alias for the first in a {@link plat.ui.controls.ForEach|ForEach} 
          * item template.
          */
-        first: string;
+        first?: string;
 
 
         /**
