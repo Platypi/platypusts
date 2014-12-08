@@ -77,7 +77,6 @@ function cfg(config: any) {
             '../framework/ui/controls/html/html.js',
             '../framework/ui/controls/select/select.js',
             '../framework/ui/controls/if/if.js',
-            '../framework/ui/controls/anchor/anchor.js',
             '../framework/app/app.js',
             'tests/**/*.js'
         ],

@@ -111,16 +111,16 @@
                 ]
             }, {
                     /**
-                        * The className that will be used to define the custom style for 
-                        * blocking touch action scrolling, zooming, etc on the element.
-                        */
+                     * The className that will be used to define the custom style for 
+                     * blocking touch action scrolling, zooming, etc on the element.
+                     */
                     className: 'plat-no-touch-action',
                     /**
-                        * An array of string styles that block touch action scrolling, zooming, etc. 
-                        * Primarily useful on elements such as a canvas.
-                        * In the format 'CSS identifier: value'
-                        * (e.g. 'width : 100px')
-                        */
+                     * An array of string styles that block touch action scrolling, zooming, etc. 
+                     * Primarily useful on elements such as a canvas.
+                     * In the format 'CSS identifier: value'
+                     * (e.g. 'width : 100px')
+                     */
                     styles: [
                         '-ms-touch-action: none',
                         'touch-action: none'
@@ -410,30 +410,30 @@
          */
         private __touchCount = 0;
         /**
-         * @name __tapTimeout
+         * @name __cancelDeferredTap
          * @memberof plat.ui.DomEvents
          * @kind property
          * @access private
          * 
-         * @type {number}
+         * @type {plat.IRemoveListener}
          * 
          * @description
-         * A timeout ID given in the case that a tap delay was needed for 
+         * A function to remove a deferred tap given the case that a tap delay was needed for 
          * something such as a double tap to zoom feature.
          */
-        private __tapTimeout: number;
+        private __cancelDeferredTap = noop;
         /**
-         * @name __holdTimeout
+         * @name __cancelDeferredHold
          * @memberof plat.ui.DomEvents
          * @kind property
          * @access private
          * 
-         * @type {number}
+         * @type {plat.IRemoveListener}
          * 
          * @description
-         * A timeout ID for removing a registered hold event.
+         * A function for removing a deferred hold event.
          */
-        private __holdTimeout: number;
+        private __cancelDeferredHold = noop;
         /**
          * @name __cancelRegex
          * @memberof plat.ui.DomEvents
@@ -464,36 +464,24 @@
          * @kind property
          * @access private
          * 
-         * @type {plat.ui.IPointerEvent}
+         * @type {plat.ui.IBaseEventProperties}
          * 
          * @description
          * The user's last touch down.
          */
-        private __lastTouchDown: IPointerEvent;
-        /**
-         * @name __lastTouchUp
-         * @memberof plat.ui.DomEvents
-         * @kind property
-         * @access private
-         * 
-         * @type {plat.ui.IPointerEvent}
-         * 
-         * @description
-         * The user's last touch up.
-         */
-        private __lastTouchUp: IPointerEvent;
+        private __lastTouchDown: IBaseEventProperties;
         /**
          * @name __swipeOrigin
          * @memberof plat.ui.DomEvents
          * @kind property
          * @access private
          * 
-         * @type {plat.ui.IPointerEvent}
+         * @type {plat.ui.IBaseEventProperties}
          * 
          * @description
          * The starting place of an initiated swipe gesture.
          */
-        private __swipeOrigin: IPointerEvent;
+        private __swipeOrigin: IBaseEventProperties;
         /**
          * @name __lastMoveEvent
          * @memberof plat.ui.DomEvents
@@ -506,6 +494,18 @@
          * The user's last move while in touch.
          */
         private __lastMoveEvent: IPointerEvent;
+        /**
+         * @name __lastTouchUp
+         * @memberof plat.ui.DomEvents
+         * @kind property
+         * @access private
+         * 
+         * @type {plat.ui.IPointerEvent}
+         * 
+         * @description
+         * The user's last touch up.
+         */
+        private __lastTouchUp: IPointerEvent;
         /**
          * @name __capturedTarget
          * @memberof plat.ui.DomEvents
@@ -824,18 +824,11 @@
             this.__pointerEvents = [];
             this.__pointerHash = {};
             this.__reverseMap = {};
-            this.__tapCount = 0;
-            this.__touchCount = 0;
-            this.__detectingMove = false;
-            this.__hasMoved = false;
-            this.__hasRelease = false;
-            this.__hasSwiped = false;
-            this.__swipeOrigin = null;
-            this.__lastMoveEvent = null;
-            this.__lastTouchDown = null;
-            this.__lastTouchUp = null;
-            this.__capturedTarget = null;
-            this.__focusedElement = null;
+            this.__tapCount = this.__touchCount = 0;
+            this.__detectingMove = this.__hasMoved = this.__hasRelease = this.__hasSwiped = false;
+            this.__lastMoveEvent = this.__lastTouchDown = this.__lastTouchUp = null;
+            this.__swipeOrigin = this.__capturedTarget = this.__focusedElement = null;
+            this.__cancelDeferredHold = this.__cancelDeferredTap = noop;
         }
 
         /**
@@ -853,7 +846,7 @@
          */
         protected _onTouchStart(ev: IPointerEvent): boolean {
             if (this.__touchCount++ > 0) {
-                return;
+                return true;
             }
 
             if (ev.type !== 'mousedown') {
@@ -868,13 +861,19 @@
 
             ev = this.__standardizeEventObject(ev);
             if (isNull(ev)) {
-                return;
+                return true;
             }
 
             // set any captured target and last move back to null
             this.__capturedTarget = this.__lastMoveEvent = null;
             this.__hasMoved = false;
-            this.__lastTouchDown = this.__swipeOrigin = ev;
+            this.__lastTouchDown = this.__swipeOrigin = {
+                clientX: ev.clientX,
+                clientY: ev.clientY,
+                timeStamp: ev.timeStamp,
+                target: ev.target,
+                identifier: ev.identifier
+            };
 
             var gestureCount = this._gestureCount,
                 noHolds = gestureCount.$hold <= 0,
@@ -898,16 +897,16 @@
 
             if (noHolds) {
                 this.__hasRelease = false;
-                this.__holdTimeout = setTimeout(() => {
+                this.__cancelDeferredHold = defer(() => {
                     this.__hasRelease = true;
                 }, holdInterval);
-                return;
+                return true;
             } else if (noRelease) {
                 domEvent = this.__findFirstSubscriber(<ICustomElement>ev.target, this._gestures.$hold);
                 if ((domEventFound = !isNull(domEvent))) {
                     subscribeFn = () => {
                         domEvent.trigger(ev);
-                        this.__holdTimeout = null;
+                        this.__cancelDeferredHold = noop;
                     };
                 }
             } else {
@@ -918,17 +917,15 @@
                     subscribeFn = () => {
                         domEvent.trigger(ev);
                         this.__hasRelease = true;
-                        this.__holdTimeout = null;
+                        this.__cancelDeferredHold = noop;
                     };
                 }
             }
 
             // set timeout to fire the subscribeFn
             if (domEventFound) {
-                this.__holdTimeout = setTimeout(subscribeFn, holdInterval);
+                this.__cancelDeferredHold = defer(subscribeFn, holdInterval);
             }
-
-            return true;
         }
 
         /**
@@ -946,7 +943,8 @@
          */
         protected _onTouchMove(ev: IPointerEvent): boolean {
             // clear hold event
-            this.__clearHold();
+            this.__cancelDeferredHold();
+            this.__cancelDeferredHold = noop;
 
             // return immediately if there are multiple touches present, or 
             // if it is a mouse event and currently in a touch
@@ -956,7 +954,7 @@
 
             ev = this.__standardizeEventObject(ev);
             if (isNull(ev)) {
-                return;
+                return true;
             }
 
             var gestureCount = this._gestureCount,
@@ -969,14 +967,19 @@
                 minMove = this.__hasMoved ||
                     (this.__getDistance(swipeOrigin.clientX, x, swipeOrigin.clientY, y) >= config.distances.minScrollDistance);
 
-            // if minimum distance not met or no moving events return
-            if (!minMove || (noTracking && noSwiping)) {
+            // if minimum distance not met
+            if (!minMove) {
                 return true;
             }
 
             this.__hasMoved = true;
 
-            var lastMove = this.__lastMoveEvent || swipeOrigin,
+            // if no moving events return
+            if (noTracking && noSwiping) {
+                return true;
+            }
+
+            var lastMove = <IBaseEventProperties>this.__lastMoveEvent || swipeOrigin,
                 direction = ev.direction = this.__getDirection(x - lastMove.clientX, y - lastMove.clientY),
                 originChanged = this.__checkForOriginChanged(direction),
                 velocity = ev.velocity = this.__getVelocity(x - swipeOrigin.clientX, y - swipeOrigin.clientY,
@@ -993,8 +996,6 @@
             }
 
             this.__lastMoveEvent = ev;
-
-            return true;
         }
 
         /**
@@ -1035,7 +1036,7 @@
                         if (ev.cancelable === true) {
                             ev.preventDefault();
                         }
-                        return;
+                        return true;
                     }
 
                     this.__preventClickFromTouch();
@@ -1063,7 +1064,7 @@
             // standardizeEventObject creates touches
             ev = this.__standardizeEventObject(ev);
             if (isNull(ev)) {
-                return;
+                return true;
             }
 
             this.__clearTempStates();
@@ -1090,7 +1091,7 @@
             if (hasMoved) {
                 this.__handleTrackEnd(ev);
                 this.__tapCount = 0;
-                return false;
+                return true;
             } else if (isNull(touchDown) || ((touchEnd - touchDown.timeStamp) > intervals.tapInterval)) {
                 this.__tapCount = 0;
                 return true;
@@ -1115,8 +1116,6 @@
             this.__handleTap(ev);
 
             this.__lastTouchUp = ev;
-
-            return true;
         }
 
         /**
@@ -1132,7 +1131,9 @@
          */
         private __clearTempStates(): void {
             // clear hold event
-            this.__clearHold();
+            this.__cancelDeferredHold();
+            this.__cancelDeferredHold = noop;
+
             if (this.__detectingMove) {
                 this.__unregisterType(this.__MOVE);
                 this.__detectingMove = false;
@@ -1212,7 +1213,7 @@
                 return;
             }
 
-            // fire tap event immediately if no dbltap zoom
+            // fire tap event immediately if no dbltap zoom delay 
             // or a mouse is being used
             if (DomEvents.config.intervals.dblTapZoomDelay <= 0 ||
                 ev.pointerType === 'mouse' || ev.type === 'mouseup') {
@@ -1220,12 +1221,12 @@
                 return;
             }
 
-            // setTimeout for tap delay in case of 
+            // defer for tap delay in case of something like desired 
             // dbltap zoom
-            this.__tapTimeout = setTimeout(() => {
+            this.__cancelDeferredTap = defer(() => {
                 domEvent.trigger(ev);
                 this.__tapCount = 0;
-                this.__tapTimeout = null;
+                this.__cancelDeferredTap = noop;
             }, DomEvents.config.intervals.dblTapZoomDelay);
         }
 
@@ -1245,10 +1246,8 @@
         private __handleDbltap(ev: IPointerEvent): void {
             this.__tapCount = 0;
 
-            if (!isNull(this.__tapTimeout)) {
-                clearTimeout(this.__tapTimeout);
-                this.__tapTimeout = null;
-            }
+            this.__cancelDeferredTap();
+            this.__cancelDeferredTap = noop;
 
             if (this._gestureCount.$dbltap <= 0) {
                 return;
@@ -1758,6 +1757,10 @@
          * point in the DOM tree.
          */
         private __findFirstSubscriber(eventTarget: ICustomElement, type: string): IDomEventInstance {
+            if (isNull(eventTarget)) {
+                return;
+            }
+
             var plat: ICustomElementProperty,
                 subscriber: IEventSubscriber,
                 domEvent: IDomEventInstance;
@@ -1796,6 +1799,10 @@
          * points in the DOM tree.
          */
         private __findFirstSubscribers(eventTarget: ICustomElement, types: Array<string>): Array<IDomEventInstance> {
+            if (isNull(eventTarget)) {
+                return [];
+            }
+
             var plat: ICustomElementProperty,
                 subscriber: IEventSubscriber,
                 subscriberKeys: Array<string>,
@@ -1938,21 +1945,18 @@
             this.__setTouchPoint(ev);
 
             var isStart = this._startEvents.indexOf(ev.type) !== -1,
-                touches = ev.touches = ev.touches || this.__pointerEvents,
-                cTouches = ev.changedTouches,
-                changedTouchesExist = !isUndefined(cTouches),
-                changedTouches = changedTouchesExist ? cTouches : [],
+                touches = ev.touches || this.__pointerEvents,
+                changedTouches = ev.changedTouches,
+                changedTouchesExist = !isUndefined(changedTouches),
                 timeStamp = ev.timeStamp;
 
             if (changedTouchesExist) {
                 if (isStart) {
                     ev = changedTouches[0];
-                    ev.touches = touches;
                 } else {
                     var changedTouchIndex = this.__getTouchIndex(changedTouches);
                     if (changedTouchIndex >= 0) {
                         ev = changedTouches[changedTouchIndex];
-                        ev.touches = touches;
                     } else if (this.__getTouchIndex(touches) >= 0) {
                         // we want to return null because our point of interest is in touches 
                         // but was not in changedTouches so it is still playing a part on the page
@@ -1965,6 +1969,7 @@
                 this.__setCapture(ev.target);
             }
 
+            ev.touches = touches;
             ev.offset = this.__getOffset(ev);
             ev.timeStamp = timeStamp;
 
@@ -1988,7 +1993,7 @@
          * not found.
          */
         private __getTouchIndex(touches: Array<IExtendedEvent>): number {
-            var identifier = (this.__lastTouchDown || <IExtendedEvent>{}).identifier,
+            var identifier = (this.__lastTouchDown || <IBaseEventProperties>{}).identifier,
                 length = touches.length;
 
             for (var i = 0; i < length; ++i) {
@@ -2040,24 +2045,6 @@
             };
         }
 
-        /**
-         * @name __clearHold
-         * @memberof plat.ui.DomEvents
-         * @kind function
-         * @access private
-         * 
-         * @description
-         * Clears the hold events setTimeout.
-         * 
-         * @returns {void}
-         */
-        private __clearHold(): void {
-            if (!isNull(this.__holdTimeout)) {
-                clearTimeout(this.__holdTimeout);
-                this.__holdTimeout = null;
-            }
-        }
-
         // utility methods
 
         /**
@@ -2077,8 +2064,8 @@
          * @returns {number} The distance between the points.
          */
         private __getDistance(x1: number, x2: number, y1: number, y2: number): number {
-            var x = Math.abs(x2 - x1),
-                y = Math.abs(y2 - y1);
+            var x = x2 - x1,
+                y = y2 - y1;
             return Math.sqrt((x * x) + (y * y));
         }
 
@@ -2159,7 +2146,13 @@
                 return false;
             }
 
-            this.__swipeOrigin = lastMove;
+            this.__swipeOrigin = {
+                clientX: lastMove.clientX,
+                clientY: lastMove.clientY,
+                timeStamp: lastMove.timeStamp,
+                target: lastMove.target,
+                identifier: lastMove.identifier
+            };
 
             this.__hasSwiped = false;
             return true;
@@ -2180,7 +2173,7 @@
          * @returns {void}
          */
         private __setRegisteredSwipes(direction: IDirection, velocity: IVelocity): void {
-            var swipeTarget = <ICustomElement>this.__swipeOrigin.target,
+            var swipeTarget = <ICustomElement>(this.__swipeOrigin || {}).target,
                 swipeGesture = this._gestures.$swipe,
                 minSwipeVelocity = DomEvents.config.velocities.minSwipeVelocity,
                 events = [swipeGesture];
@@ -3109,6 +3102,83 @@
     }
 
     /**
+     * @name IBaseEventProperties
+     * @memberof plat.ui
+     * @kind interface
+     * 
+     * @description
+     * An extended event object containing coordinate, time, and target info.
+     */
+    export interface IBaseEventProperties {
+        /**
+         * @name clientX
+         * @memberof plat.ui.IBaseEventProperties
+         * @kind property
+         * @access public
+         * 
+         * @type {number}
+         * 
+         * @description
+         * The x-coordinate of the event on the screen relative to the upper left corner of the 
+         * browser window. This value cannot be affected by scrolling.
+         */
+        clientX?: number;
+
+        /**
+         * @name clientY
+         * @memberof plat.ui.IBaseEventProperties
+         * @kind property
+         * @access public
+         * 
+         * @type {number}
+         * 
+         * @description
+         * The y-coordinate of the event on the screen relative to the upper left corner of the 
+         * browser window. This value cannot be affected by scrolling.
+         */
+        clientY?: number;
+
+        /**
+         * @name identifier
+         * @memberof plat.ui.IBaseEventProperties
+         * @kind property
+         * @access public
+         * 
+         * @type {number}
+         * 
+         * @description
+         * A unique touch identifier.
+         */
+        identifier?: number;
+
+        /**
+         * @name timeStamp
+         * @memberof plat.ui.IBaseEventProperties
+         * @kind property
+         * @access public
+         * 
+         * @type {number}
+         * 
+         * @description
+         * A timestamp.
+         */
+        timeStamp?: number;
+
+        /**
+         * @name target
+         * @memberof plat.ui.IBaseEventProperties
+         * @kind property
+         * @access public
+         * 
+         * @type {number}
+         * 
+         * @description
+         * The target of an Event object.
+         */
+        target?: EventTarget;
+    }
+
+    /**
      * @name IExtendedEvent
      * @memberof plat.ui
      * @kind interface
@@ -3303,7 +3373,7 @@
 
         /**
          * @name identifier
-         * @memberof plat.ui.IPointerEvent
+         * @memberof plat.ui.IExtendedEvent
          * @kind property
          * @access public
          * 

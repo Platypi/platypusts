@@ -26,16 +26,6 @@ module app {
             });
         }
 
-        constructor() {
-            super();
-            var config = plat.acquire(plat.web.IBrowserConfig),
-                browser = plat.acquire(plat.web.IBrowser),
-                utils = browser.urlUtils('viewcontrols/main/main.viewcontrol.html');
-
-            console.log(config.baseUrl);
-            console.log(utils);
-        }
-
         goBack() {
             this.navigator.goBack({
                 // ViewControl: MainViewControl,
@@ -84,13 +74,6 @@ module app {
 
         backButtonPressed(ev: plat.events.IDispatchEventInstance) {
             console.log('Here: ' + this.context.count);
-
-            var config = plat.acquire(plat.web.IBrowserConfig),
-                browser = plat.acquire(plat.web.IBrowser),
-                utils = browser.urlUtils('url here');
-
-            console.log(config.baseUrl);
-            console.log(utils.toString());
         }
 
         foo() {

@@ -21,7 +21,7 @@ module plat.navigation {
          * @access private
          * @static
          * 
-         * @type {plat.navigator.INavigatorInstance}
+         * @type {plat.navigation.INavigatorInstance}
          * 
          * @description
          * Stores the instance of the main navigator. Unless otherwise specified, the main 

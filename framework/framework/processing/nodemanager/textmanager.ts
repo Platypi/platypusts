@@ -40,7 +40,6 @@ module plat.processing {
                         nodes: [{
                             node: node,
                             expressions: expressions,
-                            identifiers: NodeManager.findUniqueIdentifiers(expressions),
                         }]
                     };
 
@@ -74,7 +73,6 @@ module plat.processing {
             var node = sourceMap.nodes[0],
                 nodeMap: INodeMap = {
                     nodes: [{
-                        identifiers: node.identifiers,
                         expressions: node.expressions,
                         nodeName: node.nodeName,
                         node: newNode
@@ -165,7 +163,7 @@ module plat.processing {
                 textNode = node.node,
                 expressions = node.expressions;
 
-            NodeManager.observeIdentifiers(node.identifiers, parent,
+            NodeManager.observeExpressions(node.expressions, parent,
                 this._setText.bind(this, textNode, parent, expressions));
 
             this._setText(textNode, parent, expressions);
@@ -189,8 +187,7 @@ module plat.processing {
          * @returns {void}
          */
         protected _setText(node: Node, control: ui.ITemplateControl, expressions: Array<expressions.IParsedExpression>): void {
-            control = control || <ui.ITemplateControl>{};
-            node.nodeValue = NodeManager.build(expressions, control);
+            node.nodeValue = NodeManager.build(expressions, (control || <ui.ITemplateControl>{}));
         }
     }
 

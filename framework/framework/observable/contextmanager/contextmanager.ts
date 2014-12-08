@@ -129,7 +129,7 @@ module plat.observable {
 
             if (!isNull(control.context)) {
                 ContextManager.defineProperty(control, __CONTEXT,
-                    persist === true ? _clone(control.context, true) : null, true, true);
+                    persist === true ? _clone(control.context, true) : null, true, true, true);
             }
         }
         
@@ -205,14 +205,16 @@ module plat.observable {
          * @param {boolean} enumerable? Whether or not the property should be enumerable (able to be iterated 
          * over in a loop)
          * @param {boolean} configurable? Whether or not the property is able to be reconfigured.
+         * @param {boolean} writable? Whether or not assignment operators work on the property.
          * 
          * @returns {void}
          */
-        static defineProperty(obj: any, key: string, value: any, enumerable?: boolean, configurable?: boolean): void {
+        static defineProperty(obj: any, key: string, value: any, enumerable?: boolean, configurable?: boolean, writable?: boolean): void {
             Object.defineProperty(obj, key, {
                 value: value,
                 enumerable: enumerable === true,
-                configurable: configurable === true
+                configurable: configurable === true,
+                writable: writable === true
             });
         }
         
@@ -314,6 +316,9 @@ module plat.observable {
             }
 
             listeners.splice(index, 1);
+            if (listeners.length === 0) {
+                deleteProperty(control, identifier);
+        }
         }
         
         /**
@@ -539,7 +544,7 @@ module plat.observable {
          * 
          * @description
          * Safely retrieves the local context for this manager given an Array of
-         * property strings.
+         * property strings and observes it if not found.
          * 
          * @param {Array<string>} split The string array containing properties used to index into
          * the context.
@@ -551,7 +556,7 @@ module plat.observable {
                 context = this.__contextObjects[join];
 
             if (isNull(context)) {
-                context = this.__contextObjects[join] = this._getImmediateContext(join);
+                context = this.__contextObjects[join] = this._observeImmediateContext(split, join);
             }
 
             return context;
@@ -589,7 +594,7 @@ module plat.observable {
                 join = split.join('.');
                 context = this.__contextObjects[join];
                 if (isNull(context)) {
-                    context = this.__contextObjects[join] = this._getImmediateContext(join);
+                    context = this.__contextObjects[join] = this._observeImmediateContext(split, join);
                 }
             } else {
                 join = key;
@@ -600,7 +605,7 @@ module plat.observable {
                 if (hasObservableListener) {
                     if (key === 'length') {
                         this.__lengthListeners[absoluteIdentifier] = observableListener;
-                        ContextManager.pushRemoveListener(absoluteIdentifier, uid, () => {
+                        ContextManager.pushRemoveListener(absoluteIdentifier, observableListener.uid, () => {
                             deleteProperty(this.__lengthListeners, absoluteIdentifier);
                         });
                     }
@@ -641,8 +646,7 @@ module plat.observable {
             if (!hasIdentifier) {
                 if (key === 'length' && isArray(context)) {
                     var property = split.pop(),
-                        parentContext = this.getContext(split),
-                        uid = observableListener.uid;
+                        parentContext = this.getContext(split);
 
                     this.__observedIdentifier = null;
                     access(parentContext, property);
@@ -652,6 +656,11 @@ module plat.observable {
                     }
 
                     var removeObservableListener = removeCallback,
+                        removeListener = noop,
+                        removeArrayObserve = noop;
+
+                    if (hasObservableListener) {
+                        var uid = observableListener.uid;
                         removeListener = this.observeArray(uid, noop, join, context, null),
                         removeArrayObserve = this.observe(join, {
                             uid: uid,
@@ -660,6 +669,7 @@ module plat.observable {
                                 removeListener = this.observeArray(uid, noop, join, newValue, oldValue);
                             }
                         });
+                    }
 
                     removeCallback = () => {
                         removeObservableListener();
@@ -855,7 +865,7 @@ module plat.observable {
             for (i = 0; i < length; ++i) {
                 method = arrayMethods[i];
                 ContextManager.defineProperty(array, method,
-                    this._overwriteArrayFunction(absoluteIdentifier, method), false, true);
+                    this._overwriteArrayFunction(absoluteIdentifier, method), false, true, true);
             }
         }
 
@@ -866,20 +876,15 @@ module plat.observable {
          * @access protected
          * 
          * @description
-         * Gets the immediate context of identifier by splitting on "." 
-         * and observes the objects along the way.
+         * Gets the immediate context of identifier by splitting on ".".
          * 
-         * @param {string} identifier The identifier being observed.
+         * @param {Array<string>} split The string array containing properties used to index into
+         * the context.
          * 
          * @returns {any} The immediate context denoted by the identifier.
          */
-        protected _getImmediateContext(identifier: string): any {
-            if (isNull(this.__identifiers[identifier])) {
-                this.observe(identifier, null);
-            }
-
-            var split = identifier.split('.'),
-                context = this.context;
+        protected _getImmediateContext(split: Array<string>): any {
+            var context = this.context;
 
             while (split.length > 0) {
                 context = context[split.shift()];
@@ -891,6 +896,30 @@ module plat.observable {
             return context;
         }
         
+        /**
+         * @name _observeImmediateContext
+         * @memberof plat.observable.ContextManager
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Gets the immediate context of identifier by splitting on "." 
+         * and observes the objects along the way.
+         * 
+         * @param {Array<string>} split The identifier's split string array containing properties 
+         * used to index into the context.
+         * @param {string} identifier The identifier being observed.
+         * 
+         * @returns {any} The immediate context denoted by the identifier.
+         */
+        protected _observeImmediateContext(split: Array<string>, identifier: string): any {
+            if (isNull(this.__identifiers[identifier])) {
+                this.observe(identifier, null);
+            }
+
+            return this._getImmediateContext(split);
+        }
+
         /**
          * @name _getValues
          * @memberof plat.observable.ContextManager
@@ -1081,10 +1110,7 @@ module plat.observable {
          * @returns {plat.IRemoveListener} A function for removing the given listener for the given absoluteIdentifier.
          */
         protected _addObservableListener(absoluteIdentifier: string, observableListener: IListener): IRemoveListener {
-            var remove = () => {
-                    this._removeCallback(absoluteIdentifier, observableListener);
-                },
-                split = absoluteIdentifier.split('.'),
+            var split = absoluteIdentifier.split('.'),
                 property = split.pop(),
                 isLength = property === 'length',
                 context: any;
@@ -1105,8 +1131,13 @@ module plat.observable {
 
             this.__add(absoluteIdentifier, observableListener);
 
-            ContextManager.pushRemoveListener(absoluteIdentifier, observableListener.uid, remove);
+            var uid = observableListener.uid,
+                remove = () => {
+                    ContextManager.spliceRemoveListener(absoluteIdentifier, uid, remove);
+                    this._removeCallback(absoluteIdentifier, observableListener);
+                };
 
+            ContextManager.pushRemoveListener(absoluteIdentifier, uid, remove);
             return remove;
         }
         
@@ -1280,8 +1311,15 @@ module plat.observable {
                 return;
             }
 
-            for (var i = 0; i < observableListeners.length; ++i) {
+            var length = observableListeners.length,
+                newLength = length,
+                i = 0;
+
+            while (i < length) {
                 observableListeners[i].listener(value, oldValue);
+                newLength = observableListeners.length;
+                i += newLength - length + 1;
+                length = newLength;
             }
         }
         
@@ -1322,15 +1360,16 @@ module plat.observable {
                         return;
                     }
 
-                    var hash = this.__identifierHash[identifier],
-                        childPropertiesLength = isArray(hash) ? hash.length : 0;
-
+                    var childPropertiesExist = (this.__identifierHash[identifier] || []).length > 0;
                     this._execute(identifier, value, oldValue);
-                    if (childPropertiesLength > 0) {
+
+                    if (childPropertiesExist) {
                         this._notifyChildProperties(identifier, value, oldValue);
                     }
 
-                    if (!isObject(value)) {
+                    if (!childPropertiesExist && isEmpty(this.__identifiers[identifier])) {
+                        ContextManager.defineProperty(immediateContext, key, value, true, true, true);
+                    } else if (!isObject(value)) {
                         this.__definePrimitive(identifier, immediateContext, key);
                     }
                 }
@@ -1378,17 +1417,17 @@ module plat.observable {
                         return;
                     }
 
-                    if (isObject(value)) {
-                        var childPropertiesLength = this.__identifierHash[identifier].length;
+                    var childPropertiesExist = (this.__identifierHash[identifier] || []).length > 0;
                         this._execute(identifier, newValue, oldValue);
+
+                    if (!childPropertiesExist && isEmpty(this.__identifiers[identifier])) {
+                        ContextManager.defineProperty(immediateContext, key, value, true, true, true);
+                    } else if (isObject(value)) {
                         this.__defineObject(identifier, immediateContext, key);
-                        if (childPropertiesLength > 0) {
+                        if (childPropertiesExist) {
                             this._notifyChildProperties(identifier, newValue, oldValue);
                         }
-                    } else if (isDefined) {
-                        this._execute(identifier, newValue, oldValue);
-                    } else {
-                        this._execute(identifier, newValue, oldValue);
+                    } else if (!isDefined) {
                         this.__definePrimitive(identifier, immediateContext, key);
                         isDefined = true;
                     }
@@ -1589,10 +1628,11 @@ module plat.observable {
          * @param {boolean} enumerable? Whether or not the property should be enumerable (able to be iterated 
          * over in a loop)
          * @param {boolean} configurable? Whether or not the property is able to be reconfigured.
+         * @param {boolean} writable? Whether or not assignment operators work on the property.
          * 
          * @returns {void}
          */
-        defineProperty(obj: any, key: string, value: any, enumerable?: boolean, configurable?: boolean): void;
+        defineProperty(obj: any, key: string, value: any, enumerable?: boolean, configurable?: boolean, writable?: boolean): void;
 
         /**
          * @name defineGetter
@@ -1649,7 +1689,7 @@ module plat.observable {
          *
          * @returns {void}
          */
-        spliceRemoveListener(identifier: string, uid: string, listener: IRemoveListener): void
+        spliceRemoveListener(identifier: string, uid: string, listener: IRemoveListener): void;
 
         /**
          * @name removeIdentifier

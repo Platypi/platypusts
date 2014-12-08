@@ -51,50 +51,6 @@ module plat.processing {
         static $TemplateControlFactory: ui.ITemplateControlFactory;
         
         /**
-         * @name findUniqueIdentifiers
-         * @memberof plat.processing.NodeManager
-         * @kind function
-         * @access public
-         * @static
-         * 
-         * @description
-         * Given an {@link plat.expressions.IParsedExpression|IParsedExpression} array, creates an array of unique identifers 
-         * to use with binding. This allows us to avoid creating multiple listeners for the identifier and node.
-         * 
-         * @param {Array<plat.expressions.IParsedExpression>} expressions An array of parsed expressions to search for identifiers.
-         * 
-         * @returns {Array<string>} An array of unique identifiers.
-         */
-        static findUniqueIdentifiers(expressions: Array<expressions.IParsedExpression>): Array<string> {
-            var length = expressions.length,
-                uniqueIdentifierObject: IObject<boolean> = {},
-                uniqueIdentifiers: Array<string> = [],
-                identifiers: Array<string>,
-                identifier: string,
-                j: number,
-                jLength: number;
-
-            if (length === 1) {
-                return expressions[0].identifiers.slice(0);
-            }
-
-            for (var i = 0; i < length; ++i) {
-                identifiers = expressions[i].identifiers;
-                jLength = identifiers.length;
-
-                for (j = 0; j < jLength; ++j) {
-                    identifier = identifiers[j];
-                    if (isNull(uniqueIdentifierObject[identifier])) {
-                        uniqueIdentifierObject[identifier] = true;
-                        uniqueIdentifiers.push(identifier);
-                    }
-                }
-            }
-
-            return uniqueIdentifiers;
-        }
-        
-        /**
          * @name hasMarkup
          * @memberof plat.processing.NodeManager
          * @kind function
@@ -151,15 +107,8 @@ module plat.processing {
 
                 // check for one-time databinding
                 if (substring[0] === '=') {
-                    substring = substring.slice(1).trim();
-                    expression = $parser.parse(substring);
-                    expression = {
-                        expression: expression.expression,
-                        evaluate: expression.evaluate,
-                        identifiers: [],
-                        aliases: expression.aliases,
-                        oneTime: true
-                    };
+                    expression = $parser.parse(substring.slice(1).trim());
+                    expression.oneTime = true;
                     parsedExpressions.push(expression);
                 } else {
                     parsedExpressions.push($parser.parse(substring.trim()));
@@ -223,7 +172,7 @@ module plat.processing {
                     text += value;
                 }
 
-                if (expression.oneTime) {
+                if (expression.oneTime && !isUndefined(value)) {
                     expressions[i] = NodeManager._wrapExpression(value);
                 }
             }
@@ -232,7 +181,7 @@ module plat.processing {
         }
         
         /**
-         * @name observeIdentifiers
+         * @name observeExpressions
          * @memberof plat.processing.NodeManager
          * @kind function
          * @access public
@@ -241,83 +190,55 @@ module plat.processing {
          * @description
          * Registers a listener to be notified of a change in any associated identifier.
          * 
-         * @param {Array<string>} identifiers An Array of identifiers to observe.
+         * @param {Array<plat.expressions.IParsedExpression>} expressions An Array of 
+         * {@link plat.expressions.IParsedExpression|IParsedExpressions} to observe.
          * @param {plat.ui.ITemplateControl} control The {@link plat.ui.ITemplateControl|ITemplateControl} associated 
          * to the identifiers.
          * @param {(...args: Array<any>) => void} listener The listener to call when any identifier property changes.
          * 
          * @returns {void}
          */
-        static observeIdentifiers(identifiers: Array<string>, control: ui.ITemplateControl,
+        static observeExpressions(expressions: Array<expressions.IParsedExpression>, control: ui.ITemplateControl,
             listener: (...args: Array<any>) => void): void {
-            var length = identifiers.length,
-                $contextManager = NodeManager.$ContextManagerStatic,
-                rootManager = $contextManager.getManager(Control.getRootControl(control)),
-                absoluteContextPath = control.absoluteContextPath,
-                context = control.context,
+            var uniqueIdentiifers = NodeManager.__findUniqueIdentifiers(expressions),
+                identifiers = uniqueIdentiifers.identifiers,
+                oneTimeIdentifiers = uniqueIdentiifers.oneTimeIdentifiers,
+                oneTimeIdentifier: string,
                 observableCallback = {
                     listener: listener,
                     uid: control.uid
                 },
-                resources: IObject<{
-                    resource: ui.IResource;
-                    control: ui.ITemplateControl;
-                }>  = {},
-                resourceObj: {
-                    resource: ui.IResource;
-                    control: ui.ITemplateControl;
-                },
+                observationDetails: IObservationDetails,
                 manager: observable.IContextManager,
-                split: Array<string>,
-                alias: string,
                 absoluteIdentifier: string,
-                identifier: string;
+                stopObserving: IRemoveListener,
+                stopListening: IRemoveListener;
 
-            for (var i = 0; i < length; ++i) {
-                identifier = identifiers[i];
-                absoluteIdentifier = '';
-
-                if (identifier[0] === '@') {
-                    // we found an alias
-                    split = identifier.split('.');
-                    alias = split.shift().slice(1);
-
-                    if (split.length > 0) {
-                        absoluteIdentifier = '.' + split.join('.');
-                    }
-
-                    resourceObj = resources[alias];
-
-                    if (isNull(resourceObj)) {
-                        resourceObj = resources[alias] = control.findResource(alias);
-                    }
-
-                    if (!isNull(resourceObj) && !isNull(resourceObj.resource) && resourceObj.resource.type === __OBSERVABLE_RESOURCE) {
-                        manager = $contextManager.getManager(resources[alias].control);
-                        absoluteIdentifier = 'resources.' + alias + '.value' + absoluteIdentifier;
-                    } else {
-                        continue;
-                    }
-                } else {
-                    // look on the control.context
-                    split = identifier.split('.');
-
-                    if (!isNull($contextManager.getContext(context, split))) {
-                        manager = rootManager;
-                        absoluteIdentifier = absoluteContextPath + '.' + identifier;
-                    } else if (!isNull($contextManager.getContext(control, split))) {
-                        manager = null;
-                    } else {
-                        manager = rootManager;
-                        absoluteIdentifier = absoluteContextPath + '.' + identifier;
-                    }
-                }
-
+            while (identifiers.length > 0) {
+                observationDetails = NodeManager.__getObservationDetails(identifiers.pop(), control);
+                manager = observationDetails.manager;
                 if (!isNull(manager)) {
-                    manager.observe(absoluteIdentifier, observableCallback);
+                    manager.observe(observationDetails.absoluteIdentifier, observableCallback);
+                    }
+                    }
+
+            while (oneTimeIdentifiers.length > 0) {
+                oneTimeIdentifier = oneTimeIdentifiers.pop();
+                observationDetails = NodeManager.__getObservationDetails(oneTimeIdentifier, control);
+                manager = observationDetails.manager;
+                if (!(isNull(manager) || observationDetails.isDefined)) {
+                    absoluteIdentifier = observationDetails.absoluteIdentifier;
+                    stopObserving = manager.observe(absoluteIdentifier, observableCallback);
+                    stopListening = manager.observe(absoluteIdentifier, {
+                        uid: control.uid,
+                        listener: () => {
+                            stopObserving();
+                            stopListening();
+                    }
+                    });
+                }
                 }
             }
-        }
         
         /**
          * @name _markupRegex
@@ -370,6 +291,155 @@ module plat.processing {
             };
         }
         
+        /**
+         * @name __findUniqueIdentifiers
+         * @memberof plat.processing.NodeManager
+         * @kind function
+         * @access private
+         * @static
+         * 
+         * @description
+         * Given an {@link plat.expressions.IParsedExpression|IParsedExpression} array, creates an array of unique identifers 
+         * to use with binding. This allows us to avoid creating multiple listeners for the identifier and node.
+         * 
+         * @param {Array<plat.expressions.IParsedExpression>} expressions An array of parsed expressions to search for identifiers.
+         * 
+         * @returns {plat.processing.IUniqueIdentifiers} An object containing both an array of unique identifiers for 
+         * one way binding as well as an array of unique identifiers for one time binding.
+         */
+        private static __findUniqueIdentifiers(expressions: Array<expressions.IParsedExpression>): IUniqueIdentifiers {
+            var length = expressions.length,
+                expression: expressions.IParsedExpression;
+
+            if (length === 1) {
+                expression = expressions[0];
+                if (expression.oneTime) {
+                    return {
+                        identifiers: [],
+                        oneTimeIdentifiers: expression.identifiers.slice(0)
+                    };
+                }
+
+                return {
+                    identifiers: expression.identifiers.slice(0),
+                    oneTimeIdentifiers: []
+                };
+            }
+
+            var uniqueIdentifierObject: IObject<boolean> = {},
+                oneTimeIdentifierObject: IObject<boolean> = {},
+                uniqueIdentifiers: Array<string> = [],
+                oneTimeIdentifiers: Array<string> = [],
+                identifiers: Array<string>,
+                identifier: string,
+                j: number,
+                jLength: number,
+                oneTime: boolean;
+
+            for (var i = 0; i < length; ++i) {
+                expression = expressions[i];
+                oneTime = expression.oneTime;
+                identifiers = expression.identifiers;
+                jLength = identifiers.length;
+
+                for (j = 0; j < jLength; ++j) {
+                    identifier = identifiers[j];
+                    if (oneTime) {
+                        if (uniqueIdentifierObject[identifier] === true) {
+                            continue;
+                        }
+
+                        if (!oneTimeIdentifierObject[identifier]) {
+                            oneTimeIdentifierObject[identifier] = true;
+                            oneTimeIdentifiers.push(identifier);
+                        }
+                    } else {
+                        if (!uniqueIdentifierObject[identifier]) {
+                            uniqueIdentifierObject[identifier] = true;
+                            uniqueIdentifiers.push(identifier);
+                        }
+
+                        if (oneTimeIdentifierObject[identifier] === true) {
+                            oneTimeIdentifierObject[identifier] = false;
+                            oneTimeIdentifiers.splice(oneTimeIdentifiers.indexOf(identifier), 1);
+                        }
+                    }
+                }
+            }
+
+            return {
+                identifiers: uniqueIdentifiers,
+                oneTimeIdentifiers: oneTimeIdentifiers
+            };
+        }
+
+        /**
+         * @name __getObservationDetails
+         * @memberof plat.processing.NodeManager
+         * @kind function
+         * @access private
+         * @static
+         * 
+         * @description
+         * Takes in an identifier and returns an object containing both its converted absolute path and the 
+         * {@link plat.observable.ContextManager|ContextManager} needed to observe it.
+         * 
+         * @param {string} identifier The identifier looking to be observed.
+         * @param {plat.ui.ITemplateControl} control The {@link plat.ui.ITemplateControl|ITemplateControl} associated 
+         * to the identifiers.
+         * 
+         * @returns {plat.processing.IObservationDetails} An object containing information needed for observing a the given 
+         * identifier.
+         */
+        private static __getObservationDetails(identifier: string, control: ui.ITemplateControl): IObservationDetails {
+            var $contextManager = NodeManager.$ContextManagerStatic,
+                manager: observable.IContextManager,
+                split = identifier.split('.'),
+                absoluteIdentifier = '',
+                isDefined = false;
+
+            if (identifier[0] === '@') {
+                // we found an alias
+                var resourceObj: { resource: ui.IResource; control: ui.ITemplateControl; },
+                    resources: IObject<{
+                        resource: ui.IResource;
+                        control: ui.ITemplateControl;
+                    }> = {},
+                    alias = split.shift().slice(1);
+
+                if (split.length > 0) {
+                    absoluteIdentifier = '.' + split.join('.');
+                }
+
+                resourceObj = resources[alias];
+
+                if (isNull(resourceObj)) {
+                    resourceObj = resources[alias] = control.findResource(alias);
+                }
+
+                if (!isNull(resourceObj) && !isNull(resourceObj.resource) && resourceObj.resource.type === __OBSERVABLE_RESOURCE) {
+                    manager = $contextManager.getManager(resources[alias].control);
+                    absoluteIdentifier = 'resources.' + alias + '.value' + absoluteIdentifier;
+                }
+            } else {
+                // look on the control.context
+                isDefined = !isUndefined($contextManager.getContext(control.context, split));
+
+                if (isDefined || isUndefined($contextManager.getContext(control, split))) {
+                    manager = $contextManager.getManager(Control.getRootControl(control));
+                    absoluteIdentifier = control.absoluteContextPath + '.' + identifier;
+                } else {
+                    manager = null;
+                }
+            }
+
+            return {
+                absoluteIdentifier: absoluteIdentifier,
+                manager: manager,
+                isDefined: isDefined
+            };
+        }
+
         /**
          * @name type
          * @memberof plat.processing.NodeManager
@@ -540,23 +610,6 @@ module plat.processing {
      */
     export interface INodeManagerStatic {
         /**
-         * @name findUniqueIdentifiers
-         * @memberof plat.processing.INodeManagerStatic
-         * @kind function
-         * @access public
-         * @static
-         * 
-         * @description
-         * Given an {@link plat.expressions.IParsedExpression|IParsedExpression} array, creates an array of unique identifers 
-         * to use with binding. This allows us to avoid creating multiple listeners for the identifier and node.
-         * 
-         * @param {Array<plat.expressions.IParsedExpression>} expressions An array of parsed expressions to search for identifiers.
-         * 
-         * @returns {Array<string>} An array of unique identifiers.
-         */
-        findUniqueIdentifiers(expressions: Array<expressions.IParsedExpression>): Array<string>;
-
-        /**
          * @name hasMarkup
          * @memberof plat.processing.INodeManagerStatic
          * @kind function
@@ -610,7 +663,7 @@ module plat.processing {
         build(expressions: Array<expressions.IParsedExpression>, control?: ui.ITemplateControl): string;
 
         /**
-         * @name observeIdentifiers
+         * @name observeExpressions
          * @memberof plat.processing.NodeManager
          * @kind function
          * @access public
@@ -619,14 +672,15 @@ module plat.processing {
          * @description
          * Registers a listener to be notified of a change in any associated identifier.
          * 
-         * @param {Array<string>} identifiers An Array of identifiers to observe.
+         * @param {Array<plat.expressions.IParsedExpression>} expressions An Array of 
+         * {@link plat.expressions.IParsedExpression|IParsedExpressions} to observe.
          * @param {plat.ui.ITemplateControl} control The {@link plat.ui.ITemplateControl|ITemplateControl} associated 
          * to the identifiers.
          * @param {(...args: Array<any>) => void} listener The listener to call when any identifier property changes.
          * 
          * @returns {void}
          */
-        observeIdentifiers(identifiers: Array<string>,
+        observeExpressions(expressions: Array<expressions.IParsedExpression>,
             control: ui.ITemplateControl, listener: (...args: Array<any>) => void): void;
     }
     
@@ -815,19 +869,6 @@ module plat.processing {
         expressions?: Array<expressions.IParsedExpression>;
         
         /**
-         * @name identifiers
-         * @memberof plat.processing.INode
-         * @kind property
-         * @access public
-         * 
-         * @type {Array<string>}
-         * 
-         * @description
-         * Unique identifiers contained in the Node.
-         */
-        identifiers?: Array<string>;
-        
-        /**
          * @name injector
          * @memberof plat.processing.INode
          * @kind property
@@ -969,5 +1010,91 @@ module plat.processing {
          * if one was found for the Element.
          */
         uiControlNode?: IUiControlNode;
+    }
+
+    /**
+     * @name IUniqueIdentifiers
+     * @memberof plat.processing
+     * @kind interface
+     * @exported false
+     * 
+     * @description
+     * Holds an array of identifiers for one way bindings and an 
+     * array of identifiers for one time bindings.
+     */
+    interface IUniqueIdentifiers {
+        /**
+         * @name identifiers
+         * @memberof plat.processing.IUniqueIdentifiers
+         * @kind property
+         * @access public
+         * 
+         * @type {Array<string>}
+         * 
+         * @description
+         * An array of identifiers used for one way bindings.
+         */
+        identifiers: Array<string>;
+        /**
+         * @name oneTimeIdentifiers
+         * @memberof plat.processing.IUniqueIdentifiers
+         * @kind property
+         * @access public
+         * 
+         * @type {Array<string>}
+         * 
+         * @description
+         * An array of identifiers used for one time bindings.
+         */
+        oneTimeIdentifiers: Array<string>;
+    }
+
+    /**
+     * @name IObservationDetails
+     * @memberof plat.processing
+     * @kind interface
+     * @exported false
+     * 
+     * @description
+     * Contains information needed for observing properties.
+     */
+    interface IObservationDetails {
+        /**
+         * @name absoluteIdentifier
+         * @memberof plat.processing.IObservationDetails
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * The absolute identifier to be observed.
+         */
+        absoluteIdentifier: string;
+        /**
+         * @name manager
+         * @memberof plat.processing.IObservationDetails
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.observable.IContextManager}
+         * 
+         * @description
+         * The {@link plat.observable.ContextManager|ContextManager} that will 
+         * be doing the observing.
+         */
+        manager: observable.IContextManager;
+        /**
+         * @name isDefined
+         * @memberof plat.processing.IObservationDetails
+         * @kind property
+         * @access public
+         * 
+         * @type {boolean}
+         * 
+         * @description
+         * Signifies that a context value is defined for one time data binding.
+         */
+        isDefined: boolean;
     }
 }

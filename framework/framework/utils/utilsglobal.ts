@@ -252,13 +252,15 @@ function map<T, R>(obj: any, iterator: (value: T, key: any, obj: any) => R, cont
 
 var Promise: plat.async.IPromise;
 
-function mapAsync<T, R>(obj: any, iterator: (value: T, key: any, obj: any) => plat.async.IThenable<R>, context?: any): plat.async.IThenable<Array<R>> {
+function mapAsync<T, R>(obj: any, iterator: (value: T, key: any, obj: any) => plat.async.IThenable<R>,
+    context?: any): plat.async.IThenable<Array<R>> {
     Promise = Promise || plat.acquire(__Promise);
 
     return Promise.all(map(obj, iterator, context));
 }
 
-function mapAsyncWithOrder<T, R>(array: Array<T>, iterator: (value: T, index: number, list: Array<T>) => plat.async.IThenable<R>, context: any, descending?: boolean): plat.async.IThenable<Array<R>> {
+function mapAsyncWithOrder<T, R>(array: Array<T>, iterator: (value: T, index: number, list: Array<T>) => plat.async.IThenable<R>,
+    context: any, descending?: boolean): plat.async.IThenable<Array<R>> {
     Promise = Promise || plat.acquire(__Promise);
     var initialValue = Promise.resolve<Array<R>>([]);
 
@@ -269,7 +271,8 @@ function mapAsyncWithOrder<T, R>(array: Array<T>, iterator: (value: T, index: nu
     iterator = iterator.bind(context);
 
     var promise: plat.async.IThenable<Array<R>>,
-        inOrder = (previousValue: plat.async.IThenable<Array<R>>, nextValue: T, nextIndex: number, array: Array<T>): plat.async.IThenable<Array<R>> => {
+        inOrder = (previousValue: plat.async.IThenable<Array<R>>, nextValue: T, nextIndex: number,
+            array: Array<T>): plat.async.IThenable<Array<R>> => {
             return previousValue.then((items) => {
                 return iterator(nextValue, nextIndex, array).then((moreItems) => {
                     return items.concat(moreItems);
@@ -278,17 +281,19 @@ function mapAsyncWithOrder<T, R>(array: Array<T>, iterator: (value: T, index: nu
         };
 
     if (descending === true) {
-        return array.reduceRight(inOrder, initialValue);    
+        return array.reduceRight(inOrder, initialValue);
     }
 
     return array.reduce(inOrder, initialValue);
 }
 
-function mapAsyncInOrder<T, R>(array: Array<T>, iterator: (value: T, index: number, list: Array<T>) => plat.async.IThenable<R>, context?: any): plat.async.IThenable<Array<R>> {
+function mapAsyncInOrder<T, R>(array: Array<T>, iterator: (value: T, index: number, list: Array<T>) => plat.async.IThenable<R>,
+    context?: any): plat.async.IThenable<Array<R>> {
     return mapAsyncWithOrder(array, iterator, context);
 }
 
-function mapAsyncInDescendingOrder<T, R>(array: Array<T>, iterator: (value: T, index: number, list: Array<T>) => plat.async.IThenable<R>, context?: any): plat.async.IThenable<Array<R>> {
+function mapAsyncInDescendingOrder<T, R>(array: Array<T>, iterator: (value: T, index: number, list: Array<T>) => plat.async.IThenable<R>,
+    context?: any): plat.async.IThenable<Array<R>> {
     return mapAsyncWithOrder(array, iterator, context, true);
 }
 

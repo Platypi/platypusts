@@ -301,9 +301,9 @@ module plat.ui.controls {
             }
 
             var aliases = options.value.aliases,
-                keys = Object.keys(this._aliases),
-                length = keys.length,
                 _aliases = this._aliases,
+                keys = Object.keys(_aliases),
+                length = keys.length,
                 value: string;
 
             for (var i = 0; i < length; ++i) {
@@ -330,9 +330,10 @@ module plat.ui.controls {
          * @returns {void}
          */
         protected _addItem(item: DocumentFragment, animate?: boolean): void {
+            var context = this.context;
             if (!isNode(item) ||
-                !isArray(this.context) ||
-                this.context.length === 0 ||
+                !isArray(context) ||
+                context.length === 0 ||
                 this.controls.length === 0) {
                 return;
             }
@@ -541,27 +542,27 @@ module plat.ui.controls {
                 type = __OBSERVABLE_RESOURCE;
 
             aliases[_aliases.index] = {
-                    value: index,
+                value: index,
                 type: type
             };
 
             aliases[_aliases.even] = {
-                    value: isEven,
+                value: isEven,
                 type: type
             };
 
             aliases[_aliases.odd] = {
-                    value: !isEven,
+                value: !isEven,
                 type: type
             };
 
             aliases[_aliases.first] = {
-                    value: index === 0,
+                value: index === 0,
                 type: type
             };
 
             aliases[_aliases.last] = {
-                    value: index === (this.context.length - 1),
+                value: index === (this.context.length - 1),
                 type: type
             };
 
@@ -799,7 +800,7 @@ module plat.ui.controls {
          * @description
          * Used to specify alternative alias tokens for the built-in foreach aliases.
          */
-        aliases: IForEachAliasOptions;
+        aliases?: IForEachAliasOptions;
     }
 
     /**
@@ -825,7 +826,7 @@ module plat.ui.controls {
          * Used to specify an alternative alias for the index in a {@link plat.ui.controls.ForEach|ForEach} 
          * item template.
          */
-        index: string;
+        index?: string;
 
         
         /**
@@ -839,7 +840,7 @@ module plat.ui.controls {
          * Used to specify an alternative alias for the even in a {@link plat.ui.controls.ForEach|ForEach} 
          * item template.
          */
-        even: string;
+        even?: string;
 
         
         /**
@@ -853,7 +854,7 @@ module plat.ui.controls {
          * Used to specify an alternative alias for the odd in a {@link plat.ui.controls.ForEach|ForEach} 
          * item template.
          */
-        odd: string;
+        odd?: string;
 
         
         /**
@@ -867,7 +868,7 @@ module plat.ui.controls {
          * Used to specify an alternative alias for the first in a {@link plat.ui.controls.ForEach|ForEach} 
          * item template.
          */
-        first: string;
+        first?: string;
 
         
         /**
@@ -881,6 +882,6 @@ module plat.ui.controls {
          * Used to specify an alternative alias for the last in a {@link plat.ui.controls.ForEach|ForEach} 
          * item template.
          */
-        last: string;
+        last?: string;
     }
 }

@@ -22,6 +22,7 @@
          * A regular expression for finding markup in a string.
          */
         markupRegex: RegExp;
+
         /**
          * @name argumentRegex
          * @memberof plat.expressions.Regex
@@ -38,6 +39,7 @@
          * exec("myFunction('foo', 'bar', 'baz')");
          */
         argumentRegex = /\((.*)\)/;
+
         /**
          * @name aliasRegex
          * @memberof plat.expressions.Regex
@@ -59,6 +61,7 @@
          * exec('@context');
          */
         aliasRegex = /[^@\.\[\(]+(?=[\.\[\(])/;
+
         /**
          * @name initialUrlRegex
          * @memberof plat.expressions.Regex
@@ -76,6 +79,7 @@
          * exec('http://localhost:8080/index.html');
          */
         initialUrlRegex = /\/[^\/]*\.(?:html|htm)/;
+
         /**
          * @name protocolRegex
          * @memberof plat.expressions.Regex
@@ -88,6 +92,7 @@
          * Finds a protocol delimeter in a string (e.g. ://).
          */
         protocolRegex = /:\/\//;
+
         /**
          * @name invalidVariableRegex
          * @memberof plat.expressions.Regex
@@ -100,6 +105,7 @@
          * Looks for any invalid variable syntax.
          */
         invalidVariableRegex = /[^a-zA-Z0-9@_$]/;
+
         /**
          * @name fileNameRegex
          * @memberof plat.expressions.Regex
@@ -112,6 +118,7 @@
          * Grabs the file name from a file path.
          */
         fileNameRegex = /.*(?:\/|\\)/;
+
         /**
          * @name shiftedKeyRegex
          * @memberof plat.expressions.Regex
@@ -137,7 +144,35 @@
          * Determines if a url is relative or absolute.
          */
         fullUrlRegex = /^(?:[a-z0-9\-]+:)?(?:\/\/)?/i;
-        
+
+        /**
+         * @name validateEmail
+         * @memberof plat.expressions.Regex
+         * @kind property
+         * @access public
+         * 
+         * @type {RegExp}
+         * 
+         * @description
+         * Determines if an email address is valid.
+         */
+        validateEmail = new RegExp('^(([^<>()[\\]\\\.,;:\\s@\\"]+(\\.[^<>()[\\]\\\.,;:\\s@\\"]+)*)|' +
+            '(\\".+\\"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|' +
+            '(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$');
+
+        /**
+         * @name validateTelephone
+         * @memberof plat.expressions.Regex
+         * @kind property
+         * @access public
+         * 
+         * @type {RegExp}
+         * 
+         * @description
+         * Determines if a telephone number is valid.
+         */
+        validateTelephone = /^\+?[0-9\.\-\s]*$/;
+
         /**
          * @name newLineRegex
          * @memberof plat.expressions.Regex
@@ -153,7 +188,7 @@
         get newLineRegex(): RegExp {
             return /\r|\n/g;
         }
-        
+
         /**
          * @name optionalRouteRegex
          * @memberof plat.expressions.Regex
@@ -176,7 +211,7 @@
         get optionalRouteRegex(): RegExp {
             return /\((.*?)\)/g;
         }
-        
+
         /**
          * @name namedParameterRouteRegex
          * @memberof plat.expressions.Regex
@@ -199,7 +234,7 @@
         get namedParameterRouteRegex(): RegExp {
             return /(\(\?)?:\w+/g;
         }
-        
+
         /**
          * @name namedParameterRouteRegex
          * @memberof plat.expressions.Regex
@@ -219,7 +254,7 @@
         get wildcardRouteRegex(): RegExp {
             return /\*\w*/g;
         }
-        
+
         /**
          * @name escapeRouteRegex
          * @memberof plat.expressions.Regex
@@ -239,7 +274,7 @@
         get escapeRouteRegex(): RegExp {
             return /[\-{}\[\]+?.,\\\^$|#\s]/g;
         }
-        
+
         /**
          * @name camelCaseRegex
          * @memberof plat.expressions.Regex
@@ -270,7 +305,7 @@
         get camelCaseRegex(): RegExp {
             return /([\-_\.\s])(\w+?)/g;
         }
-        
+
         /**
          * @name whiteSpaceRegex
          * @memberof plat.expressions.Regex
@@ -288,7 +323,7 @@
         get whiteSpaceRegex(): RegExp {
             return /("[^"]*?"|'[^']*?')|[\s\r\n\t\v]/g;
         }
-        
+
         /**
          * @name quotationRegex
          * @memberof plat.expressions.Regex
@@ -624,5 +659,31 @@
          * Determines if a url is relative or absolute.
          */
         fullUrlRegex: RegExp;
+
+        /**
+         * @name validateEmail
+         * @memberof plat.expressions.Regex
+         * @kind property
+         * @access public
+         * 
+         * @type {RegExp}
+         * 
+         * @description
+         * Determines if an email address is valid.
+         */
+        validateEmail: RegExp;
+
+        /**
+         * @name validateTelephone
+         * @memberof plat.expressions.Regex
+         * @kind property
+         * @access public
+         * 
+         * @type {RegExp}
+         * 
+         * @description
+         * Determines if a telephone number is valid.
+         */
+        validateTelephone: RegExp;
     }
 }
