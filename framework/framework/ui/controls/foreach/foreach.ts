@@ -301,9 +301,9 @@ module plat.ui.controls {
             }
 
             var aliases = options.value.aliases,
-                keys = Object.keys(this._aliases),
-                length = keys.length,
                 _aliases = this._aliases,
+                keys = Object.keys(_aliases),
+                length = keys.length,
                 value: string;
 
             for (var i = 0; i < length; ++i) {
@@ -330,9 +330,10 @@ module plat.ui.controls {
          * @returns {void}
          */
         _addItem(item: DocumentFragment, animate?: boolean): void {
+            var context = this.context;
             if (!isNode(item) ||
-                !isArray(this.context) ||
-                this.context.length === 0 ||
+                !isArray(context) ||
+                context.length === 0 ||
                 this.controls.length === 0) {
                 return;
             }
@@ -469,11 +470,11 @@ module plat.ui.controls {
                 promises.push(bindableTemplates.bind('item', index, this._getAliases(index)).then((fragment: DocumentFragment) => {
                     this._addItem(fragment, animate);
                 }).catch((error: any) => {
-                    postpone(() => {
-                        var $exception: IExceptionStatic = acquire(__ExceptionStatic);
-                        $exception.fatal(error, $exception.BIND);
-                    });
-                }));
+                        postpone(() => {
+                            var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                            $exception.fatal(error, $exception.BIND);
+                        });
+                    }));
             }
 
             if (promises.length > 0) {
@@ -827,7 +828,7 @@ module plat.ui.controls {
          */
         index?: string;
 
-        
+
         /**
          * @name even
          * @memberof plat.ui.controls.IForEachAliasOptions
@@ -841,7 +842,7 @@ module plat.ui.controls {
          */
         even?: string;
 
-        
+
         /**
          * @name odd
          * @memberof plat.ui.controls.IForEachAliasOptions
@@ -855,7 +856,7 @@ module plat.ui.controls {
          */
         odd?: string;
 
-        
+
         /**
          * @name first
          * @memberof plat.ui.controls.IForEachAliasOptions
@@ -869,7 +870,7 @@ module plat.ui.controls {
          */
         first: string;
 
-        
+
         /**
          * @name last
          * @memberof plat.ui.controls.IForEachAliasOptions
