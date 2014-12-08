@@ -21,7 +21,7 @@ module plat.navigation {
          * @access private
          * @static
          * 
-         * @type {plat.navigator.INavigatorInstance}
+         * @type {plat.navigation.INavigatorInstance}
          * 
          * @description
          * Stores the instance of the main navigator. Unless otherwise specified, the main 
@@ -599,7 +599,7 @@ module plat.navigation {
 
         /**
          * @name currentState
-         * @memberof plat.navigation.INavigator
+         * @memberof plat.navigation.INavigatorInstance
          * @kind property
          * @access public
          * 
@@ -614,7 +614,7 @@ module plat.navigation {
 
         /**
          * @name viewport
-         * @memberof plat.navigation.INavigator
+         * @memberof plat.navigation.INavigatorInstance
          * @kind property
          * @access public
          * 

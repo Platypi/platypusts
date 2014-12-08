@@ -129,7 +129,7 @@ module plat.observable {
 
             if (!isNull(control.context)) {
                 ContextManager.defineProperty(control, __CONTEXT,
-                    persist === true ? _clone(control.context, true) : null, true, true);
+                    persist === true ? _clone(control.context, true) : null, true, true, true);
             }
         }
 
@@ -205,14 +205,16 @@ module plat.observable {
          * @param {boolean} enumerable? Whether or not the property should be enumerable (able to be iterated 
          * over in a loop)
          * @param {boolean} configurable? Whether or not the property is able to be reconfigured.
+         * @param {boolean} writable? Whether or not assignment operators work on the property.
          * 
          * @returns {void}
          */
-        static defineProperty(obj: any, key: string, value: any, enumerable?: boolean, configurable?: boolean): void {
+        static defineProperty(obj: any, key: string, value: any, enumerable?: boolean, configurable?: boolean, writable?: boolean): void {
             Object.defineProperty(obj, key, {
                 value: value,
                 enumerable: enumerable === true,
-                configurable: configurable === true
+                configurable: configurable === true,
+                writable: writable === true
             });
         }
 
@@ -863,7 +865,7 @@ module plat.observable {
             for (i = 0; i < length; ++i) {
                 method = arrayMethods[i];
                 ContextManager.defineProperty(array, method,
-                    this._overwriteArrayFunction(absoluteIdentifier, method), false, true);
+                    this._overwriteArrayFunction(absoluteIdentifier, method), false, true, true);
             }
         }
 
@@ -1626,10 +1628,11 @@ module plat.observable {
          * @param {boolean} enumerable? Whether or not the property should be enumerable (able to be iterated 
          * over in a loop)
          * @param {boolean} configurable? Whether or not the property is able to be reconfigured.
+         * @param {boolean} writable? Whether or not assignment operators work on the property.
          * 
          * @returns {void}
          */
-        defineProperty(obj: any, key: string, value: any, enumerable?: boolean, configurable?: boolean): void;
+        defineProperty(obj: any, key: string, value: any, enumerable?: boolean, configurable?: boolean, writable?: boolean): void;
 
         /**
          * @name defineGetter

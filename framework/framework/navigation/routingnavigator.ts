@@ -399,7 +399,7 @@
     export interface IRouteNavigationState {
         /**
          * @name control
-         * @memberof plat.navigation.IRouteNavigationStateNavigationState
+         * @memberof plat.navigation.IRouteNavigationState
          * @kind property
          * @access public
          * 
@@ -412,7 +412,7 @@
 
         /**
          * @name route
-         * @memberof plat.navigation.RoutingNavigator
+         * @memberof plat.navigation.IRouteNavigationState
          * @kind property
          * @access public
          * 
