@@ -340,8 +340,8 @@ module plat.ui {
             TemplateControl.$ManagerCache.remove(uid);
             Control.removeParent(control);
 
-            define(control, __CONTEXT, null, true, true);
-            define(control, __RESOURCES, null, true, true);
+            define(control, __CONTEXT, null, true, true, true);
+            define(control, __RESOURCES, null, true, true, true);
             control.attributes = null;
             control.bindableTemplates = null;
             control.controls = [];
