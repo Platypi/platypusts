@@ -1368,7 +1368,7 @@ module plat.observable {
                     }
 
                     if (!childPropertiesExist && isEmpty(this.__identifiers[identifier])) {
-                        ContextManager.defineProperty(immediateContext, key, value, true, true);
+                        ContextManager.defineProperty(immediateContext, key, value, true, true, true);
                     } else if (!isObject(value)) {
                         this.__definePrimitive(identifier, immediateContext, key);
                     }
@@ -1421,7 +1421,7 @@ module plat.observable {
                     this._execute(identifier, newValue, oldValue);
 
                     if (!childPropertiesExist && isEmpty(this.__identifiers[identifier])) {
-                        ContextManager.defineProperty(immediateContext, key, value, true, true);
+                        ContextManager.defineProperty(immediateContext, key, value, true, true, true);
                     } else if (isObject(value)) {
                         this.__defineObject(identifier, immediateContext, key);
                         if (childPropertiesExist) {
