@@ -37,19 +37,6 @@
         _elements: IObject<IAnimatedElement> = {};
 
         /**
-         * @name __cssWarning
-         * @memberof plat.ui.animations.Animator
-         * @kind property
-         * @access private
-         * 
-         * @type {boolean}
-         * 
-         * @description
-         * Indicates if a warning regarding our CSS was previously fired.
-         */
-        private __cssWarning = false;
-
-        /**
          * @name animate
          * @memberof plat.ui.animations.Animator
          * @kind function
@@ -69,26 +56,17 @@
                 return this.resolve();
             }
 
-            var $compat = this.$Compat,
-                animation = animationInjectors[key],
+            var animation = animationInjectors[key],
                 jsAnimation = jsAnimationInjectors[key],
                 animationInstance: IBaseAnimation;
 
-            if (!$compat.animationSupported || isUndefined(animation)) {
+            if (!this.$Compat.animationSupported || isUndefined(animation)) {
                 if (isUndefined(jsAnimation)) {
                     return this.resolve();
                 }
 
                 animationInstance = jsAnimation.inject();
             } else {
-                if (!(this.__cssWarning || $compat.platCss)) {
-                    var $exception: IExceptionStatic = acquire(__ExceptionStatic);
-                    $exception.warn('CSS animation occurring and platypus.css was not loaded. If you ' +
-                        'intend to use platypus.css, please move it before platypus.js inside your head or body declaration.',
-                        $exception.ANIMATION);
-                    this.__cssWarning = true;
-                }
-
                 animationInstance = animation.inject();
             }
 
