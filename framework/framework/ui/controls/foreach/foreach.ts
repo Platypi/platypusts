@@ -799,7 +799,7 @@ module plat.ui.controls {
          * @description
          * Used to specify alternative alias tokens for the built-in foreach aliases.
          */
-        aliases: IForEachAliasOptions;
+        aliases?: IForEachAliasOptions;
     }
 
     /**
@@ -825,7 +825,7 @@ module plat.ui.controls {
          * Used to specify an alternative alias for the index in a {@link plat.ui.controls.ForEach|ForEach} 
          * item template.
          */
-        index: string;
+        index?: string;
 
         
         /**
@@ -839,7 +839,7 @@ module plat.ui.controls {
          * Used to specify an alternative alias for the even in a {@link plat.ui.controls.ForEach|ForEach} 
          * item template.
          */
-        even: string;
+        even?: string;
 
         
         /**
@@ -853,7 +853,7 @@ module plat.ui.controls {
          * Used to specify an alternative alias for the odd in a {@link plat.ui.controls.ForEach|ForEach} 
          * item template.
          */
-        odd: string;
+        odd?: string;
 
         
         /**
@@ -881,6 +881,6 @@ module plat.ui.controls {
          * Used to specify an alternative alias for the last in a {@link plat.ui.controls.ForEach|ForEach} 
          * item template.
          */
-        last: string;
+        last?: string;
     }
 }
