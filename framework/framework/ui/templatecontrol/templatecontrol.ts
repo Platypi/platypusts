@@ -560,36 +560,7 @@ module plat.ui {
                 return <any>Promise.reject(null);
             }
 
-            var $exception: IExceptionStatic;
-
-            return templateCache.put(templateUrl, templateCache.read(templateUrl).catch((error) => {
-                if (isNull(error)) {
-                    return TemplateControl.$Http.ajax<string>({ url: templateUrl });
-                }
-            }).then<DocumentFragment>((success) => {
-                if (isDocumentFragment(success)) {
-                    return templateCache.put(templateUrl, <any>success);
-                } else if (!isObject(success) || !isString(success.response)) {
-                    $exception = acquire(__ExceptionStatic);
-                    $exception.warn('No template found at ' + templateUrl, $exception.AJAX);
-                    return templateCache.put(templateUrl, dom.serializeHtml());
-                }
-
-                var templateString = success.response;
-
-                if (isEmpty(templateString.trim())) {
-                    return templateCache.put(templateUrl, dom.serializeHtml());
-                }
-
-                return templateCache.put(templateUrl, dom.serializeHtml(templateString));
-            }).catch((error) => {
-                postpone(() => {
-                    $exception = acquire(__ExceptionStatic);
-                    $exception.fatal('Failure to get template from ' + templateUrl + '.',
-                        $exception.TEMPLATE);
-                });
-                return error;
-            }));
+            return dom.getTemplate(templateUrl);
         }
 
         /**

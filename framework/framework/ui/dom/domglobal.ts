@@ -440,4 +440,46 @@ function hasClass(element: HTMLElement, className: string): boolean {
 
     return true;
 }
+
+var __$templateCache: plat.storage.ITemplateCache,
+    __$http: plat.async.IHttp;
+
+function getTemplate(templateUrl: string) {
+    __$templateCache = __$templateCache || plat.acquire(__TemplateCache);
+    __$http = __$http || plat.acquire(__Http);
+
+    var $exception: plat.IExceptionStatic,
+        ajax = __$http.ajax;
+
+    return __$templateCache.put(templateUrl, __$templateCache.read(templateUrl)
+        .catch((error) => {
+            if (isNull(error)) {
+                return ajax<string>({ url: templateUrl });
+            }
+        }).then<DocumentFragment>((success) => {
+            if (isDocumentFragment(success)) {
+                return __$templateCache.put(templateUrl, <any>success);
+            } else if (!isObject(success) || !isString(success.response)) {
+                $exception = plat.acquire(__ExceptionStatic);
+                $exception.warn('No template found at ' + templateUrl, $exception.AJAX);
+                return __$templateCache.put(templateUrl, serializeHtml());
+            }
+
+            var templateString = success.response;
+
+            if (isEmpty(templateString.trim())) {
+                return __$templateCache.put(templateUrl, serializeHtml());
+            }
+
+            return __$templateCache.put(templateUrl, serializeHtml(templateString));
+        }).catch((error) => {
+            postpone(() => {
+                $exception = plat.acquire(__ExceptionStatic);
+                $exception.fatal('Failure to get template from ' + templateUrl + '.',
+                    $exception.TEMPLATE);
+            });
+            return error;
+        }));
+}
+
 /* tslint:enable:no-unused-variable */

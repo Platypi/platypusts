@@ -527,6 +527,25 @@ module plat.ui {
         hasClass(element: Element, className: string): boolean {
             return hasClass(<HTMLElement>element, className);
         }
+
+        /**
+         * @name getTemplate
+         * @memberof plat.ui.Dom
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Retrieves and serializes HTML from an HTML template file using ajax. Will facilitate caching the template 
+         * as well.
+         * 
+         * @param {string} templateUrl The url where the HTML template is stored.
+         * 
+         * @returns {plat.async.IThenable<DocumentFragment>} A thenable that will resolve with the template, serialized as a 
+         * DocumentFragment.
+         */
+        getTemplate(templateUrl: string): async.IThenable<DocumentFragment> {
+            return getTemplate(templateUrl);
+        }
     }
 
     /**
@@ -1016,6 +1035,8 @@ module plat.ui {
          * specified in the className argument.
          */
         hasClass(element: Element, className: string): boolean;
+
+        getTemplate(templateUrl: string): async.IThenable<DocumentFragment>;
     }
 
     /**
