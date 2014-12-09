@@ -1,6 +1,6 @@
 {
   "name": "framework",
-  "version": "0.9.5",
+  "version": "0.9.6",
   "description": "",
   "main": "gruntfile.js",
   "devDependencies": {
@@ -9,8 +9,9 @@
     "grunt-contrib-clean": "^0.6.0",
     "grunt-contrib-copy": "^0.7.0",
     "grunt-contrib-uglify": "^0.6.0",
-    "grunt-ts": "^1.12.1",
-    "grunt-ts-bundle": "~0.0.1"
+    "grunt-ts": "^2.0.0",
+    "grunt-ts-bundle": "~0.0.1",
+    "typescript": "latest"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
