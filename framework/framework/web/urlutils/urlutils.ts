@@ -368,7 +368,7 @@
                 $BrowserConfig = this.$BrowserConfig;
 
             // always make local urls relative to start page.
-            if (url[0] === '/') {
+            if (url[0] === '/' && url.indexOf('//') !== 0) {
                 url = url.slice(1);
             }
 
@@ -379,11 +379,11 @@
 
             element.setAttribute('href', url);
             url = element.href;
-
+            
             // we need to do this twice for cerain browsers (e.g. win8)
             element.setAttribute('href', url);
             url = element.href;
-
+            
             var protocol = element.protocol ? element.protocol.replace(/:$/, '') : '';
 
             define(this, 'href', url, true, true);
