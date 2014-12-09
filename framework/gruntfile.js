@@ -101,14 +101,14 @@ module.exports = exports = function load(grunt) {
                 options: {
                     target: 'es5',
                     module: 'commonjs',
+                    fast: 'never',
                     sourceMap: true,
                     declaration: true,
                     removeComments: false
                 },
                 src: [
                     'dist/platypus.ts'
-                ],
-                out: 'dist/platypus.js'
+                ]
             }
         },
         uglify: {
