@@ -121,18 +121,15 @@ module plat.controls {
          * @returns {void}
          */
         protected _setListener(): void {
-            var attr = this.attribute;
-            if (isEmpty(this.event) || isEmpty(attr)) {
+            var event = this.event,
+                fn = this.attributes[this.attribute];
+
+            if (isEmpty(event) || isEmpty(fn)) {
                 return;
             }
 
-            this._parseArgs(this.attributes[attr]);
-
-            if (isNull(this._expression)) {
-                return;
-            }
-
-            this.addEventListener(this.element, this.event, this._onEvent, false);
+            this._parseArgs(fn);
+            this.addEventListener(this.element, event, this._onEvent, false);
         }
 
         /**
@@ -187,8 +184,9 @@ module plat.controls {
          */
         protected _buildExpression(): { fn: () => void; control: ui.ITemplateControl; args: Array<expressions.IParsedExpression>; } {
             var expression = this._expression.slice(0),
-                hasParent = !isNull(this.parent),
-                aliases = hasParent ? this.parent.getResources(this._aliases) : null,
+                parent = this.parent,
+                hasParent = !isNull(parent),
+                aliases = hasParent ? parent.getResources(this._aliases) : null,
                 listenerStr = expression.shift(),
                 listener: { control: ui.ITemplateControl; value: any; },
                 control: ui.ITemplateControl,
@@ -208,8 +206,8 @@ module plat.controls {
                 fn = listener.value;
                 control = listener.control;
             } else {
-                fn = aliases[listenerStr];
-                control = null;
+                fn = isNull(aliases) ? noop : (aliases[listenerStr] || noop);
+                control = undefined;
             }
 
             var length = expression.length,
@@ -217,7 +215,7 @@ module plat.controls {
                 $parser = this.$Parser;
 
             for (var i = 0; i < length; ++i) {
-                args.push($parser.parse(expression[i]).evaluate(hasParent ? this.parent.context : null, aliases));
+                args.push($parser.parse(expression[i]).evaluate(hasParent ? parent.context : null, aliases));
             }
 
             return {
@@ -242,9 +240,7 @@ module plat.controls {
          */
         protected _onEvent(ev: Event): void {
             var expression = this._buildExpression(),
-                fn = expression.fn,
-                control = expression.control,
-                args = expression.args;
+                fn = expression.fn;
 
             if (!isFunction(fn)) {
                 var $exception: IExceptionStatic = acquire(__ExceptionStatic);
@@ -253,7 +249,7 @@ module plat.controls {
                 return;
             }
 
-            fn.apply(control, args.concat(<any>ev));
+            fn.apply(expression.control, expression.args.concat(<any>ev));
         }
 
         /**
@@ -303,14 +299,12 @@ module plat.controls {
          * @returns {void}
          */
         protected _parseArgs(expression: string): void {
-            var exec = this.$Regex.argumentRegex.exec(expression),
-                haveArgs = !isNull(exec);
-
             if (isEmpty(expression)) {
                 return;
             }
 
-            if (haveArgs) {
+            var exec = this.$Regex.argumentRegex.exec(expression);
+            if (!isNull(exec)) {
                 this._expression = [expression.slice(0, exec.index)]
                     .concat((exec[1] !== '') ? exec[1].split(',') : []);
             } else {
