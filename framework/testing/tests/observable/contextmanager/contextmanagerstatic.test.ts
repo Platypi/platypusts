@@ -109,7 +109,7 @@ module tests.observable.contextManagerStatic {
                 baz: 'foo'
             };
 
-            ContextManager.defineProperty(foo, 'baz', 'baz');
+            ContextManager.defineProperty(foo, 'baz', 'baz', false, false, true);
 
             expect(foo.propertyIsEnumerable('baz')).toBe(false);
             expect(foo.baz).toBe('baz');
@@ -121,7 +121,7 @@ module tests.observable.contextManagerStatic {
             ContextManager.defineProperty(foo, 'baz', 'bar');
             expect(foo.baz).toBe('bar');
 
-            ContextManager.defineProperty(foo.bar, 'quux', 'foo', true, true);
+            ContextManager.defineProperty(foo.bar, 'quux', 'foo', true, true, true);
 
             expect(foo.bar.propertyIsEnumerable('quux')).toBe(true);
             expect(foo.bar.quux).toBe('foo');

@@ -46,21 +46,21 @@
             control.templateControl = null;
             control.initialize();
 
-            expect(control._removeListener).toBeUndefined();
+            expect((<any>control)._removeListener).toBeUndefined();
 
             control.loaded();
 
-            expect(control._removeListener).toBeUndefined();
+            expect((<any>control)._removeListener).toBeUndefined();
         });
 
         it('should test loaded', () => {
             control.initialize();
 
-            expect(control._removeListener).toBeUndefined();
+            expect((<any>control)._removeListener).toBeUndefined();
 
             control.loaded();
 
-            expect(control._removeListener).toBeDefined();
+            expect((<any>control)._removeListener).toBeDefined();
         });
 
         it('should test observe', () => {
@@ -82,7 +82,7 @@
 
             parent.context.foo.bar = 'foo';
 
-            expect(observeExpressionSpy).toHaveBeenCalledWith('foo.bar', control._setProperty);
+            expect(observeExpressionSpy).toHaveBeenCalledWith('foo.bar', (<any>control)._setProperty);
             expect(called).toBe(1);
             expect(spy).toHaveBeenCalled();
         });
@@ -106,7 +106,7 @@
 
             parent.context.foo.bar = 'foo';
 
-            expect(observeExpressionSpy).toHaveBeenCalledWith('foo.bar', control._setProperty);
+            expect(observeExpressionSpy).toHaveBeenCalledWith('foo.bar', (<any>control)._setProperty);
             expect(called).toBe(0);
             expect(spy).toHaveBeenCalled();
         });

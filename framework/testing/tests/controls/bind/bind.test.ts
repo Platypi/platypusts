@@ -44,7 +44,7 @@
 
             control.loaded();
             expect(spy).toHaveBeenCalled();
-            expect(control._contextExpression).toBeNull();
+            expect((<any>control)._contextExpression).toBeNull();
         });
 
         it('should test loaded with nested identifier', () => {
@@ -56,10 +56,10 @@
 
             control.loaded();
             expect(spy.calls.count()).toBe(2);
-            expect(control._contextExpression.aliases).toEqual([]);
-            expect(control._contextExpression.expression).toEqual('foo');
-            expect(control._contextExpression.identifiers).toEqual(['foo']);
-            expect(control._property).toEqual('bar');
+            expect((<any>control)._contextExpression.aliases).toEqual([]);
+            expect((<any>control)._contextExpression.expression).toEqual('foo');
+            expect((<any>control)._contextExpression.identifiers).toEqual(['foo']);
+            expect((<any>control)._property).toEqual('bar');
         });
 
         it('should test loaded with alias identifier and no parent resources', () => {
@@ -71,10 +71,10 @@
 
             control.loaded();
             expect(spy.calls.count()).toBe(1);
-            expect(control._expression.aliases).toEqual(['foo']);
-            expect(control._expression.expression).toEqual('@foo');
-            expect(control._expression.identifiers).toEqual(['@foo']);
-            expect(control._property).toEqual('@foo');
+            expect((<any>control)._expression.aliases).toEqual(['foo']);
+            expect((<any>control)._expression.expression).toEqual('@foo');
+            expect((<any>control)._expression.identifiers).toEqual(['@foo']);
+            expect((<any>control)._property).toEqual('@foo');
         });
 
         it('should test loaded with alias identifier and no observable resources', () => {
@@ -95,10 +95,10 @@
 
             control.loaded();
             expect(spy.calls.count()).toBe(1);
-            expect(control._expression.aliases).toEqual(['foo']);
-            expect(control._expression.expression).toEqual('@foo');
-            expect(control._expression.identifiers).toEqual(['@foo']);
-            expect(control._property).toEqual('@foo');
+            expect((<any>control)._expression.aliases).toEqual(['foo']);
+            expect((<any>control)._expression.expression).toEqual('@foo');
+            expect((<any>control)._expression.identifiers).toEqual(['@foo']);
+            expect((<any>control)._property).toEqual('@foo');
         });
 
         it('should test loaded with alias identifier and observable resources', () => {
@@ -119,14 +119,14 @@
 
             control.loaded();
             expect(spy.calls.count()).toBe(1);
-            expect(control._expression.aliases).toEqual(['foo']);
-            expect(control._expression.expression).toEqual('@foo');
-            expect(control._expression.identifiers).toEqual(['@foo']);
-            expect(control._property).toEqual('value');
-            expect(control._contextExpression.aliases).toEqual([]);
-            expect(control._contextExpression.expression).toEqual('');
-            expect(control._contextExpression.identifiers).toEqual([]);
-            expect(control._contextExpression.evaluate(null)).toEqual({
+            expect((<any>control)._expression.aliases).toEqual(['foo']);
+            expect((<any>control)._expression.expression).toEqual('@foo');
+            expect((<any>control)._expression.identifiers).toEqual(['@foo']);
+            expect((<any>control)._property).toEqual('value');
+            expect((<any>control)._contextExpression.aliases).toEqual([]);
+            expect((<any>control)._contextExpression.expression).toEqual('');
+            expect((<any>control)._contextExpression.identifiers).toEqual([]);
+            expect((<any>control)._contextExpression.evaluate(null)).toEqual({
                 type: 'observable',
                 value: {
                     bar: 'text'
@@ -145,10 +145,10 @@
 
             control.loaded();
             expect(spy.calls.count()).toBe(1);
-            expect(control._contextExpression.aliases).toEqual([]);
-            expect(control._contextExpression.expression).toEqual('');
-            expect(control._contextExpression.identifiers).toEqual([]);
-            expect(control._contextExpression.evaluate(null)).toBeNull();
+            expect((<any>control)._contextExpression.aliases).toEqual([]);
+            expect((<any>control)._contextExpression.expression).toEqual('');
+            expect((<any>control)._contextExpression.identifiers).toEqual([]);
+            expect((<any>control)._contextExpression.evaluate(null)).toBeNull();
         });
 
         it('should test contextChanged', () => {
