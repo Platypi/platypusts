@@ -77,6 +77,19 @@ module plat.controls {
         protected _expression: Array<string> = [];
 
         /**
+         * @name _fn
+         * @memberof plat.controls.SimpleEventControl
+         * @kind property
+         * @access protected
+         * 
+         * @type {plat.IControlProperty}
+         * 
+         * @description
+         * The found function up the control's parent chain denoted by the attribute value.
+         */
+        protected _fn: IControlProperty;
+
+        /**
          * @name _aliases
          * @memberof plat.controls.SimpleEventControl
          * @kind property
@@ -133,42 +146,6 @@ module plat.controls {
         }
 
         /**
-         * @name _findListener
-         * @memberof plat.controls.SimpleEventControl
-         * @kind function
-         * @access protected
-         * 
-         * @description
-         * Finds the first instance of the specified function 
-         * in the parent control chain.
-         * 
-         * @param {string} identifier the function identifer
-         * 
-         * @returns {{ control: ui.ITemplateControl; value: any; }} The instance of the specified function.
-         */
-        protected _findListener(identifier: string): { control: ui.ITemplateControl; value: any; } {
-            var control: ui.ITemplateControl = <any>this,
-                expression = this.$Parser.parse(identifier),
-                value: any;
-
-            while (!isNull(control)) {
-                value = expression.evaluate(control);
-                if (!isNull(value)) {
-                    return {
-                        control: control,
-                        value: value
-                    };
-                }
-                control = control.parent;
-            }
-
-            return {
-                control: null,
-                value: null
-            };
-        }
-
-        /**
          * @name _buildExpression
          * @memberof plat.controls.SimpleEventControl
          * @kind function
@@ -186,14 +163,20 @@ module plat.controls {
             var expression = this._expression.slice(0),
                 parent = this.parent,
                 hasParent = !isNull(parent),
-                aliases = hasParent ? parent.getResources(this._aliases) : null,
                 listenerStr = expression.shift(),
                 listener: { control: ui.ITemplateControl; value: any; },
                 control: ui.ITemplateControl,
-                fn: () => void;
+                fn: () => void,
+                aliases: IObject<any>,
+                argContext: any;
+
+            if (!isNull(parent)) {
+                aliases = parent.getResources(this._aliases);
+                argContext = parent.context;
+            }
 
             if (listenerStr[0] !== '@') {
-                listener = this._findListener(listenerStr);
+                listener = this._fn || (this._fn = this.findProperty(listenerStr));
 
                 if (isNull(listener)) {
                     return {
@@ -215,7 +198,7 @@ module plat.controls {
                 $parser = this.$Parser;
 
             for (var i = 0; i < length; ++i) {
-                args.push($parser.parse(expression[i]).evaluate(hasParent ? parent.context : null, aliases));
+                args.push($parser.parse(expression[i]).evaluate(argContext, aliases));
             }
 
             return {

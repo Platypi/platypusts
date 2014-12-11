@@ -261,7 +261,7 @@ module plat.expressions {
             this._makeIdentifiersUnique();
 
             var parsedExpression: IParsedExpression = {
-                evaluate: <(context: any, aliases?: any) => any>new Function(__CONTEXT, __ALIASES,
+                evaluate: <(context: any, aliases?: IObject<any>) => any>new Function(__CONTEXT, __ALIASES,
                     'var initialContext;' +
                     'return ' + (codeArray.length === 0 ? ('"' + expression + '"') : codeArray.join('')) + ';'),
                 expression: expression,
@@ -722,17 +722,15 @@ module plat.expressions {
          * @param {any} context The context object.
          * @param {any} aliases Any aliases that may exist.
          * @param {string} token The property used to find the initial context.
-         * @param {any} undefined An undefined argument.
          * 
          * @returns {any} The correct initial context.
          */
-        private __findInitialContext(context: any, aliases: any, token: string, undefined?: any): any {
+        private __findInitialContext(context: any, aliases: any, token: string): any {
             if (token[0] === '@' && aliases !== null && typeof aliases === 'object') {
-                return aliases[token];
+                return aliases[token.slice(1)];
             } else if (context !== null && typeof context === 'object') {
                 return context[token];
             }
-            return undefined;
         }
         /**
          * @name __indexIntoContext
@@ -745,15 +743,13 @@ module plat.expressions {
          * 
          * @param {any} context The context object.
          * @param {string} token The property used to drill into the context.
-         * @param {any} undefined An undefined argument.
          * 
          * @returns {any} The property of the context denoted by the token.
          */
-        private __indexIntoContext(context: any, token: string, undefined?: any): any {
+        private __indexIntoContext(context: any, token: string): any {
             if (context !== null && typeof context === 'object') {
                 return context[token];
             }
-            return undefined;
         }
 
         /**
@@ -1007,11 +1003,12 @@ module plat.expressions {
          * A method for evaluating an expression with a context.
          * 
          * @param {any} context? The primary context for evaluation.
-         * @param {any} aliases? An object containing resource alias values. All keys must begin with '@'.
+         * @param {IObject<any>} aliases? An object containing resource alias values. 
+         * All property keys must never begin with '@'.
          * 
          * @returns {any} The evaluated object or primitive.
          */
-        evaluate(context?: any, aliases?: any): any;
+        evaluate(context?: any, aliases?: IObject<any>): any;
 
         /**
          * @name expression
@@ -1049,7 +1046,7 @@ module plat.expressions {
          * @type {Array<string>}
          * 
          * @description
-         * Contains all the aliases (denoted by an identifier with '@' as the first character) for this 
+         * Contains all the aliases (denoted without '@' as the first character) for this 
          * {@link plat.expressions.IParsedExpression|IParsedExpression}.
          */
         aliases: Array<string>;

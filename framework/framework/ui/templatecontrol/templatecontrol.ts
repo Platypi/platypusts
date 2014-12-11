@@ -117,11 +117,12 @@ module plat.ui {
          * 
          * @param {string} expression The expression string (e.g. 'foo + foo').
          * @param {plat.ui.ITemplateControl} control? The control used for evaluation context.
-         * @param {any} aliases? An optional alias object containing resource alias values
+         * @param {IObject<any>} aliases? An optional alias object containing resource alias values (property keys should 
+         * not include the '@' character).
          * 
          * @returns {any} The evaluated object.
          */
-        static evaluateExpression(expression: string, control?: ITemplateControl, aliases?: any): any;
+        static evaluateExpression(expression: string, control?: ITemplateControl, aliases?: IObject<any>): any;
         /**
          * @name evaluateExpression
          * @memberof plat.ui.TemplateControl
@@ -136,19 +137,22 @@ module plat.ui {
          * @param {plat.expressions.IParsedExpression} expression A parsed expression object created using the 
          * plat.expressions.IParser injectable.
          * @param {plat.ui.ITemplateControl} control? The control used for evaluation context.
-         * @param {any} aliases? An optional alias object containing resource alias values
+         * @param {IObject<any>} aliases? An optional alias object containing resource alias values (property keys should 
+         * not include the '@' character).
          * 
          * @returns {any} The evaluated object.
          */
-        static evaluateExpression(expression: expressions.IParsedExpression, control?: ITemplateControl, aliases?: any): any;
-        static evaluateExpression(expression: any, control?: ITemplateControl, aliases?: any): any {
-            if (isNull(expression)) {
-                return;
-            } else if (!(isString(expression) || isFunction(expression.evaluate))) {
-                return;
+        static evaluateExpression(expression: expressions.IParsedExpression, control?: ITemplateControl, aliases?: IObject<any>): any;
+        static evaluateExpression(expression: any, control?: ITemplateControl, aliases?: IObject<any>): any {
+            if (isEmpty(expression)) {
+                return expression;
             }
 
-            expression = isString(expression) ? TemplateControl.$Parser.parse(expression) : expression;
+            if (isString(expression)) {
+                expression = TemplateControl.$Parser.parse(expression);
+            } else if (!isFunction(expression.evaluate)) {
+                return expression;
+            }
 
             if (isNull(control)) {
                 return expression.evaluate(null, aliases);
@@ -174,17 +178,19 @@ module plat.ui {
          * 
          * @param {plat.ui.ITemplateControl} control The control used as the starting point for finding resources.
          * @param {Array<string>} aliases An array of aliases to search for.
-         * @param {any} resources? An optional resources object to extend, if no resources object is passed in a new one will be created.
+         * @param {IObject<any>} resources? An optional resources object to extend, if no resources object is passed in a 
+         * new one will be created.
          * 
          * @returns {IObject<any>} An object representing a set of resources.
          */
-        static getResources(control: ITemplateControl, aliases: Array<string>, resources?: any): IObject<any> {
+        static getResources(control: ITemplateControl, aliases: Array<string>, resources?: IObject<any>): IObject<any> {
             if (isNull(control)) {
                 return {};
             }
 
             var length = aliases.length,
                 alias: string,
+                resource: IResource,
                 resourceObj: {
                     control: ITemplateControl;
                     resource: IResource;
@@ -229,7 +235,8 @@ module plat.ui {
                 }
 
                 cache[alias] = resourceObj;
-                resources['@' + alias] = isNull(resourceObj.resource) ? resourceObj.resource : resourceObj.resource.value;
+                resource = resourceObj.resource;
+                resources[alias] = isNull(resource) ? resource : resource.value;
             }
 
             return resources;
@@ -272,13 +279,13 @@ module plat.ui {
                 };
             } else if (alias === __CONTEXT_RESOURCE || alias === __CONTROL_RESOURCE) {
                 return {
-                    resource: (<any>control.resources)[alias],
+                    resource: ((<any>control.resources) || {})[alias],
                     control: control
                 };
             }
 
             while (!isNull(control)) {
-                resource = (<any>control.resources)[alias];
+                resource = ((<any>control.resources) || {})[alias];
                 if (!isNull(resource)) {
                     return {
                         resource: resource,
@@ -630,12 +637,12 @@ module plat.ui {
          * @access private
          * @static
          * 
-         * @type {any}
+         * @type {IObject<any>}
          * 
          * @description
          * An object for quickly retrieving previously accessed resources.
          */
-        private static __resourceCache: any = {};
+        private static __resourceCache: IObject<any> = {};
 
         /**
          * @name priority
@@ -1056,11 +1063,12 @@ module plat.ui {
          * the values.
          * 
          * @param {Array<string>} aliases An array of aliases to search for.
-         * @param {any} resources? An optional resources object to extend, if no resources object is passed in a new one will be created.
+         * @param {IObject<any>} resources? An optional resources object to extend, 
+        if no resources object is passed in a new one will be created.
          * 
          * @returns {IObject<any>} The context object containing the values of the associated resources.
          */
-        getResources(aliases: Array<string>, resources?: any): IObject<any> {
+        getResources(aliases: Array<string>, resources?: IObject<any>): IObject<any> {
             return TemplateControl.getResources(this, aliases, resources);
         }
 
@@ -1176,11 +1184,11 @@ module plat.ui {
          * 
          * @param {string} expression The expression string (e.g. 'foo + foo').
          * @param {plat.ui.ITemplateControl} control? The control used for evaluation context.
-         * @param {any} aliases? An optional alias object containing resource alias values
+         * @param {IObject<any>} aliases? An optional alias object containing resource alias values
          * 
          * @returns {any} The evaluated object.
          */
-        evaluateExpression(expression: string, control?: ITemplateControl, aliases?: any): any;
+        evaluateExpression(expression: string, control?: ITemplateControl, aliases?: IObject<any>): any;
         /**
          * @name evaluateExpression
          * @memberof plat.ui.ITemplateControlFactory
@@ -1195,11 +1203,11 @@ module plat.ui {
          * @param {plat.expressions.IParsedExpression} expression A parsed expression object created using the 
          * plat.expressions.IParser injectable.
          * @param {plat.ui.ITemplateControl} control? The control used for evaluation context.
-         * @param {any} aliases? An optional alias object containing resource alias values
+         * @param {IObject<any>} aliases? An optional alias object containing resource alias values
          * 
          * @returns {any} The evaluated object.
          */
-        evaluateExpression(expression: expressions.IParsedExpression, control?: ITemplateControl, aliases?: any): any;
+        evaluateExpression(expression: expressions.IParsedExpression, control?: ITemplateControl, aliases?: IObject<any>): any;
 
         /**
          * @name getResources
@@ -1214,11 +1222,12 @@ module plat.ui {
          * 
          * @param {plat.ui.ITemplateControl} control The control used as the starting point for finding resources.
          * @param {Array<string>} aliases An array of aliases to search for.
-         * @param {any} resources? An optional resources object to extend, if no resources object is passed in a new one will be created.
+         * @param {IObject<any>} resources? An optional resources object to extend, 
+         * if no resources object is passed in a new one will be created.
          * 
          * @returns {IObject<any>} An object representing a set of resources.
          */
-        getResources(control: ITemplateControl, aliases: Array<string>, resources?: any): IObject<any>;
+        getResources(control: ITemplateControl, aliases: Array<string>, resources?: IObject<any>): IObject<any>;
 
         /**
          * @name findResource
@@ -1751,11 +1760,12 @@ module plat.ui {
          * the values.
          * 
          * @param {Array<string>} aliases An array of aliases to search for.
-         * @param {any} resources? An optional resources object to extend, if no resources object is passed in a new one will be created.
+         * @param {IObject<any>} resources? An optional resources object to extend, 
+        if no resources object is passed in a new one will be created.
          * 
          * @returns {IObject<any>} The context object containing the values of the associated resources.
          */
-        getResources? (aliases: Array<string>, resources?: any): IObject<any>;
+        getResources? (aliases: Array<string>, resources?: IObject<any>): IObject<any>;
 
         /**
          * @name findResource
