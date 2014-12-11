@@ -471,7 +471,6 @@ module tests.routing.routeRecognizer {
                 isDynamic: true
             }]);
 
-
             result = router2.recognize('/posts/6/edit');
             expect(result).toEqual([{
                 delegate: 2,
