@@ -31,13 +31,13 @@
          * @kind property
          * @access public
          * 
-         * @type {plat.IObject<string>}
+         * @type {plat.ui.animations.ISimpleCssTransitionOptions}
          * 
          * @description
-         * A JavaScript object with key value pairs for adjusting transition values. 
-         * (e.g. { width: '800px' } would set the element's width to 800px.
+         * An optional options object that can denote a pseudo element animation and specify 
+         * properties to modify during the transition.
          */
-        options: IObject<string>;
+        options: ISimpleCssTransitionOptions;
 
         /**
          * @name className
@@ -113,7 +113,7 @@
                     removeClass(element, this.className);
                     this.end();
                 },
-                computedStyle = this.$Window.getComputedStyle(element),
+                computedStyle = this.$Window.getComputedStyle(element, (this.options || <ISimpleCssTransitionOptions>{}).pseudo),
                 transitionProperty = computedStyle[<any>(transitionId + 'Property')],
                 transitionDuration = computedStyle[<any>(transitionId + 'Duration')];
 
@@ -193,8 +193,8 @@
          */
         protected _animate(): boolean {
             var style = this.element.style || {},
-                options = this.options || {},
-                keys = Object.keys(options),
+                properties = (this.options || <ISimpleCssTransitionOptions>{}).properties || {},
+                keys = Object.keys(properties),
                 length = keys.length,
                 key: any,
                 modifiedProperties = this._modifiedProperties,
@@ -205,7 +205,7 @@
             while (keys.length > 0) {
                 key = keys.shift();
                 currentProperty = style[key];
-                newProperty = options[key];
+                newProperty = properties[key];
                 if (!isString(newProperty)) {
                     unchanged++;
                     continue;
@@ -243,12 +243,28 @@
          * @kind property
          * @access public
          * 
+         * @type {plat.ui.animations.ISimpleCssTransitionOptions}
+         * 
+         * @description
+         * An optional options object that can denote a pseudo element animation and specify 
+         * properties to modify during the transition.
+         */
+        options: ISimpleCssTransitionOptions;
+    }
+
+    export interface ISimpleCssTransitionOptions extends ISimpleCssAnimationOptions {
+        /**
+         * @name properties
+         * @memberof plat.ui.animations.ISimpleCssTransitionOptions
+         * @kind property
+         * @access public
+         * 
          * @type {plat.IObject<string>}
          * 
          * @description
          * A JavaScript object with key value pairs for adjusting transition values. 
          * (e.g. { width: '800px' } would set the element's width to 800px.
          */
-        options: plat.IObject<string>;
+        properties: IObject<string>;
     }
 }

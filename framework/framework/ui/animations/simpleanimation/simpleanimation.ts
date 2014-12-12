@@ -48,6 +48,19 @@ module plat.ui.animations {
         className = __SimpleAnimation;
 
         /**
+         * @name options
+         * @memberof plat.ui.animations.SimpleCssAnimation
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.ui.animations.ISimpleAnimationOptions}
+         * 
+         * @description
+         * An optional options object that can denote a pseudo element animation.
+         */
+        options: ISimpleCssAnimationOptions;
+
+        /**
          * @name initialize
          * @memberof plat.ui.animations.SimpleCssAnimation
          * @kind function
@@ -87,7 +100,7 @@ module plat.ui.animations {
             var animationId = this.$Compat.animationEvents.$animation,
                 element = this.element,
                 className = this.className,
-                computedStyle = this.$Window.getComputedStyle(element),
+                computedStyle = this.$Window.getComputedStyle(element, (this.options || <ISimpleCssAnimationOptions>{}).pseudo),
                 animationName = computedStyle[<any>(animationId + 'Name')];
 
             if (animationName === '' ||
@@ -170,6 +183,42 @@ module plat.ui.animations {
          * The class name added to the animated element.
          */
         className: string;
+
+        /**
+         * @name options
+         * @memberof plat.ui.animations.ISimpleCssAnimation
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.ui.animations.ISimpleAnimationOptions}
+         * 
+         * @description
+         * An optional options object that can denote a pseudo element animation.
+         */
+        options: ISimpleCssAnimationOptions;
+    }
+
+    /**
+     * @name ISimpleCssAnimationOptions
+     * @memberof plat.ui.animations
+     * @kind interface
+     * 
+     * @description
+     * An interface describing the options for {@link plat.ui.animations.ISimpleCssAnimation|ISimpleCssAnimation}.
+     */
+    export interface ISimpleCssAnimationOptions {
+        /**
+         * @name pseudo
+         * @memberof plat.ui.animations.ISimpleCssAnimationOptions
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * The pseudo element identifier (i.e. '::before' if defined as .red::before).
+         */
+        pseudo?: string;
     }
 
     /**
