@@ -51,6 +51,12 @@ var __prefix = '$',
     __LocalStorage = __prefix + 'LocalStorage',
     __SessionStorage = __prefix + 'SessionStorage',
     __Geolocation = __prefix + 'Geolocation',
+    __BaseSegmentFactory = __prefix + 'BaseSegmentFactory',
+    __StaticSegmentInstance = __prefix + 'StaticSegmentInstance',
+    __VariableSegmentInstance = __prefix + 'VariableSegmentInstance',
+    __DynamicSegmentInstance = __prefix + 'DynamicSegmentInstance',
+    __SplatSegmentInstance = __prefix + 'SplatSegmentInstance',
+
 
     /**
      * Controls

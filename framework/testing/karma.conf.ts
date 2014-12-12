@@ -59,6 +59,7 @@ function cfg(config: any) {
             '../framework/processing/nodemanager/textmanager.js',
             '../framework/processing/nodemanager/commentmanager.js',
             '../framework/routing/segments/segments.js',
+            '../framework/routing/state/state.js',
             '../framework/routing/routerecognizer/routerecognizer.js',
             '../framework/navigation/basenavigator.js',
             '../framework/navigation/navigator.js',
