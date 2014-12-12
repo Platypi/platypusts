@@ -201,6 +201,15 @@ var __prefix = '$',
     },
 
     /**
+     * Routing
+     */
+    __BASE_SEGMENT_TYPE = 'base',
+    __VARIABLE_SEGMENT_TYPE = 'variable',
+    __STATIC_SEGMENT_TYPE = 'static',
+    __SPLAT_SEGMENT_TYPE = 'splat',
+    __DYNAMIC_SEGMENT_TYPE = 'dynamic',
+
+    /**
      * Constants
      */
     __startSymbol = '{{',

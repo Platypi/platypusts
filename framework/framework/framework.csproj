@@ -57,6 +57,7 @@
     <TypeScriptCompile Include="references\references.ts" />
     <TypeScriptCompile Include="register\register.ts" />
     <TypeScriptCompile Include="routing\routerecognizer\routerecognizer.ts" />
+    <TypeScriptCompile Include="routing\segments\segments.ts" />
     <TypeScriptCompile Include="storage\basestorage.ts" />
     <TypeScriptCompile Include="storage\cache\cache.ts" />
     <TypeScriptCompile Include="storage\cache\templatecache.ts" />

@@ -11534,6 +11534,7 @@ declare module plat {
     }
     module routing {
         class BaseSegment {
+            static parse(route: string, names: string[], types: ISegmentTypeCount): BaseSegment[];
             type: string;
             name: string;
             regex: string;
@@ -11551,7 +11552,7 @@ declare module plat {
             type: string;
             generate(params?: any): any;
         }
-        class WildcardSegment extends VariableSegment {
+        class SplatSegment extends VariableSegment {
             type: string;
             regex: string;
             protected _specification: IRouteSegmentSpecification;
@@ -11567,16 +11568,21 @@ declare module plat {
           * sub-states.
           */
         class State {
+            static addSegment(state: State, segment: BaseSegment): State;
+            static getResult(state: State, path: string): IRecognizeResult;
+            static recognize(states: State[], char: string): State[];
+            static sort(states: State[]): State[];
             nextStates: State[];
             specification: IRouteSegmentSpecification;
-            delegates: IDelegateInfo[];
+            delegates: IDelegateNames[];
             regex: RegExp;
-            types: ISegmentTypes;
+            types: ISegmentTypeCount;
             constructor();
-            initialize(spec: IRouteSegmentSpecification): void;
-            getNextState(spec: IRouteSegmentSpecification): State;
-            addNextState(spec: IRouteSegmentSpecification): State;
-            match(char: string): State[];
+            initialize(spec?: IRouteSegmentSpecification): void;
+            add(spec: IRouteSegmentSpecification): State;
+            protected _match(char: string): State[];
+            protected _find(spec: IRouteSegmentSpecification): State;
+            protected _someChildren(callback: (child: State) => void): void;
         }
         interface IRouteSegmentSpecification {
             invalidCharacters?: string;
@@ -11589,20 +11595,67 @@ declare module plat {
             register(routes: IRegisteredRouteOptions[]): void;
             recognize(path: string): IRecognizeResult;
         }
-        interface ISegmentTypes {
+        /**
+          * Contains the total number of each segment type for a registered route.
+          * Used to sort recognized route solutions for more accurate route
+          * matching.
+          */
+        interface ISegmentTypeCount {
+            /**
+              * A count of how many static segments exist in the route.
+              */
             statics: number;
+            /**
+              * A count of how many dynamic segments exist in the route.
+              */
             dynamics: number;
-            wildcards: number;
+            /**
+              * A count of how many splat segments exist in the route.
+              */
+            splats: number;
         }
-        interface IDelegateInfo {
+        /**
+          * Contains a delegate and its associated segment names. Used for populating
+          * the parameters in an IDelegateInfo object.
+          */
+        interface IDelegateNames {
+            /**
+              * The delegate for a registered route
+              */
             delegate: any;
+            /**
+              * Contains the parameter names for a given delegate
+              */
             names: string[];
         }
-        interface IRecognizeResult extends Array<{
+        /**
+          * An Array of delegate information for a recognized route.
+          */
+        interface IRecognizeResult extends Array<IDelegateInfo> {
+        }
+        /**
+          * Information for a recognized route segment. Contains the registered
+          * delegate, as well as a parameters object with key/value pairs for a
+          * dynamic route segment.
+          */
+        interface IDelegateInfo {
+            /**
+              * A delegate can be anything. It is an object that will provide functionality
+              * for a route segment.
+              */
             delegate: any;
-            params: any;
+            /**
+              * The parameters for a route segment. If the segment is a dynamic or splat
+              * segment, then the parameters will be a key/value pair object with the associated
+              * variables.
+              */
+            parameters: any;
+            /**
+              * States whether or not the register delegate is for a dynamic/splat route. If
+              * this value is true, then the parameters object will be filled with key/value pairs
+              * associated to the registered route parameters.
+              */
             isDynamic: boolean;
-        }> {
         }
         /**
           * Used during route registeration to specify a delegate object to associate
@@ -11610,7 +11663,7 @@ declare module plat {
           */
         interface IRegisteredRouteOptions {
             /**
-              * The pattern to match for the route, accepts dynamic routes as well as splat/wildcard routes.
+              * The pattern to match for the route, accepts dynamic routes as well as splat routes.
               * /posts/new
               * /posts/:id
               * /posts/*path

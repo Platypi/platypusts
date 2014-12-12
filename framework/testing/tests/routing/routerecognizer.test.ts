@@ -23,25 +23,25 @@ module tests.routing.routeRecognizer {
 
             expect(router.recognize('admin/users')).toEqual([{
                 delegate: delegate1,
-                params: {},
+                parameters: {},
                 isDynamic: false
             }]);
 
             expect(router.recognize('/admin/users')).toEqual([{
                 delegate: delegate1,
-                params: {},
+                parameters: {},
                 isDynamic: false
             }]);
 
             expect(router.recognize('admin/users/')).toEqual([{
                 delegate: delegate1,
-                params: {},
+                parameters: {},
                 isDynamic: false
             }]);
 
             expect(router.recognize('/admin/users/')).toEqual([{
                 delegate: delegate1,
-                params: {},
+                parameters: {},
                 isDynamic: false
             }]);
         });
@@ -54,25 +54,25 @@ module tests.routing.routeRecognizer {
 
             expect(router.recognize('admin/users')).toEqual([{
                 delegate: delegate1,
-                params: {},
+                parameters: {},
                 isDynamic: false
             }]);
 
             expect(router.recognize('/admin/users')).toEqual([{
                 delegate: delegate1,
-                params: {},
+                parameters: {},
                 isDynamic: false
             }]);
 
             expect(router.recognize('admin/users/')).toEqual([{
                 delegate: delegate1,
-                params: {},
+                parameters: {},
                 isDynamic: false
             }]);
 
             expect(router.recognize('/admin/users/')).toEqual([{
                 delegate: delegate1,
-                params: {},
+                parameters: {},
                 isDynamic: false
             }]);
         });
@@ -85,25 +85,25 @@ module tests.routing.routeRecognizer {
 
             expect(router.recognize('admin/users')).toEqual([{
                 delegate: delegate1,
-                params: {},
+                parameters: {},
                 isDynamic: false
             }]);
 
             expect(router.recognize('/admin/users')).toEqual([{
                 delegate: delegate1,
-                params: {},
+                parameters: {},
                 isDynamic: false
             }]);
             expect(router.recognize('admin/users/')).toEqual([{
 
                 delegate: delegate1,
-                params: {},
+                parameters: {},
                 isDynamic: false
             }]);
 
             expect(router.recognize('/admin/users/')).toEqual([{
                 delegate: delegate1,
-                params: {},
+                parameters: {},
                 isDynamic: false
             }]);
         });
@@ -116,7 +116,7 @@ module tests.routing.routeRecognizer {
 
             expect(router.recognize('/')).toEqual([{
                 delegate: delegate1,
-                params: {},
+                parameters: {},
                 isDynamic: false
             }]);
         });
@@ -129,7 +129,7 @@ module tests.routing.routeRecognizer {
 
             expect(router.recognize('customers/john')).toEqual([{
                 delegate: delegate1,
-                params: {
+                parameters: {
                     name: 'john'
                 },
                 isDynamic: true
@@ -137,7 +137,7 @@ module tests.routing.routeRecognizer {
 
             expect(router.recognize('customers/1')).toEqual([{
                 delegate: delegate1,
-                params: {
+                parameters: {
                     name: '1'
                 },
                 isDynamic: true
@@ -159,7 +159,7 @@ module tests.routing.routeRecognizer {
 
             expect(router.recognize('posts/1')).toEqual([{
                 delegate: delegate1,
-                params: {
+                parameters: {
                     id: '1'
                 },
                 isDynamic: true
@@ -167,7 +167,7 @@ module tests.routing.routeRecognizer {
 
             expect(router.recognize('customers/2')).toEqual([{
                 delegate: delegate2,
-                params: {
+                parameters: {
                     id: '2'
                 },
                 isDynamic: true
@@ -185,11 +185,11 @@ module tests.routing.routeRecognizer {
 
             expect(router.recognize('/')).toEqual([{
                 delegate: delegate1,
-                params: {},
+                parameters: {},
                 isDynamic: false
             }, {
                 delegate: delegate2,
-                params: {},
+                parameters: {},
                 isDynamic: false
             }]);
         });
@@ -207,7 +207,7 @@ module tests.routing.routeRecognizer {
 
             expect(router.recognize('/posts/1/title')).toEqual([{
                 delegate: delegate2,
-                params: {
+                parameters: {
                     title: 'title'
                 },
                 isDynamic: true
@@ -215,7 +215,7 @@ module tests.routing.routeRecognizer {
 
             expect(router.recognize('/posts/1')).toEqual([{
                 delegate: delegate1,
-                params: {
+                parameters: {
                     id: '1'
                 },
                 isDynamic: true
@@ -235,7 +235,7 @@ module tests.routing.routeRecognizer {
 
             expect(router.recognize('/posts/1/title')).toEqual([{
                 delegate: delegate1,
-                params: {
+                parameters: {
                     path: '1/title'
                 },
                 isDynamic: true
@@ -243,7 +243,7 @@ module tests.routing.routeRecognizer {
 
             expect(router.recognize('/1')).toEqual([{
                 delegate: delegate2,
-                params: {
+                parameters: {
                     path: '1'
                 },
                 isDynamic: true
@@ -263,7 +263,7 @@ module tests.routing.routeRecognizer {
 
             expect(router.recognize('/posts/1')).toEqual([{
                 delegate: delegate1,
-                params: {
+                parameters: {
                     path: '1'
                 },
                 isDynamic: true
@@ -271,7 +271,7 @@ module tests.routing.routeRecognizer {
 
             expect(router.recognize('/posts/title')).toEqual([{
                 delegate: delegate1,
-                params: {
+                parameters: {
                     path: 'title'
                 },
                 isDynamic: true
@@ -279,7 +279,7 @@ module tests.routing.routeRecognizer {
 
             expect(router.recognize('/posts/title/1')).toEqual([{
                 delegate: delegate2,
-                params: {
+                parameters: {
                     id: '1',
                     path: 'title'
                 },
@@ -298,13 +298,13 @@ module tests.routing.routeRecognizer {
 
             expect(router.recognize('/app/2/posts/1')).toEqual([{
                 delegate: delegate1,
-                params: {
+                parameters: {
                     page: '2'
                 },
                 isDynamic: true
             }, {
                 delegate: delegate2,
-                params: {
+                parameters: {
                     id: '1'
                 },
                 isDynamic: true
@@ -318,13 +318,13 @@ module tests.routing.routeRecognizer {
 
             expect(router.recognize('/posts/new')).toEqual([{
                 delegate: delegate1,
-                params: {},
+                parameters: {},
                 isDynamic: false
             }]);
 
             expect(router.recognize('/posts/1')).toEqual([{
                 delegate: delegate2,
-                params: {
+                parameters: {
                     id: '1'
                 },
                 isDynamic: true
@@ -332,7 +332,7 @@ module tests.routing.routeRecognizer {
 
             expect(router.recognize('/posts/edit')).toEqual([{
                 delegate: delegate3,
-                params: {},
+                parameters: {},
                 isDynamic: false
             }]);
         });
@@ -352,16 +352,16 @@ module tests.routing.routeRecognizer {
             ]);
 
             expect(router.recognize('/posts/1')).toEqual([
-                { delegate: delegate1, params: {}, isDynamic: false },
-                { delegate: delegate2, params: {}, isDynamic: false },
-                { delegate: delegate3, params: { id: '1' }, isDynamic: true }
+                { delegate: delegate1, parameters: {}, isDynamic: false },
+                { delegate: delegate2, parameters: {}, isDynamic: false },
+                { delegate: delegate3, parameters: { id: '1' }, isDynamic: true }
             ]);
 
             expect(router.recognize('/posts/edit')).toEqual([
-                { delegate: delegate1, params: {}, isDynamic: false },
-                { delegate: delegate2, params: {}, isDynamic: false },
-                { delegate: delegate3, params: {}, isDynamic: false },
-                { delegate: delegate4, params: {}, isDynamic: false }
+                { delegate: delegate1, parameters: {}, isDynamic: false },
+                { delegate: delegate2, parameters: {}, isDynamic: false },
+                { delegate: delegate3, parameters: {}, isDynamic: false },
+                { delegate: delegate4, parameters: {}, isDynamic: false }
             ]);
         });
 
@@ -379,27 +379,27 @@ module tests.routing.routeRecognizer {
             ]);
 
             expect(router.recognize('/')).toEqual([
-                { delegate: delegate1, params: {}, isDynamic: false },
-                { delegate: delegate2, params: {}, isDynamic: false },
-                { delegate: delegate3, params: {}, isDynamic: false }
+                { delegate: delegate1, parameters: {}, isDynamic: false },
+                { delegate: delegate2, parameters: {}, isDynamic: false },
+                { delegate: delegate3, parameters: {}, isDynamic: false }
             ]);
 
             expect(router.recognize('')).toEqual([
-                { delegate: delegate1, params: {}, isDynamic: false },
-                { delegate: delegate2, params: {}, isDynamic: false },
-                { delegate: delegate3, params: {}, isDynamic: false }
+                { delegate: delegate1, parameters: {}, isDynamic: false },
+                { delegate: delegate2, parameters: {}, isDynamic: false },
+                { delegate: delegate3, parameters: {}, isDynamic: false }
             ]);
 
             expect(router.recognize('/foo')).toEqual([
-                { delegate: delegate2, params: {}, isDynamic: false },
-                { delegate: delegate3, params: {}, isDynamic: false },
-                { delegate: delegate4, params: {}, isDynamic: false }
+                { delegate: delegate2, parameters: {}, isDynamic: false },
+                { delegate: delegate3, parameters: {}, isDynamic: false },
+                { delegate: delegate4, parameters: {}, isDynamic: false }
             ]);
 
             expect(router.recognize('foo')).toEqual([
-                { delegate: delegate2, params: {}, isDynamic: false },
-                { delegate: delegate3, params: {}, isDynamic: false },
-                { delegate: delegate4, params: {}, isDynamic: false }
+                { delegate: delegate2, parameters: {}, isDynamic: false },
+                { delegate: delegate3, parameters: {}, isDynamic: false },
+                { delegate: delegate4, parameters: {}, isDynamic: false }
             ]);
         });
 
@@ -409,7 +409,7 @@ module tests.routing.routeRecognizer {
             ]);
 
             expect(router.recognize('posts/1')).toEqual([
-                { delegate: delegate1, params: { id: '1' }, isDynamic: true }
+                { delegate: delegate1, parameters: { id: '1' }, isDynamic: true }
             ]);
         });
 
@@ -423,21 +423,21 @@ module tests.routing.routeRecognizer {
             var result = router.recognize('/6');
             expect(result).toEqual([{
                 delegate: 3,
-                params: { id: '6' },
+                parameters: { id: '6' },
                 isDynamic: true
             }]);
 
             result = router.recognize('/6/edit');
             expect(result).toEqual([{
                 delegate: 4,
-                params: { id: '6' },
+                parameters: { id: '6' },
                 isDynamic: true
             }]);
 
             result = router.recognize('/new');
             expect(result).toEqual([{
                 delegate: 5,
-                params: { },
+                parameters: { },
                 isDynamic: false
             }]);
 
@@ -458,14 +458,14 @@ module tests.routing.routeRecognizer {
             result = router2.recognize('/posts');
             expect(result).toEqual([{
                 delegate: 1,
-                params: {},
+                parameters: {},
                 isDynamic: false
             }]);
 
             result = router2.recognize('/posts/6');
             expect(result).toEqual([{
                 delegate: 2,
-                params: {
+                parameters: {
                     childroute: '6'
                 },
                 isDynamic: true
@@ -474,7 +474,7 @@ module tests.routing.routeRecognizer {
             result = router2.recognize('/posts/6/edit');
             expect(result).toEqual([{
                 delegate: 2,
-                params: {
+                parameters: {
                     childroute: '6/edit'
                 },
                 isDynamic: true
@@ -483,7 +483,7 @@ module tests.routing.routeRecognizer {
             result = router2.recognize('/posts/new');
             expect(result).toEqual([{
                 delegate: 2,
-                params: {
+                parameters: {
                     childroute: 'new'
                 },
                 isDynamic: true

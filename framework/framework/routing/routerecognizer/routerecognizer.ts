@@ -1,110 +1,4 @@
 ﻿module plat.routing {
-
-    var specialCharacters = [
-            '/', '.', '*', '+', '?', '|',
-            '(', ')', '[', ']', '{', '}', '\\'
-        ],
-        escapeRegex = new RegExp('(\\' + specialCharacters.join('|\\') + ')', 'g');
-
-    export class BaseSegment {
-        type: string = 'base';
-        name: string = '';
-        regex: string = '';
-
-        protected _specification: IRouteSegmentSpecification;
-
-        constructor(name?: string) {
-            this.name = name;
-        }
-
-        forEachCharacter(callback: (spec: IRouteSegmentSpecification) => void) {
-            if (isObject(this._specification)) {
-                callback(this._specification);
-            }
-        }
-
-        generate(params?: any) {
-            return this.name;
-        }
-    }
-
-    export class StaticSegment extends BaseSegment {
-        type: string = 'static';
-        regex: string = this.name.replace(escapeRegex, '\\$1');
-
-        forEachCharacter(callback: (spec: IRouteSegmentSpecification) => void) {
-            var name: string = this.name,
-                length = name.length;
-
-            for (var i = 0; i < length; ++i) {
-                callback({ validCharacters: name[i] });
-            }
-        }
-    }
-
-    export class VariableSegment extends BaseSegment {
-        type: string = 'variable';
-        generate(params?: any) {
-            if (isObject(params)) {
-                return params[this.name];
-            }
-        }
-    }
-
-    export class WildcardSegment extends VariableSegment {
-        type: string = 'wildcard';
-        regex: string = '(.+)';
-        protected _specification: IRouteSegmentSpecification = {
-            invalidCharacters: '',
-            repeat: true
-        };
-    }
-
-    export class DynamicSegment extends VariableSegment {
-        type: string = 'dynamic';
-        regex: string = '([^/]+)';
-        protected _specification: IRouteSegmentSpecification = {
-            invalidCharacters: '/',
-            repeat: true
-        };
-    }
-
-    var dynamicSegmentRegexp = /^:([^\/]+)$/,
-        wildcardSegmentRegexp = /^\*([^\/]+)$/;
-
-    function parse(route: string, names: Array<string>, types: ISegmentTypes) {
-        if (route[0] === '/') {
-            route = route.slice(1);
-        }
-
-        var segments: Array<string> = route.split('/'),
-            length = segments.length,
-            results: Array<BaseSegment> = [],
-            segment: string,
-            match: RegExpMatchArray;
-
-        for (var i = 0; i < length; ++i) {
-            segment = segments[i];
-
-            if (segment === '') {
-                results.push(new BaseSegment());
-            } else if (match = segment.match(dynamicSegmentRegexp)) {
-                results.push(new DynamicSegment(match[1]));
-                names.push(match[1]);
-                types.dynamics++;
-            } else if (match = segment.match(wildcardSegmentRegexp)) {
-                results.push(new WildcardSegment(match[1]));
-                names.push(match[1]);
-                types.wildcards++;
-            } else {
-                results.push(new StaticSegment(segment));
-                types.statics++;
-            }
-        }
-
-        return results;
-    }
-
     /**
      * @name State
      * @memberof plat.routing
@@ -116,11 +10,116 @@
      * sub-states.
      */
     export class State {
+        static addSegment(state: State, segment: BaseSegment) {
+            segment.forEachCharacter((char) => {
+                state = state.add(char);
+            });
+
+            return state;
+        }
+
+        static getResult(state: State, path: string) {
+            var delegates: Array<IDelegateNames> = state.delegates,
+                regex = state.regex,
+                length = delegates.length,
+                matches = path.match(regex),
+                matchIndex = 1,
+                result: IRecognizeResult = [],
+                names: Array<string>,
+                parameters: any,
+                j: number,
+                jLength: number,
+                delegate: IDelegateNames;
+
+            for (var i = 0; i < length; ++i) {
+                delegate = delegates[i];
+                names = delegate.names;
+                parameters = {};
+
+                for (j = 0, jLength = names.length; j < jLength; ++j) {
+                    parameters[names[j]] = matches[matchIndex++];
+                }
+
+                result.push({
+                    delegate: delegate.delegate,
+                    parameters: parameters,
+                    isDynamic: jLength > 0
+                });
+            }
+
+            return result;
+        }
+
+        static recognize(states: Array<State>, char: string) {
+            var nextStates: Array<State> = [],
+                length = states.length,
+                state: State;
+
+            for (var i = 0; i < length; ++i) {
+                state = states[i];
+
+                nextStates = nextStates.concat(state._match(char));
+            }
+
+            return nextStates;
+        }
+
+        static sort(states: Array<State>) {
+            if (!isArray(states)) {
+                return states;
+            }
+
+            var aTypes: ISegmentTypeCount,
+                aSplats: number,
+                aStatics: number,
+                aDynamics: number,
+                bTypes: ISegmentTypeCount,
+                bSplats: number,
+                bStatics: number,
+                bDynamics: number;
+
+            return states.sort((a, b) => {
+                aTypes = a.types;
+                bTypes = b.types;
+                aSplats = aTypes.splats;
+                bSplats = bTypes.splats;
+
+                if (aSplats !== bSplats) {
+                    return aSplats - bSplats;
+                }
+
+                aStatics = aTypes.statics;
+                aDynamics = aTypes.dynamics;
+                bStatics = bTypes.statics;
+                bDynamics = bTypes.dynamics;
+
+                if (aSplats > 0) {
+                    if (aStatics !== bStatics) {
+                        return bStatics - aStatics;
+                    }
+
+                    if (aDynamics !== bDynamics) {
+                        return bDynamics - aDynamics;
+                    }
+                }
+
+                if (aDynamics !== bDynamics) {
+                    return aDynamics - bDynamics;
+                }
+
+                if (aStatics !== bStatics) {
+                    return bStatics = aStatics;
+                }
+
+                return 0;
+            });
+        }
+
         nextStates: Array<State>;
         specification: IRouteSegmentSpecification;
-        delegates: Array<IDelegateInfo>;
+        delegates: Array<IDelegateNames>;
         regex: RegExp;
-        types: ISegmentTypes;
+        types: ISegmentTypeCount;
 
         constructor() {
             this.initialize();
@@ -131,27 +130,8 @@
             this.nextStates = [];
         }
 
-        getNextState(spec: IRouteSegmentSpecification): State {
-            var nextStates = this.nextStates,
-                length = nextStates.length,
-                validChars = spec.validCharacters,
-                invalidChars = spec.invalidCharacters,
-                child: State,
-                specification: IRouteSegmentSpecification;
-
-            for (var i = 0; i < length; ++i) {
-                child = nextStates[i];
-                specification = child.specification;
-
-                if (specification.validCharacters === validChars &&
-                    specification.invalidCharacters === invalidChars) {
-                    return child;
-                }
-            }
-        }
-
-        addNextState(spec: IRouteSegmentSpecification): State {
-            var state = this.getNextState(spec);
+        add(spec: IRouteSegmentSpecification): State {
+            var state = this._find(spec);
 
             if (isObject(state)) {
                 return state;
@@ -169,26 +149,51 @@
             return state;
         }
 
-        match(char: string) {
-            var nextStates = this.nextStates,
-                length = nextStates.length,
-                child: State,
+        protected _match(char: string) {
+            var matches: Array<State> = [],
                 spec: IRouteSegmentSpecification,
-                chars: string,
-                matches: Array<State> = [];
+                chars: string;
 
-            for (var i = 0; i < length; ++i) {
-                child = nextStates[i];
+            this._someChildren((child) => {
                 spec = child.specification;
-
                 if (isString(chars = spec.validCharacters) && chars.indexOf(char) > -1) {
                     matches.push(child);
                 } else if (isString(chars = spec.invalidCharacters) && chars.indexOf(char) === -1) {
                     matches.push(child);
                 }
-            }
+            });
 
             return matches;
+        }
+
+        protected _find(spec: IRouteSegmentSpecification): State {
+            var validChars = spec.validCharacters,
+                invalidChars = spec.invalidCharacters,
+                s: IRouteSegmentSpecification,
+                found: State;
+
+            this._someChildren((child) => {
+                s = child.specification;
+
+                if (s.validCharacters === validChars &&
+                    s.invalidCharacters === invalidChars) {
+                    found = child;
+                    return true;
+                }
+            });
+
+            return found;
+        }
+
+        protected _someChildren(callback: (child: State) => void) {
+            var nextStates = this.nextStates,
+                length = nextStates.length;
+
+            for (var i = 0; i < length; ++i) {
+                if (callback(nextStates[i])) {
+                    return;
+                }
+            }
         }
     }
 
@@ -196,112 +201,6 @@
         invalidCharacters?: string;
         validCharacters?: string;
         repeat?: boolean;
-    }
-
-    function sortStates(states: Array<State>) {
-        if (!isArray(states)) {
-            return states;
-        }
-
-        var aTypes: ISegmentTypes,
-            aWildcards: number,
-            aStatics: number,
-            aDynamics: number,
-            bTypes: ISegmentTypes,
-            bWildcards: number,
-            bStatics: number,
-            bDynamics: number;
-
-
-        return states.sort((a, b) => {
-            aTypes = a.types;
-            bTypes = b.types;
-            aWildcards = aTypes.wildcards;
-            bWildcards = bTypes.wildcards;
-
-            if (aWildcards !== bWildcards) {
-                return aWildcards - bWildcards;
-            }
-
-            aStatics = aTypes.statics;
-            aDynamics = aTypes.dynamics;
-            bStatics = bTypes.statics;
-            bDynamics = bTypes.dynamics;
-
-            if (aWildcards > 0) {
-                if (aStatics !== bStatics) {
-                    return bStatics - aStatics;
-                }
-
-                if (aDynamics !== bDynamics) {
-                    return bDynamics - aDynamics;
-                }
-            }
-
-            if (aDynamics !== bDynamics) {
-                return aDynamics - bDynamics;
-            }
-
-            if (aStatics !== bStatics) {
-                return bStatics = aStatics;
-            }
-
-            return 0;
-        });
-    }
-
-    function recognizeCharacter(states: Array<State>, char: string) {
-        var nextStates: Array<State> = [],
-            length = states.length,
-            state: State;
-
-        for (var i = 0; i < length; ++i) {
-            state = states[i];
-
-            nextStates = nextStates.concat(state.match(char));
-        }
-
-        return nextStates;
-    }
-
-    function findDelegate(state: State, path: string) {
-        var delegates: Array<IDelegateInfo> = state.delegates,
-            regex = state.regex,
-            length = delegates.length,
-            matches = path.match(regex),
-            matchIndex = 1,
-            results: IRecognizeResult = [],
-            names: Array<string>,
-            params: any,
-            j: number,
-            jLength: number,
-            delegate: IDelegateInfo;
-
-        for (var i = 0; i < length; ++i) {
-            delegate = delegates[i];
-            names = delegate.names;
-            params = {};
-
-            for (j = 0, jLength = names.length; j < jLength; ++j) {
-                params[names[j]] = matches[matchIndex++];
-            }
-
-            results.push({
-                delegate: delegate.delegate,
-                params: params,
-                isDynamic: jLength > 0
-            });
-        }
-
-        return results;
-    }
-
-    function addSegment(currentState: State, segment: BaseSegment) {
-        segment.forEachCharacter((char) => {
-            currentState = currentState.addNextState(char);
-        });
-
-        return currentState;
     }
 
     export class RouteRecognizer {
@@ -317,10 +216,10 @@
             var currentState = this.rootState,
                 length = routes.length,
                 regex = '^',
-                types: ISegmentTypes = {
+                types: ISegmentTypeCount = {
                     statics: 0,
                     dynamics: 0,
-                    wildcards: 0
+                    splats: 0
                 },
                 delegates: Array<any> = [],
                 allSegments: Array<BaseSegment> = [],
@@ -333,23 +232,23 @@
             for (var i = 0; i < length; ++i) {
                 route = routes[i];
                 names = [];
-                segments = parse(route.pattern, names, types);
+                segments = BaseSegment.parse(route.pattern, names, types);
 
                 allSegments = allSegments.concat(segments);
 
                 for (var j = 0, jLength = segments.length; j < jLength; ++j) {
                     segment = segments[j];
 
-                    if (segment.type === 'base') {
+                    if (segment.type === __BASE_SEGMENT_TYPE) {
                         continue;
                     }
 
                     isEmpty = false;
 
-                    currentState = currentState.addNextState({ validCharacters: '/' });
+                    currentState = currentState.add({ validCharacters: '/' });
                     regex += '/';
 
-                    currentState = addSegment(currentState, segment);
+                    currentState = State.addSegment(currentState, segment);
                     regex += segment.regex;
                 }
 
@@ -360,7 +259,7 @@
             }
 
             if (isEmpty) {
-                currentState = currentState.addNextState({
+                currentState = currentState.add({
                     validCharacters: '/'
                 });
                 regex += '/';
@@ -397,7 +296,7 @@
             length = path.length;
 
             for (i = 0; i < length; ++i) {
-                states = recognizeCharacter(states, path[i]);
+                states = State.recognize(states, path[i]);
 
                 if (states.length === 0) {
                     break;
@@ -413,7 +312,7 @@
                 }
             }
 
-            states = sortStates(solutions);
+            states = State.sort(solutions);
 
             state = solutions[0];
             if (isObject(state) && isArray(state.delegates)) {
@@ -421,30 +320,163 @@
                     path = path + '/';
                 }
 
-                return findDelegate(state, path);
+                return State.getResult(state, path);
             }
         }
     }
 
-    export interface ISegmentTypes {
+    /**
+     * @name ISegmentTypes
+     * @memberof plat.routing
+     * @kind interface
+     * 
+     * @description
+     * Contains the total number of each segment type for a registered route. 
+     * Used to sort recognized route solutions for more accurate route 
+     * matching.
+     */
+    export interface ISegmentTypeCount {
+        /**
+         * @name statics
+         * @memberof plat.routing.ISegmentTypeCount
+         * @kind property
+         * 
+         * @type {number}
+         * 
+         * @description
+         * A count of how many static segments exist in the route.
+         */
         statics: number;
+
+        
+        /**
+         * @name dynamics
+         * @memberof plat.routing.ISegmentTypeCount
+         * @kind property
+         * 
+         * @type {number}
+         * 
+         * @description
+         * A count of how many dynamic segments exist in the route.
+         */
         dynamics: number;
-        wildcards: number;
+
+        
+        /**
+         * @name splats
+         * @memberof plat.routing.ISegmentTypeCount
+         * @kind property
+         * 
+         * @type {number}
+         * 
+         * @description
+         * A count of how many splat segments exist in the route.
+         */
+        splats: number;
     }
 
-    export interface IDelegateInfo {
+    /**
+     * @name IDelegateNames
+     * @memberof plat.routing
+     * @kind interface
+     * 
+     * @description
+     * Contains a delegate and its associated segment names. Used for populating 
+     * the parameters in an {@link plat.routing.IDelegateInfo|IDelegateInfo} object.
+     */
+    export interface IDelegateNames {
+        /**
+         * @name delegate
+         * @memberof plat.routing.IDelegateNames
+         * @kind property
+         * 
+         * @type {any}
+         * 
+         * @description
+         * The delegate for a registered route
+         */
         delegate: any;
+
+        /**
+         * @name names
+         * @memberof plat.routing.IDelegateNames
+         * @kind property
+         * 
+         * @type {Array<string>}
+         * 
+         * @description
+         * Contains the parameter names for a given delegate
+         */
         names: Array<string>;
     }
 
-    export interface IRecognizeResult extends Array<{
-        delegate: any;
-        params: any;
-        isDynamic: boolean;
-    }> { };
+    /**
+     * @name IRecognizeResult
+     * @memberof plat.routing
+     * @kind interface
+     * 
+     * @extends {Array<plat.routing.IDelegateInfo>}
+     * 
+     * @description
+     * An Array of delegate information for a recognized route.
+     */
+    export interface IRecognizeResult extends Array<IDelegateInfo> { };
 
     /**
-     * @name RegisteredRouteOptions
+     * @name IDelegateInfo
+     * @memberof plat.routing
+     * @kind interface
+     * 
+     * @description
+     * Information for a recognized route segment. Contains the registered 
+     * delegate, as well as a parameters object with key/value pairs for a 
+     * dynamic route segment.
+     */
+    export interface IDelegateInfo {
+        /**
+         * @name delegate
+         * @memberof plat.routing.IDelegateInfo
+         * @kind property
+         * 
+         * @type {any}
+         * 
+         * @description
+         * A delegate can be anything. It is an object that will provide functionality 
+         * for a route segment.
+         */
+        delegate: any;
+
+        /**
+         * @name parameters
+         * @memberof plat.routing.IDelegateInfo
+         * @kind property
+         * 
+         * @type {any}
+         * 
+         * @description
+         * The parameters for a route segment. If the segment is a dynamic or splat 
+         * segment, then the parameters will be a key/value pair object with the associated 
+         * variables.
+         */
+        parameters: any;
+
+        /**
+         * @name isDynamic
+         * @memberof plat.routing.IDelegateInfo
+         * @kind property
+         * 
+         * @type {boolean}
+         * 
+         * @description
+         * States whether or not the register delegate is for a dynamic/splat route. If 
+         * this value is true, then the parameters object will be filled with key/value pairs 
+         * associated to the registered route parameters.
+         */
+        isDynamic: boolean;
+    }
+
+    /**
+     * @name IRegisteredRouteOptions
      * @memberof plat.routing
      * @kind interface
      * 
@@ -455,13 +487,13 @@
     export interface IRegisteredRouteOptions {
         /**
          * @name pattern
-         * @memberof plat.routing
+         * @memberof plat.routing.IRegisteredRouteOptions
          * @kind property
          * 
          * @type {string}
          * 
          * @description
-         * The pattern to match for the route, accepts dynamic routes as well as splat/wildcard routes.
+         * The pattern to match for the route, accepts dynamic routes as well as splat routes.
          * 
          * @example
          * /posts/new
@@ -476,7 +508,7 @@
 
         /**
          * @name delegate
-         * @memberof plat.routing
+         * @memberof plat.routing.IRegisteredRouteOptions
          * @kind property
          * 
          * @type {any}
