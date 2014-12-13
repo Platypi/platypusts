@@ -142,12 +142,16 @@
 
         protected _findResult(state: State, path: string, isTrailingSlashDropped: boolean) {
             if (isObject(state) && isArray(state.delegates)) {
-                if (isTrailingSlashDropped && state.regex.source.slice(-5) === '(.+)$') {
+                if (isTrailingSlashDropped && this._isDynamic(state)) {
                     path = path + '/';
                 }
 
                 return this.$StateStatic.getResult(state, path);
             }
+        }
+
+        protected _isDynamic(state: State) {
+            return state.regex.source.slice(-5) === '(.+)$';
         }
     }
 
