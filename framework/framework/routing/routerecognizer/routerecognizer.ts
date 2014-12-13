@@ -28,7 +28,7 @@
                 finalState = this._compile(segments, finalState, regex);
             }
 
-            finalState = this._normalizeRootState(finalState, regex);
+            finalState = this._finalize(finalState, regex);
             finalState.delegates = delegates;
             finalState.regex = new RegExp(regex.join('') + '$');
             finalState.types = types;
@@ -49,7 +49,7 @@
             return this._findResult(solutions[0], path, isTrailingSlashDropped);
         }
 
-        protected _normalizeRootState(state: State, regex: Array<string>) {
+        protected _finalize(state: State, regex: Array<string>) {
             if (state === this.rootState) {
                 state = state.add({
                     validCharacters: '/'
