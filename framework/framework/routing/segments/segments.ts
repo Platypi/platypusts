@@ -33,7 +33,7 @@
 
                 if (segment === '') {
                     if (!isObject(baseSegment)) {
-                        baseSegment = new BaseSegment();
+                        baseSegment = acquire(__BaseSegmentInstance);
                     }
 
                     results.push(baseSegment);
@@ -94,7 +94,13 @@
         return BaseSegment;
     }
 
-    plat.register.injectable(__BaseSegmentFactory, IBaseSegmentFactory, null, register.injectable.FACTORY);
+    plat.register.injectable(__BaseSegmentFactory, IBaseSegmentFactory, null, __FACTORY);
+
+    export function IBaseSegmentInstance(): BaseSegment {
+        return new BaseSegment();
+    }
+
+    plat.register.injectable(__BaseSegmentInstance, IBaseSegmentInstance, null, __INSTANCE);
 
     export class StaticSegment extends BaseSegment {
         type: string = __STATIC_SEGMENT_TYPE;
@@ -120,7 +126,7 @@
         return new StaticSegment();
     }
 
-    plat.register.injectable(__StaticSegmentInstance, IStaticSegmentInstance, null, register.injectable.INSTANCE);
+    plat.register.injectable(__StaticSegmentInstance, IStaticSegmentInstance, null, __INSTANCE);
 
     export class VariableSegment extends BaseSegment {
         type: string = __VARIABLE_SEGMENT_TYPE;
@@ -135,7 +141,7 @@
         return new VariableSegment();
     }
 
-    plat.register.injectable(__VariableSegmentInstance, IVariableSegmentInstance, null, register.injectable.INSTANCE);
+    plat.register.injectable(__VariableSegmentInstance, IVariableSegmentInstance, null, __INSTANCE);
 
     export class SplatSegment extends VariableSegment {
         type: string = __SPLAT_SEGMENT_TYPE;
@@ -150,7 +156,7 @@
         return new SplatSegment();
     }
 
-    plat.register.injectable(__SplatSegmentInstance, ISplatSegmentInstance, null, register.injectable.INSTANCE);
+    plat.register.injectable(__SplatSegmentInstance, ISplatSegmentInstance, null, __INSTANCE);
 
     export class DynamicSegment extends VariableSegment {
         type: string = __DYNAMIC_SEGMENT_TYPE;
@@ -165,7 +171,7 @@
         return new DynamicSegment();
     }
 
-    plat.register.injectable(__DynamicSegmentInstance, IDynamicSegmentInstance, null, register.injectable.INSTANCE);
+    plat.register.injectable(__DynamicSegmentInstance, IDynamicSegmentInstance, null, __INSTANCE);
 
     export interface IRouteSegmentSpecification {
         invalidCharacters?: string;

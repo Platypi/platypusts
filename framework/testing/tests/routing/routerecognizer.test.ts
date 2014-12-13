@@ -8,7 +8,7 @@ module tests.routing.routeRecognizer {
             delegate4: Object;
 
         beforeEach(() => {
-            router = new plat.routing.RouteRecognizer();
+            router = plat.acquire(plat.routing.IRouteRecognizerInstance);
             delegate1 = { foo: 'foo' };
             delegate2 = { bar: 'bar' };
             delegate3 = { baz: 'baz' };

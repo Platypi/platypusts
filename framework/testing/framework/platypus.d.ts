@@ -11535,65 +11535,44 @@ declare module plat {
     module routing {
         class BaseSegment {
             static parse(route: string, names: string[], types: ISegmentTypeCount): BaseSegment[];
+            private static __findSegment(name, token, cache);
             type: string;
             name: string;
             regex: string;
             protected _specification: IRouteSegmentSpecification;
-            constructor(name?: string);
+            initialize(name?: string): void;
             forEachCharacter(callback: (spec: IRouteSegmentSpecification) => void): void;
-            generate(params?: any): string;
+            generate(parameters?: IObject<string>): string;
         }
+        function IBaseSegmentFactory(): typeof BaseSegment;
         class StaticSegment extends BaseSegment {
             type: string;
             regex: string;
+            initialize(name?: string): void;
             forEachCharacter(callback: (spec: IRouteSegmentSpecification) => void): void;
         }
+        function IStaticSegmentInstance(): StaticSegment;
         class VariableSegment extends BaseSegment {
             type: string;
-            generate(params?: any): any;
+            generate(parameters?: IObject<string>): string;
         }
+        function IVariableSegmentInstance(): VariableSegment;
         class SplatSegment extends VariableSegment {
             type: string;
             regex: string;
             protected _specification: IRouteSegmentSpecification;
         }
+        function ISplatSegmentInstance(): SplatSegment;
         class DynamicSegment extends VariableSegment {
             type: string;
             regex: string;
             protected _specification: IRouteSegmentSpecification;
         }
-        /**
-          * A State represents a route segment. It contains a specification for the
-          * acceptable characters in the segment. It also has reference to acceptable
-          * sub-states.
-          */
-        class State {
-            static addSegment(state: State, segment: BaseSegment): State;
-            static getResult(state: State, path: string): IRecognizeResult;
-            static recognize(states: State[], char: string): State[];
-            static sort(states: State[]): State[];
-            nextStates: State[];
-            specification: IRouteSegmentSpecification;
-            delegates: IDelegateNames[];
-            regex: RegExp;
-            types: ISegmentTypeCount;
-            constructor();
-            initialize(spec?: IRouteSegmentSpecification): void;
-            add(spec: IRouteSegmentSpecification): State;
-            protected _match(char: string): State[];
-            protected _find(spec: IRouteSegmentSpecification): State;
-            protected _someChildren(callback: (child: State) => void): void;
-        }
+        function IDynamicSegmentInstance(): DynamicSegment;
         interface IRouteSegmentSpecification {
             invalidCharacters?: string;
             validCharacters?: string;
             repeat?: boolean;
-        }
-        class RouteRecognizer {
-            rootState: State;
-            constructor();
-            register(routes: IRegisteredRouteOptions[]): void;
-            recognize(path: string): IRecognizeResult;
         }
         /**
           * Contains the total number of each segment type for a registered route.
@@ -11615,6 +11594,30 @@ declare module plat {
             splats: number;
         }
         /**
+          * Route segment matching is done using a state machine. Each state contains
+          * a specification indicating valid and invalid characters. Each State has a
+          * list of potential next states. When matching a route segment you start with
+          * a root state and then iteratively match next states until you complete the
+          * segment or invalidate the segment.
+          */
+        class State {
+            static addSegment(state: State, segment: BaseSegment): State;
+            static getResult(state: State, path: string): IRecognizeResult;
+            static recognize(states: State[], char: string): State[];
+            static sort(states: State[]): State[];
+            nextStates: State[];
+            specification: IRouteSegmentSpecification;
+            delegates: IDelegateNames[];
+            regex: RegExp;
+            types: ISegmentTypeCount;
+            constructor();
+            initialize(spec?: IRouteSegmentSpecification): void;
+            add(spec: IRouteSegmentSpecification): State;
+            protected _match(char: string): State[];
+            protected _find(spec: IRouteSegmentSpecification): State;
+            protected _someChildren(callback: (child: State) => void): void;
+        }
+        /**
           * Contains a delegate and its associated segment names. Used for populating
           * the parameters in an IDelegateInfo object.
           */
@@ -11628,6 +11631,13 @@ declare module plat {
               */
             names: string[];
         }
+        class RouteRecognizer {
+            $BaseSegmentFactory: typeof BaseSegment;
+            rootState: State;
+            register(routes: IRegisteredRouteOptions[]): void;
+            recognize(path: string): IRecognizeResult;
+        }
+        function IRouteRecognizerInstance(): RouteRecognizer;
         /**
           * An Array of delegate information for a recognized route.
           */

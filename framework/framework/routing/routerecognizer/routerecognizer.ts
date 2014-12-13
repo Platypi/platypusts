@@ -1,123 +1,161 @@
 ﻿module plat.routing {
     export class RouteRecognizer {
-        rootState = new State();
+        $BaseSegmentFactory: typeof BaseSegment = acquire(__BaseSegmentFactory);
+        $StateStatic: typeof State = acquire(__StateStatic);
+
+        rootState: State = acquire(__StateInstance);
 
         register(routes: Array<IRegisteredRouteOptions>) {
             if (!isArray(routes)) {
                 return;
             }
 
-            var currentState = this.rootState,
+            var finalState = this.rootState,
                 length = routes.length,
-                regex = '^',
+                regex: Array<string> = ['^'],
                 types: ISegmentTypeCount = {
                     statics: 0,
                     dynamics: 0,
                     splats: 0
                 },
-                delegates: Array<any> = [],
+                delegates: Array<IDelegateNames> = [],
                 allSegments: Array<BaseSegment> = [],
-                isEmpty = true,
-                route: IRegisteredRouteOptions,
-                segments: Array<BaseSegment>,
-                segment: BaseSegment,
-                names: Array<string>;
+                segments: Array<BaseSegment>;
 
             for (var i = 0; i < length; ++i) {
-                route = routes[i];
-                names = [];
-                segments = BaseSegment.parse(route.pattern, names, types);
-
+                segments = this._parse(routes[i], delegates, types);
                 allSegments = allSegments.concat(segments);
-
-                for (var j = 0, jLength = segments.length; j < jLength; ++j) {
-                    segment = segments[j];
-
-                    if (segment.type === __BASE_SEGMENT_TYPE) {
-                        continue;
-                    }
-
-                    isEmpty = false;
-
-                    currentState = currentState.add({ validCharacters: '/' });
-                    regex += '/';
-
-                    currentState = State.addSegment(currentState, segment);
-                    regex += segment.regex;
-                }
-
-                delegates.push({
-                    delegate: route.delegate,
-                    names: names
-                });
+                finalState = this._compile(segments, finalState, regex);
             }
 
-            if (isEmpty) {
-                currentState = currentState.add({
-                    validCharacters: '/'
-                });
-                regex += '/';
-            }
-
-            currentState.delegates = delegates;
-            currentState.regex = new RegExp(regex + '$');
-            currentState.types = types;
+            finalState = this._normalizeRootState(finalState, regex);
+            finalState.delegates = delegates;
+            finalState.regex = new RegExp(regex.join('') + '$');
+            finalState.types = types;
         }
 
         recognize(path: string) {
-            var states: Array<State> = [
-                this.rootState
-            ],
-                isTrailingSlashDropped: boolean = false,
-                i: number,
-                length: number,
-                state: State,
+            var isTrailingSlashDropped: boolean = false,
                 solutions: Array<State> = [];
 
+            path = this._normalizePath(path);
+            isTrailingSlashDropped = this._hasTrailingSlash(path);
+
+            if (isTrailingSlashDropped) {
+                path = path.substr(0, path.length - 1);
+            }
+
+            solutions = this._filter(this._states(path));
+            return this._findResult(solutions[0], path, isTrailingSlashDropped);
+        }
+
+        protected _normalizeRootState(state: State, regex: Array<string>) {
+            if (state === this.rootState) {
+                state = state.add({
+                    validCharacters: '/'
+                });
+                regex.push('/');
+            }
+
+            return state;
+        }
+
+        protected _parse(route: IRegisteredRouteOptions, delegates: Array<IDelegateNames>, types: ISegmentTypeCount) {
+            var names: Array<string> = [];
+
+            delegates.push({
+                delegate: route.delegate,
+                names: names
+            });
+
+            return this.$BaseSegmentFactory.parse(route.pattern, names, types);
+        }
+
+        protected _compile(segments: Array<BaseSegment>, state: State, regex: Array<string>) {
+            var length = segments.length,
+                addSegment = this.$StateStatic.addSegment,
+                segment: BaseSegment;
+
+            for (var i = 0; i < length; ++i) {
+                segment = segments[i];
+
+                if (segment.type === __BASE_SEGMENT_TYPE) {
+                    continue;
+                }
+
+                state = state.add({ validCharacters: '/' });
+                state = addSegment(state, segment);
+                regex.push('/' + segment.regex);
+            }
+
+            return state;
+        }
+
+        protected _normalizePath(path: string) {
             path = decodeURI(path);
 
             if (path[0] !== '/') {
                 path = '/' + path;
             }
 
-            length = path.length;
+            return path;
+        }
 
-            if (length > 1 && path[length - 1] === '/') {
-                path = path.substr(0, length - 1);
-                isTrailingSlashDropped = true;
-            }
+        protected _hasTrailingSlash(path: string) {
+            var length = path.length;
 
-            length = path.length;
+            return length > 1 && path[length - 1] === '/';
+        }
 
-            for (i = 0; i < length; ++i) {
-                states = State.recognize(states, path[i]);
+        protected _states(path: string) {
+            var states: Array<State> = [
+                this.rootState
+            ],
+                recognize = this.$StateStatic.recognize,
+                length = path.length;
+
+            for (var i = 0; i < length; ++i) {
+                states = recognize(states, path[i]);
 
                 if (states.length === 0) {
                     break;
                 }
             }
 
-            length = states.length;
+            return states;
+        }
 
-            for (i = 0; i < length; ++i) {
+        protected _filter(states: Array<State>) {
+            var length = states.length,
+                solutions: Array<State> = [],
+                state: State;
+
+            for (var i = 0; i < length; ++i) {
                 state = states[i];
                 if (isArray(state.delegates)) {
                     solutions.push(state);
                 }
             }
 
-            states = State.sort(solutions);
+            return this.$StateStatic.sort(solutions);
+        }
 
-            state = solutions[0];
+        protected _findResult(state: State, path: string, isTrailingSlashDropped: boolean) {
             if (isObject(state) && isArray(state.delegates)) {
                 if (isTrailingSlashDropped && state.regex.source.slice(-5) === '(.+)$') {
                     path = path + '/';
                 }
 
-                return State.getResult(state, path);
+                return this.$StateStatic.getResult(state, path);
             }
         }
     }
+
+    export function IRouteRecognizerInstance(): RouteRecognizer {
+        return new RouteRecognizer();
+    }
+
+    plat.register.injectable(__RouteRecognizerInstance, IRouteRecognizerInstance, null, __INSTANCE);
 
     /**
      * @name IRecognizeResult

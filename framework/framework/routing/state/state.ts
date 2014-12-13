@@ -207,6 +207,18 @@
         }
     }
 
+    export function IStateStatic(): typeof State {
+        return State;
+    }
+
+    plat.register.injectable(__StateStatic, IStateStatic, null, __STATIC);
+
+    export function IStateInstance(): State {
+        return new State();
+    }
+
+    plat.register.injectable(__StateInstance, IStateInstance, null, __INSTANCE);
+
     /**
      * @name IDelegateNames
      * @memberof plat.routing
