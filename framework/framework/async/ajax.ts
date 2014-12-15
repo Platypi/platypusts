@@ -1028,13 +1028,13 @@ module plat.async {
          * @access public
          * @optional
          * 
-         * @type {any}
+         * @type {IObject<any>}
          * 
          * @description
          * A key/value pair object where the key is a DOMString header key
          * and the value is the DOMString header value.
          */
-        headers?: any;
+        headers?: IObject<any>;
 
         /**
          * @name withCredentials
@@ -1437,7 +1437,8 @@ module plat.async {
      * @implements {plat.async.IAjaxPromise}
      * 
      * @description
-     * Describes a type of {@link plat.async.Promise|Promise} that fulfills with an {@link plat.async.IAjaxResponse|IAjaxResponse} and can be optionally cancelled.
+     * Describes a type of {@link plat.async.Promise|Promise} that fulfills with an {@link plat.async.IAjaxResponse|IAjaxResponse} 
+     * and can be optionally cancelled.
      * 
      * @typeparam {any} R The type of the response object in the {@link plat.async.IAjaxResponse|IAjaxResponse}.
      */
@@ -1572,8 +1573,8 @@ module plat.async {
          * @typeparam {any} U The type of the object returned from the fulfill/reject callbacks, which will be carried to the 
          * next then method in the promise chain.
          * 
-         * @param {(success: plat.async.IAjaxResponse<R>) => plat.async.IAjaxThenable<U>} onFulfilled A method called when/if the promise fulfills. 
-         * If undefined the next onFulfilled method in the promise chain will be called.
+         * @param {(success: plat.async.IAjaxResponse<R>) => plat.async.IAjaxThenable<U>} onFulfilled A method called when/if 
+         * the promise fulfills. If undefined the next onFulfilled method in the promise chain will be called.
          * @param {(error: plat.async.IAjaxError) => plat.async.IAjaxThenable<U>} onRejected A method called when/if the promise rejects. 
          * If undefined the next onRejected method in the promise chain will be called.
          * 
@@ -1594,8 +1595,8 @@ module plat.async {
          * @typeparam {any} U The type of the object returned from the fulfill/reject callbacks, which will be carried to the 
          * next then method in the promise chain.
          * 
-         * @param {(success: plat.async.IAjaxResponse<R>) => plat.async.IAjaxThenable<U>} onFulfilled A method called when/if the promise fulfills. 
-         * If undefined the next onFulfilled method in the promise chain will be called.
+         * @param {(success: plat.async.IAjaxResponse<R>) => plat.async.IAjaxThenable<U>} onFulfilled A method called when/if 
+         * the promise fulfills. If undefined the next onFulfilled method in the promise chain will be called.
          * @param {(error: plat.async.IAjaxError) => U} onRejected A method called when/if the promise rejects. 
          * If undefined the next onRejected method in the promise chain will be called.
          * 
@@ -1664,8 +1665,8 @@ module plat.async {
          * 
          * @typeparam {any} U The return type of the returned promise.
          * 
-         * @param {(error: any) => plat.async.IAjaxThenable<U>} onRejected A method called when/if the promise rejects. If undefined the next
-         * onRejected method in the promise chain will be called.
+         * @param {(error: any) => plat.async.IAjaxThenable<U>} onRejected A method called when/if the promise rejects. 
+         * If undefined the next onRejected method in the promise chain will be called.
          * 
          * @returns {plat.async.IAjaxThenable<U>} A promise that resolves with the input type parameter U.
          */
@@ -1834,7 +1835,8 @@ module plat.async {
      * @extends {plat.async.IAjaxThenable}
      * 
      * @description
-     * Describes a type of {@link plat.async.IPromise|IPromise} that fulfills with an {@link plat.async.IAjaxResponse|IAjaxResponse} and can be optionally cancelled.
+     * Describes a type of {@link plat.async.IPromise|IPromise} that fulfills with an {@link plat.async.IAjaxResponse|IAjaxResponse} 
+     * and can be optionally cancelled.
      * 
      * @typeparam {any} R The type of the response object in the {@link plat.async.IAjaxResponse|IAjaxResponse}.
      */
@@ -1881,12 +1883,13 @@ module plat.async {
          * @typeparam {any} U The type of the object returned from the fulfill/reject callbacks, which will be carried to the 
          * next then method in the promise chain.
          * 
-         * @param {(success: plat.async.IAjaxResponse<R>) => plat.async.IAjaxThenable<U>} onFulfilled A method called when/if the promise fulfills. 
-         * If undefined the next onFulfilled method in the promise chain will be called.
+         * @param {(success: plat.async.IAjaxResponse<R>) => plat.async.IAjaxThenable<U>} onFulfilled A method called when/if 
+         * the promise fulfills. If undefined the next onFulfilled method in the promise chain will be called.
          * @param {(error: plat.async.IAjaxError) => plat.async.IAjaxThenable<U>} onRejected A method called when/if the promise rejects. 
          * If undefined the next onRejected method in the promise chain will be called.
          */
-        then<U>(onFulfilled: (success: IAjaxResponse<R>) => IAjaxThenable<U>, onRejected?: (error: IAjaxError) => IAjaxThenable<U>): IAjaxThenable<U>;
+        then<U>(onFulfilled: (success: IAjaxResponse<R>) => IAjaxThenable<U>,
+            onRejected?: (error: IAjaxError) => IAjaxThenable<U>): IAjaxThenable<U>;
         /**
          * @name then
          * @memberof plat.async.IAjaxPromise
@@ -1900,8 +1903,8 @@ module plat.async {
          * @typeparam {any} U The type of the object returned from the fulfill/reject callbacks, which will be carried to the 
          * next then method in the promise chain.
          * 
-         * @param {(success: plat.async.IAjaxResponse<R>) => plat.async.IAjaxThenable<U>} onFulfilled A method called when/if the promise fulfills. 
-         * If undefined the next onFulfilled method in the promise chain will be called.
+         * @param {(success: plat.async.IAjaxResponse<R>) => plat.async.IAjaxThenable<U>} onFulfilled A method called when/if 
+         * the promise fulfills. If undefined the next onFulfilled method in the promise chain will be called.
          * @param {(error: plat.async.IAjaxError) => U} onRejected A method called when/if the promise rejects. 
          * If undefined the next onRejected method in the promise chain will be called.
          */

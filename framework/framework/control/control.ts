@@ -718,13 +718,11 @@ module plat {
             }
 
             var control = isFunction((<ui.ITemplateControl>(<any>this)).getAbsoluteIdentifier) ? this : <IControl>this.parent;
-
             if (isNull(control) || !isFunction((<ui.ITemplateControl>(<any>control)).getAbsoluteIdentifier)) {
                 return noop;
             }
 
             var absoluteIdentifier = (<ui.ITemplateControl>(<any>control)).getAbsoluteIdentifier(context);
-
             if (isNull(absoluteIdentifier)) {
                 return noop;
             }
@@ -786,15 +784,12 @@ module plat {
                 return noop;
             }
 
-            var array = context[property],
-                callback = listener.bind(this);
-
+            var array = context[property];
             if (!isArray(array)) {
                 return noop;
             }
 
             var control = isFunction((<ui.ITemplateControl>this).getAbsoluteIdentifier) ? this : <IControl>this.parent;
-
             if (isNull(control) || !isFunction((<ui.ITemplateControl>control).getAbsoluteIdentifier)) {
                 return noop;
             }
@@ -813,6 +808,7 @@ module plat {
             }
 
             var contextManager = ContextManager.getManager(Control.getRootControl(this)),
+                callback = listener.bind(this),
                 uid = this.uid,
                 removeListener = contextManager.observeArray(uid, callback, absoluteIdentifier, array, null),
                 removeCallback = contextManager.observe(absoluteIdentifier, {
@@ -823,7 +819,6 @@ module plat {
                     uid: uid
                 });
 
-            // need to call callback if 
             return () => {
                 removeListener();
                 removeCallback();
@@ -865,9 +860,13 @@ module plat {
          */
         observeExpression(expression: expressions.IParsedExpression, listener: (value: any, oldValue: any) => void): IRemoveListener;
         observeExpression(expression: any, listener: (value: any, oldValue: any) => void): IRemoveListener {
-            if (isNull(expression)) {
+            if (isEmpty(expression)) {
                 return noop;
-            } else if (!(isString(expression) || isFunction(expression.evaluate))) {
+            }
+
+            if (isString(expression)) {
+                expression = Control.$Parser.parse(expression);
+            } else if (!isFunction(expression.evaluate)) {
                 return noop;
             }
 
@@ -881,11 +880,11 @@ module plat {
 
             listener = listener.bind(this);
 
-            var parsedExpression: expressions.IParsedExpression = isString(expression) ? Control.$Parser.parse(expression) : expression,
-                aliases = parsedExpression.aliases,
+            var aliases = expression.aliases,
                 alias: string,
                 length = aliases.length,
                 resources: IObject<observable.IContextManager> = {},
+                resourceObj: { resource: ui.IResource; control: ui.ITemplateControl; },
                 ContextManager = Control.$ContextManagerStatic,
                 getManager = ContextManager.getManager,
                 TemplateControl = ui.TemplateControl,
@@ -895,17 +894,18 @@ module plat {
 
             for (i = 0; i < length; ++i) {
                 alias = aliases[i];
+                resourceObj = findResource(control, alias);
 
-                var resourceObj = findResource(control, alias);
                 if (!isNull(resourceObj) && resourceObj.resource.type === __OBSERVABLE_RESOURCE) {
                     resources[alias] = getManager(resourceObj.control);
                 }
             }
 
-            var identifiers = parsedExpression.identifiers,
+            var identifiers = expression.identifiers,
                 contextManager = getManager(Control.getRootControl(control)),
                 identifier: string,
                 split: Array<string> = [],
+                topIdentifier: string,
                 absolutePath = control.absoluteContextPath + '.',
                 managers: IObject<observable.IContextManager> = {};
 
@@ -914,12 +914,13 @@ module plat {
             for (i = 0; i < length; ++i) {
                 identifier = identifiers[i];
                 split = identifier.split('.');
+                topIdentifier = split[0];
 
-                if (identifier.indexOf('this') === 0) {
+                if (topIdentifier === 'this') {
                     identifier = identifier.slice(5);
                 } else if (identifier[0] === '@') {
-                    alias = split[0].slice(1);
-                    identifier = identifier.replace('@' + alias, 'resources.' + alias + '.value');
+                    alias = topIdentifier.slice(1);
+                    identifier = identifier.replace(topIdentifier, 'resources.' + alias + '.value');
 
                     if (!isNull(resources[alias])) {
                         managers[identifier] = resources[alias];
@@ -934,7 +935,7 @@ module plat {
             identifiers = Object.keys(managers);
             length = identifiers.length;
 
-            var oldValue = evaluateExpression(parsedExpression, control),
+            var oldValue = evaluateExpression(expression, control),
                 listeners: Array<IRemoveListener> = [],
                 uid = this.uid;
 
@@ -944,7 +945,7 @@ module plat {
                 listeners.push(managers[identifier].observe(identifier, {
                     uid: uid,
                     listener: () => {
-                        var value = evaluateExpression(parsedExpression, control);
+                        var value = evaluateExpression(expression, control);
                         listener(value, oldValue);
                         oldValue = value;
                     }
@@ -971,11 +972,11 @@ module plat {
          * Evaluates an expression string, using the control.parent.context.
          * 
          * @param {string} expression The expression string to evaluate.
-         * @param {any} aliases Optional alias values to parse with the expression
+         * @param {IObject<any>} aliases Optional alias values to parse with the expression
          * 
          * @returns {any} The evaluated expression
          */
-        evaluateExpression(expression: string, aliases?: any): any;
+        evaluateExpression(expression: string, aliases?: IObject<any>): any;
         /**
          * @name evaluateExpression
          * @memberof plat.Control
@@ -987,13 +988,47 @@ module plat {
          * Evaluates an {@link plat.expressions.IParsedExpression|IParsedExpression} using the control.parent.context.
          * 
          * @param {string} expression The expression string to evaluate.
-         * @param {any} aliases Optional alias values to parse with the expression
+         * @param {IObject<any>} aliases Optional alias values to parse with the expression
          * 
          * @returns {any} The evaluated expression
          */
-        evaluateExpression(expression: expressions.IParsedExpression, aliases?: any): any;
-        evaluateExpression(expression: any, aliases?: any): any {
+        evaluateExpression(expression: expressions.IParsedExpression, aliases?: IObject<any>): any;
+        evaluateExpression(expression: any, aliases?: IObject<any>): any {
             return ui.TemplateControl.evaluateExpression(expression, this.parent, aliases);
+        }
+
+        /**
+         * @name findProperty
+         * @memberof plat.Control
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Finds the first instance of the specified property 
+         * in the parent control chain. Returns undefined if not found.
+         * 
+         * @param {string} property The property identifer
+         * 
+         * @returns {IControlProperty} An object containing both the 
+         * property value and the control that it's on.
+         */
+        findProperty(property: string): IControlProperty {
+            var control = <IControl>this,
+                expression = Control.$Parser.parse(property),
+                value: any;
+
+            while (!isNull(control)) {
+                value = expression.evaluate(control);
+
+                if (!isNull(value)) {
+                    return {
+                        control: control,
+                        value: value
+                    };
+                }
+
+                control = <IControl>control.parent;
+            }
         }
 
         /**
@@ -1147,11 +1182,11 @@ module plat {
         $ContextManagerStatic?: observable.IContextManagerStatic,
         $EventManagerStatic?: events.IEventManagerStatic,
         $Promise?: async.IPromise): IControlFactory {
-            Control.$Parser = $Parser;
-            Control.$ContextManagerStatic = $ContextManagerStatic;
-            Control.$EventManagerStatic = $EventManagerStatic;
-            Control.$Promise = $Promise;
-            return Control;
+        Control.$Parser = $Parser;
+        Control.$ContextManagerStatic = $ContextManagerStatic;
+        Control.$EventManagerStatic = $EventManagerStatic;
+        Control.$Promise = $Promise;
+        return Control;
     }
 
     register.injectable(__ControlFactory, IControlFactory, [
@@ -1648,11 +1683,11 @@ module plat {
          * Evaluates an expression string, using the control.parent.context.
          * 
          * @param {string} expression The expression string to evaluate.
-         * @param {any} aliases Optional alias values to parse with the expression
+         * @param {IObject<any>} aliases Optional alias values to parse with the expression
          * 
          * @returns {any} The evaluated expression
          */
-        evaluateExpression? (expression: string, aliases?: any): any;
+        evaluateExpression? (expression: string, aliases?: IObject<any>): any;
         /**
          * @name evaluateExpression
          * @memberof plat.IControl
@@ -1664,11 +1699,28 @@ module plat {
          * Evaluates an {@link plat.expressions.IParsedExpression|IParsedExpression} using the control.parent.context.
          * 
          * @param {string} expression The expression string to evaluate.
-         * @param {any} aliases Optional alias values to parse with the expression
+         * @param {IObject<any>} aliases Optional alias values to parse with the expression
          * 
          * @returns {any} The evaluated expression
          */
-        evaluateExpression? (expression: expressions.IParsedExpression, aliases?: any): any;
+        evaluateExpression? (expression: expressions.IParsedExpression, aliases?: IObject<any>): any;
+
+        /**
+         * @name findProperty
+         * @memberof plat.IControl
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Finds the first instance of the specified property 
+         * in the parent control chain. Returns undefined if not found.
+         * 
+         * @param {string} property The property identifer
+         * 
+         * @returns {IControlProperty} An object containing both the 
+         * property value and the control that it's on.
+         */
+        findProperty(property: string): IControlProperty;
 
         /**
          * @name dispatchEvent
@@ -1792,6 +1844,42 @@ module plat {
          * @returns {void}
          */
         dispose? (): void;
+    }
+
+    /**
+     * @name IControlProperty
+     * @memberof plat
+     * @kind interface
+     * 
+     * @description
+     * An object that links a property to a control.
+     */
+    export interface IControlProperty {
+        /**
+         * @name value
+         * @memberof plat.IControl
+         * @kind property
+         * @access public
+         * 
+         * @type {any}
+         * 
+         * @description
+         * The value of the property.
+         */
+        value: any;
+
+        /**
+         * @name control
+         * @memberof plat.IControl
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.IControl}
+         * 
+         * @description
+         * The control on which the property is found.
+         */
+        control: IControl;
     }
 
     export module observable {

@@ -122,16 +122,17 @@ module plat {
          * A static method called upon app registration. Primarily used 
          * to initiate a ready state in the case that amd is being used.
          * 
-         * @param {any} app The app instance.
+         * @param {plat.dependency.IInjector<plat.IApp>} appInjector The injector for 
+         * injecting the app instance.
          * 
          * @returns {void}
          */
-        static registerApp(app: any): void {
+        static registerApp(appInjector: dependency.IInjector<IApp>): void {
             if (!isNull(App.app) && isString(App.app.uid)) {
                 App.$EventManagerStatic.dispose(App.app.uid);
             }
 
-            App.app = app;
+            App.__injector = appInjector;
 
             if (App.$Compat.amd) {
                 var $LifecycleEventStatic = App.$LifecycleEventStatic,
@@ -201,6 +202,20 @@ module plat {
          * The instance of the registered {@link plat.IApp|IApp}.
          */
         static app: IApp = null;
+        
+        /**
+         * @name __injector
+         * @memberof plat.App
+         * @kind property
+         * @access private
+         * @static
+         * 
+         * @type {plat.dependency.IInjector<plat.IApp>}
+         * 
+         * @description
+         * The injector for injecting the instance of the currently registered {@link plat.IApp|IApp}.
+         */
+        private static __injector: dependency.IInjector<IApp>;
 
         /**
          * @name __ready
@@ -221,10 +236,7 @@ module plat {
          */
         private static __ready(ev: events.ILifecycleEvent): void {
             dependency.Injector.initialize();
-
-            if (!isNull(App.app)) {
-                App.__registerAppEvents(ev);
-            }
+            App.__registerAppEvents(ev);
 
             if (!ev.defaultPrevented) {
                 App.load();
@@ -264,11 +276,12 @@ module plat {
          * @returns {void}
          */
         private static __registerAppEvents(ev: events.ILifecycleEvent): void {
-            var app = App.app;
-
-            if (isFunction((<dependency.IInjector<any>>(<any>app)).inject)) {
-                App.app = app = (<dependency.IInjector<any>>(<any>app)).inject();
+            var appInjector = App.__injector;
+            if (isNull(appInjector) || !isFunction(appInjector.inject)) {
+                return;
             }
+
+            var app = App.app = appInjector.inject();
 
             app.on(__suspend, app.suspend);
             app.on(__resume, app.resume);
@@ -660,9 +673,12 @@ module plat {
          * A static methods called upon app registration. Primarily used 
          * to initiate a ready state in the case that amd is being used.
          * 
+         * @param {plat.dependency.IInjector<plat.IApp>} appInjector The injector for 
+         * injecting the app instance.
+         * 
          * @returns {void}
          */
-        registerApp(app: dependency.IInjector<IApp>): void;
+        registerApp(appInjector: dependency.IInjector<IApp>): void;
 
         /**
          * @name load

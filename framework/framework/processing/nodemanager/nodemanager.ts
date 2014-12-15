@@ -49,7 +49,7 @@ module plat.processing {
          * Reference to the {@link plat.ui.ITemplateControlFactory|ITemplateControlFactory} injectable.
          */
         static $TemplateControlFactory: ui.ITemplateControlFactory;
-        
+
         /**
          * @name hasMarkup
          * @memberof plat.processing.NodeManager
@@ -67,7 +67,7 @@ module plat.processing {
         static hasMarkup(text: string): boolean {
             return NodeManager._markupRegex.test(text);
         }
-        
+
         /**
          * @name findMarkup
          * @memberof plat.processing.NodeManager
@@ -125,7 +125,7 @@ module plat.processing {
 
             return parsedExpressions;
         }
-        
+
         /**
          * @name build
          * @memberof plat.processing.NodeManager
@@ -146,7 +146,7 @@ module plat.processing {
         static build(expressions: Array<expressions.IParsedExpression>, control?: ui.ITemplateControl): string {
             var text = '',
                 length = expressions.length,
-                resources = {},
+                resources = <IObject<any>>{},
                 expression: expressions.IParsedExpression,
                 value: any,
                 evaluateExpression = NodeManager.$TemplateControlFactory.evaluateExpression;
@@ -179,7 +179,7 @@ module plat.processing {
 
             return text;
         }
-        
+
         /**
          * @name observeExpressions
          * @memberof plat.processing.NodeManager
@@ -219,8 +219,8 @@ module plat.processing {
                 manager = observationDetails.manager;
                 if (!isNull(manager)) {
                     manager.observe(observationDetails.absoluteIdentifier, observableCallback);
-                    }
-                    }
+                }
+            }
 
             while (oneTimeIdentifiers.length > 0) {
                 oneTimeIdentifier = oneTimeIdentifiers.pop();
@@ -234,12 +234,12 @@ module plat.processing {
                         listener: () => {
                             stopObserving();
                             stopListening();
-                    }
+                        }
                     });
                 }
-                }
             }
-        
+        }
+
         /**
          * @name _markupRegex
          * @memberof plat.processing.NodeManager
@@ -253,7 +253,7 @@ module plat.processing {
          * A regular expression for finding markup
          */
         protected static _markupRegex: RegExp;
-        
+
         /**
          * @name _newLineRegex
          * @memberof plat.processing.NodeManager
@@ -267,7 +267,7 @@ module plat.processing {
          * A regular expression for finding newline characters.
          */
         protected static _newLineRegex: RegExp;
-        
+
         /**
          * @name _wrapExpression
          * @memberof plat.processing.NodeManager
@@ -290,7 +290,7 @@ module plat.processing {
                 expression: text
             };
         }
-        
+
         /**
          * @name __findUniqueIdentifiers
          * @memberof plat.processing.NodeManager
@@ -489,7 +489,7 @@ module plat.processing {
          * Whether or not this {@link plat.processing.INodeManager|INodeManager} is a clone.
          */
         isClone = false;
-        
+
         /**
          * @name initialize
          * @memberof plat.processing.NodeManager
@@ -514,7 +514,7 @@ module plat.processing {
                 parent.children.push(this);
             }
         }
-        
+
         /**
          * @name getParentControl
          * @memberof plat.processing.NodeManager
@@ -541,7 +541,7 @@ module plat.processing {
 
             return control;
         }
-        
+
         /**
          * @name clone
          * @memberof plat.processing.NodeManager
@@ -560,7 +560,7 @@ module plat.processing {
         clone(newNode: Node, parentManager: IElementManager): number {
             return 1;
         }
-        
+
         /**
          * @name bind
          * @memberof plat.processing.NodeManager
@@ -583,14 +583,14 @@ module plat.processing {
         $ContextManagerStatic?: observable.IContextManagerStatic,
         $Parser?: expressions.IParser,
         $TemplateControlFactory?: ui.ITemplateControlFactory): INodeManagerStatic {
-            // NOTE: This is not advised by TypeScript, but we want to do this.
-            (<any>NodeManager)._markupRegex = $Regex.markupRegex;
-            (<any>NodeManager)._newLineRegex = $Regex.newLineRegex;
+        // NOTE: This is not advised by TypeScript, but we want to do this.
+        (<any>NodeManager)._markupRegex = $Regex.markupRegex;
+        (<any>NodeManager)._newLineRegex = $Regex.newLineRegex;
 
-            NodeManager.$ContextManagerStatic = $ContextManagerStatic;
-            NodeManager.$Parser = $Parser;
-            NodeManager.$TemplateControlFactory = $TemplateControlFactory;
-            return NodeManager;
+        NodeManager.$ContextManagerStatic = $ContextManagerStatic;
+        NodeManager.$Parser = $Parser;
+        NodeManager.$TemplateControlFactory = $TemplateControlFactory;
+        return NodeManager;
     }
 
     register.injectable(__NodeManagerStatic, INodeManagerStatic, [
@@ -599,7 +599,7 @@ module plat.processing {
         __Parser,
         __TemplateControlFactory
     ], __STATIC);
-    
+
     /**
      * @name INodeManagerStatic
      * @memberof plat.processing
@@ -683,7 +683,7 @@ module plat.processing {
         observeExpressions(expressions: Array<expressions.IParsedExpression>,
             control: ui.ITemplateControl, listener: (...args: Array<any>) => void): void;
     }
-    
+
     /**
      * @name INodeManager
      * @memberof plat.processing
@@ -705,7 +705,7 @@ module plat.processing {
          * The type of {@link plat.processing.INodeManager|INodeManager}.
          */
         type: string;
-        
+
         /**
          * @name nodeMap
          * @memberof plat.processing.INodeManager
@@ -719,7 +719,7 @@ module plat.processing {
          * Contains the compiled Node.
          */
         nodeMap?: INodeMap;
-        
+
         /**
          * @name parent
          * @memberof plat.processing.INodeManager
@@ -732,7 +732,7 @@ module plat.processing {
          * The parent {@link plat.processing.IElementManager|IElementManager}.
          */
         parent?: IElementManager;
-        
+
         /**
          * @name isClone
          * @memberof plat.processing.INodeManager
@@ -806,7 +806,7 @@ module plat.processing {
          */
         bind(): void;
     }
-    
+
     /**
      * @name INode
      * @memberof plat.processing
@@ -828,7 +828,7 @@ module plat.processing {
          * The control associated with the Node, if one exists.
          */
         control?: IControl;
-        
+
         /**
          * @name node
          * @memberof plat.processing.INode
@@ -841,7 +841,7 @@ module plat.processing {
          * The Node that is compiled.
          */
         node?: Node;
-        
+
         /**
          * @name nodeName
          * @memberof plat.processing.INode
@@ -854,7 +854,7 @@ module plat.processing {
          * The name of the Node.
          */
         nodeName?: string;
-        
+
         /**
          * @name expressions
          * @memberof plat.processing.INode
@@ -867,7 +867,7 @@ module plat.processing {
          * Any {@link plat.expressions.IParsedExpression|IParsedExpressions} contained in the Node.
          */
         expressions?: Array<expressions.IParsedExpression>;
-        
+
         /**
          * @name injector
          * @memberof plat.processing.INode
@@ -905,7 +905,7 @@ module plat.processing {
          * The control associated with the Element, if one exists.
          */
         control: ui.ITemplateControl;
-        
+
         /**
          * @name resourceElement
          * @memberof plat.processing.IUiControlNode
@@ -943,7 +943,7 @@ module plat.processing {
          * The Element that is compiled.
          */
         element?: HTMLElement;
-        
+
         /**
          * @name nodes
          * @memberof plat.processing.INodeMap
@@ -956,7 +956,7 @@ module plat.processing {
          * The compiled attribute Nodes for the Element.
          */
         nodes: Array<INode>;
-        
+
         /**
          * @name attributes
          * @memberof plat.processing.INodeMap
@@ -969,7 +969,7 @@ module plat.processing {
          * An object of key/value attribute pairs.
          */
         attributes?: IObject<string>;
-        
+
         /**
          * @name childContext
          * @memberof plat.processing.INodeMap
@@ -983,7 +983,7 @@ module plat.processing {
          * {@link plat.ui.ITemplateControl|ITemplateControl}, if specified.
          */
         childContext?: string;
-        
+
         /**
          * @name hasControl
          * @memberof plat.processing.INodeMap
@@ -996,7 +996,7 @@ module plat.processing {
          * Indicates whether or not an {@link plat.IControl|IControl} was found on the Element.
          */
         hasControl?: boolean;
-        
+
         /**
          * @name uiControlNode
          * @memberof plat.processing.INodeMap
