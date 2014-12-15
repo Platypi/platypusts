@@ -5,7 +5,7 @@
 </form>
 <br />
 <br />
-<button plat-tap="foo">pseudo</button>
+<button plat-tap="bar">pseudo</button>
 
 <input type="text" plat-bind="keydown" plat-keypress="{ key: '!', method: 'keyDown' }" />
 
@@ -16,28 +16,8 @@
     Count = {{count}}
 </div>
 
+<br />
+
 <plat-foreach plat-context="arr">
-    <div>{{@context}}</div>
+    <div class="arr-item">{{@context}}</div>
 </plat-foreach>
-
-<br /><br /><br /><br />
-
-<plat-foreach plat-options="{ aliases: { index: 'i', even: 'e', odd: 'o', first: 'f', last: 'l' } }" plat-context="nested">
-    <br /><br />
-    Item {{@i}}
-    <br />
-    <plat-foreach>
-        <div>parent-index: {{@i}}</div>
-        <div>child-index: {{@index}}</div>
-        <div>parent-even: {{@e}}</div>
-        <div>child-even: {{@even}}</div>
-        <div>parent-odd: {{@o}}</div>
-        <div>child-odd: {{@odd}}</div>
-        <div>parent-first: {{@f}}</div>
-        <div>child-first: {{@first}}</div>
-        <div>parent-last: {{@l}}</div>
-        <div>child-last: {{@last}}</div>
-    </plat-foreach>
-</plat-foreach>
-
-<!--<plat-viewport plat-options="{ defaultView: 'viewcontrol'}"></plat-viewport>-->
