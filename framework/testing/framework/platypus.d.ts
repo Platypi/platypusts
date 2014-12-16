@@ -11814,10 +11814,10 @@ declare module plat {
             $BaseSegmentFactory: typeof BaseSegment;
             $StateStatic: typeof State;
             rootState: State;
-            register(routes: IRegisteredRouteOptions[]): void;
+            register(routes: IRegisterRouteOptions[]): void;
             recognize(path: string): IRecognizeResult;
             protected _finalize(state: State, regex: string[]): State;
-            protected _parse(route: IRegisteredRouteOptions, delegates: IDelegateNames[], types: ISegmentTypeCount): BaseSegment[];
+            protected _parse(route: IRegisterRouteOptions, delegates: IDelegateNames[], types: ISegmentTypeCount): BaseSegment[];
             protected _compile(segments: BaseSegment[], state: State, regex: string[]): State;
             protected _normalizePath(path: string): string;
             protected _hasTrailingSlash(path: string): boolean;
@@ -11860,7 +11860,7 @@ declare module plat {
           * Used during route registeration to specify a delegate object to associate
           * with a route.
           */
-        interface IRegisteredRouteOptions {
+        interface IRegisterRouteOptions {
             /**
               * The pattern to match for the route, accepts dynamic routes as well as splat routes.
               * /posts/new

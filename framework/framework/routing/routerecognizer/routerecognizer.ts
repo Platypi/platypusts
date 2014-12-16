@@ -1,16 +1,75 @@
 ﻿module plat.routing {
+    /**
+     * @name RouteRecognizer
+     * @memberof plat.routing
+     * @kind class
+     * 
+     * @description
+     * Assists in compiling and linking route strings. You can register route strings using 
+     * a defined scheme, and it will compile the routes. When you want to match a route, it will 
+     * find the associated compiled route and link it to the data given with the passed-in route.
+     */
     export class RouteRecognizer {
+        /**
+         * @name $BaseSegmentFactory
+         * @memberof plat.routing.RouteRecognizer
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.routing.BaseSegment}
+         * 
+         * @description
+         * Reference to the {@link plat.routing.BaseSegment|BaseSegment} injectable.
+         */
         $BaseSegmentFactory: typeof BaseSegment = acquire(__BaseSegmentFactory);
+
+        /**
+         * @name $StateStatic
+         * @memberof plat.routing.RouteRecognizer
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.routing.State}
+         * 
+         * @description
+         * Reference to the {@link plat.routing.State|State} injectable.
+         */
         $StateStatic: typeof State = acquire(__StateStatic);
 
-        rootState: State = acquire(__StateInstance);
+        /**
+         * @name _rootState
+         * @memberof plat.routing.RouteRecognizer
+         * @kind property
+         * @access protected
+         * 
+         * @type {plat.routing.State}
+         * 
+         * @description
+         * A root state for the recognizer used to add next states.
+         */
+        protected _rootState: State = acquire(__StateInstance);
 
-        register(routes: Array<IRegisteredRouteOptions>) {
+        /**
+         * @name register
+         * @memberof plat.routing.RouteRecognizer
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * A method for registering routes to be identified later. Internally the 
+         * routes will be compiled into a series of {@link plat.routing.State|states} 
+         * which will be used to recognize the route later.
+         * 
+         * @param {Array<plat.routing.IRegisterRouteOptions>} routes The routes to register.
+         * 
+         * @returns {void}
+         */
+        register(routes: Array<IRegisterRouteOptions>): void {
             if (!isArray(routes)) {
                 return;
             }
 
-            var finalState = this.rootState,
+            var finalState = this._rootState,
                 length = routes.length,
                 regex: Array<string> = ['^'],
                 types: ISegmentTypeCount = {
@@ -34,23 +93,55 @@
             finalState.types = types;
         }
 
+        /**
+         * @name recognize
+         * @memberof plat.routing.RouteRecognizer
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Searches for a match to the provided path. If a match is found, the path is deconstructed 
+         * to populate a parameters object (if the registered route was a dynamic/splat route).
+         * 
+         * @param {string} path The path to recognize.
+         * 
+         * @returns {plat.routing.IRecognizeResult} If the path is recognized, the linked delegates will be 
+         * returned.
+         */
         recognize(path: string) {
             var isTrailingSlashDropped: boolean = false,
                 solutions: Array<State> = [];
 
-            path = this._normalizePath(path);
+            path = this._addLeadingSlash(path);
             isTrailingSlashDropped = this._hasTrailingSlash(path);
 
             if (isTrailingSlashDropped) {
                 path = path.substr(0, path.length - 1);
             }
 
-            solutions = this._filter(this._states(path));
-            return this._findResult(solutions[0], path, isTrailingSlashDropped);
+            solutions = this._filter(this._findStates(path));
+            return this._link(solutions[0], path, isTrailingSlashDropped);
         }
 
+        /**
+         * @name _finalize
+         * @memberof plat.routing.RouteRecognizer
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Finalizes a compiled route, adding a final state if necessary. If the state is equal to the 
+         * root state for the recognizer, a new state will be created. This is because the root state does not 
+         * represent any route.
+         * 
+         * @param {plat.routing.State} state The state to finalize.
+         * @param {string} regex The regular expression string built for the compiled routes. Used to recognize 
+         * routes and associate them with the compiled routes.
+         * 
+         * @returns {plat.routing.State} The final state.
+         */
         protected _finalize(state: State, regex: Array<string>) {
-            if (state === this.rootState) {
+            if (state === this._rootState) {
                 state = state.add({
                     validCharacters: '/'
                 });
@@ -60,7 +151,22 @@
             return state;
         }
 
-        protected _parse(route: IRegisteredRouteOptions, delegates: Array<IDelegateNames>, types: ISegmentTypeCount) {
+        /**
+         * @name _parse
+         * @memberof plat.routing.RouteRecognizer
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Parses a route into different {@link plat.routing.BaseSegment|segments};
+         * 
+         * @param {plat.routing.IRegisterRouteOptions} route The route options to be parsed.
+         * @param {Array<plat.routing.IDelegateNames>} delegates The delegates and associated names for mapping parameters.
+         * @param {plat.routing.ISegmentTypeCount} types A count of all the segment types in the route.
+         * 
+         * @returns {Array<plat.routing.BaseSegment>} The segments created for the route.
+         */
+        protected _parse(route: IRegisterRouteOptions, delegates: Array<IDelegateNames>, types: ISegmentTypeCount): Array<BaseSegment> {
             var names: Array<string> = [];
 
             delegates.push({
@@ -71,7 +177,22 @@
             return this.$BaseSegmentFactory.parse(route.pattern, names, types);
         }
 
-        protected _compile(segments: Array<BaseSegment>, state: State, regex: Array<string>) {
+        /**
+         * @name _compile
+         * @memberof plat.routing.RouteRecognizer
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Compiles a list of segments into a series of {@link plat.routing.State|states}.
+         * 
+         * @param {Array<plat.routing.BaseSegment>} segments The segments to compile.
+         * @param {plat.routing.State} state The initial state used to compile.
+         * @param {Array<string>} regex A regular expression string to build in order to match the segments.
+         * 
+         * @returns {plat.routing.State} The final state obtained from compilation.
+         */
+        protected _compile(segments: Array<BaseSegment>, state: State, regex: Array<string>): State {
             var length = segments.length,
                 compile = this.$StateStatic.compile,
                 segment: BaseSegment;
@@ -91,7 +212,20 @@
             return state;
         }
 
-        protected _normalizePath(path: string) {
+        /**
+         * @name _trimLeadingSlash
+         * @memberof plat.routing.RouteRecognizer
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Adds a leading slash to the passed-in string if necessary.
+         * 
+         * @param {string} path The path to which to add the slash.
+         * 
+         * @returns {string} The path, with leading slash added.
+         */
+        protected _addLeadingSlash(path: string): string {
             path = decodeURI(path);
 
             if (path[0] !== '/') {
@@ -101,15 +235,41 @@
             return path;
         }
 
-        protected _hasTrailingSlash(path: string) {
+        /**
+         * @name _hasTrailingSlash
+         * @memberof plat.routing.RouteRecognizer
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Checks for a trailing slash on a given string.
+         * 
+         * @param {string} path The path on which to look for a trailing slash.
+         * 
+         * @returns {boolean} Whether or not the path has a trailing slash
+         */
+        protected _hasTrailingSlash(path: string): boolean {
             var length = path.length;
 
             return length > 1 && path[length - 1] === '/';
         }
 
-        protected _states(path: string) {
+        /**
+         * @name _findStates
+         * @memberof plat.routing.RouteRecognizer
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Finds the compiled states for a given path.
+         * 
+         * @param {string} path The path with which to look for compiled states.
+         * 
+         * @returns {Array<plat.routing.State>} The states associated with the given path.
+         */
+        protected _findStates(path: string): Array<State> {
             var states: Array<State> = [
-                this.rootState
+                this._rootState
             ],
                 recognize = this.$StateStatic.recognize,
                 length = path.length;
@@ -125,7 +285,20 @@
             return states;
         }
 
-        protected _filter(states: Array<State>) {
+        /**
+         * @name _filter
+         * @memberof plat.routing.RouteRecognizer
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Filters out states with no delegates, and sorts the states.
+         * 
+         * @param {Array<plat.routing.State>} states The states to filter.
+         * 
+         * @returns {Array<plat.routing.State>} The filtered and sorted states
+         */
+        protected _filter(states: Array<State>): Array<State> {
             var length = states.length,
                 solutions: Array<State> = [],
                 state: State;
@@ -140,7 +313,22 @@
             return this.$StateStatic.sort(solutions);
         }
 
-        protected _findResult(state: State, path: string, isTrailingSlashDropped: boolean) {
+        /**
+         * @name _link
+         * @memberof plat.routing.RouteRecognizer
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Links a state to a path, producing an {@link plat.routing.IRecognizeResult|IRecognizeResult}.
+         * 
+         * @param {plat.routing.State} states The state to link.
+         * @param {string} path The path to link.
+         * @param {boolean} isTrailingSlashDropped Whether or not the trailing slash is dropped from the path.
+         * 
+         * @returns {plat.routing.IRecognizeResult} The linked result.
+         */
+        protected _link(state: State, path: string, isTrailingSlashDropped: boolean): IRecognizeResult {
             if (isObject(state) && isArray(state.delegates)) {
                 if (isTrailingSlashDropped && this._isDynamic(state)) {
                     path = path + '/';
@@ -150,11 +338,27 @@
             }
         }
 
-        protected _isDynamic(state: State) {
+        /**
+         * @name _isDynamic
+         * @memberof plat.routing.RouteRecognizer
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Determines whether or not the state is dynamic.
+         * 
+         * @param {plat.routing.State} states The state used to determine if it is dynamic or not.
+         * 
+         * @returns {boolean} Whether or not the state is dynamic.
+         */
+        protected _isDynamic(state: State): boolean {
             return state.regex.source.slice(-5) === '(.+)$';
         }
     }
 
+    /**
+     * The Type for referencing the '$RouteRecognizerInstance' injectable as a dependency.
+     */
     export function IRouteRecognizerInstance(): RouteRecognizer {
         return new RouteRecognizer();
     }
@@ -227,7 +431,7 @@
     }
 
     /**
-     * @name IRegisteredRouteOptions
+     * @name IRegisterRouteOptions
      * @memberof plat.routing
      * @kind interface
      * 
@@ -235,10 +439,10 @@
      * Used during route registeration to specify a delegate object to associate 
      * with a route.
      */
-    export interface IRegisteredRouteOptions {
+    export interface IRegisterRouteOptions {
         /**
          * @name pattern
-         * @memberof plat.routing.IRegisteredRouteOptions
+         * @memberof plat.routing.IRegisterRouteOptions
          * @kind property
          * 
          * @type {string}
@@ -259,7 +463,7 @@
 
         /**
          * @name delegate
-         * @memberof plat.routing.IRegisteredRouteOptions
+         * @memberof plat.routing.IRegisterRouteOptions
          * @kind property
          * 
          * @type {any}

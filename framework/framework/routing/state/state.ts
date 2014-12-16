@@ -400,12 +400,12 @@
          * Iterates through the next states and calls the input callback with each state. Acts like 
          * {@link plat.IUtils.some|Utils.some}. If the callback returns true, it will break out of the loop.
          * 
-         * @param {(child: plat.routing.State) => boolean} callback The function with which to call for each 
+         * @param {(child: plat.routing.State) => boolean} iterator The function with which to call for each 
          * State. Can return true to break out of the loop
          * 
          * @returns {boolean} Whether or not the loop was escaped.
          */
-        protected _someChildren(callback: (child: State) => boolean): boolean;
+        protected _someChildren(iterator: (child: State) => boolean): boolean;
         /**
          * @name _someChildren
          * @memberof plat.routing.State
@@ -416,18 +416,18 @@
          * @description
          * Iterates through the next states and calls the input callback with each state.
          * 
-         * @param {(child: plat.routing.State) => void} callback The function with which to call for each 
+         * @param {(child: plat.routing.State) => void} iterator The function with which to call for each 
          * State.
          * 
          * @returns {void}
          */
-        protected _someChildren(callback: (child: State) => void): void;
-        protected _someChildren(callback: (child: State) => any) {
+        protected _someChildren(iterator: (child: State) => void): void;
+        protected _someChildren(iterator: (child: State) => any) {
             var nextStates = this.nextStates,
                 length = nextStates.length;
 
             for (var i = 0; i < length; ++i) {
-                if (callback(nextStates[i]) === true) {
+                if (iterator(nextStates[i]) === true) {
                     return true;
                 }
             }

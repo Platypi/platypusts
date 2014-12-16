@@ -24,6 +24,7 @@
          * @memberof plat.routing.BaseSegment
          * @kind property
          * @access public
+         * @static
          * 
          * @type {plat.expressions.IRegex}
          * 
@@ -37,6 +38,7 @@
          * @memberof plat.routing.BaseSegment
          * @kind function
          * @access public
+         * @static
          * 
          * @description
          * Parses a route into segments, populating an array of names (for dynamic and splat segments) as well as 
@@ -46,7 +48,7 @@
          * @param {Array<string>} names An array to populate with dynamic/splat segment names
          * @param {plat.routing.ISegmentTypeCount} types An object to use for counting segment types in the route.
          * 
-         * @returns {Array<plat.routing.BaseSegment>} The prsed segments.
+         * @returns {Array<plat.routing.BaseSegment>} The parsed segments.
          */
         static parse(route: string, names: Array<string>, types: ISegmentTypeCount): Array<BaseSegment> {
             if (!isString(route) || !isArray(names) || !isObject(types)) {
@@ -95,7 +97,24 @@
             return results;
         }
 
-        private static __findSegment(name: string, token: string, cache: IObject<BaseSegment>) {
+        /**
+         * @name __findSegment
+         * @memberof plat.routing.BaseSegment
+         * @kind function
+         * @access private
+         * @static
+         * 
+         * @description
+         * Parses a route into segments, populating an array of names (for dynamic and splat segments) as well as 
+         * an {@link plat.routing.ISegmentTypeCount|ISegmentTypeCount} object.
+         * 
+         * @param {string} name The name of the segment to look for.
+         * @param {string} token The token used to {@link plat.acquire|acquire} a new segment if necessary.
+         * @param {plat.IObject<plat.routing.BaseSegment>} cache The cache in which to look for/store the segment.
+         * 
+         * @returns {plat.routing.BaseSegment} The located segment.
+         */
+        private static __findSegment(name: string, token: string, cache: IObject<BaseSegment>): BaseSegment {
             var segment = cache[name];
 
             if (!isObject(segment)) {
@@ -106,29 +125,122 @@
             return segment;
         }
 
+        /**
+         * @name type
+         * @memberof plat.routing.BaseSegment
+         * @kind property
+         * @access public
+         * @virtual
+         * 
+         * @type {string}
+         * 
+         * @description
+         * Denotes the type of segment for this instance.
+         */
         type: string = __BASE_SEGMENT_TYPE;
+
+        /**
+         * @name name
+         * @memberof plat.routing.BaseSegment
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * The name of the segment.
+         */
         name: string = '';
+
+        /**
+         * @name regex
+         * @memberof plat.routing.BaseSegment
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * A regular expression string which can be used to match the segment.
+         */
         regex: string = '';
 
+        /**
+         * @name regex
+         * @memberof plat.routing.BaseSegment
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * A regular expression string which can be used to match the segment.
+         */
         protected _specification: ICharacterSpecification;
 
-        initialize(name?: string) {
+        /**
+         * @name initialize
+         * @memberof plat.routing.BaseSegment
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Initializes the segment.
+         * 
+         * @param {string} name? The name for the new segment.
+         * 
+         * @returns {void}
+         */
+        initialize(name?: string): void {
             this.name = name;
         }
 
-        reduceCharacters<T>(callback: (previousValue: T, spec: ICharacterSpecification) => T, initialValue?: T): T {
+        /**
+         * @name reduceCharacters
+         * @memberof plat.routing.BaseSegment
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Iterates over the characters in the segment, calling an iterator method and accumulating the result of each call in 
+         * a defined object.
+         * 
+         * @typeparam {any} T The type of the accumulated object.
+         * 
+         * @param {(previousValue: T, spec: plat.routing.ICharacterSpecification) => T} iterator The iterator to call with each character.
+         * @param {T} initialValue? An optional initial value with which to start the accumulation.
+         * 
+         * @returns {T} The accumulated object.
+         */
+        reduceCharacters<T>(iterator: (previousValue: T, spec: ICharacterSpecification) => T, initialValue?: T): T {
             if (isObject(this._specification)) {
-                initialValue = callback(initialValue, this._specification);
+                initialValue = iterator(initialValue, this._specification);
             }
 
             return initialValue;
         }
 
-        generate(parameters?: IObject<string>) {
+        /**
+         * @name generate
+         * @memberof plat.routing.BaseSegment
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Generates a new segment, using the input parameters if necessary.
+         * 
+         * @param {plat.IObject<string>} parameters? The input parameters for the segment.
+         * 
+         * @returns {string} The generated segment.
+         */
+        generate(parameters?: IObject<string>): string {
             return this.name;
         }
     }
 
+    /**
+     * The Type for referencing the '$BaseSegmentFactory' injectable as a dependency.
+     */
     export function IBaseSegmentFactory($Regex: expressions.IRegex): typeof BaseSegment {
         BaseSegment.$Regex = $Regex;
         return BaseSegment;
@@ -136,43 +248,132 @@
 
     plat.register.injectable(__BaseSegmentFactory, IBaseSegmentFactory, [__Regex], __FACTORY);
 
+    /**
+     * The Type for referencing the '$BaseSegmentInstance' injectable as a dependency.
+     */
     export function IBaseSegmentInstance(): BaseSegment {
         return new BaseSegment();
     }
 
     plat.register.injectable(__BaseSegmentInstance, IBaseSegmentInstance, null, __INSTANCE);
 
+    /**
+     * @name StaticSegment
+     * @memberof plat.routing
+     * @kind class
+     * 
+     * @description
+     * Stores information about a static segment, publishes a regex for matching the segment as well as 
+     * methods for generating the segment and iterating over the characters in the segment.
+     */
     export class StaticSegment extends BaseSegment {
+        /**
+         * @name type
+         * @memberof plat.routing.StaticSegment
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * Denotes that this is a static segment.
+         */
         type: string = __STATIC_SEGMENT_TYPE;
-        regex: string;
 
+        /**
+         * @name initialize
+         * @memberof plat.routing.StaticSegment
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Initializes the segment.
+         * 
+         * @param {string} name? The name for the new segment.
+         * 
+         * @returns {void}
+         */
         initialize(name?: string) {
             super.initialize(name);
 
             this.regex = this.name.replace(escapeRegex, '\\$1');
         }
 
-        reduceCharacters<T>(callback: (previousValue: T, spec: ICharacterSpecification) => T, initialValue?: T): T {
+        /**
+         * @name reduceCharacters
+         * @memberof plat.routing.StaticSegment
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Iterates over the characters in the segment, calling an iterator method and accumulating the result of each call in 
+         * a defined object.
+         * 
+         * @typeparam {any} T The type of the accumulated object.
+         * 
+         * @param {(previousValue: T, spec: plat.routing.ICharacterSpecification) => T} iterator The iterator to call with each character.
+         * @param {T} initialValue? An optional initial value with which to start the accumulation.
+         * 
+         * @returns {T} The accumulated object.
+         */
+        reduceCharacters<T>(iterator: (previousValue: T, spec: ICharacterSpecification) => T, initialValue?: T): T {
             var name: string = this.name,
                 length = name.length,
                 value = initialValue;
 
             for (var i = 0; i < length; ++i) {
-                value = callback(value, { validCharacters: name[i] });
+                value = iterator(value, { validCharacters: name[i] });
             }
 
             return value;
         }
     }
 
+    /**
+     * The Type for referencing the '$StaticSegmentInstance' injectable as a dependency.
+     */
     export function IStaticSegmentInstance(): StaticSegment {
         return new StaticSegment();
     }
 
     plat.register.injectable(__StaticSegmentInstance, IStaticSegmentInstance, null, __INSTANCE);
 
+    /**
+     * @name VariableSegment
+     * @memberof plat.routing
+     * @kind class
+     * 
+     * @description
+     * Stores information about a variable segment (either dynamic or splat), publishes a regex for matching the segment as well as 
+     * methods for generating the segment and iterating over the characters in the segment.
+     */
     export class VariableSegment extends BaseSegment {
+        /**
+         * @name type
+         * @memberof plat.routing.VariableSegment
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * Denotes that this is a variable segment.
+         */
         type: string = __VARIABLE_SEGMENT_TYPE;
+
+        /**
+         * @name generate
+         * @memberof plat.routing.VariableSegment
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Generates a new segment, using the input parameters.
+         * 
+         * @param {plat.IObject<string>} parameters? The input parameters for the segment.
+         * 
+         * @returns {string} The generated segment.
+         */
         generate(parameters?: IObject<string>) {
             if (isObject(parameters)) {
                 return parameters[this.name];
@@ -180,30 +381,124 @@
         }
     }
 
+    /**
+     * The Type for referencing the '$VariableSegmentInstance' injectable as a dependency.
+     */
     export function IVariableSegmentInstance(): VariableSegment {
         return new VariableSegment();
     }
 
     plat.register.injectable(__VariableSegmentInstance, IVariableSegmentInstance, null, __INSTANCE);
 
+    /**
+     * @name SplatSegment
+     * @memberof plat.routing
+     * @kind class
+     * 
+     * @description
+     * Stores information about a splat segment, publishes a regex for matching the segment as well as 
+     * methods for generating the segment and iterating over the characters in the segment.
+     */
     export class SplatSegment extends VariableSegment {
+        /**
+         * @name type
+         * @memberof plat.routing.SplatSegment
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * Denotes that this is a splat segment.
+         */
         type: string = __SPLAT_SEGMENT_TYPE;
+
+        /**
+         * @name regex
+         * @memberof plat.routing.SplatSegment
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * A regular expression string which can be used to match the segment.
+         */
         regex: string = '(.+)';
+
+        /**
+         * @name regex
+         * @memberof plat.routing.SplatSegment
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * A regular expression string which can be used to match the segment.
+         */
         protected _specification: ICharacterSpecification = {
             invalidCharacters: '',
             repeat: true
         };
     }
 
+    /**
+     * The Type for referencing the '$SplatSegmentInstance' injectable as a dependency.
+     */
     export function ISplatSegmentInstance(): SplatSegment {
         return new SplatSegment();
     }
 
     plat.register.injectable(__SplatSegmentInstance, ISplatSegmentInstance, null, __INSTANCE);
 
+    /**
+     * @name DynamicSegment
+     * @memberof plat.routing
+     * @kind class
+     * 
+     * @description
+     * Stores information about a dynamic segment, publishes a regex for matching the segment as well as 
+     * methods for generating the segment and iterating over the characters in the segment.
+     */
     export class DynamicSegment extends VariableSegment {
+        /**
+         * @name type
+         * @memberof plat.routing.DynamicSegment
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * Denotes that this is a dynamic segment.
+         */
         type: string = __DYNAMIC_SEGMENT_TYPE;
+
+        /**
+         * @name regex
+         * @memberof plat.routing.DynamicSegment
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * A regular expression string which can be used to match the segment.
+         */
         regex: string = '([^/]+)';
+
+        /**
+         * @name regex
+         * @memberof plat.routing.DynamicSegment
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * A regular expression string which can be used to match the segment.
+         */
         protected _specification: ICharacterSpecification = {
             invalidCharacters: '/',
             repeat: true
@@ -219,9 +514,49 @@
 
     plat.register.injectable(__DynamicSegmentInstance, IDynamicSegmentInstance, null, __INSTANCE);
 
+    /**
+     * @name ICharacterSpecification
+     * @memberof plat.routing
+     * @kind interface
+     * 
+     * @description
+     * Contains information for validating characters.
+     */
     export interface ICharacterSpecification {
+        /**
+         * @name invalidCharacters
+         * @memberof plat.routing.ICharacterSpecification
+         * @kind property
+         * 
+         * @type {number}
+         * 
+         * @description
+         * Contains all the invalid characters
+         */
         invalidCharacters?: string;
+
+        /**
+         * @name validCharacters
+         * @memberof plat.routing.ICharacterSpecification
+         * @kind property
+         * 
+         * @type {string}
+         * 
+         * @description
+         * Contains all the valid characters
+         */
         validCharacters?: string;
+
+        /**
+         * @name repeat
+         * @memberof plat.routing.ICharacterSpecification
+         * @kind property
+         * 
+         * @type {boolean}
+         * 
+         * @description
+         * Whether or not the character should repeat.
+         */
         repeat?: boolean;
     }
 

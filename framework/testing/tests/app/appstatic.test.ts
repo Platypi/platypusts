@@ -9,7 +9,7 @@ module tests.appStatic {
     describe('AppStatic Tests', () => {
         beforeEach(() => {
             plat.register.app('app', App);
-            app = plat.acquire(plat.IApp);
+            app = <any>plat.acquire(plat.IApp);
         });
 
         it('should test App start and fail', () => {
