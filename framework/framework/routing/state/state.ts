@@ -49,7 +49,7 @@
          * @returns {plat.routing.IRecognizeResult} The result from the linking.
          */
         static link(state: State, path: string): IRecognizeResult {
-            var delegates: Array<IDelegateNames> = state.delegates,
+            var delegates: Array<IDelegateParameterNames> = state.delegates,
                 regex = state.regex,
                 length = delegates.length,
                 matches = path.match(regex),
@@ -59,7 +59,7 @@
                 parameters: any,
                 j: number,
                 jLength: number,
-                delegate: IDelegateNames;
+                delegate: IDelegateParameterNames;
 
             for (var i = 0; i < length; ++i) {
                 delegate = delegates[i];
@@ -212,13 +212,13 @@
          * @kind property
          * @access public
          * 
-         * @type {Array<plat.routing.IDelegateNames>}
+         * @type {Array<plat.routing.IDelegateParameterNames>}
          * 
          * @description
-         * The associated {@link plat.routing.IDelegateNames|delegate} objects for this 
+         * The associated {@link plat.routing.IDelegateParameterNames|delegate} objects for this 
          * state, with their parameter names.
          */
-        delegates: Array<IDelegateNames>;
+        delegates: Array<IDelegateParameterNames>;
 
         /**
          * @name regex
@@ -453,7 +453,7 @@
     plat.register.injectable(__StateInstance, IStateInstance, null, __INSTANCE);
 
     /**
-     * @name IDelegateNames
+     * @name IDelegateParameterNames
      * @memberof plat.routing
      * @kind interface
      * 
@@ -461,10 +461,10 @@
      * Contains a delegate and its associated segment names. Used for populating 
      * the parameters in an {@link plat.routing.IDelegateInfo|IDelegateInfo} object.
      */
-    export interface IDelegateNames {
+    export interface IDelegateParameterNames {
         /**
          * @name delegate
-         * @memberof plat.routing.IDelegateNames
+         * @memberof plat.routing.IDelegateParameterNames
          * @kind property
          * 
          * @type {any}
@@ -476,7 +476,7 @@
 
         /**
          * @name names
-         * @memberof plat.routing.IDelegateNames
+         * @memberof plat.routing.IDelegateParameterNames
          * @kind property
          * 
          * @type {Array<string>}

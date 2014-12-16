@@ -11624,47 +11624,160 @@ declare module plat {
               * @param {plat.routing.ISegmentTypeCount} types An object to use for counting segment types in the route.
               */
             static parse(route: string, names: string[], types: ISegmentTypeCount): BaseSegment[];
+            /**
+              * Parses a route into segments, populating an array of names (for dynamic and splat segments) as well as
+              * an ISegmentTypeCount object.
+              * @param {string} name The name of the segment to look for.
+              * @param {string} token The token used to acquire a new segment if necessary.
+              * @param {plat.IObject<plat.routing.BaseSegment>} cache The cache in which to look for/store the segment.
+              */
             private static __findSegment(name, token, cache);
+            /**
+              * Denotes the type of segment for this instance.
+              */
             type: string;
+            /**
+              * The name of the segment.
+              */
             name: string;
+            /**
+              * A regular expression string which can be used to match the segment.
+              */
             regex: string;
+            /**
+              * A regular expression string which can be used to match the segment.
+              */
             protected _specification: ICharacterSpecification;
+            /**
+              * Initializes the segment.
+              * @param {string} name? The name for the new segment.
+              */
             initialize(name?: string): void;
-            reduceCharacters<T>(callback: (previousValue: T, spec: ICharacterSpecification) => T, initialValue?: T): T;
+            /**
+              * Iterates over the characters in the segment, calling an iterator method and accumulating the result of each call in
+              * a defined object.
+              * @param {(previousValue: T, spec: plat.routing.ICharacterSpecification) => T} iterator The iterator to call with each character.
+              * @param {T} initialValue? An optional initial value with which to start the accumulation.
+              */
+            reduceCharacters<T>(iterator: (previousValue: T, spec: ICharacterSpecification) => T, initialValue?: T): T;
+            /**
+              * Generates a new segment, using the input parameters if necessary.
+              * @param {plat.IObject<string>} parameters? The input parameters for the segment.
+              */
             generate(parameters?: IObject<string>): string;
         }
+        /**
+          * The Type for referencing the '$BaseSegmentFactory' injectable as a dependency.
+          */
         function IBaseSegmentFactory($Regex: expressions.IRegex): typeof BaseSegment;
+        /**
+          * The Type for referencing the '$BaseSegmentInstance' injectable as a dependency.
+          */
         function IBaseSegmentInstance(): BaseSegment;
+        /**
+          * Stores information about a static segment, publishes a regex for matching the segment as well as
+          * methods for generating the segment and iterating over the characters in the segment.
+          */
         class StaticSegment extends BaseSegment {
+            /**
+              * Denotes that this is a static segment.
+              */
             type: string;
-            regex: string;
+            /**
+              * Initializes the segment.
+              * @param {string} name? The name for the new segment.
+              */
             initialize(name?: string): void;
-            reduceCharacters<T>(callback: (previousValue: T, spec: ICharacterSpecification) => T, initialValue?: T): T;
+            /**
+              * Iterates over the characters in the segment, calling an iterator method and accumulating the result of each call in
+              * a defined object.
+              * @param {(previousValue: T, spec: plat.routing.ICharacterSpecification) => T} iterator The iterator to call with each character.
+              * @param {T} initialValue? An optional initial value with which to start the accumulation.
+              */
+            reduceCharacters<T>(iterator: (previousValue: T, spec: ICharacterSpecification) => T, initialValue?: T): T;
         }
+        /**
+          * The Type for referencing the '$StaticSegmentInstance' injectable as a dependency.
+          */
         function IStaticSegmentInstance(): StaticSegment;
+        /**
+          * Stores information about a variable segment (either dynamic or splat), publishes a regex for matching the segment as well as
+          * methods for generating the segment and iterating over the characters in the segment.
+          */
         class VariableSegment extends BaseSegment {
+            /**
+              * Denotes that this is a variable segment.
+              */
             type: string;
+            /**
+              * Generates a new segment, using the input parameters.
+              * @param {plat.IObject<string>} parameters? The input parameters for the segment.
+              */
             generate(parameters?: IObject<string>): string;
         }
+        /**
+          * The Type for referencing the '$VariableSegmentInstance' injectable as a dependency.
+          */
         function IVariableSegmentInstance(): VariableSegment;
+        /**
+          * Stores information about a splat segment, publishes a regex for matching the segment as well as
+          * methods for generating the segment and iterating over the characters in the segment.
+          */
         class SplatSegment extends VariableSegment {
+            /**
+              * Denotes that this is a splat segment.
+              */
             type: string;
+            /**
+              * A regular expression string which can be used to match the segment.
+              */
             regex: string;
+            /**
+              * A regular expression string which can be used to match the segment.
+              */
             protected _specification: ICharacterSpecification;
         }
+        /**
+          * The Type for referencing the '$SplatSegmentInstance' injectable as a dependency.
+          */
         function ISplatSegmentInstance(): SplatSegment;
+        /**
+          * Stores information about a dynamic segment, publishes a regex for matching the segment as well as
+          * methods for generating the segment and iterating over the characters in the segment.
+          */
         class DynamicSegment extends VariableSegment {
+            /**
+              * Denotes that this is a dynamic segment.
+              */
             type: string;
+            /**
+              * A regular expression string which can be used to match the segment.
+              */
             regex: string;
+            /**
+              * A regular expression string which can be used to match the segment.
+              */
             protected _specification: ICharacterSpecification;
         }
         /**
           * The Type for referencing the '$DynamicSegmentInstance' injectable as a dependency.
           */
         function IDynamicSegmentInstance(): DynamicSegment;
+        /**
+          * Contains information for validating characters.
+          */
         interface ICharacterSpecification {
+            /**
+              * Contains all the invalid characters
+              */
             invalidCharacters?: string;
+            /**
+              * Contains all the valid characters
+              */
             validCharacters?: string;
+            /**
+              * Whether or not the character should repeat.
+              */
             repeat?: boolean;
         }
         /**
@@ -11733,7 +11846,7 @@ declare module plat {
               * The associated delegate objects for this
               * state, with their parameter names.
               */
-            delegates: IDelegateNames[];
+            delegates: IDelegateParameterNames[];
             /**
               * A regular expression to match this state to a path.
               */
@@ -11777,16 +11890,16 @@ declare module plat {
             /**
               * Iterates through the next states and calls the input callback with each state. Acts like
               * Utils.some. If the callback returns true, it will break out of the loop.
-              * @param {(child: plat.routing.State) => boolean} callback The function with which to call for each
+              * @param {(child: plat.routing.State) => boolean} iterator The function with which to call for each
               * State. Can return true to break out of the loop
               */
-            protected _someChildren(callback: (child: State) => boolean): boolean;
+            protected _someChildren(iterator: (child: State) => boolean): boolean;
             /**
               * Iterates through the next states and calls the input callback with each state.
-              * @param {(child: plat.routing.State) => void} callback The function with which to call for each
+              * @param {(child: plat.routing.State) => void} iterator The function with which to call for each
               * State.
               */
-            protected _someChildren(callback: (child: State) => void): void;
+            protected _someChildren(iterator: (child: State) => void): void;
         }
         /**
           * The Type for referencing the '$StateStatic' injectable as a dependency.
@@ -11800,7 +11913,7 @@ declare module plat {
           * Contains a delegate and its associated segment names. Used for populating
           * the parameters in an IDelegateInfo object.
           */
-        interface IDelegateNames {
+        interface IDelegateParameterNames {
             /**
               * The delegate for a registered route
               */
@@ -11810,22 +11923,114 @@ declare module plat {
               */
             names: string[];
         }
+        /**
+          * Assists in compiling and linking route strings. You can register route strings using
+          * a defined scheme, and it will compile the routes. When you want to match a route, it will
+          * find the associated compiled route and link it to the data given with the passed-in route.
+          */
         class RouteRecognizer {
+            /**
+              * Reference to the BaseSegment injectable.
+              */
             $BaseSegmentFactory: typeof BaseSegment;
+            /**
+              * Reference to the State injectable.
+              */
             $StateStatic: typeof State;
-            rootState: State;
-            register(routes: IRegisterRouteOptions[]): void;
+            /**
+              * A root state for the recognizer used to add next states.
+              */
+            protected _rootState: State;
+            /**
+              * All the named routes for this recognizer.
+              */
+            protected _namedRoutes: IObject<INamedRoute>;
+            /**
+              * A method for registering routes to be identified later. Internally the
+              * routes will be compiled into a series of states
+              * which will be used to recognize the route later.
+              * @param {Array<plat.routing.IRouteDelegate>} routes The routes to register.
+              * @param {plat.routing.IRegisterOptions} options? An object containing options for the
+              * registered route.
+              */
+            register(routes: IRouteDelegate[], options?: IRegisterOptions): void;
+            /**
+              * Searches for a match to the provided path. If a match is found, the path is deconstructed
+              * to populate a parameters object (if the registered route was a dynamic/splat route).
+              * @param {string} path The path to recognize.
+              * returned.
+              */
             recognize(path: string): IRecognizeResult;
+            /**
+              * Finds the delegates for an INamedRoute
+              * @param {string} name The named route from which to get the delegates.
+              */
+            delegatesFor(name: string): any[];
+            /**
+              * Determines whether or not an INamedRoute is registered.
+              * @param {string} name The named route to search for.
+              */
+            exists(name: string): boolean;
+            generate(name: string, parameters?: IObject<string>): string;
+            /**
+              * Finalizes a compiled route, adding a final state if necessary. If the state is equal to the
+              * root state for the recognizer, a new state will be created. This is because the root state does not
+              * represent any route.
+              * @param {plat.routing.State} state The state to finalize.
+              * @param {string} regex The regular expression string built for the compiled routes. Used to recognize
+              * routes and associate them with the compiled routes.
+              */
             protected _finalize(state: State, regex: string[]): State;
-            protected _parse(route: IRegisterRouteOptions, delegates: IDelegateNames[], types: ISegmentTypeCount): BaseSegment[];
+            /**
+              * Parses a route into different segments;
+              * @param {plat.routing.IRouteDelegate} route The route options to be parsed.
+              * @param {Array<plat.routing.IDelegateParameterNames>} delegates The delegates and associated names for mapping parameters.
+              * @param {plat.routing.ISegmentTypeCount} types A count of all the segment types in the route.
+              */
+            protected _parse(route: IRouteDelegate, delegates: IDelegateParameterNames[], types: ISegmentTypeCount): BaseSegment[];
+            /**
+              * Compiles a list of segments into a series of states.
+              * @param {Array<plat.routing.BaseSegment>} segments The segments to compile.
+              * @param {plat.routing.State} state The initial state used to compile.
+              * @param {Array<string>} regex A regular expression string to build in order to match the segments.
+              */
             protected _compile(segments: BaseSegment[], state: State, regex: string[]): State;
-            protected _normalizePath(path: string): string;
+            /**
+              * Adds a leading slash to the passed-in string if necessary.
+              * @param {string} path The path to which to add the slash.
+              */
+            protected _addLeadingSlash(path: string): string;
+            /**
+              * Checks for a trailing slash on a given string.
+              * @param {string} path The path on which to look for a trailing slash.
+              */
             protected _hasTrailingSlash(path: string): boolean;
-            protected _states(path: string): State[];
+            /**
+              * Finds the compiled states for a given path.
+              * @param {string} path The path with which to look for compiled states.
+              */
+            protected _findStates(path: string): State[];
+            /**
+              * Filters out states with no delegates, and sorts the states.
+              * @param {Array<plat.routing.State>} states The states to filter.
+              */
             protected _filter(states: State[]): State[];
-            protected _findResult(state: State, path: string, isTrailingSlashDropped: boolean): IRecognizeResult;
+            /**
+              * Links a state to a path, producing an IRecognizeResult.
+              * @param {plat.routing.State} states The state to link.
+              * @param {string} path The path to link.
+              * @param {boolean} isTrailingSlashDropped Whether or not the trailing slash is dropped from the path.
+              */
+            protected _link(state: State, path: string, isTrailingSlashDropped: boolean): IRecognizeResult;
+            /**
+              * Determines whether or not the state is dynamic.
+              * @param {plat.routing.State} states The state used to determine if it is dynamic or not.
+              */
             protected _isDynamic(state: State): boolean;
         }
+        /**
+          * The Type for referencing the '$RouteRecognizerInstance' injectable as a dependency.
+          */
         function IRouteRecognizerInstance(): RouteRecognizer;
         /**
           * An Array of delegate information for a recognized route.
@@ -11857,10 +12062,24 @@ declare module plat {
             isDynamic: boolean;
         }
         /**
+          * Contains information about a named route. Created when you register a route with an associated
+          * name.
+          */
+        interface INamedRoute {
+            /**
+              * All the segments for the named route.
+              */
+            segments: BaseSegment[];
+            /**
+              * All the delegates for the named route.
+              */
+            delegates: any[];
+        }
+        /**
           * Used during route registeration to specify a delegate object to associate
           * with a route.
           */
-        interface IRegisterRouteOptions {
+        interface IRouteDelegate {
             /**
               * The pattern to match for the route, accepts dynamic routes as well as splat routes.
               * /posts/new
@@ -11873,6 +12092,15 @@ declare module plat {
               * it is up to the owner of the registered route to know what to do with the delegate.
               */
             delegate: any;
+        }
+        /**
+          * Options that you can pass in when registering routes.
+          */
+        interface IRegisterOptions {
+            /**
+              * Allows you to assign a name to a registered route.
+              */
+            name?: string;
         }
     }
     /**

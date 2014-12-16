@@ -489,5 +489,44 @@ module tests.routing.routeRecognizer {
                 isDynamic: true
             }]);
         });
+
+        it('should test generation', () => {
+            router.register([{ pattern: '/', delegate: delegate1 }], { name: 'index' });
+            router.register([{ pattern: '/posts/:id', delegate: delegate2 }], { name: 'post' });
+            router.register([{ pattern: '/posts', delegate: delegate3 }], { name: 'posts' });
+            router.register([{ pattern: '/posts', delegate: delegate4 }, { pattern: '/', delegate: delegate4 }], { name: 'postIndex' });
+            router.register([{ pattern: '/posts/new', delegate: delegate1 }], { name: 'new_post' });
+            router.register([{ pattern: '/posts/:id/edit', delegate: delegate2 }], { name: 'edit_post' });
+            router.register([{ pattern: '/foo/:bar', delegate: delegate3 }, { pattern: '/baz/:bat', delegate: delegate3 }], { name: 'foo' });
+            router.register([{ pattern: '/splat/*splat', delegate: delegate3 }], { name: 'splat' });
+
+            expect(router.exists('index')).toBe(true);
+            expect(router.exists('post')).toBe(true);
+            expect(router.exists('postIndex')).toBe(true);
+            expect(router.exists('splat')).toBe(true);
+            expect(router.exists('x')).toBe(false);
+
+            expect(router.generate('index')).toEqual('/');
+            expect(router.generate('post', { id: '1' })).toEqual('/posts/1');
+            expect(router.generate('posts')).toEqual('/posts');
+            expect(router.generate('new_post')).toEqual('/posts/new');
+            expect(router.generate('edit_post', { id: '1' })).toEqual('/posts/1/edit');
+            expect(router.generate('postIndex')).toEqual('/posts');
+            expect(router.generate('foo', { bar: 'bar', bat: 'quux' })).toEqual('/foo/bar/baz/quux');
+            expect(router.generate('splat', { splat: 'foo/bar/baz/quux' })).toEqual('/splat/foo/bar/baz/quux');
+        });
+
+        it('should test delegatesFor', () => {
+            router.register([{ pattern: '/', delegate: delegate1 }], { name: 'index' });
+            router.register([{ pattern: '/posts/:id', delegate: delegate2 }], { name: 'post' });
+            router.register([{ pattern: '/posts', delegate: delegate3 }], { name: 'posts' });
+            router.register([{ pattern: '/posts', delegate: delegate4 }, { pattern: '/', delegate: delegate3 }], { name: 'postIndex' });
+            router.register([{ pattern: '/posts/:id/edit', delegate: delegate4 }], { name: 'edit_post' });
+
+            expect(router.delegatesFor('index')).toEqual([{ delegate: delegate1, names: []}]);
+            expect(router.delegatesFor('post')).toEqual([{ delegate: delegate2, names: ['id']}]);
+            expect(router.delegatesFor('posts')).toEqual([{ delegate: delegate3, names: []}]);
+            expect(router.delegatesFor('edit_post')).toEqual([{ delegate: delegate4, names: ['id']}]);
+        });
     });
 }

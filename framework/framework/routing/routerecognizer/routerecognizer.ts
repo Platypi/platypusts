@@ -50,6 +50,19 @@
         protected _rootState: State = acquire(__StateInstance);
 
         /**
+         * @name _namedRoutes
+         * @memberof plat.routing.RouteRecognizer
+         * @kind property
+         * @access protected
+         * 
+         * @type {plat.IObject<plat.routing.INamedRoute>}
+         * 
+         * @description
+         * All the named routes for this recognizer.
+         */
+        protected _namedRoutes: IObject<INamedRoute> = {};
+
+        /**
          * @name register
          * @memberof plat.routing.RouteRecognizer
          * @kind function
@@ -60,11 +73,13 @@
          * routes will be compiled into a series of {@link plat.routing.State|states} 
          * which will be used to recognize the route later.
          * 
-         * @param {Array<plat.routing.IRegisterRouteOptions>} routes The routes to register.
+         * @param {Array<plat.routing.IRouteDelegate>} routes The routes to register.
+         * @param {plat.routing.IRegisterOptions} options? An object containing options for the 
+         * registered route.
          * 
          * @returns {void}
          */
-        register(routes: Array<IRegisterRouteOptions>): void {
+        register(routes: Array<IRouteDelegate>, options?: IRegisterOptions): void {
             if (!isArray(routes)) {
                 return;
             }
@@ -77,7 +92,7 @@
                     dynamics: 0,
                     splats: 0
                 },
-                delegates: Array<IDelegateNames> = [],
+                delegates: Array<IDelegateParameterNames> = [],
                 allSegments: Array<BaseSegment> = [],
                 segments: Array<BaseSegment>;
 
@@ -91,6 +106,13 @@
             finalState.delegates = delegates;
             finalState.regex = new RegExp(regex.join('') + '$');
             finalState.types = types;
+
+            if (isObject(options) && isString(options.name)) {
+                this._namedRoutes[options.name] = {
+                    segments: allSegments,
+                    delegates: delegates
+                };
+            }
         }
 
         /**
@@ -121,6 +143,98 @@
 
             solutions = this._filter(this._findStates(path));
             return this._link(solutions[0], path, isTrailingSlashDropped);
+        }
+
+        /**
+         * @name generate
+         * @memberof plat.routing.RouteRecognizer
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Finds a {@link plat.routing.INamedRoute|INamedRoute} and generates a string 
+         * if it exists. Uses the parameters object to generate dynamic routes.
+         * 
+         * @param {string} name The named route with which to generate the route string.
+         * @param {plat.IObject<string>} parameters The route parameters, in the case that the 
+         * named route is dynamic.
+         * 
+         * @returns {string} The generated route.
+         */
+        generate(name: string, parameters?: IObject<string>): string {
+            var route = this._namedRoutes[name],
+                output = "",
+                segments: Array<BaseSegment>,
+                length: number;
+
+            if (!isObject(route)) {
+                return;
+            }
+
+            segments = route.segments;
+            length = segments.length;
+
+            for (var i = 0; i < length; i++) {
+                var segment = segments[i];
+
+                if (segment.type === __BASE_SEGMENT_TYPE) {
+                    continue;
+                }
+
+                output += "/";
+                output += segment.generate(parameters);
+            }
+
+            output = this._addLeadingSlash(output);
+
+            return output;
+        }
+
+        /**
+         * @name delegatesFor
+         * @memberof plat.routing.RouteRecognizer
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Finds the delegates for an {@link plat.routing.INamedRoute|INamedRoute}
+         * 
+         * @param {string} name The named route from which to get the delegates.
+         * 
+         * @returns {Array<IDelegateParameterNames>} The delegates for the named route.
+         */
+        delegatesFor(name: string): Array<IDelegateParameterNames> {
+            var namedRoute = this._namedRoutes[name],
+                delegates: Array<IDelegateParameterNames>;
+
+            if (!isObject(namedRoute)) {
+                return [];
+            }
+
+            delegates = namedRoute.delegates;
+
+            if (!isArray(delegates)) {
+                return [];
+            }
+
+            return delegates.slice(0);
+        }
+
+        /**
+         * @name exists
+         * @memberof plat.routing.RouteRecognizer
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Determines whether or not an {@link plat.routing.INamedRoute|INamedRoute} is registered.
+         * 
+         * @param {string} name The named route to search for.
+         * 
+         * @returns {boolean} Whether or not the named route exists.
+         */
+        exists(name: string): boolean {
+            return isObject(this._namedRoutes[name]);
         }
 
         /**
@@ -160,13 +274,13 @@
          * @description
          * Parses a route into different {@link plat.routing.BaseSegment|segments};
          * 
-         * @param {plat.routing.IRegisterRouteOptions} route The route options to be parsed.
-         * @param {Array<plat.routing.IDelegateNames>} delegates The delegates and associated names for mapping parameters.
+         * @param {plat.routing.IRouteDelegate} route The route options to be parsed.
+         * @param {Array<plat.routing.IDelegateParameterNames>} delegates The delegates and associated names for mapping parameters.
          * @param {plat.routing.ISegmentTypeCount} types A count of all the segment types in the route.
          * 
          * @returns {Array<plat.routing.BaseSegment>} The segments created for the route.
          */
-        protected _parse(route: IRegisterRouteOptions, delegates: Array<IDelegateNames>, types: ISegmentTypeCount): Array<BaseSegment> {
+        protected _parse(route: IRouteDelegate, delegates: Array<IDelegateParameterNames>, types: ISegmentTypeCount): Array<BaseSegment> {
             var names: Array<string> = [];
 
             delegates.push({
@@ -431,7 +545,42 @@
     }
 
     /**
-     * @name IRegisterRouteOptions
+     * @name INamedRoute
+     * @memberof plat.routing
+     * @kind interface
+     * 
+     * @description
+     * Contains information about a named route. Created when you register a route with an associated 
+     * name.
+     */
+    export interface INamedRoute {
+        /**
+         * @name segments
+         * @memberof plat.routing.INamedRoute
+         * @kind property
+         * 
+         * @type {Array<plat.routing.BaseSegment>}
+         * 
+         * @description
+         * All the segments for the named route.
+         */
+        segments: Array<BaseSegment>;
+
+        /**
+         * @name delegates
+         * @memberof plat.routing.INamedRoute
+         * @kind property
+         * 
+         * @type {Array<plat.routing.IDelegateParameterNames>}
+         * 
+         * @description
+         * All the delegates for the named route.
+         */
+        delegates: Array<IDelegateParameterNames>;
+    }
+
+    /**
+     * @name IRouteDelegate
      * @memberof plat.routing
      * @kind interface
      * 
@@ -439,10 +588,10 @@
      * Used during route registeration to specify a delegate object to associate 
      * with a route.
      */
-    export interface IRegisterRouteOptions {
+    export interface IRouteDelegate {
         /**
          * @name pattern
-         * @memberof plat.routing.IRegisterRouteOptions
+         * @memberof plat.routing.IRouteDelegate
          * @kind property
          * 
          * @type {string}
@@ -463,7 +612,7 @@
 
         /**
          * @name delegate
-         * @memberof plat.routing.IRegisterRouteOptions
+         * @memberof plat.routing.IRouteDelegate
          * @kind property
          * 
          * @type {any}
@@ -473,5 +622,27 @@
          * it is up to the owner of the registered route to know what to do with the delegate.
          */
         delegate: any;
+    }
+
+    /**
+     * @name IRegisterOptions
+     * @memberof plat.routing
+     * @kind interface
+     * 
+     * @description
+     * Options that you can pass in when registering routes.
+     */
+    export interface IRegisterOptions {
+        /**
+         * @name name
+         * @memberof plat.routing.IRegisterOptions
+         * @kind property
+         * 
+         * @type {string}
+         * 
+         * @description
+         * Allows you to assign a name to a registered route.
+         */
+        name?: string;
     }
 }
