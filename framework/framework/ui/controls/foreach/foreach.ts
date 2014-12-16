@@ -358,10 +358,10 @@ module plat.ui.controls {
                     if (animate === true) {
                         var length = templates.length;
                         for (var i = 0; i < length; ++i) {
-                            this._addAnimatedItem(templates[i], __Enter);
+                            this._appendAnimatedItem(templates[i], __Enter);
                         }
                     } else {
-                        appendChildren(templates, this.element);
+                        this._appendItems(templates);
                     }
 
                     if (isFunction(this.__resolveFn)) {
@@ -388,6 +388,59 @@ module plat.ui.controls {
         }
 
         /**
+         * @name _appendItems
+         * @memberof plat.ui.controls.ForEach
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Adds an Array of items to the element without animating.
+         * 
+         * @param {Array<Node>} items The Array of items to add.
+         * 
+         * @returns {void}
+         */
+        protected _appendItems(items: Array<Node>): void {
+            appendChildren(items, this.element);
+        }
+
+        /**
+         * @name _appendAnimatedItem
+         * @memberof plat.ui.controls.ForEach
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Adds an item to the control's element animating its elements.
+         * 
+         * @param {DocumentFragment} item The HTML fragment representing a single item.
+         * @param {string} key The animation key/type.
+         * 
+         * @returns {void}
+         */
+        protected _appendAnimatedItem(item: DocumentFragment, key: string): void {
+            if (!isNode(item)) {
+                return;
+            }
+
+            var $animator = this.$Animator,
+                childNodes: Array<Element> = Array.prototype.slice.call(item.childNodes),
+                childNode: Element;
+
+            insertBefore(this.element, item);
+
+            var currentAnimations = this._currentAnimations;
+            while (childNodes.length > 0) {
+                childNode = childNodes.shift();
+                if (childNode.nodeType === Node.ELEMENT_NODE) {
+                    currentAnimations.push($animator.animate(childNode, key).then(() => {
+                        currentAnimations.shift();
+                    }));
+                }
+            }
+        }
+
+        /**
          * @name _removeItems
          * @memberof plat.ui.controls.ForEach
          * @kind function
@@ -407,42 +460,6 @@ module plat.ui.controls {
 
             if (this.controls.length > 0) {
                 this._updateResources();
-            }
-        }
-
-        /**
-         * @name _addItem
-         * @memberof plat.ui.controls.ForEach
-         * @kind function
-         * @access protected
-         * 
-         * @description
-         * Adds an item to the control's element animating its elements.
-         * 
-         * @param {DocumentFragment} item The HTML fragment representing a single item.
-         * @param {string} key The animation key/type.
-         * 
-         * @returns {void}
-         */
-        protected _addAnimatedItem(item: DocumentFragment, key: string): void {
-            if (!isNode(item)) {
-                return;
-            }
-
-            var $animator = this.$Animator,
-                childNodes: Array<Element> = Array.prototype.slice.call(item.childNodes),
-                childNode: Element;
-
-            insertBefore(this.element, item);
-
-            var currentAnimations = this._currentAnimations;
-            while (childNodes.length > 0) {
-                childNode = childNodes.shift();
-                if (childNode.nodeType === Node.ELEMENT_NODE) {
-                    currentAnimations.push($animator.animate(childNode, key).then(() => {
-                        currentAnimations.shift();
-                    }));
-                }
             }
         }
 
