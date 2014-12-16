@@ -1,5 +1,5 @@
 /**
-  * PlatypusTS v0.9.7 (http://getplatypi.com)
+  * PlatypusTS v0.9.8 (http://getplatypi.com)
   * Copyright 2014 Platypi, LLC. All rights reserved.
   * PlatypusTS is licensed under the GPL-3.0 found at
   * http://opensource.org/licenses/GPL-3.0
@@ -963,120 +963,120 @@ declare module plat {
         /**
           * Takes in an array and a function to evaluate the properties in the array.
           * Returns a filtered array of objects resulting from evaluating the function.
-          * @param {Array<T>} array The Array to filter.
           * @param {plat.IListIterator<T, boolean>} iterator The iterator function to call with array's properties.
           * Returns true if the property should be kept, false otherwise.
-          * @param {any} context? Optional context with which to call the iterator.
+          * @param {Array<T>} array The Array to filter.
+          * @param {any} context? An optional context to bind to the iterator.
           */
-        filter<T>(array: T[], iterator: IListIterator<T, boolean>, context?: any): T[];
+        filter<T>(iterator: IListIterator<T, boolean>, array: T[], context?: any): T[];
         /**
           * Takes in an object/array and a function to evaluate the properties in the object/array.
           * Returns a filtered array of objects resulting from evaluating the function.
-          * @param {plat.IObject<T>} obj The object to filter.
           * @param {plat.IObjectIterator<T, boolean>} iterator The iterator function to call with array's properties.
           * Returns true if the property should be kept, false otherwise.
-          * @param {any} context? Optional context with which to call the iterator.
+          * @param {plat.IObject<T>} obj The object to filter.
+          * @param {any} context? An optional context to bind to the iterator.
           */
-        filter<T>(obj: IObject<T>, iterator: IObjectIterator<T, boolean>, context?: any): T[];
+        filter<T>(iterator: IObjectIterator<T, boolean>, obj: IObject<T>, context?: any): T[];
         /**
           * Takes in a list and object containing key/value pairs to search for in the list.
+          * @param {Object} properties An object containing key/value pairs to match with obj's values.
           * @param {Array<T>} array The list used for searching for properties.
-          * @param {any} properties An object containing key/value pairs to match with obj's values.
           */
-        where<T, U extends {}>(array: T[], properties: U): T[];
+        where<T>(properties: Object, array: T[]): T[];
         /**
           * Takes in an Array and a function to iterate over. Calls the iterator function with every property
           * in the Array, then returns the object.
-          * @param {Array<T>} array An Array.
           * @param {plat.IListIterator<T, void>} iterator A method that takes in a value, index, and the object.
+          * @param {Array<T>} array An Array.
           * @param {any} context? An optional context to bind to the iterator.
           */
-        forEach<T>(array: T[], iterator: IListIterator<T, void>, context?: any): T[];
+        forEach<T>(iterator: IListIterator<T, void>, array: T[], context?: any): T[];
         /**
           * Takes in an Array and a function to iterate over. Calls the iterator function with every property
           * in the Array, then returns the object.
-          * @param {plat.IObject<T>} obj An object.
           * @param {plat.IObjectIterator<T, void>} iterator A method that takes in a value, index, and the object.
+          * @param {plat.IObject<T>} obj An object.
           * @param {any} context? An optional context to bind to the iterator.
           */
-        forEach<T>(obj: IObject<T>, iterator: IObjectIterator<T, void>, context?: any): IObject<T>;
+        forEach<T>(iterator: IObjectIterator<T, void>, obj: IObject<T>, context?: any): IObject<T>;
         /**
           * Takes in an object and an iterator function. Calls the iterator with all the values in the object. The
           * iterator can transform the object and return it. The returned values will be pushed to an Array and
           * returned.
-          * @param {Array<T>} array An Array.
           * @param {plat.IListIterator<T, R>} iterator The transformation function.
+          * @param {Array<T>} array An Array.
           * @param {any} context? An optional context to bind to the iterator.
           */
-        map<T, R>(array: T[], iterator: IListIterator<T, R>, context?: any): R[];
+        map<T, R>(iterator: IListIterator<T, R>, array: T[], context?: any): R[];
         /**
           * Takes in an object and an iterator function. Calls the iterator with all the values in the object. The
           * iterator can transform the object and return it. The returned values will be pushed to an Array and
           * returned.
-          * @param {plat.IObject<T>} obj An Object.
           * @param {(value: T, index: number, obj: any) => U} iterator The transformation function.
+          * @param {plat.IObject<T>} obj An Object.
           * @param {any} context? An optional context to bind to the iterator.
           */
-        map<T, R>(obj: IObject<T>, iterator: IObjectIterator<T, R>, context?: any): R[];
+        map<T, R>(iterator: IObjectIterator<T, R>, obj: IObject<T>, context?: any): R[];
         /**
           * Takes in an array and an iterator function. Calls the iterator with all the values in the array. The
           * iterator can return a promise the will resolve with the mapped value. The returned values will be pushed
           * to an Array. A promise is returned that will resolve when all the iterators have resolved.
-          * @param {Array<T>} array An array.
           * @param {plat.IListIterator<T, plat.async.IThenable<R>>} iterator The transformation function.
+          * @param {Array<T>} array An array.
           * @param {any} context? An optional context to bind to the iterator.
           */
-        mapAsync<T, R>(array: T[], iterator: IListIterator<T, async.IThenable<R>>, context?: any): async.IThenable<R[]>;
+        mapAsync<T, R>(iterator: IListIterator<T, async.IThenable<R>>, array: T[], context?: any): async.IThenable<R[]>;
         /**
           * Takes in an object and an iterator function. Calls the iterator with all the values in the object. The
           * iterator can return a promise the will resolve with the mapped value. The returned values will be pushed
           * to an Array. A promise is returned that will resolve when all the iterators have resolved.
-          * @param {plat.IObject<T>} obj An Object.
           * @param {plat.IObjectIterator<T, plat.async.IThenable<R>>} iterator The transformation function.
+          * @param {plat.IObject<T>} obj An Object.
           * @param {any} context? An optional context to bind to the iterator.
           */
-        mapAsync<T, R>(obj: IObject<T>, iterator: IObjectIterator<T, async.IThenable<R>>, context?: any): async.IThenable<R[]>;
+        mapAsync<T, R>(iterator: IObjectIterator<T, async.IThenable<R>>, obj: IObject<T>, context?: any): async.IThenable<R[]>;
         /**
           * Takes in an array and an iterator function. Calls the iterator with all the values in the array. The
           * iterator can return a promise the will resolve with the mapped value. The next value in the array will not be passed to
           * the iterator until the previous promise fulfills.
-          * @param {Array<T>} array An Array.
           * @param {plat.IListIterator<T, plat.async.IThenable<R>>} iterator The transformation function.
+          * @param {Array<T>} array An Array.
           * @param {any} context? An optional context to bind to the iterator.
           */
-        mapAsyncInOrder<T, R>(array: T[], iterator: IListIterator<T, async.IThenable<R>>, context?: any): async.IThenable<R[]>;
+        mapAsyncInOrder<T, R>(iterator: IListIterator<T, async.IThenable<R>>, array: T[], context?: any): async.IThenable<R[]>;
         /**
           * Takes in an array and an iterator function. Calls the iterator with all the values in the array in descending order. The
           * iterator can return a promise the will resolve with the mapped value. The next value in the array will not be passed to
           * the iterator until the previous promise fulfills.
-          * @param {Array<T>} array An Array.
           * @param {plat.IListIterator<T, plat.async.IThenable<R>>} iterator The transformation function.
+          * @param {Array<T>} array An Array.
           * @param {any} context? An optional context to bind to the iterator.
           */
-        mapAsyncInDescendingOrder<T, R>(array: T[], iterator: (value: T, index: number, list: T[]) => async.IThenable<R>, context?: any): async.IThenable<R[]>;
+        mapAsyncInDescendingOrder<T, R>(iterator: IListIterator<T, async.IThenable<R>>, array: T[], context?: any): async.IThenable<R[]>;
         /**
           * Takes in an object and a property to extract from all of the object's values. Returns an array of
           * the 'plucked' values.
-          * @param {any} obj An object.
-          * @param {string} key The property to 'pluck' from each value in obj.
+          * @param {string} key The property to 'pluck' from each value in the array.
+          * @param {Array<T>} array The array to pluck the key from
           */
-        pluck<T extends {}>(obj: T[], key: string): any[];
+        pluck<T extends {}>(key: string, array: T[]): any[];
         /**
           * Takes in an array and an iterator. Evaluates all the values in the array with the iterator.
           * Returns true if any of the iterators return true, otherwise returns false.
-          * @param {Array<T>} array An array.
           * @param {plat.IListIterator<T, boolean>} iterator A method with which to evaluate all the values in obj.
+          * @param {Array<T>} array An array.
           * @param {any} context? An optional context to bind to the iterator.
           */
-        some<T>(array: T[], iterator: IListIterator<T, boolean>, context?: any): boolean;
+        some<T>(iterator: IListIterator<T, boolean>, array: T[], context?: any): boolean;
         /**
           * Takes in an array and an iterator. Evaluates all the values in the array with the iterator.
           * Returns true if any of the iterators return true, otherwise returns false.
-          * @param {plat.IObject<T>} obj An object.
           * @param {plat.IObjectIterator<T, boolean>} iterator A method with which to evaluate all the values in obj.
+          * @param {plat.IObject<T>} obj An object.
           * @param {any} context? An optional context to bind to the iterator.
           */
-        some<T>(obj: IObject<T>, iterator: IObjectIterator<T, boolean>, context?: any): boolean;
+        some<T>(iterator: IObjectIterator<T, boolean>, obj: IObject<T>, context?: any): boolean;
         /**
           * Takes in a method and array of arguments to pass to that method. Delays calling the method until
           * after the current call stack is clear. Equivalent to a setTimeout with a timeout of 0.
@@ -1239,120 +1239,120 @@ declare module plat {
         /**
           * Takes in an array and a function to evaluate the properties in the array.
           * Returns a filtered array of objects resulting from evaluating the function.
-          * @param {Array<T>} array The Array to filter.
           * @param {plat.IListIterator<T, boolean>} iterator The iterator function to call with array's properties.
           * Returns true if the property should be kept, false otherwise.
-          * @param {any} context? Optional context with which to call the iterator.
+          * @param {Array<T>} array The Array to filter.
+          * @param {any} context? An optional context to bind to the iterator.
           */
-        filter<T>(array: T[], iterator: IListIterator<T, boolean>, context?: any): T[];
+        filter<T>(iterator: IListIterator<T, boolean>, array: T[], context?: any): T[];
         /**
           * Takes in an object/array and a function to evaluate the properties in the object/array.
           * Returns a filtered array of objects resulting from evaluating the function.
-          * @param {plat.IObject<T>} obj The object to filter.
           * @param {plat.IObjectIterator<T, boolean>} iterator The iterator function to call with array's properties.
           * Returns true if the property should be kept, false otherwise.
-          * @param {any} context? Optional context with which to call the iterator.
+          * @param {plat.IObject<T>} obj The object to filter.
+          * @param {any} context? An optional context to bind to the iterator.
           */
-        filter<T>(obj: IObject<T>, iterator: IObjectIterator<T, boolean>, context?: any): T[];
+        filter<T>(iterator: IObjectIterator<T, boolean>, obj: IObject<T>, context?: any): T[];
         /**
           * Takes in a list and object containing key/value pairs to search for in the list.
+          * @param {Object} properties An object containing key/value pairs to match with obj's values.
           * @param {Array<T>} array The list used for searching for properties.
-          * @param {any} properties An object containing key/value pairs to match with obj's values.
           */
-        where<T, U extends {}>(array: T[], properties: U): T[];
+        where<T>(properties: Object, array: T[]): T[];
         /**
           * Takes in an Array and a function to iterate over. Calls the iterator function with every property
           * in the Array, then returns the object.
-          * @param {Array<T>} array An Array.
           * @param {plat.IListIterator<T, void>} iterator A method that takes in a value, index, and the object.
+          * @param {Array<T>} array An Array.
           * @param {any} context? An optional context to bind to the iterator.
           */
-        forEach<T>(array: T[], iterator: IListIterator<T, void>, context?: any): T[];
+        forEach<T>(iterator: IListIterator<T, void>, array: T[], context?: any): T[];
         /**
           * Takes in an Array and a function to iterate over. Calls the iterator function with every property
           * in the Array, then returns the object.
-          * @param {plat.IObject<T>} obj An object.
           * @param {plat.IObjectIterator<T, void>} iterator A method that takes in a value, index, and the object.
+          * @param {plat.IObject<T>} obj An object.
           * @param {any} context? An optional context to bind to the iterator.
           */
-        forEach<T>(obj: IObject<T>, iterator: IObjectIterator<T, void>, context?: any): IObject<T>;
+        forEach<T>(iterator: IObjectIterator<T, void>, obj: IObject<T>, context?: any): IObject<T>;
         /**
-          * Takes in an array and an iterator function. Calls the iterator with all the values in the array. The
+          * Takes in an object and an iterator function. Calls the iterator with all the values in the object. The
           * iterator can transform the object and return it. The returned values will be pushed to an Array and
           * returned.
-          * @param {Array<T>} array An Array.
           * @param {plat.IListIterator<T, R>} iterator The transformation function.
+          * @param {Array<T>} array An Array.
           * @param {any} context? An optional context to bind to the iterator.
           */
-        map<T, R>(array: T[], iterator: IListIterator<T, R>, context?: any): R[];
+        map<T, R>(iterator: IListIterator<T, R>, array: T[], context?: any): R[];
         /**
           * Takes in an object and an iterator function. Calls the iterator with all the values in the object. The
           * iterator can transform the object and return it. The returned values will be pushed to an Array and
           * returned.
+          * @param {(value: T, index: number, obj: any) => U} iterator The transformation function.
           * @param {plat.IObject<T>} obj An Object.
-          * @param {plat.IObjectIterator<T, R>} iterator The transformation function.
           * @param {any} context? An optional context to bind to the iterator.
           */
-        map<T, R>(obj: IObject<T>, iterator: IObjectIterator<T, R>, context?: any): R[];
+        map<T, R>(iterator: IObjectIterator<T, R>, obj: IObject<T>, context?: any): R[];
         /**
           * Takes in an array and an iterator function. Calls the iterator with all the values in the array. The
           * iterator can return a promise the will resolve with the mapped value. The returned values will be pushed
           * to an Array. A promise is returned that will resolve when all the iterators have resolved.
-          * @param {Array<T>} array An array.
           * @param {plat.IListIterator<T, plat.async.IThenable<R>>} iterator The transformation function.
+          * @param {Array<T>} array An array.
           * @param {any} context? An optional context to bind to the iterator.
           */
-        mapAsync<T, R>(array: T[], iterator: IListIterator<T, async.IThenable<R>>, context?: any): async.IThenable<R[]>;
+        mapAsync<T, R>(iterator: IListIterator<T, async.IThenable<R>>, array: T[], context?: any): async.IThenable<R[]>;
         /**
           * Takes in an object and an iterator function. Calls the iterator with all the values in the object. The
           * iterator can return a promise the will resolve with the mapped value. The returned values will be pushed
           * to an Array. A promise is returned that will resolve when all the iterators have resolved.
-          * @param {plat.IObject<T>} obj An Object.
           * @param {plat.IObjectIterator<T, plat.async.IThenable<R>>} iterator The transformation function.
+          * @param {plat.IObject<T>} obj An Object.
           * @param {any} context? An optional context to bind to the iterator.
           */
-        mapAsync<T, R>(obj: IObject<T>, iterator: IObjectIterator<T, async.IThenable<R>>, context?: any): async.IThenable<R[]>;
+        mapAsync<T, R>(iterator: IObjectIterator<T, async.IThenable<R>>, obj: IObject<T>, context?: any): async.IThenable<R[]>;
         /**
           * Takes in an array and an iterator function. Calls the iterator with all the values in the array. The
           * iterator can return a promise the will resolve with the mapped value. The next value in the array will not be passed to
           * the iterator until the previous promise fulfills.
-          * @param {Array<T>} array An Array.
           * @param {plat.IListIterator<T, plat.async.IThenable<R>>} iterator The transformation function.
+          * @param {Array<T>} array An Array.
           * @param {any} context? An optional context to bind to the iterator.
           */
-        mapAsyncInOrder<T, R>(array: T[], iterator: IListIterator<T, async.IThenable<R>>, context?: any): async.IThenable<R[]>;
+        mapAsyncInOrder<T, R>(iterator: IListIterator<T, async.IThenable<R>>, array: T[], context?: any): async.IThenable<R[]>;
         /**
           * Takes in an array and an iterator function. Calls the iterator with all the values in the array in descending order. The
           * iterator can return a promise the will resolve with the mapped value. The next value in the array will not be passed to
           * the iterator until the previous promise fulfills.
-          * @param {Array<T>} array An Array.
           * @param {plat.IListIterator<T, plat.async.IThenable<R>>} iterator The transformation function.
+          * @param {Array<T>} array An Array.
           * @param {any} context? An optional context to bind to the iterator.
           */
-        mapAsyncInDescendingOrder<T, R>(array: T[], iterator: (value: T, index: number, list: T[]) => async.IThenable<R>, context?: any): async.IThenable<R[]>;
+        mapAsyncInDescendingOrder<T, R>(iterator: IListIterator<T, async.IThenable<R>>, array: T[], context?: any): async.IThenable<R[]>;
         /**
           * Takes in an object and a property to extract from all of the object's values. Returns an array of
           * the 'plucked' values.
-          * @param {any} obj An object.
-          * @param {string} key The property to 'pluck' from each value in obj.
+          * @param {string} key The property to 'pluck' from each value in the array.
+          * @param {Array<T>} array The array to pluck the key from
           */
-        pluck<T extends {}>(obj: T[], key: string): any[];
+        pluck<T extends {}>(key: string, array: T[]): any[];
         /**
           * Takes in an array and an iterator. Evaluates all the values in the array with the iterator.
           * Returns true if any of the iterators return true, otherwise returns false.
-          * @param {Array<T>} array An array.
           * @param {plat.IListIterator<T, boolean>} iterator A method with which to evaluate all the values in obj.
+          * @param {Array<T>} array An array.
           * @param {any} context? An optional context to bind to the iterator.
           */
-        some<T>(array: T[], iterator: IListIterator<T, boolean>, context?: any): boolean;
+        some<T>(iterator: IListIterator<T, boolean>, array: T[], context?: any): boolean;
         /**
           * Takes in an array and an iterator. Evaluates all the values in the array with the iterator.
           * Returns true if any of the iterators return true, otherwise returns false.
-          * @param {plat.IObject<T>} obj An object.
           * @param {plat.IObjectIterator<T, boolean>} iterator A method with which to evaluate all the values in obj.
+          * @param {plat.IObject<T>} obj An object.
           * @param {any} context? An optional context to bind to the iterator.
           */
-        some<T>(obj: IObject<T>, iterator: IObjectIterator<T, boolean>, context?: any): boolean;
+        some<T>(iterator: IObjectIterator<T, boolean>, obj: IObject<T>, context?: any): boolean;
         /**
           * Takes in a method and array of arguments to pass to that method. Delays calling the method until
           * after the current call stack is clear. Equivalent to a setTimeout with a timeout of 0.
@@ -1480,6 +1480,14 @@ declare module plat {
               * Determines if a telephone number is valid.
               */
             validateTelephone: RegExp;
+            /**
+              * A regular expression for matching dynamic segments in a route.
+              */
+            dynamicSegmentsRegex: RegExp;
+            /**
+              * A regular expression for matching splat segments in a route.
+              */
+            splatSegmentRegex: RegExp;
             /**
               * A regular expression for matching or removing all newline characters.
               */
@@ -1659,6 +1667,14 @@ declare module plat {
               * Determines if a telephone number is valid.
               */
             validateTelephone: RegExp;
+            /**
+              * A regular expression for matching dynamic segments in a route.
+              */
+            dynamicSegmentsRegex: RegExp;
+            /**
+              * A regular expression for matching splat segments in a route.
+              */
+            splatSegmentRegex: RegExp;
         }
         /**
           * A class that is responsible for taking in a JavaScript expression string and
@@ -2060,16 +2076,14 @@ declare module plat {
               * @param {any} context The context object.
               * @param {any} aliases Any aliases that may exist.
               * @param {string} token The property used to find the initial context.
-              * @param {any} undefined An undefined argument.
               */
-            private __findInitialContext(context, aliases, token, undefined?);
+            private __findInitialContext(context, aliases, token);
             /**
               * Safely drills down into a specified context with a given token.
               * @param {any} context The context object.
               * @param {string} token The property used to drill into the context.
-              * @param {any} undefined An undefined argument.
               */
-            private __indexIntoContext(context, token, undefined?);
+            private __indexIntoContext(context, token);
             /**
               * Peek at the next IToken.
               * @param {number} index The index before the desired IToken
@@ -2149,9 +2163,10 @@ declare module plat {
             /**
               * A method for evaluating an expression with a context.
               * @param {any} context? The primary context for evaluation.
-              * @param {any} aliases? An object containing resource alias values. All keys must begin with '@'.
+              * @param {IObject<any>} aliases? An object containing resource alias values.
+              * All property keys must never begin with '@'.
               */
-            evaluate(context?: any, aliases?: any): any;
+            evaluate(context?: any, aliases?: IObject<any>): any;
             /**
               * The original expression string.
               */
@@ -2162,7 +2177,7 @@ declare module plat {
               */
             identifiers: string[];
             /**
-              * Contains all the aliases (denoted by an identifier with '@' as the first character) for this
+              * Contains all the aliases (denoted without '@' as the first character) for this
               * IParsedExpression.
               */
             aliases: string[];
@@ -3292,7 +3307,7 @@ declare module plat {
               * A key/value pair object where the key is a DOMString header key
               * and the value is the DOMString header value.
               */
-            headers?: any;
+            headers?: IObject<any>;
             /**
               * Indicates whether or not cross-site Access-Control requests
               * should be made using credentials such as cookies or
@@ -3394,7 +3409,8 @@ declare module plat {
         interface IAjaxError extends Error, IAjaxResponse<any> {
         }
         /**
-          * Describes a type of Promise that fulfills with an IAjaxResponse and can be optionally cancelled.
+          * Describes a type of Promise that fulfills with an IAjaxResponse
+          * and can be optionally cancelled.
           */
         class AjaxPromise<R> extends Promise<IAjaxResponse<R>> implements IAjaxPromise<R> {
             /**
@@ -3429,8 +3445,8 @@ declare module plat {
             /**
               * Takes in two methods, called when/if the promise fulfills/rejects.
               * next then method in the promise chain.
-              * @param {(success: plat.async.IAjaxResponse<R>) => plat.async.IAjaxThenable<U>} onFulfilled A method called when/if the promise fulfills.
-              * If undefined the next onFulfilled method in the promise chain will be called.
+              * @param {(success: plat.async.IAjaxResponse<R>) => plat.async.IAjaxThenable<U>} onFulfilled A method called when/if
+              * the promise fulfills. If undefined the next onFulfilled method in the promise chain will be called.
               * @param {(error: plat.async.IAjaxError) => plat.async.IAjaxThenable<U>} onRejected A method called when/if the promise rejects.
               * If undefined the next onRejected method in the promise chain will be called.
               */
@@ -3438,8 +3454,8 @@ declare module plat {
             /**
               * Takes in two methods, called when/if the promise fulfills/rejects.
               * next then method in the promise chain.
-              * @param {(success: plat.async.IAjaxResponse<R>) => plat.async.IAjaxThenable<U>} onFulfilled A method called when/if the promise fulfills.
-              * If undefined the next onFulfilled method in the promise chain will be called.
+              * @param {(success: plat.async.IAjaxResponse<R>) => plat.async.IAjaxThenable<U>} onFulfilled A method called when/if
+              * the promise fulfills. If undefined the next onFulfilled method in the promise chain will be called.
               * @param {(error: plat.async.IAjaxError) => U} onRejected A method called when/if the promise rejects.
               * If undefined the next onRejected method in the promise chain will be called.
               */
@@ -3464,8 +3480,8 @@ declare module plat {
             then<U>(onFulfilled: (success: IAjaxResponse<R>) => U, onRejected?: (error: IAjaxError) => IThenable<U>): IAjaxThenable<U>;
             /**
               * A wrapper method for Promise.then(undefined, onRejected);
-              * @param {(error: any) => plat.async.IAjaxThenable<U>} onRejected A method called when/if the promise rejects. If undefined the next
-              * onRejected method in the promise chain will be called.
+              * @param {(error: any) => plat.async.IAjaxThenable<U>} onRejected A method called when/if the promise rejects.
+              * If undefined the next onRejected method in the promise chain will be called.
               */
             catch<U>(onRejected: (error: any) => IAjaxThenable<U>): IAjaxThenable<U>;
             /**
@@ -3533,7 +3549,8 @@ declare module plat {
             catch<U>(onRejected: (error: any) => U): IAjaxThenable<U>;
         }
         /**
-          * Describes a type of IPromise that fulfills with an IAjaxResponse and can be optionally cancelled.
+          * Describes a type of IPromise that fulfills with an IAjaxResponse
+          * and can be optionally cancelled.
           */
         interface IAjaxPromise<R> extends IAjaxThenable<IAjaxResponse<R>> {
             /**
@@ -3549,8 +3566,8 @@ declare module plat {
             /**
               * Takes in two methods, called when/if the promise fulfills/rejects.
               * next then method in the promise chain.
-              * @param {(success: plat.async.IAjaxResponse<R>) => plat.async.IAjaxThenable<U>} onFulfilled A method called when/if the promise fulfills.
-              * If undefined the next onFulfilled method in the promise chain will be called.
+              * @param {(success: plat.async.IAjaxResponse<R>) => plat.async.IAjaxThenable<U>} onFulfilled A method called when/if
+              * the promise fulfills. If undefined the next onFulfilled method in the promise chain will be called.
               * @param {(error: plat.async.IAjaxError) => plat.async.IAjaxThenable<U>} onRejected A method called when/if the promise rejects.
               * If undefined the next onRejected method in the promise chain will be called.
               */
@@ -3558,8 +3575,8 @@ declare module plat {
             /**
               * Takes in two methods, called when/if the promise fulfills/rejects.
               * next then method in the promise chain.
-              * @param {(success: plat.async.IAjaxResponse<R>) => plat.async.IAjaxThenable<U>} onFulfilled A method called when/if the promise fulfills.
-              * If undefined the next onFulfilled method in the promise chain will be called.
+              * @param {(success: plat.async.IAjaxResponse<R>) => plat.async.IAjaxThenable<U>} onFulfilled A method called when/if
+              * the promise fulfills. If undefined the next onFulfilled method in the promise chain will be called.
               * @param {(error: plat.async.IAjaxError) => U} onRejected A method called when/if the promise rejects.
               * If undefined the next onRejected method in the promise chain will be called.
               */
@@ -5645,15 +5662,22 @@ declare module plat {
         /**
           * Evaluates an expression string, using the control.parent.context.
           * @param {string} expression The expression string to evaluate.
-          * @param {any} aliases Optional alias values to parse with the expression
+          * @param {IObject<any>} aliases Optional alias values to parse with the expression
           */
-        evaluateExpression(expression: string, aliases?: any): any;
+        evaluateExpression(expression: string, aliases?: IObject<any>): any;
         /**
           * Evaluates an IParsedExpression using the control.parent.context.
           * @param {string} expression The expression string to evaluate.
-          * @param {any} aliases Optional alias values to parse with the expression
+          * @param {IObject<any>} aliases Optional alias values to parse with the expression
           */
-        evaluateExpression(expression: expressions.IParsedExpression, aliases?: any): any;
+        evaluateExpression(expression: expressions.IParsedExpression, aliases?: IObject<any>): any;
+        /**
+          * Finds the first instance of the specified property
+          * in the parent control chain. Returns undefined if not found.
+          * @param {string} property The property identifer
+          * property value and the control that it's on.
+          */
+        findProperty(property: string): IControlProperty;
         /**
           * Creates a new DispatchEvent and propagates it to controls based on the
           * provided direction mechanism. Controls in the propagation chain that registered
@@ -5909,15 +5933,22 @@ declare module plat {
         /**
           * Evaluates an expression string, using the control.parent.context.
           * @param {string} expression The expression string to evaluate.
-          * @param {any} aliases Optional alias values to parse with the expression
+          * @param {IObject<any>} aliases Optional alias values to parse with the expression
           */
-        evaluateExpression?(expression: string, aliases?: any): any;
+        evaluateExpression?(expression: string, aliases?: IObject<any>): any;
         /**
           * Evaluates an IParsedExpression using the control.parent.context.
           * @param {string} expression The expression string to evaluate.
-          * @param {any} aliases Optional alias values to parse with the expression
+          * @param {IObject<any>} aliases Optional alias values to parse with the expression
           */
-        evaluateExpression?(expression: expressions.IParsedExpression, aliases?: any): any;
+        evaluateExpression?(expression: expressions.IParsedExpression, aliases?: IObject<any>): any;
+        /**
+          * Finds the first instance of the specified property
+          * in the parent control chain. Returns undefined if not found.
+          * @param {string} property The property identifer
+          * property value and the control that it's on.
+          */
+        findProperty(property: string): IControlProperty;
         /**
           * Creates a new DispatchEvent and propagates it to controls based on the
           * provided direction mechanism. Controls in the propagation chain that registered
@@ -5980,6 +6011,19 @@ declare module plat {
           * all of the memory it is using, including DOM event and property listeners.
           */
         dispose?(): void;
+    }
+    /**
+      * An object that links a property to a control.
+      */
+    interface IControlProperty {
+        /**
+          * The value of the property.
+          */
+        value: any;
+        /**
+          * The control on which the property is found.
+          */
+        control: IControl;
     }
     /**
       * A type of control that can be used as an attribute but will
@@ -6075,25 +6119,28 @@ declare module plat {
               * Evaluates an expression string with a given control and optional control's context and aliases.
               * @param {string} expression The expression string (e.g. 'foo + foo').
               * @param {plat.ui.ITemplateControl} control? The control used for evaluation context.
-              * @param {any} aliases? An optional alias object containing resource alias values
+              * @param {IObject<any>} aliases? An optional alias object containing resource alias values (property keys should
+              * not include the '@' character).
               */
-            static evaluateExpression(expression: string, control?: ITemplateControl, aliases?: any): any;
+            static evaluateExpression(expression: string, control?: ITemplateControl, aliases?: IObject<any>): any;
             /**
               * Evaluates an expression string with a given control and optional control's context and aliases.
               * @param {plat.expressions.IParsedExpression} expression A parsed expression object created using the
               * plat.expressions.IParser injectable.
               * @param {plat.ui.ITemplateControl} control? The control used for evaluation context.
-              * @param {any} aliases? An optional alias object containing resource alias values
+              * @param {IObject<any>} aliases? An optional alias object containing resource alias values (property keys should
+              * not include the '@' character).
               */
-            static evaluateExpression(expression: expressions.IParsedExpression, control?: ITemplateControl, aliases?: any): any;
+            static evaluateExpression(expression: expressions.IParsedExpression, control?: ITemplateControl, aliases?: IObject<any>): any;
             /**
               * Given a control and Array of aliases, finds the associated resources and builds a context object containing
               * the values. Returns the object.
               * @param {plat.ui.ITemplateControl} control The control used as the starting point for finding resources.
               * @param {Array<string>} aliases An array of aliases to search for.
-              * @param {any} resources? An optional resources object to extend, if no resources object is passed in a new one will be created.
+              * @param {IObject<any>} resources? An optional resources object to extend, if no resources object is passed in a
+              * new one will be created.
               */
-            static getResources(control: ITemplateControl, aliases: string[], resources?: any): IObject<any>;
+            static getResources(control: ITemplateControl, aliases: string[], resources?: IObject<any>): IObject<any>;
             /**
               * Starts at a control and searches up its parent chain for a particular resource alias.
               * If the resource is found, it will be returned along with the control instance on which
@@ -6317,9 +6364,10 @@ declare module plat {
               * Finds the associated resources and builds a context object containing
               * the values.
               * @param {Array<string>} aliases An array of aliases to search for.
-              * @param {any} resources? An optional resources object to extend, if no resources object is passed in a new one will be created.
+              * @param {IObject<any>} resources? An optional resources object to extend,
+            if no resources object is passed in a new one will be created.
               */
-            getResources(aliases: string[], resources?: any): IObject<any>;
+            getResources(aliases: string[], resources?: IObject<any>): IObject<any>;
             /**
               * Starts at a control and searches up its parent chain for a particular resource alias.
               * If the resource is found, it will be returned along with the control instance on which
@@ -6358,25 +6406,26 @@ declare module plat {
               * Evaluates an expression string with a given control and optional control's context and aliases.
               * @param {string} expression The expression string (e.g. 'foo + foo').
               * @param {plat.ui.ITemplateControl} control? The control used for evaluation context.
-              * @param {any} aliases? An optional alias object containing resource alias values
+              * @param {IObject<any>} aliases? An optional alias object containing resource alias values
               */
-            evaluateExpression(expression: string, control?: ITemplateControl, aliases?: any): any;
+            evaluateExpression(expression: string, control?: ITemplateControl, aliases?: IObject<any>): any;
             /**
               * Evaluates an expression string with a given control and optional control's context and aliases.
               * @param {plat.expressions.IParsedExpression} expression A parsed expression object created using the
               * plat.expressions.IParser injectable.
               * @param {plat.ui.ITemplateControl} control? The control used for evaluation context.
-              * @param {any} aliases? An optional alias object containing resource alias values
+              * @param {IObject<any>} aliases? An optional alias object containing resource alias values
               */
-            evaluateExpression(expression: expressions.IParsedExpression, control?: ITemplateControl, aliases?: any): any;
+            evaluateExpression(expression: expressions.IParsedExpression, control?: ITemplateControl, aliases?: IObject<any>): any;
             /**
               * Given a control and Array of aliases, finds the associated resources and builds a context object containing
               * the values. Returns the object.
               * @param {plat.ui.ITemplateControl} control The control used as the starting point for finding resources.
               * @param {Array<string>} aliases An array of aliases to search for.
-              * @param {any} resources? An optional resources object to extend, if no resources object is passed in a new one will be created.
+              * @param {IObject<any>} resources? An optional resources object to extend,
+              * if no resources object is passed in a new one will be created.
               */
-            getResources(control: ITemplateControl, aliases: string[], resources?: any): IObject<any>;
+            getResources(control: ITemplateControl, aliases: string[], resources?: IObject<any>): IObject<any>;
             /**
               * Starts at a control and searches up its parent chain for a particular resource alias.
               * If the resource is found, it will be returned along with the control instance on which
@@ -6597,9 +6646,10 @@ declare module plat {
               * Finds the associated resources and builds a context object containing
               * the values.
               * @param {Array<string>} aliases An array of aliases to search for.
-              * @param {any} resources? An optional resources object to extend, if no resources object is passed in a new one will be created.
+              * @param {IObject<any>} resources? An optional resources object to extend,
+            if no resources object is passed in a new one will be created.
               */
-            getResources?(aliases: string[], resources?: any): IObject<any>;
+            getResources?(aliases: string[], resources?: IObject<any>): IObject<any>;
             /**
               * Starts at a control and searches up its parent chain for a particular resource alias.
               * If the resource is found, it will be returned along with the control instance on which
@@ -9511,6 +9561,10 @@ declare module plat {
                   */
                 className: string;
                 /**
+                  * An optional options object that can denote a pseudo element animation.
+                  */
+                options: ISimpleCssAnimationOptions;
+                /**
                   * Adds the class to start the animation.
                   */
                 initialize(): void;
@@ -9540,6 +9594,19 @@ declare module plat {
                   * The class name added to the animated element.
                   */
                 className: string;
+                /**
+                  * An optional options object that can denote a pseudo element animation.
+                  */
+                options: ISimpleCssAnimationOptions;
+            }
+            /**
+              * An interface describing the options for ISimpleCssAnimation.
+              */
+            interface ISimpleCssAnimationOptions {
+                /**
+                  * The pseudo element identifier (i.e. '::before' if defined as .red::before).
+                  */
+                pseudo?: string;
             }
             /**
               * An animation control that fades in an element as defined by the included CSS.
@@ -9587,10 +9654,10 @@ declare module plat {
                   */
                 $Window: Window;
                 /**
-                  * A JavaScript object with key value pairs for adjusting transition values.
-                  * (e.g. { width: '800px' } would set the element's width to 800px.
+                  * An optional options object that can denote a pseudo element animation and specify
+                  * properties to modify during the transition.
                   */
-                options: IObject<string>;
+                options: ISimpleCssTransitionOptions;
                 /**
                   * The class name added to the animated element.
                   */
@@ -9633,10 +9700,17 @@ declare module plat {
               */
             interface ISimpleCssTransition extends ISimpleCssAnimation {
                 /**
+                  * An optional options object that can denote a pseudo element animation and specify
+                  * properties to modify during the transition.
+                  */
+                options: ISimpleCssTransitionOptions;
+            }
+            interface ISimpleCssTransitionOptions extends ISimpleCssAnimationOptions {
+                /**
                   * A JavaScript object with key value pairs for adjusting transition values.
                   * (e.g. { width: '800px' } would set the element's width to 800px.
                   */
-                options: IObject<string>;
+                properties: IObject<string>;
             }
         }
         /**
@@ -11533,23 +11607,39 @@ declare module plat {
         }
     }
     module routing {
+        /**
+          * Stores information about a segment, publishes a regex for matching the segment as well as
+          * methods for generating the segment and iterating over the characters in the segment.
+          */
         class BaseSegment {
+            /**
+              * Reference to the IRegex injectable.
+              */
+            static $Regex: expressions.IRegex;
+            /**
+              * Parses a route into segments, populating an array of names (for dynamic and splat segments) as well as
+              * an ISegmentTypeCount object.
+              * @param {string} route The route to parse.
+              * @param {Array<string>} names An array to populate with dynamic/splat segment names
+              * @param {plat.routing.ISegmentTypeCount} types An object to use for counting segment types in the route.
+              */
             static parse(route: string, names: string[], types: ISegmentTypeCount): BaseSegment[];
             private static __findSegment(name, token, cache);
             type: string;
             name: string;
             regex: string;
-            protected _specification: IRouteSegmentSpecification;
+            protected _specification: ICharacterSpecification;
             initialize(name?: string): void;
-            forEachCharacter(callback: (spec: IRouteSegmentSpecification) => void): void;
+            reduceCharacters<T>(callback: (previousValue: T, spec: ICharacterSpecification) => T, initialValue?: T): T;
             generate(parameters?: IObject<string>): string;
         }
-        function IBaseSegmentFactory(): typeof BaseSegment;
+        function IBaseSegmentFactory($Regex: expressions.IRegex): typeof BaseSegment;
+        function IBaseSegmentInstance(): BaseSegment;
         class StaticSegment extends BaseSegment {
             type: string;
             regex: string;
             initialize(name?: string): void;
-            forEachCharacter(callback: (spec: IRouteSegmentSpecification) => void): void;
+            reduceCharacters<T>(callback: (previousValue: T, spec: ICharacterSpecification) => T, initialValue?: T): T;
         }
         function IStaticSegmentInstance(): StaticSegment;
         class VariableSegment extends BaseSegment {
@@ -11560,16 +11650,19 @@ declare module plat {
         class SplatSegment extends VariableSegment {
             type: string;
             regex: string;
-            protected _specification: IRouteSegmentSpecification;
+            protected _specification: ICharacterSpecification;
         }
         function ISplatSegmentInstance(): SplatSegment;
         class DynamicSegment extends VariableSegment {
             type: string;
             regex: string;
-            protected _specification: IRouteSegmentSpecification;
+            protected _specification: ICharacterSpecification;
         }
+        /**
+          * The Type for referencing the '$DynamicSegmentInstance' injectable as a dependency.
+          */
         function IDynamicSegmentInstance(): DynamicSegment;
-        interface IRouteSegmentSpecification {
+        interface ICharacterSpecification {
             invalidCharacters?: string;
             validCharacters?: string;
             repeat?: boolean;
@@ -11601,22 +11694,108 @@ declare module plat {
           * segment or invalidate the segment.
           */
         class State {
-            static addSegment(state: State, segment: BaseSegment): State;
-            static getResult(state: State, path: string): IRecognizeResult;
-            static recognize(states: State[], char: string): State[];
+            /**
+              * Compiles a segment into a state tree.
+              * @param {plat.routing.BaseSegment} segment The segment to compile.
+              * @param {plat.routing.State} state The initial state with which to start compilation.
+              */
+            static compile(segment: BaseSegment, state: State): State;
+            /**
+              * Links a path to a compiled state, and returns the result.
+              * @param {plat.routing.State} state The state with which to link the result.
+              * @param {string} path The path to link to the given state.
+              */
+            static link(state: State, path: string): IRecognizeResult;
+            /**
+              * Finds all the next states for a given character.
+              * @param {string} char The character used to match next states.
+              * @param {Array<plat.routing.State>} states The states with which to match the character.
+              */
+            static recognize(char: string, states: State[]): State[];
+            /**
+              * Sorts states by statics/dynamics/splats.
+              * Favors less splat (*) segments
+              * Favors less dynamic (:) segments
+              * Favors more static segments
+              * @param {Array<plat.routing.State>} states The states to sort.
+              */
             static sort(states: State[]): State[];
+            /**
+              * The possible next states for the current state.
+              */
             nextStates: State[];
-            specification: IRouteSegmentSpecification;
+            /**
+              * The specification for the
+              * assigned route segment for this state.
+              */
+            specification: ICharacterSpecification;
+            /**
+              * The associated delegate objects for this
+              * state, with their parameter names.
+              */
             delegates: IDelegateNames[];
+            /**
+              * A regular expression to match this state to a path.
+              */
             regex: RegExp;
+            /**
+              * The totals for the different segment types
+              * for this state.
+              */
             types: ISegmentTypeCount;
+            /**
+              * The constructor for a State.
+              */
             constructor();
-            initialize(spec?: IRouteSegmentSpecification): void;
-            add(spec: IRouteSegmentSpecification): State;
-            protected _match(char: string): State[];
-            protected _find(spec: IRouteSegmentSpecification): State;
+            /**
+              * Initializes the state with the given specification.
+              * @param {plat.routing.ICharacterSpecification} specification? The character specification for the state.
+              */
+            initialize(specification?: ICharacterSpecification): void;
+            /**
+              * Adds a new specification to the next states. If the specification
+              * already exists as a next state a new one won't be used.
+              * @param {plat.routing.ICharacterSpecification} specification? The character specification used to create
+              * the next state if necessary.
+              */
+            add(specification: ICharacterSpecification): State;
+            /**
+              * Finds next states that match the input character. If the character exists
+              * in the state's specification for valid characters, or if it does not
+              * exist in the specification for invalid characters, then the state is considered
+              * a match.
+              * @param {string} char The character with which to match next states.
+              */
+            match(char: string): State[];
+            /**
+              * Finds the next state that shares the same specification
+              * as the input spec.
+              * @param {plat.routing.ICharacterSpecification} spec The character specification used to find
+              * the next state.
+              */
+            protected _find(spec: ICharacterSpecification): State;
+            /**
+              * Iterates through the next states and calls the input callback with each state. Acts like
+              * Utils.some. If the callback returns true, it will break out of the loop.
+              * @param {(child: plat.routing.State) => boolean} callback The function with which to call for each
+              * State. Can return true to break out of the loop
+              */
+            protected _someChildren(callback: (child: State) => boolean): boolean;
+            /**
+              * Iterates through the next states and calls the input callback with each state.
+              * @param {(child: plat.routing.State) => void} callback The function with which to call for each
+              * State.
+              */
             protected _someChildren(callback: (child: State) => void): void;
         }
+        /**
+          * The Type for referencing the '$StateStatic' injectable as a dependency.
+          */
+        function IStateStatic(): typeof State;
+        /**
+          * The Type for referencing the '$StateInstance' injectable as a dependency.
+          */
+        function IStateInstance(): State;
         /**
           * Contains a delegate and its associated segment names. Used for populating
           * the parameters in an IDelegateInfo object.
@@ -11633,9 +11812,19 @@ declare module plat {
         }
         class RouteRecognizer {
             $BaseSegmentFactory: typeof BaseSegment;
+            $StateStatic: typeof State;
             rootState: State;
             register(routes: IRegisteredRouteOptions[]): void;
             recognize(path: string): IRecognizeResult;
+            protected _finalize(state: State, regex: string[]): State;
+            protected _parse(route: IRegisteredRouteOptions, delegates: IDelegateNames[], types: ISegmentTypeCount): BaseSegment[];
+            protected _compile(segments: BaseSegment[], state: State, regex: string[]): State;
+            protected _normalizePath(path: string): string;
+            protected _hasTrailingSlash(path: string): boolean;
+            protected _states(path: string): State[];
+            protected _filter(states: State[]): State[];
+            protected _findResult(state: State, path: string, isTrailingSlashDropped: boolean): IRecognizeResult;
+            protected _isDynamic(state: State): boolean;
         }
         function IRouteRecognizerInstance(): RouteRecognizer;
         /**
@@ -12339,6 +12528,10 @@ declare module plat {
               */
             protected _expression: string[];
             /**
+              * The found function up the control's parent chain denoted by the attribute value.
+              */
+            protected _fn: IControlProperty;
+            /**
               * An array of the aliases used in the expression.
               */
             protected _aliases: string[];
@@ -12350,15 +12543,6 @@ declare module plat {
               * Sets the event listener.
               */
             protected _setListener(): void;
-            /**
-              * Finds the first instance of the specified function
-              * in the parent control chain.
-              * @param {string} identifier the function identifer
-              */
-            protected _findListener(identifier: string): {
-                control: ui.ITemplateControl;
-                value: any;
-            };
             /**
               * Constructs the function to evaluate with
               * the evaluated arguments taking resources
@@ -13478,9 +13662,10 @@ declare module plat {
         /**
           * A static method called upon app registration. Primarily used
           * to initiate a ready state in the case that amd is being used.
-          * @param {any} app The app instance.
+          * @param {plat.dependency.IInjector<plat.IApp>} appInjector The injector for
+          * injecting the app instance.
           */
-        static registerApp(app: any): void;
+        static registerApp(appInjector: dependency.IInjector<IApp>): void;
         /**
           * Kicks off compilation of the DOM from the specified node. If no node is specified,
           * the default start node is document.body.
@@ -13491,6 +13676,10 @@ declare module plat {
           * The instance of the registered IApp.
           */
         static app: IApp;
+        /**
+          * The injector for injecting the instance of the currently registered IApp.
+          */
+        private static __injector;
         /**
           * A static method called when the application is ready. It calls the app instance's
           * ready function as well as checks for the presence of a module loader. If one exists,
@@ -13632,8 +13821,10 @@ declare module plat {
         /**
           * A static methods called upon app registration. Primarily used
           * to initiate a ready state in the case that amd is being used.
+          * @param {plat.dependency.IInjector<plat.IApp>} appInjector The injector for
+          * injecting the app instance.
           */
-        registerApp(app: dependency.IInjector<IApp>): void;
+        registerApp(appInjector: dependency.IInjector<IApp>): void;
         /**
           * Kicks off compilation of the DOM from the specified node. If no node is specified,
           * the default start node is document.body.

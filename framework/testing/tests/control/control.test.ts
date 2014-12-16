@@ -92,7 +92,7 @@
 
             expect(two).toBe(2);
 
-            var four = control.evaluateExpression('2 + @two', { '@two': two });
+            var four = control.evaluateExpression('2 + @two', { two: two });
 
             expect(four).toBe(4);
 
@@ -103,7 +103,7 @@
                 }
             };
 
-            var six = control.evaluateExpression('2 + @two + two', { '@two': two });
+            var six = control.evaluateExpression('2 + @two + two', { two: two });
 
             expect(six).toBe(6);
 
@@ -113,7 +113,7 @@
                 }
             };
 
-            var eight = control.evaluateExpression('@two + two + @four', { '@two': two });
+            var eight = control.evaluateExpression('@two + two + @four', { two: two });
 
             expect(eight).toBe(8);
         });
@@ -121,7 +121,7 @@
         it('should test on and dispatchEvent', () => {
             var val: number;
 
-            control.on('foo', (ev, value: number) => {
+            control.on('foo', (ev, value) => {
                 val = value;
             });
 

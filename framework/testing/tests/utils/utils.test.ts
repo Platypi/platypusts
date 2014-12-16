@@ -11,7 +11,7 @@ module tests.utils {
     var utils = plat.acquire(plat.IUtils),
         Promise = plat.acquire(plat.async.IPromise);
 
-    function isTrue(obj) {
+    function isTrue(obj: any) {
         return obj === true;
     }
 
@@ -289,37 +289,37 @@ module tests.utils {
         {
             name: 'some with null',
             fn: 'some',
-            args: [null, isTrue],
+            args: [isTrue, null],
             expected: false
         },
         {
             name: 'some with an array and return true',
             fn: 'some',
-            args: [[true, false, true], isTrue],
+            args: [isTrue, [true, false, true]],
             expected: true
         },
         {
             name: 'some with an array and return false',
             fn: 'some',
-            args: [[false, false, false], isTrue],
+            args: [isTrue, [false, false, false]],
             expected: false
         },
         {
             name: 'some with an object and return true',
             fn: 'some',
-            args: [{ foo: true, bar: false, baz: true }, isTrue],
+            args: [isTrue, { foo: true, bar: false, baz: true }],
             expected: true
         },
         {
             name: 'some with an object and return false',
             fn: 'some',
-            args: [{ foo: false, bar: false, baz: false }, isTrue],
+            args: [isTrue, { foo: false, bar: false, baz: false }],
             expected: false
         },
         {
             name: 'some with a string and return true',
             fn: 'some',
-            args: ['foo', () => true],
+            args: [() => true, 'foo'],
             expected: true
         },
         {
@@ -379,67 +379,67 @@ module tests.utils {
             {
                 name: 'filter with null',
                 fn: 'filter',
-                args: [null, isTrue],
+                args: [isTrue, null],
                 expected: []
             },
             {
                 name: 'filter with a number',
                 fn: 'filter',
-                args: [3, isTrue],
+                args: [isTrue, 3],
                 expected: []
             },
             {
                 name: 'filter with an rray',
                 fn: 'filter',
-                args: [[true, false, true], isTrue],
+                args: [isTrue, [true, false, true]],
                 expected: [true, true]
             },
             {
                 name: 'filter with an object',
                 fn: 'filter',
-                args: [{ foo: true, bar: false, baz: true }, isTrue],
+                args: [isTrue, { foo: true, bar: false, baz: true }],
                 expected: [true, true]
             },
             {
                 name: 'where with an array',
                 fn: 'where',
-                args: [[{ foo: 'foo', bar: 'bar' }, { foo: 'bar', bar: 'foo' }], { foo: 'foo' }],
+                args: [{ foo: 'foo' }, [{ foo: 'foo', bar: 'bar' }, { foo: 'bar', bar: 'foo' }]],
                 expected: [{ foo: 'foo', bar: 'bar' }]
             },
             {
                 name: 'where with an object',
                 fn: 'where',
-                args: [{ foo: { foo: 'foo', bar: 'bar' }, bar: { foo: 'bar', bar: 'foo' } }, { foo: 'foo' }],
+                args: [{ foo: 'foo' }, { foo: { foo: 'foo', bar: 'bar' }, bar: { foo: 'bar', bar: 'foo' } }],
                 expected: [{ foo: 'foo', bar: 'bar' }]
             },
             {
                 name: 'map with null',
                 fn: 'map',
-                args: [null, isTrue],
+                args: [isTrue, null],
                 expected: []
             },
             {
                 name: 'map with an object',
                 fn: 'map',
-                args: [{ foo: true, bar: false, baz: true }, isTrue],
+                args: [isTrue, { foo: true, bar: false, baz: true }],
                 expected: [true, false, true]
             },
             {
                 name: 'map with an array',
                 fn: 'map',
-                args: [[true, false, true], isTrue],
+                args: [isTrue, [true, false, true]],
                 expected: [true, false, true]
             },
             {
                 name: 'pluck with an array',
                 fn: 'pluck',
-                args: [[{ foo: 'bar', bar: 'foo' }, { foo: 'foo', bar: 'bar' }], 'foo'],
+                args: ['foo', [{ foo: 'bar', bar: 'foo' }, { foo: 'foo', bar: 'bar' }]],
                 expected: ['bar', 'foo']
             },
             {
                 name: 'pluck with an object',
                 fn: 'pluck',
-                args: [{ foo: { foo: 'bar', bar: 'foo' }, bar: { foo: 'foo', bar: 'bar' } }, 'foo'],
+                args: ['foo', { foo: { foo: 'bar', bar: 'foo' }, bar: { foo: 'foo', bar: 'bar' } }],
                 expected: ['bar', 'foo']
             }
         ];
@@ -447,14 +447,14 @@ module tests.utils {
     describe('Utils Tests', () => {
         toBeTests.forEach((test) => {
             it('should test ' + test.name, () => {
-                var result = utils[test.fn].apply(utils, test.args);
+                var result = (<any>utils)[test.fn].apply(utils, test.args);
                 expect(result).toBe(test.expected);
             });
         });
 
         toEqualTests.forEach((test) => {
             it('should test ' + test.name, () => {
-                var result = utils[test.fn].apply(utils, test.args);
+                var result = (<any>utils)[test.fn].apply(utils, test.args);
                 expect(result).toEqual(test.expected);
             });
         });
@@ -495,7 +495,7 @@ module tests.utils {
         });
 
         it('should test clone with null', () => {
-            var foo = null,
+            var foo: void = null,
                 baz = utils.clone(foo);
 
             expect(baz).toEqual(foo);
@@ -596,7 +596,7 @@ module tests.utils {
         it('should test forEach with an array', () => {
             var spy = spyOn(utils, 'noop');
 
-            utils.forEach([true, true, true], utils.noop);
+            utils.forEach(utils.noop, [true, true, true]);
 
             expect(spy.calls.count()).toBe(3);
         });
@@ -604,7 +604,7 @@ module tests.utils {
         it('should test forEach with an object', () => {
             var spy = spyOn(utils, 'noop');
 
-            utils.forEach({ foo: true, bar: true, baz: true }, utils.noop);
+            utils.forEach(utils.noop, { foo: true, bar: true, baz: true });
 
             expect(spy.calls.count()).toBe(3);
         });
@@ -612,7 +612,7 @@ module tests.utils {
         it('should test forEach with null', () => {
             var spy = spyOn(utils, 'noop');
 
-            utils.forEach(null, utils.noop);
+            utils.forEach(utils.noop, null);
 
             expect(spy).not.toHaveBeenCalled();
         });
@@ -620,7 +620,7 @@ module tests.utils {
         it('should test forEach with a string', () => {
             var spy = spyOn(utils, 'noop');
 
-            utils.forEach(<any>'foo', utils.noop);
+            utils.forEach(utils.noop, <any>'foo');
 
             expect(spy.calls.count()).toBe(3);
             expect(spy.calls.mostRecent().args).toEqual(['o', 2, 'foo']);
@@ -629,7 +629,7 @@ module tests.utils {
         it('should test some with a string and return false', () => {
             var spy = spyOn(utils, 'noop');
 
-            expect(utils.some(<any>'foo', <any>utils.noop)).toBe(false);
+            expect(utils.some(<any>utils.noop, <any>'foo')).toBe(false);
 
             expect(spy.calls.count()).toBe(3);
             expect(spy.calls.mostRecent().args).toEqual(['o', 2, 'foo']);
@@ -681,15 +681,15 @@ module tests.utils {
             var array = [1, 2, 3, 4, 5],
                 temp: number;
 
-            utils.mapAsync(array, (value: number, key, obj) => {
+            utils.mapAsync((value, key, obj) => {
                 temp = value;
-                return new Promise((resolve) => {
+                return new Promise<number>((resolve) => {
                     setTimeout(() => {
                         expect(temp).toEqual(array[array.length - 1]);
                         resolve(value + 1);
                     }, value);
                 });
-            })
+            }, array)
                 .then((results) => {
                     expect(results).toEqual([2, 3, 4, 5, 6]);
                     done();
@@ -705,7 +705,7 @@ module tests.utils {
                 e: 5
             }, temp: number, keys = Object.keys(obj);
 
-            utils.mapAsync(obj, function (value, key, obj) {
+            utils.mapAsync(function (value, key, obj) {
                 temp = value;
                 expect(this).toEqual(2);
                 return new Promise((resolve) => {
@@ -714,7 +714,7 @@ module tests.utils {
                         resolve(value + 1);
                     }, value);
                 });
-            }, 2)
+            }, obj, 2)
                 .then((results) => {
                     expect(results).toEqual([2, 3, 4, 5, 6]);
                     done();
@@ -725,7 +725,7 @@ module tests.utils {
             var array = [1, 2, 3, 4, 5],
                 temp: number;
 
-            utils.mapAsyncInOrder(array, function (value: number, key, obj) {
+            utils.mapAsyncInOrder(function (value, key, obj) {
                 temp = value;
                 expect(this).toEqual(2);
                 return new Promise((resolve) => {
@@ -734,7 +734,7 @@ module tests.utils {
                         resolve(value + 1);
                     }, value);
                 });
-            }, 2)
+            }, array, 2)
                 .then((results) => {
                     expect(results).toEqual([2, 3, 4, 5, 6]);
                     done();
@@ -745,7 +745,7 @@ module tests.utils {
             var array = [1, 2, 3, 4, 5],
                 temp: number;
 
-            utils.mapAsyncInDescendingOrder(array, function (value: number, key, obj) {
+            utils.mapAsyncInDescendingOrder(function (value, key, obj) {
                 temp = value;
                 expect(this).toEqual(2);
                 return new Promise((resolve) => {
@@ -754,7 +754,7 @@ module tests.utils {
                         resolve(value + 1);
                     }, value);
                 });
-            }, 2)
+            }, array, 2)
                 .then((results) => {
                     expect(results).toEqual([6, 5, 4, 3, 2]);
                     done();

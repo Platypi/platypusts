@@ -26,7 +26,7 @@
             control.initialize();
 
             expect(control.templateControl.name).toBeUndefined();
-            expect(parent['test']).toBeUndefined();
+            expect((<any>parent)['test']).toBeUndefined();
         });
 
         it('should test initialize with null templateControl', () => {
@@ -36,7 +36,7 @@
             control.initialize();
 
             expect(control.templateControl).toBeNull();
-            expect(parent['test']).toBeTruthy();
+            expect((<any>parent)['test']).toBeTruthy();
         });
 
         it('should test initialize with null rootControl', () => {
@@ -45,7 +45,7 @@
             control.initialize();
 
             expect(control.templateControl.name).toBe('test');
-            expect(parent['test']).toBeUndefined();
+            expect((<any>parent)['test']).toBeUndefined();
         });
 
         it('should test initialize', () => {
@@ -54,7 +54,7 @@
             control.initialize();
 
             expect(control.templateControl.name).toBe('test');
-            expect(parent['test']).toBeTruthy();
+            expect((<any>parent)['test']).toBeTruthy();
         });
     });
 }

@@ -4,15 +4,51 @@
         '(', ')', '[', ']', '{', '}', '\\'
     ],
         escapeRegex = new RegExp('(\\' + specialCharacters.join('|\\') + ')', 'g'),
-        dynamicSegmentRegexp = /^:([^\/]+)$/,
-        splatSegmentRegexp = /^\*([^\/]+)$/,
         baseSegment: BaseSegment,
         dynamicSegments: IObject<DynamicSegment> = {},
         splatSegments: IObject<SplatSegment> = {},
         staticSegments: IObject<StaticSegment> = {};
 
+    /**
+     * @name BaseSegment
+     * @memberof plat.routing
+     * @kind class
+     * 
+     * @description
+     * Stores information about a segment, publishes a regex for matching the segment as well as 
+     * methods for generating the segment and iterating over the characters in the segment.
+     */
     export class BaseSegment {
-        static parse(route: string, names: Array<string>, types: ISegmentTypeCount) {
+        /**
+         * @name $Regex
+         * @memberof plat.routing.BaseSegment
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.expressions.IRegex}
+         * 
+         * @description
+         * Reference to the {@link plat.expressions.IRegex|IRegex} injectable.
+         */
+        static $Regex: expressions.IRegex;
+
+        /**
+         * @name parse
+         * @memberof plat.routing.BaseSegment
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Parses a route into segments, populating an array of names (for dynamic and splat segments) as well as 
+         * an {@link plat.routing.ISegmentTypeCount|ISegmentTypeCount} object.
+         * 
+         * @param {string} route The route to parse.
+         * @param {Array<string>} names An array to populate with dynamic/splat segment names
+         * @param {plat.routing.ISegmentTypeCount} types An object to use for counting segment types in the route.
+         * 
+         * @returns {Array<plat.routing.BaseSegment>} The prsed segments.
+         */
+        static parse(route: string, names: Array<string>, types: ISegmentTypeCount): Array<BaseSegment> {
             if (!isString(route) || !isArray(names) || !isObject(types)) {
                 return [];
             } else if (route[0] === '/') {
@@ -26,7 +62,8 @@
                 result: BaseSegment,
                 segment: string,
                 name: string,
-                match: RegExpMatchArray;
+                match: RegExpMatchArray,
+                $Regex = BaseSegment.$Regex;
 
             for (var i = 0; i < length; ++i) {
                 segment = segments[i];
@@ -37,13 +74,13 @@
                     }
 
                     results.push(baseSegment);
-                } else if (match = segment.match(dynamicSegmentRegexp)) {
+                } else if (match = segment.match($Regex.dynamicSegmentsRegex)) {
                     name = match[1];
 
                     results.push(__findSegment(name, __DynamicSegmentInstance, dynamicSegments));
                     names.push(name);
                     types.dynamics++;
-                } else if (match = segment.match(splatSegmentRegexp)) {
+                } else if (match = segment.match($Regex.splatSegmentRegex)) {
                     name = match[1];
 
                     results.push(__findSegment(name, __SplatSegmentInstance, splatSegments));
@@ -73,16 +110,18 @@
         name: string = '';
         regex: string = '';
 
-        protected _specification: IRouteSegmentSpecification;
+        protected _specification: ICharacterSpecification;
 
         initialize(name?: string) {
             this.name = name;
         }
 
-        forEachCharacter(callback: (spec: IRouteSegmentSpecification) => void) {
+        reduceCharacters<T>(callback: (previousValue: T, spec: ICharacterSpecification) => T, initialValue?: T): T {
             if (isObject(this._specification)) {
-                callback(this._specification);
+                initialValue = callback(initialValue, this._specification);
             }
+
+            return initialValue;
         }
 
         generate(parameters?: IObject<string>) {
@@ -90,11 +129,12 @@
         }
     }
 
-    export function IBaseSegmentFactory(): typeof BaseSegment {
+    export function IBaseSegmentFactory($Regex: expressions.IRegex): typeof BaseSegment {
+        BaseSegment.$Regex = $Regex;
         return BaseSegment;
     }
 
-    plat.register.injectable(__BaseSegmentFactory, IBaseSegmentFactory, null, __FACTORY);
+    plat.register.injectable(__BaseSegmentFactory, IBaseSegmentFactory, [__Regex], __FACTORY);
 
     export function IBaseSegmentInstance(): BaseSegment {
         return new BaseSegment();
@@ -112,13 +152,16 @@
             this.regex = this.name.replace(escapeRegex, '\\$1');
         }
 
-        forEachCharacter(callback: (spec: IRouteSegmentSpecification) => void) {
+        reduceCharacters<T>(callback: (previousValue: T, spec: ICharacterSpecification) => T, initialValue?: T): T {
             var name: string = this.name,
-                length = name.length;
+                length = name.length,
+                value = initialValue;
 
             for (var i = 0; i < length; ++i) {
-                callback({ validCharacters: name[i] });
+                value = callback(value, { validCharacters: name[i] });
             }
+
+            return value;
         }
     }
 
@@ -146,7 +189,7 @@
     export class SplatSegment extends VariableSegment {
         type: string = __SPLAT_SEGMENT_TYPE;
         regex: string = '(.+)';
-        protected _specification: IRouteSegmentSpecification = {
+        protected _specification: ICharacterSpecification = {
             invalidCharacters: '',
             repeat: true
         };
@@ -161,19 +204,22 @@
     export class DynamicSegment extends VariableSegment {
         type: string = __DYNAMIC_SEGMENT_TYPE;
         regex: string = '([^/]+)';
-        protected _specification: IRouteSegmentSpecification = {
+        protected _specification: ICharacterSpecification = {
             invalidCharacters: '/',
             repeat: true
         };
     }
 
+    /**
+     * The Type for referencing the '$DynamicSegmentInstance' injectable as a dependency.
+     */
     export function IDynamicSegmentInstance(): DynamicSegment {
         return new DynamicSegment();
     }
 
     plat.register.injectable(__DynamicSegmentInstance, IDynamicSegmentInstance, null, __INSTANCE);
 
-    export interface IRouteSegmentSpecification {
+    export interface ICharacterSpecification {
         invalidCharacters?: string;
         validCharacters?: string;
         repeat?: boolean;

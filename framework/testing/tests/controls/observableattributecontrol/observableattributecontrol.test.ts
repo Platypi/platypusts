@@ -39,7 +39,7 @@
 
         it('should test initialize', () => {
             control.initialize();
-            expect(control.templateControl['options'].value).toBe('test');
+            expect((<any>control.templateControl)['options'].value).toBe('test');
         });
 
         it('should test loaded with null templateControl', () => {
@@ -74,7 +74,7 @@
             control.initialize();
             control.loaded();
 
-            control.templateControl['options'].observe((newValue: any, oldValue: any) => {
+            (<any>control.templateControl)['options'].observe((newValue: any, oldValue: any) => {
                 expect(newValue).toBe('foo');
                 expect(oldValue).toBe('test');
                 called++;
@@ -98,7 +98,7 @@
             control.initialize();
             control.loaded();
 
-            control.templateControl['options'].observe((newValue: any, oldValue: any) => {
+            (<any>control.templateControl)['options'].observe((newValue: any, oldValue: any) => {
                 expect(newValue).toBe('foo');
                 expect(oldValue).toBe('test');
                 called++;

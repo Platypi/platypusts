@@ -249,7 +249,7 @@ module tests.acquire {
         });
 
         it('should test acquiring all dependencies at once', () => {
-            var deps = plat.acquire(utils.pluck(dependencies, 'name'));
+            var deps = plat.acquire(utils.pluck('name', dependencies));
 
             deps.forEach((dep, index) => {
                 dependencies[index].compare(dep);

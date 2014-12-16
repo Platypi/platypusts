@@ -9,7 +9,7 @@ module tests.appStatic {
     describe('AppStatic Tests', () => {
         beforeEach(() => {
             plat.register.app('app', App);
-            app = (<any>plat.acquire(plat.IApp)).inject();
+            app = plat.acquire(plat.IApp);
         });
 
         it('should test App start and fail', () => {
@@ -51,29 +51,6 @@ module tests.appStatic {
 
             expect(error).toBe(false);
             expect(spy).toHaveBeenCalled();
-        });
-
-        it('should test registerApp', () => {
-            var $EventManagerStatic: plat.events.IEventManagerStatic = plat.acquire(plat.events.IEventManagerStatic),
-                evSpy = spyOn($EventManagerStatic, 'dispose'),
-                appSpy = spyOn(app, 'ready');
-
-            $AppStatic.app = undefined;
-
-            $AppStatic.registerApp(new plat.dependency.Injector('app', App));
-
-            expect(evSpy).not.toHaveBeenCalled();
-
-            app = $AppStatic.app = (<any>plat.acquire(plat.IApp)).inject();
-
-            $AppStatic.registerApp(new plat.dependency.Injector('app', App));
-
-            expect(evSpy).toHaveBeenCalledWith(app.uid);
-
-            app = (<any>plat.acquire(plat.IApp)).inject();
-
-            expect($AppStatic.app).toEqual(new plat.dependency.Injector('app', App));
-            expect(appSpy).not.toHaveBeenCalled();
         });
 
         document.addEventListener('load', () => {

@@ -3,10 +3,10 @@ module tests.expressions.parser {
     var parser = plat.acquire(plat.expressions.IParser),
         context = {
             title: 'Parser',
-            fooFn: function (arg0, arg1) {
+            fooFn: function (arg0: any, arg1: any) {
                 return arg0 + arg1;
             },
-            wild: function (array0, array1) {
+            wild: function (array0: any, array1: any) {
                 return array0.concat(array1);
             },
             five: 'high ',
@@ -42,7 +42,7 @@ module tests.expressions.parser {
             condition: true,
             test: 'hello',
             arrayTest: ['cool', 'beans', 'test'],
-            mathFn: function (input1, input2) {
+            mathFn: function (input1: any, input2: any) {
                 return input1 + input2;
             },
             thisThat: function () {
@@ -62,14 +62,14 @@ module tests.expressions.parser {
             },
             embed: function () {
 
-                function createFn(num) {
+                function createFn(num: number) {
                     return function () {
                         return 'The number ' + num;
                     };
                 }
 
                 return function (num: number) {
-                    var array = [];
+                    var array: Array<any> = [];
                     while (num--) {
                         array.push(createFn(num));
                     }
@@ -81,7 +81,7 @@ module tests.expressions.parser {
             isTrue: function (obj: any) {
                 return obj === true;
             },
-            context: null
+            context: <any>null
         };
 
     context.context = context;
@@ -563,22 +563,22 @@ module tests.expressions.parser {
 
                 var parsed = parser.parse(test.expression),
                     evaluate = parsed.evaluate(context, {
-                        '@five': 'high ',
-                        '@context': context,
-                        '@fn': function (a, b) {
+                        five: 'high ',
+                        context: context,
+                        fn: function (a: number, b: number) {
                             return a + b;
                         },
-                        '@control': {
-                            fn: function (a) {
+                        control: {
+                            fn: function (a: string) {
                                 return 'hi ' + a;
                             }
                         },
-                        '@index': 1
+                        index: 1
                     });
 
                 expect(parsed.expression).toEqual(test.expression);
                 expect(parsed.identifiers).toEqual(test.identifiers);
-                expect(evaluate)[test.fn](test.returns);
+                (<any>expect(evaluate))[test.fn](test.returns);
 
                 if (!!spy) {
                     expect(spy.calls.any()).toBe(test.wasCalled);

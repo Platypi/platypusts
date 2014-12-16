@@ -73,7 +73,7 @@
 
         protected _compile(segments: Array<BaseSegment>, state: State, regex: Array<string>) {
             var length = segments.length,
-                addSegment = this.$StateStatic.addSegment,
+                compile = this.$StateStatic.compile,
                 segment: BaseSegment;
 
             for (var i = 0; i < length; ++i) {
@@ -84,7 +84,7 @@
                 }
 
                 state = state.add({ validCharacters: '/' });
-                state = addSegment(state, segment);
+                state = compile(segment, state);
                 regex.push('/' + segment.regex);
             }
 
@@ -115,7 +115,7 @@
                 length = path.length;
 
             for (var i = 0; i < length; ++i) {
-                states = recognize(states, path[i]);
+                states = recognize(path[i], states);
 
                 if (states.length === 0) {
                     break;
@@ -146,7 +146,7 @@
                     path = path + '/';
                 }
 
-                return this.$StateStatic.getResult(state, path);
+                return this.$StateStatic.link(state, path);
             }
         }
 

@@ -174,6 +174,32 @@
         validateTelephone = /^\+?[0-9\.\-\s]*$/;
 
         /**
+         * @name splatSegmentRegex
+         * @memberof plat.expressions.Regex
+         * @kind property
+         * @access public
+         * 
+         * @type {RegExp}
+         * 
+         * @description
+         * A regular expression for matching dynamic segments in a route.
+         */
+        dynamicSegmentsRegex = /^:([^\/]+)$/;
+
+        /**
+         * @name splatSegmentRegex
+         * @memberof plat.expressions.Regex
+         * @kind property
+         * @access public
+         * 
+         * @type {RegExp}
+         * 
+         * @description
+         * A regular expression for matching splat segments in a route.
+         */
+        splatSegmentRegex = /^\*([^\/]+)$/;
+
+        /**
          * @name newLineRegex
          * @memberof plat.expressions.Regex
          * @kind property
@@ -685,5 +711,31 @@
          * Determines if a telephone number is valid.
          */
         validateTelephone: RegExp;
+
+        /**
+         * @name splatSegmentRegex
+         * @memberof plat.expressions.Regex
+         * @kind property
+         * @access public
+         * 
+         * @type {RegExp}
+         * 
+         * @description
+         * A regular expression for matching dynamic segments in a route.
+         */
+        dynamicSegmentsRegex: RegExp;
+
+        /**
+         * @name splatSegmentRegex
+         * @memberof plat.expressions.Regex
+         * @kind property
+         * @access public
+         * 
+         * @type {RegExp}
+         * 
+         * @description
+         * A regular expression for matching splat segments in a route.
+         */
+        splatSegmentRegex: RegExp;
     }
 }

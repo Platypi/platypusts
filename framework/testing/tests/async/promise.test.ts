@@ -3,8 +3,7 @@
 
     describe('Promise Tests', () => {
         it('should test all', (done) => {
-            var result = [],
-                promises = [2, Promise.resolve(3), 4];
+            var promises = [2, Promise.resolve(3), 4];
 
             Promise.all(promises).then((success) => {
                 expect(success).toEqual([2, 3, 4]);
@@ -58,7 +57,7 @@
 
         it('should test reject', (done) => {
             Promise.reject(2).then(() => {
-                return null;
+                return <any>null;
             }, (error) => {
                 expect(error).toEqual(2);
                 return 4;

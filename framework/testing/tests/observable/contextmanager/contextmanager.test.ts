@@ -167,7 +167,7 @@ module tests.observable.contextManager {
 
         it('should test observe with array length', () => {
             var called = 0,
-                arr = control.context.arr = [];
+                arr: Array<any> = control.context.arr = [];
 
             manager.observe('context.arr.length', {
                 uid: control.uid,
@@ -206,7 +206,7 @@ module tests.observable.contextManager {
         it('should test observe with array length and observing twice', () => {
             var called = 0,
                 called2 = 0,
-                arr = control.context.arr = [];
+                arr: Array<any> = control.context.arr = [];
 
             manager.observe('context.arr.length', {
                 uid: control.uid,
@@ -443,7 +443,7 @@ module tests.observable.contextManager {
 
         it('should test observeArray with all overwritten array methods called.', () => {
             var called = 0,
-                oldArray,
+                oldArray: Array<any>,
                 arr: Array<any> = control.context.arr = [
                     'a',
                     'b',

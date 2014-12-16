@@ -39,9 +39,9 @@ module plat.storage {
         constructor(storage: Storage) {
             this._storage = storage;
 
-            forEach(storage, (value, key) => {
+            forEach((value, key) => {
                 this[key] = value;
-            });
+            }, storage);
         }
 
         /**
