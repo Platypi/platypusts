@@ -128,7 +128,7 @@ function isDocumentFragment(obj: any): boolean {
 }
 
 function isFile(obj: any): boolean {
-    return isObject(obj) && obj.toString() === fileClass;
+    return typeof obj === 'object' && objToString.call(obj) === fileClass;
 }
 
 function isString(obj: any): boolean {
@@ -140,7 +140,7 @@ function isRegExp(obj: any): boolean {
 }
 
 function isPromise(obj: any): boolean {
-    return isObject(obj) && (obj.toString() === promiseClass || isFunction(obj.then));
+    return typeof obj === 'object' && (objToString.call(obj) === promiseClass || isFunction(obj.then));
 }
 
 function isEmpty(obj: any): boolean {
