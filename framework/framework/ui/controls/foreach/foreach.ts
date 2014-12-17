@@ -97,7 +97,7 @@ module plat.ui.controls {
          * @type {plat.observable.IObservableProperty<plat.ui.controls.IForEachAliasOptions>}
          * 
          * @description
-         * The {@link plat.ui.controls.IForEachOptions|options} for the foreach control. 
+         * The {@link plat.ui.controls.IForEachOptions|options} for the {@link plat.ui.controls.ForEach|ForEach} control.
          */
         options: observable.IObservableProperty<IForEachOptions>;
 
@@ -112,7 +112,7 @@ module plat.ui.controls {
          * @description
          * Used to hold the alias tokens for the built-in foreach aliases. You 
          * can overwrite these with the {@link plat.ui.controls.IForEachOptions|options} for 
-         * the foreach control. 
+         * the {@link plat.ui.controls.ForEach|ForEach} control. 
          */
         protected _aliases: IForEachAliasOptions = {
             index: __forEachAliasOptions.index,
@@ -216,7 +216,7 @@ module plat.ui.controls {
          * @access public
          * 
          * @description
-         * Re-syncs the ForEach children controls and DOM with the new 
+         * Re-syncs the {@link plat.ui.controls.ForEach|ForEach} child controls and DOM with the new 
          * array.
          * 
          * @param {Array<any>} newValue? The new Array
@@ -296,7 +296,7 @@ module plat.ui.controls {
          * @access protected
          * 
          * @description
-         * Sets the alias tokens to use for all the items in the foreach context array.
+         * Sets the alias tokens to use for all the items in the {@link plat.ui.controls.ForEach|ForEach} context array.
          * 
          * @returns {void}
          */
@@ -482,7 +482,7 @@ module plat.ui.controls {
         }
 
         /**
-         * @name _removeItem
+         * @name _bindItem
          * @memberof plat.ui.controls.ForEach
          * @kind function
          * @access protected
