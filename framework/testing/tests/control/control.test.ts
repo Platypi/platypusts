@@ -53,14 +53,14 @@
         });
 
         it('should test observeArray', () => {
-            var remove = control.observeArray(null, 'foo', () => { });
+            var remove = control.observeArray(null, 'foo', () => { }, () => { });
 
             expect(typeof remove).toEqual('function');
 
             remove = null;
             control.parent = <any>{};
 
-            remove = control.observeArray({ foo: [] }, 'foo', () => { });
+            remove = control.observeArray({ foo: [] }, 'foo', () => { }, () => { });
             expect(typeof remove).toEqual('function');
         });
 

@@ -61,15 +61,15 @@ module tests.observable.contextManagerStatic {
             expect(!!controls[control.uid]).toBe(false);
 
             manager = ContextManager.getManager(control);
-            manager.observeArray('test', () => { }, 'foo', [], []);
+            manager.observeArray('test', () => { }, () => { }, 'foo', [], []);
 
             ContextManager.dispose(control);
 
-            expect(!!(<any>ContextManager.observedArrayListeners).foo).toBe(false);
+            expect(!!(<any>ContextManager.postArrayListeners).foo).toBe(false);
         });
 
         it('should test removeArrayListeners', () => {
-            var arrayListeners = ContextManager.observedArrayListeners = {
+            var arrayListeners = ContextManager.postArrayListeners = {
                 foo: {
                     test: [() => { }]
                 }

@@ -4198,10 +4198,16 @@ declare module plat {
           */
         class ContextManager implements IContextManager {
             /**
+              * A set of functions to be fired prior to when a particular observed array is mutated.
+              */
+            static preArrayListeners: IObject<IObject<{
+                (ev: IPreArrayChangeInfo): void;
+            }[]>>;
+            /**
               * A set of functions to be fired when a particular observed array is mutated.
               */
-            static observedArrayListeners: IObject<IObject<{
-                (ev: IArrayMethodInfo<any>): void;
+            static postArrayListeners: IObject<IObject<{
+                (ev: IPostArrayChangeInfo<any>): void;
             }[]>>;
             /**
               * Gets the IContextManager associated to the given control. If no
@@ -4344,17 +4350,30 @@ declare module plat {
               * that array. The watched functions are push, pop, shift, splice, unshift, sort,
               * and reverse.
               * @param {string} uid The unique ID of the object observing the array.
-              * @param {(ev: plat.observable.IArrayMethodInfo<any>) => void} listener The callback for when an observed Array
+              * @param {(ev: plat.observable.IPreArrayChangeInfo) => void} preListener The callback for prior to when an observed Array
+              * function has been called.
+              * @param {(ev: plat.observable.IPostArrayChangeInfo<any>) => void} postListener The callback for after when an observed Array
               * function has been called.
               * @param {string} absoluteIdentifier The identifier from the root context used to find the array.
               * @param {Array<any>} array The array to be observed.
               * @param {Array<any>} oldArray The old array to stop observing.
               */
-            observeArray(uid: string, listener: (ev: IArrayMethodInfo<any>) => void, absoluteIdentifier: string, array: any[], oldArray: any[]): IRemoveListener;
+            observeArray(uid: string, preListener: (ev: IPreArrayChangeInfo) => void, postListener: (ev: IPostArrayChangeInfo<any>) => void, absoluteIdentifier: string, array: any[], oldArray: any[]): IRemoveListener;
             /**
               * Disposes the memory for an IContextManager.
               */
             dispose(): void;
+            /**
+              * Pushes Array mutation listeners and removers.
+              * @param {string} uid The unique identifier to store the callback.
+              * @param {string} absoluteIdentifier The identifier of the Array being observed.
+              * @param {(ev: plat.observable.IPreArrayChangeInfo) => void} listener The Array mutation listener.
+              * @param {plat.IObject<plat.IObject<Array<(ev: plat.observable.IPreArrayChangeInfo) => void>>>} arrayListeners
+              * The Array to hold the new listener.
+              */
+            protected _pushArrayListener(uid: string, absoluteIdentifier: string, listener: (ev: IPreArrayChangeInfo) => void, arrayListeners: IObject<IObject<{
+                (ev: IPreArrayChangeInfo): void;
+            }[]>>): IRemoveListener;
             /**
               * Restores an array to use Array.prototype instead of listener functions.
               * @param {Array<any>} array The array to restore.
@@ -4481,10 +4500,16 @@ declare module plat {
           */
         interface IContextManagerStatic {
             /**
+              * A set of functions to be fired prior to when a particular observed array is mutated.
+              */
+            preArrayListeners: IObject<IObject<{
+                (ev: IPreArrayChangeInfo): void;
+            }[]>>;
+            /**
               * A set of functions to be fired when a particular observed array is mutated.
               */
-            observedArrayListeners: IObject<IObject<{
-                (ev: IArrayMethodInfo<any>): void;
+            postArrayListeners: IObject<IObject<{
+                (ev: IPostArrayChangeInfo<any>): void;
             }[]>>;
             /**
               * Gets the IContextManager associated to the given control. If no
@@ -4594,13 +4619,15 @@ declare module plat {
               * that array. The watched functions are push, pop, shift, splice, unshift, sort,
               * and reverse.
               * @param {string} uid The unique ID of the object observing the array.
-              * @param {(ev: plat.observable.IArrayMethodInfo<any>) => void} listener The callback for when an observed Array
+              * @param {(ev: plat.observable.IPreArrayChangeInfo) => void} preListener The callback for prior to when an observed Array
+              * function has been called.
+              * @param {(ev: plat.observable.IPostArrayChangeInfo<any>) => void} postListener The callback for after when an observed Array
               * function has been called.
               * @param {string} absoluteIdentifier The identifier from the root context used to find the array.
               * @param {Array<any>} array The array to be observed.
               * @param {Array<any>} oldArray The old array to stop observing.
               */
-            observeArray(uid: string, listener: (ev: IArrayMethodInfo<any>) => void, absoluteIdentifier: string, array: any[], oldArray: any[]): IRemoveListener;
+            observeArray(uid: string, preListener: (ev: IPreArrayChangeInfo) => void, postListener: (ev: IPostArrayChangeInfo<any>) => void, absoluteIdentifier: string, array: any[], oldArray: any[]): IRemoveListener;
             /**
               * Disposes the memory for an IContextManager.
               */
@@ -4623,16 +4650,25 @@ declare module plat {
             uid: string;
         }
         /**
-          * An object for Array method info. Takes a
-          * generic type to denote the type of array it uses.
+          * An object for Array method mutation info prior to the Array being mutated.
           */
-        interface IArrayMethodInfo<T> {
+        interface IPreArrayChangeInfo {
             /**
               * The method name that was called. Possible values are:
               * 'push', 'pop', 'reverse', 'shift', 'sort', 'splice',
               * and 'unshift'
               */
             method: string;
+            /**
+              * The arguments passed into the array function.
+              */
+            arguments: any[];
+        }
+        /**
+          * An object for Array method mutation info after the Array has been mutated. Takes a
+          * generic type to denote the type of array it uses.
+          */
+        interface IPostArrayChangeInfo<T> extends IPreArrayChangeInfo {
             /**
               * The value returned from the called function.
               */
@@ -4645,10 +4681,6 @@ declare module plat {
               * The new value of the array.
               */
             newArray: T[];
-            /**
-              * The arguments passed into the array function.
-              */
-            arguments: any[];
         }
         /**
           * Defines the object added to a template control when its element
@@ -5631,20 +5663,24 @@ declare module plat {
           * every item in the array.
           * @param {any} context The immediate parent object containing the array as a property.
           * @param {string} property The array property identifier to watch for changes.
-          * @param {(ev: plat.observable.IArrayMethodInfo<T>) => void} listener The method called when an array-changing method is called.
-          * This method will have its 'this' context set to the control instance.
+          * @param {(ev: plat.observable.IPreArrayChangeInfo) => void} preListener The method called prior to an array-changing
+          * method is called. This method will have its 'this' context set to the control instance.
+          * @param {(ev: plat.observable.IPostArrayChangeInfo<T>) => void} postListener The method called after an array-changing
+          * method is called. This method will have its 'this' context set to the control instance.
           */
-        observeArray<T>(context: any, property: string, listener: (ev: observable.IArrayMethodInfo<T>) => void): IRemoveListener;
+        observeArray<T>(context: any, property: string, preListener: (ev: observable.IPreArrayChangeInfo) => void, postListener: (ev: observable.IPostArrayChangeInfo<T>) => void): IRemoveListener;
         /**
           * Allows a Control to observe an array and receive updates when certain array-changing methods are called.
           * The methods watched are push, pop, shift, sort, splice, reverse, and unshift. This method does not watch
           * every item in the array.
           * @param {any} context The immediate parent object containing the array as a property.
           * @param {number} property The array property identifier to watch for changes.
-          * @param {(ev: plat.observable.IArrayMethodInfo<T>) => void} listener The method called when an array-changing method is called.
-          * This method will have its 'this' context set to the control instance.
+          * @param {(ev: plat.observable.IPreArrayChangeInfo) => void} preListener The method called prior to an array-changing
+          * method is called. This method will have its 'this' context set to the control instance.
+          * @param {(ev: plat.observable.IPostArrayChangeInfo<T>) => void} postListener The method called after an array-changing
+          * method is called. This method will have its 'this' context set to the control instance.
           */
-        observeArray<T>(context: any, property: number, listener: (ev: observable.IArrayMethodInfo<T>) => void): IRemoveListener;
+        observeArray<T>(context: any, property: number, preListener: (ev: observable.IPreArrayChangeInfo) => void, postListener: (ev: observable.IPostArrayChangeInfo<T>) => void): IRemoveListener;
         /**
           * Parses an expression string and observes any associated identifiers. When an identifier
           * value changes, the listener will be called.
@@ -5902,20 +5938,24 @@ declare module plat {
           * every item in the array.
           * @param {any} context The immediate parent object containing the array as a property.
           * @param {string} property The array property identifier to watch for changes.
-          * @param {(ev: plat.observable.IArrayMethodInfo<T>) => void} listener The method called when an array-changing method is called.
-          * This method will have its 'this' context set to the control instance.
+          * @param {(ev: plat.observable.IPreArrayChangeInfo) => void} preListener The method called prior to an array-changing
+          * method is called. This method will have its 'this' context set to the control instance.
+          * @param {(ev: plat.observable.IPostArrayChangeInfo<T>) => void} postListener The method called after an array-changing
+          * method is called. This method will have its 'this' context set to the control instance.
           */
-        observeArray?<T>(context: any, property: string, listener: (ev: observable.IArrayMethodInfo<T>) => void): IRemoveListener;
+        observeArray?<T>(context: any, property: string, preListener: (ev: observable.IPreArrayChangeInfo) => void, postListener: (ev: observable.IPostArrayChangeInfo<T>) => void): IRemoveListener;
         /**
           * Allows a Control to observe an array and receive updates when certain array-changing methods are called.
           * The methods watched are push, pop, shift, sort, splice, reverse, and unshift. This method does not watch
           * every item in the array.
           * @param {any} context The immediate parent object containing the array as a property.
           * @param {number} property The array property identifier to watch for changes.
-          * @param {(ev: plat.observable.IArrayMethodInfo<T>) => void} listener The method called when an array-changing method is called.
-          * This method will have its 'this' context set to the control instance.
+          * @param {(ev: plat.observable.IPreArrayChangeInfo) => void} preListener The method called prior to an array-changing
+          * method is called. This method will have its 'this' context set to the control instance.
+          * @param {(ev: plat.observable.IPostArrayChangeInfo<T>) => void} postListener The method called after an array-changing
+          * method is called. This method will have its 'this' context set to the control instance.
           */
-        observeArray?<T>(context: any, property: number, listener: (ev: observable.IArrayMethodInfo<T>) => void): IRemoveListener;
+        observeArray?<T>(context: any, property: number, preListener: (ev: observable.IPreArrayChangeInfo) => void, postListener: (ev: observable.IPostArrayChangeInfo<T>) => void): IRemoveListener;
         /**
           * Parses an expression string and observes any associated identifiers. When an identifier
           * value changes, the listener will be called.
@@ -7147,6 +7187,13 @@ declare module plat {
               */
             toggleClass(element: Element, className: string): void;
             /**
+              * Replaces a single class with another class.
+              * @param {Element} element The element on which the class name is being toggled.
+              * @param {string} oldClass The class name being replaced.
+              * @param {string} newClass The class name doing the replacing.
+              */
+            replaceClass(element: Element, oldClass: string, newClass: string): void;
+            /**
               * Returns whether or not an element has a particular class or classes assigned to it.
               * @param {Element} element The element on which the class name is being checked.
               * @param {string} className The class name or space delimited class names to check on the element.
@@ -7357,6 +7404,13 @@ declare module plat {
               * @param {string} className The class name or space delimited class names to toggle on the element.
               */
             toggleClass(element: Element, className: string): void;
+            /**
+              * Replaces a single class with another class.
+              * @param {Element} element The element on which the class name is being toggled.
+              * @param {string} oldClass The class name being replaced.
+              * @param {string} newClass The class name doing the replacing.
+              */
+            replaceClass(element: Element, oldClass: string, newClass: string): void;
             /**
               * Returns whether or not an element has a particular class or classes assigned to it.
               * @param {Element} element The element on which the class name is being checked.
@@ -7580,12 +7634,10 @@ declare module plat {
               * or a template being bound.
               * @param {string} key The template key.
               * @param {DocumentFragment} template The template being compiled or being bound.
-              * @param {string} relativeIdentifier? A potential context string identifier identifying the
-              * object's position off the context.
               * @param {plat.IObject<plat.ui.IResource>} resources? A set of resources to add to the control used to
               * compile/bind this template.
               */
-            protected _createBoundControl(key: string, template: DocumentFragment, relativeIdentifier?: string, resources?: IObject<IResource>): ITemplateControl;
+            protected _createBoundControl(key: string, template: DocumentFragment, resources?: IObject<IResource>): ITemplateControl;
         }
         /**
           * The Type for referencing the '$BindableTemplatesFactory' injectable as a dependency.
@@ -10077,27 +10129,29 @@ declare module plat {
                   */
                 itemsLoaded: async.IThenable<void>;
                 /**
-                  * The options for the foreach control.
+                  * The options for the ForEach control.
                   */
                 options: observable.IObservableProperty<IForEachOptions>;
                 /**
                   * Used to hold the alias tokens for the built-in foreach aliases. You
                   * can overwrite these with the options for
-                  * the foreach control.
+                  * the ForEach control.
                   */
                 protected _aliases: IForEachAliasOptions;
                 /**
-                  * The node length of the element's childNodes (innerHTML).
+                  * The node length of each item's childNodes (innerHTML).
+                  * For the ForEach it should be a
+                  * single constant number.
                   */
-                protected _blockLength: number;
+                protected _blockLength: any;
+                /**
+                  * An array to aggregate all current animation promises.
+                  */
+                protected _currentAnimations: animations.IAnimationThenable<any>[];
                 /**
                   * Whether or not the Array listener has been set.
                   */
                 private __listenerSet;
-                /**
-                  * An array to aggregate all current animation promises.
-                  */
-                private __currentAnimations;
                 /**
                   * The resolve function for the itemsLoaded promise.
                   */
@@ -10111,7 +10165,7 @@ declare module plat {
                   */
                 setTemplate(): void;
                 /**
-                  * Re-syncs the ForEach children controls and DOM with the new
+                  * Re-syncs the ForEach child controls and DOM with the new
                   * array.
                   * @param {Array<any>} newValue? The new Array
                   * @param {Array<any>} oldValue? The old Array
@@ -10126,19 +10180,45 @@ declare module plat {
                   */
                 dispose(): void;
                 /**
-                  * Sets the alias tokens to use for all the items in the foreach context array.
+                  * Sets the alias tokens to use for all the items in the ForEach context array.
                   */
                 protected _setAliases(): void;
                 /**
-                  * Adds an item to the control's element.
-                  * @param {DocumentFragment} item The HTML fragment representing a single item
-                  * @param {boolean} animate? Whether or not to animate the entering item
+                  * Adds new items to the control's element when items are added to
+                  * the array.
+                  * @param {number} numberOfItems The number of items to add.
+                  * @param {number} index The point in the array to start adding items.
+                  * @param {boolean} animate? Whether or not to animate the new items
                   */
-                protected _addItem(item: DocumentFragment, animate?: boolean): void;
+                protected _addItems(numberOfItems: number, index: number, animate?: boolean): async.IThenable<void>;
+                /**
+                  * Adds an Array of items to the element without animating.
+                  * @param {Array<Node>} items The Array of items to add.
+                  */
+                protected _appendItems(items: Node[]): void;
+                /**
+                  * Adds an item to the control's element animating its elements.
+                  * @param {DocumentFragment} item The HTML fragment representing a single item.
+                  * @param {string} key The animation key/type.
+                  */
+                protected _appendAnimatedItem(item: DocumentFragment, key: string): void;
+                /**
+                  * Removes items from the control's element.
+                  * @param {number} numberOfItems The number of items to remove.
+                  */
+                protected _removeItems(numberOfItems: number): void;
                 /**
                   * Removes an item from the control's element.
                   */
                 protected _removeItem(): void;
+                /**
+                  * Binds the item to a template at that index.
+                  */
+                protected _bindItem(index: number): async.IThenable<DocumentFragment>;
+                /**
+                  * Sets the corresponding block length for animation.
+                  */
+                protected _setBlockLength(templates: Node[]): void;
                 /**
                   * Updates the control's children resource objects when
                   * the array changes.
@@ -10149,24 +10229,17 @@ declare module plat {
                   */
                 protected _setListener(): void;
                 /**
+                  * Receives an event prior to a method being called on an array and maps the array
+                  * method to its associated pre-method handler.
+                  * @param {plat.observable.IPreArrayChangeInfo} ev The Array mutation event information.
+                  */
+                protected _preprocessEvent(ev: observable.IPreArrayChangeInfo): void;
+                /**
                   * Receives an event when a method has been called on an array and maps the array
                   * method to its associated method handler.
-                  * @param {plat.observable.IArrayMethodInfo<any>} ev The Array mutation event information.
+                  * @param {plat.observable.IPostArrayChangeInfo<any>} ev The Array mutation event information.
                   */
-                protected _executeEvent(ev: observable.IArrayMethodInfo<any>): void;
-                /**
-                  * Adds new items to the control's element when items are added to
-                  * the array.
-                  * @param {number} numberOfItems The number of items to add.
-                  * @param {number} index The point in the array to start adding items.
-                  * @param {boolean} animate? Whether or not to animate the new items
-                  */
-                protected _addItems(numberOfItems: number, index: number, animate?: boolean): async.IThenable<void>;
-                /**
-                  * Removes items from the control's element.
-                  * @param {number} numberOfItems The number of items to remove.
-                  */
-                protected _removeItems(numberOfItems: number): void;
+                protected _executeEvent(ev: observable.IPostArrayChangeInfo<any>): void;
                 /**
                   * Returns a resource alias object for an item in the array. The
                   * resource object contains index:number, even:boolean, odd:boolean,
@@ -10176,55 +10249,82 @@ declare module plat {
                 protected _getAliases(index: number): IObject<IResource>;
                 /**
                   * Handles items being pushed into the array.
-                  * @param {plat.observable.IArrayMethodInfo<any>} ev The Array mutation event information.
+                  * @param {plat.observable.IPostArrayChangeInfo<any>} ev The Array mutation event information.
                   */
-                protected _push(ev: observable.IArrayMethodInfo<any>): void;
+                protected _push(ev: observable.IPostArrayChangeInfo<any>): void;
                 /**
                   * Handles items being popped off the array.
-                  * @param {plat.observable.IArrayMethodInfo<any>} ev The Array mutation event information.
+                  * @param {plat.observable.IPostArrayChangeInfo<any>} ev The Array mutation event information.
                   */
-                protected _pop(ev: observable.IArrayMethodInfo<any>): void;
+                protected _pop(ev: observable.IPostArrayChangeInfo<any>): void;
                 /**
                   * Handles items being shifted off the array.
-                  * @param {plat.observable.IArrayMethodInfo<any>} ev The Array mutation event information.
+                  * @param {plat.observable.IPreArrayChangeInfo} ev The Array mutation event information.
                   */
-                protected _shift(ev: observable.IArrayMethodInfo<any>): void;
+                protected _preshift(ev: observable.IPreArrayChangeInfo): void;
+                /**
+                  * Handles items being shifted off the array.
+                  * @param {plat.observable.IPostArrayChangeInfo<any>} ev The Array mutation event information.
+                  */
+                protected _shift(ev: observable.IPostArrayChangeInfo<any>): void;
                 /**
                   * Handles adding/removing items when an array is spliced.
-                  * @param {plat.observable.IArrayMethodInfo<any>} ev The Array mutation event information.
+                  * @param {plat.observable.IPreArrayChangeInfo} ev The Array mutation event information.
                   */
-                protected _splice(ev: observable.IArrayMethodInfo<any>): void;
+                protected _presplice(ev: observable.IPreArrayChangeInfo): void;
+                /**
+                  * Handles adding/removing items when an array is spliced.
+                  * @param {plat.observable.IPostArrayChangeInfo<any>} ev The Array mutation event information.
+                  */
+                protected _splice(ev: observable.IPostArrayChangeInfo<any>): void;
+                /**
+                  * Handles animating items being unshifted into the array.
+                  * @param {plat.observable.IPreArrayChangeInfo} ev The Array mutation event information.
+                  */
+                protected _preunshift(ev: observable.IPreArrayChangeInfo): void;
                 /**
                   * Handles items being unshifted into the array.
-                  * @param {plat.observable.IArrayMethodInfo<any>} ev The Array mutation event information.
+                  * @param {plat.observable.IPostArrayChangeInfo<any>} ev The Array mutation event information.
                   */
-                protected _unshift(ev: observable.IArrayMethodInfo<any>): void;
+                protected _unshift(ev: observable.IPostArrayChangeInfo<any>): void;
                 /**
                   * Handles when the array is sorted.
-                  * @param {plat.observable.IArrayMethodInfo<any>} ev The Array mutation event information.
+                  * @param {plat.observable.IPostArrayChangeInfo<any>} ev The Array mutation event information.
                   */
-                protected _sort(ev: observable.IArrayMethodInfo<any>): void;
+                protected _sort(ev: observable.IPostArrayChangeInfo<any>): void;
                 /**
                   * Handles when the array is reversed.
-                  * @param {plat.observable.IArrayMethodInfo<any>} ev The Array mutation event information.
+                  * @param {plat.observable.IPostArrayChangeInfo<any>} ev The Array mutation event information.
                   */
-                protected _reverse(ev: observable.IArrayMethodInfo<any>): void;
+                protected _reverse(ev: observable.IPostArrayChangeInfo<any>): void;
                 /**
-                  * Animates a block of elements.
-                  * @param {number} startNode The starting childNode of the ForEach to animate
-                  * @param {number} endNode The ending childNode of the ForEach to animate
-                  * @param {string} key The animation key/type
+                  * Animates the indicated items.
+                  * @param {number} startIndex The starting index of items to animate.
+                  * @param {number} numberOfItems The number of consecutive items to animate.
+                  * @param {string} key The animation key/type.
+                  * @param {boolean} clone? Whether to clone the items and animate the clones or simply animate the items itself.
                   * @param {boolean} cancel? Whether or not the animation should cancel all current animations.
                   * Defaults to true.
                   */
-                protected _animateItems(startNode: number, endNode: number, key: string, cancel?: boolean): animations.IAnimationThenable<void>;
+                protected _animateItems(startIndex: number, numberOfItems: number, key: string, clone?: boolean, cancel?: boolean): async.IThenable<void>;
+                /**
+                  * Animates a block of elements.
+                  * @param {number} startNode The starting childNode of the ForEach to animate.
+                  * @param {number} endNode The ending childNode of the ForEach to animate.
+                  * @param {string} key The animation key/type.
+                  * @param {boolean} clone? Whether to clone the items and animate the clones or simply animate the items itself.
+                  * @param {boolean} cancel? Whether or not the animation should cancel all current animations.
+                  * Defaults to true.
+                  */
+                protected _initiateAnimation(startNode: number, endNode: number, key: string, clone?: boolean, cancel?: boolean): async.IThenable<void>;
                 /**
                   * Handles the animation of a block of elements.
                   * @param {number} startNode The starting childNode of the ForEach to animate
                   * @param {number} endNode The ending childNode of the ForEach to animate
                   * @param {string} key The animation key/type
+                  * @param {boolean} clone Whether to clone the items and animate the clones or simply animate the items itself.
                   */
-                private __handleAnimation(startNode, endNode, key);
+                private __handleAnimation(startNode, endNode, key, clone);
             }
             /**
               * The options object for the
@@ -10378,9 +10478,9 @@ declare module plat {
                 /**
                   * Receives an event when a method has been called on an array and maps the array
                   * method to its associated method handler.
-                  * @param {plat.observable.IArrayMethodInfo<any>} ev The Array mutation event information.
+                  * @param {plat.observable.IPostArrayChangeInfo<any>} ev The Array mutation event information.
                   */
-                protected _executeEvent(ev: observable.IArrayMethodInfo<any>): void;
+                protected _executeEvent(ev: observable.IPostArrayChangeInfo<any>): void;
                 /**
                   * Adds the options to the select element.
                   * @param {number} numberOfItems The number of items to add.
@@ -10412,9 +10512,9 @@ declare module plat {
                 /**
                   * The function called when an item has been removed
                   * from the array context.
-                  * @param {plat.observable.IArrayMethodInfo<any>} ev The array mutation object
+                  * @param {plat.observable.IPostArrayChangeInfo<any>} ev The array mutation object
                   */
-                protected _itemRemoved(ev: observable.IArrayMethodInfo<any>): void;
+                protected _itemRemoved(ev: observable.IPostArrayChangeInfo<any>): void;
                 /**
                   * Resets the select element by removing all its
                   * items and adding them back.
@@ -10423,45 +10523,45 @@ declare module plat {
                 /**
                   * The function called when an element is pushed to
                   * the array context.
-                  * @param {plat.observable.IArrayMethodInfo<any>} ev The array mutation object
+                  * @param {plat.observable.IPostArrayChangeInfo<any>} ev The array mutation object
                   */
-                protected _push(ev: observable.IArrayMethodInfo<any>): void;
+                protected _push(ev: observable.IPostArrayChangeInfo<any>): void;
                 /**
                   * The function called when an item is popped
                   * from the array context.
-                  * @param {plat.observable.IArrayMethodInfo<any>} ev The array mutation object
+                  * @param {plat.observable.IPostArrayChangeInfo<any>} ev The array mutation object
                   */
-                protected _pop(ev: observable.IArrayMethodInfo<any>): void;
+                protected _pop(ev: observable.IPostArrayChangeInfo<any>): void;
                 /**
                   * The function called when an item is shifted
                   * from the array context.
-                  * @param {plat.observable.IArrayMethodInfo<any>} ev The array mutation object
+                  * @param {plat.observable.IPostArrayChangeInfo<any>} ev The array mutation object
                   */
-                protected _shift(ev: observable.IArrayMethodInfo<any>): void;
+                protected _shift(ev: observable.IPostArrayChangeInfo<any>): void;
                 /**
                   * The function called when items are spliced
                   * from the array context.
-                  * @param {plat.observable.IArrayMethodInfo<any>} ev The array mutation object
+                  * @param {plat.observable.IPostArrayChangeInfo<any>} ev The array mutation object
                   */
-                protected _splice(ev: observable.IArrayMethodInfo<any>): void;
+                protected _splice(ev: observable.IPostArrayChangeInfo<any>): void;
                 /**
                   * The function called when an item is unshifted
                   * onto the array context.
-                  * @param {plat.observable.IArrayMethodInfo<any>} ev The array mutation object
+                  * @param {plat.observable.IPostArrayChangeInfo<any>} ev The array mutation object
                   */
-                protected _unshift(ev: observable.IArrayMethodInfo<any>): void;
+                protected _unshift(ev: observable.IPostArrayChangeInfo<any>): void;
                 /**
                   * The function called when the array context
                   * is sorted.
-                  * @param {plat.observable.IArrayMethodInfo<any>} ev The array mutation object
+                  * @param {plat.observable.IPostArrayChangeInfo<any>} ev The array mutation object
                   */
-                protected _sort(ev: observable.IArrayMethodInfo<any>): void;
+                protected _sort(ev: observable.IPostArrayChangeInfo<any>): void;
                 /**
                   * The function called when the array context
                   * is reversed.
-                  * @param {plat.observable.IArrayMethodInfo<any>} ev The array mutation object
+                  * @param {plat.observable.IPostArrayChangeInfo<any>} ev The array mutation object
                   */
-                protected _reverse(ev: observable.IArrayMethodInfo<any>): void;
+                protected _reverse(ev: observable.IPostArrayChangeInfo<any>): void;
             }
             /**
               * The available options for the Select control.
@@ -10534,6 +10634,10 @@ declare module plat {
                   */
                 private __enterAnimation;
                 /**
+                  * A promise that resolves when the template has been bound.
+                  */
+                private __initialBind;
+                /**
                   * The constructor for a If. Creates the
                   * DocumentFragment for holding the conditional nodes.
                   */
@@ -10543,6 +10647,9 @@ declare module plat {
                   * evaluation.
                   */
                 contextChanged(): async.IThenable<void>;
+                /**
+                  * Creates a bindable template with the control element's childNodes (innerHTML).
+                  */
                 setTemplate(): void;
                 /**
                   * Sets the visibility to true if no options are
@@ -10565,9 +10672,17 @@ declare module plat {
                   */
                 protected _addItem(): async.IThenable<void>;
                 /**
+                  * Animates the template as it enters the DOM.
+                  */
+                protected _animateEntrance(): animations.IAnimationThenable<void>;
+                /**
                   * Removes the conditional nodes from the DOM.
                   */
-                protected _removeItem(): void;
+                protected _removeItem(): async.IThenable<void>;
+                /**
+                  * Animates the template as it leaves the DOM.
+                  */
+                protected _animateLeave(): animations.IAnimationThenable<void>;
             }
             /**
               * The available options for the If control.
@@ -11962,16 +12077,23 @@ declare module plat {
               */
             recognize(path: string): IRecognizeResult;
             /**
+              * Finds a INamedRoute and generates a string
+              * if it exists. Uses the parameters object to generate dynamic routes.
+              * @param {string} name The named route with which to generate the route string.
+              * @param {plat.IObject<string>} parameters The route parameters, in the case that the
+              * named route is dynamic.
+              */
+            generate(name: string, parameters?: IObject<string>): string;
+            /**
               * Finds the delegates for an INamedRoute
               * @param {string} name The named route from which to get the delegates.
               */
-            delegatesFor(name: string): any[];
+            delegatesFor(name: string): IDelegateParameterNames[];
             /**
               * Determines whether or not an INamedRoute is registered.
               * @param {string} name The named route to search for.
               */
             exists(name: string): boolean;
-            generate(name: string, parameters?: IObject<string>): string;
             /**
               * Finalizes a compiled route, adding a final state if necessary. If the state is equal to the
               * root state for the recognizer, a new state will be created. This is because the root state does not
@@ -12073,7 +12195,7 @@ declare module plat {
             /**
               * All the delegates for the named route.
               */
-            delegates: any[];
+            delegates: IDelegateParameterNames[];
         }
         /**
           * Used during route registeration to specify a delegate object to associate
