@@ -1,6 +1,27 @@
 ﻿/* tslint:disable:no-unused-variable */
 var __nativeIsArray = !!Array.isArray,
-    __uids__: plat.IObject<Array<string>> = {};
+    __uids__: plat.IObject<Array<string>> = {},
+    objToString = Object.prototype.toString,
+    toStringClass = '[object ',
+    errorClass = toStringClass + 'Error]',
+    fileClass = toStringClass + 'File]',
+    arrayClass = toStringClass + 'Array]',
+    boolClass = toStringClass + 'Boolean]',
+    dateClass = toStringClass + 'Date]',
+    funcClass = toStringClass + 'Function]',
+    numberClass = toStringClass + 'Number]',
+    objectClass = toStringClass + 'Object]',
+    regexpClass = toStringClass + 'RegExp]',
+    stringClass = toStringClass + 'String]',
+    promiseClass = toStringClass + 'Promise]',
+    objectTypes: any = {
+        'boolean': false,
+        'function': true,
+        'object': true,
+        'number': false,
+        'string': false,
+        'undefined': false
+    };
 
 function noop(): void { }
 
@@ -83,11 +104,11 @@ function _clone(obj: any, deep?: boolean) {
 }
 
 function isError(obj: any): boolean {
-    return Object.prototype.toString.call(obj) === '[object Error]';
+    return objToString.call(obj) === errorClass;
 }
 
 function isObject(obj: any): boolean {
-    return obj != null && typeof obj === 'object';
+    return !!(obj && objectTypes[typeof obj]);
 }
 
 function isWindow(obj: any): boolean {
@@ -107,19 +128,19 @@ function isDocumentFragment(obj: any): boolean {
 }
 
 function isFile(obj: any): boolean {
-    return isObject(obj) && obj.toString() === '[object File]';
+    return isObject(obj) && obj.toString() === fileClass;
 }
 
 function isString(obj: any): boolean {
-    return typeof obj === 'string';
+    return typeof obj === 'string' || obj && typeof obj === 'object' && objToString.call(obj) == stringClass || false;
 }
 
 function isRegExp(obj: any): boolean {
-    return Object.prototype.toString.call(obj) === '[object RegExp]';
+    return obj && typeof obj === 'object' && objToString.call(obj) === regexpClass || false;
 }
 
 function isPromise(obj: any): boolean {
-    return isObject(obj) && (obj.toString() === '[object Promise]' || isFunction(obj.then));
+    return isObject(obj) && (obj.toString() === promiseClass || isFunction(obj.then));
 }
 
 function isEmpty(obj: any): boolean {
@@ -139,11 +160,11 @@ function isEmpty(obj: any): boolean {
 }
 
 function isBoolean(obj: any): boolean {
-    return typeof obj === 'boolean';
+    return obj === true || obj === false || obj && typeof obj === 'object' && objToString.call(obj) === boolClass || false;
 }
 
 function isNumber(obj: any): boolean {
-    return typeof obj === 'number' && !isNaN(obj);
+    return typeof obj === 'number' || obj && typeof obj === 'object' && objToString.call(obj) == numberClass || false;
 }
 
 function isFunction(obj: any): boolean {
@@ -163,7 +184,7 @@ function isArray(obj: any): boolean {
         return Array.isArray(obj);
     }
 
-    return Object.prototype.toString.call(obj) === '[object Array]';
+    return objToString.call(obj) === arrayClass;
 }
 
 function isArrayLike(obj: any): boolean {
@@ -175,7 +196,7 @@ function isArrayLike(obj: any): boolean {
 }
 
 function isDate(obj: any): boolean {
-    return Object.prototype.toString.call(obj) === '[object Date]';
+    return obj && typeof obj == 'object' && objToString.call(obj) == dateClass || false;
 }
 
 function filter<T>(iterator: (value: T, key: any, obj: any) => boolean, obj: any, context?: any): Array<T> {
@@ -203,7 +224,7 @@ function where(properties: any, obj: any): Array<any> {
             => (<any>value)[key] !== property, properties), obj);
 }
 
-function forEach<T>(iterator: (value: T, index: number, obj: any) => void, array: Array<T>, context?: any): Array <T>;
+function forEach<T>(iterator: (value: T, index: number, obj: any) => void, array: Array<T>, context?: any): Array<T>;
 function forEach<T>(iterator: (value: T, key: string, obj: any) => void, obj: any, context?: any): any;
 function forEach<T>(iterator: (value: T, key: any, obj: any) => void, obj: any, context?: any): any {
     if (isNull(obj) || !(isObject(obj) || isArrayLike(obj))) {
