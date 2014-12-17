@@ -1,6 +1,27 @@
 ﻿/* tslint:disable:no-unused-variable */
 var __nativeIsArray = !!Array.isArray,
-    __uids__: plat.IObject<Array<string>> = {};
+    __uids__: plat.IObject<Array<string>> = {},
+    objToString = Object.prototype.toString,
+    toStringClass = '[object ',
+    errorClass = toStringClass + 'Error]',
+    fileClass = toStringClass + 'File]',
+    arrayClass = toStringClass + 'Array]',
+    boolClass = toStringClass + 'Boolean]',
+    dateClass = toStringClass + 'Date]',
+    funcClass = toStringClass + 'Function]',
+    numberClass = toStringClass + 'Number]',
+    objectClass = toStringClass + 'Object]',
+    regexpClass = toStringClass + 'RegExp]',
+    stringClass = toStringClass + 'String]',
+    promiseClass = toStringClass + 'Promise]',
+    objectTypes: any = {
+        'boolean': false,
+        'function': true,
+        'object': true,
+        'number': false,
+        'string': false,
+        'undefined': false
+    };
 
 function noop(): void { }
 
@@ -18,14 +39,14 @@ function extend(destination: any, ...sources: any[]): any {
     var keys: Array<string>,
         property: any;
 
-    forEach(sources, (source, k) => {
+    forEach((source, k) => {
         if (!isObject(source)) {
             return;
         }
 
         keys = Object.keys(source);
 
-        forEach(keys, (key) => {
+        forEach((key) => {
             property = source[key];
             if (deep) {
                 if (isArray(property)) {
@@ -46,8 +67,8 @@ function extend(destination: any, ...sources: any[]): any {
                 }
             }
             destination[key] = property;
-        });
-    });
+        }, keys);
+    }, sources);
 
     return destination;
 }
@@ -83,11 +104,11 @@ function _clone(obj: any, deep?: boolean) {
 }
 
 function isError(obj: any): boolean {
-    return Object.prototype.toString.call(obj) === '[object Error]';
+    return objToString.call(obj) === errorClass;
 }
 
 function isObject(obj: any): boolean {
-    return obj != null && typeof obj === 'object';
+    return !!(obj && objectTypes[typeof obj]);
 }
 
 function isWindow(obj: any): boolean {
@@ -107,19 +128,19 @@ function isDocumentFragment(obj: any): boolean {
 }
 
 function isFile(obj: any): boolean {
-    return isObject(obj) && obj.toString() === '[object File]';
+    return isObject(obj) && obj.toString() === fileClass;
 }
 
 function isString(obj: any): boolean {
-    return typeof obj === 'string';
+    return typeof obj === 'string' || obj && typeof obj === 'object' && objToString.call(obj) == stringClass || false;
 }
 
 function isRegExp(obj: any): boolean {
-    return Object.prototype.toString.call(obj) === '[object RegExp]';
+    return obj && typeof obj === 'object' && objToString.call(obj) === regexpClass || false;
 }
 
 function isPromise(obj: any): boolean {
-    return isObject(obj) && (obj.toString() === '[object Promise]' || isFunction(obj.then));
+    return isObject(obj) && (obj.toString() === promiseClass || isFunction(obj.then));
 }
 
 function isEmpty(obj: any): boolean {
@@ -139,11 +160,11 @@ function isEmpty(obj: any): boolean {
 }
 
 function isBoolean(obj: any): boolean {
-    return typeof obj === 'boolean';
+    return obj === true || obj === false || obj && typeof obj === 'object' && objToString.call(obj) === boolClass || false;
 }
 
 function isNumber(obj: any): boolean {
-    return typeof obj === 'number' && !isNaN(obj);
+    return typeof obj === 'number' || obj && typeof obj === 'object' && objToString.call(obj) == numberClass || false;
 }
 
 function isFunction(obj: any): boolean {
@@ -163,7 +184,7 @@ function isArray(obj: any): boolean {
         return Array.isArray(obj);
     }
 
-    return Object.prototype.toString.call(obj) === '[object Array]';
+    return objToString.call(obj) === arrayClass;
 }
 
 function isArrayLike(obj: any): boolean {
@@ -175,10 +196,10 @@ function isArrayLike(obj: any): boolean {
 }
 
 function isDate(obj: any): boolean {
-    return Object.prototype.toString.call(obj) === '[object Date]';
+    return obj && typeof obj == 'object' && objToString.call(obj) == dateClass || false;
 }
 
-function filter<T>(obj: any, iterator: (value: T, key: any, obj: any) => boolean, context?: any): Array<T> {
+function filter<T>(iterator: (value: T, key: any, obj: any) => boolean, obj: any, context?: any): Array<T> {
     var arr: Array<T> = [];
     if (isNull(obj)) {
         return arr;
@@ -188,24 +209,24 @@ function filter<T>(obj: any, iterator: (value: T, key: any, obj: any) => boolean
         return obj.filter(iterator, context);
     }
 
-    forEach<T>(obj, (value: T, key: any, obj: any) => {
+    forEach<T>((value: T, key: any, obj: any) => {
         if (iterator(value, key, obj)) {
             arr.push(value);
         }
-    });
+    }, obj);
 
     return arr;
 }
 
-function where(obj: any, properties: any): Array<any> {
-    return filter(obj, (value)
-        => !some(properties, (property, key)
-            => (<any>value)[key] !== property));
+function where(properties: any, obj: any): Array<any> {
+    return filter((value)
+        => !some((property, key)
+            => (<any>value)[key] !== property, properties), obj);
 }
 
-function forEach<T>(array: Array <T>, iterator: (value: T, index: number, obj: any) => void, context?: any): Array <T>;
-function forEach<T>(obj: any, iterator: (value: T, key: string, obj: any) => void, context?: any): any;
-function forEach<T>(obj: any, iterator: (value: T, key: any, obj: any) => void, context?: any): any {
+function forEach<T>(iterator: (value: T, index: number, obj: any) => void, array: Array<T>, context?: any): Array<T>;
+function forEach<T>(iterator: (value: T, key: string, obj: any) => void, obj: any, context?: any): any;
+function forEach<T>(iterator: (value: T, key: any, obj: any) => void, obj: any, context?: any): any {
     if (isNull(obj) || !(isObject(obj) || isArrayLike(obj))) {
         return obj;
     }
@@ -232,7 +253,7 @@ function forEach<T>(obj: any, iterator: (value: T, key: any, obj: any) => void, 
     return obj;
 }
 
-function map<T, R>(obj: any, iterator: (value: T, key: any, obj: any) => R, context?: any): Array<R> {
+function map<T, R>(iterator: (value: T, key: any, obj: any) => R, obj: any, context?: any): Array<R> {
     var arr: Array<R> = [];
 
     if (isNull(obj)) {
@@ -243,24 +264,23 @@ function map<T, R>(obj: any, iterator: (value: T, key: any, obj: any) => R, cont
         return obj.map(iterator, context);
     }
 
-    forEach(obj, (value, key) => {
+    forEach((value, key) => {
         arr.push(iterator.call(context, value, key, obj));
-    });
+    }, obj);
 
     return arr;
 }
 
 var Promise: plat.async.IPromise;
 
-function mapAsync<T, R>(obj: any, iterator: (value: T, key: any, obj: any) => plat.async.IThenable<R>,
-    context?: any): plat.async.IThenable<Array<R>> {
+function mapAsync<T, R>(iterator: (value: T, key: any, obj: any) => plat.async.IThenable<R>, obj: any, context?: any): plat.async.IThenable<Array<R>> {
     Promise = Promise || plat.acquire(__Promise);
 
-    return Promise.all(map(obj, iterator, context));
+    return Promise.all(map(iterator, obj, context));
 }
 
-function mapAsyncWithOrder<T, R>(array: Array<T>, iterator: (value: T, index: number, list: Array<T>) => plat.async.IThenable<R>,
-    context: any, descending?: boolean): plat.async.IThenable<Array<R>> {
+function mapAsyncWithOrder<T, R>(iterator: (value: T, index: number, list: Array<T>) => plat.async.IThenable<R>,
+    array: Array<T>, context: any, descending?: boolean): plat.async.IThenable<Array<R>> {
     Promise = Promise || plat.acquire(__Promise);
     var initialValue = Promise.resolve<Array<R>>([]);
 
@@ -287,21 +307,21 @@ function mapAsyncWithOrder<T, R>(array: Array<T>, iterator: (value: T, index: nu
     return array.reduce(inOrder, initialValue);
 }
 
-function mapAsyncInOrder<T, R>(array: Array<T>, iterator: (value: T, index: number, list: Array<T>) => plat.async.IThenable<R>,
-    context?: any): plat.async.IThenable<Array<R>> {
-    return mapAsyncWithOrder(array, iterator, context);
+function mapAsyncInOrder<T, R>(iterator: (value: T, index: number, list: Array<T>) => plat.async.IThenable<R>,
+    array: Array<T>, context?: any): plat.async.IThenable<Array<R>> {
+    return mapAsyncWithOrder(iterator, array, context);
 }
 
-function mapAsyncInDescendingOrder<T, R>(array: Array<T>, iterator: (value: T, index: number, list: Array<T>) => plat.async.IThenable<R>,
-    context?: any): plat.async.IThenable<Array<R>> {
-    return mapAsyncWithOrder(array, iterator, context, true);
+function mapAsyncInDescendingOrder<T, R>(iterator: (value: T, index: number, list: Array<T>) => plat.async.IThenable<R>,
+    array: Array<T>, context?: any): plat.async.IThenable<Array<R>> {
+    return mapAsyncWithOrder(iterator, array, context, true);
 }
 
-function pluck<T, U>(obj: any, key: string): Array<U> {
-    return map<T, U>(obj, (value) => (<any>value)[key]);
+function pluck<T, U>(key: string, obj: any): Array<U> {
+    return map<T, U>((value) => (<any>value)[key], obj);
 }
 
-function some<T>(obj: any, iterator: (value: T, key: any, obj: any) => boolean, context?: any): boolean {
+function some<T>(iterator: (value: T, key: any, obj: any) => boolean, obj: any, context?: any): boolean {
     if (isNull(obj) || isFunction(obj)) {
         return false;
     }
