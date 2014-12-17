@@ -132,7 +132,7 @@ function isFile(obj: any): boolean {
 }
 
 function isString(obj: any): boolean {
-    return typeof obj === 'string' || typeof obj === 'object' && objToString.call(obj) == stringClass;
+    return typeof obj === 'string' || typeof obj === 'object' && objToString.call(obj) === stringClass;
 }
 
 function isRegExp(obj: any): boolean {
@@ -164,7 +164,7 @@ function isBoolean(obj: any): boolean {
 }
 
 function isNumber(obj: any): boolean {
-    return (typeof obj === 'number' || typeof obj === 'object' && objToString.call(obj) == numberClass) && !isNaN(obj);
+    return (typeof obj === 'number' || typeof obj === 'object' && objToString.call(obj) === numberClass) && !isNaN(obj);
 }
 
 function isFunction(obj: any): boolean {
@@ -196,7 +196,7 @@ function isArrayLike(obj: any): boolean {
 }
 
 function isDate(obj: any): boolean {
-    return typeof obj == 'object' && objToString.call(obj) == dateClass || false;
+    return typeof obj === 'object' && objToString.call(obj) === dateClass;
 }
 
 function filter<T>(iterator: (value: T, key: any, obj: any) => boolean, obj: any, context?: any): Array<T> {
