@@ -935,7 +935,7 @@ module plat.controls {
                 if (isNull(context[property])) {
                     context[property] = [];
                 }
-                this.observeArray(context, property, (arrayInfo: observable.IArrayMethodInfo<string>) => {
+                this.observeArray(context, property, null, (arrayInfo: observable.IPostArrayChangeInfo<string>) => {
                     this._setter(arrayInfo.newArray, arrayInfo.oldArray, true);
                 });
             }
@@ -1062,8 +1062,8 @@ module plat.controls {
                 var split = select.absoluteContextPath.split('.'),
                     key = split.pop();
 
-                this.observeArray(this.$ContextManagerStatic.getContext(this.parent, split), key,
-                    (ev: observable.IArrayMethodInfo<any>) => {
+                this.observeArray(this.$ContextManagerStatic.getContext(this.parent, split), key, null,
+                    (ev: observable.IPostArrayChangeInfo<any>) => {
                         select.itemsLoaded.then(() => {
                             this._setter(this.evaluateExpression(this._expression));
                         });

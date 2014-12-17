@@ -23,7 +23,7 @@ module plat.ui.controls {
          * @returns {void}
          */
         setTemplate(): void {
-            this.innerTemplate = this.dom.appendChildren(this.element.childNodes);
+            this.innerTemplate = <DocumentFragment>appendChildren(this.element.childNodes);
         }
 
         /**

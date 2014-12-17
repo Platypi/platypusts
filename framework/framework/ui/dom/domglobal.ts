@@ -311,7 +311,8 @@ function addClass(element: HTMLElement, className: string): void {
     }
 
     var split = className.split(__whiteSpaceRegex),
-        name: string;
+        name: string,
+        classNameRegex: RegExp;
     if (isUndefined(element.classList)) {
         if (isEmpty(cName)) {
             element.className = className;
@@ -321,7 +322,10 @@ function addClass(element: HTMLElement, className: string): void {
         while (split.length > 0) {
             name = split.shift();
             if (name !== '') {
-                element.className += ' ' + name;
+                classNameRegex = new RegExp('^' + name + '\\s+|\\s+' + name + '$|\\s+' + name + '\\s+', 'g');
+                if (!classNameRegex.test(cName)) {
+                    element.className += ' ' + name;
+                }
             }
         }
         return;
@@ -353,7 +357,7 @@ function removeClass(element: HTMLElement, className: string): void {
             name = split.shift();
             if (name !== '') {
                 element.className = cName = cName
-                    .replace(new RegExp('^' + name + '\\s|\\s' + name + '$|\\s' + name + '|' + name + '\\s', 'g'), '');
+                    .replace(new RegExp('^' + name + '\\s+|\\s+' + name + '$|\\s+' + name + '\\s+', 'g'), '');
             }
         }
         return;
@@ -387,7 +391,7 @@ function toggleClass(element: HTMLElement, className: string): void {
         while (split.length > 0) {
             name = split.shift();
             if (name !== '') {
-                classNameRegex = new RegExp('^' + name + '\\s|\\s' + name + '$|\\s' + name + '|' + name + '\\s', 'g');
+                classNameRegex = new RegExp('^' + name + '\\s+|\\s+' + name + '$|\\s+' + name + '\\s+', 'g');
                 if (classNameRegex.test(cName)) {
                     element.className = cName = cName.replace(classNameRegex, '');
                     continue;
@@ -407,6 +411,20 @@ function toggleClass(element: HTMLElement, className: string): void {
     }
 }
 
+function replaceClass(element: HTMLElement, oldClass: string, newClass: string): void {
+    var cName = (element || <HTMLElement>{}).className;
+    if (!isString(cName) || !isString(newClass) || newClass === '') {
+        return;
+    }
+
+    var startRegex = new RegExp('^' + oldClass + '\\s+', 'g'),
+        midRegex = new RegExp('\\s+' + oldClass + '\\s+', 'g'),
+        endRegex = new RegExp('\\s+' + oldClass + '$', 'g');
+    element.className = cName.replace(startRegex, newClass + ' ')
+        .replace(midRegex, ' ' + newClass + ' ')
+        .replace(endRegex, ' ' + newClass);
+}
+
 function hasClass(element: HTMLElement, className: string): boolean {
     var cName = (element || <HTMLElement>{}).className;
     if (!isString(cName) || !isString(className) || className === '') {
@@ -424,7 +442,7 @@ function hasClass(element: HTMLElement, className: string): boolean {
         var name: string;
         while (split.length > 0) {
             name = split.shift();
-            if (!(name === '' || new RegExp('^' + name + '\\s|\\s' + name + '$|\\s' + name + '|' + name + '\\s', 'g').test(cName))) {
+            if (!(name === '' || new RegExp('^' + name + '\\s|\\s' + name + '$|\\s' + name + '\\s', 'g').test(cName))) {
                 return false;
             }
         }

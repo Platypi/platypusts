@@ -97,7 +97,7 @@ module plat.ui.controls {
          * @type {plat.observable.IObservableProperty<plat.ui.controls.IForEachAliasOptions>}
          * 
          * @description
-         * The {@link plat.ui.controls.IForEachOptions|options} for the foreach control. 
+         * The {@link plat.ui.controls.IForEachOptions|options} for the {@link plat.ui.controls.ForEach|ForEach} control.
          */
         options: observable.IObservableProperty<IForEachOptions>;
 
@@ -112,7 +112,7 @@ module plat.ui.controls {
          * @description
          * Used to hold the alias tokens for the built-in foreach aliases. You 
          * can overwrite these with the {@link plat.ui.controls.IForEachOptions|options} for 
-         * the foreach control. 
+         * the {@link plat.ui.controls.ForEach|ForEach} control. 
          */
         protected _aliases: IForEachAliasOptions = {
             index: __forEachAliasOptions.index,
@@ -128,12 +128,27 @@ module plat.ui.controls {
          * @kind property
          * @access protected
          * 
-         * @type {number}
+         * @type {any}
          * 
          * @description
-         * The node length of the element's childNodes (innerHTML).
+         * The node length of each item's childNodes (innerHTML). 
+         * For the {@link plat.ui.controls.ForEach|ForEach} it should be a 
+         * single constant number.
          */
-        protected _blockLength = 0;
+        protected _blockLength: any = 0;
+
+        /**
+         * @name _currentAnimations
+         * @memberof plat.ui.controls.ForEach
+         * @kind property
+         * @access protected
+         * 
+         * @type {Array<plat.ui.animations.IAnimationThenable<any>>}
+         * 
+         * @description
+         * An array to aggregate all current animation promises.
+         */
+        protected _currentAnimations: Array<animations.IAnimationThenable<any>> = [];
 
         /**
          * @name __listenerSet
@@ -147,18 +162,6 @@ module plat.ui.controls {
          * Whether or not the Array listener has been set.
          */
         private __listenerSet = false;
-        /**
-         * @name __currentAnimations
-         * @memberof plat.ui.controls.ForEach
-         * @kind property
-         * @access private
-         * 
-         * @type {Array<plat.ui.animations.IAnimationThenable<any>>}
-         * 
-         * @description
-         * An array to aggregate all current animation promises.
-         */
-        private __currentAnimations: Array<animations.IAnimationThenable<any>> = [];
         /**
          * @name __resolveFn
          * @memberof plat.ui.controls.ForEach
@@ -213,7 +216,7 @@ module plat.ui.controls {
          * @access public
          * 
          * @description
-         * Re-syncs the ForEach children controls and DOM with the new 
+         * Re-syncs the {@link plat.ui.controls.ForEach|ForEach} child controls and DOM with the new 
          * array.
          * 
          * @param {Array<any>} newValue? The new Array
@@ -223,6 +226,8 @@ module plat.ui.controls {
          */
         contextChanged(newValue?: Array<any>, oldValue?: Array<any>): void {
             if (!isArray(newValue)) {
+                var $exception: plat.IExceptionStatic = plat.acquire(__ExceptionStatic);
+                $exception.warn(this.type + ' context set to something other than an Array.', $exception.CONTEXT);
                 return;
             }
 
@@ -256,14 +261,16 @@ module plat.ui.controls {
          */
         loaded(): void {
             var context = this.context;
-
             if (!isArray(context)) {
+                if (!isNull(context)) {
+                    var $exception: plat.IExceptionStatic = plat.acquire(__ExceptionStatic);
+                    $exception.warn(this.type + ' context set to something other than an Array.', $exception.CONTEXT);
+                }
                 return;
             }
 
             this._setAliases();
             this._addItems(context.length, 0);
-
             this._setListener();
         }
 
@@ -289,7 +296,7 @@ module plat.ui.controls {
          * @access protected
          * 
          * @description
-         * Sets the alias tokens to use for all the items in the foreach context array.
+         * Sets the alias tokens to use for all the items in the {@link plat.ui.controls.ForEach|ForEach} context array.
          * 
          * @returns {void}
          */
@@ -317,55 +324,142 @@ module plat.ui.controls {
         }
 
         /**
-         * @name _addItem
+         * @name _addItems
          * @memberof plat.ui.controls.ForEach
          * @kind function
          * @access protected
          * 
          * @description
-         * Adds an item to the control's element.
+         * Adds new items to the control's element when items are added to 
+         * the array.
          * 
-         * @param {DocumentFragment} item The HTML fragment representing a single item
-         * @param {boolean} animate? Whether or not to animate the entering item
+         * @param {number} numberOfItems The number of items to add.
+         * @param {number} index The point in the array to start adding items.
+         * @param {boolean} animate? Whether or not to animate the new items
+         * 
+         * @returns {plat.async.IThenable<void>} The itemsLoaded promise.
+         */
+        protected _addItems(numberOfItems: number, index: number, animate?: boolean): async.IThenable<void> {
+            var context = this.context,
+                max = +(index + numberOfItems);
+            if (!isArray(context) || !isNumber(max) || (context.length < max)) {
+                return;
+            }
+
+            var promises: Array<async.IThenable<DocumentFragment>> = [];
+            while (index < max) {
+                promises.push(this._bindItem(index++));
+            }
+
+            if (promises.length > 0) {
+                this.itemsLoaded = this.$Promise.all(promises).then<void>((templates) => {
+                    this._setBlockLength(templates);
+
+                    if (animate === true) {
+                        var length = templates.length;
+                        for (var i = 0; i < length; ++i) {
+                            this._appendAnimatedItem(templates[i], __Enter);
+                        }
+                    } else {
+                        this._appendItems(templates);
+                    }
+
+                    if (isFunction(this.__resolveFn)) {
+                        this.__resolveFn();
+                        this.__resolveFn = null;
+                    }
+                }).catch((error) => {
+                        postpone(() => {
+                            var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                            $exception.warn(error, $exception.BIND);
+                        });
+                    });
+            } else {
+                if (isFunction(this.__resolveFn)) {
+                    this.__resolveFn();
+                    this.__resolveFn = null;
+                }
+                this.itemsLoaded = new this.$Promise<void>((resolve) => {
+                    this.__resolveFn = resolve;
+                });
+            }
+
+            return this.itemsLoaded;
+        }
+
+        /**
+         * @name _appendItems
+         * @memberof plat.ui.controls.ForEach
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Adds an Array of items to the element without animating.
+         * 
+         * @param {Array<Node>} items The Array of items to add.
          * 
          * @returns {void}
          */
-        protected _addItem(item: DocumentFragment, animate?: boolean): void {
-            var context = this.context;
-            if (!isNode(item) ||
-                !isArray(context) ||
-                context.length === 0 ||
-                this.controls.length === 0) {
+        protected _appendItems(items: Array<Node>): void {
+            appendChildren(items, this.element);
+        }
+
+        /**
+         * @name _appendAnimatedItem
+         * @memberof plat.ui.controls.ForEach
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Adds an item to the control's element animating its elements.
+         * 
+         * @param {DocumentFragment} item The HTML fragment representing a single item.
+         * @param {string} key The animation key/type.
+         * 
+         * @returns {void}
+         */
+        protected _appendAnimatedItem(item: DocumentFragment, key: string): void {
+            if (!isNode(item)) {
                 return;
             }
 
             var $animator = this.$Animator,
-                childNodes: Array<Element>,
+                childNodes: Array<Element> = Array.prototype.slice.call(item.childNodes),
                 childNode: Element;
 
-            if (animate === true) {
-                childNodes = Array.prototype.slice.call(item.childNodes);
-                if (this._blockLength === 0) {
-                    this._blockLength = childNodes.length;
-                }
-            } else {
-                if (this._blockLength === 0) {
-                    this._blockLength = item.childNodes.length;
-                }
-                this.dom.insertBefore(this.element, item);
-                return;
-            }
+            insertBefore(this.element, item);
 
-            this.dom.insertBefore(this.element, item);
-
-            var currentAnimations = this.__currentAnimations;
+            var currentAnimations = this._currentAnimations;
             while (childNodes.length > 0) {
                 childNode = childNodes.shift();
                 if (childNode.nodeType === Node.ELEMENT_NODE) {
-                    currentAnimations.push($animator.animate(childNode, __Enter).then(() => {
+                    currentAnimations.push($animator.animate(childNode, key).then(() => {
                         currentAnimations.shift();
                     }));
                 }
+            }
+        }
+
+        /**
+         * @name _removeItems
+         * @memberof plat.ui.controls.ForEach
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Removes items from the control's element.
+         * 
+         * @param {number} numberOfItems The number of items to remove.
+         * 
+         * @returns {void}
+         */
+        protected _removeItems(numberOfItems: number): void {
+            for (var i = 0; i < numberOfItems; ++i) {
+                this._removeItem();
+            }
+
+            if (this.controls.length > 0) {
+                this._updateResources();
             }
         }
 
@@ -385,6 +479,40 @@ module plat.ui.controls {
                 length = controls.length - 1;
 
             TemplateControl.dispose(controls[length]);
+        }
+
+        /**
+         * @name _bindItem
+         * @memberof plat.ui.controls.ForEach
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Binds the item to a template at that index.
+         * 
+         * @returns {void}
+         */
+        protected _bindItem(index: number): async.IThenable<DocumentFragment> {
+            return this.bindableTemplates.bind('item', index, this._getAliases(index));
+        }
+
+        /**
+         * @name _setBlockLength
+         * @memberof plat.ui.controls.ForEach
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Sets the corresponding block length for animation.
+         * 
+         * @returns {void}
+         */
+        protected _setBlockLength(templates: Array<Node>): void {
+            if (this._blockLength > 0 || templates.length === 0) {
+                return;
+            }
+
+            this._blockLength = templates[0].childNodes.length;
         }
 
         /**
@@ -421,8 +549,29 @@ module plat.ui.controls {
          */
         protected _setListener(): void {
             if (!this.__listenerSet) {
-                this.observeArray(this, __CONTEXT, this._executeEvent);
+                this.observeArray(this, __CONTEXT, this._preprocessEvent, this._executeEvent);
                 this.__listenerSet = true;
+            }
+        }
+
+        /**
+         * @name _preprocessEvent
+         * @memberof plat.ui.controls.ForEach
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Receives an event prior to a method being called on an array and maps the array 
+         * method to its associated pre-method handler.
+         * 
+         * @param {plat.observable.IPreArrayChangeInfo} ev The Array mutation event information.
+         * 
+         * @returns {void}
+         */
+        protected _preprocessEvent(ev: observable.IPreArrayChangeInfo): void {
+            var method = '_pre' + ev.method;
+            if (isFunction((<any>this)[method])) {
+                (<any>this)[method](ev);
             }
         }
 
@@ -436,88 +585,14 @@ module plat.ui.controls {
          * Receives an event when a method has been called on an array and maps the array 
          * method to its associated method handler.
          * 
-         * @param {plat.observable.IArrayMethodInfo<any>} ev The Array mutation event information.
+         * @param {plat.observable.IPostArrayChangeInfo<any>} ev The Array mutation event information.
          * 
          * @returns {void}
          */
-        protected _executeEvent(ev: observable.IArrayMethodInfo<any>): void {
+        protected _executeEvent(ev: observable.IPostArrayChangeInfo<any>): void {
             var method = '_' + ev.method;
             if (isFunction((<any>this)[method])) {
                 (<any>this)[method](ev);
-            }
-        }
-
-        /**
-         * @name _addItems
-         * @memberof plat.ui.controls.ForEach
-         * @kind function
-         * @access protected
-         * 
-         * @description
-         * Adds new items to the control's element when items are added to 
-         * the array.
-         * 
-         * @param {number} numberOfItems The number of items to add.
-         * @param {number} index The point in the array to start adding items.
-         * @param {boolean} animate? Whether or not to animate the new items
-         * 
-         * @returns {plat.async.IThenable<void>} The itemsLoaded promise.
-         */
-        protected _addItems(numberOfItems: number, index: number, animate?: boolean): async.IThenable<void> {
-            var bindableTemplates = this.bindableTemplates,
-                promises: Array<async.IThenable<void>> = [];
-
-            for (var i = 0; i < numberOfItems; ++i, ++index) {
-                promises.push(bindableTemplates.bind('item', index, this._getAliases(index)).then((fragment: DocumentFragment) => {
-                    this._addItem(fragment, animate);
-                }).catch((error: any) => {
-                        postpone(() => {
-                            var $exception: IExceptionStatic = acquire(__ExceptionStatic);
-                            $exception.fatal(error, $exception.BIND);
-                        });
-                    }));
-            }
-
-            if (promises.length > 0) {
-                this.itemsLoaded = this.$Promise.all(promises).then<void>(() => {
-                    if (isFunction(this.__resolveFn)) {
-                        this.__resolveFn();
-                        this.__resolveFn = null;
-                    }
-                });
-            } else {
-                if (isFunction(this.__resolveFn)) {
-                    this.__resolveFn();
-                    this.__resolveFn = null;
-                }
-                this.itemsLoaded = new this.$Promise<void>((resolve) => {
-                    this.__resolveFn = resolve;
-                });
-            }
-
-            return this.itemsLoaded;
-        }
-
-        /**
-         * @name _removeItems
-         * @memberof plat.ui.controls.ForEach
-         * @kind function
-         * @access protected
-         * 
-         * @description
-         * Removes items from the control's element.
-         * 
-         * @param {number} numberOfItems The number of items to remove.
-         * 
-         * @returns {void}
-         */
-        protected _removeItems(numberOfItems: number): void {
-            for (var i = 0; i < numberOfItems; ++i) {
-                this._removeItem();
-            }
-
-            if (this.controls.length > 0) {
-                this._updateResources();
             }
         }
 
@@ -579,11 +654,11 @@ module plat.ui.controls {
          * @description
          * Handles items being pushed into the array.
          * 
-         * @param {plat.observable.IArrayMethodInfo<any>} ev The Array mutation event information.
+         * @param {plat.observable.IPostArrayChangeInfo<any>} ev The Array mutation event information.
          * 
          * @returns {void}
          */
-        protected _push(ev: observable.IArrayMethodInfo<any>): void {
+        protected _push(ev: observable.IPostArrayChangeInfo<any>): void {
             this._addItems(ev.arguments.length, ev.oldArray.length, true);
         }
 
@@ -596,28 +671,31 @@ module plat.ui.controls {
          * @description
          * Handles items being popped off the array.
          * 
-         * @param {plat.observable.IArrayMethodInfo<any>} ev The Array mutation event information.
+         * @param {plat.observable.IPostArrayChangeInfo<any>} ev The Array mutation event information.
          * 
          * @returns {void}
          */
-        protected _pop(ev: observable.IArrayMethodInfo<any>): void {
-            var blockLength = this._blockLength,
-                startNode: number,
-                animationPromise: plat.ui.animations.IAnimationThenable<void>;
-
-            if (blockLength > 0) {
-                startNode = blockLength * ev.newArray.length;
-                animationPromise = this._animateItems(startNode, undefined, __Leave);
-            }
-
-            if (isNull(animationPromise)) {
-                this._removeItems(1);
-                return;
-            }
-
-            this.itemsLoaded = animationPromise.then(() => {
+        protected _pop(ev: observable.IPostArrayChangeInfo<any>): void {
+            this._animateItems(ev.newArray.length, 1, __Leave).then(() => {
                 this._removeItems(1);
             });
+        }
+
+        /**
+         * @name _preshift
+         * @memberof plat.ui.controls.ForEach
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Handles items being shifted off the array.
+         * 
+         * @param {plat.observable.IPreArrayChangeInfo} ev The Array mutation event information.
+         * 
+         * @returns {void}
+         */
+        protected _preshift(ev: observable.IPreArrayChangeInfo): void {
+            this._animateItems(0, 1, __Leave, true);
         }
 
         /**
@@ -629,12 +707,39 @@ module plat.ui.controls {
          * @description
          * Handles items being shifted off the array.
          * 
-         * @param {plat.observable.IArrayMethodInfo<any>} ev The Array mutation event information.
+         * @param {plat.observable.IPostArrayChangeInfo<any>} ev The Array mutation event information.
          * 
          * @returns {void}
          */
-        protected _shift(ev: observable.IArrayMethodInfo<any>): void {
+        protected _shift(ev: observable.IPostArrayChangeInfo<any>): void {
             this._removeItems(1);
+        }
+
+        /**
+         * @name _presplice
+         * @memberof plat.ui.controls.ForEach
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Handles adding/removing items when an array is spliced.
+         * 
+         * @param {plat.observable.IPreArrayChangeInfo} ev The Array mutation event information.
+         * 
+         * @returns {void}
+         */
+        protected _presplice(ev: observable.IPreArrayChangeInfo): void {
+            var arguments = ev.arguments,
+                addCount = arguments.length - 2,
+                deleteCount = arguments[1];
+
+            // check if adding more items than deleting
+            if (addCount >= deleteCount) {
+                this._animateItems(arguments[0], addCount, __Enter);
+                return;
+            }
+
+            this._animateItems(arguments[0], deleteCount, __Leave, true);
         }
 
         /**
@@ -646,19 +751,36 @@ module plat.ui.controls {
          * @description
          * Handles adding/removing items when an array is spliced.
          * 
-         * @param {plat.observable.IArrayMethodInfo<any>} ev The Array mutation event information.
+         * @param {plat.observable.IPostArrayChangeInfo<any>} ev The Array mutation event information.
          * 
          * @returns {void}
          */
-        protected _splice(ev: observable.IArrayMethodInfo<any>): void {
+        protected _splice(ev: observable.IPostArrayChangeInfo<any>): void {
             var oldLength = this.controls.length,
                 newLength = ev.newArray.length;
 
             if (newLength > oldLength) {
-                this._addItems(newLength - oldLength, oldLength, oldLength === 0);
+                this._addItems(newLength - oldLength, oldLength);
             } else if (oldLength > newLength) {
                 this._removeItems(oldLength - newLength);
             }
+        }
+
+        /**
+         * @name _preunshift
+         * @memberof plat.ui.controls.ForEach
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Handles animating items being unshifted into the array.
+         * 
+         * @param {plat.observable.IPreArrayChangeInfo} ev The Array mutation event information.
+         * 
+         * @returns {void}
+         */
+        protected _preunshift(ev: observable.IPreArrayChangeInfo): void {
+            this._animateItems(0, 1, __Enter);
         }
 
         /**
@@ -670,11 +792,11 @@ module plat.ui.controls {
          * @description
          * Handles items being unshifted into the array.
          * 
-         * @param {plat.observable.IArrayMethodInfo<any>} ev The Array mutation event information.
+         * @param {plat.observable.IPostArrayChangeInfo<any>} ev The Array mutation event information.
          * 
          * @returns {void}
          */
-        protected _unshift(ev: observable.IArrayMethodInfo<any>): void {
+        protected _unshift(ev: observable.IPostArrayChangeInfo<any>): void {
             this._addItems(ev.arguments.length, ev.oldArray.length);
         }
 
@@ -687,11 +809,11 @@ module plat.ui.controls {
          * @description
          * Handles when the array is sorted.
          * 
-         * @param {plat.observable.IArrayMethodInfo<any>} ev The Array mutation event information.
+         * @param {plat.observable.IPostArrayChangeInfo<any>} ev The Array mutation event information.
          * 
          * @returns {void}
          */
-        protected _sort(ev: observable.IArrayMethodInfo<any>): void { }
+        protected _sort(ev: observable.IPostArrayChangeInfo<any>): void { }
 
         /**
          * @name _reverse
@@ -702,11 +824,11 @@ module plat.ui.controls {
          * @description
          * Handles when the array is reversed.
          * 
-         * @param {plat.observable.IArrayMethodInfo<any>} ev The Array mutation event information.
+         * @param {plat.observable.IPostArrayChangeInfo<any>} ev The Array mutation event information.
          * 
          * @returns {void}
          */
-        protected _reverse(ev: observable.IArrayMethodInfo<any>): void { }
+        protected _reverse(ev: observable.IPostArrayChangeInfo<any>): void { }
 
         /**
          * @name _animateItems
@@ -715,31 +837,62 @@ module plat.ui.controls {
          * @access protected
          * 
          * @description
-         * Animates a block of elements.
+         * Animates the indicated items.
          * 
-         * @param {number} startNode The starting childNode of the ForEach to animate
-         * @param {number} endNode The ending childNode of the ForEach to animate
-         * @param {string} key The animation key/type
+         * @param {number} startIndex The starting index of items to animate.
+         * @param {number} numberOfItems The number of consecutive items to animate.
+         * @param {string} key The animation key/type.
+         * @param {boolean} clone? Whether to clone the items and animate the clones or simply animate the items itself.
          * @param {boolean} cancel? Whether or not the animation should cancel all current animations. 
          * Defaults to true.
          * 
-         * @returns {plat.ui.animations.IAnimationThenable<void>} A promise that resolves when all animations are complete.
+         * @returns {plat.ui.async.IThenable<void>} A promise that resolves when all animations are complete.
          */
-        protected _animateItems(startNode: number, endNode: number, key: string, cancel?: boolean): animations.IAnimationThenable<void> {
-            var currentAnimations = this.__currentAnimations,
+        protected _animateItems(startIndex: number, numberOfItems: number, key: string, clone?: boolean,
+            cancel?: boolean): async.IThenable<void> {
+            var blockLength = this._blockLength;
+            if (blockLength === 0) {
+                return this.$Promise.resolve<void>();
+            }
+
+            var start = startIndex * blockLength;
+            return this._initiateAnimation(start, numberOfItems * blockLength + start, key, clone, cancel);
+        }
+
+        /**
+         * @name _initiateAnimation
+         * @memberof plat.ui.controls.ForEach
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Animates a block of elements.
+         * 
+         * @param {number} startNode The starting childNode of the ForEach to animate.
+         * @param {number} endNode The ending childNode of the ForEach to animate.
+         * @param {string} key The animation key/type.
+         * @param {boolean} clone? Whether to clone the items and animate the clones or simply animate the items itself.
+         * @param {boolean} cancel? Whether or not the animation should cancel all current animations. 
+         * Defaults to true.
+         * 
+         * @returns {plat.ui.async.IThenable<void>} A promise that resolves when all animations are complete.
+         */
+        protected _initiateAnimation(startNode: number, endNode: number, key: string, clone?: boolean,
+            cancel?: boolean): async.IThenable<void> {
+            var animationPromises: Array<animations.IAnimatingThenable> = [],
+                currentAnimations = this._currentAnimations,
                 length = currentAnimations.length;
 
             if (length === 0 || cancel === false) {
-                return this.__handleAnimation(startNode, endNode, key);
+                return this.__handleAnimation(startNode, endNode, key, clone);
             }
 
-            var animationPromises: Array<animations.IAnimatingThenable> = [];
             while (length-- > 0) {
                 animationPromises.push(currentAnimations[length].cancel());
             }
 
-            return <animations.IAnimationThenable<void>>this.$Promise.all(animationPromises).then(() => {
-                return this.__handleAnimation(startNode, endNode, key);
+            return this.$Promise.all(animationPromises).then(() => {
+                return this.__handleAnimation(startNode, endNode, key, clone);
             });
         }
 
@@ -755,22 +908,39 @@ module plat.ui.controls {
          * @param {number} startNode The starting childNode of the ForEach to animate
          * @param {number} endNode The ending childNode of the ForEach to animate
          * @param {string} key The animation key/type
+         * @param {boolean} clone Whether to clone the items and animate the clones or simply animate the items itself.
          * 
-         * @returns {plat.ui.animations.IAnimationThenable<void>} The last element node's animation promise.
+         * @returns {plat.async.IThenable<void>} The last element node's animation promise.
          */
-        private __handleAnimation(startNode: number, endNode: number, key: string): animations.IAnimationThenable<void> {
-            var nodes: Array<Node> = Array.prototype.slice.call(this.element.childNodes, startNode, endNode),
+        private __handleAnimation(startNode: number, endNode: number, key: string, clone: boolean): async.IThenable<void> {
+            var element = this.element,
+                nodes: Array<Node> = Array.prototype.slice.call(element.childNodes, startNode, endNode),
                 node: Node,
+                firstNode = nodes[0],
                 $animator = this.$Animator,
-                currentAnimations = this.__currentAnimations,
+                currentAnimations = this._currentAnimations,
+                callback: () => void,
                 animationPromise: animations.IAnimationThenable<void>;
 
+            clone = clone === true;
             while (nodes.length > 0) {
                 node = nodes.shift();
                 if (node.nodeType === Node.ELEMENT_NODE) {
-                    animationPromise = $animator.animate(<Element>node, key).then(() => {
-                        currentAnimations.shift();
-                    });
+                    if (clone) {
+                        node = node.cloneNode(true);
+                        element.insertBefore(node, firstNode);
+                        // bind callback to current cloned node due to loop
+                        callback = function () {
+                            currentAnimations.shift();
+                            element.removeChild(this);
+                        }.bind(node);
+                    } else {
+                        callback = () => {
+                            currentAnimations.shift();
+                        };
+                    }
+
+                    animationPromise = $animator.animate(<Element>node, key).then(callback);
                     currentAnimations.push(animationPromise);
                 }
             }
