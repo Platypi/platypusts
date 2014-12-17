@@ -1229,8 +1229,8 @@ module plat.observable {
          * array function.
          */
         protected _overwriteArrayFunction(absoluteIdentifier: string, method: string): (...args: any[]) => any {
-            var preCallbackObjects = ContextManager.preArrayListeners[absoluteIdentifier],
-                postCallbackObjects = ContextManager.postArrayListeners[absoluteIdentifier],
+            var preCallbackObjects = ContextManager.preArrayListeners[absoluteIdentifier] || {},
+                postCallbackObjects = ContextManager.postArrayListeners[absoluteIdentifier] || {},
                 _this = this;
 
             // we can't use a fat-arrow function here because we need the array context.
