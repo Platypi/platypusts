@@ -249,10 +249,10 @@ module plat.ui.controls {
 
             if (!isNull(url)) {
                 template = this.$TemplateCache.read(url);
-                this.dom.clearNodeBlock(this.elementNodes, parentNode);
+                clearNodeBlock(this.elementNodes, parentNode);
             } else {
                 template = this.$Document.createDocumentFragment();
-                this.dom.appendChildren(this.elementNodes, template);
+                appendChildren(this.elementNodes, template);
             }
 
             var controlPromise: async.IThenable<ITemplateControl>;
@@ -305,7 +305,7 @@ module plat.ui.controls {
                 return this.bindableTemplates.bind(this._id);
             }).then((clone) => {
                 var endNode = this.endNode;
-                this.dom.insertBefore(endNode.parentNode, clone, endNode);
+                insertBefore(endNode.parentNode, clone, endNode);
             }).catch((error) => {
                 postpone(() => {
                     $exception = acquire(__ExceptionStatic);

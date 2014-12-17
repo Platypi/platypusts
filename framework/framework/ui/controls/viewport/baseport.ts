@@ -130,7 +130,7 @@
          * @returns {void}
          */
         setTemplate(): void {
-            this.dom.clearNode(this.element);
+            clearNode(this.element);
             this._load();
         }
 

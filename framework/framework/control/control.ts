@@ -751,12 +751,15 @@ module plat {
          * 
          * @param {any} context The immediate parent object containing the array as a property.
          * @param {string} property The array property identifier to watch for changes.
-         * @param {(ev: plat.observable.IArrayMethodInfo<T>) => void} listener The method called when an array-changing method is called. 
-         * This method will have its 'this' context set to the control instance.
+         * @param {(ev: plat.observable.IPreArrayChangeInfo) => void} preListener The method called prior to an array-changing 
+         * method is called. This method will have its 'this' context set to the control instance.
+         * @param {(ev: plat.observable.IPostArrayChangeInfo<T>) => void} postListener The method called after an array-changing 
+         * method is called. This method will have its 'this' context set to the control instance.
          * 
          * @returns {plat.IRemoveListener} A function to call in order to stop observing the array.
          */
-        observeArray<T>(context: any, property: string, listener: (ev: observable.IArrayMethodInfo<T>) => void): IRemoveListener;
+        observeArray<T>(context: any, property: string, preListener: (ev: observable.IPreArrayChangeInfo) => void,
+            postListener: (ev: observable.IPostArrayChangeInfo<T>) => void): IRemoveListener;
         /**
          * @name observeArray
          * @memberof plat.Control
@@ -773,13 +776,17 @@ module plat {
          * 
          * @param {any} context The immediate parent object containing the array as a property.
          * @param {number} property The array property identifier to watch for changes.
-         * @param {(ev: plat.observable.IArrayMethodInfo<T>) => void} listener The method called when an array-changing method is called. 
-         * This method will have its 'this' context set to the control instance.
+         * @param {(ev: plat.observable.IPreArrayChangeInfo) => void} preListener The method called prior to an array-changing 
+         * method is called. This method will have its 'this' context set to the control instance.
+         * @param {(ev: plat.observable.IPostArrayChangeInfo<T>) => void} postListener The method called after an array-changing 
+         * method is called. This method will have its 'this' context set to the control instance.
          * 
          * @returns {plat.IRemoveListener} A function to call in order to stop observing the array.
          */
-        observeArray<T>(context: any, property: number, listener: (ev: observable.IArrayMethodInfo<T>) => void): IRemoveListener;
-        observeArray(context: any, property: any, listener: (ev: observable.IArrayMethodInfo<any>) => void): IRemoveListener {
+        observeArray<T>(context: any, property: number, preListener: (ev: observable.IPreArrayChangeInfo) => void,
+            postListener: (ev: observable.IPostArrayChangeInfo<T>) => void): IRemoveListener;
+        observeArray(context: any, property: any, preListener: (ev: observable.IPreArrayChangeInfo) => void,
+            postListener: (ev: observable.IPostArrayChangeInfo<any>) => void): IRemoveListener {
             if (isNull(context) || !context.hasOwnProperty(property)) {
                 return noop;
             }
@@ -791,6 +798,13 @@ module plat {
 
             var control = isFunction((<ui.ITemplateControl>this).getAbsoluteIdentifier) ? this : <IControl>this.parent;
             if (isNull(control) || !isFunction((<ui.ITemplateControl>control).getAbsoluteIdentifier)) {
+                return noop;
+            }
+
+            var preIsFunction = isFunction(preListener),
+                postIsFunction = isFunction(postListener);
+
+            if (!(preIsFunction || postIsFunction)) {
                 return noop;
             }
 
@@ -808,13 +822,15 @@ module plat {
             }
 
             var contextManager = ContextManager.getManager(Control.getRootControl(this)),
-                callback = listener.bind(this),
+                preCallback = preIsFunction ? preListener.bind(this) : null,
+                postCallback = postIsFunction ? postListener.bind(this) : null,
                 uid = this.uid,
-                removeListener = contextManager.observeArray(uid, callback, absoluteIdentifier, array, null),
+                removeListener = contextManager.observeArray(uid, preCallback, postCallback, absoluteIdentifier, array, null),
                 removeCallback = contextManager.observe(absoluteIdentifier, {
                     listener: (newValue: Array<any>, oldValue: Array<any>) => {
                         removeListener();
-                        removeListener = contextManager.observeArray(uid, callback, absoluteIdentifier, newValue, oldValue);
+                        removeListener = contextManager
+                            .observeArray(uid, preCallback, postCallback, absoluteIdentifier, newValue, oldValue);
                     },
                     uid: uid
                 });
@@ -1608,12 +1624,15 @@ module plat {
          * 
          * @param {any} context The immediate parent object containing the array as a property.
          * @param {string} property The array property identifier to watch for changes.
-         * @param {(ev: plat.observable.IArrayMethodInfo<T>) => void} listener The method called when an array-changing method is called. 
-         * This method will have its 'this' context set to the control instance.
+         * @param {(ev: plat.observable.IPreArrayChangeInfo) => void} preListener The method called prior to an array-changing 
+         * method is called. This method will have its 'this' context set to the control instance.
+         * @param {(ev: plat.observable.IPostArrayChangeInfo<T>) => void} postListener The method called after an array-changing 
+         * method is called. This method will have its 'this' context set to the control instance.
          * 
          * @returns {plat.IRemoveListener} A function to call in order to stop observing the array.
          */
-        observeArray? <T>(context: any, property: string, listener: (ev: observable.IArrayMethodInfo<T>) => void): IRemoveListener;
+        observeArray? <T>(context: any, property: string, preListener: (ev: observable.IPreArrayChangeInfo) => void,
+            postListener: (ev: observable.IPostArrayChangeInfo<T>) => void): IRemoveListener;
         /**
          * @name observeArray
          * @memberof plat.IControl
@@ -1630,12 +1649,15 @@ module plat {
          * 
          * @param {any} context The immediate parent object containing the array as a property.
          * @param {number} property The array property identifier to watch for changes.
-         * @param {(ev: plat.observable.IArrayMethodInfo<T>) => void} listener The method called when an array-changing method is called. 
-         * This method will have its 'this' context set to the control instance.
+         * @param {(ev: plat.observable.IPreArrayChangeInfo) => void} preListener The method called prior to an array-changing 
+         * method is called. This method will have its 'this' context set to the control instance.
+         * @param {(ev: plat.observable.IPostArrayChangeInfo<T>) => void} postListener The method called after an array-changing 
+         * method is called. This method will have its 'this' context set to the control instance.
          * 
          * @returns {plat.IRemoveListener} A function to call in order to stop observing the array.
          */
-        observeArray? <T>(context: any, property: number, listener: (ev: observable.IArrayMethodInfo<T>) => void): IRemoveListener;
+        observeArray? <T>(context: any, property: number, preListener: (ev: observable.IPreArrayChangeInfo) => void,
+            postListener: (ev: observable.IPostArrayChangeInfo<T>) => void): IRemoveListener;
 
         /**
          * @name observeExpression

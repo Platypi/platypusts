@@ -44,7 +44,7 @@ module plat.ui.controls {
                 return;
             }
 
-            this.dom.setInnerHtml(this.element, context);
+            setInnerHtml(this.element, context);
         }
     }
 

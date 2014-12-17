@@ -472,7 +472,7 @@ module plat.ui {
         addClass(element: Element, className: string): void {
             return addClass(<HTMLElement>element, className);
         }
-        
+
         /**
          * @name removeClass
          * @memberof plat.ui.Dom
@@ -490,7 +490,7 @@ module plat.ui {
         removeClass(element: Element, className: string): void {
             return removeClass(<HTMLElement>element, className);
         }
-        
+
         /**
          * @name toggleClass
          * @memberof plat.ui.Dom
@@ -508,7 +508,26 @@ module plat.ui {
         toggleClass(element: Element, className: string): void {
             return toggleClass(<HTMLElement>element, className);
         }
-        
+
+        /**
+         * @name replaceClass
+         * @memberof plat.ui.Dom
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Replaces a single class with another class.
+         * 
+         * @param {Element} element The element on which the class name is being toggled.
+         * @param {string} oldClass The class name being replaced.
+         * @param {string} newClass The class name doing the replacing.
+         * 
+         * @returns {void}
+         */
+        replaceClass(element: Element, oldClass: string, newClass: string): void {
+            return replaceClass(<HTMLElement>element, oldClass, newClass);
+        }
+
         /**
          * @name hasClass
          * @memberof plat.ui.Dom
@@ -1018,6 +1037,23 @@ module plat.ui {
          * @returns {void}
          */
         toggleClass(element: Element, className: string): void;
+
+        /**
+         * @name replaceClass
+         * @memberof plat.ui.Dom
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Replaces a single class with another class.
+         * 
+         * @param {Element} element The element on which the class name is being toggled.
+         * @param {string} oldClass The class name being replaced.
+         * @param {string} newClass The class name doing the replacing.
+         * 
+         * @returns {void}
+         */
+        replaceClass(element: Element, oldClass: string, newClass: string): void;
 
         /**
          * @name hasClass

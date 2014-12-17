@@ -360,7 +360,7 @@ module plat.ui.controls {
          */
         protected _setListener(): void {
             if (!this.__listenerSet) {
-                this.observeArray(this, __CONTEXT, this._executeEvent);
+                this.observeArray(this, __CONTEXT, null, this._executeEvent);
                 this.__listenerSet = true;
             }
         }
@@ -375,11 +375,11 @@ module plat.ui.controls {
          * Receives an event when a method has been called on an array and maps the array 
          * method to its associated method handler.
          * 
-         * @param {plat.observable.IArrayMethodInfo<any>} ev The Array mutation event information.
+         * @param {plat.observable.IPostArrayChangeInfo<any>} ev The Array mutation event information.
          * 
          * @returns {void}
          */
-        protected _executeEvent(ev: observable.IArrayMethodInfo<any>): void {
+        protected _executeEvent(ev: observable.IPostArrayChangeInfo<any>): void {
             var method = '_' + ev.method;
             if (isFunction((<any>this)[method])) {
                 (<any>this)[method](ev);
@@ -537,11 +537,11 @@ module plat.ui.controls {
          * The function called when an item has been removed 
          * from the array context.
          * 
-         * @param {plat.observable.IArrayMethodInfo<any>} ev The array mutation object
+         * @param {plat.observable.IPostArrayChangeInfo<any>} ev The array mutation object
          * 
          * @returns {void}
          */
-        protected _itemRemoved(ev: observable.IArrayMethodInfo<any>): void {
+        protected _itemRemoved(ev: observable.IPostArrayChangeInfo<any>): void {
             if (ev.oldArray.length === 0) {
                 return;
             } else if (this.__isGrouped) {
@@ -588,11 +588,11 @@ module plat.ui.controls {
          * The function called when an element is pushed to 
          * the array context.
          * 
-         * @param {plat.observable.IArrayMethodInfo<any>} ev The array mutation object
+         * @param {plat.observable.IPostArrayChangeInfo<any>} ev The array mutation object
          * 
          * @returns {void}
          */
-        protected _push(ev: observable.IArrayMethodInfo<any>): void {
+        protected _push(ev: observable.IPostArrayChangeInfo<any>): void {
             this._addItems(ev.arguments.length, ev.oldArray.length);
         }
 
@@ -606,14 +606,14 @@ module plat.ui.controls {
          * The function called when an item is popped 
          * from the array context.
          * 
-         * @param {plat.observable.IArrayMethodInfo<any>} ev The array mutation object
+         * @param {plat.observable.IPostArrayChangeInfo<any>} ev The array mutation object
          * 
          * @returns {void}
          */
-        protected _pop(ev: observable.IArrayMethodInfo<any>): void {
+        protected _pop(ev: observable.IPostArrayChangeInfo<any>): void {
             this._itemRemoved(ev);
         }
-        
+
         /**
          * @name _shift
          * @memberof plat.ui.controls.Select
@@ -624,14 +624,14 @@ module plat.ui.controls {
          * The function called when an item is shifted 
          * from the array context.
          * 
-         * @param {plat.observable.IArrayMethodInfo<any>} ev The array mutation object
+         * @param {plat.observable.IPostArrayChangeInfo<any>} ev The array mutation object
          * 
          * @returns {void}
          */
-        protected _shift(ev: observable.IArrayMethodInfo<any>): void {
+        protected _shift(ev: observable.IPostArrayChangeInfo<any>): void {
             this._itemRemoved(ev);
         }
-        
+
         /**
          * @name _splice
          * @memberof plat.ui.controls.Select
@@ -642,11 +642,11 @@ module plat.ui.controls {
          * The function called when items are spliced 
          * from the array context.
          * 
-         * @param {plat.observable.IArrayMethodInfo<any>} ev The array mutation object
+         * @param {plat.observable.IPostArrayChangeInfo<any>} ev The array mutation object
          * 
          * @returns {void}
          */
-        protected _splice(ev: observable.IArrayMethodInfo<any>): void {
+        protected _splice(ev: observable.IPostArrayChangeInfo<any>): void {
             if (this.__isGrouped) {
                 this._resetSelect();
                 return;
@@ -661,7 +661,7 @@ module plat.ui.controls {
                 this._removeItems(oldLength - newLength);
             }
         }
-        
+
         /**
          * @name _unshift
          * @memberof plat.ui.controls.Select
@@ -672,11 +672,11 @@ module plat.ui.controls {
          * The function called when an item is unshifted 
          * onto the array context.
          * 
-         * @param {plat.observable.IArrayMethodInfo<any>} ev The array mutation object
+         * @param {plat.observable.IPostArrayChangeInfo<any>} ev The array mutation object
          * 
          * @returns {void}
          */
-        protected _unshift(ev: observable.IArrayMethodInfo<any>): void {
+        protected _unshift(ev: observable.IPostArrayChangeInfo<any>): void {
             if (this.__isGrouped) {
                 this._resetSelect();
                 return;
@@ -684,7 +684,7 @@ module plat.ui.controls {
 
             this._addItems(ev.arguments.length, ev.oldArray.length);
         }
-        
+
         /**
          * @name _sort
          * @memberof plat.ui.controls.Select
@@ -695,16 +695,16 @@ module plat.ui.controls {
          * The function called when the array context 
          * is sorted.
          * 
-         * @param {plat.observable.IArrayMethodInfo<any>} ev The array mutation object
+         * @param {plat.observable.IPostArrayChangeInfo<any>} ev The array mutation object
          * 
          * @returns {void}
          */
-        protected _sort(ev: observable.IArrayMethodInfo<any>): void {
+        protected _sort(ev: observable.IPostArrayChangeInfo<any>): void {
             if (this.__isGrouped) {
                 this._resetSelect();
             }
         }
-        
+
         /**
          * @name _reverse
          * @memberof plat.ui.controls.Select
@@ -715,11 +715,11 @@ module plat.ui.controls {
          * The function called when the array context 
          * is reversed.
          * 
-         * @param {plat.observable.IArrayMethodInfo<any>} ev The array mutation object
+         * @param {plat.observable.IPostArrayChangeInfo<any>} ev The array mutation object
          * 
          * @returns {void}
          */
-        protected _reverse(ev: observable.IArrayMethodInfo<any>): void {
+        protected _reverse(ev: observable.IPostArrayChangeInfo<any>): void {
             if (this.__isGrouped) {
                 this._resetSelect();
             }
@@ -764,7 +764,7 @@ module plat.ui.controls {
          * option's value.
          */
         value: string;
-        
+
         /**
          * @name textContent
          * @memberof plat.ui.controls.ISelectOptions

@@ -320,13 +320,13 @@ module plat.ui {
             return templatePromise.then((result: DocumentFragment) => {
                 return this._bindTemplate(key, <DocumentFragment>result.cloneNode(true), relativeIdentifier, resources);
             }).then(null, (error: any) => {
-                postpone(() => {
-                    $exception = acquire(__ExceptionStatic);
-                    $exception.fatal(error, $exception.BIND);
-                });
+                    postpone(() => {
+                        $exception = acquire(__ExceptionStatic);
+                        $exception.fatal(error, $exception.BIND);
+                    });
 
-                return <DocumentFragment>null;
-            });
+                    return <DocumentFragment>null;
+                });
         }
 
         /**
@@ -462,7 +462,7 @@ module plat.ui {
             this.cache = {};
             this.templates = {};
         }
-        
+
         /**
          * @name _bindTemplate
          * @memberof plat.ui.BindableTemplates
@@ -483,7 +483,7 @@ module plat.ui {
          */
         protected _bindTemplate(key: string, template: DocumentFragment, contextId: string,
             resources: IObject<IResource>): async.IThenable<DocumentFragment> {
-            var control = this._createBoundControl(key, template, contextId, resources),
+            var control = this._createBoundControl(key, template, resources),
                 nodeMap = this._createNodeMap(control, template, contextId),
                 disposed = false,
                 dispose = isFunction(control.dispose) ? control.dispose.bind(control) : noop;
@@ -506,15 +506,15 @@ module plat.ui {
 
                 return template;
             }, (error: any) => {
-                postpone(() => {
-                    var $exception: IExceptionStatic = acquire(__ExceptionStatic);
-                    $exception.fatal(error, $exception.COMPILE);
-                });
+                    postpone(() => {
+                        var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                        $exception.fatal(error, $exception.COMPILE);
+                    });
 
-                return <DocumentFragment>null;
-            });
+                    return <DocumentFragment>null;
+                });
         }
-        
+
         /**
          * @name _bindNodeMap
          * @memberof plat.ui.BindableTemplates
@@ -543,7 +543,7 @@ module plat.ui {
             manager.clone(template, $managerCache.read(this.control.uid), nodeMap);
             return $managerCache.read(child.uid).bindAndLoad();
         }
-        
+
         /**
          * @name _compile
          * @memberof plat.ui.BindableTemplates
@@ -567,7 +567,7 @@ module plat.ui {
 
             this._compileNodeMap(control, nodeMap, key);
         }
-        
+
         /**
          * @name _compileNodeMap
          * @memberof plat.ui.BindableTemplates
@@ -611,7 +611,7 @@ module plat.ui {
                 return clone;
             });
         }
-        
+
         /**
          * @name _createNodeMap
          * @memberof plat.ui.BindableTemplates
@@ -642,7 +642,7 @@ module plat.ui {
                 }
             };
         }
-        
+
         /**
          * @name _createBoundControl
          * @memberof plat.ui.BindableTemplates
@@ -655,15 +655,12 @@ module plat.ui {
          * 
          * @param {string} key The template key.
          * @param {DocumentFragment} template The template being compiled or being bound.
-         * @param {string} relativeIdentifier? A potential context string identifier identifying the 
-         * object's position off the context.
          * @param {plat.IObject<plat.ui.IResource>} resources? A set of resources to add to the control used to 
          * compile/bind this template.
          * 
          * @returns {plat.ui.ITemplateControl} The newly created {@link plat.ui.ITemplateControl|ITemplateControl}.
          */
-        protected _createBoundControl(key: string, template: DocumentFragment,
-            relativeIdentifier?: string, resources?: IObject<IResource>): ITemplateControl {
+        protected _createBoundControl(key: string, template: DocumentFragment, resources?: IObject<IResource>): ITemplateControl {
             var $TemplateControlFactory = this.$TemplateControlFactory,
                 control = $TemplateControlFactory.getInstance(),
                 $ResourcesFactory = this.$ResourcesFactory,

@@ -358,14 +358,13 @@ module plat.web {
                 location.href = url;
                 return;
             }
+            
+            // make sure URL is absolute
+            if (!this.$Regex.fullUrlRegex.test(url) && url[0] !== '/') {
+                url = '/' + url;
+            }
 
             if (this.$Compat.pushState) {
-
-                // make sure URL is absolute
-                if (!this.$Regex.fullUrlRegex.test(url) && url[0] !== '/') {
-                    url = '/' + url;
-                }
-
                 if (replace) {
                     history.replaceState(null, '', url);
                 } else {
