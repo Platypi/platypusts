@@ -108,7 +108,7 @@ function isError(obj: any): boolean {
 }
 
 function isObject(obj: any): boolean {
-    return !!(obj && objectTypes[typeof obj]);
+    return obj != null && typeof obj === 'object';
 }
 
 function isWindow(obj: any): boolean {
@@ -132,11 +132,11 @@ function isFile(obj: any): boolean {
 }
 
 function isString(obj: any): boolean {
-    return typeof obj === 'string' || obj && typeof obj === 'object' && objToString.call(obj) == stringClass || false;
+    return typeof obj === 'string' || typeof obj === 'object' && objToString.call(obj) == stringClass;
 }
 
 function isRegExp(obj: any): boolean {
-    return obj && typeof obj === 'object' && objToString.call(obj) === regexpClass || false;
+    return typeof obj === 'object' && objToString.call(obj) === regexpClass;
 }
 
 function isPromise(obj: any): boolean {
@@ -160,11 +160,11 @@ function isEmpty(obj: any): boolean {
 }
 
 function isBoolean(obj: any): boolean {
-    return obj === true || obj === false || obj && typeof obj === 'object' && objToString.call(obj) === boolClass || false;
+    return obj === true || obj === false || typeof obj === 'object' && objToString.call(obj) === boolClass;
 }
 
 function isNumber(obj: any): boolean {
-    return typeof obj === 'number' || obj && typeof obj === 'object' && objToString.call(obj) == numberClass || false;
+    return (typeof obj === 'number' || typeof obj === 'object' && objToString.call(obj) == numberClass) && !isNaN(obj);
 }
 
 function isFunction(obj: any): boolean {
@@ -196,7 +196,7 @@ function isArrayLike(obj: any): boolean {
 }
 
 function isDate(obj: any): boolean {
-    return obj && typeof obj == 'object' && objToString.call(obj) == dateClass || false;
+    return typeof obj == 'object' && objToString.call(obj) == dateClass || false;
 }
 
 function filter<T>(iterator: (value: T, key: any, obj: any) => boolean, obj: any, context?: any): Array<T> {
