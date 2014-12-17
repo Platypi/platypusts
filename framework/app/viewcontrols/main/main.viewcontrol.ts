@@ -15,7 +15,8 @@ module app {
                 ['foo', 'bar', 'baz'],
                 ['quux'],
                 ['foobar', 'bazquux']
-            ]
+            ],
+            iff: true
         };
         text: plat.controls.INamedElement<HTMLElement, void>;
         password: plat.controls.INamedElement<HTMLElement, void>;
@@ -70,6 +71,10 @@ module app {
             }).then((clone) => {
                 this.element.appendChild(clone);
             });
+
+            setInterval(() => {
+                this.context.iff = !this.context.iff;
+            }, 1000);
         }
 
         backButtonPressed(ev: plat.events.IDispatchEventInstance) {
