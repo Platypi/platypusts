@@ -61,7 +61,6 @@ var __prefix = '$',
     __StateInstance = __prefix + 'StateInstance',
     __RouteRecognizerInstance = __prefix + 'RouteRecognizerInstance',
 
-
     /**
      * Controls
      */
