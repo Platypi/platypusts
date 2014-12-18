@@ -118,6 +118,11 @@ var __prefix = '$',
     __Context = __Plat + __CONTEXT,
 
     /**
+     * Control Properties
+     */
+    __TemplateControlCache = '__templateControlCache',
+
+    /**
      * Lifecycle events
      */
     __ready = 'ready',
