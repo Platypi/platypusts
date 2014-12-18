@@ -7,12 +7,14 @@
  * The entry point into the platypus library.
  */
 module plat {
-    if (!isUndefined(window) && isUndefined((<any>window).plat)) {
-        (<any>window).plat = plat;
-    }
+    if (!isUndefined(window)) {
+        if (isUndefined((<any>window).plat)) {
+            (<any>window).plat = plat;
+        }
 
-    if (!isUndefined(window) && isUndefined((<any>window).module)) {
-        (<any>window).module = {};
+        if (isUndefined((<any>window).module)) {
+            (<any>window).module = {};
+        }
     }
 
     /**
