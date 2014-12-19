@@ -73,7 +73,7 @@ module plat.ui.controls {
          * The evaluated {@link plat.controls.Options|plat-options} object.
          */
         options: observable.IObservableProperty<ITemplateOptions>;
-        
+
         /**
          * @name _id
          * @memberof plat.ui.controls.Template
@@ -87,7 +87,7 @@ module plat.ui.controls {
          * template.
          */
         protected _id: string;
-        
+
         /**
          * @name _url
          * @memberof plat.ui.controls.Template
@@ -101,7 +101,7 @@ module plat.ui.controls {
          * particular template.
          */
         protected _url: string;
-        
+
         /**
          * @name __isFirst
          * @memberof plat.ui.controls.Template
@@ -154,7 +154,7 @@ module plat.ui.controls {
         constructor() {
             super();
             var $cacheFactory: storage.ICacheFactory = acquire(__CacheFactory);
-            this.__templateControlCache = $cacheFactory.create<any>('__templateControlCache');
+            this.__templateControlCache = $cacheFactory.create<any>(__TemplateControlCache);
         }
 
         /**
@@ -169,10 +169,13 @@ module plat.ui.controls {
          * @returns {void}
          */
         initialize(): void {
-            var id = this._id = this.options.value.id,
-                options = this.options.value;
+            var optionsObj = this.options || <observable.IObservableProperty<ITemplateOptions>>{},
+                options = optionsObj.value || <ITemplateOptions>{},
+                id = this._id = options.id;
 
             if (isNull(id)) {
+                var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                $exception.warn(this.type + ' instantiated without an id option', $exception.COMPILE);
                 return;
             }
 
@@ -187,7 +190,7 @@ module plat.ui.controls {
             this.__isFirst = true;
             this._initializeTemplate();
         }
-        
+
         /**
          * @name loaded
          * @memberof plat.ui.controls.Template
@@ -205,7 +208,7 @@ module plat.ui.controls {
                 this._waitForTemplateControl(this.__templatePromise);
             }
         }
-        
+
         /**
          * @name dispose
          * @memberof plat.ui.controls.Template
@@ -219,10 +222,14 @@ module plat.ui.controls {
          */
         dispose(): void {
             if (this.__isFirst) {
-                this.__templateControlCache.dispose();
+                var cache = this.__templateControlCache;
+                cache.remove(this._id);
+                if (cache.info().size === 0) {
+                    cache.dispose();
+                }
             }
         }
-        
+
         /**
          * @name _initializeTemplate
          * @memberof plat.ui.controls.Template
@@ -262,9 +269,9 @@ module plat.ui.controls {
                         return TemplateControl.determineTemplate(this, url);
                     }
                 }).then((template: DocumentFragment) => {
-                    this.bindableTemplates.add(id, template.cloneNode(true));
-                    return this;
-                });
+                        this.bindableTemplates.add(id, template.cloneNode(true));
+                        return this;
+                    });
             } else {
                 this.bindableTemplates.add(id, template.cloneNode(true));
 
@@ -273,7 +280,7 @@ module plat.ui.controls {
 
             this.__templateControlCache.put(id, controlPromise);
         }
-        
+
         /**
          * @name _waitForTemplateControl
          * @memberof plat.ui.controls.Template
@@ -296,7 +303,7 @@ module plat.ui.controls {
                 if (!(isNull(this._url) || (this._url === templateControl._url))) {
                     $exception = acquire(__ExceptionStatic);
                     $exception.warn('The specified url: ' + this._url +
-                        ' does not match the original plat-template with id: ' +
+                        ' does not match the original ' + this.type + ' with id: ' +
                         '"' + this._id + '". The original url will be loaded.',
                         $exception.TEMPLATE);
                 }
@@ -304,17 +311,17 @@ module plat.ui.controls {
                 this.__mapBindableTemplates(templateControl);
                 return this.bindableTemplates.bind(this._id);
             }).then((clone) => {
-                var endNode = this.endNode;
-                insertBefore(endNode.parentNode, clone, endNode);
-            }).catch((error) => {
-                postpone(() => {
-                    $exception = acquire(__ExceptionStatic);
-                    $exception.warn('Problem resolving plat-template url: ' +
-                        error.response, $exception.TEMPLATE);
+                    var endNode = this.endNode;
+                    insertBefore(endNode.parentNode, clone, endNode);
+                }).catch((error) => {
+                    postpone(() => {
+                        $exception = acquire(__ExceptionStatic);
+                        $exception.warn('Problem resolving ' + this.type + ' url: ' +
+                            error.response, $exception.TEMPLATE);
+                    });
                 });
-            });
         }
-        
+
         /**
          * @name __mapBindableTemplates
          * @memberof plat.ui.controls.Template
