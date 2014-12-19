@@ -5,7 +5,7 @@
             ControlFactory = plat.acquire(plat.IControlFactory);
 
         beforeEach(() => {
-            control = new plat.controls.Name();
+            control = plat.acquire(plat.controls.Name);
             parent = new plat.ui.TemplateControl();
             parent.type = 'test-control';
             parent.controls = [control];

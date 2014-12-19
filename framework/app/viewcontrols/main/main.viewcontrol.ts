@@ -21,6 +21,15 @@ module app {
         text: plat.controls.INamedElement<HTMLElement, void>;
         password: plat.controls.INamedElement<HTMLElement, void>;
 
+        initialize() {
+            var a = plat.acquire(MainViewControl),
+                b = plat.acquire(MainViewControl);
+
+            console.log('a instanceof MainViewControl: ', a instanceof MainViewControl);
+            console.log('b instanceof MainViewControl: ', a instanceof MainViewControl);
+            console.log('a !== b: ', a !== b);
+        }
+
         navigate() {
             this.navigator.navigate(MainViewControl, {
                 // initialize: true

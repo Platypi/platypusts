@@ -5,7 +5,7 @@
             ControlFactory = plat.acquire(plat.IControlFactory);
 
         beforeEach(() => {
-            control = new plat.controls.Bind();
+            control = plat.acquire(plat.controls.Bind);
             parent = new plat.ui.TemplateControl();
             parent.controls = [control];
             parent.resources = plat.acquire(plat.ui.IResourcesFactory).getInstance();
