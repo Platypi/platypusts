@@ -80,7 +80,7 @@ module app {
 
             setTimeout(() => {
                 this.load();
-            }, 1000);
+            });
         }
 
         error(ev: plat.events.IErrorEvent<any>) {

@@ -190,22 +190,17 @@ module plat.dependency {
                 return __Document;
             }
 
-            var injectors = injectableInjectors,
-                injector: IInjector<any>,
-                keys = Object.keys(injectors),
-                length = keys.length,
-                key: string,
-                value: any;
+            var find: (injectors: IInjectorObject<any>) => IInjector<any> =
+                Injector.__findInjector.bind(Injector, dependency),
+                injector = find(injectableInjectors) ||
+                find(staticInjectors) ||
+                find(viewControlInjectors) ||
+                find(controlInjectors) ||
+                find(animationInjectors) ||
+                find(jsAnimationInjectors);
 
-            for (var i = 0; i < length; ++i) {
-                key = keys[i];
-                injector = injectors[key];
-
-                value = injector.Constructor;
-
-                if (value === dependency) {
-                    return key;
-                }
+            if (isObject(injector)) {
+                return injector.name;
             }
 
             return __NOOP_INJECTOR;
@@ -257,16 +252,45 @@ module plat.dependency {
         private static __locateInjector(Constructor: any): any {
             if (isNull(Constructor)) {
                 return;
-            } else if (isString(Constructor)) {
-                return injectableInjectors[Constructor] || Injector.__noop();
             } else if (Constructor === window) {
                 return (<any>injectableInjectors).$Window;
             } else if (Constructor === window.document) {
                 return (<any>injectableInjectors).$Document;
             }
 
-            var injectors = injectableInjectors,
-                injector: IInjector<any>,
+            var find: (injectors: IInjectorObject<any>) => IInjector<any> =
+                Injector.__findInjector.bind(Injector, Constructor),
+                injector = find(injectableInjectors) ||
+                find(staticInjectors) ||
+                find(viewControlInjectors) ||
+                find(controlInjectors) ||
+                find(animationInjectors) ||
+                find(jsAnimationInjectors) ||
+                Injector.__wrap(Constructor);
+
+            return injector;
+        }
+
+        /**
+         * @name __findInjector
+         * @memberof plat.dependency.Injector
+         * @kind function
+         * @access private
+         * @static
+         * 
+         * @description
+         * Finds an injector object with the associated constructor in the given {@link plat.dependency.IInjectorObject|IInjectorObject}.
+         * 
+         * @param {Function} Constructor The Function
+         * 
+         * @returns {any} The located injector.
+         */
+        private static __findInjector(Constructor: any, injectors: IInjectorObject<any>) {
+            if (isString(Constructor)) {
+                return injectors[Constructor] || Injector.__noop();
+            }
+
+            var injector: IInjector<any>,
                 keys = Object.keys(injectors),
                 length = keys.length;
 
@@ -277,8 +301,6 @@ module plat.dependency {
                     return injector;
                 }
             }
-
-            return Injector.__wrap(Constructor);
         }
 
         /**

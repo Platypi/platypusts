@@ -87,14 +87,14 @@ module plat.register {
      * 
      * @returns {plat.register} The object that contains the register methods (for method chaining).
      */
-    export function control(name: string, Type: new (...args: any[]) => IControl, dependencies?: Array<any>): typeof register {
+    export function control(name: string, Type: new (...args: any[]) => IControl, dependencies?: Array<any>, isStatic?: boolean): typeof register {
         if (isString(name)) {
             name = name.toLowerCase();
         } else {
             throw new Error('A Control must be registered with a string name');
         }
 
-        return add(controlInjectors, name, Type, dependencies);
+        return add(controlInjectors, name, Type, dependencies, isStatic ? __STATIC : undefined);
     }
     
     /**
