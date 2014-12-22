@@ -303,7 +303,7 @@ module plat.events {
 
             var eventListeners = eventsListener.listeners[eventName];
 
-            if (isNull(eventListeners)) {
+            if (!isArray(eventListeners)) {
                 eventListeners = eventsListener.listeners[eventName] = [];
             }
 

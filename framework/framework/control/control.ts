@@ -727,7 +727,8 @@ module plat {
                 return noop;
             }
 
-            var contextManager = Control.$ContextManagerStatic.getManager(Control.getRootControl(this));
+            var $ContextManagerStatic: observable.IContextManagerStatic = Control.$ContextManagerStatic || acquire(__ContextManagerStatic),
+                contextManager = $ContextManagerStatic.getManager(Control.getRootControl(this));
 
             return contextManager.observe(absoluteIdentifier + '.' + property, {
                 listener: listener.bind(this),
@@ -809,7 +810,7 @@ module plat {
             }
 
             var absoluteIdentifier = (<ui.ITemplateControl>control).getAbsoluteIdentifier(context),
-                ContextManager = Control.$ContextManagerStatic;
+                ContextManager: observable.IContextManagerStatic = Control.$ContextManagerStatic || acquire(__ContextManagerStatic);
 
             if (isNull(absoluteIdentifier)) {
                 if (property === __CONTEXT) {
@@ -901,7 +902,7 @@ module plat {
                 length = aliases.length,
                 resources: IObject<observable.IContextManager> = {},
                 resourceObj: { resource: ui.IResource; control: ui.ITemplateControl; },
-                ContextManager = Control.$ContextManagerStatic,
+                ContextManager: observable.IContextManagerStatic = Control.$ContextManagerStatic || acquire(__ContextManagerStatic),
                 getManager = ContextManager.getManager,
                 TemplateControl = ui.TemplateControl,
                 findResource = TemplateControl.findResource,
@@ -1136,7 +1137,7 @@ module plat {
          */
         dispatchEvent(name: string, direction?: string, ...args: any[]): void;
         dispatchEvent(name: string, direction?: string, ...args: any[]) {
-            var manager = Control.$EventManagerStatic;
+            var manager: events.IEventManagerStatic = Control.$EventManagerStatic || acquire(__EventManagerStatic);
 
             if (!manager.hasDirection(direction)) {
                 if (!isUndefined(direction)) {
@@ -1171,7 +1172,8 @@ module plat {
          * @returns {plat.IRemoveListener} A function to call in order to stop listening for this event.
          */
         on(name: string, listener: (ev: events.IDispatchEventInstance, ...args: any[]) => void): IRemoveListener {
-            return Control.$EventManagerStatic.on(this.uid, name, listener, this);
+            var $EventManagerStatic: events.IEventManagerStatic = Control.$EventManagerStatic || acquire(__EventManagerStatic);
+            return $EventManagerStatic.on(this.uid, name, listener, this);
         }
 
         /**

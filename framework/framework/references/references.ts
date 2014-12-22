@@ -61,7 +61,6 @@ var __prefix = '$',
     __StateInstance = __prefix + 'StateInstance',
     __RouteRecognizerInstance = __prefix + 'RouteRecognizerInstance',
 
-
     /**
      * Controls
      */
@@ -116,6 +115,11 @@ var __prefix = '$',
     __Routeport = __Plat + 'routeport',
     __Viewport = __Plat + 'viewport',
     __Context = __Plat + __CONTEXT,
+
+    /**
+     * Control Properties
+     */
+    __TemplateControlCache = '__templateControlCache',
 
     /**
      * Lifecycle events

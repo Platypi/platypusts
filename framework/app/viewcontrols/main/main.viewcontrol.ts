@@ -80,7 +80,7 @@ module app {
 
             setTimeout(() => {
                 this.load();
-            }, 1000);
+            });
         }
 
         error(ev: plat.events.IErrorEvent<any>) {
@@ -91,4 +91,11 @@ module app {
     plat.register.app('app', App, [
         plat.web.IBrowserConfig
     ]);
+
+    var a = plat.acquire(MainViewControl),
+        b = plat.acquire(MainViewControl);
+
+    console.log('a instanceof MainViewControl: ', a instanceof MainViewControl);
+    console.log('b instanceof MainViewControl: ', a instanceof MainViewControl);
+    console.log('a !== b: ', a !== b);
 }

@@ -128,19 +128,19 @@ function isDocumentFragment(obj: any): boolean {
 }
 
 function isFile(obj: any): boolean {
-    return typeof obj === 'object' && objToString.call(obj) === fileClass;
+    return isObject(obj) && objToString.call(obj) === fileClass;
 }
 
 function isString(obj: any): boolean {
-    return typeof obj === 'string' || typeof obj === 'object' && objToString.call(obj) === stringClass;
+    return typeof obj === 'string' || isObject(obj) && objToString.call(obj) === stringClass;
 }
 
 function isRegExp(obj: any): boolean {
-    return typeof obj === 'object' && objToString.call(obj) === regexpClass;
+    return isObject(obj) && objToString.call(obj) === regexpClass;
 }
 
 function isPromise(obj: any): boolean {
-    return typeof obj === 'object' && (objToString.call(obj) === promiseClass || isFunction(obj.then));
+    return isObject(obj) && (objToString.call(obj) === promiseClass || isFunction(obj.then));
 }
 
 function isEmpty(obj: any): boolean {
@@ -160,11 +160,11 @@ function isEmpty(obj: any): boolean {
 }
 
 function isBoolean(obj: any): boolean {
-    return obj === true || obj === false || typeof obj === 'object' && objToString.call(obj) === boolClass;
+    return obj === true || obj === false || isObject(obj) && objToString.call(obj) === boolClass;
 }
 
 function isNumber(obj: any): boolean {
-    return (typeof obj === 'number' || typeof obj === 'object' && objToString.call(obj) === numberClass) && !isNaN(obj);
+    return (typeof obj === 'number' || isObject(obj) && objToString.call(obj) === numberClass) && !isNaN(obj);
 }
 
 function isFunction(obj: any): boolean {

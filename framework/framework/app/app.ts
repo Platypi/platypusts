@@ -467,7 +467,8 @@ module plat {
          * @returns {void}
          */
         dispatchEvent(name: string, ...args: any[]): void {
-            App.$EventManagerStatic.dispatch(name, this, App.$EventManagerStatic.DIRECT, args);
+            var $EventManagerStatic: events.IEventManagerStatic = App.$EventManagerStatic || acquire(__EventManagerStatic);
+            $EventManagerStatic.dispatch(name, this, $EventManagerStatic.DIRECT, args);
         }
 
         /**
@@ -581,7 +582,8 @@ module plat {
          * @returns {plat.IRemoveListener} A method for removing the listener.
          */
         on(name: string, listener: (ev: events.IDispatchEventInstance, ...args: any[]) => void): IRemoveListener {
-            return App.$EventManagerStatic.on(this.uid, name, listener, this);
+            var $EventManagerStatic: events.IEventManagerStatic = App.$EventManagerStatic || acquire(__EventManagerStatic);
+            return $EventManagerStatic.on(this.uid, name, listener, this);
         }
 
         /**
