@@ -123,25 +123,42 @@ module plat.dependency {
             if (!isArray(dependencies)) {
                 return [];
             }
-            var deps: Array<string> = [],
+            var convert = Injector.convertDependency,
+                deps: Array<string> = [],
                 length = dependencies.length,
                 dependency: any,
                 value: string;
 
             for (var i = 0; i < length; ++i) {
-                dependency = dependencies[i];
-
-                if (isNull(dependency)) {
-                    deps.push('noop');
-                    continue;
-                }
-
-                value = Injector.__getInjectorName(dependency);
-
-                deps.push(value);
+                deps.push(convert(dependencies[i]));
             }
 
             return deps;
+        }
+
+        /**
+         * @name convertDependency
+         * @memberof plat.dependency.Injector
+         * @kind function
+         * @access public
+         * @static
+         * 
+         * @description
+         * Converts a dependency specified by its Constructors into an
+         * equivalent dependency specified by its registered string 
+         * name.
+         * 
+         * @param {any} dependency The dependency specified 
+         * by either a Constructor or a registered name.
+         * 
+         * @returns {string} The dependency string.
+         */
+        static convertDependency(dependency: any): string {
+            if (isNull(dependency)) {
+                return __NOOP_INJECTOR;
+            }
+
+            return Injector.__getInjectorName(dependency);
         }
 
         /**

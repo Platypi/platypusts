@@ -228,14 +228,28 @@ module plat.async {
          * @static
          * 
          * @description
+         * Returns a promise that resolves immediately.
+         * 
+         * @returns {plat.async.IThenable<void>} A promise that will resolve.
+         */
+        static resolve(): IThenable<void>;
+        /**
+         * @name resolve
+         * @memberof plat.async.Promise
+         * @kind function
+         * @access public
+         * @static
+         * 
+         * @description
          * Returns a promise that resolves with the input value.
          * 
          * @typeparam {any} R The value with which to resolve the promise.
          * 
-         * @param {R} value? The value to resolve.
+         * @param {R} value The value to resolve.
          * 
          * @returns {plat.async.IThenable<R>} A promise that will resolve with the associated value.
          */
+        static resolve<R>(value: R): IThenable<R>;
         static resolve<R>(value?: R): IThenable<R> {
             return new Promise<R>((resolve: (value: R) => any, reject: (reason: any) => any) => {
                 resolve(value);
@@ -1126,17 +1140,32 @@ module plat.async {
          * @kind function
          * @access public
          * @static
+         * @variation 0
+         * 
+         * @description
+         * Returns a promise that resolves immediately.
+         * 
+         * @returns {plat.async.IThenable<void>} A promise that will resolve.
+         */
+        resolve(): IThenable<void>;
+        /**
+         * @name resolve
+         * @memberof plat.async.IPromise
+         * @kind function
+         * @access public
+         * @static
+         * @variation 1
          * 
          * @description
          * Returns a promise that resolves with the input value.
          * 
          * @typeparam {any} R The value with which to resolve the promise.
          * 
-         * @param {R} value? The value to resolve.
+         * @param {R} value The value to resolve.
          * 
          * @returns {plat.async.IThenable<R>} A promise that will resolve with the associated value.
          */
-        resolve<R>(value?: R): IThenable<R>;
+        resolve<R>(value: R): IThenable<R>;
 
         /**
          * @name reject
@@ -1152,6 +1181,6 @@ module plat.async {
          * 
          * @returns {plat.async.IThenable<any>} A promise that will reject with the error.
          */
-        reject(error: any): IThenable<any>;
+        reject(error?: any): IThenable<any>;
     }
 }

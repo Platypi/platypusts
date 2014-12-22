@@ -1,5 +1,5 @@
 /**
-  * PlatypusTS v0.9.8 (http://getplatypi.com)
+  * PlatypusTS v0.9.9 (http://getplatypi.com)
   * Copyright 2014 Platypi, LLC. All rights reserved.
   * PlatypusTS is licensed under the GPL-3.0 found at
   * http://opensource.org/licenses/GPL-3.0
@@ -30,7 +30,7 @@ declare module plat {
           * @param {Array<any>} dependencies? An array of strings representing the dependencies needed for the IControl
           * injector.
           */
-        function control(name: string, Type: new (...args: any[]) => IControl, dependencies?: any[]): typeof register;
+        function control(name: string, Type: new (...args: any[]) => IControl, dependencies?: any[], isStatic?: boolean): typeof register;
         /**
           * Registers an IViewControl with the framework. The framework will
           * instantiate the control when needed. The dependencies array corresponds to injectables that will be
@@ -193,6 +193,14 @@ declare module plat {
               */
             static convertDependencies(dependencies: any[]): string[];
             /**
+              * Converts a dependency specified by its Constructors into an
+              * equivalent dependency specified by its registered string
+              * name.
+              * @param {any} dependency The dependency specified
+              * by either a Constructor or a registered name.
+              */
+            static convertDependency(dependency: any): string;
+            /**
               * Checks if the object being passed in fulfills the requirements for being an Injector.
               * @param {plat.dependency.Injector<any>} dependency The object to check.
               */
@@ -213,6 +221,11 @@ declare module plat {
               * @param {any} Constructor The Constructor to locate.
               */
             private static __locateInjector(Constructor);
+            /**
+              * Finds an injector object with the associated constructor in the given IInjectorObject.
+              * @param {Function} Constructor The Function
+              */
+            private static __findInjector(Constructor, injectors);
             /**
               * Once an injector is injected, it is wrapped to prevent further injection.
               * @param {any} value The injected value.
@@ -2882,10 +2895,14 @@ declare module plat {
               */
             static race<R>(promises: R[]): IThenable<R>;
             /**
-              * Returns a promise that resolves with the input value.
-              * @param {R} value? The value to resolve.
+              * Returns a promise that resolves immediately.
               */
-            static resolve<R>(value?: R): IThenable<R>;
+            static resolve(): IThenable<void>;
+            /**
+              * Returns a promise that resolves with the input value.
+              * @param {R} value The value to resolve.
+              */
+            static resolve<R>(value: R): IThenable<R>;
             /**
               * Returns a promise that rejects with the input value.
               * @param {any} error The value to reject.
@@ -3125,15 +3142,19 @@ declare module plat {
               */
             race<R>(promises: R[]): IThenable<R>;
             /**
-              * Returns a promise that resolves with the input value.
-              * @param {R} value? The value to resolve.
+              * Returns a promise that resolves immediately.
               */
-            resolve<R>(value?: R): IThenable<R>;
+            resolve(): IThenable<void>;
+            /**
+              * Returns a promise that resolves with the input value.
+              * @param {R} value The value to resolve.
+              */
+            resolve<R>(value: R): IThenable<R>;
             /**
               * Returns a promise that rejects with the input value.
               * @param {any} value The value to reject.
               */
-            reject(error: any): IThenable<any>;
+            reject(error?: any): IThenable<any>;
         }
         /**
           * HttpRequest provides a wrapper for the XMLHttpRequest object. Allows for
@@ -11243,7 +11264,7 @@ declare module plat {
             /**
               * Reference to the IBindableTemplatesFactory injectable.
               */
-            $BindableTeampltesFactory: ui.IBindableTemplatesFactory;
+            $BindableTemplatesFactory: ui.IBindableTemplatesFactory;
             /**
               * The child managers for this manager.
               */
@@ -12223,6 +12244,52 @@ declare module plat {
               * Allows you to assign a name to a registered route.
               */
             name?: string;
+        }
+        class Router {
+            $Promise: async.IPromise;
+            recognizer: RouteRecognizer;
+            childRecognizer: RouteRecognizer;
+            navigating: boolean;
+            previousUrl: string;
+            previousPattern: string;
+            currentRouteInfo: IDelegateInfo;
+            result: IRouteResult;
+            previousResult: IRouteResult;
+            ports: IObject<ISupportRouteNavigation>;
+            parent: Router;
+            children: Router[];
+            initialize(parent?: Router): void;
+            child(): Router;
+            registerViewport(viewport: ISupportRouteNavigation, name?: string): async.IThenable<void>;
+            configure(routes: IRouteMapping[]): async.IThenable<void>;
+            configure(routes: IRouteMapping): async.IThenable<void>;
+            navigate(url: string, force?: boolean): async.IThenable<void>;
+            forceNavigate(): async.IThenable<void>;
+            generate(name: string, parameters: IObject<any>): string;
+            navigateChildren(result: IRouteResult): async.IThenable<void>;
+            performNavigation(result: IRouteResult): async.IThenable<void>;
+            canNavigate(result: IRouteResult): async.IThenable<boolean>;
+            runPreNavigationSteps(result: IRouteResult): async.IThenable<boolean>[];
+            preNavigate(result: IRouteResult): async.IThenable<boolean>;
+            canNavigateFrom(result: IRouteResult): async.IThenable<boolean>;
+            canNavigateTo(result: IRouteResult): async.IThenable<boolean>;
+            reduce(values: boolean[]): boolean;
+        }
+        function IRouter(): Router;
+        interface IRouteMapping {
+            pattern: string;
+            view: any;
+        }
+        interface IRouteResult extends Array<IRouteInfo> {
+        }
+        interface IRouteInfo extends IDelegateInfo {
+            delegate: IRouteMapping;
+        }
+        interface ISupportRouteNavigation {
+            canNavigateFrom(result: IRouteResult): async.IThenable<boolean>;
+            canNavigateTo(result: IRouteResult): async.IThenable<boolean>;
+            navigateFrom(result: IRouteResult): async.IThenable<void>;
+            navigateTo(result: IRouteResult): async.IThenable<void>;
         }
     }
     /**

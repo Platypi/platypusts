@@ -61,6 +61,7 @@ function cfg(config: any) {
             '../framework/routing/segments/segments.js',
             '../framework/routing/state/state.js',
             '../framework/routing/routerecognizer/routerecognizer.js',
+            '../framework/routing/router/router.js',
             '../framework/navigation/basenavigator.js',
             '../framework/navigation/navigator.js',
             '../framework/navigation/routingnavigator.js',

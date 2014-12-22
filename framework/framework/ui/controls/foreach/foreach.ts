@@ -852,7 +852,7 @@ module plat.ui.controls {
             cancel?: boolean): async.IThenable<void> {
             var blockLength = this._blockLength;
             if (blockLength === 0) {
-                return this.$Promise.resolve<void>();
+                return this.$Promise.resolve();
             }
 
             var start = startIndex * blockLength;
