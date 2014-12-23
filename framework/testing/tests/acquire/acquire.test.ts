@@ -193,7 +193,7 @@ module tests.acquire {
             compare: toBe(plat.web.IBrowserConfig())
         }, {
             name: __Router,
-            compare: instanceOf(plat.web.Router)
+            compare: instanceOf(plat.routing.Router)
         }, {
             name: __UrlUtilsInstance,
             compare: instanceOf(plat.web.UrlUtils)

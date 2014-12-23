@@ -210,7 +210,9 @@
                     .then(() => {
                         return port.navigateTo(result);
                     });
-            }, this.ports).then(() => { });
+            }, this.ports).then(() => {
+                return this.navigateChildren(result);
+            });
         }
 
         canNavigate(result: IRouteResult) {
