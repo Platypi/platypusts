@@ -84,7 +84,7 @@ module plat.controls {
          * @type {number}
          * 
          * @description
-         * The priority of Bind is set high to take precede 
+         * The priority of Bind is set high to precede 
          * other controls that may be listening to the same 
          * event.
          */
@@ -236,12 +236,14 @@ module plat.controls {
          * @returns {void}
          */
         loaded(): void {
-            if (isNull(this.parent) || isNull(this.element)) {
+            var parent = this.parent;
+            if (isNull(parent) || isNull(this.element)) {
                 return;
             }
 
             var attr = camelCase(this.type),
-                expression = this._expression = this.$Parser.parse(this.attributes[attr]);
+                $parser = this.$Parser,
+                expression = this._expression = $parser.parse(this.attributes[attr]);
 
             var identifiers = expression.identifiers;
 
@@ -257,10 +259,10 @@ module plat.controls {
             this._property = split.pop();
 
             if (split.length > 0) {
-                this._contextExpression = this.$Parser.parse(split.join('.'));
+                this._contextExpression = $parser.parse(split.join('.'));
             } else if (expression.aliases.length > 0) {
                 var alias = expression.aliases[0],
-                    resourceObj = this.parent.findResource(alias);
+                    resourceObj = parent.findResource(alias);
 
                 if (isNull(resourceObj) || resourceObj.resource.type !== __OBSERVABLE_RESOURCE) {
                     return;
@@ -279,7 +281,7 @@ module plat.controls {
             } else {
                 this._contextExpression = {
                     evaluate: () => {
-                        return this.parent.context;
+                        return parent.context;
                     },
                     aliases: [],
                     identifiers: [],
@@ -342,6 +344,7 @@ module plat.controls {
             var element = this.element,
                 $compat = this.$Compat,
                 composing = false,
+                input = 'input',
                 timeout: IRemoveListener,
                 eventListener = () => {
                     if (composing) {
@@ -369,8 +372,8 @@ module plat.controls {
                 }, false);
             }
 
-            if ($compat.hasEvent('input')) {
-                this.addEventListener(element, 'input', eventListener, false);
+            if ($compat.hasEvent(input)) {
+                this.addEventListener(element, input, eventListener, false);
             } else {
                 this.addEventListener(element, 'keydown', (ev: KeyboardEvent) => {
                     var key = ev.keyCode,
