@@ -207,6 +207,10 @@ module plat.dependency {
                 return __Document;
             }
 
+            if (isString(dependency.__injectorToken)) {
+                dependency = dependency.__injectorToken;
+            }
+
             var find: (injectors: IInjectorObject<any>) => IInjector<any> =
                 Injector.__findInjector.bind(Injector, dependency),
                 injector = find(injectableInjectors) ||
@@ -275,6 +279,10 @@ module plat.dependency {
                 return (<any>injectableInjectors).$Document;
             }
 
+            if (isString(Constructor.__injectorToken)) {
+                Constructor = Constructor.__injectorToken;
+            }
+
             var find: (injectors: IInjectorObject<any>) => IInjector<any> =
                 Injector.__findInjector.bind(Injector, Constructor),
                 injector = find(injectableInjectors) ||
@@ -303,7 +311,7 @@ module plat.dependency {
          * @returns {any} The located injector.
          */
         private static __findInjector(Constructor: any, injectors: IInjectorObject<any>) {
-            if (isString(Constructor)) {
+            if (isNull(Constructor) || isString(Constructor)) {
                 return injectors[Constructor] || Injector.__noop();
             }
 

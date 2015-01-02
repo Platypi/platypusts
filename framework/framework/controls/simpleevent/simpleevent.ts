@@ -129,20 +129,34 @@ module plat.controls {
          * @access protected
          * 
          * @description
-         * Sets the event listener.
+         * Parses function args and sets the event listener.
          * 
          * @returns {void}
          */
         protected _setListener(): void {
-            var event = this.event,
-                fn = this.attributes[this.attribute];
+            var fn = this.attributes[this.attribute];
 
-            if (isEmpty(event) || isEmpty(fn)) {
+            if (isEmpty(this.event) || isEmpty(fn)) {
                 return;
             }
 
             this._parseArgs(fn);
-            this.addEventListener(this.element, event, this._onEvent, false);
+            this._addEventListeners();
+        }
+
+        /**
+         * @name _addEventListeners
+         * @memberof plat.controls.SimpleEventControl
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Adds any and all necessary event listeners.
+         * 
+         * @returns {void}
+         */
+        protected _addEventListeners(): void {
+            this.addEventListener(this.element, this.event, this._onEvent, false);
         }
 
         /**
@@ -1006,6 +1020,114 @@ module plat.controls {
         }
     }
 
+    /**
+     * @name React
+     * @memberof plat.controls
+     * @kind class
+     * 
+     * @extends {plat.controls.SimpleEventControl}
+     * 
+     * @description
+     * A {@link plat.controls.SimpleEventControl|SimpleEventControl} for the 'input' event. If 
+     * 'input' is not an event, it will simulate an 'input' using other events like 'keydown', 
+     * 'cut', 'paste', etc. Also fires on the 'change' event.
+     */
+    export class React extends SimpleEventControl {
+        /**
+         * @name $Compat
+         * @memberof plat.controls.Input
+         * @kind property
+         * @access public
+         * @static
+         * 
+         * @type {plat.ICompat}
+         * 
+         * @description
+         * Reference to the {@link plat.ICompat|ICompat} injectable.
+         */
+        $Compat: ICompat = acquire(__Compat);
+
+        /**
+         * @name event
+         * @memberof plat.controls.Input
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * The event name.
+         */
+        event: string = 'input';
+
+        /**
+         * @name _addEventListeners
+         * @memberof plat.controls.Input
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Adds any and all necessary event listeners.
+         * 
+         * @returns {void}
+         */
+        protected _addEventListeners(): void {
+            var element = this.element,
+                $compat = this.$Compat,
+                composing = false,
+                input = 'input',
+                timeout: IRemoveListener,
+                eventListener = (ev: Event) => {
+                    if (composing) {
+                        return;
+                    }
+
+                    this._onEvent(ev);
+                },
+                postponedEventListener = (ev: Event) => {
+                    if (isFunction(timeout)) {
+                        return;
+                    }
+
+                    timeout = postpone(() => {
+                        eventListener(ev);
+                        timeout = null;
+                    });
+                };
+
+            if (isUndefined($compat.ANDROID)) {
+                this.addEventListener(element, 'compositionstart', () => (composing = true), false);
+                this.addEventListener(element, 'compositionend', (ev: Event) => {
+                    composing = false;
+                    eventListener(ev);
+                }, false);
+            }
+
+            this.addEventListener(element, input, eventListener, false);
+            this.addEventListener(element, 'change', eventListener, false);
+
+            if ($compat.hasEvent(input)) {
+                return;
+            }
+
+            this.addEventListener(element, 'keydown', (ev: KeyboardEvent) => {
+                var key = ev.keyCode,
+                    codes = KeyCodes;
+
+                if (key === codes.lwk ||
+                    key === codes.rwk ||
+                    (key >= codes.shift && key <= codes.escape) ||
+                    (key > codes.space && key <= codes.down)) {
+                    return;
+                }
+
+                postponedEventListener(ev);
+            }, false);
+            this.addEventListener(element, 'cut', postponedEventListener, false);
+            this.addEventListener(element, 'paste', postponedEventListener, false);
+        }
+    }
+
     register.control(__Tap, Tap);
     register.control(__Blur, Blur);
     register.control(__Change, Change);
@@ -1032,4 +1154,5 @@ module plat.controls {
     register.control(__TrackUp, TrackUp);
     register.control(__TrackDown, TrackDown);
     register.control(__TrackEnd, TrackEnd);
+    register.control(__React, React);
 }

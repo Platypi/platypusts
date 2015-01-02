@@ -39,6 +39,10 @@ module plat.register {
             staticInjectors[name] = injector;
         }
 
+        if (!isNull(Type)) {
+            Type.__injectorToken = name;
+        }
+
         return register;
     }
     
