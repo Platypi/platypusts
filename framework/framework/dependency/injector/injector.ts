@@ -533,14 +533,11 @@ module plat.dependency {
          * @param {any} value The value to wrap
          */
         protected _wrapInjector(value: any): IInjector<any> {
-            var name = this.name;
-            return injectableInjectors[name] = <IInjector<any>>{
-                type: this.type,
-                name: name,
-                __dependencies: this.__dependencies,
-                Constructor: this.Constructor,
-                inject: () => <T>value
+            this.inject = () => {
+                return <T>value;
             };
+
+            return this;
         }
     }
 
