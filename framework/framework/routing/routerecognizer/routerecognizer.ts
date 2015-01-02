@@ -1,4 +1,6 @@
 ﻿module plat.routing {
+    'use strict';
+
     /**
      * @name RouteRecognizer
      * @memberof plat.routing
@@ -163,7 +165,7 @@
          */
         generate(name: string, parameters?: IObject<string>): string {
             var route = this._namedRoutes[name],
-                output = "",
+                output = '',
                 segments: Array<BaseSegment>,
                 length: number;
 
@@ -181,7 +183,7 @@
                     continue;
                 }
 
-                output += "/";
+                output += '/';
                 output += segment.generate(parameters);
             }
 

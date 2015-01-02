@@ -8,6 +8,8 @@
  * Holds all the classes and interfaces related to registering components for platypus.
  */
 module plat.register {
+    'use strict';
+
     /**
      * @name add
      * @memberof plat.register
@@ -45,7 +47,7 @@ module plat.register {
 
         return register;
     }
-    
+
     /**
      * @name app
      * @memberof plat.register
@@ -70,7 +72,7 @@ module plat.register {
         $appStatic.registerApp(app);
         return register;
     }
-    
+
     /**
      * @name control
      * @memberof plat.register
@@ -100,7 +102,7 @@ module plat.register {
 
         return add(controlInjectors, name, Type, dependencies, isStatic ? __STATIC : undefined);
     }
-    
+
     /**
      * @name viewControl
      * @memberof plat.register
@@ -167,7 +169,7 @@ module plat.register {
 
         return ret;
     }
-    
+
     /**
      * @name injectable
      * @memberof plat.register
@@ -238,7 +240,7 @@ module plat.register {
 
         return add(injectableInjectors, name, Type, dependencies, injectableType, false);
     }
- 
+
     /**
      * @name injectable
      * @memberof plat.register
@@ -263,7 +265,7 @@ module plat.register {
          * a static constructor and load dependencies into static class properties.
          */
         export var STATIC = __STATIC;
-        
+
         /**
          * @name SINGLETON
          * @memberof plat.register.injectable
@@ -279,7 +281,7 @@ module plat.register {
          * and lists it as a dependency.
          */
         export var SINGLETON = __SINGLETON;
-        
+
         /**
          * @name INSTANCE
          * @memberof plat.register.injectable
@@ -295,7 +297,7 @@ module plat.register {
          * and lists it as a dependency.
          */
         export var INSTANCE = __INSTANCE;
-        
+
         /**
          * @name FACTORY
          * @memberof plat.register.injectable
@@ -311,7 +313,7 @@ module plat.register {
          * injectable.
          */
         export var FACTORY = __FACTORY;
-        
+
         /**
          * @name CLASS
          * @memberof plat.register.injectable
@@ -327,7 +329,7 @@ module plat.register {
          */
         export var CLASS = __CLASS;
     }
-    
+
     /**
      * @name animation
      * @memberof plat.register
@@ -390,7 +392,7 @@ module plat.register {
         return add((animationType === __JS ? jsAnimationInjectors : animationInjectors),
             name, Type, dependencies, register.injectable.INSTANCE);
     }
-    
+
     /**
      * @name animation
      * @memberof plat.register
@@ -414,7 +416,7 @@ module plat.register {
          * A CSS animation.
          */
         export var CSS = __CSS;
-        
+
         /**
          * @name JS
          * @memberof plat.register.animation

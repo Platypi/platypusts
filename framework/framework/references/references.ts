@@ -60,6 +60,7 @@ var __prefix = '$',
     __StateStatic = __prefix + 'StateStatic',
     __StateInstance = __prefix + 'StateInstance',
     __RouteRecognizerInstance = __prefix + 'RouteRecognizerInstance',
+    __InjectorStatic = __prefix + 'InjectorStatic',
 
     /**
      * Controls

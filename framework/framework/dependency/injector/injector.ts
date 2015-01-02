@@ -8,6 +8,8 @@
  * Holds classes and interfaces related to dependency injection components in platypus.
  */
 module plat.dependency {
+    'use strict';
+
     /**
      * @name Injector
      * @memberof plat.dependency
@@ -294,7 +296,11 @@ module plat.dependency {
          * @returns {any} The located injector.
          */
         private static __findInjector(Constructor: any, injectors: IInjectorObject<any>) {
-            if (isNull(Constructor) || isString(Constructor)) {
+            if (Constructor === Injector || Constructor === __InjectorStatic) {
+                var ret = Injector.__wrap(Injector);
+                ret.name = __InjectorStatic;
+                return ret;
+            } else if (isNull(Constructor) || isString(Constructor)) {
                 return injectors[Constructor] || Injector.__noop();
             }
 
@@ -705,7 +711,7 @@ module plat.dependency {
          * An {@link plat.dependency.IInjectorObject|IInjectorObject} of animations. Can be either CSS or JS implementations.
          */
         export var animation = animationInjectors;
-        
+
         /**
          * @name jsAnimation
          * @memberof plat.dependency.injectors
