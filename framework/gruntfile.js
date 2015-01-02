@@ -1,14 +1,12 @@
 function stripDocs(data) {
-    var linkRegex = /\{@link (.*?)[|](.*?)\}/g;
-
-    data = data.replace(linkRegex, function(value, qualifiedPath, linkValue, index, content) {
-        return linkValue;
-    });
-
-    var lines = data.split(/\r\n|\n/g),
+    var linkRegex = /\{@link (.*?)[|](.*?)\}/g,
         out = [];
 
-    lines.forEach(function (line) {       
+    data.forEach(function (line) {
+        line = line.replace(linkRegex, function(value, qualifiedPath, linkValue, index, content) {
+            return linkValue;
+        });
+
         if(line.trim() === '*') {
             return;
         } else if (line.indexOf('* @') === -1) {
@@ -18,7 +16,51 @@ function stripDocs(data) {
         }
     });
 
-    return out.join('\r\n');
+    return out;
+}
+
+function useStrict(data) {
+    var plat;
+
+    data = data
+        .map(function (line, index, lines) {
+            var trim = line.trim();
+            if (trim === '\'use strict\';') {
+                return '';
+            } else if (trim.indexOf('module plat ') > -1) {
+                plat = index+1;
+            }
+
+            return line;
+        });
+
+    data.splice(plat, 0, '    \'use strict;\'');
+    return data;
+}
+
+function normalizeBlockComments(data) {
+    return data
+        .map(function (line, index, lines) {
+            if (line.trim()[0] === '*') {
+                return ' ' + line;
+            }
+
+            return line;
+        })
+        .join('\r\n');
+
+}
+
+function addNodeTypeDefinition(data) {
+    return data 
+        .slice(0, -2)
+        .concat([
+            '',
+            'declare module \'platypus\' {',
+            '    export = plat;',
+            '}',
+            ''
+        ]);
 }
 
 module.exports = exports = function load(grunt) {
@@ -53,7 +95,9 @@ module.exports = exports = function load(grunt) {
             main: {
                 options: {
                     process: function (data) {
-                        return stripDocs(data) + 'export = plat;\r\n';
+                        return stripDocs(useStrict(data.split(/\r\n|\n/)))
+                            .concat(['export = plat;', ''])
+                            .join('\r\n');
                     }
                 },
                 src: 'platypus.ts',
@@ -62,15 +106,7 @@ module.exports = exports = function load(grunt) {
             bower: {
                 options: {
                     process: function (data) {
-                        return data
-                            .split(/\r\n|\n/)
-                            .map(function (line, index, lines) {
-                                if (line.trim()[0] === '*') {
-                                    return ' ' + line;
-                                }
-
-                                return line;
-                            }).join('\r\n');
+                        return normalizeBlockComments(data.split(/\r\n|\n/));
                     }
                 },
                 src: 'dist/platypus.d.ts',
@@ -79,17 +115,7 @@ module.exports = exports = function load(grunt) {
             node: {
                 options: {
                     process: function (data) {
-                        return data
-                            .split(/\r\n|\n/)
-                            .slice(0, -2)
-                            .concat([
-                                '',
-                                'declare module \'platypus\' {',
-                                '    export = plat;',
-                                '}',
-                                ''
-                            ])
-                            .join('\r\n');
+                        return addNodeTypeDefinition(data.split(/\r\n|\n/)).join('\r\n');
                     }
                 },
                 src: 'dist/platypus.d.ts',
