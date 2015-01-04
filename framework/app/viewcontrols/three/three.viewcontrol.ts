@@ -1,10 +1,6 @@
-module app.viewcontrols {
-    var count = 0,
-        arrCount = 6;
-
-    export class Main extends plat.ui.ViewControl {
-        title = 'Main';
-        templateUrl = 'viewcontrols/main/main.viewcontrol.html';
+﻿module app.viewcontrols {
+    export class Three extends plat.ui.ViewControl {
+        templateUrl = 'viewcontrols/three/three.viewcontrol.html';
         context = {
             views: ['one', 'two', 'three']
         };
@@ -18,9 +14,10 @@ module app.viewcontrols {
                 { pattern: '/three', view: Three }
             ]);
         }
+
     }
 
-    plat.register.viewControl('main', Main, [
+    plat.register.viewControl('three', Three, [
         plat.routing.IRouter
     ]);
 }

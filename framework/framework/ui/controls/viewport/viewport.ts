@@ -274,7 +274,6 @@ module plat.ui.controls {
 
 
         initialize() {
-            console.log('initializing viewport');
             var router = this.router = this.$RouterStatic.currentRouter(),
                 parentViewport = this._getParentViewport(),
                 parentRouter: routing.Router;
@@ -283,8 +282,10 @@ module plat.ui.controls {
                 parentRouter = this.parentRouter = parentViewport.router;
                 parentRouter.addChild(router);
             }
-            
-            router.registerViewport(this);
+        }
+
+        setTemplate() {
+            this.router.registerViewport(this);
         }
 
         canNavigateTo(result: routing.IRouteResult) {
@@ -296,35 +297,38 @@ module plat.ui.controls {
         }
 
         navigateTo(result: routing.IRouteResult) {
-            console.log('navigating');
-            var router = this.router,
-                route = result[0],
-                injector = this.$Injector.getDependency(route.delegate.view),
-                nodeMap = this._createNodeMap(injector),
-                element = this.element,
-                node = nodeMap.element;
+            console.log('nav:', this.uid);
+            return this.$Promise.resolve().then(() => {
+                var router = this.router,
+                    route = result[0],
+                    injector = this.$Injector.getDependency(route.delegate.view),
+                    nodeMap = this._createNodeMap(injector),
+                    element = this.element,
+                    node = nodeMap.element;
 
-            element.appendChild(node);
+                element.appendChild(node);
 
-            var animationPromise = this._animationPromise;
-            if (isPromise(animationPromise)) {
-                animationPromise.dispose();
-            }
+                var animationPromise = this._animationPromise;
+                if (isPromise(animationPromise)) {
+                    animationPromise.dispose();
+                }
 
-            this._animationPromise = this.$Animator.animate(this.element, __Enter);
+                this._animationPromise = this.$Animator.animate(this.element, __Enter);
 
-            var viewportManager = this.$ManagerCache.read(this.uid),
-                manager = this.$ElementManagerFactory.getInstance();
+                var viewportManager = this.$ManagerCache.read(this.uid),
+                    manager = this.$ElementManagerFactory.getInstance();
 
-            viewportManager.children = [];
-            manager.initialize(nodeMap, viewportManager);
+                viewportManager.children = [];
+                manager.initialize(nodeMap, viewportManager);
 
-            var control = this.controls[0];
-            (<any>control).router = router;
-            control.navigatedTo(route.parameters);
-
-            manager.setUiControlTemplate();
-            return this.$Promise.resolve();
+                var control = this.controls[0];
+                (<any>control).router = router;
+                control.navigatedTo(route.parameters);
+                console.log('settingTemplate:', this.uid);
+                manager.setUiControlTemplate();
+            }, (err) => {
+                console.log(err);
+            });
         }
 
         navigateFrom(result: routing.IRouteResult) {

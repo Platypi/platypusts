@@ -1,28 +1,10 @@
-﻿
-<plat-if plat-options="{ condition: iff }">
-    <div>IFF</div>
-</plat-if>
-
-<form plat-submit="foo">
-    <input plat-name="text" type="text" plat-bind="text" />
-    <input plat-name="password" type="password" plat-bind="password" />
-    <button type="submit">tap</button>
-</form>
-<br />
-<br />
-<button plat-tap="bar">pseudo</button>
-
-<input type="text" plat-bind="keydown" plat-keypress="{ key: '!', method: 'keyDown' }" />
-
-<button plat-tap="navigate">Navigate</button>
-<button plat-tap="goBack">Back</button>
-
-<div>
-    Count = {{count}}
+﻿<div class="inline">
+    <div>
+        <plat-foreach plat-context="views">
+            <div>
+                <a plat-link2="{{@context}}">{{@context}}</a>
+            </div>
+        </plat-foreach>
+    </div>
+    <plat-viewport2></plat-viewport2>
 </div>
-
-<br />
-
-<plat-foreach plat-context="arr">
-    <div class="arr-item">{{@context}}</div>
-</plat-foreach>

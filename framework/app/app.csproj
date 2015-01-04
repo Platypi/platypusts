@@ -22,14 +22,21 @@
     <TypeScriptCompile Include="..\framework\**\*.ts">
       <Link>lib\%(RecursiveDir)%(Filename)%.ts</Link>
     </TypeScriptCompile>
+    <TypeScriptCompile Include="app\app.ts" />
     <TypeScriptCompile Include="viewcontrols\main\main.viewcontrol.ts" />
+    <TypeScriptCompile Include="viewcontrols\three\three.viewcontrol.ts" />
+    <TypeScriptCompile Include="viewcontrols\two\two.viewcontrol.ts" />
+    <TypeScriptCompile Include="viewcontrols\one\one.viewcontrol.ts" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\framework\**\*.css">
       <Link>lib\%(RecursiveDir)%(Filename)%.css</Link>
     </Content>
-    <Content Include="viewcontrols\main\main.viewcontrol.css" />
+    <Content Include="style.css" />
     <Content Include="viewcontrols\main\main.viewcontrol.html" />
+    <Content Include="viewcontrols\three\three.viewcontrol.html" />
+    <Content Include="viewcontrols\two\two.viewcontrol.html" />
+    <Content Include="viewcontrols\one\one.viewcontrol.html" />
     <Content Include="web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -40,9 +47,7 @@
       <DependentUpon>web.config</DependentUpon>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="lib\routing\state\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

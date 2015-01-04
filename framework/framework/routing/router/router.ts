@@ -15,6 +15,7 @@
 
         $Promise: async.IPromise = acquire(__Promise);
         $Injector: typeof dependency.Injector = acquire(__InjectorStatic);
+        $EventManagerStatic: events.IEventManagerStatic = acquire(__EventManagerStatic);
 
         recognizer: RouteRecognizer = acquire(__RouteRecognizerInstance);
         childRecognizer: RouteRecognizer = acquire(__RouteRecognizerInstance);
@@ -30,9 +31,20 @@
         ports: Array<ISupportRouteNavigation> = [];
         parent: Router;
         children: Array<Router> = [];
+        uid: string;
 
         constructor() {
+            this.uid = uniqueId(__Plat);
+            var current = Router.currentRouter();
             Router.currentRouter(this);
+
+            if (isNull(current)) {
+                this.$EventManagerStatic.on(this.uid, __urlChanged, (ev: events.IDispatchEventInstance, utils?: web.IUrlUtilsInstance) => {
+                    postpone(() => {
+                        this.navigate(utils.pathname);
+                    });
+                });
+            }
         }
 
         initialize(parent?: Router) {
@@ -165,6 +177,8 @@
                 }
 
                 this.previousPattern = pattern;
+            } else {
+                this.previousPattern = result[0].delegate.pattern;
             }
 
             if (isEmpty(result)) {
@@ -206,7 +220,7 @@
             return resolve();
         }
 
-        generate(name: string, parameters: IObject<any>) {
+        generate(name: string, parameters?: IObject<any>) {
             var router = this,
                 prefix = '';
 
@@ -223,7 +237,7 @@
             var path = router.recognizer.generate(name, parameters);
 
             while (!isNull(router = router.parent)) {
-                prefix += router.previousPattern;
+                prefix += (router.previousPattern !== '/') ? router.previousPattern : '';
             }
 
             return prefix + path;
@@ -304,8 +318,8 @@
         router.initialize();
         return router;
     }
-
-    plat.register.injectable(__Router, IRouter);
+    
+    plat.register.injectable(__Router, IRouter, null, __INSTANCE);
 
     export function IRouterStatic() {
         return Router;
