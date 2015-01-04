@@ -46,6 +46,14 @@ module plat.ui {
                 this.on(__backButtonPressed, backButtonPressed);
             }
         }
+
+        canNavigateFrom() {
+            return true;
+        }
+
+        canNavigateTo() {
+            return true;
+        }
     }
 
     /**
@@ -93,5 +101,8 @@ module plat.ui {
          * you can use ev.stopPropagation().
          */
         backButtonPressed? (ev: plat.events.IDispatchEventInstance): void;
+
+        canNavigateFrom(): boolean;
+        canNavigateTo(): boolean;
     }
 }

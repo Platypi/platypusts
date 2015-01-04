@@ -271,6 +271,8 @@ module plat.ui.controls {
         router: routing.Router;
         parentRouter: routing.Router;
         controls: Array<IViewControl>;
+        nextInjector: dependency.IInjector<IViewControl>;
+        nextView: IViewControl;
 
 
         initialize() {
@@ -289,18 +291,38 @@ module plat.ui.controls {
         }
 
         canNavigateTo(result: routing.IRouteResult) {
-            return this.$Promise.resolve(true);
+            var bool: any = true,
+                router = this.router,
+                route = result[0],
+                injector: dependency.IInjector<IViewControl> = this.$Injector.getDependency(route.delegate.view),
+                view = injector.inject();
+
+            if (isObject(view) && isFunction(view.canNavigateTo)) {
+                bool = view.canNavigateTo();
+            }
+
+            return this.$Promise.resolve(bool).then((canNavigateTo) => {
+                this.nextInjector = injector;
+                this.nextView = view;
+            });
         }
 
         canNavigateFrom(result: routing.IRouteResult) {
-            return this.$Promise.resolve(true);
+            var view = this.controls[0],
+                bool: any = true;
+
+            if (isObject(view) && isFunction(view.canNavigateFrom)) {
+                bool = view.canNavigateFrom();
+            }
+
+            return this.$Promise.resolve(bool);
         }
 
         navigateTo(result: routing.IRouteResult) {
             return this.$Promise.resolve().then(() => {
                 var router = this.router,
                     route = result[0],
-                    injector = this.$Injector.getDependency(route.delegate.view),
+                    injector = this.nextInjector || this.$Injector.getDependency(route.delegate.view),
                     nodeMap = this._createNodeMap(injector),
                     element = this.element,
                     node = nodeMap.element;
@@ -322,15 +344,26 @@ module plat.ui.controls {
 
                 var control = this.controls[0];
                 (<any>control).router = router;
-                control.navigatedTo(route.parameters);
+
+                if (isFunction(control.navigatedTo)) {
+                    control.navigatedTo(route.parameters);
+                }
+
                 manager.setUiControlTemplate();
                 return manager.templatePromise;
             });
         }
 
         navigateFrom(result: routing.IRouteResult) {
-            Control.dispose(this.controls[0]);
-            return this.$Promise.resolve();
+            var view = this.controls[0];
+
+            if (isObject(view) && isFunction(view.navigatingFrom)) {
+                view.navigatingFrom();
+            }
+
+            return this.$Promise.resolve().then(() => {
+                Control.dispose(view);
+            });
         }
 
         dispose() {
@@ -338,7 +371,7 @@ module plat.ui.controls {
         }
 
         protected _createNodeMap(injector: dependency.IInjector<IViewControl>) {
-            var control = injector.inject(),
+            var control = this.nextView || injector.inject(),
                 doc = this.$Document,
                 type = injector.name,
                 replaceWith = control.replaceWith,

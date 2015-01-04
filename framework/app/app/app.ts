@@ -3,12 +3,13 @@
         constructor($browserConfig: plat.web.IBrowserConfig, router: plat.routing.Router) {
             super();
 
-            router.configure({
-                pattern: '/',
-                view: viewcontrols.Main
-            });
             $browserConfig.routingType = $browserConfig.HASH;
             $browserConfig.baseUrl = 'app';
+
+            router.configure({
+                pattern: '',
+                view: viewcontrols.Main
+            });
         }
 
         error(ev: plat.events.IErrorEvent<any>) {

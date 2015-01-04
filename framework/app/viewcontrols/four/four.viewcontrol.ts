@@ -1,6 +1,6 @@
 ﻿module app.viewcontrols {
-    export class Three extends plat.ui.ViewControl {
-        templateUrl = 'viewcontrols/three/three.viewcontrol.html';
+    export class Four extends plat.ui.ViewControl {
+        templateUrl = 'viewcontrols/four/four.viewcontrol.html';
         context = {
             views: ['one', 'two', 'three', 'four']
         };
@@ -34,7 +34,7 @@
         }
     }
 
-    plat.register.viewControl('three', Three, [
+    plat.register.viewControl('four', Four, [
         plat.routing.IRouter
     ]);
 }

@@ -24,6 +24,7 @@
     </TypeScriptCompile>
     <TypeScriptCompile Include="app\app.ts" />
     <TypeScriptCompile Include="viewcontrols\main\main.viewcontrol.ts" />
+    <TypeScriptCompile Include="viewcontrols\four\four.viewcontrol.ts" />
     <TypeScriptCompile Include="viewcontrols\three\three.viewcontrol.ts" />
     <TypeScriptCompile Include="viewcontrols\two\two.viewcontrol.ts" />
     <TypeScriptCompile Include="viewcontrols\one\one.viewcontrol.ts" />
@@ -34,6 +35,7 @@
     </Content>
     <Content Include="style.css" />
     <Content Include="viewcontrols\main\main.viewcontrol.html" />
+    <Content Include="viewcontrols\four\four.viewcontrol.html" />
     <Content Include="viewcontrols\three\three.viewcontrol.html" />
     <Content Include="viewcontrols\two\two.viewcontrol.html" />
     <Content Include="viewcontrols\one\one.viewcontrol.html" />
