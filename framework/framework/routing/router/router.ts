@@ -3,7 +3,18 @@
         __CHILD_ROUTE_LENGTH = __CHILD_ROUTE.length;
 
     export class Router {
+        static currentRouter(router?: Router) {
+            if (!isNull(router)) {
+                Router.__currentRouter = router;
+            }
+
+            return Router.__currentRouter;
+        }
+
+        private static __currentRouter: Router;
+
         $Promise: async.IPromise = acquire(__Promise);
+        $Injector: typeof dependency.Injector = acquire(__InjectorStatic);
 
         recognizer: RouteRecognizer = acquire(__RouteRecognizerInstance);
         childRecognizer: RouteRecognizer = acquire(__RouteRecognizerInstance);
@@ -16,16 +27,22 @@
         result: IRouteResult;
         previousResult: IRouteResult;
 
-        ports: IObject<ISupportRouteNavigation> = {};
+        ports: Array<ISupportRouteNavigation> = [];
         parent: Router;
         children: Array<Router> = [];
+
+        constructor() {
+            Router.currentRouter(this);
+        }
 
         initialize(parent?: Router) {
             this.parent = parent;
         }
 
-        child() {
-            var child = new Router();
+        addChild(child: Router) {
+            if (isNull(child) || this.children.indexOf(child) > -1) {
+                return child;
+            }
 
             child.initialize(this);
             this.children.push(child);
@@ -33,12 +50,25 @@
             return child;
         }
 
-        registerViewport(viewport: ISupportRouteNavigation, name?: string) {
-            if (isEmpty(name)) {
-                name = 'default';
+        removeChild(child: Router) {
+            var children = this.children,
+                index = this.children.indexOf(child);
+
+            if (index < 0) {
+                return;
             }
 
-            this.ports[name] = viewport;
+            children.splice(index, 1);
+        }
+
+        registerViewport(viewport: ISupportRouteNavigation) {
+            var ports = this.ports;
+
+            if (isNull(viewport) || ports.indexOf(viewport) > -1) {
+                return this.$Promise.resolve();
+            }
+
+            ports.push(viewport);
 
             if (isArray(this.result)) {
                 return this.performNavigation(this.result);
@@ -47,8 +77,23 @@
             return this.$Promise.resolve();
         }
 
-        configure(routes: Array<IRouteMapping>): async.IThenable<void>;
+        unregisterViewport(viewport: ISupportRouteNavigation) {
+            var ports = this.ports,
+                index = ports.indexOf(viewport);
+
+            if (index < 0) {
+                return;
+            }
+
+            ports.splice(index, 1);
+
+            if (ports.length === 0 && !isNull(this.parent)) {
+                this.parent.removeChild(this);
+            }
+        }
+
         configure(routes: IRouteMapping): async.IThenable<void>;
+        configure(routes: Array<IRouteMapping>): async.IThenable<void>;
         configure(routes: any) {
             if (isArray(routes)) {
                 return mapAsync((route: IRouteMapping) => {
@@ -58,7 +103,7 @@
 
             var resolve = this.$Promise.resolve,
                 route: IRouteMapping = routes,
-                view: string = dependency.Injector.convertDependency(route.view);
+                view: string = this.$Injector.convertDependency(route.view);
 
             if (view === __NOOP_INJECTOR) {
                 return resolve();
@@ -262,6 +307,11 @@
 
     plat.register.injectable(__Router, IRouter);
 
+    export function IRouterStatic() {
+        return Router;
+    }
+
+    plat.register.injectable(__RouterStatic, IRouterStatic);
 
     export interface IRouteMapping {
         pattern: string;
@@ -278,7 +328,7 @@
         canNavigateFrom(result: IRouteResult): async.IThenable<boolean>;
         canNavigateTo(result: IRouteResult): async.IThenable<boolean>;
 
-        navigateFrom(result: IRouteResult): async.IThenable<void>;
-        navigateTo(result: IRouteResult): async.IThenable<void>;
+        navigateFrom(result: IRouteResult): async.IThenable<any>;
+        navigateTo(result: IRouteResult): async.IThenable<any>;
     }
 }

@@ -66,11 +66,17 @@ module app {
         }
     }
 
-    plat.register.viewControl('viewcontrol', (<any>MainViewControl), null, ['']);
+    plat.register.viewControl('viewcontrol', (<any>MainViewControl));
 
     class App extends plat.App {
-        constructor($browserConfig: plat.web.IBrowserConfig) {
+        constructor($browserConfig: plat.web.IBrowserConfig, router: plat.routing.Router) {
             super();
+
+            router.previousUrl = '/';
+            router.configure({
+                pattern: '/',
+                view: MainViewControl
+            });
 
             $browserConfig.baseUrl = 'app';
         }
@@ -89,13 +95,7 @@ module app {
     }
 
     plat.register.app('app', App, [
-        plat.web.IBrowserConfig
+        plat.web.IBrowserConfig,
+        plat.routing.IRouter
     ]);
-
-    var a = plat.acquire(MainViewControl),
-        b = plat.acquire(MainViewControl);
-
-    console.log('a instanceof MainViewControl: ', a instanceof MainViewControl);
-    console.log('b instanceof MainViewControl: ', a instanceof MainViewControl);
-    console.log('a !== b: ', a !== b);
 }

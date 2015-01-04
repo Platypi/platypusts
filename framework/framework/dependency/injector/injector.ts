@@ -220,7 +220,8 @@ module plat.dependency {
                 find(viewControlInjectors) ||
                 find(controlInjectors) ||
                 find(animationInjectors) ||
-                find(jsAnimationInjectors);
+                find(jsAnimationInjectors) ||
+                Injector.__noop();
 
             if (isObject(injector)) {
                 return injector.name;
@@ -318,7 +319,7 @@ module plat.dependency {
                 ret.name = __InjectorStatic;
                 return ret;
             } else if (isNull(Constructor) || isString(Constructor)) {
-                return injectors[Constructor] || Injector.__noop();
+                return injectors[Constructor];
             }
 
             var injector: IInjector<any>,

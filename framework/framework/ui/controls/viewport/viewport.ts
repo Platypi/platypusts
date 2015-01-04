@@ -220,4 +220,157 @@ module plat.ui.controls {
     }
 
     register.control(__Viewport, Viewport, [__NavigatorInstance]);
+
+    export class Viewport2 extends TemplateControl implements routing.ISupportRouteNavigation {
+        $RouterStatic: typeof routing.Router = acquire(__RouterStatic);
+        $Promise: async.IPromise = acquire(__Promise);
+        $Injector: typeof dependency.Injector = acquire(__InjectorStatic);
+        $ElementManagerFactory: processing.IElementManagerFactory = acquire(__ElementManagerFactory);
+        $Document: Document = acquire(__Document);
+
+
+        /**
+         * @name $ManagerCache
+         * @memberof plat.ui.controls.Viewport
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.storage.ICache<plat.processing.IElementManager>}
+         * 
+         * @description
+         * Reference to an injectable that caches {@link plat.processing.IElementManager|IElementManagers}.
+         */
+        $ManagerCache: storage.ICache<processing.IElementManager> = acquire(__ManagerCache);
+
+        /**
+         * @name $Animator
+         * @memberof plat.ui.controls.Viewport
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.ui.animations.IAnimator}
+         * 
+         * @description
+         * Reference to the {@link plat.ui.animations.IAnimator|IAnimator} injectable.
+         */
+        $Animator: animations.IAnimator = acquire(__Animator);
+
+        /**
+         * @name _animationPromise
+         * @memberof plat.ui.controls.Viewport
+         * @kind property
+         * @access protected
+         * 
+         * @type {plat.ui.animations.IAnimationThenable<plat.ui.animations.IParentAnimationFn>}
+         * 
+         * @description
+         * A promise used for disposing the end state of the previous animation prior to starting a new one.
+         */
+        protected _animationPromise: animations.IAnimationThenable<animations.IGetAnimatingThenable>;
+
+        router: routing.Router;
+        parentRouter: routing.Router;
+        controls: Array<IViewControl>;
+
+
+        initialize() {
+            console.log('initializing viewport');
+            var router = this.router = this.$RouterStatic.currentRouter(),
+                parentViewport = this._getParentViewport(),
+                parentRouter: routing.Router;
+
+            if (!(isNull(parentViewport) || isNull(parentViewport.router))) {
+                parentRouter = this.parentRouter = parentViewport.router;
+                parentRouter.addChild(router);
+            }
+            
+            router.registerViewport(this);
+        }
+
+        canNavigateTo(result: routing.IRouteResult) {
+            return this.$Promise.resolve(true);
+        }
+
+        canNavigateFrom(result: routing.IRouteResult) {
+            return this.$Promise.resolve(true);
+        }
+
+        navigateTo(result: routing.IRouteResult) {
+            console.log('navigating');
+            var router = this.router,
+                route = result[0],
+                injector = this.$Injector.getDependency(route.delegate.view),
+                nodeMap = this._createNodeMap(injector),
+                element = this.element,
+                node = nodeMap.element;
+
+            element.appendChild(node);
+
+            var animationPromise = this._animationPromise;
+            if (isPromise(animationPromise)) {
+                animationPromise.dispose();
+            }
+
+            this._animationPromise = this.$Animator.animate(this.element, __Enter);
+
+            var viewportManager = this.$ManagerCache.read(this.uid),
+                manager = this.$ElementManagerFactory.getInstance();
+
+            viewportManager.children = [];
+            manager.initialize(nodeMap, viewportManager);
+
+            var control = this.controls[0];
+            (<any>control).router = router;
+            control.navigatedTo(route.parameters);
+
+            manager.setUiControlTemplate();
+            return this.$Promise.resolve();
+        }
+
+        navigateFrom(result: routing.IRouteResult) {
+            Control.dispose(this.controls[0]);
+            return this.$Promise.resolve();
+        }
+
+        dispose() {
+            this.router.unregisterViewport(this);
+        }
+
+        protected _createNodeMap(injector: dependency.IInjector<IViewControl>) {
+            var control = injector.inject(),
+                doc = this.$Document,
+                type = injector.name,
+                replaceWith = control.replaceWith,
+                node: HTMLElement = (isEmpty(replaceWith) || replaceWith === 'any') ? doc.createElement('div') : doc.createElement(replaceWith);
+
+            node.setAttribute('plat-control', type);
+            node.className = 'plat-viewcontrol';
+
+            return <processing.INodeMap>{
+                element: node,
+                attributes: {},
+                nodes: [],
+                uiControlNode: {
+                    control: control,
+                    nodeName: type,
+                    expressions: [],
+                    injector: injector,
+                    childManagerLength: 0
+                }
+            };
+        }
+
+        protected _getParentViewport(): Viewport2 {
+            var viewport = this.parent,
+                type = this.type;
+
+            while (!isNull(viewport) && viewport.type !== type) {
+                viewport = viewport.parent;
+            }
+
+            return <Viewport2>viewport;
+        }
+    }
+
+    register.control(__Viewport + 2, Viewport2);
 }
