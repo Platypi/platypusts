@@ -16,6 +16,7 @@
         $Promise: async.IPromise = acquire(__Promise);
         $Injector: typeof dependency.Injector = acquire(__InjectorStatic);
         $EventManagerStatic: events.IEventManagerStatic = acquire(__EventManagerStatic);
+        $browser: web.IBrowser = acquire(__Browser);
 
         recognizer: RouteRecognizer = acquire(__RouteRecognizerInstance);
         childRecognizer: RouteRecognizer = acquire(__RouteRecognizerInstance);
@@ -44,6 +45,7 @@
                         this.navigate(utils.pathname);
                     });
                 });
+                this.previousUrl = this.$browser.urlUtils().pathname;
             }
         }
 

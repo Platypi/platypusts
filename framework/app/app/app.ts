@@ -3,7 +3,6 @@
         constructor($browserConfig: plat.web.IBrowserConfig, router: plat.routing.Router) {
             super();
 
-            router.previousUrl = '/';
             router.configure({
                 pattern: '/',
                 view: viewcontrols.Main

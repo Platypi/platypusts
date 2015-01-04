@@ -324,6 +324,7 @@ module plat.ui.controls {
                 (<any>control).router = router;
                 control.navigatedTo(route.parameters);
                 manager.setUiControlTemplate();
+                return manager.templatePromise;
             });
         }
 
