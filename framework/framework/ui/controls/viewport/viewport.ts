@@ -297,7 +297,6 @@ module plat.ui.controls {
         }
 
         navigateTo(result: routing.IRouteResult) {
-            console.log('nav:', this.uid);
             return this.$Promise.resolve().then(() => {
                 var router = this.router,
                     route = result[0],
@@ -324,10 +323,7 @@ module plat.ui.controls {
                 var control = this.controls[0];
                 (<any>control).router = router;
                 control.navigatedTo(route.parameters);
-                console.log('settingTemplate:', this.uid);
                 manager.setUiControlTemplate();
-            }, (err) => {
-                console.log(err);
             });
         }
 
