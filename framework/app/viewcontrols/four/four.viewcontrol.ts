@@ -1,6 +1,6 @@
 ﻿module app.viewcontrols {
     'use strict';
-    var once = false;
+
     export class Four extends plat.ui.ViewControl {
         templateUrl = 'viewcontrols/four/four.viewcontrol.html';
         context: { views: Array<Function>; } = {
@@ -29,10 +29,6 @@
 
         canNavigateFrom() {
             // console.log('canNavigateFrom:', this.uid);
-            if (!once) {
-                once = true;
-                return false;
-            }
         }
 
         canNavigateTo() {

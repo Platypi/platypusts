@@ -252,6 +252,10 @@ module plat.ui.controls {
          * @returns {string} The href, normalized.
          */
         getHref(): string {
+            if (isNull(this.router)) {
+                return;
+            }
+
             var $browserConfig = this.$browserConfig,
                 baseUrl = $browserConfig.baseUrl.slice(0, -1),
                 routingType = $browserConfig.routingType,

@@ -291,7 +291,9 @@ module plat.ui.controls {
         }
 
         setTemplate() {
-            this.router.registerViewport(this);
+            postpone(() => {
+                this.router.registerViewport(this);
+            });
         }
 
         canNavigateTo(result: routing.IRouteResult): async.IThenable<boolean> {
