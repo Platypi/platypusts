@@ -19,6 +19,7 @@
         $Injector: typeof dependency.Injector = acquire(__InjectorStatic);
         $EventManagerStatic: events.IEventManagerStatic = acquire(__EventManagerStatic);
         $browser: web.IBrowser = acquire(__Browser);
+        $browserConfig: web.IBrowserConfig = acquire(__BrowserConfig);
 
         recognizer: RouteRecognizer = acquire(__RouteRecognizerInstance);
         childRecognizer: RouteRecognizer = acquire(__RouteRecognizerInstance);
@@ -44,6 +45,10 @@
             Router.currentRouter(this);
 
             if (isRoot) {
+                var config = this.$browserConfig,
+                    prefix: string,
+                    previousUrl: string;
+
                 this.$EventManagerStatic.on(this.uid, __urlChanged, (ev: events.IDispatchEventInstance, utils?: web.IUrlUtilsInstance) => {
                     if (this.ignoreOnce) {
                         this.ignoreOnce = false;
@@ -51,9 +56,11 @@
                     }
 
                     postpone(() => {
+                        previousUrl = this.previousUrl;
                         this.navigate(utils.pathname).catch(() => {
                             this.ignoreOnce = true;
-                            window.history.go(-1);
+                            this.previousUrl = previousUrl;
+                            this.$browser.url(previousUrl, true);
                         });
                     });
                 });
@@ -126,7 +133,7 @@
                 }, routes).then((): void => undefined);
             }
 
-            var resolve = this.$Promise.resolve,
+            var resolve = this.$Promise.resolve.bind(this.$Promise),
                 route: IRouteMapping = routes,
                 view: string = this.$Injector.convertDependency(route.view);
 
@@ -157,16 +164,14 @@
 
         navigate(url: string, force?: boolean): async.IThenable<void> {
             var Promise = this.$Promise,
-                resolve = Promise.resolve,
-                reject = Promise.reject;
+                resolve = Promise.resolve.bind(Promise),
+                reject = Promise.reject.bind(Promise);
 
             force = force === true;
 
             if (!isString(url) || this.navigating || (!force && url === this.previousUrl)) {
                 return resolve();
             }
-
-            this.previousUrl = url;
 
             var result: IRouteResult = this.recognizer.recognize(url),
                 routeInfo: IRouteInfo,
@@ -177,6 +182,7 @@
 
                 if (isEmpty(result)) {
                     // route has not been matched
+                    this.previousUrl = url;
                     return reject();
                 }
 
@@ -186,15 +192,12 @@
                 if (this.previousPattern === pattern) {
                     // the pattern for this router is the same as the last pattern so 
                     // only navigate child routers.
-                    return this.navigateChildren(result);
+                    return this.navigateChildren(result).then(() => {
+                        this.previousUrl = url;
+                    });
                 }
             } else {
                 pattern = result[0].delegate.pattern;
-            }
-
-            if (isEmpty(result)) {
-                // route has not been matched.
-                return reject();
             }
 
             routeInfo = result[0];
@@ -212,6 +215,7 @@
                         throw new Error('Not cleared to navigate');
                     }
 
+                    this.previousUrl = url;
                     return this.performNavigation(result);
                 })
                 .then(() => {
@@ -225,7 +229,7 @@
         }
 
         forceNavigate() {
-            var resolve = this.$Promise.resolve;
+            var resolve = this.$Promise.resolve.bind(this.$Promise);
 
             if (this.navigating) {
                 return resolve();
@@ -269,7 +273,7 @@
         }
 
         navigateChildren(result: IRouteResult) {
-            var resolve = this.$Promise.resolve,
+            var resolve = this.$Promise.resolve.bind(this.$Promise),
                 childRoute = this.getChildRoute(result);
 
             if (isNull(childRoute)) {
@@ -329,7 +333,11 @@
             }, <Array<async.IThenable<boolean>>>[]))
                 .then(this.reduce)
                 .then((canNavigateFrom: boolean) => {
-                    return canNavigateFrom && mapAsync((port: ISupportRouteNavigation) => {
+                    if (!canNavigateFrom) {
+                        return <any>[canNavigateFrom];
+                    }
+
+                    return mapAsync((port: ISupportRouteNavigation) => {
                         return port.canNavigateFrom(result);
                     }, this.ports);
                 }).then(this.reduce);
@@ -350,7 +358,7 @@
                         if (isEmpty(childRoute)) {
                             promises = [true];
                         } else {
-                            promises = this.children.reduce((promises: Array<async.IThenable<boolean>>, child: Router) => {
+                            this.children.reduce((promises: Array<async.IThenable<boolean>>, child: Router) => {
                                 return promises.concat(child.canNavigateTo(child.childRecognizer.recognize(childRoute)));
                             }, promises);
                         }

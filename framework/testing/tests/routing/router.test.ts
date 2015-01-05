@@ -3,7 +3,7 @@ module test.routing.router {
     'use strict';
 
     var Promise = plat.acquire(plat.async.IPromise),
-        resolve = Promise.resolve;
+        resolve = Promise.resolve.bind(Promise);
 
     class PostsViewControl extends plat.ui.ViewControl { }
     class CreatePostViewControl extends plat.ui.ViewControl { }

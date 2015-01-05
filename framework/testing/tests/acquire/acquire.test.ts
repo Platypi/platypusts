@@ -82,7 +82,7 @@ module tests.acquire {
             compare: toBe(plat.async.IHttpConfig())
         }, {
             name: __Promise,
-            compare: toBe((<any>window).Promise || plat.async.Promise)
+            compare: toBe(plat.async.IPromise(window))
         }, {
             name: __Compat,
             compare: instanceOf(plat.Compat)

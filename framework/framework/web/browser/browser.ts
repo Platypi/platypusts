@@ -352,16 +352,17 @@ module plat.web {
         protected _setUrl(url: string, replace?: boolean): void {
             url = this._formatUrl(url);
 
-            var utils = this.urlUtils(url);
+            var utils = this.urlUtils(url),
+                baseUrl = Browser.config.baseUrl;
 
-            if (utils.href.indexOf(Browser.config.baseUrl) === -1) {
+            if (utils.href.indexOf(baseUrl) === -1) {
                 location.href = url;
                 return;
             }
             
             // make sure URL is absolute
             if (!this.$Regex.fullUrlRegex.test(url) && url[0] !== '/') {
-                url = '/' + url;
+                url = baseUrl + url;
             }
 
             if (this.$Compat.pushState) {
@@ -399,7 +400,7 @@ module plat.web {
          */
         protected _formatUrl(url: string): string {
             var $config = Browser.config;
-            if (url.indexOf($config.baseUrl) > -1 && $config.routingType === $config.HASH) {
+            if ((!this.$Regex.fullUrlRegex.test(url) || url.indexOf($config.baseUrl) > -1) && $config.routingType === $config.HASH) {
                 var hasProtocol = url.indexOf(this.urlUtils().protocol) !== -1,
                     prefix = $config.hashPrefix || '',
                     hashRegex = new RegExp('#' + prefix + '|#/');
@@ -407,7 +408,7 @@ module plat.web {
                 if (hasProtocol && !hashRegex.test(url)) {
                     url = url + '#' + prefix + '/';
                 } else if (!hashRegex.test(url)) {
-                    url = '#' + prefix + '/' + url;
+                    url = '#' + prefix + ((url[0] !== '/') ? '/' : '') + url;
                 }
             }
 
