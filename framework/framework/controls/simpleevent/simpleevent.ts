@@ -77,19 +77,6 @@ module plat.controls {
         protected _expression: Array<string> = [];
 
         /**
-         * @name _fn
-         * @memberof plat.controls.SimpleEventControl
-         * @kind property
-         * @access protected
-         * 
-         * @type {plat.IControlProperty}
-         * 
-         * @description
-         * The found function up the control's parent chain denoted by the attribute value.
-         */
-        protected _fn: IControlProperty;
-
-        /**
          * @name _aliases
          * @memberof plat.controls.SimpleEventControl
          * @kind property
@@ -190,7 +177,7 @@ module plat.controls {
             }
 
             if (listenerStr[0] !== '@') {
-                listener = this._fn || (this._fn = this.findProperty(listenerStr));
+                listener = this.findProperty(listenerStr);
 
                 if (isNull(listener)) {
                     return {

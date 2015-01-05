@@ -164,6 +164,7 @@ node_modules
 reporter
 typings/
 .tscache
+tscommand*
 dist
 
 !gruntfile.js
