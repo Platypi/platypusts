@@ -33,8 +33,31 @@ module plat.ui.controls {
          */
         replaceWith = 'a';
 
+        /**
+         * @name $RouterStatic
+         * @memberof plat.ui.controls.Link
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.routing.IRouterStatic}
+         * 
+         * @description
+         * The {@link plat.routing.IRouterStatic|IRouterStatic} injectable instance
+         */
         $RouterStatic: typeof routing.Router = acquire(__RouterStatic);
-        router: routing.Router;
+
+        /**
+         * @name $InjectorStatic
+         * @memberof plat.ui.controls.Link
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.dependency.Injector}
+         * 
+         * @description
+         * The {@link plat.dependency.Injector|Injector} injectable instance
+         */
+        $InjectorStatic: typeof dependency.Injector = acquire(__InjectorStatic);
 
         /**
          * @name $browserConfig
@@ -63,6 +86,19 @@ module plat.ui.controls {
         $browser: web.IBrowser = acquire(__Browser);
 
         /**
+         * @name router
+         * @memberof plat.ui.controls.Link
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.routing.IRouter}
+         * 
+         * @description
+         * The {@link plat.routing.IRouter|router} associated with this link.
+         */
+        router: routing.Router;
+
+        /**
          * @name options
          * @memberof plat.ui.controls.Link
          * @kind property
@@ -74,8 +110,6 @@ module plat.ui.controls {
          * The options for Link, if ignore is true, anchor will ignore changing the url.
          */
         options: observable.IObservableProperty<{ view: any; parameters?: IObject<string>; }>;
-
-        $Injector: typeof dependency.Injector = acquire(__InjectorStatic);
 
         /**
          * @name element
@@ -115,7 +149,7 @@ module plat.ui.controls {
          * @access public
          * 
          * @description
-         * Prevents default on the anchor tag if the href attribute is left empty, also normalizes internal links.
+         * Prevents default on the anchor tag if the href attribute is left empty, also determines internal links.
          * 
          * @returns {void}
          */
@@ -194,7 +228,7 @@ module plat.ui.controls {
          * @access public
          * 
          * @description
-         * Calls to normalizes the href for internal links and resets the href is necessary.
+         * Sets the element href to the one formed using the associated options.
          * 
          * @returns {void}
          */
@@ -213,7 +247,7 @@ module plat.ui.controls {
          * @access public
          * 
          * @description
-         * Normalizes the href for internal links, ignores external links.
+         * Determines the href based on the input options.
          * 
          * @returns {string} The href, normalized.
          */
@@ -237,7 +271,7 @@ module plat.ui.controls {
                 return href;
             }
 
-            href = this.$Injector.convertDependency(href);
+            href = this.$InjectorStatic.convertDependency(href);
 
             var path = this.router.generate(href, parameters);
 
