@@ -435,11 +435,12 @@ module plat.ui.controls {
 
             href = this.$Injector.convertDependency(href);
 
-            var path = this.router.generate(href),
-                urlWithHash = baseUrl + '/#';
+            var path = this.router.generate(href);
 
             if (usingHash && href.indexOf('#') === -1) {
-                href = urlWithHash + prefix + path;
+                href = baseUrl + '/#' + prefix + path;
+            } else {
+                href = baseUrl + path;
             }
 
             return href;
