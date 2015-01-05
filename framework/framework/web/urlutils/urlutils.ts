@@ -40,22 +40,7 @@
          * representing the query string.
          */
         private static __getQuery(search: string): IObject<string> {
-            if (isEmpty(search)) {
-                return;
-            }
-
-            var split = search.split('&'),
-                query: IObject<string> = {},
-                length = split.length,
-                item: Array<string>;
-
-            for (var i = 0; i < length; ++i) {
-                item = split[i].split('=');
-
-                query[item[0]] = item[1];
-            }
-
-            return query;
+            return getQuery(search);
         }
 
         /**

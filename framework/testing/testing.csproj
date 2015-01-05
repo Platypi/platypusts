@@ -51,7 +51,7 @@
     <TypeScriptSourceMap>false</TypeScriptSourceMap>
   </PropertyGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="framework\platypus.d.ts" />
+    <TypeScriptCompile Include="framework\platypus-node.d.ts" />
     <TypeScriptCompile Include="karma.conf.ts" />
     <TypeScriptCompile Include="tests\acquire\acquire.test.ts" />
     <TypeScriptCompile Include="tests\app\app.test.ts" />

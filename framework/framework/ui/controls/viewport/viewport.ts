@@ -296,24 +296,30 @@ module plat.ui.controls {
             });
         }
 
-        canNavigateTo(result: routing.IRouteResult): async.IThenable<boolean> {
+        canNavigateTo(result: routing.IRouteResult, query?: Object): async.IThenable<boolean> {
             var response: any = true,
                 route = result[0],
                 injector: dependency.IInjector<IViewControl> = this.$Injector.getDependency(route.delegate.view),
-                view = injector.inject();
+                view = injector.inject(),
+                parameters = route.parameters,
+                resolve = this.$Promise.resolve.bind(this.$Promise);
 
-            if (isObject(view) && isFunction(view.canNavigateTo)) {
-                response = view.canNavigateTo();
+            if (!isObject(view)) {
+                return resolve();
             }
 
-            return this.$Promise.resolve(response).then((canNavigateTo: boolean) => {
+            if (isFunction(view.canNavigateTo)) {
+                response = view.canNavigateTo(parameters, query);
+            }
+
+            return resolve(response).then((canNavigateTo: boolean) => {
                 this.nextInjector = injector;
                 this.nextView = view;
                 return canNavigateTo;
             });
         }
 
-        canNavigateFrom(result: routing.IRouteResult): async.IThenable<boolean> {
+        canNavigateFrom(): async.IThenable<boolean> {
             var view = this.controls[0],
                 response: any = true;
 
@@ -360,7 +366,7 @@ module plat.ui.controls {
             });
         }
 
-        navigateFrom(result: routing.IRouteResult) {
+        navigateFrom() {
             var view = this.controls[0];
 
             if (isObject(view) && isFunction(view.navigatingFrom)) {

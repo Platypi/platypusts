@@ -453,4 +453,23 @@ function access(obj: any, property: any): any {
     }
     return obj[property];
 }
+
+function getQuery(search: string) {
+    if (isEmpty(search)) {
+        return;
+    }
+
+    var split = search.split('&'),
+        query: plat.IObject<string> = {},
+        length = split.length,
+        item: Array<string>;
+
+    for (var i = 0; i < length; ++i) {
+        item = split[i].split('=');
+
+        query[item[0]] = item[1];
+    }
+
+    return query;
+}
 /* tslint:enable:no-unused-variable */

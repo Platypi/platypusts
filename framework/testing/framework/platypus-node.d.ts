@@ -6905,8 +6905,6 @@ declare module plat {
               * you implement a backButtonPressed function.
               */
             constructor();
-            canNavigateFrom(): boolean;
-            canNavigateTo(): boolean;
         }
         /**
           * Describes a control used in a Viewport for simulated page navigation. The
@@ -6926,8 +6924,8 @@ declare module plat {
               * you can use ev.stopPropagation().
               */
             backButtonPressed?(ev: events.IDispatchEventInstance): void;
-            canNavigateFrom(): boolean;
-            canNavigateTo(): boolean;
+            canNavigateFrom?(): any;
+            canNavigateTo?(parameters: {}, query: {}): any;
         }
         /**
           * A control used in a Routeport for simulated page navigation. The
@@ -10004,10 +10002,10 @@ declare module plat {
                 nextView: IViewControl;
                 initialize(): void;
                 setTemplate(): void;
-                canNavigateTo(result: routing.IRouteResult): async.IThenable<boolean>;
-                canNavigateFrom(result: routing.IRouteResult): async.IThenable<boolean>;
+                canNavigateTo(result: routing.IRouteResult, query?: Object): async.IThenable<boolean>;
+                canNavigateFrom(): async.IThenable<boolean>;
                 navigateTo(result: routing.IRouteResult): async.IThenable<void>;
-                navigateFrom(result: routing.IRouteResult): async.IThenable<void>;
+                navigateFrom(): async.IThenable<void>;
                 dispose(): void;
                 protected _createNodeMap(injector: dependency.IInjector<IViewControl>): processing.INodeMap;
                 protected _getParentViewport(): Viewport2;
@@ -10763,13 +10761,13 @@ declare module plat {
                   */
                 replaceWith: string;
                 /**
-                  * The control's anchor element.
+                  * The IRouterStatic injectable instance
                   */
-                element: HTMLAnchorElement;
+                $RouterStatic: typeof routing.Router;
                 /**
-                  * The a method for removing the click event listener for this control's element.
+                  * The Injector injectable instance
                   */
-                removeClickListener: IRemoveListener;
+                $InjectorStatic: typeof dependency.Injector;
                 /**
                   * The IBrowserConfig injectable instance
                   */
@@ -10779,43 +10777,16 @@ declare module plat {
                   */
                 $browser: web.IBrowser;
                 /**
-                  * The options for Anchor, if ignore is true, anchor will ignore changing the url.
+                  * The router associated with this link.
                   */
-                options: observable.IObservableProperty<{
-                    ignore?: boolean;
-                }>;
-                /**
-                  * Prevents default on the anchor tag if the href attribute is left empty, also normalizes internal links.
-                  */
-                initialize(): void;
-                /**
-                  * Returns a click event listener. Also handles disposing of the listener.
-                  */
-                getListener(element: HTMLAnchorElement): (ev: Event) => void;
-                /**
-                  * Calls to normalize the href for internal links.
-                  */
-                loaded(): void;
-                /**
-                  * Calls to normalizes the href for internal links and resets the href is necessary.
-                  */
-                setHref(): void;
-                /**
-                  * Normalizes the href for internal links, ignores external links.
-                  */
-                getHref(): string;
-            }
-            class Link2 extends AttributeControl {
-                $RouterStatic: typeof routing.Router;
                 router: routing.Router;
                 /**
-                  * The IBrowserConfig injectable instance
+                  * The options for Link, if ignore is true, anchor will ignore changing the url.
                   */
-                $browserConfig: web.IBrowserConfig;
-                /**
-                  * The IBrowser injectable instance
-                  */
-                $browser: web.IBrowser;
+                options: observable.IObservableProperty<{
+                    view: any;
+                    parameters?: IObject<string>;
+                }>;
                 /**
                   * The control's anchor element.
                   */
@@ -10826,7 +10797,7 @@ declare module plat {
                 removeClickListener: IRemoveListener;
                 constructor();
                 /**
-                  * Prevents default on the anchor tag if the href attribute is left empty, also normalizes internal links.
+                  * Prevents default on the anchor tag if the href attribute is left empty, also determines internal links.
                   */
                 initialize(): void;
                 /**
@@ -10838,11 +10809,11 @@ declare module plat {
                   */
                 loaded(): void;
                 /**
-                  * Calls to normalizes the href for internal links and resets the href is necessary.
+                  * Sets the element href to the one formed using the associated options.
                   */
                 setHref(): void;
                 /**
-                  * Normalizes the href for internal links, ignores external links.
+                  * Determines the href based on the input options.
                   */
                 getHref(): string;
             }
@@ -12331,10 +12302,15 @@ declare module plat {
             $Injector: typeof dependency.Injector;
             $EventManagerStatic: events.IEventManagerStatic;
             $browser: web.IBrowser;
+            $browserConfig: web.IBrowserConfig;
             recognizer: RouteRecognizer;
             childRecognizer: RouteRecognizer;
+            bindings: IObject<{
+                (parameters: Object): any;
+            }[]>;
             navigating: boolean;
             previousUrl: string;
+            previousQuery: string;
             previousPattern: string;
             currentRouteInfo: IDelegateInfo;
             result: IRouteResult;
@@ -12344,6 +12320,7 @@ declare module plat {
             children: Router[];
             uid: string;
             isRoot: boolean;
+            ignoreOnce: boolean;
             constructor();
             initialize(parent?: Router): void;
             addChild(child: Router): Router;
@@ -12352,20 +12329,21 @@ declare module plat {
             unregisterViewport(viewport: ISupportRouteNavigation): void;
             configure(routes: IRouteMapping): async.IThenable<void>;
             configure(routes: IRouteMapping[]): async.IThenable<void>;
-            navigate(url: string, force?: boolean): async.IThenable<void>;
-            forceNavigate(): async.IThenable<void>;
+            binding(view: string, callback: (parameters: Object) => void): Router;
+            binding(view: new (...args: any[]) => any, callback: (parameters: Object) => void): Router;
+            navigate(url: string, query?: Object, force?: boolean): async.IThenable<void>;
+            forceNavigate(): any;
             generate(name: string, parameters?: IObject<any>): string;
-            navigateChildren(result: IRouteResult): async.IThenable<void>;
+            navigateChildren(result: IRouteResult, query?: Object): any;
             getChildRoute(result: IRouteResult): string;
-            performNavigation(result: IRouteResult): async.IThenable<void>;
-            performNavigateFrom(result: IRouteResult): async.IThenable<void>;
-            canNavigate(result: IRouteResult): async.IThenable<boolean>;
-            runPreNavigationSteps(result: IRouteResult): async.IThenable<boolean>[];
-            runCanNavigateFrom(result: IRouteResult): async.IThenable<boolean>[];
-            preNavigate(result: IRouteResult): async.IThenable<boolean>;
-            canNavigateFrom(result: IRouteResult): async.IThenable<boolean>;
-            canNavigateTo(result: IRouteResult): async.IThenable<boolean>;
+            performNavigation(result: IRouteResult, query?: Object): async.IThenable<any>;
+            performNavigateFrom(): async.IThenable<void>;
+            canNavigate(result: IRouteResult, query?: Object): async.IThenable<boolean>;
+            executeBindings(view: string, parameters: {}, query?: Object): async.IThenable<void>;
+            canNavigateFrom(): async.IThenable<boolean>;
+            canNavigateTo(result: IRouteResult, query?: Object): async.IThenable<boolean>;
             reduce(values: boolean[]): boolean;
+            getQueryString(query: {}): string;
         }
         function IRouter(): Router;
         function IRouterStatic(): typeof Router;
@@ -12377,12 +12355,13 @@ declare module plat {
         }
         interface IRouteInfo extends IDelegateInfo {
             delegate: IRouteMapping;
+            query?: Object;
         }
         interface ISupportRouteNavigation {
-            canNavigateFrom(result: IRouteResult): async.IThenable<boolean>;
-            canNavigateTo(result: IRouteResult): async.IThenable<boolean>;
-            navigateFrom(result: IRouteResult): async.IThenable<any>;
-            navigateTo(result: IRouteResult): async.IThenable<any>;
+            canNavigateFrom(): async.IThenable<boolean>;
+            canNavigateTo(result: IRouteResult, query?: Object): async.IThenable<boolean>;
+            navigateFrom(): async.IThenable<any>;
+            navigateTo(result: IRouteResult, query?: Object): async.IThenable<any>;
         }
     }
     /**
@@ -13037,10 +13016,6 @@ declare module plat {
               * A parsed form of the expression found in the attribute's value.
               */
             protected _expression: string[];
-            /**
-              * The found function up the control's parent chain denoted by the attribute value.
-              */
-            protected _fn: IControlProperty;
             /**
               * An array of the aliases used in the expression.
               */

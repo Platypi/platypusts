@@ -166,6 +166,37 @@ module test.routing.router {
                 });
             });
         });
+
+        describe('with variable routes', () => {
+            beforeEach(() => {
+                router.configure({
+                    pattern: '/posts/:id',
+                    view: 'posts'
+                });
+            });
+
+            it('should test parameter bindings', (done) => {
+                var spy1 = jasmine.createSpy('test1', (parameters: { id: any; }, query: { foo: any; }) => {
+                    expect(parameters.id).toBe('2');
+                    expect(query.foo).toBe('2');
+                    parameters.id = query.foo = 2;
+                }).and.callThrough(),
+                    spy2 = jasmine.createSpy('test2', (parameters: { id: any; }, query: { foo: any; }) => {
+                        expect(parameters.id).toBe(2);
+                        expect(query.foo).toBe(2);
+                    }).and.callThrough();
+
+                router
+                    .binding('posts', <any>spy1)
+                    .binding('posts', <any>spy2);
+
+                router.navigate('/posts/2', { foo: '2' }).then(() => {
+                    expect(spy1).toHaveBeenCalled();
+                    expect(spy2).toHaveBeenCalled();
+                    done();
+                });
+            });
+        });
     });
 
     function expectAllNot(viewport: IViewport) {

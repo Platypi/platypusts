@@ -98,6 +98,6 @@ module plat.ui {
 
         canNavigateFrom? (): any;
 
-        canNavigateTo? (): any;
+        canNavigateTo? (parameters: {}, query: {}): any;
     }
 }
