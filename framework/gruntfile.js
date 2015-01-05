@@ -91,6 +91,15 @@ module.exports = exports = function load(grunt) {
                 ]
             }
         },
+        connect: {
+            server: {
+                options: {
+                    port: 8080,
+                    base: './',
+                    keepalive: true
+                }
+            }
+        },
         copy: {
             main: {
                 options: {
@@ -123,17 +132,28 @@ module.exports = exports = function load(grunt) {
             }
         },
         ts: {
+            options: {
+                target: 'es5',
+                module: 'commonjs',
+                sourceMap: true,
+                removeComments: false
+            },
             main: {
                 options: {
-                    target: 'es5',
-                    module: 'commonjs',
                     fast: 'never',
-                    sourceMap: true,
-                    declaration: true,
-                    removeComments: false
+                    declaration: true
                 },
                 src: [
                     'dist/platypus.ts'
+                ]
+            },
+            all: {
+                options: {
+                    fast: 'always'
+                },
+                src: [
+                    'framework/**/*.ts',
+                    'app/**/*.ts'
                 ]
             }
         },
@@ -155,6 +175,7 @@ module.exports = exports = function load(grunt) {
     
     grunt.initConfig(config);
     grunt.loadNpmTasks('grunt-contrib-clean');
+    grunt.loadNpmTasks('grunt-contrib-connect');
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-ts-bundle');
@@ -163,5 +184,7 @@ module.exports = exports = function load(grunt) {
     grunt.registerTask('docs', ['clean:after', 'bundle'])
 
     // By default, run all tests.
-    grunt.registerTask('default', ['clean', 'bundle', 'copy:main', 'ts', 'uglify', 'copy:bower', 'copy:node', 'clean:after']);
+    grunt.registerTask('default', ['clean', 'bundle', 'copy:main', 'ts:main', 'uglify', 'copy:bower', 'copy:node', 'clean:after']);
+
+    grunt.registerTask('start', ['ts:all', 'connect'])
 };
