@@ -3,8 +3,8 @@
     var once = false;
     export class Four extends plat.ui.ViewControl {
         templateUrl = 'viewcontrols/four/four.viewcontrol.html';
-        context = {
-            views: ['one', 'two', 'three', 'four']
+        context: { views: Array<Function>; } = {
+            views: [One, Two, Three, Four]
         };
 
         constructor(router: plat.routing.Router) {

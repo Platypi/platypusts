@@ -1,13 +1,13 @@
 ﻿<div>
-    <div>View 3</div>
-    <div class="inline">
-        <div>
-            <plat-foreach plat-context="views">
-                <div>
-                    <a plat-link2="{{@context}}">{{@context}}</a>
-                </div>
-            </plat-foreach>
-        </div>
+    <div class="left">
+        <plat-foreach plat-context="views">
+            <div>
+                <a plat-link2="@context">{{@index + 1}}</a>
+            </div>
+        </plat-foreach>
+    </div>
+    <div class="right">
+        <div>View 3</div>
         <plat-viewport2></plat-viewport2>
     </div>
 </div>

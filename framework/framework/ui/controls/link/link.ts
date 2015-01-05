@@ -276,6 +276,8 @@ module plat.ui.controls {
          */
         $browser: web.IBrowser = acquire(__Browser);
 
+        $Injector: typeof dependency.Injector = acquire(__InjectorStatic);
+
         /**
          * @name element
          * @memberof plat.ui.controls.Link
@@ -417,20 +419,24 @@ module plat.ui.controls {
          * @returns {string} The href, normalized.
          */
         getHref(): string {
-            var element = this.element,
-                href = element.getAttribute(this.type) || '',
-                $browserConfig = this.$browserConfig,
+            var $browserConfig = this.$browserConfig,
                 baseUrl = $browserConfig.baseUrl.slice(0, -1),
                 routingType = $browserConfig.routingType,
                 usingHash = routingType !== $browserConfig.STATE,
                 prefix = $browserConfig.hashPrefix,
-                path = this.router.generate(href);
+                element = this.element,
+                href = this.attributes[camelCase(this.type)] || '';
+
+            href = this.evaluateExpression(href);
 
             if (isEmpty(href)) {
                 return href;
             }
 
-            var urlWithHash = baseUrl + '/#';
+            href = this.$Injector.convertDependency(href);
+
+            var path = this.router.generate(href),
+                urlWithHash = baseUrl + '/#';
 
             if (usingHash && href.indexOf('#') === -1) {
                 href = urlWithHash + prefix + path;

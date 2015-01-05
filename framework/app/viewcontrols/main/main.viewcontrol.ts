@@ -6,7 +6,7 @@ module app.viewcontrols {
         title = 'Main';
         templateUrl = 'viewcontrols/main/main.viewcontrol.html';
         context = {
-            views: ['one', 'two', 'three', 'four']
+            views: [One, Two, Three, Four]
         };
 
         constructor(router: plat.routing.Router) {
