@@ -1,4 +1,6 @@
 ﻿module app.viewcontrols {
+    'use strict';
+
     export class Four extends plat.ui.ViewControl {
         templateUrl = 'viewcontrols/four/four.viewcontrol.html';
         context = {
@@ -18,19 +20,20 @@
 
 
         navigatedTo() {
-            console.log('navigatedTo:', this.uid);
+            // console.log('navigatedTo:', this.uid);
         }
 
         navigatingFrom() {
-            console.log('navigatingFrom:', this.uid);
+            // console.log('navigatingFrom:', this.uid);
         }
 
         canNavigateFrom() {
-            console.log('canNavigateFrom:', this.uid);
+            // console.log('canNavigateFrom:', this.uid);
+            return false;
         }
 
         canNavigateTo() {
-            console.log('canNavigateTo:', this.uid);
+            // console.log('canNavigateTo:', this.uid);
         }
     }
 

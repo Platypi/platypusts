@@ -1,4 +1,6 @@
 module plat.ui {
+    'use strict';
+
     /**
      * @name ViewControl
      * @memberof plat.ui
@@ -45,14 +47,6 @@ module plat.ui {
             if (isFunction(backButtonPressed)) {
                 this.on(__backButtonPressed, backButtonPressed);
             }
-        }
-
-        canNavigateFrom() {
-            return true;
-        }
-
-        canNavigateTo() {
-            return true;
         }
     }
 
@@ -102,7 +96,8 @@ module plat.ui {
          */
         backButtonPressed? (ev: plat.events.IDispatchEventInstance): void;
 
-        canNavigateFrom(): boolean;
-        canNavigateTo(): boolean;
+        canNavigateFrom? (): any;
+
+        canNavigateTo? (): any;
     }
 }

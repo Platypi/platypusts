@@ -2,7 +2,7 @@
     var Promise = plat.acquire(plat.async.IPromise);
 
     describe('Promise Tests', () => {
-        it('should test all', (done) => {
+        it('should test all', (done: Function) => {
             var promises = [2, Promise.resolve(3), 4];
 
             Promise.all(promises).then((success) => {
@@ -23,7 +23,7 @@
             expect(exception).toBe(false);
         });
 
-        it('should test race', (done) => {
+        it('should test race', (done: Function) => {
             var numPromise: plat.async.IThenable<number> = new Promise((resolve) => { setTimeout(() => resolve(2), 0, 0); }),
                 promise: plat.async.IThenable<any> = new Promise((resolve) => { setTimeout(resolve, 0, 4); }),
                 result: number;
@@ -46,7 +46,7 @@
             expect(exception).toBe(false);
         });
 
-        it('should test resolve', (done) => {
+        it('should test resolve', (done: Function) => {
             var result: number;
 
             Promise.resolve(2).then((success) => {
@@ -55,7 +55,7 @@
             });
         });
 
-        it('should test reject', (done) => {
+        it('should test reject', (done: Function) => {
             Promise.reject(2).then(() => {
                 return <any>null;
             }, (error) => {

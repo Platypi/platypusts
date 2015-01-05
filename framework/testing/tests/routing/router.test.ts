@@ -1,5 +1,7 @@
 ﻿/// <reference path="../../typings/tsd.d.ts" />
 module test.routing.router {
+    'use strict';
+
     var Promise = plat.acquire(plat.async.IPromise),
         resolve = Promise.resolve;
 
@@ -16,14 +18,13 @@ module test.routing.router {
             viewport: IViewport;
 
         beforeEach(() => {
-            plat.register.injectable('$Router', plat.routing.IRouter);
             router = plat.acquire(plat.routing.IRouter);
             viewport = createViewport('root');
             router.registerViewport(<any>viewport);
             resetAll(viewport);
         });
 
-        it('should force navigate after configuration', (done) => {
+        it('should force navigate after configuration', (done: Function) => {
             router.navigate('/posts')
                 .catch(() => {
                     expectAllNot(viewport);
@@ -34,7 +35,7 @@ module test.routing.router {
                 })
                 .then(() => {
                     expectAllTo(viewport);
-                }).then(done, done);
+                }).then(<any>done, <any>done);
         });
 
         describe('with a simple configuration', () => {
@@ -46,13 +47,13 @@ module test.routing.router {
                 resetAll(viewport);
             });
 
-            it('should call navigateTo on navigation', (done) => {
+            it('should call navigateTo on navigation', (done: Function) => {
                 router.navigate('/posts').then(() => {
                     expectAllTo(viewport);
-                }).then(done, done);
+                }).then(<any>done, <any>done);
             });
 
-            it('should not re-navigate when called with the same url', (done) => {
+            it('should not re-navigate when called with the same url', (done: Function) => {
                 router.navigate('/posts')
                     .then(() => {
                         expectAllTo(viewport);
@@ -62,10 +63,10 @@ module test.routing.router {
                     .then(() => {
                         expectAllNot(viewport);
                     })
-                    .then(done, done);
+                    .then(<any>done, <any>done);
             });
 
-            it('should not navigate when viewport returns false from canNavigateFrom', (done) => {
+            it('should not navigate when viewport returns false from canNavigateFrom', (done: Function) => {
                 viewport.canNavigateFrom = <any>jasmine.createSpy('root canNavigateFrom').and.returnValue(resolve(false));
 
                 router.navigate('/posts')
@@ -74,10 +75,10 @@ module test.routing.router {
                         expect(viewport.canNavigateTo).not.toHaveBeenCalled();
                         expect(viewport.navigateFrom).not.toHaveBeenCalled();
                         expect(viewport.navigateTo).not.toHaveBeenCalled();
-                    }).then(done, done);
+                    }).then(<any>done, <any>done);
             });
 
-            it('should not navigate when viewport returns false from canNavigateTo', (done) => {
+            it('should not navigate when viewport returns false from canNavigateTo', (done: Function) => {
                 viewport.canNavigateTo = <any>jasmine.createSpy('root canNavigateTo').and.returnValue(resolve(false));
 
                 router.navigate('/posts')
@@ -86,11 +87,10 @@ module test.routing.router {
                         expect(viewport.canNavigateTo).toHaveBeenCalled();
                         expect(viewport.navigateFrom).not.toHaveBeenCalled();
                         expect(viewport.navigateTo).not.toHaveBeenCalled();
-                    }).then(done, done);
+                    }).then(<any>done, <any>done);
             });
 
-            it('should navigate viewports registered after navigation', (done) => {
-                plat.register.injectable('$Router', plat.routing.IRouter);
+            it('should navigate viewports registered after navigation', (done: Function) => {
                 router = plat.acquire(plat.routing.IRouter);
                 viewport = createViewport('root');
                 router.configure([{ pattern: '/posts', view: 'posts' }]);
@@ -102,7 +102,7 @@ module test.routing.router {
                     }).then(() => {
                         expect(viewport.navigateFrom).toHaveBeenCalled();
                         expect(viewport.navigateTo).toHaveBeenCalled();
-                    }).then(done, done);
+                    }).then(<any>done, <any>done);
             });
 
             describe('with child routers', () => {
@@ -110,25 +110,26 @@ module test.routing.router {
                     childViewport: IViewport;
 
                 beforeEach(() => {
-                    child = router.child();
+                    child = plat.acquire(plat.routing.IRouter);
                     child.configure([
                         { pattern: '/new', view: 'createpost' },
                         { pattern: '/edit', view: 'editpost' }
                     ]);
 
                     childViewport = createViewport('child');
+                    child = router.addChild(child);
                     child.registerViewport(childViewport);
                 });
 
-                it('should perform navigation', (done) => {
+                it('should perform navigation', (done: Function) => {
                     router.navigate('/posts/new')
                         .then(() => {
                             expectAllTo(viewport);
                             expectAllTo(childViewport);
-                        }).then(done, done);
+                        }).then(<any>done, <any>done);
                 });
 
-                it('should not navigate root viewports when the pattern is the same', (done) => {
+                it('should not navigate root viewports when the pattern is the same', (done: Function) => {
                     router.navigate('/posts/new')
                         .then(() => {
                             expectAllTo(viewport);
@@ -140,11 +141,11 @@ module test.routing.router {
                         }).then(() => {
                             expectAllNot(viewport);
                             expectAllTo(childViewport);
-                        }).then(done, done);
+                        }).then(<any>done, <any>done);
                 });
 
-                it('should not navigate if pre-navigation steps resolve false', (done) => {
-                    child.preNavigate = () => resolve(false);
+                it('should not navigate if pre-navigation steps resolve false', (done: Function) => {
+                    child.canNavigateFrom = () => { return resolve(false); };
 
                     router.navigate('/posts/new').then(() => {
                         expect(viewport.canNavigateFrom).toHaveBeenCalled();
@@ -152,16 +153,16 @@ module test.routing.router {
                         expect(viewport.navigateFrom).not.toHaveBeenCalled();
                         expect(viewport.navigateTo).not.toHaveBeenCalled();
                         expectAllNot(childViewport);
-                    }).then(done, done);
+                    }).then(<any>done, <any>done);
                 });
 
-                it('should generate urls', (done) => {
+                it('should generate urls', (done: Function) => {
                     // a child router can only generate urls after the 
                     // child router has been navigated to
                     router.navigate('/posts/new').then(() => {
                         expect(router.generate('posts', {})).toBe('/posts');
                         expect(child.generate('editpost', {})).toBe('/posts/edit');
-                    }).then(done, done);
+                    }).then(<any>done, <any>done);
                 });
             });
         });

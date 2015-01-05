@@ -1,4 +1,6 @@
 ﻿module plat.routing {
+    'use strict';
+
     var __CHILD_ROUTE = '/*childRoute',
         __CHILD_ROUTE_LENGTH = __CHILD_ROUTE.length;
 
@@ -34,6 +36,7 @@
         children: Array<Router> = [];
         uid: string;
         isRoot: boolean = false;
+        ignoreOnce = false;
 
         constructor() {
             this.uid = uniqueId(__Plat);
@@ -42,8 +45,16 @@
 
             if (isRoot) {
                 this.$EventManagerStatic.on(this.uid, __urlChanged, (ev: events.IDispatchEventInstance, utils?: web.IUrlUtilsInstance) => {
+                    if (this.ignoreOnce) {
+                        this.ignoreOnce = false;
+                        return;
+                    }
+
                     postpone(() => {
-                        this.navigate(utils.pathname);
+                        this.navigate(utils.pathname).catch(() => {
+                            this.ignoreOnce = true;
+                            window.history.go(-1);
+                        });
                     });
                 });
             }
@@ -112,7 +123,7 @@
             if (isArray(routes)) {
                 return mapAsync((route: IRouteMapping) => {
                     return this.configure(route);
-                }, routes).then(() => { });
+                }, routes).then((): void => undefined);
             }
 
             var resolve = this.$Promise.resolve,
@@ -173,14 +184,12 @@
                 pattern = pattern.substr(0, pattern.length - __CHILD_ROUTE_LENGTH);
 
                 if (this.previousPattern === pattern) {
-                    // The pattern for this router is the same as the last pattern so 
+                    // the pattern for this router is the same as the last pattern so 
                     // only navigate child routers.
                     return this.navigateChildren(result);
                 }
-
-                this.previousPattern = pattern;
             } else {
-                this.previousPattern = result[0].delegate.pattern;
+                pattern = result[0].delegate.pattern;
             }
 
             if (isEmpty(result)) {
@@ -194,17 +203,24 @@
                 return resolve();
             }
 
-            this.currentRouteInfo = routeInfo;
-            this.result = result;
             this.navigating = true;
 
             return this.canNavigate(result)
-                .then((canNavigate) => {
-                    return canNavigate && this.performNavigation(result);
+                .then((canNavigate: boolean) => {
+                    if (!canNavigate) {
+                        this.navigating = false;
+                        throw new Error('Not cleared to navigate');
+                    }
+
+                    return this.performNavigation(result);
                 })
                 .then(() => {
-                    this.navigating = false;
+                    this.previousPattern = pattern;
+                    this.currentRouteInfo = routeInfo;
+                    this.result = result;
                     this.previousResult = result;
+
+                    this.navigating = false;
                 });
         }
 
@@ -262,7 +278,7 @@
 
             return mapAsync((child: Router) => {
                 return child.navigate(childRoute);
-            }, this.children).then(() => { });
+            }, this.children).then((): void => undefined);
         }
 
         getChildRoute(result: IRouteResult) {
@@ -298,61 +314,55 @@
                     return mapAsync((port: ISupportRouteNavigation) => {
                         return port.navigateFrom(result);
                     }, this.ports);
-                }).then(() => { });
+                }).then((): void => undefined);
         }
 
         canNavigate(result: IRouteResult) {
-            return this.$Promise.all(this.runPreNavigationSteps(result)).then(this.reduce);
-        }
-
-        runPreNavigationSteps(result: IRouteResult): Array<async.IThenable<boolean>> {
-            var childRoute: string,
-                childResult: IRouteResult;
-
-            return this.children.reduce((promises, child) => {
-                childRoute = this.getChildRoute(result);
-
-                if (!isEmpty(childRoute)) {
-                    childResult = child.childRecognizer.recognize(childRoute);
-                    promises.concat(child.runPreNavigationSteps(childResult));
-                } else {
-                    promises.concat(child.runCanNavigateFrom(result));
-                }
-
-                return promises;
-            },[]).concat(this.preNavigate(result));
-        }
-
-        runCanNavigateFrom(result: IRouteResult): Array<async.IThenable<boolean>> {
-            return this.children.reduce((promises, child) => {
-                return promises.concat(child.runCanNavigateFrom(result));
-            }, []).concat(this.canNavigateFrom(result));
-        }
-
-        preNavigate(result: IRouteResult) {
-            return this.canNavigateFrom(result).then((canNavigateFrom) => {
+            return this.canNavigateFrom(result).then((canNavigateFrom: boolean) => {
                 return canNavigateFrom && this.canNavigateTo(result);
             });
         }
 
-        canNavigateFrom(result: IRouteResult) {
-            var resolve = this.$Promise.resolve;
-
-            return mapAsync((port: ISupportRouteNavigation) => {
-                return port.canNavigateFrom(result);
-            }, this.ports).then(this.reduce);
+        canNavigateFrom(result: IRouteResult): async.IThenable<boolean> {
+            return this.$Promise.all(this.children.reduce((promises: Array<async.IThenable<boolean>>, child: Router) => {
+                return promises.concat(child.canNavigateFrom(result));
+            }, <Array<async.IThenable<boolean>>>[]))
+                .then(this.reduce)
+                .then((canNavigateFrom: boolean) => {
+                    return canNavigateFrom && mapAsync((port: ISupportRouteNavigation) => {
+                        return port.canNavigateFrom(result);
+                    }, this.ports);
+                }).then(this.reduce);
         }
 
-        canNavigateTo(result: IRouteResult) {
-            var resolve = this.$Promise.resolve;
-
+        canNavigateTo(result: IRouteResult): async.IThenable<boolean> {
             return mapAsync((port: ISupportRouteNavigation) => {
                 return port.canNavigateTo(result);
-            }, this.ports).then(this.reduce);
+            }, this.ports)
+                .then(this.reduce)
+                .then((canNavigateTo: boolean) => {
+                    var promises: Array<any> = [];
+                    if (!canNavigateTo) {
+                        promises = [canNavigateTo];
+                    } else {
+                        var childRoute = this.getChildRoute(result);
+
+                        if (isEmpty(childRoute)) {
+                            promises = [true];
+                        } else {
+                            promises = this.children.reduce((promises: Array<async.IThenable<boolean>>, child: Router) => {
+                                return promises.concat(child.canNavigateTo(child.childRecognizer.recognize(childRoute)));
+                            }, promises);
+                        }
+                    }
+
+                    return this.$Promise.all(promises);
+                })
+                .then(this.reduce);
         }
 
         reduce(values: Array<boolean>) {
-            return values.reduce((prev, current) => {
+            return values.reduce((prev: boolean, current: boolean) => {
                 return prev && current !== false;
             }, true);
         }
@@ -363,7 +373,7 @@
         router.initialize();
         return router;
     }
-    
+
     plat.register.injectable(__Router, IRouter, null, __INSTANCE);
 
     export function IRouterStatic() {

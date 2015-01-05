@@ -635,7 +635,7 @@ module tests.utils {
             expect(spy.calls.mostRecent().args).toEqual(['o', 2, 'foo']);
         });
 
-        it('should test postpone', (done) => {
+        it('should test postpone', (done: Function) => {
             var postArg: any;
 
             utils.postpone((arg) => {
@@ -644,14 +644,14 @@ module tests.utils {
             }, ['foo']);
         });
 
-        it('should test defer', (done) => {
+        it('should test defer', (done: Function) => {
             utils.defer((arg) => {
                 expect(arg).toBe('foo');
                 done();
             }, 0, ['foo']);
         });
 
-        it('should test a cancelled defer', (done) => {
+        it('should test a cancelled defer', (done: Function) => {
             var postArg: string;
 
             utils.defer((arg) => {
@@ -677,7 +677,7 @@ module tests.utils {
             expect(uid).toBe(rand + '00');
         });
 
-        it('should test mapAsync', (done) => {
+        it('should test mapAsync', (done: Function) => {
             var array = [1, 2, 3, 4, 5],
                 temp: number;
 
@@ -696,7 +696,7 @@ module tests.utils {
                 });
         });
 
-        it('should test mapAsync with an Object', (done) => {
+        it('should test mapAsync with an Object', (done: Function) => {
             var obj: plat.IObject<number> = {
                 a: 1,
                 b: 2,
@@ -721,7 +721,7 @@ module tests.utils {
                 });
         });
 
-        it('should test mapAsyncInOrder', (done) => {
+        it('should test mapAsyncInOrder', (done: Function) => {
             var array = [1, 2, 3, 4, 5],
                 temp: number;
 
@@ -741,7 +741,7 @@ module tests.utils {
                 });
         });
 
-        it('should test mapAsyncInDescendingOrder', (done) => {
+        it('should test mapAsyncInDescendingOrder', (done: Function) => {
             var array = [1, 2, 3, 4, 5],
                 temp: number;
 

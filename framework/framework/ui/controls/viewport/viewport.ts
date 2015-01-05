@@ -1,4 +1,6 @@
 module plat.ui.controls {
+    'use strict';
+
     /**
      * @name Viewport
      * @memberof plat.ui.controls
@@ -99,6 +101,8 @@ module plat.ui.controls {
          * from one to another.
          */
         navigator: navigation.INavigatorInstance;
+
+        controls: Array<IViewControl>;
 
         /**
          * @name backButtonPressed
@@ -290,32 +294,32 @@ module plat.ui.controls {
             this.router.registerViewport(this);
         }
 
-        canNavigateTo(result: routing.IRouteResult) {
-            var bool: any = true,
-                router = this.router,
+        canNavigateTo(result: routing.IRouteResult): async.IThenable<boolean> {
+            var response: any = true,
                 route = result[0],
                 injector: dependency.IInjector<IViewControl> = this.$Injector.getDependency(route.delegate.view),
                 view = injector.inject();
 
             if (isObject(view) && isFunction(view.canNavigateTo)) {
-                bool = view.canNavigateTo();
+                response = view.canNavigateTo();
             }
 
-            return this.$Promise.resolve(bool).then((canNavigateTo) => {
+            return this.$Promise.resolve(response).then((canNavigateTo: boolean) => {
                 this.nextInjector = injector;
                 this.nextView = view;
+                return canNavigateTo;
             });
         }
 
-        canNavigateFrom(result: routing.IRouteResult) {
+        canNavigateFrom(result: routing.IRouteResult): async.IThenable<boolean> {
             var view = this.controls[0],
-                bool: any = true;
+                response: any = true;
 
             if (isObject(view) && isFunction(view.canNavigateFrom)) {
-                bool = view.canNavigateFrom();
+                response = view.canNavigateFrom();
             }
 
-            return this.$Promise.resolve(bool);
+            return this.$Promise.resolve(response);
         }
 
         navigateTo(result: routing.IRouteResult) {
@@ -375,7 +379,8 @@ module plat.ui.controls {
                 doc = this.$Document,
                 type = injector.name,
                 replaceWith = control.replaceWith,
-                node: HTMLElement = (isEmpty(replaceWith) || replaceWith === 'any') ? doc.createElement('div') : doc.createElement(replaceWith);
+                node: HTMLElement = (isEmpty(replaceWith) || replaceWith === 'any') ?
+                    doc.createElement('div') : doc.createElement(replaceWith);
 
             node.setAttribute('plat-control', type);
             node.className = 'plat-viewcontrol';

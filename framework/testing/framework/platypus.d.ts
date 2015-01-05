@@ -6905,6 +6905,8 @@ declare module plat {
               * you implement a backButtonPressed function.
               */
             constructor();
+            canNavigateFrom(): boolean;
+            canNavigateTo(): boolean;
         }
         /**
           * Describes a control used in a Viewport for simulated page navigation. The
@@ -6924,6 +6926,8 @@ declare module plat {
               * you can use ev.stopPropagation().
               */
             backButtonPressed?(ev: events.IDispatchEventInstance): void;
+            canNavigateFrom(): boolean;
+            canNavigateTo(): boolean;
         }
         /**
           * A control used in a Routeport for simulated page navigation. The
@@ -9947,6 +9951,7 @@ declare module plat {
                   * from one to another.
                   */
                 navigator: navigation.INavigatorInstance;
+                controls: IViewControl[];
                 /**
                   * Propagates an event up from the bottom of the view-tree, allowing the backbutton
                   * event to be handled by any view control. If no view control handles the event, the
@@ -9973,6 +9978,39 @@ declare module plat {
                   * backbutton events.
                   */
                 main?: string;
+            }
+            class Viewport2 extends TemplateControl implements routing.ISupportRouteNavigation {
+                $RouterStatic: typeof routing.Router;
+                $Promise: async.IPromise;
+                $Injector: typeof dependency.Injector;
+                $ElementManagerFactory: processing.IElementManagerFactory;
+                $Document: Document;
+                /**
+                  * Reference to an injectable that caches IElementManagers.
+                  */
+                $ManagerCache: storage.ICache<processing.IElementManager>;
+                /**
+                  * Reference to the IAnimator injectable.
+                  */
+                $Animator: animations.IAnimator;
+                /**
+                  * A promise used for disposing the end state of the previous animation prior to starting a new one.
+                  */
+                protected _animationPromise: animations.IAnimationThenable<animations.IGetAnimatingThenable>;
+                router: routing.Router;
+                parentRouter: routing.Router;
+                controls: IViewControl[];
+                nextInjector: dependency.IInjector<IViewControl>;
+                nextView: IViewControl;
+                initialize(): void;
+                setTemplate(): void;
+                canNavigateTo(result: routing.IRouteResult): async.IThenable<boolean>;
+                canNavigateFrom(result: routing.IRouteResult): async.IThenable<boolean>;
+                navigateTo(result: routing.IRouteResult): async.IThenable<void>;
+                navigateFrom(result: routing.IRouteResult): async.IThenable<void>;
+                dispose(): void;
+                protected _createNodeMap(injector: dependency.IInjector<IViewControl>): processing.INodeMap;
+                protected _getParentViewport(): Viewport2;
             }
             /**
               * A TemplateControl that can interchangeably swap out
@@ -10746,6 +10784,47 @@ declare module plat {
                 options: observable.IObservableProperty<{
                     ignore?: boolean;
                 }>;
+                /**
+                  * Prevents default on the anchor tag if the href attribute is left empty, also normalizes internal links.
+                  */
+                initialize(): void;
+                /**
+                  * Returns a click event listener. Also handles disposing of the listener.
+                  */
+                getListener(element: HTMLAnchorElement): (ev: Event) => void;
+                /**
+                  * Calls to normalize the href for internal links.
+                  */
+                loaded(): void;
+                /**
+                  * Calls to normalizes the href for internal links and resets the href is necessary.
+                  */
+                setHref(): void;
+                /**
+                  * Normalizes the href for internal links, ignores external links.
+                  */
+                getHref(): string;
+            }
+            class Link2 extends AttributeControl {
+                $RouterStatic: typeof routing.Router;
+                router: routing.Router;
+                /**
+                  * The IBrowserConfig injectable instance
+                  */
+                $browserConfig: web.IBrowserConfig;
+                /**
+                  * The IBrowser injectable instance
+                  */
+                $browser: web.IBrowser;
+                /**
+                  * The control's anchor element.
+                  */
+                element: HTMLAnchorElement;
+                /**
+                  * The a method for removing the click event listener for this control's element.
+                  */
+                removeClickListener: IRemoveListener;
+                constructor();
                 /**
                   * Prevents default on the anchor tag if the href attribute is left empty, also normalizes internal links.
                   */
@@ -12246,7 +12325,12 @@ declare module plat {
             name?: string;
         }
         class Router {
+            static currentRouter(router?: Router): Router;
+            private static __currentRouter;
             $Promise: async.IPromise;
+            $Injector: typeof dependency.Injector;
+            $EventManagerStatic: events.IEventManagerStatic;
+            $browser: web.IBrowser;
             recognizer: RouteRecognizer;
             childRecognizer: RouteRecognizer;
             navigating: boolean;
@@ -12255,27 +12339,36 @@ declare module plat {
             currentRouteInfo: IDelegateInfo;
             result: IRouteResult;
             previousResult: IRouteResult;
-            ports: IObject<ISupportRouteNavigation>;
+            ports: ISupportRouteNavigation[];
             parent: Router;
             children: Router[];
+            uid: string;
+            isRoot: boolean;
+            constructor();
             initialize(parent?: Router): void;
-            child(): Router;
-            registerViewport(viewport: ISupportRouteNavigation, name?: string): async.IThenable<void>;
-            configure(routes: IRouteMapping[]): async.IThenable<void>;
+            addChild(child: Router): Router;
+            removeChild(child: Router): void;
+            registerViewport(viewport: ISupportRouteNavigation): async.IThenable<void>;
+            unregisterViewport(viewport: ISupportRouteNavigation): void;
             configure(routes: IRouteMapping): async.IThenable<void>;
+            configure(routes: IRouteMapping[]): async.IThenable<void>;
             navigate(url: string, force?: boolean): async.IThenable<void>;
             forceNavigate(): async.IThenable<void>;
-            generate(name: string, parameters: IObject<any>): string;
+            generate(name: string, parameters?: IObject<any>): string;
             navigateChildren(result: IRouteResult): async.IThenable<void>;
+            getChildRoute(result: IRouteResult): string;
             performNavigation(result: IRouteResult): async.IThenable<void>;
+            performNavigateFrom(result: IRouteResult): async.IThenable<void>;
             canNavigate(result: IRouteResult): async.IThenable<boolean>;
             runPreNavigationSteps(result: IRouteResult): async.IThenable<boolean>[];
+            runCanNavigateFrom(result: IRouteResult): async.IThenable<boolean>[];
             preNavigate(result: IRouteResult): async.IThenable<boolean>;
             canNavigateFrom(result: IRouteResult): async.IThenable<boolean>;
             canNavigateTo(result: IRouteResult): async.IThenable<boolean>;
             reduce(values: boolean[]): boolean;
         }
         function IRouter(): Router;
+        function IRouterStatic(): typeof Router;
         interface IRouteMapping {
             pattern: string;
             view: any;
@@ -12288,8 +12381,8 @@ declare module plat {
         interface ISupportRouteNavigation {
             canNavigateFrom(result: IRouteResult): async.IThenable<boolean>;
             canNavigateTo(result: IRouteResult): async.IThenable<boolean>;
-            navigateFrom(result: IRouteResult): async.IThenable<void>;
-            navigateTo(result: IRouteResult): async.IThenable<void>;
+            navigateFrom(result: IRouteResult): async.IThenable<any>;
+            navigateTo(result: IRouteResult): async.IThenable<any>;
         }
     }
     /**
@@ -12957,9 +13050,13 @@ declare module plat {
               */
             loaded(): void;
             /**
-              * Sets the event listener.
+              * Parses function args and sets the event listener.
               */
             protected _setListener(): void;
+            /**
+              * Adds any and all necessary event listeners.
+              */
+            protected _addEventListeners(): void;
             /**
               * Constructs the function to evaluate with
               * the evaluated arguments taking resources
@@ -13240,6 +13337,25 @@ declare module plat {
               * @param {Event} ev The event object.
               */
             protected _onEvent(ev: Event): void;
+        }
+        /**
+          * A SimpleEventControl for the 'input' event. If
+          * 'input' is not an event, it will simulate an 'input' using other events like 'keydown',
+          * 'cut', 'paste', etc. Also fires on the 'change' event.
+          */
+        class React extends SimpleEventControl {
+            /**
+              * Reference to the ICompat injectable.
+              */
+            $Compat: ICompat;
+            /**
+              * The event name.
+              */
+            event: string;
+            /**
+              * Adds any and all necessary event listeners.
+              */
+            protected _addEventListeners(): void;
         }
         /**
           * A mapping of all keys to their equivalent keyCode.
@@ -13743,7 +13859,7 @@ declare module plat {
               */
             $document: Document;
             /**
-              * The priority of Bind is set high to take precede
+              * The priority of Bind is set high to precede
               * other controls that may be listening to the same
               * event.
               */
