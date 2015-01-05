@@ -2,7 +2,7 @@
     <div class="left">
         <plat-foreach plat-context="views">
             <div>
-                <a plat-link2="@context">{{@index + 1}}</a>
+                <plat-link2 plat-options="{ view: @context }">{{@index + 1}}</plat-link2>
             </div>
         </plat-foreach>
     </div>

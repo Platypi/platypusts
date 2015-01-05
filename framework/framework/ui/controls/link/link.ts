@@ -246,7 +246,20 @@ module plat.ui.controls {
 
     register.control(__Link, Link);
 
-    export class Link2 extends AttributeControl {
+    export class Link2 extends TemplateControl {
+        /**
+         * @name replaceWith
+         * @memberof plat.ui.controls.Link
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * Replaces the {@link plat.ui.controls.Link|Link's} element with a native anchor tag.
+         */
+        replaceWith = 'a';
+
         $RouterStatic: typeof routing.Router = acquire(__RouterStatic);
         router: routing.Router;
 
@@ -275,6 +288,19 @@ module plat.ui.controls {
          * The {@link plat.web.IBrowser|IBrowser} injectable instance
          */
         $browser: web.IBrowser = acquire(__Browser);
+
+        /**
+         * @name options
+         * @memberof plat.ui.controls.Link
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.observable.IObservableProperty<{ view: any; parameters?: plat.IObject<string>; }>}
+         * 
+         * @description
+         * The options for Link, if ignore is true, anchor will ignore changing the url.
+         */
+        options: observable.IObservableProperty<{ view: any; parameters?: IObject<string>; }>;
 
         $Injector: typeof dependency.Injector = acquire(__InjectorStatic);
 
@@ -424,10 +450,15 @@ module plat.ui.controls {
                 routingType = $browserConfig.routingType,
                 usingHash = routingType !== $browserConfig.STATE,
                 prefix = $browserConfig.hashPrefix,
-                element = this.element,
-                href = this.attributes[camelCase(this.type)] || '';
+                options = this.options || {},
+                value = this.options.value;
 
-            href = this.evaluateExpression(href);
+            if (!isObject(value)) {
+                return '';
+            }
+
+            var href = value.view,
+                parameters = value.parameters;
 
             if (isEmpty(href)) {
                 return href;
@@ -435,7 +466,7 @@ module plat.ui.controls {
 
             href = this.$Injector.convertDependency(href);
 
-            var path = this.router.generate(href);
+            var path = this.router.generate(href, parameters);
 
             if (usingHash && href.indexOf('#') === -1) {
                 href = baseUrl + '/#' + prefix + path;
