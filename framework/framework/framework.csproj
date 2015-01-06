@@ -36,7 +36,6 @@
     <TypeScriptCompile Include="events\errorevent.ts" />
     <TypeScriptCompile Include="events\eventmanager.ts" />
     <TypeScriptCompile Include="events\lifecycleevent.ts" />
-    <TypeScriptCompile Include="events\navigationevent.ts" />
     <TypeScriptCompile Include="exception\exception.ts" />
     <TypeScriptCompile Include="expressions\operators\operators.ts" />
     <TypeScriptCompile Include="expressions\parser\parser.ts" />
@@ -44,9 +43,6 @@
     <TypeScriptCompile Include="expressions\tokenizer\tokenizer.ts" />
     <TypeScriptCompile Include="injectables\geolocation\geolocation.ts" />
     <TypeScriptCompile Include="injectables\indexeddb\indexeddb.ts" />
-    <TypeScriptCompile Include="navigation\basenavigator.ts" />
-    <TypeScriptCompile Include="navigation\navigator.ts" />
-    <TypeScriptCompile Include="navigation\routingnavigator.ts" />
     <TypeScriptCompile Include="observable\contextmanager\contextmanager.ts" />
     <TypeScriptCompile Include="processing\compiler\compiler.ts" />
     <TypeScriptCompile Include="processing\nodemanager\commentmanager.ts" />
@@ -80,23 +76,21 @@
     <TypeScriptCompile Include="ui\controls\ignore\ignore.ts" />
     <TypeScriptCompile Include="ui\controls\select\select.ts" />
     <TypeScriptCompile Include="ui\controls\template\template.ts" />
-    <TypeScriptCompile Include="ui\controls\viewport\baseport.ts" />
-    <TypeScriptCompile Include="ui\controls\viewport\routeport.ts" />
     <TypeScriptCompile Include="ui\controls\viewport\viewport.ts" />
     <TypeScriptCompile Include="ui\domevents\domevents.ts" />
     <TypeScriptCompile Include="ui\dom\dom.ts" />
     <TypeScriptCompile Include="ui\dom\domglobal.ts" />
     <TypeScriptCompile Include="ui\resources\resources.ts" />
     <TypeScriptCompile Include="ui\templatecontrol\templatecontrol.ts" />
-    <TypeScriptCompile Include="ui\viewcontrol\baseviewcontrol.ts" />
     <TypeScriptCompile Include="ui\viewcontrol\viewcontrol.ts" />
-    <TypeScriptCompile Include="ui\viewcontrol\webviewcontrol.ts" />
     <TypeScriptCompile Include="utils\utils.ts" />
     <TypeScriptCompile Include="utils\utilsglobal.ts" />
     <TypeScriptCompile Include="web\browser\browser.ts" />
-    <TypeScriptCompile Include="web\router\router.ts" />
     <TypeScriptCompile Include="web\urlutils\urlutils.ts" />
     <TypeScriptCompile Include="window\window.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="navigation\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">12.0</VisualStudioVersion>

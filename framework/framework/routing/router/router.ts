@@ -100,14 +100,14 @@
             children.splice(index, 1);
         }
 
-        registerViewport(viewport: ISupportRouteNavigation) {
+        register(port: ISupportRouteNavigation) {
             var ports = this.ports;
 
-            if (isNull(viewport) || ports.indexOf(viewport) > -1) {
+            if (isNull(port) || ports.indexOf(port) > -1) {
                 return this.$Promise.resolve();
             }
 
-            ports.push(viewport);
+            ports.push(port);
 
             if (isArray(this.result)) {
                 return this.performNavigation(this.result);
@@ -116,9 +116,9 @@
             return this.$Promise.resolve();
         }
 
-        unregisterViewport(viewport: ISupportRouteNavigation) {
+        unregister(port: ISupportRouteNavigation) {
             var ports = this.ports,
-                index = ports.indexOf(viewport);
+                index = ports.indexOf(port);
 
             if (index < 0) {
                 return;

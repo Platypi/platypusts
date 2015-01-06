@@ -232,7 +232,7 @@ module plat.ui {
             });
 
             if (control.hasOwnContext) {
-                Resources.__addRoot(<IViewControl>control);
+                Resources.__addRoot(control);
             }
         }
 

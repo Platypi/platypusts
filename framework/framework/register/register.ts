@@ -108,7 +108,6 @@ module plat.register {
      * @memberof plat.register
      * @kind function
      * @access public
-     * @variation 0
      * 
      * @description
      * Registers an {@link plat.ui.IViewControl|IViewControl} with the framework. The framework will 
@@ -125,49 +124,15 @@ module plat.register {
      * 
      * @returns {plat.register} The object that contains the register methods (for method chaining).
      */
-    export function viewControl(name: string, Type: new (...args: any[]) => ui.IViewControl,
-        dependencies?: Array<any>): typeof register;
-    /**
-     * @name viewControl
-     * @memberof plat.register
-     * @kind function
-     * @access public
-     * @variation 1
-     * 
-     * @description
-     * Registers an {@link plat.ui.IWebViewControl|WebViewControl} with the framework. The framework will instantiate the 
-     * control when needed. The dependencies array corresponds to injectables that will be passed into the Constructor of the control.
-     * 
-     * @param {string} name The control type, corresponding to the HTML notation for creating a new 
-     * {@link plat.ui.IWebViewControl|WebViewControl}. Used for navigation to the specified {@link plat.ui.IWebViewControl|WebViewControl}.
-     * @param {new (...args: any[]) => ui.IWebViewControl} Type The constructor for the {@link plat.ui.IWebViewControl|WebViewControl}.
-     * @param {Array<any>} dependencies? An optional array of strings representing the dependencies needed for the 
-     * {@link plat.ui.IWebViewControl|WebViewControl} injector.
-     * @param {Array<any>} routes? Optional route strings (or regular expressions) used for matching a URL to the 
-     * registered {@link plat.ui.IWebViewControl|WebViewControl}.
-     * 
-     * @example plat.register.viewControl('my-view-control', MyViewControl, null, ['customers/:customer(/:ordernumber)']);
-     * 
-     * @returns {plat.register} The object that contains the register methods (for method chaining).
-     */
-    export function viewControl(name: string, Type: new (...args: any[]) => ui.IWebViewControl,
-        dependencies: Array<any>, routes: Array<any>): typeof register;
-    export function viewControl(name: string, Type: new (...args: any[]) => ui.IBaseViewControl,
-        dependencies?: Array<any>, routes?: Array<any>): typeof register {
+    export function viewControl<T extends ui.ViewControl>(name: string, Type: new (...args: any[]) => T,
+        dependencies?: Array<any>): typeof register {
         if (isString(name)) {
             name = name.toLowerCase();
         } else {
             throw new Error('A ViewControl must be registered with a string name');
         }
 
-        var ret = add(viewControlInjectors, name, Type, dependencies);
-
-        if (isArray(routes)) {
-            var $Router: web.IRouter = acquire(__Router);
-            $Router.registerRoutes(name, routes);
-        }
-
-        return ret;
+        return add(viewControlInjectors, name, Type, dependencies);
     }
 
     /**
@@ -434,7 +399,7 @@ module plat.register {
 }
 
 var controlInjectors: plat.dependency.IInjectorObject<plat.IControl> = {};
-var viewControlInjectors: plat.dependency.IInjectorObject<plat.ui.IBaseViewControl> = {};
+var viewControlInjectors: plat.dependency.IInjectorObject<plat.ui.ViewControl> = {};
 var injectableInjectors: plat.dependency.IInjectorObject<plat.dependency.IInjector<any>> = {};
 var staticInjectors: plat.dependency.IInjectorObject<plat.dependency.IInjector<any>> = {};
 var animationInjectors: plat.dependency.IInjectorObject<plat.ui.animations.IBaseAnimation> = {};

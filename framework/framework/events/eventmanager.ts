@@ -821,95 +821,6 @@ module plat.events {
          * @variation 0
          * 
          * @description
-         * Registers a listener for the beforeNavigate Event. The listener will be called when the beforeNavigate 
-         * event is propagating over the given uid. Any number of listeners can exist for a single event name. The 
-         * listener can chose to cancel the event using ev.cancel(), preventing any navigation as well as further 
-         * calls to event listeners.
-         * 
-         * @param {string} uid A unique id to associate with the object registering the listener.
-         * @param {string} eventName='beforeNavigate' The name of the event to listen to.
-         * @param {(ev: plat.events.INavigationEvent<any>) => void} listener The method called when the event is fired.
-         * @param {any} context? The context with which to call the listener method.
-         * 
-         * @returns {plat.IRemoveListener} A method for removing the listener.
-         */
-        on(uid: string, eventName: 'beforeNavigate',
-            listener: (ev: INavigationEvent<any>) => void, context?: any): IRemoveListener;
-        /**
-         * @name on
-         * @memberof plat.events.IEventManagerStatic
-         * @kind function
-         * @access public
-         * @static
-         * @variation 1
-         * 
-         * @description
-         * Registers a listener for the navigating Event. The listener will be called when the navigating 
-         * event is propagating over the given uid. Any number of listeners can exist for a single event name.
-         * The listener can chose to cancel the event using ev.cancel(), preventing any navigation as well as further 
-         * calls to event listeners.
-         * 
-         * @param {string} uid A unique id to associate with the object registering the listener.
-         * @param {string} eventName='navigating' Specifies that this is a listener for the navigating event.
-         * @param {(ev: plat.events.INavigationEvent<any>) => void} listener The method called when the event is fired.
-         * @param {any} context? The context with which to call the listener method.
-         * 
-         * @returns {plat.IRemoveListener} A method for removing the listener.
-         */
-        on(uid: string, eventName: 'navigating',
-            listener: (ev: INavigationEvent<any>) => void, context?: any): IRemoveListener;
-        /**
-         * @name on
-         * @memberof plat.events.IEventManagerStatic
-         * @kind function
-         * @access public
-         * @static
-         * @variation 2
-         * 
-         * @description
-         * Registers a listener for the navigated Event. The listener will be called when the navigated 
-         * event is propagating over the given uid. Any number of listeners can exist for a single event name.
-         * The listener cannot cancel the event.
-         * 
-         * @param {string} uid A unique id to associate with the object registering the listener.
-         * @param {string} eventName='navigated' Specifies that this is a listener for the navigated event.
-         * @param {(ev: plat.events.INavigationEvent<any>) => void} listener The method called when the event is fired.
-         * @param {any} context? The context with which to call the listener method.
-         * 
-         * @returns {plat.IRemoveListener} A method for removing the listener.
-         */
-        on(uid: string, eventName: 'navigated',
-            listener: (ev: INavigationEvent<any>) => void, context?: any): IRemoveListener;
-        /**
-         * @name on
-         * @memberof plat.events.IEventManagerStatic
-         * @kind function
-         * @access public
-         * @static
-         * @variation 3
-         * 
-         * @description
-         * Registers a listener for a NavigationEvent. The listener will be called when a NavigationEvent is
-         * propagating over the given uid. Any number of listeners can exist for a single event name.
-         * 
-         * @param {string} uid A unique id to associate with the object registering the listener.
-         * @param {string} eventName The name of the event to listen to.
-         * @param {(ev: plat.events.INavigationEvent<any>) => void} listener The method called when the event is fired.
-         * @param {any} context? The context with which to call the listener method.
-         * 
-         * @returns {plat.IRemoveListener} A method for removing the listener.
-         */
-        on(uid: string, eventName: string, listener: (ev: INavigationEvent<any>) => void,
-            context?: any): IRemoveListener;
-        /**
-         * @name on
-         * @memberof plat.events.IEventManagerStatic
-         * @kind function
-         * @access public
-         * @static
-         * @variation 4
-         * 
-         * @description
          * Registers a listener for the ready AlmEvent. The ready event will be called when the app 
          * is ready to start.
          * 
@@ -928,7 +839,7 @@ module plat.events {
          * @kind function
          * @access public
          * @static
-         * @variation 5
+         * @variation 1
          * 
          * @description
          * Registers a listener for the suspend AlmEvent. The listener will be called when an app 
@@ -949,7 +860,7 @@ module plat.events {
          * @kind function
          * @access public
          * @static
-         * @variation 6
+         * @variation 2
          * 
          * @description
          * Registers a listener for the resume AlmEvent. The listener will be called when an app 
@@ -970,7 +881,7 @@ module plat.events {
          * @kind function
          * @access public
          * @static
-         * @variation 7
+         * @variation 3
          * 
          * @description
          * Registers a listener for the online AlmEvent. This event fires when the app's network 
@@ -991,7 +902,7 @@ module plat.events {
          * @kind function
          * @access public
          * @static
-         * @variation 8
+         * @variation 4
          * 
          * @description
          * Registers a listener for the offline AlmEvent. This event fires when the app's network 
@@ -1012,7 +923,7 @@ module plat.events {
          * @kind function
          * @access public
          * @static
-         * @variation 9
+         * @variation 5
          * 
          * @description
          * Registers a listener for an AlmEvent. The listener will be called when an AlmEvent is
@@ -1033,7 +944,7 @@ module plat.events {
          * @kind function
          * @access public
          * @static
-         * @variation 10
+         * @variation 6
          * 
          * @description
          * Registers a listener for a ErrorEvent. The listener will be called when a ErrorEvent is
@@ -1054,28 +965,7 @@ module plat.events {
          * @kind function
          * @access public
          * @static
-         * @variation 11
-         * 
-         * @description
-         * Registers a listener for a ErrorEvent. The listener will be called when a ErrorEvent is
-         * propagating over the given uid. Any number of listeners can exist for a single event name.
-         * 
-         * @param {string} uid A unique id to associate with the object registering the listener.
-         * @param {string} eventName The name of the event to listen to.
-         * @param {(ev: plat.events.IErrorEvent<any>) => void} listener The method called when the event is fired.
-         * @param {any} context? The context with which to call the listener method.
-         * 
-         * @returns {plat.IRemoveListener} A method for removing the listener.
-         */
-        on(uid: string, eventName: string, listener: (ev: IErrorEvent<any>) => void,
-            context?: any): IRemoveListener;
-        /**
-         * @name on
-         * @memberof plat.events.IEventManagerStatic
-         * @kind function
-         * @access public
-         * @static
-         * @variation 12
+         * @variation 7
          * 
          * @description
          * Registers a listener for a DispatchEvent. The listener will be called when a DispatchEvent is

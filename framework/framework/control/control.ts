@@ -182,7 +182,7 @@ module plat {
                 AttributeControl.dispose(ctrl);
                 return;
             } else if (ctrl.hasOwnContext) {
-                ui.BaseViewControl.dispose(ctrl);
+                ui.ViewControl.dispose(ctrl);
                 return;
             } else if (ctrl.controls) {
                 ui.TemplateControl.dispose(ctrl);

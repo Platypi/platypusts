@@ -42,7 +42,6 @@
     <!-- Web -->
     <script src="../framework/web/browser/browser.js"></script>
     <script src="../framework/web/urlutils/urlutils.js"></script>
-    <script src="../framework/web/router/router.js"></script>
 
     <!-- Async -->
     <script src="../framework/async/promise.js"></script>
@@ -67,7 +66,6 @@
     <script src="../framework/events/dispatchevent.js"></script>
     <script src="../framework/events/lifecycleevent.js"></script>
     <script src="../framework/events/eventmanager.js"></script>
-    <script src="../framework/events/navigationevent.js"></script>
     <script src="../framework/events/errorevent.js"></script>
 
     <!-- Control Classes -->
@@ -75,9 +73,7 @@
     <script src="../framework/attributecontrol/attributecontrol.js"></script>
     <script src="../framework/ui/templatecontrol/templatecontrol.js"></script>
     <script src="../framework/ui/bindablepropertycontrol/bindablepropertycontrol.js"></script>
-    <script src="../framework/ui/viewcontrol/baseviewcontrol.js"></script>
     <script src="../framework/ui/viewcontrol/viewcontrol.js"></script>
-    <script src="../framework/ui/viewcontrol/webviewcontrol.js"></script>
 
     <!-- DOM -->
     <script src="../framework/ui/dom/dom.js"></script>
@@ -102,9 +98,6 @@
     <script src="../framework/routing/router/router.js"></script>
 
     <!-- Navigation -->
-    <script src="../framework/navigation/basenavigator.js"></script>
-    <script src="../framework/navigation/navigator.js"></script>
-    <script src="../framework/navigation/routingnavigator.js"></script>
 
     <!-- Animations -->
     <script src="../framework/ui/animations/animator.js"></script>
@@ -124,9 +117,7 @@
     <script src="../framework/controls/observableattributecontrol/observableattributecontrol.js"></script>
 
     <!-- UI Controls -->
-    <script src="../framework/ui/controls/viewport/baseport.js"></script>
     <script src="../framework/ui/controls/viewport/viewport.js"></script>
-    <script src="../framework/ui/controls/viewport/routeport.js"></script>
     <script src="../framework/ui/controls/template/template.js"></script>
     <script src="../framework/ui/controls/ignore/ignore.js"></script>
     <script src="../framework/ui/controls/foreach/foreach.js"></script>
@@ -141,7 +132,7 @@
     <link href="style.css" rel="stylesheet" />
 </head>
 <body>
-    <plat-viewport2 plat-options="{ defaultView: 'viewcontrol'}"></plat-viewport2>
+    <plat-viewport plat-options="{ defaultView: 'viewcontrol'}"></plat-viewport>
 
     <script src="viewcontrols/one/one.viewcontrol.js"></script>
     <script src="viewcontrols/two/two.viewcontrol.js"></script>

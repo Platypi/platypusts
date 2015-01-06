@@ -13,20 +13,53 @@ module plat.ui {
      * A control used in a {@link plat.ui.controls.Viewport|Viewport} for simulated page navigation. The 
      * control has navigation events that are called when navigating to and from the control.
      */
-    export class ViewControl extends BaseViewControl implements IViewControl {
+    export class ViewControl extends TemplateControl implements ISupportNavigation {
         /**
-         * @name navigator
+         * @name dispose
          * @memberof plat.ui.ViewControl
+         * @kind function
+         * @access public
+         * @static
+         * 
+         * @description
+         * Recursively disposes a {@link plat.ui.ViewControl|ViewControl} and its children.
+         * 
+         * @param {plat.ui.ViewControl} control A control to dispose.
+         * 
+         * @returns {void}
+         */
+        static dispose(control: ITemplateControl): void {
+            TemplateControl.dispose(control);
+        }
+
+        /**
+         * @name getInstance
+         * @memberof plat.ui.ViewControl
+         * @kind function
+         * @access public
+         * @static
+         * 
+         * @description
+         * Returns a new instance of a {@link plat.ui.ViewControl|ViewControl}.
+         * 
+         * @returns {plat.ui.ViewControl} A new {@link plat.ui.ViewControl|ViewControl} instance.
+         */
+        static getInstance(): ViewControl {
+            return new ViewControl();
+        }
+
+        /**
+         * @name hasOwnContext
+         * @memberof plat.ui.BaseViewControl
          * @kind property
          * @access public
          * 
-         * @type {plat.navigation.INavigatorInstance}
+         * @type {boolean}
          * 
          * @description
-         * Specifies the navigator for this control. Used for navigating to other {@link plat.ui.IViewControl|IViewControls} 
-         * in a {@link plat.ui.controls.Viewport|Viewport}.
+         * Specifies that this control will have its own context, and it should not inherit a context.
          */
-        navigator: navigation.INavigatorInstance;
+        hasOwnContext: boolean = true;
 
         /**
          * @name constructor
@@ -42,62 +75,26 @@ module plat.ui {
          */
         constructor() {
             super();
-            var backButtonPressed = (<any>this)[__backButtonPressed];
-
-            if (isFunction(backButtonPressed)) {
-                this.on(__backButtonPressed, backButtonPressed);
-            }
         }
+
+        canNavigateFrom(): any {
+            return true;
+        }
+
+        canNavigateTo(parameters: any, query: any): any {
+            return true;
+        }
+
+        navigatingFrom(): any { }
+
+        navigatedTo(parameters: any, query: any): any { }
     }
 
-    /**
-     * @name IViewControl
-     * @memberof plat.ui
-     * @kind interface
-     * 
-     * @extends {plat.ui.IBaseViewControl}
-     * 
-     * @description
-     * Describes a control used in a {@link plat.ui.controls.Viewport|Viewport} for simulated page navigation. The 
-     * control has navigation events that are called when navigating to and from the control.
-     */
-    export interface IViewControl extends IBaseViewControl {
-        /**
-         * @name navigator
-         * @memberof plat.ui.IViewControl
-         * @kind property
-         * @access public
-         * 
-         * @type {plat.navigation.INavigatorInstance}
-         * 
-         * @description
-         * Specifies the navigator for this control. Used for navigating to other {@link plat.ui.IViewControl|IViewControls} 
-         * in a {@link plat.ui.controls.Viewport|Viewport}.
-         */
-        navigator?: navigation.INavigatorInstance;
+    export interface ISupportNavigation {
+        canNavigateFrom (): any;
+        canNavigateTo (parameters: any, query: any): any;
 
-        /**
-         * @name backButtonPressed
-         * @memberof plat.ui.IViewControl
-         * @kind function
-         * @access public
-         * @virtual
-         * 
-         * @type {plat.navigation.INavigatorInstance}
-         * 
-         * @description
-         * Called when the hard-back button is pressed on a device. Allows you to 
-         * consume the event and prevent the navigator from navigating back if 
-         * necessary.
-         * 
-         * @remarks
-         * If you want to prevent the navigator from navigating back during this event, 
-         * you can use ev.stopPropagation().
-         */
-        backButtonPressed? (ev: plat.events.IDispatchEventInstance): void;
-
-        canNavigateFrom? (): any;
-
-        canNavigateTo? (parameters: {}, query: {}): any;
+        navigatingFrom (): any;
+        navigatedTo (parameters: any, query: any): any;
     }
 }
