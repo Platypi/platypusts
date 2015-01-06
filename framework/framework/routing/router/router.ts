@@ -175,9 +175,9 @@
             return this._addHandler(handler, view, parameter, this.paramHandlers);
         }
 
-        query(handler: (value: string) => any, view: string, parameter: string): Router;
-        query(handler: (value: string) => any, view: new (...args: any[]) => any, parameter: string): Router;
-        query(handler: (value: string) => any, view: any, parameter: string){
+        queryParam(handler: (value: string) => any, view: string, parameter: string): Router;
+        queryParam(handler: (value: string) => any, view: new (...args: any[]) => any, parameter: string): Router;
+        queryParam(handler: (value: string) => any, view: any, parameter: string){
             return this._addHandler(handler, view, parameter, this.queryHandlers);
         }
 
@@ -210,7 +210,6 @@
                 resolve = Promise.resolve.bind(Promise),
                 reject = Promise.reject.bind(Promise),
                 queryString = this.getQueryString(query);
-
 
             force = force === true;
 

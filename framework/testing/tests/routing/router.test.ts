@@ -207,8 +207,8 @@ module test.routing.router {
                     }).and.callThrough();
 
                 router
-                    .query(<any>spy1, 'posts', 'foo')
-                    .query(<any>spy2, 'posts', 'foo');
+                    .queryParam(<any>spy1, 'posts', 'foo')
+                    .queryParam(<any>spy2, 'posts', 'foo');
 
                 router.navigate('/posts/2', { foo: '2' }).then(() => {
                     expect(spy1).toHaveBeenCalled();

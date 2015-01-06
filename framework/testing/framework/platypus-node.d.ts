@@ -12330,8 +12330,8 @@ declare module plat {
             configure(routes: IRouteMapping[]): async.IThenable<void>;
             param(handler: (value: string) => any, view: string, parameter: string): Router;
             param(handler: (value: string) => any, view: new (...args: any[]) => any, parameter: string): Router;
-            query(handler: (value: string) => any, view: string, parameter: string): Router;
-            query(handler: (value: string) => any, view: new (...args: any[]) => any, parameter: string): Router;
+            queryParam(handler: (value: string) => any, view: string, parameter: string): Router;
+            queryParam(handler: (value: string) => any, view: new (...args: any[]) => any, parameter: string): Router;
             protected _addHandler(handler: (value: string) => any, view: any, parameter: string, handlers: IObject<IRouteHandlers>): Router;
             navigate(url: string, query?: Object, force?: boolean): async.IThenable<void>;
             forceNavigate(): any;
