@@ -169,19 +169,19 @@
             return this.forceNavigate();
         }
 
-        param(handler: (value: string) => any, view: string, parameter: string): Router;
-        param(handler: (value: string) => any, view: new (...args: any[]) => any, parameter: string): Router;
-        param(handler: (value: string) => any, view: any, parameter: string) {
+        param(handler: (value: any, parameters: any, query: any) => any, view: string, parameter: string): Router;
+        param(handler: (value: any, parameters: any, query: any) => any, view: new (...args: any[]) => any, parameter: string): Router;
+        param(handler: (value: any, parameters: any, query: any) => any, view: any, parameter: string) {
             return this._addHandler(handler, view, parameter, this.paramHandlers);
         }
 
-        queryParam(handler: (value: string) => any, view: string, parameter: string): Router;
-        queryParam(handler: (value: string) => any, view: new (...args: any[]) => any, parameter: string): Router;
-        queryParam(handler: (value: string) => any, view: any, parameter: string){
+        queryParam(handler: (value: any, query: any) => any, view: string, parameter: string): Router;
+        queryParam(handler: (value: any, query: any) => any, view: new (...args: any[]) => any, parameter: string): Router;
+        queryParam(handler: (value: string, query: any) => any, view: any, parameter: string){
             return this._addHandler(handler, view, parameter, this.queryHandlers);
         }
 
-        protected _addHandler(handler: (value: string) => any, view: any, parameter: string, handlers: IObject<IRouteHandlers>) {
+        protected _addHandler(handler: (value: string, values: any, query?: any) => any, view: any, parameter: string, handlers: IObject<IRouteHandlers>) {
             view = this.$Injector.convertDependency(view);
 
             if (isEmpty(view) || isEmpty(parameter)) {
@@ -386,26 +386,22 @@
                 });
         }
 
-        executeAllHandlers(view: string, parameters: Object, query?: Object): async.IThenable<void>;
-        executeAllHandlers(view: string, parameters: any, query?: any) {
+        executeAllHandlers(view: string, parameters: any, query?: any): async.IThenable<void> {
             var Promise = this.$Promise,
                 resolve = Promise.resolve.bind(Promise);
 
-            return Promise.all([
-                this.executeHandlers(this.paramHandlers[view], parameters),
-                this.executeHandlers(this.queryHandlers[view], query)
-            ]).then((): void => undefined);
+            return this.executeHandlers(this.queryHandlers[view], query)
+                .then(() => this.executeHandlers(this.paramHandlers[view], parameters, query))
+                .then((): void => undefined);
         }
 
-        executeHandlers(allHandlers: IRouteHandlers, obj: any) {
+        executeHandlers(allHandlers: IRouteHandlers, obj: any, query?: any) {
             var Promise = this.$Promise,
                 resolve = Promise.resolve.bind(Promise);
 
-            return mapAsync((handlers: Array<(value: string) => any>, key: string) => {
+            return mapAsync((handlers: Array<(value: string, values: any, query?: any) => any>, key: string) => {
                 return mapAsyncInOrder((handler) => {
-                    return resolve(handler(obj[key])).then((value: any) => {
-                        obj[key] = value;
-                    });
+                    return resolve(handler(obj[key], obj, query));
                 }, handlers);
             }, allHandlers);
         }
@@ -495,7 +491,7 @@
         query?: Object;
     }
 
-    export interface IRouteHandlers extends IObject<Array<(value: string) => any>> { }
+    export interface IRouteHandlers extends IObject<Array<(value: string, values: any, query?: any) => any>> { }
 
     export interface ISupportRouteNavigation {
         canNavigateFrom(): async.IThenable<boolean>;

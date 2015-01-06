@@ -176,43 +176,83 @@ module test.routing.router {
             });
 
             it('should test parameter bindings', (done) => {
-                var spy1 = jasmine.createSpy('test1', (value: string) => {
+                var post = { title: 'My Post' };
+                var spy1 = jasmine.createSpy('strToNum', (value: string, parameters: { id: any; post?: typeof post; }) => {
                     expect(value).toBe('2');
-                    return 2;
+                    parameters.id = Number(value);
                 }).and.callThrough(),
-                    spy2 = jasmine.createSpy('test2', (value: string) => {
+                    spy2 = jasmine.createSpy('numToPost', (value: number, parameters: { id: number; post?: typeof post; }) => {
                         expect(value).toBe(2);
-                        return value;
+                        parameters.post = post;
+                    }).and.callThrough(),
+                    spy3 = jasmine.createSpy('checkPost', (value: number, parameters: { id: number; post?: typeof post; }) => {
+                        expect(parameters.post).toBe(post);
                     }).and.callThrough();
 
                 router
                     .param(<any>spy1, 'posts', 'id')
-                    .param(<any>spy2, 'posts', 'id');
+                    .param(<any>spy2, 'posts', 'id')
+                    .param(<any>spy3, 'posts', 'id');
 
                 router.navigate('/posts/2').then(() => {
+                    expect(spy1).toHaveBeenCalled();
+                    expect(spy2).toHaveBeenCalled();
+                    expect(spy3).toHaveBeenCalled();
+                    done();
+                });
+            });
+
+            it('should test query bindings', (done) => {
+                var post = { title: 'My Post' };
+                var spy1 = jasmine.createSpy('changePost', (value: string, query: typeof post) => {
+                    expect(value).toBe(query.title);
+                    query.title = post.title;
+                    post.title = value;
+                }).and.callThrough(),
+                    spy2 = jasmine.createSpy('checkPost', (value: number, query: typeof post) => {
+                        expect(query.title).toBe(value);
+                        expect(post.title).not.toBe(query.title);
+                        expect(post.title).toBe('My different post');
+                    }).and.callThrough();
+
+                router
+                    .queryParam(<any>spy1, 'posts', 'title')
+                    .queryParam(<any>spy2, 'posts', 'title');
+
+                router.navigate('/posts/2', { title: 'My different post' }).then(() => {
                     expect(spy1).toHaveBeenCalled();
                     expect(spy2).toHaveBeenCalled();
                     done();
                 });
             });
 
-            it('should test query bindings', (done) => {
-                var spy1 = jasmine.createSpy('test1', (value: string) => {
-                    expect(value).toBe('2');
-                    return 2;
+            it('should test parameter and query bindings', (done) => {
+                var post = { title: 'My Post' };
+                var spy1 = jasmine.createSpy('changePost', (value: string, query: typeof post) => {
+                    expect(value).toBe(query.title);
+                    query.title += ' changed';
                 }).and.callThrough(),
-                    spy2 = jasmine.createSpy('test2', (value: string) => {
-                        expect(value).toBe(2);
-                        return value;
+                    spy2 = jasmine.createSpy('getPost', (value: string, parameters: { id: any; post?: typeof post; }, query: typeof post) => {
+                        expect(value).toBe('2');
+                        expect(post.title).not.toBe(query.title);
+                        parameters.id = Number(value);
+                        parameters.post = post;
+                        post.title = query.title;
+                    }).and.callThrough(),
+                    spy3 = jasmine.createSpy('checkPost', (value: number, parameters: { id: number; post?: typeof post; }, query: typeof post) => {
+                        expect(parameters.post).toBe(post);
+                        expect(post.title).toBe('My different post changed');
                     }).and.callThrough();
 
                 router
-                    .queryParam(<any>spy1, 'posts', 'foo')
-                    .queryParam(<any>spy2, 'posts', 'foo');
+                    .param(<any>spy2, 'posts', 'id')
+                    .param(<any>spy3, 'posts', 'id')
+                    .queryParam(<any>spy1, 'posts', 'title');
 
-                router.navigate('/posts/2', { foo: '2' }).then(() => {
+                router.navigate('/posts/2', { title: 'My different post' }).then(() => {
                     expect(spy1).toHaveBeenCalled();
                     expect(spy2).toHaveBeenCalled();
+                    expect(spy3).toHaveBeenCalled();
                     done();
                 });
             });
