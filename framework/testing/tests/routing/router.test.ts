@@ -176,19 +176,39 @@ module test.routing.router {
             });
 
             it('should test parameter bindings', (done) => {
-                var spy1 = jasmine.createSpy('test1', (parameters: { id: any; }, query: { foo: any; }) => {
-                    expect(parameters.id).toBe('2');
-                    expect(query.foo).toBe('2');
-                    parameters.id = query.foo = 2;
+                var spy1 = jasmine.createSpy('test1', (value: string) => {
+                    expect(value).toBe('2');
+                    return 2;
                 }).and.callThrough(),
-                    spy2 = jasmine.createSpy('test2', (parameters: { id: any; }, query: { foo: any; }) => {
-                        expect(parameters.id).toBe(2);
-                        expect(query.foo).toBe(2);
+                    spy2 = jasmine.createSpy('test2', (value: string) => {
+                        expect(value).toBe(2);
+                        return value;
                     }).and.callThrough();
 
                 router
-                    .binding('posts', <any>spy1)
-                    .binding('posts', <any>spy2);
+                    .param(<any>spy1, 'posts', 'id')
+                    .param(<any>spy2, 'posts', 'id');
+
+                router.navigate('/posts/2').then(() => {
+                    expect(spy1).toHaveBeenCalled();
+                    expect(spy2).toHaveBeenCalled();
+                    done();
+                });
+            });
+
+            it('should test query bindings', (done) => {
+                var spy1 = jasmine.createSpy('test1', (value: string) => {
+                    expect(value).toBe('2');
+                    return 2;
+                }).and.callThrough(),
+                    spy2 = jasmine.createSpy('test2', (value: string) => {
+                        expect(value).toBe(2);
+                        return value;
+                    }).and.callThrough();
+
+                router
+                    .query(<any>spy1, 'posts', 'foo')
+                    .query(<any>spy2, 'posts', 'foo');
 
                 router.navigate('/posts/2', { foo: '2' }).then(() => {
                     expect(spy1).toHaveBeenCalled();

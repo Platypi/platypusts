@@ -23,7 +23,10 @@
 
         recognizer: RouteRecognizer = acquire(__RouteRecognizerInstance);
         childRecognizer: RouteRecognizer = acquire(__RouteRecognizerInstance);
-        bindings: IObject<Array<(parameters: Object, query: Object) => any>> = {};
+
+        paramHandlers: IObject<IRouteHandlers> = {};
+        queryHandlers: IObject<IRouteHandlers> = {};
+
         navigating: boolean = false;
         previousUrl: string;
         previousQuery: string;
@@ -166,18 +169,38 @@
             return this.forceNavigate();
         }
 
-        binding(view: string, callback: (parameters: Object) => void): Router;
-        binding(view: new (...args: any[]) => any, callback: (parameters: Object) => void): Router;
-        binding(view: any, callback: (parameters: Object) => void) {
+        param(handler: (value: string) => any, view: string, parameter: string): Router;
+        param(handler: (value: string) => any, view: new (...args: any[]) => any, parameter: string): Router;
+        param(handler: (value: string) => any, view: any, parameter: string) {
+            return this._addHandler(handler, view, parameter, this.paramHandlers);
+        }
+
+        query(handler: (value: string) => any, view: string, parameter: string): Router;
+        query(handler: (value: string) => any, view: new (...args: any[]) => any, parameter: string): Router;
+        query(handler: (value: string) => any, view: any, parameter: string){
+            return this._addHandler(handler, view, parameter, this.queryHandlers);
+        }
+
+        protected _addHandler(handler: (value: string) => any, view: any, parameter: string, handlers: IObject<IRouteHandlers>) {
             view = this.$Injector.convertDependency(view);
 
-            var bindings = this.bindings[view];
-
-            if (!isArray(bindings)) {
-                bindings = this.bindings[view] = [];
+            if (isEmpty(view) || isEmpty(parameter)) {
+                return;
             }
 
-            bindings.push(callback);
+            var viewHandlers = handlers[view];
+
+            if (!isObject(viewHandlers)) {
+                viewHandlers = handlers[view] = {};
+            }
+
+            var bindings = viewHandlers[parameter];
+
+            if (!isArray(bindings)) {
+                bindings = viewHandlers[parameter] = [];
+            }
+
+            bindings.push(handler);
 
             return this;
         }
@@ -364,10 +387,28 @@
                 });
         }
 
-        executeBindings(view: string, parameters: {}, query?: Object): async.IThenable<void> {
-            return mapAsync((binding: (parameters: {}, query: {}) => any) => {
-                return binding(parameters, query);
-            }, this.bindings[view]).then((): void => undefined);
+        executeAllHandlers(view: string, parameters: Object, query?: Object): async.IThenable<void>;
+        executeAllHandlers(view: string, parameters: any, query?: any) {
+            var Promise = this.$Promise,
+                resolve = Promise.resolve.bind(Promise);
+
+            return Promise.all([
+                this.executeHandlers(this.paramHandlers[view], parameters),
+                this.executeHandlers(this.queryHandlers[view], query)
+            ]).then((): void => undefined);
+        }
+
+        executeHandlers(allHandlers: IRouteHandlers, obj: any) {
+            var Promise = this.$Promise,
+                resolve = Promise.resolve.bind(Promise);
+
+            return mapAsync((handlers: Array<(value: string) => any>, key: string) => {
+                return mapAsyncInOrder((handler) => {
+                    return resolve(handler(obj[key])).then((value: any) => {
+                        obj[key] = value;
+                    });
+                }, handlers);
+            }, allHandlers);
         }
 
         canNavigateFrom(): async.IThenable<boolean> {
@@ -387,7 +428,9 @@
         }
 
         canNavigateTo(result: IRouteResult, query?: Object): async.IThenable<boolean> {
-            this.executeBindings(result[0].delegate.view, result[0].parameters, query);
+            var routeInfo = result[0];
+
+            this.executeAllHandlers(routeInfo.delegate.view, routeInfo.parameters, query);
 
             return mapAsync((port: ISupportRouteNavigation) => {
                 return port.canNavigateTo(result, query);
@@ -452,6 +495,8 @@
         delegate: IRouteMapping;
         query?: Object;
     }
+
+    export interface IRouteHandlers extends IObject<Array<(value: string) => any>> { }
 
     export interface ISupportRouteNavigation {
         canNavigateFrom(): async.IThenable<boolean>;

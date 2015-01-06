@@ -12305,9 +12305,8 @@ declare module plat {
             $browserConfig: web.IBrowserConfig;
             recognizer: RouteRecognizer;
             childRecognizer: RouteRecognizer;
-            bindings: IObject<{
-                (parameters: Object): any;
-            }[]>;
+            paramHandlers: IObject<IRouteHandlers>;
+            queryHandlers: IObject<IRouteHandlers>;
             navigating: boolean;
             previousUrl: string;
             previousQuery: string;
@@ -12329,8 +12328,11 @@ declare module plat {
             unregisterViewport(viewport: ISupportRouteNavigation): void;
             configure(routes: IRouteMapping): async.IThenable<void>;
             configure(routes: IRouteMapping[]): async.IThenable<void>;
-            binding(view: string, callback: (parameters: Object) => void): Router;
-            binding(view: new (...args: any[]) => any, callback: (parameters: Object) => void): Router;
+            param(handler: (value: string) => any, view: string, parameter: string): Router;
+            param(handler: (value: string) => any, view: new (...args: any[]) => any, parameter: string): Router;
+            query(handler: (value: string) => any, view: string, parameter: string): Router;
+            query(handler: (value: string) => any, view: new (...args: any[]) => any, parameter: string): Router;
+            protected _addHandler(handler: (value: string) => any, view: any, parameter: string, handlers: IObject<IRouteHandlers>): Router;
             navigate(url: string, query?: Object, force?: boolean): async.IThenable<void>;
             forceNavigate(): any;
             generate(name: string, parameters?: IObject<any>): string;
@@ -12339,7 +12341,8 @@ declare module plat {
             performNavigation(result: IRouteResult, query?: Object): async.IThenable<any>;
             performNavigateFrom(): async.IThenable<void>;
             canNavigate(result: IRouteResult, query?: Object): async.IThenable<boolean>;
-            executeBindings(view: string, parameters: {}, query?: Object): async.IThenable<void>;
+            executeAllHandlers(view: string, parameters: Object, query?: Object): async.IThenable<void>;
+            executeHandlers(allHandlers: IRouteHandlers, obj: any): async.IThenable<{}[][]>;
             canNavigateFrom(): async.IThenable<boolean>;
             canNavigateTo(result: IRouteResult, query?: Object): async.IThenable<boolean>;
             reduce(values: boolean[]): boolean;
@@ -12356,6 +12359,8 @@ declare module plat {
         interface IRouteInfo extends IDelegateInfo {
             delegate: IRouteMapping;
             query?: Object;
+        }
+        interface IRouteHandlers extends IObject<Array<(value: string) => any>> {
         }
         interface ISupportRouteNavigation {
             canNavigateFrom(): async.IThenable<boolean>;
