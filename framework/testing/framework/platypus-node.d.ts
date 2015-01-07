@@ -11462,6 +11462,8 @@ declare module plat {
             static currentRouter(router?: Router): Router;
             private static __currentRouter;
             $Promise: async.IPromise;
+            resolve: typeof async.Promise.resolve;
+            reject: typeof async.Promise.reject;
             $Injector: typeof dependency.Injector;
             $EventManagerStatic: events.IEventManagerStatic;
             $browser: web.IBrowser;
@@ -11470,6 +11472,9 @@ declare module plat {
             childRecognizer: RouteRecognizer;
             paramHandlers: IObject<IRouteHandlers>;
             queryHandlers: IObject<IRouteHandlers>;
+            interceptors: IObject<{
+                (routeInfo: IRouteInfo): any;
+            }[]>;
             navigating: boolean;
             previousUrl: string;
             previousQuery: string;
@@ -11496,16 +11501,19 @@ declare module plat {
             queryParam(handler: (value: any, query: any) => any, parameter: string, view: string): Router;
             queryParam(handler: (value: any, query: any) => any, parameter: string, view: new (...args: any[]) => any): Router;
             protected _addHandler(handler: (value: string, values: any, query?: any) => any, parameter: string, view: any, handlers: IObject<IRouteHandlers>): Router;
+            intercept(handler: (routeInfo: IRouteInfo) => any, view: string): Router;
+            intercept(handler: (routeInfo: IRouteInfo) => any, view: new (...args: any[]) => any): Router;
             navigate(url: string, query?: IObject<any>, force?: boolean): async.IThenable<void>;
-            forceNavigate(): any;
+            forceNavigate(): async.IThenable<void>;
             generate(name: string, parameters?: IObject<any>, query?: IObject<string>): string;
-            navigateChildren(info: IRouteInfo): any;
+            navigateChildren(info: IRouteInfo): async.IThenable<void>;
             getChildRoute(info: IRouteInfo): string;
-            performNavigation(info: IRouteInfo): async.IThenable<any>;
+            performNavigation(info: IRouteInfo): async.IThenable<void>;
             performNavigateFrom(): async.IThenable<void>;
             canNavigate(info: IRouteInfo): async.IThenable<boolean>;
-            executeAllHandlers(view: string, parameters: any, query?: any): async.IThenable<void>;
-            executeHandlers(allHandlers: IRouteHandlers, obj: any, query?: any): async.IThenable<{}[][]>;
+            callAllHandlers(view: string, parameters: any, query?: any): async.IThenable<void>;
+            callHandlers(allHandlers: IRouteHandlers, obj: any, query?: any): async.IThenable<any[][]>;
+            callInterceptors(info: IRouteInfo): async.IThenable<boolean>;
             canNavigateFrom(): async.IThenable<boolean>;
             canNavigateTo(info: IRouteInfo): async.IThenable<boolean>;
             reduce(values: boolean[]): boolean;

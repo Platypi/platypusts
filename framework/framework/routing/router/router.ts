@@ -16,6 +16,9 @@
         private static __currentRouter: Router;
 
         $Promise: async.IPromise = acquire(__Promise);
+        resolve: typeof async.Promise.resolve = this.$Promise.resolve.bind(this.$Promise);
+        reject: typeof async.Promise.reject = this.$Promise.reject.bind(this.$Promise);
+
         $Injector: typeof dependency.Injector = acquire(__InjectorStatic);
         $EventManagerStatic: events.IEventManagerStatic = acquire(__EventManagerStatic);
         $browser: web.IBrowser = acquire(__Browser);
@@ -24,8 +27,9 @@
         recognizer: RouteRecognizer = acquire(__RouteRecognizerInstance);
         childRecognizer: RouteRecognizer = acquire(__RouteRecognizerInstance);
 
-        paramHandlers: IObject<IRouteHandlers> = {};
-        queryHandlers: IObject<IRouteHandlers> = {};
+        paramTransforms: IObject<IRouteTransforms> = {};
+        queryTransforms: IObject<IRouteTransforms> = {};
+        interceptors: IObject<Array<(routeInfo: IRouteInfo) => any>> = {};
 
         navigating: boolean = false;
         previousUrl: string;
@@ -140,7 +144,7 @@
                 }, routes).then((): void => undefined);
             }
 
-            var resolve = this.$Promise.resolve.bind(this.$Promise),
+            var resolve = this.resolve,
                 route: IRouteMapping = routes,
                 view: string = this.$Injector.convertDependency(route.view);
 
@@ -172,20 +176,20 @@
         param(handler: (value: any, parameters: any, query: any) => any, parameter: string, view: string): Router;
         param(handler: (value: any, parameters: any, query: any) => any, parameter: string, view: new (...args: any[]) => any): Router;
         param(handler: (value: any, parameters: any, query: any) => any, parameter: string, view: any) {
-            return this._addHandler(handler, parameter, view, this.paramHandlers);
+            return this._addHandler(handler, parameter, view, this.paramTransforms);
         }
 
         queryParam(handler: (value: any, query: any) => any, parameter: string, view: string): Router;
         queryParam(handler: (value: any, query: any) => any, parameter: string, view: new (...args: any[]) => any): Router;
         queryParam(handler: (value: string, query: any) => any, parameter: string, view: any){
-            return this._addHandler(handler, parameter, view, this.queryHandlers);
+            return this._addHandler(handler, parameter, view, this.queryTransforms);
         }
 
-        protected _addHandler(handler: (value: string, values: any, query?: any) => any, parameter: string, view: any, handlers: IObject<IRouteHandlers>) {
+        protected _addHandler(handler: (value: string, values: any, query?: any) => any, parameter: string, view: any, handlers: IObject<IRouteTransforms>) {
             view = this.$Injector.convertDependency(view);
 
             if (isEmpty(view) || isEmpty(parameter)) {
-                return;
+                return this;
             }
 
             var viewHandlers = handlers[view];
@@ -194,21 +198,40 @@
                 viewHandlers = handlers[view] = {};
             }
 
-            var bindings = viewHandlers[parameter];
+            var transforms = viewHandlers[parameter];
 
-            if (!isArray(bindings)) {
-                bindings = viewHandlers[parameter] = [];
+            if (!isArray(transforms)) {
+                transforms = viewHandlers[parameter] = [];
             }
 
-            bindings.push(handler);
+            transforms.push(handler);
+
+            return this;
+        }
+
+        intercept(handler: (routeInfo: IRouteInfo) => any, view: string): Router;
+        intercept(handler: (routeInfo: IRouteInfo) => any, view: new (...args: any[]) => any): Router;
+        intercept(handler: (routeInfo: IRouteInfo) => any, view: any) {
+            view = this.$Injector.convertDependency(view);
+
+            if (isEmpty(view)) {
+                return this;
+            }
+
+            var interceptors = this.interceptors[view];
+
+            if (!isArray(interceptors)) {
+                interceptors = this.interceptors[view] = [];
+            }
+
+            interceptors.push(handler);
 
             return this;
         }
 
         navigate(url: string, query?: IObject<any>, force?: boolean): async.IThenable<void> {
-            var Promise = this.$Promise,
-                resolve = Promise.resolve.bind(Promise),
-                reject = Promise.reject.bind(Promise),
+            var resolve = this.resolve,
+                reject = this.reject,
                 queryString = this.getQueryString(query);
 
             force = force === true;
@@ -278,7 +301,7 @@
         }
 
         forceNavigate() {
-            var resolve = this.$Promise.resolve.bind(this.$Promise),
+            var resolve = this.resolve,
                 query: IObject<any>;
 
             if (this.navigating) {
@@ -329,7 +352,7 @@
         }
 
         navigateChildren(info: IRouteInfo) {
-            var resolve = this.$Promise.resolve.bind(this.$Promise),
+            var resolve = this.resolve,
                 childRoute = this.getChildRoute(info);
 
             if (isNull(childRoute)) {
@@ -388,24 +411,32 @@
                 });
         }
 
-        executeAllHandlers(view: string, parameters: any, query?: any): async.IThenable<void> {
+        callAllHandlers(view: string, parameters: any, query?: any): async.IThenable<void> {
             var Promise = this.$Promise,
                 resolve = Promise.resolve.bind(Promise);
 
-            return this.executeHandlers(this.queryHandlers[view], query)
-                .then(() => this.executeHandlers(this.paramHandlers[view], parameters, query))
+            return this.callHandlers(this.queryTransforms[view], query)
+                .then(() => this.callHandlers(this.paramTransforms[view], parameters, query))
                 .then((): void => undefined);
         }
 
-        executeHandlers(allHandlers: IRouteHandlers, obj: any, query?: any) {
-            var Promise = this.$Promise,
-                resolve = Promise.resolve.bind(Promise);
+        callHandlers(allHandlers: IRouteTransforms, obj: any, query?: any) {
+            var resolve = this.resolve;
 
             return mapAsync((handlers: Array<(value: string, values: any, query?: any) => any>, key: string) => {
                 return mapAsyncInOrder((handler) => {
                     return resolve(handler(obj[key], obj, query));
                 }, handlers);
             }, allHandlers);
+        }
+
+        callInterceptors(info: IRouteInfo): async.IThenable<boolean> {
+            var resolve = this.resolve;
+
+            return mapAsync((handler: (routeInfo: IRouteInfo) => any) => {
+                return resolve(handler(info));
+            }, this.interceptors[info.delegate.view])
+                .then(this.reduce);
         }
 
         canNavigateFrom(): async.IThenable<boolean> {
@@ -425,14 +456,22 @@
         }
 
         canNavigateTo(info: IRouteInfo): async.IThenable<boolean> {
-            this.executeAllHandlers(info.delegate.view, info.parameters, info.query);
+            var promises: Array<any> = [];
+            return this.callAllHandlers(info.delegate.view, info.parameters, info.query)
+                .then(() => {
+                    return this.callInterceptors(info);
+                })
+                .then((canNavigateTo) => {
+                    if (!canNavigateTo) {
+                        return <any>[canNavigateTo];
+                    }
 
-            return mapAsync((port: ISupportRouteNavigation) => {
-                return port.canNavigateTo(info);
-            }, this.ports)
+                    return mapAsync((port: ISupportRouteNavigation) => {
+                        return port.canNavigateTo(info);
+                    }, this.ports);
+                })
                 .then(this.reduce)
                 .then((canNavigateTo: boolean) => {
-                    var promises: Array<any> = [];
                     if (!canNavigateTo) {
                         promises = [canNavigateTo];
                     } else {
@@ -444,9 +483,11 @@
                             var childResult: IRouteResult,
                                 childInfo: IRouteInfo;
 
+                            promises = [];
+
                             this.children.reduce((promises: Array<async.IThenable<boolean>>, child: Router) => {
                                 childResult = child.childRecognizer.recognize(childRoute);
-                                
+
                                 if (isEmpty(childResult)) {
                                     return;
                                 }
@@ -502,7 +543,7 @@
         query?: IObject<any>;
     }
 
-    export interface IRouteHandlers extends IObject<Array<(value: string, values: any, query?: any) => any>> { }
+    export interface IRouteTransforms extends IObject<Array<(value: string, values: any, query?: any) => any>> { }
 
     export interface ISupportRouteNavigation {
         canNavigateFrom(): async.IThenable<boolean>;

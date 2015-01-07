@@ -70,7 +70,7 @@ module test.routing.router {
                 viewport.canNavigateFrom = <any>jasmine.createSpy('root canNavigateFrom').and.returnValue(resolve(false));
 
                 router.navigate('/posts')
-                    .then(() => {
+                    .catch(() => {
                         expect(viewport.canNavigateFrom).toHaveBeenCalled();
                         expect(viewport.canNavigateTo).not.toHaveBeenCalled();
                         expect(viewport.navigateFrom).not.toHaveBeenCalled();
@@ -82,7 +82,7 @@ module test.routing.router {
                 viewport.canNavigateTo = <any>jasmine.createSpy('root canNavigateTo').and.returnValue(resolve(false));
 
                 router.navigate('/posts')
-                    .then(() => {
+                    .catch(() => {
                         expect(viewport.canNavigateFrom).toHaveBeenCalled();
                         expect(viewport.canNavigateTo).toHaveBeenCalled();
                         expect(viewport.navigateFrom).not.toHaveBeenCalled();
@@ -253,6 +253,19 @@ module test.routing.router {
                     expect(spy1).toHaveBeenCalled();
                     expect(spy2).toHaveBeenCalled();
                     expect(spy3).toHaveBeenCalled();
+                    done();
+                });
+            });
+
+            it('should test interceptors', (done) => {
+                router.intercept(() => false, PostsViewControl);
+
+                router.navigate('/posts/2').catch((e) => {
+                    expect(e.toString()).toBe('Error: Not cleared to navigate');
+                    expect(viewport.canNavigateFrom).toHaveBeenCalled();
+                    expect(viewport.canNavigateTo).not.toHaveBeenCalled();
+                    expect(viewport.navigateFrom).not.toHaveBeenCalled();
+                    expect(viewport.navigateTo).not.toHaveBeenCalled();
                     done();
                 });
             });
