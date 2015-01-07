@@ -11491,11 +11491,11 @@ declare module plat {
             unregister(port: ISupportRouteNavigation): void;
             configure(routes: IRouteMapping): async.IThenable<void>;
             configure(routes: IRouteMapping[]): async.IThenable<void>;
-            param(handler: (value: any, parameters: any, query: any) => any, view: string, parameter: string): Router;
-            param(handler: (value: any, parameters: any, query: any) => any, view: new (...args: any[]) => any, parameter: string): Router;
-            queryParam(handler: (value: any, query: any) => any, view: string, parameter: string): Router;
-            queryParam(handler: (value: any, query: any) => any, view: new (...args: any[]) => any, parameter: string): Router;
-            protected _addHandler(handler: (value: string, values: any, query?: any) => any, view: any, parameter: string, handlers: IObject<IRouteHandlers>): Router;
+            param(handler: (value: any, parameters: any, query: any) => any, parameter: string, view: string): Router;
+            param(handler: (value: any, parameters: any, query: any) => any, parameter: string, view: new (...args: any[]) => any): Router;
+            queryParam(handler: (value: any, query: any) => any, parameter: string, view: string): Router;
+            queryParam(handler: (value: any, query: any) => any, parameter: string, view: new (...args: any[]) => any): Router;
+            protected _addHandler(handler: (value: string, values: any, query?: any) => any, parameter: string, view: any, handlers: IObject<IRouteHandlers>): Router;
             navigate(url: string, query?: IObject<any>, force?: boolean): async.IThenable<void>;
             forceNavigate(): any;
             generate(name: string, parameters?: IObject<any>, query?: IObject<string>): string;

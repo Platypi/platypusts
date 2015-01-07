@@ -190,9 +190,9 @@ module test.routing.router {
                     }).and.callThrough();
 
                 router
-                    .param(<any>spy1, 'posts', 'id')
-                    .param(<any>spy2, 'posts', 'id')
-                    .param(<any>spy3, 'posts', 'id');
+                    .param(<any>spy1, 'id', 'posts')
+                    .param(<any>spy2, 'id', PostsViewControl)
+                    .param(<any>spy3, 'id', 'posts');
 
                 router.navigate('/posts/2').then(() => {
                     expect(spy1).toHaveBeenCalled();
@@ -216,8 +216,8 @@ module test.routing.router {
                     }).and.callThrough();
 
                 router
-                    .queryParam(<any>spy1, 'posts', 'title')
-                    .queryParam(<any>spy2, 'posts', 'title');
+                    .queryParam(<any>spy1, 'title', 'posts')
+                    .queryParam(<any>spy2, 'title', PostsViewControl);
 
                 router.navigate('/posts/2', { title: 'My different post' }).then(() => {
                     expect(spy1).toHaveBeenCalled();
@@ -245,9 +245,9 @@ module test.routing.router {
                     }).and.callThrough();
 
                 router
-                    .param(<any>spy2, 'posts', 'id')
-                    .param(<any>spy3, 'posts', 'id')
-                    .queryParam(<any>spy1, 'posts', 'title');
+                    .param(<any>spy2, 'id', 'posts')
+                    .param(<any>spy3, 'id', 'posts')
+                    .queryParam(<any>spy1, 'title', PostsViewControl);
 
                 router.navigate('/posts/2', { title: 'My different post' }).then(() => {
                     expect(spy1).toHaveBeenCalled();

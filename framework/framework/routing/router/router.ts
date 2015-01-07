@@ -169,19 +169,19 @@
             return this.forceNavigate();
         }
 
-        param(handler: (value: any, parameters: any, query: any) => any, view: string, parameter: string): Router;
-        param(handler: (value: any, parameters: any, query: any) => any, view: new (...args: any[]) => any, parameter: string): Router;
-        param(handler: (value: any, parameters: any, query: any) => any, view: any, parameter: string) {
-            return this._addHandler(handler, view, parameter, this.paramHandlers);
+        param(handler: (value: any, parameters: any, query: any) => any, parameter: string, view: string): Router;
+        param(handler: (value: any, parameters: any, query: any) => any, parameter: string, view: new (...args: any[]) => any): Router;
+        param(handler: (value: any, parameters: any, query: any) => any, parameter: string, view: any) {
+            return this._addHandler(handler, parameter, view, this.paramHandlers);
         }
 
-        queryParam(handler: (value: any, query: any) => any, view: string, parameter: string): Router;
-        queryParam(handler: (value: any, query: any) => any, view: new (...args: any[]) => any, parameter: string): Router;
-        queryParam(handler: (value: string, query: any) => any, view: any, parameter: string){
-            return this._addHandler(handler, view, parameter, this.queryHandlers);
+        queryParam(handler: (value: any, query: any) => any, parameter: string, view: string): Router;
+        queryParam(handler: (value: any, query: any) => any, parameter: string, view: new (...args: any[]) => any): Router;
+        queryParam(handler: (value: string, query: any) => any, parameter: string, view: any){
+            return this._addHandler(handler, parameter, view, this.queryHandlers);
         }
 
-        protected _addHandler(handler: (value: string, values: any, query?: any) => any, view: any, parameter: string, handlers: IObject<IRouteHandlers>) {
+        protected _addHandler(handler: (value: string, values: any, query?: any) => any, parameter: string, view: any, handlers: IObject<IRouteHandlers>) {
             view = this.$Injector.convertDependency(view);
 
             if (isEmpty(view) || isEmpty(parameter)) {
