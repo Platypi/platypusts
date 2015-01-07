@@ -109,7 +109,7 @@ module plat.ui.controls {
          * @description
          * The options for Link, if ignore is true, anchor will ignore changing the url.
          */
-        options: observable.IObservableProperty<{ view: any; parameters?: IObject<string>; }>;
+        options: observable.IObservableProperty<{ view: any; parameters?: IObject<string>; query?: IObject<string>; }>;
 
         /**
          * @name element

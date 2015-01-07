@@ -454,7 +454,7 @@ function access(obj: any, property: any): any {
     return obj[property];
 }
 
-function getQuery(search: string) {
+function deserializeQuery(search: string) {
     if (isEmpty(search)) {
         return;
     }
@@ -472,4 +472,21 @@ function getQuery(search: string) {
 
     return query;
 }
+
+function serializeQuery(query: plat.IObject<string>): string {
+    return !isNull(query) ? '?' + map((value, key) => {
+        return key + '=' + value;
+    }, query).join('&') : '';
+}
+
+function booleanReduce(values: Array<boolean>): boolean {
+    if (!isArray(values)) {
+        return isBoolean(values) ? <any>values : true;
+    }
+
+    return values.reduce((prev: boolean, current: boolean) => {
+        return prev && current !== false;
+    }, true);
+}
+
 /* tslint:enable:no-unused-variable */

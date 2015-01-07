@@ -77,21 +77,21 @@ module plat.ui {
             super();
         }
 
-        canNavigateFrom(): any {
-            return true;
-        }
+        navigator: routing.Navigator;
 
-        canNavigateTo(parameters: any, query: any): any {
-            return true;
-        }
+        canNavigateFrom: () => any;
 
-        navigatingFrom(): any { }
+        canNavigateTo: (parameters: any, query: any) => any;
 
-        navigatedTo(parameters: any, query: any): any { }
+        navigatingFrom: () => any;
+
+        navigatedTo: (parameters: any, query: any) => any;
     }
 
     export interface ISupportNavigation {
-        canNavigateFrom (): any;
+        navigator?: routing.Navigator;
+
+        canNavigateFrom(): any;
         canNavigateTo (parameters: any, query: any): any;
 
         navigatingFrom (): any;

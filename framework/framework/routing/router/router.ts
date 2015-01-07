@@ -232,7 +232,7 @@
         navigate(url: string, query?: IObject<any>, force?: boolean): async.IThenable<void> {
             var resolve = this.resolve,
                 reject = this.reject,
-                queryString = this.getQueryString(query);
+                queryString = serializeQuery(query);
 
             force = force === true;
 
@@ -315,7 +315,7 @@
             }
 
             if (!isEmpty(this.previousQuery)) {
-                query = getQuery(this.previousQuery);
+                query = deserializeQuery(this.previousQuery);
             }
 
             if (!isEmpty(this.previousUrl)) {
@@ -348,7 +348,7 @@
                 prefix = previous + prefix;
             }
 
-            return prefix + path + this.getQueryString(query);
+            return prefix + path + serializeQuery(query);
         }
 
         navigateChildren(info: IRouteInfo) {
@@ -436,14 +436,14 @@
             return mapAsync((handler: (routeInfo: IRouteInfo) => any) => {
                 return resolve(handler(info));
             }, this.interceptors[info.delegate.view])
-                .then(this.reduce);
+                .then(booleanReduce);
         }
 
         canNavigateFrom(): async.IThenable<boolean> {
             return this.$Promise.all(this.children.reduce((promises: Array<async.IThenable<boolean>>, child: Router) => {
                 return promises.concat(child.canNavigateFrom());
             }, <Array<async.IThenable<boolean>>>[]))
-                .then(this.reduce)
+                .then(booleanReduce)
                 .then((canNavigateFrom: boolean) => {
                     if (!canNavigateFrom) {
                         return <any>[canNavigateFrom];
@@ -452,7 +452,7 @@
                     return mapAsync((port: ISupportRouteNavigation) => {
                         return port.canNavigateFrom();
                     }, this.ports);
-                }).then(this.reduce);
+                }).then(booleanReduce);
         }
 
         canNavigateTo(info: IRouteInfo): async.IThenable<boolean> {
@@ -470,7 +470,7 @@
                         return port.canNavigateTo(info);
                     }, this.ports);
                 })
-                .then(this.reduce)
+                .then(booleanReduce)
                 .then((canNavigateTo: boolean) => {
                     if (!canNavigateTo) {
                         promises = [canNavigateTo];
@@ -501,19 +501,7 @@
 
                     return this.$Promise.all(promises);
                 })
-                .then(this.reduce);
-        }
-
-        reduce(values: Array<boolean>) {
-            return values.reduce((prev: boolean, current: boolean) => {
-                return prev && current !== false;
-            }, true);
-        }
-
-        getQueryString(query: IObject<string>) {
-            return !isNull(query) ? '?' + map((value, key) => {
-                return key + '=' + value;
-            }, query).join('&') : '';
+                .then(booleanReduce);
         }
     }
 

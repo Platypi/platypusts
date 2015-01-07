@@ -47,12 +47,12 @@ module plat.ui.controls {
          */
         protected _animationPromise: animations.IAnimationThenable<animations.IGetAnimatingThenable>;
 
+        navigator: routing.Navigator = acquire(__NavigatorInstance);
         router: routing.Router;
         parentRouter: routing.Router;
         controls: Array<ViewControl>;
         nextInjector: dependency.IInjector<ViewControl>;
         nextView: ViewControl;
-
 
         initialize() {
             var router = this.router = this.$RouterStatic.currentRouter(),
@@ -63,6 +63,8 @@ module plat.ui.controls {
                 parentRouter = this.parentRouter = parentViewport.router;
                 parentRouter.addChild(router);
             }
+
+            this.navigator.initialize(router);
         }
 
         setTemplate() {
@@ -81,6 +83,8 @@ module plat.ui.controls {
             if (!isObject(view)) {
                 return resolve();
             }
+
+            view.navigator = this.navigator;
 
             if (isFunction(view.canNavigateTo)) {
                 response = view.canNavigateTo(parameters, routeInfo.query);
@@ -155,6 +159,7 @@ module plat.ui.controls {
 
         dispose() {
             this.router.unregister(this);
+            this.navigator.dispose();
         }
 
         protected _createNodeMap(injector: dependency.IInjector<ViewControl>) {

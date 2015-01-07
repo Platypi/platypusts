@@ -40,7 +40,7 @@
          * representing the query string.
          */
         private static __getQuery(search: string): IObject<string> {
-            return getQuery(search);
+            return deserializeQuery(search);
         }
 
         /**
