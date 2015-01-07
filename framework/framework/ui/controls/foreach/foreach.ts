@@ -123,6 +123,19 @@ module plat.ui.controls {
         };
 
         /**
+         * @name _container
+         * @memberof plat.ui.controls.ForEach
+         * @kind property
+         * @access protected
+         * 
+         * @type {HTMLElement}
+         * 
+         * @description
+         * The container to which items will be added.
+         */
+        protected _container: HTMLElement;
+
+        /**
          * @name _blockLength
          * @memberof plat.ui.controls.ForEach
          * @kind property
@@ -207,6 +220,7 @@ module plat.ui.controls {
         setTemplate(): void {
             var childNodes: Array<Node> = Array.prototype.slice.call(this.element.childNodes);
             this.bindableTemplates.add('item', childNodes);
+            this._container = this.element;
         }
 
         /**
@@ -401,7 +415,7 @@ module plat.ui.controls {
          * @returns {void}
          */
         protected _appendItems(items: Array<Node>): void {
-            appendChildren(items, this.element);
+            appendChildren(items, this._container);
         }
 
         /**
@@ -427,7 +441,7 @@ module plat.ui.controls {
                 childNodes: Array<Element> = Array.prototype.slice.call(item.childNodes),
                 childNode: Element;
 
-            insertBefore(this.element, item);
+            insertBefore(this._container, item);
 
             var currentAnimations = this._currentAnimations;
             while (childNodes.length > 0) {
@@ -490,7 +504,8 @@ module plat.ui.controls {
          * @description
          * Binds the item to a template at that index.
          * 
-         * @returns {void}
+         * @returns {plat.async.IThenable<DocumentFragment>} A promise that resolves with 
+         * the a DocumentFragment that represents an item.
          */
         protected _bindItem(index: number): async.IThenable<DocumentFragment> {
             return this.bindableTemplates.bind('item', index, this._getAliases(index));
@@ -913,8 +928,8 @@ module plat.ui.controls {
          * @returns {plat.async.IThenable<void>} The last element node's animation promise.
          */
         private __handleAnimation(startNode: number, endNode: number, key: string, clone: boolean): async.IThenable<void> {
-            var element = this.element,
-                nodes: Array<Node> = Array.prototype.slice.call(element.childNodes, startNode, endNode),
+            var container = this._container,
+                nodes: Array<Node> = Array.prototype.slice.call(container.childNodes, startNode, endNode),
                 node: Node,
                 firstNode = nodes[0],
                 $animator = this.$Animator,
@@ -928,11 +943,11 @@ module plat.ui.controls {
                 if (node.nodeType === Node.ELEMENT_NODE) {
                     if (clone) {
                         node = node.cloneNode(true);
-                        element.insertBefore(node, firstNode);
+                        container.insertBefore(node, firstNode);
                         // bind callback to current cloned node due to loop
                         callback = function () {
                             currentAnimations.shift();
-                            element.removeChild(this);
+                            container.removeChild(this);
                         }.bind(node);
                     } else {
                         callback = () => {
