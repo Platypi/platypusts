@@ -3,19 +3,19 @@
   "description": "Testing for PlatypusTS",
   "version": "0.0.0",
   "dependencies": {
-    "karma": "^0.12.16",
-    "karma-ie-launcher": "^0.1.5",
-    "karma-chrome-launcher": "^0.1.3",
-    "karma-firefox-launcher": "^0.1.3",
-    "karma-jasmine": "^0.2.2",
-    "karma-cli": "0.0.4"
+    "karma": "latest",
+    "karma-ie-launcher": "latest",
+    "karma-chrome-launcher": "latest",
+    "karma-firefox-launcher": "latest",
+    "karma-jasmine": "latest",
+    "karma-cli": "latest",
+    "karma-html-reporter": "latest",
+    "karma-coverage": "latest",
+    "tsd": "next"
   },
   "scripts": {
     "test": "karma start karma.conf.js"
   },
   "devDependencies": {
-    "karma-html-reporter": "^0.2.3",
-    "karma-coverage": "^0.2.4",
-    "tsd": "next"
   }
 }

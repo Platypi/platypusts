@@ -253,6 +253,7 @@ module test.routing.router {
                     expect(spy1).toHaveBeenCalled();
                     expect(spy2).toHaveBeenCalled();
                     expect(spy3).toHaveBeenCalled();
+                    expect(viewport.navigateTo.calls.mostRecent().args[0].parameters).toEqual({ id: 2, post: post });
                     done();
                 });
             });
