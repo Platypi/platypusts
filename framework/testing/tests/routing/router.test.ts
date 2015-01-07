@@ -20,7 +20,7 @@ module test.routing.router {
         beforeEach(() => {
             router = plat.acquire(plat.routing.IRouter);
             viewport = createViewport('root');
-            router.registerViewport(<any>viewport);
+            router.register(<any>viewport);
             resetAll(viewport);
         });
 
@@ -98,7 +98,7 @@ module test.routing.router {
                 router.navigate('/posts')
                     .then(() => {
                         expectAllNot(viewport);
-                        return router.registerViewport(<any>viewport);
+                        return router.register(<any>viewport);
                     }).then(() => {
                         expect(viewport.navigateFrom).toHaveBeenCalled();
                         expect(viewport.navigateTo).toHaveBeenCalled();
@@ -118,7 +118,7 @@ module test.routing.router {
 
                     childViewport = createViewport('child');
                     child = router.addChild(child);
-                    child.registerViewport(childViewport);
+                    child.register(childViewport);
                 });
 
                 it('should perform navigation', (done: Function) => {

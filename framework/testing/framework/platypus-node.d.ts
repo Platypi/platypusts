@@ -41,19 +41,7 @@ declare module plat {
           * @param {Array<any>} dependencies? An optional array of strings representing the dependencies needed for the
           * IViewControl injector.
           */
-        function viewControl(name: string, Type: new (...args: any[]) => ui.IViewControl, dependencies?: any[]): typeof register;
-        /**
-          * Registers an WebViewControl with the framework. The framework will instantiate the
-          * control when needed. The dependencies array corresponds to injectables that will be passed into the Constructor of the control.
-          * @param {string} name The control type, corresponding to the HTML notation for creating a new
-          * WebViewControl. Used for navigation to the specified WebViewControl.
-          * @param {new (...args: any[]) => ui.IWebViewControl} Type The constructor for the WebViewControl.
-          * @param {Array<any>} dependencies? An optional array of strings representing the dependencies needed for the
-          * WebViewControl injector.
-          * @param {Array<any>} routes? Optional route strings (or regular expressions) used for matching a URL to the
-          * registered WebViewControl.
-          */
-        function viewControl(name: string, Type: new (...args: any[]) => ui.IWebViewControl, dependencies: any[], routes: any[]): typeof register;
+        function viewControl<T extends ui.ViewControl>(name: string, Type: new (...args: any[]) => T, dependencies?: any[]): typeof register;
         /**
           * Registers an injectable with the framework. Injectables are objects that can be used for dependency injection into other objects.
           * The dependencies array corresponds to injectables that will be passed into the Constructor of the injectable.
@@ -315,7 +303,7 @@ declare module plat {
               * An IInjectorObject of IBaseViewControls.
               * Contains all the registered view controls for an application.
               */
-            var viewControl: IInjectorObject<ui.IBaseViewControl>;
+            var viewControl: IInjectorObject<ui.ViewControl>;
             /**
               * An IInjectorObject of objects. Contains all the registered
               * injectables for an application.
@@ -2563,275 +2551,6 @@ declare module plat {
               * A toString function implementation for the IUrlUtilsInstance.
               */
             toString(): string;
-        }
-        /**
-          * The class that handles route registration and navigation
-          * to and from IViewControls within the
-          * Routeport.
-          */
-        class Router implements IRouter {
-            /**
-              * Reference to the IBrowser injectable.
-              */
-            $Browser: IBrowser;
-            /**
-              * Reference to the IBrowserConfig injectable.
-              */
-            $BrowserConfig: IBrowserConfig;
-            /**
-              * Reference to the IEventManagerStatic injectable.
-              */
-            $EventManagerStatic: events.IEventManagerStatic;
-            /**
-              * Reference to the INavigationEventStatic injectable.
-              */
-            $NavigationEventStatic: events.INavigationEventStatic;
-            /**
-              * Reference to the ICompat injectable.
-              */
-            $Compat: ICompat;
-            /**
-              * Reference to the IRegex injectable.
-              */
-            $Regex: expressions.IRegex;
-            /**
-              * Reference to the Window injectable.
-              */
-            $Window: Window;
-            /**
-              * A unique string identifier.
-              */
-            uid: string;
-            /**
-              * The registered routes (as IRouteMatchers) for matching
-              * on route change.
-              */
-            protected _routes: IRouteMatcher[];
-            /**
-              * The function to stop listening to the 'urlChanged' event.
-              */
-            protected _removeListener: IRemoveListener;
-            /**
-              * The registered default route ('') converted into an IMatchedRoute.
-              * The default route is used whenever a specified route/url is not matched.
-              */
-            protected _defaultRoute: IMatchedRoute;
-            /**
-              * The registered base route ('/') converted into an IMatchedRoute.
-              * The base route is the first route navigated to in the Routeport if a
-              * default route is not specified in its plat-options.
-              */
-            protected _baseRoute: IMatchedRoute;
-            /**
-              * A regular expression for finding invalid characters in a route string.
-              */
-            private __escapeRegex;
-            /**
-              * A regular expression for finding optional parameters in a route string.
-              */
-            private __optionalRegex;
-            /**
-              * A regular expression for finding forward slashes at the beginning or end of
-              * an expression.
-              */
-            private __pathSlashRegex;
-            /**
-              * States whether the specified route is the first attempt at routing.
-              */
-            private __firstRoute;
-            /**
-              * A virtual history stack used in IE based MS apps.
-              */
-            private __history;
-            /**
-              * The constructor for a Router. Assigns a uid and subscribes to the 'urlChanged' event.
-              */
-            constructor();
-            /**
-              * Registers route strings/RegExps and associates them with a control type.
-              * @param {string} type The control type with which to associate the routes.
-              * @param {Array<any>} routes An array of strings or RegExp expressions to associate with
-              * the control type.
-              */
-            registerRoutes(type: string, routes: any[]): void;
-            /**
-              * Formats a url path given the parameters and query string, then changes the
-              * url to that path.
-              * @param {string} path The route path to navigate to.
-              * @param {plat.web.IRouteNavigationOptions} options? The IRouteNavigationOptions
-              * included with this route.
-              */
-            route(path: string, options?: IRouteNavigationOptions): boolean;
-            /**
-              * Navigates back in the history.
-              * @param {number} length? The number of entries to go back in the history.
-              */
-            goBack(length?: number): void;
-            /**
-              * Builds a valid route with a valid query string to use for navigation.
-              * @param {string} routeParameter The route portion of the navigation path. Used to
-              * match with a registered WebViewControl.
-              * @param {plat.IObject<string>} query The route query object if passed into the
-              * IRouteNavigationOptions.
-              * both the fully evaluated route and the corresponding IMatchedRoute.
-              */
-            protected _buildRoute(routeParameter: string, query: IObject<string>): {
-                route: string;
-                match: IMatchedRoute;
-            };
-            /**
-              * Builds the query string if a query object was passed into
-              * the IRouteNavigationOptions.
-              * @param {plat.IObject<string>} query The query object passed in.
-              */
-            protected _buildQueryString(query: IObject<string>): string;
-            /**
-              * The method called when the route function is invoked
-              * or on a 'urlChanged' event.
-              * @param {plat.events.IDispatchEventInstance} ev The 'urlChanged' event object.
-              * @param {plat.web.IUrlUtilsInstance} utils The IUrlUtilsInstance
-              * created for the invoked route function.
-              */
-            protected _routeChanged(ev: events.IDispatchEventInstance, utils: IUrlUtilsInstance): void;
-            /**
-              * Registers a WebViewControl's route.
-              * @param {any} route Can be either a string or RegExp.
-              * @param {plat.dependency.IInjector<plat.ui.IBaseViewControl>} injector The injector for the
-              * WebViewControl defined by the type.
-              * @param {string} type The control type.
-              */
-            protected _registerRoute(route: any, injector: dependency.IInjector<ui.IBaseViewControl>, type: string): void;
-            /**
-              * Parses the route and pulls out route parameters. Then
-              * converts them to regular expressions to match for
-              * routing.
-              * @param {string} route The route to parse.
-              * route with a BaseViewControl's injector.
-              */
-            protected _getRouteParameters(route: string): IRouteMatcher;
-            /**
-              * Matches a route to a registered route using the
-              * registered route's regular expression.
-              * @param {plat.web.IUrlUtilsInstance} utils The utility used to obtain
-              * the url fragment and the url query.
-              * injector.
-              */
-            protected _match(utils: IUrlUtilsInstance): IMatchedRoute;
-            /**
-              * Trims the first and last slash on the URL pathname and returns it.
-              * @param {plat.web.IUrlUtilsInstance} utils The utility used to obtain
-              * the url fragment.
-              */
-            protected _getUrlFragment(utils: IUrlUtilsInstance): string;
-        }
-        /**
-          * The Type for referencing the '$Router' injectable as a dependency.
-          */
-        function IRouter(): IRouter;
-        /**
-          * Describes the object that handles route registration and navigation
-          * to and from IWebViewControls within a
-          * Routeport.
-          */
-        interface IRouter {
-            /**
-              * A unique string identifier.
-              */
-            uid: string;
-            /**
-              * Registers route strings/RegExps and associates them with a control type.
-              * @param {string} type The control type with which to associate the routes.
-              * @param {Array<any>} routes An array of strings or RegExp expressions to associate with
-              * the control type.
-              */
-            registerRoutes(type: string, routes: any[]): void;
-            /**
-              * Formats a url path given the parameters and query string, then changes the
-              * url to that path.
-              * @param {string} path The route path to navigate to.
-              * @param {plat.web.IRouteNavigationOptions} options? The IRouteNavigationOptions
-              * included with this route.
-              */
-            route(path: string, options?: IRouteNavigationOptions): boolean;
-            /**
-              * Navigates back in the history.
-              * @param {number} length? The number of entries to go back in the history.
-              */
-            goBack(length?: number): void;
-        }
-        /**
-          * Options that you can submit to the router in order
-          * to customize navigation.
-          */
-        interface IRouteNavigationOptions extends navigation.IBaseNavigationOptions {
-            /**
-              * An object that includes the query parameters to be inserted into the route
-              * as the query string.
-              */
-            query?: IObject<string>;
-        }
-        /**
-          * Used by the navigator for matching a route with
-          * a IBaseViewControl's injector.
-          */
-        interface IRouteMatcher {
-            /**
-              * The IBaseViewControl injector.
-              */
-            injector?: dependency.IInjector<ui.IBaseViewControl>;
-            /**
-              * The type of IBaseViewControl.
-              */
-            type?: string;
-            /**
-              * A regular expression to match with the url.
-              */
-            regex: RegExp;
-            /**
-              * Route arguments used to create route parameters
-              * in the event of a url match.
-              */
-            args: string[];
-        }
-        /**
-          * Provides a IInjector<IBaseViewControl> that matches
-          * the given IRoute.
-          */
-        interface IMatchedRoute {
-            /**
-              * The associated IInjector<IBaseViewControl> for the route.
-              */
-            injector: dependency.IInjector<ui.IBaseViewControl>;
-            /**
-              * The type of IBaseViewControl.
-              */
-            type: string;
-            /**
-              * The route associated with this object's injector.
-              */
-            route?: IRoute<any>;
-        }
-        /**
-          * Contains the parsed properties of a url.
-          */
-        interface IRoute<T extends {}> {
-            /**
-              * The defined parameters that were matched with the route.
-              * When a route is registered, the registrant can specify named
-              * route parameters. Those parameters will appear in this object
-              * as key/value pairs.
-              */
-            parameters: T;
-            /**
-              * This property will always exist and will be equal to the full
-              * route for navigation (only the path from root, not including
-              * the query string).
-              */
-            path: string;
-            /**
-              * An object containing query string key/value pairs.
-              */
-            query?: any;
         }
     }
     /**
@@ -5124,47 +4843,6 @@ declare module plat {
               */
             dispose(uid: string): void;
             /**
-              * Registers a listener for the beforeNavigate Event. The listener will be called when the beforeNavigate
-              * event is propagating over the given uid. Any number of listeners can exist for a single event name. The
-              * listener can chose to cancel the event using ev.cancel(), preventing any navigation as well as further
-              * calls to event listeners.
-              * @param {string} uid A unique id to associate with the object registering the listener.
-              * @param {string} eventName='beforeNavigate' The name of the event to listen to.
-              * @param {(ev: plat.events.INavigationEvent<any>) => void} listener The method called when the event is fired.
-              * @param {any} context? The context with which to call the listener method.
-              */
-            on(uid: string, eventName: 'beforeNavigate', listener: (ev: INavigationEvent<any>) => void, context?: any): IRemoveListener;
-            /**
-              * Registers a listener for the navigating Event. The listener will be called when the navigating
-              * event is propagating over the given uid. Any number of listeners can exist for a single event name.
-              * The listener can chose to cancel the event using ev.cancel(), preventing any navigation as well as further
-              * calls to event listeners.
-              * @param {string} uid A unique id to associate with the object registering the listener.
-              * @param {string} eventName='navigating' Specifies that this is a listener for the navigating event.
-              * @param {(ev: plat.events.INavigationEvent<any>) => void} listener The method called when the event is fired.
-              * @param {any} context? The context with which to call the listener method.
-              */
-            on(uid: string, eventName: 'navigating', listener: (ev: INavigationEvent<any>) => void, context?: any): IRemoveListener;
-            /**
-              * Registers a listener for the navigated Event. The listener will be called when the navigated
-              * event is propagating over the given uid. Any number of listeners can exist for a single event name.
-              * The listener cannot cancel the event.
-              * @param {string} uid A unique id to associate with the object registering the listener.
-              * @param {string} eventName='navigated' Specifies that this is a listener for the navigated event.
-              * @param {(ev: plat.events.INavigationEvent<any>) => void} listener The method called when the event is fired.
-              * @param {any} context? The context with which to call the listener method.
-              */
-            on(uid: string, eventName: 'navigated', listener: (ev: INavigationEvent<any>) => void, context?: any): IRemoveListener;
-            /**
-              * Registers a listener for a NavigationEvent. The listener will be called when a NavigationEvent is
-              * propagating over the given uid. Any number of listeners can exist for a single event name.
-              * @param {string} uid A unique id to associate with the object registering the listener.
-              * @param {string} eventName The name of the event to listen to.
-              * @param {(ev: plat.events.INavigationEvent<any>) => void} listener The method called when the event is fired.
-              * @param {any} context? The context with which to call the listener method.
-              */
-            on(uid: string, eventName: string, listener: (ev: INavigationEvent<any>) => void, context?: any): IRemoveListener;
-            /**
               * Registers a listener for the ready AlmEvent. The ready event will be called when the app
               * is ready to start.
               * @param {string} uid A unique id to associate with the object registering the listener.
@@ -5228,15 +4906,6 @@ declare module plat {
               */
             on(uid: string, eventName: "error", listener: (ev: IErrorEvent<Error>) => void, context?: any): IRemoveListener;
             /**
-              * Registers a listener for a ErrorEvent. The listener will be called when a ErrorEvent is
-              * propagating over the given uid. Any number of listeners can exist for a single event name.
-              * @param {string} uid A unique id to associate with the object registering the listener.
-              * @param {string} eventName The name of the event to listen to.
-              * @param {(ev: plat.events.IErrorEvent<any>) => void} listener The method called when the event is fired.
-              * @param {any} context? The context with which to call the listener method.
-              */
-            on(uid: string, eventName: string, listener: (ev: IErrorEvent<any>) => void, context?: any): IRemoveListener;
-            /**
               * Registers a listener for a DispatchEvent. The listener will be called when a DispatchEvent is
               * propagating over the given uid. Any number of listeners can exist for a single event name.
               * @param {string} uid A unique id to associate with the object registering the listener.
@@ -5292,117 +4961,6 @@ declare module plat {
               * @param {Array<any>} args The arguments associated with the event
               */
             sendEvent(event: IDispatchEventInstance, args?: any[]): void;
-        }
-        /**
-          * A class used by the Navigator to dispatch Navigation events. Allows anyone to listen
-          * for navigation events and respond to them, even canceling them if necessary.
-          */
-        class NavigationEvent<P> extends DispatchEvent implements INavigationEvent<P> {
-            /**
-              * Reference to the IEventManagerStatic injectable.
-              */
-            static $EventManagerStatic: IEventManagerStatic;
-            /**
-              * Creates a new NavigationEvent and fires it.
-              * @param {string} name The name of the event (e.g. 'beforeNavigate')
-              * @param {any} sender The object sending the event.
-              * @param {plat.events.INavigationEventOptions<P>} eventOptions An object implementing INavigationEvent, specifying what all event listeners
-              * will be passed.
-              */
-            static dispatch<P>(name: string, sender: any, eventOptions: INavigationEventOptions<P>): INavigationEvent<P>;
-            /**
-              * The navigation parameter being dispatched.
-              */
-            parameter: P;
-            /**
-              * The navigation options for the event.
-              */
-            options: navigation.IBaseNavigationOptions;
-            /**
-              * The navigation event target. Its type depends on the type of Navigation event.
-              */
-            target: any;
-            /**
-              * Specifies the type of IBaseViewControl for the event.
-              */
-            type: string;
-            /**
-              * Initializes the event members.
-              * @param {string} name The name of the event.
-              * @param {any} sender The object that initiated the event.
-              * @param {string} direction='direct' This will always be a direct event no matter what is sent in.
-              */
-            initialize(name: string, sender: any, direction?: 'direct', eventOptions?: INavigationEventOptions<P>): void;
-            initialize(name: string, sender: any, direction?: string, eventOptions?: INavigationEventOptions<P>): void;
-        }
-        /**
-          * The Type for referencing the '$NavigationEventStatic' injectable as a dependency.
-          */
-        function INavigationEventStatic($EventManagerStatic?: IEventManagerStatic): INavigationEventStatic;
-        /**
-          * The intended external interface for the '$NavigationEventStatic' injectable.
-          */
-        interface INavigationEventStatic {
-            /**
-              * Creates a new INavigationEvent and fires it.
-              * @param {string} name The name of the event (e.g. 'beforeNavigate')
-              * @param {any} sender The object sending the event.
-              * @param {plat.events.INavigationEventOptions<P>} eventOptions An object implementing INavigationEvent, specifying what all event listeners
-              * will be passed.
-              */
-            dispatch<P>(name: string, sender: any, eventOptions: INavigationEventOptions<P>): INavigationEvent<P>;
-        }
-        /**
-          * A class used by the Navigator to dispatch Navigation events. Allows anyone to listen
-          * for navigation events and respond to them, even canceling them if necessary.
-          */
-        interface INavigationEvent<P> extends IDispatchEventInstance {
-            /**
-              * The navigation parameter being dispatched.
-              */
-            parameter: P;
-            /**
-              * The navigation options for the event.
-              */
-            options: navigation.IBaseNavigationOptions;
-            /**
-              * The navigation event target. Its type depends on the type of Navigation event.
-              */
-            target: any;
-            /**
-              * Specifies the type of IBaseViewControl for the event.
-              */
-            type: string;
-            /**
-              * Initializes the event members.
-              * @param {string} name The name of the event.
-              * @param {any} sender The object that initiated the event.
-              * @param {string} direction='direct' This will always be a direct event no matter what is sent in.
-              */
-            initialize(name: string, sender: any, direction?: 'direct', eventOptions?: INavigationEventOptions<P>): void;
-            initialize(name: string, sender: any, direction?: string, eventOptions?: INavigationEventOptions<P>): void;
-        }
-        /**
-          * Describes options for an INavigationEvent. The generic parameter specifies the
-          * target type for the event.
-          */
-        interface INavigationEventOptions<P> {
-            /**
-              * The navigation parameter being dispatched.
-              */
-            parameter: P;
-            /**
-              * The navigation options for the event.
-              */
-            options: navigation.IBaseNavigationOptions;
-            /**
-              * The navigation event target. Its type depends on the type of Navigation event.
-              */
-            target: any;
-            /**
-              * Specifies the type of IBaseViewControl for the event.
-              */
-            type: string;
         }
         /**
           * Represents an internal Error Event. This is used for any
@@ -6800,218 +6358,38 @@ declare module plat {
             propertyChanged(newValue: any, oldValue?: any): void;
         }
         /**
-          * A control used in a IBaseport for simulated page navigation. The
+          * A control used in a Viewport for simulated page navigation. The
           * control has navigation events that are called when navigating to and from the control.
           */
-        class BaseViewControl extends TemplateControl implements IBaseViewControl {
+        class ViewControl extends TemplateControl implements ISupportNavigation {
             /**
-              * Detaches a BaseViewControl. Disposes its children, but does not dispose the
-              * BaseViewControl. Useful for the Navigator when storing the
-              * BaseViewControl in history.
-              * @param {plat.ui.BaseViewControl} control The control to be detached.
+              * Recursively disposes a ViewControl and its children.
+              * @param {plat.ui.ViewControl} control A control to dispose.
               */
-            static detach(control: IBaseViewControl): void;
+            static dispose(control: ITemplateControl): void;
             /**
-              * Recursively disposes a BaseViewControl and its children.
-              * @param {plat.ui.BaseViewControl} control A control to dispose.
+              * Returns a new instance of a ViewControl.
               */
-            static dispose(control: IBaseViewControl): void;
-            /**
-              * Returns a new instance of a BaseViewControl.
-              */
-            static getInstance(): IBaseViewControl;
+            static getInstance(): ViewControl;
             /**
               * Specifies that this control will have its own context, and it should not inherit a context.
               */
             hasOwnContext: boolean;
             /**
-              * Specifies the navigator for this control. Used for navigating to other IBaseViewControls
-              * in a {plat.ui.controls.IBaseport|IBaseport}.
-              */
-            navigator: navigation.IBaseNavigator;
-            /**
-              * This event is fired when this control has been navigated to.
-              * @param {any} parameter? A navigation parameter sent from the previous
-              * IBaseViewControl.
-              */
-            navigatedTo(parameter?: any): void;
-            /**
-              * This event is fired when this control is being navigated away from.
-              */
-            navigatingFrom(): void;
-        }
-        /**
-          * The Type for referencing the '$ViewControlFactory' injectable as a dependency.
-          */
-        function IBaseViewControlFactory(): IBaseViewControlFactory;
-        /**
-          * Creates and manages IBaseViewControls.
-          */
-        interface IBaseViewControlFactory {
-            /**
-              * Detaches a BaseViewControl. Disposes its children, but does not dispose the
-              * BaseViewControl. Useful for the Navigator when storing the
-              * BaseViewControl in history.
-              * @param {plat.ui.BaseViewControl} control The control to be detached.
-              */
-            detach(control: IBaseViewControl): void;
-            /**
-              * Recursively disposes a BaseViewControl and its children.
-              * @param {plat.ui.BaseViewControl} control A control to dispose.
-              */
-            dispose(control: IBaseViewControl): void;
-            /**
-              * Returns a new instance of a BaseViewControl.
-              */
-            getInstance(): IBaseViewControl;
-        }
-        /**
-          * Describes a control used in a IBaseport for simulated page navigation. The
-          * control has navigation events that are called when navigating to and from the control.
-          */
-        interface IBaseViewControl extends ITemplateControl {
-            /**
-              * Specifies that this control will have its own context, and it should not inherit a context.
-              */
-            hasOwnContext?: boolean;
-            /**
-              * Specifies the navigator for this control. Used for navigating to other IBaseViewControls
-              * in a {plat.ui.controls.IBaseport|IBaseport}.
-              */
-            navigator?: navigation.IBaseNavigator;
-            /**
-              * This event is fired when this control has been navigated to.
-              * @param {any} parameter? A navigation parameter sent from the previous
-              * IBaseViewControl.
-              */
-            navigatedTo?(parameter?: any): void;
-            /**
-              * This event is fired when this control is being navigated away from.
-              */
-            navigatingFrom?(): void;
-        }
-        /**
-          * A control used in a Viewport for simulated page navigation. The
-          * control has navigation events that are called when navigating to and from the control.
-          */
-        class ViewControl extends BaseViewControl implements IViewControl {
-            /**
-              * Specifies the navigator for this control. Used for navigating to other IViewControls
-              * in a Viewport.
-              */
-            navigator: navigation.INavigatorInstance;
-            /**
               * Initializes any events that you might use in the ViewControl. Automatically subscribes to 'backButtonPressed' when
               * you implement a backButtonPressed function.
               */
             constructor();
+            canNavigateFrom(): any;
+            canNavigateTo(parameters: any, query: any): any;
+            navigatingFrom(): any;
+            navigatedTo(parameters: any, query: any): any;
         }
-        /**
-          * Describes a control used in a Viewport for simulated page navigation. The
-          * control has navigation events that are called when navigating to and from the control.
-          */
-        interface IViewControl extends IBaseViewControl {
-            /**
-              * Specifies the navigator for this control. Used for navigating to other IViewControls
-              * in a Viewport.
-              */
-            navigator?: navigation.INavigatorInstance;
-            /**
-              * Called when the hard-back button is pressed on a device. Allows you to
-              * consume the event and prevent the navigator from navigating back if
-              * necessary.
-              * If you want to prevent the navigator from navigating back during this event,
-              * you can use ev.stopPropagation().
-              */
-            backButtonPressed?(ev: events.IDispatchEventInstance): void;
-            canNavigateFrom?(): any;
-            canNavigateTo?(parameters: {}, query: {}): any;
-        }
-        /**
-          * A control used in a Routeport for simulated page navigation. The
-          * control has navigation events that are called when navigating to and from the control.
-          * It also provides functionality for setting the title of a page.
-          */
-        class WebViewControl extends BaseViewControl implements IWebViewControl {
-            /**
-              * The title of the HTML web page.
-              */
-            static titleElement: HTMLTitleElement;
-            /**
-              * The description meta tag.
-              */
-            static descriptionElement: HTMLMetaElement;
-            /**
-              * Sets the title programmatically and has it reflect in the browser title.
-              * @param {string} title The title to set.
-              */
-            static setTitle(title: string): void;
-            /**
-              * Sets the meta description programmatically.
-              * @param {string} description The description to set.
-              */
-            static setDescription(description: string): void;
-            /**
-              * The title of the page, corresponds to the textContent of the title element in the HTML head.
-              */
-            title: string;
-            /**
-              * The title of the page, corresponds to the content of the description meta element in the HTML head.
-              */
-            description: string;
-            /**
-              * Specifies the navigator for this control. Used for navigating to other IWebViewControls
-              * in a Routeport.
-              */
-            navigator: navigation.IRoutingNavigator;
-            /**
-              * The constructor for a WebViewControl. Sets the page title and description
-              * upon the navigation event occurring.
-              */
-            constructor();
-            /**
-              * Allows the WebViewControl set its title programmatically and
-              * have it reflect in the browser title.
-              * @param {string} title The title to set.
-              */
-            setTitle(title: string): void;
-            /**
-              * Allows the WebViewControl set its description programmatically and
-              * have it reflect in the browser meta description tag.
-              * @param {string} description The description to set.
-              */
-            setDescription(description: string): void;
-        }
-        /**
-          * Defines an object intended to be used inside of a Routeport
-          * to simulate page navigation.
-          */
-        interface IWebViewControl extends IBaseViewControl {
-            /**
-              * The title of the page, corresponds to the textContent of the title element in the HTML head.
-              */
-            title?: string;
-            /**
-              * The title of the page, corresponds to the content of the description meta element in the HTML head.
-              */
-            description?: string;
-            /**
-              * Specifies the navigator for this control. Used for navigating to other IWebViewControls
-              * in a Routeport.
-              */
-            navigator?: navigation.IRoutingNavigator;
-            /**
-              * Allows the WebViewControl set its title programmatically and
-              * have it reflect in the browser title.
-              * @param {string} title The title to set.
-              */
-            setTitle?(title: string): void;
-            /**
-              * Allows the WebViewControl set its description programmatically and
-              * have it reflect in the browser meta description tag.
-              * @param {string} description The description to set.
-              */
-            setDescription(description: string): void;
+        interface ISupportNavigation {
+            canNavigateFrom(): any;
+            canNavigateTo(parameters: any, query: any): any;
+            navigatingFrom(): any;
+            navigatedTo(parameters: any, query: any): any;
         }
         /**
           * An extensible class dealing with the creation, deletion, and modification
@@ -9792,253 +9170,38 @@ declare module plat {
           * Holds classes and interfaces related to UI control components in platypus.
           */
         module controls {
-            /**
-              * A TemplateControl that acts as a base for all
-              * controls that can interchangeably swap out IBaseViewControls.
-              */
-            class Baseport extends TemplateControl implements IBaseport {
+            class Viewport extends TemplateControl implements routing.ISupportRouteNavigation {
+                protected $RouterStatic: typeof routing.Router;
+                protected $Promise: async.IPromise;
+                protected $Injector: typeof dependency.Injector;
+                protected $ElementManagerFactory: processing.IElementManagerFactory;
+                protected $Document: Document;
                 /**
                   * Reference to an injectable that caches IElementManagers.
                   */
-                $ManagerCache: storage.ICache<processing.IElementManager>;
-                /**
-                  * Reference to the Document injectable.
-                  */
-                $Document: Document;
-                /**
-                  * Reference to the IElementManagerFactory injectable.
-                  */
-                $ElementManagerFactory: processing.IElementManagerFactory;
+                protected $ManagerCache: storage.ICache<processing.IElementManager>;
                 /**
                   * Reference to the IAnimator injectable.
                   */
-                $Animator: animations.IAnimator;
-                /**
-                  * Reference to the IPromise injectable.
-                  */
-                $Promise: async.IPromise;
-                /**
-                  * The navigator used for navigating between IBaseViewControls.
-                  */
-                navigator: navigation.IBaseNavigator;
-                /**
-                  * A promise used for disposing the end state of the previous animation prior to starting a new one.
-                  */
-                protected _animationPromise: animations.IAnimationThenable<animations.IGetAnimatingThenable>;
-                /**
-                  * The constructor for a Baseport.
-                  * @param {plat.navigation.IBaseNavigator} navigator The navigator used for navigating between
-                  * IBaseViewControls.
-                  */
-                constructor(navigator: navigation.IBaseNavigator);
-                /**
-                  * Clears the control element's innerHTML.
-                  */
-                setTemplate(): void;
-                /**
-                  * Clean up any memory being held.
-                  */
-                dispose(): void;
-                /**
-                  * Grabs the root of this control's manager
-                  * tree, clears it, and initializes the
-                  * creation of a new one by kicking off a
-                  * navigate.
-                  * @param {plat.ui.controls.IBaseportNavigateToOptions} ev The navigation options.
-                  */
-                navigateTo(ev: IBaseportNavigateToOptions): void;
-                /**
-                  * Implements the functionality for when the hard backbutton is pressed on a device.
-                  */
-                backButtonPressed(): void;
-                /**
-                  * Manages the navigatingFrom lifecycle event for
-                  * IBaseViewControls.
-                  * @param {plat.ui.IBaseViewControl} fromControl The IBaseViewControl
-                  * being navigated away from.
-                  * resolves when the current view is done animating away.
-                  */
-                navigateFrom(fromControl: IBaseViewControl): animations.IAnimationThenable<animations.IGetAnimatingThenable>;
-                /**
-                  * Initializes the navigator.
-                  * @param {any} navigationParameter? A parameter needed
-                  * to perform the specified type of navigation.
-                  * @param {plat.navigation.IBaseNavigationOptions} options? The options
-                  * needed on load for the inherited form of navigation.
-                  */
-                protected _load(navigationParameter?: any, options?: navigation.IBaseNavigationOptions): void;
-            }
-            /**
-              * Describes an object that acts as a base for all controls that can interchangeably
-              * swap out IBaseViewControls.
-              */
-            interface IBaseport extends ITemplateControl {
-                /**
-                  * The navigator used for navigating between IBaseViewControls.
-                  */
-                navigator: navigation.IBaseNavigator;
-                /**
-                  * Grabs the root of this control's manager
-                  * tree, clears it, and initializes the
-                  * creation of a new one by kicking off a
-                  * navigate.
-                  * @param {plat.ui.controls.IBaseportNavigateToOptions} ev The navigation options.
-                  */
-                navigateTo(ev: IBaseportNavigateToOptions): void;
-                /**
-                  * Manages the navigatingFrom lifecycle event for
-                  * IBaseViewControls.
-                  * @param {plat.ui.IBaseViewControl} fromControl The IBaseViewControl
-                  * being navigated away from.
-                  * when the current view is done animating away.
-                  */
-                navigateFrom(fromControl: IBaseViewControl): animations.IAnimationThenable<animations.IGetAnimatingThenable>;
-                /**
-                  * Implements the functionality for when the hard backbutton is pressed on a device.
-                  */
-                backButtonPressed(): void;
-            }
-            /**
-              * Navigation options for a Baseport and all
-              * controls that inherit from Baseport.
-              */
-            interface IBaseportNavigateToOptions {
-                /**
-                  * Either an IBaseViewControls or an injector for an
-                  * IBaseViewControls to be used.
-                  */
-                target: any;
-                /**
-                  * The navigation parameter.
-                  */
-                parameter: any;
-                /**
-                  * The options used for navigation.
-                  */
-                options: navigation.IBaseNavigationOptions;
-                /**
-                  * The type of IBaseViewControls to navigate to.
-                  */
-                type: string;
-            }
-            /**
-              * A TemplateControl that can interchangeably swap out
-              * IViewControls.
-              */
-            class Viewport extends Baseport {
-                /**
-                  * Contains all the bottom-level viewports.
-                  */
-                private static __endViewports;
-                /**
-                  * Adds a viewport to the end viewports array if necessary. Keeps track of all viewports so that
-                  * the end viewports array only contains the bottom-level viewports.
-                  */
-                private static __addViewport(viewport);
-                /**
-                  * Reference to the IEventManagerStatic injectable.
-                  */
-                $EventManagerStatic: events.IEventManagerStatic;
-                /**
-                  * The evaluated plat-options object.
-                  */
-                options: observable.IObservableProperty<IViewportOptions>;
-                /**
-                  * A type of navigator that uses either the ViewControl's
-                  * Constructors or their registered names for navigation
-                  * from one to another.
-                  */
-                navigator: navigation.INavigatorInstance;
-                controls: IViewControl[];
-                /**
-                  * Propagates an event up from the bottom of the view-tree, allowing the backbutton
-                  * event to be handled by any view control. If no view control handles the event, the
-                  * default functionality is to call navigator.goBack().
-                  */
-                backButtonPressed(): void;
-                /**
-                  * Checks for a default view, finds the ViewControl's injector,
-                  * and initializes the loading of the view.
-                  */
-                protected _load(): void;
-            }
-            /**
-              * The available options for a Viewport.
-              */
-            interface IViewportOptions {
-                /**
-                  * The registered name of the default
-                  * IViewControl to initially navigate to.
-                  */
-                defaultView: string;
-                /**
-                  * Whether or not this viewport is a main viewport. Main viewports handle
-                  * backbutton events.
-                  */
-                main?: string;
-            }
-            class Viewport2 extends TemplateControl implements routing.ISupportRouteNavigation {
-                $RouterStatic: typeof routing.Router;
-                $Promise: async.IPromise;
-                $Injector: typeof dependency.Injector;
-                $ElementManagerFactory: processing.IElementManagerFactory;
-                $Document: Document;
-                /**
-                  * Reference to an injectable that caches IElementManagers.
-                  */
-                $ManagerCache: storage.ICache<processing.IElementManager>;
-                /**
-                  * Reference to the IAnimator injectable.
-                  */
-                $Animator: animations.IAnimator;
+                protected $Animator: animations.IAnimator;
                 /**
                   * A promise used for disposing the end state of the previous animation prior to starting a new one.
                   */
                 protected _animationPromise: animations.IAnimationThenable<animations.IGetAnimatingThenable>;
                 router: routing.Router;
                 parentRouter: routing.Router;
-                controls: IViewControl[];
-                nextInjector: dependency.IInjector<IViewControl>;
-                nextView: IViewControl;
+                controls: ViewControl[];
+                nextInjector: dependency.IInjector<ViewControl>;
+                nextView: ViewControl;
                 initialize(): void;
                 setTemplate(): void;
-                canNavigateTo(result: routing.IRouteResult, query?: Object): async.IThenable<boolean>;
+                canNavigateTo(routeInfo: routing.IRouteInfo): async.IThenable<boolean>;
                 canNavigateFrom(): async.IThenable<boolean>;
-                navigateTo(result: routing.IRouteResult): async.IThenable<void>;
+                navigateTo(routeInfo: routing.IRouteInfo): async.IThenable<void>;
                 navigateFrom(): async.IThenable<void>;
                 dispose(): void;
-                protected _createNodeMap(injector: dependency.IInjector<IViewControl>): processing.INodeMap;
-                protected _getParentViewport(): Viewport2;
-            }
-            /**
-              * A TemplateControl that can interchangeably swap out
-              * IWebViewControls based on their defined routes.
-              */
-            class Routeport extends Baseport {
-                /**
-                  * The evaluated plat-options object.
-                  */
-                options: observable.IObservableProperty<IRouteportOptions>;
-                /**
-                  * A type of navigator that uses the registered routes
-                  * for IWebViewControls to navigate to and from one another.
-                  */
-                navigator: navigation.IRoutingNavigator;
-                /**
-                  * Looks for a default route and initializes the loading
-                  * of the view.
-                  */
-                protected _load(): void;
-            }
-            /**
-              * The available options for a Routeport.
-              */
-            interface IRouteportOptions {
-                /**
-                  * The registered route of the default
-                  * IWebViewControl to initially navigate to.
-                  */
-                defaultRoute: string;
+                protected _createNodeMap(injector: dependency.IInjector<ViewControl>): processing.INodeMap;
+                protected _getParentViewport(): Viewport;
             }
             /**
               * A TemplateControl for easily reusing a
@@ -12324,8 +11487,8 @@ declare module plat {
             initialize(parent?: Router): void;
             addChild(child: Router): Router;
             removeChild(child: Router): void;
-            registerViewport(viewport: ISupportRouteNavigation): async.IThenable<void>;
-            unregisterViewport(viewport: ISupportRouteNavigation): void;
+            register(port: ISupportRouteNavigation): async.IThenable<void>;
+            unregister(port: ISupportRouteNavigation): void;
             configure(routes: IRouteMapping): async.IThenable<void>;
             configure(routes: IRouteMapping[]): async.IThenable<void>;
             param(handler: (value: any, parameters: any, query: any) => any, view: string, parameter: string): Router;
@@ -12333,20 +11496,20 @@ declare module plat {
             queryParam(handler: (value: any, query: any) => any, view: string, parameter: string): Router;
             queryParam(handler: (value: any, query: any) => any, view: new (...args: any[]) => any, parameter: string): Router;
             protected _addHandler(handler: (value: string, values: any, query?: any) => any, view: any, parameter: string, handlers: IObject<IRouteHandlers>): Router;
-            navigate(url: string, query?: Object, force?: boolean): async.IThenable<void>;
+            navigate(url: string, query?: IObject<any>, force?: boolean): async.IThenable<void>;
             forceNavigate(): any;
-            generate(name: string, parameters?: IObject<any>): string;
-            navigateChildren(result: IRouteResult, query?: Object): any;
-            getChildRoute(result: IRouteResult): string;
-            performNavigation(result: IRouteResult, query?: Object): async.IThenable<any>;
+            generate(name: string, parameters?: IObject<any>, query?: IObject<string>): string;
+            navigateChildren(info: IRouteInfo): any;
+            getChildRoute(info: IRouteInfo): string;
+            performNavigation(info: IRouteInfo): async.IThenable<any>;
             performNavigateFrom(): async.IThenable<void>;
-            canNavigate(result: IRouteResult, query?: Object): async.IThenable<boolean>;
+            canNavigate(info: IRouteInfo): async.IThenable<boolean>;
             executeAllHandlers(view: string, parameters: any, query?: any): async.IThenable<void>;
             executeHandlers(allHandlers: IRouteHandlers, obj: any, query?: any): async.IThenable<{}[][]>;
             canNavigateFrom(): async.IThenable<boolean>;
-            canNavigateTo(result: IRouteResult, query?: Object): async.IThenable<boolean>;
+            canNavigateTo(info: IRouteInfo): async.IThenable<boolean>;
             reduce(values: boolean[]): boolean;
-            getQueryString(query: {}): string;
+            getQueryString(query: IObject<string>): string;
         }
         function IRouter(): Router;
         function IRouterStatic(): typeof Router;
@@ -12358,590 +11521,15 @@ declare module plat {
         }
         interface IRouteInfo extends IDelegateInfo {
             delegate: IRouteMapping;
-            query?: Object;
+            query?: IObject<any>;
         }
         interface IRouteHandlers extends IObject<Array<(value: string, values: any, query?: any) => any>> {
         }
         interface ISupportRouteNavigation {
             canNavigateFrom(): async.IThenable<boolean>;
-            canNavigateTo(result: IRouteResult, query?: Object): async.IThenable<boolean>;
+            canNavigateTo(routeInfo: IRouteInfo): async.IThenable<boolean>;
             navigateFrom(): async.IThenable<any>;
-            navigateTo(result: IRouteResult, query?: Object): async.IThenable<any>;
-        }
-    }
-    /**
-      * Holds classes and interfaces related to navigation in platypus.
-      */
-    module navigation {
-        /**
-          * A class that defines the base navigation properties and methods.
-          */
-        class BaseNavigator implements IBaseNavigator {
-            /**
-              * Reference to the IEventManagerStatic injectable.
-              */
-            $EventManagerStatic: events.IEventManagerStatic;
-            /**
-              * Reference to the INavigationEventStatic injectable.
-              */
-            $NavigationEventStatic: events.INavigationEventStatic;
-            /**
-              * Reference to the IBaseViewControlFactory injectable.
-              */
-            $BaseViewControlFactory: ui.IBaseViewControlFactory;
-            /**
-              * Reference to the IContextManagerStatic injectable.
-              */
-            $ContextManagerStatic: observable.IContextManagerStatic;
-            /**
-              * A unique ID used to identify this navigator.
-              */
-            uid: string;
-            /**
-              * Set to true during "navigate" (i.e. while navigation is in progress), set to false during
-              * "navigated" (i.e. after a navigation has successfully occurred).
-              */
-            navigating: boolean;
-            /**
-              * The constructor for a BaseNavigator.
-              * Defines a unique id and subscribes to the "goBack" event.
-              */
-            constructor();
-            /**
-              * Registers an {plat.ui.controls.IBaseport|IBaseport} with this navigator. The IBaseport will call this method and pass
-              * itself in so the navigator can store it and use it to facilitate navigation. Every navigator must implement this method
-              * in order to store the baseport.
-              * @param {plat.ui.controls.IBaseport} baseport The {plat.ui.controls.IBaseport|IBaseport}
-              * associated with this IBaseNavigator.
-              */
-            registerPort(baseport: ui.controls.IBaseport): void;
-            /**
-              * Allows an IBaseViewControl to navigate to another
-              * IBaseViewControl. Also allows for
-              * navigation parameters to be sent to the new IBaseViewControl.
-              * @param {any} navigationParameter? An optional navigation parameter to send to the next
-              * IBaseViewControl.
-              * @param {plat.navigation.IBaseNavigationOptions} options? Optional
-              * IBaseNavigationOptions used for navigation.
-              */
-            navigate(navigationParameter?: any, options?: IBaseNavigationOptions): void;
-            /**
-              * Called by the {plat.ui.controls.IBaseport|IBaseport} to make the
-              * IBaseNavigator aware of a successful
-              * navigation. The IBaseNavigator will
-              * in-turn send the app.navigated event.
-              * @param {plat.ui.IBaseViewControl} control The IBaseViewControl
-              * to which the navigation occurred.
-              * @param {any} parameter The navigation parameter sent to the control.
-              * @param {plat.navigation.IBaseNavigationOptions} options The
-              * IBaseNavigationOptions used during navigation.
-              */
-            navigated(control: ui.IBaseViewControl, parameter: any, options: IBaseNavigationOptions): void;
-            /**
-              * Every navigator must implement this method, defining what happens when an
-              * IBaseViewControl wants to go back.
-              * @param {plat.navigation.IBaseBackNavigationOptions} options? Optional backwards navigation options of type
-              * IBaseBackNavigationOptions.
-              */
-            goBack(options?: IBaseBackNavigationOptions): void;
-            /**
-              * Every navigator can implement this method, defining what happens when the hard back button has been pressed
-              * on a device. By default this method will call the goBack method.
-              */
-            backButtonPressed(): void;
-            /**
-              * Cleans up memory.
-              */
-            dispose(): void;
-            /**
-              * Sends an INavigationEvent with the given parameters.
-              * The 'sender' property of the event will be this navigator.
-              * @param {string} name The name of the event to send.
-              * @param {any} target The target of the event, could be an IBaseViewControl
-              * or a route depending upon this navigator and event name.
-              * @param {plat.navigation.IBaseNavigationOptions} options The
-              * IBaseNavigationOptions used during navigation
-              * dispatch.
-              */
-            protected _sendEvent(name: string, target: any, type: string, parameter: any, options: IBaseNavigationOptions): events.INavigationEvent<any>;
-        }
-        /**
-          * Defines the methods that a type of navigator must implement.
-          */
-        interface IBaseNavigator {
-            /**
-              * A unique ID used to identify this navigator.
-              */
-            uid: string;
-            /**
-              * Set to true during "navigate" (i.e. while navigation is in progress), set to false during
-              * "navigated" (i.e. after a navigation has successfully occurred).
-              */
-            navigating: boolean;
-            /**
-              * Registers an {plat.ui.controls.IBaseport|IBaseport} with this navigator. The IBaseport will call this method and pass
-              * itself in so the navigator can store it and use it to facilitate navigation.
-              * @param {plat.ui.controls.IBaseport} baseport The {plat.ui.controls.IBaseport|IBaseport}
-              * associated with this IBaseNavigator.
-              */
-            registerPort(baseport: ui.controls.IBaseport): void;
-            /**
-              * Allows an IBaseViewControl to navigate to another
-              * IBaseViewControl. Also allows for
-              * navigation parameters to be sent to the new IBaseViewControl.
-              * @param {any} navigationParameter? An optional navigation parameter to send to the next
-              * IBaseViewControl.
-              * @param {plat.navigation.IBaseNavigationOptions} options? Optional
-              * IBaseNavigationOptions used for navigation.
-              */
-            navigate(navigationParameter?: any, options?: IBaseNavigationOptions): void;
-            /**
-              * Called by the {plat.ui.controls.IBaseport|IBaseport} to make the
-              * IBaseNavigator aware of a successful
-              * navigation. The IBaseNavigator will
-              * in-turn send the app.navigated event.
-              * @param {plat.ui.IBaseViewControl} control The IBaseViewControl
-              * to which the navigation occurred.
-              * @param {any} parameter The navigation parameter sent to the control.
-              * @param {plat.navigation.IBaseNavigationOptions} options The
-              * IBaseNavigationOptions used during navigation.
-              */
-            navigated(control: ui.IBaseViewControl, parameter: any, options: IBaseNavigationOptions): void;
-            /**
-              * Every navigator must implement this method, defining what happens when an
-              * IBaseViewControl wants to go back.
-              * @param {plat.navigation.IBaseBackNavigationOptions} options? Optional backwards navigation options of type
-              * IBaseBackNavigationOptions.
-              */
-            goBack(options?: IBaseBackNavigationOptions): void;
-            /**
-              * Every navigator can implement this method, defining what happens when the hard back button has been pressed
-              * on a device. By default this method will call the goBack method.
-              */
-            backButtonPressed(): void;
-            /**
-              * Cleans up memory.
-              */
-            dispose(): void;
-        }
-        /**
-          * Options that you can submit to an IBaseNavigator in order
-          * to customize navigation.
-          */
-        interface IBaseNavigationOptions {
-            /**
-              * Allows an IBaseViewControl to leave itself out of the
-              * navigation history.
-              */
-            replace?: boolean;
-        }
-        /**
-          * Options that you can submit to an IBaseNavigator during a backward
-          * navigation in order to customize the navigation.
-          */
-        interface IBaseBackNavigationOptions {
-            /**
-              * Lets the IBaseNavigator know to navigate back a specific length
-              * in history.
-              */
-            length?: number;
-        }
-        /**
-          * Allows IBaseViewControl to navigate within a
-          * Viewport. Every Viewport
-          * has its own Navigator instance, allowing multiple navigators to
-          * coexist in one app.
-          */
-        class Navigator extends BaseNavigator implements INavigatorInstance {
-            /**
-              * Stores the instance of the main navigator. Unless otherwise specified, the main
-              * navigator is the first instantiated navigator.
-              */
-            private static __mainNavigator;
-            /**
-              * Indicates whether or not a main navigator has been found. Main navigators respond to backbutton
-              * events.
-              */
-            private static __mainNavigatorFound;
-            /**
-              * Contains the navigation history stack for the associated Viewport.
-              */
-            history: INavigationState[];
-            /**
-              * Specifies the current state of navigation. This state should contain
-              * enough information for it to be pushed onto the history stack when
-              * necessary.
-              */
-            currentState: INavigationState;
-            /**
-              * Every navigator will have an IBaseport with which to communicate and
-              * facilitate navigation.
-              */
-            viewport: ui.controls.IBaseport;
-            /**
-              * Registers an Viewport with this navigator.
-              * The Viewport will call this method and pass
-              * itself in so the navigator can store it and use it to facilitate navigation.
-              * @param Viewport viewport The Viewport
-              * associated with this INavigatorInstance.
-              * @param {boolean} main? Whether or not this
-              */
-            registerPort(viewport: ui.controls.IBaseport, main?: boolean): void;
-            /**
-              * Allows an IBaseViewControl to navigate to another
-              * IBaseViewControl. Also allows for
-              * navigation parameters to be sent along with the navigation.
-              * @param {new (...args: any[]) => ui.IBaseViewControl} Constructor The Constructor for the new
-              * IBaseViewControl. This navigator will find the injector for
-              * the Constructor and create a new instance of the control.
-              * @param {plat.navigation.INavigationOptions} options? Optional
-              * INavigationOptions used for navigation.
-              */
-            navigate(Constructor: new (...args: any[]) => ui.IBaseViewControl, options?: INavigationOptions): void;
-            /**
-              * Allows an IBaseViewControl to navigate to another
-              * IBaseViewControl. Also allows for
-              * navigation parameters to be sent along with the navigation.
-              * @param {string} name The name for the new IBaseViewControl.
-              * The name is associated to the value used when the view control was registered.
-              * @param {plat.navigation.INavigationOptions} options? Optional
-              * INavigationOptions used for navigation.
-              */
-            navigate(name: string, options?: INavigationOptions): void;
-            /**
-              * Allows an IBaseViewControl to navigate to another
-              * IBaseViewControl. Also allows for
-              * navigation parameters to be sent along with the navigation.
-              * @param {new (...args: any[]) => plat.ui.IBaseViewControl} injector The IInjector
-              * for the new IBaseViewControl. This navigator will create a new instance of the control.
-              * @param {plat.navigation.INavigationOptions} options? Optional
-              * INavigationOptions used for navigation.
-              */
-            navigate(injector: dependency.IInjector<ui.IBaseViewControl>, options?: INavigationOptions): void;
-            /**
-              * Returns whether or not the current state matches the input Constructor.
-              * @param {new (...args: any[]) => plat.ui.IBaseViewControl} Constructor The
-              * IBaseViewControl constructor to match in the current state.
-              */
-            isCurrentState(Constructor: new (...args: any[]) => ui.IBaseViewControl): boolean;
-            /**
-              * Returns whether or not the current state matches the input type.
-              * @param {string} type The
-              * IBaseViewControl type to match in the current state.
-              */
-            isCurrentState(type: string): boolean;
-            /**
-              * Returns to the last visited IBaseViewControl.
-              * @param {plat.navigation.IBackNavigationOptions} options? Optional
-              * IBackNavigationOptions allowing the
-              * IBaseViewControl to customize navigation. Enables
-              * navigating back to a specified point in history as well as specifying a new templateUrl
-              * to use at the next IBaseViewControl.
-              */
-            goBack(options?: IBackNavigationOptions): void;
-            /**
-              * Looks for a backButtonPressed event on the current view control and uses it if it exists. Otherwise calls goBack if
-              * this navigator is the main navigator.
-              */
-            backButtonPressed(): void;
-            /**
-              * Lets the caller know if there are IBaseViewControl in the history,
-              * meaning the caller is safe to perform a backward navigation.
-              */
-            canGoBack(): boolean;
-            /**
-              * Clears the navigation history, disposing all the controls.
-              */
-            clearHistory(): void;
-            navigated(control: ui.IViewControl, parameter: any, options: IBaseNavigationOptions): void;
-            /**
-              * Finds the given constructor in the history stack. Returns the index in the history where
-              * the constructor is found, or -1 if no constructor is found.
-              * @param {new (...args: any[]) => plat.ui.IBaseViewControl} Constructor The
-              * IBaseViewControl constructor to search for in the history stack.
-              */
-            protected _findInHistory(Constructor: new (...args: any[]) => ui.IBaseViewControl): number;
-            /**
-              * Finds the given constructor in the history stack. Returns the index in the history where
-              * the constructor is found, or -1 if no constructor is found.
-              * @param {new (...args: any[]) => plat.ui.IBaseViewControl} Constructor The
-              * IBaseViewControl constructor to search for in the history stack.
-              */
-            protected _findInHistory(Constructor: string): number;
-            /**
-              * This method takes in a length and navigates back in the history, returning the
-              * IBaseViewControl associated with length + 1 entries
-              * back in the history.  It disposes all the IBaseViewControls
-              * encapsulated in the length, but does not dispose the current IBaseViewControls.
-              * @param {number} length The number of entries to go back in the history stack.
-              * INavigationState.
-              */
-            protected _goBackLength(length?: number): INavigationState;
-        }
-        /**
-          * The Type for referencing the '$Navigator' injectable as a dependency.
-          */
-        function INavigatorInstance(): INavigatorInstance;
-        /**
-          * An object that allows IBaseViewControl to implement methods
-          * used to navigate within a Viewport.
-          */
-        interface INavigatorInstance extends IBaseNavigator {
-            /**
-              * Contains the navigation history stack for the associated Viewport.
-              */
-            history: INavigationState[];
-            /**
-              * Specifies the current state of navigation. This state should contain
-              * enough information for it to be pushed onto the history stack when
-              * necessary.
-              */
-            currentState: INavigationState;
-            /**
-              * Every navigator will have an IBaseport with which to communicate and
-              * facilitate navigation.
-              */
-            viewport: ui.controls.IBaseport;
-            /**
-              * Allows an IBaseViewControl to navigate to another
-              * IBaseViewControl. Also allows for
-              * navigation parameters to be sent along with the navigation.
-              * @param {new (...args: any[]) => ui.IBaseViewControl} Constructor The Constructor for the new
-              * IBaseViewControl. This navigator will find the injector for
-              * the Constructor and create a new instance of the control.
-              * @param {plat.navigation.INavigationOptions} options? Optional
-              * INavigationOptions used for navigation.
-              */
-            navigate(Constructor: new (...args: any[]) => ui.IBaseViewControl, options?: INavigationOptions): void;
-            /**
-              * Allows an IBaseViewControl to navigate to another
-              * IBaseViewControl. Also allows for
-              * navigation parameters to be sent along with the navigation.
-              * @param {string} name The name for the new IBaseViewControl.
-              * The name is associated to the value used when the view control was registered.
-              * @param {plat.navigation.INavigationOptions} options? Optional
-              * INavigationOptions used for navigation.
-              */
-            navigate(name: string, options?: INavigationOptions): void;
-            /**
-              * Allows an IBaseViewControl to navigate to another
-              * IBaseViewControl. Also allows for
-              * navigation parameters to be sent along with the navigation.
-              * @param {new (...args: any[]) => plat.ui.IBaseViewControl} injector The IInjector
-              * for the new IBaseViewControl. This navigator will create a new instance of the control.
-              * @param {plat.navigation.INavigationOptions} options? Optional
-              * INavigationOptions used for navigation.
-              */
-            navigate(injector: dependency.IInjector<ui.IBaseViewControl>, options?: INavigationOptions): void;
-            /**
-              * Returns to the last visited IBaseViewControl.
-              * @param {plat.navigation.IBackNavigationOptions} options? Optional
-              * IBackNavigationOptions allowing the
-              * IBaseViewControl to customize navigation. Enables
-              * navigating back to a specified point in history as well as specifying a new templateUrl
-              * to use at the next IBaseViewControl.
-              */
-            goBack(options?: IBackNavigationOptions): void;
-            /**
-              * Lets the caller know if there are IBaseViewControl in the history,
-              * meaning the caller is safe to perform a backward navigation.
-              */
-            canGoBack(): boolean;
-            /**
-              * Clears the navigation history, disposing all the controls.
-              */
-            clearHistory(): void;
-        }
-        /**
-          * Options that you can submit to an INavigatorInstance in order
-          * to customize navigation.
-          */
-        interface INavigationOptions extends IBaseNavigationOptions {
-            /**
-              * An optional parameter to send to the next IBaseViewControl.
-              */
-            parameter?: any;
-            /**
-              * If true it will not attempt to find the next view in the history, it will instantiate a new view.
-              */
-            initialize?: boolean;
-        }
-        /**
-          * Options that you can submit to an INavigatorInstance during a backward
-          * navigation in order to customize the navigation.
-          */
-        interface IBackNavigationOptions extends IBaseBackNavigationOptions {
-            /**
-              * An optional parameter to send to the next IBaseViewControl.
-              */
-            parameter?: any;
-            /**
-              * An IBaseViewControl Constructor that the
-              * INavigatorInstance will use to navigate.
-              * The INavigatorInstance will search for an instance
-              * of the IBaseViewControl in its history and navigate to it.
-              */
-            ViewControl?: new (...args: any[]) => ui.IBaseViewControl;
-        }
-        /**
-          * Defines the base interface that needs to be implemented in the navigation history.
-          */
-        interface INavigationState {
-            /**
-              * The IViewControl associated with a history entry.
-              */
-            control: ui.IViewControl;
-        }
-        /**
-          * A type of navigator class that utilizes routing capabilities. It is directly associated with a
-          * Routeport, thus only allowing one
-          * RoutingNavigator per app.
-          */
-        class RoutingNavigator extends BaseNavigator implements IRoutingNavigator {
-            /**
-              * Reference to the IRouter injectable.
-              */
-            $Router: web.IRouter;
-            /**
-              * Reference to the Window injectable.
-              */
-            $Window: Window;
-            /**
-              * The routing information for the Routeport's current state.
-              */
-            currentState: IRouteNavigationState;
-            /**
-              * Every navigator will have an IBaseport with which to communicate and
-              * facilitate navigation.
-              */
-            routeport: ui.controls.IBaseport;
-            /**
-              * A collection of listeners for removing event based listeners.
-              */
-            private __removeListeners;
-            /**
-              * The history length. Used to keep track of potential app shutdown.
-              */
-            private __historyLength;
-            /**
-              * Initializes this navigator. The {plat.ui.controls.Routeport|Routeport} will call this method and pass
-              * itself in so the navigator can store it and use it to facilitate navigation. Also subscribes to
-              * 'routeChanged' and 'beforeRouteChange' events.
-              * @param {plat.ui.controls.IBaseport} routeport The {plat.ui.controls.Routeport|Routeport}
-              * associated with this IRoutingNavigator.
-              */
-            registerPort(routeport: ui.controls.IBaseport): void;
-            /**
-              * Allows a IBaseViewControl to navigate to another
-              * IBaseViewControl. Also allows for
-              * navigation parameters to be sent to the new IBaseViewControl.
-              * @param {string} path The URL path to navigate to.
-              * @param {plat.web.IRouteNavigationOptions} options? Optional IRouteNavigationOptions
-              * for ignoring the current ui.IBaseViewControl in the history as well as specifying a new templateUrl
-              * for the next IBaseViewControl to use.
-              */
-            navigate(path: string, options?: web.IRouteNavigationOptions): void;
-            /**
-              * Called by the Routeport to make the Navigator aware of a successful navigation.
-              * @param {plat.ui.IWebViewControl} control The IWebViewControl to which the
-              * navigation occurred.
-              * @param {plat.web.IRoute<any>} parameter The navigation parameter sent to the control.
-              * @param {plat.web.IRouteNavigationOptions} options The options used during navigation.
-              */
-            navigated(control: ui.IWebViewControl, parameter: web.IRoute<any>, options: web.IRouteNavigationOptions): void;
-            /**
-              * Returns to the last visited IBaseViewControl.
-              * @param {plat.navigation.IBaseBackNavigationOptions} options? Optional
-              * IBaseBackNavigationOptions allowing the
-              * IBaseViewControl to customize navigation. Enables navigating
-              * back to a specified point in history as well as specifying a new templateUrl to use at the
-              * next IBaseViewControl.
-              */
-            goBack(options?: IBaseBackNavigationOptions): void;
-            /**
-              * Cleans up memory.
-              */
-            dispose(): void;
-            /**
-              * The method called prior to a route change event.
-              * @param {plat.events.INavigationEvent<plat.web.IRoute<any>>} ev The
-              * INavigationEvent containing information regarding
-              * the IBaseViewControl, the routing information,
-              * and the Router.
-              */
-            protected _beforeRouteChange(ev: events.INavigationEvent<web.IRoute<any>>): void;
-            /**
-              * The method called when a route change is successfully performed and
-              * IBaseViewControl navigation can occur.
-              * @param {plat.events.INavigationEvent<plat.web.IRoute<any>>} ev The
-              * INavigationEvent containing information regarding
-              * the IBaseViewControl, the routing information,
-              * and the Router.
-              */
-            protected _onRouteChanged(ev: events.INavigationEvent<web.IRoute<any>>): void;
-        }
-        /**
-          * The Type for referencing the '$RoutingNavigator' injectable as a dependency.
-          */
-        function IRoutingNavigator(): IRoutingNavigator;
-        /**
-          * Defines the methods that a navigator must implement if it chooses to utilize
-          * routing capabilities.
-          */
-        interface IRoutingNavigator extends IBaseNavigator {
-            /**
-              * The routing information for the Routeport's current state.
-              */
-            currentState: IRouteNavigationState;
-            /**
-              * Initializes this navigator. The {plat.ui.controls.Routeport|Routeport} will call this method and pass
-              * itself in so the navigator can store it and use it to facilitate navigation. Also subscribes to
-              * 'routeChanged' and 'beforeRouteChange' events.
-              * @param {plat.ui.controls.IBaseport} routeport The {plat.ui.controls.Routeport|Routeport}
-              * associated with this IRoutingNavigator.
-              */
-            registerPort(routeport: ui.controls.IBaseport): void;
-            /**
-              * Allows a IBaseViewControl to navigate to another
-              * IBaseViewControl. Also allows for
-              * navigation parameters to be sent to the new IBaseViewControl.
-              * @param {string} path The URL path to navigate to.
-              * @param {plat.web.IRouteNavigationOptions} options? Optional IRouteNavigationOptions
-              * for ignoring the current ui.IBaseViewControl in the history as well as specifying a new templateUrl
-              * for the next IBaseViewControl to use.
-              */
-            navigate(path: string, options?: web.IRouteNavigationOptions): void;
-            /**
-              * Called by the Routeport to make the Navigator aware of a successful navigation.
-              * @param {plat.ui.IWebViewControl} control The IWebViewControl to which the
-              * navigation occurred.
-              * @param {plat.web.IRoute<any>} parameter The navigation parameter sent to the control.
-              * @param {plat.web.IRouteNavigationOptions} options The options used during navigation.
-              */
-            navigated(control: ui.IWebViewControl, parameter: web.IRoute<any>, options: web.IRouteNavigationOptions): void;
-            /**
-              * Returns to the last visited IBaseViewControl.
-              * @param {plat.navigation.IBaseBackNavigationOptions} options? Optional
-              * IBaseBackNavigationOptions allowing the
-              * IBaseViewControl to customize navigation. Enables navigating
-              * back to a specified point in history as well as specifying a new templateUrl to use at the
-              * next IBaseViewControl.
-              */
-            goBack(options?: IBaseBackNavigationOptions): void;
-        }
-        /**
-          * Defines the route type interface implemented for current state and last state.
-          */
-        interface IRouteNavigationState {
-            /**
-              * The IWebViewControl associated with a history entry.
-              */
-            control: ui.IWebViewControl;
-            /**
-              * The associated route information in the form of an
-              * IRoute.
-              */
-            route: web.IRoute<any>;
+            navigateTo(routeInfo: IRouteInfo): async.IThenable<any>;
         }
     }
     /**
@@ -14263,49 +12851,13 @@ declare module plat {
           */
         dispatchEvent(name: string, ...args: any[]): void;
         /**
-          * Registers a listener for a beforeNavigate event. The listener will be called when a beforeNavigate
-          * event is propagating over the app. Any number of listeners can exist for a single event name.
-          * This event is cancelable using the ev.preventDefault() method,
-          * and thereby preventing the navigation.
-          * @param {string} name='beforeNavigate' The name of the event, cooinciding with the beforeNavigate event.
-          * @param {(ev: plat.events.INavigationEvent<any>) => void} listener The method called when the beforeNavigate event is fired.
+          * Registers a listener for a DispatchEvent. The listener will be called when
+          * a DispatchEvent is propagating over the app. Any number of listeners can exist for a single event name.
+          * @param {string} name The name of the event, cooinciding with the DispatchEvent name.
+          * @param {(ev: plat.events.IDispatchEventInstance, ...args: Array<any>) => void} listener The method called when
+          * the DispatchEvent is fired.
           */
-        on(name: 'beforeNavigate', listener: (ev: events.INavigationEvent<any>) => void): IRemoveListener;
-        /**
-          * Registers a listener for a navigating event. The listener will be called when a navigating
-          * event is propagating over the app. Any number of listeners can exist for a single event name.
-          * This event is cancelable using the ev.preventDefault() method,
-          * and thereby preventing the navigation.
-          * @param {string} name='navigating' The name of the event, cooinciding with the navigating event.
-          * @param {(ev: plat.events.INavigationEvent<any>) => void} listener The method called when the navigating
-          * event is fired.
-          */
-        on(name: 'navigating', listener: (ev: events.INavigationEvent<any>) => void): IRemoveListener;
-        /**
-          * Registers a listener for a navigated event. The listener will be called when a navigated
-          * event is propagating over the app. Any number of listeners can exist for a single event name.
-          * This event is not cancelable.
-          * @param {string} name='navigated' The name of the event, cooinciding with the navigated event.
-          * @param {(ev: plat.events.INavigationEvent<any>) => void} listener The method called when the navigated
-          * event is fired.
-          */
-        on(name: 'navigated', listener: (ev: events.INavigationEvent<any>) => void): IRemoveListener;
-        /**
-          * Registers a listener for a routeChanged event. The listener will be called when a routeChange event
-          * is propagating over the app. Any number of listeners can exist for a single event name.
-          * @param {string} eventName='routeChange' This specifies that the listener is for a routeChange event.
-          * @param {(ev: plat.events.INavigationEvent<plat.web.IRoute<any>>) => void} listener The method called
-          * when the routeChange is fired. The route argument will contain a parsed route.
-          */
-        on(name: 'routeChanged', listener: (ev: events.INavigationEvent<web.IRoute<any>>) => void): IRemoveListener;
-        /**
-          * Registers a listener for a NavigationEvent. The listener will be called
-          * when a NavigationEvent is propagating over the app. Any number of listeners can exist for a single event name.
-          * @param {string} name The name of the event, cooinciding with the NavigationEvent name.
-          * @param {(ev: plat.events.INavigationEvent<any>) => void} listener The method called when the
-          * NavigationEvent is fired.
-          */
-        on(name: string, listener: (ev: events.INavigationEvent<any>) => void): IRemoveListener;
+        on(name: string, listener: (ev: events.IDispatchEventInstance, ...args: any[]) => void): IRemoveListener;
         /**
           * Kicks off compilation of the DOM from the specified node. If no node is specified,
           * the default start node is document.body. This method should be called from the app when
@@ -14397,50 +12949,6 @@ declare module plat {
           * @param {Array<any>} ...args Any number of arguments to send to all the listeners.
           */
         dispatchEvent(name: string, ...args: any[]): void;
-        /**
-          * Registers a listener for a beforeNavigate event. The listener will be called when a beforeNavigate
-          * event is propagating over the app. Any number of listeners can exist for a single event name.
-          * This event is cancelable using the ev.preventDefault() method,
-          * and thereby preventing the navigation.
-          * @param {string} name='beforeNavigate' The name of the event, cooinciding with the beforeNavigate event.
-          * @param {(ev: plat.events.INavigationEvent<any>) => void} listener The method called when the beforeNavigate event is fired.
-          */
-        on(name: 'beforeNavigate', listener: (ev: events.INavigationEvent<any>) => void): IRemoveListener;
-        /**
-          * Registers a listener for a navigating event. The listener will be called when a navigating
-          * event is propagating over the app. Any number of listeners can exist for a single event name.
-          * This event is cancelable using the ev.preventDefault() method,
-          * and thereby preventing the navigation.
-          * @param {string} name='navigating' The name of the event, cooinciding with the navigating event.
-          * @param {(ev: plat.events.INavigationEvent<any>) => void} listener The method called when the navigating
-          * event is fired.
-          */
-        on(name: 'navigating', listener: (ev: events.INavigationEvent<any>) => void): IRemoveListener;
-        /**
-          * Registers a listener for a navigated event. The listener will be called when a navigated
-          * event is propagating over the app. Any number of listeners can exist for a single event name.
-          * This event is not cancelable.
-          * @param {string} name='navigated' The name of the event, cooinciding with the navigated event.
-          * @param {(ev: plat.events.INavigationEvent<any>) => void} listener The method called when the navigated
-          * event is fired.
-          */
-        on(name: 'navigated', listener: (ev: events.INavigationEvent<any>) => void): IRemoveListener;
-        /**
-          * Registers a listener for a routeChanged event. The listener will be called when a routeChange event
-          * is propagating over the app. Any number of listeners can exist for a single event name.
-          * @param {string} eventName='routeChange' This specifies that the listener is for a routeChange event.
-          * @param {(ev: plat.events.INavigationEvent<plat.web.IRoute<any>>) => void} listener The method called
-          * when the routeChange is fired. The route argument will contain a parsed route.
-          */
-        on(name: 'routeChanged', listener: (ev: events.INavigationEvent<web.IRoute<any>>) => void): IRemoveListener;
-        /**
-          * Registers a listener for a NavigationEvent. The listener will be called
-          * when a NavigationEvent is propagating over the app. Any number of listeners can exist for a single event name.
-          * @param {string} name The name of the event, cooinciding with the NavigationEvent name.
-          * @param {(ev: plat.events.INavigationEvent<any>) => void} listener The method called when the
-          * NavigationEvent is fired.
-          */
-        on(name: string, listener: (ev: events.INavigationEvent<any>) => void): IRemoveListener;
         /**
           * Registers a listener for a DispatchEvent. The listener will be called when
           * a DispatchEvent is propagating over the app. Any number of listeners can exist for a single event name.

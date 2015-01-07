@@ -110,7 +110,7 @@
             ports.push(port);
 
             if (isArray(this.result)) {
-                return this.performNavigation(this.result);
+                return this.performNavigation(this.currentRouteInfo);
             }
 
             return this.$Promise.resolve();
@@ -205,7 +205,7 @@
             return this;
         }
 
-        navigate(url: string, query?: Object, force?: boolean): async.IThenable<void> {
+        navigate(url: string, query?: IObject<any>, force?: boolean): async.IThenable<void> {
             var Promise = this.$Promise,
                 resolve = Promise.resolve.bind(Promise),
                 reject = Promise.reject.bind(Promise),
@@ -231,22 +231,24 @@
                     return reject();
                 }
 
-                pattern = result[0].delegate.pattern;
+                routeInfo = result[0];
+                routeInfo.query = query;
+                pattern = routeInfo.delegate.pattern;
                 pattern = pattern.substr(0, pattern.length - __CHILD_ROUTE_LENGTH);
 
                 if (this.previousPattern === pattern) {
                     // the pattern for this router is the same as the last pattern so 
                     // only navigate child routers.
-                    return this.navigateChildren(result, query).then(() => {
+                    return this.navigateChildren(routeInfo).then(() => {
                         this.previousUrl = url;
                         this.previousQuery = queryString;
                     });
                 }
             } else {
-                pattern = result[0].delegate.pattern;
+                routeInfo = result[0];
+                routeInfo.query = query;
+                pattern = routeInfo.delegate.pattern;
             }
-
-            routeInfo = result[0];
 
             if (this.currentRouteInfo === routeInfo) {
                 return resolve();
@@ -254,7 +256,7 @@
 
             this.navigating = true;
 
-            return this.canNavigate(result, query)
+            return this.canNavigate(routeInfo)
                 .then((canNavigate: boolean) => {
                     if (!canNavigate) {
                         this.navigating = false;
@@ -263,7 +265,7 @@
 
                     this.previousUrl = url;
                     this.previousQuery = queryString;
-                    return this.performNavigation(result, query);
+                    return this.performNavigation(routeInfo);
                 })
                 .then(() => {
                     this.previousPattern = pattern;
@@ -277,7 +279,7 @@
 
         forceNavigate() {
             var resolve = this.$Promise.resolve.bind(this.$Promise),
-                query: {};
+                query: IObject<any>;
 
             if (this.navigating) {
                 return resolve();
@@ -300,7 +302,7 @@
             return resolve();
         }
 
-        generate(name: string, parameters?: IObject<any>) {
+        generate(name: string, parameters?: IObject<any>, query?: IObject<string>) {
             var router = this,
                 prefix = '';
 
@@ -323,28 +325,28 @@
                 prefix = previous + prefix;
             }
 
-            return prefix + path;
+            return prefix + path + this.getQueryString(query);
         }
 
-        navigateChildren(result: IRouteResult, query?: Object) {
+        navigateChildren(info: IRouteInfo) {
             var resolve = this.$Promise.resolve.bind(this.$Promise),
-                childRoute = this.getChildRoute(result);
+                childRoute = this.getChildRoute(info);
 
             if (isNull(childRoute)) {
                 return resolve();
             }
 
             return mapAsync((child: Router) => {
-                return child.navigate(childRoute, query);
+                return child.navigate(childRoute, info.query);
             }, this.children).then((): void => undefined);
         }
 
-        getChildRoute(result: IRouteResult) {
-            if (isEmpty(result)) {
+        getChildRoute(info: IRouteInfo) {
+            if (isNull(info)) {
                 return;
             }
 
-            var childRoute = result[0].parameters.childRoute;
+            var childRoute = info.parameters.childRoute;
 
             if (isEmpty(childRoute)) {
                 return;
@@ -353,14 +355,14 @@
             return '/' + childRoute;
         }
 
-        performNavigation(result: IRouteResult, query?: Object) {
+        performNavigation(info: IRouteInfo) {
             return this.performNavigateFrom().then(() => {
                 return mapAsync((port: ISupportRouteNavigation) => {
-                    return port.navigateTo(result, query);
+                    return port.navigateTo(info);
                 }, this.ports);
             })
                 .then(() => {
-                    return this.navigateChildren(result, query);
+                    return this.navigateChildren(info);
                 });
         }
 
@@ -375,11 +377,11 @@
                 }).then((): void => undefined);
         }
 
-        canNavigate(result: IRouteResult, query?: Object) {
+        canNavigate(info: IRouteInfo) {
             return this.canNavigateFrom()
                 .then((canNavigateFrom: boolean) => {
                     // TODO: If canNavigateFrom we need to execute any parameter bindings.
-                    return canNavigateFrom && this.canNavigateTo(result, query);
+                    return canNavigateFrom && this.canNavigateTo(info);
                 })
                 .then((canNavigate) => {
                     return canNavigate;
@@ -422,13 +424,11 @@
                 }).then(this.reduce);
         }
 
-        canNavigateTo(result: IRouteResult, query?: Object): async.IThenable<boolean> {
-            var routeInfo = result[0];
-
-            this.executeAllHandlers(routeInfo.delegate.view, routeInfo.parameters, query);
+        canNavigateTo(info: IRouteInfo): async.IThenable<boolean> {
+            this.executeAllHandlers(info.delegate.view, info.parameters, info.query);
 
             return mapAsync((port: ISupportRouteNavigation) => {
-                return port.canNavigateTo(result, query);
+                return port.canNavigateTo(info);
             }, this.ports)
                 .then(this.reduce)
                 .then((canNavigateTo: boolean) => {
@@ -436,13 +436,24 @@
                     if (!canNavigateTo) {
                         promises = [canNavigateTo];
                     } else {
-                        var childRoute = this.getChildRoute(result);
+                        var childRoute = this.getChildRoute(info);
 
                         if (isEmpty(childRoute)) {
                             promises = [true];
                         } else {
+                            var childResult: IRouteResult,
+                                childInfo: IRouteInfo;
+
                             this.children.reduce((promises: Array<async.IThenable<boolean>>, child: Router) => {
-                                return promises.concat(child.canNavigateTo(child.childRecognizer.recognize(childRoute), query));
+                                childResult = child.childRecognizer.recognize(childRoute);
+                                
+                                if (isEmpty(childResult)) {
+                                    return;
+                                }
+
+                                childInfo = childResult[0];
+                                childInfo.query = info.query;
+                                return promises.concat(child.canNavigateTo(childInfo));
                             }, promises);
                         }
                     }
@@ -458,7 +469,7 @@
             }, true);
         }
 
-        getQueryString(query: {}) {
+        getQueryString(query: IObject<string>) {
             return !isNull(query) ? '?' + map((value, key) => {
                 return key + '=' + value;
             }, query).join('&') : '';
@@ -488,16 +499,16 @@
 
     export interface IRouteInfo extends IDelegateInfo {
         delegate: IRouteMapping;
-        query?: Object;
+        query?: IObject<any>;
     }
 
     export interface IRouteHandlers extends IObject<Array<(value: string, values: any, query?: any) => any>> { }
 
     export interface ISupportRouteNavigation {
         canNavigateFrom(): async.IThenable<boolean>;
-        canNavigateTo(result: IRouteResult, query?: Object): async.IThenable<boolean>;
+        canNavigateTo(routeInfo: IRouteInfo): async.IThenable<boolean>;
 
         navigateFrom(): async.IThenable<any>;
-        navigateTo(result: IRouteResult, query?: Object): async.IThenable<any>;
+        navigateTo(routeInfo: IRouteInfo): async.IThenable<any>;
     }
 }

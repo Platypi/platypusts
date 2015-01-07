@@ -71,12 +71,11 @@ module plat.ui.controls {
             });
         }
 
-        canNavigateTo(result: routing.IRouteResult, query?: Object): async.IThenable<boolean> {
+        canNavigateTo(routeInfo: routing.IRouteInfo): async.IThenable<boolean> {
             var response: any = true,
-                route = result[0],
-                injector: dependency.IInjector<ViewControl> = this.$Injector.getDependency(route.delegate.view),
+                injector: dependency.IInjector<ViewControl> = this.$Injector.getDependency(routeInfo.delegate.view),
                 view = injector.inject(),
-                parameters = route.parameters,
+                parameters = routeInfo.parameters,
                 resolve = this.$Promise.resolve.bind(this.$Promise);
 
             if (!isObject(view)) {
@@ -84,7 +83,7 @@ module plat.ui.controls {
             }
 
             if (isFunction(view.canNavigateTo)) {
-                response = view.canNavigateTo(parameters, query);
+                response = view.canNavigateTo(parameters, routeInfo.query);
             }
 
             return resolve(response).then((canNavigateTo: boolean) => {
@@ -105,16 +104,15 @@ module plat.ui.controls {
             return this.$Promise.resolve(response);
         }
 
-        navigateTo(result: routing.IRouteResult) {
+        navigateTo(routeInfo: routing.IRouteInfo) {
             return this.$Promise.resolve().then(() => {
                 var router = this.router,
-                    route = result[0],
-                    injector = this.nextInjector || this.$Injector.getDependency(route.delegate.view),
+                    injector = this.nextInjector || this.$Injector.getDependency(routeInfo.delegate.view),
                     nodeMap = this._createNodeMap(injector),
                     element = this.element,
                     node = nodeMap.element,
-                    parameters = route.parameters,
-                    query = route.query;
+                    parameters = routeInfo.parameters,
+                    query = routeInfo.query;
 
                 element.appendChild(node);
 
@@ -135,7 +133,7 @@ module plat.ui.controls {
                 (<any>control).router = router;
 
                 if (isFunction(control.navigatedTo)) {
-                    control.navigatedTo(route.parameters, query);
+                    control.navigatedTo(routeInfo.parameters, query);
                 }
 
                 manager.setUiControlTemplate();

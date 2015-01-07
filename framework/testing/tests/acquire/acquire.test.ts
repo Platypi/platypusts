@@ -108,9 +108,6 @@ module tests.acquire {
             name: __LifecycleEventStatic,
             compare: toBe(plat.events.LifecycleEvent)
         }, {
-            name: __NavigationEventStatic,
-            compare: toBe(plat.events.NavigationEvent)
-        }, {
             name: __ExceptionStatic,
             compare: toBe(plat.Exception)
         }, {
@@ -122,12 +119,6 @@ module tests.acquire {
         }, {
             name: __Tokenizer,
             compare: instanceOf(plat.expressions.Tokenizer)
-        }, {
-            name: __NavigatorInstance,
-            compare: instanceOf(plat.navigation.Navigator)
-        }, {
-            name: __RoutingNavigator,
-            compare: instanceOf(plat.navigation.RoutingNavigator)
         }, {
             name: __ContextManagerStatic,
             compare: toBe(plat.observable.ContextManager)
@@ -179,9 +170,6 @@ module tests.acquire {
         }, {
             name: __TemplateControlFactory,
             compare: toBe(plat.ui.TemplateControl)
-        }, {
-            name: __BaseViewControlFactory,
-            compare: toBe(plat.ui.BaseViewControl)
         }, {
             name: __Utils,
             compare: instanceOf(plat.Utils)
