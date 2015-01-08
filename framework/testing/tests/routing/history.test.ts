@@ -8,14 +8,14 @@ module test.routing.history {
 
         beforeEach(() => {
             history.entries = [
-                { url: 'posts/8', view: 'post8', parameters: { id: '1' }, query: { limit: '10' } },
-                { url: 'posts/7', view: 'post7', parameters: { id: '1' }, query: { limit: '10' } },
-                { url: 'posts/6', view: 'post6', parameters: { id: '1' }, query: { limit: '10' } },
-                { url: 'posts/5', view: 'post5', parameters: { id: '1' }, query: { limit: '10' } },
-                { url: 'posts/4', view: 'post4', parameters: { id: '1' }, query: { limit: '10' } },
-                { url: 'posts/3', view: 'post3', parameters: { id: '1' }, query: { limit: '10' } },
+                { url: 'posts/1', view: 'post1', parameters: { id: '1' }, query: { limit: '10' } },
                 { url: 'posts/2', view: 'post2', parameters: { id: '1' }, query: { limit: '10' } },
-                { url: 'posts/1', view: 'post1', parameters: { id: '1' }, query: { limit: '10' } }
+                { url: 'posts/3', view: 'post3', parameters: { id: '1' }, query: { limit: '10' } },
+                { url: 'posts/4', view: 'post4', parameters: { id: '1' }, query: { limit: '10' } },
+                { url: 'posts/5', view: 'post5', parameters: { id: '1' }, query: { limit: '10' } },
+                { url: 'posts/6', view: 'post6', parameters: { id: '1' }, query: { limit: '10' } },
+                { url: 'posts/7', view: 'post7', parameters: { id: '1' }, query: { limit: '10' } },
+                { url: 'posts/8', view: 'post8', parameters: { id: '1' }, query: { limit: '10' } }
             ];
         });
 
@@ -24,12 +24,12 @@ module test.routing.history {
 
             history.push(entry);
 
-            expect(history.entries[0]).toBe(entry);
+            expect(history.entries[history.length - 1]).toBe(entry);
         });
 
 
         it('should test pop', () => {
-            var entry = history.entries[0],
+            var entry = history.entries[history.length - 1],
                 popped = history.pop();
 
             expect(entry).toBe(popped);
@@ -46,12 +46,12 @@ module test.routing.history {
         });
 
         it('should test indexOf', () => {
-            expect(history.indexOf('post4')).toBe(4);
+            expect(history.indexOf('post4')).toBe(3);
             expect(history.indexOf('foo')).toBe(-1);
         });
 
         it('should test slice', () => {
-            history.slice(history.indexOf('post4') + 1);
+            history.slice(history.indexOf('post4') - 1);
 
             expect(history.length).toBe(3);
             expect(history.indexOf('post4')).toBe(-1);

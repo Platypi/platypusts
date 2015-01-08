@@ -7,24 +7,23 @@
         }
 
         push(entry: IHistoryEntry) {
-            this.entries.unshift(entry);
+            return this.entries.push(entry);
         }
 
         pop() {
-            return this.entries.shift();
+            return this.entries.pop();
         }
 
         slice(index: number) {
-            this.entries = this.entries.slice(index);
+            this.entries = this.entries.slice(0, index + 1);
 
             return this.entries[index];
         }
 
         indexOf(view: string): number {
-            var entries = this.entries,
-                length = entries.length;
+            var entries = this.entries;
 
-            for (var i = 0; i < length; ++i) {
+            for (var i = entries.length - 1; i >= 0; --i) {
                 if (entries[i].view === view) {
                     return i;
                 }

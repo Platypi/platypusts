@@ -79,8 +79,16 @@
             }
         }
 
-        navigate(view: any, options: INavigateOptions) {
-            var url = this._getUrl(view, options.parameters, options.query);
+        navigate(view: any, options?: INavigateOptions) {
+            options = isObject(options) ? options : {};
+            var url: string;
+
+            if (options.isUrl) {
+                url = view;
+            } else {
+                url = this.generate(view, options.parameters, options.query);
+            }
+
             this.$browser.url(url, options.replace);
         }
 
@@ -114,17 +122,26 @@
                 entry: IHistoryEntry;
 
             if (!isNull(view)) {
-                view = this.$InjectorStatic.getDependency(view);
+                view = this.$InjectorStatic.convertDependency(view);
 
-                if (!isObject(view)) {
+                if (!isString(view)) {
                     return;
                 }
 
+                entry = this.history.pop();
+
                 length = this.history.indexOf(view);
+
+                this.history.push(entry);
             }
 
-            if (!isNumber(length) || length === -1) {
+            if (!isNumber(length) || length <= 0) {
                 return;
+            }
+
+            if (!isString(view)) {
+                // We want to go back length + 1 times, so we can navigate to the entry.
+                length = this.history.length - (length + 1);
             }
 
             entry = this.history.slice(length);
@@ -134,9 +151,8 @@
 
             this.$window.history.go(-length);
 
-            this.navigate(entry.view, {
-                parameters: entry.parameters,
-                query: entry.query
+            this.navigate(entry.url, {
+                isUrl: true
             });
         }
 
@@ -177,16 +193,10 @@
             });
         }
 
-        protected _getUrl(view: any, parameters: any, query: any): string {
+        generate(view: any, parameters: any, query: any): string {
             if (isNull(this.router)) {
                 return;
             }
-
-            var $browserConfig = this.$browserConfig,
-                baseUrl = $browserConfig.baseUrl.slice(0, -1),
-                routingType = $browserConfig.routingType,
-                usingHash = routingType !== $browserConfig.STATE,
-                prefix = $browserConfig.hashPrefix;
 
             if (isEmpty(view)) {
                 return view;
@@ -194,15 +204,7 @@
 
             view = this.$InjectorStatic.convertDependency(view);
 
-            var path = this.router.generate(view, parameters, query);
-
-            if (usingHash && view.indexOf('#') === -1) {
-                view = baseUrl + '/#' + prefix + path;
-            } else {
-                view = baseUrl + path;
-            }
-
-            return view;
+            return this.router.generate(view, parameters, query);
         }
     }
 
@@ -213,6 +215,7 @@
     register.injectable(__NavigatorInstance, INavigatorInstance, null, __INSTANCE);
 
     export interface INavigateOptions {
+        isUrl?: boolean;
         parameters?: IObject<string>;
         query?: IObject<string>;
         replace?: boolean;

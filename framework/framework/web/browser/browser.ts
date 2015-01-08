@@ -35,7 +35,7 @@ module plat.web {
             NONE: 'none',
             HASH: 'hash',
             STATE: 'state',
-            routingType: 'none',
+            routingType: 'hash',
             hashPrefix: '',
             baseUrl: ''
         };
@@ -350,7 +350,7 @@ module plat.web {
          * @returns {void}
          */
         protected _setUrl(url: string, replace?: boolean): void {
-            url = this._formatUrl(url);
+            url = this.formatUrl(url);
 
             var utils = this.urlUtils(url),
                 baseUrl = Browser.config.baseUrl;
@@ -386,7 +386,7 @@ module plat.web {
         }
 
         /**
-         * @name _formatUrl
+         * @name formatUrl
          * @memberof plat.web.Browser
          * @kind function
          * @access public
@@ -398,17 +398,30 @@ module plat.web {
          * 
          * @returns {string} The formatted URL.
          */
-        protected _formatUrl(url: string): string {
+        formatUrl(url: string): string {
             var $config = Browser.config;
+
             if ((!this.$Regex.fullUrlRegex.test(url) || url.indexOf($config.baseUrl) > -1) && $config.routingType === $config.HASH) {
                 var hasProtocol = url.indexOf(this.urlUtils().protocol) !== -1,
                     prefix = $config.hashPrefix || '',
                     hashRegex = new RegExp('#' + prefix + '|#/');
 
+                if (url[0] === '/') {
+                    url = url.slice(1);
+                }
+
+                if (url[url.length - 1] !== '/') {
+                    url += '/';
+                }
+
                 if (hasProtocol && !hashRegex.test(url)) {
                     url = url + '#' + prefix + '/';
                 } else if (!hashRegex.test(url)) {
                     url = '#' + prefix + ((url[0] !== '/') ? '/' : '') + url;
+                }
+
+                if (url.indexOf($config.baseUrl) === -1) {
+                    url = $config.baseUrl + url;
                 }
             }
 
@@ -509,6 +522,21 @@ module plat.web {
          * @returns {boolean} Whether or not the URL argument is cross domain.
          */
         isCrossDomain(url: string): boolean;
+
+        /**
+         * @name formatUrl
+         * @memberof plat.web.IBrowser
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Formats the URL in the case of HASH routing.
+         * 
+         * @param url The URL to format.
+         * 
+         * @returns {string} The formatted URL.
+         */
+        formatUrl(url: string): string;
     }
 
     /**

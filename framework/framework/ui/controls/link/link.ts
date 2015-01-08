@@ -60,19 +60,6 @@ module plat.ui.controls {
         $InjectorStatic: typeof dependency.Injector = acquire(__InjectorStatic);
 
         /**
-         * @name $browserConfig
-         * @memberof plat.ui.controls.Link
-         * @kind property
-         * @access public
-         * 
-         * @type {plat.web.IBrowserConfig}
-         * 
-         * @description
-         * The {@link plat.web.IBrowserConfig|IBrowserConfig} injectable instance
-         */
-        $browserConfig: web.IBrowserConfig = acquire(__BrowserConfig);
-
-        /**
          * @name $browser
          * @memberof plat.ui.controls.Link
          * @kind property
@@ -256,12 +243,7 @@ module plat.ui.controls {
                 return;
             }
 
-            var $browserConfig = this.$browserConfig,
-                baseUrl = $browserConfig.baseUrl.slice(0, -1),
-                routingType = $browserConfig.routingType,
-                usingHash = routingType !== $browserConfig.STATE,
-                prefix = $browserConfig.hashPrefix,
-                options = this.options || {},
+            var options = this.options || {},
                 value = this.options.value;
 
             if (!isObject(value)) {
@@ -279,13 +261,7 @@ module plat.ui.controls {
 
             var path = this.router.generate(href, parameters);
 
-            if (usingHash && href.indexOf('#') === -1) {
-                href = baseUrl + '/#' + prefix + path;
-            } else {
-                href = baseUrl + path;
-            }
-
-            return href;
+            return this.$browser.formatUrl(path);
         }
     }
 

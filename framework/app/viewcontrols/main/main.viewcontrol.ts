@@ -11,7 +11,7 @@ module app.viewcontrols {
 
         constructor(router: plat.routing.Router) {
             super();
-
+            
             router.configure([
                 { pattern: '/one', view: One },
                 { pattern: '/two', view: Two },
