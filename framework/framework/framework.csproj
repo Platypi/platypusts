@@ -51,6 +51,7 @@
     <TypeScriptCompile Include="processing\nodemanager\textmanager.ts" />
     <TypeScriptCompile Include="references\references.ts" />
     <TypeScriptCompile Include="register\register.ts" />
+    <TypeScriptCompile Include="routing\history\history.ts" />
     <TypeScriptCompile Include="routing\navigator\navigator.ts" />
     <TypeScriptCompile Include="routing\routerecognizer\routerecognizer.ts" />
     <TypeScriptCompile Include="routing\router\router.ts" />

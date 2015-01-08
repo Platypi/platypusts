@@ -71,6 +71,8 @@
     <TypeScriptCompile Include="tests\expressions\tokenizer\tokenizer.test.ts" />
     <TypeScriptCompile Include="tests\observable\contextmanager\contextmanager.test.ts" />
     <TypeScriptCompile Include="tests\observable\contextmanager\contextmanagerstatic.test.ts" />
+    <TypeScriptCompile Include="tests\routing\history.test.ts" />
+    <TypeScriptCompile Include="tests\routing\navigator.test.ts" />
     <TypeScriptCompile Include="tests\routing\router.test.ts" />
     <TypeScriptCompile Include="tests\routing\routerecognizer.test.ts" />
     <TypeScriptCompile Include="tests\storage\cache\cache.test.ts" />

@@ -2,6 +2,8 @@
     'use strict';
 
     export class Navigator {
+        protected static root: Navigator;
+
         /**
          * @name $InjectorStatic
          * @memberof plat.routing.Navigator
@@ -42,6 +44,7 @@
         $browser: web.IBrowser = acquire(__Browser);
 
         $EventManagerStatic: events.IEventManagerStatic = acquire(__EventManagerStatic);
+        $window: Window = acquire(__Window);
 
         /**
          * @name router
@@ -54,17 +57,24 @@
          * @description
          * The {@link plat.routing.IRouter|router} associated with this link.
          */
-        router: routing.Router;
+        router: Router;
+
+        history: History;
 
         uid = uniqueId(__Plat);
-        removeUrlListener = noop;
+        removeUrlListener: IRemoveListener = noop;
         ignoreOnce = false;
         previousUrl: string;
 
-        initialize(router: routing.Router) {
+        initialize(router: Router) {
             this.router = router;
 
             if (router.isRoot) {
+                Navigator.root = this;
+                var history = this.history = acquire(__History);
+                history.forEach((entry: IHistoryEntry) => {
+                    this.$browser.url(entry.url);
+                });
                 this._observeUrl();
             }
         }
@@ -74,8 +84,60 @@
             this.$browser.url(url, options.replace);
         }
 
-        goBack() {
+        navigated() {
+            var router = this.router;
 
+            if(!(isObject(router) && router.isRoot)) {
+                return;
+            }
+
+            var routeInfo = router.currentRouteInfo,
+                utils = this.$browser.urlUtils();
+
+            this.history.push({
+                url: utils.href,
+                view: routeInfo.delegate.view,
+                parameters: routeInfo.parameters,
+                query: utils.query
+            });
+        }
+
+        goBack(options: IBackNavigationOptions) {
+            var root = Navigator.root;
+
+            if (root !== this) {
+                root.goBack(options);
+            }
+
+            var view = options.view,
+                length = options.length,
+                entry: IHistoryEntry;
+
+            if (!isNull(view)) {
+                view = this.$InjectorStatic.getDependency(view);
+
+                if (!isObject(view)) {
+                    return;
+                }
+
+                length = this.history.indexOf(view);
+            }
+
+            if (!isNumber(length) || length === -1) {
+                return;
+            }
+
+            entry = this.history.slice(length);
+
+            this.history.pop();
+            this.ignoreOnce = true;
+
+            this.$window.history.go(-length);
+
+            this.navigate(entry.view, {
+                parameters: entry.parameters,
+                query: entry.query
+            });
         }
 
         dispose() {
@@ -93,7 +155,7 @@
                 previousUrl: string,
                 previousQuery: string;
 
-            this.previousUrl = this.$browser.urlUtils().href;
+            this.previousUrl = this.$browser.url();
             this.removeUrlListener();
 
             this.removeUrlListener = this.$EventManagerStatic.on(this.uid, __urlChanged, (ev: events.IDispatchEventInstance, utils?: web.IUrlUtilsInstance) => {
@@ -154,5 +216,10 @@
         parameters?: IObject<string>;
         query?: IObject<string>;
         replace?: boolean;
+    }
+
+    export interface IBackNavigationOptions {
+        view?: any;
+        length?: number;
     }
 }

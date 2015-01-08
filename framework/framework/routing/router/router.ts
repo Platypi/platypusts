@@ -38,9 +38,6 @@
 
         currentRouteInfo: IDelegateInfo;
 
-        result: IRouteResult;
-        previousResult: IRouteResult;
-
         ports: Array<ISupportRouteNavigation> = [];
         parent: Router;
         children: Array<Router> = [];
@@ -50,32 +47,8 @@
 
         constructor() {
             this.uid = uniqueId(__Plat);
-            var isRoot = this.isRoot = isNull(Router.currentRouter());
+            this.isRoot = isNull(Router.currentRouter());
             Router.currentRouter(this);
-
-            if (isRoot) {
-                var config = this.$browserConfig,
-                    prefix: string,
-                    previousUrl: string,
-                    previousQuery: string;
-
-                this.$EventManagerStatic.on(this.uid, __urlChanged, (ev: events.IDispatchEventInstance, utils?: web.IUrlUtilsInstance) => {
-                    if (this.ignoreOnce) {
-                        this.ignoreOnce = false;
-                        return;
-                    }
-
-                    postpone(() => {
-                        previousUrl = this.previousUrl;
-                        previousQuery = this.previousQuery;
-                        this.navigate(utils.pathname, utils.query).catch(() => {
-                            this.ignoreOnce = true;
-                            this.previousUrl = previousUrl;
-                            this.$browser.url(previousUrl + previousQuery, true);
-                        });
-                    });
-                });
-            }
         }
 
         initialize(parent?: Router) {
@@ -113,8 +86,17 @@
 
             ports.push(port);
 
-            if (isArray(this.result)) {
-                return this.performNavigation(this.currentRouteInfo);
+            if (isObject(this.currentRouteInfo)) {
+                var routeInfo = _clone(this.currentRouteInfo, true);
+
+                return this.canNavigateTo(routeInfo)
+                    .then((canNavigateTo) => {
+                        if (!canNavigateTo) {
+                            return;
+                        }
+
+                        return this.performNavigation(routeInfo);
+                    });
             }
 
             return this.$Promise.resolve();
@@ -279,6 +261,8 @@
 
             this.navigating = true;
 
+            var routeInfoCopy = _clone(routeInfo, true);
+
             return this.canNavigate(routeInfo)
                 .then((canNavigate: boolean) => {
                     if (!canNavigate) {
@@ -292,10 +276,7 @@
                 })
                 .then(() => {
                     this.previousPattern = pattern;
-                    this.currentRouteInfo = routeInfo;
-                    this.result = result;
-                    this.previousResult = result;
-
+                    this.currentRouteInfo = routeInfoCopy;
                     this.navigating = false;
                 });
         }

@@ -6380,12 +6380,14 @@ declare module plat {
               * you implement a backButtonPressed function.
               */
             constructor();
-            canNavigateFrom(): any;
-            canNavigateTo(parameters: any, query: any): any;
-            navigatingFrom(): any;
-            navigatedTo(parameters: any, query: any): any;
+            navigator: routing.Navigator;
+            canNavigateFrom: () => any;
+            canNavigateTo: (parameters: any, query: any) => any;
+            navigatingFrom: () => any;
+            navigatedTo: (parameters: any, query: any) => any;
         }
         interface ISupportNavigation {
+            navigator?: routing.Navigator;
             canNavigateFrom(): any;
             canNavigateTo(parameters: any, query: any): any;
             navigatingFrom(): any;
@@ -9188,6 +9190,7 @@ declare module plat {
                   * A promise used for disposing the end state of the previous animation prior to starting a new one.
                   */
                 protected _animationPromise: animations.IAnimationThenable<animations.IGetAnimatingThenable>;
+                navigator: routing.Navigator;
                 router: routing.Router;
                 parentRouter: routing.Router;
                 controls: ViewControl[];
@@ -9949,6 +9952,7 @@ declare module plat {
                 options: observable.IObservableProperty<{
                     view: any;
                     parameters?: IObject<string>;
+                    query?: IObject<string>;
                 }>;
                 /**
                   * The control's anchor element.
@@ -10956,6 +10960,65 @@ declare module plat {
         }
     }
     module routing {
+        class Navigator {
+            protected static root: Navigator;
+            /**
+              * The Injector injectable instance
+              */
+            $InjectorStatic: typeof dependency.Injector;
+            /**
+              * The IBrowserConfig injectable instance
+              */
+            $browserConfig: web.IBrowserConfig;
+            /**
+              * The IBrowser injectable instance
+              */
+            $browser: web.IBrowser;
+            $EventManagerStatic: events.IEventManagerStatic;
+            $window: Window;
+            /**
+              * The router associated with this link.
+              */
+            router: Router;
+            history: History;
+            uid: string;
+            removeUrlListener: IRemoveListener;
+            ignoreOnce: boolean;
+            previousUrl: string;
+            initialize(router: Router): void;
+            navigate(view: any, options: INavigateOptions): void;
+            navigated(): void;
+            goBack(options: IBackNavigationOptions): void;
+            dispose(): void;
+            protected _observeUrl(): void;
+            protected _getUrl(view: any, parameters: any, query: any): string;
+        }
+        function INavigatorInstance(): Navigator;
+        interface INavigateOptions {
+            parameters?: IObject<string>;
+            query?: IObject<string>;
+            replace?: boolean;
+        }
+        interface IBackNavigationOptions {
+            view?: any;
+            length?: number;
+        }
+        class History {
+            entries: IHistoryEntry[];
+            length: number;
+            push(entry: IHistoryEntry): void;
+            pop(): IHistoryEntry;
+            slice(index: number): IHistoryEntry;
+            indexOf(view: string): number;
+            forEach(handler: (entry: IHistoryEntry, index: number, entries: IHistoryEntry[]) => void): void;
+        }
+        interface IHistoryEntry {
+            url: string;
+            view: string;
+            parameters: IObject<string>;
+            query: IObject<string>;
+        }
+        function IHistory(): History;
         /**
           * Stores information about a segment, publishes a regex for matching the segment as well as
           * methods for generating the segment and iterating over the characters in the segment.
@@ -11470,8 +11533,8 @@ declare module plat {
             $browserConfig: web.IBrowserConfig;
             recognizer: RouteRecognizer;
             childRecognizer: RouteRecognizer;
-            paramHandlers: IObject<IRouteHandlers>;
-            queryHandlers: IObject<IRouteHandlers>;
+            paramTransforms: IObject<IRouteTransforms>;
+            queryTransforms: IObject<IRouteTransforms>;
             interceptors: IObject<{
                 (routeInfo: IRouteInfo): any;
             }[]>;
@@ -11480,8 +11543,6 @@ declare module plat {
             previousQuery: string;
             previousPattern: string;
             currentRouteInfo: IDelegateInfo;
-            result: IRouteResult;
-            previousResult: IRouteResult;
             ports: ISupportRouteNavigation[];
             parent: Router;
             children: Router[];
@@ -11500,7 +11561,7 @@ declare module plat {
             param(handler: (value: any, parameters: any, query: any) => any, parameter: string, view: new (...args: any[]) => any): Router;
             queryParam(handler: (value: any, query: any) => any, parameter: string, view: string): Router;
             queryParam(handler: (value: any, query: any) => any, parameter: string, view: new (...args: any[]) => any): Router;
-            protected _addHandler(handler: (value: string, values: any, query?: any) => any, parameter: string, view: any, handlers: IObject<IRouteHandlers>): Router;
+            protected _addHandler(handler: (value: string, values: any, query?: any) => any, parameter: string, view: any, handlers: IObject<IRouteTransforms>): Router;
             intercept(handler: (routeInfo: IRouteInfo) => any, view: string): Router;
             intercept(handler: (routeInfo: IRouteInfo) => any, view: new (...args: any[]) => any): Router;
             navigate(url: string, query?: IObject<any>, force?: boolean): async.IThenable<void>;
@@ -11512,12 +11573,10 @@ declare module plat {
             performNavigateFrom(): async.IThenable<void>;
             canNavigate(info: IRouteInfo): async.IThenable<boolean>;
             callAllHandlers(view: string, parameters: any, query?: any): async.IThenable<void>;
-            callHandlers(allHandlers: IRouteHandlers, obj: any, query?: any): async.IThenable<any[][]>;
+            callHandlers(allHandlers: IRouteTransforms, obj: any, query?: any): async.IThenable<any[][]>;
             callInterceptors(info: IRouteInfo): async.IThenable<boolean>;
             canNavigateFrom(): async.IThenable<boolean>;
             canNavigateTo(info: IRouteInfo): async.IThenable<boolean>;
-            reduce(values: boolean[]): boolean;
-            getQueryString(query: IObject<string>): string;
         }
         function IRouter(): Router;
         function IRouterStatic(): typeof Router;
@@ -11531,7 +11590,7 @@ declare module plat {
             delegate: IRouteMapping;
             query?: IObject<any>;
         }
-        interface IRouteHandlers extends IObject<Array<(value: string, values: any, query?: any) => any>> {
+        interface IRouteTransforms extends IObject<Array<(value: string, values: any, query?: any) => any>> {
         }
         interface ISupportRouteNavigation {
             canNavigateFrom(): async.IThenable<boolean>;

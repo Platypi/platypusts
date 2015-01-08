@@ -110,13 +110,21 @@ module plat.ui.controls {
 
         navigateTo(routeInfo: routing.IRouteInfo) {
             return this.$Promise.resolve().then(() => {
-                var router = this.router,
-                    injector = this.nextInjector || this.$Injector.getDependency(routeInfo.delegate.view),
+                var injector = this.nextInjector || this.$Injector.getDependency(routeInfo.delegate.view),
                     nodeMap = this._createNodeMap(injector),
                     element = this.element,
                     node = nodeMap.element,
                     parameters = routeInfo.parameters,
-                    query = routeInfo.query;
+                    query = routeInfo.query,
+                    control = <ViewControl>nodeMap.uiControlNode.control;
+
+                if (isObject((<any>control).router)) {
+                    var navigator: routing.Navigator = acquire(__NavigatorInstance);
+                    control.navigator = navigator;
+                    navigator.initialize((<any>control).router);
+                } else {
+                    control.navigator = this.navigator;
+                }
 
                 element.appendChild(node);
 
@@ -133,15 +141,14 @@ module plat.ui.controls {
                 viewportManager.children = [];
                 manager.initialize(nodeMap, viewportManager);
 
-                var control = this.controls[0];
-                (<any>control).router = router;
-
                 if (isFunction(control.navigatedTo)) {
                     control.navigatedTo(routeInfo.parameters, query);
                 }
 
                 manager.setUiControlTemplate();
-                return manager.templatePromise;
+                return manager.templatePromise.then(() => {
+                    this.navigator.navigated();
+                });
             });
         }
 
