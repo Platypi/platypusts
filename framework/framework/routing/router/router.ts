@@ -36,7 +36,7 @@
         previousQuery: string;
         previousPattern: string;
 
-        currentRouteInfo: IDelegateInfo;
+        currentRouteInfo: IRouteInfo;
 
         ports: Array<ISupportRouteNavigation> = [];
         parent: Router;
@@ -255,10 +255,6 @@
                 pattern = routeInfo.delegate.pattern;
             }
 
-            if (this.currentRouteInfo === routeInfo) {
-                return resolve();
-            }
-
             this.navigating = true;
 
             var routeInfoCopy = _clone(routeInfo, true);
@@ -382,10 +378,15 @@
         }
 
         canNavigate(info: IRouteInfo) {
-            return this.canNavigateFrom()
+            var currentRouteInfo = this.currentRouteInfo,
+                sameRoute = isObject(currentRouteInfo) &&
+                currentRouteInfo.delegate.view === info.delegate.view &&
+                currentRouteInfo.delegate.pattern === info.delegate.pattern;
+
+            return this.canNavigateFrom(sameRoute)
                 .then((canNavigateFrom: boolean) => {
                     // TODO: If canNavigateFrom we need to execute any parameter bindings.
-                    return canNavigateFrom && this.canNavigateTo(info);
+                    return canNavigateFrom && this.canNavigateTo(info, sameRoute);
                 })
                 .then((canNavigate) => {
                     return canNavigate;
@@ -420,13 +421,13 @@
                 .then(booleanReduce);
         }
 
-        canNavigateFrom(): async.IThenable<boolean> {
+        canNavigateFrom(ignorePorts?: boolean): async.IThenable<boolean> {
             return this.$Promise.all(this.children.reduce((promises: Array<async.IThenable<boolean>>, child: Router) => {
                 return promises.concat(child.canNavigateFrom());
             }, <Array<async.IThenable<boolean>>>[]))
                 .then(booleanReduce)
                 .then((canNavigateFrom: boolean) => {
-                    if (!canNavigateFrom) {
+                    if (!canNavigateFrom || ignorePorts) {
                         return <any>[canNavigateFrom];
                     }
 
@@ -436,14 +437,14 @@
                 }).then(booleanReduce);
         }
 
-        canNavigateTo(info: IRouteInfo): async.IThenable<boolean> {
+        canNavigateTo(info: IRouteInfo, ignorePorts?: boolean): async.IThenable<boolean> {
             var promises: Array<any> = [];
             return this.callAllHandlers(info.delegate.view, info.parameters, info.query)
                 .then(() => {
                     return this.callInterceptors(info);
                 })
                 .then((canNavigateTo) => {
-                    if (!canNavigateTo) {
+                    if (!canNavigateTo || ignorePorts) {
                         return <any>[canNavigateTo];
                     }
 

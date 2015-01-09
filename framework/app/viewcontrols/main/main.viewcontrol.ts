@@ -1,7 +1,7 @@
 module app.viewcontrols {
     var count = 0,
         arrCount = 6;
-
+    (<any>window).backCalled = 0;
     export class Main extends plat.ui.ViewControl {
         title = 'Main';
         templateUrl = 'viewcontrols/main/main.viewcontrol.html';
@@ -9,7 +9,7 @@ module app.viewcontrols {
             views: [One, Two, Three, Four]
         };
 
-        constructor(router: plat.routing.Router) {
+        constructor(public router: plat.routing.Router) {
             super();
             
             router.configure([
@@ -20,8 +20,14 @@ module app.viewcontrols {
             ]);
         }
 
+        navigateTo(view: string) {
+            this.navigator.navigate(view);
+        }
+
         goBack() {
-            this.navigator.goBack();
+            this.dispatchEvent('backbutton', 'direct');
+            //this.navigator.goBack();
+            (<any>window).backCalled++;
         }
     }
 

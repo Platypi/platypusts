@@ -2,7 +2,8 @@
     <div class="left">
         <plat-foreach plat-context="views">
             <div>
-                <plat-link plat-options="{ view: @context }">{{@index + 1}}</plat-link>
+                <button plat-tap="navigateTo(@context)">{{@index + 1}}</button>
+                <!--<plat-link plat-options="{ view: @context }">{{@index + 1}}</plat-link>-->
             </div>
         </plat-foreach>
     </div>

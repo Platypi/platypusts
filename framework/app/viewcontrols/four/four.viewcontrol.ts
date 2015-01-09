@@ -28,7 +28,7 @@
         }
 
         canNavigateFrom() {
-            // console.log('canNavigateFrom:', this.uid);
+            return false;
         }
 
         canNavigateTo() {

@@ -64,7 +64,9 @@
         uid = uniqueId(__Plat);
         removeUrlListener: IRemoveListener = noop;
         ignoreOnce = false;
+        ignored = false;
         previousUrl: string;
+        backNavigate: boolean = false;
 
         initialize(router: Router) {
             this.router = router;
@@ -106,13 +108,14 @@
             var $history = this.$history,
                 url = this.$browser.url();
 
+            this.backNavigate = true;
             $history.go(-length);
-
+            
             setTimeout(() => {
-                if (url === this.$browser.url()) {
+                if (!this.ignored && url === this.$browser.url()) {
                     this.$EventManagerStatic.dispatch(__shutdown, this, this.$EventManagerStatic.DIRECT);
                 }
-            }, 10);
+            }, 50);
         }
 
         dispose() {
@@ -126,33 +129,49 @@
             }
 
             var config = this.$browserConfig,
+                EventManager = this.$EventManagerStatic,
                 prefix: string,
                 previousUrl: string,
-                previousQuery: string;
+                previousQuery: string,
+                backNavigate: boolean;
 
             this.previousUrl = this.$browser.url();
 
-            var EventManager = this.$EventManagerStatic;
-
             EventManager.dispose(this.uid);
-            EventManager.on(this.uid, __backButton, (ev) => {
-                
+            EventManager.on(this.uid, __backButton, () => {
+                var ev: events.IDispatchEventInstance = acquire(__DispatchEventInstance);
+                ev.initialize('backButtonPressed', this);
+
+                EventManager.sendEvent(ev);
+
+                if (ev.defaultPrevented) {
+                    return;
+                }
+
+                this.goBack();
             });
 
             EventManager.on(this.uid, __urlChanged, (ev: events.IDispatchEventInstance, utils?: web.IUrlUtilsInstance) => {
                 if (this.ignoreOnce) {
                     this.ignoreOnce = false;
+                    this.ignored = true;
                     return;
                 }
 
+                this.ignored = false;
+                backNavigate = this.backNavigate;
+                this.backNavigate = false;
+
                 postpone(() => {
                     previousUrl = this.previousUrl;
-                    this.router.navigate(utils.pathname, utils.query).then(() => {
-                        this.previousUrl = utils.href;
-                    }).catch(() => {
+                    this.router.navigate(utils.pathname, utils.query)
+                        .then(() => {
+                            this.previousUrl = utils.pathname;
+                        })
+                        .catch((e) => {
                             this.ignoreOnce = true;
                             this.previousUrl = previousUrl;
-                            this.$browser.url(previousUrl, true);
+                            this.$browser.url(previousUrl, !backNavigate);
                         });
                 });
             });
