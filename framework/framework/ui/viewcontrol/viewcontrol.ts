@@ -79,13 +79,13 @@ module plat.ui {
 
         navigator: routing.Navigator;
 
-        canNavigateFrom: () => any;
+        canNavigateFrom(): any { }
 
-        canNavigateTo: (parameters: any, query: any) => any;
+        canNavigateTo(parameters: any, query: any): any { }
 
-        navigatingFrom: () => any;
+        navigatingFrom(): any { }
 
-        navigatedTo: (parameters: any, query: any) => any;
+        navigatedTo(parameters: any, query: any): any { }
     }
 
     export interface ISupportNavigation {

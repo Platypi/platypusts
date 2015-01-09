@@ -6,7 +6,7 @@ module test.routing.router {
 
     }
 
-    var history = plat.acquire(plat.routing.IHistory),
+    var history = plat.acquire(plat.routing.History),
         router = plat.acquire(plat.routing.IRouter),
         browser = plat.acquire(plat.web.IBrowser),
         navigator: plat.routing.Navigator;
@@ -38,17 +38,6 @@ module test.routing.router {
 
     describe('Navigator Test', () => {
         beforeEach(() => {
-            history.entries = [
-                { url: 'posts/1', view: 'post1', parameters: { id: '1' }, query: { limit: '10' } },
-                { url: 'posts/2', view: 'post2', parameters: { id: '1' }, query: { limit: '10' } },
-                { url: 'posts/3', view: 'post3', parameters: { id: '1' }, query: { limit: '10' } },
-                { url: 'posts/4', view: 'post4', parameters: { id: '1' }, query: { limit: '10' } },
-                { url: 'posts/5', view: 'post5', parameters: { id: '1' }, query: { limit: '10' } },
-                { url: 'posts/6', view: 'post6', parameters: { id: '1' }, query: { limit: '10' } },
-                { url: 'posts/7', view: 'post7', parameters: { id: '1' }, query: { limit: '10' } },
-                { url: 'posts/8', view: 'post8', parameters: { id: '1' }, query: { limit: '10' } }
-            ];
-
             navigator = plat.acquire(plat.routing.INavigatorInstance);
         });
 
@@ -58,7 +47,7 @@ module test.routing.router {
 
         it('should test history', () => {
             navigator.initialize(router);
-            expect(navigator.history).toBe(history);
+            expect(navigator.$history).toBe(history);
         });
 
         it('should test that the history stack is populated for the initial navigator', () => {
@@ -67,7 +56,7 @@ module test.routing.router {
 
             spy.calls.reset();
             navigator.initialize(router);
-            expect(spy.calls.count()).toBe(history.length + 1);
+            expect(spy).toHaveBeenCalled();
             expect(spy2).not.toHaveBeenCalled();
         });
 
@@ -84,24 +73,13 @@ module test.routing.router {
             });
 
             it('should test goBack with length', () => {
-                var spy = spyOn(navigator, 'navigate').and.callThrough();
-                spyOn(window.history, 'go');
+                var spy = spyOn(window.history, 'go');
+
                 navigator.goBack({
                     length: 2
                 });
 
-                expect(spy).toHaveBeenCalledWith('posts/6', { isUrl: true });
-            });
-
-            it('should test goBack with a view', () => {
-                var spy = spyOn(navigator, 'navigate');
-                spyOn(window.history, 'go');
-
-                navigator.goBack({
-                    view: 'post6'
-                });
-
-                expect(spy).toHaveBeenCalledWith('posts/6', { isUrl: true });
+                expect(spy).toHaveBeenCalledWith(-2);
             });
         });
     });

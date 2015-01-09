@@ -524,6 +524,10 @@ declare module plat {
           */
         $Window: Window;
         /**
+          * The window.history injectable.
+          */
+        $history: History;
+        /**
           * The document injectable.
           */
         $Document: Document;
@@ -1418,7 +1422,7 @@ declare module plat {
       * The Type for referencing the '$Document' injectable as a dependency.
       * Used so that the Window can be mocked.
       */
-    function Document($Window?: Window): Document;
+    function Document($window?: Window): Document;
     /**
       * Holds classes and interfaces related to expression handling in platypus.
       */
@@ -2195,6 +2199,11 @@ declare module plat {
       */
     module web {
         /**
+          * The Type for referencing the '$History' injectable as a dependency.
+          * Used so that the window.history can be mocked.
+          */
+        function Location($window?: Window): Location;
+        /**
           * The class that handles all interaction with the browser.
           */
         class Browser implements IBrowser {
@@ -2217,7 +2226,15 @@ declare module plat {
             /**
               * Reference to the Window injectable.
               */
-            $Window: Window;
+            $window: Window;
+            /**
+              * Reference to the Location injectable.
+              */
+            $location: Location;
+            /**
+              * Reference to the History injectable.
+              */
+            $history: History;
             /**
               * Reference to the IDom injectable.
               */
@@ -2248,7 +2265,7 @@ declare module plat {
               */
             initialize(): void;
             /**
-              * Sets or gets the current $Window.location
+              * Sets or gets the current $window.location
               * @param {string} url? The URL to set the location to.
               * @param {boolean} replace? Whether or not to replace the current URL in
               * the history.
@@ -2283,7 +2300,7 @@ declare module plat {
               * Formats the URL in the case of HASH routing.
               * @param url The URL to format.
               */
-            protected _formatUrl(url: string): string;
+            formatUrl(url: string): string;
         }
         /**
           * The Type for referencing the '$Browser' injectable as a dependency.
@@ -2303,7 +2320,7 @@ declare module plat {
               */
             initialize(): void;
             /**
-              * Sets or gets the current $Window.location
+              * Sets or gets the current $window.location
               * @param {string} url? The URL to set the location to.
               * @param {boolean} replace? Whether or not to replace the current URL in
               * the history.
@@ -2320,6 +2337,11 @@ declare module plat {
               * @param url The URL to verify whether or not it's cross domain.
               */
             isCrossDomain(url: string): boolean;
+            /**
+              * Formats the URL in the case of HASH routing.
+              * @param url The URL to format.
+              */
+            formatUrl(url: string): string;
         }
         /**
           * The Type for referencing the '$BrowserConfig' injectable as a dependency.
@@ -6381,10 +6403,10 @@ declare module plat {
               */
             constructor();
             navigator: routing.Navigator;
-            canNavigateFrom: () => any;
-            canNavigateTo: (parameters: any, query: any) => any;
-            navigatingFrom: () => any;
-            navigatedTo: (parameters: any, query: any) => any;
+            canNavigateFrom(): any;
+            canNavigateTo(parameters: any, query: any): any;
+            navigatingFrom(): any;
+            navigatedTo(parameters: any, query: any): any;
         }
         interface ISupportNavigation {
             navigator?: routing.Navigator;
@@ -9935,10 +9957,6 @@ declare module plat {
                   */
                 $InjectorStatic: typeof dependency.Injector;
                 /**
-                  * The IBrowserConfig injectable instance
-                  */
-                $browserConfig: web.IBrowserConfig;
-                /**
                   * The IBrowser injectable instance
                   */
                 $browser: web.IBrowser;
@@ -10980,45 +10998,33 @@ declare module plat {
               * The router associated with this link.
               */
             router: Router;
-            history: History;
+            $history: History;
             uid: string;
             removeUrlListener: IRemoveListener;
             ignoreOnce: boolean;
             previousUrl: string;
             initialize(router: Router): void;
-            navigate(view: any, options: INavigateOptions): void;
-            navigated(): void;
+            navigate(view: any, options?: INavigateOptions): void;
             goBack(options: IBackNavigationOptions): void;
             dispose(): void;
             protected _observeUrl(): void;
-            protected _getUrl(view: any, parameters: any, query: any): string;
+            generate(view: any, parameters: any, query: any): string;
         }
         function INavigatorInstance(): Navigator;
         interface INavigateOptions {
+            isUrl?: boolean;
             parameters?: IObject<string>;
             query?: IObject<string>;
             replace?: boolean;
         }
         interface IBackNavigationOptions {
-            view?: any;
             length?: number;
         }
-        class History {
-            entries: IHistoryEntry[];
-            length: number;
-            push(entry: IHistoryEntry): void;
-            pop(): IHistoryEntry;
-            slice(index: number): IHistoryEntry;
-            indexOf(view: string): number;
-            forEach(handler: (entry: IHistoryEntry, index: number, entries: IHistoryEntry[]) => void): void;
-        }
-        interface IHistoryEntry {
-            url: string;
-            view: string;
-            parameters: IObject<string>;
-            query: IObject<string>;
-        }
-        function IHistory(): History;
+        /**
+          * The Type for referencing the '$History' injectable as a dependency.
+          * Used so that the window.history can be mocked.
+          */
+        function History($window?: Window): History;
         /**
           * Stores information about a segment, publishes a regex for matching the segment as well as
           * methods for generating the segment and iterating over the characters in the segment.

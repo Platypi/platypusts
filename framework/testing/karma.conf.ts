@@ -23,6 +23,7 @@ function cfg(config: any) {
             '../framework/window/window.js',
             '../framework/document/document.js',
             '../framework/expressions/regex/*.js',
+            '../framework/web/location/*.js',
             '../framework/web/browser/*.js',
             '../framework/web/urlutils/*.js',
             '../framework/async/promise.js',

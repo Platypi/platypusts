@@ -25,6 +25,19 @@
         $Window: Window = acquire(__Window);
 
         /**
+         * @name $history
+         * @memberof plat.Compat
+         * @kind property
+         * @access public
+         * 
+         * @type {Window}
+         * 
+         * @description
+         * The window.history injectable.
+         */
+        $history: History = acquire(__History);
+
+        /**
          * @name $Document
          * @memberof plat.Compat
          * @kind property
@@ -379,7 +392,7 @@
             var $window = this.$Window,
                 navigator = $window.navigator || <Navigator>{},
                 userAgent = (navigator.userAgent || '').toLowerCase(),
-                history = $window.history,
+                history = this.$history,
                 def = (<any>$window).define,
                 msA = (<any>$window).MSApp,
                 android = parseInt((<any>/android (\d+)/.exec(userAgent) || [])[1], 10);

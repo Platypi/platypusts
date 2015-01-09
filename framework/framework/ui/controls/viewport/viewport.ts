@@ -146,9 +146,7 @@ module plat.ui.controls {
                 }
 
                 manager.setUiControlTemplate();
-                return manager.templatePromise.then(() => {
-                    this.navigator.navigated();
-                });
+                return manager.templatePromise;
             });
         }
 

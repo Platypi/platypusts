@@ -41,6 +41,7 @@
     <TypeScriptCompile Include="expressions\parser\parser.ts" />
     <TypeScriptCompile Include="expressions\regex\regex.ts" />
     <TypeScriptCompile Include="expressions\tokenizer\tokenizer.ts" />
+    <TypeScriptCompile Include="routing\history\history.ts" />
     <TypeScriptCompile Include="injectables\geolocation\geolocation.ts" />
     <TypeScriptCompile Include="injectables\indexeddb\indexeddb.ts" />
     <TypeScriptCompile Include="observable\contextmanager\contextmanager.ts" />
@@ -51,7 +52,6 @@
     <TypeScriptCompile Include="processing\nodemanager\textmanager.ts" />
     <TypeScriptCompile Include="references\references.ts" />
     <TypeScriptCompile Include="register\register.ts" />
-    <TypeScriptCompile Include="routing\history\history.ts" />
     <TypeScriptCompile Include="routing\navigator\navigator.ts" />
     <TypeScriptCompile Include="routing\routerecognizer\routerecognizer.ts" />
     <TypeScriptCompile Include="routing\router\router.ts" />
@@ -88,6 +88,7 @@
     <TypeScriptCompile Include="utils\utils.ts" />
     <TypeScriptCompile Include="utils\utilsglobal.ts" />
     <TypeScriptCompile Include="web\browser\browser.ts" />
+    <TypeScriptCompile Include="web\location\location.ts" />
     <TypeScriptCompile Include="web\urlutils\urlutils.ts" />
     <TypeScriptCompile Include="window\window.ts" />
   </ItemGroup>

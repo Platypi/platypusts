@@ -19,6 +19,10 @@ module app.viewcontrols {
                 { pattern: '/four', view: Four }
             ]);
         }
+
+        goBack() {
+            this.navigator.goBack();
+        }
     }
 
     plat.register.viewControl('main', Main, [

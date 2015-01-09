@@ -59,7 +59,7 @@
          */
         router: Router;
 
-        history: History;
+        $history: History = plat.acquire(__History);
 
         uid = uniqueId(__Plat);
         removeUrlListener: IRemoveListener = noop;
@@ -71,10 +71,6 @@
 
             if (router.isRoot) {
                 Navigator.root = this;
-                var history = this.history = acquire(__History);
-                history.forEach((entry: IHistoryEntry) => {
-                    this.$browser.url(entry.url);
-                });
                 this._observeUrl();
             }
         }
@@ -92,68 +88,31 @@
             this.$browser.url(url, options.replace);
         }
 
-        navigated() {
-            var router = this.router;
+        goBack(options?: IBackNavigationOptions) {
+            options = isObject(options) ? options : {};
 
-            if(!(isObject(router) && router.isRoot)) {
-                return;
+            var length = Number(options.length);
+
+            if (!isNumber(length)) {
+                length = 1;
             }
 
-            var routeInfo = router.currentRouteInfo,
-                utils = this.$browser.urlUtils();
-
-            this.history.push({
-                url: utils.href,
-                view: routeInfo.delegate.view,
-                parameters: routeInfo.parameters,
-                query: utils.query
-            });
-        }
-
-        goBack(options: IBackNavigationOptions) {
             var root = Navigator.root;
 
             if (root !== this) {
                 root.goBack(options);
             }
 
-            var view = options.view,
-                length = options.length,
-                entry: IHistoryEntry;
+            var $history = this.$history,
+                url = this.$browser.url();
 
-            if (!isNull(view)) {
-                view = this.$InjectorStatic.convertDependency(view);
+            $history.go(-length);
 
-                if (!isString(view)) {
-                    return;
+            setTimeout(() => {
+                if (url === this.$browser.url()) {
+                    this.$EventManagerStatic.dispatch(__shutdown, this, this.$EventManagerStatic.DIRECT);
                 }
-
-                entry = this.history.pop();
-
-                length = this.history.indexOf(view);
-
-                this.history.push(entry);
-            }
-
-            if (!isNumber(length) || length <= 0) {
-                return;
-            }
-
-            if (!isString(view)) {
-                // We want to go back length + 1 times, so we can navigate to the entry.
-                length = this.history.length - (length + 1);
-            }
-
-            entry = this.history.slice(length);
-
-            this.history.pop();
-            this.ignoreOnce = true;
-
-            this.$window.history.go(-length);
-
-            this.navigate(entry.url, {
-                isUrl: true
-            });
+            }, 10);
         }
 
         dispose() {
@@ -172,9 +131,15 @@
                 previousQuery: string;
 
             this.previousUrl = this.$browser.url();
-            this.removeUrlListener();
 
-            this.removeUrlListener = this.$EventManagerStatic.on(this.uid, __urlChanged, (ev: events.IDispatchEventInstance, utils?: web.IUrlUtilsInstance) => {
+            var EventManager = this.$EventManagerStatic;
+
+            EventManager.dispose(this.uid);
+            EventManager.on(this.uid, __backButton, (ev) => {
+                
+            });
+
+            EventManager.on(this.uid, __urlChanged, (ev: events.IDispatchEventInstance, utils?: web.IUrlUtilsInstance) => {
                 if (this.ignoreOnce) {
                     this.ignoreOnce = false;
                     return;
@@ -185,10 +150,10 @@
                     this.router.navigate(utils.pathname, utils.query).then(() => {
                         this.previousUrl = utils.href;
                     }).catch(() => {
-                        this.ignoreOnce = true;
-                        this.previousUrl = previousUrl;
-                        this.$browser.url(previousUrl, true);
-                    });
+                            this.ignoreOnce = true;
+                            this.previousUrl = previousUrl;
+                            this.$browser.url(previousUrl, true);
+                        });
                 });
             });
         }
@@ -203,7 +168,6 @@
             }
 
             view = this.$InjectorStatic.convertDependency(view);
-
             return this.router.generate(view, parameters, query);
         }
     }
@@ -222,7 +186,6 @@
     }
 
     export interface IBackNavigationOptions {
-        view?: any;
         length?: number;
     }
 }

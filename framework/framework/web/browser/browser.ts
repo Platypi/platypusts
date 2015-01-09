@@ -77,7 +77,7 @@ module plat.web {
          */
         $Regex: expressions.IRegex = acquire(__Regex);
         /**
-         * @name $Window
+         * @name $window
          * @memberof plat.web.Browser
          * @kind property
          * @access public
@@ -87,7 +87,34 @@ module plat.web {
          * @description
          * Reference to the Window injectable.
          */
-        $Window: Window = acquire(__Window);
+        $window: Window = acquire(__Window);
+
+        /**
+         * @name $location
+         * @memberof plat.web.Browser
+         * @kind property
+         * @access public
+         * 
+         * @type {Location}
+         * 
+         * @description
+         * Reference to the Location injectable.
+         */
+        $location: Location = acquire(__Location);
+
+        /**
+         * @name $history
+         * @memberof plat.web.Browser
+         * @kind property
+         * @access public
+         * 
+         * @type {History}
+         * 
+         * @description
+         * Reference to the History injectable.
+         */
+        $history: History = acquire(__History);
+
         /**
          * @name $Dom
          * @memberof plat.web.Browser
@@ -138,7 +165,7 @@ module plat.web {
          * @description
          * The browser's last URL.
          */
-        private __lastUrl = this.$Window.location.href;
+        private __lastUrl = this.$location.href;
         /**
          * @name __initializing
          * @memberof plat.web.Browser
@@ -199,7 +226,7 @@ module plat.web {
                 trimmedUrl = url,
                 changed = this._urlChanged.bind(this),
                 $dom = this.$Dom,
-                $window = this.$Window;
+                $window = this.$window;
 
             if (trimmedUrl !== url) {
                 this.url(trimmedUrl, true);
@@ -221,7 +248,7 @@ module plat.web {
          * @access public
          * 
          * @description
-         * Sets or gets the current $Window.location
+         * Sets or gets the current $window.location
          * 
          * @param {string} url? The URL to set the location to.
          * @param {boolean} replace? Whether or not to replace the current URL in 
@@ -230,7 +257,7 @@ module plat.web {
          * @returns {string} The current URL or current location.
          */
         url(url?: string, replace?: boolean): string {
-            var location = this.$Window.location;
+            var location = this.$location;
 
             if (isString(url) && this.__lastUrl !== url) {
                 this._setUrl(url, replace);
@@ -353,10 +380,12 @@ module plat.web {
             url = this.formatUrl(url);
 
             var utils = this.urlUtils(url),
-                baseUrl = Browser.config.baseUrl;
+                baseUrl = Browser.config.baseUrl,
+                $history = this.$history,
+                $location = this.$location;
 
             if (utils.href.indexOf(baseUrl) === -1) {
-                location.href = url;
+                $location.href = url;
                 return;
             }
             
@@ -367,9 +396,9 @@ module plat.web {
 
             if (this.$Compat.pushState) {
                 if (replace) {
-                    history.replaceState(null, '', url);
+                    $history.replaceState(null, '', url);
                 } else {
-                    history.pushState(null, '', url);
+                    $history.pushState(null, '', url);
                 }
 
                 if (!this.__initializing) {
@@ -378,9 +407,9 @@ module plat.web {
             } else {
                 this.__currentUrl = url;
                 if (replace) {
-                    location.replace(url);
+                    $location.replace(url);
                 } else {
-                    location.href = url;
+                    $location.href = url;
                 }
             }
         }
@@ -482,7 +511,7 @@ module plat.web {
          * @access public
          * 
          * @description
-         * Sets or gets the current $Window.location
+         * Sets or gets the current $window.location
          * 
          * @param {string} url? The URL to set the location to.
          * @param {boolean} replace? Whether or not to replace the current URL in 
