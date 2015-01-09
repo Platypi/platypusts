@@ -74,17 +74,26 @@ module plat.ui.controls {
         }
 
         canNavigateTo(routeInfo: routing.IRouteInfo): async.IThenable<boolean> {
-            var response: any = true,
+            var getRouter = this.$RouterStatic.currentRouter,
+                currentRouter = getRouter(),
+                response: any = true,
                 injector: dependency.IInjector<ViewControl> = this.$Injector.getDependency(routeInfo.delegate.view),
                 view = injector.inject(),
                 parameters = routeInfo.parameters,
-                resolve = this.$Promise.resolve.bind(this.$Promise);
+                resolve = this.$Promise.resolve.bind(this.$Promise),
+                nextRouter = getRouter();
 
             if (!isObject(view)) {
                 return resolve();
             }
 
-            view.navigator = this.navigator;
+            if (currentRouter !== nextRouter) {
+                var navigator: routing.Navigator = acquire(__NavigatorInstance);
+                view.navigator = navigator;
+                navigator.initialize(nextRouter);
+            } else {
+                view.navigator = this.navigator;
+            }
 
             if (isFunction(view.canNavigateTo)) {
                 response = view.canNavigateTo(parameters, routeInfo.query);
@@ -117,14 +126,6 @@ module plat.ui.controls {
                     parameters = routeInfo.parameters,
                     query = routeInfo.query,
                     control = <ViewControl>nodeMap.uiControlNode.control;
-
-                if (isObject((<any>control).router)) {
-                    var navigator: routing.Navigator = acquire(__NavigatorInstance);
-                    control.navigator = navigator;
-                    navigator.initialize((<any>control).router);
-                } else {
-                    control.navigator = this.navigator;
-                }
 
                 element.appendChild(node);
 

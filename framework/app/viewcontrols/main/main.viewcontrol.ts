@@ -9,7 +9,7 @@ module app.viewcontrols {
             views: [One, Two, Three, Four]
         };
 
-        constructor(public router: plat.routing.Router) {
+        constructor(router: plat.routing.Router) {
             super();
             
             router.configure([
