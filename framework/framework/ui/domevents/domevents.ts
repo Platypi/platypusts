@@ -868,6 +868,7 @@
             this.__capturedTarget = this.__lastMoveEvent = null;
             this.__hasMoved = false;
             this.__lastTouchDown = this.__swipeOrigin = {
+                buttons: ev.buttons,
                 clientX: ev.clientX,
                 clientY: ev.clientY,
                 timeStamp: ev.timeStamp,
@@ -965,7 +966,7 @@
                 x = ev.clientX,
                 y = ev.clientY,
                 minMove = this.__hasMoved ||
-                    (this.__getDistance(swipeOrigin.clientX, x, swipeOrigin.clientY, y) >= config.distances.minScrollDistance);
+                (this.__getDistance(swipeOrigin.clientX, x, swipeOrigin.clientY, y) >= config.distances.minScrollDistance);
 
             // if minimum distance not met
             if (!minMove) {
@@ -1217,6 +1218,7 @@
             // or a mouse is being used
             if (DomEvents.config.intervals.dblTapZoomDelay <= 0 ||
                 ev.pointerType === 'mouse' || ev.type === 'mouseup') {
+                ev = extend({}, ev, this.__lastTouchDown);
                 domEvent.trigger(ev);
                 return;
             }
@@ -1224,6 +1226,7 @@
             // defer for tap delay in case of something like desired 
             // dbltap zoom
             this.__cancelDeferredTap = defer(() => {
+                ev = extend({}, ev, this.__lastTouchDown);
                 domEvent.trigger(ev);
                 this.__tapCount = 0;
                 this.__cancelDeferredTap = noop;
@@ -1258,6 +1261,7 @@
                 return;
             }
 
+            ev = extend({}, ev, this.__lastTouchDown);
             domEvent.trigger(ev);
             // set touch count to -1 to prevent repeated fire on sequential taps
             this.__tapCount = -1;
@@ -1969,11 +1973,36 @@
                 this.__setCapture(ev.target);
             }
 
+            this.__normalizeButtons(ev);
             ev.touches = touches;
             ev.offset = this.__getOffset(ev);
             ev.timeStamp = timeStamp;
 
             return ev;
+        }
+
+        /**
+         * @name __normalizeButtons
+         * @memberof plat.ui.DomEvents
+         * @kind function
+         * @access private
+         * 
+         * @description
+         * Normalizes the 'buttons' property on an IExetendedEvent. 
+         * 
+         * @param {plat.ui.IExtendedEvent} ev The event.
+         * 
+         * @returns {void}
+         */
+        private __normalizeButtons(ev: IExtendedEvent) {
+            if (isNumber(ev.buttons)) {
+                return;
+            } else if (isNumber((<any>ev).which) && (<any>ev).which > 0) {
+                ev.buttons = (<any>ev).which;
+                return;
+            }
+
+            ev.buttons = (<any>ev).button;
         }
 
         /**
@@ -2893,6 +2922,7 @@
             customEv.screenY = ev.screenY;
             customEv.pageX = ev.pageX;
             customEv.pageY = ev.pageY;
+            customEv.buttons = ev.buttons;
         }
 
         /**
@@ -3111,6 +3141,19 @@
      */
     export interface IBaseEventProperties {
         /**
+         * @name buttons
+         * @memberof plat.ui.IBaseEventProperties
+         * @kind property
+         * @access public
+         * 
+         * @type {number}
+         * 
+         * @description
+         * Indicates which mouse button is being pressed in a mouse event.
+         */
+        buttons?: number;
+
+        /**
          * @name clientX
          * @memberof plat.ui.IBaseEventProperties
          * @kind property
@@ -3189,6 +3232,19 @@
      * An extended event object potentially containing coordinate and movement information.
      */
     export interface IExtendedEvent extends Event {
+        /**
+         * @name buttons
+         * @memberof plat.ui.IExtendedEvent
+         * @kind property
+         * @access public
+         * 
+         * @type {number}
+         * 
+         * @description
+         * Indicates which mouse button is being pressed in a mouse event.
+         */
+        buttons?: number;
+
         /**
          * @name clientX
          * @memberof plat.ui.IExtendedEvent
@@ -3435,6 +3491,19 @@
      * The type of event object passed into the listeners for our custom events.
      */
     export interface IGestureEvent extends CustomEvent {
+        /**
+         * @name buttons
+         * @memberof plat.ui.IGestureEvent
+         * @kind property
+         * @access public
+         * 
+         * @type {number}
+         * 
+         * @description
+         * Indicates which mouse button is being pressed in a mouse event.
+         */
+        buttons?: number;
+
         /**
          * @name clientX
          * @memberof plat.ui.IGestureEvent
