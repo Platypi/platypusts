@@ -96,7 +96,7 @@ module plat.ui.controls {
          * @description
          * The options for Link, if ignore is true, anchor will ignore changing the url.
          */
-        options: observable.IObservableProperty<{ view: any; parameters?: IObject<string>; query?: IObject<string>; }>;
+        options: observable.IObservableProperty<ILinkOptions>;
 
         /**
          * @name element
@@ -254,21 +254,27 @@ module plat.ui.controls {
                 return '';
             }
 
-            var href = value.view,
-                parameters = value.parameters;
+            var href = value.view;
 
-            if (isEmpty(href)) {
-                return href;
+            if (value.isUrl !== true) {
+                var parameters = value.parameters;
+
+                if (isEmpty(href)) {
+                    return href;
+                }
+
+                href = this.$InjectorStatic.convertDependency(href);
+                href = this.router.generate(href, parameters);
             }
 
-            href = this.$InjectorStatic.convertDependency(href);
-
-            var path = this.router.generate(href, parameters);
-
-            return this.$browser.formatUrl(path);
+            return this.$browser.formatUrl(href);
         }
     }
 
+
+    export interface ILinkOptions extends routing.INavigateOptions {
+        view: any;
+    }
 
     register.control(__Link, Link);
 }
