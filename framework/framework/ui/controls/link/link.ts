@@ -148,7 +148,11 @@ module plat.ui.controls {
                 this.removeClickListener();
             });
 
-            this.addEventListener(element, __tap, (ev: Event) => {
+            this.addEventListener(element, __tap, (ev: IExtendedEvent) => {
+                if (ev.buttons !== 1) {
+                    return;
+                }
+
                 var href = this.getHref();
 
                 if (isUndefined(href)) {
@@ -161,6 +165,7 @@ module plat.ui.controls {
                     return;
                 }
 
+                console.log(ev);
                 this.$browser.url(href);
                 this.removeClickListener();
                 element.addEventListener('click', this.getListener(element));
