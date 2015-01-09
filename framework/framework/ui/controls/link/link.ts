@@ -165,7 +165,6 @@ module plat.ui.controls {
                     return;
                 }
 
-                console.log(ev);
                 this.$browser.url(href);
                 this.removeClickListener();
                 element.addEventListener('click', this.getListener(element));
