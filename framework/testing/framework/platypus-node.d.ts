@@ -11002,6 +11002,10 @@ declare module plat {
         class Navigator {
             protected static root: Navigator;
             /**
+              * The IPromise injectable instance
+              */
+            $Promise: async.IPromise;
+            /**
               * The Injector injectable instance
               */
             $InjectorStatic: typeof dependency.Injector;
@@ -11024,10 +11028,14 @@ declare module plat {
             removeUrlListener: IRemoveListener;
             ignoreOnce: boolean;
             ignored: boolean;
+            isRoot: boolean;
             previousUrl: string;
             backNavigate: boolean;
+            resolveNavigate: () => void;
+            rejectNavigate: (err: any) => void;
             initialize(router: Router): void;
-            navigate(view: any, options?: INavigateOptions): void;
+            navigate(view: any, options?: INavigateOptions): async.IThenable<void>;
+            protected _navigate(url: string, replace?: boolean): async.IThenable<void>;
             goBack(options?: IBackNavigationOptions): void;
             dispose(): void;
             protected _observeUrl(): void;
@@ -11595,17 +11603,21 @@ declare module plat {
             intercept(handler: (routeInfo: IRouteInfo) => any, view: new (...args: any[]) => any): Router;
             navigate(url: string, query?: IObject<any>, force?: boolean): async.IThenable<void>;
             forceNavigate(): async.IThenable<void>;
+            resolveCancel: () => void;
+            cancel(): async.IThenable<void>;
             generate(name: string, parameters?: IObject<any>, query?: IObject<string>): string;
             navigateChildren(info: IRouteInfo): async.IThenable<void>;
             getChildRoute(info: IRouteInfo): string;
             performNavigation(info: IRouteInfo): async.IThenable<void>;
-            performNavigateFrom(): async.IThenable<void>;
+            performNavigateFrom(ignorePorts?: boolean): async.IThenable<void>;
             canNavigate(info: IRouteInfo): async.IThenable<boolean>;
             callAllHandlers(view: string, parameters: any, query?: any): async.IThenable<void>;
             callHandlers(allHandlers: IRouteTransforms, obj: any, query?: any): async.IThenable<any[][]>;
             callInterceptors(info: IRouteInfo): async.IThenable<boolean>;
             canNavigateFrom(ignorePorts?: boolean): async.IThenable<boolean>;
             canNavigateTo(info: IRouteInfo, ignorePorts?: boolean): async.IThenable<boolean>;
+            protected _isSameRoute(info: IRouteInfo): boolean;
+            protected _clearInfo(): void;
         }
         function IRouter(): Router;
         function IRouterStatic(): typeof Router;

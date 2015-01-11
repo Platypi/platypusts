@@ -190,7 +190,8 @@ module.exports = exports = function load(grunt) {
             main: {
                 options: {
                     sourceMapIn: 'dist/platypus.js.map',
-                    sourceMap: 'dist/platypus.js.map'
+                    sourceMap: 'dist/platypus.js.map',
+                    screwIE8: true
                 },
                 files: {
                     'dist/platypus.js': [
