@@ -216,7 +216,7 @@ module.exports = exports = function load(grunt) {
     // By default, run all tests.
     grunt.registerTask('default', ['clean', 'bundle', 'copy:main', 'ts:main', 'uglify', 'copy:bower', 'copy:node', 'copy:test', 'clean:after']);
 
-
+    grunt.registerTask('install', ['tsd']);
     grunt.registerTask('docs', ['clean:after', 'bundle']);
     grunt.registerTask('test', ['ts:test', 'karma']);
     grunt.registerTask('app', ['ts:all', 'connect']);

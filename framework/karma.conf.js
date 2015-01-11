@@ -138,4 +138,3 @@ function cfg(config) {
     });
 }
 module.exports = cfg;
-//# sourceMappingURL=karma.conf.js.map
