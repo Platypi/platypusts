@@ -18,7 +18,6 @@
             ]);
         }
 
-
         navigatedTo() {
             // console.log('navigatedTo:', this.uid);
             this.navigator.navigate(Three);
