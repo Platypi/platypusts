@@ -135,12 +135,18 @@ module.exports = exports = function load(grunt) {
                 dest: 'testing/framework/platypus-node.d.ts'
             }
         },
+        karma: {
+            unit: {
+                configFile: 'karma.conf.js'
+            }
+        },
         ts: {
             options: {
                 target: 'es5',
                 module: 'commonjs',
                 sourceMap: true,
-                removeComments: false
+                removeComments: false,
+                fast: 'always'
             },
             main: {
                 options: {
@@ -152,13 +158,32 @@ module.exports = exports = function load(grunt) {
                 ]
             },
             all: {
-                options: {
-                    fast: 'always'
-                },
                 src: [
                     'framework/**/*.ts',
-                    'app/**/*.ts'
+                    'app/**/*.ts',
+                    'testing/**/*.ts',
+                    '!testing/framework/**',
+                    '!node_modules/**'
                 ]
+            },
+            test: {
+                src: [
+                    'testing/**/*.ts'
+                ]
+            }
+        },
+        tsd: {
+            refresh: {
+                options: {
+                    // execute a command
+                    command: 'reinstall',
+
+                    //optional: always get from HEAD
+                    latest: true,
+
+                    // specify config file
+                    config: './tsd.test.json'
+                }
             }
         },
         uglify: {
@@ -182,13 +207,17 @@ module.exports = exports = function load(grunt) {
     grunt.loadNpmTasks('grunt-contrib-connect');
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-karma');
     grunt.loadNpmTasks('grunt-ts-bundle');
     grunt.loadNpmTasks('grunt-ts');
+    grunt.loadNpmTasks('grunt-tsd');
 
-    grunt.registerTask('docs', ['clean:after', 'bundle'])
 
     // By default, run all tests.
     grunt.registerTask('default', ['clean', 'bundle', 'copy:main', 'ts:main', 'uglify', 'copy:bower', 'copy:node', 'copy:test', 'clean:after']);
 
-    grunt.registerTask('start', ['ts:all', 'connect'])
+
+    grunt.registerTask('docs', ['clean:after', 'bundle']);
+    grunt.registerTask('test', ['ts:test', 'karma']);
+    grunt.registerTask('app', ['ts:all', 'connect']);
 };

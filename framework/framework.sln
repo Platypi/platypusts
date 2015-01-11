@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30723.0
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "app", "app\app.csproj", "{B368243F-B394-4D72-91B7-5A6F80EC0A10}"
 EndProject
@@ -14,10 +14,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\.gitattributes = ..\.gitattributes
 		..\.gitignore = ..\.gitignore
 		gruntfile.js = gruntfile.js
+		karma.conf.js = karma.conf.js
 		..\LICENSE = ..\LICENSE
 		license.txt = license.txt
 		package.json = package.json
 		..\README.md = ..\README.md
+		tsd.test.json = tsd.test.json
 	EndProjectSection
 EndProject
 Global
