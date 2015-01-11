@@ -52,7 +52,6 @@
   </PropertyGroup>
   <ItemGroup>
     <TypeScriptCompile Include="framework\platypus-node.d.ts" />
-    <TypeScriptCompile Include="karma.conf.ts" />
     <TypeScriptCompile Include="tests\acquire\acquire.test.ts" />
     <TypeScriptCompile Include="tests\app\app.test.ts" />
     <TypeScriptCompile Include="tests\app\appstatic.test.ts" />
@@ -77,12 +76,6 @@
     <TypeScriptCompile Include="tests\storage\cache\cache.test.ts" />
     <TypeScriptCompile Include="tests\utils\utils.test.ts" />
     <TypeScriptCompile Include="typings\tsd.d.ts" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="tsd.json" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="package.json" />
   </ItemGroup>
   <ItemGroup />
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
