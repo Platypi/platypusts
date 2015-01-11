@@ -107,6 +107,10 @@
             return this._navigate(url, options.replace);
         }
 
+        redirect(view: any, options?: INavigateOptions) {
+
+        }
+
         protected _navigate(url: string, replace?: boolean): async.IThenable<void> {
             if (!this.isRoot) {
                 return Navigator.root._navigate(url, replace);
