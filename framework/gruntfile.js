@@ -129,6 +129,10 @@ module.exports = exports = function load(grunt) {
                 },
                 src: 'dist/platypus.d.ts',
                 dest: 'dist/platypus-node.d.ts'
+            },
+            test: {
+                src: 'dist/platypus-node.d.ts',
+                dest: 'testing/framework/platypus-node.d.ts'
             }
         },
         ts: {
@@ -184,7 +188,7 @@ module.exports = exports = function load(grunt) {
     grunt.registerTask('docs', ['clean:after', 'bundle'])
 
     // By default, run all tests.
-    grunt.registerTask('default', ['clean', 'bundle', 'copy:main', 'ts:main', 'uglify', 'copy:bower', 'copy:node', 'clean:after']);
+    grunt.registerTask('default', ['clean', 'bundle', 'copy:main', 'ts:main', 'uglify', 'copy:bower', 'copy:node', 'copy:test', 'clean:after']);
 
     grunt.registerTask('start', ['ts:all', 'connect'])
 };

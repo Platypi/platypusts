@@ -7969,6 +7969,11 @@ declare module plat {
               */
             private __standardizeEventObject(ev);
             /**
+              * Normalizes the 'buttons' property on an IExetendedEvent.
+              * @param {plat.ui.IExtendedEvent} ev The event.
+              */
+            private __normalizeButtons(ev);
+            /**
               * Searches through the input array looking for the primary
               * touch down index.
               * @param {Array<plat.ui.IExtendedEvent>} ev The array of touch event objects
@@ -8183,6 +8188,10 @@ declare module plat {
           */
         interface IBaseEventProperties {
             /**
+              * Indicates which mouse button is being pressed in a mouse event.
+              */
+            buttons?: number;
+            /**
               * The x-coordinate of the event on the screen relative to the upper left corner of the
               * browser window. This value cannot be affected by scrolling.
               */
@@ -8209,6 +8218,10 @@ declare module plat {
           * An extended event object potentially containing coordinate and movement information.
           */
         interface IExtendedEvent extends Event {
+            /**
+              * Indicates which mouse button is being pressed in a mouse event.
+              */
+            buttons?: number;
             /**
               * The x-coordinate of the event on the screen relative to the upper left corner of the
               * browser window. This value cannot be affected by scrolling.
@@ -8297,6 +8310,10 @@ declare module plat {
           * The type of event object passed into the listeners for our custom events.
           */
         interface IGestureEvent extends CustomEvent {
+            /**
+              * Indicates which mouse button is being pressed in a mouse event.
+              */
+            buttons?: number;
             /**
               * The x-coordinate of the event on the screen relative to the upper left corner of the
               * browser window. This value cannot be affected by scrolling.
@@ -9384,6 +9401,10 @@ declare module plat {
                   */
                 protected _aliases: IForEachAliasOptions;
                 /**
+                  * The container to which items will be added.
+                  */
+                protected _container: HTMLElement;
+                /**
                   * The node length of each item's childNodes (innerHTML).
                   * For the ForEach it should be a
                   * single constant number.
@@ -9458,6 +9479,7 @@ declare module plat {
                 protected _removeItem(): void;
                 /**
                   * Binds the item to a template at that index.
+                  * the a DocumentFragment that represents an item.
                   */
                 protected _bindItem(index: number): async.IThenable<DocumentFragment>;
                 /**
@@ -9967,11 +9989,7 @@ declare module plat {
                 /**
                   * The options for Link, if ignore is true, anchor will ignore changing the url.
                   */
-                options: observable.IObservableProperty<{
-                    view: any;
-                    parameters?: IObject<string>;
-                    query?: IObject<string>;
-                }>;
+                options: observable.IObservableProperty<ILinkOptions>;
                 /**
                   * The control's anchor element.
                   */
@@ -10001,6 +10019,9 @@ declare module plat {
                   * Determines the href based on the input options.
                   */
                 getHref(): string;
+            }
+            interface ILinkOptions extends routing.INavigateOptions {
+                view: any;
             }
         }
     }
@@ -11002,10 +11023,12 @@ declare module plat {
             uid: string;
             removeUrlListener: IRemoveListener;
             ignoreOnce: boolean;
+            ignored: boolean;
             previousUrl: string;
+            backNavigate: boolean;
             initialize(router: Router): void;
             navigate(view: any, options?: INavigateOptions): void;
-            goBack(options: IBackNavigationOptions): void;
+            goBack(options?: IBackNavigationOptions): void;
             dispose(): void;
             protected _observeUrl(): void;
             generate(view: any, parameters: any, query: any): string;
@@ -11548,7 +11571,7 @@ declare module plat {
             previousUrl: string;
             previousQuery: string;
             previousPattern: string;
-            currentRouteInfo: IDelegateInfo;
+            currentRouteInfo: IRouteInfo;
             ports: ISupportRouteNavigation[];
             parent: Router;
             children: Router[];
@@ -11581,8 +11604,8 @@ declare module plat {
             callAllHandlers(view: string, parameters: any, query?: any): async.IThenable<void>;
             callHandlers(allHandlers: IRouteTransforms, obj: any, query?: any): async.IThenable<any[][]>;
             callInterceptors(info: IRouteInfo): async.IThenable<boolean>;
-            canNavigateFrom(): async.IThenable<boolean>;
-            canNavigateTo(info: IRouteInfo): async.IThenable<boolean>;
+            canNavigateFrom(ignorePorts?: boolean): async.IThenable<boolean>;
+            canNavigateTo(info: IRouteInfo, ignorePorts?: boolean): async.IThenable<boolean>;
         }
         function IRouter(): Router;
         function IRouterStatic(): typeof Router;
