@@ -88,6 +88,7 @@ module plat.ui.controls {
             }
 
             if (currentRouter !== nextRouter) {
+                nextRouter.initialize(this.router);
                 var navigator: routing.Navigator = acquire(__NavigatorInstance);
                 view.navigator = navigator;
                 navigator.initialize(nextRouter);

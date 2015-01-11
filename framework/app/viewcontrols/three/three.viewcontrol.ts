@@ -19,21 +19,23 @@
         }
 
 
-        // navigatedTo() {
-        //     console.log('navigatedTo:', this.uid);
-        // }
+         navigatedTo() {
+             // console.log('navigatedTo:', this.uid);
+         }
 
-        // navigatingFrom() {
-        //     console.log('navigatingFrom:', this.uid);
-        // }
+         navigatingFrom() {
+             // console.log('navigatingFrom:', this.uid);
+         }
 
-        // canNavigateFrom() {
-        //     console.log('canNavigateFrom:', this.uid);
-        // }
+         canNavigateFrom() {
+             // console.log('canNavigateFrom:', this.uid);
+         }
 
-        // canNavigateTo() {
-        //     console.log('canNavigateTo:', this.uid);
-        // }
+         canNavigateTo() {
+             // console.log('canNavigateTo:', this.uid);
+
+             this.navigator.navigate('/two', { isUrl: true, replace: true });
+         }
     }
 
     plat.register.viewControl('three', Three, [

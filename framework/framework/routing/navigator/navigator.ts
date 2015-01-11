@@ -98,17 +98,25 @@
             options = isObject(options) ? options : {};
             var url: string;
 
-            if (options.isUrl) {
-                url = view;
-            } else {
-                url = this.generate(view, options.parameters, options.query);
-            }
+            return this._finishNavigating().then(() => {
+                if (options.isUrl) {
+                    url = view;
+                } else {
+                    url = this.generate(view, options.parameters, options.query);
+                }
 
-            return this._navigate(url, options.replace);
+                return this._navigate(url, options.replace);
+            });
         }
 
-        redirect(view: any, options?: INavigateOptions) {
+        protected _finishNavigating(): async.IThenable<void> {
+            var router = Navigator.root.router;
 
+            if (router.navigating) {
+                return router.finishNavigating;
+            }
+
+            return this.$Promise.resolve();
         }
 
         protected _navigate(url: string, replace?: boolean): async.IThenable<void> {

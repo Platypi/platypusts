@@ -32,6 +32,8 @@
         interceptors: IObject<Array<(routeInfo: IRouteInfo) => any>> = {};
 
         navigating: boolean = false;
+        finishNavigating: async.IThenable<void>;
+
         previousUrl: string;
         previousQuery: string;
         previousPattern: string;
@@ -225,6 +227,10 @@
             force = force === true;
 
             if (!isString(url) || this.navigating || (!force && url === this.previousUrl)) {
+                if (this.navigating) {
+                    return this.finishNavigating;
+                }
+
                 return resolve();
             }
 
@@ -250,10 +256,16 @@
                 if (this.previousPattern === pattern) {
                     // the pattern for this router is the same as the last pattern so 
                     // only navigate child routers.
-                    return this.navigateChildren(routeInfo).then(() => {
-                        this.previousUrl = url;
-                        this.previousQuery = queryString;
-                    });
+                    this.navigating = true;
+                    return this.finishNavigating = this.navigateChildren(routeInfo)
+                        .then(() => {
+                            this.previousUrl = url;
+                            this.previousQuery = queryString;
+                            this.navigating = false;
+                        }, (e) => {
+                            this.navigating = false;
+                            throw e;
+                        });
                 }
             } else {
                 routeInfo = result[0];
@@ -263,14 +275,11 @@
 
             this.navigating = true;
 
-            var routeInfoCopy = _clone(routeInfo, true),
-                cancelled: boolean;
+            var routeInfoCopy = _clone(routeInfo, true);
 
-            return this.canNavigate(routeInfo)
+            return this.finishNavigating = this.canNavigate(routeInfo)
                 .then((canNavigate: boolean) => {
-                    cancelled = isFunction(this.resolveCancel);
-
-                    if (!cancelled && !canNavigate) {
+                    if (!canNavigate) {
                         this.navigating = false;
                         throw new Error('Not cleared to navigate');
                     }
@@ -278,20 +287,15 @@
                     this.previousUrl = url;
                     this.previousQuery = queryString;
 
-                    if (cancelled) {
-                        return;
-                    }
-
                     return this.performNavigation(routeInfo);
                 })
                 .then(() => {
                     this.previousPattern = pattern;
                     this.currentRouteInfo = routeInfoCopy;
                     this.navigating = false;
-
-                    if (cancelled || isFunction(this.resolveCancel)) {
-                        this.resolveCancel();
-                    }
+                }, (e) => {
+                    this.navigating = false;
+                    throw e;
                 });
         }
 
@@ -318,16 +322,6 @@
             }
 
             return resolve();
-        }
-
-        resolveCancel: () => void;
-
-        cancel(): async.IThenable<void> {
-            return new this.$Promise((resolve) => {
-                this.resolveCancel = resolve;
-            }).then(() => {
-                this.resolveCancel = undefined;
-            });
         }
 
         generate(name: string, parameters?: IObject<any>, query?: IObject<string>) {
@@ -422,13 +416,6 @@
             return this.canNavigateFrom(sameRoute)
                 .then((canNavigateFrom: boolean) => {
                     return canNavigateFrom && this.canNavigateTo(info, sameRoute);
-                })
-                .then((canNavigate) => {
-                    if (isFunction(this.resolveCancel)) {
-                        return;
-                    }
-
-                    return canNavigate;
                 });
         }
 
@@ -477,17 +464,14 @@
         }
 
         canNavigateTo(info: IRouteInfo, ignorePorts?: boolean): async.IThenable<boolean> {
-            var promises: Array<any> = [],
-                cancelled: boolean;
+            var promises: Array<any> = [];
 
             return this.callAllHandlers(info.delegate.view, info.parameters, info.query)
                 .then(() => {
                     return this.callInterceptors(info);
                 })
                 .then((canNavigateTo) => {
-                    cancelled = isFunction(this.resolveCancel);
-
-                    if (cancelled || !canNavigateTo || ignorePorts) {
+                    if (!canNavigateTo || ignorePorts) {
                         return <any>[canNavigateTo];
                     }
 
@@ -497,7 +481,7 @@
                 })
                 .then(booleanReduce)
                 .then((canNavigateTo: boolean) => {
-                    if (!canNavigateTo || cancelled || isFunction(this.resolveCancel)) {
+                    if (!canNavigateTo) {
                         promises = [canNavigateTo];
                     } else {
                         var childRoute = this.getChildRoute(info);
