@@ -65,11 +65,12 @@ module test.routing.router {
                 navigator.initialize(router);
             });
 
-            it('should test navigate', () => {
+            it('should test navigate', (done) => {
                 var spy = <jasmine.Spy><any>spyOn(browser, 'url').and.callThrough();
-                navigator.navigate(PostsViewControl, null);
-
-                expect(spy).toHaveBeenCalled();
+                navigator.navigate(PostsViewControl, null).then(() => {
+                    expect(spy).toHaveBeenCalled();
+                    done();
+                });
             });
 
             it('should test goBack with length', () => {

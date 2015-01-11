@@ -11035,6 +11035,7 @@ declare module plat {
             rejectNavigate: (err: any) => void;
             initialize(router: Router): void;
             navigate(view: any, options?: INavigateOptions): async.IThenable<void>;
+            protected _finishNavigating(): async.IThenable<void>;
             protected _navigate(url: string, replace?: boolean): async.IThenable<void>;
             goBack(options?: IBackNavigationOptions): void;
             dispose(): void;
@@ -11576,6 +11577,7 @@ declare module plat {
                 (routeInfo: IRouteInfo): any;
             }[]>;
             navigating: boolean;
+            finishNavigating: async.IThenable<void>;
             previousUrl: string;
             previousQuery: string;
             previousPattern: string;
@@ -11603,8 +11605,6 @@ declare module plat {
             intercept(handler: (routeInfo: IRouteInfo) => any, view: new (...args: any[]) => any): Router;
             navigate(url: string, query?: IObject<any>, force?: boolean): async.IThenable<void>;
             forceNavigate(): async.IThenable<void>;
-            resolveCancel: () => void;
-            cancel(): async.IThenable<void>;
             generate(name: string, parameters?: IObject<any>, query?: IObject<string>): string;
             navigateChildren(info: IRouteInfo): async.IThenable<void>;
             getChildRoute(info: IRouteInfo): string;
