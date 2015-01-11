@@ -148,6 +148,8 @@ module plat.ui.controls {
 
                 manager.setUiControlTemplate();
                 return manager.templatePromise;
+            }).catch((e) => {
+                console.log(e);
             });
         }
 

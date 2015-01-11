@@ -21,7 +21,9 @@ module app.viewcontrols {
         }
 
         navigateTo(view: string) {
-            this.navigator.navigate(view);
+            this.navigator.navigate(view).then(() => {
+                console.log('navigated!');
+            });
         }
 
         goBack() {

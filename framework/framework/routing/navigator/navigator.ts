@@ -5,6 +5,19 @@
         protected static root: Navigator;
 
         /**
+         * @name $Promise
+         * @memberof plat.routing.Navigator
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.async.IPromise}
+         * 
+         * @description
+         * The {@link plat.async.IPromise|IPromise} injectable instance
+         */
+        $Promise: async.IPromise = acquire(__Promise);
+
+        /**
          * @name $InjectorStatic
          * @memberof plat.routing.Navigator
          * @kind property
@@ -65,13 +78,17 @@
         removeUrlListener: IRemoveListener = noop;
         ignoreOnce = false;
         ignored = false;
+        isRoot: boolean = false;
         previousUrl: string;
         backNavigate: boolean = false;
+        resolveNavigate: () => void;
+        rejectNavigate: (err: any) => void;
 
         initialize(router: Router) {
             this.router = router;
 
             if (router.isRoot) {
+                this.isRoot = true;
                 Navigator.root = this;
                 this._observeUrl();
             }
@@ -87,7 +104,19 @@
                 url = this.generate(view, options.parameters, options.query);
             }
 
-            this.$browser.url(url, options.replace);
+            return this._navigate(url, options.replace);
+        }
+
+        protected _navigate(url: string, replace?: boolean): async.IThenable<void> {
+            if (!this.isRoot) {
+                return Navigator.root._navigate(url, replace);
+            }
+
+            return new this.$Promise<void>((resolve, reject) => {
+                this.resolveNavigate = resolve;
+                this.rejectNavigate = reject;
+                this.$browser.url(url, replace);
+            });
         }
 
         goBack(options?: IBackNavigationOptions) {
@@ -99,10 +128,8 @@
                 length = 1;
             }
 
-            var root = Navigator.root;
-
-            if (root !== this) {
-                root.goBack(options);
+            if (!this.isRoot) {
+                Navigator.root.goBack(options);
             }
 
             var $history = this.$history,
@@ -167,11 +194,18 @@
                     this.router.navigate(utils.pathname, utils.query)
                         .then(() => {
                             this.previousUrl = utils.pathname;
+                            if (isFunction(this.resolveNavigate)) {
+                                this.resolveNavigate();
+                            }
                         })
                         .catch((e) => {
                             this.ignoreOnce = true;
                             this.previousUrl = previousUrl;
                             this.$browser.url(previousUrl, !backNavigate);
+
+                            if (isFunction(this.rejectNavigate)) {
+                                this.rejectNavigate(e);
+                            }
                         });
                 });
             });

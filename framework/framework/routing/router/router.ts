@@ -94,8 +94,10 @@
                         if (!canNavigateTo) {
                             return;
                         }
-
+                        this.currentRouteInfo = undefined;
                         return this.performNavigation(routeInfo);
+                    }).then(() => {
+                        this.currentRouteInfo = routeInfo;
                     });
             }
 
@@ -216,6 +218,10 @@
                 reject = this.reject,
                 queryString = serializeQuery(query);
 
+            if (url === '/') {
+                url = '';
+            }
+
             force = force === true;
 
             if (!isString(url) || this.navigating || (!force && url === this.previousUrl)) {
@@ -257,23 +263,35 @@
 
             this.navigating = true;
 
-            var routeInfoCopy = _clone(routeInfo, true);
+            var routeInfoCopy = _clone(routeInfo, true),
+                cancelled: boolean;
 
             return this.canNavigate(routeInfo)
                 .then((canNavigate: boolean) => {
-                    if (!canNavigate) {
+                    cancelled = isFunction(this.resolveCancel);
+
+                    if (!cancelled && !canNavigate) {
                         this.navigating = false;
                         throw new Error('Not cleared to navigate');
                     }
 
                     this.previousUrl = url;
                     this.previousQuery = queryString;
+
+                    if (cancelled) {
+                        return;
+                    }
+
                     return this.performNavigation(routeInfo);
                 })
                 .then(() => {
                     this.previousPattern = pattern;
                     this.currentRouteInfo = routeInfoCopy;
                     this.navigating = false;
+
+                    if (cancelled || isFunction(this.resolveCancel)) {
+                        this.resolveCancel();
+                    }
                 });
         }
 
@@ -300,6 +318,16 @@
             }
 
             return resolve();
+        }
+
+        resolveCancel: () => void;
+
+        cancel(): async.IThenable<void> {
+            return new this.$Promise((resolve) => {
+                this.resolveCancel = resolve;
+            }).then(() => {
+                this.resolveCancel = undefined;
+            });
         }
 
         generate(name: string, parameters?: IObject<any>, query?: IObject<string>) {
@@ -356,7 +384,13 @@
         }
 
         performNavigation(info: IRouteInfo) {
-            return this.performNavigateFrom().then(() => {
+            var sameRoute = this._isSameRoute(info);
+
+            return this.performNavigateFrom(sameRoute).then(() => {
+                if (sameRoute) {
+                    return;
+                }
+
                 return mapAsync((port: ISupportRouteNavigation) => {
                     return port.navigateTo(info);
                 }, this.ports);
@@ -366,11 +400,15 @@
                 });
         }
 
-        performNavigateFrom(): async.IThenable<void> {
+        performNavigateFrom(ignorePorts?: boolean): async.IThenable<void> {
             return mapAsync((child: Router) => {
                 return child.performNavigateFrom();
             }, this.children)
                 .then(() => {
+                    if (ignorePorts) {
+                        return;
+                    }
+
                     return mapAsync((port: ISupportRouteNavigation) => {
                         return port.navigateFrom();
                     }, this.ports);
@@ -379,16 +417,17 @@
 
         canNavigate(info: IRouteInfo) {
             var currentRouteInfo = this.currentRouteInfo,
-                sameRoute = isObject(currentRouteInfo) &&
-                currentRouteInfo.delegate.view === info.delegate.view &&
-                currentRouteInfo.delegate.pattern === info.delegate.pattern;
+                sameRoute = this._isSameRoute(info);
 
             return this.canNavigateFrom(sameRoute)
                 .then((canNavigateFrom: boolean) => {
-                    // TODO: If canNavigateFrom we need to execute any parameter bindings.
                     return canNavigateFrom && this.canNavigateTo(info, sameRoute);
                 })
                 .then((canNavigate) => {
+                    if (isFunction(this.resolveCancel)) {
+                        return;
+                    }
+
                     return canNavigate;
                 });
         }
@@ -438,13 +477,17 @@
         }
 
         canNavigateTo(info: IRouteInfo, ignorePorts?: boolean): async.IThenable<boolean> {
-            var promises: Array<any> = [];
+            var promises: Array<any> = [],
+                cancelled: boolean;
+
             return this.callAllHandlers(info.delegate.view, info.parameters, info.query)
                 .then(() => {
                     return this.callInterceptors(info);
                 })
                 .then((canNavigateTo) => {
-                    if (!canNavigateTo || ignorePorts) {
+                    cancelled = isFunction(this.resolveCancel);
+
+                    if (cancelled || !canNavigateTo || ignorePorts) {
                         return <any>[canNavigateTo];
                     }
 
@@ -454,12 +497,15 @@
                 })
                 .then(booleanReduce)
                 .then((canNavigateTo: boolean) => {
-                    if (!canNavigateTo) {
+                    if (!canNavigateTo || cancelled || isFunction(this.resolveCancel)) {
                         promises = [canNavigateTo];
                     } else {
                         var childRoute = this.getChildRoute(info);
 
                         if (isEmpty(childRoute)) {
+                            forEach((child: Router) => {
+                                child._clearInfo();
+                            }, this.children);
                             promises = [true];
                         } else {
                             var childResult: IRouteResult,
@@ -471,6 +517,7 @@
                                 childResult = child.childRecognizer.recognize(childRoute);
 
                                 if (isEmpty(childResult)) {
+                                    child._clearInfo();
                                     return;
                                 }
 
@@ -484,6 +531,24 @@
                     return this.$Promise.all(promises);
                 })
                 .then(booleanReduce);
+        }
+
+        protected _isSameRoute(info: IRouteInfo) {
+            var currentRouteInfo = this.currentRouteInfo;
+
+            return isObject(currentRouteInfo) &&
+            currentRouteInfo.delegate.view === info.delegate.view &&
+            currentRouteInfo.delegate.pattern === info.delegate.pattern;
+        }
+
+        protected _clearInfo() {
+            this.previousPattern = undefined;
+            this.previousUrl = undefined;
+            this.currentRouteInfo = undefined;
+            this.navigating = false;
+            forEach((child) => {
+                child._clearInfo();
+            }, this.children);
         }
     }
 
