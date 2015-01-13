@@ -1,5 +1,5 @@
 /**
-  * PlatypusTS v0.10.0-beta.1 (http://getplatypi.com)
+  * PlatypusTS v0.10.0-beta.2 (http://getplatypi.com)
   * Copyright 2014 Platypi, LLC. All rights reserved.
   * PlatypusTS is licensed under the GPL-3.0 found at
   * http://opensource.org/licenses/GPL-3.0
@@ -5034,7 +5034,7 @@ declare module plat {
         /**
           * The Type for referencing the '$ErrorEventStatic' injectable as a dependency.
           */
-        function IErrorEventStatic(_EventManagerStatic?: IEventManagerStatic): IErrorEventStatic;
+        function IErrorEventStatic(_EventManager?: IEventManagerStatic): IErrorEventStatic;
         /**
           * Dispatches ErrorEvents
           */
@@ -5088,11 +5088,11 @@ declare module plat {
         /**
           * Reference to the IContextManagerStatic injectable.
           */
-        protected static _ContextManagerStatic: observable.IContextManagerStatic;
+        protected static _ContextManager: observable.IContextManagerStatic;
         /**
           * Reference to the IEventManagerStatic injectable.
           */
-        protected static _EventManagerStatic: events.IEventManagerStatic;
+        protected static _EventManager: events.IEventManagerStatic;
         /**
           * Reference to the IPromise injectable.
           */
@@ -5394,7 +5394,7 @@ declare module plat {
     /**
       * The Type for referencing the '_ControlFactory' injectable as a dependency.
       */
-    function IControlFactory(_parser?: expressions.IParser, _ContextManagerStatic?: observable.IContextManagerStatic, _EventManagerStatic?: events.IEventManagerStatic, _Promise?: async.IPromise): IControlFactory;
+    function IControlFactory(_parser?: expressions.IParser, _ContextManager?: observable.IContextManagerStatic, _EventManager?: events.IEventManagerStatic, _Promise?: async.IPromise): IControlFactory;
     /**
       * Creates and manages instances of IControl.
       */
@@ -12569,11 +12569,11 @@ declare module plat {
             /**
               * Reference to the ICompat injectable.
               */
-            _compat: ICompat;
+            protected _compat: ICompat;
             /**
               * Reference to the Document injectable.
               */
-            _document: Document;
+            protected _document: Document;
             /**
               * The priority of Bind is set high to precede
               * other controls that may be listening to the same
@@ -12891,7 +12891,7 @@ declare module plat {
         /**
           * Reference to the IEventManagerStatic injectable.
           */
-        protected static _EventManagerStatic: events.IEventManagerStatic;
+        protected static _EventManager: events.IEventManagerStatic;
         /**
           * Reference to the Document injectable.
           */
@@ -13022,7 +13022,7 @@ declare module plat {
     /**
       * The Type for referencing the '_AppStatic' injectable as a dependency.
       */
-    function IAppStatic(_compat?: ICompat, _EventManagerStatic?: events.IEventManagerStatic, _document?: Document, _compiler?: processing.ICompiler, _LifecycleEvent?: events.ILifecycleEventStatic, _Exception?: IExceptionStatic): IAppStatic;
+    function IAppStatic(_compat?: ICompat, _EventManager?: events.IEventManagerStatic, _document?: Document, _compiler?: processing.ICompiler, _LifecycleEvent?: events.ILifecycleEventStatic, _Exception?: IExceptionStatic): IAppStatic;
     /**
       * The Type for referencing the '_app' injectable as a dependency.
       */
