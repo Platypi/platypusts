@@ -7863,8 +7863,10 @@ declare module plat {
             /**
               * A function for handling and firing track events.
               * @param {plat.ui.IPointerEvent} ev The touch move event object.
+              * @param {plat.ui.IPointerEvent} originalEv The original touch move event object
+              * used for preventing default in the case of an ANDROID device.
               */
-            private __handleTrack(ev);
+            private __handleTrack(ev, originalEv);
             /**
               * A function for handling and firing track end events.
               * @param {plat.ui.IPointerEvent} ev The touch end event object.

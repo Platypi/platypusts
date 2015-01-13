@@ -953,8 +953,8 @@
                 return true;
             }
 
-            ev = this.__standardizeEventObject(ev);
-            if (isNull(ev)) {
+            var evt = this.__standardizeEventObject(ev);
+            if (isNull(evt)) {
                 return true;
             }
 
@@ -963,8 +963,8 @@
                 noSwiping = gestureCount.$swipe <= 0,
                 config = DomEvents.config,
                 swipeOrigin = this.__swipeOrigin,
-                x = ev.clientX,
-                y = ev.clientY,
+                x = evt.clientX,
+                y = evt.clientY,
                 minMove = this.__hasMoved ||
                 (this.__getDistance(swipeOrigin.clientX, x, swipeOrigin.clientY, y) >= config.distances.minScrollDistance);
 
@@ -981,10 +981,10 @@
             }
 
             var lastMove = <IBaseEventProperties>this.__lastMoveEvent || swipeOrigin,
-                direction = ev.direction = this.__getDirection(x - lastMove.clientX, y - lastMove.clientY),
+                direction = evt.direction = this.__getDirection(x - lastMove.clientX, y - lastMove.clientY),
                 originChanged = this.__checkForOriginChanged(direction),
-                velocity = ev.velocity = this.__getVelocity(x - swipeOrigin.clientX, y - swipeOrigin.clientY,
-                    ev.timeStamp - swipeOrigin.timeStamp);
+                velocity = evt.velocity = this.__getVelocity(x - swipeOrigin.clientX, y - swipeOrigin.clientY,
+                    evt.timeStamp - swipeOrigin.timeStamp);
 
             // if swiping events exist
             if (!(noSwiping || (this.__hasSwiped && !originChanged))) {
@@ -993,10 +993,10 @@
 
             // if tracking events exist
             if (!noTracking) {
-                this.__handleTrack(ev);
+                this.__handleTrack(evt, ev);
             }
 
-            this.__lastMoveEvent = ev;
+            this.__lastMoveEvent = evt;
         }
 
         /**
@@ -1022,6 +1022,7 @@
                     // all to handle a strange issue when touch clicking certain types 
                     // of DOM elements
                     if (hasMoved) {
+                        // we check ev.cancelable in the END case in case of scrolling conditions
                         if (ev.cancelable === true) {
                             ev.preventDefault();
                         }
@@ -1328,10 +1329,12 @@
          * A function for handling and firing track events.
          * 
          * @param {plat.ui.IPointerEvent} ev The touch move event object.
+         * @param {plat.ui.IPointerEvent} originalEv The original touch move event object 
+         * used for preventing default in the case of an ANDROID device.
          * 
          * @returns {void}
          */
-        private __handleTrack(ev: IPointerEvent): void {
+        private __handleTrack(ev: IPointerEvent, originalEv: IPointerEvent): void {
             var trackGesture = this._gestures.$track,
                 direction = ev.direction,
                 eventTarget = this.__capturedTarget || <ICustomElement>ev.target;
@@ -1339,8 +1342,8 @@
             var domEvents = this.__findFirstSubscribers(eventTarget,
                 [trackGesture, (trackGesture + direction.x), (trackGesture + direction.y)]);
             if (domEvents.length > 0) {
-                if (this.$Compat.ANDROID) {
-                    ev.preventDefault();
+                if (!isUndefined(this.$Compat.ANDROID)) {
+                    originalEv.preventDefault();
                 }
 
                 while (domEvents.length > 0) {
