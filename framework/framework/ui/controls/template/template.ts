@@ -12,7 +12,7 @@ module plat.ui.controls {
      */
     export class Template extends TemplateControl {
         /**
-         * @name $Promise
+         * @name _Promise
          * @memberof plat.ui.controls.Template
          * @kind property
          * @access public
@@ -22,9 +22,9 @@ module plat.ui.controls {
          * @description
          * Reference to the {@link plat.async.IPromise|IPromise} injectable.
          */
-        $Promise: async.IPromise = acquire(__Promise);
+        _Promise: async.IPromise = acquire(__Promise);
         /**
-         * @name $TemplateCache
+         * @name _templateCache
          * @memberof plat.ui.controls.Template
          * @kind property
          * @access public
@@ -34,9 +34,9 @@ module plat.ui.controls {
          * @description
          * Reference to an injectable for storing HTML templates.
          */
-        $TemplateCache: storage.ITemplateCache = acquire(__TemplateCache);
+        _templateCache: storage.ITemplateCache = acquire(__TemplateCache);
         /**
-         * @name $Document
+         * @name _document
          * @memberof plat.ui.controls.Template
          * @kind property
          * @access public
@@ -46,7 +46,7 @@ module plat.ui.controls {
          * @description
          * Reference to the Document injectable.
          */
-        $Document: Document = acquire(__Document);
+        _document: Document = acquire(__Document);
 
         /**
          * @name replaceWith
@@ -153,8 +153,8 @@ module plat.ui.controls {
          */
         constructor() {
             super();
-            var $cacheFactory: storage.ICacheFactory = acquire(__CacheFactory);
-            this.__templateControlCache = $cacheFactory.create<any>(__TemplateControlCache);
+            var _CacheFactory: storage.ICacheFactory = acquire(__CacheFactory);
+            this.__templateControlCache = _CacheFactory.create<any>(__TemplateControlCache);
         }
 
         /**
@@ -174,8 +174,8 @@ module plat.ui.controls {
                 id = this._id = options.id;
 
             if (isNull(id)) {
-                var $exception: IExceptionStatic = acquire(__ExceptionStatic);
-                $exception.warn(this.type + ' instantiated without an id option', $exception.COMPILE);
+                var _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+                _Exception.warn(this.type + ' instantiated without an id option', _Exception.COMPILE);
                 return;
             }
 
@@ -255,10 +255,10 @@ module plat.ui.controls {
                 template: any;
 
             if (!isNull(url)) {
-                template = this.$TemplateCache.read(url);
+                template = this._templateCache.read(url);
                 clearNodeBlock(this.elementNodes, parentNode);
             } else {
-                template = this.$Document.createDocumentFragment();
+                template = this._document.createDocumentFragment();
                 appendChildren(this.elementNodes, template);
             }
 
@@ -275,7 +275,7 @@ module plat.ui.controls {
             } else {
                 this.bindableTemplates.add(id, template.cloneNode(true));
 
-                controlPromise = this.$Promise.resolve(this);
+                controlPromise = this._Promise.resolve(this);
             }
 
             this.__templateControlCache.put(id, controlPromise);
@@ -298,14 +298,14 @@ module plat.ui.controls {
          * @returns {void}
          */
         protected _waitForTemplateControl(templatePromise: async.IThenable<Template>): void {
-            var $exception: IExceptionStatic;
+            var _Exception: IExceptionStatic;
             templatePromise.then((templateControl: Template) => {
                 if (!(isNull(this._url) || (this._url === templateControl._url))) {
-                    $exception = acquire(__ExceptionStatic);
-                    $exception.warn('The specified url: ' + this._url +
+                    _Exception = acquire(__ExceptionStatic);
+                    _Exception.warn('The specified url: ' + this._url +
                         ' does not match the original ' + this.type + ' with id: ' +
                         '"' + this._id + '". The original url will be loaded.',
-                        $exception.TEMPLATE);
+                        _Exception.TEMPLATE);
                 }
 
                 this.__mapBindableTemplates(templateControl);
@@ -315,9 +315,9 @@ module plat.ui.controls {
                     insertBefore(endNode.parentNode, clone, endNode);
                 }).catch((error) => {
                     postpone(() => {
-                        $exception = acquire(__ExceptionStatic);
-                        $exception.warn('Problem resolving ' + this.type + ' url: ' +
-                            error.response, $exception.TEMPLATE);
+                        _Exception = acquire(__ExceptionStatic);
+                        _Exception.warn('Problem resolving ' + this.type + ' url: ' +
+                            error.response, _Exception.TEMPLATE);
                     });
                 });
         }

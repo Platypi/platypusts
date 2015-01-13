@@ -17,7 +17,7 @@ module plat.storage {
     }
 
     /**
-     * The Type for referencing the '$LocalStorage' injectable as a dependency.
+     * The Type for referencing the '_localStorage' injectable as a dependency.
      */
     export function ILocalStorage(): ILocalStorage {
         return new LocalStorage();

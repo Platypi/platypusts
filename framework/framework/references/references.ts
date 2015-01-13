@@ -203,7 +203,7 @@ var __prefix = '$',
     __contextError = 'Context' + __errorSuffix,
     __eventError = 'DispatchEvent' + __errorSuffix,
     __injectableError = 'Injectable' + __errorSuffix,
-    __compatError = 'Compatibility' + __errorSuffix,
+    __CompatError = 'Compatibility' + __errorSuffix,
 
     /**
      * ForEach aliases

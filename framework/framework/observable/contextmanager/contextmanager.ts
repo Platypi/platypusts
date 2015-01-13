@@ -448,7 +448,7 @@ module plat.observable {
         private static __controls: IObject<IObject<Array<IRemoveListener>>> = {};
 
         /**
-         * @name $Compat
+         * @name _compat
          * @memberof plat.observable.ContextManager
          * @kind property
          * @access public
@@ -458,7 +458,7 @@ module plat.observable {
          * @description
          * Reference to the {@link plat.ICompat|ICompat} injectable.
          */
-        $Compat: ICompat = acquire(__Compat);
+        _compat: ICompat = acquire(__Compat);
 
         /**
          * @name context
@@ -725,9 +725,9 @@ module plat.observable {
             var length = arrayMethods.length,
                 method: string,
                 i: number,
-                $compat = this.$Compat,
-                proto = $compat.proto,
-                setProto = $compat.setProto;
+                _compat = this._compat,
+                proto = _compat.proto,
+                setProto = _compat.setProto;
 
             if (isArray(oldArray)) {
                 this._restoreArray(oldArray);
@@ -856,11 +856,11 @@ module plat.observable {
          * @returns {void}
          */
         protected _restoreArray(array: Array<any>) {
-            var $compat = this.$Compat;
+            var _compat = this._compat;
 
-            if ($compat.setProto) {
+            if (_compat.setProto) {
                 (<any>Object).setPrototypeOf(array, Object.create(Array.prototype));
-            } else if ($compat.proto) {
+            } else if (_compat.proto) {
                 (<any>array).__proto__ = Object.create(Array.prototype);
             } else {
                 var length = arrayMethods.length,
@@ -888,12 +888,12 @@ module plat.observable {
          * @returns {void}
          */
         protected _overwriteArray(absoluteIdentifier: string, array: Array<any>) {
-            var $compat = this.$Compat,
+            var _compat = this._compat,
                 length = arrayMethods.length,
                 method: string,
                 i: number;
 
-            if ($compat.proto) {
+            if (_compat.proto) {
                 var obj = Object.create(Array.prototype);
 
                 for (i = 0; i < length; ++i) {
@@ -901,7 +901,7 @@ module plat.observable {
                     obj[method] = this._overwriteArrayFunction(absoluteIdentifier, method);
                 }
 
-                if ($compat.setProto) {
+                if (_compat.setProto) {
                     (<any>Object).setPrototypeOf(array, obj);
                 } else {
                     (<any>array).__proto__ = obj;
@@ -1573,7 +1573,7 @@ module plat.observable {
     }
 
     /**
-     * The Type for referencing the '$ContextManagerStatic' injectable as a dependency.
+     * The Type for referencing the '_ContextManager' injectable as a dependency.
      */
     export function IContextManagerStatic(): IContextManagerStatic {
         return ContextManager;

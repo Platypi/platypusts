@@ -12,7 +12,7 @@ module plat.controls {
      */
     export class SimpleEventControl extends AttributeControl implements ISimpleEventControl {
         /**
-         * @name $Parser
+         * @name _parser
          * @memberof plat.controls.SimpleEventControl
          * @kind property
          * @access public
@@ -22,10 +22,10 @@ module plat.controls {
          * @description
          * Reference to the {@link plat.expressions.IParser|IParser} injectable.
          */
-        $Parser: expressions.IParser = acquire(__Parser);
+        _parser: expressions.IParser = acquire(__Parser);
 
         /**
-         * @name $Regex
+         * @name _regex
          * @memberof plat.controls.SimpleEventControl
          * @kind property
          * @access public
@@ -35,7 +35,7 @@ module plat.controls {
          * @description
          * Reference to the {@link plat.expressions.IRegex|IRegex} injectable.
          */
-        $Regex: expressions.IRegex = acquire(__Regex);
+        _regex: expressions.IRegex = acquire(__Regex);
 
         /**
          * @name event
@@ -196,10 +196,10 @@ module plat.controls {
 
             var length = expression.length,
                 args: Array<expressions.IParsedExpression> = [],
-                $parser = this.$Parser;
+                _parser = this._parser;
 
             for (var i = 0; i < length; ++i) {
-                args.push($parser.parse(expression[i]).evaluate(argContext, aliases));
+                args.push(_parser.parse(expression[i]).evaluate(argContext, aliases));
             }
 
             return {
@@ -227,9 +227,9 @@ module plat.controls {
                 fn = expression.fn;
 
             if (!isFunction(fn)) {
-                var $exception: IExceptionStatic = acquire(__ExceptionStatic);
-                $exception.warn('Cannot find registered event method ' +
-                    this._expression[0] + ' for control: ' + this.type, $exception.BIND);
+                var _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+                _Exception.warn('Cannot find registered event method ' +
+                    this._expression[0] + ' for control: ' + this.type, _Exception.BIND);
                 return;
             }
 
@@ -254,13 +254,13 @@ module plat.controls {
                 arg: string,
                 exec: RegExpExecArray,
                 aliases: IObject<boolean> = {},
-                $regex = this.$Regex;
+                _regex = this._regex;
 
             for (var i = 0; i < length; ++i) {
                 arg = args[i].trim();
 
                 if (arg[0] === '@') {
-                    exec = $regex.aliasRegex.exec(arg);
+                    exec = _regex.aliasRegex.exec(arg);
                     aliases[!isNull(exec) ? exec[0] : arg.slice(1)] = true;
                 }
             }
@@ -287,7 +287,7 @@ module plat.controls {
                 return;
             }
 
-            var exec = this.$Regex.argumentRegex.exec(expression);
+            var exec = this._regex.argumentRegex.exec(expression);
             if (!isNull(exec)) {
                 this._expression = [expression.slice(0, exec.index)]
                     .concat((exec[1] !== '') ? exec[1].split(',') : []);
@@ -1021,7 +1021,7 @@ module plat.controls {
      */
     export class React extends SimpleEventControl {
         /**
-         * @name $Compat
+         * @name _compat
          * @memberof plat.controls.Input
          * @kind property
          * @access public
@@ -1032,7 +1032,7 @@ module plat.controls {
          * @description
          * Reference to the {@link plat.ICompat|ICompat} injectable.
          */
-        $Compat: ICompat = acquire(__Compat);
+        _compat: ICompat = acquire(__Compat);
 
         /**
          * @name event
@@ -1060,7 +1060,7 @@ module plat.controls {
          */
         protected _addEventListeners(): void {
             var element = this.element,
-                $compat = this.$Compat,
+                _compat = this._compat,
                 composing = false,
                 input = 'input',
                 timeout: IRemoveListener,
@@ -1082,7 +1082,7 @@ module plat.controls {
                     });
                 };
 
-            if (isUndefined($compat.ANDROID)) {
+            if (isUndefined(_compat.ANDROID)) {
                 this.addEventListener(element, 'compositionstart', () => (composing = true), false);
                 this.addEventListener(element, 'compositionend', (ev: Event) => {
                     composing = false;
@@ -1093,7 +1093,7 @@ module plat.controls {
             this.addEventListener(element, input, eventListener, false);
             this.addEventListener(element, 'change', eventListener, false);
 
-            if ($compat.hasEvent(input)) {
+            if (_compat.hasEvent(input)) {
                 return;
             }
 

@@ -780,7 +780,7 @@ module plat {
     }
 
     /**
-     * The Type for referencing the '$Utils' injectable as a dependency.
+     * The Type for referencing the '_utils' injectable as a dependency.
      */
     export function IUtils(): IUtils {
         return new Utils();

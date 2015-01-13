@@ -435,7 +435,7 @@
     }
 
     /**
-     * The Type for referencing the '$StateStatic' injectable as a dependency.
+     * The Type for referencing the '_State' injectable as a dependency.
      */
     export function IStateStatic(): typeof State {
         return State;
@@ -444,7 +444,7 @@
     plat.register.injectable(__StateStatic, IStateStatic, null, __STATIC);
 
     /**
-     * The Type for referencing the '$StateInstance' injectable as a dependency.
+     * The Type for referencing the '_state' injectable as a dependency.
      */
     export function IStateInstance(): State {
         return new State();

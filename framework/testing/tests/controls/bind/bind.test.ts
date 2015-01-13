@@ -28,7 +28,7 @@
         });
 
         it('should test loaded and immediately return', () => {
-            var spy = spyOn(control.$Parser, 'parse');
+            var spy = spyOn(control._parser, 'parse');
 
             control.loaded();
 
@@ -38,7 +38,7 @@
         it('should test loaded with undefined attribute', () => {
             control.element = <HTMLElement>control.dom.serializeHtml('<input type="text" plat-bind="foo" />').childNodes[0];
 
-            var spy = spyOn(control.$Parser, 'parse');
+            var spy = spyOn(control._parser, 'parse');
 
             spy.and.callThrough();
 
@@ -50,7 +50,7 @@
         it('should test loaded with nested identifier', () => {
             control.element = <HTMLElement>control.dom.serializeHtml('<input type="text" plat-bind="foo.bar" />').childNodes[0];
             control.attributes['platBind'] = 'foo.bar';
-            var spy = spyOn(control.$Parser, 'parse');
+            var spy = spyOn(control._parser, 'parse');
 
             spy.and.callThrough();
 
@@ -65,7 +65,7 @@
         it('should test loaded with alias identifier and no parent resources', () => {
             control.element = <HTMLElement>control.dom.serializeHtml('<input type="text" plat-bind="@foo.bar" />').childNodes[0];
             control.attributes['platBind'] = '@foo';
-            var spy = spyOn(control.$Parser, 'parse');
+            var spy = spyOn(control._parser, 'parse');
 
             spy.and.callThrough();
 
@@ -89,7 +89,7 @@
                 }
             });
 
-            var spy = spyOn(control.$Parser, 'parse');
+            var spy = spyOn(control._parser, 'parse');
 
             spy.and.callThrough();
 
@@ -113,7 +113,7 @@
                 }
             });
 
-            var spy = spyOn(control.$Parser, 'parse');
+            var spy = spyOn(control._parser, 'parse');
 
             spy.and.callThrough();
 
@@ -139,7 +139,7 @@
             control.element = <HTMLElement>control.dom.serializeHtml('<input type="text" plat-bind="foo" />').childNodes[0];
             control.attributes['platBind'] = 'foo';
             control.initialize();
-            var spy = spyOn(control.$Parser, 'parse');
+            var spy = spyOn(control._parser, 'parse');
 
             spy.and.callThrough();
 

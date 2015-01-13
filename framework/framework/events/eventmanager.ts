@@ -10,7 +10,7 @@ module plat.events {
      */
     export class EventManager {
         /**
-         * @name _Compat
+         * @name _compat
          * @memberof plat.events.EventManager
          * @kind property
          * @access protected
@@ -21,7 +21,7 @@ module plat.events {
          * @description
          * Reference to the {@link plat.ICompat|ICompat} injectable.
          */
-        protected static _Compat: ICompat;
+        protected static _compat: ICompat;
 
         /**
          * @name _document
@@ -189,18 +189,18 @@ module plat.events {
 
             var lifecycleListeners = EventManager.__lifecycleEventListeners,
                 length = lifecycleListeners.length,
-                $compat = EventManager._Compat,
-                $document = EventManager._document,
-                $dom = EventManager._dom,
+                _compat = EventManager._compat,
+                _document = EventManager._document,
+                _dom = EventManager._dom,
                 dispatch = LifecycleEvent.dispatch,
                 listener: { name: string; value: () => void; };
 
             while (lifecycleListeners.length > 0) {
                 listener = lifecycleListeners.pop();
-                $document.removeEventListener(listener.name, listener.value, false);
+                _document.removeEventListener(listener.name, listener.value, false);
             }
 
-            if ($compat.cordova) {
+            if (_compat.cordova) {
                 var eventNames = [__resume, __online, __offline],
                     event: string;
 
@@ -215,7 +215,7 @@ module plat.events {
                         })(event)
                     });
 
-                    $dom.addEventListener($document, event, lifecycleListeners[i].value, false);
+                    _dom.addEventListener(_document, event, lifecycleListeners[i].value, false);
                 }
 
                 lifecycleListeners.push({
@@ -225,7 +225,7 @@ module plat.events {
                     }
                 });
 
-                $dom.addEventListener($document, __pause, lifecycleListeners[lifecycleListeners.length - 1].value, false);
+                _dom.addEventListener(_document, __pause, lifecycleListeners[lifecycleListeners.length - 1].value, false);
 
                 lifecycleListeners.push({
                     name: __deviceReady,
@@ -234,7 +234,7 @@ module plat.events {
                     }
                 });
 
-                $dom.addEventListener($document, __deviceReady, lifecycleListeners[lifecycleListeners.length - 1].value, false);
+                _dom.addEventListener(_document, __deviceReady, lifecycleListeners[lifecycleListeners.length - 1].value, false);
 
                 lifecycleListeners.push({
                     name: __backButton,
@@ -243,11 +243,11 @@ module plat.events {
                     }
                 });
 
-                $dom.addEventListener($document, __backButton, lifecycleListeners[lifecycleListeners.length - 1].value, false);
-            } else if ($compat.amd) {
+                _dom.addEventListener(_document, __backButton, lifecycleListeners[lifecycleListeners.length - 1].value, false);
+            } else if (_compat.amd) {
                 return;
             } else {
-                $dom.addEventListener(EventManager._window, 'load', () => {
+                _dom.addEventListener(EventManager._window, 'load', () => {
                     dispatch(__ready, EventManager);
                 });
             }
@@ -625,22 +625,22 @@ module plat.events {
                 try {
                     listeners[index].apply(context, args);
                 } catch (e) {
-                    var $exception: IExceptionStatic = acquire(__ExceptionStatic);
-                    $exception.warn(e, $exception.EVENT);
+                    var _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+                    _Exception.warn(e, _Exception.EVENT);
                 }
             }
         }
     }
 
     /**
-     * The Type for referencing the '$EventManagerStatic' injectable as a dependency.
+     * The Type for referencing the '_EventManagerStatic' injectable as a dependency.
      */
     export function IEventManagerStatic(
-        _Compat?: ICompat,
+        _compat?: ICompat,
         _document?: Document,
         _window?: Window,
         _dom?: ui.IDom): IEventManagerStatic {
-            (<any>EventManager)._Compat = _Compat;
+            (<any>EventManager)._compat = _compat;
             (<any>EventManager)._document = _document;
             (<any>EventManager)._window = _window;
             (<any>EventManager)._dom = _dom;

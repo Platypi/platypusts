@@ -53,7 +53,7 @@ declare module plat {
           * STATIC, INSTANCE,
           * FACTORY, CLASS
           * (defaults to SINGLETON).
-          * plat.register.injectable('$CacheFactory', [plat.expressions.IParser], Cache);
+          * plat.register.injectable('_CacheFactory', [plat.expressions.IParser], Cache);
           * plat.register.injectable('database', MyDatabase, null, plat.register.injectable.INSTANCE);
           */
         function injectable(name: string, Type: new (...args: any[]) => any, dependencies?: any[], injectableType?: string): typeof register;
@@ -67,7 +67,7 @@ declare module plat {
           * STATIC, INSTANCE,
           * FACTORY, CLASS
           * (defaults to SINGLETON).
-          * plat.register.injectable('$CacheFactory', [plat.expressions.IParser],
+          * plat.register.injectable('_CacheFactory', [plat.expressions.IParser],
           *     function(parser: plat.expressions.IParser) { return { ... }; });
           * plat.register.injectable('database', function() { return new Database(); }, null, register.injectable.INSTANCE);
           */
@@ -204,6 +204,7 @@ declare module plat {
               * @param {Array<any>} args The arguments to pass to the constructor.
               */
             private static __construct(Constructor, args);
+            private static __walk(obj, proto);
             /**
               * Finds an injector object with the associated constructor.
               * @param {any} Constructor The Constructor to locate.
@@ -433,7 +434,7 @@ declare module plat {
         static ANIMATION: number;
     }
     /**
-      * The Type for referencing the '$ExceptionStatic' injectable as a dependency.
+      * The Type for referencing the '_Exception' injectable as a dependency.
       */
     function IExceptionStatic(): IExceptionStatic;
     /**
@@ -522,15 +523,15 @@ declare module plat {
         /**
           * The window injectable.
           */
-        $Window: Window;
+        _window: Window;
         /**
           * The window.history injectable.
           */
-        $history: History;
+        _history: History;
         /**
           * The document injectable.
           */
-        $Document: Document;
+        _document: Document;
         /**
           * Determines if the browser is modern enough to correctly
           * run PlatypusTS.
@@ -649,7 +650,7 @@ declare module plat {
         private __determineCss();
     }
     /**
-      * The Type for referencing the '$Compat' injectable as a dependency.
+      * The Type for referencing the '_compat' injectable as a dependency.
       */
     function ICompat(): ICompat;
     /**
@@ -1114,7 +1115,7 @@ declare module plat {
         camelCase(str: string): string;
     }
     /**
-      * The Type for referencing the '$Utils' injectable as a dependency.
+      * The Type for referencing the '_utils' injectable as a dependency.
       */
     function IUtils(): IUtils;
     /**
@@ -1414,15 +1415,15 @@ declare module plat {
         (value: T, key: string, obj: IObject<T>): R;
     }
     /**
-      * The Type for referencing the '$Window' injectable as a dependency.
+      * The Type for referencing the '_window' injectable as a dependency.
       * Used so that the Window can be mocked.
       */
     function Window(): Window;
     /**
-      * The Type for referencing the '$Document' injectable as a dependency.
+      * The Type for referencing the '_document' injectable as a dependency.
       * Used so that the Window can be mocked.
       */
-    function Document($window?: Window): Document;
+    function Document(_window?: Window): Document;
     /**
       * Holds classes and interfaces related to expression handling in platypus.
       */
@@ -1555,7 +1556,7 @@ declare module plat {
             constructor();
         }
         /**
-          * The Type for referencing the '$Regex' injectable as a dependency.
+          * The Type for referencing the '_regex' injectable as a dependency.
           */
         function IRegex(): IRegex;
         /**
@@ -1915,7 +1916,7 @@ declare module plat {
             private __removeFnFromStack(argCount);
         }
         /**
-          * The Type for referencing the '$Tokenizer' injectable as a dependency.
+          * The Type for referencing the '_tokenizer' injectable as a dependency.
           */
         function ITokenizer(): ITokenizer;
         /**
@@ -1980,7 +1981,7 @@ declare module plat {
             /**
               * Reference to the ITokenizer injectable.
               */
-            $Tokenizer: ITokenizer;
+            _tokenizer: ITokenizer;
             /**
               * A single expression's token representation created by a ITokenizer.
               */
@@ -2138,7 +2139,7 @@ declare module plat {
             protected _throwError(error: string): void;
         }
         /**
-          * The Type for referencing the '$Parser' injectable as a dependency.
+          * The Type for referencing the '_parser' injectable as a dependency.
           */
         function IParser(): IParser;
         /**
@@ -2199,10 +2200,10 @@ declare module plat {
       */
     module web {
         /**
-          * The Type for referencing the '$History' injectable as a dependency.
+          * The Type for referencing the '_history' injectable as a dependency.
           * Used so that the window.history can be mocked.
           */
-        function Location($window?: Window): Location;
+        function Location(_window?: Window): Location;
         /**
           * The class that handles all interaction with the browser.
           */
@@ -2214,31 +2215,31 @@ declare module plat {
             /**
               * Reference to the IEventManagerStatic injectable.
               */
-            $EventManagerStatic: events.IEventManagerStatic;
+            _EventManagerStatic: events.IEventManagerStatic;
             /**
               * Reference to the ICompat injectable.
               */
-            $Compat: ICompat;
+            _compat: ICompat;
             /**
               * Reference to the IRegex injectable.
               */
-            $Regex: expressions.IRegex;
+            _regex: expressions.IRegex;
             /**
               * Reference to the Window injectable.
               */
-            $window: Window;
+            _window: Window;
             /**
               * Reference to the Location injectable.
               */
-            $location: Location;
+            _location: Location;
             /**
               * Reference to the History injectable.
               */
-            $history: History;
+            _history: History;
             /**
               * Reference to the IDom injectable.
               */
-            $Dom: ui.IDom;
+            _dom: ui.IDom;
             /**
               * A unique string identifier.
               */
@@ -2265,7 +2266,7 @@ declare module plat {
               */
             initialize(): void;
             /**
-              * Sets or gets the current $window.location
+              * Sets or gets the current _window.location
               * @param {string} url? The URL to set the location to.
               * @param {boolean} replace? Whether or not to replace the current URL in
               * the history.
@@ -2303,7 +2304,7 @@ declare module plat {
             formatUrl(url: string): string;
         }
         /**
-          * The Type for referencing the '$Browser' injectable as a dependency.
+          * The Type for referencing the '_browser' injectable as a dependency.
           */
         function IBrowser(): IBrowser;
         /**
@@ -2320,7 +2321,7 @@ declare module plat {
               */
             initialize(): void;
             /**
-              * Sets or gets the current $window.location
+              * Sets or gets the current _window.location
               * @param {string} url? The URL to set the location to.
               * @param {boolean} replace? Whether or not to replace the current URL in
               * the history.
@@ -2344,7 +2345,7 @@ declare module plat {
             formatUrl(url: string): string;
         }
         /**
-          * The Type for referencing the '$BrowserConfig' injectable as a dependency.
+          * The Type for referencing the '_browserConfig' injectable as a dependency.
           */
         function IBrowserConfig(): IBrowserConfig;
         /**
@@ -2419,27 +2420,27 @@ declare module plat {
             /**
               * Reference to the IContextManagerStatic injectable.
               */
-            $ContextManagerStatic: observable.IContextManagerStatic;
+            _ContextManager: observable.IContextManagerStatic;
             /**
               * Reference to the Document injectable.
               */
-            $Document: Document;
+            _document: Document;
             /**
               * Reference to the Window injectable.
               */
-            $Window: Window;
+            _window: Window;
             /**
               * Reference to the ICompat injectable.
               */
-            $Compat: ICompat;
+            _compat: ICompat;
             /**
               * Reference to the IRegex injectable.
               */
-            $Regex: expressions.IRegex;
+            _regex: expressions.IRegex;
             /**
               * Reference to the IBrowserConfig injectable.
               */
-            $BrowserConfig: IBrowserConfig;
+            _browserConfig: IBrowserConfig;
             /**
               * The whole associated URL.
               */
@@ -2506,7 +2507,7 @@ declare module plat {
             toString(): string;
         }
         /**
-          * The Type for referencing the '$UrlUtilsInstance' injectable as a dependency.
+          * The Type for referencing the '_urlUtilsInstance' injectable as a dependency.
           */
         function IUrlUtilsInstance(): IUrlUtilsInstance;
         /**
@@ -2834,9 +2835,9 @@ declare module plat {
             (resolve: (value?: R) => void, reject: (reason?: any) => void): void;
         }
         /**
-          * The Type for referencing the '$Promise' injectable as a dependency.
+          * The Type for referencing the '_Promise' injectable as a dependency.
           */
-        function IPromise($Window?: any): IPromise;
+        function IPromise(_window?: any): IPromise;
         /**
           * The injectable reference for the ES6 Promise implementation.
           */
@@ -2918,15 +2919,15 @@ declare module plat {
             /**
               * The plat.web.IBrowser injectable instance
               */
-            $Browser: web.IBrowser;
+            _browser: web.IBrowser;
             /**
               * The injectable instance of type Window
               */
-            $Window: Window;
+            _window: Window;
             /**
               * The injectable instance of type Document
               */
-            $Document: Document;
+            _document: Document;
             /**
               * The configuration for an HTTP Request
               */
@@ -3178,7 +3179,7 @@ declare module plat {
             /**
               * The Window object.
               */
-            $Window: Window;
+            _window: Window;
             /**
               * The HttpRequest object.
               */
@@ -3481,7 +3482,7 @@ declare module plat {
             json<R>(options: IHttpConfig): IAjaxPromise<R>;
         }
         /**
-          * The Type for referencing the '$Http' injectable as a dependency.
+          * The Type for referencing the '_http' injectable as a dependency.
           */
         function IHttp(): IHttp;
         /**
@@ -3524,7 +3525,7 @@ declare module plat {
             json?<R>(options: IHttpConfig): IAjaxPromise<R>;
         }
         /**
-          * The Type for referencing the '$HttpConfig' injectable as a dependency.
+          * The Type for referencing the '_httpConfig' injectable as a dependency.
           */
         function IHttpConfig(): IHttpConfig;
     }
@@ -3604,7 +3605,7 @@ declare module plat {
             dispose(): void;
         }
         /**
-          * The Type for referencing the '$CacheFactory' injectable as a dependency.
+          * The Type for referencing the '_CacheFactory' injectable as a dependency.
           */
         function ICacheFactory(): ICacheFactory;
         /**
@@ -3666,7 +3667,7 @@ declare module plat {
             dispose(): void;
         }
         /**
-          * The Type for referencing the '$ManagerCache' injectable as a dependency.
+          * The Type for referencing the '_managerCache' injectable as a dependency.
           */
         function IManagerCache(): ICache<processing.INodeManager>;
         /**
@@ -3710,7 +3711,7 @@ declare module plat {
             /**
               * Reference to the IPromise injectable.
               */
-            $Promise: async.IPromise;
+            _Promise: async.IPromise;
             /**
               * The constructor for a TemplateCache. Creates a new ICache
               * with the ID "__templateCache".
@@ -3740,7 +3741,7 @@ declare module plat {
             read(key: string): async.IThenable<DocumentFragment>;
         }
         /**
-          * The Type for referencing the '$TemplateCache' injectable as a dependency.
+          * The Type for referencing the '_templateCache' injectable as a dependency.
           */
         function ITemplateCache(): ITemplateCache;
         /**
@@ -3862,7 +3863,7 @@ declare module plat {
             constructor();
         }
         /**
-          * The Type for referencing the '$LocalStorage' injectable as a dependency.
+          * The Type for referencing the '_localStorage' injectable as a dependency.
           */
         function ILocalStorage(): ILocalStorage;
         /**
@@ -3909,7 +3910,7 @@ declare module plat {
             constructor();
         }
         /**
-          * The Type for referencing the '$SessionStorage' injectable as a dependency.
+          * The Type for referencing the '_sessionStorage' injectable as a dependency.
           */
         function ISessionStorage(): ISessionStorage;
         /**
@@ -4060,7 +4061,7 @@ declare module plat {
             /**
               * Reference to the ICompat injectable.
               */
-            $Compat: ICompat;
+            _compat: ICompat;
             /**
               * The root context associated with and to be managed by this
               * IContextManager.
@@ -4253,7 +4254,7 @@ declare module plat {
             private __addHashValues(identifier);
         }
         /**
-          * The Type for referencing the '$ContextManagerStatic' injectable as a dependency.
+          * The Type for referencing the '_ContextManager' injectable as a dependency.
           */
         function IContextManagerStatic(): IContextManagerStatic;
         /**
@@ -4482,11 +4483,11 @@ declare module plat {
             /**
               * Reference to the IEventManagerStatic injectable.
               */
-            $EventManagerStatic: IEventManagerStatic;
+            _EventManagerStatic: IEventManagerStatic;
             /**
               * Reference to the IContextManagerStatic injectable.
               */
-            $ContextManagerStatic: observable.IContextManagerStatic;
+            _ContextManager: observable.IContextManagerStatic;
             /**
               * The object that initiated the event.
               */
@@ -4548,7 +4549,7 @@ declare module plat {
             stopPropagation(): void;
         }
         /**
-          * The Type for referencing the '$DispatchEventInstance' injectable as a dependency.
+          * The Type for referencing the '_dispatchEventInstance' injectable as a dependency.
           */
         function IDispatchEventInstance(): IDispatchEventInstance;
         /**
@@ -4637,7 +4638,7 @@ declare module plat {
             initialize(name: string, sender: any): void;
         }
         /**
-          * The Type for referencing the '$LifecycleEventStatic' injectable as a dependency.
+          * The Type for referencing the '_LifecycleEventStatic' injectable as a dependency.
           */
         function ILifecycleEventStatic(): ILifecycleEventStatic;
         /**
@@ -4669,19 +4670,19 @@ declare module plat {
             /**
               * Reference to the ICompat injectable.
               */
-            static $Compat: ICompat;
+            protected static _compat: ICompat;
             /**
               * Reference to the Document injectable.
               */
-            static $Document: Document;
+            protected static _document: Document;
             /**
               * Reference to the Window injectable.
               */
-            static $Window: Window;
+            protected static _window: Window;
             /**
               * Reference to the IDom injectable.
               */
-            static $Dom: ui.IDom;
+            protected static _dom: ui.IDom;
             /**
               * An upward-moving event will start at the sender and move
               * up the parent chain.
@@ -4813,29 +4814,13 @@ declare module plat {
             private static __callListeners(context, ev, listeners, args);
         }
         /**
-          * The Type for referencing the '$EventManagerStatic' injectable as a dependency.
+          * The Type for referencing the '_EventManagerStatic' injectable as a dependency.
           */
-        function IEventManagerStatic($Compat?: ICompat, $Document?: Document, $Window?: Window, $Dom?: ui.IDom): IEventManagerStatic;
+        function IEventManagerStatic(_compat?: ICompat, _document?: Document, _window?: Window, _dom?: ui.IDom): IEventManagerStatic;
         /**
           * Manages dispatching events, handling all propagating events as well as any error handling.
           */
         interface IEventManagerStatic {
-            /**
-              * Reference to the ICompat injectable.
-              */
-            $Compat: ICompat;
-            /**
-              * Reference to the Document injectable.
-              */
-            $Document: Document;
-            /**
-              * Reference to the Window injectable.
-              */
-            $Window: Window;
-            /**
-              * Reference to the IDom injectable.
-              */
-            $Dom: ui.IDom;
             /**
               * An upward-moving event will start at the sender and move
               * up the parent chain.
@@ -4993,7 +4978,7 @@ declare module plat {
             /**
               * Reference to the IEventManagerStatic injectable.
               */
-            static $EventManagerStatic: IEventManagerStatic;
+            protected static _EventManagerStatic: IEventManagerStatic;
             /**
               * Creates a new ErrorEvent and fires it.
               * @param {string} name The name of the event.
@@ -5025,7 +5010,7 @@ declare module plat {
         /**
           * The Type for referencing the '$ErrorEventStatic' injectable as a dependency.
           */
-        function IErrorEventStatic($EventManagerStatic?: IEventManagerStatic): IErrorEventStatic;
+        function IErrorEventStatic(_EventManagerStatic?: IEventManagerStatic): IErrorEventStatic;
         /**
           * Dispatches ErrorEvents
           */
@@ -5075,19 +5060,19 @@ declare module plat {
         /**
           * Reference to the IParser injectable.
           */
-        static $Parser: expressions.IParser;
+        protected static _parser: expressions.IParser;
         /**
           * Reference to the IContextManagerStatic injectable.
           */
-        static $ContextManagerStatic: observable.IContextManagerStatic;
+        protected static _ContextManagerStatic: observable.IContextManagerStatic;
         /**
           * Reference to the IEventManagerStatic injectable.
           */
-        static $EventManagerStatic: events.IEventManagerStatic;
+        protected static _EventManagerStatic: events.IEventManagerStatic;
         /**
           * Reference to the IPromise injectable.
           */
-        static $Promise: async.IPromise;
+        protected static _Promise: async.IPromise;
         /**
           * An object containing all controls' registered event listeners.
           */
@@ -5379,9 +5364,9 @@ declare module plat {
         dispose(): void;
     }
     /**
-      * The Type for referencing the '$ControlFactory' injectable as a dependency.
+      * The Type for referencing the '_ControlFactory' injectable as a dependency.
       */
-    function IControlFactory($Parser?: expressions.IParser, $ContextManagerStatic?: observable.IContextManagerStatic, $EventManagerStatic?: events.IEventManagerStatic, $Promise?: async.IPromise): IControlFactory;
+    function IControlFactory(_parser?: expressions.IParser, _ContextManagerStatic?: observable.IContextManagerStatic, _EventManagerStatic?: events.IEventManagerStatic, _Promise?: async.IPromise): IControlFactory;
     /**
       * Creates and manages instances of IControl.
       */
@@ -5689,7 +5674,7 @@ declare module plat {
         templateControl: ui.ITemplateControl;
     }
     /**
-      * The Type for referencing the '$AttributeControlFactory' injectable as a dependency.
+      * The Type for referencing the '_AttributeControlFactory' injectable as a dependency.
       */
     function IAttributeControlFactory(): IAttributeControlFactory;
     /**
@@ -5731,31 +5716,31 @@ declare module plat {
             /**
               * Reference to the IResourcesFactory injectable.
               */
-            static $ResourcesFactory: IResourcesFactory;
+            static _ResourcesFactory: IResourcesFactory;
             /**
               * Reference to the IBindableTemplatesFactory injectable.
               */
-            static $BindableTemplatesFactory: IBindableTemplatesFactory;
+            static _BindableTemplatesFactory: IBindableTemplatesFactory;
             /**
               * Reference to a cache injectable that stores IElementManagers.
               */
-            static $ManagerCache: storage.ICache<processing.IElementManager>;
+            static _managerCache: storage.ICache<processing.IElementManager>;
             /**
               * Reference to a cache injectable that stores and retrieves HTML templates.
               */
-            static $TemplateCache: storage.ITemplateCache;
+            static _templateCache: storage.ITemplateCache;
             /**
               * Reference to the IParser injectable.
               */
-            static $Parser: expressions.IParser;
+            static _parser: expressions.IParser;
             /**
               * Reference to the IHttp injectable.
               */
-            static $Http: async.IHttp;
+            static _http: async.IHttp;
             /**
               * Reference to the IPromise injectable.
               */
-            static $Promise: async.IPromise;
+            static _Promise: async.IPromise;
             /**
               * Evaluates an expression string with a given control and optional control's context and aliases.
               * @param {string} expression The expression string (e.g. 'foo + foo').
@@ -5891,7 +5876,7 @@ declare module plat {
               * to find the alias on a control's resources. This first matching alias will be used.
               * <custom-control>
               *     <plat-resources>
-              *         <injectable alias="Cache">$CacheFactory</injectable>
+              *         <injectable alias="Cache">_CacheFactory</injectable>
               *         <observable alias="testObj">
               *              {
               *                  foo: 'foo',
@@ -6036,9 +6021,9 @@ declare module plat {
             evaluateExpression(expression: expressions.IParsedExpression, context?: any): any;
         }
         /**
-          * The Type for referencing the '$TemplateControlFactory' injectable as a dependency.
+          * The Type for referencing the '_TemplateControlFactory' injectable as a dependency.
           */
-        function ITemplateControlFactory($ResourcesFactory?: IResourcesFactory, $BindableTemplatesFactory?: IBindableTemplatesFactory, $ManagerCache?: storage.ICache<processing.IElementManager>, $TemplateCache?: storage.ITemplateCache, $Parser?: expressions.IParser, $Http?: async.IHttp, $Promise?: async.IPromise): ITemplateControlFactory;
+        function ITemplateControlFactory(_ResourcesFactory?: IResourcesFactory, _BindableTemplatesFactory?: IBindableTemplatesFactory, _managerCache?: storage.ICache<processing.IElementManager>, _templateCache?: storage.ITemplateCache, _parser?: expressions.IParser, _http?: async.IHttp, _Promise?: async.IPromise): ITemplateControlFactory;
         /**
           * Creates and manages ITemplateControls.
           */
@@ -6173,7 +6158,7 @@ declare module plat {
               * to find the alias on a control's resources. This first matching alias will be used.
               * <custom-control>
               *     <plat-resources>
-              *         <injectable alias="Cache">$CacheFactory</injectable>
+              *         <injectable alias="Cache">_CacheFactory</injectable>
               *         <observable alias="testObj">
               *              {
               *                  foo: 'foo',
@@ -6423,7 +6408,7 @@ declare module plat {
             /**
               * Reference to the IDomEvents injectable.
               */
-            $DomEvents: IDomEvents;
+            _domEvents: IDomEvents;
             /**
               * Adds an event listener of the specified type to the specified element.
               * @param {Node} element The element to add the event listener to.
@@ -6634,7 +6619,7 @@ declare module plat {
             getTemplate(templateUrl: string): async.IThenable<DocumentFragment>;
         }
         /**
-          * The Type for referencing the '$Dom' injectable as a dependency.
+          * The Type for referencing the '_dom' injectable as a dependency.
           */
         function IDom(): IDom;
         /**
@@ -6907,27 +6892,27 @@ declare module plat {
             /**
               * Reference to the IResourcesFactory injectable.
               */
-            $ResourcesFactory: IResourcesFactory;
+            _ResourcesFactory: IResourcesFactory;
             /**
               * Reference to the ITemplateControlFactory injectable.
               */
-            $TemplateControlFactory: ITemplateControlFactory;
+            _TemplateControlFactory: ITemplateControlFactory;
             /**
               * Reference to the IPromise injectable.
               */
-            $Promise: async.IPromise;
+            _Promise: async.IPromise;
             /**
               * Reference to a cache injectable that stores IElementManagers.
               */
-            $ManagerCache: storage.ICache<processing.IElementManager>;
+            _managerCache: storage.ICache<processing.IElementManager>;
             /**
               * Reference to the Document injectable.
               */
-            $Document: Document;
+            _document: Document;
             /**
               * Reference to the IElementManagerFactory injectable.
               */
-            $ElementManagerFactory: processing.IElementManagerFactory;
+            _ElementManagerFactory: processing.IElementManagerFactory;
             /**
               * The control containing this BindableTemplates object.
               */
@@ -7065,7 +7050,7 @@ declare module plat {
             protected _createBoundControl(key: string, template: DocumentFragment, resources?: IObject<IResource>): ITemplateControl;
         }
         /**
-          * The Type for referencing the '$BindableTemplatesFactory' injectable as a dependency.
+          * The Type for referencing the '_BindableTemplatesFactory' injectable as a dependency.
           */
         function IBindableTemplatesFactory(): IBindableTemplatesFactory;
         /**
@@ -7274,7 +7259,7 @@ declare module plat {
           * to find the alias on a control's resources. This first matching alias will be used.
           * <custom-control>
           *     <plat-resources>
-          *         <injectable alias="Cache">$CacheFactory</injectable>
+          *         <injectable alias="Cache">_CacheFactory</injectable>
           *         <observable alias="testObj">
           *              {
           *                  foo: 'foo',
@@ -7309,11 +7294,11 @@ declare module plat {
             /**
               * Reference to the IContextManagerStatic injectable.
               */
-            static $ContextManagerStatic: observable.IContextManagerStatic;
+            static _ContextManager: observable.IContextManagerStatic;
             /**
               * Reference to the IRegex injectable.
               */
-            static $Regex: expressions.IRegex;
+            static _regex: expressions.IRegex;
             /**
               * Populates an IResource value if necessary, and adds it to the given
               * control's resources.
@@ -7434,16 +7419,16 @@ declare module plat {
               * @param {Element} element An Element containing resource element children.
               * The resource type is specified by the element name.
               *     <plat-resources>
-              *         <injectable alias="Cache">$CacheFactory</injectable>
+              *         <injectable alias="Cache">_CacheFactory</injectable>
               *         <observable alias="testObj">{ foo: 'foo', bar: 'bar', baz: 2 }</observable>
               *     </plat-resources>
               */
             add(element: Element): void;
         }
         /**
-          * The Type for referencing the '$ResourcesFactory' injectable as a dependency.
+          * The Type for referencing the '_ResourcesFactory' injectable as a dependency.
           */
-        function IResourcesFactory($ContextManagerStatic?: observable.IContextManagerStatic, $Regex?: expressions.IRegex): IResourcesFactory;
+        function IResourcesFactory(_ContextManager?: observable.IContextManagerStatic, _regex?: expressions.IRegex): IResourcesFactory;
         /**
           * Creates and manages IResources for ITemplateControls.
           */
@@ -7528,7 +7513,7 @@ declare module plat {
           * to find the alias on a control's resources. This first matching alias will be used.
           * <custom-control>
           *     <plat-resources>
-          *         <injectable alias="Cache">$CacheFactory</injectable>
+          *         <injectable alias="Cache">_CacheFactory</injectable>
           *         <observable alias="testObj">
           *              {
           *                  foo: 'foo',
@@ -7559,7 +7544,7 @@ declare module plat {
               * @param {Element} element An Element containing resource element children.
               * The resource type is specified by the element name.
               *     <plat-resources>
-              *         <injectable alias="Cache">$CacheFactory</injectable>
+              *         <injectable alias="Cache">_CacheFactory</injectable>
               *         <observable alias="testObj">{ foo: 'foo', bar: 'bar', baz: 2 }</observable>
               *     </plat-resources>
               */
@@ -7621,11 +7606,11 @@ declare module plat {
             /**
               * Reference to the Document injectable.
               */
-            $Document: Document;
+            _document: Document;
             /**
               * Reference to the ICompat injectable.
               */
-            $Compat: ICompat;
+            _compat: ICompat;
             /**
               * Whether or not the DomEvents are currently active.
               * They become active at least one element on the current
@@ -8069,7 +8054,7 @@ declare module plat {
             private __preventDefault(ev);
         }
         /**
-          * The Type for referencing the '$DomEvents' injectable as a dependency.
+          * The Type for referencing the '_domEvents' injectable as a dependency.
           */
         function IDomEvents(): IDomEvents;
         /**
@@ -8114,7 +8099,7 @@ declare module plat {
             dispose(): void;
         }
         /**
-          * The Type for referencing the '$DomEventsConfig' injectable as a dependency.
+          * The Type for referencing the '_domEventsConfig' injectable as a dependency.
           */
         function IDomEventsConfig(): IDomEventsConfig;
         /**
@@ -8124,7 +8109,7 @@ declare module plat {
             /**
               * Reference to the Document injectable.
               */
-            $Document: Document;
+            _document: Document;
             /**
               * The node or window object associated with this IDomEventInstance object.
               */
@@ -8152,7 +8137,7 @@ declare module plat {
             trigger(eventExtension?: Object): void;
         }
         /**
-          * The Type for referencing the '$DomEventInstance' injectable as a dependency.
+          * The Type for referencing the '_domEvents' injectable as a dependency.
           */
         function IDomEventInstance(): IDomEventInstance;
         /**
@@ -8625,7 +8610,7 @@ declare module plat {
                 /**
                   * Reference to the ICompat injectable.
                   */
-                $Compat: ICompat;
+                _compat: ICompat;
                 /**
                   * All elements currently being animated.
                   */
@@ -8660,7 +8645,7 @@ declare module plat {
                 private __stopChildAnimations(element);
             }
             /**
-              * The Type for referencing the '$Animator' injectable as a dependency.
+              * The Type for referencing the '_animator' injectable as a dependency.
               */
             function IAnimator(): IAnimator;
             /**
@@ -8859,7 +8844,7 @@ declare module plat {
                 /**
                   * Reference to the ICompat injectable.
                   */
-                $Compat: ICompat;
+                _compat: ICompat;
                 /**
                   * The node having the animation performed on it.
                   */
@@ -9051,7 +9036,7 @@ declare module plat {
                 /**
                   * Reference to the Window injectable.
                   */
-                $Window: Window;
+                _window: Window;
                 /**
                   * The class name added to the animated element.
                   */
@@ -9148,7 +9133,7 @@ declare module plat {
                 /**
                   * Reference to the Window injectable.
                   */
-                $Window: Window;
+                _window: Window;
                 /**
                   * An optional options object that can denote a pseudo element animation and specify
                   * properties to modify during the transition.
@@ -9214,19 +9199,19 @@ declare module plat {
           */
         module controls {
             class Viewport extends TemplateControl implements routing.ISupportRouteNavigation {
-                protected $RouterStatic: typeof routing.Router;
-                protected $Promise: async.IPromise;
-                protected $Injector: typeof dependency.Injector;
-                protected $ElementManagerFactory: processing.IElementManagerFactory;
-                protected $Document: Document;
+                protected _routerStatic: typeof routing.Router;
+                protected _Promise: async.IPromise;
+                protected _Injector: typeof dependency.Injector;
+                protected _ElementManagerFactory: processing.IElementManagerFactory;
+                protected _document: Document;
                 /**
                   * Reference to an injectable that caches IElementManagers.
                   */
-                protected $ManagerCache: storage.ICache<processing.IElementManager>;
+                protected _managerCache: storage.ICache<processing.IElementManager>;
                 /**
                   * Reference to the IAnimator injectable.
                   */
-                protected $Animator: animations.IAnimator;
+                protected _animator: animations.IAnimator;
                 /**
                   * A promise used for disposing the end state of the previous animation prior to starting a new one.
                   */
@@ -9255,15 +9240,15 @@ declare module plat {
                 /**
                   * Reference to the IPromise injectable.
                   */
-                $Promise: async.IPromise;
+                _Promise: async.IPromise;
                 /**
                   * Reference to an injectable for storing HTML templates.
                   */
-                $TemplateCache: storage.ITemplateCache;
+                _templateCache: storage.ITemplateCache;
                 /**
                   * Reference to the Document injectable.
                   */
-                $Document: Document;
+                _document: Document;
                 /**
                   * Removes the <plat-template> node from the DOM
                   */
@@ -9371,11 +9356,11 @@ declare module plat {
                 /**
                   * Reference to the IAnimator injectable.
                   */
-                $Animator: animations.IAnimator;
+                _animator: animations.IAnimator;
                 /**
                   * Reference to the IPromise injectable.
                   */
-                $Promise: async.IPromise;
+                _Promise: async.IPromise;
                 /**
                   * The required context of the control (must be of type Array).
                   */
@@ -9658,11 +9643,11 @@ declare module plat {
                 /**
                   * Reference to the IPromise injectable.
                   */
-                $Promise: async.IPromise;
+                _Promise: async.IPromise;
                 /**
                   * Reference to the Document injectable.
                   */
-                $Document: Document;
+                _document: Document;
                 /**
                   * Replaces the <plat-select> node with
                   * a <select> node.
@@ -9863,11 +9848,11 @@ declare module plat {
                 /**
                   * Reference to the IAnimator injectable.
                   */
-                $Animator: animations.IAnimator;
+                _animator: animations.IAnimator;
                 /**
                   * Reference to the IPromise injectable.
                   */
-                $Promise: async.IPromise;
+                _Promise: async.IPromise;
                 /**
                   * The evaluated plat-options object.
                   */
@@ -9975,15 +9960,15 @@ declare module plat {
                 /**
                   * The IRouterStatic injectable instance
                   */
-                $RouterStatic: typeof routing.Router;
+                _routerStatic: typeof routing.Router;
                 /**
                   * The Injector injectable instance
                   */
-                $InjectorStatic: typeof dependency.Injector;
+                _Injector: typeof dependency.Injector;
                 /**
                   * The IBrowser injectable instance
                   */
-                $browser: web.IBrowser;
+                _browser: web.IBrowser;
                 /**
                   * The router associated with this link.
                   */
@@ -10038,19 +10023,19 @@ declare module plat {
             /**
               * Reference to the IElementManagerFactory injectable.
               */
-            $ElementManagerFactory: IElementManagerFactory;
+            _ElementManagerFactory: IElementManagerFactory;
             /**
               * Reference to the ITextManagerFactory injectable.
               */
-            $TextManagerFactory: ITextManagerFactory;
+            _TextManager: ITextManagerFactory;
             /**
               * Reference to the ICommentManagerFactory injectable.
               */
-            $CommentManagerFactory: ICommentManagerFactory;
+            _CommentManagerFactory: ICommentManagerFactory;
             /**
               * Reference to a cache injectable that stores IElementManagers.
               */
-            $ManagerCache: storage.ICache<INodeManager>;
+            _managerCache: storage.ICache<INodeManager>;
             /**
               * Goes through the child Nodes of the given Node, finding elements that contain controls as well as
               * text that contains markup.
@@ -10092,7 +10077,7 @@ declare module plat {
             protected _compileNodes(nodes: Node[], manager: IElementManager): void;
         }
         /**
-          * The Type for referencing the '$Compiler' injectable as a dependency.
+          * The Type for referencing the '_compiler' injectable as a dependency.
           */
         function ICompiler(): ICompiler;
         /**
@@ -10131,15 +10116,15 @@ declare module plat {
             /**
               * Reference to the IContextManagerStatic injectable.
               */
-            static $ContextManagerStatic: observable.IContextManagerStatic;
+            static _ContextManager: observable.IContextManagerStatic;
             /**
               * Reference to the IParser injectable.
               */
-            static $Parser: expressions.IParser;
+            static _parser: expressions.IParser;
             /**
               * Reference to the ITemplateControlFactory injectable.
               */
-            static $TemplateControlFactory: ui.ITemplateControlFactory;
+            static _TemplateControlFactory: ui.ITemplateControlFactory;
             /**
               * Determines if a string has the markup notation.
               * @param {string} text The text string in which to search for markup.
@@ -10239,9 +10224,9 @@ declare module plat {
             bind(): void;
         }
         /**
-          * The Type for referencing the '$NodeManagerStatic' injectable as a dependency.
+          * The Type for referencing the '_NodeManager' injectable as a dependency.
           */
-        function INodeManagerStatic($Regex?: expressions.IRegex, $ContextManagerStatic?: observable.IContextManagerStatic, $Parser?: expressions.IParser, $TemplateControlFactory?: ui.ITemplateControlFactory): INodeManagerStatic;
+        function INodeManagerStatic(_regex?: expressions.IRegex, _ContextManager?: observable.IContextManagerStatic, _parser?: expressions.IParser, _TemplateControlFactory?: ui.ITemplateControlFactory): INodeManagerStatic;
         /**
           * Performs essential Node management and binding functions.
           */
@@ -10400,19 +10385,19 @@ declare module plat {
             /**
               * Reference to the Document injectable.
               */
-            static $Document: Document;
+            protected static _document: Document;
             /**
               * Reference to a cache injectable that stores IElementManagers.
               */
-            static $ManagerCache: storage.ICache<IElementManager>;
+            protected static _managerCache: storage.ICache<IElementManager>;
             /**
               * Reference to the IResourcesFactory injectable.
               */
-            static $ResourcesFactory: ui.IResourcesFactory;
+            protected static _ResourcesFactory: ui.IResourcesFactory;
             /**
               * Reference to the IBindableTemplatesFactory injectable.
               */
-            static $BindableTemplatesFactory: ui.IBindableTemplatesFactory;
+            protected static _BindableTemplatesFactory: ui.IBindableTemplatesFactory;
             /**
               * Determines if the associated Element has controls that need to be instantiated or Attr nodes
               * containing text markup. If controls exist or markup is found a new
@@ -10498,31 +10483,31 @@ declare module plat {
             /**
               * Reference to the IPromise injectable.
               */
-            $Promise: async.IPromise;
+            _Promise: async.IPromise;
             /**
               * Reference to the ICompiler injectable.
               */
-            $Compiler: ICompiler;
+            _compiler: ICompiler;
             /**
               * Reference to the IContextManagerStatic injectable.
               */
-            $ContextManagerStatic: observable.IContextManagerStatic;
+            _ContextManager: observable.IContextManagerStatic;
             /**
               * Reference to the ICommentManagerFactory injectable.
               */
-            $CommentManagerFactory: ICommentManagerFactory;
+            _CommentManagerFactory: ICommentManagerFactory;
             /**
               * Reference to the IControlFactory injectable.
               */
-            $ControlFactory: IControlFactory;
+            _ControlFactory: IControlFactory;
             /**
               * Reference to the ITemplateControlFactory injectable.
               */
-            $TemplateControlFactory: ui.ITemplateControlFactory;
+            _TemplateControlFactory: ui.ITemplateControlFactory;
             /**
               * Reference to the IBindableTemplatesFactory injectable.
               */
-            $BindableTemplatesFactory: ui.IBindableTemplatesFactory;
+            _BindableTemplatesFactory: ui.IBindableTemplatesFactory;
             /**
               * The child managers for this manager.
               */
@@ -10690,9 +10675,9 @@ declare module plat {
             protected _fulfillChildTemplates(): async.IThenable<void>;
         }
         /**
-          * The Type for referencing the '$ElementManagerFactory' injectable as a dependency.
+          * The Type for referencing the '_ElementManagerFactory' injectable as a dependency.
           */
-        function IElementManagerFactory($Document?: Document, $ManagerCache?: storage.ICache<IElementManager>, $ResourcesFactory?: ui.IResourcesFactory, $BindableTemplatesFactory?: ui.IBindableTemplatesFactory): IElementManagerFactory;
+        function IElementManagerFactory(_document?: Document, _managerCache?: storage.ICache<IElementManager>, _ResourcesFactory?: ui.IResourcesFactory, _BindableTemplatesFactory?: ui.IBindableTemplatesFactory): IElementManagerFactory;
         /**
           * Creates and manages a class for dealing with Element nodes.
           */
@@ -10908,7 +10893,7 @@ declare module plat {
             protected _setText(node: Node, control: ui.ITemplateControl, expressions: expressions.IParsedExpression[]): void;
         }
         /**
-          * The Type for referencing the '$TextManagerFactory' injectable as a dependency.
+          * The Type for referencing the '_TextManager' injectable as a dependency.
           */
         function ITextManagerFactory(): ITextManagerFactory;
         /**
@@ -10970,7 +10955,7 @@ declare module plat {
             clone(newNode: Node, parentManager: IElementManager): number;
         }
         /**
-          * The Type for referencing the '$CommentManagerFactory' injectable as a dependency.
+          * The Type for referencing the '_CommentManagerFactory' injectable as a dependency.
           */
         function ICommentManagerFactory(): ICommentManagerFactory;
         /**
@@ -11006,26 +10991,26 @@ declare module plat {
             /**
               * The IPromise injectable instance
               */
-            $Promise: async.IPromise;
+            _Promise: async.IPromise;
             /**
               * The Injector injectable instance
               */
-            $InjectorStatic: typeof dependency.Injector;
+            _Injector: typeof dependency.Injector;
             /**
               * The IBrowserConfig injectable instance
               */
-            $browserConfig: web.IBrowserConfig;
+            _browserConfig: web.IBrowserConfig;
             /**
               * The IBrowser injectable instance
               */
-            $browser: web.IBrowser;
-            $EventManagerStatic: events.IEventManagerStatic;
-            $window: Window;
+            _browser: web.IBrowser;
+            _EventManagerStatic: events.IEventManagerStatic;
+            _window: Window;
             /**
               * The router associated with this link.
               */
             router: Router;
-            $history: History;
+            _history: History;
             uid: string;
             removeUrlListener: IRemoveListener;
             ignoreOnce: boolean;
@@ -11055,10 +11040,10 @@ declare module plat {
             length?: number;
         }
         /**
-          * The Type for referencing the '$History' injectable as a dependency.
+          * The Type for referencing the '_history' injectable as a dependency.
           * Used so that the window.history can be mocked.
           */
-        function History($window?: Window): History;
+        function History(_window?: Window): History;
         /**
           * Stores information about a segment, publishes a regex for matching the segment as well as
           * methods for generating the segment and iterating over the characters in the segment.
@@ -11067,7 +11052,7 @@ declare module plat {
             /**
               * Reference to the IRegex injectable.
               */
-            static $Regex: expressions.IRegex;
+            static _regex: expressions.IRegex;
             /**
               * Parses a route into segments, populating an array of names (for dynamic and splat segments) as well as
               * an ISegmentTypeCount object.
@@ -11119,11 +11104,11 @@ declare module plat {
             generate(parameters?: IObject<string>): string;
         }
         /**
-          * The Type for referencing the '$BaseSegmentFactory' injectable as a dependency.
+          * The Type for referencing the '_BaseSegmentFactory' injectable as a dependency.
           */
-        function IBaseSegmentFactory($Regex: expressions.IRegex): typeof BaseSegment;
+        function IBaseSegmentFactory(_regex: expressions.IRegex): typeof BaseSegment;
         /**
-          * The Type for referencing the '$BaseSegmentInstance' injectable as a dependency.
+          * The Type for referencing the '_baseSegment' injectable as a dependency.
           */
         function IBaseSegmentInstance(): BaseSegment;
         /**
@@ -11149,7 +11134,7 @@ declare module plat {
             reduceCharacters<T>(iterator: (previousValue: T, spec: ICharacterSpecification) => T, initialValue?: T): T;
         }
         /**
-          * The Type for referencing the '$StaticSegmentInstance' injectable as a dependency.
+          * The Type for referencing the '_staticSegment' injectable as a dependency.
           */
         function IStaticSegmentInstance(): StaticSegment;
         /**
@@ -11168,7 +11153,7 @@ declare module plat {
             generate(parameters?: IObject<string>): string;
         }
         /**
-          * The Type for referencing the '$VariableSegmentInstance' injectable as a dependency.
+          * The Type for referencing the '_variableSegment' injectable as a dependency.
           */
         function IVariableSegmentInstance(): VariableSegment;
         /**
@@ -11190,7 +11175,7 @@ declare module plat {
             protected _specification: ICharacterSpecification;
         }
         /**
-          * The Type for referencing the '$SplatSegmentInstance' injectable as a dependency.
+          * The Type for referencing the '_splatSegment' injectable as a dependency.
           */
         function ISplatSegmentInstance(): SplatSegment;
         /**
@@ -11212,7 +11197,7 @@ declare module plat {
             protected _specification: ICharacterSpecification;
         }
         /**
-          * The Type for referencing the '$DynamicSegmentInstance' injectable as a dependency.
+          * The Type for referencing the '_dynamicSegment' injectable as a dependency.
           */
         function IDynamicSegmentInstance(): DynamicSegment;
         /**
@@ -11354,11 +11339,11 @@ declare module plat {
             protected _someChildren(iterator: (child: State) => void): void;
         }
         /**
-          * The Type for referencing the '$StateStatic' injectable as a dependency.
+          * The Type for referencing the '_State' injectable as a dependency.
           */
         function IStateStatic(): typeof State;
         /**
-          * The Type for referencing the '$StateInstance' injectable as a dependency.
+          * The Type for referencing the '_state' injectable as a dependency.
           */
         function IStateInstance(): State;
         /**
@@ -11384,11 +11369,11 @@ declare module plat {
             /**
               * Reference to the BaseSegment injectable.
               */
-            $BaseSegmentFactory: typeof BaseSegment;
+            _BaseSegmentFactory: typeof BaseSegment;
             /**
               * Reference to the State injectable.
               */
-            $StateStatic: typeof State;
+            _State: typeof State;
             /**
               * A root state for the recognizer used to add next states.
               */
@@ -11488,7 +11473,7 @@ declare module plat {
             protected _isDynamic(state: State): boolean;
         }
         /**
-          * The Type for referencing the '$RouteRecognizerInstance' injectable as a dependency.
+          * The Type for referencing the '_routerecognizerInstance' injectable as a dependency.
           */
         function IRouteRecognizerInstance(): RouteRecognizer;
         /**
@@ -11564,13 +11549,13 @@ declare module plat {
         class Router {
             static currentRouter(router?: Router): Router;
             private static __currentRouter;
-            $Promise: async.IPromise;
+            _Promise: async.IPromise;
             resolve: typeof async.Promise.resolve;
             reject: typeof async.Promise.reject;
-            $Injector: typeof dependency.Injector;
-            $EventManagerStatic: events.IEventManagerStatic;
-            $browser: web.IBrowser;
-            $browserConfig: web.IBrowserConfig;
+            _Injector: typeof dependency.Injector;
+            _EventManagerStatic: events.IEventManagerStatic;
+            _browser: web.IBrowser;
+            _browserConfig: web.IBrowserConfig;
             recognizer: RouteRecognizer;
             childRecognizer: RouteRecognizer;
             paramTransforms: IObject<IRouteTransforms>;
@@ -11702,11 +11687,11 @@ declare module plat {
             /**
               * Reference to the IParser injectable.
               */
-            $Parser: expressions.IParser;
+            _parser: expressions.IParser;
             /**
               * Reference to the IRegex injectable.
               */
-            $Regex: expressions.IRegex;
+            _regex: expressions.IRegex;
             /**
               * The event name.
               */
@@ -12025,7 +12010,7 @@ declare module plat {
             /**
               * Reference to the ICompat injectable.
               */
-            $Compat: ICompat;
+            _compat: ICompat;
             /**
               * The event name.
               */
@@ -12227,7 +12212,7 @@ declare module plat {
             /**
               * Reference to the IRegex injectable.
               */
-            $Regex: expressions.IRegex;
+            _regex: expressions.IRegex;
             /**
               * Holds the key mappings to filter for in a KeyboardEvent.
               */
@@ -12509,7 +12494,7 @@ declare module plat {
             /**
               * The plat.web.IBrowser injectable instance
               */
-            $Browser: web.IBrowser;
+            _browser: web.IBrowser;
             /**
               * The function for setting the corresponding
               * attribute property value to the evaluated expression.
@@ -12523,19 +12508,19 @@ declare module plat {
             /**
               * Reference to the IParser injectable.
               */
-            $Parser: expressions.IParser;
+            _parser: expressions.IParser;
             /**
               * Reference to the IContextManagerStatic injectable.
               */
-            $ContextManagerStatic: observable.IContextManagerStatic;
+            _ContextManager: observable.IContextManagerStatic;
             /**
               * Reference to the ICompat injectable.
               */
-            $Compat: ICompat;
+            _compat: ICompat;
             /**
               * Reference to the Document injectable.
               */
-            $document: Document;
+            _document: Document;
             /**
               * The priority of Bind is set high to precede
               * other controls that may be listening to the same
@@ -12748,7 +12733,7 @@ declare module plat {
             /**
               * Reference to the IContextManagerStatic injectable.
               */
-            $ContextManagerStatic: observable.IContextManagerStatic;
+            _ContextManager: observable.IContextManagerStatic;
             /**
               * The property to set on the associated template control.
               */
@@ -12849,23 +12834,23 @@ declare module plat {
         /**
           * Reference to the ICompat injectable.
           */
-        static $Compat: ICompat;
+        protected static _compat: ICompat;
         /**
           * Reference to the IEventManagerStatic injectable.
           */
-        static $EventManagerStatic: events.IEventManagerStatic;
+        protected static _EventManagerStatic: events.IEventManagerStatic;
         /**
           * Reference to the Document injectable.
           */
-        static $Document: Document;
+        protected static _document: Document;
         /**
           * Reference to the ICompiler injectable.
           */
-        static $Compiler: processing.ICompiler;
+        protected static _compiler: processing.ICompiler;
         /**
           * Reference to the ILifecycleEventStatic injectable.
           */
-        static $LifecycleEventStatic: events.ILifecycleEventStatic;
+        protected static _LifecycleEvent: events.ILifecycleEventStatic;
         /**
           * A static method for initiating the app startup.
           */
@@ -12978,15 +12963,15 @@ declare module plat {
         load(node?: Node): void;
     }
     /**
-      * The Type for referencing the '$AppStatic' injectable as a dependency.
+      * The Type for referencing the '_AppStatic' injectable as a dependency.
       */
-    function IAppStatic($Compat?: ICompat, $EventManagerStatic?: events.IEventManagerStatic, $Document?: Document, $Compiler?: processing.ICompiler, $LifecycleEventStatic?: events.ILifecycleEventStatic): IAppStatic;
+    function IAppStatic(_compat?: ICompat, _EventManagerStatic?: events.IEventManagerStatic, _document?: Document, _compiler?: processing.ICompiler, _LifecycleEvent?: events.ILifecycleEventStatic): IAppStatic;
     /**
-      * The Type for referencing the '$App' injectable as a dependency.
+      * The Type for referencing the '_app' injectable as a dependency.
       */
-    function IApp($AppStatic?: IAppStatic): IApp;
+    function IApp(_AppStatic?: IAppStatic): IApp;
     /**
-      * The external interface for the '$AppStatic' injectable.
+      * The external interface for the '_AppStatic' injectable.
       */
     interface IAppStatic {
         /**

@@ -5,7 +5,7 @@
         protected static root: Navigator;
 
         /**
-         * @name $Promise
+         * @name _Promise
          * @memberof plat.routing.Navigator
          * @kind property
          * @access public
@@ -15,10 +15,10 @@
          * @description
          * The {@link plat.async.IPromise|IPromise} injectable instance
          */
-        $Promise: async.IPromise = acquire(__Promise);
+        _Promise: async.IPromise = acquire(__Promise);
 
         /**
-         * @name $InjectorStatic
+         * @name _Injector
          * @memberof plat.routing.Navigator
          * @kind property
          * @access public
@@ -28,10 +28,10 @@
          * @description
          * The {@link plat.dependency.Injector|Injector} injectable instance
          */
-        $InjectorStatic: typeof dependency.Injector = acquire(__InjectorStatic);
+        _Injector: typeof dependency.Injector = acquire(__InjectorStatic);
 
         /**
-         * @name $browserConfig
+         * @name _browserConfig
          * @memberof plat.routing.Navigator
          * @kind property
          * @access public
@@ -41,10 +41,10 @@
          * @description
          * The {@link plat.web.IBrowserConfig|IBrowserConfig} injectable instance
          */
-        $browserConfig: web.IBrowserConfig = acquire(__BrowserConfig);
+        _browserConfig: web.IBrowserConfig = acquire(__BrowserConfig);
 
         /**
-         * @name $browser
+         * @name _browser
          * @memberof plat.routing.Navigator
          * @kind property
          * @access public
@@ -54,10 +54,10 @@
          * @description
          * The {@link plat.web.IBrowser|IBrowser} injectable instance
          */
-        $browser: web.IBrowser = acquire(__Browser);
+        _browser: web.IBrowser = acquire(__Browser);
 
-        $EventManagerStatic: events.IEventManagerStatic = acquire(__EventManagerStatic);
-        $window: Window = acquire(__Window);
+        _EventManagerStatic: events.IEventManagerStatic = acquire(__EventManagerStatic);
+        _window: Window = acquire(__Window);
 
         /**
          * @name router
@@ -72,7 +72,7 @@
          */
         router: Router;
 
-        $history: History = plat.acquire(__History);
+        _history: History = plat.acquire(__History);
 
         uid = uniqueId(__Plat);
         removeUrlListener: IRemoveListener = noop;
@@ -116,7 +116,7 @@
                 return router.finishNavigating;
             }
 
-            return this.$Promise.resolve();
+            return this._Promise.resolve();
         }
 
         protected _navigate(url: string, replace?: boolean): async.IThenable<void> {
@@ -124,10 +124,10 @@
                 return Navigator.root._navigate(url, replace);
             }
 
-            return new this.$Promise<void>((resolve, reject) => {
+            return new this._Promise<void>((resolve, reject) => {
                 this.resolveNavigate = resolve;
                 this.rejectNavigate = reject;
-                this.$browser.url(url, replace);
+                this._browser.url(url, replace);
             });
         }
 
@@ -144,15 +144,15 @@
                 Navigator.root.goBack(options);
             }
 
-            var $history = this.$history,
-                url = this.$browser.url();
+            var _history = this._history,
+                url = this._browser.url();
 
             this.backNavigate = true;
-            $history.go(-length);
+            _history.go(-length);
             
             setTimeout(() => {
-                if (!this.ignored && url === this.$browser.url()) {
-                    this.$EventManagerStatic.dispatch(__shutdown, this, this.$EventManagerStatic.DIRECT);
+                if (!this.ignored && url === this._browser.url()) {
+                    this._EventManagerStatic.dispatch(__shutdown, this, this._EventManagerStatic.DIRECT);
                 }
             }, 50);
         }
@@ -167,14 +167,14 @@
                 return;
             }
 
-            var config = this.$browserConfig,
-                EventManager = this.$EventManagerStatic,
+            var config = this._browserConfig,
+                EventManager = this._EventManagerStatic,
                 prefix: string,
                 previousUrl: string,
                 previousQuery: string,
                 backNavigate: boolean;
 
-            this.previousUrl = this.$browser.url();
+            this.previousUrl = this._browser.url();
 
             EventManager.dispose(this.uid);
             EventManager.on(this.uid, __backButton, () => {
@@ -213,7 +213,7 @@
                         .catch((e) => {
                             this.ignoreOnce = true;
                             this.previousUrl = previousUrl;
-                            this.$browser.url(previousUrl, !backNavigate);
+                            this._browser.url(previousUrl, !backNavigate);
 
                             if (isFunction(this.rejectNavigate)) {
                                 this.rejectNavigate(e);
@@ -232,7 +232,7 @@
                 return view;
             }
 
-            view = this.$InjectorStatic.convertDependency(view);
+            view = this._Injector.convertDependency(view);
             return this.router.generate(view, parameters, query);
         }
     }

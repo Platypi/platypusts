@@ -192,7 +192,7 @@ module plat.processing {
     }
 
     /**
-     * The Type for referencing the '$TextManagerFactory' injectable as a dependency.
+     * The Type for referencing the '_TextManager' injectable as a dependency.
      */
     export function ITextManagerFactory(): ITextManagerFactory {
         return TextManager;

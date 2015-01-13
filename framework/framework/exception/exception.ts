@@ -264,7 +264,7 @@ module plat {
     }
 
     /**
-     * The Type for referencing the '$ExceptionStatic' injectable as a dependency.
+     * The Type for referencing the '_Exception' injectable as a dependency.
      */
     export function IExceptionStatic(): IExceptionStatic {
         return Exception;
@@ -679,7 +679,7 @@ module plat {
                 error.name = __injectableError;
                 break;
             case Exception.COMPAT:
-                error.name = __compatError;
+                error.name = __CompatError;
                 break;
             default:
                 error = new PlatError(message);

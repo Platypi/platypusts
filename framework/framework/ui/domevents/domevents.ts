@@ -129,7 +129,7 @@
         };
 
         /**
-         * @name $Document
+         * @name _document
          * @memberof plat.ui.DomEvents
          * @kind property
          * @access public
@@ -140,9 +140,9 @@
          * @description
          * Reference to the Document injectable.
          */
-        $Document: Document = acquire(__Document);
+        _document: Document = acquire(__Document);
         /**
-         * @name $Compat
+         * @name _compat
          * @memberof plat.ui.DomEvents
          * @kind property
          * @access public
@@ -153,7 +153,7 @@
          * @description
          * Reference to the {@link plat.ICompat|ICompat} injectable.
          */
-        $Compat: ICompat = acquire(__Compat);
+        _compat: ICompat = acquire(__Compat);
 
         /**
          * @name _isActive
@@ -713,8 +713,8 @@
          */
         addEventListener(element: Window, type: string, listener: EventListener, useCapture?: boolean): IRemoveListener;
         addEventListener(element: any, type: string, listener: IGestureListener, useCapture?: boolean): IRemoveListener {
-            var $compat = this.$Compat,
-                mappedGestures = $compat.mappedEvents,
+            var _compat = this._compat,
+                mappedGestures = _compat.mappedEvents,
                 mappedType = mappedGestures[type],
                 mappingExists = !isNull(mappedType),
                 mappedCount = this.__mappedCount,
@@ -730,7 +730,7 @@
                 mappedCount[type]++;
                 mappedRemoveListener = this.__addMappedEvent(count, mappedType, useCapture);
 
-                if ($compat.hasTouchEvents && !this.__cancelRegex.test(mappedType)) {
+                if (_compat.hasTouchEvents && !this.__cancelRegex.test(mappedType)) {
                     mappedType = mappedType
                         .replace('touch', 'mouse')
                         .replace('start', 'down')
@@ -855,7 +855,7 @@
                 // return immediately if mouse event and currently in a touch
                 ev.preventDefault();
                 return false;
-            } else if (this.$Compat.hasTouchEvents) {
+            } else if (this._compat.hasTouchEvents) {
                 this._inMouse = true;
             }
 
@@ -1342,7 +1342,7 @@
             var domEvents = this.__findFirstSubscribers(eventTarget,
                 [trackGesture, (trackGesture + direction.x), (trackGesture + direction.y)]);
             if (domEvents.length > 0) {
-                if (!isUndefined(this.$Compat.ANDROID)) {
+                if (!isUndefined(this._compat.ANDROID)) {
                     originalEv.preventDefault();
                 }
 
@@ -1423,15 +1423,15 @@
          * @returns {void}
          */
         private __getTypes(): void {
-            var $compat = this.$Compat,
-                touchEvents = $compat.mappedEvents;
+            var _compat = this._compat,
+                touchEvents = _compat.mappedEvents;
 
-            if ($compat.hasPointerEvents) {
+            if (_compat.hasPointerEvents) {
                 this._startEvents = [touchEvents.$touchstart];
                 this._moveEvents = [touchEvents.$touchmove];
                 this._endEvents = [touchEvents.$touchend, touchEvents.$touchcancel];
                 return;
-            } else if ($compat.hasTouchEvents) {
+            } else if (_compat.hasTouchEvents) {
                 this._startEvents = [touchEvents.$touchstart, 'mousedown'];
                 this._moveEvents = [touchEvents.$touchmove, 'mousemove'];
                 this._endEvents = [touchEvents.$touchend, touchEvents.$touchcancel, 'mouseup'];
@@ -1493,7 +1493,7 @@
         private __registerType(event: string): void {
             var events: Array<string>,
                 listener = this.__listeners[event],
-                $document = this.$Document;
+                _document = this._document;
 
             switch (event) {
                 case this.__START:
@@ -1511,7 +1511,7 @@
 
             var index = events.length;
             while (index-- > 0) {
-                $document.addEventListener(events[index], listener, false);
+                _document.addEventListener(events[index], listener, false);
             }
         }
 
@@ -1531,7 +1531,7 @@
         private __unregisterType(event: string): void {
             var events: Array<string>,
                 listener = this.__listeners[event],
-                $document = this.$Document;
+                _document = this._document;
 
             switch (event) {
                 case this.__START:
@@ -1549,7 +1549,7 @@
 
             var index = events.length;
             while (index-- > 0) {
-                $document.removeEventListener(events[index], listener, false);
+                _document.removeEventListener(events[index], listener, false);
             }
         }
 
@@ -1591,12 +1591,12 @@
                 this._isActive = true;
             }
 
-            var $domEvent: IDomEventInstance;
+            var _domEvent: IDomEventInstance;
             if (isNull(id)) {
                 var subscriber = this._subscribers[plat.domEvent];
                 if (isUndefined((<any>subscriber)[type])) {
-                    $domEvent = new CustomDomEvent(element, type);
-                    (<any>subscriber)[type] = $domEvent;
+                    _domEvent = new CustomDomEvent(element, type);
+                    (<any>subscriber)[type] = _domEvent;
                 } else {
                     (<any>subscriber)[type].count++;
                 }
@@ -1605,8 +1605,8 @@
             }
 
             var newSubscriber = { gestureCount: 1 };
-            $domEvent = new CustomDomEvent(element, type);
-            (<any>newSubscriber)[type] = $domEvent;
+            _domEvent = new CustomDomEvent(element, type);
+            (<any>newSubscriber)[type] = _domEvent;
             this._subscribers[id] = newSubscriber;
 
             if (!isUndefined((<HTMLElement>element).className)) {
@@ -1670,9 +1670,9 @@
          */
         private __setTouchPoint(ev: IPointerEvent): void {
             var eventType = ev.type,
-                $compat = this.$Compat;
+                _compat = this._compat;
 
-            if ($compat.hasPointerEvents || $compat.hasMsPointerEvents) {
+            if (_compat.hasPointerEvents || _compat.hasMsPointerEvents) {
                 this.__updatePointers(ev, this.__pointerEndRegex.test(eventType));
                 return;
             }
@@ -1855,14 +1855,14 @@
          * @returns {plat.IRemoveListener} A function for removing the added mapped listener.
          */
         private __addMappedEvent(count: number, mappedEvent: string, useCapture?: boolean): IRemoveListener {
-            var $document = this.$Document;
+            var _document = this._document;
 
             if (count === 0) {
-                $document.addEventListener(mappedEvent, this.__mappedEventListener, useCapture);
+                _document.addEventListener(mappedEvent, this.__mappedEventListener, useCapture);
             }
 
             return () => {
-                $document.removeEventListener(mappedEvent, this.__mappedEventListener, useCapture);
+                _document.removeEventListener(mappedEvent, this.__mappedEventListener, useCapture);
             };
         }
 
@@ -2252,14 +2252,14 @@
          * @returns {void}
          */
         private __appendGestureStyle(): void {
-            var $document = this.$Document,
+            var _document = this._document,
                 styleClasses: Array<IDefaultStyle>,
                 classLength: number;
 
-            if (this.$Compat.platCss) {
+            if (this._compat.platCss) {
                 return;
-            } else if (!isNull($document.styleSheets) && $document.styleSheets.length > 0) {
-                var styleSheet = <CSSStyleSheet>$document.styleSheets[0];
+            } else if (!isNull(_document.styleSheets) && _document.styleSheets.length > 0) {
+                var styleSheet = <CSSStyleSheet>_document.styleSheets[0];
                 styleClasses = DomEvents.config.styleConfig;
                 classLength = styleClasses.length;
                 while (classLength-- > 0) {
@@ -2268,8 +2268,8 @@
                 return;
             }
 
-            var head = $document.head,
-                style = <HTMLStyleElement>$document.createElement('style'),
+            var head = _document.head,
+                style = <HTMLStyleElement>_document.createElement('style'),
                 textContent = '';
 
             style.type = 'text/css';
@@ -2373,7 +2373,7 @@
                                 focusedElement.blur();
                             }
                             postpone(() => {
-                                if (this.$Document.body.contains(target)) {
+                                if (this._document.body.contains(target)) {
                                     target.click();
                                 }
                             });
@@ -2397,7 +2397,7 @@
                         focusedElement.blur();
                     }
                     postpone(() => {
-                        if (this.$Document.body.contains(target)) {
+                        if (this._document.body.contains(target)) {
                             target.click();
                         }
                     });
@@ -2417,9 +2417,9 @@
                         focusedElement.blur();
                     }
                     postpone(() => {
-                        var $document = this.$Document;
-                        if ($document.body.contains(target)) {
-                            var event = <MouseEvent>$document.createEvent('MouseEvents');
+                        var _document = this._document;
+                        if (_document.body.contains(target)) {
+                            var event = <MouseEvent>_document.createEvent('MouseEvents');
                             event.initMouseEvent('mousedown', false, false, null, null, null,
                                 null, null, null, null, null, null, null, null, null);
                             target.dispatchEvent(event);
@@ -2431,7 +2431,7 @@
                         focusedElement.blur();
                     }
                     postpone(() => {
-                        if (this.$Document.body.contains(target) && isFunction(target.click)) {
+                        if (this._document.body.contains(target) && isFunction(target.click)) {
                             target.click();
                         }
                     });
@@ -2453,16 +2453,16 @@
          * @returns {void}
          */
         private __preventClickFromTouch(): void {
-            var $document = this.$Document,
+            var _document = this._document,
                 delayedClickRemover = defer(() => {
-                    $document.removeEventListener('click', preventDefault, true);
-                    $document.removeEventListener('mousedown', preventDefault, true);
-                    $document.removeEventListener('mouseup', preventDefault, true);
+                    _document.removeEventListener('click', preventDefault, true);
+                    _document.removeEventListener('mousedown', preventDefault, true);
+                    _document.removeEventListener('mouseup', preventDefault, true);
                 }, 400),
                 preventDefault = (ev: Event) => {
                     ev.preventDefault();
                     ev.stopPropagation();
-                    $document.removeEventListener(ev.type, preventDefault, true);
+                    _document.removeEventListener(ev.type, preventDefault, true);
                     if (delayedClickRemover === noop) {
                         return false;
                     }
@@ -2478,9 +2478,9 @@
                 };
 
             postpone(() => {
-                $document.addEventListener('click', preventDefault, true);
-                $document.addEventListener('mousedown', preventDefault, true);
-                $document.addEventListener('mouseup', preventDefault, true);
+                _document.addEventListener('click', preventDefault, true);
+                _document.addEventListener('mousedown', preventDefault, true);
+                _document.addEventListener('mouseup', preventDefault, true);
             });
         }
 
@@ -2566,7 +2566,7 @@
     }
 
     /**
-     * The Type for referencing the '$DomEvents' injectable as a dependency.
+     * The Type for referencing the '_domEvents' injectable as a dependency.
      */
     export function IDomEvents(): IDomEvents {
         return new DomEvents();
@@ -2675,7 +2675,7 @@
     }
 
     /**
-     * The Type for referencing the '$DomEventsConfig' injectable as a dependency.
+     * The Type for referencing the '_domEventsConfig' injectable as a dependency.
      */
     export function IDomEventsConfig(): IDomEventsConfig {
         return DomEvents.config;
@@ -2695,7 +2695,7 @@
      */
     export class DomEvent implements IDomEventInstance {
         /**
-         * @name $Document
+         * @name _document
          * @memberof plat.ui.DomEvent
          * @kind property
          * @access public
@@ -2705,7 +2705,7 @@
          * @description
          * Reference to the Document injectable.
          */
-        $Document: Document = acquire(__Document);
+        _document: Document = acquire(__Document);
 
         /**
          * @name element
@@ -2784,7 +2784,7 @@
          * @returns {void}
          */
         trigger(eventExtension?: Object): void {
-            var customEv = <CustomEvent>this.$Document.createEvent('CustomEvent');
+            var customEv = <CustomEvent>this._document.createEvent('CustomEvent');
             if (isObject(eventExtension)) {
                 extend(customEv, eventExtension);
             }
@@ -2794,7 +2794,7 @@
     }
 
     /**
-     * The Type for referencing the '$DomEventInstance' injectable as a dependency.
+     * The Type for referencing the '_domEvents' injectable as a dependency.
      */
     export function IDomEventInstance(): IDomEventInstance {
         return new DomEvent();
@@ -2884,7 +2884,7 @@
          * @returns {void}
          */
         trigger(ev: IPointerEvent): void {
-            var customEv = <CustomEvent>this.$Document.createEvent('CustomEvent');
+            var customEv = <CustomEvent>this._document.createEvent('CustomEvent');
             this.__extendEventObject(customEv, ev);
             customEv.initCustomEvent(this.event, true, true, 0);
             this.element.dispatchEvent(customEv);

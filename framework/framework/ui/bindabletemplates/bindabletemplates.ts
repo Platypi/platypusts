@@ -126,7 +126,7 @@ module plat.ui {
         }
 
         /**
-         * @name $ResourcesFactory
+         * @name _ResourcesFactory
          * @memberof plat.ui.BindableTemplates
          * @kind property
          * @access public
@@ -136,9 +136,9 @@ module plat.ui {
          * @description
          * Reference to the {@link plat.ui.IResourcesFactory|IResourcesFactory} injectable.
          */
-        $ResourcesFactory: IResourcesFactory = acquire(__ResourcesFactory);
+        _ResourcesFactory: IResourcesFactory = acquire(__ResourcesFactory);
         /**
-         * @name $TemplateControlFactory
+         * @name _TemplateControlFactory
          * @memberof plat.ui.BindableTemplates
          * @kind property
          * @access public
@@ -148,9 +148,9 @@ module plat.ui {
          * @description
          * Reference to the {@link plat.ui.ITemplateControlFactory|ITemplateControlFactory} injectable.
          */
-        $TemplateControlFactory: ITemplateControlFactory = acquire(__TemplateControlFactory);
+        _TemplateControlFactory: ITemplateControlFactory = acquire(__TemplateControlFactory);
         /**
-         * @name $Promise
+         * @name _Promise
          * @memberof plat.ui.BindableTemplates
          * @kind property
          * @access public
@@ -160,9 +160,9 @@ module plat.ui {
          * @description
          * Reference to the {@link plat.async.IPromise|IPromise} injectable.
          */
-        $Promise: async.IPromise = acquire(__Promise);
+        _Promise: async.IPromise = acquire(__Promise);
         /**
-         * @name $ManagerCache
+         * @name _managerCache
          * @memberof plat.ui.BindableTemplates
          * @kind property
          * @access public
@@ -172,9 +172,9 @@ module plat.ui {
          * @description
          * Reference to a cache injectable that stores {@link plat.processing.IElementManager|IElementManagers}.
          */
-        $ManagerCache: storage.ICache<processing.IElementManager> = acquire(__ManagerCache);
+        _managerCache: storage.ICache<processing.IElementManager> = acquire(__ManagerCache);
         /**
-         * @name $Document
+         * @name _document
          * @memberof plat.ui.BindableTemplates
          * @kind property
          * @access public
@@ -184,9 +184,9 @@ module plat.ui {
          * @description
          * Reference to the Document injectable.
          */
-        $Document: Document = acquire(__Document);
+        _document: Document = acquire(__Document);
         /**
-         * @name $ElementManagerFactory
+         * @name _ElementManagerFactory
          * @memberof plat.ui.BindableTemplates
          * @kind property
          * @access public
@@ -196,7 +196,7 @@ module plat.ui {
          * @description
          * Reference to the {@link plat.processing.IElementManagerFactory|IElementManagerFactory} injectable.
          */
-        $ElementManagerFactory: processing.IElementManagerFactory = acquire(__ElementManagerFactory);
+        _ElementManagerFactory: processing.IElementManagerFactory = acquire(__ElementManagerFactory);
 
         /**
          * @name control
@@ -300,20 +300,20 @@ module plat.ui {
         bind(key: string, relativeIdentifier?: number, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
         bind(key: any, relativeIdentifier?: any, resources?: IObject<IResource>): async.IThenable<DocumentFragment> {
             var templatePromise = this.templates[key],
-                $exception: IExceptionStatic;
+                _Exception: IExceptionStatic;
 
             if (isNull(templatePromise)) {
-                $exception = acquire(__ExceptionStatic);
-                $exception.fatal('Cannot bind template, no template stored with key: ' + key,
-                    $exception.TEMPLATE);
+                _Exception = acquire(__ExceptionStatic);
+                _Exception.fatal('Cannot bind template, no template stored with key: ' + key,
+                    _Exception.TEMPLATE);
                 return;
             }
 
             if (!(isNull(relativeIdentifier) || isNumber(relativeIdentifier) || isString(relativeIdentifier))) {
-                $exception = acquire(__ExceptionStatic);
-                $exception.warn('Cannot bind template with relativeIdentifier: ' +
+                _Exception = acquire(__ExceptionStatic);
+                _Exception.warn('Cannot bind template with relativeIdentifier: ' +
                     relativeIdentifier +
-                    '. Identifier must be either a string or number', $exception.BIND);
+                    '. Identifier must be either a string or number', _Exception.BIND);
                 return;
             }
 
@@ -321,8 +321,8 @@ module plat.ui {
                 return this._bindTemplate(key, <DocumentFragment>result.cloneNode(true), relativeIdentifier, resources);
             }).then(null, (error: any) => {
                     postpone(() => {
-                        $exception = acquire(__ExceptionStatic);
-                        $exception.fatal(error, $exception.BIND);
+                        _Exception = acquire(__ExceptionStatic);
+                        _Exception.fatal(error, _Exception.BIND);
                     });
 
                     return <DocumentFragment>null;
@@ -424,7 +424,7 @@ module plat.ui {
                 return;
             }
 
-            var fragment = this.$Document.createDocumentFragment();
+            var fragment = this._document.createDocumentFragment();
 
             if (isNode(template)) {
                 fragment.appendChild(template);
@@ -449,7 +449,7 @@ module plat.ui {
          * @returns {void}
          */
         dispose(): void {
-            var dispose = this.$TemplateControlFactory.dispose,
+            var dispose = this._TemplateControlFactory.dispose,
                 compiledControls = this.__compiledControls,
                 length = compiledControls.length;
 
@@ -495,20 +495,20 @@ module plat.ui {
             };
 
             return this._bindNodeMap(nodeMap, key).then(() => {
-                var $document = this.$Document;
+                var _document = this._document;
                 if (disposed) {
-                    return $document.createDocumentFragment();
+                    return _document.createDocumentFragment();
                 }
-                control.startNode = template.insertBefore($document.createComment(control.type + __START_NODE),
+                control.startNode = template.insertBefore(_document.createComment(control.type + __START_NODE),
                     template.firstChild);
-                control.endNode = template.insertBefore($document.createComment(control.type + __END_NODE),
+                control.endNode = template.insertBefore(_document.createComment(control.type + __END_NODE),
                     null);
 
                 return template;
             }, (error: any) => {
                     postpone(() => {
-                        var $exception: IExceptionStatic = acquire(__ExceptionStatic);
-                        $exception.fatal(error, $exception.COMPILE);
+                        var _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+                        _Exception.fatal(error, _Exception.COMPILE);
                     });
 
                     return <DocumentFragment>null;
@@ -536,12 +536,12 @@ module plat.ui {
             var manager = this.cache[key],
                 child = nodeMap.uiControlNode.control,
                 template = nodeMap.element,
-                $managerCache = this.$ManagerCache;
+                _managerCache = this._managerCache;
 
             this.control.controls.push(child);
 
-            manager.clone(template, $managerCache.read(this.control.uid), nodeMap);
-            return $managerCache.read(child.uid).bindAndLoad();
+            manager.clone(template, _managerCache.read(this.control.uid), nodeMap);
+            return _managerCache.read(child.uid).bindAndLoad();
         }
 
         /**
@@ -585,7 +585,7 @@ module plat.ui {
          * @returns {void}
          */
         protected _compileNodeMap(control: ITemplateControl, nodeMap: processing.INodeMap, key: string): void {
-            var manager = this.$ElementManagerFactory.getInstance(),
+            var manager = this._ElementManagerFactory.getInstance(),
                 promises: Array<async.IThenable<void>> = [];
 
             manager.isClone = true;
@@ -596,15 +596,15 @@ module plat.ui {
 
             promises.push(manager.fulfillTemplate());
 
-            this.templates[key] = this.$Promise.all(promises).then(() => {
+            this.templates[key] = this._Promise.all(promises).then(() => {
                 var element = nodeMap.element,
                     startNode: Comment,
                     endNode: Comment;
 
                 var clone = <DocumentFragment>nodeMap.element.cloneNode(true);
 
-                startNode = control.startNode = this.$Document.createComment(control.type + __START_NODE);
-                endNode = control.endNode = this.$Document.createComment(control.type + __END_NODE);
+                startNode = control.startNode = this._document.createComment(control.type + __START_NODE);
+                endNode = control.endNode = this._document.createComment(control.type + __END_NODE);
                 element.insertBefore(startNode, element.firstChild);
                 element.insertBefore(endNode, null);
 
@@ -661,12 +661,12 @@ module plat.ui {
          * @returns {plat.ui.ITemplateControl} The newly created {@link plat.ui.ITemplateControl|ITemplateControl}.
          */
         protected _createBoundControl(key: string, template: DocumentFragment, resources?: IObject<IResource>): ITemplateControl {
-            var $TemplateControlFactory = this.$TemplateControlFactory,
-                control = $TemplateControlFactory.getInstance(),
-                $ResourcesFactory = this.$ResourcesFactory,
+            var _TemplateControlFactory = this._TemplateControlFactory,
+                control = _TemplateControlFactory.getInstance(),
+                _ResourcesFactory = this._ResourcesFactory,
                 parent = this.control,
                 compiledManager = this.cache[key],
-                _resources = $ResourcesFactory.getInstance();
+                _resources = _ResourcesFactory.getInstance();
 
             if (isObject(compiledManager)) {
                 var compiledControl = compiledManager.getUiControl();
@@ -678,7 +678,7 @@ module plat.ui {
             }
 
             control.resources = _resources;
-            $ResourcesFactory.addControlResources(control);
+            _ResourcesFactory.addControlResources(control);
 
             control.parent = parent;
             control.controls = [];
@@ -690,7 +690,7 @@ module plat.ui {
     }
 
     /**
-     * The Type for referencing the '$BindableTemplatesFactory' injectable as a dependency.
+     * The Type for referencing the '_BindableTemplatesFactory' injectable as a dependency.
      */
     export function IBindableTemplatesFactory(): IBindableTemplatesFactory {
         return BindableTemplates;

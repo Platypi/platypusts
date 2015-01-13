@@ -11,7 +11,7 @@
      */
     export class Animator implements IAnimator {
         /**
-         * @name $Compat
+         * @name _compat
          * @memberof plat.ui.animations.Animator
          * @kind property
          * @access public
@@ -21,7 +21,7 @@
          * @description
          * Reference to the {@link plat.ICompat|ICompat} injectable.
          */
-        $Compat: ICompat = acquire(__Compat);
+        _compat: ICompat = acquire(__Compat);
 
         /**
          * @name _elements
@@ -60,7 +60,7 @@
                 jsAnimation = jsAnimationInjectors[key],
                 animationInstance: IBaseAnimation;
 
-            if (!this.$Compat.animationSupported || isUndefined(animation)) {
+            if (!this._compat.animationSupported || isUndefined(animation)) {
                 if (isUndefined(jsAnimation)) {
                     return this.resolve();
                 }
@@ -265,13 +265,13 @@
     }
 
     /**
-     * The Type for referencing the '$Animator' injectable as a dependency.
+     * The Type for referencing the '_animator' injectable as a dependency.
      */
     export function IAnimator(): IAnimator {
         return new Animator();
     }
 
-    register.injectable('$Animator', IAnimator);
+    register.injectable(__Animator, IAnimator);
 
     /**
      * @name IAnimator

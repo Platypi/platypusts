@@ -23,46 +23,46 @@ module tests.app {
         }
     }
 
-    var $AppStatic = plat.acquire(plat.IAppStatic),
-        $EventManagerStatic = plat.acquire(plat.events.IEventManagerStatic),
-        $LifecycleEventStatic = plat.acquire(plat.events.ILifecycleEventStatic),
+    var _AppStatic = plat.acquire(plat.IAppStatic),
+        _EventManagerStatic = plat.acquire(plat.events.IEventManagerStatic),
+        _LifecycleEvent = plat.acquire(plat.events.ILifecycleEventStatic),
         compat = plat.acquire(plat.ICompat),
         app: App;
 
     describe('App Tests', () => {
         beforeEach(() => {
             plat.register.app('app', App);
-            (<any>$AppStatic).__registerAppEvents();
+            (<any>_AppStatic).__registerAppEvents();
             app = <App>plat.acquire(plat.IApp);
             called = false;
         });
 
         it('should test app suspend', () => {
-            $LifecycleEventStatic.dispatch('suspend', {});
+            _LifecycleEvent.dispatch('suspend', {});
 
             expect(called).toBe(true);
         });
 
         it('should test app resume', () => {
-            $LifecycleEventStatic.dispatch('resume', {});
+            _LifecycleEvent.dispatch('resume', {});
 
             expect(called).toBe(true);
         });
 
         it('should test app online', () => {
-            $LifecycleEventStatic.dispatch('online', {});
+            _LifecycleEvent.dispatch('online', {});
 
             expect(called).toBe(true);
         });
 
         it('should test app offline', () => {
-            $LifecycleEventStatic.dispatch('offline', {});
+            _LifecycleEvent.dispatch('offline', {});
 
             expect(called).toBe(true);
         });
 
         it('should test app error', () => {
-            $LifecycleEventStatic.dispatch('error', {});
+            _LifecycleEvent.dispatch('error', {});
 
             expect(called).toBe(true);
         });

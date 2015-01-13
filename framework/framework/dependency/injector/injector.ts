@@ -301,9 +301,9 @@ module plat.dependency {
             if (isNull(Constructor)) {
                 return;
             } else if (Constructor === window) {
-                return (<any>injectableInjectors).$Window;
+                return (<any>injectableInjectors)._window;
             } else if (Constructor === window.document) {
-                return (<any>injectableInjectors).$Document;
+                return (<any>injectableInjectors)._document;
             }
 
             if (isString(Constructor.__injectorToken)) {

@@ -125,7 +125,7 @@ module plat.controls {
         property: string = 'src';
 
         /**
-         * @name $Browser
+         * @name _browser
          * @memberof plat.controls.Src
          * @kind property
          * @access public
@@ -135,7 +135,7 @@ module plat.controls {
          * @description
          * The plat.web.IBrowser injectable instance
          */
-        $Browser: web.IBrowser = acquire(__Browser);
+        _browser: web.IBrowser = acquire(__Browser);
 
         /**
          * @name setter
@@ -159,7 +159,7 @@ module plat.controls {
             }
 
             if (!isUndefined((<any>element)[elementProperty])) {
-                (<any>element)[elementProperty] = this.$Browser.urlUtils(expression);
+                (<any>element)[elementProperty] = this._browser.urlUtils(expression);
             }
         }
     }

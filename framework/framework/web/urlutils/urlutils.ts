@@ -58,7 +58,7 @@
          * @returns {string} The base URL.
          */
         private static __getBaseUrl(url: string): string {
-            var $Regex = acquire(__Regex),
+            var _regex = acquire(__Regex),
                 origin = (<any>window.location).origin,
                 protocol = window.location.protocol,
                 host = window.location.host;
@@ -69,13 +69,13 @@
                 origin = window.location.protocol + "//" + window.location.host;
             }
 
-            origin = origin.replace($Regex.initialUrlRegex, '');
+            origin = origin.replace(_regex.initialUrlRegex, '');
 
             return origin.split('?')[0].split('#')[0] + '/';
         }
 
         /**
-         * @name $ContextManagerStatic
+         * @name _ContextManager
          * @memberof plat.web.UrlUtils
          * @kind property
          * @access public
@@ -85,9 +85,9 @@
          * @description
          * Reference to the {@link plat.observable.IContextManagerStatic|IContextManagerStatic} injectable.
          */
-        $ContextManagerStatic: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
+        _ContextManager: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
         /**
-         * @name $Document
+         * @name _document
          * @memberof plat.web.UrlUtils
          * @kind property
          * @access public
@@ -97,9 +97,9 @@
          * @description
          * Reference to the Document injectable.
          */
-        $Document: Document = acquire(__Document);
+        _document: Document = acquire(__Document);
         /**
-         * @name $Window
+         * @name _window
          * @memberof plat.web.UrlUtils
          * @kind property
          * @access public
@@ -109,9 +109,9 @@
          * @description
          * Reference to the Window injectable.
          */
-        $Window: Window = acquire(__Window);
+        _window: Window = acquire(__Window);
         /**
-         * @name $Compat
+         * @name _compat
          * @memberof plat.web.UrlUtils
          * @kind property
          * @access public
@@ -121,9 +121,9 @@
          * @description
          * Reference to the {@link plat.ICompat|ICompat} injectable.
          */
-        $Compat: ICompat = acquire(__Compat);
+        _compat: ICompat = acquire(__Compat);
         /**
-         * @name $Regex
+         * @name _regex
          * @memberof plat.web.UrlUtils
          * @kind property
          * @access public
@@ -133,9 +133,9 @@
          * @description
          * Reference to the {@link plat.expressions.IRegex|IRegex} injectable.
          */
-        $Regex: expressions.IRegex = acquire(__Regex);
+        _regex: expressions.IRegex = acquire(__Regex);
         /**
-         * @name $BrowserConfig
+         * @name _browserConfig
          * @memberof plat.web.UrlUtils
          * @kind property
          * @access public
@@ -145,7 +145,7 @@
          * @description
          * Reference to the {@link plat.web.IBrowserConfig|IBrowserConfig} injectable.
          */
-        $BrowserConfig: IBrowserConfig = acquire(__BrowserConfig);
+        _browserConfig: IBrowserConfig = acquire(__BrowserConfig);
 
         /**
          * @name href
@@ -306,10 +306,10 @@
          * @returns {plat.web.UrlUtils}
          */
         constructor() {
-            var $config = this.$BrowserConfig;
-            if (isEmpty($config.baseUrl) || !this.$Regex.fullUrlRegex.test($config.baseUrl)) {
-                var url = this.$Window.location.href,
-                    trimmedUrl = url.replace(this.$Regex.initialUrlRegex, '/'),
+            var $config = this._browserConfig;
+            if (isEmpty($config.baseUrl) || !this._regex.fullUrlRegex.test($config.baseUrl)) {
+                var url = this._window.location.href,
+                    trimmedUrl = url.replace(this._regex.initialUrlRegex, '/'),
                     baseUrl = $config.baseUrl;
 
                 if (isString(baseUrl)) {
@@ -348,9 +348,9 @@
             url = url || '';
 
             var element = UrlUtils.__urlUtilsElement ||
-                (UrlUtils.__urlUtilsElement = this.$Document.createElement('a')),
-                define = this.$ContextManagerStatic.defineGetter,
-                $BrowserConfig = this.$BrowserConfig;
+                (UrlUtils.__urlUtilsElement = this._document.createElement('a')),
+                define = this._ContextManager.defineGetter,
+                _browserConfig = this._browserConfig;
 
             // always make local urls relative to start page.
             if (url[0] === '/' && url.indexOf('//') !== 0) {
@@ -358,8 +358,8 @@
             }
 
             // Always append the baseUrl if this is not a full-url
-            if (!this.$Regex.fullUrlRegex.test(url)) {
-                url = $BrowserConfig.baseUrl + url;
+            if (!this._regex.fullUrlRegex.test(url)) {
+                url = _browserConfig.baseUrl + url;
             }
 
             element.setAttribute('href', url);
@@ -381,8 +381,8 @@
 
             var path: string;
 
-            if (!isEmpty($BrowserConfig.baseUrl)) {
-                path = url.replace($BrowserConfig.baseUrl, '/');
+            if (!isEmpty(_browserConfig.baseUrl)) {
+                path = url.replace(_browserConfig.baseUrl, '/');
             } else {
                 path = (element.pathname.charAt(0) === '/')
                 ? element.pathname
@@ -410,7 +410,7 @@
     }
 
     /**
-     * The Type for referencing the '$UrlUtilsInstance' injectable as a dependency.
+     * The Type for referencing the '_urlUtilsInstance' injectable as a dependency.
      */
     export function IUrlUtilsInstance(): IUrlUtilsInstance {
         return new UrlUtils();

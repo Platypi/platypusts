@@ -12,7 +12,7 @@ module plat {
      */
     export class App implements IApp {
         /**
-         * @name _Compat
+         * @name _compat
          * @memberof plat.App
          * @kind property
          * @access protected
@@ -23,7 +23,7 @@ module plat {
          * @description
          * Reference to the {@link plat.ICompat|ICompat} injectable.
          */
-        protected static _Compat: ICompat;
+        protected static _compat: ICompat;
 
         /**
          * @name _EventManagerStatic
@@ -68,7 +68,7 @@ module plat {
         protected static _compiler: processing.ICompiler;
 
         /**
-         * @name _LifecycleEventStatic
+         * @name _LifecycleEvent
          * @memberof plat.App
          * @kind property
          * @access protected
@@ -79,7 +79,21 @@ module plat {
          * @description
          * Reference to the {@link plat.events.ILifecycleEventStatic|ILifecycleEventStatic} injectable.
          */
-        protected static _LifecycleEventStatic: events.ILifecycleEventStatic;
+        protected static _LifecycleEvent: events.ILifecycleEventStatic;
+
+        /**
+         * @name _Exception
+         * @memberof plat.App
+         * @kind property
+         * @access protected
+         * @static
+         * 
+         * @type {plat.IExceptionStatic}
+         * 
+         * @description
+         * Reference to the {@link plat.IExceptionStatic|IExceptionStatic} injectable.
+         */
+        protected static _Exception: IExceptionStatic;
 
         /**
          * @name start
@@ -94,21 +108,21 @@ module plat {
          * @returns {void}
          */
         static start(): void {
-            if (!App._Compat.isCompatible) {
-                var $exception: IExceptionStatic = acquire(__ExceptionStatic);
-                $exception.fatal('PlatypusTS only supports modern browsers where ' +
-                    'Object.defineProperty is defined', $exception.COMPAT);
+            if (!App._compat.isCompatible) {
+                var _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+                _Exception.fatal('PlatypusTS only supports modern browsers where ' +
+                    'Object.defineProperty is defined', _Exception.COMPAT);
                 return;
             }
 
             App.__addPlatCss();
 
-            var $EventManagerStatic = App._EventManagerStatic;
+            var _EventManagerStatic = App._EventManagerStatic;
 
-            $EventManagerStatic.dispose(__APP);
-            $EventManagerStatic.on(__APP, __ready, App.__ready);
-            $EventManagerStatic.on(__APP, __shutdown, App.__shutdown);
-            $EventManagerStatic.initialize();
+            _EventManagerStatic.dispose(__APP);
+            _EventManagerStatic.on(__APP, __ready, App.__ready);
+            _EventManagerStatic.on(__APP, __shutdown, App.__shutdown);
+            _EventManagerStatic.initialize();
         }
 
         /**
@@ -134,12 +148,12 @@ module plat {
 
             App.__injector = appInjector;
 
-            if (App._Compat.amd) {
-                var $LifecycleEventStatic = App._LifecycleEventStatic,
-                    dispatch = $LifecycleEventStatic.dispatch;
+            if (App._compat.amd) {
+                var _LifecycleEvent = App._LifecycleEvent,
+                    dispatch = _LifecycleEvent.dispatch;
 
                 postpone(() => {
-                    dispatch(__ready, $LifecycleEventStatic);
+                    dispatch(__ready, _LifecycleEvent);
                 });
             }
         }
@@ -160,18 +174,18 @@ module plat {
          * @returns {void}
          */
         static load(node?: Node): void {
-            var $LifecycleEventStatic = App._LifecycleEventStatic,
-                $compiler = App._compiler,
+            var _LifecycleEvent = App._LifecycleEvent,
+                _compiler = App._compiler,
                 body = App._document.body,
                 head = App._document.head;
 
-            $LifecycleEventStatic.dispatch(__beforeLoad, App);
+            _LifecycleEvent.dispatch(__beforeLoad, App);
 
             if (isNull(node)) {
                 body.setAttribute(__Hide, '');
                 postpone(() => {
-                    $compiler.compile(head);
-                    $compiler.compile(body);
+                    _compiler.compile(head);
+                    _compiler.compile(body);
                     body.removeAttribute(__Hide);
                 });
                 return;
@@ -180,13 +194,13 @@ module plat {
             if (isFunction((<Element>node).setAttribute)) {
                 (<Element>node).setAttribute(__Hide, '');
                 postpone(() => {
-                    $compiler.compile(node);
+                    _compiler.compile(node);
                     (<Element>node).removeAttribute(__Hide);
                 });
                 return;
             }
 
-            $compiler.compile(node);
+            _compiler.compile(node);
         }
 
         /**
@@ -308,11 +322,11 @@ module plat {
          * @returns {void}
          */
         private static __addPlatCss(): void {
-            var $document = App._document;
-            if (App._Compat.platCss) {
+            var _document = App._document;
+            if (App._compat.platCss) {
                 return;
-            } else if (!isNull($document.styleSheets) && $document.styleSheets.length > 0) {
-                (<CSSStyleSheet>$document.styleSheets[0]).insertRule('[plat-hide] { display: none !important; }', 0);
+            } else if (!isNull(_document.styleSheets) && _document.styleSheets.length > 0) {
+                (<CSSStyleSheet>_document.styleSheets[0]).insertRule('[plat-hide] { display: none !important; }', 0);
                 return;
             }
 
@@ -467,8 +481,8 @@ module plat {
          * @returns {void}
          */
         dispatchEvent(name: string, ...args: any[]): void {
-            var $EventManagerStatic: events.IEventManagerStatic = App._EventManagerStatic || acquire(__EventManagerStatic);
-            $EventManagerStatic.dispatch(name, this, $EventManagerStatic.DIRECT, args);
+            var _EventManagerStatic: events.IEventManagerStatic = App._EventManagerStatic || acquire(__EventManagerStatic);
+            _EventManagerStatic.dispatch(name, this, _EventManagerStatic.DIRECT, args);
         }
 
         /**
@@ -488,8 +502,8 @@ module plat {
          * @returns {plat.IRemoveListener} A method for removing the listener.
          */
         on(name: string, listener: (ev: events.IDispatchEventInstance, ...args: any[]) => void): IRemoveListener {
-            var $EventManagerStatic: events.IEventManagerStatic = App._EventManagerStatic || acquire(__EventManagerStatic);
-            return $EventManagerStatic.on(this.uid, name, listener, this);
+            var _EventManagerStatic: events.IEventManagerStatic = App._EventManagerStatic || acquire(__EventManagerStatic);
+            return _EventManagerStatic.on(this.uid, name, listener, this);
         }
 
         /**
@@ -514,19 +528,19 @@ module plat {
     }
 
     /**
-     * The Type for referencing the '$AppStatic' injectable as a dependency.
+     * The Type for referencing the '_AppStatic' injectable as a dependency.
      */
     export function IAppStatic(
-        _Compat?: ICompat,
+        _compat?: ICompat,
         _EventManagerStatic?: events.IEventManagerStatic,
         _document?: Document,
         _compiler?: processing.ICompiler,
-        _LifecycleEventStatic?: events.ILifecycleEventStatic): IAppStatic {
-            (<any>App)._Compat = _Compat;
+        _LifecycleEvent?: events.ILifecycleEventStatic): IAppStatic {
+            (<any>App)._compat = _compat;
             (<any>App)._EventManagerStatic = _EventManagerStatic;
             (<any>App)._document = _document;
             (<any>App)._compiler = _compiler;
-            (<any>App)._LifecycleEventStatic = _LifecycleEventStatic;
+            (<any>App)._LifecycleEvent = _LifecycleEvent;
             return App;
     }
 
@@ -539,10 +553,10 @@ module plat {
     ], __STATIC);
 
     /**
-     * The Type for referencing the '$App' injectable as a dependency.
+     * The Type for referencing the '_app' injectable as a dependency.
      */
-    export function IApp($AppStatic?: IAppStatic): IApp {
-        return $AppStatic.app;
+    export function IApp(_AppStatic?: IAppStatic): IApp {
+        return _AppStatic.app;
     }
 
     register.injectable(__App, IApp, [__AppStatic], __INSTANCE);
@@ -553,7 +567,7 @@ module plat {
      * @kind interface
      * 
      * @description
-     * The external interface for the '$AppStatic' injectable.
+     * The external interface for the '_AppStatic' injectable.
      */
     export interface IAppStatic {
         /**

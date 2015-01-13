@@ -462,7 +462,7 @@ module plat.processing {
                 hasMarkup: boolean,
                 hasMarkupFn = NodeManager.hasMarkup,
                 findMarkup = NodeManager.findMarkup,
-                $parser = NodeManager.$Parser,
+                _parser = NodeManager._parser,
                 build = NodeManager.build,
                 expressions: Array<expressions.IParsedExpression>,
                 hasControl = false,
@@ -478,11 +478,11 @@ module plat.processing {
 
                 if (name === 'plat-context') {
                     if (value !== '') {
-                        childContext = $parser.parse(value);
+                        childContext = _parser.parse(value);
                         if (childContext.identifiers.length !== 1) {
-                            var $exception: IExceptionStatic = acquire(__ExceptionStatic);
-                            $exception.warn('Incorrect plat-context: ' +
-                                value + ', must contain a single identifier.', $exception.COMPILE);
+                            var _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+                            _Exception.warn('Incorrect plat-context: ' +
+                                value + ', must contain a single identifier.', _Exception.COMPILE);
                         }
                         childIdentifier = childContext.identifiers[0];
                     }
@@ -612,7 +612,7 @@ module plat.processing {
         }
 
         /**
-         * @name $Promise
+         * @name _Promise
          * @memberof plat.processing.ElementManager
          * @kind property
          * @access public
@@ -622,9 +622,9 @@ module plat.processing {
          * @description
          * Reference to the {@link plat.async.IPromise|IPromise} injectable.
          */
-        $Promise: async.IPromise = acquire(__Promise);
+        _Promise: async.IPromise = acquire(__Promise);
         /**
-         * @name $Compiler
+         * @name _compiler
          * @memberof plat.processing.ElementManager
          * @kind property
          * @access public
@@ -634,9 +634,9 @@ module plat.processing {
          * @description
          * Reference to the {@link plat.processing.ICompiler|ICompiler} injectable.
          */
-        $Compiler: ICompiler = acquire(__Compiler);
+        _compiler: ICompiler = acquire(__Compiler);
         /**
-         * @name $ContextManagerStatic
+         * @name _ContextManager
          * @memberof plat.processing.ElementManager
          * @kind property
          * @access public
@@ -646,9 +646,9 @@ module plat.processing {
          * @description
          * Reference to the {@link plat.observable.IContextManagerStatic|IContextManagerStatic} injectable.
          */
-        $ContextManagerStatic: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
+        _ContextManager: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
         /**
-         * @name $CommentManagerFactory
+         * @name _CommentManagerFactory
          * @memberof plat.processing.ElementManager
          * @kind property
          * @access public
@@ -658,9 +658,9 @@ module plat.processing {
          * @description
          * Reference to the {@link plat.processing.ICommentManagerFactory|ICommentManagerFactory} injectable.
          */
-        $CommentManagerFactory: ICommentManagerFactory = acquire(__CommentManagerFactory);
+        _CommentManagerFactory: ICommentManagerFactory = acquire(__CommentManagerFactory);
         /**
-         * @name $ControlFactory
+         * @name _ControlFactory
          * @memberof plat.processing.ElementManager
          * @kind property
          * @access public
@@ -670,9 +670,9 @@ module plat.processing {
          * @description
          * Reference to the {@link plat.IControlFactory|IControlFactory} injectable.
          */
-        $ControlFactory: IControlFactory = acquire(__ControlFactory);
+        _ControlFactory: IControlFactory = acquire(__ControlFactory);
         /**
-         * @name $TemplateControlFactory
+         * @name _TemplateControlFactory
          * @memberof plat.processing.ElementManager
          * @kind property
          * @access public
@@ -682,10 +682,10 @@ module plat.processing {
          * @description
          * Reference to the {@link plat.ui.ITemplateControlFactory|ITemplateControlFactory} injectable.
          */
-        $TemplateControlFactory: ui.ITemplateControlFactory = acquire(__TemplateControlFactory);
+        _TemplateControlFactory: ui.ITemplateControlFactory = acquire(__TemplateControlFactory);
 
         /**
-         * @name $BindableTemplatesFactory
+         * @name _BindableTemplatesFactory
          * @memberof plat.processing.ElementManager
          * @kind property
          * @access public
@@ -695,7 +695,7 @@ module plat.processing {
          * @description
          * Reference to the {@link plat.ui.IBindableTemplatesFactory|IBindableTemplatesFactory} injectable.
          */
-        $BindableTemplatesFactory: ui.IBindableTemplatesFactory = acquire(__BindableTemplatesFactory);
+        _BindableTemplatesFactory: ui.IBindableTemplatesFactory = acquire(__BindableTemplatesFactory);
 
         /**
          * @name children
@@ -963,10 +963,10 @@ module plat.processing {
             if (!isNull(controlNode)) {
                 var uiControl = controlNode.control,
                     childContext = nodeMap.childContext,
-                    getManager = this.$ContextManagerStatic.getManager,
+                    getManager = this._ContextManager.getManager,
                     contextManager: observable.IContextManager,
                     absoluteContextPath = isNull(parent) ? __CONTEXT : parent.absoluteContextPath,
-                    $TemplateControlFactory = this.$TemplateControlFactory,
+                    _TemplateControlFactory = this._TemplateControlFactory,
                     inheritsContext = !uiControl.hasOwnContext;
 
                 controls.push(uiControl);
@@ -975,8 +975,8 @@ module plat.processing {
                     if (childContext[0] === '@') {
                         var split = childContext.split('.'),
                             alias = split.shift().slice(1),
-                            resourceObj = $TemplateControlFactory.findResource(uiControl, alias),
-                            $exception: IExceptionStatic;
+                            resourceObj = _TemplateControlFactory.findResource(uiControl, alias),
+                            _Exception: IExceptionStatic;
 
                         if (isObject(resourceObj)) {
                             var resource = resourceObj.resource;
@@ -984,22 +984,22 @@ module plat.processing {
                                 absoluteContextPath = 'resources.' + alias + '.value' + (split.length > 0 ? ('.' + split.join('.')) : '');
                                 uiControl.root = resourceObj.control;
                             } else {
-                                $exception = acquire(__ExceptionStatic);
-                                $exception.warn('Only resources of type "observable" can be set as context.',
-                                    $exception.CONTEXT);
+                                _Exception = acquire(__ExceptionStatic);
+                                _Exception.warn('Only resources of type "observable" can be set as context.',
+                                    _Exception.CONTEXT);
                             }
                         } else {
-                            $exception = acquire(__ExceptionStatic);
-                            $exception.warn('Could not set the context of ' + uiControl.type +
+                            _Exception = acquire(__ExceptionStatic);
+                            _Exception.warn('Could not set the context of ' + uiControl.type +
                                 ' with the resource specified as "' + childContext + '".',
-                                $exception.CONTEXT);
+                                _Exception.CONTEXT);
                         }
                     } else {
                         absoluteContextPath += '.' + childContext;
                     }
                 }
 
-                uiControl.root = this.$ControlFactory.getRootControl(uiControl) || uiControl;
+                uiControl.root = this._ControlFactory.getRootControl(uiControl) || uiControl;
 
                 contextManager = getManager(uiControl.root);
 
@@ -1013,7 +1013,7 @@ module plat.processing {
                 }
 
                 if (awaitContext) {
-                    this.contextPromise = new this.$Promise<void>((resolve, reject) => {
+                    this.contextPromise = new this._Promise<void>((resolve, reject) => {
                         var removeListener = contextManager.observe(absoluteContextPath, {
                             uid: uiControl.uid,
                             listener: (newValue, oldValue) => {
@@ -1059,7 +1059,7 @@ module plat.processing {
             if (!isNull(controlNode)) {
                 var control = controlNode.control;
 
-                this.templatePromise = this.$TemplateControlFactory.determineTemplate(control, templateUrl).then((template) => {
+                this.templatePromise = this._TemplateControlFactory.determineTemplate(control, templateUrl).then((template) => {
                     this.templatePromise = null;
                     this._initializeControl(control, <DocumentFragment>template.cloneNode(true));
                 }, (error) => {
@@ -1067,15 +1067,15 @@ module plat.processing {
                         if (isNull(error)) {
                             var template: DocumentFragment = error;
 
-                            if (this.$BindableTemplatesFactory.isBoundControl(control)) {
+                            if (this._BindableTemplatesFactory.isBoundControl(control)) {
                                 template = <DocumentFragment>appendChildren(control.element.childNodes);
                             }
 
                             this._initializeControl(control, template);
                         } else {
                             postpone(() => {
-                                var $exception: IExceptionStatic = acquire(__ExceptionStatic);
-                                $exception.fatal(error, $exception.COMPILE);
+                                var _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+                                _Exception.fatal(error, _Exception.COMPILE);
                             });
                         }
                     });
@@ -1163,8 +1163,8 @@ module plat.processing {
                 return this._loadControls(<Array<IAttributeControl>>controls, this.getUiControl());
             }).catch((error: any) => {
                     postpone(() => {
-                        var $exception: IExceptionStatic = acquire(__ExceptionStatic);
-                        $exception.fatal(error, $exception.BIND);
+                        var _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+                        _Exception.fatal(error, _Exception.BIND);
                     });
                 });
         }
@@ -1192,8 +1192,8 @@ module plat.processing {
                 return;
             }
 
-            this.loadedPromise = new this.$Promise<void>((resolve) => {
-                var removeListener = this.$ContextManagerStatic.getManager(root).observe(__CONTEXT, {
+            this.loadedPromise = new this._Promise<void>((resolve) => {
+                var removeListener = this._ContextManager.getManager(root).observe(__CONTEXT, {
                     listener: () => {
                         removeListener();
                         loadMethod().then(resolve);
@@ -1202,8 +1202,8 @@ module plat.processing {
                 });
             }).catch((error) => {
                     postpone(() => {
-                        var $exception: IExceptionStatic = acquire(__ExceptionStatic);
-                        $exception.fatal(error, $exception.BIND);
+                        var _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+                        _Exception.fatal(error, _Exception.BIND);
                     });
                 });
         }
@@ -1224,8 +1224,8 @@ module plat.processing {
          * @returns {void}
          */
         protected _beforeLoad(uiControl: ui.ITemplateControl, absoluteContextPath: string): void {
-            var contextManager = this.$ContextManagerStatic.getManager(uiControl.root),
-                $TemplateControlFactory = this.$TemplateControlFactory;
+            var contextManager = this._ContextManager.getManager(uiControl.root),
+                _TemplateControlFactory = this._TemplateControlFactory;
 
             (<any>uiControl).zCC__plat = contextManager.observe(absoluteContextPath, {
                 uid: uiControl.uid,
@@ -1234,8 +1234,8 @@ module plat.processing {
                 }
             });
 
-            $TemplateControlFactory.setAbsoluteContextPath(uiControl, absoluteContextPath);
-            $TemplateControlFactory.setContextResources(uiControl);
+            _TemplateControlFactory.setAbsoluteContextPath(uiControl, absoluteContextPath);
+            _TemplateControlFactory.setContextResources(uiControl);
             ElementManager._ResourcesFactory.bindResources(uiControl.resources);
 
             if (!this.replace) {
@@ -1276,7 +1276,7 @@ module plat.processing {
                 }
             }
 
-            return this.$Promise.all(promises);
+            return this._Promise.all(promises);
         }
 
         /**
@@ -1345,7 +1345,7 @@ module plat.processing {
         protected _loadControls(controls: Array<IAttributeControl>, templateControl: ui.ITemplateControl): async.IThenable<void> {
             var length = controls.length,
                 control: IAttributeControl,
-                load = this.$ControlFactory.load,
+                load = this._ControlFactory.load,
                 templateControlLoaded = isNull(templateControl),
                 promise: async.IThenable<void>,
                 templateControlPriority: number,
@@ -1396,8 +1396,8 @@ module plat.processing {
                 return this.bindAndLoad();
             }).catch((error) => {
                     postpone(() => {
-                        var $exception: IExceptionStatic = acquire(__ExceptionStatic);
-                        $exception.fatal(error, $exception.BIND);
+                        var _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+                        _Exception.fatal(error, _Exception.BIND);
                     });
                 });
         }
@@ -1489,12 +1489,12 @@ module plat.processing {
         protected _replaceElement(control: ui.ITemplateControl, nodeMap: INodeMap): void {
             var element = nodeMap.element,
                 parentNode = element.parentNode,
-                $document = ElementManager._document,
+                _document = ElementManager._document,
                 controlType = control.type,
                 controlUid = control.uid,
-                startNode = control.startNode = $document.createComment(controlType + ' ' + controlUid + __START_NODE),
-                endNode = control.endNode = $document.createComment(controlType + ' ' + controlUid + __END_NODE),
-                create = this.$CommentManagerFactory.create;
+                startNode = control.startNode = _document.createComment(controlType + ' ' + controlUid + __START_NODE),
+                endNode = control.endNode = _document.createComment(controlType + ' ' + controlUid + __END_NODE),
+                create = this._CommentManagerFactory.create;
 
             create(startNode, this);
             create(endNode, this);
@@ -1549,7 +1549,7 @@ module plat.processing {
             }
 
             if (replaceElement) {
-                this.$Compiler.compile(uiControl.elementNodes, uiControl);
+                this._compiler.compile(uiControl.elementNodes, uiControl);
                 var startNode = uiControl.startNode,
                     parentNode = startNode.parentNode,
                     childNodes: Array<Node> = Array.prototype.slice.call(parentNode.childNodes);
@@ -1559,7 +1559,7 @@ module plat.processing {
                 uiControl.elementNodes = childNodes.slice(childNodes.indexOf(startNode) + 1, childNodes.indexOf(endNode));
                 this.replaceNodeLength = uiControl.elementNodes.length + 2;
             } else {
-                this.$Compiler.compile(element, uiControl);
+                this._compiler.compile(element, uiControl);
             }
 
             if (uiControl.hasOwnContext && !this.isClone) {
@@ -1630,17 +1630,17 @@ module plat.processing {
                 }
             }
 
-            return this.$Promise.all(promises).catch((error) => {
+            return this._Promise.all(promises).catch((error) => {
                 postpone(() => {
-                    var $exception: IExceptionStatic = acquire(__ExceptionStatic);
-                    $exception.fatal(error, $exception.COMPILE);
+                    var _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+                    _Exception.fatal(error, _Exception.COMPILE);
                 });
             });
         }
     }
 
     /**
-     * The Type for referencing the '$ElementManagerFactory' injectable as a dependency.
+     * The Type for referencing the '_ElementManagerFactory' injectable as a dependency.
      */
     export function IElementManagerFactory(
         _document?: Document,

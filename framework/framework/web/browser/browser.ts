@@ -41,7 +41,7 @@ module plat.web {
         };
 
         /**
-         * @name $EventManagerStatic
+         * @name _EventManagerStatic
          * @memberof plat.web.Browser
          * @kind property
          * @access public
@@ -51,9 +51,9 @@ module plat.web {
          * @description
          * Reference to the {@link plat.events.IEventManagerStatic|IEventManagerStatic} injectable.
          */
-        $EventManagerStatic: events.IEventManagerStatic = acquire(__EventManagerStatic);
+        _EventManagerStatic: events.IEventManagerStatic = acquire(__EventManagerStatic);
         /**
-         * @name $Compat
+         * @name _compat
          * @memberof plat.web.Browser
          * @kind property
          * @access public
@@ -63,9 +63,9 @@ module plat.web {
          * @description
          * Reference to the {@link plat.ICompat|ICompat} injectable.
          */
-        $Compat: ICompat = acquire(__Compat);
+        _compat: ICompat = acquire(__Compat);
         /**
-         * @name $Regex
+         * @name _regex
          * @memberof plat.web.Browser
          * @kind property
          * @access public
@@ -75,9 +75,9 @@ module plat.web {
          * @description
          * Reference to the {@link plat.expressions.IRegex|IRegex} injectable.
          */
-        $Regex: expressions.IRegex = acquire(__Regex);
+        _regex: expressions.IRegex = acquire(__Regex);
         /**
-         * @name $window
+         * @name _window
          * @memberof plat.web.Browser
          * @kind property
          * @access public
@@ -87,10 +87,10 @@ module plat.web {
          * @description
          * Reference to the Window injectable.
          */
-        $window: Window = acquire(__Window);
+        _window: Window = acquire(__Window);
 
         /**
-         * @name $location
+         * @name _location
          * @memberof plat.web.Browser
          * @kind property
          * @access public
@@ -100,10 +100,10 @@ module plat.web {
          * @description
          * Reference to the Location injectable.
          */
-        $location: Location = acquire(__Location);
+        _location: Location = acquire(__Location);
 
         /**
-         * @name $history
+         * @name _history
          * @memberof plat.web.Browser
          * @kind property
          * @access public
@@ -113,10 +113,10 @@ module plat.web {
          * @description
          * Reference to the History injectable.
          */
-        $history: History = acquire(__History);
+        _history: History = acquire(__History);
 
         /**
-         * @name $Dom
+         * @name _dom
          * @memberof plat.web.Browser
          * @kind property
          * @access public
@@ -126,7 +126,7 @@ module plat.web {
          * @description
          * Reference to the {@link plat.ui.IDom|IDom} injectable.
          */
-        $Dom: ui.IDom = acquire(__Dom);
+        _dom: ui.IDom = acquire(__Dom);
 
         /**
          * @name uid
@@ -165,7 +165,7 @@ module plat.web {
          * @description
          * The browser's last URL.
          */
-        private __lastUrl = this.$location.href;
+        private __lastUrl = this._location.href;
         /**
          * @name __initializing
          * @memberof plat.web.Browser
@@ -193,7 +193,7 @@ module plat.web {
         constructor() {
             var ContextManager: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
             ContextManager.defineGetter(this, 'uid', uniqueId(__Plat));
-            this.$EventManagerStatic.on(this.uid, __beforeLoad, this.initialize, this);
+            this._EventManagerStatic.on(this.uid, __beforeLoad, this.initialize, this);
         }
 
         /**
@@ -210,9 +210,9 @@ module plat.web {
          */
         initialize(): void {
             var $config = Browser.config,
-                $compat = this.$Compat;
+                _compat = this._compat;
 
-            this.$EventManagerStatic.dispose(this.uid);
+            this._EventManagerStatic.dispose(this.uid);
 
             if ($config.routingType === $config.NONE) {
                 return;
@@ -225,18 +225,18 @@ module plat.web {
             var url = this.url(),
                 trimmedUrl = url,
                 changed = this._urlChanged.bind(this),
-                $dom = this.$Dom,
-                $window = this.$window;
+                _dom = this._dom,
+                _window = this._window;
 
             if (trimmedUrl !== url) {
                 this.url(trimmedUrl, true);
             }
 
-            if ($compat.pushState) {
-                $dom.addEventListener($window, __POPSTATE, changed, false);
+            if (_compat.pushState) {
+                _dom.addEventListener(_window, __POPSTATE, changed, false);
             }
 
-            $dom.addEventListener($window, __HASHCHANGE, changed, false);
+            _dom.addEventListener(_window, __HASHCHANGE, changed, false);
 
             this.__initializing = false;
         }
@@ -248,7 +248,7 @@ module plat.web {
          * @access public
          * 
          * @description
-         * Sets or gets the current $window.location
+         * Sets or gets the current _window.location
          * 
          * @param {string} url? The URL to set the location to.
          * @param {boolean} replace? Whether or not to replace the current URL in 
@@ -257,7 +257,7 @@ module plat.web {
          * @returns {string} The current URL or current location.
          */
         url(url?: string, replace?: boolean): string {
-            var location = this.$location;
+            var location = this._location;
 
             if (isString(url) && this.__lastUrl !== url) {
                 this._setUrl(url, replace);
@@ -353,7 +353,7 @@ module plat.web {
 
             this.__lastUrl = url;
 
-            var $manager = this.$EventManagerStatic;
+            var $manager = this._EventManagerStatic;
             $manager.dispatch(__urlChanged,
                 this,
                 $manager.DIRECT,
@@ -381,24 +381,24 @@ module plat.web {
 
             var utils = this.urlUtils(url),
                 baseUrl = Browser.config.baseUrl,
-                $history = this.$history,
-                $location = this.$location;
+                _history = this._history,
+                _location = this._location;
 
             if (utils.href.indexOf(baseUrl) === -1) {
-                $location.href = url;
+                _location.href = url;
                 return;
             }
             
             // make sure URL is absolute
-            if (!this.$Regex.fullUrlRegex.test(url) && url[0] !== '/') {
+            if (!this._regex.fullUrlRegex.test(url) && url[0] !== '/') {
                 url = baseUrl + url;
             }
 
-            if (this.$Compat.pushState) {
+            if (this._compat.pushState) {
                 if (replace) {
-                    $history.replaceState(null, '', url);
+                    _history.replaceState(null, '', url);
                 } else {
-                    $history.pushState(null, '', url);
+                    _history.pushState(null, '', url);
                 }
 
                 if (!this.__initializing) {
@@ -407,9 +407,9 @@ module plat.web {
             } else {
                 this.__currentUrl = url;
                 if (replace) {
-                    $location.replace(url);
+                    _location.replace(url);
                 } else {
-                    $location.href = url;
+                    _location.href = url;
                 }
             }
         }
@@ -430,7 +430,7 @@ module plat.web {
         formatUrl(url: string): string {
             var $config = Browser.config;
 
-            if ((!this.$Regex.fullUrlRegex.test(url) || url.indexOf($config.baseUrl) > -1) && $config.routingType === $config.HASH) {
+            if ((!this._regex.fullUrlRegex.test(url) || url.indexOf($config.baseUrl) > -1) && $config.routingType === $config.HASH) {
                 var hasProtocol = url.indexOf(this.urlUtils().protocol) !== -1,
                     prefix = $config.hashPrefix || '',
                     hashRegex = new RegExp('#' + prefix + '|#/');
@@ -459,7 +459,7 @@ module plat.web {
     }
 
     /**
-     * The Type for referencing the '$Browser' injectable as a dependency.
+     * The Type for referencing the '_browser' injectable as a dependency.
      */
     export function IBrowser(): IBrowser {
         return new Browser();
@@ -511,7 +511,7 @@ module plat.web {
          * @access public
          * 
          * @description
-         * Sets or gets the current $window.location
+         * Sets or gets the current _window.location
          * 
          * @param {string} url? The URL to set the location to.
          * @param {boolean} replace? Whether or not to replace the current URL in 
@@ -569,7 +569,7 @@ module plat.web {
     }
 
     /**
-     * The Type for referencing the '$BrowserConfig' injectable as a dependency.
+     * The Type for referencing the '_browserConfig' injectable as a dependency.
      */
     export function IBrowserConfig(): IBrowserConfig {
         return Browser.config;

@@ -383,7 +383,7 @@
     }
 
     /**
-     * The Type for referencing the '$Regex' injectable as a dependency.
+     * The Type for referencing the '_regex' injectable as a dependency.
      */
     export function IRegex(): IRegex {
         return new Regex();

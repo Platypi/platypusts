@@ -102,10 +102,10 @@ function clearNodeBlockWithParent(nodeList: Array<Node>, parent: Node): void {
 }
 
 function stringToNode(html: string): Node {
-    var $compat: plat.ICompat = plat.acquire(__Compat),
-        $document: Document = plat.acquire(__Document),
+    var _compat: plat.ICompat = plat.acquire(__Compat),
+        _document: Document = plat.acquire(__Document),
         nodeName = __nodeNameRegex.exec(html),
-        element = <HTMLElement>$document.createElement('div');
+        element = <HTMLElement>_document.createElement('div');
 
     if (isNull(nodeName)) {
         element = innerHtml(element, html);
@@ -117,10 +117,10 @@ function stringToNode(html: string): Node {
 
     var mapTag = nodeName[1];
 
-    if ($compat.pushState && isUndefined(__innerTableWrappers[mapTag])) {
+    if (_compat.pushState && isUndefined(__innerTableWrappers[mapTag])) {
         return innerHtml(element, html);
     } else if (mapTag === 'body') {
-        element = innerHtml($document.createElement('html'), html);
+        element = innerHtml(_document.createElement('html'), html);
         return element.removeChild(element.lastChild);
     }
 
@@ -178,10 +178,10 @@ function insertBefore(parent: Node, nodes: any, endNode?: Node): Array<Node> {
         nodes = Array.prototype.slice.call(nodes);
     }
 
-    var $document = plat.acquire(__Document),
+    var _document = plat.acquire(__Document),
         length = nodes.length;
 
-    fragment = $document.createDocumentFragment();
+    fragment = _document.createDocumentFragment();
 
     for (var i = 0; i < length; ++i) {
         fragment.insertBefore(nodes[i], null);
@@ -229,8 +229,8 @@ function replaceWith(node: any, newNode: any): any {
 }
 
 function serializeHtml(html?: string): DocumentFragment {
-    var $document = plat.acquire(__Document),
-        templateElement = $document.createDocumentFragment();
+    var _document = plat.acquire(__Document),
+        templateElement = _document.createDocumentFragment();
 
     if (!isEmpty(html)) {
         setInnerHtml(templateElement, html);
@@ -279,9 +279,9 @@ function removeAll(startNode: Node, endNode?: Node): void {
  * available.
  */
 function innerHtml(element: HTMLElement, html: string): HTMLElement {
-    var $compat: plat.ICompat = plat.acquire(__Compat);
+    var _compat: plat.ICompat = plat.acquire(__Compat);
 
-    if ($compat.msApp) {
+    if (_compat.msApp) {
         MSApp.execUnsafeLocalFunction(() => {
             element.innerHTML = html;
         });
@@ -459,42 +459,42 @@ function hasClass(element: HTMLElement, className: string): boolean {
     return true;
 }
 
-var __$templateCache: plat.storage.ITemplateCache,
-    __$http: plat.async.IHttp;
+var ___templateCache: plat.storage.ITemplateCache,
+    ___http: plat.async.IHttp;
 
 function getTemplate(templateUrl: string) {
-    __$templateCache = __$templateCache || plat.acquire(__TemplateCache);
-    __$http = __$http || plat.acquire(__Http);
+    ___templateCache = ___templateCache || plat.acquire(__TemplateCache);
+    ___http = ___http || plat.acquire(__Http);
 
-    var $exception: plat.IExceptionStatic,
-        ajax = __$http.ajax;
+    var _Exception: plat.IExceptionStatic,
+        ajax = ___http.ajax;
 
-    return __$templateCache.put(templateUrl, __$templateCache.read(templateUrl)
+    return ___templateCache.put(templateUrl, ___templateCache.read(templateUrl)
         .catch((error) => {
             if (isNull(error)) {
                 return ajax<string>({ url: templateUrl });
             }
         }).then<DocumentFragment>((success) => {
             if (isDocumentFragment(success)) {
-                return __$templateCache.put(templateUrl, <any>success);
+                return ___templateCache.put(templateUrl, <any>success);
             } else if (!isObject(success) || !isString(success.response)) {
-                $exception = plat.acquire(__ExceptionStatic);
-                $exception.warn('No template found at ' + templateUrl, $exception.AJAX);
-                return __$templateCache.put(templateUrl, serializeHtml());
+                _Exception = plat.acquire(__ExceptionStatic);
+                _Exception.warn('No template found at ' + templateUrl, _Exception.AJAX);
+                return ___templateCache.put(templateUrl, serializeHtml());
             }
 
             var templateString = success.response;
 
             if (isEmpty(templateString.trim())) {
-                return __$templateCache.put(templateUrl, serializeHtml());
+                return ___templateCache.put(templateUrl, serializeHtml());
             }
 
-            return __$templateCache.put(templateUrl, serializeHtml(templateString));
+            return ___templateCache.put(templateUrl, serializeHtml(templateString));
         }).catch((error) => {
             postpone(() => {
-                $exception = plat.acquire(__ExceptionStatic);
-                $exception.fatal('Failure to get template from ' + templateUrl + '.',
-                    $exception.TEMPLATE);
+                _Exception = plat.acquire(__ExceptionStatic);
+                _Exception.fatal('Failure to get template from ' + templateUrl + '.',
+                    _Exception.TEMPLATE);
             });
             return error;
         }));

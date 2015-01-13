@@ -12,7 +12,7 @@ module plat.ui.controls {
      */
     export class ForEach extends TemplateControl {
         /**
-         * @name $Animator
+         * @name _animator
          * @memberof plat.ui.controls.ForEach
          * @kind property
          * @access public
@@ -22,9 +22,9 @@ module plat.ui.controls {
          * @description
          * Reference to the {@link plat.ui.animations.IAnimator|IAnimator} injectable.
          */
-        $Animator: animations.IAnimator = acquire(__Animator);
+        _animator: animations.IAnimator = acquire(__Animator);
         /**
-         * @name $Promise
+         * @name _Promise
          * @memberof plat.ui.controls.ForEach
          * @kind property
          * @access public
@@ -34,7 +34,7 @@ module plat.ui.controls {
          * @description
          * Reference to the {@link plat.async.IPromise|IPromise} injectable.
          */
-        $Promise: async.IPromise = acquire(__Promise);
+        _Promise: async.IPromise = acquire(__Promise);
 
         /**
          * @name context
@@ -201,7 +201,7 @@ module plat.ui.controls {
          */
         constructor() {
             super();
-            this.itemsLoaded = new this.$Promise<void>((resolve) => {
+            this.itemsLoaded = new this._Promise<void>((resolve) => {
                 this.__resolveFn = resolve;
             });
         }
@@ -240,8 +240,8 @@ module plat.ui.controls {
          */
         contextChanged(newValue?: Array<any>, oldValue?: Array<any>): void {
             if (!isArray(newValue)) {
-                var $exception: plat.IExceptionStatic = plat.acquire(__ExceptionStatic);
-                $exception.warn(this.type + ' context set to something other than an Array.', $exception.CONTEXT);
+                var _Exception: plat.IExceptionStatic = plat.acquire(__ExceptionStatic);
+                _Exception.warn(this.type + ' context set to something other than an Array.', _Exception.CONTEXT);
                 return;
             }
 
@@ -277,8 +277,8 @@ module plat.ui.controls {
             var context = this.context;
             if (!isArray(context)) {
                 if (!isNull(context)) {
-                    var $exception: plat.IExceptionStatic = plat.acquire(__ExceptionStatic);
-                    $exception.warn(this.type + ' context set to something other than an Array.', $exception.CONTEXT);
+                    var _Exception: plat.IExceptionStatic = plat.acquire(__ExceptionStatic);
+                    _Exception.warn(this.type + ' context set to something other than an Array.', _Exception.CONTEXT);
                 }
                 return;
             }
@@ -366,7 +366,7 @@ module plat.ui.controls {
             }
 
             if (promises.length > 0) {
-                this.itemsLoaded = this.$Promise.all(promises).then<void>((templates) => {
+                this.itemsLoaded = this._Promise.all(promises).then<void>((templates) => {
                     this._setBlockLength(templates);
 
                     if (animate === true) {
@@ -384,8 +384,8 @@ module plat.ui.controls {
                     }
                 }).catch((error) => {
                         postpone(() => {
-                            var $exception: IExceptionStatic = acquire(__ExceptionStatic);
-                            $exception.warn(error, $exception.BIND);
+                            var _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+                            _Exception.warn(error, _Exception.BIND);
                         });
                     });
             } else {
@@ -393,7 +393,7 @@ module plat.ui.controls {
                     this.__resolveFn();
                     this.__resolveFn = null;
                 }
-                this.itemsLoaded = new this.$Promise<void>((resolve) => {
+                this.itemsLoaded = new this._Promise<void>((resolve) => {
                     this.__resolveFn = resolve;
                 });
             }
@@ -437,7 +437,7 @@ module plat.ui.controls {
                 return;
             }
 
-            var $animator = this.$Animator,
+            var _animator = this._animator,
                 childNodes: Array<Element> = Array.prototype.slice.call(item.childNodes),
                 childNode: Element;
 
@@ -447,7 +447,7 @@ module plat.ui.controls {
             while (childNodes.length > 0) {
                 childNode = childNodes.shift();
                 if (childNode.nodeType === Node.ELEMENT_NODE) {
-                    currentAnimations.push($animator.animate(childNode, key).then(() => {
+                    currentAnimations.push(_animator.animate(childNode, key).then(() => {
                         currentAnimations.shift();
                     }));
                 }
@@ -867,7 +867,7 @@ module plat.ui.controls {
             cancel?: boolean): async.IThenable<void> {
             var blockLength = this._blockLength;
             if (blockLength === 0) {
-                return this.$Promise.resolve();
+                return this._Promise.resolve();
             }
 
             var start = startIndex * blockLength;
@@ -906,7 +906,7 @@ module plat.ui.controls {
                 animationPromises.push(currentAnimations[length].cancel());
             }
 
-            return this.$Promise.all(animationPromises).then(() => {
+            return this._Promise.all(animationPromises).then(() => {
                 return this.__handleAnimation(startNode, endNode, key, clone);
             });
         }
@@ -932,7 +932,7 @@ module plat.ui.controls {
                 nodes: Array<Node> = Array.prototype.slice.call(container.childNodes, startNode, endNode),
                 node: Node,
                 firstNode = nodes[0],
-                $animator = this.$Animator,
+                _animator = this._animator,
                 currentAnimations = this._currentAnimations,
                 callback: () => void,
                 animationPromise: animations.IAnimationThenable<void>;
@@ -955,7 +955,7 @@ module plat.ui.controls {
                         };
                     }
 
-                    animationPromise = $animator.animate(<Element>node, key).then(callback);
+                    animationPromise = _animator.animate(<Element>node, key).then(callback);
                     currentAnimations.push(animationPromise);
                 }
             }

@@ -11,7 +11,7 @@ module plat.processing {
      */
     export class NodeManager implements INodeManager {
         /**
-         * @name $ContextManagerStatic
+         * @name _ContextManager
          * @memberof plat.processing.NodeManager
          * @kind property
          * @access public
@@ -22,9 +22,9 @@ module plat.processing {
          * @description
          * Reference to the {@link plat.observable.IContextManagerStatic|IContextManagerStatic} injectable.
          */
-        static $ContextManagerStatic: observable.IContextManagerStatic;
+        static _ContextManager: observable.IContextManagerStatic;
         /**
-         * @name $Parser
+         * @name _parser
          * @memberof plat.processing.NodeManager
          * @kind property
          * @access public
@@ -35,9 +35,9 @@ module plat.processing {
          * @description
          * Reference to the {@link plat.expressions.IParser|IParser} injectable.
          */
-        static $Parser: expressions.IParser;
+        static _parser: expressions.IParser;
         /**
-         * @name $TemplateControlFactory
+         * @name _TemplateControlFactory
          * @memberof plat.processing.NodeManager
          * @kind property
          * @access public
@@ -48,7 +48,7 @@ module plat.processing {
          * @description
          * Reference to the {@link plat.ui.ITemplateControlFactory|ITemplateControlFactory} injectable.
          */
-        static $TemplateControlFactory: ui.ITemplateControlFactory;
+        static _TemplateControlFactory: ui.ITemplateControlFactory;
 
         /**
          * @name hasMarkup
@@ -91,7 +91,7 @@ module plat.processing {
                 wrapExpression = NodeManager._wrapExpression,
                 substring: string,
                 expression: expressions.IParsedExpression,
-                $parser = NodeManager.$Parser;
+                _parser = NodeManager._parser;
 
             text = text.replace(NodeManager._newLineRegex, '');
 
@@ -107,11 +107,11 @@ module plat.processing {
 
                 // check for one-time databinding
                 if (substring[0] === '=') {
-                    expression = $parser.parse(substring.slice(1).trim());
+                    expression = _parser.parse(substring.slice(1).trim());
                     expression.oneTime = true;
                     parsedExpressions.push(expression);
                 } else {
-                    parsedExpressions.push($parser.parse(substring.trim()));
+                    parsedExpressions.push(_parser.parse(substring.trim()));
                 }
 
                 text = text.slice(end);
@@ -149,7 +149,7 @@ module plat.processing {
                 resources = <IObject<any>>{},
                 expression: expressions.IParsedExpression,
                 value: any,
-                evaluateExpression = NodeManager.$TemplateControlFactory.evaluateExpression;
+                evaluateExpression = NodeManager._TemplateControlFactory.evaluateExpression;
 
             for (var i = 0; i < length; ++i) {
                 expression = expressions[i];
@@ -165,8 +165,8 @@ module plat.processing {
                         }
                         e.message = 'Cannot stringify object: ' + e.message;
 
-                        var $exception: IExceptionStatic = acquire(__ExceptionStatic);
-                        $exception.warn(e, $exception.PARSE);
+                        var _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+                        _Exception.warn(e, _Exception.PARSE);
                     }
                 } else if (!isNull(value)) {
                     text += value;
@@ -392,7 +392,7 @@ module plat.processing {
          * identifier.
          */
         private static __getObservationDetails(identifier: string, control: ui.ITemplateControl): IObservationDetails {
-            var $contextManager = NodeManager.$ContextManagerStatic,
+            var $contextManager = NodeManager._ContextManager,
                 manager: observable.IContextManager,
                 split = identifier.split('.'),
                 absoluteIdentifier = '',
@@ -576,20 +576,20 @@ module plat.processing {
     }
 
     /**
-     * The Type for referencing the '$NodeManagerStatic' injectable as a dependency.
+     * The Type for referencing the '_NodeManager' injectable as a dependency.
      */
     export function INodeManagerStatic(
-        $Regex?: expressions.IRegex,
-        $ContextManagerStatic?: observable.IContextManagerStatic,
-        $Parser?: expressions.IParser,
-        $TemplateControlFactory?: ui.ITemplateControlFactory): INodeManagerStatic {
+        _regex?: expressions.IRegex,
+        _ContextManager?: observable.IContextManagerStatic,
+        _parser?: expressions.IParser,
+        _TemplateControlFactory?: ui.ITemplateControlFactory): INodeManagerStatic {
         // NOTE: This is not advised by TypeScript, but we want to do this.
-        (<any>NodeManager)._markupRegex = $Regex.markupRegex;
-        (<any>NodeManager)._newLineRegex = $Regex.newLineRegex;
+        (<any>NodeManager)._markupRegex = _regex.markupRegex;
+        (<any>NodeManager)._newLineRegex = _regex.newLineRegex;
 
-        NodeManager.$ContextManagerStatic = $ContextManagerStatic;
-        NodeManager.$Parser = $Parser;
-        NodeManager.$TemplateControlFactory = $TemplateControlFactory;
+        NodeManager._ContextManager = _ContextManager;
+        NodeManager._parser = _parser;
+        NodeManager._TemplateControlFactory = _TemplateControlFactory;
         return NodeManager;
     }
 

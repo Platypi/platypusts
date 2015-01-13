@@ -1,7 +1,7 @@
 ﻿/// <reference path="../../typings/tsd.d.ts" />
 
 module tests.appStatic {
-    var $AppStatic = plat.acquire(plat.IAppStatic),
+    var _AppStatic = plat.acquire(plat.IAppStatic),
         app: plat.App;
 
     class App extends plat.App { }
@@ -23,7 +23,7 @@ module tests.appStatic {
             });
 
             try {
-                $AppStatic.start();
+                _AppStatic.start();
             } catch (e) {
                 error = true;
             }
@@ -40,11 +40,11 @@ module tests.appStatic {
         it('should test App start and succeed', () => {
             var compat: plat.ICompat = plat.acquire(plat.ICompat),
                 error = false,
-                $EventManagerStatic: plat.events.IEventManagerStatic = plat.acquire(plat.events.IEventManagerStatic),
-                spy = spyOn($EventManagerStatic, 'initialize');
+                _EventManagerStatic: plat.events.IEventManagerStatic = plat.acquire(plat.events.IEventManagerStatic),
+                spy = spyOn(_EventManagerStatic, 'initialize');
 
             try {
-                $AppStatic.start();
+                _AppStatic.start();
             } catch (e) {
                 error = true;
             }
@@ -60,10 +60,10 @@ module tests.appStatic {
 
                 var el = document.createElement('div');
 
-                $AppStatic.load();
+                _AppStatic.load();
                 expect(spy).toHaveBeenCalledWith(document.body);
 
-                $AppStatic.load(el);
+                _AppStatic.load(el);
                 expect(spy).toHaveBeenCalledWith(el);
             });
         });

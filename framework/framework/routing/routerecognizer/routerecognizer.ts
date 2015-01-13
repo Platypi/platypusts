@@ -13,7 +13,7 @@
      */
     export class RouteRecognizer {
         /**
-         * @name $BaseSegmentFactory
+         * @name _BaseSegmentFactory
          * @memberof plat.routing.RouteRecognizer
          * @kind property
          * @access public
@@ -23,10 +23,10 @@
          * @description
          * Reference to the {@link plat.routing.BaseSegment|BaseSegment} injectable.
          */
-        $BaseSegmentFactory: typeof BaseSegment = acquire(__BaseSegmentFactory);
+        _BaseSegmentFactory: typeof BaseSegment = acquire(__BaseSegmentFactory);
 
         /**
-         * @name $StateStatic
+         * @name _State
          * @memberof plat.routing.RouteRecognizer
          * @kind property
          * @access public
@@ -36,7 +36,7 @@
          * @description
          * Reference to the {@link plat.routing.State|State} injectable.
          */
-        $StateStatic: typeof State = acquire(__StateStatic);
+        _State: typeof State = acquire(__StateStatic);
 
         /**
          * @name _rootState
@@ -290,7 +290,7 @@
                 names: names
             });
 
-            return this.$BaseSegmentFactory.parse(route.pattern, names, types);
+            return this._BaseSegmentFactory.parse(route.pattern, names, types);
         }
 
         /**
@@ -310,7 +310,7 @@
          */
         protected _compile(segments: Array<BaseSegment>, state: State, regex: Array<string>): State {
             var length = segments.length,
-                compile = this.$StateStatic.compile,
+                compile = this._State.compile,
                 segment: BaseSegment;
 
             for (var i = 0; i < length; ++i) {
@@ -387,7 +387,7 @@
             var states: Array<State> = [
                 this._rootState
             ],
-                recognize = this.$StateStatic.recognize,
+                recognize = this._State.recognize,
                 length = path.length;
 
             for (var i = 0; i < length; ++i) {
@@ -426,7 +426,7 @@
                 }
             }
 
-            return this.$StateStatic.sort(solutions);
+            return this._State.sort(solutions);
         }
 
         /**
@@ -450,7 +450,7 @@
                     path = path + '/';
                 }
 
-                return this.$StateStatic.link(state, path);
+                return this._State.link(state, path);
             }
         }
 
@@ -473,7 +473,7 @@
     }
 
     /**
-     * The Type for referencing the '$RouteRecognizerInstance' injectable as a dependency.
+     * The Type for referencing the '_routerecognizerInstance' injectable as a dependency.
      */
     export function IRouteRecognizerInstance(): RouteRecognizer {
         return new RouteRecognizer();

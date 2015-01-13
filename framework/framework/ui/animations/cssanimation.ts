@@ -22,7 +22,7 @@
          * @description
          * A set of browser compatible CSS animation events capable of being listened to.
          */
-        private __animationEvents: IAnimationEvents = this.$Compat.animationEvents;
+        private __animationEvents: IAnimationEvents = this._compat.animationEvents;
         /**
          * @name __subscribers
          * @memberof plat.ui.animations.CssAnimation

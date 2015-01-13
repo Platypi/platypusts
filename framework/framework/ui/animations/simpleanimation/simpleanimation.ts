@@ -22,7 +22,7 @@ module plat.ui.animations {
      */
     export class SimpleCssAnimation extends CssAnimation implements ISimpleCssAnimation {
         /**
-         * @name $Window
+         * @name _window
          * @memberof plat.ui.animations.SimpleCssAnimation
          * @kind property
          * @access public
@@ -32,7 +32,7 @@ module plat.ui.animations {
          * @description
          * Reference to the Window injectable.
          */
-        $Window: Window = acquire(__Window);
+        _window: Window = acquire(__Window);
 
         /**
          * @name className
@@ -97,10 +97,10 @@ module plat.ui.animations {
          * @returns {void}
          */
         start(): void {
-            var animationId = this.$Compat.animationEvents.$animation,
+            var animationId = this._compat.animationEvents.$animation,
                 element = this.element,
                 className = this.className,
-                computedStyle = this.$Window.getComputedStyle(element, (this.options || <ISimpleCssAnimationOptions>{}).pseudo),
+                computedStyle = this._window.getComputedStyle(element, (this.options || <ISimpleCssAnimationOptions>{}).pseudo),
                 animationName = computedStyle[<any>(animationId + 'Name')];
 
             if (animationName === '' ||

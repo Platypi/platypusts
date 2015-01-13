@@ -15,14 +15,14 @@
 
         private static __currentRouter: Router;
 
-        $Promise: async.IPromise = acquire(__Promise);
-        resolve: typeof async.Promise.resolve = this.$Promise.resolve.bind(this.$Promise);
-        reject: typeof async.Promise.reject = this.$Promise.reject.bind(this.$Promise);
+        _Promise: async.IPromise = acquire(__Promise);
+        resolve: typeof async.Promise.resolve = this._Promise.resolve.bind(this._Promise);
+        reject: typeof async.Promise.reject = this._Promise.reject.bind(this._Promise);
 
-        $Injector: typeof dependency.Injector = acquire(__InjectorStatic);
-        $EventManagerStatic: events.IEventManagerStatic = acquire(__EventManagerStatic);
-        $browser: web.IBrowser = acquire(__Browser);
-        $browserConfig: web.IBrowserConfig = acquire(__BrowserConfig);
+        _Injector: typeof dependency.Injector = acquire(__InjectorStatic);
+        _EventManagerStatic: events.IEventManagerStatic = acquire(__EventManagerStatic);
+        _browser: web.IBrowser = acquire(__Browser);
+        _browserConfig: web.IBrowserConfig = acquire(__BrowserConfig);
 
         recognizer: RouteRecognizer = acquire(__RouteRecognizerInstance);
         childRecognizer: RouteRecognizer = acquire(__RouteRecognizerInstance);
@@ -83,7 +83,7 @@
             var ports = this.ports;
 
             if (isNull(port) || ports.indexOf(port) > -1) {
-                return this.$Promise.resolve();
+                return this._Promise.resolve();
             }
 
             ports.push(port);
@@ -103,7 +103,7 @@
                     });
             }
 
-            return this.$Promise.resolve();
+            return this._Promise.resolve();
         }
 
         unregister(port: ISupportRouteNavigation) {
@@ -132,7 +132,7 @@
 
             var resolve = this.resolve,
                 route: IRouteMapping = routes,
-                view: string = this.$Injector.convertDependency(route.view);
+                view: string = this._Injector.convertDependency(route.view);
 
             if (view === __NOOP_INJECTOR) {
                 return resolve();
@@ -172,7 +172,7 @@
         }
 
         protected _addHandler(handler: (value: string, values: any, query?: any) => any, parameter: string, view: any, handlers: IObject<IRouteTransforms>) {
-            view = this.$Injector.convertDependency(view);
+            view = this._Injector.convertDependency(view);
 
             if (isEmpty(view) || isEmpty(parameter)) {
                 return this;
@@ -198,7 +198,7 @@
         intercept(handler: (routeInfo: IRouteInfo) => any, view: string): Router;
         intercept(handler: (routeInfo: IRouteInfo) => any, view: new (...args: any[]) => any): Router;
         intercept(handler: (routeInfo: IRouteInfo) => any, view: any) {
-            view = this.$Injector.convertDependency(view);
+            view = this._Injector.convertDependency(view);
 
             if (isEmpty(view)) {
                 return this;
@@ -308,7 +308,7 @@
             }
 
             if (this.isRoot && isEmpty(this.previousUrl)) {
-                var utils = this.$browser.urlUtils();
+                var utils = this._browser.urlUtils();
                 this.previousUrl = utils.pathname;
                 query = utils.query;
             }
@@ -420,7 +420,7 @@
         }
 
         callAllHandlers(view: string, parameters: any, query?: any): async.IThenable<void> {
-            var Promise = this.$Promise,
+            var Promise = this._Promise,
                 resolve = Promise.resolve.bind(Promise);
 
             return this.callHandlers(this.queryTransforms[view], query)
@@ -448,7 +448,7 @@
         }
 
         canNavigateFrom(ignorePorts?: boolean): async.IThenable<boolean> {
-            return this.$Promise.all(this.children.reduce((promises: Array<async.IThenable<boolean>>, child: Router) => {
+            return this._Promise.all(this.children.reduce((promises: Array<async.IThenable<boolean>>, child: Router) => {
                 return promises.concat(child.canNavigateFrom());
             }, <Array<async.IThenable<boolean>>>[]))
                 .then(booleanReduce)
@@ -512,7 +512,7 @@
                         }
                     }
 
-                    return this.$Promise.all(promises);
+                    return this._Promise.all(promises);
                 })
                 .then(booleanReduce);
         }

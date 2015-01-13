@@ -727,8 +727,8 @@ module plat {
                 return noop;
             }
 
-            var $ContextManagerStatic: observable.IContextManagerStatic = Control._ContextManagerStatic || acquire(__ContextManagerStatic),
-                contextManager = $ContextManagerStatic.getManager(Control.getRootControl(this));
+            var _ContextManager: observable.IContextManagerStatic = Control._ContextManagerStatic || acquire(__ContextManagerStatic),
+                contextManager = _ContextManager.getManager(Control.getRootControl(this));
 
             return contextManager.observe(absoluteIdentifier + '.' + property, {
                 listener: listener.bind(this),
@@ -1172,8 +1172,8 @@ module plat {
          * @returns {plat.IRemoveListener} A function to call in order to stop listening for this event.
          */
         on(name: string, listener: (ev: events.IDispatchEventInstance, ...args: any[]) => void): IRemoveListener {
-            var $EventManagerStatic: events.IEventManagerStatic = Control._EventManagerStatic || acquire(__EventManagerStatic);
-            return $EventManagerStatic.on(this.uid, name, listener, this);
+            var _EventManagerStatic: events.IEventManagerStatic = Control._EventManagerStatic || acquire(__EventManagerStatic);
+            return _EventManagerStatic.on(this.uid, name, listener, this);
         }
 
         /**
@@ -1193,7 +1193,7 @@ module plat {
     }
 
     /**
-     * The Type for referencing the '$ControlFactory' injectable as a dependency.
+     * The Type for referencing the '_ControlFactory' injectable as a dependency.
      */
     export function IControlFactory(
         _parser?: expressions.IParser,

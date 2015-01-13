@@ -25,7 +25,7 @@ module plat.events {
      */
     export class DispatchEvent implements IDispatchEventInstance {
         /**
-         * @name $EventManagerStatic
+         * @name _EventManagerStatic
          * @memberof plat.events.DispatchEvent
          * @kind property
          * @access public
@@ -38,7 +38,7 @@ module plat.events {
         _EventManagerStatic: IEventManagerStatic = acquire(__EventManagerStatic);
 
         /**
-         * @name $ContextManagerStatic
+         * @name _ContextManager
          * @memberof plat.events.DispatchEvent
          * @kind property
          * @access public
@@ -48,7 +48,7 @@ module plat.events {
          * @description
          * Reference to the {@link plat.events.IContextManagerStatic|IContextManagerStatic} injectable.
          */
-        $ContextManagerStatic: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
+        _ContextManager: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
 
         /**
          * @name sender
@@ -205,7 +205,7 @@ module plat.events {
          */
         preventDefault(): void {
             if (!this.defaultPrevented) {
-                this.$ContextManagerStatic.defineGetter(this, 'defaultPrevented', true);
+                this._ContextManager.defineGetter(this, 'defaultPrevented', true);
             }
         }
 
@@ -230,7 +230,7 @@ module plat.events {
     }
 
     /**
-     * The Type for referencing the '$DispatchEventInstance' injectable as a dependency.
+     * The Type for referencing the '_dispatchEventInstance' injectable as a dependency.
      */
     export function IDispatchEventInstance(): IDispatchEventInstance {
         return new DispatchEvent();

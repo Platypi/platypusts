@@ -34,7 +34,7 @@ module plat.ui {
      * @example 
      * <custom-control>
      *     <plat-resources>
-     *         <injectable alias="Cache">$CacheFactory</injectable>
+     *         <injectable alias="Cache">_CacheFactory</injectable>
      *         <observable alias="testObj">
      *              { 
      *                  foo: 'foo', 
@@ -117,7 +117,7 @@ module plat.ui {
         static FUNCTION: string = __FUNCTION_RESOURCE;
 
         /**
-         * @name $ContextManagerStatic
+         * @name _ContextManager
          * @memberof plat.ui.Resources
          * @kind property
          * @access public
@@ -128,10 +128,10 @@ module plat.ui {
          * @description
          * Reference to the {@link plat.observable.IContextManagerStatic|IContextManagerStatic} injectable.
          */
-        static $ContextManagerStatic: observable.IContextManagerStatic;
+        static _ContextManager: observable.IContextManagerStatic;
 
         /**
-         * @name $Regex
+         * @name _regex
          * @memberof plat.ui.Resources
          * @kind property
          * @access public
@@ -141,7 +141,7 @@ module plat.ui {
          * @description
          * Reference to the {@link plat.expressions.IRegex|IRegex} injectable.
          */
-        static $Regex: expressions.IRegex;
+        static _regex: expressions.IRegex;
 
         /**
          * @name create
@@ -191,10 +191,10 @@ module plat.ui {
                         if (isFunction(value)) {
                             resource.value = value.bind(control);
                         } else {
-                            var $exception: IExceptionStatic = acquire(__ExceptionStatic);
-                            $exception.warn('Attempted to create a "function" ' +
+                            var _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+                            _Exception.warn('Attempted to create a "function" ' +
                                 'type Resource with a function not found on your control.',
-                                $exception.BIND);
+                                _Exception.BIND);
                             resource.value = noop;
                         }
                     }
@@ -308,7 +308,7 @@ module plat.ui {
             var keys = Object.keys(resources.__resources),
                 key: string,
                 length = keys.length,
-                define = Resources.$ContextManagerStatic.defineProperty,
+                define = Resources._ContextManager.defineProperty,
                 resource: IResource;
 
             for (var i = 0; i < length; ++i) {
@@ -341,9 +341,9 @@ module plat.ui {
         static parseElement(element: Element): IObject<IResource> {
             var children: Array<Element> = Array.prototype.slice.call((<HTMLElement>element).children),
                 child: Element,
-                $regex = Resources.$Regex,
-                whiteSpaceRegex = $regex.whiteSpaceRegex,
-                quotationRegex = $regex.quotationRegex,
+                _regex = Resources._regex,
+                whiteSpaceRegex = _regex.whiteSpaceRegex,
+                quotationRegex = _regex.quotationRegex,
                 resources: IObject<IResource> = {},
                 resource: IResource,
                 types = Resources.__resourceTypes,
@@ -697,7 +697,7 @@ module plat.ui {
          * 
          * @example
          *     <plat-resources>
-         *         <injectable alias="Cache">$CacheFactory</injectable>
+         *         <injectable alias="Cache">_CacheFactory</injectable>
          *         <observable alias="testObj">{ foo: 'foo', bar: 'bar', baz: 2 }</observable>
          *     </plat-resources>
          */
@@ -728,13 +728,13 @@ module plat.ui {
     }
 
     /**
-     * The Type for referencing the '$ResourcesFactory' injectable as a dependency.
+     * The Type for referencing the '_ResourcesFactory' injectable as a dependency.
      */
     export function IResourcesFactory(
-        $ContextManagerStatic?: observable.IContextManagerStatic,
-        $Regex?: expressions.IRegex): IResourcesFactory {
-            Resources.$ContextManagerStatic = $ContextManagerStatic;
-            Resources.$Regex = $Regex;
+        _ContextManager?: observable.IContextManagerStatic,
+        _regex?: expressions.IRegex): IResourcesFactory {
+            Resources._ContextManager = _ContextManager;
+            Resources._regex = _regex;
             return Resources;
     }
 
@@ -960,7 +960,7 @@ module plat.ui {
      * @example 
      * <custom-control>
      *     <plat-resources>
-     *         <injectable alias="Cache">$CacheFactory</injectable>
+     *         <injectable alias="Cache">_CacheFactory</injectable>
      *         <observable alias="testObj">
      *              { 
      *                  foo: 'foo', 
@@ -1017,7 +1017,7 @@ module plat.ui {
          * 
          * @example
          *     <plat-resources>
-         *         <injectable alias="Cache">$CacheFactory</injectable>
+         *         <injectable alias="Cache">_CacheFactory</injectable>
          *         <observable alias="testObj">{ foo: 'foo', bar: 'bar', baz: 2 }</observable>
          *     </plat-resources>
          */

@@ -20,7 +20,7 @@ module plat.controls {
      */
     export class Bind extends AttributeControl {
         /**
-         * @name $Parser
+         * @name _parser
          * @memberof plat.controls.Bind
          * @kind property
          * @access public
@@ -31,10 +31,10 @@ module plat.controls {
          * @description
          * Reference to the {@link plat.expressions.IParser|IParser} injectable.
          */
-        $Parser: expressions.IParser = acquire(__Parser);
+        _parser: expressions.IParser = acquire(__Parser);
 
         /**
-         * @name $ContextManagerStatic
+         * @name _ContextManager
          * @memberof plat.controls.Bind
          * @kind property
          * @access public
@@ -45,10 +45,10 @@ module plat.controls {
          * @description
          * Reference to the {@link plat.observable.IContextManagerStatic|IContextManagerStatic} injectable.
          */
-        $ContextManagerStatic: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
+        _ContextManager: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
 
         /**
-         * @name $Compat
+         * @name _compat
          * @memberof plat.controls.Bind
          * @kind property
          * @access public
@@ -59,10 +59,10 @@ module plat.controls {
          * @description
          * Reference to the {@link plat.ICompat|ICompat} injectable.
          */
-        $Compat: ICompat = acquire(__Compat);
+        _compat: ICompat = acquire(__Compat);
 
         /**
-         * @name $document
+         * @name _document
          * @memberof plat.controls.Bind
          * @kind property
          * @access public
@@ -73,7 +73,7 @@ module plat.controls {
          * @description
          * Reference to the Document injectable.
          */
-        $document: Document = acquire(__Document);
+        _document: Document = acquire(__Document);
 
         /**
          * @name priority
@@ -242,14 +242,14 @@ module plat.controls {
             }
 
             var attr = camelCase(this.type),
-                $parser = this.$Parser,
-                expression = this._expression = $parser.parse(this.attributes[attr]);
+                _parser = this._parser,
+                expression = this._expression = _parser.parse(this.attributes[attr]);
 
             var identifiers = expression.identifiers;
 
             if (identifiers.length !== 1) {
-                var $exception: IExceptionStatic = acquire(__ExceptionStatic);
-                $exception.warn('Only 1 identifier allowed in a plat-bind expression', $exception.BIND);
+                var _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+                _Exception.warn('Only 1 identifier allowed in a plat-bind expression', _Exception.BIND);
                 this._contextExpression = null;
                 return;
             }
@@ -259,7 +259,7 @@ module plat.controls {
             this._property = split.pop();
 
             if (split.length > 0) {
-                this._contextExpression = $parser.parse(split.join('.'));
+                this._contextExpression = _parser.parse(split.join('.'));
             } else if (expression.aliases.length > 0) {
                 var alias = expression.aliases[0],
                     resourceObj = parent.findResource(alias);
@@ -342,7 +342,7 @@ module plat.controls {
          */
         protected _addTextEventListener(): void {
             var element = this.element,
-                $compat = this.$Compat,
+                _compat = this._compat,
                 composing = false,
                 input = 'input',
                 timeout: IRemoveListener,
@@ -364,7 +364,7 @@ module plat.controls {
                     });
                 };
 
-            if (isUndefined($compat.ANDROID)) {
+            if (isUndefined(_compat.ANDROID)) {
                 this.addEventListener(element, 'compositionstart', () => (composing = true), false);
                 this.addEventListener(element, 'compositionend', () => {
                     composing = false;
@@ -372,7 +372,7 @@ module plat.controls {
                 }, false);
             }
 
-            if ($compat.hasEvent(input)) {
+            if (_compat.hasEvent(input)) {
                 this.addEventListener(element, input, eventListener, false);
             } else {
                 this.addEventListener(element, 'keydown', (ev: KeyboardEvent) => {
@@ -731,7 +731,7 @@ module plat.controls {
             var element = <HTMLSelectElement>this.element,
                 value = element.value;
             if (isNull(newValue)) {
-                if (firstTime === true || !this.$document.body.contains(element)) {
+                if (firstTime === true || !this._document.body.contains(element)) {
                     this._propertyChanged();
                     return;
                 }
@@ -752,7 +752,7 @@ module plat.controls {
                 Exception.warn(message, Exception.BIND);
             } else if (value === newValue) {
                 return;
-            } else if (!this.$document.body.contains(element)) {
+            } else if (!this._document.body.contains(element)) {
                 element.value = newValue;
                 if (element.value !== newValue) {
                     element.value = value;
@@ -919,7 +919,7 @@ module plat.controls {
 
             if (!isObject(context)) {
                 if (isNull(context) && contextExpression.identifiers.length > 0) {
-                    context = this.$ContextManagerStatic.createContext(this.parent,
+                    context = this._ContextManager.createContext(this.parent,
                         contextExpression.identifiers[0]);
                 } else {
                     var Exception: IExceptionStatic = acquire(__ExceptionStatic);
@@ -1065,7 +1065,7 @@ module plat.controls {
                 var split = select.absoluteContextPath.split('.'),
                     key = split.pop();
 
-                this.observeArray(this.$ContextManagerStatic.getContext(this.parent, split), key, null,
+                this.observeArray(this._ContextManager.getContext(this.parent, split), key, null,
                     (ev: observable.IPostArrayChangeInfo<any>) => {
                         select.itemsLoaded.then(() => {
                             this._setter(this.evaluateExpression(this._expression));

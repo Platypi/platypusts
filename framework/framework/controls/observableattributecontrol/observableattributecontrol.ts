@@ -12,7 +12,7 @@
      */
     export class ObservableAttributeControl extends AttributeControl implements IObservableAttributeControl {
         /**
-         * @name $ContextManagerStatic
+         * @name _ContextManager
          * @memberof plat.controls.ObservableAttributeControl
          * @kind property
          * @access public
@@ -22,7 +22,7 @@
          * @description
          * Reference to the {@link plat.observable.IContextManagerStatic|IContextManagerStatic} injectable.
          */
-        $ContextManagerStatic: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
+        _ContextManager: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
 
         /**
          * @name property
@@ -178,7 +178,7 @@
                 return;
             }
 
-            this.$ContextManagerStatic.defineGetter(templateControl, this.property, <observable.IObservableProperty<any>>{
+            this._ContextManager.defineGetter(templateControl, this.property, <observable.IObservableProperty<any>>{
                 value: value,
                 observe: this._boundAddListener
             }, true, true);

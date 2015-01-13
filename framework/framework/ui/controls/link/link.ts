@@ -34,7 +34,7 @@ module plat.ui.controls {
         replaceWith = 'a';
 
         /**
-         * @name $RouterStatic
+         * @name _routerStatic
          * @memberof plat.ui.controls.Link
          * @kind property
          * @access public
@@ -44,10 +44,10 @@ module plat.ui.controls {
          * @description
          * The {@link plat.routing.IRouterStatic|IRouterStatic} injectable instance
          */
-        $RouterStatic: typeof routing.Router = acquire(__RouterStatic);
+        _routerStatic: typeof routing.Router = acquire(__RouterStatic);
 
         /**
-         * @name $InjectorStatic
+         * @name _Injector
          * @memberof plat.ui.controls.Link
          * @kind property
          * @access public
@@ -57,10 +57,10 @@ module plat.ui.controls {
          * @description
          * The {@link plat.dependency.Injector|Injector} injectable instance
          */
-        $InjectorStatic: typeof dependency.Injector = acquire(__InjectorStatic);
+        _Injector: typeof dependency.Injector = acquire(__InjectorStatic);
 
         /**
-         * @name $browser
+         * @name _browser
          * @memberof plat.ui.controls.Link
          * @kind property
          * @access public
@@ -70,7 +70,7 @@ module plat.ui.controls {
          * @description
          * The {@link plat.web.IBrowser|IBrowser} injectable instance
          */
-        $browser: web.IBrowser = acquire(__Browser);
+        _browser: web.IBrowser = acquire(__Browser);
 
         /**
          * @name router
@@ -126,7 +126,7 @@ module plat.ui.controls {
 
         constructor() {
             super();
-            this.router = this.$RouterStatic.currentRouter();
+            this.router = this._routerStatic.currentRouter();
         }
 
         /**
@@ -165,7 +165,7 @@ module plat.ui.controls {
                     return;
                 }
 
-                this.$browser.url(href);
+                this._browser.url(href);
                 this.removeClickListener();
                 element.addEventListener('click', this.getListener(element));
             }, false);
@@ -263,11 +263,11 @@ module plat.ui.controls {
                     return href;
                 }
 
-                href = this.$InjectorStatic.convertDependency(href);
+                href = this._Injector.convertDependency(href);
                 href = this.router.generate(href, parameters);
             }
 
-            return this.$browser.formatUrl(href);
+            return this._browser.formatUrl(href);
         }
     }
 

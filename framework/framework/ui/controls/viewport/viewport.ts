@@ -2,14 +2,14 @@ module plat.ui.controls {
     'use strict';
 
     export class Viewport extends TemplateControl implements routing.ISupportRouteNavigation {
-        protected $RouterStatic: typeof routing.Router = acquire(__RouterStatic);
-        protected $Promise: async.IPromise = acquire(__Promise);
-        protected $Injector: typeof dependency.Injector = acquire(__InjectorStatic);
-        protected $ElementManagerFactory: processing.IElementManagerFactory = acquire(__ElementManagerFactory);
-        protected $Document: Document = acquire(__Document);
+        protected _routerStatic: typeof routing.Router = acquire(__RouterStatic);
+        protected _Promise: async.IPromise = acquire(__Promise);
+        protected _Injector: typeof dependency.Injector = acquire(__InjectorStatic);
+        protected _ElementManagerFactory: processing.IElementManagerFactory = acquire(__ElementManagerFactory);
+        protected _document: Document = acquire(__Document);
 
         /**
-         * @name $ManagerCache
+         * @name _managerCache
          * @memberof plat.ui.controls.Viewport
          * @kind property
          * @access public
@@ -19,10 +19,10 @@ module plat.ui.controls {
          * @description
          * Reference to an injectable that caches {@link plat.processing.IElementManager|IElementManagers}.
          */
-        protected $ManagerCache: storage.ICache<processing.IElementManager> = acquire(__ManagerCache);
+        protected _managerCache: storage.ICache<processing.IElementManager> = acquire(__ManagerCache);
 
         /**
-         * @name $Animator
+         * @name _animator
          * @memberof plat.ui.controls.Viewport
          * @kind property
          * @access public
@@ -32,7 +32,7 @@ module plat.ui.controls {
          * @description
          * Reference to the {@link plat.ui.animations.IAnimator|IAnimator} injectable.
          */
-        protected $Animator: animations.IAnimator = acquire(__Animator);
+        protected _animator: animations.IAnimator = acquire(__Animator);
 
         /**
          * @name _animationPromise
@@ -55,7 +55,7 @@ module plat.ui.controls {
         nextView: ViewControl;
 
         initialize() {
-            var router = this.router = this.$RouterStatic.currentRouter(),
+            var router = this.router = this._routerStatic.currentRouter(),
                 parentViewport = this._getParentViewport(),
                 parentRouter: routing.Router;
 
@@ -74,13 +74,13 @@ module plat.ui.controls {
         }
 
         canNavigateTo(routeInfo: routing.IRouteInfo): async.IThenable<boolean> {
-            var getRouter = this.$RouterStatic.currentRouter,
+            var getRouter = this._routerStatic.currentRouter,
                 currentRouter = getRouter(),
                 response: any = true,
-                injector: dependency.IInjector<ViewControl> = this.$Injector.getDependency(routeInfo.delegate.view),
+                injector: dependency.IInjector<ViewControl> = this._Injector.getDependency(routeInfo.delegate.view),
                 view = injector.inject(),
                 parameters = routeInfo.parameters,
-                resolve = this.$Promise.resolve.bind(this.$Promise),
+                resolve = this._Promise.resolve.bind(this._Promise),
                 nextRouter = getRouter();
 
             if (!isObject(view)) {
@@ -115,12 +115,12 @@ module plat.ui.controls {
                 response = view.canNavigateFrom();
             }
 
-            return this.$Promise.resolve(response);
+            return this._Promise.resolve(response);
         }
 
         navigateTo(routeInfo: routing.IRouteInfo) {
-            return this.$Promise.resolve().then(() => {
-                var injector = this.nextInjector || this.$Injector.getDependency(routeInfo.delegate.view),
+            return this._Promise.resolve().then(() => {
+                var injector = this.nextInjector || this._Injector.getDependency(routeInfo.delegate.view),
                     nodeMap = this._createNodeMap(injector),
                     element = this.element,
                     node = nodeMap.element,
@@ -135,10 +135,10 @@ module plat.ui.controls {
                     animationPromise.dispose();
                 }
 
-                this._animationPromise = this.$Animator.animate(this.element, __Enter);
+                this._animationPromise = this._animator.animate(this.element, __Enter);
 
-                var viewportManager = this.$ManagerCache.read(this.uid),
-                    manager = this.$ElementManagerFactory.getInstance();
+                var viewportManager = this._managerCache.read(this.uid),
+                    manager = this._ElementManagerFactory.getInstance();
 
                 viewportManager.children = [];
                 manager.initialize(nodeMap, viewportManager);
@@ -159,7 +159,7 @@ module plat.ui.controls {
                 view.navigatingFrom();
             }
 
-            return this.$Promise.resolve().then(() => {
+            return this._Promise.resolve().then(() => {
                 Control.dispose(view);
             });
         }
@@ -171,7 +171,7 @@ module plat.ui.controls {
 
         protected _createNodeMap(injector: dependency.IInjector<ViewControl>) {
             var control = this.nextView || injector.inject(),
-                doc = this.$Document,
+                doc = this._document,
                 type = injector.name,
                 replaceWith = control.replaceWith,
                 node: HTMLElement = (isEmpty(replaceWith) || replaceWith === 'any') ?

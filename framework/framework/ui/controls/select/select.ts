@@ -12,7 +12,7 @@ module plat.ui.controls {
      */
     export class Select extends TemplateControl {
         /**
-         * @name $Promise
+         * @name _Promise
          * @memberof plat.ui.controls.Select
          * @kind property
          * @access public
@@ -22,9 +22,9 @@ module plat.ui.controls {
          * @description
          * Reference to the {@link plat.async.IPromise|IPromise} injectable.
          */
-        $Promise: async.IPromise = acquire(__Promise);
+        _Promise: async.IPromise = acquire(__Promise);
         /**
-         * @name $Document
+         * @name _document
          * @memberof plat.ui.controls.Select
          * @kind property
          * @access public
@@ -34,7 +34,7 @@ module plat.ui.controls {
          * @description
          * Reference to the Document injectable.
          */
-        $Document: Document = acquire(__Document);
+        _document: Document = acquire(__Document);
 
         /**
          * @name replaceWith
@@ -204,7 +204,7 @@ module plat.ui.controls {
          */
         constructor() {
             super();
-            this.itemsLoaded = new this.$Promise<void>((resolve) => {
+            this.itemsLoaded = new this._Promise<void>((resolve) => {
                 this.__resolveFn = resolve;
             });
         }
@@ -222,10 +222,10 @@ module plat.ui.controls {
          * @returns {void}
          */
         setTemplate(): void {
-            var $document = this.$Document,
+            var _document = this._document,
                 options = this.options || <observable.IObservableProperty<ISelectOptions>>{},
                 platOptions = options.value || <ISelectOptions>{},
-                option = $document.createElement('option'),
+                option = _document.createElement('option'),
                 value = platOptions.value,
                 textContent = platOptions.textContent;
 
@@ -237,7 +237,7 @@ module plat.ui.controls {
 
             if (!isNull(platOptions.group)) {
                 var group = this.__group = platOptions.group,
-                    optionGroup = $document.createElement('optgroup');
+                    optionGroup = _document.createElement('optgroup');
 
                 optionGroup.label = __startSymbol + group + __endSymbol;
 
@@ -414,7 +414,7 @@ module plat.ui.controls {
             }
 
             if (promises.length > 0) {
-                this.itemsLoaded = this.$Promise.all(promises).then(() => {
+                this.itemsLoaded = this._Promise.all(promises).then(() => {
                     if (isFunction(this.__resolveFn)) {
                         this.__resolveFn();
                         this.__resolveFn = null;
@@ -426,7 +426,7 @@ module plat.ui.controls {
                     this.__resolveFn();
                     this.__resolveFn = null;
                 }
-                this.itemsLoaded = new this.$Promise<void>((resolve) => {
+                this.itemsLoaded = new this._Promise<void>((resolve) => {
                     this.__resolveFn = resolve;
                 });
             }
@@ -476,11 +476,11 @@ module plat.ui.controls {
                 }
 
                 optgroup.appendChild(optionClone);
-                return this.$Promise.resolve(null);
+                return this._Promise.resolve(null);
             }
 
             element.appendChild(optionClone);
-            return this.$Promise.resolve(null);
+            return this._Promise.resolve(null);
         }
 
         /**

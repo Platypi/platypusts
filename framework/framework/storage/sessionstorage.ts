@@ -17,7 +17,7 @@ module plat.storage {
     }
 
     /**
-     * The Type for referencing the '$SessionStorage' injectable as a dependency.
+     * The Type for referencing the '_sessionStorage' injectable as a dependency.
      */
     export function ISessionStorage(): ISessionStorage {
         return new SessionStorage();

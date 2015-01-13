@@ -12,7 +12,7 @@
      */
     export class Compat implements ICompat {
         /**
-         * @name $Window
+         * @name _window
          * @memberof plat.Compat
          * @kind property
          * @access public
@@ -22,10 +22,10 @@
          * @description
          * The window injectable.
          */
-        $Window: Window = acquire(__Window);
+        _window: Window = acquire(__Window);
 
         /**
-         * @name $history
+         * @name _history
          * @memberof plat.Compat
          * @kind property
          * @access public
@@ -35,10 +35,10 @@
          * @description
          * The window.history injectable.
          */
-        $history: History = acquire(__History);
+        _history: History = acquire(__History);
 
         /**
-         * @name $Document
+         * @name _document
          * @memberof plat.Compat
          * @kind property
          * @access public
@@ -48,7 +48,7 @@
          * @description
          * The document injectable.
          */
-        $Document: Document = acquire(__Document);
+        _document: Document = acquire(__Document);
 
         /**
          * @name isCompatible
@@ -366,7 +366,7 @@
                 eventExists = events[event];
 
             if (isUndefined(eventExists)) {
-                var element = this.$Document.createElement('div');
+                var element = this._document.createElement('div');
                 if (event === 'input' && this.IE === 9) {
                     eventExists = events[event] = false;
                 } else {
@@ -389,25 +389,25 @@
          * @returns {void}
          */
         private __defineBooleans(): void {
-            var $window = this.$Window,
-                navigator = $window.navigator || <Navigator>{},
+            var _window = this._window,
+                navigator = _window.navigator || <Navigator>{},
                 userAgent = (navigator.userAgent || '').toLowerCase(),
-                history = this.$history,
-                def = (<any>$window).define,
-                msA = (<any>$window).MSApp,
+                history = this._history,
+                def = (<any>_window).define,
+                msA = (<any>_window).MSApp,
                 android = parseInt((<any>/android (\d+)/.exec(userAgent) || [])[1], 10);
 
-            this.isCompatible = isFunction(Object.defineProperty) && isFunction(this.$Document.querySelector);
-            this.cordova = !isNull((<any>$window).cordova);
+            this.isCompatible = isFunction(Object.defineProperty) && isFunction(this._document.querySelector);
+            this.cordova = !isNull((<any>_window).cordova);
             this.pushState = !(isNull(history) || isNull(history.pushState));
-            this.fileSupported = !(isUndefined((<any>$window).File) || isUndefined((<any>$window).FormData));
+            this.fileSupported = !(isUndefined((<any>_window).File) || isUndefined((<any>_window).FormData));
             this.amd = isFunction(def) && !isNull(def.amd);
             this.msApp = isObject(msA) && isFunction(msA.execUnsafeLocalFunction);
-            this.indexedDb = !isNull($window.indexedDB);
+            this.indexedDb = !isNull(_window.indexedDB);
             this.proto = isObject((<any>{}).__proto__);
             this.getProto = isFunction(Object.getPrototypeOf);
             this.setProto = isFunction((<any>Object).setPrototypeOf);
-            this.hasTouchEvents = !isUndefined((<any>$window).ontouchstart);
+            this.hasTouchEvents = !isUndefined((<any>_window).ontouchstart);
             this.hasPointerEvents = !!navigator.pointerEnabled;
             this.hasMsPointerEvents = !!navigator.msPointerEnabled;
 
@@ -478,8 +478,8 @@
          * @returns {void}
          */
         private __defineAnimationEvents(): void {
-            var documentElement = this.$Document.documentElement,
-                styles = this.$Window.getComputedStyle(documentElement, ''),
+            var documentElement = this._document.documentElement,
+                styles = this._window.getComputedStyle(documentElement, ''),
                 prefix: string;
 
             if (!isUndefined((<any>styles).OLink)) {
@@ -554,14 +554,14 @@
          * @returns {void}
          */
         private __determineCss(): void {
-            var $document = this.$Document,
-                head = $document.head,
-                element = $document.createElement('div');
+            var _document = this._document,
+                head = _document.head,
+                element = _document.createElement('div');
 
             element.setAttribute(__Hide, '');
             head.insertBefore(element, null);
 
-            var computedStyle = this.$Window.getComputedStyle(element),
+            var computedStyle = this._window.getComputedStyle(element),
                 display = computedStyle.display,
                 visibility = computedStyle.visibility;
 
@@ -576,7 +576,7 @@
     }
 
    /**
-    * The Type for referencing the '$Compat' injectable as a dependency.
+    * The Type for referencing the '_compat' injectable as a dependency.
     */
     export function ICompat(): ICompat {
         return new Compat();

@@ -78,7 +78,7 @@ module plat.processing {
     }
 
     /**
-     * The Type for referencing the '$CommentManagerFactory' injectable as a dependency.
+     * The Type for referencing the '_CommentManagerFactory' injectable as a dependency.
      */
     export function ICommentManagerFactory(): ICommentManagerFactory {
         return CommentManager;

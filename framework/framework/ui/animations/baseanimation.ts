@@ -11,7 +11,7 @@
      */
     export class BaseAnimation implements IBaseAnimation {
         /**
-         * @name $Compat
+         * @name _compat
          * @memberof plat.ui.animations.BaseAnimation
          * @kind property
          * @access public
@@ -21,7 +21,7 @@
          * @description
          * Reference to the {@link plat.ICompat|ICompat} injectable.
          */
-        $Compat: ICompat = acquire(__Compat);
+        _compat: ICompat = acquire(__Compat);
 
         /**
          * @name element

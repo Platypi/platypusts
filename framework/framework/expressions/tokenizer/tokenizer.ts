@@ -465,8 +465,8 @@ module plat.expressions {
          * @returns {void}
          */
         protected _throwError(error: string): void {
-            var $exception: IExceptionStatic = acquire(__ExceptionStatic);
-            $exception.fatal(error + ' in ' + this._input, $exception.PARSE);
+            var _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+            _Exception.fatal(error + ' in ' + this._input, _Exception.PARSE);
         }
         
         /**
@@ -1125,7 +1125,7 @@ module plat.expressions {
     }
 
     /**
-     * The Type for referencing the '$Tokenizer' injectable as a dependency.
+     * The Type for referencing the '_tokenizer' injectable as a dependency.
      */
     export function ITokenizer(): ITokenizer {
         return new Tokenizer();

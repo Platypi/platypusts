@@ -21,7 +21,7 @@ module plat.expressions {
      */
     export class Parser implements IParser {
         /**
-         * @name $Tokenizer
+         * @name _tokenizer
          * @memberof plat.expressions.Parser
          * @kind property
          * @access public
@@ -31,7 +31,7 @@ module plat.expressions {
          * @description
          * Reference to the {@link plat.expressions.ITokenizer|ITokenizer} injectable.
          */
-        $Tokenizer: ITokenizer = acquire(__Tokenizer);
+        _tokenizer: ITokenizer = acquire(__Tokenizer);
 
         /**
          * @name _tokens
@@ -128,7 +128,7 @@ module plat.expressions {
                 return parsedObject;
             }
 
-            this._tokens = this.$Tokenizer.createTokens(expression);
+            this._tokens = this._tokenizer.createTokens(expression);
 
             parsedObject = this._evaluate(expression);
 
@@ -925,13 +925,13 @@ module plat.expressions {
          * @returns {void}
          */
         protected _throwError(error: string): void {
-            var $exception: IExceptionStatic = acquire(__ExceptionStatic);
-            $exception.fatal(error, $exception.PARSE);
+            var _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+            _Exception.fatal(error, _Exception.PARSE);
         }
     }
 
     /**
-     * The Type for referencing the '$Parser' injectable as a dependency.
+     * The Type for referencing the '_parser' injectable as a dependency.
      */
     export function IParser(): IParser {
         return new Parser();

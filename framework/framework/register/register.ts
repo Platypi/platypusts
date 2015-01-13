@@ -67,9 +67,9 @@ module plat.register {
      */
     export function app(name: string, Type: new (...args: any[]) => IApp, dependencies?: Array<any>): typeof register {
         var app = new dependency.Injector<IApp>(name, Type, dependencies),
-            $appStatic: IAppStatic = acquire(__AppStatic);
+            _AppStatic: IAppStatic = acquire(__AppStatic);
 
-        $appStatic.registerApp(app);
+        _AppStatic.registerApp(app);
         return register;
     }
 
@@ -156,7 +156,7 @@ module plat.register {
      * (defaults to {@link plat.register.injectable.SINGLETON|SINGLETON}).
      * 
      * @example
-     * plat.register.injectable('$CacheFactory', [plat.expressions.IParser], Cache);
+     * plat.register.injectable('_CacheFactory', [plat.expressions.IParser], Cache);
      * plat.register.injectable('database', MyDatabase, null, plat.register.injectable.INSTANCE);
      * 
      * @returns {plat.register} The object that contains the register methods (for method chaining).
@@ -183,7 +183,7 @@ module plat.register {
      * (defaults to {@link plat.register.injectable.SINGLETON|SINGLETON}).
      * 
      * @example
-     * plat.register.injectable('$CacheFactory', [plat.expressions.IParser], 
+     * plat.register.injectable('_CacheFactory', [plat.expressions.IParser], 
      *     function(parser: plat.expressions.IParser) { return { ... }; });
      * plat.register.injectable('database', function() { return new Database(); }, null, register.injectable.INSTANCE);
      * 

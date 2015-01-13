@@ -1,10 +1,10 @@
 ﻿module app {
     export class App extends plat.App {
-        constructor($browserConfig: plat.web.IBrowserConfig, router: plat.routing.Router) {
+        constructor(_browserConfig: plat.web.IBrowserConfig, router: plat.routing.Router) {
             super();
 
-            $browserConfig.routingType = $browserConfig.HASH;
-            $browserConfig.baseUrl = 'app';
+            _browserConfig.routingType = _browserConfig.HASH;
+            _browserConfig.baseUrl = 'app';
 
             router.configure({
                 pattern: '',

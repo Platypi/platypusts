@@ -12,7 +12,7 @@ module plat.ui.controls {
      */
     export class If extends TemplateControl {
         /**
-         * @name $Animator
+         * @name _animator
          * @memberof plat.ui.controls.If
          * @kind property
          * @access public
@@ -22,10 +22,10 @@ module plat.ui.controls {
          * @description
          * Reference to the {@link plat.ui.animations.IAnimator|IAnimator} injectable.
          */
-        $Animator: animations.IAnimator = acquire(__Animator);
+        _animator: animations.IAnimator = acquire(__Animator);
 
         /**
-         * @name $Promise
+         * @name _Promise
          * @memberof plat.ui.controls.If
          * @kind property
          * @access public
@@ -36,7 +36,7 @@ module plat.ui.controls {
          * @description
          * Reference to the {@link plat.async.IPromise|IPromise} injectable.
          */
-        $Promise: async.IPromise = acquire(__Promise);
+        _Promise: async.IPromise = acquire(__Promise);
 
         /**
          * @name options
@@ -167,8 +167,8 @@ module plat.ui.controls {
          */
         constructor() {
             super();
-            var $document: Document = acquire(__Document);
-            this.commentNode = $document.createComment('plat-if' + __BOUND_PREFIX + 'placeholder');
+            var _document: Document = acquire(__Document);
+            this.commentNode = _document.createComment('plat-if' + __BOUND_PREFIX + 'placeholder');
         }
 
         /**
@@ -224,8 +224,8 @@ module plat.ui.controls {
          */
         loaded(): async.IThenable<void> {
             if (isNull(this.options)) {
-                var $exception: IExceptionStatic = acquire(__ExceptionStatic);
-                $exception.warn('No condition specified in plat-options for plat-if.', $exception.BIND);
+                var _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+                _Exception.warn('No condition specified in plat-options for plat-if.', _Exception.BIND);
 
                 this.options = {
                     value: {
@@ -281,7 +281,7 @@ module plat.ui.controls {
                 promise: async.IThenable<void>;
 
             if (value === this.__condition && !this.__firstTime) {
-                return this.$Promise.resolve(null);
+                return this._Promise.resolve(null);
             }
 
             if (value) {
@@ -301,7 +301,7 @@ module plat.ui.controls {
                     });
                 } else {
                     this._removeItem();
-                    promise = this.$Promise.resolve(null);
+                    promise = this._Promise.resolve(null);
                 }
             }
 
@@ -323,7 +323,7 @@ module plat.ui.controls {
          */
         protected _addItem(): async.IThenable<void> {
             if (!isNode(this.commentNode.parentNode) && !this.__firstTime) {
-                return this.$Promise.resolve(null);
+                return this._Promise.resolve(null);
             }
 
             if (this.__firstTime) {
@@ -338,7 +338,7 @@ module plat.ui.controls {
                         return <any>this._animateEntrance();
                     }
 
-                    return this.__enterAnimation = this.$Animator.animate(element, __Enter);
+                    return this.__enterAnimation = this._animator.animate(element, __Enter);
                 }).then(() => {
                     this.__enterAnimation = null;
                 });
@@ -371,7 +371,7 @@ module plat.ui.controls {
                 parentNode = commentNode.parentNode;
 
             parentNode.replaceChild(this.fragmentStore, commentNode);
-            return this.__enterAnimation = this.$Animator.animate(this.element, __Enter).then(() => {
+            return this.__enterAnimation = this._animator.animate(this.element, __Enter).then(() => {
                 this.__enterAnimation = null;
             });
         }
@@ -411,13 +411,13 @@ module plat.ui.controls {
         protected _animateLeave(): animations.IAnimationThenable<void> {
             var element = this.element;
 
-            return this.__leaveAnimation = this.$Animator.animate(element, __Leave).then(() => {
+            return this.__leaveAnimation = this._animator.animate(element, __Leave).then(() => {
                 this.__leaveAnimation = null;
                 element.parentNode.insertBefore(this.commentNode, element);
 
                 if (!isDocumentFragment(this.fragmentStore)) {
-                    var $document: Document = plat.acquire(__Document);
-                    this.fragmentStore = $document.createDocumentFragment();
+                    var _document: Document = plat.acquire(__Document);
+                    this.fragmentStore = _document.createDocumentFragment();
                 }
 
                 insertBefore(this.fragmentStore, element);

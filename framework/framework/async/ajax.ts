@@ -61,7 +61,7 @@ module plat.async {
         jsonpCallback: string;
 
         /**
-         * @name $Browser
+         * @name _browser
          * @memberof plat.async.HttpRequest
          * @kind property
          * @access public
@@ -71,10 +71,10 @@ module plat.async {
          * @description
          * The plat.web.IBrowser injectable instance
          */
-        $Browser: web.IBrowser = acquire(__Browser);
+        _browser: web.IBrowser = acquire(__Browser);
 
         /**
-         * @name $Window
+         * @name _window
          * @memberof plat.async.HttpRequest
          * @kind property
          * @access public
@@ -84,10 +84,10 @@ module plat.async {
          * @description
          * The injectable instance of type Window
          */
-        $Window: Window = acquire(__Window);
+        _window: Window = acquire(__Window);
 
         /**
-         * @name $Document
+         * @name _document
          * @memberof plat.async.HttpRequest
          * @kind property
          * @access public
@@ -97,7 +97,7 @@ module plat.async {
          * @description
          * The injectable instance of type Document
          */
-        $Document: Document = acquire(__Document);
+        _document: Document = acquire(__Document);
 
         /**
          * @name $config
@@ -176,7 +176,7 @@ module plat.async {
                 return this._invalidOptions();
             }
 
-            options.url = this.$Browser.urlUtils(url).toString();
+            options.url = this._browser.urlUtils(url).toString();
 
             var isCrossDomain = options.isCrossDomain || false,
                 xDomain = false;
@@ -187,7 +187,7 @@ module plat.async {
             } else {
                 this.xhr = new XMLHttpRequest();
                 if (isUndefined(this.xhr.withCredentials)) {
-                    xDomain = this.$Browser.isCrossDomain(url);
+                    xDomain = this._browser.isCrossDomain(url);
                 }
             }
 
@@ -221,32 +221,32 @@ module plat.async {
                 return this._invalidOptions();
             }
 
-            options.url = this.$Browser.urlUtils(url).toString();
+            options.url = this._browser.urlUtils(url).toString();
             if (isNull(this.jsonpCallback)) {
                 this.jsonpCallback = options.jsonpCallback || uniqueId('plat_callback');
             }
 
             var promise = new AjaxPromise((resolve, reject) => {
-                var $window = <any>this.$Window,
-                    $document = this.$Document,
-                    scriptTag = $document.createElement('script'),
+                var _window = <any>this._window,
+                    _document = this._document,
+                    scriptTag = _document.createElement('script'),
                     jsonpCallback = this.jsonpCallback,
                     jsonpIdentifier = options.jsonpIdentifier || 'callback';
 
                 scriptTag.src = url + ((url.indexOf('?') > -1) ? '&' : '?') + jsonpIdentifier + '=' + jsonpCallback;
 
-                var oldValue = $window[jsonpCallback];
-                $window[jsonpCallback] = (response: any) => {
+                var oldValue = _window[jsonpCallback];
+                _window[jsonpCallback] = (response: any) => {
                     // clean up
                     if (isFunction(this.clearTimeout)) {
                         this.clearTimeout();
                     }
 
-                    $document.head.removeChild(scriptTag);
+                    _document.head.removeChild(scriptTag);
                     if (isUndefined(oldValue)) {
-                        deleteProperty($window, jsonpCallback);
+                        deleteProperty(_window, jsonpCallback);
                     } else {
-                        $window[jsonpCallback] = oldValue;
+                        _window[jsonpCallback] = oldValue;
                     }
 
                     // call callback
@@ -257,7 +257,7 @@ module plat.async {
                     });
                 };
 
-                $document.head.appendChild(scriptTag);
+                _document.head.appendChild(scriptTag);
 
                 var timeout = options.timeout;
                 if (isNumber(timeout) && timeout > 0) {
@@ -270,7 +270,7 @@ module plat.async {
                                 // request timeout
                                 status: 408
                             }));
-                            $window[jsonpCallback] = noop;
+                            _window[jsonpCallback] = noop;
                         }, timeout - 1);
                     });
                 }
@@ -629,8 +629,8 @@ module plat.async {
                     val = '';
                 } else if (isObject(val)) {
                     // may throw a fatal error but this is an invalid case
-                    var $exception: IExceptionStatic = acquire(__ExceptionStatic);
-                    $exception.warn('Invalid form entry with key "' + key + '" and value "' + val, $exception.AJAX);
+                    var _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+                    _Exception.warn('Invalid form entry with key "' + key + '" and value "' + val, _Exception.AJAX);
                     val = JSON.stringify(val);
                 }
 
@@ -668,8 +668,8 @@ module plat.async {
                         formData.append(key, val, val.name || val.fileName || 'blob');
                     } else {
                         // may throw a fatal error but this is an invalid case
-                        var $exception: IExceptionStatic = acquire(__ExceptionStatic);
-                        $exception.warn('Invalid form entry with key "' + key + '" and value "' + val, $exception.AJAX);
+                        var _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+                        _Exception.warn('Invalid form entry with key "' + key + '" and value "' + val, _Exception.AJAX);
                         formData.append(key, JSON.stringify(val));
                     }
                 } else {
@@ -695,11 +695,11 @@ module plat.async {
             var options = this.__options,
                 data = options.data,
                 url = options.url,
-                $document = this.$Document,
-                $body = $document.body,
+                _document = this._document,
+                $body = _document.body,
                 Promise: IPromise = acquire(__Promise),
-                form = $document.createElement('form'),
-                iframe = $document.createElement('iframe'),
+                form = _document.createElement('form'),
+                iframe = _document.createElement('iframe'),
                 iframeName = uniqueId('iframe_target'),
                 keys = Object.keys(data),
                 key: string;
@@ -757,9 +757,9 @@ module plat.async {
          * @returns {HTMLInputElement}
          */
         private __createInput(key: string, val: any): HTMLInputElement {
-            var $document = this.$Document,
-                $exception: IExceptionStatic,
-                input = <HTMLInputElement>$document.createElement('input');
+            var _document = this._document,
+                _Exception: IExceptionStatic,
+                input = <HTMLInputElement>_document.createElement('input');
 
             input.type = 'hidden';
             input.name = key;
@@ -769,13 +769,13 @@ module plat.async {
             } else if (isObject(val)) {
                 // check if val is an pseudo File
                 if (isFunction(val.slice) && !(isUndefined(val.name) || isUndefined(val.path))) {
-                    var fileList = $document.querySelectorAll('input[type="file"][name="' + key + '"]'),
+                    var fileList = _document.querySelectorAll('input[type="file"][name="' + key + '"]'),
                         length = fileList.length;
                     // if no inputs found, stringify the data
                     if (length === 0) {
-                        $exception = acquire(__ExceptionStatic);
-                        $exception.warn('Could not find input[type="file"] with [name="' + key +
-                            '"]. Stringifying data instead.', $exception.AJAX);
+                        _Exception = acquire(__ExceptionStatic);
+                        _Exception.warn('Could not find input[type="file"] with [name="' + key +
+                            '"]. Stringifying data instead.', _Exception.AJAX);
                         input.value = JSON.stringify(val);
                     } else if (length === 1) {
                         input = <HTMLInputElement>fileList[0];
@@ -800,16 +800,16 @@ module plat.async {
 
                         // could not find the right file
                         if (length === -1) {
-                            $exception = acquire(__ExceptionStatic);
-                            $exception.warn('Could not find input[type="file"] with [name="' + key + '"] and [value="' +
-                                val.path + '"]. Stringifying data instead.', $exception.AJAX);
+                            _Exception = acquire(__ExceptionStatic);
+                            _Exception.warn('Could not find input[type="file"] with [name="' + key + '"] and [value="' +
+                                val.path + '"]. Stringifying data instead.', _Exception.AJAX);
                             input.value = JSON.stringify(val);
                         }
                     }
                 } else {
                     // may throw a fatal error but this is an invalid case
-                    $exception = acquire(__ExceptionStatic);
-                    $exception.warn('Invalid form entry with key "' + key + '" and value "' + val, $exception.AJAX);
+                    _Exception = acquire(__ExceptionStatic);
+                    _Exception.warn('Invalid form entry with key "' + key + '" and value "' + val, _Exception.AJAX);
                     input.value = JSON.stringify(val);
                 }
             } else {
@@ -1444,7 +1444,7 @@ module plat.async {
      */
     export class AjaxPromise<R> extends Promise<IAjaxResponse<R>> implements IAjaxPromise<R> {
         /**
-         * @name $Window
+         * @name _window
          * @memberof plat.async.AjaxPromise
          * @kind property
          * @access public
@@ -1455,7 +1455,7 @@ module plat.async {
          * @description
          * The Window object.
          */
-        $Window: Window = acquire(__Window);
+        _window: Window = acquire(__Window);
 
         /**
          * @name __http
@@ -1554,7 +1554,7 @@ module plat.async {
                 xhr.abort();
                 http.xhr = null;
             } else if (!isNull(jsonpCallback)) {
-                (<any>this.$Window)[jsonpCallback] = noop;
+                (<any>this._window)[jsonpCallback] = noop;
             }
 
             (<any>this).__subscribers = [];
@@ -2327,7 +2327,7 @@ module plat.async {
     }
 
     /**
-     * The Type for referencing the '$Http' injectable as a dependency.
+     * The Type for referencing the '_http' injectable as a dependency.
      */
     export function IHttp(): IHttp {
         return new Http();
@@ -2434,7 +2434,7 @@ module plat.async {
     }
 
     /**
-     * The Type for referencing the '$HttpConfig' injectable as a dependency.
+     * The Type for referencing the '_httpConfig' injectable as a dependency.
      */
     export function IHttpConfig(): IHttpConfig {
         return Http.config;

@@ -13,7 +13,7 @@
      */
     export class SimpleCssTransition extends CssAnimation implements ISimpleCssTransition {
         /**
-         * @name $Window
+         * @name _window
          * @memberof plat.ui.animations.SimpleCssTransition
          * @kind property
          * @access public
@@ -23,7 +23,7 @@
          * @description
          * Reference to the Window injectable.
          */
-        $Window: Window = acquire(__Window);
+        _window: Window = acquire(__Window);
 
         /**
          * @name options
@@ -107,13 +107,13 @@
          * @returns {void}
          */
         start(): void {
-            var transitionId = this.$Compat.animationEvents.$transition,
+            var transitionId = this._compat.animationEvents.$transition,
                 element = this.element,
                 endFn = () => {
                     removeClass(element, this.className);
                     this.end();
                 },
-                computedStyle = this.$Window.getComputedStyle(element, (this.options || <ISimpleCssTransitionOptions>{}).pseudo),
+                computedStyle = this._window.getComputedStyle(element, (this.options || <ISimpleCssTransitionOptions>{}).pseudo),
                 transitionProperty = computedStyle[<any>(transitionId + 'Property')],
                 transitionDuration = computedStyle[<any>(transitionId + 'Duration')];
 

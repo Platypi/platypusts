@@ -12,7 +12,7 @@ module plat.ui {
      */
     export class Dom implements IDom {
         /**
-         * @name $DomEvents
+         * @name _domEvents
          * @memberof plat.ui.Dom
          * @kind property
          * @access public
@@ -22,7 +22,7 @@ module plat.ui {
          * @description
          * Reference to the {@link plat.ui.IDomEvents|IDomEvents} injectable.
          */
-        $DomEvents: ui.IDomEvents = acquire(__DomEvents);
+        _domEvents: ui.IDomEvents = acquire(__DomEvents);
 
         /**
          * @name addEventListener
@@ -101,7 +101,7 @@ module plat.ui {
          */
         addEventListener(element: Window, type: string, listener: EventListener, useCapture?: boolean): IRemoveListener;
         addEventListener(element: any, type: string, listener: ui.IGestureListener, useCapture?: boolean): IRemoveListener {
-            return this.$DomEvents.addEventListener(element, type, listener, useCapture);
+            return this._domEvents.addEventListener(element, type, listener, useCapture);
         }
 
         /**
@@ -568,7 +568,7 @@ module plat.ui {
     }
 
     /**
-     * The Type for referencing the '$Dom' injectable as a dependency.
+     * The Type for referencing the '_dom' injectable as a dependency.
      */
     export function IDom(): IDom {
         return new Dom();

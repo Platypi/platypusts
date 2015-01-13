@@ -14,7 +14,7 @@ module plat.storage {
      */
     export class TemplateCache extends Cache<async.IThenable<DocumentFragment>> implements ITemplateCache {
         /**
-         * @name $Promise
+         * @name _Promise
          * @memberof plat.storage.TemplateCache
          * @kind property
          * @access public
@@ -24,7 +24,7 @@ module plat.storage {
          * @description
          * Reference to the {@link plat.async.IPromise|IPromise} injectable.
          */
-        $Promise: async.IPromise = acquire(__Promise);
+        _Promise: async.IPromise = acquire(__Promise);
         
         /**
          * @name constructor
@@ -78,7 +78,7 @@ module plat.storage {
          */
         put(key: string, value: async.IThenable<Node>): async.IThenable<DocumentFragment>;
         put(key: string, value: any): async.IThenable<DocumentFragment> {
-            var Promise = this.$Promise;
+            var Promise = this._Promise;
             super.put(key, Promise.resolve<DocumentFragment>(value));
 
             if (isDocumentFragment(value)) {
@@ -111,21 +111,21 @@ module plat.storage {
             var promise: async.IThenable<DocumentFragment> = super.read(key);
 
             if (isNull(promise)) {
-                return <any>this.$Promise.reject(null);
+                return <any>this._Promise.reject(null);
             }
 
             return promise.then((node) => {
                 return this.put(key, node);
             }, (error: Error) => {
-                var $exception: IExceptionStatic = acquire(__ExceptionStatic);
-                $exception.warn('Error retrieving template from promise.', $exception.TEMPLATE);
+                var _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+                _Exception.warn('Error retrieving template from promise.', _Exception.TEMPLATE);
                 return <DocumentFragment>null;
             });
         }
     }
 
     /**
-     * The Type for referencing the '$TemplateCache' injectable as a dependency.
+     * The Type for referencing the '_templateCache' injectable as a dependency.
      */
     export function ITemplateCache(): ITemplateCache {
         return new TemplateCache();

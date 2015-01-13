@@ -13,7 +13,7 @@ module plat.ui {
      */
     export class TemplateControl extends Control implements ITemplateControl {
         /**
-         * @name $ResourcesFactory
+         * @name _ResourcesFactory
          * @memberof plat.ui.TemplateControl
          * @kind property
          * @access public
@@ -24,9 +24,9 @@ module plat.ui {
          * @description
          * Reference to the {@link plat.ui.IResourcesFactory|IResourcesFactory} injectable.
          */
-        static $ResourcesFactory: IResourcesFactory;
+        static _ResourcesFactory: IResourcesFactory;
         /**
-         * @name $BindableTemplatesFactory
+         * @name _BindableTemplatesFactory
          * @memberof plat.ui.TemplateControl
          * @kind property
          * @access public
@@ -37,9 +37,9 @@ module plat.ui {
          * @description
          * Reference to the {@link plat.ui.IBindableTemplatesFactory|IBindableTemplatesFactory} injectable.
          */
-        static $BindableTemplatesFactory: IBindableTemplatesFactory;
+        static _BindableTemplatesFactory: IBindableTemplatesFactory;
         /**
-         * @name $ManagerCache
+         * @name _managerCache
          * @memberof plat.ui.TemplateControl
          * @kind property
          * @access public
@@ -50,9 +50,9 @@ module plat.ui {
          * @description
          * Reference to a cache injectable that stores {@link plat.processing.IElementManager|IElementManagers}.
          */
-        static $ManagerCache: storage.ICache<processing.IElementManager>;
+        static _managerCache: storage.ICache<processing.IElementManager>;
         /**
-         * @name $TemplateCache
+         * @name _templateCache
          * @memberof plat.ui.TemplateControl
          * @kind property
          * @access public
@@ -63,9 +63,9 @@ module plat.ui {
          * @description
          * Reference to a cache injectable that stores and retrieves HTML templates.
          */
-        static $TemplateCache: storage.ITemplateCache;
+        static _templateCache: storage.ITemplateCache;
         /**
-         * @name $Parser
+         * @name _parser
          * @memberof plat.ui.TemplateControl
          * @kind property
          * @access public
@@ -76,9 +76,9 @@ module plat.ui {
          * @description
          * Reference to the {@link plat.expressions.IParser|IParser} injectable.
          */
-        static $Parser: expressions.IParser;
+        static _parser: expressions.IParser;
         /**
-         * @name $Http
+         * @name _http
          * @memberof plat.ui.TemplateControl
          * @kind property
          * @access public
@@ -89,9 +89,9 @@ module plat.ui {
          * @description
          * Reference to the {@link plat.async.IHttp|IHttp} injectable.
          */
-        static $Http: async.IHttp;
+        static _http: async.IHttp;
         /**
-         * @name $Promise
+         * @name _Promise
          * @memberof plat.ui.TemplateControl
          * @kind property
          * @access public
@@ -102,7 +102,7 @@ module plat.ui {
          * @description
          * Reference to the {@link plat.async.IPromise|IPromise} injectable.
          */
-        static $Promise: async.IPromise;
+        static _Promise: async.IPromise;
 
         /**
          * @name evaluateExpression
@@ -149,7 +149,7 @@ module plat.ui {
             }
 
             if (isString(expression)) {
-                expression = TemplateControl.$Parser.parse(expression);
+                expression = TemplateControl._parser.parse(expression);
             } else if (!isFunction(expression.evaluate)) {
                 return expression;
             }
@@ -229,8 +229,8 @@ module plat.ui {
                 }
 
                 if (isNull(resourceObj)) {
-                    var $exception: IExceptionStatic = acquire(__ExceptionStatic);
-                    $exception.warn('Attempting to use a resource that is not defined.', $exception.CONTEXT);
+                    var _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+                    _Exception.warn('Attempting to use a resource that is not defined.', _Exception.CONTEXT);
                     continue;
                 }
 
@@ -336,15 +336,15 @@ module plat.ui {
             Control.removeEventListeners(control);
             TemplateControl.removeElement(control);
 
-            TemplateControl.$ResourcesFactory.dispose(control);
-            TemplateControl.$BindableTemplatesFactory.dispose(control);
+            TemplateControl._ResourcesFactory.dispose(control);
+            TemplateControl._BindableTemplatesFactory.dispose(control);
 
             deleteProperty(TemplateControl.__resourceCache, control.uid);
 
             ContextManager.dispose(control);
             events.EventManager.dispose(control.uid);
 
-            TemplateControl.$ManagerCache.remove(uid);
+            TemplateControl._managerCache.remove(uid);
             Control.removeParent(control);
 
             define(control, __CONTEXT, null, true, true, true);
@@ -433,7 +433,7 @@ module plat.ui {
             var value = control.context;
 
             if (isNull(control.resources)) {
-                control.resources = TemplateControl.$ResourcesFactory.getInstance();
+                control.resources = TemplateControl._ResourcesFactory.getInstance();
                 control.resources.initialize(control);
             }
 
@@ -545,9 +545,9 @@ module plat.ui {
          */
         static determineTemplate(control: ITemplateControl, templateUrl?: string): async.IThenable<DocumentFragment> {
             var template: any,
-                templateCache = TemplateControl.$TemplateCache,
+                templateCache = TemplateControl._templateCache,
                 dom = control.dom,
-                Promise = TemplateControl.$Promise;
+                Promise = TemplateControl._Promise;
 
             if (!isNull(templateUrl)) {
                 // do nothing
@@ -600,14 +600,14 @@ module plat.ui {
             Control.removeEventListeners(control);
             TemplateControl.removeElement(control);
 
-            TemplateControl.$ResourcesFactory.dispose(control, true);
+            TemplateControl._ResourcesFactory.dispose(control, true);
 
             deleteProperty(TemplateControl.__resourceCache, control.uid);
 
             Control._ContextManagerStatic.dispose(control, true);
             events.EventManager.dispose(control.uid);
 
-            TemplateControl.$ManagerCache.remove(control.uid);
+            TemplateControl._managerCache.remove(control.uid);
             Control.removeParent(control);
 
             control.controls = [];
@@ -736,7 +736,7 @@ module plat.ui {
          * @example
          * <custom-control>
          *     <plat-resources>
-         *         <injectable alias="Cache">$CacheFactory</injectable>
+         *         <injectable alias="Cache">_CacheFactory</injectable>
          *         <observable alias="testObj">
          *              { 
          *                  foo: 'foo', 
@@ -1132,23 +1132,23 @@ module plat.ui {
     }
 
     /**
-     * The Type for referencing the '$TemplateControlFactory' injectable as a dependency.
+     * The Type for referencing the '_TemplateControlFactory' injectable as a dependency.
      */
     export function ITemplateControlFactory(
-        $ResourcesFactory?: IResourcesFactory,
-        $BindableTemplatesFactory?: IBindableTemplatesFactory,
-        $ManagerCache?: storage.ICache<processing.IElementManager>,
-        $TemplateCache?: storage.ITemplateCache,
-        $Parser?: expressions.IParser,
-        $Http?: async.IHttp,
-        $Promise?: async.IPromise): ITemplateControlFactory {
-            TemplateControl.$ResourcesFactory = $ResourcesFactory;
-            TemplateControl.$BindableTemplatesFactory = $BindableTemplatesFactory;
-            TemplateControl.$ManagerCache = $ManagerCache;
-            TemplateControl.$TemplateCache = $TemplateCache;
-            TemplateControl.$Parser = $Parser;
-            TemplateControl.$Http = $Http;
-            TemplateControl.$Promise = $Promise;
+        _ResourcesFactory?: IResourcesFactory,
+        _BindableTemplatesFactory?: IBindableTemplatesFactory,
+        _managerCache?: storage.ICache<processing.IElementManager>,
+        _templateCache?: storage.ITemplateCache,
+        _parser?: expressions.IParser,
+        _http?: async.IHttp,
+        _Promise?: async.IPromise): ITemplateControlFactory {
+            TemplateControl._ResourcesFactory = _ResourcesFactory;
+            TemplateControl._BindableTemplatesFactory = _BindableTemplatesFactory;
+            TemplateControl._managerCache = _managerCache;
+            TemplateControl._templateCache = _templateCache;
+            TemplateControl._parser = _parser;
+            TemplateControl._http = _http;
+            TemplateControl._Promise = _Promise;
             return TemplateControl;
     }
 
@@ -1492,7 +1492,7 @@ module plat.ui {
          * @example
          * <custom-control>
          *     <plat-resources>
-         *         <injectable alias="Cache">$CacheFactory</injectable>
+         *         <injectable alias="Cache">_CacheFactory</injectable>
          *         <observable alias="testObj">
          *              { 
          *                  foo: 'foo', 

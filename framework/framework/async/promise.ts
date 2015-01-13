@@ -526,9 +526,9 @@ module plat.async {
 
             try {
                 if (promise === value) {
-                    var $exception: IExceptionStatic = acquire(__ExceptionStatic);
-                    $exception.fatal(new TypeError('A promises callback cannot return the same promise.'),
-                        $exception.PROMISE);
+                    var _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+                    _Exception.fatal(new TypeError('A promises callback cannot return the same promise.'),
+                        _Exception.PROMISE);
                 }
 
                 if (isPromise(value)) {
@@ -612,18 +612,18 @@ module plat.async {
          * @returns {plat.async.Promise<R>} A promise object.
          */
         constructor(resolveFunction: IResolveFunction<R>) {
-            var $exception: IExceptionStatic;
+            var _Exception: IExceptionStatic;
             if (!isFunction(resolveFunction)) {
-                $exception = acquire(__ExceptionStatic);
-                $exception.fatal(new TypeError('You must pass a resolver function as the first argument to the promise constructor'),
-                    $exception.PROMISE);
+                _Exception = acquire(__ExceptionStatic);
+                _Exception.fatal(new TypeError('You must pass a resolver function as the first argument to the promise constructor'),
+                    _Exception.PROMISE);
             }
 
             if (!(this instanceof Promise)) {
-                $exception = acquire(__ExceptionStatic);
-                $exception.fatal(new TypeError('Failed to construct "Promise": ' +
+                _Exception = acquire(__ExceptionStatic);
+                _Exception.fatal(new TypeError('Failed to construct "Promise": ' +
                     'Please use the "new" operator, this object constructor cannot be called as a function.'),
-                    $exception.PROMISE);
+                    _Exception.PROMISE);
             }
 
             this.__subscribers = [];
@@ -932,13 +932,13 @@ module plat.async {
 
     function useMutationObserver(): () => void {
         var observer = new BrowserMutationObserver(flush),
-            $document = acquire(__Document),
-            $window = acquire(__Window),
-            element = $document.createElement('div');
+            _document = acquire(__Document),
+            _window = acquire(__Window),
+            element = _document.createElement('div');
 
         observer.observe(element, { attributes: true });
 
-        $window.addEventListener('unload', () => {
+        _window.addEventListener('unload', () => {
             observer.disconnect();
             observer = null;
         }, false);
@@ -1003,15 +1003,15 @@ module plat.async {
     }
 
     /**
-     * The Type for referencing the '$Promise' injectable as a dependency.
+     * The Type for referencing the '_Promise' injectable as a dependency.
      */
-    export function IPromise($Window?: any): IPromise {
-        if (!isNull($Window.Promise) &&
-            isFunction($Window.Promise.all) &&
-            isFunction($Window.Promise.race) &&
-            isFunction($Window.Promise.resolve) &&
-            isFunction($Window.Promise.reject)) {
-            return $Window.Promise;
+    export function IPromise(_window?: any): IPromise {
+        if (!isNull(_window.Promise) &&
+            isFunction(_window.Promise.all) &&
+            isFunction(_window.Promise.race) &&
+            isFunction(_window.Promise.resolve) &&
+            isFunction(_window.Promise.reject)) {
+            return _window.Promise;
         }
         return Promise;
     }

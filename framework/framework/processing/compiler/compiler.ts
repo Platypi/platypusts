@@ -20,7 +20,7 @@ module plat.processing {
      */
     export class Compiler implements ICompiler {
         /**
-         * @name $ElementManagerFactory
+         * @name _ElementManagerFactory
          * @memberof plat.processing.Compiler
          * @kind property
          * @access public
@@ -30,9 +30,9 @@ module plat.processing {
          * @description
          * Reference to the {@link plat.processing.IElementManagerFactory|IElementManagerFactory} injectable.
          */
-        $ElementManagerFactory: IElementManagerFactory = acquire(__ElementManagerFactory);
+        _ElementManagerFactory: IElementManagerFactory = acquire(__ElementManagerFactory);
         /**
-         * @name $TextManagerFactory
+         * @name _TextManager
          * @memberof plat.processing.Compiler
          * @kind property
          * @access public
@@ -42,9 +42,9 @@ module plat.processing {
          * @description
          * Reference to the {@link plat.processing.ITextManagerFactory|ITextManagerFactory} injectable.
          */
-        $TextManagerFactory: ITextManagerFactory = acquire(__TextManagerFactory);
+        _TextManager: ITextManagerFactory = acquire(__TextManagerFactory);
         /**
-         * @name $CommentManagerFactory
+         * @name _CommentManagerFactory
          * @memberof plat.processing.Compiler
          * @kind property
          * @access public
@@ -54,9 +54,9 @@ module plat.processing {
          * @description
          * Reference to the {@link plat.processing.ICommentManagerFactory|ICommentManagerFactory} injectable.
          */
-        $CommentManagerFactory: ICommentManagerFactory = acquire(__CommentManagerFactory);
+        _CommentManagerFactory: ICommentManagerFactory = acquire(__CommentManagerFactory);
         /**
-         * @name $ManagerCache
+         * @name _managerCache
          * @memberof plat.processing.Compiler
          * @kind property
          * @access public
@@ -66,7 +66,7 @@ module plat.processing {
          * @description
          * Reference to a cache injectable that stores {@link plat.processing.IElementManager|IElementManagers}.
          */
-        $ManagerCache: storage.ICache<INodeManager> = acquire(__ManagerCache);
+        _managerCache: storage.ICache<INodeManager> = acquire(__ManagerCache);
         
         /**
          * @name compile
@@ -128,8 +128,8 @@ module plat.processing {
                 newLength: number,
                 childNode: Node,
                 hasControl = !isNull(control),
-                manager = <IElementManager>(hasControl ? this.$ManagerCache.read(control.uid) : null),
-                create = this.$ElementManagerFactory.create;
+                manager = <IElementManager>(hasControl ? this._managerCache.read(control.uid) : null),
+                create = this._ElementManagerFactory.create;
 
             if (!isUndefined(childNodes)) {
                 childNodes = Array.prototype.slice.call(childNodes);
@@ -188,9 +188,9 @@ module plat.processing {
                 node: Node,
                 newManager: IElementManager,
                 newLength: number,
-                create = this.$ElementManagerFactory.create,
-                commentCreate = this.$CommentManagerFactory.create,
-                textCreate = this.$TextManagerFactory.create;
+                create = this._ElementManagerFactory.create,
+                commentCreate = this._CommentManagerFactory.create,
+                textCreate = this._TextManager.create;
 
             for (var i = 0; i < length; ++i) {
                 node = nodes[i];
@@ -216,7 +216,7 @@ module plat.processing {
     }
 
     /**
-     * The Type for referencing the '$Compiler' injectable as a dependency.
+     * The Type for referencing the '_compiler' injectable as a dependency.
      */
     export function ICompiler(): ICompiler {
         return new Compiler();

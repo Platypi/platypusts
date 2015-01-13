@@ -310,7 +310,7 @@ module plat.storage {
     }
 
     /**
-     * The Type for referencing the '$CacheFactory' injectable as a dependency.
+     * The Type for referencing the '_CacheFactory' injectable as a dependency.
      */
     export function ICacheFactory(): ICacheFactory {
         return Cache;
@@ -487,7 +487,7 @@ module plat.storage {
     var managerCache = Cache.create<processing.INodeManager>('__managerCache');
 
     /**
-     * The Type for referencing the '$ManagerCache' injectable as a dependency.
+     * The Type for referencing the '_managerCache' injectable as a dependency.
      */
     export function IManagerCache(): typeof managerCache {
         return managerCache;

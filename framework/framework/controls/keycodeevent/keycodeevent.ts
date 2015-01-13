@@ -120,7 +120,7 @@ module plat.controls {
      */
     export class KeyCodeEventControl extends SimpleEventControl implements IKeyCodeEventControl {
         /**
-         * @name $Regex
+         * @name _regex
          * @memberof plat.controls.KeyCodeEventControl
          * @kind property
          * @access public
@@ -130,7 +130,7 @@ module plat.controls {
          * @description
          * Reference to the {@link plat.expressions.IRegex|IRegex} injectable.
          */
-        $Regex: plat.expressions.IRegex = plat.acquire(__Regex);
+        _regex: plat.expressions.IRegex = plat.acquire(__Regex);
 
         /**
          * @name keyCodes
@@ -245,7 +245,7 @@ module plat.controls {
                 key: string,
                 keyCodes = this.keyCodes,
                 index: string,
-                shifted = this.$Regex.shiftedKeyRegex;
+                shifted = this._regex.shiftedKeyRegex;
 
             if (!isObject(keyCodes)) {
                 keyCodes = this.keyCodes = {};

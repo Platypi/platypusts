@@ -221,4 +221,5 @@ module.exports = exports = function load(grunt) {
     grunt.registerTask('docs', ['clean:after', 'bundle']);
     grunt.registerTask('test', ['ts:test', 'karma']);
     grunt.registerTask('app', ['ts:all', 'connect']);
+    grunt.registerTask('compile', ['ts:all']);
 };
