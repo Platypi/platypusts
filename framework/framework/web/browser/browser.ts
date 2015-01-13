@@ -36,7 +36,7 @@ module plat.web {
             HASH: 'hash',
             STATE: 'state',
             routingType: 'hash',
-            hashPrefix: '',
+            hashPrefix: '!',
             baseUrl: ''
         };
 
