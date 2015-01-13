@@ -130,7 +130,7 @@ module plat.controls {
          * @description
          * Reference to the {@link plat.expressions.IRegex|IRegex} injectable.
          */
-        _regex: plat.expressions.IRegex = plat.acquire(__Regex);
+        protected _regex: plat.expressions.IRegex = plat.acquire(__Regex);
 
         /**
          * @name keyCodes
@@ -385,7 +385,7 @@ module plat.controls {
          * 
          * @returns {void}
          */
-        _onEvent(ev: KeyboardEvent): void {
+        protected _onEvent(ev: KeyboardEvent): void {
             var keyCode = ev.keyCode;
 
             if ((keyCode >= 48 && keyCode <= 90) ||

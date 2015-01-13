@@ -22,7 +22,7 @@
          * @description
          * The window injectable.
          */
-        _window: Window = acquire(__Window);
+        protected _window: Window = acquire(__Window);
 
         /**
          * @name _history
@@ -35,7 +35,7 @@
          * @description
          * The window.history injectable.
          */
-        _history: History = acquire(__History);
+        protected _history: History = acquire(__History);
 
         /**
          * @name _document

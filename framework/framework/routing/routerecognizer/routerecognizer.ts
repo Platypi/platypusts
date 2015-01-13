@@ -23,7 +23,7 @@
          * @description
          * Reference to the {@link plat.routing.BaseSegment|BaseSegment} injectable.
          */
-        _BaseSegmentFactory: typeof BaseSegment = acquire(__BaseSegmentFactory);
+        protected _BaseSegmentFactory: typeof BaseSegment = acquire(__BaseSegmentFactory);
 
         /**
          * @name _State
@@ -36,7 +36,7 @@
          * @description
          * Reference to the {@link plat.routing.State|State} injectable.
          */
-        _State: typeof State = acquire(__StateStatic);
+        protected _State: typeof State = acquire(__StateStatic);
 
         /**
          * @name _rootState

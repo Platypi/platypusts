@@ -30,7 +30,7 @@ module plat.processing {
          * @description
          * Reference to the {@link plat.processing.IElementManagerFactory|IElementManagerFactory} injectable.
          */
-        _ElementManagerFactory: IElementManagerFactory = acquire(__ElementManagerFactory);
+        protected _ElementManagerFactory: IElementManagerFactory = acquire(__ElementManagerFactory);
         /**
          * @name _TextManager
          * @memberof plat.processing.Compiler
@@ -42,7 +42,7 @@ module plat.processing {
          * @description
          * Reference to the {@link plat.processing.ITextManagerFactory|ITextManagerFactory} injectable.
          */
-        _TextManager: ITextManagerFactory = acquire(__TextManagerFactory);
+        protected _TextManager: ITextManagerFactory = acquire(__TextManagerFactory);
         /**
          * @name _CommentManagerFactory
          * @memberof plat.processing.Compiler

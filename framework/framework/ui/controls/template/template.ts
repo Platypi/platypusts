@@ -22,7 +22,7 @@ module plat.ui.controls {
          * @description
          * Reference to the {@link plat.async.IPromise|IPromise} injectable.
          */
-        _Promise: async.IPromise = acquire(__Promise);
+        protected _Promise: async.IPromise = acquire(__Promise);
         /**
          * @name _templateCache
          * @memberof plat.ui.controls.Template
@@ -34,7 +34,7 @@ module plat.ui.controls {
          * @description
          * Reference to an injectable for storing HTML templates.
          */
-        _templateCache: storage.ITemplateCache = acquire(__TemplateCache);
+        protected _templateCache: storage.ITemplateCache = acquire(__TemplateCache);
         /**
          * @name _document
          * @memberof plat.ui.controls.Template

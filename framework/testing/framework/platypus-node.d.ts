@@ -523,11 +523,11 @@ declare module plat {
         /**
           * The window injectable.
           */
-        _window: Window;
+        protected _window: Window;
         /**
           * The window.history injectable.
           */
-        _history: History;
+        protected _history: History;
         /**
           * The document injectable.
           */
@@ -5716,31 +5716,31 @@ declare module plat {
             /**
               * Reference to the IResourcesFactory injectable.
               */
-            static _ResourcesFactory: IResourcesFactory;
+           protected static _ResourcesFactory: IResourcesFactory;
             /**
               * Reference to the IBindableTemplatesFactory injectable.
               */
-            static _BindableTemplatesFactory: IBindableTemplatesFactory;
+           protected static _BindableTemplatesFactory: IBindableTemplatesFactory;
             /**
               * Reference to a cache injectable that stores IElementManagers.
               */
-            static _managerCache: storage.ICache<processing.IElementManager>;
+           protected static _managerCache: storage.ICache<processing.IElementManager>;
             /**
               * Reference to a cache injectable that stores and retrieves HTML templates.
               */
-            static _templateCache: storage.ITemplateCache;
+           protected static _templateCache: storage.ITemplateCache;
             /**
               * Reference to the IParser injectable.
               */
-            static _parser: expressions.IParser;
+           protected static _parser: expressions.IParser;
             /**
               * Reference to the IHttp injectable.
               */
-            static _http: async.IHttp;
+           protected static _http: async.IHttp;
             /**
               * Reference to the IPromise injectable.
               */
-            static _Promise: async.IPromise;
+           protected static _Promise: async.IPromise;
             /**
               * Evaluates an expression string with a given control and optional control's context and aliases.
               * @param {string} expression The expression string (e.g. 'foo + foo').
@@ -7294,11 +7294,11 @@ declare module plat {
             /**
               * Reference to the IContextManagerStatic injectable.
               */
-            static _ContextManager: observable.IContextManagerStatic;
+           protected static _ContextManager: observable.IContextManagerStatic;
             /**
               * Reference to the IRegex injectable.
               */
-            static _regex: expressions.IRegex;
+           protected static _regex: expressions.IRegex;
             /**
               * Populates an IResource value if necessary, and adds it to the given
               * control's resources.
@@ -10116,15 +10116,15 @@ declare module plat {
             /**
               * Reference to the IContextManagerStatic injectable.
               */
-            static _ContextManager: observable.IContextManagerStatic;
+           protected static _ContextManager: observable.IContextManagerStatic;
             /**
               * Reference to the IParser injectable.
               */
-            static _parser: expressions.IParser;
+           protected static _parser: expressions.IParser;
             /**
               * Reference to the ITemplateControlFactory injectable.
               */
-            static _TemplateControlFactory: ui.ITemplateControlFactory;
+           protected static _TemplateControlFactory: ui.ITemplateControlFactory;
             /**
               * Determines if a string has the markup notation.
               * @param {string} text The text string in which to search for markup.
@@ -11052,7 +11052,7 @@ declare module plat {
             /**
               * Reference to the IRegex injectable.
               */
-            static _regex: expressions.IRegex;
+           protected static _regex: expressions.IRegex;
             /**
               * Parses a route into segments, populating an array of names (for dynamic and splat segments) as well as
               * an ISegmentTypeCount object.

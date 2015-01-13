@@ -1465,7 +1465,7 @@ module plat.async {
          * @description
          * The Window object.
          */
-        _window: Window = acquire(__Window);
+        protected _window: Window = acquire(__Window);
 
         /**
          * @name __http

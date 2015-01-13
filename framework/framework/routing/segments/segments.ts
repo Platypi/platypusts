@@ -31,7 +31,7 @@
          * @description
          * Reference to the {@link plat.expressions.IRegex|IRegex} injectable.
          */
-        static _regex: expressions.IRegex;
+       protected static _regex: expressions.IRegex;
 
         /**
          * @name parse
@@ -242,7 +242,7 @@
      * The Type for referencing the '_BaseSegmentFactory' injectable as a dependency.
      */
     export function IBaseSegmentFactory(_regex: expressions.IRegex): typeof BaseSegment {
-        BaseSegment._regex = _regex;
+        (<any>BaseSegment)._regex = _regex;
         return BaseSegment;
     }
 

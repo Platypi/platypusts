@@ -51,7 +51,7 @@ module plat.web {
          * @description
          * Reference to the {@link plat.events.IEventManagerStatic|IEventManagerStatic} injectable.
          */
-        _EventManagerStatic: events.IEventManagerStatic = acquire(__EventManagerStatic);
+        protected _EventManagerStatic: events.IEventManagerStatic = acquire(__EventManagerStatic);
         /**
          * @name _compat
          * @memberof plat.web.Browser
@@ -63,7 +63,7 @@ module plat.web {
          * @description
          * Reference to the {@link plat.ICompat|ICompat} injectable.
          */
-        _compat: ICompat = acquire(__Compat);
+        protected _compat: ICompat = acquire(__Compat);
         /**
          * @name _regex
          * @memberof plat.web.Browser

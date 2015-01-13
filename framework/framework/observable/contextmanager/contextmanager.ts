@@ -472,7 +472,7 @@ module plat.observable {
          * @description
          * Reference to the {@link plat.ICompat|ICompat} injectable.
          */
-        _compat: ICompat = acquire(__Compat);
+        protected _compat: ICompat = acquire(__Compat);
 
         /**
          * @name context

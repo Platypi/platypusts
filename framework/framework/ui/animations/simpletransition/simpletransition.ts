@@ -23,7 +23,7 @@
          * @description
          * Reference to the Window injectable.
          */
-        _window: Window = acquire(__Window);
+        protected _window: Window = acquire(__Window);
 
         /**
          * @name options

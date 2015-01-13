@@ -22,7 +22,7 @@ module plat.ui.controls {
          * @description
          * Reference to the {@link plat.async.IPromise|IPromise} injectable.
          */
-        _Promise: async.IPromise = acquire(__Promise);
+        protected _Promise: async.IPromise = acquire(__Promise);
         /**
          * @name _document
          * @memberof plat.ui.controls.Select
@@ -34,7 +34,7 @@ module plat.ui.controls {
          * @description
          * Reference to the Document injectable.
          */
-        _document: Document = acquire(__Document);
+        protected _document: Document = acquire(__Document);
 
         /**
          * @name replaceWith

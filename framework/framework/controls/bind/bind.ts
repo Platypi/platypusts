@@ -31,7 +31,7 @@ module plat.controls {
          * @description
          * Reference to the {@link plat.expressions.IParser|IParser} injectable.
          */
-        _parser: expressions.IParser = acquire(__Parser);
+        protected _parser: expressions.IParser = acquire(__Parser);
 
         /**
          * @name _ContextManager
@@ -45,7 +45,7 @@ module plat.controls {
          * @description
          * Reference to the {@link plat.observable.IContextManagerStatic|IContextManagerStatic} injectable.
          */
-        _ContextManager: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
+        protected _ContextManager: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
 
         /**
          * @name _compat

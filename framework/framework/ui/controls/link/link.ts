@@ -44,7 +44,7 @@ module plat.ui.controls {
          * @description
          * The {@link plat.routing.IRouterStatic|IRouterStatic} injectable instance
          */
-        _routerStatic: typeof routing.Router = acquire(__RouterStatic);
+        protected _routerStatic: typeof routing.Router = acquire(__RouterStatic);
 
         /**
          * @name _Injector
@@ -57,7 +57,7 @@ module plat.ui.controls {
          * @description
          * The {@link plat.dependency.Injector|Injector} injectable instance
          */
-        _Injector: typeof dependency.Injector = acquire(__InjectorStatic);
+        protected _Injector: typeof dependency.Injector = acquire(__InjectorStatic);
 
         /**
          * @name _browser

@@ -22,7 +22,7 @@ module plat.controls {
          * @description
          * Reference to the {@link plat.expressions.IParser|IParser} injectable.
          */
-        _parser: expressions.IParser = acquire(__Parser);
+        protected _parser: expressions.IParser = acquire(__Parser);
 
         /**
          * @name _regex
@@ -35,7 +35,7 @@ module plat.controls {
          * @description
          * Reference to the {@link plat.expressions.IRegex|IRegex} injectable.
          */
-        _regex: expressions.IRegex = acquire(__Regex);
+        protected _regex: expressions.IRegex = acquire(__Regex);
 
         /**
          * @name event
@@ -1032,7 +1032,7 @@ module plat.controls {
          * @description
          * Reference to the {@link plat.ICompat|ICompat} injectable.
          */
-        _compat: ICompat = acquire(__Compat);
+        protected _compat: ICompat = acquire(__Compat);
 
         /**
          * @name event

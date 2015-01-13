@@ -140,7 +140,7 @@
          * @description
          * Reference to the Document injectable.
          */
-        _document: Document = acquire(__Document);
+        protected _document: Document = acquire(__Document);
         /**
          * @name _compat
          * @memberof plat.ui.DomEvents
@@ -153,7 +153,7 @@
          * @description
          * Reference to the {@link plat.ICompat|ICompat} injectable.
          */
-        _compat: ICompat = acquire(__Compat);
+        protected _compat: ICompat = acquire(__Compat);
 
         /**
          * @name _isActive
@@ -2705,7 +2705,7 @@
          * @description
          * Reference to the Document injectable.
          */
-        _document: Document = acquire(__Document);
+        protected _document: Document = acquire(__Document);
 
         /**
          * @name element

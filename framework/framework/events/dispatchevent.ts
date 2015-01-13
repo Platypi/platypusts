@@ -35,7 +35,7 @@ module plat.events {
          * @description
          * Reference to the {@link plat.events.IEventManagerStatic|IEventManagerStatic} injectable.
          */
-        _EventManagerStatic: IEventManagerStatic = acquire(__EventManagerStatic);
+        protected _EventManagerStatic: IEventManagerStatic = acquire(__EventManagerStatic);
 
         /**
          * @name _ContextManager
@@ -48,7 +48,7 @@ module plat.events {
          * @description
          * Reference to the {@link plat.events.IContextManagerStatic|IContextManagerStatic} injectable.
          */
-        _ContextManager: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
+        protected _ContextManager: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
 
         /**
          * @name sender

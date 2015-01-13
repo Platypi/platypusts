@@ -15,7 +15,7 @@
          * @description
          * The {@link plat.async.IPromise|IPromise} injectable instance
          */
-        _Promise: async.IPromise = acquire(__Promise);
+        protected _Promise: async.IPromise = acquire(__Promise);
 
         /**
          * @name _Injector
@@ -28,7 +28,7 @@
          * @description
          * The {@link plat.dependency.Injector|Injector} injectable instance
          */
-        _Injector: typeof dependency.Injector = acquire(__InjectorStatic);
+        protected _Injector: typeof dependency.Injector = acquire(__InjectorStatic);
 
         /**
          * @name _browserConfig

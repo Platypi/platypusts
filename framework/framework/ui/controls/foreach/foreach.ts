@@ -22,7 +22,7 @@ module plat.ui.controls {
          * @description
          * Reference to the {@link plat.ui.animations.IAnimator|IAnimator} injectable.
          */
-        _animator: animations.IAnimator = acquire(__Animator);
+        protected _animator: animations.IAnimator = acquire(__Animator);
         /**
          * @name _Promise
          * @memberof plat.ui.controls.ForEach
@@ -34,7 +34,7 @@ module plat.ui.controls {
          * @description
          * Reference to the {@link plat.async.IPromise|IPromise} injectable.
          */
-        _Promise: async.IPromise = acquire(__Promise);
+        protected _Promise: async.IPromise = acquire(__Promise);
 
         /**
          * @name context

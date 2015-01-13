@@ -22,7 +22,7 @@
          * @description
          * Reference to the {@link plat.observable.IContextManagerStatic|IContextManagerStatic} injectable.
          */
-        _ContextManager: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
+        protected _ContextManager: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
 
         /**
          * @name property

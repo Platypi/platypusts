@@ -85,7 +85,7 @@
          * @description
          * Reference to the {@link plat.observable.IContextManagerStatic|IContextManagerStatic} injectable.
          */
-        _ContextManager: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
+        protected _ContextManager: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
         /**
          * @name _document
          * @memberof plat.web.UrlUtils
@@ -97,7 +97,7 @@
          * @description
          * Reference to the Document injectable.
          */
-        _document: Document = acquire(__Document);
+        protected _document: Document = acquire(__Document);
         /**
          * @name _window
          * @memberof plat.web.UrlUtils

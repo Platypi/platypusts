@@ -57,7 +57,7 @@ module plat.expressions {
          * @description
          * A single expression's token representation created by a {@link plat.expressions.ITokenizer|ITokenizer}.
          */
-        _tokens: Array<IToken> = [];
+        protected _tokens: Array<IToken> = [];
 
         /**
          * @name __cache
