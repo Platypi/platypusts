@@ -240,7 +240,7 @@ module plat.ui.controls {
          */
         contextChanged(newValue?: Array<any>, oldValue?: Array<any>): void {
             if (!isArray(newValue)) {
-                var _Exception: plat.IExceptionStatic = plat.acquire(__ExceptionStatic);
+                var _Exception: IExceptionStatic = this._Exception;
                 _Exception.warn(this.type + ' context set to something other than an Array.', _Exception.CONTEXT);
                 return;
             }
@@ -277,7 +277,7 @@ module plat.ui.controls {
             var context = this.context;
             if (!isArray(context)) {
                 if (!isNull(context)) {
-                    var _Exception: plat.IExceptionStatic = plat.acquire(__ExceptionStatic);
+                    var _Exception: IExceptionStatic = this._Exception;
                     _Exception.warn(this.type + ' context set to something other than an Array.', _Exception.CONTEXT);
                 }
                 return;
@@ -384,7 +384,7 @@ module plat.ui.controls {
                     }
                 }).catch((error) => {
                         postpone(() => {
-                            var _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+                            var _Exception: IExceptionStatic = this._Exception;
                             _Exception.warn(error, _Exception.BIND);
                         });
                     });

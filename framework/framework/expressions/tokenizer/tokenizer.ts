@@ -12,6 +12,19 @@ module plat.expressions {
      */
     export class Tokenizer implements ITokenizer {
         /**
+         * @name _Exception
+         * @memberof plat.expressions.Tokenizer
+         * @kind property
+         * @access protected
+         * 
+         * @type {plat.IExceptionStatic}
+         * 
+         * @description
+         * Reference to the {@link plat.IExceptionStatic|IExceptionStatic} injectable.
+         */
+        protected _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+
+        /**
          * @name _input
          * @memberof plat.expressions.Tokenizer
          * @kind property
@@ -465,7 +478,7 @@ module plat.expressions {
          * @returns {void}
          */
         protected _throwError(error: string): void {
-            var _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+            var _Exception: IExceptionStatic = this._Exception;
             _Exception.fatal(error + ' in ' + this._input, _Exception.PARSE);
         }
         

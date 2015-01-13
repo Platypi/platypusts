@@ -17,14 +17,27 @@ module plat.storage {
          * @name _Promise
          * @memberof plat.storage.TemplateCache
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.async.IPromise}
          * 
          * @description
          * Reference to the {@link plat.async.IPromise|IPromise} injectable.
          */
-        _Promise: async.IPromise = acquire(__Promise);
+        protected _Promise: async.IPromise = acquire(__Promise);
+
+        /**
+         * @name _Exception
+         * @memberof plat.storage.TemplateCache
+         * @kind property
+         * @access protected
+         * 
+         * @type {plat.IExceptionStatic}
+         * 
+         * @description
+         * Reference to the {@link plat.IExceptionStatic|IExceptionStatic} injectable.
+         */
+        protected _Exception: IExceptionStatic = acquire(__ExceptionStatic);
         
         /**
          * @name constructor
@@ -117,7 +130,7 @@ module plat.storage {
             return promise.then((node) => {
                 return this.put(key, node);
             }, (error: Error) => {
-                var _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+                var _Exception: IExceptionStatic = this._Exception;
                 _Exception.warn('Error retrieving template from promise.', _Exception.TEMPLATE);
                 return <DocumentFragment>null;
             });

@@ -16,7 +16,7 @@ module plat.ui {
          * @name _ResourcesFactory
          * @memberof plat.ui.TemplateControl
          * @kind property
-         * @access public
+         * @access protected
          * @static
          * 
          * @type {plat.ui.IResourcesFactory}
@@ -24,12 +24,13 @@ module plat.ui {
          * @description
          * Reference to the {@link plat.ui.IResourcesFactory|IResourcesFactory} injectable.
          */
-        static _ResourcesFactory: IResourcesFactory;
+        protected static _ResourcesFactory: IResourcesFactory;
+
         /**
          * @name _BindableTemplatesFactory
          * @memberof plat.ui.TemplateControl
          * @kind property
-         * @access public
+         * @access protected
          * @static
          * 
          * @type {plat.ui.IBindableTemplatesFactory}
@@ -37,12 +38,13 @@ module plat.ui {
          * @description
          * Reference to the {@link plat.ui.IBindableTemplatesFactory|IBindableTemplatesFactory} injectable.
          */
-        static _BindableTemplatesFactory: IBindableTemplatesFactory;
+        protected static _BindableTemplatesFactory: IBindableTemplatesFactory;
+
         /**
          * @name _managerCache
          * @memberof plat.ui.TemplateControl
          * @kind property
-         * @access public
+         * @access protected
          * @static
          * 
          * @type {plat.storage.ICache<processing.IElementManager>}
@@ -50,12 +52,13 @@ module plat.ui {
          * @description
          * Reference to a cache injectable that stores {@link plat.processing.IElementManager|IElementManagers}.
          */
-        static _managerCache: storage.ICache<processing.IElementManager>;
+        protected static _managerCache: storage.ICache<processing.IElementManager>;
+
         /**
          * @name _templateCache
          * @memberof plat.ui.TemplateControl
          * @kind property
-         * @access public
+         * @access protected
          * @static
          * 
          * @type {plat.storage.ITemplateCache}
@@ -63,12 +66,13 @@ module plat.ui {
          * @description
          * Reference to a cache injectable that stores and retrieves HTML templates.
          */
-        static _templateCache: storage.ITemplateCache;
+        protected static _templateCache: storage.ITemplateCache;
+
         /**
          * @name _parser
          * @memberof plat.ui.TemplateControl
          * @kind property
-         * @access public
+         * @access protected
          * @static
          * 
          * @type {plat.expressions.IParser}
@@ -76,12 +80,13 @@ module plat.ui {
          * @description
          * Reference to the {@link plat.expressions.IParser|IParser} injectable.
          */
-        static _parser: expressions.IParser;
+        protected static _parser: expressions.IParser;
+
         /**
          * @name _http
          * @memberof plat.ui.TemplateControl
          * @kind property
-         * @access public
+         * @access protected
          * @static
          * 
          * @type {plat.async.IHttp}
@@ -89,12 +94,13 @@ module plat.ui {
          * @description
          * Reference to the {@link plat.async.IHttp|IHttp} injectable.
          */
-        static _http: async.IHttp;
+        protected static _http: async.IHttp;
+
         /**
          * @name _Promise
          * @memberof plat.ui.TemplateControl
          * @kind property
-         * @access public
+         * @access protected
          * @static
          * 
          * @type {plat.async.IPromise}
@@ -102,7 +108,20 @@ module plat.ui {
          * @description
          * Reference to the {@link plat.async.IPromise|IPromise} injectable.
          */
-        static _Promise: async.IPromise;
+        protected static _Promise: async.IPromise;
+
+        /**
+         * @name _Exception
+         * @memberof plat.ui.TemplateControl
+         * @kind property
+         * @access protected
+         * 
+         * @type {plat.IExceptionStatic}
+         * 
+         * @description
+         * Reference to the {@link plat.IExceptionStatic|IExceptionStatic} injectable.
+         */
+        protected static _Exception: IExceptionStatic;
 
         /**
          * @name evaluateExpression
@@ -229,7 +248,7 @@ module plat.ui {
                 }
 
                 if (isNull(resourceObj)) {
-                    var _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+                    var _Exception: IExceptionStatic = TemplateControl._Exception;
                     _Exception.warn('Attempting to use a resource that is not defined.', _Exception.CONTEXT);
                     continue;
                 }
@@ -1141,15 +1160,17 @@ module plat.ui {
         _templateCache?: storage.ITemplateCache,
         _parser?: expressions.IParser,
         _http?: async.IHttp,
-        _Promise?: async.IPromise): ITemplateControlFactory {
-            TemplateControl._ResourcesFactory = _ResourcesFactory;
-            TemplateControl._BindableTemplatesFactory = _BindableTemplatesFactory;
-            TemplateControl._managerCache = _managerCache;
-            TemplateControl._templateCache = _templateCache;
-            TemplateControl._parser = _parser;
-            TemplateControl._http = _http;
-            TemplateControl._Promise = _Promise;
-            return TemplateControl;
+        _Promise?: async.IPromise,
+        _Exception?: IExceptionStatic): ITemplateControlFactory {
+        (<any>TemplateControl)._ResourcesFactory = _ResourcesFactory;
+        (<any>TemplateControl)._BindableTemplatesFactory = _BindableTemplatesFactory;
+        (<any>TemplateControl)._managerCache = _managerCache;
+        (<any>TemplateControl)._templateCache = _templateCache;
+        (<any>TemplateControl)._parser = _parser;
+        (<any>TemplateControl)._http = _http;
+        (<any>TemplateControl)._Promise = _Promise;
+        (<any>TemplateControl)._Exception = _Exception;
+        return TemplateControl;
     }
 
     register.injectable(__TemplateControlFactory, ITemplateControlFactory, [
@@ -1159,7 +1180,8 @@ module plat.ui {
         __TemplateCache,
         __Parser,
         __Http,
-        __Promise
+        __Promise,
+        __ExceptionStatic
     ], __FACTORY);
 
     /**

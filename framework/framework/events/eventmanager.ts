@@ -10,6 +10,20 @@ module plat.events {
      */
     export class EventManager {
         /**
+         * @name _Exception
+         * @memberof plat.events.EventManager
+         * @kind property
+         * @access protected
+         * @static
+         * 
+         * @type {plat.IExceptionStatic}
+         * 
+         * @description
+         * Reference to the {@link plat.IExceptionStatic|IExceptionStatic} injectable.
+         */
+        protected static _Exception: IExceptionStatic;
+
+        /**
          * @name _compat
          * @memberof plat.events.EventManager
          * @kind property
@@ -625,7 +639,7 @@ module plat.events {
                 try {
                     listeners[index].apply(context, args);
                 } catch (e) {
-                    var _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+                    var _Exception: IExceptionStatic = EventManager._Exception;
                     _Exception.warn(e, _Exception.EVENT);
                 }
             }
@@ -636,18 +650,21 @@ module plat.events {
      * The Type for referencing the '_EventManagerStatic' injectable as a dependency.
      */
     export function IEventManagerStatic(
+        _Exception?: IExceptionStatic,
         _compat?: ICompat,
         _document?: Document,
         _window?: Window,
         _dom?: ui.IDom): IEventManagerStatic {
-            (<any>EventManager)._compat = _compat;
-            (<any>EventManager)._document = _document;
-            (<any>EventManager)._window = _window;
-            (<any>EventManager)._dom = _dom;
-            return EventManager;
+        (<any>EventManager)._Exception = _Exception;
+        (<any>EventManager)._compat = _compat;
+        (<any>EventManager)._document = _document;
+        (<any>EventManager)._window = _window;
+        (<any>EventManager)._dom = _dom;
+        return EventManager;
     }
 
     register.injectable(__EventManagerStatic, IEventManagerStatic, [
+        __ExceptionStatic,
         __Compat,
         __Document,
         __Window,

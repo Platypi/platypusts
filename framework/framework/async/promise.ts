@@ -526,9 +526,7 @@ module plat.async {
 
             try {
                 if (promise === value) {
-                    var _Exception: IExceptionStatic = acquire(__ExceptionStatic);
-                    _Exception.fatal(new TypeError('A promises callback cannot return the same promise.'),
-                        _Exception.PROMISE);
+                    throw new TypeError('A promises callback cannot return the same promise.');
                 }
 
                 if (isPromise(value)) {
@@ -614,16 +612,12 @@ module plat.async {
         constructor(resolveFunction: IResolveFunction<R>) {
             var _Exception: IExceptionStatic;
             if (!isFunction(resolveFunction)) {
-                _Exception = acquire(__ExceptionStatic);
-                _Exception.fatal(new TypeError('You must pass a resolver function as the first argument to the promise constructor'),
-                    _Exception.PROMISE);
+                throw new TypeError('You must pass a resolver function as the first argument to the promise constructor');
             }
 
             if (!(this instanceof Promise)) {
-                _Exception = acquire(__ExceptionStatic);
-                _Exception.fatal(new TypeError('Failed to construct "Promise": ' +
-                    'Please use the "new" operator, this object constructor cannot be called as a function.'),
-                    _Exception.PROMISE);
+                throw new TypeError('Failed to construct "Promise": ' +
+                    'Please use the "new" operator, this object constructor cannot be called as a function.');
             }
 
             this.__subscribers = [];

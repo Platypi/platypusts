@@ -67,6 +67,20 @@ module plat.processing {
         protected static _BindableTemplatesFactory: ui.IBindableTemplatesFactory;
 
         /**
+         * @name _Exception
+         * @memberof plat.processing.ElementManager
+         * @kind property
+         * @access protected
+         * @static
+         * 
+         * @type {plat.IExceptionStatic}
+         * 
+         * @description
+         * Reference to the {@link plat.IExceptionStatic|IExceptionStatic} injectable.
+         */
+        protected static _Exception: IExceptionStatic;
+
+        /**
          * @name create
          * @memberof plat.processing.ElementManager
          * @kind function
@@ -480,7 +494,7 @@ module plat.processing {
                     if (value !== '') {
                         childContext = _parser.parse(value);
                         if (childContext.identifiers.length !== 1) {
-                            var _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+                            var _Exception: IExceptionStatic = ElementManager._Exception;
                             _Exception.warn('Incorrect plat-context: ' +
                                 value + ', must contain a single identifier.', _Exception.COMPILE);
                         }
@@ -615,87 +629,105 @@ module plat.processing {
          * @name _Promise
          * @memberof plat.processing.ElementManager
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.async.IPromise}
          * 
          * @description
          * Reference to the {@link plat.async.IPromise|IPromise} injectable.
          */
-        _Promise: async.IPromise = acquire(__Promise);
+        protected _Promise: async.IPromise = acquire(__Promise);
+
         /**
          * @name _compiler
          * @memberof plat.processing.ElementManager
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.processing.ICompiler}
          * 
          * @description
          * Reference to the {@link plat.processing.ICompiler|ICompiler} injectable.
          */
-        _compiler: ICompiler = acquire(__Compiler);
+        protected _compiler: ICompiler = acquire(__Compiler);
+
         /**
          * @name _ContextManager
          * @memberof plat.processing.ElementManager
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.observable.IContextManagerStatic}
          * 
          * @description
          * Reference to the {@link plat.observable.IContextManagerStatic|IContextManagerStatic} injectable.
          */
-        _ContextManager: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
+        protected _ContextManager: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
+
         /**
          * @name _CommentManagerFactory
          * @memberof plat.processing.ElementManager
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.processing.ICommentManagerFactory}
          * 
          * @description
          * Reference to the {@link plat.processing.ICommentManagerFactory|ICommentManagerFactory} injectable.
          */
-        _CommentManagerFactory: ICommentManagerFactory = acquire(__CommentManagerFactory);
+        protected _CommentManagerFactory: ICommentManagerFactory = acquire(__CommentManagerFactory);
+
         /**
          * @name _ControlFactory
          * @memberof plat.processing.ElementManager
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.IControlFactory}
          * 
          * @description
          * Reference to the {@link plat.IControlFactory|IControlFactory} injectable.
          */
-        _ControlFactory: IControlFactory = acquire(__ControlFactory);
+        protected _ControlFactory: IControlFactory = acquire(__ControlFactory);
+
         /**
          * @name _TemplateControlFactory
          * @memberof plat.processing.ElementManager
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.ui.ITemplateControlFactory}
          * 
          * @description
          * Reference to the {@link plat.ui.ITemplateControlFactory|ITemplateControlFactory} injectable.
          */
-        _TemplateControlFactory: ui.ITemplateControlFactory = acquire(__TemplateControlFactory);
+        protected _TemplateControlFactory: ui.ITemplateControlFactory = acquire(__TemplateControlFactory);
 
         /**
          * @name _BindableTemplatesFactory
          * @memberof plat.processing.ElementManager
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.ui.IBindableTemplatesFactory}
          * 
          * @description
          * Reference to the {@link plat.ui.IBindableTemplatesFactory|IBindableTemplatesFactory} injectable.
          */
-        _BindableTemplatesFactory: ui.IBindableTemplatesFactory = acquire(__BindableTemplatesFactory);
+        protected _BindableTemplatesFactory: ui.IBindableTemplatesFactory = acquire(__BindableTemplatesFactory);
+
+        /**
+         * @name _Exception
+         * @memberof plat.processing.ElementManager
+         * @kind property
+         * @access protected
+         * 
+         * @type {plat.IExceptionStatic}
+         * 
+         * @description
+         * Reference to the {@link plat.IExceptionStatic|IExceptionStatic} injectable.
+         */
+        protected _Exception: IExceptionStatic = acquire(__ExceptionStatic);
 
         /**
          * @name children
@@ -976,7 +1008,7 @@ module plat.processing {
                         var split = childContext.split('.'),
                             alias = split.shift().slice(1),
                             resourceObj = _TemplateControlFactory.findResource(uiControl, alias),
-                            _Exception: IExceptionStatic;
+                            _Exception: IExceptionStatic = this._Exception;
 
                         if (isObject(resourceObj)) {
                             var resource = resourceObj.resource;
@@ -984,12 +1016,10 @@ module plat.processing {
                                 absoluteContextPath = 'resources.' + alias + '.value' + (split.length > 0 ? ('.' + split.join('.')) : '');
                                 uiControl.root = resourceObj.control;
                             } else {
-                                _Exception = acquire(__ExceptionStatic);
                                 _Exception.warn('Only resources of type "observable" can be set as context.',
                                     _Exception.CONTEXT);
                             }
                         } else {
-                            _Exception = acquire(__ExceptionStatic);
                             _Exception.warn('Could not set the context of ' + uiControl.type +
                                 ' with the resource specified as "' + childContext + '".',
                                 _Exception.CONTEXT);
@@ -1074,7 +1104,7 @@ module plat.processing {
                             this._initializeControl(control, template);
                         } else {
                             postpone(() => {
-                                var _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+                                var _Exception: IExceptionStatic = this._Exception;
                                 _Exception.fatal(error, _Exception.COMPILE);
                             });
                         }
@@ -1163,7 +1193,7 @@ module plat.processing {
                 return this._loadControls(<Array<IAttributeControl>>controls, this.getUiControl());
             }).catch((error: any) => {
                     postpone(() => {
-                        var _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+                        var _Exception: IExceptionStatic = this._Exception;
                         _Exception.fatal(error, _Exception.BIND);
                     });
                 });
@@ -1202,7 +1232,7 @@ module plat.processing {
                 });
             }).catch((error) => {
                     postpone(() => {
-                        var _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+                        var _Exception: IExceptionStatic = this._Exception;
                         _Exception.fatal(error, _Exception.BIND);
                     });
                 });
@@ -1396,7 +1426,7 @@ module plat.processing {
                 return this.bindAndLoad();
             }).catch((error) => {
                     postpone(() => {
-                        var _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+                        var _Exception: IExceptionStatic = this._Exception;
                         _Exception.fatal(error, _Exception.BIND);
                     });
                 });
@@ -1632,7 +1662,7 @@ module plat.processing {
 
             return this._Promise.all(promises).catch((error) => {
                 postpone(() => {
-                    var _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+                    var _Exception: IExceptionStatic = this._Exception;
                     _Exception.fatal(error, _Exception.COMPILE);
                 });
             });
@@ -1646,11 +1676,13 @@ module plat.processing {
         _document?: Document,
         _managerCache?: storage.ICache<IElementManager>,
         _ResourcesFactory?: ui.IResourcesFactory,
-        _BindableTemplatesFactory?: ui.IBindableTemplatesFactory): IElementManagerFactory {
+        _BindableTemplatesFactory?: ui.IBindableTemplatesFactory,
+        _Exception?: IExceptionStatic): IElementManagerFactory {
         (<any>ElementManager)._document = _document;
         (<any>ElementManager)._managerCache = _managerCache;
         (<any>ElementManager)._ResourcesFactory = _ResourcesFactory;
         (<any>ElementManager)._BindableTemplatesFactory = _BindableTemplatesFactory;
+        (<any>ElementManager)._Exception = _Exception;
         return ElementManager;
     }
 
@@ -1658,7 +1690,8 @@ module plat.processing {
         __Document,
         __ManagerCache,
         __ResourcesFactory,
-        __BindableTemplatesFactory
+        __BindableTemplatesFactory,
+        __ExceptionStatic
     ], __FACTORY);
 
     /**

@@ -109,7 +109,7 @@ module plat {
          */
         static start(): void {
             if (!App._compat.isCompatible) {
-                var _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+                var _Exception: IExceptionStatic = App._Exception;
                 _Exception.fatal('PlatypusTS only supports modern browsers where ' +
                     'Object.defineProperty is defined', _Exception.COMPAT);
                 return;
@@ -535,13 +535,15 @@ module plat {
         _EventManagerStatic?: events.IEventManagerStatic,
         _document?: Document,
         _compiler?: processing.ICompiler,
-        _LifecycleEvent?: events.ILifecycleEventStatic): IAppStatic {
-            (<any>App)._compat = _compat;
-            (<any>App)._EventManagerStatic = _EventManagerStatic;
-            (<any>App)._document = _document;
-            (<any>App)._compiler = _compiler;
-            (<any>App)._LifecycleEvent = _LifecycleEvent;
-            return App;
+        _LifecycleEvent?: events.ILifecycleEventStatic,
+        _Exception?: IExceptionStatic): IAppStatic {
+        (<any>App)._compat = _compat;
+        (<any>App)._EventManagerStatic = _EventManagerStatic;
+        (<any>App)._document = _document;
+        (<any>App)._compiler = _compiler;
+        (<any>App)._LifecycleEvent = _LifecycleEvent;
+        (<any>App)._Exception = _Exception;
+        return App;
     }
 
     register.injectable(__AppStatic, IAppStatic, [
@@ -549,7 +551,8 @@ module plat {
         __EventManagerStatic,
         __Document,
         __Compiler,
-        __LifecycleEventStatic
+        __LifecycleEventStatic,
+        __ExceptionStatic
     ], __STATIC);
 
     /**

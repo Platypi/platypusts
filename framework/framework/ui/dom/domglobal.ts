@@ -460,7 +460,8 @@ function hasClass(element: HTMLElement, className: string): boolean {
 }
 
 var ___templateCache: plat.storage.ITemplateCache,
-    ___http: plat.async.IHttp;
+    ___http: plat.async.IHttp,
+    ___Exception: plat.IExceptionStatic;
 
 function getTemplate(templateUrl: string) {
     ___templateCache = ___templateCache || plat.acquire(__TemplateCache);
@@ -478,8 +479,8 @@ function getTemplate(templateUrl: string) {
             if (isDocumentFragment(success)) {
                 return ___templateCache.put(templateUrl, <any>success);
             } else if (!isObject(success) || !isString(success.response)) {
-                _Exception = plat.acquire(__ExceptionStatic);
-                _Exception.warn('No template found at ' + templateUrl, _Exception.AJAX);
+                ___Exception = ___Exception || plat.acquire(__ExceptionStatic);
+                ___Exception.warn('No template found at ' + templateUrl, ___Exception.AJAX);
                 return ___templateCache.put(templateUrl, serializeHtml());
             }
 
@@ -492,9 +493,9 @@ function getTemplate(templateUrl: string) {
             return ___templateCache.put(templateUrl, serializeHtml(templateString));
         }).catch((error) => {
             postpone(() => {
-                _Exception = plat.acquire(__ExceptionStatic);
-                _Exception.fatal('Failure to get template from ' + templateUrl + '.',
-                    _Exception.TEMPLATE);
+                ___Exception = ___Exception || plat.acquire(__ExceptionStatic);
+                ___Exception.fatal('Failure to get template from ' + templateUrl + '.',
+                    ___Exception.TEMPLATE);
             });
             return error;
         }));

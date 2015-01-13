@@ -14,7 +14,7 @@ module plat.processing {
          * @name _ContextManager
          * @memberof plat.processing.NodeManager
          * @kind property
-         * @access public
+         * @access protected
          * @static
          * 
          * @type {plat.observable.IContextManagerStatic}
@@ -22,12 +22,13 @@ module plat.processing {
          * @description
          * Reference to the {@link plat.observable.IContextManagerStatic|IContextManagerStatic} injectable.
          */
-        static _ContextManager: observable.IContextManagerStatic;
+        protected static _ContextManager: observable.IContextManagerStatic;
+
         /**
          * @name _parser
          * @memberof plat.processing.NodeManager
          * @kind property
-         * @access public
+         * @access protected
          * @static
          * 
          * @type {plat.expressions.IParser}
@@ -35,12 +36,13 @@ module plat.processing {
          * @description
          * Reference to the {@link plat.expressions.IParser|IParser} injectable.
          */
-        static _parser: expressions.IParser;
+        protected static _parser: expressions.IParser;
+
         /**
          * @name _TemplateControlFactory
          * @memberof plat.processing.NodeManager
          * @kind property
-         * @access public
+         * @access protected
          * @static
          * 
          * @type {plat.ui.ITemplateControlFactory}
@@ -48,7 +50,21 @@ module plat.processing {
          * @description
          * Reference to the {@link plat.ui.ITemplateControlFactory|ITemplateControlFactory} injectable.
          */
-        static _TemplateControlFactory: ui.ITemplateControlFactory;
+        protected static _TemplateControlFactory: ui.ITemplateControlFactory;
+
+        /**
+         * @name _Exception
+         * @memberof plat.processing.NodeManager
+         * @kind property
+         * @access protected
+         * @static
+         * 
+         * @type {plat.IExceptionStatic}
+         * 
+         * @description
+         * Reference to the {@link plat.IExceptionStatic|IExceptionStatic} injectable.
+         */
+        protected static _Exception: IExceptionStatic;
 
         /**
          * @name hasMarkup
@@ -165,7 +181,7 @@ module plat.processing {
                         }
                         e.message = 'Cannot stringify object: ' + e.message;
 
-                        var _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+                        var _Exception: IExceptionStatic = NodeManager._Exception;
                         _Exception.warn(e, _Exception.PARSE);
                     }
                 } else if (!isNull(value)) {
@@ -582,14 +598,15 @@ module plat.processing {
         _regex?: expressions.IRegex,
         _ContextManager?: observable.IContextManagerStatic,
         _parser?: expressions.IParser,
-        _TemplateControlFactory?: ui.ITemplateControlFactory): INodeManagerStatic {
+        _TemplateControlFactory?: ui.ITemplateControlFactory,
+        _Exception?: IExceptionStatic): INodeManagerStatic {
         // NOTE: This is not advised by TypeScript, but we want to do this.
         (<any>NodeManager)._markupRegex = _regex.markupRegex;
         (<any>NodeManager)._newLineRegex = _regex.newLineRegex;
-
-        NodeManager._ContextManager = _ContextManager;
-        NodeManager._parser = _parser;
-        NodeManager._TemplateControlFactory = _TemplateControlFactory;
+        (<any>NodeManager)._ContextManager = _ContextManager;
+        (<any>NodeManager)._parser = _parser;
+        (<any>NodeManager)._TemplateControlFactory = _TemplateControlFactory;
+        (<any>NodeManager)._Exception = _Exception;
         return NodeManager;
     }
 

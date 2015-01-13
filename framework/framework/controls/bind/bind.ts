@@ -248,7 +248,7 @@ module plat.controls {
             var identifiers = expression.identifiers;
 
             if (identifiers.length !== 1) {
-                var _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+                var _Exception: IExceptionStatic = this._Exception;
                 _Exception.warn('Only 1 identifier allowed in a plat-bind expression', _Exception.BIND);
                 this._contextExpression = null;
                 return;
@@ -738,7 +738,7 @@ module plat.controls {
                 element.selectedIndex = -1;
                 return;
             } else if (!isString(newValue)) {
-                var Exception: IExceptionStatic = acquire(__ExceptionStatic),
+                var Exception: IExceptionStatic = this._Exception,
                     message: string;
                 if (isNumber(newValue)) {
                     newValue = newValue.toString();
@@ -922,7 +922,7 @@ module plat.controls {
                     context = this._ContextManager.createContext(this.parent,
                         contextExpression.identifiers[0]);
                 } else {
-                    var Exception: IExceptionStatic = acquire(__ExceptionStatic);
+                    var Exception: IExceptionStatic = this._Exception;
                     Exception.warn('plat-bind is trying to index into a primitive type. ' +
                         this._contextExpression.expression + ' is already defined and not ' +
                         'an object when trying to evaluate plat-bind="' +

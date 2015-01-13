@@ -174,7 +174,7 @@ module plat.ui.controls {
                 id = this._id = options.id;
 
             if (isNull(id)) {
-                var _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+                var _Exception: IExceptionStatic = this._Exception;
                 _Exception.warn(this.type + ' instantiated without an id option', _Exception.COMPILE);
                 return;
             }
@@ -298,10 +298,9 @@ module plat.ui.controls {
          * @returns {void}
          */
         protected _waitForTemplateControl(templatePromise: async.IThenable<Template>): void {
-            var _Exception: IExceptionStatic;
+            var _Exception: IExceptionStatic = this._Exception;
             templatePromise.then((templateControl: Template) => {
                 if (!(isNull(this._url) || (this._url === templateControl._url))) {
-                    _Exception = acquire(__ExceptionStatic);
                     _Exception.warn('The specified url: ' + this._url +
                         ' does not match the original ' + this.type + ' with id: ' +
                         '"' + this._id + '". The original url will be loaded.',
@@ -315,7 +314,6 @@ module plat.ui.controls {
                     insertBefore(endNode.parentNode, clone, endNode);
                 }).catch((error) => {
                     postpone(() => {
-                        _Exception = acquire(__ExceptionStatic);
                         _Exception.warn('Problem resolving ' + this.type + ' url: ' +
                             error.response, _Exception.TEMPLATE);
                     });

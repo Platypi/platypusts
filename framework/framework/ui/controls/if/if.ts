@@ -224,7 +224,7 @@ module plat.ui.controls {
          */
         loaded(): async.IThenable<void> {
             if (isNull(this.options)) {
-                var _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+                var _Exception: IExceptionStatic = this._Exception;
                 _Exception.warn('No condition specified in plat-options for plat-if.', _Exception.BIND);
 
                 this.options = {

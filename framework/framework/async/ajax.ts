@@ -61,56 +61,69 @@ module plat.async {
         jsonpCallback: string;
 
         /**
+         * @name _Exception
+         * @memberof plat.async.HttpRequest
+         * @kind property
+         * @access protected
+         * 
+         * @type {plat.IExceptionStatic}
+         * 
+         * @description
+         * The plat.IExceptionStatic injectable instance
+         */
+        protected _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+
+        /**
          * @name _browser
          * @memberof plat.async.HttpRequest
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.web.IBrowser}
          * 
          * @description
          * The plat.web.IBrowser injectable instance
          */
-        _browser: web.IBrowser = acquire(__Browser);
+        protected _browser: web.IBrowser = acquire(__Browser);
 
         /**
          * @name _window
          * @memberof plat.async.HttpRequest
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {Window}
          * 
          * @description
          * The injectable instance of type Window
          */
-        _window: Window = acquire(__Window);
+        protected _window: Window = acquire(__Window);
 
         /**
          * @name _document
          * @memberof plat.async.HttpRequest
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {Document}
          * 
          * @description
          * The injectable instance of type Document
          */
-        _document: Document = acquire(__Document);
+        protected _document: Document = acquire(__Document);
 
         /**
          * @name $config
          * @memberof plat.async.HttpRequest
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.async.IHttpConfig}
          * 
          * @description
          * The configuration for an HTTP Request
          */
-        $config: IHttpConfig = acquire(__HttpConfig);
+        protected _config: IHttpConfig = acquire(__HttpConfig);
 
         /**
          * @name __fileSupported
@@ -152,7 +165,7 @@ module plat.async {
          * @returns {plat.async.HttpRequest}
          */
         constructor(options: IHttpConfig) {
-            this.__options = extend({}, this.$config, options);
+            this.__options = extend({}, this._config, options);
         }
 
         /**
@@ -364,8 +377,8 @@ module plat.async {
                     };
 
                     if (!isString(method)) {
-                        var Exception: IExceptionStatic = acquire(__ExceptionStatic);
-                        Exception.warn('AjaxOptions method was not of type string. Defaulting to "GET".', Exception.AJAX);
+                        var _Exception: IExceptionStatic = this._Exception;
+                        _Exception.warn('AjaxOptions method was not of type string. Defaulting to "GET".', _Exception.AJAX);
                         method = 'GET';
                     }
 
@@ -514,8 +527,8 @@ module plat.async {
          */
         protected _invalidOptions(): IAjaxPromise<any> {
             return new AjaxPromise((resolve, reject) => {
-                var exceptionFactory: IExceptionStatic = acquire(__ExceptionStatic);
-                exceptionFactory.warn('Attempting a request without specifying a url', exceptionFactory.AJAX);
+                var _Exception: IExceptionStatic = this._Exception;
+                _Exception.warn('Attempting a request without specifying a url', _Exception.AJAX);
                 reject(new AjaxError({
                     response: 'Attempting a request without specifying a url',
                     status: null,
@@ -629,7 +642,7 @@ module plat.async {
                     val = '';
                 } else if (isObject(val)) {
                     // may throw a fatal error but this is an invalid case
-                    var _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+                    var _Exception: IExceptionStatic = this._Exception;
                     _Exception.warn('Invalid form entry with key "' + key + '" and value "' + val, _Exception.AJAX);
                     val = JSON.stringify(val);
                 }
@@ -668,7 +681,7 @@ module plat.async {
                         formData.append(key, val, val.name || val.fileName || 'blob');
                     } else {
                         // may throw a fatal error but this is an invalid case
-                        var _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+                        var _Exception: IExceptionStatic = this._Exception;
                         _Exception.warn('Invalid form entry with key "' + key + '" and value "' + val, _Exception.AJAX);
                         formData.append(key, JSON.stringify(val));
                     }
@@ -758,7 +771,7 @@ module plat.async {
          */
         private __createInput(key: string, val: any): HTMLInputElement {
             var _document = this._document,
-                _Exception: IExceptionStatic,
+                _Exception: IExceptionStatic = this._Exception,
                 input = <HTMLInputElement>_document.createElement('input');
 
             input.type = 'hidden';
@@ -773,7 +786,6 @@ module plat.async {
                         length = fileList.length;
                     // if no inputs found, stringify the data
                     if (length === 0) {
-                        _Exception = acquire(__ExceptionStatic);
                         _Exception.warn('Could not find input[type="file"] with [name="' + key +
                             '"]. Stringifying data instead.', _Exception.AJAX);
                         input.value = JSON.stringify(val);
@@ -800,7 +812,6 @@ module plat.async {
 
                         // could not find the right file
                         if (length === -1) {
-                            _Exception = acquire(__ExceptionStatic);
                             _Exception.warn('Could not find input[type="file"] with [name="' + key + '"] and [value="' +
                                 val.path + '"]. Stringifying data instead.', _Exception.AJAX);
                             input.value = JSON.stringify(val);
@@ -808,7 +819,6 @@ module plat.async {
                     }
                 } else {
                     // may throw a fatal error but this is an invalid case
-                    _Exception = acquire(__ExceptionStatic);
                     _Exception.warn('Invalid form entry with key "' + key + '" and value "' + val, _Exception.AJAX);
                     input.value = JSON.stringify(val);
                 }

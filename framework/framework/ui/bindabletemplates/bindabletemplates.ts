@@ -129,74 +129,92 @@ module plat.ui {
          * @name _ResourcesFactory
          * @memberof plat.ui.BindableTemplates
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.ui.IResourcesFactory}
          * 
          * @description
          * Reference to the {@link plat.ui.IResourcesFactory|IResourcesFactory} injectable.
          */
-        _ResourcesFactory: IResourcesFactory = acquire(__ResourcesFactory);
+        protected _ResourcesFactory: IResourcesFactory = acquire(__ResourcesFactory);
+
         /**
          * @name _TemplateControlFactory
          * @memberof plat.ui.BindableTemplates
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.ui.ITemplateControlFactory}
          * 
          * @description
          * Reference to the {@link plat.ui.ITemplateControlFactory|ITemplateControlFactory} injectable.
          */
-        _TemplateControlFactory: ITemplateControlFactory = acquire(__TemplateControlFactory);
+        protected _TemplateControlFactory: ITemplateControlFactory = acquire(__TemplateControlFactory);
+
         /**
          * @name _Promise
          * @memberof plat.ui.BindableTemplates
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.async.IPromise}
          * 
          * @description
          * Reference to the {@link plat.async.IPromise|IPromise} injectable.
          */
-        _Promise: async.IPromise = acquire(__Promise);
+        protected _Promise: async.IPromise = acquire(__Promise);
+
         /**
          * @name _managerCache
          * @memberof plat.ui.BindableTemplates
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.storage.ICache<processing.IElementManager>}
          * 
          * @description
          * Reference to a cache injectable that stores {@link plat.processing.IElementManager|IElementManagers}.
          */
-        _managerCache: storage.ICache<processing.IElementManager> = acquire(__ManagerCache);
+        protected _managerCache: storage.ICache<processing.IElementManager> = acquire(__ManagerCache);
+
         /**
          * @name _document
          * @memberof plat.ui.BindableTemplates
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {Document}
          * 
          * @description
          * Reference to the Document injectable.
          */
-        _document: Document = acquire(__Document);
+        protected _document: Document = acquire(__Document);
+
         /**
          * @name _ElementManagerFactory
          * @memberof plat.ui.BindableTemplates
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.processing.IElementManagerFactory}
          * 
          * @description
          * Reference to the {@link plat.processing.IElementManagerFactory|IElementManagerFactory} injectable.
          */
-        _ElementManagerFactory: processing.IElementManagerFactory = acquire(__ElementManagerFactory);
+        protected _ElementManagerFactory: processing.IElementManagerFactory = acquire(__ElementManagerFactory);
+
+        /**
+         * @name _Exception
+         * @memberof plat.ui.BindableTemplates
+         * @kind property
+         * @access protected
+         * 
+         * @type {plat.IExceptionStatic}
+         * 
+         * @description
+         * Reference to the {@link plat.IExceptionStatic|IExceptionStatic} injectable.
+         */
+        protected _Exception: IExceptionStatic = acquire(__ExceptionStatic);
 
         /**
          * @name control
@@ -300,17 +318,15 @@ module plat.ui {
         bind(key: string, relativeIdentifier?: number, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
         bind(key: any, relativeIdentifier?: any, resources?: IObject<IResource>): async.IThenable<DocumentFragment> {
             var templatePromise = this.templates[key],
-                _Exception: IExceptionStatic;
+                _Exception: IExceptionStatic = this._Exception;
 
             if (isNull(templatePromise)) {
-                _Exception = acquire(__ExceptionStatic);
                 _Exception.fatal('Cannot bind template, no template stored with key: ' + key,
                     _Exception.TEMPLATE);
                 return;
             }
 
             if (!(isNull(relativeIdentifier) || isNumber(relativeIdentifier) || isString(relativeIdentifier))) {
-                _Exception = acquire(__ExceptionStatic);
                 _Exception.warn('Cannot bind template with relativeIdentifier: ' +
                     relativeIdentifier +
                     '. Identifier must be either a string or number', _Exception.BIND);
@@ -321,7 +337,6 @@ module plat.ui {
                 return this._bindTemplate(key, <DocumentFragment>result.cloneNode(true), relativeIdentifier, resources);
             }).then(null, (error: any) => {
                     postpone(() => {
-                        _Exception = acquire(__ExceptionStatic);
                         _Exception.fatal(error, _Exception.BIND);
                     });
 
@@ -507,7 +522,7 @@ module plat.ui {
                 return template;
             }, (error: any) => {
                     postpone(() => {
-                        var _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+                        var _Exception: IExceptionStatic = this._Exception;
                         _Exception.fatal(error, _Exception.COMPILE);
                     });
 

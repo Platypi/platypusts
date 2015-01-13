@@ -24,14 +24,27 @@ module plat.expressions {
          * @name _tokenizer
          * @memberof plat.expressions.Parser
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.expressions.ITokenizer}
          * 
          * @description
          * Reference to the {@link plat.expressions.ITokenizer|ITokenizer} injectable.
          */
-        _tokenizer: ITokenizer = acquire(__Tokenizer);
+        protected _tokenizer: ITokenizer = acquire(__Tokenizer);
+
+        /**
+         * @name _Exception
+         * @memberof plat.expressions.Parser
+         * @kind property
+         * @access protected
+         * 
+         * @type {plat.IExceptionStatic}
+         * 
+         * @description
+         * Reference to the {@link plat.IExceptionStatic|IExceptionStatic} injectable.
+         */
+        protected _Exception: IExceptionStatic = acquire(__ExceptionStatic);
 
         /**
          * @name _tokens
@@ -925,7 +938,7 @@ module plat.expressions {
          * @returns {void}
          */
         protected _throwError(error: string): void {
-            var _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+            var _Exception: IExceptionStatic = this._Exception;
             _Exception.fatal(error, _Exception.PARSE);
         }
     }

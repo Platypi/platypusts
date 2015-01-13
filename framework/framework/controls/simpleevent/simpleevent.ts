@@ -227,7 +227,7 @@ module plat.controls {
                 fn = expression.fn;
 
             if (!isFunction(fn)) {
-                var _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+                var _Exception: IExceptionStatic = this._Exception;
                 _Exception.warn('Cannot find registered event method ' +
                     this._expression[0] + ' for control: ' + this.type, _Exception.BIND);
                 return;

@@ -120,7 +120,7 @@ module plat.ui {
          * @name _ContextManager
          * @memberof plat.ui.Resources
          * @kind property
-         * @access public
+         * @access protected
          * @static
          * 
          * @type {plat.observable.IContextManagerStatic}
@@ -128,20 +128,33 @@ module plat.ui {
          * @description
          * Reference to the {@link plat.observable.IContextManagerStatic|IContextManagerStatic} injectable.
          */
-        static _ContextManager: observable.IContextManagerStatic;
+        protected static _ContextManager: observable.IContextManagerStatic;
 
         /**
          * @name _regex
          * @memberof plat.ui.Resources
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.expressions.IRegex}
          * 
          * @description
          * Reference to the {@link plat.expressions.IRegex|IRegex} injectable.
          */
-        static _regex: expressions.IRegex;
+        protected static _regex: expressions.IRegex;
+
+        /**
+         * @name _Exception
+         * @memberof plat.ui.Resources
+         * @kind property
+         * @access protected
+         * 
+         * @type {plat.IExceptionStatic}
+         * 
+         * @description
+         * Reference to the {@link plat.IExceptionStatic|IExceptionStatic} injectable.
+         */
+        protected static _Exception: IExceptionStatic;
 
         /**
          * @name create
@@ -191,7 +204,7 @@ module plat.ui {
                         if (isFunction(value)) {
                             resource.value = value.bind(control);
                         } else {
-                            var _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+                            var _Exception: IExceptionStatic = Resources._Exception;
                             _Exception.warn('Attempted to create a "function" ' +
                                 'type Resource with a function not found on your control.',
                                 _Exception.BIND);
@@ -732,15 +745,18 @@ module plat.ui {
      */
     export function IResourcesFactory(
         _ContextManager?: observable.IContextManagerStatic,
-        _regex?: expressions.IRegex): IResourcesFactory {
-            Resources._ContextManager = _ContextManager;
-            Resources._regex = _regex;
-            return Resources;
+        _regex?: expressions.IRegex,
+        _Exception?: IExceptionStatic): IResourcesFactory {
+        (<any>Resources)._ContextManager = _ContextManager;
+        (<any>Resources)._regex = _regex;
+        (<any>Resources)._Exception = _Exception;
+        return Resources;
     }
 
     register.injectable(__ResourcesFactory, IResourcesFactory, [
         __ContextManagerStatic,
-        __Regex
+        __Regex,
+        __ExceptionStatic
     ], __FACTORY);
 
     /**

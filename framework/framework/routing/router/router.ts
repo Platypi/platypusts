@@ -15,14 +15,14 @@
 
         private static __currentRouter: Router;
 
-        _Promise: async.IPromise = acquire(__Promise);
-        resolve: typeof async.Promise.resolve = this._Promise.resolve.bind(this._Promise);
-        reject: typeof async.Promise.reject = this._Promise.reject.bind(this._Promise);
-
-        _Injector: typeof dependency.Injector = acquire(__InjectorStatic);
-        _EventManagerStatic: events.IEventManagerStatic = acquire(__EventManagerStatic);
-        _browser: web.IBrowser = acquire(__Browser);
-        _browserConfig: web.IBrowserConfig = acquire(__BrowserConfig);
+        protected _Promise: async.IPromise = acquire(__Promise);
+        protected _Injector: typeof dependency.Injector = acquire(__InjectorStatic);
+        protected _EventManagerStatic: events.IEventManagerStatic = acquire(__EventManagerStatic);
+        protected _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+        protected _browser: web.IBrowser = acquire(__Browser);
+        protected _browserConfig: web.IBrowserConfig = acquire(__BrowserConfig);
+        protected _resolve: typeof async.Promise.resolve = this._Promise.resolve.bind(this._Promise);
+        protected _reject: typeof async.Promise.reject = this._Promise.reject.bind(this._Promise);
 
         recognizer: RouteRecognizer = acquire(__RouteRecognizerInstance);
         childRecognizer: RouteRecognizer = acquire(__RouteRecognizerInstance);
@@ -130,7 +130,7 @@
                 }, routes).then((): void => undefined);
             }
 
-            var resolve = this.resolve,
+            var resolve = this._resolve,
                 route: IRouteMapping = routes,
                 view: string = this._Injector.convertDependency(route.view);
 
@@ -216,8 +216,8 @@
         }
 
         navigate(url: string, query?: IObject<any>, force?: boolean): async.IThenable<void> {
-            var resolve = this.resolve,
-                reject = this.reject,
+            var resolve = this._resolve,
+                reject = this._reject,
                 queryString = serializeQuery(query);
 
             if (url === '/') {
@@ -300,7 +300,7 @@
         }
 
         forceNavigate() {
-            var resolve = this.resolve,
+            var resolve = this._resolve,
                 query: IObject<any>;
 
             if (this.navigating) {
@@ -333,8 +333,8 @@
             }
 
             if (isNull(router)) {
-                var Exception: IExceptionStatic = acquire(__ExceptionStatic);
-                Exception.fatal('Route does not exist', Exception.NAVIGATION);
+                var _Exception: IExceptionStatic = this._Exception;
+                _Exception.fatal('Route does not exist', _Exception.NAVIGATION);
                 return;
             }
 
@@ -351,7 +351,7 @@
         }
 
         navigateChildren(info: IRouteInfo) {
-            var resolve = this.resolve,
+            var resolve = this._resolve,
                 childRoute = this.getChildRoute(info);
 
             if (isNull(childRoute)) {
@@ -429,7 +429,7 @@
         }
 
         callHandlers(allHandlers: IRouteTransforms, obj: any, query?: any) {
-            var resolve = this.resolve;
+            var resolve = this._resolve;
 
             return mapAsync((handlers: Array<(value: string, values: any, query?: any) => any>, key: string) => {
                 return mapAsyncInOrder((handler) => {
@@ -439,7 +439,7 @@
         }
 
         callInterceptors(info: IRouteInfo): async.IThenable<boolean> {
-            var resolve = this.resolve;
+            var resolve = this._resolve;
 
             return mapAsync((handler: (routeInfo: IRouteInfo) => any) => {
                 return resolve(handler(info));

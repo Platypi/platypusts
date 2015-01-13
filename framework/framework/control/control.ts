@@ -391,6 +391,19 @@ module plat {
         }
 
         /**
+         * @name _Exception
+         * @memberof plat.Control
+         * @kind property
+         * @access protected
+         * 
+         * @type {plat.IExceptionStatic}
+         * 
+         * @description
+         * The plat.IExceptionStatic injectable instance
+         */
+        protected _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+
+        /**
          * @name uid
          * @memberof plat.Control
          * @kind property
@@ -653,8 +666,8 @@ module plat {
         addEventListener(element: EventTarget, type: string, listener: EventListener, useCapture?: boolean): IRemoveListener;
         addEventListener(element: any, type: string, listener: ui.IGestureListener, useCapture?: boolean): IRemoveListener {
             if (!isFunction(listener)) {
-                var Exception: IExceptionStatic = acquire(__ExceptionStatic);
-                Exception.warn('"Control.addEventListener" must take a function as the third argument.', Exception.EVENT);
+                var _Exception: IExceptionStatic = this._Exception;
+                _Exception.warn('"Control.addEventListener" must take a function as the third argument.', _Exception.EVENT);
                 return noop;
             }
 

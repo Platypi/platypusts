@@ -36,6 +36,20 @@ module plat.observable {
      */
     export class ContextManager implements IContextManager {
         /**
+         * @name _Exception
+         * @memberof plat.observable.ContextManager
+         * @kind property
+         * @access protected
+         * @static
+         * 
+         * @type {plat.IExceptionStatic}
+         * 
+         * @description
+         * Reference to the {@link plat.IExceptionStatic|IExceptionStatic} injectable.
+         */
+        protected static _Exception: IExceptionStatic;
+
+        /**
          * @name preArrayListeners
          * @memberof plat.observable.ContextManager
          * @kind property
@@ -390,9 +404,9 @@ module plat.observable {
                 if (isNull(context)) {
                     context = control.context = {};
                 } else {
-                    var Exception: IExceptionStatic = acquire(__ExceptionStatic);
-                    Exception.warn('A child control is trying to create a child context that has ' +
-                        'a parent control with a primitive type context', Exception.BIND);
+                    var _Exception: IExceptionStatic = ContextManager._Exception;
+                    _Exception.warn('A child control is trying to create a child context that has ' +
+                        'a parent control with a primitive type context', _Exception.BIND);
                     return;
                 }
             }
@@ -1575,7 +1589,8 @@ module plat.observable {
     /**
      * The Type for referencing the '_ContextManager' injectable as a dependency.
      */
-    export function IContextManagerStatic(): IContextManagerStatic {
+    export function IContextManagerStatic(_Exception: IExceptionStatic): IContextManagerStatic {
+        (<any>ContextManager)._Exception = _Exception;
         return ContextManager;
     }
 
