@@ -236,7 +236,7 @@ module plat.async {
 
             options.url = this._browser.urlUtils(url).toString();
             if (isNull(this.jsonpCallback)) {
-                this.jsonpCallback = options.jsonpCallback || uniqueId('plat_callback');
+                this.jsonpCallback = options.jsonpCallback || uniqueId(__Callback);
             }
 
             var promise = new AjaxPromise((resolve, reject) => {

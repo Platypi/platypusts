@@ -121,6 +121,7 @@ var __prefix = '$',
     __ViewControl = __Plat + 'viewcontrol',
     __Resources = __Plat + 'resources',
     __Context = __Plat + __CONTEXT,
+    __Callback = __Plat + 'callback',
     __AttributePrefix = 'data-',
 
     /**
