@@ -14,7 +14,7 @@
          * @name _compat
          * @memberof plat.ui.animations.BaseAnimation
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.ICompat}
          * 

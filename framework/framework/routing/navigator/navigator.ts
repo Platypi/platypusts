@@ -8,7 +8,7 @@
          * @name _Promise
          * @memberof plat.routing.Navigator
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.async.IPromise}
          * 
@@ -21,7 +21,7 @@
          * @name _Injector
          * @memberof plat.routing.Navigator
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.dependency.Injector}
          * 
@@ -34,30 +34,30 @@
          * @name _browserConfig
          * @memberof plat.routing.Navigator
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.web.IBrowserConfig}
          * 
          * @description
          * The {@link plat.web.IBrowserConfig|IBrowserConfig} injectable instance
          */
-        _browserConfig: web.IBrowserConfig = acquire(__BrowserConfig);
+        protected _browserConfig: web.IBrowserConfig = acquire(__BrowserConfig);
 
         /**
          * @name _browser
          * @memberof plat.routing.Navigator
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.web.IBrowser}
          * 
          * @description
          * The {@link plat.web.IBrowser|IBrowser} injectable instance
          */
-        _browser: web.IBrowser = acquire(__Browser);
+        protected _browser: web.IBrowser = acquire(__Browser);
 
-        _EventManagerStatic: events.IEventManagerStatic = acquire(__EventManagerStatic);
-        _window: Window = acquire(__Window);
+        protected _EventManager: events.IEventManagerStatic = acquire(__EventManagerStatic);
+        protected _window: Window = acquire(__Window);
 
         /**
          * @name router
@@ -72,7 +72,7 @@
          */
         router: Router;
 
-        _history: History = plat.acquire(__History);
+        protected _history: History = plat.acquire(__History);
 
         uid = uniqueId(__Plat);
         removeUrlListener: IRemoveListener = noop;
@@ -152,7 +152,7 @@
             
             setTimeout(() => {
                 if (!this.ignored && url === this._browser.url()) {
-                    this._EventManagerStatic.dispatch(__shutdown, this, this._EventManagerStatic.DIRECT);
+                    this._EventManager.dispatch(__shutdown, this, this._EventManager.DIRECT);
                 }
             }, 50);
         }
@@ -168,7 +168,7 @@
             }
 
             var config = this._browserConfig,
-                EventManager = this._EventManagerStatic,
+                EventManager = this._EventManager,
                 prefix: string,
                 previousUrl: string,
                 previousQuery: string,

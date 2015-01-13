@@ -15,7 +15,7 @@ module plat.ui.controls {
          * @name _Promise
          * @memberof plat.ui.controls.Select
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.async.IPromise}
          * 
@@ -23,11 +23,12 @@ module plat.ui.controls {
          * Reference to the {@link plat.async.IPromise|IPromise} injectable.
          */
         protected _Promise: async.IPromise = acquire(__Promise);
+
         /**
          * @name _document
          * @memberof plat.ui.controls.Select
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {Document}
          * 

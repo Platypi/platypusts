@@ -25,23 +25,23 @@ module plat.events {
      */
     export class DispatchEvent implements IDispatchEventInstance {
         /**
-         * @name _EventManagerStatic
+         * @name _EventManager
          * @memberof plat.events.DispatchEvent
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.events.IEventManagerStatic}
          * 
          * @description
          * Reference to the {@link plat.events.IEventManagerStatic|IEventManagerStatic} injectable.
          */
-        protected _EventManagerStatic: IEventManagerStatic = acquire(__EventManagerStatic);
+        protected _EventManager: IEventManagerStatic = acquire(__EventManagerStatic);
 
         /**
          * @name _ContextManager
          * @memberof plat.events.DispatchEvent
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.events.IContextManagerStatic}
          * 
@@ -188,7 +188,7 @@ module plat.events {
         initialize(name: string, sender: any, direction?: string): void;
         initialize(name: string, sender: any, direction?: string) {
             this.name = name;
-            this.direction = direction || this._EventManagerStatic.UP;
+            this.direction = direction || this._EventManager.UP;
             this.sender = sender;
         }
 
@@ -222,9 +222,9 @@ module plat.events {
          * @returns {void}
          */
         stopPropagation(): void {
-            if (this.direction === this._EventManagerStatic.UP) {
+            if (this.direction === this._EventManager.UP) {
                 this.stopped = true;
-                (<any>this._EventManagerStatic.propagatingEvents)[this.name] = false;
+                (<any>this._EventManager.propagatingEvents)[this.name] = false;
             }
         }
     }

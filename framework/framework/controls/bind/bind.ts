@@ -23,7 +23,7 @@ module plat.controls {
          * @name _parser
          * @memberof plat.controls.Bind
          * @kind property
-         * @access public
+         * @access protected
          * @static
          * 
          * @type {plat.expressions.IParser}
@@ -37,7 +37,7 @@ module plat.controls {
          * @name _ContextManager
          * @memberof plat.controls.Bind
          * @kind property
-         * @access public
+         * @access protected
          * @static
          * 
          * @type {plat.observable.IContextManagerStatic}
@@ -51,7 +51,7 @@ module plat.controls {
          * @name _compat
          * @memberof plat.controls.Bind
          * @kind property
-         * @access public
+         * @access protected
          * @static
          * 
          * @type {plat.ICompat}
@@ -59,13 +59,13 @@ module plat.controls {
          * @description
          * Reference to the {@link plat.ICompat|ICompat} injectable.
          */
-        _compat: ICompat = acquire(__Compat);
+        protected _compat: ICompat = acquire(__Compat);
 
         /**
          * @name _document
          * @memberof plat.controls.Bind
          * @kind property
-         * @access public
+         * @access protected
          * @static
          * 
          * @type {Document}
@@ -73,7 +73,7 @@ module plat.controls {
          * @description
          * Reference to the Document injectable.
          */
-        _document: Document = acquire(__Document);
+        protected _document: Document = acquire(__Document);
 
         /**
          * @name priority
@@ -738,7 +738,7 @@ module plat.controls {
                 element.selectedIndex = -1;
                 return;
             } else if (!isString(newValue)) {
-                var Exception: IExceptionStatic = this._Exception,
+                var _Exception: IExceptionStatic = this._Exception,
                     message: string;
                 if (isNumber(newValue)) {
                     newValue = newValue.toString();
@@ -749,7 +749,7 @@ module plat.controls {
                         'The element\'s selected index will be set to -1.';
                 }
 
-                Exception.warn(message, Exception.BIND);
+                _Exception.warn(message, _Exception.BIND);
             } else if (value === newValue) {
                 return;
             } else if (!this._document.body.contains(element)) {

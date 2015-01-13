@@ -337,7 +337,7 @@ module plat.ui {
             var uid = control.uid,
                 childControls = control.controls,
                 controls = (childControls && childControls.slice(0)),
-                ContextManager = Control._ContextManagerStatic,
+                ContextManager = Control._ContextManager,
                 define = ContextManager.defineProperty;
 
             if (!isNull(controls)) {
@@ -543,7 +543,7 @@ module plat.ui {
          * @returns {void}
          */
         static setAbsoluteContextPath(control: ITemplateControl, path: string): void {
-            Control._ContextManagerStatic.defineGetter(control, 'absoluteContextPath', path, false, true);
+            Control._ContextManager.defineGetter(control, 'absoluteContextPath', path, false, true);
         }
 
         /**
@@ -623,7 +623,7 @@ module plat.ui {
 
             deleteProperty(TemplateControl.__resourceCache, control.uid);
 
-            Control._ContextManagerStatic.dispose(control, true);
+            Control._ContextManager.dispose(control, true);
             events.EventManager.dispose(control.uid);
 
             TemplateControl._managerCache.remove(control.uid);

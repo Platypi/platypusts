@@ -135,6 +135,7 @@ module plat.ui {
          * @memberof plat.ui.Resources
          * @kind property
          * @access protected
+         * @static
          * 
          * @type {plat.expressions.IRegex}
          * 
@@ -148,6 +149,7 @@ module plat.ui {
          * @memberof plat.ui.Resources
          * @kind property
          * @access protected
+         * @static
          * 
          * @type {plat.IExceptionStatic}
          * 

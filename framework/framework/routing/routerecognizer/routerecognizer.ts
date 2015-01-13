@@ -16,7 +16,7 @@
          * @name _BaseSegmentFactory
          * @memberof plat.routing.RouteRecognizer
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.routing.BaseSegment}
          * 
@@ -29,7 +29,7 @@
          * @name _State
          * @memberof plat.routing.RouteRecognizer
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.routing.State}
          * 

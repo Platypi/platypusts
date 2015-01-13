@@ -34,23 +34,23 @@ module plat.ui.controls {
         replaceWith = 'a';
 
         /**
-         * @name _routerStatic
+         * @name _router
          * @memberof plat.ui.controls.Link
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.routing.IRouterStatic}
          * 
          * @description
          * The {@link plat.routing.IRouterStatic|IRouterStatic} injectable instance
          */
-        protected _routerStatic: typeof routing.Router = acquire(__RouterStatic);
+        protected _router: typeof routing.Router = acquire(__RouterStatic);
 
         /**
          * @name _Injector
          * @memberof plat.ui.controls.Link
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.dependency.Injector}
          * 
@@ -63,14 +63,14 @@ module plat.ui.controls {
          * @name _browser
          * @memberof plat.ui.controls.Link
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.web.IBrowser}
          * 
          * @description
          * The {@link plat.web.IBrowser|IBrowser} injectable instance
          */
-        _browser: web.IBrowser = acquire(__Browser);
+        protected _browser: web.IBrowser = acquire(__Browser);
 
         /**
          * @name router
@@ -126,7 +126,7 @@ module plat.ui.controls {
 
         constructor() {
             super();
-            this.router = this._routerStatic.currentRouter();
+            this.router = this._router.currentRouter();
         }
 
         /**

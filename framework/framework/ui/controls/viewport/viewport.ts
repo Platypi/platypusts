@@ -12,7 +12,7 @@ module plat.ui.controls {
          * @name _managerCache
          * @memberof plat.ui.controls.Viewport
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.storage.ICache<plat.processing.IElementManager>}
          * 
@@ -25,7 +25,7 @@ module plat.ui.controls {
          * @name _animator
          * @memberof plat.ui.controls.Viewport
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.ui.animations.IAnimator}
          * 

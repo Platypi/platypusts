@@ -15,7 +15,7 @@
          * @name _window
          * @memberof plat.Compat
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {Window}
          * 
@@ -28,7 +28,7 @@
          * @name _history
          * @memberof plat.Compat
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {Window}
          * 
@@ -41,7 +41,7 @@
          * @name _document
          * @memberof plat.Compat
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {Document}
          * 

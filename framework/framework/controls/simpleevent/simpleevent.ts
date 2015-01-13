@@ -15,7 +15,7 @@ module plat.controls {
          * @name _parser
          * @memberof plat.controls.SimpleEventControl
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.expressions.IParser}
          * 
@@ -28,7 +28,7 @@ module plat.controls {
          * @name _regex
          * @memberof plat.controls.SimpleEventControl
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.expressions.IRegex}
          * 
@@ -1024,7 +1024,7 @@ module plat.controls {
          * @name _compat
          * @memberof plat.controls.Input
          * @kind property
-         * @access public
+         * @access protected
          * @static
          * 
          * @type {plat.ICompat}

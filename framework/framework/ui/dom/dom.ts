@@ -15,14 +15,14 @@ module plat.ui {
          * @name _domEvents
          * @memberof plat.ui.Dom
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.ui.IDomEvents}
          * 
          * @description
          * Reference to the {@link plat.ui.IDomEvents|IDomEvents} injectable.
          */
-        _domEvents: ui.IDomEvents = acquire(__DomEvents);
+        protected _domEvents: ui.IDomEvents = acquire(__DomEvents);
 
         /**
          * @name addEventListener

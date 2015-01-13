@@ -123,7 +123,7 @@ module plat.controls {
          * @name _regex
          * @memberof plat.controls.KeyCodeEventControl
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.expressions.IRegex}
          * 

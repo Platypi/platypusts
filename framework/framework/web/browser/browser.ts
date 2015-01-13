@@ -44,7 +44,7 @@ module plat.web {
          * @name _EventManagerStatic
          * @memberof plat.web.Browser
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.events.IEventManagerStatic}
          * 
@@ -52,11 +52,12 @@ module plat.web {
          * Reference to the {@link plat.events.IEventManagerStatic|IEventManagerStatic} injectable.
          */
         protected _EventManagerStatic: events.IEventManagerStatic = acquire(__EventManagerStatic);
+
         /**
          * @name _compat
          * @memberof plat.web.Browser
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.ICompat}
          * 
@@ -64,69 +65,71 @@ module plat.web {
          * Reference to the {@link plat.ICompat|ICompat} injectable.
          */
         protected _compat: ICompat = acquire(__Compat);
+
         /**
          * @name _regex
          * @memberof plat.web.Browser
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.expressions.IRegex}
          * 
          * @description
          * Reference to the {@link plat.expressions.IRegex|IRegex} injectable.
          */
-        _regex: expressions.IRegex = acquire(__Regex);
+        protected _regex: expressions.IRegex = acquire(__Regex);
+
         /**
          * @name _window
          * @memberof plat.web.Browser
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {Window}
          * 
          * @description
          * Reference to the Window injectable.
          */
-        _window: Window = acquire(__Window);
+        protected _window: Window = acquire(__Window);
 
         /**
          * @name _location
          * @memberof plat.web.Browser
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {Location}
          * 
          * @description
          * Reference to the Location injectable.
          */
-        _location: Location = acquire(__Location);
+        protected _location: Location = acquire(__Location);
 
         /**
          * @name _history
          * @memberof plat.web.Browser
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {History}
          * 
          * @description
          * Reference to the History injectable.
          */
-        _history: History = acquire(__History);
+        protected _history: History = acquire(__History);
 
         /**
          * @name _dom
          * @memberof plat.web.Browser
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.ui.IDom}
          * 
          * @description
          * Reference to the {@link plat.ui.IDom|IDom} injectable.
          */
-        _dom: ui.IDom = acquire(__Dom);
+        protected _dom: ui.IDom = acquire(__Dom);
 
         /**
          * @name uid
@@ -154,6 +157,7 @@ module plat.web {
          * The browser's current URL.
          */
         private __currentUrl: string;
+
         /**
          * @name __lastUrl
          * @memberof plat.web.Browser
@@ -166,6 +170,7 @@ module plat.web {
          * The browser's last URL.
          */
         private __lastUrl = this._location.href;
+
         /**
          * @name __initializing
          * @memberof plat.web.Browser

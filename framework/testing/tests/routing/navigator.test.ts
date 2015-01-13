@@ -47,7 +47,7 @@ module test.routing.router {
 
         it('should test history', () => {
             navigator.initialize(router);
-            expect(navigator._history).toBe(history);
+            expect((<any>navigator)._history).toBe(history);
         });
 
         it('should test that the history stack is populated for the initial navigator', () => {

@@ -27,7 +27,7 @@ module plat {
         protected static _parser: expressions.IParser;
 
         /**
-         * @name _ContextManagerStatic
+         * @name _ContextManager
          * @memberof plat.Control
          * @kind property
          * @access protected
@@ -38,10 +38,10 @@ module plat {
          * @description
          * Reference to the {@link plat.observable.IContextManagerStatic|IContextManagerStatic} injectable.
          */
-        protected static _ContextManagerStatic: observable.IContextManagerStatic;
+        protected static _ContextManager: observable.IContextManagerStatic;
 
         /**
-         * @name _EventManagerStatic
+         * @name _EventManager
          * @memberof plat.Control
          * @kind property
          * @access protected
@@ -52,13 +52,13 @@ module plat {
          * @description
          * Reference to the {@link plat.events.IEventManagerStatic|IEventManagerStatic} injectable.
          */
-        protected static _EventManagerStatic: events.IEventManagerStatic;
+        protected static _EventManager: events.IEventManagerStatic;
 
         /**
          * @name _Promise
          * @memberof plat.Control
          * @kind property
-         * @access public
+         * @access protected
          * @static
          * 
          * @type {plat.async.IPromise}
@@ -136,7 +136,7 @@ module plat {
 
             var ctrl = <ui.ITemplateControl>control;
             if (isString(ctrl.absoluteContextPath) && isFunction(ctrl.contextChanged)) {
-                var contextManager = Control._ContextManagerStatic.getManager(ctrl.root);
+                var contextManager = Control._ContextManager.getManager(ctrl.root);
 
                 contextManager.observe(ctrl.absoluteContextPath, {
                     uid: control.uid,
@@ -194,7 +194,7 @@ module plat {
             }
 
             Control.removeEventListeners(control);
-            Control._ContextManagerStatic.dispose(control);
+            Control._ContextManager.dispose(control);
             control.element = null;
             Control.removeParent(control);
         }
@@ -527,7 +527,7 @@ module plat {
          * @returns {plat.Control}
          */
         constructor() {
-            var ContextManager: observable.IContextManagerStatic = Control._ContextManagerStatic ||
+            var ContextManager: observable.IContextManagerStatic = Control._ContextManager ||
                 acquire(__ContextManagerStatic);
             ContextManager.defineGetter(this, 'uid', uniqueId(__Plat));
         }
@@ -740,7 +740,7 @@ module plat {
                 return noop;
             }
 
-            var _ContextManager: observable.IContextManagerStatic = Control._ContextManagerStatic || acquire(__ContextManagerStatic),
+            var _ContextManager: observable.IContextManagerStatic = Control._ContextManager || acquire(__ContextManagerStatic),
                 contextManager = _ContextManager.getManager(Control.getRootControl(this));
 
             return contextManager.observe(absoluteIdentifier + '.' + property, {
@@ -823,7 +823,7 @@ module plat {
             }
 
             var absoluteIdentifier = (<ui.ITemplateControl>control).getAbsoluteIdentifier(context),
-                ContextManager: observable.IContextManagerStatic = Control._ContextManagerStatic || acquire(__ContextManagerStatic);
+                ContextManager: observable.IContextManagerStatic = Control._ContextManager || acquire(__ContextManagerStatic);
 
             if (isNull(absoluteIdentifier)) {
                 if (property === __CONTEXT) {
@@ -915,7 +915,7 @@ module plat {
                 length = aliases.length,
                 resources: IObject<observable.IContextManager> = {},
                 resourceObj: { resource: ui.IResource; control: ui.ITemplateControl; },
-                ContextManager: observable.IContextManagerStatic = Control._ContextManagerStatic || acquire(__ContextManagerStatic),
+                ContextManager: observable.IContextManagerStatic = Control._ContextManager || acquire(__ContextManagerStatic),
                 getManager = ContextManager.getManager,
                 TemplateControl = ui.TemplateControl,
                 findResource = TemplateControl.findResource,
@@ -1150,7 +1150,7 @@ module plat {
          */
         dispatchEvent(name: string, direction?: string, ...args: any[]): void;
         dispatchEvent(name: string, direction?: string, ...args: any[]) {
-            var manager: events.IEventManagerStatic = Control._EventManagerStatic || acquire(__EventManagerStatic);
+            var manager: events.IEventManagerStatic = Control._EventManager || acquire(__EventManagerStatic);
 
             if (!manager.hasDirection(direction)) {
                 if (!isUndefined(direction)) {
@@ -1185,7 +1185,7 @@ module plat {
          * @returns {plat.IRemoveListener} A function to call in order to stop listening for this event.
          */
         on(name: string, listener: (ev: events.IDispatchEventInstance, ...args: any[]) => void): IRemoveListener {
-            var _EventManagerStatic: events.IEventManagerStatic = Control._EventManagerStatic || acquire(__EventManagerStatic);
+            var _EventManagerStatic: events.IEventManagerStatic = Control._EventManager || acquire(__EventManagerStatic);
             return _EventManagerStatic.on(this.uid, name, listener, this);
         }
 
@@ -1210,12 +1210,12 @@ module plat {
      */
     export function IControlFactory(
         _parser?: expressions.IParser,
-        _ContextManagerStatic?: observable.IContextManagerStatic,
-        _EventManagerStatic?: events.IEventManagerStatic,
+        _ContextManager?: observable.IContextManagerStatic,
+        _EventManager?: events.IEventManagerStatic,
         _Promise?: async.IPromise): IControlFactory {
         (<any>Control)._parser = _parser;
-        (<any>Control)._ContextManagerStatic = _ContextManagerStatic;
-        (<any>Control)._EventManagerStatic = _EventManagerStatic;
+        (<any>Control)._ContextManager = _ContextManager;
+        (<any>Control)._EventManager = _EventManager;
         (<any>Control)._Promise = _Promise;
         return Control;
     }

@@ -1457,7 +1457,7 @@ module plat.async {
          * @name _window
          * @memberof plat.async.AjaxPromise
          * @kind property
-         * @access public
+         * @access protected
          * @readonly
          * 
          * @type {Window}

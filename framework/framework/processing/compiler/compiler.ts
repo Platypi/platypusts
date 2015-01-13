@@ -23,7 +23,7 @@ module plat.processing {
          * @name _ElementManagerFactory
          * @memberof plat.processing.Compiler
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.processing.IElementManagerFactory}
          * 
@@ -31,42 +31,45 @@ module plat.processing {
          * Reference to the {@link plat.processing.IElementManagerFactory|IElementManagerFactory} injectable.
          */
         protected _ElementManagerFactory: IElementManagerFactory = acquire(__ElementManagerFactory);
+
         /**
          * @name _TextManager
          * @memberof plat.processing.Compiler
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.processing.IElementManagerFactory}
          * 
          * @description
          * Reference to the {@link plat.processing.ITextManagerFactory|ITextManagerFactory} injectable.
          */
-        protected _TextManager: ITextManagerFactory = acquire(__TextManagerFactory);
+        protected _TextManagerFactory: ITextManagerFactory = acquire(__TextManagerFactory);
+
         /**
          * @name _CommentManagerFactory
          * @memberof plat.processing.Compiler
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.processing.ICommentManagerFactory}
          * 
          * @description
          * Reference to the {@link plat.processing.ICommentManagerFactory|ICommentManagerFactory} injectable.
          */
-        _CommentManagerFactory: ICommentManagerFactory = acquire(__CommentManagerFactory);
+        protected _CommentManagerFactory: ICommentManagerFactory = acquire(__CommentManagerFactory);
+
         /**
          * @name _managerCache
          * @memberof plat.processing.Compiler
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.storage.ICache<processing.IElementManager>}
          * 
          * @description
          * Reference to a cache injectable that stores {@link plat.processing.IElementManager|IElementManagers}.
          */
-        _managerCache: storage.ICache<INodeManager> = acquire(__ManagerCache);
+        protected _managerCache: storage.ICache<INodeManager> = acquire(__ManagerCache);
         
         /**
          * @name compile
@@ -190,7 +193,7 @@ module plat.processing {
                 newLength: number,
                 create = this._ElementManagerFactory.create,
                 commentCreate = this._CommentManagerFactory.create,
-                textCreate = this._TextManager.create;
+                textCreate = this._TextManagerFactory.create;
 
             for (var i = 0; i < length; ++i) {
                 node = nodes[i];

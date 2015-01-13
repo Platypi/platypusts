@@ -23,7 +23,7 @@
          * @name _regex
          * @memberof plat.routing.BaseSegment
          * @kind property
-         * @access public
+         * @access protected
          * @static
          * 
          * @type {plat.expressions.IRegex}
@@ -31,7 +31,7 @@
          * @description
          * Reference to the {@link plat.expressions.IRegex|IRegex} injectable.
          */
-       protected static _regex: expressions.IRegex;
+        protected static _regex: expressions.IRegex;
 
         /**
          * @name parse

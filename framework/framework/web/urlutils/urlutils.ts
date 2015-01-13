@@ -78,7 +78,7 @@
          * @name _ContextManager
          * @memberof plat.web.UrlUtils
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.observable.IContextManagerStatic}
          * 
@@ -86,11 +86,12 @@
          * Reference to the {@link plat.observable.IContextManagerStatic|IContextManagerStatic} injectable.
          */
         protected _ContextManager: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
+
         /**
          * @name _document
          * @memberof plat.web.UrlUtils
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {Document}
          * 
@@ -98,54 +99,57 @@
          * Reference to the Document injectable.
          */
         protected _document: Document = acquire(__Document);
+
         /**
          * @name _window
          * @memberof plat.web.UrlUtils
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {Window}
          * 
          * @description
          * Reference to the Window injectable.
          */
-        _window: Window = acquire(__Window);
+        protected _window: Window = acquire(__Window);
         /**
          * @name _compat
          * @memberof plat.web.UrlUtils
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.ICompat}
          * 
          * @description
          * Reference to the {@link plat.ICompat|ICompat} injectable.
          */
-        _compat: ICompat = acquire(__Compat);
+        protected _compat: ICompat = acquire(__Compat);
+
         /**
          * @name _regex
          * @memberof plat.web.UrlUtils
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.expressions.IRegex}
          * 
          * @description
          * Reference to the {@link plat.expressions.IRegex|IRegex} injectable.
          */
-        _regex: expressions.IRegex = acquire(__Regex);
+        protected _regex: expressions.IRegex = acquire(__Regex);
+
         /**
          * @name _browserConfig
          * @memberof plat.web.UrlUtils
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.web.IBrowserConfig}
          * 
          * @description
          * Reference to the {@link plat.web.IBrowserConfig|IBrowserConfig} injectable.
          */
-        _browserConfig: IBrowserConfig = acquire(__BrowserConfig);
+        protected _browserConfig: IBrowserConfig = acquire(__BrowserConfig);
 
         /**
          * @name href
@@ -159,6 +163,7 @@
          * The whole associated URL.
          */
         href: string;
+
         /**
          * @name protocol
          * @memberof plat.web.UrlUtils
@@ -171,6 +176,7 @@
          * The protocol scheme of the URL, including the final ':' of the associated URL.
          */
         protocol: string;
+
         /**
          * @name host
          * @memberof plat.web.UrlUtils
@@ -183,6 +189,7 @@
          * The hostname and port of the associated URL.
          */
         host: string;
+
         /**
          * @name hostname
          * @memberof plat.web.UrlUtils
@@ -195,6 +202,7 @@
          * The domain of the associated URL.
          */
         hostname: string;
+
         /**
          * @name port
          * @memberof plat.web.UrlUtils
@@ -207,6 +215,7 @@
          * The port number of the associated URL.
          */
         port: string;
+
         /**
          * @name pathname
          * @memberof plat.web.UrlUtils
@@ -220,6 +229,7 @@
          * Removes the query string.
          */
         pathname: string;
+
         /**
          * @name search
          * @memberof plat.web.UrlUtils
@@ -232,6 +242,7 @@
          * A '?' followed by the included parameters in the associated URL.
          */
         search: string;
+
         /**
          * @name hash
          * @memberof plat.web.UrlUtils
@@ -244,6 +255,7 @@
          * A '#' followed by the included hash fragments in the associated URL.
          */
         hash: string;
+
         /**
          * @name username
          * @memberof plat.web.UrlUtils
@@ -256,6 +268,7 @@
          * The username specified before the domain name in the associated URL.
          */
         username: string;
+
         /**
          * @name password
          * @memberof plat.web.UrlUtils
@@ -268,6 +281,7 @@
          * The password specified before the domain name in the associated URL.
          */
         password: string;
+
         /**
          * @name origin
          * @memberof plat.web.UrlUtils
@@ -280,6 +294,7 @@
          * The origin of the associated URL (its protocol, domain, and port).
          */
         origin: string;
+
         /**
          * @name query
          * @memberof plat.web.UrlUtils

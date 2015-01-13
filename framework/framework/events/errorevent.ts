@@ -16,7 +16,7 @@
      */
     export class ErrorEvent<E extends Error> extends DispatchEvent implements IErrorEvent<E> {
         /**
-         * @name _EventManagerStatic
+         * @name _EventManager
          * @memberof plat.events.ErrorEvent
          * @kind property
          * @access protected
@@ -27,7 +27,7 @@
          * @description
          * Reference to the {@link plat.events.IEventManagerStatic|IEventManagerStatic} injectable.
          */
-        protected static _EventManagerStatic: IEventManagerStatic;
+        protected static _EventManager: IEventManagerStatic;
 
         /**
          * @name dispatch
@@ -51,7 +51,7 @@
             var event = new ErrorEvent<E>();
 
             event.initialize(name, sender, null, error);
-            ErrorEvent._EventManagerStatic.sendEvent(event);
+            ErrorEvent._EventManager.sendEvent(event);
         }
 
         /**
@@ -103,7 +103,7 @@
          */
         initialize(name: string, sender: any, direction?: string, error?: E): void;
         initialize(name: string, sender: any, direction?: string, error?: E) {
-            super.initialize(name, sender, this._EventManagerStatic.DIRECT);
+            super.initialize(name, sender, this._EventManager.DIRECT);
 
             this.error = error;
         }
@@ -112,8 +112,8 @@
     /**
      * The Type for referencing the '$ErrorEventStatic' injectable as a dependency.
      */
-    export function IErrorEventStatic(_EventManagerStatic?: IEventManagerStatic): IErrorEventStatic {
-        (<any>ErrorEvent)._EventManagerStatic = _EventManagerStatic;
+    export function IErrorEventStatic(_EventManager?: IEventManagerStatic): IErrorEventStatic {
+        (<any>ErrorEvent)._EventManager = _EventManager;
         return ErrorEvent;
     }
 

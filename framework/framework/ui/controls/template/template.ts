@@ -15,7 +15,7 @@ module plat.ui.controls {
          * @name _Promise
          * @memberof plat.ui.controls.Template
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.async.IPromise}
          * 
@@ -23,11 +23,12 @@ module plat.ui.controls {
          * Reference to the {@link plat.async.IPromise|IPromise} injectable.
          */
         protected _Promise: async.IPromise = acquire(__Promise);
+
         /**
          * @name _templateCache
          * @memberof plat.ui.controls.Template
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.storage.ITemplateCache}
          * 
@@ -35,18 +36,19 @@ module plat.ui.controls {
          * Reference to an injectable for storing HTML templates.
          */
         protected _templateCache: storage.ITemplateCache = acquire(__TemplateCache);
+
         /**
          * @name _document
          * @memberof plat.ui.controls.Template
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {Document}
          * 
          * @description
          * Reference to the Document injectable.
          */
-        _document: Document = acquire(__Document);
+        protected _document: Document = acquire(__Document);
 
         /**
          * @name replaceWith
@@ -115,6 +117,7 @@ module plat.ui.controls {
          * specifying that it defines the template to copy.
          */
         private __isFirst = false;
+
         /**
          * @name __templatePromise
          * @memberof plat.ui.controls.Template
@@ -127,6 +130,7 @@ module plat.ui.controls {
          * A promise that resolves when the template is retrieved and ready.
          */
         private __templatePromise: async.IThenable<Template>;
+
         /**
          * @name __templateControlCache
          * @memberof plat.ui.controls.Template

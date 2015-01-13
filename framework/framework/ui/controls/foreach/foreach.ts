@@ -15,7 +15,7 @@ module plat.ui.controls {
          * @name _animator
          * @memberof plat.ui.controls.ForEach
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.ui.animations.IAnimator}
          * 
@@ -23,11 +23,12 @@ module plat.ui.controls {
          * Reference to the {@link plat.ui.animations.IAnimator|IAnimator} injectable.
          */
         protected _animator: animations.IAnimator = acquire(__Animator);
+
         /**
          * @name _Promise
          * @memberof plat.ui.controls.ForEach
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.async.IPromise}
          * 

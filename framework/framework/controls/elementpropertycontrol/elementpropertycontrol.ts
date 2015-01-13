@@ -128,14 +128,14 @@ module plat.controls {
          * @name _browser
          * @memberof plat.controls.Src
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.web.IBrowser}
          * 
          * @description
          * The plat.web.IBrowser injectable instance
          */
-        _browser: web.IBrowser = acquire(__Browser);
+        protected _browser: web.IBrowser = acquire(__Browser);
 
         /**
          * @name setter

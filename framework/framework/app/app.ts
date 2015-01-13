@@ -26,7 +26,7 @@ module plat {
         protected static _compat: ICompat;
 
         /**
-         * @name _EventManagerStatic
+         * @name _EventManager
          * @memberof plat.App
          * @kind property
          * @access protected
@@ -37,7 +37,7 @@ module plat {
          * @description
          * Reference to the {@link plat.events.IEventManagerStatic|IEventManagerStatic} injectable.
          */
-        protected static _EventManagerStatic: events.IEventManagerStatic;
+        protected static _EventManager: events.IEventManagerStatic;
 
         /**
          * @name _document
@@ -117,7 +117,7 @@ module plat {
 
             App.__addPlatCss();
 
-            var _EventManagerStatic = App._EventManagerStatic;
+            var _EventManagerStatic = App._EventManager;
 
             _EventManagerStatic.dispose(__APP);
             _EventManagerStatic.on(__APP, __ready, App.__ready);
@@ -143,7 +143,7 @@ module plat {
          */
         static registerApp(appInjector: dependency.IInjector<IApp>): void {
             if (!isNull(App.app) && isString(App.app.uid)) {
-                App._EventManagerStatic.dispose(App.app.uid);
+                App._EventManager.dispose(App.app.uid);
             }
 
             App.__injector = appInjector;
@@ -481,7 +481,7 @@ module plat {
          * @returns {void}
          */
         dispatchEvent(name: string, ...args: any[]): void {
-            var _EventManagerStatic: events.IEventManagerStatic = App._EventManagerStatic || acquire(__EventManagerStatic);
+            var _EventManagerStatic: events.IEventManagerStatic = App._EventManager || acquire(__EventManagerStatic);
             _EventManagerStatic.dispatch(name, this, _EventManagerStatic.DIRECT, args);
         }
 
@@ -502,7 +502,7 @@ module plat {
          * @returns {plat.IRemoveListener} A method for removing the listener.
          */
         on(name: string, listener: (ev: events.IDispatchEventInstance, ...args: any[]) => void): IRemoveListener {
-            var _EventManagerStatic: events.IEventManagerStatic = App._EventManagerStatic || acquire(__EventManagerStatic);
+            var _EventManagerStatic: events.IEventManagerStatic = App._EventManager || acquire(__EventManagerStatic);
             return _EventManagerStatic.on(this.uid, name, listener, this);
         }
 
@@ -532,13 +532,13 @@ module plat {
      */
     export function IAppStatic(
         _compat?: ICompat,
-        _EventManagerStatic?: events.IEventManagerStatic,
+        _EventManager?: events.IEventManagerStatic,
         _document?: Document,
         _compiler?: processing.ICompiler,
         _LifecycleEvent?: events.ILifecycleEventStatic,
         _Exception?: IExceptionStatic): IAppStatic {
         (<any>App)._compat = _compat;
-        (<any>App)._EventManagerStatic = _EventManagerStatic;
+        (<any>App)._EventManager = _EventManager;
         (<any>App)._document = _document;
         (<any>App)._compiler = _compiler;
         (<any>App)._LifecycleEvent = _LifecycleEvent;

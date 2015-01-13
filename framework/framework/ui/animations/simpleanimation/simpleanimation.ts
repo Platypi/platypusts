@@ -25,7 +25,7 @@ module plat.ui.animations {
          * @name _window
          * @memberof plat.ui.animations.SimpleCssAnimation
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {Window}
          * 

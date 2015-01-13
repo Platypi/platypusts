@@ -16,7 +16,7 @@
          * @name _window
          * @memberof plat.ui.animations.SimpleCssTransition
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {Window}
          * 

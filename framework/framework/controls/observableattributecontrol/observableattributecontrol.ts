@@ -15,7 +15,7 @@
          * @name _ContextManager
          * @memberof plat.controls.ObservableAttributeControl
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.observable.IContextManagerStatic}
          * 

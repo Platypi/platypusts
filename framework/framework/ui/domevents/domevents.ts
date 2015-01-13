@@ -132,7 +132,7 @@
          * @name _document
          * @memberof plat.ui.DomEvents
          * @kind property
-         * @access public
+         * @access protected
          * @static
          * 
          * @type {Document}
@@ -141,11 +141,12 @@
          * Reference to the Document injectable.
          */
         protected _document: Document = acquire(__Document);
+
         /**
          * @name _compat
          * @memberof plat.ui.DomEvents
          * @kind property
-         * @access public
+         * @access protected
          * @static
          * 
          * @type {plat.ICompat}
