@@ -10,10 +10,10 @@ module plat.events {
      */
     export class EventManager {
         /**
-         * @name $Compat
+         * @name _Compat
          * @memberof plat.events.EventManager
          * @kind property
-         * @access public
+         * @access protected
          * @static
          * 
          * @type {plat.ICompat}
@@ -21,13 +21,13 @@ module plat.events {
          * @description
          * Reference to the {@link plat.ICompat|ICompat} injectable.
          */
-        static $Compat: ICompat;
+        protected static _Compat: ICompat;
 
         /**
-         * @name $Document
+         * @name _document
          * @memberof plat.events.EventManager
-         * @kind property
-         * @access public
+         * @kind protected
+         * @access 
          * @static
          * 
          * @type {Document}
@@ -35,13 +35,13 @@ module plat.events {
          * @description
          * Reference to the Document injectable.
          */
-        static $Document: Document;
+        protected static _document: Document;
 
         /**
-         * @name $Window
+         * @name _window
          * @memberof plat.events.EventManager
          * @kind property
-         * @access public
+         * @access protected
          * @static
          * 
          * @type {Window}
@@ -49,13 +49,13 @@ module plat.events {
          * @description
          * Reference to the Window injectable.
          */
-        static $Window: Window;
+        protected static _window: Window;
 
         /**
-         * @name $Dom
+         * @name _dom
          * @memberof plat.events.EventManager
          * @kind property
-         * @access public
+         * @access protected
          * @static
          * 
          * @type {plat.ui.IDom}
@@ -63,7 +63,7 @@ module plat.events {
          * @description
          * Reference to the {@link plat.ui.IDom|IDom} injectable.
          */
-        static $Dom: ui.IDom;
+        protected static _dom: ui.IDom;
 
         /**
          * @name UP
@@ -189,9 +189,9 @@ module plat.events {
 
             var lifecycleListeners = EventManager.__lifecycleEventListeners,
                 length = lifecycleListeners.length,
-                $compat = EventManager.$Compat,
-                $document = EventManager.$Document,
-                $dom = EventManager.$Dom,
+                $compat = EventManager._Compat,
+                $document = EventManager._document,
+                $dom = EventManager._dom,
                 dispatch = LifecycleEvent.dispatch,
                 listener: { name: string; value: () => void; };
 
@@ -247,7 +247,7 @@ module plat.events {
             } else if ($compat.amd) {
                 return;
             } else {
-                $dom.addEventListener(EventManager.$Window, 'load', () => {
+                $dom.addEventListener(EventManager._window, 'load', () => {
                     dispatch(__ready, EventManager);
                 });
             }
@@ -636,14 +636,14 @@ module plat.events {
      * The Type for referencing the '$EventManagerStatic' injectable as a dependency.
      */
     export function IEventManagerStatic(
-        $Compat?: ICompat,
-        $Document?: Document,
-        $Window?: Window,
-        $Dom?: ui.IDom): IEventManagerStatic {
-            EventManager.$Compat = $Compat;
-            EventManager.$Document = $Document;
-            EventManager.$Window = $Window;
-            EventManager.$Dom = $Dom;
+        _Compat?: ICompat,
+        _document?: Document,
+        _window?: Window,
+        _dom?: ui.IDom): IEventManagerStatic {
+            (<any>EventManager)._Compat = _Compat;
+            (<any>EventManager)._document = _document;
+            (<any>EventManager)._window = _window;
+            (<any>EventManager)._dom = _dom;
             return EventManager;
     }
 
@@ -664,62 +664,6 @@ module plat.events {
      * Manages dispatching events, handling all propagating events as well as any error handling.
      */
     export interface IEventManagerStatic {
-        /**
-         * @name $Compat
-         * @memberof plat.events.IEventManagerStatic
-         * @kind property
-         * @access public
-         * @static
-         *
-         * @type {plat.ICompat}
-         *
-         * @description
-         * Reference to the {@link plat.ICompat|ICompat} injectable.
-         */
-        $Compat: ICompat;
-
-        /**
-         * @name $Document
-         * @memberof plat.events.IEventManagerStatic
-         * @kind property
-         * @access public
-         * @static
-         *
-         * @type {Document}
-         *
-         * @description
-         * Reference to the Document injectable.
-         */
-        $Document: Document;
-
-        /**
-         * @name $Window
-         * @memberof plat.events.IEventManagerStatic
-         * @kind property
-         * @access public
-         * @static
-         *
-         * @type {Window}
-         *
-         * @description
-         * Reference to the Window injectable.
-         */
-        $Window: Window;
-
-        /**
-         * @name $Dom
-         * @memberof plat.events.IEventManagerStatic
-         * @kind property
-         * @access public
-         * @static
-         *
-         * @type {plat.ui.IDom}
-         *
-         * @description
-         * Reference to the {@link plat.ui.IDom|IDom} injectable.
-         */
-        $Dom: ui.IDom;
-
         /**
          * @name UP
          * @memberof plat.events.IEventManagerStatic

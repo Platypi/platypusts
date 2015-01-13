@@ -47,7 +47,7 @@
          * @param {any} sender The sender of the event.
          */
         initialize(name: string, sender: any): void {
-            super.initialize(name, sender, this.$EventManagerStatic.DIRECT);
+            super.initialize(name, sender, this._EventManagerStatic.DIRECT);
         }
     }
 

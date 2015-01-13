@@ -12,10 +12,10 @@ module plat {
      */
     export class App implements IApp {
         /**
-         * @name $Compat
+         * @name _Compat
          * @memberof plat.App
          * @kind property
-         * @access public
+         * @access protected
          * @static
          * 
          * @type {plat.ICompat}
@@ -23,13 +23,13 @@ module plat {
          * @description
          * Reference to the {@link plat.ICompat|ICompat} injectable.
          */
-        static $Compat: ICompat;
+        protected static _Compat: ICompat;
 
         /**
-         * @name $EventManagerStatic
+         * @name _EventManagerStatic
          * @memberof plat.App
          * @kind property
-         * @access public
+         * @access protected
          * @static
          * 
          * @type {plat.events.IEventManagerStatic}
@@ -37,13 +37,13 @@ module plat {
          * @description
          * Reference to the {@link plat.events.IEventManagerStatic|IEventManagerStatic} injectable.
          */
-        static $EventManagerStatic: events.IEventManagerStatic;
+        protected static _EventManagerStatic: events.IEventManagerStatic;
 
         /**
-         * @name $Document
+         * @name _document
          * @memberof plat.App
          * @kind property
-         * @access public
+         * @access protected
          * @static
          * 
          * @type {Document}
@@ -51,13 +51,13 @@ module plat {
          * @description
          * Reference to the Document injectable.
          */
-        static $Document: Document;
+        protected static _document: Document;
 
         /**
-         * @name $Compiler
+         * @name _compiler
          * @memberof plat.App
          * @kind property
-         * @access public
+         * @access protected
          * @static
          * 
          * @type {plat.processing.ICompiler}
@@ -65,13 +65,13 @@ module plat {
          * @description
          * Reference to the {@link plat.processing.ICompiler|ICompiler} injectable.
          */
-        static $Compiler: processing.ICompiler;
+        protected static _compiler: processing.ICompiler;
 
         /**
-         * @name $LifecycleEventStatic
+         * @name _LifecycleEventStatic
          * @memberof plat.App
          * @kind property
-         * @access public
+         * @access protected
          * @static
          * 
          * @type {plat.events.ILifecycleEventStatic}
@@ -79,7 +79,7 @@ module plat {
          * @description
          * Reference to the {@link plat.events.ILifecycleEventStatic|ILifecycleEventStatic} injectable.
          */
-        static $LifecycleEventStatic: events.ILifecycleEventStatic;
+        protected static _LifecycleEventStatic: events.ILifecycleEventStatic;
 
         /**
          * @name start
@@ -94,7 +94,7 @@ module plat {
          * @returns {void}
          */
         static start(): void {
-            if (!App.$Compat.isCompatible) {
+            if (!App._Compat.isCompatible) {
                 var $exception: IExceptionStatic = acquire(__ExceptionStatic);
                 $exception.fatal('PlatypusTS only supports modern browsers where ' +
                     'Object.defineProperty is defined', $exception.COMPAT);
@@ -103,7 +103,7 @@ module plat {
 
             App.__addPlatCss();
 
-            var $EventManagerStatic = App.$EventManagerStatic;
+            var $EventManagerStatic = App._EventManagerStatic;
 
             $EventManagerStatic.dispose(__APP);
             $EventManagerStatic.on(__APP, __ready, App.__ready);
@@ -129,13 +129,13 @@ module plat {
          */
         static registerApp(appInjector: dependency.IInjector<IApp>): void {
             if (!isNull(App.app) && isString(App.app.uid)) {
-                App.$EventManagerStatic.dispose(App.app.uid);
+                App._EventManagerStatic.dispose(App.app.uid);
             }
 
             App.__injector = appInjector;
 
-            if (App.$Compat.amd) {
-                var $LifecycleEventStatic = App.$LifecycleEventStatic,
+            if (App._Compat.amd) {
+                var $LifecycleEventStatic = App._LifecycleEventStatic,
                     dispatch = $LifecycleEventStatic.dispatch;
 
                 postpone(() => {
@@ -160,10 +160,10 @@ module plat {
          * @returns {void}
          */
         static load(node?: Node): void {
-            var $LifecycleEventStatic = App.$LifecycleEventStatic,
-                $compiler = App.$Compiler,
-                body = App.$Document.body,
-                head = App.$Document.head;
+            var $LifecycleEventStatic = App._LifecycleEventStatic,
+                $compiler = App._compiler,
+                body = App._document.body,
+                head = App._document.head;
 
             $LifecycleEventStatic.dispatch(__beforeLoad, App);
 
@@ -308,8 +308,8 @@ module plat {
          * @returns {void}
          */
         private static __addPlatCss(): void {
-            var $document = App.$Document;
-            if (App.$Compat.platCss) {
+            var $document = App._document;
+            if (App._Compat.platCss) {
                 return;
             } else if (!isNull($document.styleSheets) && $document.styleSheets.length > 0) {
                 (<CSSStyleSheet>$document.styleSheets[0]).insertRule('[plat-hide] { display: none !important; }', 0);
@@ -467,7 +467,7 @@ module plat {
          * @returns {void}
          */
         dispatchEvent(name: string, ...args: any[]): void {
-            var $EventManagerStatic: events.IEventManagerStatic = App.$EventManagerStatic || acquire(__EventManagerStatic);
+            var $EventManagerStatic: events.IEventManagerStatic = App._EventManagerStatic || acquire(__EventManagerStatic);
             $EventManagerStatic.dispatch(name, this, $EventManagerStatic.DIRECT, args);
         }
 
@@ -488,7 +488,7 @@ module plat {
          * @returns {plat.IRemoveListener} A method for removing the listener.
          */
         on(name: string, listener: (ev: events.IDispatchEventInstance, ...args: any[]) => void): IRemoveListener {
-            var $EventManagerStatic: events.IEventManagerStatic = App.$EventManagerStatic || acquire(__EventManagerStatic);
+            var $EventManagerStatic: events.IEventManagerStatic = App._EventManagerStatic || acquire(__EventManagerStatic);
             return $EventManagerStatic.on(this.uid, name, listener, this);
         }
 
@@ -517,16 +517,16 @@ module plat {
      * The Type for referencing the '$AppStatic' injectable as a dependency.
      */
     export function IAppStatic(
-        $Compat?: ICompat,
-        $EventManagerStatic?: events.IEventManagerStatic,
-        $Document?: Document,
-        $Compiler?: processing.ICompiler,
-        $LifecycleEventStatic?: events.ILifecycleEventStatic): IAppStatic {
-            App.$Compat = $Compat;
-            App.$EventManagerStatic = $EventManagerStatic;
-            App.$Document = $Document;
-            App.$Compiler = $Compiler;
-            App.$LifecycleEventStatic = $LifecycleEventStatic;
+        _Compat?: ICompat,
+        _EventManagerStatic?: events.IEventManagerStatic,
+        _document?: Document,
+        _compiler?: processing.ICompiler,
+        _LifecycleEventStatic?: events.ILifecycleEventStatic): IAppStatic {
+            (<any>App)._Compat = _Compat;
+            (<any>App)._EventManagerStatic = _EventManagerStatic;
+            (<any>App)._document = _document;
+            (<any>App)._compiler = _compiler;
+            (<any>App)._LifecycleEventStatic = _LifecycleEventStatic;
             return App;
     }
 

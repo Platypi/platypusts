@@ -14,10 +14,10 @@ module plat.processing {
      */
     export class ElementManager extends NodeManager implements IElementManager {
         /**
-         * @name $Document
+         * @name _document
          * @memberof plat.processing.ElementManager
          * @kind property
-         * @access public
+         * @access protected
          * @static
          * 
          * @type {Document}
@@ -25,43 +25,46 @@ module plat.processing {
          * @description
          * Reference to the Document injectable.
          */
-        static $Document: Document;
+        protected static _document: Document;
+
         /**
-         * @name $ManagerCache
+         * @name _managerCache
          * @memberof plat.processing.ElementManager
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.storage.ICache<processing.IElementManager>}
          * 
          * @description
          * Reference to a cache injectable that stores {@link plat.processing.IElementManager|IElementManagers}.
          */
-        static $ManagerCache: storage.ICache<IElementManager>;
+        protected static _managerCache: storage.ICache<IElementManager>;
+
         /**
-         * @name $ResourcesFactory
+         * @name _ResourcesFactory
          * @memberof plat.processing.ElementManager
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.ui.IResourcesFactory}
          * 
          * @description
          * Reference to the {@link plat.ui.IResourcesFactory|IResourcesFactory} injectable.
          */
-        static $ResourcesFactory: ui.IResourcesFactory;
+        protected static _ResourcesFactory: ui.IResourcesFactory;
+
         /**
-         * @name $BindableTemplatesFactory
+         * @name _BindableTemplatesFactory
          * @memberof plat.processing.ElementManager
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.ui.IBindableTemplatesFactory}
          * 
          * @description
          * Reference to the {@link plat.ui.IBindableTemplatesFactory|IBindableTemplatesFactory} injectable.
          */
-        static $BindableTemplatesFactory: ui.IBindableTemplatesFactory;
+        protected static _BindableTemplatesFactory: ui.IBindableTemplatesFactory;
 
         /**
          * @name create
@@ -129,7 +132,7 @@ module plat.processing {
                         replacementType = 'div';
                     }
 
-                    var replacement = ElementManager.$Document.createElement(replacementType);
+                    var replacement = ElementManager._document.createElement(replacementType);
                     if (replacement.nodeType === Node.ELEMENT_NODE) {
                         element = replaceWith(element, <HTMLElement>replacement.cloneNode(true));
                     }
@@ -232,7 +235,7 @@ module plat.processing {
             }
 
             if (hasNewControl) {
-                ElementManager.$ManagerCache.put(newControl.uid, manager);
+                ElementManager._managerCache.put(newControl.uid, manager);
             }
 
             return manager;
@@ -263,7 +266,7 @@ module plat.processing {
 
             var uiControl = uiControlNode.control,
                 newUiControl = <ui.ITemplateControl>uiControlNode.injector.inject(),
-                resources = ElementManager.$ResourcesFactory.getInstance(),
+                resources = ElementManager._ResourcesFactory.getInstance(),
                 attributes: ui.IAttributesInstance = acquire(__AttributesInstance);
 
             newUiControl.parent = parent;
@@ -276,14 +279,14 @@ module plat.processing {
             resources.initialize(newUiControl, uiControl.resources);
             newUiControl.resources = resources;
 
-            ElementManager.$ResourcesFactory.addControlResources(newUiControl);
+            ElementManager._ResourcesFactory.addControlResources(newUiControl);
 
             if (!isNull(uiControl.innerTemplate)) {
                 newUiControl.innerTemplate = <DocumentFragment>uiControl.innerTemplate.cloneNode(true);
             }
 
             newUiControl.type = uiControl.type;
-            newUiControl.bindableTemplates = ElementManager.$BindableTemplatesFactory.create(newUiControl, uiControl.bindableTemplates);
+            newUiControl.bindableTemplates = ElementManager._BindableTemplatesFactory.create(newUiControl, uiControl.bindableTemplates);
             newUiControl.replaceWith = uiControl.replaceWith;
 
             return newUiControl;
@@ -1233,7 +1236,7 @@ module plat.processing {
 
             $TemplateControlFactory.setAbsoluteContextPath(uiControl, absoluteContextPath);
             $TemplateControlFactory.setContextResources(uiControl);
-            ElementManager.$ResourcesFactory.bindResources(uiControl.resources);
+            ElementManager._ResourcesFactory.bindResources(uiControl.resources);
 
             if (!this.replace) {
                 var element = uiControl.element;
@@ -1427,7 +1430,7 @@ module plat.processing {
                 uid = uiControl.uid = uniqueId(__Plat);
             }
 
-            ElementManager.$ManagerCache.put(uid, this);
+            ElementManager._managerCache.put(uid, this);
 
             if (!isNull(parent) && uiControl.parent !== parent) {
                 parent.controls.push(uiControl);
@@ -1447,16 +1450,16 @@ module plat.processing {
             if (isObject(resources) && isFunction(resources.add)) {
                 resources.add(controlNode.resourceElement);
             } else {
-                resources = ElementManager.$ResourcesFactory.getInstance();
+                resources = ElementManager._ResourcesFactory.getInstance();
                 resources.initialize(uiControl, controlNode.resourceElement);
                 uiControl.resources = resources;
             }
 
-            ElementManager.$ResourcesFactory.addControlResources(uiControl);
+            ElementManager._ResourcesFactory.addControlResources(uiControl);
             uiControl.type = controlNode.nodeName;
 
             uiControl.bindableTemplates = uiControl.bindableTemplates ||
-            ElementManager.$BindableTemplatesFactory.create(uiControl);
+            ElementManager._BindableTemplatesFactory.create(uiControl);
 
             if (childNodes.length > 0 && (!isEmpty(uiControl.templateString) || !isEmpty(uiControl.templateUrl))) {
                 uiControl.innerTemplate = <DocumentFragment>appendChildren(childNodes);
@@ -1486,7 +1489,7 @@ module plat.processing {
         protected _replaceElement(control: ui.ITemplateControl, nodeMap: INodeMap): void {
             var element = nodeMap.element,
                 parentNode = element.parentNode,
-                $document = ElementManager.$Document,
+                $document = ElementManager._document,
                 controlType = control.type,
                 controlUid = control.uid,
                 startNode = control.startNode = $document.createComment(controlType + ' ' + controlUid + __START_NODE),
@@ -1529,7 +1532,7 @@ module plat.processing {
                 var resourceElement = ElementManager.locateResources(template);
 
                 if (!isNull(resourceElement)) {
-                    uiControl.resources.add(ElementManager.$ResourcesFactory.parseElement(resourceElement));
+                    uiControl.resources.add(ElementManager._ResourcesFactory.parseElement(resourceElement));
                 }
 
                 if (replaceElement) {
@@ -1640,14 +1643,14 @@ module plat.processing {
      * The Type for referencing the '$ElementManagerFactory' injectable as a dependency.
      */
     export function IElementManagerFactory(
-        $Document?: Document,
-        $ManagerCache?: storage.ICache<IElementManager>,
-        $ResourcesFactory?: ui.IResourcesFactory,
-        $BindableTemplatesFactory?: ui.IBindableTemplatesFactory): IElementManagerFactory {
-        ElementManager.$Document = $Document;
-        ElementManager.$ManagerCache = $ManagerCache;
-        ElementManager.$ResourcesFactory = $ResourcesFactory;
-        ElementManager.$BindableTemplatesFactory = $BindableTemplatesFactory;
+        _document?: Document,
+        _managerCache?: storage.ICache<IElementManager>,
+        _ResourcesFactory?: ui.IResourcesFactory,
+        _BindableTemplatesFactory?: ui.IBindableTemplatesFactory): IElementManagerFactory {
+        (<any>ElementManager)._document = _document;
+        (<any>ElementManager)._managerCache = _managerCache;
+        (<any>ElementManager)._ResourcesFactory = _ResourcesFactory;
+        (<any>ElementManager)._BindableTemplatesFactory = _BindableTemplatesFactory;
         return ElementManager;
     }
 

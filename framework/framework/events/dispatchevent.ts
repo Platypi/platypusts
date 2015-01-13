@@ -35,7 +35,7 @@ module plat.events {
          * @description
          * Reference to the {@link plat.events.IEventManagerStatic|IEventManagerStatic} injectable.
          */
-        $EventManagerStatic: IEventManagerStatic = acquire(__EventManagerStatic);
+        _EventManagerStatic: IEventManagerStatic = acquire(__EventManagerStatic);
 
         /**
          * @name $ContextManagerStatic
@@ -188,7 +188,7 @@ module plat.events {
         initialize(name: string, sender: any, direction?: string): void;
         initialize(name: string, sender: any, direction?: string) {
             this.name = name;
-            this.direction = direction || this.$EventManagerStatic.UP;
+            this.direction = direction || this._EventManagerStatic.UP;
             this.sender = sender;
         }
 
@@ -222,9 +222,9 @@ module plat.events {
          * @returns {void}
          */
         stopPropagation(): void {
-            if (this.direction === this.$EventManagerStatic.UP) {
+            if (this.direction === this._EventManagerStatic.UP) {
                 this.stopped = true;
-                (<any>this.$EventManagerStatic.propagatingEvents)[this.name] = false;
+                (<any>this._EventManagerStatic.propagatingEvents)[this.name] = false;
             }
         }
     }

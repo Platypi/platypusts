@@ -13,10 +13,10 @@ module plat {
      */
     export class Control implements IControl {
         /**
-         * @name $Parser
+         * @name _parser
          * @memberof plat.Control
          * @kind property
-         * @access public
+         * @access protected
          * @static
          * 
          * @type {plat.expressions.IParser}
@@ -24,13 +24,13 @@ module plat {
          * @description
          * Reference to the {@link plat.expressions.IParser|IParser} injectable.
          */
-        static $Parser: expressions.IParser;
+        protected static _parser: expressions.IParser;
 
         /**
-         * @name $ContextManagerStatic
+         * @name _ContextManagerStatic
          * @memberof plat.Control
          * @kind property
-         * @access public
+         * @access protected
          * @static
          * 
          * @type {plat.observable.IContextManagerStatic}
@@ -38,13 +38,13 @@ module plat {
          * @description
          * Reference to the {@link plat.observable.IContextManagerStatic|IContextManagerStatic} injectable.
          */
-        static $ContextManagerStatic: observable.IContextManagerStatic;
+        protected static _ContextManagerStatic: observable.IContextManagerStatic;
 
         /**
-         * @name $EventManagerStatic
+         * @name _EventManagerStatic
          * @memberof plat.Control
          * @kind property
-         * @access public
+         * @access protected
          * @static
          * 
          * @type {plat.events.IEventManagerStatic}
@@ -52,10 +52,10 @@ module plat {
          * @description
          * Reference to the {@link plat.events.IEventManagerStatic|IEventManagerStatic} injectable.
          */
-        static $EventManagerStatic: events.IEventManagerStatic;
+        protected static _EventManagerStatic: events.IEventManagerStatic;
 
         /**
-         * @name $Promise
+         * @name _Promise
          * @memberof plat.Control
          * @kind property
          * @access public
@@ -66,7 +66,7 @@ module plat {
          * @description
          * Reference to the {@link plat.async.IPromise|IPromise} injectable.
          */
-        static $Promise: async.IPromise;
+        protected static _Promise: async.IPromise;
 
         /**
          * @name __eventListeners
@@ -136,7 +136,7 @@ module plat {
 
             var ctrl = <ui.ITemplateControl>control;
             if (isString(ctrl.absoluteContextPath) && isFunction(ctrl.contextChanged)) {
-                var contextManager = Control.$ContextManagerStatic.getManager(ctrl.root);
+                var contextManager = Control._ContextManagerStatic.getManager(ctrl.root);
 
                 contextManager.observe(ctrl.absoluteContextPath, {
                     uid: control.uid,
@@ -152,10 +152,10 @@ module plat {
             }
 
             if (isFunction(control.loaded)) {
-                return Control.$Promise.resolve(control.loaded());
+                return Control._Promise.resolve(control.loaded());
             }
 
-            return Control.$Promise.resolve(null);
+            return Control._Promise.resolve(null);
         }
 
         /**
@@ -194,7 +194,7 @@ module plat {
             }
 
             Control.removeEventListeners(control);
-            Control.$ContextManagerStatic.dispose(control);
+            Control._ContextManagerStatic.dispose(control);
             control.element = null;
             Control.removeParent(control);
         }
@@ -514,7 +514,7 @@ module plat {
          * @returns {plat.Control}
          */
         constructor() {
-            var ContextManager: observable.IContextManagerStatic = Control.$ContextManagerStatic ||
+            var ContextManager: observable.IContextManagerStatic = Control._ContextManagerStatic ||
                 acquire(__ContextManagerStatic);
             ContextManager.defineGetter(this, 'uid', uniqueId(__Plat));
         }
@@ -727,7 +727,7 @@ module plat {
                 return noop;
             }
 
-            var $ContextManagerStatic: observable.IContextManagerStatic = Control.$ContextManagerStatic || acquire(__ContextManagerStatic),
+            var $ContextManagerStatic: observable.IContextManagerStatic = Control._ContextManagerStatic || acquire(__ContextManagerStatic),
                 contextManager = $ContextManagerStatic.getManager(Control.getRootControl(this));
 
             return contextManager.observe(absoluteIdentifier + '.' + property, {
@@ -810,7 +810,7 @@ module plat {
             }
 
             var absoluteIdentifier = (<ui.ITemplateControl>control).getAbsoluteIdentifier(context),
-                ContextManager: observable.IContextManagerStatic = Control.$ContextManagerStatic || acquire(__ContextManagerStatic);
+                ContextManager: observable.IContextManagerStatic = Control._ContextManagerStatic || acquire(__ContextManagerStatic);
 
             if (isNull(absoluteIdentifier)) {
                 if (property === __CONTEXT) {
@@ -882,7 +882,7 @@ module plat {
             }
 
             if (isString(expression)) {
-                expression = Control.$Parser.parse(expression);
+                expression = Control._parser.parse(expression);
             } else if (!isFunction(expression.evaluate)) {
                 return noop;
             }
@@ -902,7 +902,7 @@ module plat {
                 length = aliases.length,
                 resources: IObject<observable.IContextManager> = {},
                 resourceObj: { resource: ui.IResource; control: ui.ITemplateControl; },
-                ContextManager: observable.IContextManagerStatic = Control.$ContextManagerStatic || acquire(__ContextManagerStatic),
+                ContextManager: observable.IContextManagerStatic = Control._ContextManagerStatic || acquire(__ContextManagerStatic),
                 getManager = ContextManager.getManager,
                 TemplateControl = ui.TemplateControl,
                 findResource = TemplateControl.findResource,
@@ -1031,7 +1031,7 @@ module plat {
          */
         findProperty(property: string): IControlProperty {
             var control = <IControl>this,
-                expression = Control.$Parser.parse(property),
+                expression = Control._parser.parse(property),
                 value: any;
 
             while (!isNull(control)) {
@@ -1137,7 +1137,7 @@ module plat {
          */
         dispatchEvent(name: string, direction?: string, ...args: any[]): void;
         dispatchEvent(name: string, direction?: string, ...args: any[]) {
-            var manager: events.IEventManagerStatic = Control.$EventManagerStatic || acquire(__EventManagerStatic);
+            var manager: events.IEventManagerStatic = Control._EventManagerStatic || acquire(__EventManagerStatic);
 
             if (!manager.hasDirection(direction)) {
                 if (!isUndefined(direction)) {
@@ -1172,7 +1172,7 @@ module plat {
          * @returns {plat.IRemoveListener} A function to call in order to stop listening for this event.
          */
         on(name: string, listener: (ev: events.IDispatchEventInstance, ...args: any[]) => void): IRemoveListener {
-            var $EventManagerStatic: events.IEventManagerStatic = Control.$EventManagerStatic || acquire(__EventManagerStatic);
+            var $EventManagerStatic: events.IEventManagerStatic = Control._EventManagerStatic || acquire(__EventManagerStatic);
             return $EventManagerStatic.on(this.uid, name, listener, this);
         }
 
@@ -1196,14 +1196,14 @@ module plat {
      * The Type for referencing the '$ControlFactory' injectable as a dependency.
      */
     export function IControlFactory(
-        $Parser?: expressions.IParser,
-        $ContextManagerStatic?: observable.IContextManagerStatic,
-        $EventManagerStatic?: events.IEventManagerStatic,
-        $Promise?: async.IPromise): IControlFactory {
-        Control.$Parser = $Parser;
-        Control.$ContextManagerStatic = $ContextManagerStatic;
-        Control.$EventManagerStatic = $EventManagerStatic;
-        Control.$Promise = $Promise;
+        _parser?: expressions.IParser,
+        _ContextManagerStatic?: observable.IContextManagerStatic,
+        _EventManagerStatic?: events.IEventManagerStatic,
+        _Promise?: async.IPromise): IControlFactory {
+        (<any>Control)._parser = _parser;
+        (<any>Control)._ContextManagerStatic = _ContextManagerStatic;
+        (<any>Control)._EventManagerStatic = _EventManagerStatic;
+        (<any>Control)._Promise = _Promise;
         return Control;
     }
 

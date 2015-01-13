@@ -249,14 +249,38 @@ module plat.dependency {
             if (isNull(Constructor) || isNull(Constructor.prototype)) {
                 return Constructor;
             }
-            var obj = Object.create(Constructor.prototype),
-                ret = obj.constructor.apply(obj, args);
+            var obj = Object.create(Constructor.prototype);
+
+            Injector.__walk(obj, Object.getPrototypeOf(obj));
+
+            var ret = obj.constructor.apply(obj, args);
 
             if (!isUndefined(ret)) {
                 return ret;
             }
 
             return obj;
+        }
+
+        private static __walk(obj: any, proto: any): void {
+            if (proto.constructor !== Object) {
+                Injector.__walk(obj, Object.getPrototypeOf(proto));
+            }
+
+            var Constructor = proto.constructor,
+                toInject = Constructor._inject;
+
+            if (!isObject(toInject)) {
+                return;
+            }
+
+            var dependencies = acquire(map((value) => value, toInject)),
+                keys = Object.keys(toInject),
+                length = keys.length;
+
+            for (var i = 0; i < length; ++i) {
+                obj[keys[i]] = dependencies[i];
+            }
         }
 
         /**
