@@ -33,8 +33,6 @@
 
          canNavigateTo() {
              // console.log('canNavigateTo:', this.uid);
-
-             this.navigator.navigate('/two', { isUrl: true, replace: true });
          }
     }
 

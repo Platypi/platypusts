@@ -177,8 +177,8 @@ module plat.ui.controls {
                 node: HTMLElement = (isEmpty(replaceWith) || replaceWith === 'any') ?
                     doc.createElement('div') : doc.createElement(replaceWith);
 
-            node.setAttribute('plat-control', type);
-            node.className = 'plat-viewcontrol';
+            node.setAttribute(__Control, type);
+            node.className = __ViewControl;
 
             return <processing.INodeMap>{
                 element: node,

@@ -109,12 +109,12 @@ module plat.processing {
                 uiControlNode: IUiControlNode;
 
             if (isNull(injector)) {
-                if (element.hasAttribute('plat-control')) {
-                    name = element.getAttribute('plat-control').toLowerCase();
+                if (element.hasAttribute(__Control)) {
+                    name = element.getAttribute(__Control).toLowerCase();
                     injector = controlInjectors[name] || viewControlInjectors[name];
                     noControlAttribute = false;
-                } else if (element.hasAttribute('data-plat-control')) {
-                    name = element.getAttribute('data-plat-control').toLowerCase();
+                } else if (element.hasAttribute(__AttributePrefix + __Control)) {
+                    name = element.getAttribute(__AttributePrefix + __Control).toLowerCase();
                     injector = controlInjectors[name] || viewControlInjectors[name];
                     noControlAttribute = false;
                 }
@@ -135,7 +135,7 @@ module plat.processing {
                 hasUiControl = true;
 
                 if (noControlAttribute) {
-                    element.setAttribute('plat-control', name);
+                    element.setAttribute(__Control, name);
                 }
 
                 var replacementType = uiControl.replaceWith,
@@ -188,12 +188,14 @@ module plat.processing {
          */
         static locateResources(node: Node): HTMLElement {
             var childNodes: Array<Node> = Array.prototype.slice.call(node.childNodes),
-                childNode: Node;
+                childNode: Node,
+                nodeName: string;
 
             while (childNodes.length > 0) {
                 childNode = childNodes.shift();
+                nodeName = childNode.nodeName.toLowerCase();
 
-                if (childNode.nodeName.toLowerCase() === 'plat-resources') {
+                if (nodeName === __Resources || nodeName === 'x-' + __Resources) {
                     return <HTMLElement>node.removeChild(childNode);
                 }
             }
@@ -381,7 +383,7 @@ module plat.processing {
                     newNodes.push({
                         control: control,
                         expressions: node.expressions,
-                        node: !attributes ? null : (attributes.getNamedItem(nodeName) || attributes.getNamedItem('data-' + nodeName)),
+                        node: !attributes ? null : (attributes.getNamedItem(nodeName) || attributes.getNamedItem(__AttributePrefix + nodeName)),
                         nodeName: nodeName,
                         injector: injector
                     });
@@ -490,17 +492,17 @@ module plat.processing {
                 name = attribute.name.replace(/^data-/i, '').toLowerCase();
                 injector = controlInjectors[name] || viewControlInjectors[name];
 
-                if (name === 'plat-context') {
+                if (name === __Context) {
                     if (value !== '') {
                         childContext = _parser.parse(value);
                         if (childContext.identifiers.length !== 1) {
                             var _Exception: IExceptionStatic = ElementManager._Exception;
-                            _Exception.warn('Incorrect plat-context: ' +
+                            _Exception.warn('Incorrect ' + __Context + ': ' +
                                 value + ', must contain a single identifier.', _Exception.COMPILE);
                         }
                         childIdentifier = childContext.identifiers[0];
                     }
-                } else if (name !== 'plat-control') {
+                } else if (name !== __Control) {
                     hasMarkup = hasMarkupFn(value);
                     expressions = hasMarkup ? findMarkup(value) : [];
 
