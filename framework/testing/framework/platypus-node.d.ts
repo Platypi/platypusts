@@ -2223,7 +2223,7 @@ declare module plat {
             /**
               * Reference to the IEventManagerStatic injectable.
               */
-            protected _EventManagerStatic: events.IEventManagerStatic;
+            protected _EventManager: events.IEventManagerStatic;
             /**
               * Reference to the ICompat injectable.
               */
@@ -11603,7 +11603,7 @@ declare module plat {
             private static __currentRouter;
             protected _Promise: async.IPromise;
             protected _Injector: typeof dependency.Injector;
-            protected _EventManagerStatic: events.IEventManagerStatic;
+            protected _EventManager: events.IEventManagerStatic;
             protected _Exception: IExceptionStatic;
             protected _browser: web.IBrowser;
             protected _browserConfig: web.IBrowserConfig;

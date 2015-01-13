@@ -41,7 +41,7 @@ module plat.web {
         };
 
         /**
-         * @name _EventManagerStatic
+         * @name _EventManager
          * @memberof plat.web.Browser
          * @kind property
          * @access protected
@@ -51,7 +51,7 @@ module plat.web {
          * @description
          * Reference to the {@link plat.events.IEventManagerStatic|IEventManagerStatic} injectable.
          */
-        protected _EventManagerStatic: events.IEventManagerStatic = acquire(__EventManagerStatic);
+        protected _EventManager: events.IEventManagerStatic = acquire(__EventManagerStatic);
 
         /**
          * @name _compat

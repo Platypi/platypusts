@@ -40,7 +40,7 @@ module tests.appStatic {
         it('should test App start and succeed', () => {
             var compat: plat.ICompat = plat.acquire(plat.ICompat),
                 error = false,
-                _EventManagerStatic: plat.events.IEventManagerStatic = plat.acquire(plat.events.IEventManagerStatic),
+                _EventManager: plat.events.IEventManagerStatic = plat.acquire(plat.events.IEventManagerStatic),
                 spy = spyOn(_EventManagerStatic, 'initialize');
 
             try {

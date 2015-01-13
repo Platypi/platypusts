@@ -17,7 +17,7 @@
 
         protected _Promise: async.IPromise = acquire(__Promise);
         protected _Injector: typeof dependency.Injector = acquire(__InjectorStatic);
-        protected _EventManagerStatic: events.IEventManagerStatic = acquire(__EventManagerStatic);
+        protected _EventManager: events.IEventManagerStatic = acquire(__EventManagerStatic);
         protected _Exception: IExceptionStatic = acquire(__ExceptionStatic);
         protected _browser: web.IBrowser = acquire(__Browser);
         protected _browserConfig: web.IBrowserConfig = acquire(__BrowserConfig);

@@ -117,12 +117,12 @@ module plat {
 
             App.__addPlatCss();
 
-            var _EventManagerStatic = App._EventManager;
+            var _EventManager = App._EventManager;
 
-            _EventManagerStatic.dispose(__APP);
-            _EventManagerStatic.on(__APP, __ready, App.__ready);
-            _EventManagerStatic.on(__APP, __shutdown, App.__shutdown);
-            _EventManagerStatic.initialize();
+            _EventManager.dispose(__APP);
+            _EventManager.on(__APP, __ready, App.__ready);
+            _EventManager.on(__APP, __shutdown, App.__shutdown);
+            _EventManager.initialize();
         }
 
         /**
@@ -363,8 +363,8 @@ module plat {
          * @returns {plat.App}
          */
         constructor() {
-            var ContextManager: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
-            ContextManager.defineGetter(this, 'uid', uniqueId(__Plat));
+            var _ContextManager: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
+            _ContextManager.defineGetter(this, 'uid', uniqueId(__Plat));
         }
 
         /**
@@ -481,8 +481,8 @@ module plat {
          * @returns {void}
          */
         dispatchEvent(name: string, ...args: any[]): void {
-            var _EventManagerStatic: events.IEventManagerStatic = App._EventManager || acquire(__EventManagerStatic);
-            _EventManagerStatic.dispatch(name, this, _EventManagerStatic.DIRECT, args);
+            var _EventManager: events.IEventManagerStatic = App._EventManager || acquire(__EventManagerStatic);
+            _EventManager.dispatch(name, this, _EventManager.DIRECT, args);
         }
 
         /**
@@ -502,8 +502,8 @@ module plat {
          * @returns {plat.IRemoveListener} A method for removing the listener.
          */
         on(name: string, listener: (ev: events.IDispatchEventInstance, ...args: any[]) => void): IRemoveListener {
-            var _EventManagerStatic: events.IEventManagerStatic = App._EventManager || acquire(__EventManagerStatic);
-            return _EventManagerStatic.on(this.uid, name, listener, this);
+            var _EventManager: events.IEventManagerStatic = App._EventManager || acquire(__EventManagerStatic);
+            return _EventManager.on(this.uid, name, listener, this);
         }
 
         /**
