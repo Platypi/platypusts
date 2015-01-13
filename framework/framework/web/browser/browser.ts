@@ -198,7 +198,7 @@ module plat.web {
         constructor() {
             var ContextManager: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
             ContextManager.defineGetter(this, 'uid', uniqueId(__Plat));
-            this._EventManagerStatic.on(this.uid, __beforeLoad, this.initialize, this);
+            this._EventManager.on(this.uid, __beforeLoad, this.initialize, this);
         }
 
         /**
@@ -217,7 +217,7 @@ module plat.web {
             var $config = Browser.config,
                 _compat = this._compat;
 
-            this._EventManagerStatic.dispose(this.uid);
+            this._EventManager.dispose(this.uid);
 
             if ($config.routingType === $config.NONE) {
                 return;
@@ -358,7 +358,7 @@ module plat.web {
 
             this.__lastUrl = url;
 
-            var $manager = this._EventManagerStatic;
+            var $manager = this._EventManager;
             $manager.dispatch(__urlChanged,
                 this,
                 $manager.DIRECT,

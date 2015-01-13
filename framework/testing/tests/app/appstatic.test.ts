@@ -41,7 +41,7 @@ module tests.appStatic {
             var compat: plat.ICompat = plat.acquire(plat.ICompat),
                 error = false,
                 _EventManager: plat.events.IEventManagerStatic = plat.acquire(plat.events.IEventManagerStatic),
-                spy = spyOn(_EventManagerStatic, 'initialize');
+                spy = spyOn(_EventManager, 'initialize');
 
             try {
                 _AppStatic.start();
