@@ -12,6 +12,10 @@
             });
         }
 
+        ready() {
+            console.log(this.navigator);
+        }
+
         error(ev: plat.events.IErrorEvent<any>) {
             console.log(ev.error);
         }

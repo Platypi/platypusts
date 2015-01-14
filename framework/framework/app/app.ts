@@ -295,7 +295,10 @@ module plat {
                 return;
             }
 
-            var app = App.app = appInjector.inject();
+            var app = App.app = appInjector.inject(),
+                navigator: routing.Navigator = app.navigator = acquire(__NavigatorInstance);
+
+            navigator.initialize((<typeof routing.Router>acquire(__RouterStatic)).currentRouter());
 
             app.on(__suspend, app.suspend);
             app.on(__resume, app.resume);
@@ -349,6 +352,19 @@ module plat {
          * A unique id, created during instantiation.
          */
         uid: string;
+
+        /**
+         * @name navigator
+         * @memberof plat.App
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.routing.INavigator}
+         * 
+         * @description
+         * A Navigator instance, exists when a router is injected into the app.
+         */
+        navigator?: routing.Navigator;
 
         /**
          * @name constructor
@@ -660,6 +676,19 @@ module plat {
          * A unique id, created during instantiation.
          */
         uid: string;
+
+        /**
+         * @name navigator
+         * @memberof plat.IApp
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.routing.INavigator}
+         * 
+         * @description
+         * A Navigator instance, exists when a router is injected into the app.
+         */
+        navigator?: routing.Navigator;
 
         /**
          * @name suspend
