@@ -157,16 +157,17 @@ module plat.controls {
          * the evaluated arguments taking resources 
          * into account.
          * 
-         * @returns {{ fn: () => void; control: ui.ITemplateControl; args: Array<expressions.IParsedExpression>; }} 
+         * @returns {{ fn: () => void; control: any; args: Array<expressions.IParsedExpression>; }} 
          * The function to call and the associated arguments, as well as the control context with which to call the function.
          */
-        protected _buildExpression(): { fn: () => void; control: ui.ITemplateControl; args: Array<expressions.IParsedExpression>; } {
+        protected _buildExpression(): { fn: () => void; context: any; args: Array<expressions.IParsedExpression>; } {
             var expression = this._expression.slice(0),
+                _parser = this._parser,
                 parent = this.parent,
                 hasParent = !isNull(parent),
                 listenerStr = expression.shift(),
-                listener: { control: ui.ITemplateControl; value: any; },
-                control: ui.ITemplateControl,
+                listener: IControlProperty,
+                context: any,
                 fn: () => void,
                 aliases: IObject<any>,
                 argContext: any;
@@ -177,26 +178,48 @@ module plat.controls {
             }
 
             if (listenerStr[0] !== '@') {
+                var _Exception: IExceptionStatic;
                 listener = this.findProperty(listenerStr);
 
                 if (isNull(listener)) {
+                    _Exception = acquire(__ExceptionStatic);
+                    _Exception.warn('Could not find property ' + listenerStr + ' on any parent control.',
+                        _Exception.CONTROL);
                     return {
                         fn: noop,
-                        control: <ui.ITemplateControl>{},
+                        context: <ui.ITemplateControl>{},
                         args: []
                     };
                 }
 
+                var parsedExpression = listener.expresssion,
+                    identifiers = parsedExpression.identifiers;
+
+                if (identifiers.length > 1) {
+                    _Exception = acquire(__ExceptionStatic);
+                    _Exception.warn('Cannot have more than one identifier in a ' + this.type +
+                        '\'s expression.', _Exception.CONTROL);
+                    return {
+                        fn: noop,
+                        context: <ui.ITemplateControl>{},
+                        args: []
+                    };
+                }
+
+                var identifier = identifiers[0],
+                    split = identifier.split('.');
+
+                // pop key
+                split.pop();
+                context = split.length === 0 ? listener.control : _parser.parse(split.join('.')).evaluate(listener.control);
                 fn = listener.value;
-                control = listener.control;
             } else {
                 fn = isNull(aliases) ? noop : (aliases[listenerStr] || noop);
-                control = undefined;
+                context = undefined;
             }
 
             var length = expression.length,
-                args: Array<expressions.IParsedExpression> = [],
-                _parser = this._parser;
+                args: Array<expressions.IParsedExpression> = [];
 
             for (var i = 0; i < length; ++i) {
                 args.push(_parser.parse(expression[i]).evaluate(argContext, aliases));
@@ -204,7 +227,7 @@ module plat.controls {
 
             return {
                 fn: fn,
-                control: control,
+                context: context,
                 args: args
             };
         }
@@ -233,7 +256,7 @@ module plat.controls {
                 return;
             }
 
-            fn.apply(expression.control, expression.args.concat(<any>ev));
+            fn.apply(expression.context, expression.args.concat(<any>ev));
         }
 
         /**

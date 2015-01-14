@@ -432,6 +432,11 @@ declare module plat {
           * Exception Type for animation exceptions
           */
         static ANIMATION: number;
+        /**
+          * Exception Type for individual control exceptions
+          * (e.g. using a particular control incorrectly).
+          */
+        static CONTROL: number;
     }
     /**
       * The Type for referencing the '_Exception' injectable as a dependency.
@@ -514,6 +519,11 @@ declare module plat {
           * Exception Type for animation exceptions
           */
         ANIMATION: number;
+        /**
+          * Exception Type for individual control exceptions
+          * (e.g. using a particular control incorrectly).
+          */
+        CONTROL: number;
     }
     /**
       * A class containing boolean values signifying browser
@@ -5325,7 +5335,7 @@ declare module plat {
           * Finds the first instance of the specified property
           * in the parent control chain. Returns undefined if not found.
           * @param {string} property The property identifer
-          * property value and the control that it's on.
+          * evaluated property value, and the control that it's on.
           */
         findProperty(property: string): IControlProperty;
         /**
@@ -5670,6 +5680,10 @@ declare module plat {
       * An object that links a property to a control.
       */
     interface IControlProperty {
+        /**
+          * The parsed expression of the control property.
+          */
+        expresssion: expressions.IParsedExpression;
         /**
           * The value of the property.
           */
@@ -11782,7 +11796,7 @@ declare module plat {
               */
             protected _buildExpression(): {
                 fn: () => void;
-                control: ui.ITemplateControl;
+                context: any;
                 args: expressions.IParsedExpression[];
             };
             /**

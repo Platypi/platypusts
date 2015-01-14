@@ -261,6 +261,22 @@ module plat {
          * Exception Type for animation exceptions
          */
         static ANIMATION = 12;
+
+        /**
+         * @name CONTROL
+         * @memberof plat.Exception
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         * 
+         * @type {number}
+         * 
+         * @description
+         * Exception Type for individual control exceptions 
+         * (e.g. using a particular control incorrectly).
+         */
+        static CONTROL = 13;
     }
 
     /**
@@ -529,6 +545,22 @@ module plat {
          * Exception Type for animation exceptions
          */
         ANIMATION: number;
+
+        /**
+         * @name CONTROL
+         * @memberof plat.IExceptionStatic
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         *
+         * @type {number}
+         *
+         * @description
+         * Exception Type for individual control exceptions
+         * (e.g. using a particular control incorrectly).
+         */
+        CONTROL: number;
     }
 
     /**
