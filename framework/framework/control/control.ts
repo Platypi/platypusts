@@ -1039,8 +1039,8 @@ module plat {
          * 
          * @param {string} property The property identifer
          * 
-         * @returns {IControlProperty} An object containing both the 
-         * property value and the control that it's on.
+         * @returns {IControlProperty} An object containing the property's parsed expression, the 
+         * evaluated property value, and the control that it's on.
          */
         findProperty(property: string): IControlProperty {
             var control = <IControl>this,
@@ -1052,6 +1052,7 @@ module plat {
 
                 if (!isNull(value)) {
                     return {
+                        expresssion: expression,
                         control: control,
                         value: value
                     };
@@ -1892,6 +1893,19 @@ module plat {
      * An object that links a property to a control.
      */
     export interface IControlProperty {
+        /**
+         * @name expresssion
+         * @memberof plat.IControl
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.expressions.IParsedExpression}
+         * 
+         * @description
+         * The parsed expression of the control property.
+         */
+        expresssion: expressions.IParsedExpression;
+
         /**
          * @name value
          * @memberof plat.IControl

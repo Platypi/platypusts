@@ -364,7 +364,7 @@ module plat {
          * @description
          * A Navigator instance, exists when a router is injected into the app.
          */
-        navigator?: routing.Navigator;
+        navigator: routing.Navigator;
 
         /**
          * @name constructor
