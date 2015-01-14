@@ -444,7 +444,7 @@ module plat.web {
                     url = url.slice(1);
                 }
 
-                if (url[url.length - 1] !== '/') {
+                if (url[url.length - 1] !== '/' && url.indexOf('?') === -1) {
                     url += '/';
                 }
 

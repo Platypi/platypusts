@@ -257,14 +257,15 @@ module plat.ui.controls {
             var href = value.view;
 
             if (value.isUrl !== true) {
-                var parameters = value.parameters;
+                var parameters = value.parameters,
+                    query = value.query;
 
                 if (isEmpty(href)) {
                     return href;
                 }
 
                 href = this._Injector.convertDependency(href);
-                href = this.router.generate(href, parameters);
+                href = this.router.generate(href, parameters, query);
             }
 
             return this._browser.formatUrl(href);
