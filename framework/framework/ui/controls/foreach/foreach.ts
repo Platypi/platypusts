@@ -221,7 +221,6 @@ module plat.ui.controls {
         setTemplate(): void {
             var childNodes: Array<Node> = Array.prototype.slice.call(this.element.childNodes);
             this.bindableTemplates.add('item', childNodes);
-            this._container = this.element;
         }
 
         /**
@@ -276,6 +275,8 @@ module plat.ui.controls {
          */
         loaded(): void {
             var context = this.context;
+            this._container = this.element;
+
             if (!isArray(context)) {
                 if (!isNull(context)) {
                     var _Exception: IExceptionStatic = this._Exception;
