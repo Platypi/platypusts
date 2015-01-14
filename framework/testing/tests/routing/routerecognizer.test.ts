@@ -1,4 +1,4 @@
-﻿/// <reference path="../../typings/tsd.d.ts" />
+﻿/// <reference path="../../references.d.ts" />
 module tests.routing.routeRecognizer {
     describe('Route Recognizer tests', () => {
         var router: plat.routing.RouteRecognizer,

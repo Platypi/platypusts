@@ -58,6 +58,7 @@
 
         protected _EventManager: events.IEventManagerStatic = acquire(__EventManagerStatic);
         protected _window: Window = acquire(__Window);
+        protected _Exception: IExceptionStatic = acquire(__ExceptionStatic);
 
         /**
          * @name router
@@ -172,7 +173,8 @@
                 prefix: string,
                 previousUrl: string,
                 previousQuery: string,
-                backNavigate: boolean;
+                backNavigate: boolean,
+                _Exception = this._Exception;
 
             this.previousUrl = this._browser.url();
 
@@ -210,13 +212,16 @@
                                 this.resolveNavigate();
                             }
                         })
-                        .catch((e) => {
+                        .catch((e: any) => {
                             this.ignoreOnce = true;
                             this.previousUrl = previousUrl;
                             this._browser.url(previousUrl, !backNavigate);
-
                             if (isFunction(this.rejectNavigate)) {
                                 this.rejectNavigate(e);
+                            }
+
+                            if (!isEmpty(e)) {
+                                _Exception.warn(e, _Exception.NAVIGATION);
                             }
                         });
                 });
@@ -245,8 +250,8 @@
 
     export interface INavigateOptions {
         isUrl?: boolean;
-        parameters?: IObject<string>;
-        query?: IObject<string>;
+        parameters?: IObject<any>;
+        query?: IObject<any>;
         replace?: boolean;
     }
 

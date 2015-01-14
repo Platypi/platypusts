@@ -19,7 +19,7 @@
         }
 
         navigatedTo() {
-            // console.log('navigatedTo:', this.uid);
+            throw new Error('test');
         }
 
         navigatingFrom() {

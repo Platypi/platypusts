@@ -1,4 +1,4 @@
-﻿/// <reference path="../../typings/tsd.d.ts" />
+﻿/// <reference path="../../references.d.ts" />
 
 module tests.appStatic {
     var _AppStatic = plat.acquire(plat.IAppStatic),

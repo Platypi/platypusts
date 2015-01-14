@@ -18,7 +18,6 @@
         protected _Promise: async.IPromise = acquire(__Promise);
         protected _Injector: typeof dependency.Injector = acquire(__InjectorStatic);
         protected _EventManager: events.IEventManagerStatic = acquire(__EventManagerStatic);
-        protected _Exception: IExceptionStatic = acquire(__ExceptionStatic);
         protected _browser: web.IBrowser = acquire(__Browser);
         protected _browserConfig: web.IBrowserConfig = acquire(__BrowserConfig);
         protected _resolve: typeof async.Promise.resolve = this._Promise.resolve.bind(this._Promise);
@@ -51,6 +50,7 @@
             this.uid = uniqueId(__Plat);
             this.isRoot = isNull(Router.currentRouter());
             Router.currentRouter(this);
+            this.initialize();
         }
 
         initialize(parent?: Router) {
@@ -125,17 +125,22 @@
         configure(routes: Array<IRouteMapping>): async.IThenable<void>;
         configure(routes: any) {
             if (isArray(routes)) {
-                return mapAsync((route: IRouteMapping) => {
-                    return this.configure(route);
-                }, routes).then((): void => undefined);
+                forEach((route: IRouteMapping) => {
+                    this._configureRoute(route);
+                }, routes);
+            } else {
+                this._configureRoute(routes);
             }
 
+            return this.forceNavigate();
+        }
+
+        protected _configureRoute(route: IRouteMapping) {
             var resolve = this._resolve,
-                route: IRouteMapping = routes,
                 view: string = this._Injector.convertDependency(route.view);
 
             if (view === __NOOP_INJECTOR) {
-                return resolve();
+                return;
             }
 
             route.view = view;
@@ -155,8 +160,6 @@
 
             this.recognizer.register([routeDelegate], { name: view });
             this.childRecognizer.register([childDelegate]);
-
-            return this.forceNavigate();
         }
 
         param(handler: (value: any, parameters: any, query: any) => any, parameter: string, view: string): Router;
@@ -216,6 +219,10 @@
         }
 
         navigate(url: string, query?: IObject<any>, force?: boolean): async.IThenable<void> {
+            if (!isObject(query)) {
+                query = {};
+            }
+
             var resolve = this._resolve,
                 reject = this._reject,
                 queryString = serializeQuery(query);
@@ -226,7 +233,7 @@
 
             force = force === true;
 
-            if (!isString(url) || this.navigating || (!force && url === this.previousUrl)) {
+            if (!isString(url) || this.navigating || (!force && url === this.previousUrl && queryString === this.previousQuery)) {
                 if (this.navigating) {
                     return this.finishNavigating;
                 }
@@ -333,8 +340,7 @@
             }
 
             if (isNull(router)) {
-                var _Exception: IExceptionStatic = this._Exception;
-                _Exception.fatal('Route does not exist', _Exception.NAVIGATION);
+                throw new Error('Route: ' + name + ' does not exist');
                 return;
             }
 
@@ -351,11 +357,14 @@
         }
 
         navigateChildren(info: IRouteInfo) {
-            var resolve = this._resolve,
-                childRoute = this.getChildRoute(info);
+            var childRoute = this.getChildRoute(info);
 
             if (isNull(childRoute)) {
-                return resolve();
+                return this._resolve();
+            }
+
+            if (!isEmpty(childRoute) && childRoute !== '/' && isEmpty(this.children)) {
+                throw new Error('Child route: ' + childRoute + ' does not exist');
             }
 
             return mapAsync((child: Router) => {
@@ -370,8 +379,8 @@
 
             var childRoute = info.parameters.childRoute;
 
-            if (isEmpty(childRoute)) {
-                return;
+            if (!isString(childRoute)) {
+                childRoute = '';
             }
 
             return '/' + childRoute;
@@ -430,6 +439,9 @@
 
         callHandlers(allHandlers: IRouteTransforms, obj: any, query?: any) {
             var resolve = this._resolve;
+            if (!isObject(obj)) {
+                obj = {};
+            }
 
             return mapAsync((handlers: Array<(value: string, values: any, query?: any) => any>, key: string) => {
                 return mapAsyncInOrder((handler) => {
@@ -484,32 +496,24 @@
                     if (!canNavigateTo) {
                         promises = [canNavigateTo];
                     } else {
-                        var childRoute = this.getChildRoute(info);
+                        var childRoute = this.getChildRoute(info),
+                            childResult: IRouteResult,
+                            childInfo: IRouteInfo;
 
-                        if (isEmpty(childRoute)) {
-                            forEach((child: Router) => {
+                        promises = [];
+
+                        this.children.reduce((promises: Array<async.IThenable<boolean>>, child: Router) => {
+                            childResult = child.recognizer.recognize(childRoute);
+
+                            if (isEmpty(childResult)) {
                                 child._clearInfo();
-                            }, this.children);
-                            promises = [true];
-                        } else {
-                            var childResult: IRouteResult,
-                                childInfo: IRouteInfo;
+                                return;
+                            }
 
-                            promises = [];
-
-                            this.children.reduce((promises: Array<async.IThenable<boolean>>, child: Router) => {
-                                childResult = child.childRecognizer.recognize(childRoute);
-
-                                if (isEmpty(childResult)) {
-                                    child._clearInfo();
-                                    return;
-                                }
-
-                                childInfo = childResult[0];
-                                childInfo.query = info.query;
-                                return promises.concat(child.canNavigateTo(childInfo));
-                            }, promises);
-                        }
+                            childInfo = childResult[0];
+                            childInfo.query = info.query;
+                            return promises.concat(child.canNavigateTo(childInfo));
+                        }, promises);
                     }
 
                     return this._Promise.all(promises);
@@ -520,14 +524,27 @@
         protected _isSameRoute(info: IRouteInfo) {
             var currentRouteInfo = this.currentRouteInfo;
 
-            return isObject(currentRouteInfo) &&
-            currentRouteInfo.delegate.view === info.delegate.view &&
-            currentRouteInfo.delegate.pattern === info.delegate.pattern;
+            if (!isObject(currentRouteInfo)) {
+                return false;
+            }
+
+            var currentDelegate = currentRouteInfo.delegate,
+                delegate = info.delegate,
+                currentParameters = serializeQuery(currentRouteInfo.parameters),
+                parameters = serializeQuery(info.parameters),
+                currentQuery = serializeQuery(currentRouteInfo.query),
+                query = serializeQuery(info.query);
+
+            return currentDelegate.view === delegate.view &&
+                currentDelegate.pattern === delegate.pattern &&
+                currentParameters === parameters &&
+                currentQuery === query;
         }
 
         protected _clearInfo() {
             this.previousPattern = undefined;
             this.previousUrl = undefined;
+            this.previousQuery = undefined;
             this.currentRouteInfo = undefined;
             this.navigating = false;
             forEach((child) => {
@@ -537,9 +554,7 @@
     }
 
     export function IRouter() {
-        var router = new Router();
-        router.initialize();
-        return router;
+        return new Router();
     }
 
     plat.register.injectable(__Router, IRouter, null, __INSTANCE);

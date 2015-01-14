@@ -247,8 +247,11 @@ module plat.ui.controls {
                 return;
             }
 
-            var options = this.options || {},
-                value = this.options.value;
+            if (!isObject(this.options)) {
+                return '';
+            }
+
+            var value = this.options.value;
 
             if (!isObject(value)) {
                 return '';

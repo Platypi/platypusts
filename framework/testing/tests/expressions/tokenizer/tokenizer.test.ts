@@ -1,4 +1,4 @@
-﻿/// <reference path="../../../typings/tsd.d.ts" />
+﻿/// <reference path="../../../references.d.ts" />
 
 module tests.expressions.tokenizer {
     var tokenizer = plat.acquire(plat.expressions.ITokenizer),

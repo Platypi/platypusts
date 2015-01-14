@@ -11058,6 +11058,7 @@ declare module plat {
             protected _browser: web.IBrowser;
             protected _EventManager: events.IEventManagerStatic;
             protected _window: Window;
+            protected _Exception: IExceptionStatic;
             /**
               * The router associated with this link.
               */
@@ -11084,8 +11085,8 @@ declare module plat {
         function INavigatorInstance(): Navigator;
         interface INavigateOptions {
             isUrl?: boolean;
-            parameters?: IObject<string>;
-            query?: IObject<string>;
+            parameters?: IObject<any>;
+            query?: IObject<any>;
             replace?: boolean;
         }
         interface IBackNavigationOptions {
@@ -11604,7 +11605,6 @@ declare module plat {
             protected _Promise: async.IPromise;
             protected _Injector: typeof dependency.Injector;
             protected _EventManager: events.IEventManagerStatic;
-            protected _Exception: IExceptionStatic;
             protected _browser: web.IBrowser;
             protected _browserConfig: web.IBrowserConfig;
             protected _resolve: typeof async.Promise.resolve;
@@ -11636,6 +11636,7 @@ declare module plat {
             unregister(port: ISupportRouteNavigation): void;
             configure(routes: IRouteMapping): async.IThenable<void>;
             configure(routes: IRouteMapping[]): async.IThenable<void>;
+            protected _configureRoute(route: IRouteMapping): void;
             param(handler: (value: any, parameters: any, query: any) => any, parameter: string, view: string): Router;
             param(handler: (value: any, parameters: any, query: any) => any, parameter: string, view: new (...args: any[]) => any): Router;
             queryParam(handler: (value: any, query: any) => any, parameter: string, view: string): Router;
@@ -12959,6 +12960,10 @@ declare module plat {
           */
         uid: string;
         /**
+          * A Navigator instance, exists when a router is injected into the app.
+          */
+        navigator: routing.Navigator;
+        /**
           * Class for every app. This class contains hooks for Application Lifecycle Management (ALM)
           * as well as error handling and navigation events.
           */
@@ -13062,6 +13067,10 @@ declare module plat {
           * A unique id, created during instantiation.
           */
         uid: string;
+        /**
+          * A Navigator instance, exists when a router is injected into the app.
+          */
+        navigator?: routing.Navigator;
         /**
           * Event fired when the app is suspended.
           * @param {plat.events.ILifecycleEvent} ev The ILifecycleEvent object.

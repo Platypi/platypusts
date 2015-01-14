@@ -52,6 +52,7 @@
   </PropertyGroup>
   <ItemGroup>
     <TypeScriptCompile Include="framework\platypus-node.d.ts" />
+    <TypeScriptCompile Include="references.d.ts" />
     <TypeScriptCompile Include="tests\acquire\acquire.test.ts" />
     <TypeScriptCompile Include="tests\app\app.test.ts" />
     <TypeScriptCompile Include="tests\app\appstatic.test.ts" />

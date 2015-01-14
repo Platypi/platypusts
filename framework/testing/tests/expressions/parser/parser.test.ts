@@ -1,4 +1,4 @@
-﻿/// <reference path="../../../typings/tsd.d.ts" />
+﻿/// <reference path="../../../references.d.ts" />
 module tests.expressions.parser {
     var parser = plat.acquire(plat.expressions.IParser),
         context = {

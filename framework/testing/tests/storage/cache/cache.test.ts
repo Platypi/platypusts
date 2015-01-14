@@ -1,4 +1,4 @@
-﻿/// <reference path="../../../typings/tsd.d.ts" />
+﻿/// <reference path="../../../references.d.ts" />
 
 module tests.storage.cache {
     var Cache = plat.acquire(plat.storage.ICacheFactory),

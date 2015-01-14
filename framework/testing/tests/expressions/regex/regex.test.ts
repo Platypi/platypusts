@@ -1,4 +1,4 @@
-﻿/// <reference path="../../../typings/tsd.d.ts" />
+﻿/// <reference path="../../../references.d.ts" />
 
 module tests.expressions.regex {
     var regex = plat.acquire(plat.expressions.IRegex),

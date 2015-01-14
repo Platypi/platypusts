@@ -1,4 +1,4 @@
-﻿/// <reference path="../../typings/tsd.d.ts" />
+﻿/// <reference path="../../references.d.ts" />
 module test.routing.router {
     'use strict';
 
@@ -173,6 +173,19 @@ module test.routing.router {
                     pattern: '/posts/:id',
                     view: 'posts'
                 });
+            });
+
+            it('should test navigating with different parameters', (done) => {
+                router.navigate('/posts/1')
+                    .then(() => {
+                        expectAllTo(viewport);
+                        resetAll(viewport);
+                        return router.navigate('/posts/2');
+                    })
+                    .then(() => {
+                        expectAllTo(viewport);
+                        done();
+                    });
             });
 
             it('should test parameter bindings', (done) => {

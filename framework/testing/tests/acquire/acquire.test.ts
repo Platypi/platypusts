@@ -1,4 +1,4 @@
-﻿/// <reference path="../../typings/tsd.d.ts" />
+﻿/// <reference path="../../references.d.ts" />
 
 module tests.acquire {
     var utils: plat.IUtils = plat.acquire(plat.IUtils);
