@@ -53,7 +53,9 @@ function normalizeBlockComments(data) {
 
 function addNodeTypeDefinition(data) {
     return data
+        .slice(0, -2)
         .concat([
+            '',
             'declare module \'platypus\' {',
             '    export = plat;',
             '}',
@@ -104,6 +106,7 @@ module.exports = exports = function load(grunt) {
                 options: {
                     process: function (data) {
                         return stripDocs(useStrict(data.split(/\r\n|\n/)))
+                            .concat(['export = plat;', ''])
                             .join('\r\n');
                     }
                 },

@@ -295,10 +295,7 @@ module plat {
                 return;
             }
 
-            var app = App.app = appInjector.inject(),
-                navigator: routing.Navigator = app.navigator = acquire(__NavigatorInstance);
-
-            navigator.initialize((<typeof routing.Router>acquire(__RouterStatic)).currentRouter());
+            var app = App.app = appInjector.inject();
 
             app.on(__suspend, app.suspend);
             app.on(__resume, app.resume);
@@ -379,7 +376,9 @@ module plat {
          * @returns {plat.App}
          */
         constructor() {
-            var _ContextManager: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
+            var _ContextManager: observable.IContextManagerStatic = acquire(__ContextManagerStatic),
+                navigator: routing.Navigator = this.navigator = acquire(__NavigatorInstance);
+            navigator.initialize((<typeof routing.Router>acquire(__RouterStatic)).currentRouter());
             _ContextManager.defineGetter(this, 'uid', uniqueId(__Plat));
         }
 
