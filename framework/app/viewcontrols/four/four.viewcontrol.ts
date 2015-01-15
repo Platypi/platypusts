@@ -19,7 +19,7 @@
         }
 
         navigatedTo() {
-            throw new Error('test');
+            
         }
 
         navigatingFrom() {
@@ -32,6 +32,7 @@
 
         canNavigateTo() {
             // console.log('canNavigateTo:', this.uid);
+            return false;
         }
     }
 

@@ -88,7 +88,7 @@
         initialize(router: Router) {
             this.router = router;
 
-            if (router.isRoot) {
+            if (router.isRoot && !isObject(Navigator.root)) {
                 this.isRoot = true;
                 Navigator.root = this;
                 this._observeUrl();
@@ -151,7 +151,7 @@
             this.backNavigate = true;
             _history.go(-length);
             
-            setTimeout(() => {
+            defer(() => {
                 if (!this.ignored && url === this._browser.url()) {
                     this._EventManager.dispatch(__shutdown, this, this._EventManager.DIRECT);
                 }
@@ -215,7 +215,10 @@
                         .catch((e: any) => {
                             this.ignoreOnce = true;
                             this.previousUrl = previousUrl;
+
                             this._browser.url(previousUrl, !backNavigate);
+                            this._history.go(-1);
+
                             if (isFunction(this.rejectNavigate)) {
                                 this.rejectNavigate(e);
                             }

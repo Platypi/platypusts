@@ -364,7 +364,7 @@
             }
 
             if (!isEmpty(childRoute) && childRoute !== '/' && isEmpty(this.children)) {
-                throw new Error('Child route: ' + childRoute + ' does not exist');
+                return this._reject(new Error('Child route: ' + childRoute + ' does not exist'));
             }
 
             return mapAsync((child: Router) => {

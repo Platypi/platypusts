@@ -433,11 +433,17 @@ module plat.web {
          * @returns {string} The formatted URL.
          */
         formatUrl(url: string): string {
-            var $config = Browser.config;
+            var $config = Browser.config,
+                baseUrl = $config.baseUrl;
+
+            if (url === $config.baseUrl) {
+                return url;
+            }
 
             if ((!this._regex.fullUrlRegex.test(url) || url.indexOf($config.baseUrl) > -1) && $config.routingType === $config.HASH) {
                 var hasProtocol = url.indexOf(this.urlUtils().protocol) !== -1,
                     prefix = $config.hashPrefix || '',
+                    append = '#' + prefix,
                     hashRegex = new RegExp('#' + prefix + '|#/');
 
                 if (url[0] === '/') {
