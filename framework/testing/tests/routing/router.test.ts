@@ -8,10 +8,12 @@ module test.routing.router {
     class PostsViewControl extends plat.ui.ViewControl { }
     class CreatePostViewControl extends plat.ui.ViewControl { }
     class EditPostViewControl extends plat.ui.ViewControl { }
+    class CustomersViewControl extends plat.ui.ViewControl { }
 
     plat.register.viewControl('posts', PostsViewControl);
     plat.register.viewControl('createpost', CreatePostViewControl);
     plat.register.viewControl('editpost', EditPostViewControl);
+    plat.register.viewControl('customers', CustomersViewControl);
 
     describe('Router Tests', () => {
         var router: plat.routing.Router,
@@ -282,6 +284,47 @@ module test.routing.router {
                     expect(viewport.navigateTo).not.toHaveBeenCalled();
                     done();
                 });
+            });
+
+            it('should test * query/param/interceptors', (done) => {
+                router.configure({
+                    pattern: '/customers/:id',
+                    view: CustomersViewControl
+                });
+
+                var arr: Array<number> = [];
+
+                router
+                    .param((value: string) => {
+                        arr.push(4);
+                    }, 'id', PostsViewControl)
+                    .param((value: string) => {
+                        arr.push(3);
+                    }, 'id', '*')
+                    .queryParam((value: string) => {
+                        arr.push(2);
+                    }, 'title', PostsViewControl)
+                    .queryParam((value: string) => {
+                        arr.push(1);
+                    }, 'title', '*')
+                    .intercept((routeInfo: plat.routing.IRouteInfo) => {
+                        arr.push(6);
+                    }, PostsViewControl)
+                    .intercept((routeInfo: plat.routing.IRouteInfo) => {
+                        arr.push(5);
+                    }, '*');
+
+                router
+                    .navigate('/posts/1')
+                    .then(() => {
+                        expect(arr).toEqual([1, 2, 3, 4, 5, 6]);
+                        arr = [];
+                        return router.navigate('/customers/1');
+                    })
+                    .then(() => {
+                        expect(arr).toEqual([1,3,5]);
+                        done();
+                    });
             });
         });
     });

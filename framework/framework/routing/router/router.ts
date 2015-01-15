@@ -175,7 +175,9 @@
         }
 
         protected _addHandler(handler: (value: string, values: any, query?: any) => any, parameter: string, view: any, handlers: IObject<IRouteTransforms>) {
-            view = this._Injector.convertDependency(view);
+            if (view !== '*') {
+                view = this._Injector.convertDependency(view);
+            }
 
             if (isEmpty(view) || isEmpty(parameter)) {
                 return this;
@@ -201,7 +203,9 @@
         intercept(handler: (routeInfo: IRouteInfo) => any, view: string): Router;
         intercept(handler: (routeInfo: IRouteInfo) => any, view: new (...args: any[]) => any): Router;
         intercept(handler: (routeInfo: IRouteInfo) => any, view: any) {
-            view = this._Injector.convertDependency(view);
+            if (view !== '*') {
+                view = this._Injector.convertDependency(view);
+            }
 
             if (isEmpty(view)) {
                 return this;
@@ -432,7 +436,9 @@
             var Promise = this._Promise,
                 resolve = Promise.resolve.bind(Promise);
 
-            return this.callHandlers(this.queryTransforms[view], query)
+            return this.callHandlers(this.queryTransforms['*'], query)
+                .then(() => this.callHandlers(this.queryTransforms[view], query))
+                .then(() => this.callHandlers(this.paramTransforms['*'], parameters, query))
                 .then(() => this.callHandlers(this.paramTransforms[view], parameters, query))
                 .then((): void => undefined);
         }
@@ -453,9 +459,19 @@
         callInterceptors(info: IRouteInfo): async.IThenable<boolean> {
             var resolve = this._resolve;
 
-            return mapAsync((handler: (routeInfo: IRouteInfo) => any) => {
+            return mapAsyncInOrder((handler: (routeInfo: IRouteInfo) => any) => {
                 return resolve(handler(info));
-            }, this.interceptors[info.delegate.view])
+            }, this.interceptors['*'])
+                .then(booleanReduce)
+                .then((canNavigate: boolean) => {
+                    if (!canNavigate) {
+                        return <any>[canNavigate];
+                    }
+
+                    return mapAsync((handler: (routeInfo: IRouteInfo) => any) => {
+                        return resolve(handler(info));
+                    }, this.interceptors[info.delegate.view])
+                })
                 .then(booleanReduce);
         }
 

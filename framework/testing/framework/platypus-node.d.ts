@@ -11053,7 +11053,7 @@ declare module plat {
     }
     module routing {
         class Navigator {
-            protected static root: Navigator;
+            protected static _root: Navigator;
             /**
               * The IPromise injectable instance
               */
