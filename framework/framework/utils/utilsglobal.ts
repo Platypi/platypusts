@@ -474,7 +474,7 @@ function deserializeQuery(search: string) {
 }
 
 function serializeQuery(query: plat.IObject<string>): string {
-    return !isNull(query) ? '?' + map((value, key) => {
+    return (isArray(query) || isObject(query)) && !isEmpty(query) ? '?' + map((value, key) => {
         return key + '=' + value;
     }, query).join('&') : '';
 }
