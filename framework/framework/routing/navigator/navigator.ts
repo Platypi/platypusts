@@ -2,7 +2,7 @@
     'use strict';
 
     export class Navigator {
-        protected static root: Navigator;
+        protected static _root: Navigator;
 
         /**
          * @name _Promise
@@ -88,9 +88,9 @@
         initialize(router: Router) {
             this.router = router;
 
-            if (router.isRoot && !isObject(Navigator.root)) {
+            if (router.isRoot && !isObject(Navigator._root)) {
                 this.isRoot = true;
-                Navigator.root = this;
+                Navigator._root = this;
                 this._observeUrl();
             }
         }
@@ -111,7 +111,7 @@
         }
 
         protected _finishNavigating(): async.IThenable<void> {
-            var router = Navigator.root.router;
+            var router = Navigator._root.router;
 
             if (router.navigating) {
                 return router.finishNavigating;
@@ -122,7 +122,7 @@
 
         protected _navigate(url: string, replace?: boolean): async.IThenable<void> {
             if (!this.isRoot) {
-                return Navigator.root._navigate(url, replace);
+                return Navigator._root._navigate(url, replace);
             }
 
             return new this._Promise<void>((resolve, reject) => {
@@ -142,7 +142,7 @@
             }
 
             if (!this.isRoot) {
-                Navigator.root.goBack(options);
+                Navigator._root.goBack(options);
             }
 
             var _history = this._history,

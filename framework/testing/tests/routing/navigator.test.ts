@@ -2,10 +2,6 @@
 module test.routing.router {
     'use strict';
 
-    class Browser {
-
-    }
-
     var history = plat.acquire(plat.routing.History),
         router = plat.acquire(plat.routing.IRouter),
         browser = plat.acquire(plat.web.IBrowser),
@@ -55,6 +51,7 @@ module test.routing.router {
                 spy2 = spyOn(router, 'navigate');
 
             spy.calls.reset();
+            (<any>plat.routing.Navigator)._root = undefined;
             navigator.initialize(router);
             expect(spy).toHaveBeenCalled();
             expect(spy2).not.toHaveBeenCalled();
