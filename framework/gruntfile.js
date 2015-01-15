@@ -52,10 +52,8 @@ function normalizeBlockComments(data) {
 }
 
 function addNodeTypeDefinition(data) {
-    return data 
-        .slice(0, -2)
+    return data
         .concat([
-            '',
             'declare module \'platypus\' {',
             '    export = plat;',
             '}',
@@ -87,7 +85,8 @@ module.exports = exports = function load(grunt) {
             after: {
                 force: true,
                 src: [
-                    'platypus.ts'
+                    'platypus.ts',
+                    'dist/platypus.ts'
                 ]
             }
         },
@@ -105,34 +104,26 @@ module.exports = exports = function load(grunt) {
                 options: {
                     process: function (data) {
                         return stripDocs(useStrict(data.split(/\r\n|\n/)))
-                            .concat(['export = plat;', ''])
                             .join('\r\n');
                     }
                 },
                 src: 'platypus.ts',
                 dest: 'dist/platypus.ts'
             },
-            bower: {
+            typings: {
                 options: {
                     process: function (data) {
-                        return normalizeBlockComments(data.split(/\r\n|\n/));
+                        data = normalizeBlockComments(data.split(/\r\n|\n/));
+                        return addNodeTypeDefinition(data.split(/\r\n|\n/))
+                            .join('\r\n')
                     }
                 },
                 src: 'dist/platypus.d.ts',
                 dest: 'dist/platypus.d.ts'
-            }, 
-            node: {
-                options: {
-                    process: function (data) {
-                        return addNodeTypeDefinition(data.split(/\r\n|\n/)).join('\r\n');
-                    }
-                },
-                src: 'dist/platypus.d.ts',
-                dest: 'dist/platypus-node.d.ts'
             },
             test: {
-                src: 'dist/platypus-node.d.ts',
-                dest: 'testing/framework/platypus-node.d.ts'
+                src: 'dist/platypus.d.ts',
+                dest: 'testing/framework/platypus.d.ts'
             }
         },
         karma: {
@@ -151,6 +142,7 @@ module.exports = exports = function load(grunt) {
             main: {
                 options: {
                     fast: 'never',
+                    sourceMap: false,
                     declaration: true
                 },
                 src: [
@@ -189,12 +181,10 @@ module.exports = exports = function load(grunt) {
         uglify: {
             main: {
                 options: {
-                    sourceMapIn: 'dist/platypus.js.map',
-                    sourceMap: 'dist/platypus.js.map',
                     screwIE8: true
                 },
                 files: {
-                    'dist/platypus.js': [
+                    'dist/platypus.min.js': [
                         'dist/platypus.js'
                     ]
                 }
@@ -215,7 +205,7 @@ module.exports = exports = function load(grunt) {
 
 
     // By default, run all tests.
-    grunt.registerTask('default', ['clean', 'bundle', 'copy:main', 'ts:main', 'uglify', 'copy:bower', 'copy:node', 'copy:test', 'clean:after']);
+    grunt.registerTask('default', ['clean', 'bundle', 'copy:main', 'ts:main', 'uglify', 'copy:typings', 'copy:test', 'clean:after']);
 
     grunt.registerTask('install', ['tsd']);
     grunt.registerTask('docs', ['clean:after', 'bundle']);
