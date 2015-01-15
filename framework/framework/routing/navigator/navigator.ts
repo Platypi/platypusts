@@ -2,6 +2,17 @@
     'use strict';
 
     export class Navigator {
+        protected static _inject: any = {
+            _Promise: __Promise,
+            _Injector: __InjectorStatic,
+            _browserConfig: __BrowserConfig,
+            _browser: __Browser,
+            _EventManager: __EventManagerStatic,
+            _window: __Window,
+            _Exception: __ExceptionStatic,
+            _history: __History
+        };
+
         protected static _root: Navigator;
 
         /**
@@ -15,7 +26,7 @@
          * @description
          * The {@link plat.async.IPromise|IPromise} injectable instance
          */
-        protected _Promise: async.IPromise = acquire(__Promise);
+        protected _Promise: async.IPromise;
 
         /**
          * @name _Injector
@@ -28,7 +39,7 @@
          * @description
          * The {@link plat.dependency.Injector|Injector} injectable instance
          */
-        protected _Injector: typeof dependency.Injector = acquire(__InjectorStatic);
+        protected _Injector: typeof dependency.Injector;
 
         /**
          * @name _browserConfig
@@ -41,7 +52,7 @@
          * @description
          * The {@link plat.web.IBrowserConfig|IBrowserConfig} injectable instance
          */
-        protected _browserConfig: web.IBrowserConfig = acquire(__BrowserConfig);
+        protected _browserConfig: web.IBrowserConfig;
 
         /**
          * @name _browser
@@ -54,11 +65,12 @@
          * @description
          * The {@link plat.web.IBrowser|IBrowser} injectable instance
          */
-        protected _browser: web.IBrowser = acquire(__Browser);
+        protected _browser: web.IBrowser;
 
-        protected _EventManager: events.IEventManagerStatic = acquire(__EventManagerStatic);
-        protected _window: Window = acquire(__Window);
-        protected _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+        protected _EventManager: events.IEventManagerStatic;
+        protected _window: Window;
+        protected _Exception: IExceptionStatic;
+        protected _history: History;
 
         /**
          * @name router
@@ -72,8 +84,6 @@
          * The {@link plat.routing.IRouter|router} associated with this link.
          */
         router: Router;
-
-        protected _history: History = plat.acquire(__History);
 
         uid = uniqueId(__Plat);
         removeUrlListener: IRemoveListener = noop;
@@ -249,7 +259,7 @@
         return new Navigator();
     }
 
-    register.injectable(__NavigatorInstance, INavigatorInstance, null, __INSTANCE);
+    register.injectable(__NavigatorInstance, Navigator, null, __INSTANCE);
 
     export interface INavigateOptions {
         isUrl?: boolean;

@@ -119,6 +119,10 @@ module plat.controls {
      * Base class used for filtering keys on KeyboardEvents.
      */
     export class KeyCodeEventControl extends SimpleEventControl implements IKeyCodeEventControl {
+        protected static _inject: any = {
+            _regex: __Regex
+        };
+
         /**
          * @name _regex
          * @memberof plat.controls.KeyCodeEventControl
@@ -130,7 +134,7 @@ module plat.controls {
          * @description
          * Reference to the {@link plat.expressions.IRegex|IRegex} injectable.
          */
-        protected _regex: plat.expressions.IRegex = plat.acquire(__Regex);
+        protected _regex: plat.expressions.IRegex;
 
         /**
          * @name keyCodes
