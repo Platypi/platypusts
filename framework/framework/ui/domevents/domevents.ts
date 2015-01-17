@@ -2917,7 +2917,7 @@
         trigger(ev: IPointerEvent): void {
             var customEv = <CustomEvent>this._document.createEvent('CustomEvent');
             this.__extendEventObject(customEv, ev);
-            customEv.initCustomEvent(this.event, true, true, 0);
+            customEv.initCustomEvent(this.event, true, true, ev);
             this.element.dispatchEvent(customEv);
         }
 
