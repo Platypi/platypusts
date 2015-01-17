@@ -541,7 +541,7 @@ declare module plat {
         /**
           * The document injectable.
           */
-        _document: Document;
+        protected _document: Document;
         /**
           * Determines if the browser is modern enough to correctly
           * run PlatypusTS.
@@ -2258,7 +2258,6 @@ declare module plat {
               * Reference to the IDom injectable.
               */
             protected _dom: ui.IDom;
-            protected _Promise: async.IPromise;
             /**
               * A unique string identifier.
               */
@@ -2284,8 +2283,6 @@ declare module plat {
               * adds events for popstate and hashchange.
               */
             initialize(): void;
-            protected _waitForUrlChange: async.IThenable<void>;
-            protected _resolveWaitForUrlChange: () => void;
             /**
               * Sets or gets the current _window.location
               * @param {string} url? The URL to set the location to.
@@ -2318,7 +2315,6 @@ declare module plat {
               * current URL in the history.
               */
             protected _setUrl(url: string, replace?: boolean): void;
-            private __setUrl(url);
             /**
               * Formats the URL in the case of HASH routing.
               * @param url The URL to format.
