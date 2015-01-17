@@ -1002,6 +1002,7 @@ module plat.ui {
                     context: dataContext,
                     identifier: ''
                 },
+                context: any,
                 length: number,
                 keys: Array<string>,
                 key: string,
@@ -1015,17 +1016,18 @@ module plat.ui {
 
             while (queue.length > 0) {
                 obj = queue.pop();
+                context = obj.context;
 
-                if (!isObject(obj.context)) {
+                if (!isObject(context) || isEmpty(context)) {
                     continue;
                 }
 
-                keys = Object.keys(obj.context);
+                keys = Object.keys(context);
                 length = keys.length;
 
                 for (var i = 0; i < length; ++i) {
                     key = keys[i];
-                    newObj = obj.context[key];
+                    newObj = context[key];
 
                     if (newObj === context) {
                         return (obj.identifier !== '') ? (obj.identifier + '.' + key) : key;

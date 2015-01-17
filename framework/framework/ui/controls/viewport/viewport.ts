@@ -119,49 +119,60 @@ module plat.ui.controls {
         }
 
         navigateTo(routeInfo: routing.IRouteInfo) {
-            return this._Promise.resolve().then(() => {
-                var injector = this.nextInjector || this._Injector.getDependency(routeInfo.delegate.view),
-                    nodeMap = this._createNodeMap(injector),
-                    element = this.element,
-                    node = nodeMap.element,
-                    parameters = routeInfo.parameters,
-                    query = routeInfo.query,
-                    control = <ViewControl>nodeMap.uiControlNode.control;
+            var resolve = this._Promise.resolve.bind(this._Promise),
+                injector = this.nextInjector || this._Injector.getDependency(routeInfo.delegate.view),
+                nodeMap = this._createNodeMap(injector),
+                element = this.element,
+                node = nodeMap.element,
+                parameters = routeInfo.parameters,
+                query = routeInfo.query,
+                control = <ViewControl>nodeMap.uiControlNode.control;
 
-                element.appendChild(node);
+            element.appendChild(node);
 
-                var animationPromise = this._animationPromise;
-                if (isPromise(animationPromise)) {
-                    animationPromise.dispose();
-                }
+            var animationPromise = this._animationPromise;
+            if (isPromise(animationPromise)) {
+                animationPromise.dispose();
+            }
 
-                this._animationPromise = this._animator.animate(this.element, __Enter);
+            this._animationPromise = this._animator.animate(this.element, __Enter);
 
-                var viewportManager = this._managerCache.read(this.uid),
-                    manager = this._ElementManagerFactory.getInstance();
+            var viewportManager = this._managerCache.read(this.uid),
+                manager = this._ElementManagerFactory.getInstance(),
+                promise: async.IThenable<void>;
 
-                viewportManager.children = [];
-                manager.initialize(nodeMap, viewportManager);
+            viewportManager.children = [];
+            manager.initialize(nodeMap, viewportManager);
 
-                if (isFunction(control.navigatedTo)) {
-                    control.navigatedTo(routeInfo.parameters, query);
-                }
+            if (isFunction(control.navigatedTo)) {
+                promise = resolve(control.navigatedTo(routeInfo.parameters, query));
+            } else {
+                promise = resolve();
+            }
 
-                manager.setUiControlTemplate();
-                return manager.templatePromise;
-            });
+            return promise
+                .catch(noop)
+                .then(() => {
+                    manager.setUiControlTemplate();
+                    return manager.templatePromise;
+                });
         }
 
         navigateFrom() {
-            var view = this.controls[0];
+            var view = this.controls[0],
+                promise: async.IThenable<void>;
 
             if (isObject(view) && isFunction(view.navigatingFrom)) {
-                view.navigatingFrom();
+                promise = this._Promise.resolve(view.navigatingFrom());
+            } else {
+                promise = this._Promise.resolve();
             }
 
-            return this._Promise.resolve().then(() => {
-                Control.dispose(view);
-            });
+            return promise
+                .catch(noop)
+                .then(() => {
+                    Control.dispose(view);
+                });
         }
 
         dispose() {

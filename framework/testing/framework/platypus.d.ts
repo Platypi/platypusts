@@ -2258,6 +2258,7 @@ declare module plat {
               * Reference to the IDom injectable.
               */
             protected _dom: ui.IDom;
+            protected _Promise: async.IPromise;
             /**
               * A unique string identifier.
               */
@@ -2283,6 +2284,8 @@ declare module plat {
               * adds events for popstate and hashchange.
               */
             initialize(): void;
+            protected _waitForUrlChange: async.IThenable<void>;
+            protected _resolveWaitForUrlChange: () => void;
             /**
               * Sets or gets the current _window.location
               * @param {string} url? The URL to set the location to.
@@ -2315,6 +2318,7 @@ declare module plat {
               * current URL in the history.
               */
             protected _setUrl(url: string, replace?: boolean): void;
+            private __setUrl(url);
             /**
               * Formats the URL in the case of HASH routing.
               * @param url The URL to format.
@@ -8263,6 +8267,7 @@ declare module plat {
               * Indicates which mouse button is being pressed in a mouse event.
               */
             buttons?: number;
+            _buttons?: number;
             /**
               * The x-coordinate of the event on the screen relative to the upper left corner of the
               * browser window. This value cannot be affected by scrolling.
@@ -11634,7 +11639,7 @@ declare module plat {
             finishNavigating: async.IThenable<void>;
             previousUrl: string;
             previousQuery: string;
-            previousPattern: string;
+            previousSegment: string;
             currentRouteInfo: IRouteInfo;
             ports: ISupportRouteNavigation[];
             parent: Router;

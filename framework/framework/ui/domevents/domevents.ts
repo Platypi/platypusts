@@ -870,6 +870,7 @@
             this.__hasMoved = false;
             this.__lastTouchDown = this.__swipeOrigin = {
                 buttons: ev.buttons,
+                _buttons: ev._buttons,
                 clientX: ev.clientX,
                 clientY: ev.clientY,
                 timeStamp: ev.timeStamp,
@@ -1978,6 +1979,7 @@
             }
 
             this.__normalizeButtons(ev);
+
             ev.touches = touches;
             ev.offset = this.__getOffset(ev);
             ev.timeStamp = timeStamp;
@@ -1999,14 +2001,42 @@
          * @returns {void}
          */
         private __normalizeButtons(ev: IExtendedEvent) {
+            var buttons: number;
             if (isNumber(ev.buttons)) {
-                return;
+                if (ev.buttons === 0) {
+                    buttons = 1;
+                } else {
+                    buttons = ev.buttons;
+                }
             } else if (isNumber((<any>ev).which) && (<any>ev).which > 0) {
-                ev.buttons = (<any>ev).which;
-                return;
+                buttons = (<any>ev).which;
+            } else {
+                switch ((<any>ev).button) {
+                    case -1:
+                        buttons = 0;
+                        break;
+                    case 0:
+                        buttons = 1;
+                        break;
+                    case 1:
+                        buttons = 4;
+                        break;
+                    case 2:
+                        buttons = 2;
+                        break;
+                    case 3:
+                        buttons = 8;
+                        break;
+                    case 4:
+                        buttons = 16;
+                        break;
+                    default:
+                        buttons = 1;
+                        break;
+                }
             }
 
-            ev.buttons = (<any>ev).button;
+            ev._buttons = buttons;
         }
 
         /**
@@ -2926,7 +2956,7 @@
             customEv.screenY = ev.screenY;
             customEv.pageX = ev.pageX;
             customEv.pageY = ev.pageY;
-            customEv.buttons = ev.buttons;
+            customEv.buttons = ev._buttons;
         }
 
         /**
@@ -3248,6 +3278,8 @@
          * Indicates which mouse button is being pressed in a mouse event.
          */
         buttons?: number;
+
+        _buttons?: number;
 
         /**
          * @name clientX
