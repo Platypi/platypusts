@@ -148,7 +148,7 @@ module plat.processing {
 
                     var replacement = ElementManager._document.createElement(replacementType);
                     if (replacement.nodeType === Node.ELEMENT_NODE) {
-                        element = replaceWith(element, <HTMLElement>replacement.cloneNode(true));
+                        element = replaceWith(element, <HTMLElement>replacement);
                     }
                 }
             }
@@ -383,7 +383,8 @@ module plat.processing {
                     newNodes.push({
                         control: control,
                         expressions: node.expressions,
-                        node: !attributes ? null : (attributes.getNamedItem(nodeName) || attributes.getNamedItem(__AttributePrefix + nodeName)),
+                        node: !attributes ? null : (attributes.getNamedItem(nodeName) ||
+                        attributes.getNamedItem(__AttributePrefix + nodeName)),
                         nodeName: nodeName,
                         injector: injector
                     });
@@ -1490,8 +1491,7 @@ module plat.processing {
             ElementManager._ResourcesFactory.addControlResources(uiControl);
             uiControl.type = controlNode.nodeName;
 
-            uiControl.bindableTemplates = uiControl.bindableTemplates ||
-            ElementManager._BindableTemplatesFactory.create(uiControl);
+            uiControl.bindableTemplates = uiControl.bindableTemplates || this._BindableTemplatesFactory.create(uiControl);
 
             if (childNodes.length > 0 && (!isEmpty(uiControl.templateString) || !isEmpty(uiControl.templateUrl))) {
                 uiControl.innerTemplate = <DocumentFragment>appendChildren(childNodes);

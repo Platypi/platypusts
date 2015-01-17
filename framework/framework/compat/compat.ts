@@ -48,7 +48,7 @@
          * @description
          * The document injectable.
          */
-        _document: Document = acquire(__Document);
+        protected _document: Document = acquire(__Document);
 
         /**
          * @name isCompatible
