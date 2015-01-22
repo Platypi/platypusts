@@ -216,6 +216,7 @@ module plat.events {
 
             if (_compat.cordova) {
                 var eventNames = [__resume, __online, __offline],
+                    msApp = _compat.msApp,
                     event: string;
 
                 length = eventNames.length;
@@ -253,11 +254,27 @@ module plat.events {
                 lifecycleListeners.push({
                     name: __backButton,
                     value: () => {
-                        dispatch(__backButton, EventManager);
+                        if (!msApp) {
+                            dispatch(__backButton, EventManager);
+                        }
+
+                        return true;
                     }
                 });
 
                 _dom.addEventListener(_document, __backButton, lifecycleListeners[lifecycleListeners.length - 1].value, false);
+
+                if (msApp) {
+                    lifecycleListeners.push({
+                        name: __backClick,
+                        value: () => {
+                            dispatch(__backButton, EventManager);
+                            return true;
+                        }
+                    });
+
+                    (<any>window).WinJS.Application.addEventListener(__backClick, lifecycleListeners[lifecycleListeners.length - 1].value, false);
+                }
             } else if (_compat.amd) {
                 return;
             } else {

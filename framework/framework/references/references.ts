@@ -157,6 +157,7 @@ var __prefix = '$',
     __pause = 'pause',
     __deviceReady = 'deviceReady',
     __backButton = 'backbutton',
+    __backClick = 'backclick',
     __backButtonPressed = 'backButtonPressed',
 
     /**

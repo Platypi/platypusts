@@ -63,7 +63,7 @@
                 protocol = window.location.protocol,
                 host = window.location.host;
 
-            if (protocol === 'file:' || protocol.indexOf('wmapp') > -1) {
+            if (protocol === 'file:' || protocol.indexOf('wmapp') > -1 || protocol.indexOf('ms-appx') > -1) {
                 origin = window.location.href;
             } else if(isUndefined(origin)) {
                 origin = window.location.protocol + "//" + window.location.host;

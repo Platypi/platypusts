@@ -156,12 +156,15 @@ module.exports = exports = function load(grunt) {
                 src: [
                     'framework/**/*.ts',
                     'app/**/*.ts',
-                    'testing/**/*.ts',
-                    '!testing/framework/**',
+                    //'testing/**/*.ts',
+                    //'!testing/framework/**',
                     '!node_modules/**'
                 ]
             },
             test: {
+                options: {
+                    sourceMap: false
+                },
                 src: [
                     'testing/**/*.ts'
                 ]

@@ -2259,6 +2259,10 @@ declare module plat {
               */
             protected _dom: ui.IDom;
             /**
+              * Keeps a history stack if using a windows store app.
+              */
+            protected _stack: string[];
+            /**
               * A unique string identifier.
               */
             uid: string;
@@ -2290,6 +2294,16 @@ declare module plat {
               * the history.
               */
             url(url?: string, replace?: boolean): string;
+            /**
+              * Navigates back in the browser history
+              * @param {number} length=1 The length to go back
+              */
+            back(length?: number): void;
+            /**
+              * Navigates forward in the browser history
+              * @param {number} length=1 The length to go forward
+              */
+            forward(length?: number): void;
             /**
               * Creates a new IUrlUtilsInstance object.
               * @param url? The URL to associate with the new UrlUtils
@@ -2345,6 +2359,16 @@ declare module plat {
               * the history.
               */
             url(url?: string, replace?: boolean): string;
+            /**
+              * Navigates back in the browser history
+              * @param {number} length=1 The length to go back
+              */
+            back(length?: number): void;
+            /**
+              * Navigates forward in the browser history
+              * @param {number} length=1 The length to go forward
+              */
+            forward(length?: number): void;
             /**
               * Creates a new IUrlUtilsInstance object.
               * @param url? The URL to associate with the new UrlUtils
