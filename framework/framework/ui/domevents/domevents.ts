@@ -2833,15 +2833,15 @@
          * @param {Node} dispatchElement? The element to dispatch the Event from. If not specified, 
          * this instance's element will be used.
          * 
-         * @returns {void}
+         * @returns {boolean} Whether or not the Event was cancelled in at least one Event handler.
          */
-        trigger(eventExtension?: Object, detailArg?: any, dispatchElement?: Node): void {
+        trigger(eventExtension?: Object, detailArg?: any, dispatchElement?: Node): boolean {
             var customEv = <CustomEvent>this._document.createEvent(this.eventType);
             if (isObject(eventExtension)) {
                 extend(customEv, eventExtension);
             }
             customEv.initCustomEvent(this.event, true, true, isNull(detailArg) ? 0 : detailArg);
-            (dispatchElement || this.element).dispatchEvent(customEv);
+            return <boolean>(dispatchElement || this.element).dispatchEvent(customEv);
         }
     }
 
@@ -2933,22 +2933,27 @@
          * @param {plat.ui.IPointerEvent} ev The current touch event object used to extend the 
          * newly created custom event.
          * 
-         * @returns {void}
+         * @returns {boolean} Whether or not the Event was cancelled in at least one Event handler.
          */
-        trigger(ev: IPointerEvent): void {
+        trigger(ev: IPointerEvent): boolean {
             var customEv = <CustomEvent>this._document.createEvent('CustomEvent'),
                 element = this.element,
                 target = ev.target;
 
             this.__extendEventObject(customEv, ev);
-            customEv.initCustomEvent(this.event, true, true, ev);
+            customEv.initCustomEvent(this.event, true, true, 0);
 
             if (element.contains(target)) {
                 target.dispatchEvent(customEv);
                 return;
             }
 
-            element.dispatchEvent(customEv);
+            var success = element.dispatchEvent(customEv);
+            if (!success) {
+                ev.preventDefault();
+            }
+
+            return success;
         }
 
         /**
