@@ -2765,6 +2765,19 @@
         event: string;
 
         /**
+         * @name eventType
+         * @memberof plat.ui.DomEvent
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * The event type to dispatch. Defaults to 'CustomEvent'.
+         */
+        eventType: string;
+
+        /**
          * @name initialize
          * @memberof plat.ui.DomEvent
          * @kind function
@@ -2776,10 +2789,12 @@
          * 
          * @param {Node} element The element associated with this {@link plat.ui.IDomEventInstance|IDomEventInstance} object.
          * @param {string} event The event associated with this {@link plat.ui.IDomEventInstance|IDomEventInstance} object.
+         * @param {string} eventType? The event type associated with this {@link plat.ui.IDomEventInstance|IDomEventInstance} object. 
+         * If not specified, it will default to 'CustomEvent'.
          * 
          * @returns {void}
          */
-        initialize(element: Node, event: string): void;
+        initialize(element: Node, event: string, eventType?: string): void;
         /**
          * @name initialize
          * @memberof plat.ui.DomEvent
@@ -2792,13 +2807,16 @@
          * 
          * @param {Window} element The window object.
          * @param {string} event The event associated with this {@link plat.ui.IDomEventInstance|IDomEventInstance} object.
+         * @param {string} eventType? The event type associated with this {@link plat.ui.IDomEventInstance|IDomEventInstance} object. 
+         * If not specified, it will default to 'CustomEvent'.
          * 
          * @returns {void}
          */
-        initialize(element: Window, event: string): void;
-        initialize(element: any, event: string): void {
+        initialize(element: Window, event: string, eventType?: string): void;
+        initialize(element: any, event: string, eventType?: string): void {
             this.element = element;
             this.event = event;
+            this.eventType = isString(eventType) ? eventType : 'CustomEvent';
         }
 
         /**
@@ -2811,16 +2829,19 @@
          * Triggers its event on its element.
          * 
          * @param {Object} eventExtension? An event extension to extend the dispatched CustomEvent.
+         * @param {any} detailArg? The detail arg to include in the event object
+         * @param {Node} dispatchElement? The element to dispatch the Event from. If not specified, 
+         * this instance's element will be used.
          * 
          * @returns {void}
          */
-        trigger(eventExtension?: Object): void {
-            var customEv = <CustomEvent>this._document.createEvent('CustomEvent');
+        trigger(eventExtension?: Object, detailArg?: any, dispatchElement?: Node): void {
+            var customEv = <CustomEvent>this._document.createEvent(this.eventType);
             if (isObject(eventExtension)) {
                 extend(customEv, eventExtension);
             }
-            customEv.initCustomEvent(this.event, true, true, 0);
-            this.element.dispatchEvent(customEv);
+            customEv.initCustomEvent(this.event, true, true, isNull(detailArg) ? 0 : detailArg);
+            (dispatchElement || this.element).dispatchEvent(customEv);
         }
     }
 
@@ -2915,10 +2936,19 @@
          * @returns {void}
          */
         trigger(ev: IPointerEvent): void {
-            var customEv = <CustomEvent>this._document.createEvent('CustomEvent');
+            var customEv = <CustomEvent>this._document.createEvent('CustomEvent'),
+                element = this.element,
+                target = ev.target;
+
             this.__extendEventObject(customEv, ev);
             customEv.initCustomEvent(this.event, true, true, ev);
-            this.element.dispatchEvent(customEv);
+
+            if (element.contains(target)) {
+                target.dispatchEvent(customEv);
+                return;
+            }
+
+            element.dispatchEvent(customEv);
         }
 
         /**
