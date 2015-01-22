@@ -2943,12 +2943,7 @@
             this.__extendEventObject(customEv, ev);
             customEv.initCustomEvent(this.event, true, true, 0);
 
-            if (element.contains(target)) {
-                target.dispatchEvent(customEv);
-                return;
-            }
-
-            var success = element.dispatchEvent(customEv);
+            var success = element.contains(target) ? target.dispatchEvent(customEv) : element.dispatchEvent(customEv);
             if (!success) {
                 ev.preventDefault();
             }
