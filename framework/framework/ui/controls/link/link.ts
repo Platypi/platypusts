@@ -154,18 +154,17 @@ module plat.ui.controls {
                 }
 
                 var href = this.getHref();
-
                 if (isUndefined(href)) {
                     return;
                 }
 
                 ev.preventDefault();
+                element.href = '#';
 
-                if (isEmpty(href)) {
-                    return;
-                }
+                postpone(() => {
+                    this._browser.url(href);
+                });
 
-                this._browser.url(href);
                 this.removeClickListener();
                 element.addEventListener('click', this.getListener(element));
             }, false);
@@ -228,6 +227,7 @@ module plat.ui.controls {
 
             if (!isEmpty(href)) {
                 this.element.href = href;
+                this.element.setAttribute('data-href', href);
             }
         }
 

@@ -288,16 +288,16 @@ module plat.web {
         urlUtils(url?: string): IUrlUtilsInstance {
             url = url || this.url();
 
-            var $urlUtils: IUrlUtilsInstance = acquire(__UrlUtilsInstance),
-                $config = Browser.config;
+            var _urlUtils: IUrlUtilsInstance = acquire(__UrlUtilsInstance),
+                _config = Browser.config;
 
-            if ($config.routingType === $config.HASH) {
-                url = url.replace(new RegExp('#' + ($config.hashPrefix || '') + '/?'), '');
+            if (_config.routingType === _config.HASH) {
+                url = url.replace(new RegExp('#' + (_config.hashPrefix || '') + '/?'), '');
             }
 
-            $urlUtils.initialize(url);
+            _urlUtils.initialize(url);
 
-            return $urlUtils;
+            return _urlUtils;
         }
 
         /**
@@ -434,21 +434,22 @@ module plat.web {
          */
         formatUrl(url: string): string {
             var $config = Browser.config,
-                baseUrl = $config.baseUrl;
+                baseUrl = $config.baseUrl,
+                isLocal = !this._regex.fullUrlRegex.test(url) || url.indexOf($config.baseUrl) > -1;
 
             if (url === $config.baseUrl) {
                 return url;
             }
 
-            if ((!this._regex.fullUrlRegex.test(url) || url.indexOf($config.baseUrl) > -1) && $config.routingType === $config.HASH) {
+            if (url[0] === '/') {
+                url = url.slice(1);
+            }
+
+            if (isLocal && $config.routingType === $config.HASH) {
                 var hasProtocol = url.indexOf(this.urlUtils().protocol) !== -1,
                     prefix = $config.hashPrefix || '',
                     append = '#' + prefix,
                     hashRegex = new RegExp('#' + prefix + '|#/');
-
-                if (url[0] === '/') {
-                    url = url.slice(1);
-                }
 
                 if (url[url.length - 1] !== '/' && url.indexOf('?') === -1) {
                     url += '/';
@@ -459,10 +460,10 @@ module plat.web {
                 } else if (!hashRegex.test(url)) {
                     url = '#' + prefix + ((url[0] !== '/') ? '/' : '') + url;
                 }
+            }
 
-                if (url.indexOf($config.baseUrl) === -1) {
-                    url = $config.baseUrl + url;
-                }
+            if (isLocal && url.indexOf($config.baseUrl) === -1) {
+                url = $config.baseUrl + url;
             }
 
             return url;

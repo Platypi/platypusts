@@ -541,7 +541,7 @@ declare module plat {
         /**
           * The document injectable.
           */
-        _document: Document;
+        protected _document: Document;
         /**
           * Determines if the browser is modern enough to correctly
           * run PlatypusTS.
@@ -8263,6 +8263,7 @@ declare module plat {
               * Indicates which mouse button is being pressed in a mouse event.
               */
             buttons?: number;
+            _buttons?: number;
             /**
               * The x-coordinate of the event on the screen relative to the upper left corner of the
               * browser window. This value cannot be affected by scrolling.
@@ -11634,7 +11635,7 @@ declare module plat {
             finishNavigating: async.IThenable<void>;
             previousUrl: string;
             previousQuery: string;
-            previousPattern: string;
+            previousSegment: string;
             currentRouteInfo: IRouteInfo;
             ports: ISupportRouteNavigation[];
             parent: Router;

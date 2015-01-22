@@ -379,11 +379,11 @@
 
             element.setAttribute('href', url);
             url = element.href;
-            
+
             // we need to do this twice for cerain browsers (e.g. win8)
             element.setAttribute('href', url);
             url = element.href;
-            
+
             var protocol = element.protocol ? element.protocol.replace(/:$/, '') : '';
 
             define(this, 'href', url, true, true);
@@ -403,6 +403,9 @@
                 ? element.pathname
                 : '/' + element.pathname;
             }
+
+
+            path = path.replace(this._regex.initialUrlRegex, '/');
 
             define(this, 'pathname', path.split('?')[0].split('#')[0], true, true);
             define(this, 'query', UrlUtils.__getQuery(this.search), true, true);

@@ -35,7 +35,7 @@
 
         previousUrl: string;
         previousQuery: string;
-        previousPattern: string;
+        previousSegment: string;
 
         currentRouteInfo: IRouteInfo;
 
@@ -89,6 +89,7 @@
             ports.push(port);
 
             if (isObject(this.currentRouteInfo)) {
+                
                 var routeInfo = _clone(this.currentRouteInfo, true);
 
                 return this.canNavigateTo(routeInfo)
@@ -256,7 +257,7 @@
                     // route has not been matched
                     this.previousUrl = url;
                     this.previousQuery = queryString;
-                    return reject();
+                    return resolve();
                 }
 
                 routeInfo = result[0];
@@ -264,7 +265,7 @@
                 pattern = routeInfo.delegate.pattern;
                 pattern = pattern.substr(0, pattern.length - __CHILD_ROUTE_LENGTH);
 
-                if (this.previousPattern === pattern) {
+                if (this.previousSegment === pattern) {
                     // the pattern for this router is the same as the last pattern so 
                     // only navigate child routers.
                     this.navigating = true;
@@ -301,7 +302,7 @@
                     return this.performNavigation(routeInfo);
                 })
                 .then(() => {
-                    this.previousPattern = pattern;
+                    this.previousSegment = pattern;
                     this.currentRouteInfo = routeInfoCopy;
                     this.navigating = false;
                 }, (e) => {
@@ -352,7 +353,7 @@
                 previous: string;
 
             while (!isNull(router = router.parent)) {
-                previous = router.previousPattern;
+                previous = router.previousSegment;
                 previous = (!isNull(previous) && previous !== '/') ? previous : '';
                 prefix = previous + prefix;
             }
@@ -367,13 +368,9 @@
                 return this._resolve();
             }
 
-            if (!isEmpty(childRoute) && childRoute !== '/' && isEmpty(this.children)) {
-                return this._reject(new Error('Child route: ' + childRoute + ' does not exist'));
-            }
-
             return mapAsync((child: Router) => {
                 return child.navigate(childRoute, info.query);
-            }, this.children).then((): void => undefined);
+            }, this.children).then(noop);
         }
 
         getChildRoute(info: IRouteInfo) {
@@ -390,7 +387,7 @@
             return '/' + childRoute;
         }
 
-        performNavigation(info: IRouteInfo) {
+        performNavigation(info: IRouteInfo): async.IThenable<void> {
             var sameRoute = this._isSameRoute(info);
 
             return this.performNavigateFrom(sameRoute).then(() => {
@@ -419,7 +416,7 @@
                     return mapAsync((port: ISupportRouteNavigation) => {
                         return port.navigateFrom();
                     }, this.ports);
-                }).then((): void => undefined);
+                }).then(noop);
         }
 
         canNavigate(info: IRouteInfo) {
@@ -440,7 +437,7 @@
                 .then(() => this.callHandlers(this.queryTransforms[view], query))
                 .then(() => this.callHandlers(this.paramTransforms['*'], parameters, query))
                 .then(() => this.callHandlers(this.paramTransforms[view], parameters, query))
-                .then((): void => undefined);
+                .then(noop);
         }
 
         callHandlers(allHandlers: IRouteTransforms, obj: any, query?: any) {
@@ -499,7 +496,7 @@
                     return this.callInterceptors(info);
                 })
                 .then((canNavigateTo) => {
-                    if (!canNavigateTo || ignorePorts) {
+                    if (canNavigateTo === false || ignorePorts) {
                         return <any>[canNavigateTo];
                     }
 
@@ -558,7 +555,7 @@
         }
 
         protected _clearInfo() {
-            this.previousPattern = undefined;
+            this.previousSegment = undefined;
             this.previousUrl = undefined;
             this.previousQuery = undefined;
             this.currentRouteInfo = undefined;
