@@ -1,6 +1,6 @@
 ﻿module app {
     export class App extends plat.App {
-        constructor(_browserConfig: plat.web.BrowserConfig, router: plat.routing.Router) {
+        constructor(_browserConfig: plat.web.IBrowserConfig, router: plat.routing.Router) {
             super();
 
             _browserConfig.baseUrl = 'app';
@@ -21,7 +21,7 @@
     }
 
     plat.register.app('app', App, [
-        plat.web.BrowserConfig,
+        plat.web.IBrowserConfig,
         plat.routing.Router
     ]);
 }

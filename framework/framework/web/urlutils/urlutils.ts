@@ -142,12 +142,12 @@
          * @kind property
          * @access protected
          * 
-         * @type {plat.web.BrowserConfig}
+         * @type {plat.web.IBrowserConfig}
          * 
          * @description
-         * Reference to the {@link plat.web.BrowserConfig|BrowserConfig} injectable.
+         * Reference to the {@link plat.web.IBrowserConfig|IBrowserConfig} injectable.
          */
-        protected _browserConfig: BrowserConfig = acquire(__BrowserConfig);
+        protected _browserConfig: IBrowserConfig = acquire(__IBrowserConfig);
 
         /**
          * @name href

@@ -47,10 +47,10 @@
          * @kind property
          * @access protected
          * 
-         * @type {plat.web.BrowserConfig}
+         * @type {plat.web.IBrowserConfig}
          * 
          * @description
-         * The {@link plat.web.BrowserConfig|BrowserConfig} injectable instance
+         * The {@link plat.web.IBrowserConfig|IBrowserConfig} injectable instance
          */
         protected _browserConfig: web.IBrowserConfig;
 
