@@ -32,30 +32,8 @@ module app.viewcontrols {
             (<any>window).backCalled++;
         }
     }
-    class Router2 extends plat.routing.Router {
-        //protected static _inject: any = {
-        //    utils: plat.IUtils
-        //};
-        //utils: plat.Utils;
-
-        constructor() {
-            super();
-        }
-    }
-
-
-    class Router3 extends Router2 {
-        utils: plat.IUtils;
-
-        constructor(utils: any) {
-            super();
-            console.log(utils);
-            console.log(this.utils);
-        }
-    }
-
 
     plat.register.viewControl('main', Main, [
-        Router3
+        plat.routing.IRouter
     ]);
 }
