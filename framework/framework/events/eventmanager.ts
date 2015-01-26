@@ -205,6 +205,7 @@ module plat.events {
                 length = lifecycleListeners.length,
                 _compat = EventManager._compat,
                 _document = EventManager._document,
+                _window = EventManager._window,
                 _dom = EventManager._dom,
                 dispatch = LifecycleEvent.dispatch,
                 listener: { name: string; value: () => void; };
@@ -216,7 +217,7 @@ module plat.events {
 
             if (_compat.cordova) {
                 var eventNames = [__resume, __online, __offline],
-                    msApp = _compat.msApp,
+                    winJs = _compat.winJs,
                     event: string;
 
                 length = eventNames.length;
@@ -254,7 +255,7 @@ module plat.events {
                 lifecycleListeners.push({
                     name: __backButton,
                     value: () => {
-                        if (!msApp) {
+                        if (!winJs) {
                             dispatch(__backButton, EventManager);
                         }
 
@@ -264,7 +265,7 @@ module plat.events {
 
                 _dom.addEventListener(_document, __backButton, lifecycleListeners[lifecycleListeners.length - 1].value, false);
 
-                if (msApp) {
+                if (winJs) {
                     lifecycleListeners.push({
                         name: __backClick,
                         value: () => {
@@ -273,12 +274,12 @@ module plat.events {
                         }
                     });
 
-                    (<any>window).WinJS.Application.addEventListener(__backClick, lifecycleListeners[lifecycleListeners.length - 1].value, false);
+                    (<any>_window).WinJS.Application.addEventListener(__backClick, lifecycleListeners[lifecycleListeners.length - 1].value, false);
                 }
             } else if (_compat.amd) {
                 return;
             } else {
-                _dom.addEventListener(EventManager._window, 'load', () => {
+                _dom.addEventListener(_window, 'load', () => {
                     dispatch(__ready, EventManager);
                 });
             }
