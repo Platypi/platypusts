@@ -381,11 +381,11 @@ module plat.storage {
          */
         clear(): void;
     }
-
+    
     /**
      * A cache for persisting NodeManager trees.
      */
-    var managerCache = Cache.create<processing.NodeManager>('__managerCache');
+    export var managerCache = Cache.create<processing.NodeManager>('__managerCache');
 
     /**
      * The Type for referencing the '_managerCache' injectable as a dependency.
