@@ -209,19 +209,30 @@ module plat.dependency {
                 return __Document;
             }
 
-            if (isString(dependency.__injectorToken)) {
-                dependency = dependency.__injectorToken;
+            var Constructor = dependency,
+                _inject = isObject(Constructor._inject) ? Constructor._inject : {};
+
+            if (isString(_inject.name)) {
+                dependency = _inject.name;
+            }
+
+            if (!isString(dependency)) {
+                return <any>new Injector(dependency, Constructor, _inject.dependencies);
             }
 
             var find: (injectors: IInjectorObject<any>) => IInjector<any> =
                 Injector.__findInjector.bind(Injector, dependency),
                 injector = find(injectableInjectors) ||
+                find(unregisteredInjectors) ||
                 find(staticInjectors) ||
                 find(viewControlInjectors) ||
                 find(controlInjectors) ||
                 find(animationInjectors) ||
-                find(jsAnimationInjectors) ||
-                Injector.__noop();
+                find(jsAnimationInjectors);
+
+            if (!isObject(injector) && isString(dependency)) {
+                injector = unregisteredInjectors[dependency] = <IInjector<any>>new Injector(dependency, Constructor, Constructor._inject.dependencies);
+            }
 
             if (isObject(injector)) {
                 return injector.name;
@@ -262,13 +273,32 @@ module plat.dependency {
             return obj;
         }
 
+        /**
+         * @name __walk
+         * @memberof plat.dependency.Injector
+         * @kind function
+         * @access private
+         * @static
+         * 
+         * @description
+         * Walks up an object's prototype, injecting dependencies if they are 
+         * registered on static '_inject' objects.
+         * 
+         * @param {any} obj The object to walk.
+         * @param {any} proto the prototype of the object.
+         * 
+         * @returns {void}
+         */
         private static __walk(obj: any, proto: any): void {
             if (proto.constructor !== Object) {
                 Injector.__walk(obj, Object.getPrototypeOf(proto));
             }
 
             var Constructor = proto.constructor,
-                toInject = Constructor._inject;
+                toInject = _clone(Constructor._inject, true);
+
+            deleteProperty(toInject, 'name');
+            deleteProperty(toInject, 'dependencies');
 
             if (!isObject(toInject)) {
                 return;
@@ -306,19 +336,29 @@ module plat.dependency {
                 return (<any>injectableInjectors)._document;
             }
 
-            if (isString(Constructor.__injectorToken)) {
-                Constructor = Constructor.__injectorToken;
+            var dependency: string = Constructor;
+
+            if (isObject(Constructor._inject) && isString(Constructor._inject.name)) {
+                dependency = Constructor._inject.name;
             }
 
             var find: (injectors: IInjectorObject<any>) => IInjector<any> =
-                Injector.__findInjector.bind(Injector, Constructor),
+                Injector.__findInjector.bind(Injector, dependency),
                 injector = find(injectableInjectors) ||
+                find(unregisteredInjectors) ||
                 find(staticInjectors) ||
                 find(viewControlInjectors) ||
                 find(controlInjectors) ||
                 find(animationInjectors) ||
-                find(jsAnimationInjectors) ||
-                Injector.__wrap(Constructor);
+                find(jsAnimationInjectors);
+
+            if (!isObject(injector)) {
+                if (isString(dependency) && isFunction(Constructor)) {
+                    injector = unregisteredInjectors[dependency] = <IInjector<any>>new Injector(dependency, Constructor, Constructor._inject.dependencies);
+                } else {
+                    injector = Injector.__wrap(Constructor);
+                }
+            }
 
             return injector;
         }
@@ -501,13 +541,20 @@ module plat.dependency {
                 index = deps.indexOf(__NOOP_INJECTOR),
                 circularReference: string;
 
+            if (!isObject((<any>Constructor)._inject)) {
+                (<any>Constructor)._inject = {};
+            }
+
+            (<any>Constructor)._inject.name = name;
+            (<any>Constructor)._inject.dependencies = deps;
+
             if (index > -1) {
                 var dependency = dependencies[index];
 
                 if (isNull(dependency)) {
                     throw new TypeError('The dependency for ' +
                         name + ' at index ' +
-                        index + ' is undefined, did you forgot to include a file?');
+                        index + ' is undefined, did you forget to include a file?');
                 }
 
                 throw new TypeError('Could not resolve dependency ' +

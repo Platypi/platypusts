@@ -41,10 +41,6 @@ module plat.register {
             staticInjectors[name] = injector;
         }
 
-        if (!isNull(Type)) {
-            Type.__injectorToken = name;
-        }
-
         return register;
     }
 
@@ -401,6 +397,7 @@ module plat.register {
 var controlInjectors: plat.dependency.IInjectorObject<plat.IControl> = {};
 var viewControlInjectors: plat.dependency.IInjectorObject<plat.ui.ViewControl> = {};
 var injectableInjectors: plat.dependency.IInjectorObject<plat.dependency.IInjector<any>> = {};
+var unregisteredInjectors: plat.dependency.IInjectorObject<plat.dependency.IInjector<any>> = {};
 var staticInjectors: plat.dependency.IInjectorObject<plat.dependency.IInjector<any>> = {};
 var animationInjectors: plat.dependency.IInjectorObject<plat.ui.animations.IBaseAnimation> = {};
 var jsAnimationInjectors: plat.dependency.IInjectorObject<plat.ui.animations.IBaseAnimation> = {};
