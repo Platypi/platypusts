@@ -484,7 +484,7 @@ module plat.storage {
     /**
      * A cache for persisting NodeManager trees.
      */
-    var managerCache = Cache.create<processing.INodeManager>('__managerCache');
+    export var managerCache = Cache.create<processing.INodeManager>('__managerCache');
 
     /**
      * The Type for referencing the '_managerCache' injectable as a dependency.
