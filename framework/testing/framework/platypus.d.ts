@@ -1664,9 +1664,9 @@ declare module plat {
           */
         class Browser {
             /**
-              * The BrowserConfig injectable object.
+              * The IBrowserConfig injectable object.
               */
-            static config: BrowserConfig;
+            static config: IBrowserConfig;
             /**
               * Reference to the IEventManagerStatic injectable.
               */
@@ -1775,12 +1775,12 @@ declare module plat {
         /**
           * The Type for referencing the '_browserConfig' injectable as a dependency.
           */
-        function BrowserConfig(): BrowserConfig;
+        function IBrowserConfig(): IBrowserConfig;
         /**
           * Specifies configuration properties for the Browser
           * injectable.
           */
-        interface BrowserConfig {
+        interface IBrowserConfig {
             /**
               * Specifies that the application will not be doing
               * url-based routing.
@@ -1866,9 +1866,9 @@ declare module plat {
               */
             protected _regex: expressions.Regex;
             /**
-              * Reference to the BrowserConfig injectable.
+              * Reference to the IBrowserConfig injectable.
               */
-            protected _browserConfig: BrowserConfig;
+            protected _browserConfig: IBrowserConfig;
             /**
               * The whole associated URL.
               */
@@ -8734,9 +8734,9 @@ declare module plat {
               */
             protected _Injector: typeof dependency.Injector;
             /**
-              * The BrowserConfig injectable instance
+              * The IBrowserConfig injectable instance
               */
-            protected _browserConfig: web.BrowserConfig;
+            protected _browserConfig: web.IBrowserConfig;
             /**
               * The Browser injectable instance
               */
@@ -9263,7 +9263,7 @@ declare module plat {
             protected _Injector: typeof dependency.Injector;
             protected _EventManager: events.IEventManagerStatic;
             protected _browser: web.Browser;
-            protected _browserConfig: web.BrowserConfig;
+            protected _browserConfig: web.IBrowserConfig;
             protected _resolve: typeof async.Promise.resolve;
             protected _reject: typeof async.Promise.reject;
             recognizer: RouteRecognizer;

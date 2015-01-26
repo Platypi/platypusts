@@ -24,12 +24,12 @@ module plat.web {
          * @access public
          * @static
          * 
-         * @type {plat.web.BrowserConfig}
+         * @type {plat.web.IBrowserConfig}
          * 
          * @description
-         * The {@link plat.web.BrowserConfig|BrowserConfig} injectable object.
+         * The {@link plat.web.IBrowserConfig|IBrowserConfig} injectable object.
          */
-        static config: BrowserConfig = {
+        static config: IBrowserConfig = {
             NONE: 'none',
             HASH: 'hash',
             STATE: 'state',
@@ -546,14 +546,14 @@ module plat.web {
     /**
      * The Type for referencing the '_browserConfig' injectable as a dependency.
      */
-    export function BrowserConfig(): BrowserConfig {
+    export function IBrowserConfig(): IBrowserConfig {
         return Browser.config;
     }
 
-    register.injectable(__BrowserConfig, BrowserConfig);
+    register.injectable(__IBrowserConfig, IBrowserConfig);
 
     /**
-     * @name BrowserConfig
+     * @name IBrowserConfig
      * @memberof plat.web
      * @kind interface
      * 
@@ -561,10 +561,10 @@ module plat.web {
      * Specifies configuration properties for the {@link plat.web.Browser|Browser}  
      * injectable.
      */
-    export interface BrowserConfig {
+    export interface IBrowserConfig {
         /**
          * @name NONE
-         * @memberof plat.web.BrowserConfig
+         * @memberof plat.web.IBrowserConfig
          * @kind property
          * @access public
          * 
@@ -578,7 +578,7 @@ module plat.web {
 
         /**
          * @name HASH
-         * @memberof plat.web.BrowserConfig
+         * @memberof plat.web.IBrowserConfig
          * @kind property
          * @access public
          * 
@@ -592,7 +592,7 @@ module plat.web {
 
         /**
          * @name STATE
-         * @memberof plat.web.BrowserConfig
+         * @memberof plat.web.IBrowserConfig
          * @kind property
          * @access public
          * 
@@ -611,7 +611,7 @@ module plat.web {
 
         /**
          * @name routingType
-         * @memberof plat.web.BrowserConfig
+         * @memberof plat.web.IBrowserConfig
          * @kind property
          * @access public
          * 
@@ -638,7 +638,7 @@ module plat.web {
 
         /**
          * @name hashPrefix
-         * @memberof plat.web.BrowserConfig
+         * @memberof plat.web.IBrowserConfig
          * @kind property
          * @access public
          * 
@@ -653,7 +653,7 @@ module plat.web {
 
         /**
          * @name baseUrl
-         * @memberof plat.web.BrowserConfig
+         * @memberof plat.web.IBrowserConfig
          * @kind property
          * @access public
          * 

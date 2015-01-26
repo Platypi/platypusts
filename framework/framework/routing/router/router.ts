@@ -19,7 +19,7 @@
         protected _Injector: typeof dependency.Injector = acquire(__InjectorStatic);
         protected _EventManager: events.IEventManagerStatic = acquire(__EventManagerStatic);
         protected _browser: web.Browser = acquire(__Browser);
-        protected _browserConfig: web.BrowserConfig = acquire(__BrowserConfig);
+        protected _browserConfig: web.IBrowserConfig = acquire(__IBrowserConfig);
         protected _resolve: typeof async.Promise.resolve = this._Promise.resolve.bind(this._Promise);
         protected _reject: typeof async.Promise.reject = this._Promise.reject.bind(this._Promise);
 
