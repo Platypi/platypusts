@@ -53,7 +53,7 @@
                 listeners.splice(index, 1);
             };
         }
-        
+
         /**
          * @name setProperty
          * @memberof plat.ui.BindablePropertyControl

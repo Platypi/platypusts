@@ -24,7 +24,7 @@ module plat.storage {
     }
 
     register.injectable(__SessionStorage, ISessionStorage);
-    
+
     /**
      * @name ISessionStorage
      * @memberof plat.storage

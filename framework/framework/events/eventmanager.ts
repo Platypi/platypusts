@@ -279,7 +279,7 @@ module plat.events {
             } else if (_compat.amd) {
                 return;
             } else {
-                _dom.addEventListener(_window, 'load', () => {
+                _dom.addEventListener(_window, 'load',() => {
                     dispatch(__ready, EventManager);
                 });
             }
@@ -351,7 +351,6 @@ module plat.events {
             };
         }
 
-        
         /**
          * @name dispatch
          * @memberof plat.events.EventManager
@@ -707,9 +706,9 @@ module plat.events {
          * @access public
          * @static
          * @readonly
-         *
+         * 
          * @type {string}
-         *
+         * 
          * @description
          * An upward-moving event will start at the sender and move
          * up the parent chain.
@@ -723,9 +722,9 @@ module plat.events {
          * @access public
          * @static
          * @readonly
-         *
+         * 
          * @type {string}
-         *
+         * 
          * @description
          * A downward-moving event will start at the sender and move
          * to its children and beyond.
@@ -739,9 +738,9 @@ module plat.events {
          * @access public
          * @static
          * @readonly
-         *
+         * 
          * @type {string}
-         *
+         * 
          * @description
          * Goes through all listeners for an event name, ignoring order.
          */
@@ -753,9 +752,9 @@ module plat.events {
          * @kind property
          * @access public
          * @static
-         *
+         * 
          * @type {plat.IObject<boolean>}
-         *
+         * 
          * @description
          * Keeps track of which events are currently propagating.
          */
@@ -967,16 +966,16 @@ module plat.events {
          * @kind function
          * @access public
          * @static
-         *
+         * 
          * @description
          * Looks for listeners to a given event name, and fires the listeners using the specified
          * event direction.
-         *
+         * 
          * @param {string} name The name of the event.
          * @param {any} sender The object sending the event.
          * @param {string} direction='up' Equivalent to {@link plat.events.EventManager.UP|EventManager.UP}.
          * @param {Array<any>} args? The arguments to send to the listeners.
-         *
+         * 
          * @returns {plat.events.IDispatchEventInstance} The dispatched event.
          */
         dispatch(name: string, sender: any, direction: 'up', args?: Array<any>): IDispatchEventInstance;
@@ -986,16 +985,16 @@ module plat.events {
          * @kind function
          * @access public
          * @static
-         *
+         * 
          * @description
          * Looks for listeners to a given event name, and fires the listeners using the specified
          * event direction.
-         *
+         * 
          * @param {string} name The name of the event.
          * @param {any} sender The object sending the event.
          * @param {string} direction='down' Equivalent to {@link plat.events.EventManager.DOWN|EventManager.DOWN}.
          * @param {Array<any>} args? The arguments to send to the listeners.
-         *
+         * 
          * @returns {plat.events.IDispatchEventInstance} The dispatched event.
          */
         dispatch(name: string, sender: any, direction: 'down', args?: Array<any>): IDispatchEventInstance;
@@ -1005,16 +1004,16 @@ module plat.events {
          * @kind function
          * @access public
          * @static
-         *
+         * 
          * @description
          * Looks for listeners to a given event name, and fires the listeners using the specified
          * event direction.
-         *
+         * 
          * @param {string} name The name of the event.
          * @param {any} sender The object sending the event.
          * @param {string} direction='direct' Equivalent to {@link plat.events.EventManager.DIRECT|EventManager.DIRECT}.
          * @param {Array<any>} args? The arguments to send to the listeners.
-         *
+         * 
          * @returns {plat.events.IDispatchEventInstance} The dispatched event.
          */
         dispatch(name: string, sender: any, direction: 'direct', args?: Array<any>): IDispatchEventInstance;
@@ -1024,16 +1023,16 @@ module plat.events {
          * @kind function
          * @access public
          * @static
-         *
+         * 
          * @description
          * Looks for listeners to a given event name, and fires the listeners using the specified
          * event direction.
-         *
+         * 
          * @param {string} name The name of the event.
          * @param {any} sender The object sending the event.
          * @param {string} direction The direction in which to send the event.
          * @param {Array<any>} args? The arguments to send to the listeners.
-         *
+         * 
          * @returns {plat.events.IDispatchEventInstance} The dispatched event.
          */
         dispatch(name: string, sender: any, direction: string, args?: Array<any>): IDispatchEventInstance;
@@ -1088,9 +1087,9 @@ module plat.events {
          * @kind property
          * @access public
          * @static
-         *
+         * 
          * @type {plat.IObject<Array<(ev: plat.events.IDispatchEventInstance, ...args: any[]) => void>>}
-         *
+         * 
          * @description
          * An IObject of listener arrays, keyed by event name.
          */
@@ -1102,9 +1101,9 @@ module plat.events {
          * @kind property
          * @access public
          * @static
-         *
+         * 
          * @type {any}
-         *
+         * 
          * @description
          * The context with which to call each event listener.
          */

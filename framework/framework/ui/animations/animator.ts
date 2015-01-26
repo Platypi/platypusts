@@ -151,7 +151,7 @@
             var animationId: string;
             while (!isDocument(element = element.parentNode) && element.nodeType === Node.ELEMENT_NODE) {
                 if (hasClass(<HTMLElement>element, __Animating)) {
-                    animationId = ((<ICustomElement>element).__plat || {}).animation;
+                    animationId = ((<ICustomElement>element).__plat || <ICustomElementProperty>{}).animation;
                     if (isString(animationId)) {
                         if (!isNull(this._elements[animationId])) {
                             return animationId;

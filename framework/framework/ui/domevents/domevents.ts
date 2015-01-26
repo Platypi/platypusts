@@ -1127,10 +1127,10 @@
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access private
-         *
+         * 
          * @description
          * Clears all temporary states like move and hold events.
-         *
+         * 
          * @returns {void}
          */
         private __clearTempStates(): void {
@@ -1149,10 +1149,10 @@
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access private
-         *
+         * 
          * @description
          * A function for resetting all values potentially modified during the touch event sequence.
-         *
+         * 
          * @returns {void}
          */
         private __resetTouchEnd(): void {
@@ -1170,12 +1170,12 @@
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access private
-         *
+         * 
          * @description
          * A function for handling when gestures are canceled via the Browser.
-         *
+         * 
          * @param {plat.ui.IPointerEvent} ev The touch cancel event object.
-         *
+         * 
          * @returns {void}
          */
         private __handleCanceled(ev: IPointerEvent): void {
@@ -1195,12 +1195,12 @@
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access private
-         *
+         * 
          * @description
          * A function for handling and firing tap events.
-         *
+         * 
          * @param {plat.ui.IPointerEvent} ev The touch end event object.
-         *
+         * 
          * @returns {void}
          */
         private __handleTap(ev: IPointerEvent): void {
@@ -2236,7 +2236,7 @@
          * @returns {void}
          */
         private __setRegisteredSwipes(direction: IDirection, velocity: IVelocity): void {
-            var swipeTarget = <ICustomElement>(this.__swipeOrigin || {}).target,
+            var swipeTarget = <ICustomElement>(this.__swipeOrigin || <IBaseEventProperties>{}).target,
                 swipeGesture = this._gestures.$swipe,
                 minSwipeVelocity = DomEvents.config.velocities.minSwipeVelocity,
                 events = [swipeGesture];

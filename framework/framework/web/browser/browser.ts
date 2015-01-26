@@ -465,7 +465,7 @@ module plat.web {
                 _location.href = url;
                 return;
             }
-            
+
             // make sure URL is absolute
             if (!this._regex.fullUrlRegex.test(url) && url[0] !== '/') {
                 url = baseUrl + url;

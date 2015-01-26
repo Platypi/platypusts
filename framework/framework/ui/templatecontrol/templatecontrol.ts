@@ -1085,7 +1085,7 @@ module plat.ui {
          * 
          * @param {Array<string>} aliases An array of aliases to search for.
          * @param {IObject<any>} resources? An optional resources object to extend, 
-        if no resources object is passed in a new one will be created.
+         * if no resources object is passed in a new one will be created.
          * 
          * @returns {IObject<any>} The context object containing the values of the associated resources.
          */
@@ -1785,7 +1785,7 @@ module plat.ui {
          * 
          * @param {Array<string>} aliases An array of aliases to search for.
          * @param {IObject<any>} resources? An optional resources object to extend, 
-        if no resources object is passed in a new one will be created.
+         * if no resources object is passed in a new one will be created.
          * 
          * @returns {IObject<any>} The context object containing the values of the associated resources.
          */

@@ -38,7 +38,7 @@ module plat.storage {
          * Reference to the {@link plat.IExceptionStatic|IExceptionStatic} injectable.
          */
         protected _Exception: IExceptionStatic = acquire(__ExceptionStatic);
-        
+
         /**
          * @name constructor
          * @memberof plat.storage.TemplateCache

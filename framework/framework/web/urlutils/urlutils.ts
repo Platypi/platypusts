@@ -66,7 +66,7 @@
             if (protocol === 'file:' || protocol.indexOf('wmapp') > -1 || protocol.indexOf('ms-appx') > -1) {
                 origin = window.location.href;
             } else if(isUndefined(origin)) {
-                origin = window.location.protocol + "//" + window.location.host;
+                origin = window.location.protocol + '//' + window.location.host;
             }
 
             origin = origin.replace(_regex.initialUrlRegex, '');

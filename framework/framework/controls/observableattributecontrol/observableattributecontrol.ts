@@ -89,7 +89,7 @@
          * The function to stop listening for property changes.
          */
         protected _removeListener: IRemoveListener;
-        
+
         /**
          * @name _boundAddListener
          * @memberof plat.controls.ObservableAttributeControl

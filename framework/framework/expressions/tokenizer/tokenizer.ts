@@ -36,7 +36,7 @@ module plat.expressions {
          * The input string to tokenize.
          */
         protected _input: string;
-        
+
         /**
          * @name __previousChar
          * @memberof plat.expressions.Tokenizer
@@ -706,8 +706,8 @@ module plat.expressions {
             this.__argCount.push({
                 num: 0,
                 isArray: !(previousChar === ']' ||
-                previousChar === ')' ||
-                this._isAlphaNumeric(previousChar))
+                    previousChar === ')' ||
+                    this._isAlphaNumeric(previousChar))
             });
 
             this.__lastCommaChar.push(char);
@@ -1081,7 +1081,7 @@ module plat.expressions {
                 firstArrayOperator = OPERATORS[firstArrayVal];
                 if (!(isNull(firstArrayOperator) ||
                     !(firstArrayOperator.precedence < operatorPrecedence ||
-                    (isLtR && firstArrayOperator.precedence === operatorPrecedence)))) {
+                        (isLtR && firstArrayOperator.precedence === operatorPrecedence)))) {
                     outputQueue.push(operatorStack.shift());
                 } else {
                     operatorStack.unshift({ val: operator, args: operatorFn.fn.length - 2 });
@@ -1118,8 +1118,8 @@ module plat.expressions {
             while (!isNull(topOperator) &&
                 isValUnequal(topOperator, '([') &&
                 (this._isStringValidVariable(topOperator.val) ||
-                isValEqual(topOperator.val, '.[]') ||
-                isAccessor(topOperator.val))) {
+                    isValEqual(topOperator.val, '.[]') ||
+                    isAccessor(topOperator.val))) {
                 fnToken = operatorStack.shift();
                 if (!(fnToken.args !== -1 || isValEqual(fnToken, '.[]'))) {
                     fnToken.args = -2;

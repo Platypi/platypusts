@@ -776,9 +776,9 @@ module plat.ui {
          * @kind property
          * @access public
          * @static
-         *
+         * 
          * @type {string}
-         *
+         * 
          * @description
          * The injectable resource type token.
          */
@@ -790,9 +790,9 @@ module plat.ui {
          * @kind property
          * @access public
          * @static
-         *
+         * 
          * @type {string}
-         *
+         * 
          * @description
          * The object resource type token.
          */
@@ -804,9 +804,9 @@ module plat.ui {
          * @kind property
          * @access public
          * @static
-         *
+         * 
          * @type {string}
-         *
+         * 
          * @description
          * The observable resource type token.
          */
@@ -818,9 +818,9 @@ module plat.ui {
          * @kind property
          * @access public
          * @static
-         *
+         * 
          * @type {string}
-         *
+         * 
          * @description
          * The literal resource type token.
          */
@@ -832,9 +832,9 @@ module plat.ui {
          * @kind property
          * @access public
          * @static
-         *
+         * 
          * @type {string}
-         *
+         * 
          * @description
          * The function resource type token.
          */

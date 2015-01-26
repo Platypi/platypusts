@@ -24,7 +24,7 @@ module plat.storage {
          * Reference to HTML5 localStorage.
          */
         protected _storage: Storage;
-        
+
         /**
          * @name constructor
          * @memberof plat.storage.BaseStorage

@@ -70,7 +70,7 @@ module plat.processing {
          * Reference to a cache injectable that stores {@link plat.processing.IElementManager|IElementManagers}.
          */
         protected _managerCache: storage.ICache<INodeManager> = acquire(__ManagerCache);
-        
+
         /**
          * @name compile
          * @memberof plat.processing.Compiler

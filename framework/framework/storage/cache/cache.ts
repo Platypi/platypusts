@@ -101,7 +101,7 @@ module plat.storage {
         static fetch<T>(id: string): ICache<T> {
             return caches[id];
         }
-        
+
         /**
          * @name clear
          * @memberof plat.storage.Cache

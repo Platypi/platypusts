@@ -788,13 +788,13 @@ module plat.ui {
          * @kind function
          * @access public
          * @static
-         *
+         * 
          * @description
          * Determines whether or not a control was created using bindableTemplates.
-         *
+         * 
          * @static
          * @param {plat.ui.ITemplateControl} control The potential bound control.
-         *
+         * 
          * @returns {boolean} Whether or not the control is a bound control.
          */
         isBoundControl(control: ITemplateControl): boolean

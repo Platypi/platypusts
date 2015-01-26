@@ -688,7 +688,7 @@ module plat.observable {
 
                     if (hasObservableListener) {
                         var uid = observableListener.uid;
-                        removeListener = this.observeArray(uid, null, noop, join, context, null),
+                        removeListener = this.observeArray(uid, null, noop, join, context, null);
                         removeArrayObserve = this.observe(join, {
                             uid: uid,
                             listener: (newValue: Array<any>, oldValue: Array<any>) => {
@@ -1773,14 +1773,14 @@ module plat.observable {
          * @kind function
          * @access public
          * @static
-         *
+         * 
          * @description
          * Splices a given function for removing an observed property.
-         *
+         * 
          * @param {string} identifer The identifier for which the remove listener is being spliced.
          * @param {string} uid The unique ID of the control observing the identifier.
          * @param {plat.IRemoveListener} listener The function for removing the observed property.
-         *
+         * 
          * @returns {void}
          */
         spliceRemoveListener(identifier: string, uid: string, listener: IRemoveListener): void;

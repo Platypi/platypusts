@@ -198,7 +198,7 @@ module plat.ui.controls {
                 uiControlNode: {
                     control: <any>control,
                     nodeName: type,
-                    expressions: [],
+                    expressions: <Array<expressions.IParsedExpression>>[],
                     injector: <any>injector,
                     childManagerLength: 0
                 }

@@ -154,7 +154,7 @@
         private __addEventListener(event: string, listener: () => void): ICssAnimation {
             var subscribers = this.__subscribers,
                 subscriber = () => {
-                    this.__removeListener = this.dom.addEventListener(this.element, event, (ev: Event) => {
+                    this.__removeListener = this.dom.addEventListener(this.element, event,(ev: Event) => {
                         this.__removeListener();
                         this.__removeListener = null;
 

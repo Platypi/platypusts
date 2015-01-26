@@ -39,7 +39,7 @@ module plat.processing {
                     map = {
                         nodes: [{
                             node: node,
-                            expressions: expressions,
+                            expressions: expressions
                         }]
                     };
 
@@ -187,7 +187,7 @@ module plat.processing {
          * @returns {void}
          */
         protected _setText(node: Node, control: ui.ITemplateControl, expressions: Array<expressions.IParsedExpression>): void {
-            node.nodeValue = NodeManager.build(expressions, (control || <ui.ITemplateControl>{}));
+            node.nodeValue = NodeManager.build(expressions,(control || <ui.ITemplateControl>{}));
         }
     }
 

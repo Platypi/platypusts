@@ -360,7 +360,7 @@
             this.__defineAnimationEvents();
             this.__determineCss();
         }
-        
+
         /**
          * @name hasEvent
          * @memberof plat.Compat
