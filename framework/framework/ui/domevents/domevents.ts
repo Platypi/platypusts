@@ -869,7 +869,6 @@
             this.__capturedTarget = this.__lastMoveEvent = null;
             this.__hasMoved = false;
             this.__lastTouchDown = this.__swipeOrigin = {
-                buttons: ev.buttons,
                 _buttons: ev._buttons,
                 clientX: ev.clientX,
                 clientY: ev.clientY,
@@ -1221,7 +1220,7 @@
             // or a mouse is being used
             if (DomEvents.config.intervals.dblTapZoomDelay <= 0 ||
                 ev.pointerType === 'mouse' || ev.type === 'mouseup') {
-                ev = extend({}, ev, this.__lastTouchDown);
+                ev._buttons = this.__lastTouchDown._buttons;
                 domEvent.trigger(ev);
                 return;
             }
@@ -1229,7 +1228,7 @@
             // defer for tap delay in case of something like desired 
             // dbltap zoom
             this.__cancelDeferredTap = defer(() => {
-                ev = extend({}, ev, this.__lastTouchDown);
+                ev._buttons = this.__lastTouchDown._buttons;
                 domEvent.trigger(ev);
                 this.__tapCount = 0;
                 this.__cancelDeferredTap = noop;
@@ -1264,7 +1263,7 @@
                 return;
             }
 
-            ev = extend({}, ev, this.__lastTouchDown);
+            ev._buttons = this.__lastTouchDown._buttons;
             domEvent.trigger(ev);
             // set touch count to -1 to prevent repeated fire on sequential taps
             this.__tapCount = -1;
@@ -3215,7 +3214,7 @@
          * @description
          * Indicates which mouse button is being pressed in a mouse event.
          */
-        buttons?: number;
+        _buttons?: number;
 
         /**
          * @name clientX
@@ -3296,6 +3295,8 @@
      * An extended event object potentially containing coordinate and movement information.
      */
     export interface IExtendedEvent extends Event {
+        _buttons?: number;
+
         /**
          * @name buttons
          * @memberof plat.ui.IExtendedEvent
@@ -3308,8 +3309,6 @@
          * Indicates which mouse button is being pressed in a mouse event.
          */
         buttons?: number;
-
-        _buttons?: number;
 
         /**
          * @name clientX
