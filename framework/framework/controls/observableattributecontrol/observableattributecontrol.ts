@@ -280,12 +280,12 @@
      * @memberof plat.controls
      * @kind interface
      * 
-     * @extends {plat.IAttributeControl}
+     * @extends {plat.AttributeControl}
      * 
      * @description
-     * An {@link plat.IAttributeControl|IAttributeControl} that deals with observing changes for a specified property.
+     * An {@link plat.AttributeControl|AttributeControl} that deals with observing changes for a specified property.
      */
-    export interface IObservableAttributeControl extends IAttributeControl {
+    export interface IObservableAttributeControl extends AttributeControl {
         /**
          * @name property
          * @memberof plat.controls.IObservableAttributeControl

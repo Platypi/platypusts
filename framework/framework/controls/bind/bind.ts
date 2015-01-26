@@ -26,12 +26,12 @@ module plat.controls {
          * @access protected
          * @static
          * 
-         * @type {plat.expressions.IParser}
+         * @type {plat.expressions.Parser}
          * 
          * @description
-         * Reference to the {@link plat.expressions.IParser|IParser} injectable.
+         * Reference to the {@link plat.expressions.Parser|Parser} injectable.
          */
-        protected _parser: expressions.IParser = acquire(__Parser);
+        protected _parser: expressions.Parser = acquire(__Parser);
 
         /**
          * @name _ContextManager
@@ -54,12 +54,12 @@ module plat.controls {
          * @access protected
          * @static
          * 
-         * @type {plat.ICompat}
+         * @type {plat.Compat}
          * 
          * @description
-         * Reference to the {@link plat.ICompat|ICompat} injectable.
+         * Reference to the {@link plat.Compat|Compat} injectable.
          */
-        protected _compat: ICompat = acquire(__Compat);
+        protected _compat: Compat = acquire(__Compat);
 
         /**
          * @name _document
@@ -180,7 +180,7 @@ module plat.controls {
          * @description
          * Whether or not the File API is supported.
          */
-        private __fileSupported = (<ICompat>acquire(__Compat)).fileSupported;
+        private __fileSupported = (<Compat>acquire(__Compat)).fileSupported;
 
         /**
          * @name __fileNameRegex
@@ -193,7 +193,7 @@ module plat.controls {
          * @description
          * Used to grab a filename from input[type="file"].
          */
-        private __fileNameRegex = (<expressions.IRegex>acquire(__Regex)).fileNameRegex;
+        private __fileNameRegex = (<expressions.Regex>acquire(__Regex)).fileNameRegex;
 
         /**
          * @name __isSelf
@@ -1094,10 +1094,10 @@ module plat.controls {
          * initializes all listeners accordingly.
          * 
          * @returns {boolean} Whether or not the associated {@link plat.ui.TemplateControl|TemplateControl} 
-         * is an {@link plat.ui.IBindablePropertyControl|IBindablePropertyControl}
+         * is an {@link plat.ui.BindablePropertyControl|BindablePropertyControl}
          */
         protected _observingBindableProperty(): boolean {
-            var templateControl = <ui.IBindablePropertyControl>this.templateControl;
+            var templateControl = <ui.BindablePropertyControl>this.templateControl;
 
             if (isFunction(templateControl.observeProperty) &&
                 isFunction(templateControl.setProperty)) {
@@ -1134,7 +1134,7 @@ module plat.controls {
                 return;
             }
 
-            (<ui.IBindablePropertyControl>this.templateControl).setProperty(newValue, oldValue, firstTime);
+            (<ui.BindablePropertyControl>this.templateControl).setProperty(newValue, oldValue, firstTime);
         }
 
         /**

@@ -472,14 +472,7 @@
         }
     }
 
-    /**
-     * The Type for referencing the '_routerecognizerInstance' injectable as a dependency.
-     */
-    export function IRouteRecognizerInstance(): RouteRecognizer {
-        return new RouteRecognizer();
-    }
-
-    plat.register.injectable(__RouteRecognizerInstance, IRouteRecognizerInstance, null, __INSTANCE);
+    plat.register.injectable(__RouteRecognizerInstance, RouteRecognizer, null, __INSTANCE);
 
     /**
      * @name IRecognizeResult

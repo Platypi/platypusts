@@ -125,12 +125,12 @@ module plat.controls {
          * @kind property
          * @access protected
          * 
-         * @type {plat.expressions.IRegex}
+         * @type {plat.expressions.Regex}
          * 
          * @description
-         * Reference to the {@link plat.expressions.IRegex|IRegex} injectable.
+         * Reference to the {@link plat.expressions.Regex|Regex} injectable.
          */
-        protected _regex: plat.expressions.IRegex = plat.acquire(__Regex);
+        protected _regex: plat.expressions.Regex = plat.acquire(__Regex);
 
         /**
          * @name keyCodes
@@ -265,12 +265,12 @@ module plat.controls {
      * @memberof plat.controls
      * @kind interface
      * 
-     * @extends {plat.controls.ISimpleEventControl}
+     * @extends {plat.controls.ISendEvents}
      * 
      * @description
      * An attribute object that binds to specified key code scenarios.
      */
-    export interface IKeyCodeEventControl extends ISimpleEventControl {
+    export interface IKeyCodeEventControl extends ISendEvents {
         /**
          * @name keyCodes
          * @memberof plat.controls.IKeyCodeEventControl

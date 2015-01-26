@@ -154,12 +154,12 @@ module plat.controls {
      * @memberof plat.controls
      * @kind interface
      * 
-     * @extends {plat.IAttributeControl}
+     * @extends {plat.AttributeControl}
      * 
      * @description
-     * An {@link plat.IAttributeControl|IAttributeControl} that deals with binding to a specified property on its element.
+     * An {@link plat.AttributeControl|AttributeControl} that deals with binding to a specified property on its element.
      */
-    export interface ISetAttributeControl extends IAttributeControl {
+    export interface ISetAttributeControl extends AttributeControl {
         /**
          * @name property
          * @memberof plat.controls.ISetAttributeControl

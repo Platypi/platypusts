@@ -5,12 +5,11 @@ module plat.processing {
      * @kind class
      * 
      * @extends {plat.processing.NodeManager}
-     * @implements {plat.processing.ITextManager}
      * 
      * @description
      * The class responsible for initializing and data-binding values to text nodes.
      */
-    export class TextManager extends NodeManager implements ITextManager {
+    export class TextManager extends NodeManager {
         /**
          * @name create
          * @memberof plat.processing.TextManager
@@ -19,18 +18,18 @@ module plat.processing {
          * @static
          * 
          * @description
-         * Determines if a text node has markup, and creates a {@link plat.processing.ITextManager|ITextManager} if it does. 
-         * An {@link plat.processing.ITextManager|ITextManager} responsible for markup in the passed in node or an empty 
-         * {@link plat.processing.ITextManager|ITextManager} if not markup is found will be added to the managers array.
+         * Determines if a text node has markup, and creates a {@link plat.processing.TextManager|TextManager} if it does. 
+         * An {@link plat.processing.TextManager|TextManager} responsible for markup in the passed in node or an empty 
+         * {@link plat.processing.TextManager|TextManager} if not markup is found will be added to the managers array.
          * 
          * @param {Node} node The Node used to find markup.
-         * @param {plat.processing.IElementManager} parent The parent {@link plat.processing.IElementManager|IElementManager} 
+         * @param {plat.processing.ElementManager} parent The parent {@link plat.processing.ElementManager|ElementManager} 
          * for the node.
          * 
-         * @returns {plat.processing.TextManager} The newly created {@link plat.processing.ITextManager|ITextManager} 
+         * @returns {plat.processing.TextManager} The newly created {@link plat.processing.TextManager|TextManager} 
          * responsible for the passed in Text Node.
          */
-        static create(node: Node, parent: IElementManager): ITextManager {
+        static create(node: Node, parent: ElementManager): TextManager {
             var value = node.nodeValue,
                 manager = new TextManager();
 
@@ -89,16 +88,16 @@ module plat.processing {
          * @static
          * 
          * @description
-         * Clones a {@link plat.processing.ITextManager|ITextManager} with a new text node.
+         * Clones a {@link plat.processing.TextManager|TextManager} with a new text node.
          * 
-         * @param {plat.processing.INodeManager} sourceManager The original {@link plat.processing.INodeManager|INodeManager}.
+         * @param {plat.processing.NodeManager} sourceManager The original {@link plat.processing.NodeManager|NodeManager}.
          * @param {Node} node The new text node to associate with the clone.
-         * @param {plat.processing.IElementManager} parent The parent {@link plat.processing.IElementManager|IElementManager} 
+         * @param {plat.processing.ElementManager} parent The parent {@link plat.processing.ElementManager|ElementManager} 
          * for the new clone.
          * 
-         * @returns {plat.processing.ITextManager} The cloned {@link plat.processing.ITextManager|ITextManager}.
+         * @returns {plat.processing.TextManager} The cloned {@link plat.processing.TextManager|TextManager}.
          */
-        protected static _clone(sourceManager: INodeManager, node: Node, parent: IElementManager): ITextManager {
+        protected static _clone(sourceManager: NodeManager, node: Node, parent: ElementManager): TextManager {
             var map = sourceManager.nodeMap,
                 manager = new TextManager();
 
@@ -121,7 +120,7 @@ module plat.processing {
          * @type {string}
          * 
          * @description
-         * Specifies the type for this {@link plat.processing.INodeManager|INodeManager}. 
+         * Specifies the type for this {@link plat.processing.NodeManager|NodeManager}. 
          * It's value is "text".
          */
         type = 'text';
@@ -133,15 +132,15 @@ module plat.processing {
          * @access public
          * 
          * @description
-         * Clones this {@link plat.processing.ITextManager|ITextManager} with a new node.
+         * Clones this {@link plat.processing.TextManager|TextManager} with a new node.
          * 
-         * @param {Node} newNode The new node attached to the cloned {@link plat.processing.ITextManager|ITextManager}.
-         * @param {plat.processing.IElementManager} parentManager The parent {@link plat.processing.IElementManager|IElementManager} 
+         * @param {Node} newNode The new node attached to the cloned {@link plat.processing.TextManager|TextManager}.
+         * @param {plat.processing.ElementManager} parentManager The parent {@link plat.processing.ElementManager|ElementManager} 
          * for the clone.
          * 
          * @returns {number} The number of nodes to advance while node traversal is in progress (returns 1).
          */
-        clone(newNode: Node, parentManager: IElementManager): number {
+        clone(newNode: Node, parentManager: ElementManager): number {
             TextManager._clone(this, newNode, parentManager);
             return 1;
         }
@@ -179,15 +178,15 @@ module plat.processing {
          * Builds the node expression and sets the value.
          * 
          * @param {Node} Node The associated node whose value will be set.
-         * @param {plat.ui.ITemplateControl} control The control whose context will be used to bind 
+         * @param {plat.ui.TemplateControl} control The control whose context will be used to bind 
          * the data.
          * @param {Array<plat.expressions.IParsedExpression>} expressions An array of parsed expressions used to build 
          * the node value.
          * 
          * @returns {void}
          */
-        protected _setText(node: Node, control: ui.ITemplateControl, expressions: Array<expressions.IParsedExpression>): void {
-            node.nodeValue = NodeManager.build(expressions,(control || <ui.ITemplateControl>{}));
+        protected _setText(node: Node, control: ui.TemplateControl, expressions: Array<expressions.IParsedExpression>): void {
+            node.nodeValue = NodeManager.build(expressions,(control || <ui.TemplateControl>{}));
         }
     }
 
@@ -201,7 +200,7 @@ module plat.processing {
     register.injectable(__TextManagerFactory, ITextManagerFactory, null, __FACTORY);
     
     /**
-     * @name ITextManagerFactory
+     * @name TextManagerFactory
      * @memberof plat.processing
      * @kind interface
      * 
@@ -217,59 +216,17 @@ module plat.processing {
          * @static
          * 
          * @description
-         * Determines if a text node has markup, and creates a {@link plat.processing.ITextManager|ITextManager} if it does. 
-         * An {@link plat.processing.ITextManager|ITextManager} responsible for markup in the passed in node or an empty 
-         * {@link plat.processing.ITextManager|ITextManager} if not markup is found will be added to the managers array.
+         * Determines if a text node has markup, and creates a {@link plat.processing.TextManager|TextManager} if it does. 
+         * An {@link plat.processing.TextManager|TextManager} responsible for markup in the passed in node or an empty 
+         * {@link plat.processing.TextManager|TextManager} if not markup is found will be added to the managers array.
          * 
          * @param {Node} node The Node used to find markup.
-         * @param {plat.processing.IElementManager} parent The parent {@link plat.processing.IElementManager|IElementManager} 
+         * @param {plat.processing.ElementManager} parent The parent {@link plat.processing.ElementManager|ElementManager} 
          * for the node.
          * 
-         * @returns {plat.processing.TextManager} The newly created {@link plat.processing.ITextManager|ITextManager} 
+         * @returns {plat.processing.TextManager} The newly created {@link plat.processing.TextManager|TextManager} 
          * responsible for the passed in Text Node.
          */
-        create(node: Node, parent?: IElementManager): ITextManager;
-    }
-    
-    /**
-     * @name ITextManager
-     * @memberof plat.processing
-     * @kind interface
-     * 
-     * @extends {plat.processing.INodeManager}
-     * 
-     * @description
-     * An object responsible for initializing and data-binding values to text nodes.
-     */
-    export interface ITextManager extends INodeManager {
-        /**
-         * @name clone
-         * @memberof plat.processing.ITextManager
-         * @kind function
-         * @access public
-         * 
-         * @description
-         * Clones this {@link plat.processing.ITextManager|ITextManager} with a new node.
-         * 
-         * @param {Node} newNode The new node attached to the cloned {@link plat.processing.ITextManager|ITextManager}.
-         * @param {plat.processing.IElementManager} parentManager The parent {@link plat.processing.IElementManager|IElementManager} 
-         * for the clone.
-         * 
-         * @returns {number} The number of nodes to advance while traversing is in progress.
-         */
-        clone(newNode: Node, parentManager: IElementManager): number;
-        
-        /**
-         * @name bind
-         * @memberof plat.processing.ITextManager
-         * @kind function
-         * @access public
-         * 
-         * @description
-         * The function used for data-binding a data context to the DOM.
-         * 
-         * @returns {void}
-         */
-        bind(): void;
+        create(node: Node, parent?: ElementManager): TextManager;
     }
 }

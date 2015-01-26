@@ -18,8 +18,8 @@
         protected _Promise: async.IPromise = acquire(__Promise);
         protected _Injector: typeof dependency.Injector = acquire(__InjectorStatic);
         protected _EventManager: events.IEventManagerStatic = acquire(__EventManagerStatic);
-        protected _browser: web.IBrowser = acquire(__Browser);
-        protected _browserConfig: web.IBrowserConfig = acquire(__BrowserConfig);
+        protected _browser: web.Browser = acquire(__Browser);
+        protected _browserConfig: web.BrowserConfig = acquire(__BrowserConfig);
         protected _resolve: typeof async.Promise.resolve = this._Promise.resolve.bind(this._Promise);
         protected _reject: typeof async.Promise.reject = this._Promise.reject.bind(this._Promise);
 
@@ -565,11 +565,7 @@
         }
     }
 
-    export function IRouter() {
-        return new Router();
-    }
-
-    plat.register.injectable(__Router, IRouter, null, __INSTANCE);
+    plat.register.injectable(__Router, Router, null, __INSTANCE);
 
     export function IRouterStatic() {
         return Router;

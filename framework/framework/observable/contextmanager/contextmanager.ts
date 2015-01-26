@@ -28,13 +28,11 @@ module plat.observable {
      * @memberof plat.observable
      * @kind class
      * 
-     * @implements {plat.observable.IContextManager}
-     * 
      * @description
      * A class for managing both context inheritance and observable properties on controls and 
      * facilitating in data-binding.
      */
-    export class ContextManager implements IContextManager {
+    export class ContextManager {
         /**
          * @name _Exception
          * @memberof plat.observable.ContextManager
@@ -84,16 +82,16 @@ module plat.observable {
          * @static
          * 
          * @description
-         * Gets the {@link plat.observable.IContextManager|IContextManager} associated to the given control. If no 
-         * {@link plat.observable.IContextManager|IContextManager} exists, one is created for that control.
+         * Gets the {@link plat.observable.ContextManager|ContextManager} associated to the given control. If no 
+         * {@link plat.observable.ContextManager|ContextManager} exists, one is created for that control.
          * 
-         * @param {plat.IControl} control The control on which to locate the {@link plat.observable.IContextManager|IContextManager}.
+         * @param {plat.Control} control The control on which to locate the {@link plat.observable.ContextManager|ContextManager}.
          * 
-         * @returns {plat.observable.IContextManager} The {@link plat.observable.IContextManager|IContextManager} 
+         * @returns {plat.observable.ContextManager} The {@link plat.observable.ContextManager|ContextManager} 
          * associated with the input control.
          */
-        static getManager(control: IControl): IContextManager {
-            var contextManager: IContextManager,
+        static getManager(control: Control): ContextManager {
+            var contextManager: ContextManager,
                 managers = ContextManager.__managers,
                 uid = control.uid,
                 manager = managers[uid];
@@ -119,14 +117,14 @@ module plat.observable {
          * @description
          * Removes all the listeners for a given control's unique ID.
          * 
-         * @param {plat.IControl} control The control whose manager is being disposed.
+         * @param {plat.Control} control The control whose manager is being disposed.
          * @param {boolean} persist? Whether or not the control's context needs to 
          * be persisted post-disposal or can be set to null.
          * 
          * @returns {void}
          */
-        static dispose(control: IControl, persist?: boolean): void;
-        static dispose(control: ui.ITemplateControl, persist?: boolean): void {
+        static dispose(control: Control, persist?: boolean): void;
+        static dispose(control: ui.TemplateControl, persist?: boolean): void {
             if (isNull(control)) {
                 return;
             }
@@ -390,14 +388,14 @@ module plat.observable {
          * Ensures that an identifier path will exist on a given control. Will create 
          * objects/arrays if necessary.
          * 
-         * @param {plat.ui.ITemplateControl} control The {@link plat.ui.ITemplateControl|ITemplateControl} 
+         * @param {plat.ui.TemplateControl} control The {@link plat.ui.TemplateControl|TemplateControl} 
          * on which to create the context.
          * @param {string} identifier The period-delimited identifier string used to create 
          * the context path.
          * 
          * @returns {any} The newly created context object.
          */
-        static createContext(control: ui.ITemplateControl, identifier: string): any {
+        static createContext(control: ui.TemplateControl, identifier: string): any {
             var context = control.context;
 
             if (!isObject(context)) {
@@ -441,12 +439,12 @@ module plat.observable {
          * @access private
          * @static
          * 
-         * @type {plat.IObject<plat.observable.IContextManager>}
+         * @type {plat.IObject<plat.observable.ContextManager>}
          * 
          * @description
-         * An object for quickly accessing a previously created {@link plat.observable.IContextManager|IContextManager}.
+         * An object for quickly accessing a previously created {@link plat.observable.ContextManager|ContextManager}.
          */
-        private static __managers: IObject<IContextManager> = {};
+        private static __managers: IObject<ContextManager> = {};
         /**
          * @name __controls
          * @memberof plat.observable.ContextManager
@@ -467,12 +465,12 @@ module plat.observable {
          * @kind property
          * @access public
          * 
-         * @type {plat.ICompat}
+         * @type {plat.Compat}
          * 
          * @description
-         * Reference to the {@link plat.ICompat|ICompat} injectable.
+         * Reference to the {@link plat.Compat|Compat} injectable.
          */
-        protected _compat: ICompat = acquire(__Compat);
+        protected _compat: Compat = acquire(__Compat);
 
         /**
          * @name context
@@ -484,7 +482,7 @@ module plat.observable {
          * 
          * @description
          * The root context associated with and to be managed by this 
-         * {@link plat.observable.IContextManager|IContextManager}.
+         * {@link plat.observable.ContextManager|ContextManager}.
          */
         context: any;
 
@@ -786,7 +784,7 @@ module plat.observable {
          * @access public
          * 
          * @description
-         * Disposes the memory for an {@link plat.observable.IContextManager|IContextManager}.
+         * Disposes the memory for an {@link plat.observable.ContextManager|ContextManager}.
          * 
          * @returns {void}
          */
@@ -1597,12 +1595,12 @@ module plat.observable {
     register.injectable(__ContextManagerStatic, IContextManagerStatic, null, __STATIC);
 
     /**
-     * @name IContextManagerStatic
+     * @name ContextManagerStatic
      * @memberof plat.observable
      * @kind interface
      * 
      * @description
-     * Creates and manages {@link plat.observable.IContextManager|IContextManagers} and has 
+     * Creates and manages {@link plat.observable.ContextManager|ContextManagers} and has 
      * additional helper functions for observing objects and primitives.
      */
     export interface IContextManagerStatic {
@@ -1642,15 +1640,15 @@ module plat.observable {
          * @static
          * 
          * @description
-         * Gets the {@link plat.observable.IContextManager|IContextManager} associated to the given control. If no 
-         * {@link plat.observable.IContextManager|IContextManager} exists, one is created for that control.
+         * Gets the {@link plat.observable.ContextManager|ContextManager} associated to the given control. If no 
+         * {@link plat.observable.ContextManager|ContextManager} exists, one is created for that control.
          * 
-         * @param {plat.IControl} control The control on which to locate the {@link plat.observable.IContextManager|IContextManager}.
+         * @param {plat.Control} control The control on which to locate the {@link plat.observable.ContextManager|ContextManager}.
          * 
-         * @returns {plat.observable.IContextManager} The {@link plat.observable.IContextManager|IContextManager} 
+         * @returns {plat.observable.ContextManager} The {@link plat.observable.ContextManager|ContextManager} 
          * associated with the input control.
          */
-        getManager(control: IControl): IContextManager;
+        getManager(control: Control): ContextManager;
 
         /**
          * @name dispose
@@ -1662,13 +1660,13 @@ module plat.observable {
          * @description
          * Removes all the listeners for a given control's unique ID.
          * 
-         * @param {plat.IControl} control The control whose manager is being disposed.
+         * @param {plat.Control} control The control whose manager is being disposed.
          * @param {boolean} persist? Whether or not the control's context needs to 
          * be persisted post-disposal or can be set to null.
          * 
          * @returns {void}
          */
-        dispose(control: IControl, persist?: boolean): void;
+        dispose(control: Control, persist?: boolean): void;
 
         /**
          * @name removeArrayListeners
@@ -1813,112 +1811,14 @@ module plat.observable {
          * Ensures that an identifier path will exist on a given control. Will create 
          * objects/arrays if necessary.
          * 
-         * @param {plat.ui.ITemplateControl} control The {@link plat.ui.ITemplateControl|ITemplateControl} 
+         * @param {plat.ui.TemplateControl} control The {@link plat.ui.TemplateControl|TemplateControl} 
          * on which to create the context.
          * @param {string} identifier The period-delimited identifier string used to create 
          * the context path.
          * 
          * @returns {any} The newly created context object.
          */
-        createContext(control: ui.ITemplateControl, identifier: string): any;
-    }
-
-    /**
-     * @name IContextManager
-     * @memberof plat.observable
-     * @kind interface
-     * 
-     * @description
-     * Describes an object that manages observing properties on any object.
-     */
-    export interface IContextManager {
-        /**
-         * @name context
-         * @memberof plat.observable.IContextManager
-         * @kind property
-         * @access public
-         * 
-         * @type {any}
-         * 
-         * @description
-         * The root context associated with and to be managed by this 
-         * {@link plat.observable.IContextManager|IContextManager}.
-         */
-        context: any;
-
-        /**
-         * @name getContext
-         * @memberof plat.observable.IContextManager
-         * @kind function
-         * @access public
-         * 
-         * @description
-         * Safely retrieves the local context for this manager given an Array of
-         * property strings.
-         * 
-         * @param {Array<string>} split The string array containing properties used to index into
-         * the context.
-         * 
-         * @returns {any} The obtained context.
-         */
-        getContext(split: Array<string>): any;
-
-        /**
-         * @name observe
-         * @memberof plat.observable.IContextManager
-         * @kind function
-         * @access public
-         * 
-         * @description
-         * Given a period-delimited identifier, observes an object and calls the given listener when the 
-         * object changes.
-         * 
-         * @param {string} absoluteIdentifier The period-delimited identifier noting the property to be observed.
-         * @param {plat.observable.IListener} observableListener An object implmenting IObservableListener. The listener will be 
-         * notified of object changes.
-         * 
-         * @returns {plat.IRemoveListener} A function to stop observing the object identified by the absoluteIdentifier.
-         */
-        observe(identifier: string, observableListener: IListener): IRemoveListener;
-
-        /**
-         * @name observeArray
-         * @memberof plat.observable.IContextManager
-         * @kind function
-         * @access public
-         * 
-         * @description
-         * Observes an array and calls the listener when certain functions are called on 
-         * that array. The watched functions are push, pop, shift, splice, unshift, sort, 
-         * and reverse.
-         * 
-         * @param {string} uid The unique ID of the object observing the array.
-         * @param {(ev: plat.observable.IPreArrayChangeInfo) => void} preListener The callback for prior to when an observed Array 
-         * function has been called.
-         * @param {(ev: plat.observable.IPostArrayChangeInfo<any>) => void} postListener The callback for after when an observed Array 
-         * function has been called.
-         * @param {string} absoluteIdentifier The identifier from the root context used to find the array.
-         * @param {Array<any>} array The array to be observed.
-         * @param {Array<any>} oldArray The old array to stop observing.
-         * 
-         * @returns {plat.IRemoveListener} A function to stop observing the array identified by the absoluteIdentifier.
-         */
-        observeArray(uid: string, preListener: (ev: IPreArrayChangeInfo) => void,
-            postListener: (ev: IPostArrayChangeInfo<any>) => void, absoluteIdentifier: string,
-            array: Array<any>, oldArray: Array<any>): IRemoveListener;
-
-        /**
-         * @name dispose
-         * @memberof plat.observable.IContextManager
-         * @kind function
-         * @access public
-         * 
-         * @description
-         * Disposes the memory for an {@link plat.observable.IContextManager|IContextManager}.
-         * 
-         * @returns {void}
-         */
-        dispose(): void;
+        createContext(control: ui.TemplateControl, identifier: string): any;
     }
 
     /**

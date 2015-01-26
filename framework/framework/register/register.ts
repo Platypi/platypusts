@@ -19,12 +19,12 @@ module plat.register {
      * 
      * @description
      * Generic function for creating an {@link plat.dependency.Injector|Injector} and 
-     * adding it to an {@link plat.dependency.IInjectorObject|IInjectorObject}.
+     * adding it to an {@link plat.dependency.InjectorObject|InjectorObject}.
      * 
-     * @param {plat.dependency.IInjectorObject<any>} obj The {@link plat.dependency.IInjectorObject|IInjectorObject} 
+     * @param {plat.dependency.InjectorObject<any>} obj The {@link plat.dependency.InjectorObject|InjectorObject} 
      * to which to add an {@link plat.dependency.Injector|Injector}.
      * @param {string} name The name used to set/get the {@link plat.dependency.Injector|Injector} from the 
-     * {@link plat.dependency.IInjectorObject|IInjectorObject}.
+     * {@link plat.dependency.InjectorObject|InjectorObject}.
      * @param {any} Type The constructor or function definition for the {@link plat.dependency.Injector|Injector}.
      * @param {Array<any>} dependencies? An array of strings representing the dependencies needed for the
      * {@link plat.dependency.Injector|Injector}.
@@ -33,7 +33,7 @@ module plat.register {
      * 
      * @returns {plat.register} The object that contains the register methods (for method chaining).
      */
-    function add(obj: dependency.IInjectorObject<any>, name: string, Type: any, dependencies?: Array<any>,
+    function add(obj: dependency.InjectorObject<any>, name: string, Type: any, dependencies?: Array<any>,
         injectableType?: string, isStatic?: boolean): typeof register {
         var injector = obj[name] = new dependency.Injector<any>(name, Type, dependencies, injectableType);
 
@@ -51,18 +51,18 @@ module plat.register {
      * @access public
      * 
      * @description
-     * Registers the {@link plat.IApp|IApp} with the framework. The framework will instantiate the {@link plat.IApp|IApp} 
+     * Registers the {@link plat.App|IApp} with the framework. The framework will instantiate the {@link plat.App|IApp} 
      * when needed, and wire up the Application Lifecycle events. The dependencies array corresponds to injectables that will be 
      * passed into the Constructor of the app.
      * 
      * @param {string} name The name of your app.
-     * @param {new (...args: any[]) => plat.IApp} Type The constructor for the {@link plat.IApp|IApp}.
+     * @param {new (...args: any[]) => plat.App} Type The constructor for the {@link plat.App|IApp}.
      * @param {Array<any>} dependencies? An array of strings representing the dependencies needed for the app injector.
      * 
      * @returns {plat.register} The object that contains the register methods (for method chaining).
      */
-    export function app(name: string, Type: new (...args: any[]) => IApp, dependencies?: Array<any>): typeof register {
-        var app = new dependency.Injector<IApp>(name, Type, dependencies),
+    export function app(name: string, Type: new (...args: any[]) => App, dependencies?: Array<any>): typeof register {
+        var app = new dependency.Injector<App>(name, Type, dependencies),
             _AppStatic: IAppStatic = acquire(__AppStatic);
 
         _AppStatic.registerApp(app);
@@ -76,20 +76,20 @@ module plat.register {
      * @access public
      * 
      * @description
-     * Registers an {@link plat.IControl|IControl} with the framework. The framework will instantiate the 
-     * {@link plat.IControl|IControl} when needed. The dependencies array corresponds to injectables that 
+     * Registers an {@link plat.Control|Control} with the framework. The framework will instantiate the 
+     * {@link plat.Control|Control} when needed. The dependencies array corresponds to injectables that 
      * will be passed into the Constructor of the control.
      * 
-     * @param {string} name The control type, corresponding to the HTML notation for creating a new IControl (e.g. 'plat-foreach').
-     * @param {new (...args: any[]) => plat.IControl} Type The constructor for the {@link plat.IControl|IControl}.
-     * @param {Array<any>} dependencies? An array of strings representing the dependencies needed for the {@link plat.IControl|IControl} 
+     * @param {string} name The control type, corresponding to the HTML notation for creating a new Control (e.g. 'plat-foreach').
+     * @param {new (...args: any[]) => plat.Control} Type The constructor for the {@link plat.Control|Control}.
+     * @param {Array<any>} dependencies? An array of strings representing the dependencies needed for the {@link plat.Control|Control} 
      * injector.
      * 
-     * @example plat.register.control('my-tap', MyTap, [plat.expressions.IParser]);
+     * @example plat.register.control('my-tap', MyTap, [plat.expressions.Parser]);
      * 
      * @returns {plat.register} The object that contains the register methods (for method chaining).
      */
-    export function control(name: string, Type: new (...args: any[]) => IControl, dependencies?: Array<any>, isStatic?: boolean): typeof register {
+    export function control(name: string, Type: new (...args: any[]) => Control, dependencies?: Array<any>, isStatic?: boolean): typeof register {
         if (isString(name)) {
             name = name.toLowerCase();
         } else {
@@ -152,7 +152,7 @@ module plat.register {
      * (defaults to {@link plat.register.injectable.SINGLETON|SINGLETON}).
      * 
      * @example
-     * plat.register.injectable('_CacheFactory', [plat.expressions.IParser], Cache);
+     * plat.register.injectable('_CacheFactory', [plat.expressions.Parser], Cache);
      * plat.register.injectable('database', MyDatabase, null, plat.register.injectable.INSTANCE);
      * 
      * @returns {plat.register} The object that contains the register methods (for method chaining).
@@ -179,8 +179,8 @@ module plat.register {
      * (defaults to {@link plat.register.injectable.SINGLETON|SINGLETON}).
      * 
      * @example
-     * plat.register.injectable('_CacheFactory', [plat.expressions.IParser], 
-     *     function(parser: plat.expressions.IParser) { return { ... }; });
+     * plat.register.injectable('_CacheFactory', [plat.expressions.Parser], 
+     *     function(parser: plat.expressions.Parser) { return { ... }; });
      * plat.register.injectable('database', function() { return new Database(); }, null, register.injectable.INSTANCE);
      * 
      * @returns {plat.register} The object that contains the register methods (for method chaining).
@@ -303,7 +303,7 @@ module plat.register {
      * JS implementation as well.
      * 
      * @param {string} name The unique idenitifer of the animation.
-     * @param {new (...args: any[]) => plat.ui.animations.ICssAnimation} Type The constructor for the custom animation.
+     * @param {new (...args: any[]) => plat.ui.animations.CssAnimation} Type The constructor for the custom animation.
      * @param {Array<any>} dependencies? Any dependencies that need to be injected into the animation at 
      * instantiation.
      * @param {string} animationType The type of animation. Both the intended type and default value are 
@@ -311,9 +311,9 @@ module plat.register {
      * 
      * @returns {plat.register} The object that contains the register methods (for method chaining).
      */
-    export function animation(name: string, Type: new (...args: any[]) => ui.animations.ICssAnimation,
+    export function animation(name: string, Type: new (...args: any[]) => ui.animations.CssAnimation,
         dependencies?: Array<any>, animationType?: 'css'): typeof register;
-    export function animation(name: string, Type: new (...args: any[]) => ui.animations.ICssAnimation,
+    export function animation(name: string, Type: new (...args: any[]) => ui.animations.CssAnimation,
         dependencies?: Array<any>, animationType?: string): typeof register;
     /**
      * @name animation
@@ -327,7 +327,7 @@ module plat.register {
      * is desired.
      * 
      * @param {string} name The unique idenitifer of the animation.
-     * @param {new (...args: any[]) => plat.ui.animations.IJsAnimation} Type The constructor for the custom animation.
+     * @param {new (...args: any[]) => plat.ui.animations.JsAnimation} Type The constructor for the custom animation.
      * @param {Array<any>} dependencies? Any dependencies that need to be injected into the animation at 
      * instantiation.
      * @param {string} animationType The type of animation. Both the intended type and default value are 
@@ -335,11 +335,11 @@ module plat.register {
      * 
      * @returns {plat.register} The object that contains the register methods (for method chaining).
      */
-    export function animation(name: string, Type: new (...args: any[]) => ui.animations.IJsAnimation,
+    export function animation(name: string, Type: new (...args: any[]) => ui.animations.JsAnimation,
         dependencies: Array<any>, animationType: 'js'): typeof register;
-    export function animation(name: string, Type: new (...args: any[]) => ui.animations.IJsAnimation,
+    export function animation(name: string, Type: new (...args: any[]) => ui.animations.JsAnimation,
         dependencies: Array<any>, animationType: string): typeof register;
-    export function animation(name: string, Type: new (...args: any[]) => ui.animations.IBaseAnimation,
+    export function animation(name: string, Type: new (...args: any[]) => ui.animations.BaseAnimation,
         dependencies?: Array<any>, animationType?: string): typeof register {
         if (!isString(animationType)) {
             animationType = __CSS;
@@ -394,10 +394,10 @@ module plat.register {
     }
 }
 
-var controlInjectors: plat.dependency.IInjectorObject<plat.IControl> = {};
-var viewControlInjectors: plat.dependency.IInjectorObject<plat.ui.ViewControl> = {};
-var injectableInjectors: plat.dependency.IInjectorObject<plat.dependency.IInjector<any>> = {};
-var unregisteredInjectors: plat.dependency.IInjectorObject<plat.dependency.IInjector<any>> = {};
-var staticInjectors: plat.dependency.IInjectorObject<plat.dependency.IInjector<any>> = {};
-var animationInjectors: plat.dependency.IInjectorObject<plat.ui.animations.IBaseAnimation> = {};
-var jsAnimationInjectors: plat.dependency.IInjectorObject<plat.ui.animations.IBaseAnimation> = {};
+var controlInjectors: plat.dependency.InjectorObject<plat.Control> = {};
+var viewControlInjectors: plat.dependency.InjectorObject<plat.ui.ViewControl> = {};
+var injectableInjectors: plat.dependency.InjectorObject<plat.dependency.Injector<any>> = {};
+var unregisteredInjectors: plat.dependency.InjectorObject<plat.dependency.Injector<any>> = {};
+var staticInjectors: plat.dependency.InjectorObject<plat.dependency.Injector<any>> = {};
+var animationInjectors: plat.dependency.InjectorObject<plat.ui.animations.BaseAnimation> = {};
+var jsAnimationInjectors: plat.dependency.InjectorObject<plat.ui.animations.BaseAnimation> = {};

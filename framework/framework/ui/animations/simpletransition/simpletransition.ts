@@ -5,13 +5,12 @@
      * @kind class
      * 
      * @extends {plat.ui.animations.CssAnimation}
-     * @implements {plat.ui.animations.ISimpleCssTransition}
      * 
      * @description
      * A simple CSS Animation class that places the 'plat-transition' class on an 
      * element, checks for transition properties, and waits for the transition to end.
      */
-    export class SimpleCssTransition extends CssAnimation implements ISimpleCssTransition {
+    export class SimpleCssTransition extends CssAnimation {
         /**
          * @name _window
          * @memberof plat.ui.animations.SimpleCssTransition
@@ -31,13 +30,13 @@
          * @kind property
          * @access public
          * 
-         * @type {plat.ui.animations.ISimpleCssTransitionOptions}
+         * @type {plat.ui.animations.SimpleCssTransitionOptions}
          * 
          * @description
          * An optional options object that can denote a pseudo element animation and specify 
          * properties to modify during the transition.
          */
-        options: ISimpleCssTransitionOptions;
+        options: SimpleCssTransitionOptions;
 
         /**
          * @name className
@@ -113,7 +112,7 @@
                     removeClass(element, this.className);
                     this.end();
                 },
-                computedStyle = this._window.getComputedStyle(element, (this.options || <ISimpleCssTransitionOptions>{}).pseudo),
+                computedStyle = this._window.getComputedStyle(element, (this.options || <SimpleCssTransitionOptions>{}).pseudo),
                 transitionProperty = computedStyle[<any>(transitionId + 'Property')],
                 transitionDuration = computedStyle[<any>(transitionId + 'Duration')];
 
@@ -193,7 +192,7 @@
          */
         protected _animate(): boolean {
             var style = this.element.style || {},
-                properties = (this.options || <ISimpleCssTransitionOptions>{}).properties || {},
+                properties = (this.options || <SimpleCssTransitionOptions>{}).properties || {},
                 keys = Object.keys(properties),
                 length = keys.length,
                 key: any,
@@ -225,37 +224,10 @@
 
     register.animation(__SimpleTransition, SimpleCssTransition);
 
-    /**
-     * @name ISimpleCssTransition
-     * @memberof plat.ui.animations
-     * @kind interface
-     * 
-     * @extends {plat.ui.animations.ISimpleCssAnimation}
-     * 
-     * @description
-     * An object that allows for transitioned changes to an Element's style based on  
-     * options passed in.
-     */
-    export interface ISimpleCssTransition extends ISimpleCssAnimation {
-        /**
-         * @name options
-         * @memberof plat.ui.animations.ISimpleCssTransition
-         * @kind property
-         * @access public
-         * 
-         * @type {plat.ui.animations.ISimpleCssTransitionOptions}
-         * 
-         * @description
-         * An optional options object that can denote a pseudo element animation and specify 
-         * properties to modify during the transition.
-         */
-        options: ISimpleCssTransitionOptions;
-    }
-
-    export interface ISimpleCssTransitionOptions extends ISimpleCssAnimationOptions {
+    export interface SimpleCssTransitionOptions extends SimpleCssAnimationOptions {
         /**
          * @name properties
-         * @memberof plat.ui.animations.ISimpleCssTransitionOptions
+         * @memberof plat.ui.animations.SimpleCssTransitionOptions
          * @kind property
          * @access public
          * 

@@ -38,6 +38,6 @@
     }
 
     plat.register.viewControl('three', Three, [
-        plat.routing.IRouter
+        plat.routing.Router
     ]);
 }

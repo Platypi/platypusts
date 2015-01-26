@@ -6,13 +6,12 @@ module plat {
      * @access public
      * 
      * @extends {plat.Control}
-     * @implements {plat.IAttributeControl}
      * 
      * @description
      * A type of control that can be used as an attribute but will 
      * not be used to add, remove, or modify DOM.
      */
-    export class AttributeControl extends Control implements IAttributeControl {
+    export class AttributeControl extends Control {
         /**
          * @name dispose
          * @memberof plat.AttributeControl
@@ -24,11 +23,11 @@ module plat {
          * Method for disposing an attribute control. Removes any 
          * necessary objects from the control.
          * 
-         * @param {plat.IAttributeControl} control The {@link plat.AttributeControl|AttributeControl} to dispose.
+         * @param {plat.AttributeControl} control The {@link plat.AttributeControl|AttributeControl} to dispose.
          * 
          * @returns {void}
          */
-        static dispose(control: IAttributeControl): void {
+        static dispose(control: AttributeControl): void {
             deleteProperty(control, 'templateControl');
 
             Control.dispose(control);
@@ -44,9 +43,9 @@ module plat {
          * @description
          * Returns a new instance of {@link plat.AttributeControl|AttributeControl}.
          * 
-         * @returns {plat.IAttributeControl}
+         * @returns {plat.AttributeControl}
          */
-        static getInstance(): IAttributeControl {
+        static getInstance(): AttributeControl {
             return new AttributeControl();
         }
 
@@ -56,14 +55,14 @@ module plat {
          * @kind property
          * @access public
          * 
-         * @type {plat.ui.ITemplateControl}
+         * @type {plat.ui.TemplateControl}
          * 
          * @description
-         * Specifies the {@link plat.ui.ITemplateControl|ITemplateControl} associated with this
-         * control's element. Can be null if no {@link plat.ui.ITemplateControl|ITemplateControl}
+         * Specifies the {@link plat.ui.TemplateControl|TemplateControl} associated with this
+         * control's element. Can be null if no {@link plat.ui.TemplateControl|TemplateControl}
          * exists.
          */
-        templateControl: ui.ITemplateControl = null;
+        templateControl: ui.TemplateControl = null;
     }
 
     /**
@@ -76,12 +75,12 @@ module plat {
     register.injectable(__AttributeControlFactory, IAttributeControlFactory, null, __FACTORY);
 
     /**
-     * @name IAttributeControlFactory
+     * @name AttributeControlFactory
      * @memberof plat
      * @kind interface
      * 
      * @description
-     * Creates and manages instances of {@link plat.IAttributeControl|IAttributeControl}.
+     * Creates and manages instances of {@link plat.AttributeControl|AttributeControl}.
      */
     export interface IAttributeControlFactory {
         /**
@@ -95,11 +94,11 @@ module plat {
          * Method for disposing an attribute control. Removes any 
          * necessary objects from the control.
          * 
-         * @param {plat.IAttributeControl} control The {@link plat.AttributeControl|AttributeControl} to dispose.
+         * @param {plat.AttributeControl} control The {@link plat.AttributeControl|AttributeControl} to dispose.
          * 
          * @returns {void}
          */
-        dispose(control: IAttributeControl): void;
+        dispose(control: AttributeControl): void;
 
         /**
          * @name getInstance
@@ -111,37 +110,8 @@ module plat {
          * @description
          * Returns a new instance of {@link plat.AttributeControl|AttributeControl}.
          * 
-         * @returns {plat.IAttributeControl}
+         * @returns {plat.AttributeControl}
          */
-        getInstance(): IAttributeControl;
-    }
-
-    /**
-     * @name IAttributeControl
-     * @memberof plat
-     * @kind interface
-     * @access public
-     * 
-     * @extends {plat.IControl}
-     * 
-     * @description
-     * An object describing a type of control that can be used as an attribute but will 
-     * not be used to add, remove, or modify DOM.
-     */
-    export interface IAttributeControl extends IControl {
-        /**
-         * @name templateControl
-         * @memberof plat.IAttributeControl
-         * @kind property
-         * @access public
-         * 
-         * @type {plat.ui.ITemplateControl}
-         * 
-         * @description
-         * Specifies the {@link plat.ui.ITemplateControl|ITemplateControl} associated with this
-         * control's element. Can be null if no {@link plat.ui.ITemplateControl|ITemplateControl}
-         * exists.
-         */
-        templateControl?: ui.ITemplateControl;
+        getInstance(): AttributeControl;
     }
 }

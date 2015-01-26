@@ -4,8 +4,8 @@ module tests.observable.contextManagerStatic {
     var ContextManager = plat.acquire(plat.observable.IContextManagerStatic);
 
     describe('ContextManagerStatic Tests', () => {
-        var control: plat.ui.ITemplateControl,
-            manager: plat.observable.IContextManager;
+        var control: plat.ui.TemplateControl,
+            manager: plat.observable.ContextManager;
 
         beforeEach(() => {
             control = <any>{

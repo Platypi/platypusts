@@ -1,7 +1,7 @@
 ﻿module tests.controls.observableAttributeControl {
     describe('ObservableAttributeControl Tests', () => {
         var control: plat.controls.ObservableAttributeControl,
-            parent: plat.ui.ITemplateControl,
+            parent: plat.ui.TemplateControl,
             ControlFactory = plat.acquire(plat.IControlFactory);
 
         beforeEach(() => {
@@ -13,7 +13,7 @@
             control.parent = parent;
             control.type = 'plat-options';
             control.templateControl = new plat.ui.TemplateControl();
-            control.attributes = plat.acquire(plat.ui.IAttributesInstance);
+            control.attributes = plat.acquire(plat.ui.Attributes);
             control.attributes['platOptions'] = 'foo.bar';
             parent.context = {
                 foo: {

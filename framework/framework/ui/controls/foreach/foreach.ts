@@ -17,12 +17,12 @@ module plat.ui.controls {
          * @kind property
          * @access protected
          * 
-         * @type {plat.ui.animations.IAnimator}
+         * @type {plat.ui.animations.Animator}
          * 
          * @description
-         * Reference to the {@link plat.ui.animations.IAnimator|IAnimator} injectable.
+         * Reference to the {@link plat.ui.animations.Animator|Animator} injectable.
          */
-        protected _animator: animations.IAnimator = acquire(__Animator);
+        protected _animator: animations.Animator = acquire(__Animator);
 
         /**
          * @name _Promise
@@ -69,12 +69,12 @@ module plat.ui.controls {
          * @kind property
          * @access public
          * 
-         * @type {Array<plat.ui.ITemplateControl>}
+         * @type {Array<plat.ui.TemplateControl>}
          * 
          * @description
-         * The child controls of the control. All will be of type {@link plat.ui.ITemplateControl|ITemplateControl}.
+         * The child controls of the control. All will be of type {@link plat.ui.TemplateControl|TemplateControl}.
          */
-        controls: Array<ITemplateControl>;
+        controls: Array<TemplateControl>;
 
         /**
          * @name itemsLoaded
@@ -626,7 +626,7 @@ module plat.ui.controls {
          * 
          * @param {number} index The index used to create the resource aliases.
          * 
-         * @returns {plat.IObject<plat.ui.IResource>} An object consisting of {@link plat.ui.IResource|IResources}.
+         * @returns {plat.IObject<plat.ui.IResource>} An object consisting of {@link plat.ui.IResource|Resources}.
          */
         protected _getAliases(index: number): IObject<IResource> {
             var isEven = (index & 1) === 0,

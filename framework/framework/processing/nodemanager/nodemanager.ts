@@ -4,12 +4,10 @@ module plat.processing {
      * @memberof plat.processing
      * @kind class
      * 
-     * @implements {plat.processing.INodeManager}
-     * 
      * @description
      * Responsible for data binding a data context to a Node.
      */
-    export class NodeManager implements INodeManager {
+    export class NodeManager {
         /**
          * @name _ContextManager
          * @memberof plat.processing.NodeManager
@@ -31,12 +29,12 @@ module plat.processing {
          * @access protected
          * @static
          * 
-         * @type {plat.expressions.IParser}
+         * @type {plat.expressions.Parser}
          * 
          * @description
-         * Reference to the {@link plat.expressions.IParser|IParser} injectable.
+         * Reference to the {@link plat.expressions.Parser|Parser} injectable.
          */
-        protected static _parser: expressions.IParser;
+        protected static _parser: expressions.Parser;
 
         /**
          * @name _TemplateControlFactory
@@ -154,12 +152,12 @@ module plat.processing {
          * and outputs a string of the evaluated expressions.
          * 
          * @param {Array<plat.expressions.IParsedExpression>} expressions The composition array to evaluate.
-         * @param {plat.ui.ITemplateControl} control? The {@link plat.ui.ITemplateControl|ITemplateControl} used to parse 
+         * @param {plat.ui.TemplateControl} control? The {@link plat.ui.TemplateControl|TemplateControl} used to parse 
          * the expressions.
          * 
          * @returns {string} The output text with all markup bound.
          */
-        static build(expressions: Array<expressions.IParsedExpression>, control?: ui.ITemplateControl): string {
+        static build(expressions: Array<expressions.IParsedExpression>, control?: ui.TemplateControl): string {
             var text = '',
                 length = expressions.length,
                 resources = <IObject<any>>{},
@@ -208,13 +206,13 @@ module plat.processing {
          * 
          * @param {Array<plat.expressions.IParsedExpression>} expressions An Array of 
          * {@link plat.expressions.IParsedExpression|IParsedExpressions} to observe.
-         * @param {plat.ui.ITemplateControl} control The {@link plat.ui.ITemplateControl|ITemplateControl} associated 
+         * @param {plat.ui.TemplateControl} control The {@link plat.ui.TemplateControl|TemplateControl} associated 
          * to the identifiers.
          * @param {(...args: Array<any>) => void} listener The listener to call when any identifier property changes.
          * 
          * @returns {void}
          */
-        static observeExpressions(expressions: Array<expressions.IParsedExpression>, control: ui.ITemplateControl,
+        static observeExpressions(expressions: Array<expressions.IParsedExpression>, control: ui.TemplateControl,
             listener: (...args: Array<any>) => void): void {
             var uniqueIdentiifers = NodeManager.__findUniqueIdentifiers(expressions),
                 identifiers = uniqueIdentiifers.identifiers,
@@ -225,7 +223,7 @@ module plat.processing {
                     uid: control.uid
                 },
                 observationDetails: IObservationDetails,
-                manager: observable.IContextManager,
+                manager: observable.ContextManager,
                 absoluteIdentifier: string,
                 stopObserving: IRemoveListener,
                 stopListening: IRemoveListener;
@@ -401,25 +399,25 @@ module plat.processing {
          * {@link plat.observable.ContextManager|ContextManager} needed to observe it.
          * 
          * @param {string} identifier The identifier looking to be observed.
-         * @param {plat.ui.ITemplateControl} control The {@link plat.ui.ITemplateControl|ITemplateControl} associated 
+         * @param {plat.ui.TemplateControl} control The {@link plat.ui.TemplateControl|TemplateControl} associated 
          * to the identifiers.
          * 
          * @returns {plat.processing.IObservationDetails} An object containing information needed for observing a the given 
          * identifier.
          */
-        private static __getObservationDetails(identifier: string, control: ui.ITemplateControl): IObservationDetails {
+        private static __getObservationDetails(identifier: string, control: ui.TemplateControl): IObservationDetails {
             var $contextManager = NodeManager._ContextManager,
-                manager: observable.IContextManager,
+                manager: observable.ContextManager,
                 split = identifier.split('.'),
                 absoluteIdentifier = '',
                 isDefined = false;
 
             if (identifier[0] === '@') {
                 // we found an alias
-                var resourceObj: { resource: ui.IResource; control: ui.ITemplateControl; },
+                var resourceObj: { resource: ui.IResource; control: ui.TemplateControl; },
                     resources: IObject<{
                         resource: ui.IResource;
-                        control: ui.ITemplateControl;
+                        control: ui.TemplateControl;
                     }> = {},
                     alias = split.shift().slice(1);
 
@@ -465,7 +463,7 @@ module plat.processing {
          * @type {string}
          * 
          * @description
-         * The type of {@link plat.processing.INodeManager|INodeManager}.
+         * The type of {@link plat.processing.NodeManager|NodeManager}.
          */
         type: string;
         /**
@@ -477,7 +475,7 @@ module plat.processing {
          * @type {plat.processing.INodeMap}
          * 
          * @description
-         * The {@link plat.processing.INodeMap|INodeMap} for this {@link plat.processing.INodeManager|INodeManager}. 
+         * The {@link plat.processing.INodeMap|INodeMap} for this {@link plat.processing.NodeManager|NodeManager}. 
          * Contains the compiled Node.
          */
         nodeMap: INodeMap;
@@ -487,12 +485,12 @@ module plat.processing {
          * @kind property
          * @access public
          * 
-         * @type {plat.processing.IElementManager}
+         * @type {plat.processing.ElementManager}
          * 
          * @description
-         * The parent {@link plat.processing.IElementManager|IElementManager}.
+         * The parent {@link plat.processing.ElementManager|ElementManager}.
          */
-        parent: IElementManager;
+        parent: ElementManager;
         /**
          * @name isClone
          * @memberof plat.processing.NodeManager
@@ -502,7 +500,7 @@ module plat.processing {
          * @type {boolean}
          * 
          * @description
-         * Whether or not this {@link plat.processing.INodeManager|INodeManager} is a clone.
+         * Whether or not this {@link plat.processing.NodeManager|NodeManager} is a clone.
          */
         isClone = false;
 
@@ -516,12 +514,12 @@ module plat.processing {
          * Initializes the manager's properties.
          * 
          * @param {plat.processing.INodeMap} nodeMap The mapping associated with this manager. We have to use an 
-         * Used to treat all {@link plat.processing.INodeManager|INodeManagers} the same.
-         * @param {plat.processing.IElementManager} parent The parent {@link plat.processing.IElementManager|IElementManager}.
+         * Used to treat all {@link plat.processing.NodeManager|NodeManagers} the same.
+         * @param {plat.processing.ElementManager} parent The parent {@link plat.processing.ElementManager|ElementManager}.
          * 
          * @returns {void}
          */
-        initialize(nodeMap: INodeMap, parent: IElementManager): void {
+        initialize(nodeMap: INodeMap, parent: ElementManager): void {
             this.nodeMap = nodeMap;
             this.parent = parent;
 
@@ -540,11 +538,11 @@ module plat.processing {
          * @description
          * Retrieves the parent control associated with the parent manager.
          * 
-         * @returns {plat.ui.ITemplateControl} The parent {@link plat.ui.ITemplateControl|ITemplateControl}.
+         * @returns {plat.ui.TemplateControl} The parent {@link plat.ui.TemplateControl|TemplateControl}.
          */
-        getParentControl(): ui.ITemplateControl {
+        getParentControl(): ui.TemplateControl {
             var parent = this.parent,
-                control: ui.ITemplateControl;
+                control: ui.TemplateControl;
 
             while (isNull(control)) {
                 if (isNull(parent)) {
@@ -565,15 +563,15 @@ module plat.processing {
          * @access public
          * 
          * @description
-         * Clones this {@link plat.processing.INodeManager|INodeManager} with the new node.
+         * Clones this {@link plat.processing.NodeManager|NodeManager} with the new node.
          * 
          * @param {Node} newNode The new node associated with the new manager.
-         * @param {plat.processing.IElementManager} parentManager The parent 
-         * {@link plat.processing.IElementManager|IElementManager} for the clone.
+         * @param {plat.processing.ElementManager} parentManager The parent 
+         * {@link plat.processing.ElementManager|ElementManager} for the clone.
          * 
          * @returns {number} The number of nodes to advance while node traversal is in progress.
          */
-        clone(newNode: Node, parentManager: IElementManager): number {
+        clone(newNode: Node, parentManager: ElementManager): number {
             return 1;
         }
 
@@ -595,9 +593,9 @@ module plat.processing {
      * The Type for referencing the '_NodeManager' injectable as a dependency.
      */
     export function INodeManagerStatic(
-        _regex?: expressions.IRegex,
+        _regex?: expressions.Regex,
         _ContextManager?: observable.IContextManagerStatic,
-        _parser?: expressions.IParser,
+        _parser?: expressions.Parser,
         _TemplateControlFactory?: ui.ITemplateControlFactory,
         _Exception?: IExceptionStatic): INodeManagerStatic {
         // NOTE: This is not advised by TypeScript, but we want to do this.
@@ -618,7 +616,7 @@ module plat.processing {
     ], __STATIC);
 
     /**
-     * @name INodeManagerStatic
+     * @name NodeManagerStatic
      * @memberof plat.processing
      * @kind interface
      * 
@@ -672,12 +670,12 @@ module plat.processing {
          * and outputs a string of the evaluated expressions.
          * 
          * @param {Array<plat.expressions.IParsedExpression>} expressions The composition array to evaluate.
-         * @param {plat.ui.ITemplateControl} control? The {@link plat.ui.ITemplateControl|ITemplateControl} used to parse 
+         * @param {plat.ui.TemplateControl} control? The {@link plat.ui.TemplateControl|TemplateControl} used to parse 
          * the expressions.
          * 
          * @returns {string} The output text with all markup bound.
          */
-        build(expressions: Array<expressions.IParsedExpression>, control?: ui.ITemplateControl): string;
+        build(expressions: Array<expressions.IParsedExpression>, control?: ui.TemplateControl): string;
 
         /**
          * @name observeExpressions
@@ -691,137 +689,14 @@ module plat.processing {
          * 
          * @param {Array<plat.expressions.IParsedExpression>} expressions An Array of 
          * {@link plat.expressions.IParsedExpression|IParsedExpressions} to observe.
-         * @param {plat.ui.ITemplateControl} control The {@link plat.ui.ITemplateControl|ITemplateControl} associated 
+         * @param {plat.ui.TemplateControl} control The {@link plat.ui.TemplateControl|TemplateControl} associated 
          * to the identifiers.
          * @param {(...args: Array<any>) => void} listener The listener to call when any identifier property changes.
          * 
          * @returns {void}
          */
         observeExpressions(expressions: Array<expressions.IParsedExpression>,
-            control: ui.ITemplateControl, listener: (...args: Array<any>) => void): void;
-    }
-
-    /**
-     * @name INodeManager
-     * @memberof plat.processing
-     * @kind interface
-     * 
-     * @description
-     * Describes an object that takes a Node and provides a way to data-bind to that node.
-     */
-    export interface INodeManager {
-        /**
-         * @name type
-         * @memberof plat.processing.INodeManager
-         * @kind property
-         * @access public
-         * 
-         * @type {string}
-         * 
-         * @description
-         * The type of {@link plat.processing.INodeManager|INodeManager}.
-         */
-        type: string;
-
-        /**
-         * @name nodeMap
-         * @memberof plat.processing.INodeManager
-         * @kind property
-         * @access public
-         * 
-         * @type {plat.processing.INodeMap}
-         * 
-         * @description
-         * The {@link plat.processing.INodeMap|INodeMap} for this {@link plat.processing.INodeManager|INodeManager}. 
-         * Contains the compiled Node.
-         */
-        nodeMap?: INodeMap;
-
-        /**
-         * @name parent
-         * @memberof plat.processing.INodeManager
-         * @kind property
-         * @access public
-         * 
-         * @type {plat.processing.IElementManager}
-         * 
-         * @description
-         * The parent {@link plat.processing.IElementManager|IElementManager}.
-         */
-        parent?: IElementManager;
-
-        /**
-         * @name isClone
-         * @memberof plat.processing.INodeManager
-         * @kind property
-         * @access public
-         * 
-         * @type {boolean}
-         * 
-         * @description
-         * Whether or not this {@link plat.processing.INodeManager|INodeManager} is a clone.
-         */
-        isClone?: boolean;
-
-        /**
-         * @name initialize
-         * @memberof plat.processing.INodeManager
-         * @kind function
-         * @access public
-         * 
-         * @description
-         * Initializes the manager's properties.
-         * 
-         * @param {plat.processing.INodeMap} nodeMap The mapping associated with this manager. We have to use an 
-         * Used to treat all {@link plat.processing.INodeManager|INodeManagers} the same.
-         * @param {plat.processing.IElementManager} parent The parent {@link plat.processing.IElementManager|IElementManager}.
-         * 
-         * @returns {void}
-         */
-        initialize? (nodeMap: INodeMap, parent: IElementManager): void;
-
-        /**
-         * @name getParentControl
-         * @memberof plat.processing.INodeManager
-         * @kind function
-         * @access public
-         * 
-         * @description
-         * Retrieves the parent control associated with the parent manager.
-         * 
-         * @returns {plat.ui.ITemplateControl} The parent {@link plat.ui.ITemplateControl|ITemplateControl}.
-         */
-        getParentControl? (): ui.ITemplateControl;
-
-        /**
-         * @name clone
-         * @memberof plat.processing.INodeManager
-         * @kind function
-         * @access public
-         * 
-         * @description
-         * Clones this {@link plat.processing.INodeManager|INodeManager} with the new node.
-         * 
-         * @param {Node} newNode The new node associated with the new manager.
-         * @param {plat.processing.IElementManager} parentManager The parent 
-         * {@link plat.processing.IElementManager|IElementManager} for the clone.
-         * 
-         * @returns {number} The number of nodes to advance while node traversal is in progress.
-         */
-        clone? (newNode: Node, parentManager: IElementManager): number;
-
-        /**
-         * @name bind
-         * @memberof plat.processing.INodeManager
-         * @kind function
-         * @access public
-         * 
-         * @description
-         * The function used for data-binding a data context to the DOM.
-         * 
-         * @returns {void}
-         */
-        bind(): void;
+            control: ui.TemplateControl, listener: (...args: Array<any>) => void): void;
     }
 
     /**
@@ -839,12 +714,12 @@ module plat.processing {
          * @kind property
          * @access public
          * 
-         * @type {plat.IControl}
+         * @type {plat.Control}
          * 
          * @description
          * The control associated with the Node, if one exists.
          */
-        control?: IControl;
+        control?: Control;
 
         /**
          * @name node
@@ -891,12 +766,12 @@ module plat.processing {
          * @kind property
          * @access public
          * 
-         * @type {plat.dependency.IInjector<plat.IControl>}
+         * @type {plat.dependency.Injector<plat.Control>}
          * 
          * @description
          * The injector for a control associated with the Node, if one exists.
          */
-        injector?: dependency.IInjector<IControl>;
+        injector?: dependency.Injector<Control>;
     }
 
     /**
@@ -916,12 +791,12 @@ module plat.processing {
          * @kind property
          * @access public
          * 
-         * @type {plat.ui.ITemplateControl}
+         * @type {plat.ui.TemplateControl}
          * 
          * @description
          * The control associated with the Element, if one exists.
          */
-        control: ui.ITemplateControl;
+        control: ui.TemplateControl;
 
         /**
          * @name resourceElement
@@ -997,7 +872,7 @@ module plat.processing {
          * 
          * @description
          * The relative context path for the node's corresponding 
-         * {@link plat.ui.ITemplateControl|ITemplateControl}, if specified.
+         * {@link plat.ui.TemplateControl|TemplateControl}, if specified.
          */
         childContext?: string;
 
@@ -1010,7 +885,7 @@ module plat.processing {
          * @type {boolean}
          * 
          * @description
-         * Indicates whether or not an {@link plat.IControl|IControl} was found on the Element.
+         * Indicates whether or not an {@link plat.Control|Control} was found on the Element.
          */
         hasControl?: boolean;
 
@@ -1023,7 +898,7 @@ module plat.processing {
          * @type {plat.processing.IUiControlNode}
          * 
          * @description
-         * A type of {@link plat.processing.INode|INode} for a node that contains a {@link plat.ui.ITemplateControl|ITemplateControl}, 
+         * A type of {@link plat.processing.INode|INode} for a node that contains a {@link plat.ui.TemplateControl|TemplateControl}, 
          * if one was found for the Element.
          */
         uiControlNode?: IUiControlNode;
@@ -1094,13 +969,13 @@ module plat.processing {
          * @kind property
          * @access public
          * 
-         * @type {plat.observable.IContextManager}
+         * @type {plat.observable.ContextManager}
          * 
          * @description
          * The {@link plat.observable.ContextManager|ContextManager} that will 
          * be doing the observing.
          */
-        manager: observable.IContextManager;
+        manager: observable.ContextManager;
         /**
          * @name isDefined
          * @memberof plat.processing.IObservationDetails

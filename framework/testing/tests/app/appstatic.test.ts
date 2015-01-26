@@ -9,11 +9,11 @@ module tests.appStatic {
     describe('AppStatic Tests', () => {
         beforeEach(() => {
             plat.register.app('app', App);
-            app = <any>plat.acquire(plat.IApp);
+            app = <any>plat.acquire(plat.App);
         });
 
         it('should test App start and fail', () => {
-            var compat: plat.ICompat = plat.acquire(plat.ICompat),
+            var compat: plat.Compat = plat.acquire(plat.Compat),
                 error = false;
 
             Object.defineProperty(compat, 'isCompatible', {
@@ -38,7 +38,7 @@ module tests.appStatic {
         });
 
         it('should test App start and succeed', () => {
-            var compat: plat.ICompat = plat.acquire(plat.ICompat),
+            var compat: plat.Compat = plat.acquire(plat.Compat),
                 error = false,
                 _EventManager: plat.events.IEventManagerStatic = plat.acquire(plat.events.IEventManagerStatic),
                 spy = spyOn(_EventManager, 'initialize');
@@ -56,7 +56,7 @@ module tests.appStatic {
         document.addEventListener('load', () => {
             it('should test load', () => {
                 var div = document.createElement('div'),
-                    spy = spyOn(plat.acquire(plat.processing.ICompiler), 'compile');
+                    spy = spyOn(plat.acquire(plat.processing.Compiler), 'compile');
 
                 var el = document.createElement('div');
 

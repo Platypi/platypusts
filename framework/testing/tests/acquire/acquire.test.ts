@@ -1,7 +1,7 @@
 ﻿/// <reference path="../../references.d.ts" />
 
 module tests.acquire {
-    var utils: plat.IUtils = plat.acquire(plat.IUtils);
+    var utils: plat.Utils = plat.acquire(plat.Utils);
 
     function instanceOf(Constructor: new () => void) {
         return (obj: any) => {

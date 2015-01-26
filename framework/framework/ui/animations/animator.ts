@@ -4,24 +4,22 @@
      * @memberof plat.ui.animations
      * @kind class
      * 
-     * @implements {plat.ui.animations.IAnimator}
-     * 
      * @description
      * A class used for animating elements.
      */
-    export class Animator implements IAnimator {
+    export class Animator {
         /**
          * @name _compat
          * @memberof plat.ui.animations.Animator
          * @kind property
          * @access protected
          * 
-         * @type {plat.ICompat}
+         * @type {plat.Compat}
          * 
          * @description
-         * Reference to the {@link plat.ICompat|ICompat} injectable.
+         * Reference to the {@link plat.Compat|Compat} injectable.
          */
-        protected _compat: ICompat = acquire(__Compat);
+        protected _compat: Compat = acquire(__Compat);
 
         /**
          * @name _elements
@@ -58,7 +56,7 @@
 
             var animation = animationInjectors[key],
                 jsAnimation = jsAnimationInjectors[key],
-                animationInstance: IBaseAnimation;
+                animationInstance: BaseAnimation;
 
             if (!this._compat.animationSupported || isUndefined(animation)) {
                 if (isUndefined(jsAnimation)) {
@@ -177,11 +175,11 @@
          * Sets an new, unique animation ID and denotes the element as currently being animated.
          * 
          * @param {Node} element The element being animated.
-         * @param {plat.ui.animations.IBaseAnimation} animationInstance The animation instance doing the animating.
+         * @param {plat.ui.animations.BaseAnimation} animationInstance The animation instance doing the animating.
          * 
          * @returns {string} The new animation ID.
          */
-        private __setAnimationId(element: Node, animationInstance: IBaseAnimation): string {
+        private __setAnimationId(element: Node, animationInstance: BaseAnimation): string {
             var elements = this._elements,
                 plat = (<ICustomElement>element).__plat,
                 id: string;
@@ -263,56 +261,7 @@
             }
         }
     }
-
-    /**
-     * The Type for referencing the '_animator' injectable as a dependency.
-     */
-    export function IAnimator(): IAnimator {
-        return new Animator();
-    }
-
-    register.injectable(__Animator, IAnimator);
-
-    /**
-     * @name IAnimator
-     * @memberof plat.ui.animations
-     * @kind interface
-     * 
-     * @description
-     * Describes an object used for animating elements.
-     */
-    export interface IAnimator {
-        /**
-         * @name animate
-         * @memberof plat.ui.animations.IAnimator
-         * @kind function
-         * @access public
-         * 
-         * @description
-         * Animates the element with the defined animation denoted by the key.
-         * 
-         * @param {Element} element The Element to be animated.
-         * @param {string} key The identifier specifying the type of animation.
-         * @param {any} options Specified options for the animation.
-         * 
-         * @returns {plat.ui.animations.IAnimatingThenable} A promise that resolves when the animation is finished.
-         */
-        animate(element: Element, key: string, options?: any): IAnimatingThenable;
-
-        /**
-         * @name resolve
-         * @memberof plat.ui.animations.Animator
-         * @kind function
-         * @access public
-         * 
-         * @description
-         * Immediately resolves an empty {@link plat.ui.animations.AnimationPromise|AnimationPromise}.
-         * 
-         * @returns {plat.ui.animations.IAnimatingThenable} The immediately resolved 
-         * {@link plat.ui.animations.AnimationPromise|AnimationPromise}.
-         */
-        resolve(): IAnimatingThenable;
-    }
+    register.injectable(__Animator, Animator);
 
     /**
      * @name IAnimatedElement
@@ -398,12 +347,12 @@
          * @kind property
          * @access private
          * 
-         * @type {plat.ui.animations.IBaseAnimation}
+         * @type {plat.ui.animations.BaseAnimation}
          * 
          * @description
          * The animation instance to cancel if needed.
          */
-        private __animationInstance: IBaseAnimation;
+        private __animationInstance: BaseAnimation;
 
         /**
          * @name constructor
@@ -452,13 +401,13 @@
          * @access public
          * 
          * @description
-         * Initializes the promise, providing it with the {@link plat.ui.animations.IBaseAnimation} instance.
+         * Initializes the promise, providing it with the {@link plat.ui.animations.BaseAnimation} instance.
          * 
-         * @param {plat.ui.animations.IBaseAnimation} instance The animation instance for this promise.
+         * @param {plat.ui.animations.BaseAnimation} instance The animation instance for this promise.
          * 
          * @returns {void}
          */
-        initialize(instance: IBaseAnimation): void {
+        initialize(instance: BaseAnimation): void {
             if (isObject(instance) && isNull(this.__animationInstance)) {
                 this.__animationInstance = instance;
             }
@@ -637,13 +586,13 @@
          * @access public
          * 
          * @description
-         * Initializes the promise, providing it with the {@link plat.ui.animations.IBaseAnimation} instance.
+         * Initializes the promise, providing it with the {@link plat.ui.animations.BaseAnimation} instance.
          * 
-         * @param {plat.ui.animations.IBaseAnimation} instance The animation instance for this promise.
+         * @param {plat.ui.animations.BaseAnimation} instance The animation instance for this promise.
          * 
          * @returns {void}
          */
-        initialize? (instance: IBaseAnimation): void;
+        initialize? (instance: BaseAnimation): void;
 
         /**
          * @name cancel

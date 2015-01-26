@@ -2,19 +2,19 @@ module plat {
     /**
      * Provides methods for interacting with geolocation services on a device.
      */
-    export class Geolocation implements IGeolocation {
+    export class Geolocation {
         _Promise: async.IPromise = acquire(__Promise);
 
         /**
          * Attempts to acquire position information of the device.
          * 
-         * @param positionOptions Optional IGeolocationPositionOptions for configuring the acquisition.
-         * @returns {async.IThenable<IGeolocationPosition, IGeolocationPositionError>} A promise,
+         * @param positionOptions Optional GeolocationPositionOptions for configuring the acquisition.
+         * @returns {async.IThenable<GeolocationPosition, GeolocationPositionError>} A promise,
          * resolving when the position is found, and rejecting in the event of a position error.
          */
-        getCurrentPosition(positionOptions?: IGeolocationPositionOptions)
-                : async.IThenable<IGeolocationPosition> {
-            return new this._Promise<IGeolocationPosition>((resolve, reject) => {
+        getCurrentPosition(positionOptions?: GeolocationPositionOptions)
+                : async.IThenable<GeolocationPosition> {
+            return new this._Promise<GeolocationPosition>((resolve, reject) => {
                 navigator.geolocation.getCurrentPosition(resolve, reject, positionOptions);
             });
         }
@@ -23,15 +23,15 @@ module plat {
          * An asynchronous operation for receiving notifications when a device location changes. Cannot return
          * a promise because the callbacks may be called multiple times.
          * 
-         * @param updateCallback A method that receives IGeolocationPosition updates from the geolocation service.
-         * @param errorCallback A method that receives IGeolocationPositionError updates from the geolocation service.
-         * @param positionOptions Optional IGeolocationPositionOptions for configuring the acquisition.
+         * @param updateCallback A method that receives GeolocationPosition updates from the geolocation service.
+         * @param errorCallback A method that receives GeolocationPositionError updates from the geolocation service.
+         * @param positionOptions Optional GeolocationPositionOptions for configuring the acquisition.
          * 
          * @returns {IRemoveListener} A method for removing the watch listener when the app wants to stop listening for position updates.
          */
-        watchPosition(updateCallback: (position: IGeolocationPosition) => void,
+        watchPosition(updateCallback: (position: GeolocationPosition) => void,
             errorCallback?: (error: PositionError) => void,
-            positionOptions?: IGeolocationPositionOptions): IRemoveListener;
+            positionOptions?: GeolocationPositionOptions): IRemoveListener;
         watchPosition(updateCallback: any, errorCallback?: any, positionOptions?: any) {
             if (!isNull(errorCallback) && !isFunction(errorCallback)) {
                 positionOptions = errorCallback;
@@ -46,53 +46,18 @@ module plat {
         }
     }
 
-    /**
-     * The Type for referencing the '_geolocation' injectable as a dependency.
-     */
-    export function IGeolocation(): IGeolocation {
-        return new Geolocation();
-    }
-
-    register.injectable(__Geolocation, IGeolocation);
-
-    /**
-     * Describes an object which provides methods to interact with geolocation services on a device.
-     */
-    export interface IGeolocation {
-        /**
-         * Attempts to acquire position information of the device.
-         * 
-         * @param positionOptions Optional IGeolocationPositionOptions for configuring the acquisition.
-         * @returns {async.IThenable<IGeolocationPosition, IGeolocationPositionError>} A promise,
-         * resolving when the position is found, and rejecting in the event of a position error.
-         */
-        getCurrentPosition(positionOptions?: IGeolocationPositionOptions):
-            async.IThenable<IGeolocationPosition>;
-
-        /**
-         * An asynchronous operation for receiving notifications when a device location changes. Cannot return
-         * a promise because the callbacks may be called multiple times.
-         * 
-         * @param updateCallback A method that receives IGeolocationPosition updates from the geolocation service.
-         * @param errorCallback A method that receives IGeolocationPositionError updates from the geolocation service.
-         * @param positionOptions Optional IGeolocationPositionOptions for configuring the acquisition.
-         * 
-         * @returns {IRemoveListener} A method for removing the watch listener when the app wants to stop listening for position updates.
-         */
-        watchPosition(updateCallback: (position: IGeolocationPosition) => void,
-            errorCallback?: (error: IGeolocationPositionError) => void, positionOptions?: IGeolocationPositionOptions): IRemoveListener;
-    }
+    register.injectable(__Geolocation, Geolocation);
 
     /**
      * Wrapper interface for the Position interface, adding documentation to
      * the members.
      */
-    export interface IGeolocationPosition extends Position {
+    export interface GeolocationPosition extends Position {
         /**
-         * Contains the IGeolocationPositionCoordinates for the 
+         * Contains the GeolocationPositionCoordinates for the 
          * position.
          */
-        coordinates: IGeolocationPositionCoordinates;
+        coordinates: GeolocationPositionCoordinates;
 
         /**
          * A Date, representing when the position
@@ -105,7 +70,7 @@ module plat {
      * Wrapper interface for the PositionError interface, adding documentation 
      * to the members.
      */
-    export interface IGeolocationPositionError extends PositionError, Error {
+    export interface GeolocationPositionError extends PositionError, Error {
         /**
          * Returns the error code indicating whether the position is 
          * unavailable, permission was denied, or a timeout occurred.
@@ -144,7 +109,7 @@ module plat {
      * Describes an object that stores coordinate information for a 
      * geolocation position.
      */
-    export interface IGeolocationPositionCoordinates extends Coordinates {
+    export interface GeolocationPositionCoordinates extends Coordinates {
         /**
          * Geographic latitude coordinate in decimal degrees.
          */
@@ -192,7 +157,7 @@ module plat {
      * Descibes the interface for position options sent to the Geolocation
      * services.
      */
-    export interface IGeolocationPositionOptions {
+    export interface GeolocationPositionOptions {
         /**
          * Specifies whether the app wants to get the most accurate position. This
          * can attribute to slower response times and increased power consumption.

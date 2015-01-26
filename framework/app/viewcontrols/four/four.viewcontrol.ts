@@ -36,6 +36,6 @@
     }
 
     plat.register.viewControl('four', Four, [
-        plat.routing.IRouter
+        plat.routing.Router
     ]);
 }

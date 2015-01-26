@@ -13,12 +13,10 @@ module plat.web {
      * @memberof plat.web
      * @kind class
      * 
-     * @implements {plat.web.IBrowser}
-     * 
      * @description
      * The class that handles all interaction with the browser.
      */
-    export class Browser implements IBrowser {
+    export class Browser {
         /**
          * @name config
          * @memberof plat.web.Browser
@@ -26,12 +24,12 @@ module plat.web {
          * @access public
          * @static
          * 
-         * @type {plat.web.IBrowserConfig}
+         * @type {plat.web.BrowserConfig}
          * 
          * @description
-         * The {@link plat.web.IBrowserConfig|IBrowserConfig} injectable object.
+         * The {@link plat.web.BrowserConfig|BrowserConfig} injectable object.
          */
-        static config: IBrowserConfig = {
+        static config: BrowserConfig = {
             NONE: 'none',
             HASH: 'hash',
             STATE: 'state',
@@ -59,12 +57,12 @@ module plat.web {
          * @kind property
          * @access protected
          * 
-         * @type {plat.ICompat}
+         * @type {plat.Compat}
          * 
          * @description
-         * Reference to the {@link plat.ICompat|ICompat} injectable.
+         * Reference to the {@link plat.Compat|Compat} injectable.
          */
-        protected _compat: ICompat = acquire(__Compat);
+        protected _compat: Compat = acquire(__Compat);
 
         /**
          * @name _regex
@@ -72,12 +70,12 @@ module plat.web {
          * @kind property
          * @access protected
          * 
-         * @type {plat.expressions.IRegex}
+         * @type {plat.expressions.Regex}
          * 
          * @description
-         * Reference to the {@link plat.expressions.IRegex|IRegex} injectable.
+         * Reference to the {@link plat.expressions.Regex|Regex} injectable.
          */
-        protected _regex: expressions.IRegex = acquire(__Regex);
+        protected _regex: expressions.Regex = acquire(__Regex);
 
         /**
          * @name _window
@@ -124,12 +122,12 @@ module plat.web {
          * @kind property
          * @access protected
          * 
-         * @type {plat.ui.IDom}
+         * @type {plat.ui.Dom}
          * 
          * @description
-         * Reference to the {@link plat.ui.IDom|IDom} injectable.
+         * Reference to the {@link plat.ui.Dom|Dom} injectable.
          */
-        protected _dom: ui.IDom = acquire(__Dom);
+        protected _dom: ui.Dom = acquire(__Dom);
 
         /**
          * @name _stack
@@ -350,17 +348,17 @@ module plat.web {
          * @access public
          * 
          * @description
-         * Creates a new {@link plat.web.IUrlUtilsInstance|IUrlUtilsInstance} object.
+         * Creates a new {@link plat.web.UrlUtils|UrlUtils} object.
          * 
          * @param url? The URL to associate with the new {@link plat.web.UrlUtils|UrlUtils} 
          * instance.
          * 
-         * @returns {@link plat.web.IUrlUtilsInstance|IUrlUtilsInstance} The new {@link plat.web.IUrlUtilsInstance|IUrlUtilsInstance} object.
+         * @returns {@link plat.web.UrlUtils|UrlUtils} The new {@link plat.web.UrlUtils|UrlUtils} object.
          */
-        urlUtils(url?: string): IUrlUtilsInstance {
+        urlUtils(url?: string): UrlUtils {
             url = url || this.url();
 
-            var _urlUtils: IUrlUtilsInstance = acquire(__UrlUtilsInstance),
+            var _urlUtils: UrlUtils = acquire(__UrlUtilsInstance),
                 _config = Browser.config;
 
             if (_config.routingType === _config.HASH) {
@@ -543,168 +541,30 @@ module plat.web {
         }
     }
 
-    /**
-     * The Type for referencing the '_browser' injectable as a dependency.
-     */
-    export function IBrowser(): IBrowser {
-        return new Browser();
-    }
-
-    register.injectable(__Browser, IBrowser);
-
-    /**
-     * @name IBrowser
-     * @memberof plat.web
-     * @kind interface
-     * 
-     * @description
-     * Defines an object that handles interaction with the browser.
-     */
-    export interface IBrowser {
-        /**
-         * @name uid
-         * @memberof plat.web.IBrowser
-         * @kind property
-         * @access public
-         * @readonly
-         * 
-         * @type {string}
-         * 
-         * @description
-         * A unique string identifier.
-         */
-        uid: string;
-
-        /**
-         * @name initialize
-         * @memberof plat.web.IBrowser
-         * @kind function
-         * @access public
-         * 
-         * @description
-         * Initializes the {@link plat.web.Browser|Browser} instance, trims the url, and 
-         * adds events for popstate and hashchange.
-         * 
-         * @returns {void}
-         */
-        initialize(): void;
-
-        /**
-         * @name url
-         * @memberof plat.web.IBrowser
-         * @kind function
-         * @access public
-         * 
-         * @description
-         * Sets or gets the current _window.location
-         * 
-         * @param {string} url? The URL to set the location to.
-         * @param {boolean} replace? Whether or not to replace the current URL in 
-         * the history.
-         * 
-         * @returns {string} The current URL or current location.
-         */
-        url(url?: string, replace?: boolean): string;
-
-        /**
-         * @name back
-         * @memberof plat.web.IBrowser
-         * @kind function
-         * @access public
-         * 
-         * @description
-         * Navigates back in the browser history
-         * 
-         * @param {number} length=1 The length to go back
-         * 
-         * @returns {void}
-         */
-        back(length?: number): void;
-
-        /**
-         * @name forward
-         * @memberof plat.web.IBrowser
-         * @kind function
-         * @access public
-         * 
-         * @description
-         * Navigates forward in the browser history
-         * 
-         * @param {number} length=1 The length to go forward
-         * 
-         * @returns {void}
-         */
-        forward(length?: number): void;
-
-        /**
-         * @name urlUtils
-         * @memberof plat.web.IBrowser
-         * @kind function
-         * @access public
-         * 
-         * @description
-         * Creates a new {@link plat.web.IUrlUtilsInstance|IUrlUtilsInstance} object.
-         * 
-         * @param url? The URL to associate with the new {@link plat.web.UrlUtils|UrlUtils} 
-         * instance.
-         * 
-         * @returns {@link plat.web.IUrlUtilsInstance|IUrlUtilsInstance} The new {@link plat.web.IUrlUtilsInstance|IUrlUtilsInstance} object.
-         */
-        urlUtils(url?: string): IUrlUtilsInstance;
-
-        /**
-         * @name isCrossDomain
-         * @memberof plat.web.IBrowser
-         * @kind function
-         * @access public
-         * 
-         * @description
-         * Checks to see if the requested URL is cross domain.
-         * 
-         * @param url The URL to verify whether or not it's cross domain.
-         * 
-         * @returns {boolean} Whether or not the URL argument is cross domain.
-         */
-        isCrossDomain(url: string): boolean;
-
-        /**
-         * @name formatUrl
-         * @memberof plat.web.IBrowser
-         * @kind function
-         * @access public
-         * 
-         * @description
-         * Formats the URL in the case of HASH routing.
-         * 
-         * @param url The URL to format.
-         * 
-         * @returns {string} The formatted URL.
-         */
-        formatUrl(url: string): string;
-    }
+    register.injectable(__Browser, Browser);
 
     /**
      * The Type for referencing the '_browserConfig' injectable as a dependency.
      */
-    export function IBrowserConfig(): IBrowserConfig {
+    export function BrowserConfig(): BrowserConfig {
         return Browser.config;
     }
 
-    register.injectable(__BrowserConfig, IBrowserConfig);
+    register.injectable(__BrowserConfig, BrowserConfig);
 
     /**
-     * @name IBrowserConfig
+     * @name BrowserConfig
      * @memberof plat.web
      * @kind interface
      * 
      * @description
-     * Specifies configuration properties for the {@link plat.web.IBrowser|IBrowser}  
+     * Specifies configuration properties for the {@link plat.web.Browser|Browser}  
      * injectable.
      */
-    export interface IBrowserConfig {
+    export interface BrowserConfig {
         /**
          * @name NONE
-         * @memberof plat.web.IBrowserConfig
+         * @memberof plat.web.BrowserConfig
          * @kind property
          * @access public
          * 
@@ -718,7 +578,7 @@ module plat.web {
 
         /**
          * @name HASH
-         * @memberof plat.web.IBrowserConfig
+         * @memberof plat.web.BrowserConfig
          * @kind property
          * @access public
          * 
@@ -732,7 +592,7 @@ module plat.web {
 
         /**
          * @name STATE
-         * @memberof plat.web.IBrowserConfig
+         * @memberof plat.web.BrowserConfig
          * @kind property
          * @access public
          * 
@@ -751,7 +611,7 @@ module plat.web {
 
         /**
          * @name routingType
-         * @memberof plat.web.IBrowserConfig
+         * @memberof plat.web.BrowserConfig
          * @kind property
          * @access public
          * 
@@ -778,7 +638,7 @@ module plat.web {
 
         /**
          * @name hashPrefix
-         * @memberof plat.web.IBrowserConfig
+         * @memberof plat.web.BrowserConfig
          * @kind property
          * @access public
          * 
@@ -793,7 +653,7 @@ module plat.web {
 
         /**
          * @name baseUrl
-         * @memberof plat.web.IBrowserConfig
+         * @memberof plat.web.BrowserConfig
          * @kind property
          * @access public
          * 

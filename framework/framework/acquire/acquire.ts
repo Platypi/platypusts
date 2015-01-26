@@ -116,7 +116,7 @@ module plat {
      */
     export function acquire(dependencies: Array<any>): Array<any>;
     export function acquire(dependencies: any) {
-        var deps: Array<dependency.IInjector<any>>,
+        var deps: Array<dependency.Injector<any>>,
             array = isArray(dependencies);
 
         if (array) {

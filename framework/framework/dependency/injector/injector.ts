@@ -15,8 +15,6 @@ module plat.dependency {
      * @memberof plat.dependency
      * @kind class
      * 
-     * @implements {plat.dependency.IInjector}
-     * 
      * @description
      * The Injector class is used for dependency injection. You can create an injector object,
      * specify dependencies and a constructor for your component. When the injector object is
@@ -25,7 +23,7 @@ module plat.dependency {
      * 
      * @typeparam {any} T The type of object that will be returned when the inject method is invoked.
      */
-    export class Injector<T> implements IInjector<T> {
+    export class Injector<T> {
         /**
          * @name initialize
          * @memberof plat.dependency.Injector
@@ -65,12 +63,12 @@ module plat.dependency {
          * 
          * @returns {Array<plat.dependency.IInjecor<any>>} The dependencies
          */
-        static getDependencies(dependencies: Array<any>): Array<IInjector<any>> {
+        static getDependencies(dependencies: Array<any>): Array<Injector<any>> {
             if (isNull(dependencies) || isEmpty(dependencies)) {
                 return [];
             }
 
-            var deps: Array<IInjector<any>> = [],
+            var deps: Array<Injector<any>> = [],
                 length = dependencies.length;
 
             for (var i = 0; i < length; ++i) {
@@ -92,9 +90,9 @@ module plat.dependency {
          * 
          * @param {any} dependency an object/string used to find the dependency.
          * 
-         * @returns {plat.dependency.IInjector<any>} The dependency
+         * @returns {plat.dependency.Injector<any>} The dependency
          */
-        static getDependency(dependency: any): IInjector<any> {
+        static getDependency(dependency: any): Injector<any> {
             if (isNull(dependency) || dependency === __NOOP_INJECTOR) {
                 return Injector.__noop();
             } else if (Injector.isInjector(dependency)) {
@@ -220,7 +218,7 @@ module plat.dependency {
                 return <any>new Injector(dependency, Constructor, _inject.dependencies);
             }
 
-            var find: (injectors: IInjectorObject<any>) => IInjector<any> =
+            var find: (injectors: InjectorObject<any>) => Injector<any> =
                 Injector.__findInjector.bind(Injector, dependency),
                 injector = find(injectableInjectors) ||
                 find(unregisteredInjectors) ||
@@ -231,7 +229,7 @@ module plat.dependency {
                 find(jsAnimationInjectors);
 
             if (!isObject(injector) && isString(dependency)) {
-                injector = unregisteredInjectors[dependency] = <IInjector<any>>new Injector(dependency, Constructor, Constructor._inject.dependencies);
+                injector = unregisteredInjectors[dependency] = <Injector<any>>new Injector(dependency, Constructor, Constructor._inject.dependencies);
             }
 
             if (isObject(injector)) {
@@ -342,7 +340,7 @@ module plat.dependency {
                 dependency = Constructor._inject.name;
             }
 
-            var find: (injectors: IInjectorObject<any>) => IInjector<any> =
+            var find: (injectors: InjectorObject<any>) => Injector<any> =
                 Injector.__findInjector.bind(Injector, dependency),
                 injector = find(injectableInjectors) ||
                 find(unregisteredInjectors) ||
@@ -354,7 +352,7 @@ module plat.dependency {
 
             if (!isObject(injector)) {
                 if (isString(dependency) && isFunction(Constructor)) {
-                    injector = unregisteredInjectors[dependency] = <IInjector<any>>new Injector(dependency, Constructor, Constructor._inject.dependencies);
+                    injector = unregisteredInjectors[dependency] = <Injector<any>>new Injector(dependency, Constructor, Constructor._inject.dependencies);
                 } else {
                     injector = Injector.__wrap(Constructor);
                 }
@@ -371,13 +369,13 @@ module plat.dependency {
          * @static
          * 
          * @description
-         * Finds an injector object with the associated constructor in the given {@link plat.dependency.IInjectorObject|IInjectorObject}.
+         * Finds an injector object with the associated constructor in the given {@link plat.dependency.InjectorObject|InjectorObject}.
          * 
          * @param {Function} Constructor The Function
          * 
          * @returns {any} The located injector.
          */
-        private static __findInjector(Constructor: any, injectors: IInjectorObject<any>) {
+        private static __findInjector(Constructor: any, injectors: InjectorObject<any>) {
             if (Constructor === Injector || Constructor === __InjectorStatic) {
                 var ret = Injector.__wrap(Injector);
                 ret.name = __InjectorStatic;
@@ -386,7 +384,7 @@ module plat.dependency {
                 return injectors[Constructor];
             }
 
-            var injector: IInjector<any>,
+            var injector: Injector<any>,
                 keys = Object.keys(injectors),
                 length = keys.length;
 
@@ -411,10 +409,10 @@ module plat.dependency {
          * 
          * @param {any} value The injected value.
          * 
-         * @returns {plat.dependency.IInjector<any>} The wrapped injector.
+         * @returns {plat.dependency.Injector<any>} The wrapped injector.
          */
-        private static __wrap(value: any): IInjector<any> {
-            return {
+        private static __wrap(value: any): Injector<any> {
+            return <any>{
                 inject: () => value,
                 name: __WRAPPED_INJECTOR,
                 __dependencies: [],
@@ -432,10 +430,10 @@ module plat.dependency {
          * @description
          * Returns an empty injector object.
          * 
-         * @returns {plat.dependency.IInjector<any>} The noop injector.
+         * @returns {plat.dependency.Injector<any>} The noop injector.
          */
-        private static __noop(): IInjector<any> {
-            return {
+        private static __noop(): Injector<any> {
+            return <any>{
                 inject: noop,
                 type: __NOOP_INJECTOR,
                 name: __NOOP_INJECTOR,
@@ -597,7 +595,7 @@ module plat.dependency {
 
             var dependencies = this.__dependencies,
                 length = dependencies.length,
-                dependency: IInjector<any>,
+                dependency: Injector<any>,
                 injectable: any;
 
             for (var i = 0; i < length; ++i) {
@@ -627,7 +625,7 @@ module plat.dependency {
          * 
          * @param {any} value The value to wrap
          */
-        protected _wrapInjector(value: any): IInjector<any> {
+        protected _wrapInjector(value: any): Injector<any> {
             this.inject = () => {
                 return <T>value;
             };
@@ -637,85 +635,14 @@ module plat.dependency {
     }
 
     /**
-     * @name IInjectorObject
+     * @name InjectorObject
      * @memberof plat.dependency
      * @kind interface
      * 
      * @description
-     * An object whose values are all {@link plat.dependency.IInjector|IInjectors}.
+     * An object whose values are all {@link plat.dependency.Injector|Injectors}.
      */
-    export interface IInjectorObject<T> extends IObject<IInjector<T>> { }
-
-    /**
-     * @name IInjector
-     * @memberof plat.dependency
-     * @kind interface
-     * 
-     * @description
-     * The IInjector interface is used for dependency injection. You can create an injector object,
-     * specify dependencies and a constructor for your component. When the injector object is
-     * 'injected' it will create a new instance of your component and pass in the dependencies
-     * to the constructor.
-     * 
-     * @typeparam {any} T The type of object that will be returned when the inject method is invoked.
-     */
-    export interface IInjector<T> {
-        /**
-         * @name inject
-         * @memberof plat.dependency.IInjector
-         * @kind function
-         * @access public
-         * 
-         * @description
-         * Gathers the dependencies for the IInjector object and creates a new instance of the 
-         * Constructor, passing in the dependencies in the order they were specified. If the 
-         * Injector contains a Constructor for an injectable and the Constructor is registered 
-         * as a SINGLE type it will only inject that injectable once.
-         * 
-         * @returns {T} The injected object
-         */
-        inject(): T;
-
-        /**
-         * @name Constructor
-         * @memberof plat.dependency.IInjector
-         * @kind property
-         * @access public
-         * 
-         * @type {new () => T}
-         * 
-         * @description
-         * The constructor method for the component requiring the dependency injection.
-         */
-        Constructor: new () => T;
-
-        /**
-         * @name type
-         * @memberof plat.dependency.IInjector
-         * @kind property
-         * @access public
-         * 
-         * @type {string}
-         * 
-         * @description
-         * The type of injector, used for injectables specifying a register.injectableType of 
-         * STATIC, SINGLE, or MULTI. The default is SINGLE.
-         */
-        type?: string;
-
-        /**
-         * @name name
-         * @memberof plat.dependency.IInjector
-         * @kind property
-         * @access public
-         * 
-         * @type {string}
-         * 
-         * @description
-         * The name registered for the injector.
-         */
-        name: string;
-    }
+    export interface InjectorObject<T> extends IObject<Injector<T>> { }
 
     /**
      * @name injectors
@@ -734,10 +661,10 @@ module plat.dependency {
          * @access public
          * @static
          * 
-         * @type {plat.dependency.IInjectorObject<plat.IControl>}
+         * @type {plat.dependency.InjectorObject<plat.Control>}
          * 
          * @description
-         * An {@link plat.dependency.IInjectorObject|IInjectorObject} of {@link plat.IControl|IControls}. 
+         * An {@link plat.dependency.InjectorObject|InjectorObject} of {@link plat.Control|Controls}. 
          * Contains all the registered controls for an application.
          */
         export var control = controlInjectors;
@@ -749,10 +676,10 @@ module plat.dependency {
          * @access public
          * @static
          * 
-         * @type {plat.dependency.IInjectorObject<plat.ui.IBaseViewControl>}
+         * @type {plat.dependency.InjectorObject<plat.ui.IBaseViewControl>}
          * 
          * @description
-         * An {@link plat.dependency.IInjectorObject|IInjectorObject} of {@link plat.ui.IBaseViewControl|IBaseViewControls}. 
+         * An {@link plat.dependency.InjectorObject|InjectorObject} of {@link plat.ui.IBaseViewControl|IBaseViewControls}. 
          * Contains all the registered view controls for an application.
          */
         export var viewControl = viewControlInjectors;
@@ -764,10 +691,10 @@ module plat.dependency {
          * @access public
          * @static
          * 
-         * @type {plat.dependency.IInjectorObject<plat.dependency.IInjector<any>>}
+         * @type {plat.dependency.InjectorObject<plat.dependency.Injector<any>>}
          * 
          * @description
-         * An {@link plat.dependency.IInjectorObject|IInjectorObject} of objects. Contains all the registered 
+         * An {@link plat.dependency.InjectorObject|InjectorObject} of objects. Contains all the registered 
          * injectables for an application.
          */
         export var injectable = injectableInjectors;
@@ -779,10 +706,10 @@ module plat.dependency {
          * @access public
          * @static
          * 
-         * @type {plat.dependency.IInjectorObject<plat.dependency.IInjector<any>>}
+         * @type {plat.dependency.InjectorObject<plat.dependency.Injector<any>>}
          * 
          * @description
-         * An {@link plat.dependency.IInjectorObject|IInjectorObject} of static objects. Contains all the registered 
+         * An {@link plat.dependency.InjectorObject|InjectorObject} of static objects. Contains all the registered 
          * static injectables for an application. Once the injectables have been injected, they are removed from this object.
          */
         export var staticInjectable = staticInjectors;
@@ -794,10 +721,10 @@ module plat.dependency {
          * @access public
          * @static
          * 
-         * @type {plat.dependency.IInjectorObject<plat.ui.animations.IBaseAnimation>}
+         * @type {plat.dependency.InjectorObject<plat.ui.animations.BaseAnimation>}
          * 
          * @description
-         * An {@link plat.dependency.IInjectorObject|IInjectorObject} of animations. Can be either CSS or JS implementations.
+         * An {@link plat.dependency.InjectorObject|InjectorObject} of animations. Can be either CSS or JS implementations.
          */
         export var animation = animationInjectors;
 
@@ -808,10 +735,10 @@ module plat.dependency {
          * @access public
          * @static
          * 
-         * @type {plat.dependency.IInjectorObject<plat.ui.animations.IBaseAnimation>}
+         * @type {plat.dependency.InjectorObject<plat.ui.animations.BaseAnimation>}
          * 
          * @description
-         * An {@link plat.dependency.IInjectorObject|IInjectorObject}  of animations. Should only contain JS implementations.
+         * An {@link plat.dependency.InjectorObject|InjectorObject}  of animations. Should only contain JS implementations.
          */
         export var jsAnimation = jsAnimationInjectors;
     }

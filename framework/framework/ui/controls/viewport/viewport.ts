@@ -14,12 +14,12 @@ module plat.ui.controls {
          * @kind property
          * @access protected
          * 
-         * @type {plat.storage.ICache<plat.processing.IElementManager>}
+         * @type {plat.storage.Cache<plat.processing.ElementManager>}
          * 
          * @description
-         * Reference to an injectable that caches {@link plat.processing.IElementManager|IElementManagers}.
+         * Reference to an injectable that caches {@link plat.processing.ElementManager|ElementManagers}.
          */
-        protected _managerCache: storage.ICache<processing.IElementManager> = acquire(__ManagerCache);
+        protected _managerCache: storage.Cache<processing.ElementManager> = acquire(__ManagerCache);
 
         /**
          * @name _animator
@@ -27,12 +27,12 @@ module plat.ui.controls {
          * @kind property
          * @access protected
          * 
-         * @type {plat.ui.animations.IAnimator}
+         * @type {plat.ui.animations.Animator}
          * 
          * @description
-         * Reference to the {@link plat.ui.animations.IAnimator|IAnimator} injectable.
+         * Reference to the {@link plat.ui.animations.Animator|Animator} injectable.
          */
-        protected _animator: animations.IAnimator = acquire(__Animator);
+        protected _animator: animations.Animator = acquire(__Animator);
 
         /**
          * @name _animationPromise
@@ -51,7 +51,7 @@ module plat.ui.controls {
         router: routing.Router;
         parentRouter: routing.Router;
         controls: Array<ViewControl>;
-        nextInjector: dependency.IInjector<ViewControl>;
+        nextInjector: dependency.Injector<ViewControl>;
         nextView: ViewControl;
 
         initialize() {
@@ -77,7 +77,7 @@ module plat.ui.controls {
             var getRouter = this._routerStatic.currentRouter,
                 currentRouter = getRouter(),
                 response: any = true,
-                injector: dependency.IInjector<ViewControl> = this._Injector.getDependency(routeInfo.delegate.view),
+                injector: dependency.Injector<ViewControl> = this._Injector.getDependency(routeInfo.delegate.view),
                 view = injector.inject(),
                 parameters = routeInfo.parameters,
                 resolve = this._Promise.resolve.bind(this._Promise),
@@ -180,7 +180,7 @@ module plat.ui.controls {
             this.navigator.dispose();
         }
 
-        protected _createNodeMap(injector: dependency.IInjector<ViewControl>) {
+        protected _createNodeMap(injector: dependency.Injector<ViewControl>) {
             var control = this.nextView || injector.inject(),
                 doc = this._document,
                 type = injector.name,

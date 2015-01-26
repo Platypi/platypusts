@@ -13,8 +13,6 @@ module plat.ui {
      * @memberof plat.ui
      * @kind class
      * 
-     * @implements {plat.ui.IAttributesInstance}
-     * 
      * @description
      * The class that stores the information about an Element's attributes (NamedNodeMap).
      * Methods are implemented to allow you to observe for changes on an attribute.
@@ -22,7 +20,7 @@ module plat.ui {
      * @remarks
      * Attributes for this object are converted from dash-notation to camelCase notation.
      */
-    export class Attributes implements IAttributesInstance {
+    export class Attributes {
         [property: string]: any;
 
         /**
@@ -44,12 +42,12 @@ module plat.ui {
          * @kind property
          * @access private
          * 
-         * @type {plat.IControl}
+         * @type {plat.Control}
          * 
          * @description
          * The control tied to this instance.
          */
-        private __control: IControl;
+        private __control: Control;
 
         /**
          * @name initialize
@@ -58,15 +56,15 @@ module plat.ui {
          * @access public
          * 
          * @description
-         * Initializes this instance with a {@link plat.IControl|IControl} and the camelCased 
+         * Initializes this instance with a {@link plat.Control|Control} and the camelCased 
          * attribute properties and their values.
          * 
-         * @param {plat.IControl} control The function that acts as a listener.
+         * @param {plat.Control} control The function that acts as a listener.
          * @param {plat.IObject<string>} attributes The camelCased attribute properties and their values.
          * 
          * @returns {void}
          */
-        initialize(control: IControl, attributes: IObject<string>): void {
+        initialize(control: Control, attributes: IObject<string>): void {
             this.__control = control;
 
             var keys = Object.keys(attributes),
@@ -140,58 +138,5 @@ module plat.ui {
         }
     }
 
-    /**
-     * The Type for referencing the '$Attributes' injectable as a dependency.
-     */
-    export function IAttributesInstance(): IAttributesInstance {
-        return new Attributes();
-    }
-
-    register.injectable(__AttributesInstance, IAttributesInstance, null, __INSTANCE);
-    
-    /**
-     * @name IAttributesInstance
-     * @memberof plat.ui
-     * @kind interface
-     * 
-     * @description
-     * Describes an object that stores the information about an Element's attribute NamedNodeMap.
-     * Methods are implemented to allow you to observe for changes on an attribute.
-     */
-    export interface IAttributesInstance {
-        [property: string]: any;
-
-        /**
-         * @name initialize
-         * @memberof plat.ui.IAttributesInstance
-         * @kind function
-         * @access public
-         * 
-         * @description
-         * Initializes this instance with a {@link plat.IControl|IControl} and the camelCased 
-         * attribute properties and their values.
-         * 
-         * @param {plat.IControl} control The function that acts as a listener.
-         * @param {plat.IObject<string>} attributes The camelCased attribute properties and their values.
-         * 
-         * @returns {void}
-         */
-        initialize(control: IControl, attributes: IObject<string>): void;
-
-        /**
-         * @name observe
-         * @memberof plat.ui.IAttributesInstance
-         * @kind function
-         * @access public
-         * 
-         * @description
-         * Provides a way to observe an attribute for changes.
-         * 
-         * @param {string} key The attribute to observe for changes (e.g. 'src').
-         * @param {plat.IPropertyChangedListener} listener The listener function to be called when the attribute changes.
-         * 
-         * @returns {plat.IRemoveListener} A function to stop observing this attribute for changes.
-         */
-        observe(key: string, listener: (newValue: any, oldValue: any) => void): IRemoveListener;
-    }
+    register.injectable(__AttributesInstance, Attributes, null, __INSTANCE);
 }

@@ -5,12 +5,11 @@
      * @kind class
      * 
      * @extends {plat.events.DispatchEvent}
-     * @implements {plat.events.ILifecycleEvent}
      * 
      * @description
      * Represents a Lifecycle Event. Lifecycle Events are always direct events.
      */
-    export class LifecycleEvent extends DispatchEvent implements ILifecycleEvent {
+    export class LifecycleEvent extends DispatchEvent {
         /**
          * @name dispatch
          * @memberof plat.events.LifecycleEvent
@@ -26,9 +25,9 @@
          * @param {string} name The name of the event.
          * @param {any} sender The sender of the event.
          * 
-         * @returns {plat.events.ILifecycleEvent} The event instance.
+         * @returns {plat.events.LifecycleEvent} The event instance.
          */
-        static dispatch(name: string, sender: any): ILifecycleEvent {
+        static dispatch(name: string, sender: any): LifecycleEvent {
             var event = new LifecycleEvent();
             event.initialize(name, sender);
             EventManager.sendEvent(event);
@@ -63,7 +62,7 @@
     register.injectable(__LifecycleEventStatic, ILifecycleEventStatic, null, __STATIC);
 
     /**
-     * @name ILifecycleEventStatic
+     * @name LifecycleEventStatic
      * @memberof plat.events
      * @kind interface
      * 
@@ -86,36 +85,8 @@
          * @param {string} name The name of the event.
          * @param {any} sender The sender of the event.
          * 
-         * @returns {plat.events.ILifecycleEvent} The event instance.
+         * @returns {plat.events.LifecycleEvent} The event instance.
          */
-        dispatch(name: string, sender: any): ILifecycleEvent;
-    }
-
-    /**
-     * @name ILifecycleEvent
-     * @memberof plat.events
-     * @kind interface
-     * 
-     * @extends {plat.events.IDispatchEventInstance}
-     * 
-     * @description
-     * Represents a Lifecycle Event. Lifecycle Events are always direct events.
-     */
-    export interface ILifecycleEvent extends IDispatchEventInstance {
-        /**
-         * @name initialize
-         * @memberof plat.events.ILifecycleEvent
-         * @kind function
-         * @access public
-         * 
-         * @description
-         * Initializes the event, populating its public properties.
-         * 
-         * @param {string} name The name of the event.
-         * @param {any} sender The sender of the event.
-         * 
-         * @returns {void}
-         */
-        initialize(name: string, sender: any): void;
+        dispatch(name: string, sender: any): LifecycleEvent;
     }
 }

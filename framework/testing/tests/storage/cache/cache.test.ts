@@ -5,7 +5,7 @@ module tests.storage.cache {
         id = 'testCache';
 
     describe('Cache Tests', () => {
-        var cache: plat.storage.ICache<any>;
+        var cache: plat.storage.Cache<any>;
 
         beforeEach(() => {
             cache = Cache.create(id);

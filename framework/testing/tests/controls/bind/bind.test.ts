@@ -1,7 +1,7 @@
 ﻿module tests.controls.bind {
     describe('Bind Tests', () => {
         var control: plat.controls.Bind,
-            parent: plat.ui.ITemplateControl,
+            parent: plat.ui.TemplateControl,
             ControlFactory = plat.acquire(plat.IControlFactory);
 
         beforeEach(() => {
@@ -11,7 +11,7 @@
             parent.resources = plat.acquire(plat.ui.IResourcesFactory).getInstance();
             control.parent = parent;
             control.type = 'plat-bind';
-            control.attributes = plat.acquire(plat.ui.IAttributesInstance);
+            control.attributes = plat.acquire(plat.ui.Attributes);
         });
 
         afterEach(() => {

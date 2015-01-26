@@ -17,12 +17,12 @@ module plat.ui.controls {
          * @kind property
          * @access protected
          * 
-         * @type {plat.ui.animations.IAnimator}
+         * @type {plat.ui.animations.Animator}
          * 
          * @description
-         * Reference to the {@link plat.ui.animations.IAnimator|IAnimator} injectable.
+         * Reference to the {@link plat.ui.animations.Animator|Animator} injectable.
          */
-        protected _animator: animations.IAnimator = acquire(__Animator);
+        protected _animator: animations.Animator = acquire(__Animator);
 
         /**
          * @name _Promise

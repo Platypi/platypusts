@@ -1,6 +1,6 @@
 ﻿module app {
     export class App extends plat.App {
-        constructor(_browserConfig: plat.web.IBrowserConfig, router: plat.routing.Router) {
+        constructor(_browserConfig: plat.web.BrowserConfig, router: plat.routing.Router) {
             super();
 
             _browserConfig.baseUrl = 'app';
@@ -15,13 +15,13 @@
             console.log('app ready');
         }
 
-        error(ev: plat.events.IErrorEvent<any>) {
+        error(ev: plat.events.ErrorEvent<any>) {
             console.log(ev.error);
         }
     }
 
     plat.register.app('app', App, [
-        plat.web.IBrowserConfig,
-        plat.routing.IRouter
+        plat.web.BrowserConfig,
+        plat.routing.Router
     ]);
 }
