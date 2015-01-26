@@ -2,7 +2,7 @@
     var AttributeControlFactory = plat.acquire(plat.IAttributeControlFactory);
 
     describe('AttributeControl Tests', () => {
-        var control: plat.IAttributeControl;
+        var control: plat.AttributeControl;
 
         beforeEach(() => {
             control = AttributeControlFactory.getInstance();

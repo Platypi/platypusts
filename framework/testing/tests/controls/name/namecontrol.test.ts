@@ -1,7 +1,7 @@
 ﻿module tests.controls.nameControl {
     describe('NameControl Tests', () => {
         var control: plat.controls.Name,
-            parent: plat.ui.ITemplateControl,
+            parent: plat.ui.TemplateControl,
             ControlFactory = plat.acquire(plat.IControlFactory);
 
         beforeEach(() => {
@@ -13,8 +13,8 @@
             parent.hasOwnContext = true;
             control.parent = parent;
             control.type = 'plat-name';
-            control.templateControl = <plat.ui.ITemplateControl>{};
-            control.attributes = plat.acquire(plat.ui.IAttributesInstance);
+            control.templateControl = <plat.ui.TemplateControl>{};
+            control.attributes = plat.acquire(plat.ui.Attributes);
         });
 
         afterEach(() => {

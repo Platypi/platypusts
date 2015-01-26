@@ -398,7 +398,7 @@
          * 
          * @description
          * Iterates through the next states and calls the input callback with each state. Acts like 
-         * {@link plat.IUtils.some|Utils.some}. If the callback returns true, it will break out of the loop.
+         * {@link plat.Utils.some|Utils.some}. If the callback returns true, it will break out of the loop.
          * 
          * @param {(child: plat.routing.State) => boolean} iterator The function with which to call for each 
          * State. Can return true to break out of the loop
@@ -443,14 +443,8 @@
 
     plat.register.injectable(__StateStatic, IStateStatic, null, __STATIC);
 
-    /**
-     * The Type for referencing the '_state' injectable as a dependency.
-     */
-    export function IStateInstance(): State {
-        return new State();
-    }
 
-    plat.register.injectable(__StateInstance, IStateInstance, null, __INSTANCE);
+    plat.register.injectable(__StateInstance, State, null, __INSTANCE);
 
     /**
      * @name IDelegateParameterNames

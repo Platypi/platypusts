@@ -4,12 +4,10 @@
      * @memberof plat.ui
      * @kind class
      * 
-     * @implements {plat.ui.IDomEvents}
-     * 
      * @description
      * A class for managing DOM event registration and handling.
      */
-    export class DomEvents implements IDomEvents {
+    export class DomEvents {
         /**
          * @name config
          * @memberof plat.ui.DomEvents
@@ -17,12 +15,12 @@
          * @access public
          * @static
          * 
-         * @type {plat.ui.IDomEventsConfig}
+         * @type {plat.ui.DomEventsConfig}
          * 
          * @description
          * A configuration object for all DOM events.
          */
-        static config: IDomEventsConfig = {
+        static config: DomEventsConfig = {
             /**
              * An object containing the different time intervals that govern the behavior of certain 
              * custom DOM events.
@@ -149,12 +147,12 @@
          * @access protected
          * @static
          * 
-         * @type {plat.ICompat}
+         * @type {plat.Compat}
          * 
          * @description
-         * Reference to the {@link plat.ICompat|ICompat} injectable.
+         * Reference to the {@link plat.Compat|Compat} injectable.
          */
-        protected _compat: ICompat = acquire(__Compat);
+        protected _compat: Compat = acquire(__Compat);
 
         /**
          * @name _isActive
@@ -579,12 +577,12 @@
          * @kind property
          * @access private
          * 
-         * @type {Array<plat.ui.IDomEventInstance>}
+         * @type {Array<plat.ui.DomEvent>}
          * 
          * @description
          * An array of subscribers for the swipe gesture.
          */
-        private __swipeSubscribers: Array<IDomEventInstance>;
+        private __swipeSubscribers: Array<DomEvent>;
         /**
          * @name __pointerHash
          * @memberof plat.ui.DomEvents
@@ -869,7 +867,6 @@
             this.__capturedTarget = this.__lastMoveEvent = null;
             this.__hasMoved = false;
             this.__lastTouchDown = this.__swipeOrigin = {
-                buttons: ev.buttons,
                 _buttons: ev._buttons,
                 clientX: ev.clientX,
                 clientY: ev.clientY,
@@ -894,7 +891,7 @@
             }
 
             var holdInterval = DomEvents.config.intervals.holdInterval,
-                domEvent: IDomEventInstance,
+                domEvent: DomEvent,
                 subscribeFn: () => void,
                 domEventFound = false;
 
@@ -1127,10 +1124,10 @@
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access private
-         *
+         * 
          * @description
          * Clears all temporary states like move and hold events.
-         *
+         * 
          * @returns {void}
          */
         private __clearTempStates(): void {
@@ -1149,10 +1146,10 @@
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access private
-         *
+         * 
          * @description
          * A function for resetting all values potentially modified during the touch event sequence.
-         *
+         * 
          * @returns {void}
          */
         private __resetTouchEnd(): void {
@@ -1170,12 +1167,12 @@
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access private
-         *
+         * 
          * @description
          * A function for handling when gestures are canceled via the Browser.
-         *
+         * 
          * @param {plat.ui.IPointerEvent} ev The touch cancel event object.
-         *
+         * 
          * @returns {void}
          */
         private __handleCanceled(ev: IPointerEvent): void {
@@ -1195,12 +1192,12 @@
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access private
-         *
+         * 
          * @description
          * A function for handling and firing tap events.
-         *
+         * 
          * @param {plat.ui.IPointerEvent} ev The touch end event object.
-         *
+         * 
          * @returns {void}
          */
         private __handleTap(ev: IPointerEvent): void {
@@ -1221,7 +1218,7 @@
             // or a mouse is being used
             if (DomEvents.config.intervals.dblTapZoomDelay <= 0 ||
                 ev.pointerType === 'mouse' || ev.type === 'mouseup') {
-                ev = extend({}, ev, this.__lastTouchDown);
+                ev._buttons = this.__lastTouchDown._buttons;
                 domEvent.trigger(ev);
                 return;
             }
@@ -1229,7 +1226,7 @@
             // defer for tap delay in case of something like desired 
             // dbltap zoom
             this.__cancelDeferredTap = defer(() => {
-                ev = extend({}, ev, this.__lastTouchDown);
+                ev._buttons = this.__lastTouchDown._buttons;
                 domEvent.trigger(ev);
                 this.__tapCount = 0;
                 this.__cancelDeferredTap = noop;
@@ -1264,7 +1261,7 @@
                 return;
             }
 
-            ev = extend({}, ev, this.__lastTouchDown);
+            ev._buttons = this.__lastTouchDown._buttons;
             domEvent.trigger(ev);
             // set touch count to -1 to prevent repeated fire on sequential taps
             this.__tapCount = -1;
@@ -1593,7 +1590,7 @@
                 this._isActive = true;
             }
 
-            var _domEvent: IDomEventInstance;
+            var _domEvent: DomEvent;
             if (isNull(id)) {
                 var subscriber = this._subscribers[plat.domEvent];
                 if (isUndefined((<any>subscriber)[type])) {
@@ -1639,7 +1636,7 @@
 
             var domEventId = plat.domEvent,
                 eventSubscriber = this._subscribers[domEventId],
-                domEvent: ICustomDomEventInstance = (<any>eventSubscriber)[type];
+                domEvent: CustomDomEvent = (<any>eventSubscriber)[type];
 
             if (isNull(domEvent)) {
                 return;
@@ -1761,18 +1758,18 @@
          * @param {plat.ui.ICustomElement} eventTarget The current target of the touch event.
          * @param {string} type The type of event being searched for.
          * 
-         * @returns {plat.ui.IDomEventInstance} The found {@link plat.ui.IDomEventInstance} associated 
+         * @returns {plat.ui.DomEvent} The found {@link plat.ui.DomEvent} associated 
          * with the first found element in the tree and the event type. Used to trigger the event at this 
          * point in the DOM tree.
          */
-        private __findFirstSubscriber(eventTarget: ICustomElement, type: string): IDomEventInstance {
+        private __findFirstSubscriber(eventTarget: ICustomElement, type: string): DomEvent {
             if (isNull(eventTarget)) {
                 return;
             }
 
             var plat: ICustomElementProperty,
                 subscriber: IEventSubscriber,
-                domEvent: IDomEventInstance;
+                domEvent: DomEvent;
 
             do {
                 plat = eventTarget.__plat;
@@ -1803,11 +1800,11 @@
          * @param {plat.ui.ICustomElement} eventTarget The current target of the touch event.
          * @param {Array<string>} types An array of the types of events being searched for.
          * 
-         * @returns {Array<plat.ui.IDomEventInstance>} The found {@link plat.ui.IDomEventInstance|IDomEventInstances} associated 
+         * @returns {Array<plat.ui.DomEvent>} The found {@link plat.ui.DomEvent|DomEvents} associated 
          * with the first found element in the tree and the corresponding event type. Used to trigger the events at their lowest 
          * points in the DOM tree.
          */
-        private __findFirstSubscribers(eventTarget: ICustomElement, types: Array<string>): Array<IDomEventInstance> {
+        private __findFirstSubscribers(eventTarget: ICustomElement, types: Array<string>): Array<DomEvent> {
             if (isNull(eventTarget)) {
                 return [];
             }
@@ -1816,7 +1813,7 @@
                 subscriber: IEventSubscriber,
                 subscriberKeys: Array<string>,
                 subscriberKey: string,
-                domEvents: Array<IDomEventInstance> = [],
+                domEvents: Array<DomEvent> = [],
                 index: number;
 
             do {
@@ -2236,7 +2233,7 @@
          * @returns {void}
          */
         private __setRegisteredSwipes(direction: IDirection, velocity: IVelocity): void {
-            var swipeTarget = <ICustomElement>(this.__swipeOrigin || {}).target,
+            var swipeTarget = <ICustomElement>(this.__swipeOrigin || <IBaseEventProperties>{}).target,
                 swipeGesture = this._gestures.$swipe,
                 minSwipeVelocity = DomEvents.config.velocities.minSwipeVelocity,
                 events = [swipeGesture];
@@ -2595,136 +2592,26 @@
             return false;
         }
     }
-
-    /**
-     * The Type for referencing the '_domEvents' injectable as a dependency.
-     */
-    export function IDomEvents(): IDomEvents {
-        return new DomEvents();
-    }
-
-    register.injectable(__DomEvents, IDomEvents);
-
-    /**
-     * @name IDomEvents
-     * @memberof plat.ui
-     * @kind interface
-     * 
-     * @description
-     * Describes an object for managing DOM event registration and handling.
-     */
-    export interface IDomEvents {
-        /**
-         * @name addEventListener
-         * @memberof plat.ui.IDomEvents
-         * @kind function
-         * @access public
-         * @variation 0
-         * 
-         * @description
-         * Add an event listener for the specified event type on the specified element.
-         * 
-         * @param {Node} element The node listening for the event.
-         * @param {string} type The type of event being listened to.
-         * @param {plat.ui.IGestureListener} listener The listener to be fired.
-         * @param {boolean} useCapture? Whether to fire the event on the capture or bubble phase of propagation.
-         * 
-         * @returns {plat.IRemoveListener} A function for removing the event listener and stop listening to the event.
-         */
-        addEventListener(element: Node, type: string, listener: IGestureListener,
-            useCapture?: boolean): IRemoveListener;
-        /**
-         * @name addEventListener
-         * @memberof plat.ui.IDomEvents
-         * @kind function
-         * @access public
-         * @variation 1
-         * 
-         * @description
-         * Add an event listener for the specified event type on the specified element.
-         * 
-         * @param {Window} element The window object.
-         * @param {string} type The type of event being listened to.
-         * @param {plat.ui.IGestureListener} listener The listener to be fired.
-         * @param {boolean} useCapture? Whether to fire the event on the capture or bubble phase of propagation.
-         * 
-         * @returns {plat.IRemoveListener} A function for removing the event listener and stop listening to the event.
-         */
-        addEventListener(element: Window, type: string, listener: IGestureListener,
-            useCapture?: boolean): IRemoveListener;
-        /**
-         * @name addEventListener
-         * @memberof plat.ui.IDomEvents
-         * @kind function
-         * @access public
-         * @variation 2
-         * 
-         * @description
-         * Add an event listener for the specified event type on the specified element.
-         * 
-         * @param {Node} element The node listening for the event.
-         * @param {string} type The type of event being listened to.
-         * @param {EventListener} listener The listener to be fired.
-         * @param {boolean} useCapture? Whether to fire the event on the capture or bubble phase of propagation.
-         * 
-         * @returns {plat.IRemoveListener} A function for removing the event listener and stop listening to the event.
-         */
-        addEventListener(element: Node, type: string, listener: EventListener,
-            useCapture?: boolean): IRemoveListener;
-        /**
-         * @name addEventListener
-         * @memberof plat.ui.IDomEvents
-         * @kind function
-         * @access public
-         * @variation 3
-         * 
-         * @description
-         * Add an event listener for the specified event type on the specified element.
-         * 
-         * @param {Window} element The window object.
-         * @param {string} type The type of event being listened to.
-         * @param {EventListener} listener The listener to be fired.
-         * @param {boolean} useCapture? Whether to fire the event on the capture or bubble phase of propagation.
-         * 
-         * @returns {plat.IRemoveListener} A function for removing the event listener and stop listening to the event.
-         */
-        addEventListener(element: Window, type: string, listener: EventListener,
-            useCapture?: boolean): IRemoveListener;
-
-        /**
-         * @name dispose
-         * @memberof plat.ui.IDomEvents
-         * @kind function
-         * @access public
-         * 
-         * @description
-         * Stops listening for touch events and resets the DomEvents instance.
-         * 
-         * @returns {void}
-         */
-        dispose(): void;
-    }
+    register.injectable(__DomEvents, DomEvents);
 
     /**
      * The Type for referencing the '_domEventsConfig' injectable as a dependency.
      */
-    export function IDomEventsConfig(): IDomEventsConfig {
+    export function DomEventsConfig(): DomEventsConfig {
         return DomEvents.config;
     }
 
-    register.injectable(__DomEventsConfig, IDomEventsConfig);
+    register.injectable(__DomEventsConfig, DomEventsConfig);
 
     /**
      * @name DomEvent
      * @memberof plat.ui
      * @kind class
      * 
-     * @implements {plat.ui.IDomEventInstance}
-     * 
      * @description
      * A class for managing a single custom event.
      */
-    export class DomEvent implements IDomEventInstance {
+    export class DomEvent {
         /**
          * @name _document
          * @memberof plat.ui.DomEvent
@@ -2747,7 +2634,7 @@
          * @type {any}
          * 
          * @description
-         * The node or window object associated with this {@link plat.ui.IDomEventInstance|IDomEventInstance} object.
+         * The node or window object associated with this {@link plat.ui.DomEvent|DomEvent} object.
          */
         element: any;
 
@@ -2760,7 +2647,7 @@
          * @type {string}
          * 
          * @description
-         * The event type associated with this {@link plat.ui.IDomEventInstance|IDomEventInstance} object.
+         * The event type associated with this {@link plat.ui.DomEvent|DomEvent} object.
          */
         event: string;
 
@@ -2785,11 +2672,11 @@
          * @variation 0
          * 
          * @description
-         * Initializes the element and event of this {@link plat.ui.IDomEventInstance|IDomEventInstance} object.
+         * Initializes the element and event of this {@link plat.ui.DomEvent|DomEvent} object.
          * 
-         * @param {Node} element The element associated with this {@link plat.ui.IDomEventInstance|IDomEventInstance} object.
-         * @param {string} event The event associated with this {@link plat.ui.IDomEventInstance|IDomEventInstance} object.
-         * @param {string} eventType? The event type associated with this {@link plat.ui.IDomEventInstance|IDomEventInstance} object. 
+         * @param {Node} element The element associated with this {@link plat.ui.DomEvent|DomEvent} object.
+         * @param {string} event The event associated with this {@link plat.ui.DomEvent|DomEvent} object.
+         * @param {string} eventType? The event type associated with this {@link plat.ui.DomEvent|DomEvent} object. 
          * If not specified, it will default to 'CustomEvent'.
          * 
          * @returns {void}
@@ -2803,11 +2690,11 @@
          * @variation 1
          * 
          * @description
-         * Initializes the element and event of this {@link plat.ui.IDomEventInstance|IDomEventInstance} object.
+         * Initializes the element and event of this {@link plat.ui.DomEvent|DomEvent} object.
          * 
          * @param {Window} element The window object.
-         * @param {string} event The event associated with this {@link plat.ui.IDomEventInstance|IDomEventInstance} object.
-         * @param {string} eventType? The event type associated with this {@link plat.ui.IDomEventInstance|IDomEventInstance} object. 
+         * @param {string} event The event associated with this {@link plat.ui.DomEvent|DomEvent} object.
+         * @param {string} eventType? The event type associated with this {@link plat.ui.DomEvent|DomEvent} object. 
          * If not specified, it will default to 'CustomEvent'.
          * 
          * @returns {void}
@@ -2845,14 +2732,7 @@
         }
     }
 
-    /**
-     * The Type for referencing the '_domEvents' injectable as a dependency.
-     */
-    export function IDomEventInstance(): IDomEventInstance {
-        return new DomEvent();
-    }
-
-    register.injectable(__DomEventInstance, IDomEventInstance, null, __INSTANCE);
+    register.injectable(__DomEventInstance, DomEvent, null, __INSTANCE);
 
     /**
      * @name CustomDomEvent
@@ -2861,12 +2741,11 @@
      * @exported false
      * 
      * @extends {plat.ui.DomEvent}
-     * @implements {plat.ui.ICustomDomEventInstance}
      * 
      * @description
      * A specialized class for managing a single custom touch event in {@link plat.ui.DomEvents|DomEvents}.
      */
-    class CustomDomEvent extends DomEvent implements ICustomDomEventInstance {
+    class CustomDomEvent extends DomEvent {
         /**
          * @name count
          * @memberof plat.ui.CustomDomEvent
@@ -3018,132 +2897,6 @@
     }
 
     /**
-     * @name ICustomDomEventInstance
-     * @memberof plat.ui
-     * @kind interface
-     * @exported false
-     * 
-     * @extends {plat.ui.IDomEventInstance}
-     * 
-     * @description
-     * A specialized object for managing a single custom touch event in {@link plat.ui.DomEvents|DomEvents}.
-     */
-    interface ICustomDomEventInstance extends IDomEventInstance {
-        /**
-         * @name count
-         * @memberof plat.ui.ICustomDomEventInstance
-         * @kind property
-         * @access public
-         * 
-         * @type {number}
-         * 
-         * @description
-         * The number of listeners added for this event on this element.
-         */
-        count: number;
-
-        /**
-         * @name trigger
-         * @memberof plat.ui.ICustomDomEventInstance
-         * @kind function
-         * @access public
-         * 
-         * @description
-         * Triggers its event on its element.
-         * 
-         * @param {plat.ui.IPointerEvent} ev The current touch event object used to extend the 
-         * newly created custom event.
-         * 
-         * @returns {void}
-         */
-        trigger(ev: IPointerEvent): void;
-    }
-
-    /**
-     * @name IDomEventInstance
-     * @memberof plat.ui
-     * @kind interface
-     * 
-     * @description
-     * Describes an object used for managing a single custom event.
-     */
-    export interface IDomEventInstance {
-        /**
-         * @name element
-         * @memberof plat.ui.IDomEventInstance
-         * @kind property
-         * @access public
-         * 
-         * @type {any}
-         * 
-         * @description
-         * The node or window object associated with this {@link plat.ui.IDomEventInstance|IDomEventInstance} object.
-         */
-        element: any;
-
-        /**
-         * @name event
-         * @memberof plat.ui.IDomEventInstance
-         * @kind property
-         * @access public
-         * 
-         * @type {string}
-         * 
-         * @description
-         * The event type associated with this {@link plat.ui.IDomEventInstance|IDomEventInstance} object.
-         */
-        event: string;
-
-        /**
-         * @name initialize
-         * @memberof plat.ui.IDomEventInstance
-         * @kind function
-         * @access public
-         * @variation 0
-         * 
-         * @description
-         * Initializes the element and event of this {@link plat.ui.IDomEventInstance|IDomEventInstance} object.
-         * 
-         * @param {Node} element The element associated with this {@link plat.ui.IDomEventInstance|IDomEventInstance} object.
-         * @param {string} event The event associated with this {@link plat.ui.IDomEventInstance|IDomEventInstance} object.
-         * 
-         * @returns {void}
-         */
-        initialize(element: Node, event: string): void;
-        /**
-         * @name initialize
-         * @memberof plat.ui.IDomEventInstance
-         * @kind function
-         * @access public
-         * @variation 1
-         * 
-         * @description
-         * Initializes the element and event of this {@link plat.ui.IDomEventInstance|IDomEventInstance} object.
-         * 
-         * @param {Window} element The window object.
-         * @param {string} event The event associated with this {@link plat.ui.IDomEventInstance|IDomEventInstance} object.
-         * 
-         * @returns {void}
-         */
-        initialize(element: Window, event: string): void;
-
-        /**
-         * @name trigger
-         * @memberof plat.ui.IDomEventInstance
-         * @kind function
-         * @access public
-         * 
-         * @description
-         * Triggers its event on its element.
-         * 
-         * @param {Object} eventExtension? An event extension to extend the dispatched CustomEvent.
-         * 
-         * @returns {void}
-         */
-        trigger(eventExtension?: Object): void;
-    }
-
-    /**
      * @name ICustomEventListener
      * @memberof plat.ui
      * @kind interface
@@ -3215,7 +2968,7 @@
          * @description
          * Indicates which mouse button is being pressed in a mouse event.
          */
-        buttons?: number;
+        _buttons?: number;
 
         /**
          * @name clientX
@@ -3296,6 +3049,8 @@
      * An extended event object potentially containing coordinate and movement information.
      */
     export interface IExtendedEvent extends Event {
+        _buttons?: number;
+
         /**
          * @name buttons
          * @memberof plat.ui.IExtendedEvent
@@ -3308,8 +3063,6 @@
          * Indicates which mouse button is being pressed in a mouse event.
          */
         buttons?: number;
-
-        _buttons?: number;
 
         /**
          * @name clientX
@@ -4003,13 +3756,13 @@
      * @memberof plat.ui
      * @kind interface
      * 
-     * @extends {plat.ui.IGestures<plat.ui.IDomEventInstance>}
+     * @extends {plat.ui.IGestures<plat.ui.DomEvent>}
      * 
      * @description
      * Describes an object to keep track of a single 
      * element's registered custom event types.
      */
-    export interface IEventSubscriber extends IGestures<IDomEventInstance> {
+    export interface IEventSubscriber extends IGestures<DomEvent> {
         /**
          * @name gestureCount
          * @memberof plat.ui.IEventSubscriber
@@ -4327,17 +4080,17 @@
     }
 
     /**
-     * @name IDomEventsConfig
+     * @name DomEventsConfig
      * @memberof plat.ui
      * @kind interface
      * 
      * @description
      * Describes a configuration object for all custom DOM events.
      */
-    export interface IDomEventsConfig {
+    export interface DomEventsConfig {
         /**
          * @name intervals
-         * @memberof plat.ui.IDomEventsConfig
+         * @memberof plat.ui.DomEventsConfig
          * @kind property
          * @access public
          * 
@@ -4351,7 +4104,7 @@
 
         /**
          * @name distances
-         * @memberof plat.ui.IDomEventsConfig
+         * @memberof plat.ui.DomEventsConfig
          * @kind property
          * @access public
          * 
@@ -4365,7 +4118,7 @@
 
         /**
          * @name velocities
-         * @memberof plat.ui.IDomEventsConfig
+         * @memberof plat.ui.DomEventsConfig
          * @kind property
          * @access public
          * 
@@ -4379,7 +4132,7 @@
 
         /**
          * @name styleConfig
-         * @memberof plat.ui.IDomEventsConfig
+         * @memberof plat.ui.DomEventsConfig
          * @kind property
          * @access public
          * 

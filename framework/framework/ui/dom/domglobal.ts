@@ -102,7 +102,7 @@ function clearNodeBlockWithParent(nodeList: Array<Node>, parent: Node): void {
 }
 
 function stringToNode(html: string): Node {
-    var _compat: plat.ICompat = plat.acquire(__Compat),
+    var _compat: plat.Compat = plat.acquire(__Compat),
         _document: Document = plat.acquire(__Document),
         nodeName = __nodeNameRegex.exec(html),
         element = <HTMLElement>_document.createElement('div');
@@ -279,7 +279,7 @@ function removeAll(startNode: Node, endNode?: Node): void {
  * available.
  */
 function innerHtml(element: HTMLElement, html: string): HTMLElement {
-    var _compat: plat.ICompat = plat.acquire(__Compat);
+    var _compat: plat.Compat = plat.acquire(__Compat);
 
     if (_compat.msApp) {
         MSApp.execUnsafeLocalFunction(() => {
@@ -459,7 +459,7 @@ function hasClass(element: HTMLElement, className: string): boolean {
     return true;
 }
 
-var ___templateCache: plat.storage.ITemplateCache,
+var ___templateCache: plat.storage.TemplateCache,
     ___http: plat.async.IHttp,
     ___Exception: plat.IExceptionStatic;
 

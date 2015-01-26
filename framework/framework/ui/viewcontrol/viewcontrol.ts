@@ -28,7 +28,7 @@ module plat.ui {
          * 
          * @returns {void}
          */
-        static dispose(control: ITemplateControl): void {
+        static dispose(control: TemplateControl): void {
             TemplateControl.dispose(control);
         }
 

@@ -20,7 +20,7 @@ module test.routing.router {
             viewport: IViewport;
 
         beforeEach(() => {
-            router = plat.acquire(plat.routing.IRouter);
+            router = plat.acquire(plat.routing.Router);
             viewport = createViewport('root');
             router.register(<any>viewport);
             resetAll(viewport);
@@ -93,7 +93,7 @@ module test.routing.router {
             });
 
             it('should navigate viewports registered after navigation', (done: Function) => {
-                router = plat.acquire(plat.routing.IRouter);
+                router = plat.acquire(plat.routing.Router);
                 viewport = createViewport('root');
                 router.configure([{ pattern: '/posts', view: 'posts' }]);
 
@@ -112,7 +112,7 @@ module test.routing.router {
                     childViewport: IViewport;
 
                 beforeEach(() => {
-                    child = plat.acquire(plat.routing.IRouter);
+                    child = plat.acquire(plat.routing.Router);
                     child.configure([
                         { pattern: '/new', view: 'createpost' },
                         { pattern: '/edit', view: 'editpost' }

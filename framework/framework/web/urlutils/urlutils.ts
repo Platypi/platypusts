@@ -4,13 +4,11 @@
      * @memberof plat.web
      * @kind class
      * 
-     * @implements {plat.web.IUrlUtilsInstance}
-     * 
      * @description
      * Deals with obtaining detailed information about an 
      * associated URL.
      */
-    export class UrlUtils implements IUrlUtilsInstance {
+    export class UrlUtils {
         /**
          * @name __urlUtilsElement
          * @memberof plat.web.UrlUtils
@@ -66,7 +64,7 @@
             if (protocol === 'file:' || protocol.indexOf('wmapp') > -1 || protocol.indexOf('ms-appx') > -1) {
                 origin = window.location.href;
             } else if(isUndefined(origin)) {
-                origin = window.location.protocol + "//" + window.location.host;
+                origin = window.location.protocol + '//' + window.location.host;
             }
 
             origin = origin.replace(_regex.initialUrlRegex, '');
@@ -118,12 +116,12 @@
          * @kind property
          * @access protected
          * 
-         * @type {plat.ICompat}
+         * @type {plat.Compat}
          * 
          * @description
-         * Reference to the {@link plat.ICompat|ICompat} injectable.
+         * Reference to the {@link plat.Compat|Compat} injectable.
          */
-        protected _compat: ICompat = acquire(__Compat);
+        protected _compat: Compat = acquire(__Compat);
 
         /**
          * @name _regex
@@ -131,12 +129,12 @@
          * @kind property
          * @access protected
          * 
-         * @type {plat.expressions.IRegex}
+         * @type {plat.expressions.Regex}
          * 
          * @description
-         * Reference to the {@link plat.expressions.IRegex|IRegex} injectable.
+         * Reference to the {@link plat.expressions.Regex|Regex} injectable.
          */
-        protected _regex: expressions.IRegex = acquire(__Regex);
+        protected _regex: expressions.Regex = acquire(__Regex);
 
         /**
          * @name _browserConfig
@@ -144,12 +142,12 @@
          * @kind property
          * @access protected
          * 
-         * @type {plat.web.IBrowserConfig}
+         * @type {plat.web.BrowserConfig}
          * 
          * @description
-         * Reference to the {@link plat.web.IBrowserConfig|IBrowserConfig} injectable.
+         * Reference to the {@link plat.web.BrowserConfig|BrowserConfig} injectable.
          */
-        protected _browserConfig: IBrowserConfig = acquire(__BrowserConfig);
+        protected _browserConfig: BrowserConfig = acquire(__BrowserConfig);
 
         /**
          * @name href
@@ -426,210 +424,5 @@
             return this.href;
         }
     }
-
-    /**
-     * The Type for referencing the '_urlUtilsInstance' injectable as a dependency.
-     */
-    export function IUrlUtilsInstance(): IUrlUtilsInstance {
-        return new UrlUtils();
-    }
-
-    register.injectable(__UrlUtilsInstance, IUrlUtilsInstance, null, __INSTANCE);
-
-    /**
-     * @name IUrlUtilsInstance
-     * @memberof plat.web
-     * @kind interface
-     * 
-     * @description
-     * Defines an object that deals with obtaining detailed information about an 
-     * associated URL.
-     */
-    export interface IUrlUtilsInstance {
-        /**
-         * @name href
-         * @memberof plat.web.IUrlUtilsInstance
-         * @kind property
-         * @access public
-         * 
-         * @type {string}
-         * 
-         * @description
-         * The whole associated URL.
-         */
-        href: string;
-
-        /**
-         * @name protocol
-         * @memberof plat.web.IUrlUtilsInstance
-         * @kind property
-         * @access public
-         * 
-         * @type {string}
-         * 
-         * @description
-         * The protocol scheme of the URL, including the final ':' of the associated URL.
-         */
-        protocol: string;
-
-        /**
-         * @name host
-         * @memberof plat.web.IUrlUtilsInstance
-         * @kind property
-         * @access public
-         * 
-         * @type {string}
-         * 
-         * @description
-         * The hostname and port of the associated URL.
-         */
-        host: string;
-
-        /**
-         * @name hostname
-         * @memberof plat.web.IUrlUtilsInstance
-         * @kind property
-         * @access public
-         * 
-         * @type {string}
-         * 
-         * @description
-         * The domain of the associated URL.
-         */
-        hostname: string;
-
-        /**
-         * @name port
-         * @memberof plat.web.IUrlUtilsInstance
-         * @kind property
-         * @access public
-         * 
-         * @type {string}
-         * 
-         * @description
-         * The port number of the associated URL.
-         */
-        port: string;
-
-        /**
-         * @name pathname
-         * @memberof plat.web.IUrlUtilsInstance
-         * @kind property
-         * @access public
-         * 
-         * @type {string}
-         * 
-         * @description
-         * The additional path value in the associated URL preceded by a '/'. 
-         * Removes the query string.
-         */
-        pathname: string;
-
-        /**
-         * @name search
-         * @memberof plat.web.IUrlUtilsInstance
-         * @kind property
-         * @access public
-         * 
-         * @type {string}
-         * 
-         * @description
-         * A '?' followed by the included parameters in the associated URL.
-         */
-        search: string;
-
-        /**
-         * @name hash
-         * @memberof plat.web.IUrlUtilsInstance
-         * @kind property
-         * @access public
-         * 
-         * @type {string}
-         * 
-         * @description
-         * A '#' followed by the included hash fragments in the associated URL.
-         */
-        hash: string;
-
-        /**
-         * @name username
-         * @memberof plat.web.IUrlUtilsInstance
-         * @kind property
-         * @access public
-         * 
-         * @type {string}
-         * 
-         * @description
-         * The username specified before the domain name in the associated URL.
-         */
-        username?: string;
-
-        /**
-         * @name password
-         * @memberof plat.web.IUrlUtilsInstance
-         * @kind property
-         * @access public
-         * 
-         * @type {string}
-         * 
-         * @description
-         * The password specified before the domain name in the associated URL.
-         */
-        password?: string;
-
-        /**
-         * @name origin
-         * @memberof plat.web.IUrlUtilsInstance
-         * @kind property
-         * @access public
-         * 
-         * @type {string}
-         * 
-         * @description
-         * The origin of the associated URL (its protocol, domain, and port).
-         */
-        origin?: string;
-
-        /**
-         * @name query
-         * @memberof plat.web.IUrlUtilsInstance
-         * @kind property
-         * @access public
-         * 
-         * @type {any}
-         * 
-         * @description
-         * An object containing keyed query arguments from the associated URL.
-         */
-        query?: any;
-
-        /**
-         * @name initialize
-         * @memberof plat.web.IUrlUtilsInstance
-         * @kind function
-         * @access public
-         * 
-         * @description
-         * Initializes and defines properties using 
-         * the input url.
-         * 
-         * @param {string} url The input to associate with this {@link plat.web.IUrlUtilsInstance|IUrlUtilsInstance}.
-         * 
-         * @returns {void}
-         */
-        initialize(url: string): void;
-
-        /**
-         * @name toString
-         * @memberof plat.web.IUrlUtilsInstance
-         * @kind function
-         * @access public
-         * 
-         * @description
-         * A toString function implementation for the {@link plat.web.IUrlUtilsInstance|IUrlUtilsInstance}.
-         * 
-         * @returns {string} The href associated with this {@link plat.web.IUrlUtilsInstance|IUrlUtilsInstance}.
-         */
-        toString(): string;
-    }
+    register.injectable(__UrlUtilsInstance, UrlUtils, null, __INSTANCE);
 }

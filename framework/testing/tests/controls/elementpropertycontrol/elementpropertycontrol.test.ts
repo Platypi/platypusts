@@ -1,7 +1,7 @@
 ﻿module tests.controls.elementPropertyControl {
     describe('ElementPropertyControl Tests', () => {
         var control: plat.controls.ElementPropertyControl,
-            parent: plat.ui.ITemplateControl,
+            parent: plat.ui.TemplateControl,
             ControlFactory = plat.acquire(plat.IControlFactory);
 
         beforeEach(() => {
@@ -10,7 +10,7 @@
             parent.controls = [control];
             parent.resources = plat.acquire(plat.ui.IResourcesFactory).getInstance();
             control.parent = parent;
-            control.attributes = plat.acquire(plat.ui.IAttributesInstance);
+            control.attributes = plat.acquire(plat.ui.Attributes);
         });
 
         afterEach(() => {
@@ -20,7 +20,7 @@
 
         it('should test setter with empty expression', () => {
             control = new plat.controls.Href();
-            control.attributes = plat.acquire(plat.ui.IAttributesInstance);
+            control.attributes = plat.acquire(plat.ui.Attributes);
             var element: HTMLAnchorElement =
                 control.element =
                 <HTMLAnchorElement>control.dom.serializeHtml('<a plat-href=""></a>').childNodes[0];
@@ -62,7 +62,7 @@
 
         it('should test setter', () => {
             control = new plat.controls.Src();
-            control.attributes = plat.acquire(plat.ui.IAttributesInstance);
+            control.attributes = plat.acquire(plat.ui.Attributes);
             var element: HTMLAnchorElement =
                 control.element =
                 <HTMLAnchorElement>control.dom.serializeHtml('<a plat-href="foo"></a>').childNodes[0];

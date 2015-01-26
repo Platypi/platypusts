@@ -27,13 +27,13 @@ module app.viewcontrols {
         }
 
         goBack() {
-            this.dispatchEvent('backbutton', 'direct');
-            //this.navigator.goBack();
-            (<any>window).backCalled++;
+            this.navigator.goBack().then(() => {
+                console.log('test');
+            });
         }
     }
 
     plat.register.viewControl('main', Main, [
-        plat.routing.IRouter
+        plat.routing.Router
     ]);
 }

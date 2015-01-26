@@ -1,6 +1,6 @@
 ﻿/// <reference path="../../../references.d.ts" />
 module tests.expressions.parser {
-    var parser = plat.acquire(plat.expressions.IParser),
+    var parser = plat.acquire(plat.expressions.Parser),
         context = {
             title: 'Parser',
             fooFn: function (arg0: any, arg1: any) {

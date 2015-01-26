@@ -5,24 +5,24 @@ module plat.controls {
      * @kind class
      * 
      * @extends {plat.AttributeControl}
-     * @implements {plat.controls.ISimpleEventControl}
+     * @implements {plat.controls.ISendEvents}
      * 
      * @description
      * An {@link plat.AttributeControl|AttributeControl} that binds to a specified DOM event handler.
      */
-    export class SimpleEventControl extends AttributeControl implements ISimpleEventControl {
+    export class SimpleEventControl extends AttributeControl implements ISendEvents {
         /**
          * @name _parser
          * @memberof plat.controls.SimpleEventControl
          * @kind property
          * @access protected
          * 
-         * @type {plat.expressions.IParser}
+         * @type {plat.expressions.Parser}
          * 
          * @description
-         * Reference to the {@link plat.expressions.IParser|IParser} injectable.
+         * Reference to the {@link plat.expressions.Parser|Parser} injectable.
          */
-        protected _parser: expressions.IParser = acquire(__Parser);
+        protected _parser: expressions.Parser = acquire(__Parser);
 
         /**
          * @name _regex
@@ -30,12 +30,12 @@ module plat.controls {
          * @kind property
          * @access protected
          * 
-         * @type {plat.expressions.IRegex}
+         * @type {plat.expressions.Regex}
          * 
          * @description
-         * Reference to the {@link plat.expressions.IRegex|IRegex} injectable.
+         * Reference to the {@link plat.expressions.Regex|Regex} injectable.
          */
-        protected _regex: expressions.IRegex = acquire(__Regex);
+        protected _regex: expressions.Regex = acquire(__Regex);
 
         /**
          * @name event
@@ -187,7 +187,7 @@ module plat.controls {
                         _Exception.CONTROL);
                     return {
                         fn: noop,
-                        context: <ui.ITemplateControl>{},
+                        context: <ui.TemplateControl>{},
                         args: []
                     };
                 }
@@ -201,7 +201,7 @@ module plat.controls {
                         '\'s expression.', _Exception.CONTROL);
                     return {
                         fn: noop,
-                        context: <ui.ITemplateControl>{},
+                        context: <ui.TemplateControl>{},
                         args: []
                     };
                 }
@@ -323,19 +323,19 @@ module plat.controls {
     }
 
     /**
-     * @name ISimpleEventControl
+     * @name ISendEvents
      * @memberof plat.controls
      * @kind interface
      * 
-     * @extends {plat.IAttributeControl}
+     * @extends {plat.AttributeControl}
      * 
      * @description
-     * An {@link plat.IAttributeControl|IAttributeControl} that binds to a specified DOM event handler.
+     * An {@link plat.AttributeControl|AttributeControl} that binds to a specified DOM event handler.
      */
-    export interface ISimpleEventControl extends IAttributeControl {
+    export interface ISendEvents extends AttributeControl {
         /**
          * @name event
-         * @memberof plat.controls.ISimpleEventControl
+         * @memberof plat.controls.ISendEvents
          * @kind property
          * @access public
          * 
@@ -348,7 +348,7 @@ module plat.controls {
 
         /**
          * @name attribute
-         * @memberof plat.controls.ISimpleEventControl
+         * @memberof plat.controls.ISendEvents
          * @kind property
          * @access public
          * 
@@ -1050,12 +1050,12 @@ module plat.controls {
          * @access protected
          * @static
          * 
-         * @type {plat.ICompat}
+         * @type {plat.Compat}
          * 
          * @description
-         * Reference to the {@link plat.ICompat|ICompat} injectable.
+         * Reference to the {@link plat.Compat|Compat} injectable.
          */
-        protected _compat: ICompat = acquire(__Compat);
+        protected _compat: Compat = acquire(__Compat);
 
         /**
          * @name event

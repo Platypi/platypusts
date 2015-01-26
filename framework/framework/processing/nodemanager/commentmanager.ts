@@ -5,13 +5,13 @@ module plat.processing {
      * @kind class
      * 
      * @extends {plat.processing.NodeManager}
-     * @implements {plat.processing.ICommentManager}
+     * @implements {plat.processing.CommentManager}
      * 
      * @description
      * A class used to manage Comment nodes. Provides a way to 
      * clone a Comment node.
      */
-    export class CommentManager extends NodeManager implements ICommentManager {
+    export class CommentManager extends NodeManager {
         /**
          * @name create
          * @memberof plat.processing.CommentManager
@@ -23,13 +23,13 @@ module plat.processing {
          * Creates a new CommentManager for the given Comment node.
          * 
          * @param {Node} node The Comment to associate with the new manager.
-         * @param {plat.processing.IElementManager} parent The parent 
-         * {@link plat.processing.IElementManager|IElementManager}.
+         * @param {plat.processing.ElementManager} parent The parent 
+         * {@link plat.processing.ElementManager|ElementManager}.
          * 
-         * @returns {plat.processing.ICommentManager} The newly created {@link plat.processing.ICommentManager|ICommentManager} 
+         * @returns {plat.processing.CommentManager} The newly created {@link plat.processing.CommentManager|CommentManager} 
          * responsible for the passed in Comment Node.
          */
-        static create(node: Node, parent: IElementManager): ICommentManager {
+        static create(node: Node, parent: ElementManager): CommentManager {
             var manager = new CommentManager();
 
             manager.initialize({
@@ -50,7 +50,7 @@ module plat.processing {
          * @type {string}
          * 
          * @description
-         * Specifies the type for this {@link plat.processing.INodeManager|INodeManager}. 
+         * Specifies the type for this {@link plat.processing.NodeManager|NodeManager}. 
          * It's value is "comment".
          */
         type: string = 'comment';
@@ -66,12 +66,12 @@ module plat.processing {
          * 
          * @param {Node} newNode The new Comment node to associate with the cloned
          * manager.
-         * @param {plat.processing.IElementManager} parentManager The parent {@link plat.processing.IElementManager|IElementManager} 
+         * @param {plat.processing.ElementManager} parentManager The parent {@link plat.processing.ElementManager|ElementManager} 
          * for the clone.
          * 
          * @returns {number} The number of nodes to advance while node traversal is in progress (returns 1).
          */
-        clone(newNode: Node, parentManager: IElementManager): number {
+        clone(newNode: Node, parentManager: ElementManager): number {
             CommentManager.create(newNode, parentManager);
             return 1;
         }
@@ -87,7 +87,7 @@ module plat.processing {
     register.injectable(__CommentManagerFactory, ICommentManagerFactory, null, __FACTORY);
     
     /**
-     * @name ICommentManagerFactory
+     * @name CommentManagerFactory
      * @memberof plat.processing
      * @kind interface
      * 
@@ -106,42 +106,12 @@ module plat.processing {
          * Creates a new CommentManager for the given Comment node.
          * 
          * @param {Node} node The Comment to associate with the new manager.
-         * @param {plat.processing.IElementManager} parent The parent 
-         * {@link plat.processing.IElementManager|IElementManager}.
+         * @param {plat.processing.ElementManager} parent The parent 
+         * {@link plat.processing.ElementManager|ElementManager}.
          * 
-         * @returns {plat.processing.ICommentManager} The newly created {@link plat.processing.ICommentManager|ICommentManager} 
+         * @returns {plat.processing.CommentManager} The newly created {@link plat.processing.CommentManager|CommentManager} 
          * responsible for the passed in Comment Node.
          */
-        create(node: Node, parent: IElementManager): ICommentManager;
-    }
-    
-    /**
-     * @name ICommentManager
-     * @memberof plat.processing
-     * @kind interface
-     * 
-     * @extends {plat.processing.INodeManager}
-     * 
-     * @description
-     * An object used to manage Comment nodes.
-     */
-    export interface ICommentManager extends INodeManager {
-        /**
-         * @name clone
-         * @memberof plat.processing.ICommentManager
-         * @kind function
-         * @access public
-         * 
-         * @description
-         * A method for cloning this manager with a new Comment.
-         * 
-         * @param {Node} newNode The new Comment node to associate with the cloned
-         * manager.
-         * @param {plat.processing.IElementManager} parentManager The parent {@link plat.processing.IElementManager|IElementManager} 
-         * for the clone.
-         * 
-         * @returns {number} The number of nodes to advance while node traversal is in progress.
-         */
-        clone(newNode: Node, parentManager: IElementManager): number;
+        create(node: Node, parent: ElementManager): CommentManager;
     }
 }

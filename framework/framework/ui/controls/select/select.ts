@@ -502,7 +502,7 @@ module plat.ui.controls {
                 return;
             }
 
-            TemplateControl.dispose(this.controls[index]);
+            TemplateControl.dispose(<TemplateControl>this.controls[index]);
         }
 
         /**

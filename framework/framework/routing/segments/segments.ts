@@ -26,12 +26,12 @@
          * @access protected
          * @static
          * 
-         * @type {plat.expressions.IRegex}
+         * @type {plat.expressions.Regex}
          * 
          * @description
-         * Reference to the {@link plat.expressions.IRegex|IRegex} injectable.
+         * Reference to the {@link plat.expressions.Regex|Regex} injectable.
          */
-        protected static _regex: expressions.IRegex;
+        protected static _regex: expressions.Regex;
 
         /**
          * @name parse
@@ -241,21 +241,14 @@
     /**
      * The Type for referencing the '_BaseSegmentFactory' injectable as a dependency.
      */
-    export function IBaseSegmentFactory(_regex: expressions.IRegex): typeof BaseSegment {
+    export function IBaseSegmentFactory(_regex: expressions.Regex): typeof BaseSegment {
         (<any>BaseSegment)._regex = _regex;
         return BaseSegment;
     }
 
     plat.register.injectable(__BaseSegmentFactory, IBaseSegmentFactory, [__Regex], __FACTORY);
 
-    /**
-     * The Type for referencing the '_baseSegment' injectable as a dependency.
-     */
-    export function IBaseSegmentInstance(): BaseSegment {
-        return new BaseSegment();
-    }
-
-    plat.register.injectable(__BaseSegmentInstance, IBaseSegmentInstance, null, __INSTANCE);
+    plat.register.injectable(__BaseSegmentInstance, BaseSegment, null, __INSTANCE);
 
     /**
      * @name StaticSegment
@@ -329,14 +322,7 @@
         }
     }
 
-    /**
-     * The Type for referencing the '_staticSegment' injectable as a dependency.
-     */
-    export function IStaticSegmentInstance(): StaticSegment {
-        return new StaticSegment();
-    }
-
-    plat.register.injectable(__StaticSegmentInstance, IStaticSegmentInstance, null, __INSTANCE);
+    plat.register.injectable(__StaticSegmentInstance, StaticSegment, null, __INSTANCE);
 
     /**
      * @name VariableSegment
@@ -381,14 +367,7 @@
         }
     }
 
-    /**
-     * The Type for referencing the '_variableSegment' injectable as a dependency.
-     */
-    export function IVariableSegmentInstance(): VariableSegment {
-        return new VariableSegment();
-    }
-
-    plat.register.injectable(__VariableSegmentInstance, IVariableSegmentInstance, null, __INSTANCE);
+    plat.register.injectable(__VariableSegmentInstance, VariableSegment, null, __INSTANCE);
 
     /**
      * @name SplatSegment
@@ -443,14 +422,7 @@
         };
     }
 
-    /**
-     * The Type for referencing the '_splatSegment' injectable as a dependency.
-     */
-    export function ISplatSegmentInstance(): SplatSegment {
-        return new SplatSegment();
-    }
-
-    plat.register.injectable(__SplatSegmentInstance, ISplatSegmentInstance, null, __INSTANCE);
+    plat.register.injectable(__SplatSegmentInstance, SplatSegment, null, __INSTANCE);
 
     /**
      * @name DynamicSegment
@@ -505,14 +477,7 @@
         };
     }
 
-    /**
-     * The Type for referencing the '_dynamicSegment' injectable as a dependency.
-     */
-    export function IDynamicSegmentInstance(): DynamicSegment {
-        return new DynamicSegment();
-    }
-
-    plat.register.injectable(__DynamicSegmentInstance, IDynamicSegmentInstance, null, __INSTANCE);
+    plat.register.injectable(__DynamicSegmentInstance, DynamicSegment, null, __INSTANCE);
 
     /**
      * @name ICharacterSpecification

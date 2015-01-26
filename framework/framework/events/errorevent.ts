@@ -5,7 +5,6 @@
      * @kind class
      * 
      * @extends {plat.events.DispatchEvent}
-     * @implements {plat.events.IErrorEvent}
      * 
      * @description
      * Represents an internal Error Event. This is used for any 
@@ -14,7 +13,7 @@
      * 
      * @typeparam {Error} E The type of Error this event represents.
      */
-    export class ErrorEvent<E extends Error> extends DispatchEvent implements IErrorEvent<E> {
+    export class ErrorEvent<E extends Error> extends DispatchEvent {
         /**
          * @name _EventManager
          * @memberof plat.events.ErrorEvent
@@ -45,9 +44,9 @@
          * @param {any} sender The sender of the event.
          * @param {E} error The error that occurred, resulting in the event.
          * 
-         * @returns {plat.events.IErrorEvent<E>} The event instance.
+         * @returns {plat.events.ErrorEvent<E>} The event instance.
          */
-        static dispatch<E extends Error>(name: string, sender: any, error: E): IErrorEvent<E> {
+        static dispatch<E extends Error>(name: string, sender: any, error: E): ErrorEvent<E> {
             var event = new ErrorEvent<E>();
 
             event.initialize(name, sender, null, error);
@@ -122,7 +121,7 @@
     register.injectable(__ErrorEventStatic, IErrorEventStatic, [__EventManagerStatic], __STATIC);
 
     /**
-     * @name IErrorEventStatic
+     * @name ErrorEventStatic
      * @memberof plat.events
      * @kind interface
      * 
@@ -146,73 +145,8 @@
          * @param {any} sender The sender of the event.
          * @param {E} error The error that occurred, resulting in the event.
          * 
-         * @returns {plat.events.IErrorEvent<E>} The event instance.
+         * @returns {plat.events.ErrorEvent<E>} The event instance.
          */
-        dispatch<E extends Error>(name: string, sender: any, error: E): IErrorEvent<E>;
-    }
-
-    /**
-     * @name IErrorEvent
-     * @memberof plat.events
-     * @kind interface
-     * 
-     * @extends {plat.events.IDispatchEventInstance}
-     * 
-     * @description
-     * Represents an internal Error Event. This is used for any 
-     * internal errors (both fatal and warnings). All error events are 
-     * direct events.
-     * 
-     * @typeparam {Error} E The type of Error this event represents.
-     */
-    export interface IErrorEvent<E extends Error> extends IDispatchEventInstance {
-        /**
-         * @name error
-         * @memberof plat.events.IErrorEvent
-         * @kind property
-         * @access public
-         * @static
-         * 
-         * @type {E}
-         * 
-         * @description
-         * The error being dispatched.
-         */
-        error: E;
-
-        /**
-         * @name initialize
-         * @memberof plat.events.IErrorEvent
-         * @kind function
-         * @access public
-         * 
-         * @description
-         * Initializes the event, populating its public properties.
-         * 
-         * @param {string} name The name of the event.
-         * @param {any} sender The sender of the event.
-         * @param {string} direction='direct' Equivalent to {@link plat.events.EventManager.DIRECT|EventManager.DIRECT}.
-         * @param {E} error The error that occurred, resulting in the event.
-         * 
-         * @returns {void}
-         */
-        initialize(name: string, sender: any, direction?: 'direct', error?: E): void;
-        /**
-         * @name initialize
-         * @memberof plat.events.IErrorEvent
-         * @kind function
-         * @access public
-         * 
-         * @description
-         * Initializes the event, populating its public properties.
-         * 
-         * @param {string} name The name of the event.
-         * @param {any} sender The sender of the event.
-         * @param {string} direction This is always a direct event.
-         * @param {E} error The error that occurred, resulting in the event.
-         * 
-         * @returns {void}
-         */
-        initialize(name: string, sender: any, direction?: string, error?: E): void;
+        dispatch<E extends Error>(name: string, sender: any, error: E): ErrorEvent<E>;
     }
 }

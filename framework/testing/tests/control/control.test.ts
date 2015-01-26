@@ -1,7 +1,7 @@
 ﻿module tests.control {
     var ControlFactory = plat.acquire(plat.IControlFactory),
         TemplateControlFactory = plat.acquire(plat.ui.ITemplateControlFactory),
-        control: plat.IControl;
+        control: plat.Control;
 
     describe('Control Tests', () => {
         beforeEach(() => {

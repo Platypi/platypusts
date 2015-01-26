@@ -43,7 +43,6 @@
     <TypeScriptCompile Include="expressions\tokenizer\tokenizer.ts" />
     <TypeScriptCompile Include="routing\history\history.ts" />
     <TypeScriptCompile Include="injectables\geolocation\geolocation.ts" />
-    <TypeScriptCompile Include="injectables\indexeddb\indexeddb.ts" />
     <TypeScriptCompile Include="observable\contextmanager\contextmanager.ts" />
     <TypeScriptCompile Include="processing\compiler\compiler.ts" />
     <TypeScriptCompile Include="processing\nodemanager\commentmanager.ts" />

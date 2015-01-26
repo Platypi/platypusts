@@ -426,7 +426,7 @@ function camelCase(str: string): string {
     }
 
     str = str.charAt(0).toLowerCase() + str.slice(1);
-    camelCaseRegex = camelCaseRegex || (<plat.expressions.IRegex>plat.acquire(__Regex)).camelCaseRegex;
+    camelCaseRegex = camelCaseRegex || (<plat.expressions.Regex>plat.acquire(__Regex)).camelCaseRegex;
 
     return str.replace(camelCaseRegex,
         (match: string, delimiter?: string, char?: string, index?: number)

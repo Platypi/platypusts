@@ -1,7 +1,7 @@
 ﻿/// <reference path="../../../references.d.ts" />
 
 module tests.expressions.regex {
-    var regex = plat.acquire(plat.expressions.IRegex),
+    var regex = plat.acquire(plat.expressions.Regex),
         regexs: Array<IRegexregexTest> = [
         {
             name: 'newLine regex',

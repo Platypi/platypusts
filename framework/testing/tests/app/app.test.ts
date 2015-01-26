@@ -26,7 +26,7 @@ module tests.app {
     var _AppStatic = plat.acquire(plat.IAppStatic),
         _EventManager = plat.acquire(plat.events.IEventManagerStatic),
         _LifecycleEvent = plat.acquire(plat.events.ILifecycleEventStatic),
-        compat = plat.acquire(plat.ICompat),
+        compat: plat.Compat = plat.acquire(plat.Compat),
         app: App;
 
     describe('App Tests', () => {

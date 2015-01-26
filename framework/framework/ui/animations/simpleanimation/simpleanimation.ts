@@ -14,13 +14,12 @@ module plat.ui.animations {
      * @kind class
      * 
      * @extends {plat.ui.animations.CssAnimation}
-     * @implements {plat.ui.animations.ISimpleCssAnimation}
      * 
      * @description
      * A simple CSS Animation class that places the 'plat-animation' class on an 
      * element, checks for animation properties, and waits for the animation to end.
      */
-    export class SimpleCssAnimation extends CssAnimation implements ISimpleCssAnimation {
+    export class SimpleCssAnimation extends CssAnimation {
         /**
          * @name _window
          * @memberof plat.ui.animations.SimpleCssAnimation
@@ -58,7 +57,7 @@ module plat.ui.animations {
          * @description
          * An optional options object that can denote a pseudo element animation.
          */
-        options: ISimpleCssAnimationOptions;
+        options: SimpleCssAnimationOptions;
 
         /**
          * @name initialize
@@ -100,7 +99,7 @@ module plat.ui.animations {
             var animationId = this._compat.animationEvents.$animation,
                 element = this.element,
                 className = this.className,
-                computedStyle = this._window.getComputedStyle(element, (this.options || <ISimpleCssAnimationOptions>{}).pseudo),
+                computedStyle = this._window.getComputedStyle(element, (this.options || <SimpleCssAnimationOptions>{}).pseudo),
                 animationName = computedStyle[<any>(animationId + 'Name')];
 
             if (animationName === '' ||
@@ -156,57 +155,17 @@ module plat.ui.animations {
     register.animation(__SimpleAnimation, SimpleCssAnimation);
 
     /**
-     * @name ISimpleCssAnimation
-     * @memberof plat.ui.animations
-     * @kind interface
-     * 
-     * @extends {plat.ui.animations.ICssAnimation}
-     * 
-     * @description
-     * An interface for extending the {@link plat.ui.animations.SimpleCssAnimation|SimpleCssAnimation} 
-     * or {@link plat.ui.animations.SimpleCssTransition|SimpleCssTransition} and allowing for 
-     * custom class names to initiate animations or transitions.
-     */
-    export interface ISimpleCssAnimation extends ICssAnimation {
-        /**
-         * @name className
-         * @memberof plat.ui.animations.ISimpleCssAnimation
-         * @kind property
-         * @access public
-         * 
-         * @type {string}
-         * 
-         * @description
-         * The class name added to the animated element.
-         */
-        className: string;
-
-        /**
-         * @name options
-         * @memberof plat.ui.animations.ISimpleCssAnimation
-         * @kind property
-         * @access public
-         * 
-         * @type {plat.ui.animations.ISimpleAnimationOptions}
-         * 
-         * @description
-         * An optional options object that can denote a pseudo element animation.
-         */
-        options: ISimpleCssAnimationOptions;
-    }
-
-    /**
-     * @name ISimpleCssAnimationOptions
+     * @name SimpleCssAnimationOptions
      * @memberof plat.ui.animations
      * @kind interface
      * 
      * @description
-     * An interface describing the options for {@link plat.ui.animations.ISimpleCssAnimation|ISimpleCssAnimation}.
+     * An interface describing the options for {@link plat.ui.animations.SimpleCssAnimation|SimpleCssAnimation}.
      */
-    export interface ISimpleCssAnimationOptions {
+    export interface SimpleCssAnimationOptions {
         /**
          * @name pseudo
-         * @memberof plat.ui.animations.ISimpleCssAnimationOptions
+         * @memberof plat.ui.animations.SimpleCssAnimationOptions
          * @kind property
          * @access public
          * 

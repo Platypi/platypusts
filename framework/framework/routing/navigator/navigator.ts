@@ -47,10 +47,10 @@
          * @kind property
          * @access protected
          * 
-         * @type {plat.web.IBrowserConfig}
+         * @type {plat.web.BrowserConfig}
          * 
          * @description
-         * The {@link plat.web.IBrowserConfig|IBrowserConfig} injectable instance
+         * The {@link plat.web.BrowserConfig|BrowserConfig} injectable instance
          */
         protected _browserConfig: web.IBrowserConfig;
 
@@ -60,12 +60,12 @@
          * @kind property
          * @access protected
          * 
-         * @type {plat.web.IBrowser}
+         * @type {plat.web.Browser}
          * 
          * @description
-         * The {@link plat.web.IBrowser|IBrowser} injectable instance
+         * The {@link plat.web.Browser|Browser} injectable instance
          */
-        protected _browser: web.IBrowser;
+        protected _browser: web.Browser;
 
         protected _EventManager: events.IEventManagerStatic;
         protected _window: Window;
@@ -78,10 +78,10 @@
          * @kind property
          * @access public
          * 
-         * @type {plat.routing.IRouter}
+         * @type {plat.routing.Router}
          * 
          * @description
-         * The {@link plat.routing.IRouter|router} associated with this link.
+         * The {@link plat.routing.Router|router} associated with this link.
          */
         router: Router;
 
@@ -159,7 +159,6 @@
                 url = _browser.url();
 
             this.backNavigate = true;
-
             return this._finishNavigating()
                 .then(() => {
                     return this._goBack(length);
@@ -196,7 +195,7 @@
 
             EventManager.dispose(this.uid);
             EventManager.on(this.uid, __backButton, () => {
-                var ev: events.IDispatchEventInstance = acquire(__DispatchEventInstance);
+                var ev: events.DispatchEvent = acquire(__DispatchEventInstance);
                 ev.initialize('backButtonPressed', this);
 
                 EventManager.sendEvent(ev);
@@ -208,7 +207,7 @@
                 this.goBack();
             });
 
-            EventManager.on(this.uid, __urlChanged, (ev: events.IDispatchEventInstance, utils?: web.IUrlUtilsInstance) => {
+            EventManager.on(this.uid, __urlChanged, (ev: events.DispatchEvent, utils?: web.UrlUtils) => {
                 if (this.ignoreOnce) {
                     this.ignoreOnce = false;
                     this.ignored = true;
@@ -259,10 +258,6 @@
             view = this._Injector.convertDependency(view);
             return this.router.generate(view, parameters, query);
         }
-    }
-
-    export function INavigatorInstance() {
-        return new Navigator();
     }
 
     register.injectable(__NavigatorInstance, Navigator, null, __INSTANCE);

@@ -8,7 +8,7 @@ module tests.utils {
         expected: any;
     }
 
-    var utils = plat.acquire(plat.IUtils),
+    var utils: plat.Utils = plat.acquire(plat.Utils),
         Promise = plat.acquire(plat.async.IPromise);
 
     function isTrue(obj: any) {

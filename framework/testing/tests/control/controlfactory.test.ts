@@ -1,6 +1,6 @@
 ﻿module tests.controlFactory {
     var ControlFactory = plat.acquire(plat.IControlFactory),
-        control: plat.IControl;
+        control: plat.Control;
 
     describe('ControlFactory Tests', () => {
         beforeEach(() => {

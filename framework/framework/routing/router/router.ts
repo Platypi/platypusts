@@ -18,8 +18,8 @@
         protected _Promise: async.IPromise = acquire(__Promise);
         protected _Injector: typeof dependency.Injector = acquire(__InjectorStatic);
         protected _EventManager: events.IEventManagerStatic = acquire(__EventManagerStatic);
-        protected _browser: web.IBrowser = acquire(__Browser);
-        protected _browserConfig: web.IBrowserConfig = acquire(__BrowserConfig);
+        protected _browser: web.Browser = acquire(__Browser);
+        protected _browserConfig: web.BrowserConfig = acquire(__BrowserConfig);
         protected _resolve: typeof async.Promise.resolve = this._Promise.resolve.bind(this._Promise);
         protected _reject: typeof async.Promise.reject = this._Promise.reject.bind(this._Promise);
 
@@ -89,19 +89,19 @@
             ports.push(port);
 
             if (isObject(this.currentRouteInfo)) {
-                
+
                 var routeInfo = _clone(this.currentRouteInfo, true);
 
                 return this.canNavigateTo(routeInfo)
                     .then((canNavigateTo) => {
-                        if (!canNavigateTo) {
-                            return;
-                        }
-                        this.currentRouteInfo = undefined;
-                        return this.performNavigation(routeInfo);
-                    }).then(() => {
-                        this.currentRouteInfo = routeInfo;
-                    });
+                    if (!canNavigateTo) {
+                        return;
+                    }
+                    this.currentRouteInfo = undefined;
+                    return this.performNavigation(routeInfo);
+                }).then(() => {
+                    this.currentRouteInfo = routeInfo;
+                });
             }
 
             return this._Promise.resolve();
@@ -171,7 +171,7 @@
 
         queryParam(handler: (value: any, query: any) => any, parameter: string, view: string): Router;
         queryParam(handler: (value: any, query: any) => any, parameter: string, view: new (...args: any[]) => any): Router;
-        queryParam(handler: (value: string, query: any) => any, parameter: string, view: any){
+        queryParam(handler: (value: string, query: any) => any, parameter: string, view: any) {
             return this._addHandler(handler, parameter, view, this.queryTransforms);
         }
 
@@ -271,10 +271,10 @@
                     this.navigating = true;
                     return this.finishNavigating = this.navigateChildren(routeInfo)
                         .then(() => {
-                            this.previousUrl = url;
-                            this.previousQuery = queryString;
-                            this.navigating = false;
-                        }, (e) => {
+                        this.previousUrl = url;
+                        this.previousQuery = queryString;
+                        this.navigating = false;
+                    },(e) => {
                             this.navigating = false;
                             throw e;
                         });
@@ -291,21 +291,21 @@
 
             return this.finishNavigating = this.canNavigate(routeInfo)
                 .then((canNavigate: boolean) => {
-                    if (!canNavigate) {
-                        this.navigating = false;
-                        throw new Error('Not cleared to navigate');
-                    }
-
-                    this.previousUrl = url;
-                    this.previousQuery = queryString;
-
-                    return this.performNavigation(routeInfo);
-                })
-                .then(() => {
-                    this.previousSegment = pattern;
-                    this.currentRouteInfo = routeInfoCopy;
+                if (!canNavigate) {
                     this.navigating = false;
-                }, (e) => {
+                    throw new Error('Not cleared to navigate');
+                }
+
+                this.previousUrl = url;
+                this.previousQuery = queryString;
+
+                return this.performNavigation(routeInfo);
+            })
+                .then(() => {
+                this.previousSegment = pattern;
+                this.currentRouteInfo = routeInfoCopy;
+                this.navigating = false;
+            },(e) => {
                     this.navigating = false;
                     throw e;
                 });
@@ -346,7 +346,6 @@
 
             if (isNull(router)) {
                 throw new Error('Route: ' + name + ' does not exist');
-                return;
             }
 
             var path = router.recognizer.generate(name, parameters),
@@ -400,8 +399,8 @@
                 }, this.ports);
             })
                 .then(() => {
-                    return this.navigateChildren(info);
-                });
+                return this.navigateChildren(info);
+            });
         }
 
         performNavigateFrom(ignorePorts?: boolean): async.IThenable<void> {
@@ -409,14 +408,14 @@
                 return child.performNavigateFrom();
             }, this.children)
                 .then(() => {
-                    if (ignorePorts) {
-                        return;
-                    }
+                if (ignorePorts) {
+                    return;
+                }
 
-                    return mapAsync((port: ISupportRouteNavigation) => {
-                        return port.navigateFrom();
-                    }, this.ports);
-                }).then(noop);
+                return mapAsync((port: ISupportRouteNavigation) => {
+                    return port.navigateFrom();
+                }, this.ports);
+            }).then(noop);
         }
 
         canNavigate(info: IRouteInfo) {
@@ -425,8 +424,8 @@
 
             return this.canNavigateFrom(sameRoute)
                 .then((canNavigateFrom: boolean) => {
-                    return canNavigateFrom && this.canNavigateTo(info, sameRoute);
-                });
+                return canNavigateFrom && this.canNavigateTo(info, sameRoute);
+            });
         }
 
         callAllHandlers(view: string, parameters: any, query?: any): async.IThenable<void> {
@@ -461,14 +460,14 @@
             }, this.interceptors['*'])
                 .then(booleanReduce)
                 .then((canNavigate: boolean) => {
-                    if (!canNavigate) {
-                        return <any>[canNavigate];
-                    }
+                if (!canNavigate) {
+                    return <any>[canNavigate];
+                }
 
-                    return mapAsync((handler: (routeInfo: IRouteInfo) => any) => {
-                        return resolve(handler(info));
-                    }, this.interceptors[info.delegate.view])
-                })
+                return mapAsync((handler: (routeInfo: IRouteInfo) => any) => {
+                    return resolve(handler(info));
+                }, this.interceptors[info.delegate.view]);
+            })
                 .then(booleanReduce);
         }
 
@@ -478,14 +477,14 @@
             }, <Array<async.IThenable<boolean>>>[]))
                 .then(booleanReduce)
                 .then((canNavigateFrom: boolean) => {
-                    if (!canNavigateFrom || ignorePorts) {
-                        return <any>[canNavigateFrom];
-                    }
+                if (!canNavigateFrom || ignorePorts) {
+                    return <any>[canNavigateFrom];
+                }
 
-                    return mapAsync((port: ISupportRouteNavigation) => {
-                        return port.canNavigateFrom();
-                    }, this.ports);
-                }).then(booleanReduce);
+                return mapAsync((port: ISupportRouteNavigation) => {
+                    return port.canNavigateFrom();
+                }, this.ports);
+            }).then(booleanReduce);
         }
 
         canNavigateTo(info: IRouteInfo, ignorePorts?: boolean): async.IThenable<boolean> {
@@ -493,44 +492,44 @@
 
             return this.callAllHandlers(info.delegate.view, info.parameters, info.query)
                 .then(() => {
-                    return this.callInterceptors(info);
-                })
+                return this.callInterceptors(info);
+            })
                 .then((canNavigateTo) => {
-                    if (canNavigateTo === false || ignorePorts) {
-                        return <any>[canNavigateTo];
-                    }
+                if (canNavigateTo === false || ignorePorts) {
+                    return <any>[canNavigateTo];
+                }
 
-                    return mapAsync((port: ISupportRouteNavigation) => {
-                        return port.canNavigateTo(info);
-                    }, this.ports);
-                })
+                return mapAsync((port: ISupportRouteNavigation) => {
+                    return port.canNavigateTo(info);
+                }, this.ports);
+            })
                 .then(booleanReduce)
                 .then((canNavigateTo: boolean) => {
-                    if (!canNavigateTo) {
-                        promises = [canNavigateTo];
-                    } else {
-                        var childRoute = this.getChildRoute(info),
-                            childResult: IRouteResult,
-                            childInfo: IRouteInfo;
+                if (!canNavigateTo) {
+                    promises = [canNavigateTo];
+                } else {
+                    var childRoute = this.getChildRoute(info),
+                        childResult: IRouteResult,
+                        childInfo: IRouteInfo;
 
-                        promises = [];
+                    promises = [];
 
-                        this.children.reduce((promises: Array<async.IThenable<boolean>>, child: Router) => {
-                            childResult = child.recognizer.recognize(childRoute);
+                    this.children.reduce((promises: Array<async.IThenable<boolean>>, child: Router) => {
+                        childResult = child.recognizer.recognize(childRoute);
 
-                            if (isEmpty(childResult)) {
-                                child._clearInfo();
-                                return;
-                            }
+                        if (isEmpty(childResult)) {
+                            child._clearInfo();
+                            return;
+                        }
 
-                            childInfo = childResult[0];
-                            childInfo.query = info.query;
-                            return promises.concat(child.canNavigateTo(childInfo));
-                        }, promises);
-                    }
+                        childInfo = childResult[0];
+                        childInfo.query = info.query;
+                        return promises.concat(child.canNavigateTo(childInfo));
+                    }, promises);
+                }
 
-                    return this._Promise.all(promises);
-                })
+                return this._Promise.all(promises);
+            })
                 .then(booleanReduce);
         }
 
@@ -566,11 +565,7 @@
         }
     }
 
-    export function IRouter() {
-        return new Router();
-    }
-
-    plat.register.injectable(__Router, IRouter, null, __INSTANCE);
+    plat.register.injectable(__Router, Router, null, __INSTANCE);
 
     export function IRouterStatic() {
         return Router;

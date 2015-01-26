@@ -13,12 +13,10 @@ module plat.processing {
      * @memberof plat.processing
      * @kind class
      * 
-     * @implements {plat.processing.ICompiler}
-     * 
      * @description
      * Responsible for iterating through the DOM and collecting controls.
      */
-    export class Compiler implements ICompiler {
+    export class Compiler {
         /**
          * @name _ElementManagerFactory
          * @memberof plat.processing.Compiler
@@ -64,13 +62,13 @@ module plat.processing {
          * @kind property
          * @access protected
          * 
-         * @type {plat.storage.ICache<processing.IElementManager>}
+         * @type {plat.storage.Cache<processing.ElementManager>}
          * 
          * @description
-         * Reference to a cache injectable that stores {@link plat.processing.IElementManager|IElementManagers}.
+         * Reference to a cache injectable that stores {@link plat.processing.ElementManager|ElementManagers}.
          */
-        protected _managerCache: storage.ICache<INodeManager> = acquire(__ManagerCache);
-        
+        protected _managerCache: storage.Cache<NodeManager> = acquire(__ManagerCache);
+
         /**
          * @name compile
          * @memberof plat.processing.Compiler
@@ -83,12 +81,12 @@ module plat.processing {
          * text that contains markup.
          * 
          * @param {Node} node The node whose childNodes are going to be compiled.
-         * @param {plat.ui.ITemplateControl} control? The parent control for the given Node. The parent must implement the 
-         * {@link plat.ui.ITemplateControl|ITemplateControl interface} since only they can contain templates.
+         * @param {plat.ui.TemplateControl} control? The parent control for the given Node. The parent must implement the 
+         * {@link plat.ui.TemplateControl|TemplateControl interface} since only they can contain templates.
          * 
          * @returns {void}
          */
-        compile(node: Node, control?: ui.ITemplateControl): void;
+        compile(node: Node, control?: ui.TemplateControl): void;
         /**
          * @name compile
          * @memberof plat.processing.Compiler
@@ -101,12 +99,12 @@ module plat.processing {
          * text that contains markup.
          * 
          * @param {Array<Node>} nodes The nodes that are going to be compiled.
-         * @param {plat.ui.ITemplateControl} control? The parent control for the given Node. The parent must implement the 
-         * {@link plat.ui.ITemplateControl|ITemplateControl interface} since only they can contain templates.
+         * @param {plat.ui.TemplateControl} control? The parent control for the given Node. The parent must implement the 
+         * {@link plat.ui.TemplateControl|TemplateControl interface} since only they can contain templates.
          * 
          * @returns {void}
          */
-        compile(nodes: Array<Node>, control?: ui.ITemplateControl): void;
+        compile(nodes: Array<Node>, control?: ui.TemplateControl): void;
         /**
          * @name compile
          * @memberof plat.processing.Compiler
@@ -119,19 +117,19 @@ module plat.processing {
          * text that contains markup.
          * 
          * @param {NodeList} nodes The NodeList that is going to be compiled.
-         * @param {plat.ui.ITemplateControl} control? The parent control for the given Node. The parent must implement the 
-         * {@link plat.ui.ITemplateControl|ITemplateControl interface} since only they can contain templates.
+         * @param {plat.ui.TemplateControl} control? The parent control for the given Node. The parent must implement the 
+         * {@link plat.ui.TemplateControl|TemplateControl interface} since only they can contain templates.
          * 
          * @returns {void}
          */
-        compile(nodes: NodeList, control?: ui.ITemplateControl): void;
-        compile(node: any, control?: ui.ITemplateControl): void {
+        compile(nodes: NodeList, control?: ui.TemplateControl): void;
+        compile(node: any, control?: ui.TemplateControl): void {
             var childNodes = node.childNodes,
                 length: number,
                 newLength: number,
                 childNode: Node,
                 hasControl = !isNull(control),
-                manager = <IElementManager>(hasControl ? this._managerCache.read(control.uid) : null),
+                manager = <ElementManager>(hasControl ? this._managerCache.read(control.uid) : null),
                 create = this._ElementManagerFactory.create;
 
             if (!isUndefined(childNodes)) {
@@ -169,12 +167,12 @@ module plat.processing {
          * @access protected
          * 
          * @description
-         * Iterates through the array of nodes creating {@link plat.processing.IElementManager|IElementManagers} on Element 
-         * nodes, {@link plat.processing.ITextManager|ITextManagers} on text nodes, and 
-         * {@link plat.processing.ICommentManager|ICommentManagers} on comment nodes.
+         * Iterates through the array of nodes creating {@link plat.processing.ElementManager|ElementManagers} on Element 
+         * nodes, {@link plat.processing.TextManager|TextManagers} on text nodes, and 
+         * {@link plat.processing.CommentManager|CommentManagers} on comment nodes.
          * 
          * @param {Array<Node>} nodes The array of nodes to be compiled. 
-         * @param {plat.processing.IElementManager} manager The parent {@link plat.processing.IElementManager|IElementManagers} 
+         * @param {plat.processing.ElementManager} manager The parent {@link plat.processing.ElementManager|ElementManagers} 
          * for the given array of nodes.
          * 
          * @returns {void}
@@ -186,10 +184,10 @@ module plat.processing {
          * @param nodes The NodeList to be compiled. 
          * @param manager The parent Element Manager for the given array of nodes.
          */
-        protected _compileNodes(nodes: Array<Node>, manager: IElementManager): void {
+        protected _compileNodes(nodes: Array<Node>, manager: ElementManager): void {
             var length = nodes.length,
                 node: Node,
-                newManager: IElementManager,
+                newManager: ElementManager,
                 newLength: number,
                 create = this._ElementManagerFactory.create,
                 commentCreate = this._CommentManagerFactory.create,
@@ -218,77 +216,5 @@ module plat.processing {
         }
     }
 
-    /**
-     * The Type for referencing the '_compiler' injectable as a dependency.
-     */
-    export function ICompiler(): ICompiler {
-        return new Compiler();
-    }
-
-    register.injectable(__Compiler, ICompiler);
-    
-    /**
-     * @name ICompiler
-     * @memberof plat.processing
-     * @kind interface
-     * 
-     * @description
-     * Describes an object that iterates through the DOM and collects controls.
-     */
-    export interface ICompiler {
-        /**
-         * @name compile
-         * @memberof plat.processing.ICompiler
-         * @kind function
-         * @access public
-         * @variation 0
-         * 
-         * @description
-         * Goes through the child Nodes of the given Node, finding elements that contain controls as well as
-         * text that contains markup.
-         * 
-         * @param {Node} node The node whose childNodes are going to be compiled.
-         * @param {plat.ui.ITemplateControl} control? The parent control for the given Node. The parent must implement the 
-         * {@link plat.ui.ITemplateControl|ITemplateControl interface} since only they can contain templates.
-         * 
-         * @returns {void}
-         */
-        compile(node: Node, control?: ui.ITemplateControl): void;
-        /**
-         * @name compile
-         * @memberof plat.processing.ICompiler
-         * @kind function
-         * @access public
-         * @variation 1
-         * 
-         * @description
-         * Goes through the Node array, finding elements that contain controls as well as
-         * text that contains markup.
-         * 
-         * @param {Array<Node>} nodes The nodes that are going to be compiled.
-         * @param {plat.ui.ITemplateControl} control? The parent control for the given Node. The parent must implement the 
-         * {@link plat.ui.ITemplateControl|ITemplateControl interface} since only they can contain templates.
-         * 
-         * @returns {void}
-         */
-        compile(nodes: Array<Node>, control?: ui.ITemplateControl): void;
-        /**
-         * @name compile
-         * @memberof plat.processing.ICompiler
-         * @kind function
-         * @access public
-         * @variation 2
-         * 
-         * @description
-         * Goes through the NodeList, finding elements that contain controls as well as
-         * text that contains markup.
-         * 
-         * @param {NodeList} nodes The NodeList that is going to be compiled.
-         * @param {plat.ui.ITemplateControl} control? The parent control for the given Node. The parent must implement the 
-         * {@link plat.ui.ITemplateControl|ITemplateControl interface} since only they can contain templates.
-         * 
-         * @returns {void}
-         */
-        compile(nodes: NodeList, control?: ui.ITemplateControl): void;
-    }
+    register.injectable(__Compiler, Compiler);
 }

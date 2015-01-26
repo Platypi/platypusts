@@ -39,10 +39,10 @@ module plat.ui.controls {
          * @kind property
          * @access protected
          * 
-         * @type {plat.routing.IRouterStatic}
+         * @type {plat.routing.RouterStatic}
          * 
          * @description
-         * The {@link plat.routing.IRouterStatic|IRouterStatic} injectable instance
+         * The {@link plat.routing.RouterStatic|RouterStatic} injectable instance
          */
         protected _router: typeof routing.Router = acquire(__RouterStatic);
 
@@ -65,12 +65,12 @@ module plat.ui.controls {
          * @kind property
          * @access protected
          * 
-         * @type {plat.web.IBrowser}
+         * @type {plat.web.Browser}
          * 
          * @description
-         * The {@link plat.web.IBrowser|IBrowser} injectable instance
+         * The {@link plat.web.Browser|Browser} injectable instance
          */
-        protected _browser: web.IBrowser = acquire(__Browser);
+        protected _browser: web.Browser = acquire(__Browser);
 
         /**
          * @name router
@@ -78,10 +78,10 @@ module plat.ui.controls {
          * @kind property
          * @access public
          * 
-         * @type {plat.routing.IRouter}
+         * @type {plat.routing.Router}
          * 
          * @description
-         * The {@link plat.routing.IRouter|router} associated with this link.
+         * The {@link plat.routing.Router|router} associated with this link.
          */
         router: routing.Router;
 

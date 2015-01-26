@@ -4,13 +4,11 @@ module plat.expressions {
      * @memberof plat.expressions
      * @kind class
      * 
-     * @implements {plat.expressions.ITokenizer}
-     * 
      * @description
      * A class that is responsible for taking in a JavaScript expression string and
      * finding all of its tokens (i.e. delimiters, operators, etc).
      */
-    export class Tokenizer implements ITokenizer {
+    export class Tokenizer {
         /**
          * @name _Exception
          * @memberof plat.expressions.Tokenizer
@@ -36,7 +34,7 @@ module plat.expressions {
          * The input string to tokenize.
          */
         protected _input: string;
-        
+
         /**
          * @name __previousChar
          * @memberof plat.expressions.Tokenizer
@@ -60,7 +58,7 @@ module plat.expressions {
          * @description
          * A regular expression for determining if a potential variable is valid syntax.
          */
-        private __variableRegex = (<expressions.IRegex>acquire(__Regex)).invalidVariableRegex;
+        private __variableRegex = (<expressions.Regex>acquire(__Regex)).invalidVariableRegex;
         /**
          * @name __outputQueue
          * @memberof plat.expressions.Tokenizer
@@ -706,8 +704,8 @@ module plat.expressions {
             this.__argCount.push({
                 num: 0,
                 isArray: !(previousChar === ']' ||
-                previousChar === ')' ||
-                this._isAlphaNumeric(previousChar))
+                    previousChar === ')' ||
+                    this._isAlphaNumeric(previousChar))
             });
 
             this.__lastCommaChar.push(char);
@@ -1081,7 +1079,7 @@ module plat.expressions {
                 firstArrayOperator = OPERATORS[firstArrayVal];
                 if (!(isNull(firstArrayOperator) ||
                     !(firstArrayOperator.precedence < operatorPrecedence ||
-                    (isLtR && firstArrayOperator.precedence === operatorPrecedence)))) {
+                        (isLtR && firstArrayOperator.precedence === operatorPrecedence)))) {
                     outputQueue.push(operatorStack.shift());
                 } else {
                     operatorStack.unshift({ val: operator, args: operatorFn.fn.length - 2 });
@@ -1118,8 +1116,8 @@ module plat.expressions {
             while (!isNull(topOperator) &&
                 isValUnequal(topOperator, '([') &&
                 (this._isStringValidVariable(topOperator.val) ||
-                isValEqual(topOperator.val, '.[]') ||
-                isAccessor(topOperator.val))) {
+                    isValEqual(topOperator.val, '.[]') ||
+                    isAccessor(topOperator.val))) {
                 fnToken = operatorStack.shift();
                 if (!(fnToken.args !== -1 || isValEqual(fnToken, '.[]'))) {
                     fnToken.args = -2;
@@ -1137,42 +1135,7 @@ module plat.expressions {
         }
     }
 
-    /**
-     * The Type for referencing the '_tokenizer' injectable as a dependency.
-     */
-    export function ITokenizer(): ITokenizer {
-        return new Tokenizer();
-    }
-
-    register.injectable(__Tokenizer, ITokenizer);
-
-    /**
-     * @name ITokenizer
-     * @memberof plat.expressions
-     * @kind interface
-     * 
-     * @description
-     * Describes an object used to find tokens for an expression and create 
-     * {@link plat.expressions.IToken|ITokens}.
-     */
-    export interface ITokenizer {
-        /**
-         * @name createTokens
-         * @memberof plat.expressions.ITokenizer
-         * @kind function
-         * @access public
-         * 
-         * @description
-         * Takes in an expression string and outputs a tokenized collection of 
-         * {@link plat.expressions.IToken|ITokens}.
-         * 
-         * @param {string} input The JavaScript expression string to tokenize.
-         * 
-         * @returns {Array<plat.expressions.IToken>} The tokenized collection of 
-         * {@link plat.expressions.IToken|ITokens}.
-         */
-        createTokens(input: string): Array<IToken>;
-    }
+    register.injectable(__Tokenizer, Tokenizer);
     
     /**
      * @name IToken

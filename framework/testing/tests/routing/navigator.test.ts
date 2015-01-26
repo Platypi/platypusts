@@ -3,8 +3,8 @@ module test.routing.router {
     'use strict';
 
     var history = plat.acquire(plat.routing.History),
-        router = plat.acquire(plat.routing.IRouter),
-        browser = plat.acquire(plat.web.IBrowser),
+        router = plat.acquire(plat.routing.Router),
+        browser = plat.acquire(plat.web.Browser),
         navigator: plat.routing.Navigator;
 
     class PostsViewControl extends plat.ui.ViewControl { }
@@ -32,21 +32,21 @@ module test.routing.router {
         view: 'posts'
     });
 
-    describe('Navigator Test', () => {
+    describe('Navigator Test',() => {
         beforeEach(() => {
-            navigator = plat.acquire(plat.routing.INavigatorInstance);
+            navigator = plat.acquire(plat.routing.Navigator);
         });
 
         afterEach(() => {
             navigator.removeUrlListener();
         });
 
-        it('should test history', () => {
+        it('should test history',() => {
             navigator.initialize(router);
             expect((<any>navigator)._history).toBe(history);
         });
 
-        it('should test that the history stack is populated for the initial navigator', () => {
+        it('should test that the history stack is populated for the initial navigator',() => {
             var spy = spyOn(browser, 'url'),
                 spy2 = spyOn(router, 'navigate');
 
@@ -57,12 +57,12 @@ module test.routing.router {
             expect(spy2).not.toHaveBeenCalled();
         });
 
-        describe('pre-initialized', () => {
+        describe('pre-initialized',() => {
             beforeEach(() => {
                 navigator.initialize(router);
             });
 
-            it('should test navigate', (done) => {
+            it('should test navigate',(done) => {
                 var spy = <jasmine.Spy><any>spyOn(browser, 'url').and.callThrough();
                 navigator.navigate(PostsViewControl, null).then(() => {
                     expect(spy).toHaveBeenCalled();
@@ -70,14 +70,17 @@ module test.routing.router {
                 });
             });
 
-            it('should test goBack with length', () => {
+            it('should test goBack with length',(done) => {
                 var spy = spyOn(window.history, 'go');
 
                 navigator.goBack({
                     length: 2
                 });
 
-                expect(spy).toHaveBeenCalledWith(-2);
+                setTimeout(() => {
+                    expect(spy).toHaveBeenCalledWith(-2);
+                    done();
+                });
             });
         });
     });

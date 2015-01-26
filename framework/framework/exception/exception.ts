@@ -322,14 +322,14 @@ module plat {
          * @kind function
          * @access public
          * @static
-         *
+         * 
          * @description
          * Method for sending a fatal error to all listeners. Will
          * throw an error.
-         *
+         * 
          * @param {Error} error The Error to be sent to all the listeners.
          * @param {number} type? Denotes the type of fatal exception.
-         *
+         * 
          * @returns {void}
          */
         fatal(error: Error, type?: number): void;
@@ -339,14 +339,14 @@ module plat {
          * @kind function
          * @access public
          * @static
-         *
+         * 
          * @description
          * Method for sending a fatal message to all listeners. Will
          * throw an error.
-         *
+         * 
          * @param {string} message The message to be sent to all the listeners.
          * @param {number} type? Denotes the type of fatal exception.
-         *
+         * 
          * @returns {void}
          */
         fatal(message: string, type?: number): void;
@@ -373,9 +373,9 @@ module plat {
          * @access public
          * @static
          * @readonly
-         *
+         * 
          * @type {number}
-         *
+         * 
          * @description
          * Exception Type for compiling exceptions
          */
@@ -388,9 +388,9 @@ module plat {
          * @access public
          * @static
          * @readonly
-         *
+         * 
          * @type {number}
-         *
+         * 
          * @description
          * Exception Type for binding exceptions
          */
@@ -403,9 +403,9 @@ module plat {
          * @access public
          * @static
          * @readonly
-         *
+         * 
          * @type {number}
-         *
+         * 
          * @description
          * Exception Type for name exceptions
          */
@@ -418,9 +418,9 @@ module plat {
          * @access public
          * @static
          * @readonly
-         *
+         * 
          * @type {number}
-         *
+         * 
          * @description
          * Exception Type for navigation exceptions
          */
@@ -433,9 +433,9 @@ module plat {
          * @access public
          * @static
          * @readonly
-         *
+         * 
          * @type {number}
-         *
+         * 
          * @description
          * Exception Type for template exceptions
          */
@@ -448,9 +448,9 @@ module plat {
          * @access public
          * @static
          * @readonly
-         *
+         * 
          * @type {number}
-         *
+         * 
          * @description
          * Exception Type for ajax exceptions
          */
@@ -463,9 +463,9 @@ module plat {
          * @access public
          * @static
          * @readonly
-         *
+         * 
          * @type {number}
-         *
+         * 
          * @description
          * Exception Type for context exceptions
          */
@@ -478,9 +478,9 @@ module plat {
          * @access public
          * @static
          * @readonly
-         *
+         * 
          * @type {number}
-         *
+         * 
          * @description
          * Exception Type for event exceptions
          */
@@ -493,9 +493,9 @@ module plat {
          * @access public
          * @static
          * @readonly
-         *
+         * 
          * @type {number}
-         *
+         * 
          * @description
          * Exception Type for injectable exceptions
          */
@@ -508,9 +508,9 @@ module plat {
          * @access public
          * @static
          * @readonly
-         *
+         * 
          * @type {number}
-         *
+         * 
          * @description
          * Exception Type for compat exceptions
          */
@@ -523,9 +523,9 @@ module plat {
          * @access public
          * @static
          * @readonly
-         *
+         * 
          * @type {number}
-         *
+         * 
          * @description
          * Exception Type for promise exceptions
          */
@@ -538,9 +538,9 @@ module plat {
          * @access public
          * @static
          * @readonly
-         *
+         * 
          * @type {number}
-         *
+         * 
          * @description
          * Exception Type for animation exceptions
          */
@@ -553,9 +553,9 @@ module plat {
          * @access public
          * @static
          * @readonly
-         *
+         * 
          * @type {number}
-         *
+         * 
          * @description
          * Exception Type for individual control exceptions
          * (e.g. using a particular control incorrectly).

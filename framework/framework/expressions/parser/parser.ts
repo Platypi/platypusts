@@ -13,25 +13,23 @@ module plat.expressions {
      * @memberof plat.expressions
      * @kind class
      * 
-     * @implements {plat.expressions.IParser}
-     * 
      * @description
      * A class for parsing JavaScript expression strings and creating 
      * {@link plat.expressions.IParsedExpression|IParsedExpressions}.
      */
-    export class Parser implements IParser {
+    export class Parser {
         /**
          * @name _tokenizer
          * @memberof plat.expressions.Parser
          * @kind property
          * @access protected
          * 
-         * @type {plat.expressions.ITokenizer}
+         * @type {plat.expressions.Tokenizer}
          * 
          * @description
-         * Reference to the {@link plat.expressions.ITokenizer|ITokenizer} injectable.
+         * Reference to the {@link plat.expressions.Tokenizer|Tokenizer} injectable.
          */
-        protected _tokenizer: ITokenizer = acquire(__Tokenizer);
+        protected _tokenizer: Tokenizer = acquire(__Tokenizer);
 
         /**
          * @name _Exception
@@ -55,7 +53,7 @@ module plat.expressions {
          * @type {Array<plat.expressions.IToken>}
          * 
          * @description
-         * A single expression's token representation created by a {@link plat.expressions.ITokenizer|ITokenizer}.
+         * A single expression's token representation created by a {@link plat.expressions.Tokenizer|Tokenizer}.
          */
         protected _tokens: Array<IToken> = [];
 
@@ -943,58 +941,7 @@ module plat.expressions {
         }
     }
 
-    /**
-     * The Type for referencing the '_parser' injectable as a dependency.
-     */
-    export function IParser(): IParser {
-        return new Parser();
-    }
-
-    register.injectable(__Parser, IParser);
-
-    /**
-     * @name IParser
-     * @memberof plat.expressions
-     * @kind interface
-     * 
-     * @description
-     * Describes an object that can parse a JavaScript expression string and turn it into an
-     * {@link plat.expressions.IParsedExpression|IParsedExpression}.
-     */
-    export interface IParser {
-        /**
-         * @name parse
-         * @memberof plat.expressions.IParser
-         * @kind function
-         * @access public
-         * 
-         * @description
-         * Parses a JavaScript expression string.
-         * 
-         * @param {string} expression The JavaScript expression string to parse.
-         * 
-         * @returns {plat.expressions.IParsedExpression} The parsed expression containing detailed 
-         * information about the expression as well as a way to evaluate its value.
-         */
-        parse(expression: string): IParsedExpression;
-
-        /**
-         * @name clearCache
-         * @memberof plat.expressions.IParser
-         * @kind function
-         * @access public
-         * 
-         * @description
-         * If a key is passed in, it clears that single value in the expression cache. If no 
-         * key is present, the entire expression cache will be cleared.
-         * 
-         * @param {string} key? An optional key that will clear its stored value in the expression 
-         * cache if passed in.
-         * 
-         * @returns {void}
-         */
-        clearCache(key?: string): void;
-    }
+    register.injectable(__Parser, Parser);
 
     /**
      * @name IParsedExpression

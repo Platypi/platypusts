@@ -7,6 +7,5 @@
         return _window.history;
     }
 
-    register.injectable(__History, History, [__Window]); 
+    register.injectable(__History, History, [__Window]);
 }
- 

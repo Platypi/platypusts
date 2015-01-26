@@ -30,12 +30,12 @@ module plat.ui.controls {
          * @kind property
          * @access protected
          * 
-         * @type {plat.storage.ITemplateCache}
+         * @type {plat.storage.TemplateCache}
          * 
          * @description
          * Reference to an injectable for storing HTML templates.
          */
-        protected _templateCache: storage.ITemplateCache = acquire(__TemplateCache);
+        protected _templateCache: storage.TemplateCache = acquire(__TemplateCache);
 
         /**
          * @name _document
@@ -137,12 +137,12 @@ module plat.ui.controls {
          * @kind property
          * @access private
          * 
-         * @type {plat.storage.ICache<any>}
+         * @type {plat.storage.Cache<any>}
          * 
          * @description
          * HTML template storage for all instances of this control.
          */
-        private __templateControlCache: storage.ICache<any>;
+        private __templateControlCache: storage.Cache<any>;
 
         /**
          * @name constructor
@@ -266,7 +266,7 @@ module plat.ui.controls {
                 appendChildren(this.elementNodes, template);
             }
 
-            var controlPromise: async.IThenable<ITemplateControl>;
+            var controlPromise: async.IThenable<TemplateControl>;
             if (isPromise(template)) {
                 controlPromise = template.catch((error: Error) => {
                     if (isNull(error)) {
