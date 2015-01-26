@@ -20,7 +20,7 @@ declare module plat {
           * @param {new (...args: any[]) => plat.App} Type The constructor for the IApp.
           * @param {Array<any>} dependencies? An array of strings representing the dependencies needed for the app injector.
           */
-        function app(name: string, Type: new (...args: any[]) => App, dependencies?: any[]): typeof register;
+        function app(name: string, Type: new (...args: any[]) => App, dependencies?: Array<any>): typeof register;
         /**
           * Registers an Control with the framework. The framework will instantiate the
           * Control when needed. The dependencies array corresponds to injectables that
@@ -30,7 +30,7 @@ declare module plat {
           * @param {Array<any>} dependencies? An array of strings representing the dependencies needed for the Control
           * injector.
           */
-        function control(name: string, Type: new (...args: any[]) => Control, dependencies?: any[], isStatic?: boolean): typeof register;
+        function control(name: string, Type: new (...args: any[]) => Control, dependencies?: Array<any>, isStatic?: boolean): typeof register;
         /**
           * Registers an IViewControl with the framework. The framework will
           * instantiate the control when needed. The dependencies array corresponds to injectables that will be
@@ -41,7 +41,7 @@ declare module plat {
           * @param {Array<any>} dependencies? An optional array of strings representing the dependencies needed for the
           * IViewControl injector.
           */
-        function viewControl<T extends ui.ViewControl>(name: string, Type: new (...args: any[]) => T, dependencies?: any[]): typeof register;
+        function viewControl<T extends ui.ViewControl>(name: string, Type: new (...args: any[]) => T, dependencies?: Array<any>): typeof register;
         /**
           * Registers an injectable with the framework. Injectables are objects that can be used for dependency injection into other objects.
           * The dependencies array corresponds to injectables that will be passed into the Constructor of the injectable.
@@ -56,7 +56,7 @@ declare module plat {
           * plat.register.injectable('_CacheFactory', [plat.expressions.Parser], Cache);
           * plat.register.injectable('database', MyDatabase, null, plat.register.injectable.INSTANCE);
           */
-        function injectable(name: string, Type: new (...args: any[]) => any, dependencies?: any[], injectableType?: string): typeof register;
+        function injectable(name: string, Type: new (...args: any[]) => any, dependencies?: Array<any>, injectableType?: string): typeof register;
         /**
           * Registers an injectable with the framework. Injectables are objects that can be used for dependency injection into other objects.
           * The dependencies array corresponds to injectables that will be passed into the Constructor of the injectable.
@@ -71,7 +71,7 @@ declare module plat {
           *     function(parser: plat.expressions.Parser) { return { ... }; });
           * plat.register.injectable('database', function() { return new Database(); }, null, register.injectable.INSTANCE);
           */
-        function injectable(name: string, method: (...args: any[]) => any, dependencies?: any[], injectableType?: string): typeof register;
+        function injectable(name: string, method: (...args: any[]) => any, dependencies?: Array<any>, injectableType?: string): typeof register;
         /**
           * Contains constants for injectable type.
           */
@@ -115,8 +115,8 @@ declare module plat {
           * @param {string} animationType The type of animation. Both the intended type and default value are
           * CSS.
           */
-        function animation(name: string, Type: new (...args: any[]) => ui.animations.CssAnimation, dependencies?: any[], animationType?: 'css'): typeof register;
-        function animation(name: string, Type: new (...args: any[]) => ui.animations.CssAnimation, dependencies?: any[], animationType?: string): typeof register;
+        function animation(name: string, Type: new (...args: any[]) => ui.animations.CssAnimation, dependencies?: Array<any>, animationType?: 'css'): typeof register;
+        function animation(name: string, Type: new (...args: any[]) => ui.animations.CssAnimation, dependencies?: Array<any>, animationType?: string): typeof register;
         /**
           * Adds a JS animation denoted by its name. If  Intended to be used when JS animation implementations for legacy browsers
           * is desired.
@@ -127,8 +127,8 @@ declare module plat {
           * @param {string} animationType The type of animation. Both the intended type and default value are
           * JS.
           */
-        function animation(name: string, Type: new (...args: any[]) => ui.animations.JsAnimation, dependencies: any[], animationType: 'js'): typeof register;
-        function animation(name: string, Type: new (...args: any[]) => ui.animations.JsAnimation, dependencies: any[], animationType: string): typeof register;
+        function animation(name: string, Type: new (...args: any[]) => ui.animations.JsAnimation, dependencies: Array<any>, animationType: 'js'): typeof register;
+        function animation(name: string, Type: new (...args: any[]) => ui.animations.JsAnimation, dependencies: Array<any>, animationType: string): typeof register;
         /**
           * Contains constants for animation type.
           */
@@ -166,7 +166,7 @@ declare module plat {
               * @param {Array<any>} dependencies The array of dependencies specified
               * by either their Constructor or their registered name.
               */
-            static getDependencies(dependencies: any[]): Injector<any>[];
+            static getDependencies(dependencies: Array<any>): Array<Injector<any>>;
             /**
               * Finds and returns the dependency.
               * @param {any} dependency an object/string used to find the dependency.
@@ -179,7 +179,7 @@ declare module plat {
               * @param {Array<any>} dependencies The array of dependencies specified
               * by either their Constructor or their registered name.
               */
-            static convertDependencies(dependencies: any[]): string[];
+            static convertDependencies(dependencies: Array<any>): Array<string>;
             /**
               * Converts a dependency specified by its Constructors into an
               * equivalent dependency specified by its registered string
@@ -249,7 +249,7 @@ declare module plat {
               * @param {string} type The type of injector, used for injectables specifying a injectableType of
               * STATIC, SINGLETON, FACTORY, INSTANCE, or CLASS. The default is SINGLETON.
               */
-            constructor(name: string, Constructor: new () => T, dependencies?: any[], type?: string);
+            constructor(name: string, Constructor: new () => T, dependencies?: Array<any>, type?: string);
             /**
               * Gathers the dependencies for the Injector object and creates a new instance of the
               * Constructor, passing in the dependencies in the order they were specified. If the
@@ -317,7 +317,7 @@ declare module plat {
       * Returns the requested injectable dependency.
       * @param {Function} dependency An array of Types specifying the injectable dependencies.
       */
-    function acquire(dependencies: Function[]): any[];
+    function acquire(dependencies: Array<Function>): Array<any>;
     /**
       * Returns the requested injectable dependency.
       * @param {string} dependency The injectable dependency type to return.
@@ -327,12 +327,12 @@ declare module plat {
       * Gathers dependencies and returns them as an array in the order they were requested.
       * @param {Array<string>} dependencies An array of strings specifying the injectable dependencies.
       */
-    function acquire(dependencies: string[]): any[];
+    function acquire(dependencies: Array<string>): Array<any>;
     /**
       * Gathers dependencies and returns them as an array in the order they were requested.
       * @param {Array<any>} dependencies An array of strings or Functions specifying the injectable dependencies.
       */
-    function acquire(dependencies: any[]): any[];
+    function acquire(dependencies: Array<any>): Array<any>;
     /**
       * Manages the throwing and consuming of errors and warnings.
       */
@@ -864,7 +864,7 @@ declare module plat {
           * @param {Array<T>} array The Array to filter.
           * @param {any} context? An optional context to bind to the iterator.
           */
-        filter<T>(iterator: IListIterator<T, boolean>, array: T[], context?: any): T[];
+        filter<T>(iterator: IListIterator<T, boolean>, array: Array<T>, context?: any): Array<T>;
         /**
           * Takes in an object/array and a function to evaluate the properties in the object/array.
           * Returns a filtered array of objects resulting from evaluating the function.
@@ -873,13 +873,13 @@ declare module plat {
           * @param {plat.IObject<T>} obj The object to filter.
           * @param {any} context? An optional context to bind to the iterator.
           */
-        filter<T>(iterator: IObjectIterator<T, boolean>, obj: IObject<T>, context?: any): T[];
+        filter<T>(iterator: IObjectIterator<T, boolean>, obj: IObject<T>, context?: any): Array<T>;
         /**
           * Takes in a list and object containing key/value pairs to search for in the list.
           * @param {Object} properties An object containing key/value pairs to match with obj's values.
           * @param {Array<T>} array The list used for searching for properties.
           */
-        where<T>(properties: Object, array: T[]): T[];
+        where<T>(properties: Object, array: Array<T>): Array<T>;
         /**
           * Takes in an Array and a function to iterate over. Calls the iterator function with every property
           * in the Array, then returns the object.
@@ -887,7 +887,7 @@ declare module plat {
           * @param {Array<T>} array An Array.
           * @param {any} context? An optional context to bind to the iterator.
           */
-        forEach<T>(iterator: IListIterator<T, void>, array: T[], context?: any): T[];
+        forEach<T>(iterator: IListIterator<T, void>, array: Array<T>, context?: any): Array<T>;
         /**
           * Takes in an Array and a function to iterate over. Calls the iterator function with every property
           * in the Array, then returns the object.
@@ -904,7 +904,7 @@ declare module plat {
           * @param {Array<T>} array An Array.
           * @param {any} context? An optional context to bind to the iterator.
           */
-        map<T, R>(iterator: IListIterator<T, R>, array: T[], context?: any): R[];
+        map<T, R>(iterator: IListIterator<T, R>, array: Array<T>, context?: any): Array<R>;
         /**
           * Takes in an object and an iterator function. Calls the iterator with all the values in the object. The
           * iterator can transform the object and return it. The returned values will be pushed to an Array and
@@ -913,7 +913,7 @@ declare module plat {
           * @param {plat.IObject<T>} obj An Object.
           * @param {any} context? An optional context to bind to the iterator.
           */
-        map<T, R>(iterator: IObjectIterator<T, R>, obj: IObject<T>, context?: any): R[];
+        map<T, R>(iterator: IObjectIterator<T, R>, obj: IObject<T>, context?: any): Array<R>;
         /**
           * Takes in an array and an iterator function. Calls the iterator with all the values in the array. The
           * iterator can return a promise the will resolve with the mapped value. The returned values will be pushed
@@ -922,7 +922,7 @@ declare module plat {
           * @param {Array<T>} array An array.
           * @param {any} context? An optional context to bind to the iterator.
           */
-        mapAsync<T, R>(iterator: IListIterator<T, async.IThenable<R>>, array: T[], context?: any): async.IThenable<R[]>;
+        mapAsync<T, R>(iterator: IListIterator<T, async.IThenable<R>>, array: Array<T>, context?: any): async.IThenable<Array<R>>;
         /**
           * Takes in an object and an iterator function. Calls the iterator with all the values in the object. The
           * iterator can return a promise the will resolve with the mapped value. The returned values will be pushed
@@ -931,7 +931,7 @@ declare module plat {
           * @param {plat.IObject<T>} obj An Object.
           * @param {any} context? An optional context to bind to the iterator.
           */
-        mapAsync<T, R>(iterator: IObjectIterator<T, async.IThenable<R>>, obj: IObject<T>, context?: any): async.IThenable<R[]>;
+        mapAsync<T, R>(iterator: IObjectIterator<T, async.IThenable<R>>, obj: IObject<T>, context?: any): plat.async.IThenable<Array<R>>;
         /**
           * Takes in an array and an iterator function. Calls the iterator with all the values in the array. The
           * iterator can return a promise the will resolve with the mapped value. The next value in the array will not be passed to
@@ -940,7 +940,7 @@ declare module plat {
           * @param {Array<T>} array An Array.
           * @param {any} context? An optional context to bind to the iterator.
           */
-        mapAsyncInOrder<T, R>(iterator: IListIterator<T, async.IThenable<R>>, array: T[], context?: any): async.IThenable<R[]>;
+        mapAsyncInOrder<T, R>(iterator: IListIterator<T, async.IThenable<R>>, array: Array<T>, context?: any): plat.async.IThenable<Array<R>>;
         /**
           * Takes in an array and an iterator function. Calls the iterator with all the values in the array in descending order. The
           * iterator can return a promise the will resolve with the mapped value. The next value in the array will not be passed to
@@ -949,14 +949,14 @@ declare module plat {
           * @param {Array<T>} array An Array.
           * @param {any} context? An optional context to bind to the iterator.
           */
-        mapAsyncInDescendingOrder<T, R>(iterator: IListIterator<T, async.IThenable<R>>, array: T[], context?: any): async.IThenable<R[]>;
+        mapAsyncInDescendingOrder<T, R>(iterator: IListIterator<T, async.IThenable<R>>, array: Array<T>, context?: any): plat.async.IThenable<Array<R>>;
         /**
           * Takes in an object and a property to extract from all of the object's values. Returns an array of
           * the 'plucked' values.
           * @param {string} key The property to 'pluck' from each value in the array.
           * @param {Array<T>} array The array to pluck the key from
           */
-        pluck<T extends {}>(key: string, array: T[]): any[];
+        pluck<T extends {}>(key: string, array: Array<T>): Array<any>;
         /**
           * Takes in an array and an iterator. Evaluates all the values in the array with the iterator.
           * Returns true if any of the iterators return true, otherwise returns false.
@@ -964,7 +964,7 @@ declare module plat {
           * @param {Array<T>} array An array.
           * @param {any} context? An optional context to bind to the iterator.
           */
-        some<T>(iterator: IListIterator<T, boolean>, array: T[], context?: any): boolean;
+        some<T>(iterator: IListIterator<T, boolean>, array: Array<T>, context?: any): boolean;
         /**
           * Takes in an array and an iterator. Evaluates all the values in the array with the iterator.
           * Returns true if any of the iterators return true, otherwise returns false.
@@ -980,7 +980,7 @@ declare module plat {
           * @param {Array<any>} args? The arguments to apply to the method.
           * @param {any} context? An optional context to bind to the method.
           */
-        postpone(method: (...args: any[]) => void, args?: any[], context?: any): IRemoveListener;
+        postpone(method: (...args: any[]) => void, args?: Array<any>, context?: any): IRemoveListener;
         /**
           * Takes in a method and array of arguments to pass to that method. Delays calling the method until
           * after the current call stack is clear. Equivalent to a setTimeout with the specified timeout value.
@@ -989,7 +989,7 @@ declare module plat {
           * @param {Array<any>} args? The arguments to apply to the method.
           * @param {any} context? An optional context to bind to the method.
           */
-        defer(method: (...args: any[]) => void, timeout: number, args?: any[], context?: any): IRemoveListener;
+        defer(method: (...args: any[]) => void, timeout: number, args?: Array<any>, context?: any): IRemoveListener;
         /**
           * Takes in a prefix and returns a unique identifier string with the prefix preprended. If no prefix
           * is specified, none will be prepended.
@@ -1014,7 +1014,7 @@ declare module plat {
           * @param {number} index The index where the value can be found.
           * @param {Array<T>} list The array passed into the util method.
           */
-        (value: T, index: number, list: T[]): R;
+        (value: T, index: number, list: Array<T>): R;
     }
     /**
       * The Type for a Utils object iterator callback method.
@@ -1223,7 +1223,7 @@ declare module plat {
               * @param {string} input The JavaScript expression string to tokenize.
               * ITokens.
               */
-            createTokens(input: string): IToken[];
+            createTokens(input: string): Array<IToken>;
             /**
               * Determines character type.
               * @param {string} char The character to check.
@@ -1463,7 +1463,7 @@ declare module plat {
             /**
               * A single expression's token representation created by a Tokenizer.
               */
-            protected _tokens: IToken[];
+            protected _tokens: Array<IToken>;
             /**
               * An expression cache. Used so that a JavaScript expression is only ever parsed once.
               */
@@ -1636,12 +1636,12 @@ declare module plat {
               * Contains all the identifiers found in an expression. Useful for determining
               * properties to watch on a context.
               */
-            identifiers: string[];
+            identifiers: Array<string>;
             /**
               * Contains all the aliases (denoted without '@' as the first character) for this
               * IParsedExpression.
               */
-            aliases: string[];
+            aliases: Array<string>;
             /**
               * Specifies whether or not you want to do a one-time binding on identifiers
               * for this expression. Typically this is added to a clone of this
@@ -1698,7 +1698,7 @@ declare module plat {
             /**
               * Keeps a history stack if using a windows store app.
               */
-            protected _stack: string[];
+            protected _stack: Array<string>;
             /**
               * A unique string identifier.
               */
@@ -1970,7 +1970,7 @@ declare module plat {
               * @param {Array<plat.async.IThenable<R>>} promises An array of promises, although every argument is potentially
               * cast to a promise meaning not every item in the array needs to be a promise.
               */
-            static all<R>(promises: IThenable<R>[]): IThenable<R[]>;
+            static all<R>(promises: Array<IThenable<R>>): IThenable<Array<R>>;
             /**
               * Returns a promise that fulfills when every item in the array is fulfilled.
               * Casts arguments to promises if necessary. The result argument of the
@@ -1979,14 +1979,14 @@ declare module plat {
               * first-rejected promise.
               * @param {Array<R>} promises An array of objects, if an object is not a promise, it will be cast.
               */
-            static all<R>(promises: R[]): IThenable<R[]>;
+            static all<R>(promises: Array<R>): IThenable<Array<R>>;
             /**
               * Returns a promise that fulfills as soon as any of the promises fulfill,
               * or rejects as soon as any of the promises reject (whichever happens first).
               * @param {Array<plat.async.IThenable<R>>} promises An Array of promises to 'race'.
               * promises fulfilled.
               */
-            static race<R>(promises: IThenable<R>[]): IThenable<R>;
+            static race<R>(promises: Array<IThenable<R>>): IThenable<R>;
             /**
               * Returns a promise that fulfills as soon as any of the promises fulfill,
               * or rejects as soon as any of the promises reject (whichever happens first).
@@ -1994,7 +1994,7 @@ declare module plat {
               * be cast.
               * promises fulfilled.
               */
-            static race<R>(promises: R[]): IThenable<R>;
+            static race<R>(promises: Array<R>): IThenable<R>;
             /**
               * Returns a promise that resolves immediately.
               */
@@ -2217,7 +2217,7 @@ declare module plat {
               * @param {Array<plat.async.IThenable<R>>} promises An array of promises, although every argument is potentially
               * cast to a promise meaning not every item in the array needs to be a promise.
               */
-            all<R>(promises: IThenable<R>[]): IThenable<R[]>;
+            all<R>(promises: Array<IThenable<R>>): IThenable<Array<R>>;
             /**
               * Returns a promise that fulfills when every item in the array is fulfilled.
               * Casts arguments to promises if necessary. The result argument of the
@@ -2226,14 +2226,14 @@ declare module plat {
               * first-rejected promise.
               * @param {Array<R>} promises An array of objects, if an object is not a promise, it will be cast.
               */
-            all<R>(promises: R[]): IThenable<R[]>;
+            all<R>(promises: Array<R>): IThenable<Array<R>>;
             /**
               * Returns a promise that fulfills as soon as any of the promises fulfill,
               * or rejects as soon as any of the promises reject (whichever happens first).
               * @param {Array<plat.async.IThenable<R>>} promises An Array of promises to 'race'.
               * promises fulfilled.
               */
-            race<R>(promises: IThenable<R>[]): IThenable<R>;
+            race<R>(promises: Array<IThenable<R>>): IThenable<R>;
             /**
               * Returns a promise that fulfills as soon as any of the promises fulfill,
               * or rejects as soon as any of the promises reject (whichever happens first).
@@ -2241,7 +2241,7 @@ declare module plat {
               * be cast.
               * promises fulfilled.
               */
-            race<R>(promises: R[]): IThenable<R>;
+            race<R>(promises: Array<R>): IThenable<R>;
             /**
               * Returns a promise that resolves immediately.
               */
@@ -2266,7 +2266,7 @@ declare module plat {
             /**
               * The timeout ID associated with the specified timeout
               */
-            clearTimeout: IRemoveListener;
+            clearTimeout: plat.IRemoveListener;
             /**
               * The created XMLHttpRequest
               */
@@ -2422,7 +2422,7 @@ declare module plat {
               * An array of data transform functions that fire in order and consecutively
               * pass the returned result from one function to the next.
               */
-            transforms?: IHttpTransformFunction[];
+            transforms?: Array<IHttpTransformFunction>;
             /**
               * Forces a JSONP, cross-domain request when set to true.
               * The default is false.
@@ -2938,9 +2938,13 @@ declare module plat {
             clear(): void;
         }
         /**
+          * A cache for persisting NodeManager trees.
+          */
+        var managerCache: Cache<processing.NodeManager>;
+        /**
           * The Type for referencing the '_managerCache' injectable as a dependency.
           */
-        function IManagerCache(): Cache<processing.NodeManager>;
+        function IManagerCache(): typeof managerCache;
         /**
           * Options for a cache.
           */
@@ -3090,15 +3094,11 @@ declare module plat {
             /**
               * A set of functions to be fired prior to when a particular observed array is mutated.
               */
-            static preArrayListeners: IObject<IObject<{
-                (ev: IPreArrayChangeInfo): void;
-            }[]>>;
+            static preArrayListeners: IObject<IObject<Array<(ev: IPreArrayChangeInfo) => void>>>;
             /**
               * A set of functions to be fired when a particular observed array is mutated.
               */
-            static postArrayListeners: IObject<IObject<{
-                (ev: IPostArrayChangeInfo<any>): void;
-            }[]>>;
+            static postArrayListeners: IObject<IObject<Array<(ev: IPostArrayChangeInfo<any>) => void>>>;
             /**
               * Gets the ContextManager associated to the given control. If no
               * ContextManager exists, one is created for that control.
@@ -3126,7 +3126,7 @@ declare module plat {
               * @param {Array<string>} split The string array containing properties used to index into
               * the rootContext.
               */
-            static getContext(rootContext: any, split: string[]): any;
+            static getContext(rootContext: any, split: Array<string>): any;
             /**
               * Defines an object property with the associated value. Useful for unobserving objects.
               * @param {any} obj The object on which to define the property.
@@ -3167,7 +3167,7 @@ declare module plat {
               * @param {Array<string>} uids The set of unique Ids for which to remove the specified identifier.
               * @param {string} identifier The identifier to stop observing.
               */
-            static removeIdentifier(uids: string[], identifier: string): void;
+            static removeIdentifier(uids: Array<string>, identifier: string): void;
             /**
               * Ensures that an identifier path will exist on a given control. Will create
               * objects/arrays if necessary.
@@ -3226,7 +3226,7 @@ declare module plat {
               * @param {Array<string>} split The string array containing properties used to index into
               * the context.
               */
-            getContext(split: string[]): any;
+            getContext(split: Array<string>): any;
             /**
               * Given a period-delimited identifier, observes an object and calls the given listener when the
               * object changes.
@@ -3248,7 +3248,7 @@ declare module plat {
               * @param {Array<any>} array The array to be observed.
               * @param {Array<any>} oldArray The old array to stop observing.
               */
-            observeArray(uid: string, preListener: (ev: IPreArrayChangeInfo) => void, postListener: (ev: IPostArrayChangeInfo<any>) => void, absoluteIdentifier: string, array: any[], oldArray: any[]): IRemoveListener;
+            observeArray(uid: string, preListener: (ev: IPreArrayChangeInfo) => void, postListener: (ev: IPostArrayChangeInfo<any>) => void, absoluteIdentifier: string, array: Array<any>, oldArray: Array<any>): IRemoveListener;
             /**
               * Disposes the memory for an ContextManager.
               */
@@ -3261,26 +3261,24 @@ declare module plat {
               * @param {plat.IObject<plat.IObject<Array<(ev: plat.observable.IPreArrayChangeInfo) => void>>>} arrayListeners
               * The Array to hold the new listener.
               */
-            protected _pushArrayListener(uid: string, absoluteIdentifier: string, listener: (ev: IPreArrayChangeInfo) => void, arrayListeners: IObject<IObject<{
-                (ev: IPreArrayChangeInfo): void;
-            }[]>>): IRemoveListener;
+            protected _pushArrayListener(uid: string, absoluteIdentifier: string, listener: (ev: IPreArrayChangeInfo) => void, arrayListeners: IObject<IObject<Array<(ev: IPreArrayChangeInfo) => void>>>): IRemoveListener;
             /**
               * Restores an array to use Array.prototype instead of listener functions.
               * @param {Array<any>} array The array to restore.
               */
-            protected _restoreArray(array: any[]): void;
+            protected _restoreArray(array: Array<any>): void;
             /**
               * Overwrites an Array's prototype to observe mutation functions.
               * @param {string} absoluteIdentifier The identifier for the Array off context.
               * @param {Array<any>} array The array to overwrite.
               */
-            protected _overwriteArray(absoluteIdentifier: string, array: any[]): void;
+            protected _overwriteArray(absoluteIdentifier: string, array: Array<any>): void;
             /**
               * Gets the immediate context of identifier by splitting on ".".
               * @param {Array<string>} split The string array containing properties used to index into
               * the context.
               */
-            protected _getImmediateContext(split: string[]): any;
+            protected _getImmediateContext(split: Array<string>): any;
             /**
               * Gets the immediate context of identifier by splitting on "."
               * and observes the objects along the way.
@@ -3288,7 +3286,7 @@ declare module plat {
               * used to index into the context.
               * @param {string} identifier The identifier being observed.
               */
-            protected _observeImmediateContext(split: string[], identifier: string): any;
+            protected _observeImmediateContext(split: Array<string>, identifier: string): any;
             /**
               * Obtains the old value and new value of a given context
               * property on a property changed event.
@@ -3297,7 +3295,7 @@ declare module plat {
               * @param {any} oldRootContext The old context.
               * property upon a potential context change.
               */
-            protected _getValues(split: string[], newRootContext: any, oldRootContext: any): {
+            protected _getValues(split: Array<string>, newRootContext: any, oldRootContext: any): {
                 newValue: any;
                 oldValue: any;
             };
@@ -3392,15 +3390,11 @@ declare module plat {
             /**
               * A set of functions to be fired prior to when a particular observed array is mutated.
               */
-            preArrayListeners: IObject<IObject<{
-                (ev: IPreArrayChangeInfo): void;
-            }[]>>;
+            preArrayListeners: IObject<IObject<Array<(ev: IPreArrayChangeInfo) => void>>>;
             /**
               * A set of functions to be fired when a particular observed array is mutated.
               */
-            postArrayListeners: IObject<IObject<{
-                (ev: IPostArrayChangeInfo<any>): void;
-            }[]>>;
+            postArrayListeners: IObject<IObject<Array<(ev: IPostArrayChangeInfo<any>) => void>>>;
             /**
               * Gets the ContextManager associated to the given control. If no
               * ContextManager exists, one is created for that control.
@@ -3428,7 +3422,7 @@ declare module plat {
               * @param {Array<string>} split The string array containing properties used to index into
               * the rootContext.
               */
-            getContext(rootContext: any, split: string[]): void;
+            getContext(rootContext: any, split: Array<string>): void;
             /**
               * Defines an object property with the associated value. Useful for unobserving objects.
               * @param {any} obj The object on which to define the property.
@@ -3469,7 +3463,7 @@ declare module plat {
               * @param {Array<string>} uids The set of unique Ids for which to remove the specified identifier.
               * @param {string} identifier The identifier to stop observing.
               */
-            removeIdentifier(uids: string[], identifier: string): void;
+            removeIdentifier(uids: Array<string>, identifier: string): void;
             /**
               * Ensures that an identifier path will exist on a given control. Will create
               * objects/arrays if necessary.
@@ -3509,7 +3503,7 @@ declare module plat {
             /**
               * The arguments passed into the array function.
               */
-            arguments: any[];
+            arguments: Array<any>;
         }
         /**
           * An object for Array method mutation info after the Array has been mutated. Takes a
@@ -3523,11 +3517,11 @@ declare module plat {
             /**
               * The previous value of the array.
               */
-            oldArray: T[];
+            oldArray: Array<T>;
             /**
               * The new value of the array.
               */
-            newArray: T[];
+            newArray: Array<T>;
         }
         /**
           * Defines the object added to a template control when its element
@@ -3745,7 +3739,7 @@ declare module plat {
               * @param {string} direction='up' Equivalent to EventManager.UP.
               * @param {Array<any>} args? The arguments to send to the listeners.
               */
-            static dispatch(name: string, sender: any, direction: 'up', args?: any[]): DispatchEvent;
+            static dispatch(name: string, sender: any, direction: 'up', args?: Array<any>): DispatchEvent;
             /**
               * Looks for listeners to a given event name, and fires the listeners using the specified
               * event direction.
@@ -3754,7 +3748,7 @@ declare module plat {
               * @param {string} direction='down' Equivalent to EventManager.DOWN.
               * @param {Array<any>} args? The arguments to send to the listeners.
               */
-            static dispatch(name: string, sender: any, direction: 'down', args?: any[]): DispatchEvent;
+            static dispatch(name: string, sender: any, direction: 'down', args?: Array<any>): DispatchEvent;
             /**
               * Looks for listeners to a given event name, and fires the listeners using the specified
               * event direction.
@@ -3763,7 +3757,7 @@ declare module plat {
               * @param {string} direction='direct' Equivalent to EventManager.DIRECT.
               * @param {Array<any>} args? The arguments to send to the listeners.
               */
-            static dispatch(name: string, sender: any, direction: 'direct', args?: any[]): DispatchEvent;
+            static dispatch(name: string, sender: any, direction: 'direct', args?: Array<any>): DispatchEvent;
             /**
               * Looks for listeners to a given event name, and fires the listeners using the specified
               * event direction.
@@ -3772,7 +3766,7 @@ declare module plat {
               * @param {string} direction The direction in which to send the event.
               * @param {Array<any>} args? The arguments to send to the listeners.
               */
-            static dispatch(name: string, sender: any, direction: string, args?: any[]): DispatchEvent;
+            static dispatch(name: string, sender: any, direction: string, args?: Array<any>): DispatchEvent;
             /**
               * Returns whether or not the given string is a registered direction.
               * @param {string} direction The direction of the event
@@ -3783,25 +3777,25 @@ declare module plat {
               * @param {plat.events.DispatchEvent} event The DispatchEvent to send
               * @param {Array<any>} args The arguments associated with the event
               */
-            static sendEvent(event: DispatchEvent, args?: any[]): void;
+            static sendEvent(event: DispatchEvent, args?: Array<any>): void;
             /**
               * Dispatches the event up the control chain.
               * @param {plat.events.DispatchEvent} event The event being dispatched.
               * @param {Array<any>} args The arguments associated with the event.
               */
-            protected static _dispatchUp(event: DispatchEvent, args: any[]): void;
+            protected static _dispatchUp(event: DispatchEvent, args: Array<any>): void;
             /**
               * Dispatches the event down the control chain.
               * @param {plat.events.DispatchEvent} event The event being dispatched.
               * @param {Array<any>} args The arguments associated with the event.
               */
-            protected static _dispatchDown(event: DispatchEvent, args: any[]): void;
+            protected static _dispatchDown(event: DispatchEvent, args: Array<any>): void;
             /**
               * Dispatches the event directly to all listeners.
               * @param {plat.events.DispatchEvent} event The event being dispatched.
               * @param {Array<any>} args The arguments associated with the event.
               */
-            protected static _dispatchDirect(event: DispatchEvent, args: any[]): void;
+            protected static _dispatchDirect(event: DispatchEvent, args: Array<any>): void;
             /**
               * Dispatches the event to the listeners for the given uid.
               * @param {string} uid The uid used to find the event listeners.
@@ -3871,7 +3865,7 @@ declare module plat {
               * @param {(ev: plat.events.LifecycleEvent) => void} listener The method called when the event is fired.
               * @param {any} context? The context with which to call the listener method.
               */
-            on(uid: string, eventName: "suspend", listener: (ev: LifecycleEvent) => void, context?: any): IRemoveListener;
+            on(uid: string, eventName: 'suspend', listener: (ev: LifecycleEvent) => void, context?: any): IRemoveListener;
             /**
               * Registers a listener for the resume AlmEvent. The listener will be called when an app
               * is being resumeed.
@@ -3889,7 +3883,7 @@ declare module plat {
               * @param {(ev: plat.events.LifecycleEvent) => void} listener The method called when the event is fired.
               * @param {any} context? The context with which to call the listener method.
               */
-            on(uid: string, eventName: "online", listener: (ev: LifecycleEvent) => void, context?: any): IRemoveListener;
+            on(uid: string, eventName: 'online', listener: (ev: LifecycleEvent) => void, context?: any): IRemoveListener;
             /**
               * Registers a listener for the offline AlmEvent. This event fires when the app's network
               * connection changes to be offline.
@@ -3898,7 +3892,7 @@ declare module plat {
               * @param {(ev: plat.events.LifecycleEvent) => void} listener The method called when the event is fired.
               * @param {any} context? The context with which to call the listener method.
               */
-            on(uid: string, eventName: "offline", listener: (ev: LifecycleEvent) => void, context?: any): IRemoveListener;
+            on(uid: string, eventName: 'offline', listener: (ev: LifecycleEvent) => void, context?: any): IRemoveListener;
             /**
               * Registers a listener for an AlmEvent. The listener will be called when an AlmEvent is
               * propagating over the given uid. Any number of listeners can exist for a single event name.
@@ -3916,7 +3910,7 @@ declare module plat {
               * @param {(ev: plat.events.ErrorEvent<Error>) => void} listener The method called when the event is fired.
               * @param {any} context? The context with which to call the listener method.
               */
-            on(uid: string, eventName: "error", listener: (ev: ErrorEvent<Error>) => void, context?: any): IRemoveListener;
+            on(uid: string, eventName: 'error', listener: (ev: ErrorEvent<Error>) => void, context?: any): IRemoveListener;
             /**
               * Registers a listener for a DispatchEvent. The listener will be called when a DispatchEvent is
               * propagating over the given uid. Any number of listeners can exist for a single event name.
@@ -3934,7 +3928,7 @@ declare module plat {
               * @param {string} direction='up' Equivalent to EventManager.UP.
               * @param {Array<any>} args? The arguments to send to the listeners.
               */
-            dispatch(name: string, sender: any, direction: 'up', args?: any[]): DispatchEvent;
+            dispatch(name: string, sender: any, direction: 'up', args?: Array<any>): DispatchEvent;
             /**
               * Looks for listeners to a given event name, and fires the listeners using the specified
               * event direction.
@@ -3943,7 +3937,7 @@ declare module plat {
               * @param {string} direction='down' Equivalent to EventManager.DOWN.
               * @param {Array<any>} args? The arguments to send to the listeners.
               */
-            dispatch(name: string, sender: any, direction: 'down', args?: any[]): DispatchEvent;
+            dispatch(name: string, sender: any, direction: 'down', args?: Array<any>): DispatchEvent;
             /**
               * Looks for listeners to a given event name, and fires the listeners using the specified
               * event direction.
@@ -3952,7 +3946,7 @@ declare module plat {
               * @param {string} direction='direct' Equivalent to EventManager.DIRECT.
               * @param {Array<any>} args? The arguments to send to the listeners.
               */
-            dispatch(name: string, sender: any, direction: 'direct', args?: any[]): DispatchEvent;
+            dispatch(name: string, sender: any, direction: 'direct', args?: Array<any>): DispatchEvent;
             /**
               * Looks for listeners to a given event name, and fires the listeners using the specified
               * event direction.
@@ -3961,7 +3955,7 @@ declare module plat {
               * @param {string} direction The direction in which to send the event.
               * @param {Array<any>} args? The arguments to send to the listeners.
               */
-            dispatch(name: string, sender: any, direction: string, args?: any[]): DispatchEvent;
+            dispatch(name: string, sender: any, direction: string, args?: Array<any>): DispatchEvent;
             /**
               * Returns whether or not the given string is a registered direction.
               * @param {string} direction The direction of the event
@@ -3972,7 +3966,7 @@ declare module plat {
               * @param {plat.events.DispatchEvent} event The DispatchEvent to send
               * @param {Array<any>} args The arguments associated with the event
               */
-            sendEvent(event: DispatchEvent, args?: any[]): void;
+            sendEvent(event: DispatchEvent, args?: Array<any>): void;
         }
         /**
           * Represents an internal Error Event. This is used for any
@@ -4176,17 +4170,17 @@ declare module plat {
           * Retrieves all the controls with the specified name.
           * @param {string} name The string name with which to populate the returned controls array.
           */
-        getControlsByName(name: string): Control[];
+        getControlsByName(name: string): Array<Control>;
         /**
           * Retrieves all the controls of the specified type.
           * @param {string} type The type used to find controls (e.g. 'plat-foreach')
           */
-        getControlsByType<T extends Control>(type: string): T[];
+        getControlsByType<T extends Control>(type: string): Array<T>;
         /**
           * Retrieves all the controls of the specified type.
           * @param {new () => T} Constructor The constructor used to find controls.
           */
-        getControlsByType<T extends Control>(Constructor: new () => T): T[];
+        getControlsByType<T extends Control>(Constructor: new () => T): Array<T>;
         /**
           * Adds an event listener of the specified type to the specified element. Removal of the
           * event is handled automatically upon disposal.
@@ -4510,7 +4504,7 @@ declare module plat {
               * @param {IObject<any>} resources? An optional resources object to extend, if no resources object is passed in a
               * new one will be created.
               */
-            static getResources(control: TemplateControl, aliases: string[], resources?: IObject<any>): IObject<any>;
+            static getResources(control: TemplateControl, aliases: Array<string>, resources?: IObject<any>): IObject<any>;
             /**
               * Starts at a control and searches up its parent chain for a particular resource alias.
               * If the resource is found, it will be returned along with the control instance on which
@@ -4666,13 +4660,13 @@ declare module plat {
               * An array of child controls. Any controls created by this control can be found in this array. The controls in
               * this array will have reference to this control in their parent property.
               */
-            controls: Control[];
+            controls: Array<Control>;
             /**
               * A Node array for managing the TemplateControl's childNodes in the event that this control
               * replaces its element. This property will only exist/be of use for a TemplateControl that
               * implements the replaceWith property.
               */
-            elementNodes: Node[];
+            elementNodes: Array<Node>;
             /**
               * The first node in the TemplateControl's body. This property will be a Comment node when the
               * control implements replaceWith = null, otherwise it will be null. This property allows an
@@ -4737,7 +4731,7 @@ declare module plat {
               * @param {IObject<any>} resources? An optional resources object to extend,
               * if no resources object is passed in a new one will be created.
               */
-            getResources(aliases: string[], resources?: IObject<any>): IObject<any>;
+            getResources(aliases: Array<string>, resources?: IObject<any>): IObject<any>;
             /**
               * Starts at a control and searches up its parent chain for a particular resource alias.
               * If the resource is found, it will be returned along with the control instance on which
@@ -4795,7 +4789,7 @@ declare module plat {
               * @param {IObject<any>} resources? An optional resources object to extend,
               * if no resources object is passed in a new one will be created.
               */
-            getResources(control: TemplateControl, aliases: string[], resources?: IObject<any>): IObject<any>;
+            getResources(control: TemplateControl, aliases: Array<string>, resources?: IObject<any>): IObject<any>;
             /**
               * Starts at a control and searches up its parent chain for a particular resource alias.
               * If the resource is found, it will be returned along with the control instance on which
@@ -4872,9 +4866,7 @@ declare module plat {
               * The set of functions added externally that listens
               * for property changes.
               */
-            protected _listeners: {
-                (newValue: any, oldValue?: any): void;
-            }[];
+            protected _listeners: Array<(newValue: any, oldValue?: any) => void>;
             /**
               * Adds a listener to be called when the bindable property changes.
               * @param {plat.IPropertyChangedListener} listener The function that acts as a listener.
@@ -4944,7 +4936,7 @@ declare module plat {
             /**
               * Reference to the DomEvents injectable.
               */
-            protected _domEvents: DomEvents;
+            protected _domEvents: ui.DomEvents;
             /**
               * Adds an event listener of the specified type to the specified element.
               * @param {Node} element The element to add the event listener to.
@@ -4953,7 +4945,7 @@ declare module plat {
               * @param {boolean} useCapture? Whether to fire the event on the capture or the bubble phase
               * of event propagation.
               */
-            addEventListener(element: Node, type: string, listener: IGestureListener, useCapture?: boolean): IRemoveListener;
+            addEventListener(element: Node, type: string, listener: ui.IGestureListener, useCapture?: boolean): IRemoveListener;
             /**
               * Adds an event listener of the specified type to the specified element.
               * @param {Window} element The window object.
@@ -4962,7 +4954,7 @@ declare module plat {
               * @param {boolean} useCapture? Whether to fire the event on the capture or the bubble phase
               * of event propagation.
               */
-            addEventListener(element: Window, type: string, listener: IGestureListener, useCapture?: boolean): IRemoveListener;
+            addEventListener(element: Window, type: string, listener: ui.IGestureListener, useCapture?: boolean): IRemoveListener;
             /**
               * Adds an event listener of the specified type to the specified element.
               * @param {Node} element The element to add the event listener to.
@@ -4985,7 +4977,7 @@ declare module plat {
               * Takes a Node Array and creates a DocumentFragment and adds the nodes to the Fragment.
               * @param {Array<Node>} nodeList A Node Array to be appended to the DocumentFragment
               */
-            appendChildren(nodeList: Node[]): DocumentFragment;
+            appendChildren(nodeList: Array<Node>): DocumentFragment;
             /**
               * Takes a NodeList and creates a DocumentFragment and adds the NodeList to the Fragment.
               * @param {NodeList} nodeList A NodeList to be appended to the DocumentFragment
@@ -4998,7 +4990,7 @@ declare module plat {
               * @param {NodeList} nodeList A NodeList to be appended to the root/DocumentFragment.
               * @param {Node} root? An optional Node to append the nodeList.
               */
-            appendChildren(nodeList: Node[], root?: Node): Node;
+            appendChildren(nodeList: Array<Node>, root?: Node): Node;
             /**
               * Takes a NodeList and either adds it to the passed in Node,
               * or creates a DocumentFragment and adds the NodeList to the
@@ -5017,7 +5009,7 @@ declare module plat {
               * @param {Array<Node>} nodeList The Node Array to remove from the parent Node.
               * @param {Node} parent? The parent Node used to remove the nodeList.
               */
-            clearNodeBlock(nodeList: Node[], parent?: Node): void;
+            clearNodeBlock(nodeList: Array<Node>, parent?: Node): void;
             /**
               * Removes all the Nodes in the NodeList from the parent Node.
               * @param {NodeList} nodeList The NodeList to remove from the parent Node.
@@ -5038,35 +5030,35 @@ declare module plat {
               * @param {Array<Node>} nodes The Node Array to insert into the parent.
               * @param {Node} endNode? An optional endNode to use to insert nodes.
               */
-            insertBefore(parent: Node, nodes: Node[], endNode?: Node): Node[];
+            insertBefore(parent: Node, nodes: Array<Node>, endNode?: Node): Array<Node>;
             /**
               * Inserts a list of Nodes before the designated end Node.
               * @param {Node} parent The parent node into which to insert nodes.
               * @param {NodeList} nodes The NodeList to insert into the parent.
               * @param {Node} endNode? An optional endNode to use to insert nodes.
               */
-            insertBefore(parent: Node, nodes: NodeList, endNode?: Node): Node[];
+            insertBefore(parent: Node, nodes: NodeList, endNode?: Node): Array<Node>;
             /**
               * Inserts a DocumentFragment before the designated end Node.
               * @param {Node} parent The parent node into which to insert nodes.
               * @param {DocumentFragment} fragment The DocumentFragment to insert into the parent.
               * @param {Node} endNode? An optional endNode to use to insert nodes.
               */
-            insertBefore(parent: Node, fragment: DocumentFragment, endNode?: Node): Node[];
+            insertBefore(parent: Node, fragment: DocumentFragment, endNode?: Node): Array<Node>;
             /**
               * Inserts a Node before the designated end Node.
               * @param {Node} parent The parent node into which to insert nodes.
               * @param {Node} node The Node to insert into the parent.
               * @param {Node} endNode? An optional endNode to use to insert nodes.
               */
-            insertBefore(parent: Node, node: Node, endNode?: Node): Node[];
+            insertBefore(parent: Node, node: Node, endNode?: Node): Array<Node>;
             /**
               * Takes the child nodes of the given node and places them above the node
               * in the DOM. Then removes the given node.
               * @param {Node} node The Node to replace.
               * given node.
               */
-            replace(node: Node): Node[];
+            replace(node: Node): Array<Node>;
             /**
               * Takes the childNodes of the given element and appends them to the newElement.
               * Then replaces the element in its parent's tree with the newElement.
@@ -5293,7 +5285,7 @@ declare module plat {
               * @param {string} key The key used to store the template.
               * @param {Array<Node>} template A node Array representing the DOM template.
               */
-            add(key: string, template: Node[]): void;
+            add(key: string, template: Array<Node>): void;
             /**
               * Adds a template to this object. The template will be stored with the key,
               * and it will be transformed into a DocumentFragment.
@@ -5768,15 +5760,15 @@ declare module plat {
             /**
               * The touch start events defined by this browser.
               */
-            protected _startEvents: string[];
+            protected _startEvents: Array<string>;
             /**
               * The touch move events defined by this browser.
               */
-            protected _moveEvents: string[];
+            protected _moveEvents: Array<string>;
             /**
               * The touch end events defined by this browser.
               */
-            protected _endEvents: string[];
+            protected _endEvents: Array<string>;
             /**
               * An object containing the event types for all of the
               * supported gestures.
@@ -6244,7 +6236,7 @@ declare module plat {
             /**
               * Indicates which mouse button is being pressed in a mouse event.
               */
-            buttons?: number;
+            _buttons?: number;
             /**
               * The x-coordinate of the event on the screen relative to the upper left corner of the
               * browser window. This value cannot be affected by scrolling.
@@ -6272,11 +6264,11 @@ declare module plat {
           * An extended event object potentially containing coordinate and movement information.
           */
         interface IExtendedEvent extends Event {
+            _buttons?: number;
             /**
               * Indicates which mouse button is being pressed in a mouse event.
               */
             buttons?: number;
-            _buttons?: number;
             /**
               * The x-coordinate of the event on the screen relative to the upper left corner of the
               * browser window. This value cannot be affected by scrolling.
@@ -6336,12 +6328,12 @@ declare module plat {
               * An array containing all current touch points. The IExtendedEvents
               * may slightly differ depending on the browser implementation.
               */
-            touches?: IExtendedEvent[];
+            touches?: Array<IExtendedEvent>;
             /**
               * An array containing all recently changed touch points. This should not be present on
               * the triggered custom event.
               */
-            changedTouches?: IExtendedEvent[];
+            changedTouches?: Array<IExtendedEvent>;
             /**
               * A unique touch identifier.
               */
@@ -6423,7 +6415,7 @@ declare module plat {
               * An array containing all current touch points. The IExtendedEvents
               * may slightly differ depending on the browser implementation.
               */
-            touches?: IExtendedEvent[];
+            touches?: Array<IExtendedEvent>;
             /**
               * The type of interaction associated with the touch event ('touch', 'pen', 'mouse', '').
               */
@@ -6641,7 +6633,7 @@ declare module plat {
               * CSS identifier : value
               * (e.g. 'width : 100px')
               */
-            styles: string[];
+            styles: Array<string>;
         }
         /**
           * Describes a configuration object for all custom DOM events.
@@ -6665,7 +6657,7 @@ declare module plat {
             /**
               * The default CSS styles applied to elements listening for custom DOM events.
               */
-            styleConfig: IDefaultStyle[];
+            styleConfig: Array<IDefaultStyle>;
         }
         /**
           * Holds all the classes and interfaces related to UI animation components for platypus.
@@ -7161,7 +7153,7 @@ declare module plat {
                 navigator: routing.Navigator;
                 router: routing.Router;
                 parentRouter: routing.Router;
-                controls: ViewControl[];
+                controls: Array<ViewControl>;
                 nextInjector: dependency.Injector<ViewControl>;
                 nextView: ViewControl;
                 initialize(): void;
@@ -7306,7 +7298,7 @@ declare module plat {
                 /**
                   * The required context of the control (must be of type Array).
                   */
-                context: any[];
+                context: Array<any>;
                 /**
                   * The load priority of the control (needs to load before a Bind control).
                   */
@@ -7314,7 +7306,7 @@ declare module plat {
                 /**
                   * The child controls of the control. All will be of type TemplateControl.
                   */
-                controls: TemplateControl[];
+                controls: Array<TemplateControl>;
                 /**
                   * A Promise that fulfills when the items are loaded.
                   */
@@ -7342,7 +7334,7 @@ declare module plat {
                 /**
                   * An array to aggregate all current animation promises.
                   */
-                protected _currentAnimations: animations.IAnimationThenable<any>[];
+                protected _currentAnimations: Array<animations.IAnimationThenable<any>>;
                 /**
                   * Whether or not the Array listener has been set.
                   */
@@ -7365,7 +7357,7 @@ declare module plat {
                   * @param {Array<any>} newValue? The new Array
                   * @param {Array<any>} oldValue? The old Array
                   */
-                contextChanged(newValue?: any[], oldValue?: any[]): void;
+                contextChanged(newValue?: Array<any>, oldValue?: Array<any>): void;
                 /**
                   * Observes the Array context for changes and adds initial items to the DOM.
                   */
@@ -7390,7 +7382,7 @@ declare module plat {
                   * Adds an Array of items to the element without animating.
                   * @param {Array<Node>} items The Array of items to add.
                   */
-                protected _appendItems(items: Node[]): void;
+                protected _appendItems(items: Array<Node>): void;
                 /**
                   * Adds an item to the control's element animating its elements.
                   * @param {DocumentFragment} item The HTML fragment representing a single item.
@@ -7414,7 +7406,7 @@ declare module plat {
                 /**
                   * Sets the corresponding block length for animation.
                   */
-                protected _setBlockLength(templates: Node[]): void;
+                protected _setBlockLength(templates: Array<Node>): void;
                 /**
                   * Updates the control's children resource objects when
                   * the array changes.
@@ -7602,7 +7594,7 @@ declare module plat {
                 /**
                   * The required context of the control (must be of type Array).
                   */
-                context: any[];
+                context: Array<any>;
                 /**
                   * An object that keeps track of unique
                   * optgroups.
@@ -7657,7 +7649,7 @@ declare module plat {
                   * @param {Array<any>} newValue? The new array context.
                   * @param {Array<any>} oldValue? The old array context.
                   */
-                contextChanged(newValue?: any[], oldValue?: any[]): void;
+                contextChanged(newValue?: Array<any>, oldValue?: Array<any>): void;
                 /**
                   * Observes the new array context and adds
                   * the options accordingly.
@@ -7993,7 +7985,7 @@ declare module plat {
               * @param {plat.ui.TemplateControl} control? The parent control for the given Node. The parent must implement the
               * TemplateControl interface since only they can contain templates.
               */
-            compile(nodes: Node[], control?: ui.TemplateControl): void;
+            compile(nodes: Array<Node>, control?: ui.TemplateControl): void;
             /**
               * Goes through the NodeList, finding elements that contain controls as well as
               * text that contains markup.
@@ -8016,7 +8008,7 @@ declare module plat {
               * @param nodes The NodeList to be compiled.
               * @param manager The parent Element Manager for the given array of nodes.
               */
-            protected _compileNodes(nodes: Node[], manager: ElementManager): void;
+            protected _compileNodes(nodes: Array<Node>, manager: ElementManager): void;
         }
         /**
           * Responsible for data binding a data context to a Node.
@@ -8049,7 +8041,7 @@ declare module plat {
               * @param {string} text The text string in which to search for markup.
               * composes the output given a proper context.
               */
-            static findMarkup(text: string): expressions.IParsedExpression[];
+            static findMarkup(text: string): Array<expressions.IParsedExpression>;
             /**
               * Takes in a control with a data context and an array of IParsedExpression
               * and outputs a string of the evaluated expressions.
@@ -8057,7 +8049,7 @@ declare module plat {
               * @param {plat.ui.TemplateControl} control? The TemplateControl used to parse
               * the expressions.
               */
-            static build(expressions: expressions.IParsedExpression[], control?: ui.TemplateControl): string;
+            static build(expressions: Array<expressions.IParsedExpression>, control?: ui.TemplateControl): string;
             /**
               * Registers a listener to be notified of a change in any associated identifier.
               * @param {Array<plat.expressions.IParsedExpression>} expressions An Array of
@@ -8066,7 +8058,7 @@ declare module plat {
               * to the identifiers.
               * @param {(...args: Array<any>) => void} listener The listener to call when any identifier property changes.
               */
-            static observeExpressions(expressions: expressions.IParsedExpression[], control: ui.TemplateControl, listener: (...args: any[]) => void): void;
+            static observeExpressions(expressions: Array<expressions.IParsedExpression>, control: ui.TemplateControl, listener: (...args: Array<any>) => void): void;
             /**
               * A regular expression for finding markup
               */
@@ -8155,7 +8147,7 @@ declare module plat {
               * @param {string} text The text string in which to search for markup.
               * composes the output given a proper context.
               */
-            findMarkup(text: string): expressions.IParsedExpression[];
+            findMarkup(text: string): Array<expressions.IParsedExpression>;
             /**
               * Takes in a control with a data context and an array of IParsedExpression
               * and outputs a string of the evaluated expressions.
@@ -8163,7 +8155,7 @@ declare module plat {
               * @param {plat.ui.TemplateControl} control? The TemplateControl used to parse
               * the expressions.
               */
-            build(expressions: expressions.IParsedExpression[], control?: ui.TemplateControl): string;
+            build(expressions: Array<expressions.IParsedExpression>, control?: ui.TemplateControl): string;
             /**
               * Registers a listener to be notified of a change in any associated identifier.
               * @param {Array<plat.expressions.IParsedExpression>} expressions An Array of
@@ -8172,7 +8164,7 @@ declare module plat {
               * to the identifiers.
               * @param {(...args: Array<any>) => void} listener The listener to call when any identifier property changes.
               */
-            observeExpressions(expressions: expressions.IParsedExpression[], control: ui.TemplateControl, listener: (...args: any[]) => void): void;
+            observeExpressions(expressions: Array<expressions.IParsedExpression>, control: ui.TemplateControl, listener: (...args: Array<any>) => void): void;
         }
         /**
           * Describes a compiled Node.
@@ -8193,7 +8185,7 @@ declare module plat {
             /**
               * Any IParsedExpressions contained in the Node.
               */
-            expressions?: expressions.IParsedExpression[];
+            expressions?: Array<expressions.IParsedExpression>;
             /**
               * The injector for a control associated with the Node, if one exists.
               */
@@ -8225,7 +8217,7 @@ declare module plat {
             /**
               * The compiled attribute Nodes for the Element.
               */
-            nodes: INode[];
+            nodes: Array<INode>;
             /**
               * An object of key/value attribute pairs.
               */
@@ -8318,7 +8310,7 @@ declare module plat {
               * @param {Element} newElement? An optional element to use for attributes (used in cloning).
               * @param {boolean} isClone? Whether or not these controls are clones.
               */
-            static createAttributeControls(nodeMap: INodeMap, parent: ui.TemplateControl, templateControl?: ui.TemplateControl, newElement?: Element, isClone?: boolean): INode[];
+            static createAttributeControls(nodeMap: INodeMap, parent: ui.TemplateControl, templateControl?: ui.TemplateControl, newElement?: Element, isClone?: boolean): Array<INode>;
             /**
               * Returns a new instance of an ElementManager.
               */
@@ -8335,7 +8327,7 @@ declare module plat {
               * @param {Array<plat.processing.INode>} nodes The compiled INodes
               * to be cloned.
               */
-            protected static _copyAttributeNodes(nodes: INode[]): INode[];
+            protected static _copyAttributeNodes(nodes: Array<INode>): Array<INode>;
             /**
               * Clones an INode with a new node.
               * @param {plat.processing.INode} sourceNode The original INode.
@@ -8388,7 +8380,7 @@ declare module plat {
             /**
               * The child managers for this manager.
               */
-            children: NodeManager[];
+            children: Array<NodeManager>;
             /**
               * Specifies the type for this NodeManager.
               * It's value is "element".
@@ -8448,7 +8440,7 @@ declare module plat {
               * ElementManager's associated
               * INodeMap.
               */
-            bind(): Control[];
+            bind(): Array<Control>;
             /**
               * Sets the template for an manager by obtaining any needed HTML templates and
               * calling its associated TemplateControl's
@@ -8501,7 +8493,7 @@ declare module plat {
               * @param {Array<plat.Control>} controls The array of controls whose attributes will need to be updated
               * upon the context changing.
               */
-            protected _observeControlIdentifiers(nodes: INode[], parent: ui.TemplateControl, controls: Control[]): void;
+            protected _observeControlIdentifiers(nodes: Array<INode>, parent: ui.TemplateControl, controls: Array<Control>): void;
             /**
               * Loads the potential attribute based controls associated with this
               * ElementManager and
@@ -8510,7 +8502,7 @@ declare module plat {
               * @param {plat.ui.TemplateControl} templateControl The TemplateControl
               * associated with this manager.
               */
-            protected _loadControls(controls: AttributeControl[], templateControl: ui.TemplateControl): async.IThenable<void>;
+            protected _loadControls(controls: Array<AttributeControl>, templateControl: ui.TemplateControl): async.IThenable<void>;
             /**
               * Fulfills the template promise prior to binding and loading the control.
               * its associated controls are bound and loaded.
@@ -8544,7 +8536,7 @@ declare module plat {
               * @param {plat.ui.TemplateControl} parent The parent TemplateControl used for context.
               * @param {Array<plat.Control>} controls The controls that have the changed attribute as a property.
               */
-            protected _attributeChanged(node: INode, parent: ui.TemplateControl, controls: Control[]): void;
+            protected _attributeChanged(node: INode, parent: ui.TemplateControl, controls: Array<Control>): void;
             /**
               * Runs through all the children of this manager and calls fulfillTemplate.
               * child managers have fullfilled their templates.
@@ -8582,7 +8574,7 @@ declare module plat {
               * @param {Element} newElement? An optional element to use for attributes (used in cloning).
               * @param {boolean} isClone? Whether or not these controls are clones.
               */
-            createAttributeControls(nodeMap: INodeMap, parent: ui.TemplateControl, templateControl?: ui.TemplateControl, newElement?: Element, isClone?: boolean): INode[];
+            createAttributeControls(nodeMap: INodeMap, parent: ui.TemplateControl, templateControl?: ui.TemplateControl, newElement?: Element, isClone?: boolean): Array<INode>;
             /**
               * Clones an TemplateControl with a new INodeMap.
               * @param {plat.processing.INodeMap} sourceMap The source INodeMap used to clone the
@@ -8664,7 +8656,7 @@ declare module plat {
               * @param {Array<plat.expressions.IParsedExpression>} expressions An array of parsed expressions used to build
               * the node value.
               */
-            protected _setText(node: Node, control: ui.TemplateControl, expressions: expressions.IParsedExpression[]): void;
+            protected _setText(node: Node, control: ui.TemplateControl, expressions: Array<expressions.IParsedExpression>): void;
         }
         /**
           * The Type for referencing the '_TextManager' injectable as a dependency.
@@ -8806,7 +8798,7 @@ declare module plat {
               * @param {Array<string>} names An array to populate with dynamic/splat segment names
               * @param {plat.routing.ISegmentTypeCount} types An object to use for counting segment types in the route.
               */
-            static parse(route: string, names: string[], types: ISegmentTypeCount): BaseSegment[];
+            static parse(route: string, names: Array<string>, types: ISegmentTypeCount): Array<BaseSegment>;
             /**
               * Parses a route into segments, populating an array of names (for dynamic and splat segments) as well as
               * an ISegmentTypeCount object.
@@ -8987,7 +8979,7 @@ declare module plat {
               * @param {string} char The character used to match next states.
               * @param {Array<plat.routing.State>} states The states with which to match the character.
               */
-            static recognize(char: string, states: State[]): State[];
+            static recognize(char: string, states: Array<State>): Array<State>;
             /**
               * Sorts states by statics/dynamics/splats.
               * Favors less splat (*) segments
@@ -8995,11 +8987,11 @@ declare module plat {
               * Favors more static segments
               * @param {Array<plat.routing.State>} states The states to sort.
               */
-            static sort(states: State[]): State[];
+            static sort(states: Array<State>): Array<State>;
             /**
               * The possible next states for the current state.
               */
-            nextStates: State[];
+            nextStates: Array<State>;
             /**
               * The specification for the
               * assigned route segment for this state.
@@ -9009,7 +9001,7 @@ declare module plat {
               * The associated delegate objects for this
               * state, with their parameter names.
               */
-            delegates: IDelegateParameterNames[];
+            delegates: Array<IDelegateParameterNames>;
             /**
               * A regular expression to match this state to a path.
               */
@@ -9080,7 +9072,7 @@ declare module plat {
             /**
               * Contains the parameter names for a given delegate
               */
-            names: string[];
+            names: Array<string>;
         }
         /**
           * Assists in compiling and linking route strings. You can register route strings using
@@ -9112,7 +9104,7 @@ declare module plat {
               * @param {plat.routing.IRegisterOptions} options? An object containing options for the
               * registered route.
               */
-            register(routes: IRouteDelegate[], options?: IRegisterOptions): void;
+            register(routes: Array<IRouteDelegate>, options?: IRegisterOptions): void;
             /**
               * Searches for a match to the provided path. If a match is found, the path is deconstructed
               * to populate a parameters object (if the registered route was a dynamic/splat route).
@@ -9132,7 +9124,7 @@ declare module plat {
               * Finds the delegates for an INamedRoute
               * @param {string} name The named route from which to get the delegates.
               */
-            delegatesFor(name: string): IDelegateParameterNames[];
+            delegatesFor(name: string): Array<IDelegateParameterNames>;
             /**
               * Determines whether or not an INamedRoute is registered.
               * @param {string} name The named route to search for.
@@ -9146,21 +9138,21 @@ declare module plat {
               * @param {string} regex The regular expression string built for the compiled routes. Used to recognize
               * routes and associate them with the compiled routes.
               */
-            protected _finalize(state: State, regex: string[]): State;
+            protected _finalize(state: State, regex: Array<string>): State;
             /**
               * Parses a route into different segments;
               * @param {plat.routing.IRouteDelegate} route The route options to be parsed.
               * @param {Array<plat.routing.IDelegateParameterNames>} delegates The delegates and associated names for mapping parameters.
               * @param {plat.routing.ISegmentTypeCount} types A count of all the segment types in the route.
               */
-            protected _parse(route: IRouteDelegate, delegates: IDelegateParameterNames[], types: ISegmentTypeCount): BaseSegment[];
+            protected _parse(route: IRouteDelegate, delegates: Array<IDelegateParameterNames>, types: ISegmentTypeCount): Array<BaseSegment>;
             /**
               * Compiles a list of segments into a series of states.
               * @param {Array<plat.routing.BaseSegment>} segments The segments to compile.
               * @param {plat.routing.State} state The initial state used to compile.
               * @param {Array<string>} regex A regular expression string to build in order to match the segments.
               */
-            protected _compile(segments: BaseSegment[], state: State, regex: string[]): State;
+            protected _compile(segments: Array<BaseSegment>, state: State, regex: Array<string>): State;
             /**
               * Adds a leading slash to the passed-in string if necessary.
               * @param {string} path The path to which to add the slash.
@@ -9175,12 +9167,12 @@ declare module plat {
               * Finds the compiled states for a given path.
               * @param {string} path The path with which to look for compiled states.
               */
-            protected _findStates(path: string): State[];
+            protected _findStates(path: string): Array<State>;
             /**
               * Filters out states with no delegates, and sorts the states.
               * @param {Array<plat.routing.State>} states The states to filter.
               */
-            protected _filter(states: State[]): State[];
+            protected _filter(states: Array<State>): Array<State>;
             /**
               * Links a state to a path, producing an IRecognizeResult.
               * @param {plat.routing.State} states The state to link.
@@ -9231,11 +9223,11 @@ declare module plat {
             /**
               * All the segments for the named route.
               */
-            segments: BaseSegment[];
+            segments: Array<BaseSegment>;
             /**
               * All the delegates for the named route.
               */
-            delegates: IDelegateParameterNames[];
+            delegates: Array<IDelegateParameterNames>;
         }
         /**
           * Used during route registeration to specify a delegate object to associate
@@ -9278,18 +9270,16 @@ declare module plat {
             childRecognizer: RouteRecognizer;
             paramTransforms: IObject<IRouteTransforms>;
             queryTransforms: IObject<IRouteTransforms>;
-            interceptors: IObject<{
-                (routeInfo: IRouteInfo): any;
-            }[]>;
+            interceptors: IObject<Array<(routeInfo: IRouteInfo) => any>>;
             navigating: boolean;
             finishNavigating: async.IThenable<void>;
             previousUrl: string;
             previousQuery: string;
             previousSegment: string;
             currentRouteInfo: IRouteInfo;
-            ports: ISupportRouteNavigation[];
+            ports: Array<ISupportRouteNavigation>;
             parent: Router;
-            children: Router[];
+            children: Array<Router>;
             uid: string;
             isRoot: boolean;
             ignoreOnce: boolean;
@@ -9300,7 +9290,7 @@ declare module plat {
             register(port: ISupportRouteNavigation): async.IThenable<void>;
             unregister(port: ISupportRouteNavigation): void;
             configure(routes: IRouteMapping): async.IThenable<void>;
-            configure(routes: IRouteMapping[]): async.IThenable<void>;
+            configure(routes: Array<IRouteMapping>): async.IThenable<void>;
             protected _configureRoute(route: IRouteMapping): void;
             param(handler: (value: any, parameters: any, query: any) => any, parameter: string, view: string): Router;
             param(handler: (value: any, parameters: any, query: any) => any, parameter: string, view: new (...args: any[]) => any): Router;
@@ -9421,11 +9411,11 @@ declare module plat {
             /**
               * A parsed form of the expression found in the attribute's value.
               */
-            protected _expression: string[];
+            protected _expression: Array<string>;
             /**
               * An array of the aliases used in the expression.
               */
-            protected _aliases: string[];
+            protected _aliases: Array<string>;
             /**
               * Kicks off finding and setting the listener.
               */
@@ -9447,7 +9437,7 @@ declare module plat {
             protected _buildExpression(): {
                 fn: () => void;
                 context: any;
-                args: expressions.IParsedExpression[];
+                args: Array<expressions.IParsedExpression>;
             };
             /**
               * Calls the specified function when the DOM event is fired.
@@ -9458,7 +9448,7 @@ declare module plat {
               * Finds all alias contained within the expression.
               * @param {Array<string>} args The array of arguments as strings.
               */
-            protected _findAliases(args: string[]): string[];
+            protected _findAliases(args: Array<string>): Array<string>;
             /**
               * Parses the expression and separates the function
               * from its arguments.
@@ -9930,7 +9920,7 @@ declare module plat {
             /**
               * Reference to the Regex injectable.
               */
-            protected _regex: expressions.Regex;
+            protected _regex: plat.expressions.Regex;
             /**
               * Holds the key mappings to filter for in a KeyboardEvent.
               */
@@ -9954,7 +9944,7 @@ declare module plat {
               * @param {Array<string>} keys? The array of defined keys to satisfy the
               * key press condition.
               */
-            protected _setKeyCodes(keys?: string[]): void;
+            protected _setKeyCodes(keys?: Array<string>): void;
         }
         /**
           * An attribute object that binds to specified key code scenarios.
@@ -9983,7 +9973,7 @@ declare module plat {
             /**
               * An optional array of keys if more than one key can satisfy the condition.
               */
-            keys?: string[];
+            keys?: Array<string>;
         }
         /**
           * Used for filtering keys on keydown events.
@@ -10335,11 +10325,11 @@ declare module plat {
             /**
               * Getter for input[type="file"]-multiple
               */
-            protected _getFiles(): IFile[];
+            protected _getFiles(): Array<IFile>;
             /**
               * Getter for select-multiple
               */
-            protected _getSelectedValues(): string[];
+            protected _getSelectedValues(): Array<string>;
             /**
               * Setter for textarea, input[type=text],
               * and input[type=button], and select
@@ -10468,9 +10458,7 @@ declare module plat {
               * The set of functions added by the Template Control that listens
               * for property changes.
               */
-            protected _listeners: {
-                (newValue: any, oldValue?: any): void;
-            }[];
+            protected _listeners: Array<(newValue: any, oldValue?: any) => void>;
             /**
               * The function to stop listening for property changes.
               */
