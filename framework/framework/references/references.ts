@@ -139,6 +139,7 @@ var __prefix = '$',
     __offline = 'offline',
     __error = 'error',
     __shutdown = 'shutdown',
+    __exiting = 'exiting',
     __beforeLoad = 'beforeLoad',
 
     /**

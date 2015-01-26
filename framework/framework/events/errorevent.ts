@@ -45,13 +45,15 @@
          * @param {any} sender The sender of the event.
          * @param {E} error The error that occurred, resulting in the event.
          * 
-         * @returns {void}
+         * @returns {plat.events.IErrorEvent<E>} The event instance.
          */
-        static dispatch<E extends Error>(name: string, sender: any, error: E): void {
+        static dispatch<E extends Error>(name: string, sender: any, error: E): IErrorEvent<E> {
             var event = new ErrorEvent<E>();
 
             event.initialize(name, sender, null, error);
             ErrorEvent._EventManager.sendEvent(event);
+
+            return event;
         }
 
         /**
@@ -144,9 +146,9 @@
          * @param {any} sender The sender of the event.
          * @param {E} error The error that occurred, resulting in the event.
          * 
-         * @returns {void}
+         * @returns {plat.events.IErrorEvent<E>} The event instance.
          */
-        dispatch<E extends Error>(name: string, sender: any, error: E): void;
+        dispatch<E extends Error>(name: string, sender: any, error: E): IErrorEvent<E>;
     }
 
     /**

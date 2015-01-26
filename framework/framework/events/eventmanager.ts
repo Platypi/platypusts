@@ -368,9 +368,9 @@ module plat.events {
          * @param {string} direction='up' Equivalent to {@link plat.events.EventManager.UP|EventManager.UP}.
          * @param {Array<any>} args? The arguments to send to the listeners.
          * 
-         * @returns {void}
+         * @returns {plat.events.IDispatchEventInstance} The dispatched event.
          */
-        static dispatch(name: string, sender: any, direction: 'up', args?: Array<any>): void;
+        static dispatch(name: string, sender: any, direction: 'up', args?: Array<any>): IDispatchEventInstance;
         /**
          * @name dispatch
          * @memberof plat.events.EventManager
@@ -387,9 +387,9 @@ module plat.events {
          * @param {string} direction='down' Equivalent to {@link plat.events.EventManager.DOWN|EventManager.DOWN}.
          * @param {Array<any>} args? The arguments to send to the listeners.
          * 
-         * @returns {void}
+         * @returns {plat.events.IDispatchEventInstance} The dispatched event.
          */
-        static dispatch(name: string, sender: any, direction: 'down', args?: Array<any>): void;
+        static dispatch(name: string, sender: any, direction: 'down', args?: Array<any>): IDispatchEventInstance;
         /**
          * @name dispatch
          * @memberof plat.events.EventManager
@@ -406,9 +406,9 @@ module plat.events {
          * @param {string} direction='direct' Equivalent to {@link plat.events.EventManager.DIRECT|EventManager.DIRECT}.
          * @param {Array<any>} args? The arguments to send to the listeners.
          * 
-         * @returns {void}
+         * @returns {plat.events.IDispatchEventInstance} The dispatched event.
          */
-        static dispatch(name: string, sender: any, direction: 'direct', args?: Array<any>): void;
+        static dispatch(name: string, sender: any, direction: 'direct', args?: Array<any>): IDispatchEventInstance;
         /**
          * @name dispatch
          * @memberof plat.events.EventManager
@@ -425,13 +425,14 @@ module plat.events {
          * @param {string} direction The direction in which to send the event.
          * @param {Array<any>} args? The arguments to send to the listeners.
          * 
-         * @returns {void}
+         * @returns {plat.events.IDispatchEventInstance} The dispatched event.
          */
-        static dispatch(name: string, sender: any, direction: string, args?: Array<any>): void;
+        static dispatch(name: string, sender: any, direction: string, args?: Array<any>): IDispatchEventInstance;
         static dispatch(name: string, sender: any, direction: string, args?: Array<any>) {
             var $dispatchEvent: IDispatchEventInstance = acquire(__DispatchEventInstance);
             $dispatchEvent.initialize(name, sender, direction);
             EventManager.sendEvent($dispatchEvent, args);
+            return $dispatchEvent;
         }
 
         /**
@@ -976,9 +977,9 @@ module plat.events {
          * @param {string} direction='up' Equivalent to {@link plat.events.EventManager.UP|EventManager.UP}.
          * @param {Array<any>} args? The arguments to send to the listeners.
          *
-         * @returns {void}
+         * @returns {plat.events.IDispatchEventInstance} The dispatched event.
          */
-        dispatch(name: string, sender: any, direction: 'up', args?: Array<any>): void;
+        dispatch(name: string, sender: any, direction: 'up', args?: Array<any>): IDispatchEventInstance;
         /**
          * @name dispatch
          * @memberof plat.events.IEventManagerStatic
@@ -995,9 +996,9 @@ module plat.events {
          * @param {string} direction='down' Equivalent to {@link plat.events.EventManager.DOWN|EventManager.DOWN}.
          * @param {Array<any>} args? The arguments to send to the listeners.
          *
-         * @returns {void}
+         * @returns {plat.events.IDispatchEventInstance} The dispatched event.
          */
-        dispatch(name: string, sender: any, direction: 'down', args?: Array<any>): void;
+        dispatch(name: string, sender: any, direction: 'down', args?: Array<any>): IDispatchEventInstance;
         /**
          * @name dispatch
          * @memberof plat.events.IEventManagerStatic
@@ -1014,9 +1015,9 @@ module plat.events {
          * @param {string} direction='direct' Equivalent to {@link plat.events.EventManager.DIRECT|EventManager.DIRECT}.
          * @param {Array<any>} args? The arguments to send to the listeners.
          *
-         * @returns {void}
+         * @returns {plat.events.IDispatchEventInstance} The dispatched event.
          */
-        dispatch(name: string, sender: any, direction: 'direct', args?: Array<any>): void;
+        dispatch(name: string, sender: any, direction: 'direct', args?: Array<any>): IDispatchEventInstance;
         /**
          * @name dispatch
          * @memberof plat.events.IEventManagerStatic
@@ -1033,9 +1034,9 @@ module plat.events {
          * @param {string} direction The direction in which to send the event.
          * @param {Array<any>} args? The arguments to send to the listeners.
          *
-         * @returns {void}
+         * @returns {plat.events.IDispatchEventInstance} The dispatched event.
          */
-        dispatch(name: string, sender: any, direction: string, args?: Array<any>): void;
+        dispatch(name: string, sender: any, direction: string, args?: Array<any>): IDispatchEventInstance;
 
         /**
          * @name hasDirection
