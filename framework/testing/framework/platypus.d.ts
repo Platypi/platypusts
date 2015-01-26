@@ -11135,7 +11135,8 @@ declare module plat {
             navigate(view: any, options?: INavigateOptions): async.IThenable<void>;
             protected _finishNavigating(): async.IThenable<void>;
             protected _navigate(url: string, replace?: boolean): async.IThenable<void>;
-            goBack(options?: IBackNavigationOptions): void;
+            goBack(options?: IBackNavigationOptions): async.IThenable<void>;
+            protected _goBack(length: number): async.IThenable<void>;
             dispose(): void;
             protected _observeUrl(): void;
             generate(view: any, parameters: any, query: any): string;

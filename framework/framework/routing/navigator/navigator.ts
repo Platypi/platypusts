@@ -132,7 +132,7 @@
             });
         }
 
-        goBack(options?: IBackNavigationOptions): void {
+        goBack(options?: IBackNavigationOptions): async.IThenable<void> {
             options = isObject(options) ? options : {};
 
             var length = Number(options.length);
@@ -150,7 +150,18 @@
 
             this.backNavigate = true;
 
-            _browser.back(length);
+            return this._finishNavigating()
+                .then(() => {
+                    return this._goBack(length);
+                });
+        }
+
+        protected _goBack(length: number) {
+            return new this._Promise<void>((resolve, reject) => {
+                this.resolveNavigate = resolve;
+                this.rejectNavigate = reject;
+                this._history.go(-length);
+            });
         }
 
         dispose() {
