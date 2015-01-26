@@ -4275,7 +4275,7 @@ declare module plat {
           * @param {string} property The property identifer
           * evaluated property value, and the control that it's on.
           */
-        findProperty(property: string): ControlProperty;
+        findProperty(property: string): IControlProperty;
         /**
           * Creates a new DispatchEvent and propagates it to controls based on the
           * provided direction mechanism. Controls in the propagation chain that registered
@@ -4383,7 +4383,7 @@ declare module plat {
     /**
       * An object that links a property to a control.
       */
-    interface ControlProperty {
+    interface IControlProperty {
         /**
           * The parsed expression of the control property.
           */

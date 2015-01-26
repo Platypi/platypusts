@@ -1037,10 +1037,10 @@ module plat {
          * 
          * @param {string} property The property identifer
          * 
-         * @returns {ControlProperty} An object containing the property's parsed expression, the 
+         * @returns {plat.IControlProperty} An object containing the property's parsed expression, the 
          * evaluated property value, and the control that it's on.
          */
-        findProperty(property: string): ControlProperty {
+        findProperty(property: string): IControlProperty {
             var control = <Control>this,
                 expression = Control._parser.parse(property),
                 value: any;
@@ -1334,17 +1334,17 @@ module plat {
     }
 
     /**
-     * @name ControlProperty
+     * @name IControlProperty
      * @memberof plat
      * @kind interface
      * 
      * @description
      * An object that links a property to a control.
      */
-    export interface ControlProperty {
+    export interface IControlProperty {
         /**
          * @name expresssion
-         * @memberof plat.Control
+         * @memberof plat.IControlProperty
          * @kind property
          * @access public
          * 
@@ -1357,7 +1357,7 @@ module plat {
 
         /**
          * @name value
-         * @memberof plat.Control
+         * @memberof plat.IControlProperty
          * @kind property
          * @access public
          * 
@@ -1370,7 +1370,7 @@ module plat {
 
         /**
          * @name control
-         * @memberof plat.Control
+         * @memberof plat.IControlProperty
          * @kind property
          * @access public
          * 

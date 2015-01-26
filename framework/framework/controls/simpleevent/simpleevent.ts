@@ -166,7 +166,7 @@ module plat.controls {
                 parent = this.parent,
                 hasParent = !isNull(parent),
                 listenerStr = expression.shift(),
-                listener: ControlProperty,
+                listener: IControlProperty,
                 context: any,
                 fn: () => void,
                 aliases: IObject<any>,
