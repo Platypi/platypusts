@@ -128,9 +128,22 @@
          * @type {boolean}
          * 
          * @description
-         * Signifies whether we are in the contet of a Windows 8 app.
+         * Signifies whether we are in the context of a Windows 8 app.
          */
         msApp: boolean;
+
+        /**
+         * @name winJs
+         * @memberof plat.Compat
+         * @kind property
+         * @access public
+         * 
+         * @type {boolean}
+         * 
+         * @description
+         * Signifies whether we are in the context of a WinJS app.
+         */
+        winJs: boolean;
 
         /**
          * @name indexedDb
@@ -395,6 +408,7 @@
                 history = this._history,
                 def = (<any>_window).define,
                 msA = (<any>_window).MSApp,
+                winJs = (<any>_window).WinJS,
                 android = parseInt((<any>/android (\d+)/.exec(userAgent) || [])[1], 10);
 
             this.isCompatible = isFunction(Object.defineProperty) && isFunction(this._document.querySelector);
@@ -403,6 +417,7 @@
             this.fileSupported = !(isUndefined((<any>_window).File) || isUndefined((<any>_window).FormData));
             this.amd = isFunction(def) && !isNull(def.amd);
             this.msApp = isObject(msA) && isFunction(msA.execUnsafeLocalFunction);
+            this.winJs = isObject(winJs) && isObject(winJs.Application);
             this.indexedDb = !isNull(_window.indexedDB);
             this.proto = isObject((<any>{}).__proto__);
             this.getProto = isFunction(Object.getPrototypeOf);
@@ -672,9 +687,22 @@
          * @type {boolean}
          * 
          * @description
-         * Signifies whether we are in the contet of a Windows 8 app.
+         * Signifies whether we are in the context of a Windows 8 app.
          */
         msApp: boolean;
+
+        /**
+         * @name winJs
+         * @memberof plat.ICompat
+         * @kind property
+         * @access public
+         * 
+         * @type {boolean}
+         * 
+         * @description
+         * Signifies whether we are in the context of a WinJS app.
+         */
+        winJs: boolean;
 
         /**
          * @name indexedDb

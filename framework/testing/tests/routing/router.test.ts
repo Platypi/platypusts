@@ -28,7 +28,7 @@ module test.routing.router {
 
         it('should force navigate after configuration', (done: Function) => {
             router.navigate('/posts')
-                .catch(() => {
+                .then(() => {
                     expectAllNot(viewport);
                     return router.configure({
                         pattern: '/posts',

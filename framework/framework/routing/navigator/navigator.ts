@@ -142,7 +142,7 @@
             });
         }
 
-        goBack(options?: IBackNavigationOptions) {
+        goBack(options?: IBackNavigationOptions): async.IThenable<void> {
             options = isObject(options) ? options : {};
 
             var length = Number(options.length);
@@ -152,20 +152,26 @@
             }
 
             if (!this.isRoot) {
-                Navigator._root.goBack(options);
+                return Navigator._root.goBack(options);
             }
 
-            var _history = this._history,
-                url = this._browser.url();
+            var _browser = this._browser,
+                url = _browser.url();
 
             this.backNavigate = true;
-            _history.go(-length);
-            
-            defer(() => {
-                if (!this.ignored && url === this._browser.url()) {
-                    this._EventManager.dispatch(__shutdown, this, this._EventManager.DIRECT);
-                }
-            }, 50);
+
+            return this._finishNavigating()
+                .then(() => {
+                    return this._goBack(length);
+                });
+        }
+
+        protected _goBack(length: number) {
+            return new this._Promise<void>((resolve, reject) => {
+                this.resolveNavigate = resolve;
+                this.rejectNavigate = reject;
+                this._history.go(-length);
+            });
         }
 
         dispose() {

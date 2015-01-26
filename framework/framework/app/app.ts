@@ -270,9 +270,17 @@ module plat {
          * @returns {void}
          */
         private static __shutdown(): void {
-            var app = (<any>navigator).app;
+            var app = (<any>navigator).app,
+                _LifecycleEvent = App._LifecycleEvent,
+                ev: events.IDispatchEventInstance;
 
             if (!isNull(app) && isFunction(app.exitApp)) {
+                ev = _LifecycleEvent.dispatch(__exiting, App);
+
+                if (ev.defaultPrevented) {
+                    return;
+                }
+
                 app.exitApp();
             }
         }
@@ -302,6 +310,7 @@ module plat {
             app.on(__online, app.online);
             app.on(__offline, app.offline);
             app.on(__error, app.error);
+            app.on(__exiting, app.exiting);
 
             if (isFunction(app.ready)) {
                 app.ready(ev);
@@ -445,6 +454,22 @@ module plat {
          * @returns {void}
          */
         ready(ev: events.ILifecycleEvent): void { }
+
+        /**
+         * @name exiting
+         * @memberof plat.App
+         * @kind function
+         * @access public
+         * @virtual
+         * 
+         * @description
+         * Event fired when the app has been programatically shutdown. This event is cancelable.
+         * 
+         * @param {plat.events.ILifecycleEvent} ev The {@link plat.events.ILifecycleEvent|ILifecycleEvent} object.
+         * 
+         * @returns {void}
+         */
+        exiting(ev: events.ILifecycleEvent): void { }
 
         /**
          * @name online
@@ -752,6 +777,22 @@ module plat {
          * @returns {void}
          */
         ready? (ev: events.ILifecycleEvent): void;
+
+        /**
+         * @name exiting
+         * @memberof plat.IApp
+         * @kind function
+         * @access public
+         * @virtual
+         * 
+         * @description
+         * Event fired when the app has been programatically shutdown. This event is cancelable.
+         * 
+         * @param {plat.events.ILifecycleEvent} ev The {@link plat.events.ILifecycleEvent|ILifecycleEvent} object.
+         * 
+         * @returns {void}
+         */
+        exiting(ev: events.ILifecycleEvent): void;
 
         /**
          * @name online

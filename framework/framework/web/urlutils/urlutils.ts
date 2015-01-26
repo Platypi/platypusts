@@ -63,7 +63,7 @@
                 protocol = window.location.protocol,
                 host = window.location.host;
 
-            if (protocol === 'file:' || protocol.indexOf('wmapp') > -1) {
+            if (protocol === 'file:' || protocol.indexOf('wmapp') > -1 || protocol.indexOf('ms-appx') > -1) {
                 origin = window.location.href;
             } else if(isUndefined(origin)) {
                 origin = window.location.protocol + "//" + window.location.host;
@@ -386,13 +386,13 @@
 
             var protocol = element.protocol ? element.protocol.replace(/:$/, '') : '';
 
-            define(this, 'href', url, true, true);
-            define(this, 'protocol', element.protocol ? element.protocol.replace(/:$/, '') : '', true, true);
-            define(this, 'host', element.host, true, true);
-            define(this, 'search', element.search ? element.search.replace(/^\?/, '') : '', true, true);
-            define(this, 'hash', element.hash ? element.hash.replace(/^#/, '') : '', true, true);
-            define(this, 'hostname', element.hostname, true, true);
-            define(this, 'port', element.port, true, true);
+            this.href = url;
+            this.protocol = element.protocol ? element.protocol.replace(/:$/, '') : '';
+            this.host = element.host;
+            this.search = element.search ? element.search.replace(/^\?/, '') : '';
+            this.hash = element.hash ? element.hash.replace(/^#/, '') : '';
+            this.hostname = element.hostname;
+            this.port = element.port;
 
             var path: string;
 
@@ -407,8 +407,8 @@
 
             path = path.replace(this._regex.initialUrlRegex, '/');
 
-            define(this, 'pathname', path.split('?')[0].split('#')[0], true, true);
-            define(this, 'query', UrlUtils.__getQuery(this.search), true, true);
+            this.pathname = path.split('?')[0].split('#')[0];
+            this.query = UrlUtils.__getQuery(this.search);
         }
 
         /**

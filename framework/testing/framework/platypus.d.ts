@@ -1,5 +1,5 @@
 /**
-  * PlatypusTS v0.10.0-beta.4 (http://getplatypi.com)
+  * PlatypusTS v0.10.0 (http://getplatypi.com)
   * Copyright 2014 Platypi, LLC. All rights reserved.
   * PlatypusTS is licensed under the GPL-3.0 found at
   * http://opensource.org/licenses/GPL-3.0
@@ -567,9 +567,13 @@ declare module plat {
           */
         amd: boolean;
         /**
-          * Signifies whether we are in the contet of a Windows 8 app.
+          * Signifies whether we are in the context of a Windows 8 app.
           */
         msApp: boolean;
+        /**
+          * Signifies whether we are in the context of a WinJS app.
+          */
+        winJs: boolean;
         /**
           * Signifies whether indexedDB exists on the window.
           */
@@ -693,9 +697,13 @@ declare module plat {
           */
         amd: boolean;
         /**
-          * Signifies whether we are in the contet of a Windows 8 app.
+          * Signifies whether we are in the context of a Windows 8 app.
           */
         msApp: boolean;
+        /**
+          * Signifies whether we are in the context of a WinJS app.
+          */
+        winJs: boolean;
         /**
           * Signifies whether indexedDB exists on the window.
           */
@@ -2259,6 +2267,10 @@ declare module plat {
               */
             protected _dom: ui.IDom;
             /**
+              * Keeps a history stack if using a windows store app.
+              */
+            protected _stack: string[];
+            /**
               * A unique string identifier.
               */
             uid: string;
@@ -2290,6 +2302,16 @@ declare module plat {
               * the history.
               */
             url(url?: string, replace?: boolean): string;
+            /**
+              * Navigates back in the browser history
+              * @param {number} length=1 The length to go back
+              */
+            back(length?: number): void;
+            /**
+              * Navigates forward in the browser history
+              * @param {number} length=1 The length to go forward
+              */
+            forward(length?: number): void;
             /**
               * Creates a new IUrlUtilsInstance object.
               * @param url? The URL to associate with the new UrlUtils
@@ -2345,6 +2367,16 @@ declare module plat {
               * the history.
               */
             url(url?: string, replace?: boolean): string;
+            /**
+              * Navigates back in the browser history
+              * @param {number} length=1 The length to go back
+              */
+            back(length?: number): void;
+            /**
+              * Navigates forward in the browser history
+              * @param {number} length=1 The length to go forward
+              */
+            forward(length?: number): void;
             /**
               * Creates a new IUrlUtilsInstance object.
               * @param url? The URL to associate with the new UrlUtils
@@ -4659,7 +4691,7 @@ declare module plat {
               * @param {string} name The name of the event.
               * @param {any} sender The sender of the event.
               */
-            static dispatch(name: string, sender: any): void;
+            static dispatch(name: string, sender: any): ILifecycleEvent;
             /**
               * Initializes the event, populating its public properties.
               * @param {string} name The name of the event.
@@ -4680,7 +4712,7 @@ declare module plat {
               * @param {string} name The name of the event.
               * @param {any} sender The sender of the event.
               */
-            dispatch(name: string, sender: any): void;
+            dispatch(name: string, sender: any): ILifecycleEvent;
         }
         /**
           * Represents a Lifecycle Event. Lifecycle Events are always direct events.
@@ -4774,7 +4806,7 @@ declare module plat {
               * @param {string} direction='up' Equivalent to EventManager.UP.
               * @param {Array<any>} args? The arguments to send to the listeners.
               */
-            static dispatch(name: string, sender: any, direction: 'up', args?: any[]): void;
+            static dispatch(name: string, sender: any, direction: 'up', args?: any[]): IDispatchEventInstance;
             /**
               * Looks for listeners to a given event name, and fires the listeners using the specified
               * event direction.
@@ -4783,7 +4815,7 @@ declare module plat {
               * @param {string} direction='down' Equivalent to EventManager.DOWN.
               * @param {Array<any>} args? The arguments to send to the listeners.
               */
-            static dispatch(name: string, sender: any, direction: 'down', args?: any[]): void;
+            static dispatch(name: string, sender: any, direction: 'down', args?: any[]): IDispatchEventInstance;
             /**
               * Looks for listeners to a given event name, and fires the listeners using the specified
               * event direction.
@@ -4792,7 +4824,7 @@ declare module plat {
               * @param {string} direction='direct' Equivalent to EventManager.DIRECT.
               * @param {Array<any>} args? The arguments to send to the listeners.
               */
-            static dispatch(name: string, sender: any, direction: 'direct', args?: any[]): void;
+            static dispatch(name: string, sender: any, direction: 'direct', args?: any[]): IDispatchEventInstance;
             /**
               * Looks for listeners to a given event name, and fires the listeners using the specified
               * event direction.
@@ -4801,7 +4833,7 @@ declare module plat {
               * @param {string} direction The direction in which to send the event.
               * @param {Array<any>} args? The arguments to send to the listeners.
               */
-            static dispatch(name: string, sender: any, direction: string, args?: any[]): void;
+            static dispatch(name: string, sender: any, direction: string, args?: any[]): IDispatchEventInstance;
             /**
               * Returns whether or not the given string is a registered direction.
               * @param {string} direction The direction of the event
@@ -4963,7 +4995,7 @@ declare module plat {
               * @param {string} direction='up' Equivalent to EventManager.UP.
               * @param {Array<any>} args? The arguments to send to the listeners.
               */
-            dispatch(name: string, sender: any, direction: 'up', args?: any[]): void;
+            dispatch(name: string, sender: any, direction: 'up', args?: any[]): IDispatchEventInstance;
             /**
               * Looks for listeners to a given event name, and fires the listeners using the specified
               * event direction.
@@ -4972,7 +5004,7 @@ declare module plat {
               * @param {string} direction='down' Equivalent to EventManager.DOWN.
               * @param {Array<any>} args? The arguments to send to the listeners.
               */
-            dispatch(name: string, sender: any, direction: 'down', args?: any[]): void;
+            dispatch(name: string, sender: any, direction: 'down', args?: any[]): IDispatchEventInstance;
             /**
               * Looks for listeners to a given event name, and fires the listeners using the specified
               * event direction.
@@ -4981,7 +5013,7 @@ declare module plat {
               * @param {string} direction='direct' Equivalent to EventManager.DIRECT.
               * @param {Array<any>} args? The arguments to send to the listeners.
               */
-            dispatch(name: string, sender: any, direction: 'direct', args?: any[]): void;
+            dispatch(name: string, sender: any, direction: 'direct', args?: any[]): IDispatchEventInstance;
             /**
               * Looks for listeners to a given event name, and fires the listeners using the specified
               * event direction.
@@ -4990,7 +5022,7 @@ declare module plat {
               * @param {string} direction The direction in which to send the event.
               * @param {Array<any>} args? The arguments to send to the listeners.
               */
-            dispatch(name: string, sender: any, direction: string, args?: any[]): void;
+            dispatch(name: string, sender: any, direction: string, args?: any[]): IDispatchEventInstance;
             /**
               * Returns whether or not the given string is a registered direction.
               * @param {string} direction The direction of the event
@@ -5019,7 +5051,7 @@ declare module plat {
               * @param {any} sender The sender of the event.
               * @param {E} error The error that occurred, resulting in the event.
               */
-            static dispatch<E extends Error>(name: string, sender: any, error: E): void;
+            static dispatch<E extends Error>(name: string, sender: any, error: E): IErrorEvent<E>;
             /**
               * The error being dispatched.
               */
@@ -5055,7 +5087,7 @@ declare module plat {
               * @param {any} sender The sender of the event.
               * @param {E} error The error that occurred, resulting in the event.
               */
-            dispatch<E extends Error>(name: string, sender: any, error: E): void;
+            dispatch<E extends Error>(name: string, sender: any, error: E): IErrorEvent<E>;
         }
         /**
           * Represents an internal Error Event. This is used for any
@@ -8173,22 +8205,33 @@ declare module plat {
               */
             event: string;
             /**
+              * The event type to dispatch. Defaults to 'CustomEvent'.
+              */
+            eventType: string;
+            /**
               * Initializes the element and event of this IDomEventInstance object.
               * @param {Node} element The element associated with this IDomEventInstance object.
               * @param {string} event The event associated with this IDomEventInstance object.
+              * @param {string} eventType? The event type associated with this IDomEventInstance object.
+              * If not specified, it will default to 'CustomEvent'.
               */
-            initialize(element: Node, event: string): void;
+            initialize(element: Node, event: string, eventType?: string): void;
             /**
               * Initializes the element and event of this IDomEventInstance object.
               * @param {Window} element The window object.
               * @param {string} event The event associated with this IDomEventInstance object.
+              * @param {string} eventType? The event type associated with this IDomEventInstance object.
+              * If not specified, it will default to 'CustomEvent'.
               */
-            initialize(element: Window, event: string): void;
+            initialize(element: Window, event: string, eventType?: string): void;
             /**
               * Triggers its event on its element.
               * @param {Object} eventExtension? An event extension to extend the dispatched CustomEvent.
+              * @param {any} detailArg? The detail arg to include in the event object
+              * @param {Node} dispatchElement? The element to dispatch the Event from. If not specified,
+              * this instance's element will be used.
               */
-            trigger(eventExtension?: Object): void;
+            trigger(eventExtension?: Object, detailArg?: any, dispatchElement?: Node): boolean;
         }
         /**
           * The Type for referencing the '_domEvents' injectable as a dependency.
@@ -11092,7 +11135,8 @@ declare module plat {
             navigate(view: any, options?: INavigateOptions): async.IThenable<void>;
             protected _finishNavigating(): async.IThenable<void>;
             protected _navigate(url: string, replace?: boolean): async.IThenable<void>;
-            goBack(options?: IBackNavigationOptions): void;
+            goBack(options?: IBackNavigationOptions): async.IThenable<void>;
+            protected _goBack(length: number): async.IThenable<void>;
             dispose(): void;
             protected _observeUrl(): void;
             generate(view: any, parameters: any, query: any): string;
@@ -13004,6 +13048,11 @@ declare module plat {
           */
         ready(ev: events.ILifecycleEvent): void;
         /**
+          * Event fired when the app has been programatically shutdown. This event is cancelable.
+          * @param {plat.events.ILifecycleEvent} ev The ILifecycleEvent object.
+          */
+        exiting(ev: events.ILifecycleEvent): void;
+        /**
           * Event fired when the app regains connectivity and is now in an online state.
           * @param {plat.events.ILifecycleEvent} ev The ILifecycleEvent object.
           */
@@ -13106,6 +13155,11 @@ declare module plat {
           * @param {plat.events.ILifecycleEvent} ev The ILifecycleEvent object.
           */
         ready?(ev: events.ILifecycleEvent): void;
+        /**
+          * Event fired when the app has been programatically shutdown. This event is cancelable.
+          * @param {plat.events.ILifecycleEvent} ev The ILifecycleEvent object.
+          */
+        exiting(ev: events.ILifecycleEvent): void;
         /**
           * Event fired when the app regains connectivity and is now in an online state.
           * @param {plat.events.ILifecycleEvent} ev The ILifecycleEvent object.

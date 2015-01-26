@@ -132,6 +132,19 @@ module plat.web {
         protected _dom: ui.IDom = acquire(__Dom);
 
         /**
+         * @name _stack
+         * @memberof plat.web.Browser
+         * @kind property
+         * @access protected
+         * 
+         * @type {Array<string>}
+         * 
+         * @description
+         * Keeps a history stack if using a windows store app.
+         */
+        protected _stack: Array<string>;
+
+        /**
          * @name uid
          * @memberof plat.web.Browser
          * @kind property
@@ -199,6 +212,10 @@ module plat.web {
             var ContextManager: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
             ContextManager.defineGetter(this, 'uid', uniqueId(__Plat));
             this._EventManager.on(this.uid, __beforeLoad, this.initialize, this);
+
+            if (this._compat.msApp) {
+                this._stack = [];
+            }
         }
 
         /**
@@ -265,10 +282,65 @@ module plat.web {
             var location = this._location;
 
             if (isString(url) && this.__lastUrl !== url) {
+                if (isArray(this._stack)) {
+                    this._stack.push(location.href);
+                }
+
                 this._setUrl(url, replace);
             }
 
             return this.__currentUrl || location.href;
+        }
+
+        /**
+         * @name back
+         * @memberof plat.web.Browser
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Navigates back in the browser history
+         * 
+         * @param {number} length=1 The length to go back
+         * 
+         * @returns {void}
+         */
+        back(length?: number): void {
+            if (!isNumber(length)) {
+                length = 1;
+            }
+
+            var _stack = this._stack;
+
+            if (isArray(_stack) && _stack.length > 1) {
+                this._stack = _stack = _stack.slice(0, _stack.length - (length - 1));
+                this.url(_stack.pop());
+                _stack.pop();
+                return;
+            }
+
+            this._history.go(-length);
+        }
+
+        /**
+         * @name forward
+         * @memberof plat.web.Browser
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Navigates forward in the browser history
+         * 
+         * @param {number} length=1 The length to go forward
+         * 
+         * @returns {void}
+         */
+        forward(length?: number): void {
+            if (!isNumber(length)) {
+                length = 1;
+            }
+
+            this._history.go(length);
         }
 
         /**
@@ -410,6 +482,7 @@ module plat.web {
                     this._urlChanged();
                 }
             } else {
+                console.log('test');
                 this.__currentUrl = url;
                 if (replace) {
                     _location.replace(url);
@@ -532,6 +605,36 @@ module plat.web {
          * @returns {string} The current URL or current location.
          */
         url(url?: string, replace?: boolean): string;
+
+        /**
+         * @name back
+         * @memberof plat.web.IBrowser
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Navigates back in the browser history
+         * 
+         * @param {number} length=1 The length to go back
+         * 
+         * @returns {void}
+         */
+        back(length?: number): void;
+
+        /**
+         * @name forward
+         * @memberof plat.web.IBrowser
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Navigates forward in the browser history
+         * 
+         * @param {number} length=1 The length to go forward
+         * 
+         * @returns {void}
+         */
+        forward(length?: number): void;
 
         /**
          * @name urlUtils

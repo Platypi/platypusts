@@ -26,12 +26,14 @@
          * @param {string} name The name of the event.
          * @param {any} sender The sender of the event.
          * 
-         * @returns {void}
+         * @returns {plat.events.ILifecycleEvent} The event instance.
          */
-        static dispatch(name: string, sender: any): void {
+        static dispatch(name: string, sender: any): ILifecycleEvent {
             var event = new LifecycleEvent();
             event.initialize(name, sender);
             EventManager.sendEvent(event);
+
+            return event;
         }
 
         /**
@@ -84,9 +86,9 @@
          * @param {string} name The name of the event.
          * @param {any} sender The sender of the event.
          * 
-         * @returns {void}
+         * @returns {plat.events.ILifecycleEvent} The event instance.
          */
-        dispatch(name: string, sender: any): void;
+        dispatch(name: string, sender: any): ILifecycleEvent;
     }
 
     /**
