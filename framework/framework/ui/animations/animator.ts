@@ -8,6 +8,10 @@
      * A class used for animating elements.
      */
     export class Animator {
+        protected static _inject: any = {
+            _compat: __Compat
+        };
+
         /**
          * @name _compat
          * @memberof plat.ui.animations.Animator
@@ -19,7 +23,7 @@
          * @description
          * Reference to the {@link plat.Compat|Compat} injectable.
          */
-        protected _compat: Compat = acquire(__Compat);
+        protected _compat: Compat;
 
         /**
          * @name _elements

@@ -9,6 +9,10 @@ module plat.ui {
      * of DOM.
      */
     export class Dom {
+        protected static _inject: any = {
+            _domEvents: __DomEvents
+        };
+
         /**
          * @name _domEvents
          * @memberof plat.ui.Dom

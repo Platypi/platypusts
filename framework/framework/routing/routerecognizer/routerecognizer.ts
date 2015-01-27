@@ -12,6 +12,12 @@
      * find the associated compiled route and link it to the data given with the passed-in route.
      */
     export class RouteRecognizer {
+        protected static _inject: any = {
+            _BaseSegmentFactory: __BaseSegmentFactory,
+            _State: __StateStatic,
+            _rootState: __StateInstance
+        };
+
         /**
          * @name _BaseSegmentFactory
          * @memberof plat.routing.RouteRecognizer
@@ -23,7 +29,7 @@
          * @description
          * Reference to the {@link plat.routing.BaseSegment|BaseSegment} injectable.
          */
-        protected _BaseSegmentFactory: typeof BaseSegment = acquire(__BaseSegmentFactory);
+        protected _BaseSegmentFactory: typeof BaseSegment;
 
         /**
          * @name _State
@@ -36,7 +42,7 @@
          * @description
          * Reference to the {@link plat.routing.State|State} injectable.
          */
-        protected _State: typeof State = acquire(__StateStatic);
+        protected _State: typeof State;
 
         /**
          * @name _rootState
@@ -49,7 +55,7 @@
          * @description
          * A root state for the recognizer used to add next states.
          */
-        protected _rootState: State = acquire(__StateInstance);
+        protected _rootState: State;
 
         /**
          * @name _namedRoutes

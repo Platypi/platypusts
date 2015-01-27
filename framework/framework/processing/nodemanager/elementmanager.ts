@@ -629,7 +629,13 @@ module plat.processing {
 
         protected static _inject: any = {
             _Promise: __Promise,
-            _ContextManager: __ContextManagerStatic
+            _ContextManager: __ContextManagerStatic,
+            _compiler: __Compiler,
+            _CommentManagerFactory: __CommentManagerFactory,
+            _ControlFactory: __ControlFactory,
+            _TemplateControlFactory: __TemplateControlFactory,
+            _BindableTemplatesFactory: __BindableTemplatesFactory,
+            _Exception: __ExceptionStatic
         };
 
         /**
@@ -656,7 +662,7 @@ module plat.processing {
          * @description
          * Reference to the {@link plat.processing.Compiler|Compiler} injectable.
          */
-        protected _compiler: Compiler = acquire(__Compiler);
+        protected _compiler: Compiler;
 
         /**
          * @name _ContextManager
@@ -682,7 +688,7 @@ module plat.processing {
          * @description
          * Reference to the {@link plat.processing.ICommentManagerFactory|ICommentManagerFactory} injectable.
          */
-        protected _CommentManagerFactory: ICommentManagerFactory = acquire(__CommentManagerFactory);
+        protected _CommentManagerFactory: ICommentManagerFactory;
 
         /**
          * @name _ControlFactory
@@ -695,7 +701,7 @@ module plat.processing {
          * @description
          * Reference to the {@link plat.IControlFactory|IControlFactory} injectable.
          */
-        protected _ControlFactory: IControlFactory = acquire(__ControlFactory);
+        protected _ControlFactory: IControlFactory;
 
         /**
          * @name _TemplateControlFactory
@@ -708,7 +714,7 @@ module plat.processing {
          * @description
          * Reference to the {@link plat.ui.ITemplateControlFactory|ITemplateControlFactory} injectable.
          */
-        protected _TemplateControlFactory: ui.ITemplateControlFactory = acquire(__TemplateControlFactory);
+        protected _TemplateControlFactory: ui.ITemplateControlFactory;
 
         /**
          * @name _BindableTemplatesFactory
@@ -721,7 +727,7 @@ module plat.processing {
          * @description
          * Reference to the {@link plat.ui.IBindableTemplatesFactory|IBindableTemplatesFactory} injectable.
          */
-        protected _BindableTemplatesFactory: ui.IBindableTemplatesFactory = acquire(__BindableTemplatesFactory);
+        protected _BindableTemplatesFactory: ui.IBindableTemplatesFactory;
 
         /**
          * @name _Exception
@@ -734,7 +740,7 @@ module plat.processing {
          * @description
          * Reference to the {@link plat.IExceptionStatic|IExceptionStatic} injectable.
          */
-        protected _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+        protected _Exception: IExceptionStatic;
 
         /**
          * @name children

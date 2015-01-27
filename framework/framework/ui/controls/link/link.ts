@@ -20,6 +20,12 @@ module plat.ui.controls {
      * functionality to a native HTML anchor tag.
      */
     export class Link extends TemplateControl {
+        protected static _inject: any = {
+            _Router: __RouterStatic,
+            _Injector: __InjectorStatic,
+            _browser: __Browser
+        };
+
         /**
          * @name replaceWith
          * @memberof plat.ui.controls.Link
@@ -44,7 +50,7 @@ module plat.ui.controls {
          * @description
          * The {@link plat.routing.RouterStatic|RouterStatic} injectable instance
          */
-        protected _router: typeof routing.Router = acquire(__RouterStatic);
+        protected _Router: typeof routing.Router;
 
         /**
          * @name _Injector
@@ -57,7 +63,7 @@ module plat.ui.controls {
          * @description
          * The {@link plat.dependency.Injector|Injector} injectable instance
          */
-        protected _Injector: typeof dependency.Injector = acquire(__InjectorStatic);
+        protected _Injector: typeof dependency.Injector;
 
         /**
          * @name _browser
@@ -70,7 +76,7 @@ module plat.ui.controls {
          * @description
          * The {@link plat.web.Browser|Browser} injectable instance
          */
-        protected _browser: web.Browser = acquire(__Browser);
+        protected _browser: web.Browser;
 
         /**
          * @name router
@@ -126,7 +132,7 @@ module plat.ui.controls {
 
         constructor() {
             super();
-            this.router = this._router.currentRouter();
+            this.router = this._Router.currentRouter();
         }
 
         /**
@@ -143,10 +149,9 @@ module plat.ui.controls {
         initialize(): void {
             var element = this.element;
 
-            this.removeClickListener = this.addEventListener(element, 'click', (ev: Event) => {
+            this.addEventListener(element, 'click', (ev: Event) => {
                 ev.preventDefault();
-                this.removeClickListener();
-            });
+            }, false);
 
             this.addEventListener(element, __tap, (ev: IExtendedEvent) => {
                 if (ev.buttons !== 1) {
@@ -165,8 +170,8 @@ module plat.ui.controls {
                     this._browser.url(href);
                 });
 
-                this.removeClickListener();
-                element.addEventListener('click', this.getListener(element));
+                //this.removeClickListener();
+                //element.addEventListener('click', this.getListener(element));
             }, false);
         }
 

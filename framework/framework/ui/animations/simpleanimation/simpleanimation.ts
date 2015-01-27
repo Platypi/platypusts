@@ -20,6 +20,10 @@ module plat.ui.animations {
      * element, checks for animation properties, and waits for the animation to end.
      */
     export class SimpleCssAnimation extends CssAnimation {
+        protected static _inject: any = {
+            _window: __Window
+        };
+
         /**
          * @name _window
          * @memberof plat.ui.animations.SimpleCssAnimation
@@ -31,7 +35,7 @@ module plat.ui.animations {
          * @description
          * Reference to the Window injectable.
          */
-        protected _window: Window = acquire(__Window);
+        protected _window: Window;
 
         /**
          * @name className

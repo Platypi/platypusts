@@ -9,6 +9,15 @@
      * associated URL.
      */
     export class UrlUtils {
+        protected static _inject: any = {
+            _EventManager: __EventManagerStatic,
+            _document: __Document,
+            _window: __Window,
+            _compat: __Compat,
+            _regex: __Regex,
+            _browserConfig: __BrowserConfig
+        };
+
         /**
          * @name __urlUtilsElement
          * @memberof plat.web.UrlUtils
@@ -73,19 +82,6 @@
         }
 
         /**
-         * @name _ContextManager
-         * @memberof plat.web.UrlUtils
-         * @kind property
-         * @access protected
-         * 
-         * @type {plat.observable.IContextManagerStatic}
-         * 
-         * @description
-         * Reference to the {@link plat.observable.IContextManagerStatic|IContextManagerStatic} injectable.
-         */
-        protected _ContextManager: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
-
-        /**
          * @name _document
          * @memberof plat.web.UrlUtils
          * @kind property
@@ -96,7 +92,7 @@
          * @description
          * Reference to the Document injectable.
          */
-        protected _document: Document = acquire(__Document);
+        protected _document: Document;
 
         /**
          * @name _window
@@ -109,7 +105,7 @@
          * @description
          * Reference to the Window injectable.
          */
-        protected _window: Window = acquire(__Window);
+        protected _window: Window;
         /**
          * @name _compat
          * @memberof plat.web.UrlUtils
@@ -121,7 +117,7 @@
          * @description
          * Reference to the {@link plat.Compat|Compat} injectable.
          */
-        protected _compat: Compat = acquire(__Compat);
+        protected _compat: Compat;
 
         /**
          * @name _regex
@@ -134,7 +130,7 @@
          * @description
          * Reference to the {@link plat.expressions.Regex|Regex} injectable.
          */
-        protected _regex: expressions.Regex = acquire(__Regex);
+        protected _regex: expressions.Regex;
 
         /**
          * @name _browserConfig
@@ -147,7 +143,7 @@
          * @description
          * Reference to the {@link plat.web.IBrowserConfig|IBrowserConfig} injectable.
          */
-        protected _browserConfig: IBrowserConfig = acquire(__BrowserConfig);
+        protected _browserConfig: IBrowserConfig;
 
         /**
          * @name href
@@ -362,7 +358,6 @@
 
             var element = UrlUtils.__urlUtilsElement ||
                 (UrlUtils.__urlUtilsElement = this._document.createElement('a')),
-                define = this._ContextManager.defineGetter,
                 _browserConfig = this._browserConfig;
 
             // always make local urls relative to start page.

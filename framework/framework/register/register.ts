@@ -62,10 +62,10 @@ module plat.register {
      * @returns {plat.register} The object that contains the register methods (for method chaining).
      */
     export function app(name: string, Type: new (...args: any[]) => App, dependencies?: Array<any>): typeof register {
-        var app = new dependency.Injector<App>(name, Type, dependencies),
+        var _Injector: typeof dependency.Injector = acquire(__InjectorStatic),
             _AppStatic: IAppStatic = acquire(__AppStatic);
 
-        _AppStatic.registerApp(app);
+        _AppStatic.registerApp(new _Injector<App>(name, Type, dependencies));
         return register;
     }
 

@@ -24,7 +24,7 @@ module plat.expressions {
          * @description
          * Reference to the {@link plat.IExceptionStatic|IExceptionStatic} injectable.
          */
-        protected _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+        protected _Exception: IExceptionStatic;
 
         /**
          * @name _input

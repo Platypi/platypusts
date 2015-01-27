@@ -2,11 +2,22 @@ module plat.ui.controls {
     'use strict';
 
     export class Viewport extends TemplateControl implements routing.ISupportRouteNavigation {
-        protected _routerStatic: typeof routing.Router = acquire(__RouterStatic);
-        protected _Promise: async.IPromise = acquire(__Promise);
-        protected _Injector: typeof dependency.Injector = acquire(__InjectorStatic);
-        protected _ElementManagerFactory: processing.IElementManagerFactory = acquire(__ElementManagerFactory);
-        protected _document: Document = acquire(__Document);
+        protected static _inject: any = {
+            _Router: __RouterStatic,
+            _Promise: __Promise,
+            _Injector: __InjectorStatic,
+            _ElementManagerFactory: __ElementManagerFactory,
+            _document: __Document,
+            _managerCache: __ManagerCache,
+            _animator: __Animator,
+            navigator: __NavigatorInstance
+        };
+
+        protected _Router: typeof routing.Router;
+        protected _Promise: async.IPromise;
+        protected _Injector: typeof dependency.Injector;
+        protected _ElementManagerFactory: processing.IElementManagerFactory;
+        protected _document: Document;
 
         /**
          * @name _managerCache
@@ -19,7 +30,7 @@ module plat.ui.controls {
          * @description
          * Reference to an injectable that caches {@link plat.processing.ElementManager|ElementManagers}.
          */
-        protected _managerCache: storage.Cache<processing.ElementManager> = acquire(__ManagerCache);
+        protected _managerCache: storage.Cache<processing.ElementManager>;
 
         /**
          * @name _animator
@@ -32,7 +43,7 @@ module plat.ui.controls {
          * @description
          * Reference to the {@link plat.ui.animations.Animator|Animator} injectable.
          */
-        protected _animator: animations.Animator = acquire(__Animator);
+        protected _animator: animations.Animator;
 
         /**
          * @name _animationPromise
@@ -47,7 +58,7 @@ module plat.ui.controls {
          */
         protected _animationPromise: animations.IAnimationThenable<animations.IGetAnimatingThenable>;
 
-        navigator: routing.Navigator = acquire(__NavigatorInstance);
+        navigator: routing.Navigator;
         router: routing.Router;
         parentRouter: routing.Router;
         controls: Array<ViewControl>;
@@ -55,7 +66,7 @@ module plat.ui.controls {
         nextView: ViewControl;
 
         initialize() {
-            var router = this.router = this._routerStatic.currentRouter(),
+            var router = this.router = this._Router.currentRouter(),
                 parentViewport = this._getParentViewport(),
                 parentRouter: routing.Router;
 
@@ -74,7 +85,7 @@ module plat.ui.controls {
         }
 
         canNavigateTo(routeInfo: routing.IRouteInfo): async.IThenable<boolean> {
-            var getRouter = this._routerStatic.currentRouter,
+            var getRouter = this._Router.currentRouter,
                 currentRouter = getRouter(),
                 response: any = true,
                 injector: dependency.Injector<ViewControl> = this._Injector.getDependency(routeInfo.delegate.view),

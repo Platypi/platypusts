@@ -3,6 +3,10 @@ module app.viewcontrols {
         arrCount = 6;
     (<any>window).backCalled = 0;
     export class Main extends plat.ui.ViewControl {
+        protected static _inject: any = {
+            utils: plat.Utils
+        };
+
         title = 'Main';
         templateUrl = 'viewcontrols/main/main.viewcontrol.html';
         context = {

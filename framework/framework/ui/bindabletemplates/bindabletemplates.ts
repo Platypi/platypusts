@@ -13,6 +13,16 @@ module plat.ui {
      * separate those templates and reuse them accordingly.
      */
     export class BindableTemplates {
+        protected static _inject: any = {
+            _ResourcesFactory: __ResourcesFactory,
+            _TemplateControlFactory: __TemplateControlFactory,
+            _Promise: __Promise,
+            _managerCache: __ManagerCache,
+            _document: __Document,
+            _ElementManagerFactory: __ElementManagerFactory,
+            _Exception: __ExceptionStatic
+        };
+
         /**
          * @name create
          * @memberof plat.ui.BindableTemplates
@@ -134,7 +144,7 @@ module plat.ui {
          * @description
          * Reference to the {@link plat.ui.ResourcesFactory|IResourcesFactory} injectable.
          */
-        protected _ResourcesFactory: IResourcesFactory = acquire(__ResourcesFactory);
+        protected _ResourcesFactory: IResourcesFactory;
 
         /**
          * @name _TemplateControlFactory
@@ -147,7 +157,7 @@ module plat.ui {
          * @description
          * Reference to the {@link plat.ui.ITemplateControlFactory|ITemplateControlFactory} injectable.
          */
-        protected _TemplateControlFactory: ITemplateControlFactory = acquire(__TemplateControlFactory);
+        protected _TemplateControlFactory: ITemplateControlFactory;
 
         /**
          * @name _Promise
@@ -160,7 +170,7 @@ module plat.ui {
          * @description
          * Reference to the {@link plat.async.IPromise|IPromise} injectable.
          */
-        protected _Promise: async.IPromise = acquire(__Promise);
+        protected _Promise: async.IPromise;
 
         /**
          * @name _managerCache
@@ -173,7 +183,7 @@ module plat.ui {
          * @description
          * Reference to a cache injectable that stores {@link plat.processing.ElementManager|ElementManagers}.
          */
-        protected _managerCache: storage.Cache<processing.ElementManager> = acquire(__ManagerCache);
+        protected _managerCache: storage.Cache<processing.ElementManager>;
 
         /**
          * @name _document
@@ -186,7 +196,7 @@ module plat.ui {
          * @description
          * Reference to the Document injectable.
          */
-        protected _document: Document = acquire(__Document);
+        protected _document: Document;
 
         /**
          * @name _ElementManagerFactory
@@ -199,7 +209,7 @@ module plat.ui {
          * @description
          * Reference to the {@link plat.processing.IElementManagerFactory|IElementManagerFactory} injectable.
          */
-        protected _ElementManagerFactory: processing.IElementManagerFactory = acquire(__ElementManagerFactory);
+        protected _ElementManagerFactory: processing.IElementManagerFactory;
 
         /**
          * @name _Exception
@@ -212,7 +222,7 @@ module plat.ui {
          * @description
          * Reference to the {@link plat.IExceptionStatic|IExceptionStatic} injectable.
          */
-        protected _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+        protected _Exception: IExceptionStatic;
 
         /**
          * @name control
@@ -333,13 +343,13 @@ module plat.ui {
 
             return templatePromise.then((result: DocumentFragment) => {
                 return this._bindTemplate(key, <DocumentFragment>result.cloneNode(true), relativeIdentifier, resources);
-            }).then(null, (error: any) => {
-                    postpone(() => {
-                        _Exception.fatal(error, _Exception.BIND);
-                    });
-
-                    return <DocumentFragment>null;
+            }).then(null,(error: any) => {
+                postpone(() => {
+                    _Exception.fatal(error, _Exception.BIND);
                 });
+
+                return <DocumentFragment>null;
+            });
         }
 
         /**

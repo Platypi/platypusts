@@ -12,6 +12,11 @@ module plat.storage {
      * also clone the template when you retrieve it.
      */
     export class TemplateCache extends Cache<async.IThenable<DocumentFragment>> {
+        protected static _inject: any = {
+            _Promise: __Promise,
+            _Exception: __ExceptionStatic
+        };
+
         /**
          * @name _Promise
          * @memberof plat.storage.TemplateCache
@@ -23,7 +28,7 @@ module plat.storage {
          * @description
          * Reference to the {@link plat.async.IPromise|IPromise} injectable.
          */
-        protected _Promise: async.IPromise = acquire(__Promise);
+        protected _Promise: async.IPromise;
 
         /**
          * @name _Exception
@@ -36,7 +41,7 @@ module plat.storage {
          * @description
          * Reference to the {@link plat.IExceptionStatic|IExceptionStatic} injectable.
          */
-        protected _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+        protected _Exception: IExceptionStatic;
 
         /**
          * @name constructor

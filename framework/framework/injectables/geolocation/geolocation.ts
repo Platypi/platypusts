@@ -7,7 +7,7 @@ module plat {
             _Promise: __Promise
         };
 
-        protected _Promise: async.IPromise = acquire(__Promise);
+        protected _Promise: async.IPromise;
 
         /**
          * Attempts to acquire position information of the device.

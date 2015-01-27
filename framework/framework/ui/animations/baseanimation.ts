@@ -8,6 +8,11 @@
      * A class representing a single animation for a single element.
      */
     export class BaseAnimation {
+        protected static _inject: any = {
+            _compat: __Compat,
+            dom: __Dom
+        };
+
         /**
          * @name _compat
          * @memberof plat.ui.animations.BaseAnimation
@@ -19,7 +24,7 @@
          * @description
          * Reference to the {@link plat.Compat|Compat} injectable.
          */
-        protected _compat: Compat = acquire(__Compat);
+        protected _compat: Compat;
 
         /**
          * @name element
@@ -45,7 +50,7 @@
          * @description
          * Contains DOM helper methods for manipulating this control's element.
          */
-        dom: Dom = acquire(__Dom);
+        dom: Dom;
 
         /**
          * @name options

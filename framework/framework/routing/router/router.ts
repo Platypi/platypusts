@@ -5,6 +5,16 @@
         __CHILD_ROUTE_LENGTH = __CHILD_ROUTE.length;
 
     export class Router {
+        protected static _inject: any = {
+            _Promise: __Promise,
+            _Injector: __InjectorStatic,
+            _EventManager: __EventManagerStatic,
+            _browser: __Browser,
+            _browserConfig: __BrowserConfig,
+            recognizer: __RouteRecognizerInstance,
+            childRecognizer: __RouteRecognizerInstance
+        };
+
         static currentRouter(router?: Router) {
             if (!isNull(router)) {
                 Router.__currentRouter = router;
@@ -15,16 +25,16 @@
 
         private static __currentRouter: Router;
 
-        protected _Promise: async.IPromise = acquire(__Promise);
-        protected _Injector: typeof dependency.Injector = acquire(__InjectorStatic);
-        protected _EventManager: events.IEventManagerStatic = acquire(__EventManagerStatic);
-        protected _browser: web.Browser = acquire(__Browser);
-        protected _browserConfig: web.IBrowserConfig = acquire(__BrowserConfig);
+        protected _Promise: async.IPromise;
+        protected _Injector: typeof dependency.Injector;
+        protected _EventManager: events.IEventManagerStatic;
+        protected _browser: web.Browser;
+        protected _browserConfig: web.IBrowserConfig;
         protected _resolve: typeof async.Promise.resolve = this._Promise.resolve.bind(this._Promise);
         protected _reject: typeof async.Promise.reject = this._Promise.reject.bind(this._Promise);
 
-        recognizer: RouteRecognizer = acquire(__RouteRecognizerInstance);
-        childRecognizer: RouteRecognizer = acquire(__RouteRecognizerInstance);
+        recognizer: RouteRecognizer;
+        childRecognizer: RouteRecognizer;
 
         paramTransforms: IObject<IRouteTransforms> = {};
         queryTransforms: IObject<IRouteTransforms> = {};

@@ -295,9 +295,6 @@ module plat.dependency {
             var Constructor = proto.constructor,
                 toInject = _clone(Constructor._inject, true);
 
-            deleteProperty(toInject, 'name');
-            deleteProperty(toInject, 'dependencies');
-
             if (!isObject(toInject)) {
                 return;
             }
@@ -352,7 +349,7 @@ module plat.dependency {
 
             if (!isObject(injector)) {
                 if (isFunction(Constructor)) {
-                    injector = <Injector<any>>new Injector(dependency, Constructor, isObject(Constructor._inject) ? Constructor._inject.dependencies : []);
+                    injector = <Injector<any>>new Injector(dependency, Constructor, isObject(Constructor._inject) ? Constructor._injectorDependencies : []);
 
                     if (isString(dependency)) {
                         unregisteredInjectors[dependency] = injector;

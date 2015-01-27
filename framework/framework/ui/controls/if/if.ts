@@ -11,6 +11,11 @@ module plat.ui.controls {
      * a block of nodes to or from the DOM.
      */
     export class If extends TemplateControl {
+        protected static _inject: any = {
+            _animator: __Animator,
+            _Promise: __Promise
+        };
+
         /**
          * @name _animator
          * @memberof plat.ui.controls.If
@@ -22,7 +27,7 @@ module plat.ui.controls {
          * @description
          * Reference to the {@link plat.ui.animations.Animator|Animator} injectable.
          */
-        protected _animator: animations.Animator = acquire(__Animator);
+        protected _animator: animations.Animator;
 
         /**
          * @name _Promise
@@ -36,7 +41,7 @@ module plat.ui.controls {
          * @description
          * Reference to the {@link plat.async.IPromise|IPromise} injectable.
          */
-        protected _Promise: async.IPromise = acquire(__Promise);
+        protected _Promise: async.IPromise;
 
         /**
          * @name options

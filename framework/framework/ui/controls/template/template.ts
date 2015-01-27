@@ -11,6 +11,12 @@ module plat.ui.controls {
      * defined HTML template.
      */
     export class Template extends TemplateControl {
+        protected static _inject: any = {
+            _Promise: __Promise,
+            _templateCache: __TemplateCache,
+            _document: __Document
+        };
+
         /**
          * @name _Promise
          * @memberof plat.ui.controls.Template
@@ -22,7 +28,7 @@ module plat.ui.controls {
          * @description
          * Reference to the {@link plat.async.IPromise|IPromise} injectable.
          */
-        protected _Promise: async.IPromise = acquire(__Promise);
+        protected _Promise: async.IPromise;
 
         /**
          * @name _templateCache
@@ -35,7 +41,7 @@ module plat.ui.controls {
          * @description
          * Reference to an injectable for storing HTML templates.
          */
-        protected _templateCache: storage.TemplateCache = acquire(__TemplateCache);
+        protected _templateCache: storage.TemplateCache;
 
         /**
          * @name _document
@@ -48,7 +54,7 @@ module plat.ui.controls {
          * @description
          * Reference to the Document injectable.
          */
-        protected _document: Document = acquire(__Document);
+        protected _document: Document;
 
         /**
          * @name replaceWith

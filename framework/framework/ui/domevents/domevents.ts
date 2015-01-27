@@ -8,6 +8,11 @@
      * A class for managing DOM event registration and handling.
      */
     export class DomEvents {
+        protected static _inject: any = {
+            _document: __Document,
+            _compat: __Compat
+        };
+
         /**
          * @name config
          * @memberof plat.ui.DomEvents
@@ -138,7 +143,7 @@
          * @description
          * Reference to the Document injectable.
          */
-        protected _document: Document = acquire(__Document);
+        protected _document: Document;
 
         /**
          * @name _compat
@@ -152,7 +157,7 @@
          * @description
          * Reference to the {@link plat.Compat|Compat} injectable.
          */
-        protected _compat: Compat = acquire(__Compat);
+        protected _compat: Compat;
 
         /**
          * @name _isActive

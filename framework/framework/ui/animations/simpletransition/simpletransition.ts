@@ -11,6 +11,10 @@
      * element, checks for transition properties, and waits for the transition to end.
      */
     export class SimpleCssTransition extends CssAnimation {
+        protected static _inject: any = {
+            _window: __Window
+        };
+
         /**
          * @name _window
          * @memberof plat.ui.animations.SimpleCssTransition
@@ -22,7 +26,7 @@
          * @description
          * Reference to the Window injectable.
          */
-        protected _window: Window = acquire(__Window);
+        protected _window: Window;
 
         /**
          * @name options

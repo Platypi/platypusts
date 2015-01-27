@@ -17,6 +17,16 @@ module plat.web {
      * The class that handles all interaction with the browser.
      */
     export class Browser {
+        protected static _inject: any = {
+            _EventManager: __EventManagerStatic,
+            _compat: __Compat,
+            _regex: __Regex,
+            _window: __Window,
+            _location: __Location,
+            _history: __History,
+            _dom: __Dom
+        };
+
         /**
          * @name config
          * @memberof plat.web.Browser
@@ -49,7 +59,7 @@ module plat.web {
          * @description
          * Reference to the {@link plat.events.IEventManagerStatic|IEventManagerStatic} injectable.
          */
-        protected _EventManager: events.IEventManagerStatic = acquire(__EventManagerStatic);
+        protected _EventManager: events.IEventManagerStatic;
 
         /**
          * @name _compat
@@ -62,7 +72,7 @@ module plat.web {
          * @description
          * Reference to the {@link plat.Compat|Compat} injectable.
          */
-        protected _compat: Compat = acquire(__Compat);
+        protected _compat: Compat;
 
         /**
          * @name _regex
@@ -75,7 +85,7 @@ module plat.web {
          * @description
          * Reference to the {@link plat.expressions.Regex|Regex} injectable.
          */
-        protected _regex: expressions.Regex = acquire(__Regex);
+        protected _regex: expressions.Regex;
 
         /**
          * @name _window
@@ -88,7 +98,7 @@ module plat.web {
          * @description
          * Reference to the Window injectable.
          */
-        protected _window: Window = acquire(__Window);
+        protected _window: Window;
 
         /**
          * @name _location
@@ -101,7 +111,7 @@ module plat.web {
          * @description
          * Reference to the Location injectable.
          */
-        protected _location: Location = acquire(__Location);
+        protected _location: Location;
 
         /**
          * @name _history
@@ -114,7 +124,7 @@ module plat.web {
          * @description
          * Reference to the History injectable.
          */
-        protected _history: History = acquire(__History);
+        protected _history: History;
 
         /**
          * @name _dom
@@ -127,7 +137,7 @@ module plat.web {
          * @description
          * Reference to the {@link plat.ui.Dom|Dom} injectable.
          */
-        protected _dom: ui.Dom = acquire(__Dom);
+        protected _dom: ui.Dom;
 
         /**
          * @name _stack
@@ -154,7 +164,7 @@ module plat.web {
          * @description
          * A unique string identifier.
          */
-        uid: string;
+        uid: string = uniqueId(__Plat);
 
         /**
          * @name __currentUrl
@@ -207,8 +217,6 @@ module plat.web {
          * @returns {plat.web.Browser}
          */
         constructor() {
-            var ContextManager: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
-            ContextManager.defineGetter(this, 'uid', uniqueId(__Plat));
             this._EventManager.on(this.uid, __beforeLoad, this.initialize, this);
 
             if (this._compat.msApp) {

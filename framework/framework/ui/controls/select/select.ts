@@ -11,6 +11,11 @@ module plat.ui.controls {
      * to an Array context.
      */
     export class Select extends TemplateControl {
+        protected static _inject: any = {
+            _Promise: __Promise,
+            _document: __Document
+        };
+
         /**
          * @name _Promise
          * @memberof plat.ui.controls.Select
@@ -22,7 +27,7 @@ module plat.ui.controls {
          * @description
          * Reference to the {@link plat.async.IPromise|IPromise} injectable.
          */
-        protected _Promise: async.IPromise = acquire(__Promise);
+        protected _Promise: async.IPromise;
 
         /**
          * @name _document
@@ -35,7 +40,7 @@ module plat.ui.controls {
          * @description
          * Reference to the Document injectable.
          */
-        protected _document: Document = acquire(__Document);
+        protected _document: Document;
 
         /**
          * @name replaceWith
