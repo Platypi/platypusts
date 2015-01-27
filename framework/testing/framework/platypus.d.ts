@@ -2849,10 +2849,10 @@ declare module plat {
               * type of objects stored in the new cache.  If a cache with the same ID already exists
               * in the ICacheFactory, a new cache will not be created.
               * @param {string} id The ID of the new Cache.
-              * @param {plat.storage.CacheOptions} options CacheOptions
+              * @param {plat.storage.ICacheOptions} options ICacheOptions
               * for customizing the Cache.
               */
-            static create<T>(id: string, options?: CacheOptions): Cache<T>;
+            static create<T>(id: string, options?: ICacheOptions): Cache<T>;
             /**
               * Gets a cache out of the ICacheFactory if it exists.
               * @param {string} id The identifier used to search for the cache.
@@ -2877,14 +2877,14 @@ declare module plat {
             /**
               * The constructor for a Cache.
               * @param {string} id The id to use to retrieve the cache from the ICacheFactory.
-              * @param {plat.storage.CacheOptions} options The CacheOptions for customizing the cache.
+              * @param {plat.storage.ICacheOptions} options The ICacheOptions for customizing the cache.
               */
-            constructor(id: string, options?: CacheOptions);
+            constructor(id: string, options?: ICacheOptions);
             /**
-              * Retrieves the CacheInfo about this cache
+              * Retrieves the ICacheInfo about this cache
               * (i.e. ID, size, options)
               */
-            info(): CacheInfo;
+            info(): ICacheInfo;
             /**
               * Method for inserting an object into an Cache.
               * @param {string} key The key to use for storage/retrieval of the object.
@@ -2923,10 +2923,10 @@ declare module plat {
               * type of objects stored in the new cache.  If a cache with the same ID already exists
               * in the ICacheFactory, a new cache will not be created.
               * @param {string} id The ID of the new Cache.
-              * @param {plat.storage.CacheOptions} options CacheOptions
+              * @param {plat.storage.ICacheOptions} options ICacheOptions
               * for customizing the Cache.
               */
-            create<T>(id: string, options?: CacheOptions): Cache<T>;
+            create<T>(id: string, options?: ICacheOptions): Cache<T>;
             /**
               * Gets a cache out of the ICacheFactory if it exists.
               * @param {string} id The identifier used to search for the cache.
@@ -2948,7 +2948,7 @@ declare module plat {
         /**
           * Options for a cache.
           */
-        interface CacheOptions {
+        interface ICacheOptions {
             /**
               * Specifies a timeout for a cache value. When a value
               * is put in the cache, it will be valid for the given
@@ -2961,7 +2961,7 @@ declare module plat {
         /**
           * Contains information about an Cache.
           */
-        interface CacheInfo {
+        interface ICacheInfo {
             /**
               * A unique id for the Cache object, used to
               * retrieve the ICache out of the CacheFactory.
@@ -2972,10 +2972,10 @@ declare module plat {
               */
             size: number;
             /**
-              * Represents the CacheOptions that the
+              * Represents the ICacheOptions that the
               * Cache is using.
               */
-            options: CacheOptions;
+            options: ICacheOptions;
         }
         /**
           * Used for caching compiled nodes. This class will
@@ -5729,7 +5729,7 @@ declare module plat {
             /**
               * A configuration object for all DOM events.
               */
-            static config: DomEventsConfig;
+            static config: IDomEventsConfig;
             /**
               * Reference to the Document injectable.
               */
@@ -6183,7 +6183,7 @@ declare module plat {
         /**
           * The Type for referencing the '_domEventsConfig' injectable as a dependency.
           */
-        function DomEventsConfig(): DomEventsConfig;
+        function IDomEventsConfig(): IDomEventsConfig;
         /**
           * A class for managing a single custom event.
           */
@@ -6638,7 +6638,7 @@ declare module plat {
         /**
           * Describes a configuration object for all custom DOM events.
           */
-        interface DomEventsConfig {
+        interface IDomEventsConfig {
             /**
               * An object containing the different time intervals that govern the behavior of certain
               * custom DOM events.

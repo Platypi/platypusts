@@ -65,14 +65,14 @@ module plat.storage {
          * in the {@link plat.storage.ICacheFactory|ICacheFactory}, a new cache will not be created.
          * 
          * @param {string} id The ID of the new Cache.
-         * @param {plat.storage.CacheOptions} options {@link plat.storage.CacheOptions|CacheOptions} 
+         * @param {plat.storage.ICacheOptions} options {@link plat.storage.ICacheOptions|ICacheOptions} 
          * for customizing the Cache.
          * 
          * @typeparam {any} T Denotes the type of objects stored in the new Cache.
          * 
          * @returns {plat.storage.Cache<T>} The new cache.
          */
-        static create<T>(id: string, options?: CacheOptions): Cache<T> {
+        static create<T>(id: string, options?: ICacheOptions): Cache<T> {
             var cache: Cache<T> = caches[id];
 
             if (isNull(cache)) {
@@ -155,12 +155,12 @@ module plat.storage {
          * @kind property
          * @access private
          * 
-         * @type {plat.storage.CacheOptions}
+         * @type {plat.storage.ICacheOptions}
          * 
          * @description
          * The options for this cache.
          */
-        private __options: CacheOptions;
+        private __options: ICacheOptions;
 
         /**
          * @name constructor
@@ -172,11 +172,11 @@ module plat.storage {
          * The constructor for a {@link plat.storage.Cache|Cache}.
          * 
          * @param {string} id The id to use to retrieve the cache from the {@link plat.storage.ICacheFactory|ICacheFactory}.
-         * @param {plat.storage.CacheOptions} options The {@link plat.storage.CacheOptions|CacheOptions} for customizing the cache.
+         * @param {plat.storage.ICacheOptions} options The {@link plat.storage.ICacheOptions|ICacheOptions} for customizing the cache.
          * 
          * @returns {plat.storage.Cache} A new {@link plat.storage.Cache|Cache} instance specified by the ID.
          */
-        constructor(id: string, options?: CacheOptions) {
+        constructor(id: string, options?: ICacheOptions) {
             this.__id = id;
             this.__options = options;
             this.__size = 0;
@@ -197,12 +197,12 @@ module plat.storage {
          * @access public
          * 
          * @description
-         * Retrieves the {@link plat.storage.CacheInfo|CacheInfo} about this cache 
+         * Retrieves the {@link plat.storage.ICacheInfo|ICacheInfo} about this cache 
          * (i.e. ID, size, options)
          * 
-         * @returns {plat.storage.CacheInfo} The information about this cache.
+         * @returns {plat.storage.ICacheInfo} The information about this cache.
          */
-        info(): CacheInfo {
+        info(): ICacheInfo {
             return {
                 id: this.__id,
                 size: this.__size,
@@ -340,14 +340,14 @@ module plat.storage {
          * in the {@link plat.storage.ICacheFactory|ICacheFactory}, a new cache will not be created.
          * 
          * @param {string} id The ID of the new Cache.
-         * @param {plat.storage.CacheOptions} options {@link plat.storage.CacheOptions|CacheOptions} 
+         * @param {plat.storage.ICacheOptions} options {@link plat.storage.ICacheOptions|ICacheOptions} 
          * for customizing the Cache.
          * 
          * @typeparam {any} T Denotes the type of objects stored in the new Cache.
          * 
          * @returns {plat.storage.Cache<T>} The new cache.
          */
-        create<T>(id: string, options?: CacheOptions): Cache<T>;
+        create<T>(id: string, options?: ICacheOptions): Cache<T>;
 
         /**
          * @name fetch
@@ -397,17 +397,17 @@ module plat.storage {
     register.injectable(__ManagerCache, IManagerCache);
     
     /**
-     * @name CacheOptions
+     * @name ICacheOptions
      * @memberof plat.storage
      * @kind interface
      * 
      * @description
      * Options for a cache.
      */
-    export interface CacheOptions {
+    export interface ICacheOptions {
         /**
          * @name timeout
-         * @memberof plat.storage.CacheOptions
+         * @memberof plat.storage.ICacheOptions
          * @kind property
          * @access public
          * 
@@ -424,17 +424,17 @@ module plat.storage {
     }
     
     /**
-     * @name CacheInfo
+     * @name ICacheInfo
      * @memberof plat.storage
      * @kind interface
      * 
      * @description
      * Contains information about an {@link plat.storage.Cache|Cache}.
      */
-    export interface CacheInfo {
+    export interface ICacheInfo {
         /**
          * @name id
-         * @memberof plat.storage.CacheInfo
+         * @memberof plat.storage.ICacheInfo
          * @kind property
          * @access public
          * 
@@ -448,7 +448,7 @@ module plat.storage {
         
         /**
          * @name size
-         * @memberof plat.storage.CacheInfo
+         * @memberof plat.storage.ICacheInfo
          * @kind property
          * @access public
          * 
@@ -461,16 +461,16 @@ module plat.storage {
         
         /**
          * @name options
-         * @memberof plat.storage.CacheInfo
+         * @memberof plat.storage.ICacheInfo
          * @kind property
          * @access public
          * 
-         * @type {plat.storage.CacheOptions}
+         * @type {plat.storage.ICacheOptions}
          * 
          * @description
-         * Represents the {@link plat.storage.CacheOptions|CacheOptions} that the 
+         * Represents the {@link plat.storage.ICacheOptions|ICacheOptions} that the 
          * {@link plat.storage.Cache|Cache} is using.
          */
-        options: CacheOptions;
+        options: ICacheOptions;
     }
 }

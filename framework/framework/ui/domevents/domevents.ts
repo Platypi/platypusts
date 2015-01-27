@@ -20,12 +20,12 @@
          * @access public
          * @static
          * 
-         * @type {plat.ui.DomEventsConfig}
+         * @type {plat.ui.IDomEventsConfig}
          * 
          * @description
          * A configuration object for all DOM events.
          */
-        static config: DomEventsConfig = {
+        static config: IDomEventsConfig = {
             /**
              * An object containing the different time intervals that govern the behavior of certain 
              * custom DOM events.
@@ -2602,11 +2602,11 @@
     /**
      * The Type for referencing the '_domEventsConfig' injectable as a dependency.
      */
-    export function DomEventsConfig(): DomEventsConfig {
+    export function IDomEventsConfig(): IDomEventsConfig {
         return DomEvents.config;
     }
 
-    register.injectable(__DomEventsConfig, DomEventsConfig);
+    register.injectable(__IDomEventsConfig, IDomEventsConfig);
 
     /**
      * @name DomEvent
@@ -4085,17 +4085,17 @@
     }
 
     /**
-     * @name DomEventsConfig
+     * @name IDomEventsConfig
      * @memberof plat.ui
      * @kind interface
      * 
      * @description
      * Describes a configuration object for all custom DOM events.
      */
-    export interface DomEventsConfig {
+    export interface IDomEventsConfig {
         /**
          * @name intervals
-         * @memberof plat.ui.DomEventsConfig
+         * @memberof plat.ui.IDomEventsConfig
          * @kind property
          * @access public
          * 
@@ -4109,7 +4109,7 @@
 
         /**
          * @name distances
-         * @memberof plat.ui.DomEventsConfig
+         * @memberof plat.ui.IDomEventsConfig
          * @kind property
          * @access public
          * 
@@ -4123,7 +4123,7 @@
 
         /**
          * @name velocities
-         * @memberof plat.ui.DomEventsConfig
+         * @memberof plat.ui.IDomEventsConfig
          * @kind property
          * @access public
          * 
@@ -4137,7 +4137,7 @@
 
         /**
          * @name styleConfig
-         * @memberof plat.ui.DomEventsConfig
+         * @memberof plat.ui.IDomEventsConfig
          * @kind property
          * @access public
          * 
