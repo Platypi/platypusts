@@ -1,6 +1,15 @@
-﻿module plat.routing {
+﻿/**
+ * @name routing
+ * @memberof plat
+ * @kind namespace
+ * @access public
+ * 
+ * @description
+ * Holds all classes and interfaces related to routing components in platypus.
+ */
+module plat.routing {
     /**
-     * The Type for referencing the '_history' injectable as a dependency. 
+     * The Type for referencing the 'History' injectable as a dependency. 
      * Used so that the window.history can be mocked.
      */
     export function History(_window?: Window): History {
