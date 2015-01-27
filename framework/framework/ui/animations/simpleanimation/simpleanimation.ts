@@ -57,7 +57,7 @@ module plat.ui.animations {
          * @description
          * An optional options object that can denote a pseudo element animation.
          */
-        options: SimpleCssAnimationOptions;
+        options: ISimpleCssAnimationOptions;
 
         /**
          * @name initialize
@@ -99,7 +99,7 @@ module plat.ui.animations {
             var animationId = this._compat.animationEvents.$animation,
                 element = this.element,
                 className = this.className,
-                computedStyle = this._window.getComputedStyle(element, (this.options || <SimpleCssAnimationOptions>{}).pseudo),
+                computedStyle = this._window.getComputedStyle(element, (this.options || <ISimpleCssAnimationOptions>{}).pseudo),
                 animationName = computedStyle[<any>(animationId + 'Name')];
 
             if (animationName === '' ||
@@ -162,7 +162,7 @@ module plat.ui.animations {
      * @description
      * An interface describing the options for {@link plat.ui.animations.SimpleCssAnimation|SimpleCssAnimation}.
      */
-    export interface SimpleCssAnimationOptions {
+    export interface ISimpleCssAnimationOptions {
         /**
          * @name pseudo
          * @memberof plat.ui.animations.SimpleCssAnimationOptions

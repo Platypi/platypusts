@@ -36,7 +36,7 @@
          * An optional options object that can denote a pseudo element animation and specify 
          * properties to modify during the transition.
          */
-        options: SimpleCssTransitionOptions;
+        options: ISimpleCssTransitionOptions;
 
         /**
          * @name className
@@ -112,7 +112,7 @@
                     removeClass(element, this.className);
                     this.end();
                 },
-                computedStyle = this._window.getComputedStyle(element, (this.options || <SimpleCssTransitionOptions>{}).pseudo),
+                computedStyle = this._window.getComputedStyle(element, (this.options || <ISimpleCssTransitionOptions>{}).pseudo),
                 transitionProperty = computedStyle[<any>(transitionId + 'Property')],
                 transitionDuration = computedStyle[<any>(transitionId + 'Duration')];
 
@@ -192,7 +192,7 @@
          */
         protected _animate(): boolean {
             var style = this.element.style || {},
-                properties = (this.options || <SimpleCssTransitionOptions>{}).properties || {},
+                properties = (this.options || <ISimpleCssTransitionOptions>{}).properties || {},
                 keys = Object.keys(properties),
                 length = keys.length,
                 key: any,
@@ -224,7 +224,7 @@
 
     register.animation(__SimpleTransition, SimpleCssTransition);
 
-    export interface SimpleCssTransitionOptions extends SimpleCssAnimationOptions {
+    export interface ISimpleCssTransitionOptions extends ISimpleCssAnimationOptions {
         /**
          * @name properties
          * @memberof plat.ui.animations.SimpleCssTransitionOptions
