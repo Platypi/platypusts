@@ -33,6 +33,10 @@ module plat.observable {
      * facilitating in data-binding.
      */
     export class ContextManager {
+        protected static _inject: any = {
+            _compat: __Compat
+        };
+
         /**
          * @name _Exception
          * @memberof plat.observable.ContextManager
@@ -101,7 +105,7 @@ module plat.observable {
                 return contextManager;
             }
 
-            contextManager = managers[uid] = new ContextManager();
+            contextManager = managers[uid] = acquire(ContextManager);
             contextManager.context = control;
 
             return contextManager;
@@ -470,7 +474,7 @@ module plat.observable {
          * @description
          * Reference to the {@link plat.Compat|Compat} injectable.
          */
-        protected _compat: Compat = acquire(__Compat);
+        protected _compat: Compat;
 
         /**
          * @name context

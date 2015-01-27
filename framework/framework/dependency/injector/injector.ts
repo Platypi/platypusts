@@ -210,8 +210,8 @@ module plat.dependency {
             var Constructor = dependency,
                 _inject = isObject(Constructor._inject) ? Constructor._inject : {};
 
-            if (isString(_inject.name)) {
-                dependency = _inject.name;
+            if (isString(Constructor.__injectorName)) {
+                dependency = Constructor.__injectorName;
             }
 
             if (!isString(dependency)) {
@@ -336,8 +336,8 @@ module plat.dependency {
 
             var dependency: string = Constructor;
 
-            if (isObject(Constructor._inject) && isString(Constructor._inject.name)) {
-                dependency = Constructor._inject.name;
+            if (isString(Constructor.__injectorName)) {
+                dependency = Constructor.__injectorName;
             }
 
             var find: (injectors: InjectorObject<any>) => Injector<any> =
@@ -351,8 +351,12 @@ module plat.dependency {
                 find(jsAnimationInjectors);
 
             if (!isObject(injector)) {
-                if (isString(dependency) && isFunction(Constructor)) {
-                    injector = unregisteredInjectors[dependency] = <Injector<any>>new Injector(dependency, Constructor, Constructor._inject.dependencies);
+                if (isFunction(Constructor)) {
+                    injector = <Injector<any>>new Injector(dependency, Constructor, isObject(Constructor._inject) ? Constructor._inject.dependencies : []);
+
+                    if (isString(dependency)) {
+                        unregisteredInjectors[dependency] = injector;
+                    } 
                 } else {
                     injector = Injector.__wrap(Constructor);
                 }
@@ -539,12 +543,19 @@ module plat.dependency {
                 index = deps.indexOf(__NOOP_INJECTOR),
                 circularReference: string;
 
-            if (!isObject((<any>Constructor)._inject)) {
-                (<any>Constructor)._inject = {};
-            }
+            Object.defineProperty(Constructor, '__injectorName', {
+                value: name,
+                enumerable: false,
+                configurable: true,
+                writable: true
+            });
 
-            (<any>Constructor)._inject.name = name;
-            (<any>Constructor)._inject.dependencies = deps;
+            Object.defineProperty(Constructor, '__injectorDependencies', {
+                value: deps.slice(0),
+                enumerable: false,
+                configurable: true,
+                writable: true
+            });
 
             if (index > -1) {
                 var dependency = dependencies[index];
@@ -565,7 +576,7 @@ module plat.dependency {
             circularReference = Injector.__findCircularReferences(this);
 
             if (isString(circularReference)) {
-                throw new Error('Circular dependency detected from ' + name + ' to ' + circularReference + '.');
+                throw new Error('Circular dependency detected from ' + this.name + ' to ' + circularReference + '.');
             }
 
             if (name === __AppStatic) {

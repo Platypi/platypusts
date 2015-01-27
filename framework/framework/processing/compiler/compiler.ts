@@ -17,6 +17,13 @@ module plat.processing {
      * Responsible for iterating through the DOM and collecting controls.
      */
     export class Compiler {
+        protected static _inject: any = {
+            _ElementManagerFactory: __ElementManagerFactory,
+            _TextManagerFactory: __TextManagerFactory,
+            _CommentManagerFactory: __CommentManagerFactory,
+            _managerCache: __ManagerCache
+        };
+
         /**
          * @name _ElementManagerFactory
          * @memberof plat.processing.Compiler
@@ -28,7 +35,7 @@ module plat.processing {
          * @description
          * Reference to the {@link plat.processing.IElementManagerFactory|IElementManagerFactory} injectable.
          */
-        protected _ElementManagerFactory: IElementManagerFactory = acquire(__ElementManagerFactory);
+        protected _ElementManagerFactory: IElementManagerFactory;
 
         /**
          * @name _TextManager
@@ -41,7 +48,7 @@ module plat.processing {
          * @description
          * Reference to the {@link plat.processing.ITextManagerFactory|ITextManagerFactory} injectable.
          */
-        protected _TextManagerFactory: ITextManagerFactory = acquire(__TextManagerFactory);
+        protected _TextManagerFactory: ITextManagerFactory;
 
         /**
          * @name _CommentManagerFactory
@@ -54,7 +61,7 @@ module plat.processing {
          * @description
          * Reference to the {@link plat.processing.ICommentManagerFactory|ICommentManagerFactory} injectable.
          */
-        protected _CommentManagerFactory: ICommentManagerFactory = acquire(__CommentManagerFactory);
+        protected _CommentManagerFactory: ICommentManagerFactory;
 
         /**
          * @name _managerCache
@@ -67,7 +74,7 @@ module plat.processing {
          * @description
          * Reference to a cache injectable that stores {@link plat.processing.ElementManager|ElementManagers}.
          */
-        protected _managerCache: storage.Cache<NodeManager> = acquire(__ManagerCache);
+        protected _managerCache: storage.Cache<NodeManager>;
 
         /**
          * @name compile

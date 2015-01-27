@@ -443,7 +443,7 @@ module tests.routing.routeRecognizer {
 
             /// MAIN APP
 
-            var router2 = new plat.routing.RouteRecognizer();
+            var router2 = plat.acquire(plat.routing.RouteRecognizer);
 
             router2.register([{
                 pattern: '/posts',

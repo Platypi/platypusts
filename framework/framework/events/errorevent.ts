@@ -47,7 +47,7 @@
          * @returns {plat.events.ErrorEvent<E>} The event instance.
          */
         static dispatch<E extends Error>(name: string, sender: any, error: E): ErrorEvent<E> {
-            var event = new ErrorEvent<E>();
+            var event: ErrorEvent<E> = acquire(ErrorEvent);
 
             event.initialize(name, sender, null, error);
             ErrorEvent._EventManager.sendEvent(event);

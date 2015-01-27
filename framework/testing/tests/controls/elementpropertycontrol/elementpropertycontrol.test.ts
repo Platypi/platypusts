@@ -5,8 +5,8 @@
             ControlFactory = plat.acquire(plat.IControlFactory);
 
         beforeEach(() => {
-            control = new plat.controls.ElementPropertyControl();
-            parent = new plat.ui.TemplateControl();
+            control = plat.acquire(plat.controls.ElementPropertyControl);
+            parent = plat.acquire(plat.ui.TemplateControl);
             parent.controls = [control];
             parent.resources = plat.acquire(plat.ui.IResourcesFactory).getInstance();
             control.parent = parent;
@@ -19,7 +19,7 @@
         });
 
         it('should test setter with empty expression', () => {
-            control = new plat.controls.Href();
+            control = plat.acquire(plat.controls.Href);
             control.attributes = plat.acquire(plat.ui.Attributes);
             var element: HTMLAnchorElement =
                 control.element =
@@ -61,7 +61,7 @@
         });
 
         it('should test setter', () => {
-            control = new plat.controls.Src();
+            control = plat.acquire(plat.controls.Src);
             control.attributes = plat.acquire(plat.ui.Attributes);
             var element: HTMLAnchorElement =
                 control.element =

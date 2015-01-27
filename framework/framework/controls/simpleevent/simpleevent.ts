@@ -11,6 +11,11 @@ module plat.controls {
      * An {@link plat.AttributeControl|AttributeControl} that binds to a specified DOM event handler.
      */
     export class SimpleEventControl extends AttributeControl implements ISendEvents {
+        protected static _inject: any = {
+            _parser: __Parser,
+            _regex: __Regex
+        };
+
         /**
          * @name _parser
          * @memberof plat.controls.SimpleEventControl
@@ -22,7 +27,7 @@ module plat.controls {
          * @description
          * Reference to the {@link plat.expressions.Parser|Parser} injectable.
          */
-        protected _parser: expressions.Parser = acquire(__Parser);
+        protected _parser: expressions.Parser;
 
         /**
          * @name _regex
@@ -35,7 +40,7 @@ module plat.controls {
          * @description
          * Reference to the {@link plat.expressions.Regex|Regex} injectable.
          */
-        protected _regex: expressions.Regex = acquire(__Regex);
+        protected _regex: expressions.Regex;
 
         /**
          * @name event
@@ -178,11 +183,10 @@ module plat.controls {
             }
 
             if (listenerStr[0] !== '@') {
-                var _Exception: IExceptionStatic;
+                var _Exception: IExceptionStatic = this._Exception;
                 listener = this.findProperty(listenerStr);
 
                 if (isNull(listener)) {
-                    _Exception = acquire(__ExceptionStatic);
                     _Exception.warn('Could not find property ' + listenerStr + ' on any parent control.',
                         _Exception.CONTROL);
                     return {
@@ -196,7 +200,6 @@ module plat.controls {
                     identifiers = parsedExpression.identifiers;
 
                 if (identifiers.length > 1) {
-                    _Exception = acquire(__ExceptionStatic);
                     _Exception.warn('Cannot have more than one identifier in a ' + this.type +
                         '\'s expression.', _Exception.CONTROL);
                     return {
@@ -1043,6 +1046,10 @@ module plat.controls {
      * 'cut', 'paste', etc. Also fires on the 'change' event.
      */
     export class React extends SimpleEventControl {
+        protected static _inject: any = {
+            _compat: __Compat
+        };
+
         /**
          * @name _compat
          * @memberof plat.controls.Input
@@ -1055,7 +1062,7 @@ module plat.controls {
          * @description
          * Reference to the {@link plat.Compat|Compat} injectable.
          */
-        protected _compat: Compat = acquire(__Compat);
+        protected _compat: Compat;
 
         /**
          * @name event

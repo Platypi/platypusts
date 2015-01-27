@@ -110,6 +110,10 @@ module plat.controls {
      * A type of {@link plat.controls.ElementPropertyControl|ElementPropertyControl} used to set 'src' on an anchor tag.
      */
     export class Src extends ElementPropertyControl {
+        protected static _inject: any = {
+            _browser: __Browser
+        };
+
         /**
          * @name property
          * @memberof plat.controls.Src
@@ -135,7 +139,7 @@ module plat.controls {
          * @description
          * The plat.web.Browser injectable instance
          */
-        protected _browser: web.Browser = acquire(__Browser);
+        protected _browser: web.Browser;
 
         /**
          * @name setter

@@ -9,6 +9,10 @@ module plat.expressions {
      * finding all of its tokens (i.e. delimiters, operators, etc).
      */
     export class Tokenizer {
+        protected static _inject: any = {
+            _Exception: __ExceptionStatic
+        };
+
         /**
          * @name _Exception
          * @memberof plat.expressions.Tokenizer

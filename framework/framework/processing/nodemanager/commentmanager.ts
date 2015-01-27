@@ -30,7 +30,7 @@ module plat.processing {
          * responsible for the passed in Comment Node.
          */
         static create(node: Node, parent: ElementManager): CommentManager {
-            var manager = new CommentManager();
+            var manager = acquire(CommentManager);
 
             manager.initialize({
                 nodes: [{

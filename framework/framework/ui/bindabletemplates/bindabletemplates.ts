@@ -55,7 +55,7 @@ module plat.ui {
          * @returns {plat.ui.BindableTemplates} The newly instantiated {@link plat.ui.BindableTemplates|BindableTemplates} object.
          */
         static create(control: TemplateControl, original?: BindableTemplates): BindableTemplates {
-            var bindableTemplates = new BindableTemplates();
+            var bindableTemplates: BindableTemplates = acquire(BindableTemplates);
             bindableTemplates.control = control;
 
             if (!isNull(original)) {

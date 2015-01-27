@@ -3,7 +3,11 @@ module plat {
      * Provides methods for interacting with geolocation services on a device.
      */
     export class Geolocation {
-        _Promise: async.IPromise = acquire(__Promise);
+        protected static _inject: any = {
+            _Promise: __Promise
+        };
+
+        protected _Promise: async.IPromise = acquire(__Promise);
 
         /**
          * Attempts to acquire position information of the device.

@@ -409,7 +409,7 @@ module plat.ui {
          * @returns {plat.ui.Resources} A new {@link plat.ui.Resources|Resources} instance.
          */
         static getInstance(): Resources {
-            return new Resources();
+            return acquire(Resources);
         }
 
         /**

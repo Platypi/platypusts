@@ -460,7 +460,7 @@ function hasClass(element: HTMLElement, className: string): boolean {
 }
 
 var ___templateCache: plat.storage.TemplateCache,
-    ___http: plat.async.IHttp,
+    ___http: plat.async.Http,
     ___Exception: plat.IExceptionStatic;
 
 function getTemplate(templateUrl: string) {

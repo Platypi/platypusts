@@ -45,7 +45,7 @@ module plat.ui {
          * @returns {plat.ui.ViewControl} A new {@link plat.ui.ViewControl|ViewControl} instance.
          */
         static getInstance(): ViewControl {
-            return new ViewControl();
+            return acquire(ViewControl);
         }
 
         /**

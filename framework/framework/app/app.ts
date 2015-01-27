@@ -355,7 +355,7 @@ module plat {
          * @description
          * A unique id, created during instantiation.
          */
-        uid: string;
+        uid: string = uniqueId(__Plat);
 
         /**
          * @name navigator
@@ -383,10 +383,8 @@ module plat {
          * @returns {plat.App}
          */
         constructor() {
-            var _ContextManager: observable.IContextManagerStatic = acquire(__ContextManagerStatic),
-                navigator: routing.Navigator = this.navigator = acquire(__NavigatorInstance);
+            var navigator: routing.Navigator = this.navigator = acquire(__NavigatorInstance);
             navigator.initialize((<typeof routing.Router>acquire(__RouterStatic)).currentRouter());
-            _ContextManager.defineGetter(this, 'uid', uniqueId(__Plat));
         }
 
         /**

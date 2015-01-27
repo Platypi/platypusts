@@ -28,7 +28,7 @@
          * @returns {plat.events.LifecycleEvent} The event instance.
          */
         static dispatch(name: string, sender: any): LifecycleEvent {
-            var event = new LifecycleEvent();
+            var event: LifecycleEvent = acquire(LifecycleEvent);
             event.initialize(name, sender);
             EventManager.sendEvent(event);
 

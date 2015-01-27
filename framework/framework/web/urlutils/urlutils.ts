@@ -147,7 +147,7 @@
          * @description
          * Reference to the {@link plat.web.IBrowserConfig|IBrowserConfig} injectable.
          */
-        protected _browserConfig: IBrowserConfig = acquire(__IBrowserConfig);
+        protected _browserConfig: IBrowserConfig = acquire(__BrowserConfig);
 
         /**
          * @name href

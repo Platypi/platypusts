@@ -88,12 +88,12 @@ module plat.ui {
          * @access protected
          * @static
          * 
-         * @type {plat.async.IHttp}
+         * @type {plat.async.Http}
          * 
          * @description
          * Reference to the {@link plat.async.IHttp|IHttp} injectable.
          */
-        protected static _http: async.IHttp;
+        protected static _http: async.Http;
 
         /**
          * @name _Promise
@@ -645,7 +645,7 @@ module plat.ui {
          * @returns {plat.ui.TemplateControl} The new {@link plat.ui.TemplateControl|TemplateControl} instance.
          */
         static getInstance(): TemplateControl {
-            return new TemplateControl();
+            return acquire(TemplateControl);
         }
 
         /**
@@ -1160,7 +1160,7 @@ module plat.ui {
         _managerCache?: storage.Cache<processing.ElementManager>,
         _templateCache?: storage.TemplateCache,
         _parser?: expressions.Parser,
-        _http?: async.IHttp,
+        _http?: async.Http,
         _Promise?: async.IPromise,
         _Exception?: IExceptionStatic): ITemplateControlFactory {
         (<any>TemplateControl)._ResourcesFactory = _ResourcesFactory;

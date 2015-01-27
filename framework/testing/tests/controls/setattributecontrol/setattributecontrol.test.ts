@@ -5,14 +5,14 @@
             ControlFactory = plat.acquire(plat.IControlFactory);
 
         beforeEach(() => {
-            control = new plat.controls.Checked();
-            parent = new plat.ui.TemplateControl();
+            control = plat.acquire(plat.controls.Checked);
+            parent = plat.acquire(plat.ui.TemplateControl);
             parent.controls = [control];
             parent.resources = plat.acquire(plat.ui.IResourcesFactory).getInstance();
             parent.hasOwnContext = true;
             control.parent = parent;
             control.type = 'plat-options';
-            control.templateControl = new plat.ui.TemplateControl();
+            control.templateControl = plat.acquire(plat.ui.TemplateControl);
             control.attributes = plat.acquire(plat.ui.Attributes);
             control.attributes['platOptions'] = 'foo.bar';
             parent.context = {

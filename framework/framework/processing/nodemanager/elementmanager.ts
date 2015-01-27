@@ -48,7 +48,7 @@ module plat.processing {
          * @type {plat.ui.ResourcesFactory}
          * 
          * @description
-         * Reference to the {@link plat.ui.ResourcesFactory|IResourcesFactory} injectable.
+         * Reference to the {@link plat.ui.ResourcesFactory|ResourcesFactory} injectable.
          */
         protected static _ResourcesFactory: ui.IResourcesFactory;
 
@@ -61,7 +61,7 @@ module plat.processing {
          * @type {plat.ui.IBindableTemplatesFactory}
          * 
          * @description
-         * Reference to the {@link plat.ui.IBindableTemplatesFactory|IBindableTemplatesFactory} injectable.
+         * Reference to the {@link plat.ui.IBindableTemplatesFactory|BindableTemplatesFactory} injectable.
          */
         protected static _BindableTemplatesFactory: ui.IBindableTemplatesFactory;
 
@@ -153,7 +153,7 @@ module plat.processing {
             }
 
             var elementMap = ElementManager._collectAttributes(element.attributes),
-                manager = new ElementManager();
+                manager: ElementManager = acquire(ElementManager);
 
             elementMap.element = <HTMLElement>element;
             elementMap.uiControlNode = uiControlNode;
@@ -230,7 +230,7 @@ module plat.processing {
                     parent.getParentControl(), newControl);
             }
 
-            var manager = new ElementManager(),
+            var manager: ElementManager = acquire(ElementManager),
                 hasNewControl = !isNull(newControl);
 
             manager.nodeMap = nodeMap;
@@ -449,7 +449,7 @@ module plat.processing {
          * @returns {plat.processing.ElementManager}
          */
         static getInstance(): ElementManager {
-            return new ElementManager();
+            return acquire(ElementManager);
         }
 
         /**
@@ -627,6 +627,11 @@ module plat.processing {
             return nodeMap;
         }
 
+        protected static _inject: any = {
+            _Promise: __Promise,
+            _ContextManager: __ContextManagerStatic
+        };
+
         /**
          * @name _Promise
          * @memberof plat.processing.ElementManager
@@ -638,7 +643,7 @@ module plat.processing {
          * @description
          * Reference to the {@link plat.async.IPromise|IPromise} injectable.
          */
-        protected _Promise: async.IPromise = acquire(__Promise);
+        protected _Promise: async.IPromise;
 
         /**
          * @name _compiler
@@ -664,7 +669,7 @@ module plat.processing {
          * @description
          * Reference to the {@link plat.observable.IContextManagerStatic|ContextManagerStatic} injectable.
          */
-        protected _ContextManager: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
+        protected _ContextManager: observable.IContextManagerStatic;
 
         /**
          * @name _CommentManagerFactory

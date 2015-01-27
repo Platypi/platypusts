@@ -19,6 +19,13 @@ module plat.controls {
      * Facilitates two-way databinding for HTMLInputElements, HTMLSelectElements, and HTMLTextAreaElements.
      */
     export class Bind extends AttributeControl {
+        protected static _inject: any = {
+            _parser: __Parser,
+            _ContextManager: __ContextManagerStatic,
+            _compat: __Compat,
+            _document: __Document
+        };
+
         /**
          * @name _parser
          * @memberof plat.controls.Bind
@@ -31,7 +38,7 @@ module plat.controls {
          * @description
          * Reference to the {@link plat.expressions.Parser|Parser} injectable.
          */
-        protected _parser: expressions.Parser = acquire(__Parser);
+        protected _parser: expressions.Parser;
 
         /**
          * @name _ContextManager
@@ -45,7 +52,7 @@ module plat.controls {
          * @description
          * Reference to the {@link plat.observable.IContextManagerStatic|IContextManagerStatic} injectable.
          */
-        protected _ContextManager: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
+        protected _ContextManager: observable.IContextManagerStatic;
 
         /**
          * @name _compat
@@ -59,7 +66,7 @@ module plat.controls {
          * @description
          * Reference to the {@link plat.Compat|Compat} injectable.
          */
-        protected _compat: Compat = acquire(__Compat);
+        protected _compat: Compat;
 
         /**
          * @name _document
@@ -73,7 +80,7 @@ module plat.controls {
          * @description
          * Reference to the Document injectable.
          */
-        protected _document: Document = acquire(__Document);
+        protected _document: Document;
 
         /**
          * @name priority

@@ -10,6 +10,11 @@ module plat {
      * class for all types of controls.
      */
     export class Control {
+        protected static _inject: any = {
+            _Exception: __ExceptionStatic,
+            dom: __Dom
+        };
+
         /**
          * @name _parser
          * @memberof plat.Control
@@ -279,7 +284,7 @@ module plat {
          * @returns {plat.Control} The newly instantiated control.
          */
         static getInstance(): Control {
-            return new Control();
+            return acquire(Control);
         }
 
         /**
@@ -399,7 +404,7 @@ module plat {
          * @description
          * The plat.IExceptionStatic injectable instance
          */
-        protected _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+        protected _Exception: IExceptionStatic;
 
         /**
          * @name uid
@@ -413,7 +418,7 @@ module plat {
          * @description
          * A unique id, created during instantiation and found on every {@link plat.Control|Control}.
          */
-        uid: string;
+        uid: string = uniqueId(__Plat);
 
         /**
          * @name type
@@ -509,7 +514,7 @@ module plat {
          * @description
          * Contains DOM helper methods for manipulating this control's element.
          */
-        dom: ui.Dom = acquire(__Dom);
+        dom: ui.Dom;
 
         /**
          * @name constructor
@@ -525,9 +530,6 @@ module plat {
          * @returns {plat.Control}
          */
         constructor() {
-            var ContextManager: observable.IContextManagerStatic = Control._ContextManager ||
-                acquire(__ContextManagerStatic);
-            ContextManager.defineGetter(this, 'uid', uniqueId(__Plat));
         }
 
         /**

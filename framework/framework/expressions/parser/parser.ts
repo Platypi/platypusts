@@ -18,6 +18,11 @@ module plat.expressions {
      * {@link plat.expressions.IParsedExpression|IParsedExpressions}.
      */
     export class Parser {
+        protected static _inject: any = {
+            _tokenizer: __Tokenizer,
+            _Exception: __ExceptionStatic
+        };
+
         /**
          * @name _tokenizer
          * @memberof plat.expressions.Parser
@@ -29,7 +34,7 @@ module plat.expressions {
          * @description
          * Reference to the {@link plat.expressions.Tokenizer|Tokenizer} injectable.
          */
-        protected _tokenizer: Tokenizer = acquire(__Tokenizer);
+        protected _tokenizer: Tokenizer;
 
         /**
          * @name _Exception
@@ -42,7 +47,7 @@ module plat.expressions {
          * @description
          * Reference to the {@link plat.IExceptionStatic|IExceptionStatic} injectable.
          */
-        protected _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+        protected _Exception: IExceptionStatic;
 
         /**
          * @name _tokens

@@ -9,6 +9,12 @@
      * and/or platform compatibilities.
      */
     export class Compat {
+        protected static _inject: any = {
+            _window: __Window,
+            _history: __History,
+            _document: __Document
+        };
+
         /**
          * @name _window
          * @memberof plat.Compat
@@ -20,7 +26,7 @@
          * @description
          * The window injectable.
          */
-        protected _window: Window = acquire(__Window);
+        protected _window: Window;
 
         /**
          * @name _history
@@ -33,7 +39,7 @@
          * @description
          * The window.history injectable.
          */
-        protected _history: History = acquire(__History);
+        protected _history: History;
 
         /**
          * @name _document
@@ -46,7 +52,7 @@
          * @description
          * The document injectable.
          */
-        protected _document: Document = acquire(__Document);
+        protected _document: Document;
 
         /**
          * @name isCompatible

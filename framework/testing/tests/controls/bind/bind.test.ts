@@ -6,7 +6,7 @@
 
         beforeEach(() => {
             control = plat.acquire(plat.controls.Bind);
-            parent = new plat.ui.TemplateControl();
+            parent = plat.acquire(plat.ui.TemplateControl);
             parent.controls = [control];
             parent.resources = plat.acquire(plat.ui.IResourcesFactory).getInstance();
             control.parent = parent;

@@ -302,7 +302,7 @@
                 return state;
             }
 
-            state = new State();
+            state = acquire(State);
             state.initialize(specification);
 
             this.nextStates.push(state);

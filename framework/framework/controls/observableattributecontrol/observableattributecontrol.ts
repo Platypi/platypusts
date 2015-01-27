@@ -11,6 +11,10 @@
      * An {@link plat.AttributeControl|AttributeControl} that deals with observing changes for a specified property.
      */
     export class ObservableAttributeControl extends AttributeControl implements IObservableAttributeControl {
+        protected static _inject: any = {
+            _ContextManager: __ContextManagerStatic
+        };
+
         /**
          * @name _ContextManager
          * @memberof plat.controls.ObservableAttributeControl
@@ -22,7 +26,7 @@
          * @description
          * Reference to the {@link plat.observable.IContextManagerStatic|IContextManagerStatic} injectable.
          */
-        protected _ContextManager: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
+        protected _ContextManager: observable.IContextManagerStatic;
 
         /**
          * @name property

@@ -22,6 +22,11 @@ module plat.events {
      * not stop propagation of the event.
      */
     export class DispatchEvent {
+        protected static _inject: any = {
+            _EventManager: __EventManagerStatic,
+            _ContextManager: __ContextManagerStatic
+        };
+
         /**
          * @name _EventManager
          * @memberof plat.events.DispatchEvent
@@ -33,7 +38,7 @@ module plat.events {
          * @description
          * Reference to the {@link plat.events.IEventManagerStatic|IEventManagerStatic} injectable.
          */
-        protected _EventManager: IEventManagerStatic = acquire(__EventManagerStatic);
+        protected _EventManager: IEventManagerStatic;
 
         /**
          * @name _ContextManager
@@ -46,7 +51,7 @@ module plat.events {
          * @description
          * Reference to the {@link plat.events.ContextManagerStatic|IContextManagerStatic} injectable.
          */
-        protected _ContextManager: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
+        protected _ContextManager: observable.IContextManagerStatic;
 
         /**
          * @name sender

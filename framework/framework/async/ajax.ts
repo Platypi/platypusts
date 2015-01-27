@@ -58,6 +58,15 @@ module plat.async {
          */
         jsonpCallback: string;
 
+        protected static _inject: any = {
+            _Exception: __ExceptionStatic,
+            _browser: __Browser,
+            _window: __Window,
+            _document: __Document,
+            _config: __HttpConfig,
+            _compat: __Compat
+        };
+
         /**
          * @name _Exception
          * @memberof plat.async.HttpRequest
@@ -69,7 +78,7 @@ module plat.async {
          * @description
          * The plat.IExceptionStatic injectable instance
          */
-        protected _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+        protected _Exception: IExceptionStatic;
 
         /**
          * @name _browser
@@ -82,7 +91,7 @@ module plat.async {
          * @description
          * The plat.web.Browser injectable instance
          */
-        protected _browser: web.Browser = acquire(__Browser);
+        protected _browser: web.Browser;
 
         /**
          * @name _window
@@ -95,7 +104,7 @@ module plat.async {
          * @description
          * The injectable instance of type Window
          */
-        protected _window: Window = acquire(__Window);
+        protected _window: Window;
 
         /**
          * @name _document
@@ -108,10 +117,10 @@ module plat.async {
          * @description
          * The injectable instance of type Document
          */
-        protected _document: Document = acquire(__Document);
+        protected _document: Document;
 
         /**
-         * @name $config
+         * @name _config
          * @memberof plat.async.HttpRequest
          * @kind property
          * @access protected
@@ -121,7 +130,20 @@ module plat.async {
          * @description
          * The configuration for an HTTP Request
          */
-        protected _config: IHttpConfig = acquire(__HttpConfig);
+        protected _config: IHttpConfig;
+
+        /**
+         * @name _compat
+         * @memberof plat.async.HttpRequest
+         * @kind property
+         * @access protected
+         * 
+         * @type {plat.Compat}
+         * 
+         * @description
+         * The injectable instance of Compat
+         */
+        protected _compat: Compat;
 
         /**
          * @name __fileSupported
@@ -134,7 +156,7 @@ module plat.async {
          * @description
          * Whether or not the browser supports the File API.
          */
-        private __fileSupported = (<Compat>acquire(__Compat)).fileSupported;
+        private __fileSupported: boolean;
 
         /**
          * @name __options
@@ -158,11 +180,26 @@ module plat.async {
          * @description
          * The constructor for a {@link plat.async.HttpRequest|HttpRequest}.
          * 
-         * @param {plat.async.IHttpConfig} options The IHttpConfigStatic used to customize this HttpRequest.
-         * 
          * @returns {plat.async.HttpRequest}
          */
-        constructor(options: IHttpConfig) {
+        constructor() {
+            this.__fileSupported = this._compat.fileSupported
+        }
+
+        /**
+         * @name initialize
+         * @memberof plat.async.HttpRequest
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Initializes the HttpRequest with options.
+         * 
+         * @param {plat.async.IHttpConfig} options The IHttpConfigStatic used to customize this HttpRequest.
+         * 
+         * @returns {void}
+         */
+        initialize(options: IHttpConfig) {
             this.__options = extend({}, this._config, options);
         }
 
@@ -1951,13 +1988,11 @@ module plat.async {
      * @memberof plat.async
      * @kind class
      * 
-     * @implements {plat.async.IHttp}
-     * 
      * @description
      * The instantiated class of the injectable for making 
      * AJAX requests.
      */
-    export class Http implements IHttp {
+    export class Http {
         /**
          * @name config
          * @memberof plat.async.Http
@@ -2044,7 +2079,9 @@ module plat.async {
          * or rejected, will return an {@link plat.async.IAjaxResponse|IAjaxResponse} object.
          */
         ajax<R>(options: IHttpConfig): AjaxPromise<R> {
-            return new HttpRequest(options).execute<R>();
+            var request: HttpRequest = acquire(HttpRequest);
+            request.initialize(options);
+            return request.execute<R>();
         }
 
         /**
@@ -2064,7 +2101,9 @@ module plat.async {
          * {@link plat.async.IAjaxResponse|IAjaxResponse} object.
          */
         jsonp<R>(options: IJsonpConfig): AjaxPromise<R> {
-            return new HttpRequest(options).executeJsonp<R>();
+            var request: HttpRequest = acquire(HttpRequest);
+            request.initialize(options);
+            return request.executeJsonp<R>();
         }
 
         /**
@@ -2086,116 +2125,13 @@ module plat.async {
          * being a parsed JSON object (assuming valid JSON).
          */
         json<R>(options: IHttpConfig): AjaxPromise<R> {
-            return new HttpRequest(extend({}, options, { responseType: 'json' })).execute<R>();
+            var request: HttpRequest = acquire(HttpRequest);
+            request.initialize(extend({}, options, { responseType: 'json' }));
+            return request.execute<R>();
         }
     }
 
-    /**
-     * The Type for referencing the '_http' injectable as a dependency.
-     */
-    export function IHttp(): IHttp {
-        return new Http();
-    }
-
-    register.injectable(__Http, IHttp);
-
-    /**
-     * @name IHttp
-     * @memberof plat.async
-     * @kind interface
-     * 
-     * @description
-     * The interface of the injectable for making 
-     * AJAX requests.
-     */
-    export interface IHttp {
-        /**
-         * @name responseType
-         * @memberof plat.async.IHttp
-         * @kind property
-         * @access public
-         * 
-         * @type {plat.async.IHttpResponseType}
-         * 
-         * @description
-         * Provides value mappings for
-         * XMLHttpRequestResponseTypes
-         */
-        responseType: IHttpResponseType;
-
-        /**
-         * @name contentType
-         * @memberof plat.async.IHttp
-         * @kind property
-         * @access public
-         * 
-         * @type {plat.async.IHttpContentType}
-         * 
-         * @description
-         * Provides Content-Type mappings for Http POST requests.
-         */
-        contentType: IHttpContentType;
-
-        /**
-         * @name ajax
-         * @memberof plat.async.IHttp
-         * @kind function
-         * @access public
-         * 
-         * @description
-         * A wrapper method for the Http class that creates and executes a new Http with
-         * the specified {@link plat.async.IHttpConfig|IHttpConfig}. This function will check if 
-         * XMLHttpRequest level 2 is present, and will default to JSONP if it isn't and 
-         * the request is cross-domain.
-         * 
-         * @typeparam {any} R The type of the {@link plat.async.AjaxPromise|IAjaxPromise}
-         * 
-         * @param {plat.async.IHttpConfig} options The {@link plat.async.IHttpConfig|IHttpConfig} for either the XMLHttpRequest 
-         * or the JSONP callback.
-         * 
-         * @returns {plat.async.AjaxPromise} A promise, when fulfilled
-         * or rejected, will return an {@link plat.async.IAjaxResponse|IAjaxResponse} object.
-         */
-        ajax<R>(options: IHttpConfig): AjaxPromise<R>;
-
-        /**
-         * @name jsonp
-         * @memberof plat.async.IHttp
-         * @kind function
-         * @access public
-         * 
-         * @description
-         * A direct method to force a cross-domain JSONP request.
-         * 
-         * @typeparam {any} R The type of the {@link plat.async.AjaxPromise|IAjaxPromise}
-         * 
-         * @param {plat.async.IJsonpConfig} options The {@link plat.async.IJsonpConfig|IJsonpConfig} 
-         * 
-         * @returns {plat.async.AjaxPromise} A promise, when fulfilled or rejected, will return an 
-         * {@link plat.async.IAjaxResponse|IAjaxResponse} object.
-         */
-        jsonp? <R>(options: IJsonpConfig): AjaxPromise<R>;
-
-        /**
-         * @name json
-         * @memberof plat.async.IHttp
-         * @kind function
-         * @access public
-         * 
-         * @description
-         * Makes an ajax request, specifying responseType: 'json'.
-         * 
-         * @typeparam {any} R The type of the {@link plat.async.AjaxPromise|IAjaxPromise}
-         * 
-         * @param {plat.async.IHttpConfig} options The {@link plat.async.IHttpConfig|IHttpConfig} 
-         * for either the XMLHttpRequest or the JSONP callback.
-         * 
-         * @returns {plat.async.AjaxPromise} A promise, when fulfilled or rejected, 
-         * will return an {@link plat.async.IAjaxResponse|IAjaxResponse} object, with the response 
-         * being a parsed JSON object (assuming valid JSON).
-         */
-        json? <R>(options: IHttpConfig): AjaxPromise<R>;
-    }
+    register.injectable(__Http, Http);
 
     /**
      * The Type for referencing the '_httpConfig' injectable as a dependency.

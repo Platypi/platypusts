@@ -428,10 +428,10 @@ module plat.events {
          */
         static dispatch(name: string, sender: any, direction: string, args?: Array<any>): DispatchEvent;
         static dispatch(name: string, sender: any, direction: string, args?: Array<any>) {
-            var $dispatchEvent: DispatchEvent = acquire(__DispatchEventInstance);
-            $dispatchEvent.initialize(name, sender, direction);
-            EventManager.sendEvent($dispatchEvent, args);
-            return $dispatchEvent;
+            var _dispatchEvent: DispatchEvent = acquire(__DispatchEventInstance);
+            _dispatchEvent.initialize(name, sender, direction);
+            EventManager.sendEvent(_dispatchEvent, args);
+            return _dispatchEvent;
         }
 
         /**
@@ -514,8 +514,10 @@ module plat.events {
 
             while (!isNull(parent) && EventManager.propagatingEvents[name]) {
                 if (isNull(parent.uid)) {
+                    parent = parent.parent;
                     continue;
                 }
+
                 EventManager.__executeEvent(parent.uid, event, args);
                 parent = parent.parent;
             }

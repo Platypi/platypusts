@@ -550,7 +550,7 @@ module plat.web {
         return Browser.config;
     }
 
-    register.injectable(__IBrowserConfig, IBrowserConfig);
+    register.injectable(__BrowserConfig, IBrowserConfig);
 
     /**
      * @name IBrowserConfig
