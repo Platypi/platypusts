@@ -992,6 +992,12 @@ declare module plat {
           */
         defer(method: (...args: any[]) => void, timeout: number, args?: Array<any>, context?: any): IRemoveListener;
         /**
+          * Uses requestAnimationFrame if it is available, else it does a setTimeout.
+          * @param {FrameRequestCallback} method The method to call when the request is fulfilled.
+          * @param {any} context? An optional context to bind to the method.
+          */
+        requestAnimationFrame(method: FrameRequestCallback, context?: any): IRemoveListener;
+        /**
           * Takes in a prefix and returns a unique identifier string with the prefix preprended. If no prefix
           * is specified, none will be prepended.
           * @param {string} prefix? A string prefix to prepend tothe unique ID.

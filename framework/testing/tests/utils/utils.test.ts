@@ -636,8 +636,6 @@ module tests.utils {
         });
 
         it('should test postpone', (done: Function) => {
-            var postArg: any;
-
             utils.postpone((arg) => {
                 expect(arg).toBe('foo');
                 done();
@@ -662,6 +660,25 @@ module tests.utils {
                 expect(postArg).not.toBe('foo');
                 done();
             }, 5);
+        });
+
+        it('should test requestAnimationFrame',(done: Function) => {
+            utils.requestAnimationFrame((time) => {
+                expect(time).toBeGreaterThan(0);
+                done();
+            });
+        });
+
+        it('should test requestAnimationFrame cancelled',(done: Function) => {
+            var t: number;
+            utils.requestAnimationFrame((time) => {
+                t = time;
+            })();
+
+            setTimeout(() => {
+                expect(t).toBeUndefined();
+                done();
+            }, 100);
         });
 
         it('should test uniqueId with no prefix', () => {

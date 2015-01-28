@@ -273,7 +273,8 @@ function map<T, R>(iterator: (value: T, key: any, obj: any) => R, obj: any, cont
 
 var Promise: plat.async.IPromise;
 
-function mapAsync<T, R>(iterator: (value: T, key: any, obj: any) => plat.async.IThenable<R>, obj: any, context?: any): plat.async.IThenable<Array<R>> {
+function mapAsync<T, R>(iterator: (value: T, key: any, obj: any) => plat.async.IThenable<R>, obj: any,
+    context?: any): plat.async.IThenable<Array<R>> {
     Promise = Promise || plat.acquire(__Promise);
 
     return Promise.all(map(iterator, obj, context));
@@ -359,16 +360,27 @@ function postpone(method: (...args: any[]) => void, args?: Array<any>, context?:
     return defer(method, 0, args, context);
 }
 
-
 function defer(method: (...args: any[]) => void, timeout: number, args?: Array<any>, context?: any): plat.IRemoveListener {
     function defer() {
         method.apply(context, args);
     }
 
     var timeoutId = setTimeout(defer, timeout);
-
     return () => {
         clearTimeout(timeoutId);
+    };
+}
+
+function requestAnimationFrameGlobal(method: FrameRequestCallback, context?: any): plat.IRemoveListener {
+    if (isUndefined(requestAnimationFrame)) {
+        return postpone(() => {
+            method.call(context, Date.now());
+        });
+    }
+
+    var animationId = requestAnimationFrame(method.bind(context));
+    return () => {
+        cancelAnimationFrame(animationId);
     };
 }
 
