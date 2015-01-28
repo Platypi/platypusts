@@ -581,7 +581,8 @@ module plat {
          * @returns {plat.async.IThenable<Array<R>>} The accumulated transformed values from the iterator.
          */
         mapAsync<T, R>(iterator: IObjectIterator<T, async.IThenable<R>>, obj: IObject<T>, context?: any): plat.async.IThenable<Array<R>>;
-        mapAsync<T, R>(iterator: (value: T, key: any, obj: any) => plat.async.IThenable<R>, obj: any, context?: any): plat.async.IThenable<Array<R>> {
+        mapAsync<T, R>(iterator: (value: T, key: any, obj: any) => plat.async.IThenable<R>, obj: any,
+            context?: any): plat.async.IThenable<Array<R>> {
             return mapAsync(iterator, obj, context);
         }
 
@@ -605,7 +606,8 @@ module plat {
          * 
          * @returns {plat.async.IThenable<Array<R>>} The accumulated transformed values from the iterator.
          */
-        mapAsyncInOrder<T, R>(iterator: IListIterator<T, async.IThenable<R>>, array: Array<T>, context?: any): plat.async.IThenable<Array<R>> {
+        mapAsyncInOrder<T, R>(iterator: IListIterator<T, async.IThenable<R>>, array: Array<T>,
+            context?: any): plat.async.IThenable<Array<R>> {
             return mapAsyncInOrder(iterator, array, context);
         }
 
@@ -629,7 +631,8 @@ module plat {
          * 
          * @returns {plat.async.IThenable<Array<R>>} The accumulated transformed values from the iterator.
          */
-        mapAsyncInDescendingOrder<T, R>(iterator: IListIterator<T, async.IThenable<R>>, array: Array<T>, context?: any): plat.async.IThenable<Array<R>> {
+        mapAsyncInDescendingOrder<T, R>(iterator: IListIterator<T, async.IThenable<R>>, array: Array<T>,
+            context?: any): plat.async.IThenable<Array<R>> {
             return mapAsyncInDescendingOrder(iterator, array, context);
         }
 
@@ -737,6 +740,23 @@ module plat {
          */
         defer(method: (...args: any[]) => void, timeout: number, args?: Array<any>, context?: any) {
             return defer(method, timeout, args, context);
+        }
+
+        /**
+         * @name requestAnimationFrame
+         * @memberof plat.Utils
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Uses requestAnimationFrame if it is available, else it does a setTimeout.
+         * 
+         * @param {FrameRequestCallback} method The method to call when the request is fulfilled.
+         * 
+         * @returns {plat.IRemoveListener} A function that will cancel the frame request when called.
+         */
+        requestAnimationFrame(method: FrameRequestCallback): IRemoveListener {
+            return requestAnimationFrameGlobal(method);
         }
 
         /**
