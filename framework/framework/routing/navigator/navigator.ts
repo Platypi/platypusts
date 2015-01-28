@@ -297,7 +297,7 @@
          * 
          * @returns {plat.async.IThenable<void>} A promise that resolves when the navigation has finished.
          */
-        navigate(view: string, options?: INavigateOptions): async.IThenable<void> {
+        navigate(view: any, options?: INavigateOptions): async.IThenable<void> {
             options = isObject(options) ? options : {};
             var url: string;
             
@@ -329,7 +329,7 @@
             var router = Navigator._root.router;
 
             if (router.navigating) {
-                return router.finishNavigating;
+                return router.finishNavigating.catch(() => { });
             }
 
             return this._Promise.resolve();

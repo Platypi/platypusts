@@ -4,6 +4,19 @@
     var __CHILD_ROUTE = '/*childRoute',
         __CHILD_ROUTE_LENGTH = __CHILD_ROUTE.length;
 
+    /**
+     * @name Router
+     * @memberof plat.routing
+     * @kind class
+     * 
+     * @description
+     * Matches URLs to registered views. Allows for rejecting navigation, as well as 
+     * processing route and query parameters. When a route is matches, the current view 
+     * has the opportunity to reject/delay navigation. The next view can also reject navigation, 
+     * or redirect. 
+     * This is done asynchronously, giving the application the ability to make web service calls 
+     * to determing 
+     */
     export class Router {
         protected static _inject: any = {
             _Promise: __Promise,

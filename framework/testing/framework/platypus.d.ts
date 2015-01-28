@@ -508,6 +508,7 @@ declare module plat {
       * and/or platform compatibilities.
       */
     class Compat {
+        protected static _inject: any;
         /**
           * The window injectable.
           */
@@ -1174,6 +1175,7 @@ declare module plat {
           * finding all of its tokens (i.e. delimiters, operators, etc).
           */
         class Tokenizer {
+            protected static _inject: any;
             /**
               * Reference to the IExceptionStatic injectable.
               */
@@ -1452,6 +1454,7 @@ declare module plat {
           * IParsedExpressions.
           */
         class Parser {
+            protected static _inject: any;
             /**
               * Reference to the Tokenizer injectable.
               */
@@ -1663,6 +1666,7 @@ declare module plat {
           * The class that handles all interaction with the browser.
           */
         class Browser {
+            protected static _inject: any;
             /**
               * The IBrowserConfig injectable object.
               */
@@ -1830,6 +1834,7 @@ declare module plat {
           * associated URL.
           */
         class UrlUtils {
+            protected static _inject: any;
             /**
               * Helps with URL initialization through it's href attribute.
               */
@@ -1845,10 +1850,6 @@ declare module plat {
               * @param {string} url The initial URL passed into the Browser.
               */
             private static __getBaseUrl(url);
-            /**
-              * Reference to the IContextManagerStatic injectable.
-              */
-            protected _ContextManager: observable.IContextManagerStatic;
             /**
               * Reference to the Document injectable.
               */
@@ -2275,6 +2276,7 @@ declare module plat {
               * The JSONP callback name
               */
             jsonpCallback: string;
+            protected static _inject: any;
             /**
               * The plat.IExceptionStatic injectable instance
               */
@@ -2296,6 +2298,10 @@ declare module plat {
               */
             protected _config: IHttpConfig;
             /**
+              * The injectable instance of Compat
+              */
+            protected _compat: Compat;
+            /**
               * Whether or not the browser supports the File API.
               */
             private __fileSupported;
@@ -2305,9 +2311,13 @@ declare module plat {
             private __options;
             /**
               * The constructor for a HttpRequest.
+              */
+            constructor();
+            /**
+              * Initializes the HttpRequest with options.
               * @param {plat.async.IHttpConfig} options The IHttpConfigStatic used to customize this HttpRequest.
               */
-            constructor(options: IHttpConfig);
+            initialize(options: IHttpConfig): void;
             /**
               * Executes an XMLHttpRequest and resolves an IAjaxPromise upon completion.
               */
@@ -2749,7 +2759,7 @@ declare module plat {
           * The instantiated class of the injectable for making
           * AJAX requests.
           */
-        class Http implements IHttp {
+        class Http {
             /**
               * Default Http config
               */
@@ -2786,49 +2796,6 @@ declare module plat {
               * being a parsed JSON object (assuming valid JSON).
               */
             json<R>(options: IHttpConfig): AjaxPromise<R>;
-        }
-        /**
-          * The Type for referencing the '_http' injectable as a dependency.
-          */
-        function IHttp(): IHttp;
-        /**
-          * The interface of the injectable for making
-          * AJAX requests.
-          */
-        interface IHttp {
-            /**
-              * Provides value mappings for
-              * XMLHttpRequestResponseTypes
-              */
-            responseType: IHttpResponseType;
-            /**
-              * Provides Content-Type mappings for Http POST requests.
-              */
-            contentType: IHttpContentType;
-            /**
-              * A wrapper method for the Http class that creates and executes a new Http with
-              * the specified IHttpConfig. This function will check if
-              * XMLHttpRequest level 2 is present, and will default to JSONP if it isn't and
-              * the request is cross-domain.
-              * @param {plat.async.IHttpConfig} options The IHttpConfig for either the XMLHttpRequest
-              * or the JSONP callback.
-              * or rejected, will return an IAjaxResponse object.
-              */
-            ajax<R>(options: IHttpConfig): AjaxPromise<R>;
-            /**
-              * A direct method to force a cross-domain JSONP request.
-              * @param {plat.async.IJsonpConfig} options The IJsonpConfig
-              * IAjaxResponse object.
-              */
-            jsonp?<R>(options: IJsonpConfig): AjaxPromise<R>;
-            /**
-              * Makes an ajax request, specifying responseType: 'json'.
-              * @param {plat.async.IHttpConfig} options The IHttpConfig
-              * for either the XMLHttpRequest or the JSONP callback.
-              * will return an IAjaxResponse object, with the response
-              * being a parsed JSON object (assuming valid JSON).
-              */
-            json?<R>(options: IHttpConfig): AjaxPromise<R>;
         }
         /**
           * The Type for referencing the '_httpConfig' injectable as a dependency.
@@ -2983,6 +2950,7 @@ declare module plat {
           * also clone the template when you retrieve it.
           */
         class TemplateCache extends Cache<async.IThenable<DocumentFragment>> {
+            protected static _inject: any;
             /**
               * Reference to the IPromise injectable.
               */
@@ -3087,6 +3055,7 @@ declare module plat {
           * facilitating in data-binding.
           */
         class ContextManager {
+            protected static _inject: any;
             /**
               * Reference to the IExceptionStatic injectable.
               */
@@ -3558,6 +3527,7 @@ declare module plat {
           * not stop propagation of the event.
           */
         class DispatchEvent {
+            protected static _inject: any;
             /**
               * Reference to the IEventManagerStatic injectable.
               */
@@ -4029,6 +3999,7 @@ declare module plat {
       * class for all types of controls.
       */
     class Control {
+        protected static _inject: any;
         /**
           * Reference to the Parser injectable.
           */
@@ -4470,7 +4441,7 @@ declare module plat {
             /**
               * Reference to the IHttp injectable.
               */
-            protected static _http: async.IHttp;
+            protected static _http: async.Http;
             /**
               * Reference to the IPromise injectable.
               */
@@ -4761,7 +4732,7 @@ declare module plat {
         /**
           * The Type for referencing the '_TemplateControlFactory' injectable as a dependency.
           */
-        function ITemplateControlFactory(_ResourcesFactory?: IResourcesFactory, _BindableTemplatesFactory?: IBindableTemplatesFactory, _managerCache?: storage.Cache<processing.ElementManager>, _templateCache?: storage.TemplateCache, _parser?: expressions.Parser, _http?: async.IHttp, _Promise?: async.IPromise, _Exception?: IExceptionStatic): ITemplateControlFactory;
+        function ITemplateControlFactory(_ResourcesFactory?: IResourcesFactory, _BindableTemplatesFactory?: IBindableTemplatesFactory, _managerCache?: storage.Cache<processing.ElementManager>, _templateCache?: storage.TemplateCache, _parser?: expressions.Parser, _http?: async.Http, _Promise?: async.IPromise, _Exception?: IExceptionStatic): ITemplateControlFactory;
         /**
           * Creates and manages TemplateControls.
           */
@@ -4933,6 +4904,7 @@ declare module plat {
           * of DOM.
           */
         class Dom {
+            protected static _inject: any;
             /**
               * Reference to the DomEvents injectable.
               */
@@ -5179,6 +5151,7 @@ declare module plat {
           * separate those templates and reuse them accordingly.
           */
         class BindableTemplates {
+            protected static _inject: any;
             /**
               * Creates a new instance of BindableTemplates and returns it. If a BindableTemplates is
               * passed in, it will use the properties on the original BindableTemplates.
@@ -5726,6 +5699,7 @@ declare module plat {
           * A class for managing DOM event registration and handling.
           */
         class DomEvents {
+            protected static _inject: any;
             /**
               * A configuration object for all DOM events.
               */
@@ -6667,6 +6641,7 @@ declare module plat {
               * A class used for animating elements.
               */
             class Animator {
+                protected static _inject: any;
                 /**
                   * Reference to the Compat injectable.
                   */
@@ -6880,6 +6855,7 @@ declare module plat {
               * A class representing a single animation for a single element.
               */
             class BaseAnimation {
+                protected static _inject: any;
                 /**
                   * Reference to the Compat injectable.
                   */
@@ -6993,6 +6969,7 @@ declare module plat {
               * element, checks for animation properties, and waits for the animation to end.
               */
             class SimpleCssAnimation extends CssAnimation {
+                protected static _inject: any;
                 /**
                   * Reference to the Window injectable.
                   */
@@ -7004,7 +6981,7 @@ declare module plat {
                 /**
                   * An optional options object that can denote a pseudo element animation.
                   */
-                options: SimpleCssAnimationOptions;
+                options: ISimpleCssAnimationOptions;
                 /**
                   * Adds the class to start the animation.
                   */
@@ -7028,7 +7005,7 @@ declare module plat {
             /**
               * An interface describing the options for SimpleCssAnimation.
               */
-            interface SimpleCssAnimationOptions {
+            interface ISimpleCssAnimationOptions {
                 /**
                   * The pseudo element identifier (i.e. '::before' if defined as .red::before).
                   */
@@ -7075,6 +7052,7 @@ declare module plat {
               * element, checks for transition properties, and waits for the transition to end.
               */
             class SimpleCssTransition extends CssAnimation {
+                protected static _inject: any;
                 /**
                   * Reference to the Window injectable.
                   */
@@ -7083,7 +7061,7 @@ declare module plat {
                   * An optional options object that can denote a pseudo element animation and specify
                   * properties to modify during the transition.
                   */
-                options: SimpleCssTransitionOptions;
+                options: ISimpleCssTransitionOptions;
                 /**
                   * The class name added to the animated element.
                   */
@@ -7120,7 +7098,7 @@ declare module plat {
                   */
                 protected _animate(): boolean;
             }
-            interface SimpleCssTransitionOptions extends SimpleCssAnimationOptions {
+            interface ISimpleCssTransitionOptions extends ISimpleCssAnimationOptions {
                 /**
                   * A JavaScript object with key value pairs for adjusting transition values.
                   * (e.g. { width: '800px' } would set the element's width to 800px.
@@ -7133,7 +7111,8 @@ declare module plat {
           */
         module controls {
             class Viewport extends TemplateControl implements routing.ISupportRouteNavigation {
-                protected _routerStatic: typeof routing.Router;
+                protected static _inject: any;
+                protected _Router: typeof routing.Router;
                 protected _Promise: async.IPromise;
                 protected _Injector: typeof dependency.Injector;
                 protected _ElementManagerFactory: processing.IElementManagerFactory;
@@ -7171,6 +7150,7 @@ declare module plat {
               * defined HTML template.
               */
             class Template extends TemplateControl {
+                protected static _inject: any;
                 /**
                   * Reference to the IPromise injectable.
                   */
@@ -7287,6 +7267,7 @@ declare module plat {
               * DOM nodes bound to an array.
               */
             class ForEach extends TemplateControl {
+                protected static _inject: any;
                 /**
                   * Reference to the Animator injectable.
                   */
@@ -7574,6 +7555,7 @@ declare module plat {
               * to an Array context.
               */
             class Select extends TemplateControl {
+                protected static _inject: any;
                 /**
                   * Reference to the IPromise injectable.
                   */
@@ -7779,6 +7761,7 @@ declare module plat {
               * a block of nodes to or from the DOM.
               */
             class If extends TemplateControl {
+                protected static _inject: any;
                 /**
                   * Reference to the Animator injectable.
                   */
@@ -7887,6 +7870,7 @@ declare module plat {
               * functionality to a native HTML anchor tag.
               */
             class Link extends TemplateControl {
+                protected static _inject: any;
                 /**
                   * Replaces the Link's element with a native anchor tag.
                   */
@@ -7894,7 +7878,7 @@ declare module plat {
                 /**
                   * The RouterStatic injectable instance
                   */
-                protected _router: typeof routing.Router;
+                protected _Router: typeof routing.Router;
                 /**
                   * The Injector injectable instance
                   */
@@ -7954,6 +7938,7 @@ declare module plat {
           * Responsible for iterating through the DOM and collecting controls.
           */
         class Compiler {
+            protected static _inject: any;
             /**
               * Reference to the IElementManagerFactory injectable.
               */
@@ -8252,11 +8237,11 @@ declare module plat {
               */
             protected static _managerCache: storage.Cache<ElementManager>;
             /**
-              * Reference to the IResourcesFactory injectable.
+              * Reference to the ResourcesFactory injectable.
               */
             protected static _ResourcesFactory: ui.IResourcesFactory;
             /**
-              * Reference to the IBindableTemplatesFactory injectable.
+              * Reference to the BindableTemplatesFactory injectable.
               */
             protected static _BindableTemplatesFactory: ui.IBindableTemplatesFactory;
             /**
@@ -8345,6 +8330,7 @@ declare module plat {
               * to associate with the element.
               */
             protected static _cloneNodeMap(sourceMap: INodeMap, element: Element, parent: ui.TemplateControl, newControl?: ui.TemplateControl): INodeMap;
+            protected static _inject: any;
             /**
               * Reference to the IPromise injectable.
               */
@@ -8722,8 +8708,20 @@ declare module plat {
             create(node: Node, parent: ElementManager): CommentManager;
         }
     }
+    /**
+      * Holds all classes and interfaces related to routing components in platypus.
+      */
     module routing {
+        /**
+          * Ties the browser and routers together, facilitating app navigation at every router level.
+          * Listens for url changes and responds accordingly. Also contains functionality for generating
+          * and changing the url.
+          */
         class Navigator {
+            protected static _inject: any;
+            /**
+              * The navigator associated with the root router.
+              */
             protected static _root: Navigator;
             /**
               * The IPromise injectable instance
@@ -8741,44 +8739,132 @@ declare module plat {
               * The Browser injectable instance
               */
             protected _browser: web.Browser;
+            /**
+              * The IEventManagerStatic injectable instance
+              */
             protected _EventManager: events.IEventManagerStatic;
+            /**
+              * The window injectable instance
+              */
             protected _window: Window;
+            /**
+              * The IExceptionStatic injectable instance
+              */
             protected _Exception: IExceptionStatic;
             /**
-              * The router associated with this link.
+              * The History injectable instance
+              */
+            protected _history: History;
+            /**
+              * The router associated with this navigator.
               */
             router: Router;
-            protected _history: History;
+            /**
+              * A unique id, created during instantiation and found on every Navigator.
+              */
             uid: string;
-            removeUrlListener: IRemoveListener;
-            ignoreOnce: boolean;
-            ignored: boolean;
+            /**
+              * States whether or not the Navigator is the root Navigator.
+              */
             isRoot: boolean;
-            previousUrl: string;
-            backNavigate: boolean;
-            resolveNavigate: () => void;
-            rejectNavigate: (err: any) => void;
+            /**
+              * A method to call to stop listening for url changes, only works on the root navigator.
+              */
+            protected _removeUrlListener: IRemoveListener;
+            /**
+              * A method to call to stop listening for url changes, only works on the root navigator.
+              */
+            protected _ignoreOnce: boolean;
+            /**
+              * A method to call to stop listening for url changes, only works on the root navigator.
+              */
+            protected _previousUrl: string;
+            /**
+              * A method to call to stop listening for url changes, only works on the root navigator.
+              */
+            protected _backNavigate: boolean;
+            /**
+              * A method to resolve the current navigation.
+              */
+            protected _resolveNavigate: () => void;
+            /**
+              * A method to reject the current navigation.
+              */
+            protected _rejectNavigate: (err: any) => void;
+            /**
+              * Initializes this Navigator with a router.
+              * @param {plat.routing.Router} router The router that the navigator should use to match/generate routes.
+              */
             initialize(router: Router): void;
+            /**
+              * Tells the navigator to navigate to the url registered for a particular view.
+              * @param {any} view The view to which the Navigator should navigate.
+              * @param {plat.routing.INavigationOptions} Options used to generate the url and perform navigation.
+              */
             navigate(view: any, options?: INavigateOptions): async.IThenable<void>;
+            /**
+              * Returns a promise that resolves when all navigation has finished.
+              */
             protected _finishNavigating(): async.IThenable<void>;
+            /**
+              * Internal method for navigating to the specified url.
+              */
             protected _navigate(url: string, replace?: boolean): async.IThenable<void>;
+            /**
+              * Tells the router to go back with the given options.
+              */
             goBack(options?: IBackNavigationOptions): async.IThenable<void>;
+            /**
+              * Internal method for going back a certain length in history
+              */
             protected _goBack(length: number): async.IThenable<void>;
+            /**
+              * Lets the router dispose of all of the necessary properties.
+              */
             dispose(): void;
+            /**
+              * The root navigator will always observe for url changes and handle them accordingly. This means instructing the
+              * router to navigate, and determining what to do in the event that navigation is prevented.
+              */
             protected _observeUrl(): void;
-            generate(view: any, parameters: any, query: any): string;
+            /**
+              * Generates a url with the given view, parameters, and query.
+              */
+            protected _generate(view: any, parameters: any, query: any): string;
         }
+        /**
+          * Specifies options used during navigation. Can help build the url, as well as change
+          * the behavior of the navigation.
+          */
         interface INavigateOptions {
+            /**
+              * Indicates that the url is specified and does not need to be generated.
+              */
             isUrl?: boolean;
+            /**
+              * Url parameters, used to generate a url if the associated view is a variable route (i.e. '/posts/:id')
+              */
             parameters?: IObject<any>;
+            /**
+              * An object used to generate a query string.
+              */
             query?: IObject<any>;
+            /**
+              * Whether or not this url should replace the current url in the browser history.
+              */
             replace?: boolean;
         }
+        /**
+          * Specifies options used during backward navigation.
+          */
         interface IBackNavigationOptions {
+            /**
+              * The length in history to go back.
+              */
             length?: number;
         }
         /**
-          * The Type for referencing the '_history' injectable as a dependency.
+          * The Type for referencing the 'History' injectable as a dependency.
           * Used so that the window.history can be mocked.
           */
         function History(_window?: Window): History;
@@ -9080,6 +9166,7 @@ declare module plat {
           * find the associated compiled route and link it to the data given with the passed-in route.
           */
         class RouteRecognizer {
+            protected static _inject: any;
             /**
               * Reference to the BaseSegment injectable.
               */
@@ -9256,7 +9343,16 @@ declare module plat {
               */
             name?: string;
         }
+        /**
+          * Matches URLs to registered views. Allows for rejecting navigation, as well as
+          * processing route and query parameters. When a route is matches, the current view
+          * has the opportunity to reject/delay navigation. The next view can also reject navigation,
+          * or redirect.
+          * This is done asynchronously, giving the application the ability to make web service calls
+          * to determing
+          */
         class Router {
+            protected static _inject: any;
             static currentRouter(router?: Router): Router;
             private static __currentRouter;
             protected _Promise: async.IPromise;
@@ -9392,6 +9488,7 @@ declare module plat {
           * An AttributeControl that binds to a specified DOM event handler.
           */
         class SimpleEventControl extends AttributeControl implements ISendEvents {
+            protected static _inject: any;
             /**
               * Reference to the Parser injectable.
               */
@@ -9715,6 +9812,7 @@ declare module plat {
           * 'cut', 'paste', etc. Also fires on the 'change' event.
           */
         class React extends SimpleEventControl {
+            protected static _inject: any;
             /**
               * Reference to the Compat injectable.
               */
@@ -9917,6 +10015,7 @@ declare module plat {
           * Base class used for filtering keys on KeyboardEvents.
           */
         class KeyCodeEventControl extends SimpleEventControl implements IKeyCodeEventControl {
+            protected static _inject: any;
             /**
               * Reference to the Regex injectable.
               */
@@ -10195,6 +10294,7 @@ declare module plat {
           * A type of ElementPropertyControl used to set 'src' on an anchor tag.
           */
         class Src extends ElementPropertyControl {
+            protected static _inject: any;
             /**
               * Used to set the element's src property.
               */
@@ -10213,6 +10313,7 @@ declare module plat {
           * Facilitates two-way databinding for HTMLInputElements, HTMLSelectElements, and HTMLTextAreaElements.
           */
         class Bind extends AttributeControl {
+            protected static _inject: any;
             /**
               * Reference to the Parser injectable.
               */
@@ -10438,6 +10539,7 @@ declare module plat {
           * An AttributeControl that deals with observing changes for a specified property.
           */
         class ObservableAttributeControl extends AttributeControl implements IObservableAttributeControl {
+            protected static _inject: any;
             /**
               * Reference to the IContextManagerStatic injectable.
               */
