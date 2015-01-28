@@ -371,12 +371,14 @@ function defer(method: (...args: any[]) => void, timeout: number, args?: Array<a
     };
 }
 
-function requestAnimationFrameGlobal(method: FrameRequestCallback): plat.IRemoveListener {
+function requestAnimationFrameGlobal(method: FrameRequestCallback, context?: any): plat.IRemoveListener {
     if (isUndefined(requestAnimationFrame)) {
-        return postpone(method);
+        return postpone(() => {
+            method.call(context, Date.now());
+        });
     }
 
-    var animationId = requestAnimationFrame(method);
+    var animationId = requestAnimationFrame(method.bind(context));
     return () => {
         cancelAnimationFrame(animationId);
     };

@@ -752,11 +752,12 @@ module plat {
          * Uses requestAnimationFrame if it is available, else it does a setTimeout.
          * 
          * @param {FrameRequestCallback} method The method to call when the request is fulfilled.
+         * @param {any} context? An optional context to bind to the method.
          * 
          * @returns {plat.IRemoveListener} A function that will cancel the frame request when called.
          */
-        requestAnimationFrame(method: FrameRequestCallback): IRemoveListener {
-            return requestAnimationFrameGlobal(method);
+        requestAnimationFrame(method: FrameRequestCallback, context?: any): IRemoveListener {
+            return requestAnimationFrameGlobal(method, context);
         }
 
         /**
