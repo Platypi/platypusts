@@ -38,7 +38,7 @@ module test.routing.router {
         });
 
         afterEach(() => {
-            navigator.removeUrlListener();
+            (<any>navigator)._removeUrlListener();
         });
 
         it('should test history',() => {
