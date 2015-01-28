@@ -9414,6 +9414,7 @@ declare module plat {
             previousUrl: string;
             previousQuery: string;
             previousSegment: string;
+            previousPattern: string;
             currentRouteInfo: IRouteInfo;
             ports: Array<ISupportRouteNavigation>;
             parent: Router;

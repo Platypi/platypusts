@@ -59,6 +59,7 @@
         previousUrl: string;
         previousQuery: string;
         previousSegment: string;
+        previousPattern: string;
 
         currentRouteInfo: IRouteInfo;
 
@@ -271,7 +272,8 @@
 
             var result: IRouteResult = this.recognizer.recognize(url),
                 routeInfo: IRouteInfo,
-                pattern: string;
+                pattern: string,
+                segment: string;
 
             if (isEmpty(result)) {
                 result = this.childRecognizer.recognize(url);
@@ -288,7 +290,7 @@
                 pattern = routeInfo.delegate.pattern;
                 pattern = pattern.substr(0, pattern.length - __CHILD_ROUTE_LENGTH);
 
-                if (this.previousSegment === pattern) {
+                if (this.previousPattern === pattern) {
                     // the pattern for this router is the same as the last pattern so 
                     // only navigate child routers.
                     this.navigating = true;
@@ -308,6 +310,8 @@
                 pattern = routeInfo.delegate.pattern;
             }
 
+            segment = this.generate(routeInfo.delegate.view, routeInfo.parameters);
+
             this.navigating = true;
 
             var routeInfoCopy = _clone(routeInfo, true);
@@ -325,7 +329,8 @@
                 return this.performNavigation(routeInfo);
             })
                 .then(() => {
-                this.previousSegment = pattern;
+                this.previousPattern = pattern;
+                this.previousSegment = segment;
                 this.currentRouteInfo = routeInfoCopy;
                 this.navigating = false;
             },(e) => {
@@ -578,6 +583,7 @@
 
         protected _clearInfo() {
             this.previousSegment = undefined;
+            this.previousPattern = undefined;
             this.previousUrl = undefined;
             this.previousQuery = undefined;
             this.currentRouteInfo = undefined;
