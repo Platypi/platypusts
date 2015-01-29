@@ -206,6 +206,10 @@
         }
 
         protected _addHandler(handler: (value: string, values: any, query?: any) => any, parameter: string, view: any, handlers: IObject<IRouteTransforms>) {
+            if (isUndefined(view)) {
+                view = '*';
+            }
+
             if (view !== '*') {
                 view = this._Injector.convertDependency(view);
             }
@@ -231,15 +235,15 @@
             return this;
         }
 
-        intercept(handler: (routeInfo: IRouteInfo) => any, view: string): Router;
-        intercept(handler: (routeInfo: IRouteInfo) => any, view: new (...args: any[]) => any): Router;
-        intercept(handler: (routeInfo: IRouteInfo) => any, view: any) {
-            if (view !== '*') {
-                view = this._Injector.convertDependency(view);
+        intercept(handler: (routeInfo: IRouteInfo) => any, view?: string): Router;
+        intercept(handler: (routeInfo: IRouteInfo) => any, view?: new (...args: any[]) => any): Router;
+        intercept(handler: (routeInfo: IRouteInfo) => any, view?: any) {
+            if (isUndefined(view)) {
+                view = '*';
             }
 
-            if (isEmpty(view)) {
-                return this;
+            if (view !== '*') {
+                view = this._Injector.convertDependency(view);
             }
 
             var interceptors = this.interceptors[view];
