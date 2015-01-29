@@ -1,20 +1,23 @@
 ﻿/* tslint:disable:no-unused-variable */
-var __nativeIsArray = !!Array.isArray,
-    __uids__: plat.IObject<Array<string>> = {},
-    objToString = Object.prototype.toString,
-    toStringClass = '[object ',
-    errorClass = toStringClass + 'Error]',
-    fileClass = toStringClass + 'File]',
-    arrayClass = toStringClass + 'Array]',
-    boolClass = toStringClass + 'Boolean]',
-    dateClass = toStringClass + 'Date]',
-    funcClass = toStringClass + 'Function]',
-    numberClass = toStringClass + 'Number]',
-    objectClass = toStringClass + 'Object]',
-    regexpClass = toStringClass + 'RegExp]',
-    stringClass = toStringClass + 'String]',
-    promiseClass = toStringClass + 'Promise]',
-    objectTypes: any = {
+var _nativeIsArray = !!Array.isArray,
+    _uids: plat.IObject<Array<string>> = {},
+    _Promise: plat.async.IPromise,
+    _compat: plat.Compat,
+    _camelCaseRegex: RegExp,
+    _objToString = Object.prototype.toString,
+    _toStringClass = '[object ',
+    _errorClass = _toStringClass + 'Error]',
+    _fileClass = _toStringClass + 'File]',
+    _arrayClass = _toStringClass + 'Array]',
+    _boolClass = _toStringClass + 'Boolean]',
+    _dateClass = _toStringClass + 'Date]',
+    _funcClass = _toStringClass + 'Function]',
+    _numberClass = _toStringClass + 'Number]',
+    _objectClass = _toStringClass + 'Object]',
+    _regexpClass = _toStringClass + 'RegExp]',
+    _stringClass = _toStringClass + 'String]',
+    _promiseClass = _toStringClass + 'Promise]',
+    _objectTypes: any = {
         'boolean': false,
         'function': true,
         'object': true,
@@ -104,7 +107,7 @@ function _clone(obj: any, deep?: boolean) {
 }
 
 function isError(obj: any): boolean {
-    return objToString.call(obj) === errorClass;
+    return _objToString.call(obj) === _errorClass;
 }
 
 function isObject(obj: any): boolean {
@@ -128,19 +131,19 @@ function isDocumentFragment(obj: any): boolean {
 }
 
 function isFile(obj: any): boolean {
-    return isObject(obj) && objToString.call(obj) === fileClass;
+    return isObject(obj) && _objToString.call(obj) === _fileClass;
 }
 
 function isString(obj: any): boolean {
-    return typeof obj === 'string' || isObject(obj) && objToString.call(obj) === stringClass;
+    return typeof obj === 'string' || isObject(obj) && _objToString.call(obj) === _stringClass;
 }
 
 function isRegExp(obj: any): boolean {
-    return isObject(obj) && objToString.call(obj) === regexpClass;
+    return isObject(obj) && _objToString.call(obj) === _regexpClass;
 }
 
 function isPromise(obj: any): boolean {
-    return isObject(obj) && (objToString.call(obj) === promiseClass || isFunction(obj.then));
+    return isObject(obj) && (_objToString.call(obj) === _promiseClass || isFunction(obj.then));
 }
 
 function isEmpty(obj: any): boolean {
@@ -160,11 +163,11 @@ function isEmpty(obj: any): boolean {
 }
 
 function isBoolean(obj: any): boolean {
-    return obj === true || obj === false || isObject(obj) && objToString.call(obj) === boolClass;
+    return obj === true || obj === false || isObject(obj) && _objToString.call(obj) === _boolClass;
 }
 
 function isNumber(obj: any): boolean {
-    return (typeof obj === 'number' || isObject(obj) && objToString.call(obj) === numberClass) && !isNaN(obj);
+    return (typeof obj === 'number' || isObject(obj) && _objToString.call(obj) === _numberClass) && !isNaN(obj);
 }
 
 function isFunction(obj: any): boolean {
@@ -180,11 +183,11 @@ function isUndefined(obj: any): boolean {
 }
 
 function isArray(obj: any): boolean {
-    if (__nativeIsArray) {
+    if (_nativeIsArray) {
         return Array.isArray(obj);
     }
 
-    return objToString.call(obj) === arrayClass;
+    return _objToString.call(obj) === _arrayClass;
 }
 
 function isArrayLike(obj: any): boolean {
@@ -196,7 +199,7 @@ function isArrayLike(obj: any): boolean {
 }
 
 function isDate(obj: any): boolean {
-    return typeof obj === 'object' && objToString.call(obj) === dateClass;
+    return typeof obj === 'object' && _objToString.call(obj) === _dateClass;
 }
 
 function filter<T>(iterator: (value: T, key: any, obj: any) => boolean, obj: any, context?: any): Array<T> {
@@ -271,19 +274,17 @@ function map<T, R>(iterator: (value: T, key: any, obj: any) => R, obj: any, cont
     return arr;
 }
 
-var Promise: plat.async.IPromise;
-
 function mapAsync<T, R>(iterator: (value: T, key: any, obj: any) => plat.async.IThenable<R>, obj: any,
     context?: any): plat.async.IThenable<Array<R>> {
-    Promise = Promise || plat.acquire(__Promise);
+    _Promise = _Promise || plat.acquire(__Promise);
 
-    return Promise.all(map(iterator, obj, context));
+    return _Promise.all(map(iterator, obj, context));
 }
 
 function mapAsyncWithOrder<T, R>(iterator: (value: T, index: number, list: Array<T>) => plat.async.IThenable<R>,
     array: Array<T>, context: any, descending?: boolean): plat.async.IThenable<Array<R>> {
-    Promise = Promise || plat.acquire(__Promise);
-    var initialValue = Promise.resolve<Array<R>>([]);
+    _Promise = _Promise || plat.acquire(__Promise);
+    var initialValue = _Promise.resolve<Array<R>>([]);
 
     if (!isArray(array)) {
         return initialValue;
@@ -372,15 +373,20 @@ function defer(method: (...args: any[]) => void, timeout: number, args?: Array<a
 }
 
 function requestAnimationFrameGlobal(method: FrameRequestCallback, context?: any): plat.IRemoveListener {
-    if (isUndefined(requestAnimationFrame)) {
+    _compat = _compat || (plat.acquire(__Compat));
+
+    var requestAnimFrame = _compat.requestAnimationFrame;
+    if (isUndefined(requestAnimFrame)) {
         return postpone(() => {
             method.call(context, Date.now());
         });
     }
 
-    var animationId = requestAnimationFrame(method.bind(context));
+    var animationId = requestAnimFrame(method.bind(context)),
+        cancelAnimFrame = _compat.cancelAnimationFrame || noop;
+
     return () => {
-        cancelAnimationFrame(animationId);
+        cancelAnimFrame(animationId);
     };
 }
 
@@ -389,10 +395,10 @@ function uniqueId(prefix?: string): string {
         prefix = '';
     }
 
-    var puid = __uids__[prefix];
+    var puid = _uids[prefix];
 
     if (isNull(puid)) {
-        puid = __uids__[prefix] = ['0', '/'];
+        puid = _uids[prefix] = ['0', '/'];
     }
 
     var index = puid.length,
@@ -430,17 +436,15 @@ function uniqueId(prefix?: string): string {
     return join();
 }
 
-var camelCaseRegex: RegExp;
-
 function camelCase(str: string): string {
     if (!isString(str) || isEmpty(str)) {
         return str;
     }
 
     str = str.charAt(0).toLowerCase() + str.slice(1);
-    camelCaseRegex = camelCaseRegex || (<plat.expressions.Regex>plat.acquire(__Regex)).camelCaseRegex;
+    _camelCaseRegex = _camelCaseRegex || (<plat.expressions.Regex>plat.acquire(__Regex)).camelCaseRegex;
 
-    return str.replace(camelCaseRegex,
+    return str.replace(_camelCaseRegex,
         (match: string, delimiter?: string, char?: string, index?: number)
             => index ? char.toUpperCase() : char);
 }
