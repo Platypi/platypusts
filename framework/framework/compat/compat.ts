@@ -550,8 +550,9 @@
             (<any>_window)[prefix + 'CancelRequestAnimationFrame'] ||
             (<any>_window)[prefix + 'CancelAnimationFrame'];
 
-            var style = documentElement.style;
-            if (!isUndefined(style.animation)) {
+            var style = documentElement.style,
+                animationSupported: boolean;
+            if (animationSupported = !isUndefined(style.animation)) {
                 this.animationEvents = {
                     $animation: 'animation',
                     $animationStart: 'animationstart',
@@ -561,7 +562,7 @@
                     $transitionStart: 'transitionstart',
                     $transitionEnd: 'transitionend'
                 };
-            } else if (!isUndefined((<any>style)[jsSyntax + 'Animation'])) {
+            } else if (animationSupported = !isUndefined((<any>style)[jsSyntax + 'Animation'])) {
                 this.animationEvents = {
                     $animation: prefix + 'Animation',
                     $animationStart: prefix + 'AnimationStart',
@@ -572,6 +573,8 @@
                     $transitionEnd: prefix + 'TransitionEnd'
                 };
             }
+
+            this.animationSupported = animationSupported;
         }
 
         /**
