@@ -377,12 +377,14 @@ module plat.dependency {
          * @returns {any} The located injector.
          */
         private static __findInjector(Constructor: any, injectors: InjectorObject<any>) {
-            if (Constructor === Injector || Constructor === __InjectorStatic) {
+            if (isNull(Constructor)) {
+                return;
+            } else if (Constructor === Injector || Constructor === __InjectorStatic) {
                 var ret = Injector.__wrap(Injector);
                 ret.name = __InjectorStatic;
                 return ret;
-            } else if (isNull(Constructor) || isString(Constructor)) {
-                return injectors[Constructor];
+            } else if (isString(Constructor)) {
+                return injectors[Constructor] || injectors[(<string>Constructor).toLowerCase()];
             }
 
             var injector: Injector<any>,

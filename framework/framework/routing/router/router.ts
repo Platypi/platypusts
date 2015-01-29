@@ -523,7 +523,9 @@
 
         canNavigateTo(info: IRouteInfo, ignorePorts?: boolean): async.IThenable<boolean> {
             var promises: Array<any> = [];
-
+            if (isEmpty(this.ports)) {
+                return this._resolve(true);
+            }
             return this.callAllHandlers(info.delegate.view, info.parameters, info.query)
                 .then(() => {
                 return this.callInterceptors(info);
