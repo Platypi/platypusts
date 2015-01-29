@@ -107,25 +107,31 @@
             var ports = this.ports;
 
             if (isNull(port) || ports.indexOf(port) > -1) {
-                return this._Promise.resolve();
+                return this._resolve();
             }
 
             ports.push(port);
 
             if (isObject(this.currentRouteInfo)) {
-
-                var routeInfo = _clone(this.currentRouteInfo, true);
-
-                return this.canNavigateTo(routeInfo)
-                    .then((canNavigateTo) => {
-                    if (!canNavigateTo) {
-                        return;
-                    }
-                    this.currentRouteInfo = undefined;
-                    return this.performNavigation(routeInfo);
-                }).then(() => {
-                    this.currentRouteInfo = routeInfo;
-                });
+                this.navigating = true;
+                return this._resolve(this.finishNavigating)
+                    .catch(() => { })
+                    .then(() => {
+                        var routeInfo = _clone(this.currentRouteInfo, true);
+                        return this.finishNavigating = this.canNavigateTo(routeInfo)
+                            .then((canNavigateTo) => {
+                            if (!canNavigateTo) {
+                                return;
+                            }
+                            this.currentRouteInfo = undefined;
+                            return this.performNavigation(routeInfo);
+                        }).then(() => {
+                            this.navigating = false;
+                            this.currentRouteInfo = routeInfo;
+                        },() => {
+                                this.navigating = false;
+                            });
+                    });
             }
 
             return this._Promise.resolve();
@@ -299,7 +305,7 @@
                         this.previousUrl = url;
                         this.previousQuery = queryString;
                         this.navigating = false;
-                    },(e) => {
+                        },(e) => {
                             this.navigating = false;
                             throw e;
                         });
@@ -309,8 +315,8 @@
                 routeInfo.query = query;
                 pattern = routeInfo.delegate.pattern;
             }
-
-            segment = this.generate(routeInfo.delegate.view, routeInfo.parameters);
+            
+            segment = this.recognizer.generate(routeInfo.delegate.view, routeInfo.parameters);
 
             this.navigating = true;
 

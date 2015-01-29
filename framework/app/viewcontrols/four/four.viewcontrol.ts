@@ -7,7 +7,7 @@
             views: [One, Two, Three, Four]
         };
 
-        constructor(router: plat.routing.Router) {
+        constructor(private Promise: plat.async.IPromise, router: plat.routing.Router) {
             super();
 
             router.configure([
@@ -32,11 +32,18 @@
 
         canNavigateTo() {
             // console.log('canNavigateTo:', this.uid);
-            this.navigator.navigate(Three);
+            //return new this.Promise((resolve, reject) => {
+            //    setTimeout(() => {
+            //        console.log(this.navigator.router.navigating);
+            //        this.navigator.navigate(Three);
+            //        resolve();
+            //    }, 1000);
+            //});
         }
     }
 
     plat.register.viewControl('four', Four, [
+        plat.async.IPromise,
         plat.routing.Router
     ]);
 }

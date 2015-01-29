@@ -477,32 +477,30 @@
 
                 backNavigate = this._backNavigate;
                 this._backNavigate = false;
+                previousUrl = this._previousUrl;
+                this._finishNavigating()
+                    .then(() => {
+                        return this.router.navigate(utils.pathname, utils.query)
+                    }).then(() => {
+                        this._previousUrl = utils.pathname;
+                        if (isFunction(this._resolveNavigate)) {
+                            this._resolveNavigate();
+                        }
+                    }).catch((e: any) => {
+                        this._ignoreOnce = true;
+                        this._previousUrl = previousUrl;
 
-                postpone(() => {
-                    previousUrl = this._previousUrl;
-                    this.router.navigate(utils.pathname, utils.query)
-                        .then(() => {
-                            this._previousUrl = utils.pathname;
-                            if (isFunction(this._resolveNavigate)) {
-                                this._resolveNavigate();
-                            }
-                        })
-                        .catch((e: any) => {
-                            this._ignoreOnce = true;
-                            this._previousUrl = previousUrl;
+                        this._browser.url(previousUrl, !backNavigate);
+                        this._history.go(-1);
 
-                            this._browser.url(previousUrl, !backNavigate);
-                            this._history.go(-1);
+                        if (isFunction(this._rejectNavigate)) {
+                            this._rejectNavigate(e);
+                        }
 
-                            if (isFunction(this._rejectNavigate)) {
-                                this._rejectNavigate(e);
-                            }
-
-                            if (!isEmpty(e)) {
-                                _Exception.warn(e, _Exception.NAVIGATION);
-                            }
-                        });
-                });
+                        if (!isEmpty(e)) {
+                            _Exception.warn(e, _Exception.NAVIGATION);
+                        }
+                    });
             });
         }
 

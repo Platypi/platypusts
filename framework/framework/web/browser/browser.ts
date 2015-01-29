@@ -488,7 +488,6 @@ module plat.web {
                     this._urlChanged();
                 }
             } else {
-                console.log('test');
                 this.__currentUrl = url;
                 if (replace) {
                     _location.replace(url);

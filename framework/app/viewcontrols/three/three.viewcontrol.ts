@@ -32,7 +32,6 @@
         }
 
         canNavigateTo() {
-            console.log('test');
             // console.log('canNavigateTo:', this.uid);
         }
     }
