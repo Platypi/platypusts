@@ -291,7 +291,8 @@
          * @type {plat.IAnimationEvents}
          * 
          * @description
-         * An object containing the properly prefixed animation events.
+         * An object containing the properly prefixed animation events. 
+         * Undefined if animation isn't supported.
          */
         animationEvents: IAnimationEvents;
 
@@ -307,6 +308,32 @@
          * An object containing information regarding any potential vendor prefix.
          */
         vendorPrefix: IVendorPrefix;
+
+        /**
+         * @name requestAnimationFrame
+         * @memberof plat.Compat
+         * @kind property
+         * @access public
+         * 
+         * @type {(callback: FrameRequestCallback) => number}
+         * 
+         * @description
+         * The browser's requestAnimationFrame function if one exists. Otherwise undefined.
+         */
+        requestAnimationFrame: (callback: FrameRequestCallback) => number;
+
+        /**
+         * @name cancelAnimationFrame
+         * @memberof plat.Compat
+         * @kind property
+         * @access public
+         * 
+         * @type {(handle: number) => void}
+         * 
+         * @description
+         * The browser's cancelAnimationFrame function if one exists. Otherwise undefined.
+         */
+        cancelAnimationFrame: (handle: number) => void;
 
         /**
          * @name IE
@@ -497,68 +524,57 @@
          * @returns {void}
          */
         private __defineAnimationEvents(): void {
-            var documentElement = this._document.documentElement,
-                styles = this._window.getComputedStyle(documentElement, ''),
-                prefix: string;
+            var _window = this._window,
+                documentElement = this._document.documentElement,
+                styles = _window.getComputedStyle(documentElement, ''),
+                prefix: string,
+                jsSyntax: string;
 
             if (!isUndefined((<any>styles).OLink)) {
                 prefix = 'o';
+                jsSyntax = 'O';
             } else {
                 var matches = Array.prototype.slice.call(styles).join('').match(/-(moz|webkit|ms)-/);
                 prefix = (isArray(matches) && matches.length > 1) ? matches[1] : '';
+                jsSyntax = prefix === 'ms' ? 'MS' : prefix[0].toUpperCase() + prefix.slice(1);
             }
 
             this.vendorPrefix = {
                 lowerCase: prefix,
                 css: prefix === '' ? '' : '-' + prefix + '-',
-                js: prefix[0].toUpperCase() + prefix.slice(1)
+                upperCase: jsSyntax
             };
 
-            if (prefix === 'webkit') {
-                this.animationSupported = !isUndefined((<any>documentElement.style).WebkitAnimation);
-                if (!this.animationSupported) {
-                    this.animationEvents = {
-                        $animation: '',
-                        $animationStart: '',
-                        $animationEnd: '',
-                        $transition: '',
-                        $transitionStart: '',
-                        $transitionEnd: ''
-                    };
-                    return;
-                }
+            this.requestAnimationFrame = _window.requestAnimationFrame || (<any>_window)[prefix + 'RequestAnimationFrame'];
+            this.cancelAnimationFrame = _window.cancelAnimationFrame ||
+            (<any>_window)[prefix + 'CancelRequestAnimationFrame'] ||
+            (<any>_window)[prefix + 'CancelAnimationFrame'];
 
-                this.animationEvents = {
-                    $animation: 'webkitAnimation',
-                    $animationStart: 'webkitAnimationStart',
-                    $animationEnd: 'webkitAnimationEnd',
-                    $transition: 'webkitTransition',
-                    $transitionStart: 'webkitTransitionStart',
-                    $transitionEnd: 'webkitTransitionEnd'
-                };
-            } else {
-                this.animationSupported = !isUndefined((<any>documentElement.style).animation);
-                if (!this.animationSupported) {
-                    this.animationEvents = {
-                        $animation: '',
-                        $animationStart: '',
-                        $animationEnd: '',
-                        $transition: '',
-                        $transitionStart: '',
-                        $transitionEnd: ''
-                    };
-                    return;
-                }
-
+            var style = documentElement.style,
+                animationSupported: boolean;
+            if (animationSupported = !isUndefined(style.animation)) {
                 this.animationEvents = {
                     $animation: 'animation',
                     $animationStart: 'animationstart',
                     $animationEnd: 'animationend',
+                    $animationIteration: 'animationiteration',
                     $transition: 'transition',
                     $transitionStart: 'transitionstart',
                     $transitionEnd: 'transitionend'
                 };
+            } else if (animationSupported = !isUndefined((<any>style)[jsSyntax + 'Animation'])) {
+                this.animationEvents = {
+                    $animation: prefix + 'Animation',
+                    $animationStart: prefix + 'AnimationStart',
+                    $animationEnd: prefix + 'AnimationEnd',
+                    $animationIteration: prefix + 'AnimationIteration',
+                    $transition: prefix + 'Transition',
+                    $transitionStart: prefix + 'TransitionStart',
+                    $transitionEnd: prefix + 'TransitionEnd'
+                };
             }
+
+            this.animationSupported = animationSupported;
         }
 
         /**
@@ -777,6 +793,19 @@
         $animationEnd: string;
 
         /**
+         * @name $animationIteration
+         * @memberof plat.IAnimationEvents
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * The animation iteration event.
+         */
+        $animationIteration: string;
+
+        /**
          * @name $transition
          * @memberof plat.IAnimationEvents
          * @kind property
@@ -856,7 +885,7 @@
         css: string;
 
         /**
-         * @name js
+         * @name upperCase
          * @memberof plat.IVendorPrefix
          * @kind property
          * @access public
@@ -864,9 +893,10 @@
          * @type {string}
          * 
          * @description
-         * The JavaScript representation of the browser's vendor prefix 
-         * denoted by it beginning with a capital letter.
+         * The common uppercase representation of the browser's vendor prefix 
+         * generally denoted by it beginning with a capital letter or all capital 
+         * in the case of MS.
          */
-        js: string;
+        upperCase: string;
     }
 }

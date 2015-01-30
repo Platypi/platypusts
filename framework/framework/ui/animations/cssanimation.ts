@@ -81,7 +81,12 @@
          * @returns {plat.ui.animations.CssAnimation} This instance (for chaining).
          */
         animationStart(listener: () => void): CssAnimation {
-            return this.__addEventListener(this.__animationEvents.$animationStart, listener);
+            var animationEvents = this.__animationEvents;
+            if (isUndefined(animationEvents)) {
+                return this;
+            }
+
+            return this.__addEventListener(animationEvents.$animationStart, listener);
         }
         
         /**
@@ -98,7 +103,12 @@
          * @returns {plat.ui.animations.CssAnimation} This instance (for chaining).
          */
         transitionStart(listener: () => void): CssAnimation {
-            return this.__addEventListener(this.__animationEvents.$transitionStart, listener);
+            var animationEvents = this.__animationEvents;
+            if (isUndefined(animationEvents)) {
+                return this;
+            }
+
+            return this.__addEventListener(animationEvents.$transitionStart, listener);
         }
         
         /**
@@ -115,7 +125,12 @@
          * @returns {plat.ui.animations.CssAnimation} This instance (for chaining).
          */
         animationEnd(listener: () => void): CssAnimation {
-            return this.__addEventListener(this.__animationEvents.$animationEnd, listener);
+            var animationEvents = this.__animationEvents;
+            if (isUndefined(animationEvents)) {
+                return this;
+            }
+
+            return this.__addEventListener(animationEvents.$animationEnd, listener);
         }
         
         /**
@@ -132,7 +147,12 @@
          * @returns {plat.ui.animations.CssAnimation} This instance (for chaining).
          */
         transitionEnd(listener: () => void): CssAnimation {
-            return this.__addEventListener(this.__animationEvents.$transitionEnd, listener);
+            var animationEvents = this.__animationEvents;
+            if (isUndefined(animationEvents)) {
+                return this;
+            }
+
+            return this.__addEventListener(animationEvents.$transitionEnd, listener);
         }
         
         /**
