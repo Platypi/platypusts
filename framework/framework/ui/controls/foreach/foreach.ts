@@ -366,7 +366,7 @@ module plat.ui.controls {
             if (!isArray(context) || !isNumber(max) || (context.length < max)) {
                 return;
             }
-            animate = false;
+
             var promises: Array<async.IThenable<DocumentFragment>> = [];
             while (index < max) {
                 promises.push(this._bindItem(index++));
