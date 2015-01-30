@@ -10,8 +10,22 @@
     export class BaseAnimation {
         protected static _inject: any = {
             _compat: __Compat,
-            dom: __Dom
+            dom: __Dom,
+            _Exception: __ExceptionStatic
         };
+
+        /**
+         * @name _Exception
+         * @memberof plat.ui.animations.BaseAnimation
+         * @kind property
+         * @access protected
+         * 
+         * @type {plat.Exception}
+         * 
+         * @description
+         * Reference to the {@link plat.IExceptionStatic|IExceptionStatic} injectable.
+         */
+        protected _Exception: IExceptionStatic;
 
         /**
          * @name _compat
@@ -25,6 +39,19 @@
          * Reference to the {@link plat.Compat|Compat} injectable.
          */
         protected _compat: Compat;
+
+        /**
+         * @name __eventListeners
+         * @memberof plat.ui.animations.BaseAnimation
+         * @kind property
+         * @access private
+         * 
+         * @type {Array<plat.IRemoveListener>}
+         * 
+         * @description
+         * An Array of remove functions to dispose of event listeners.
+         */
+        private __eventListeners: Array<IRemoveListener> = [];
 
         /**
          * @name element
@@ -122,6 +149,11 @@
                 this._resolve();
                 this._resolve = null;
             }
+
+            var eventListeners = this.__eventListeners;
+            while (eventListeners.length > 0) {
+                eventListeners.pop()();
+            }
         }
 
         /**
@@ -152,6 +184,44 @@
          * @returns {void}
          */
         dispose(): void { }
+
+        /**
+         * @name addEventListener
+         * @memberof plat.ui.animations.BaseAnimation
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Adds an event listener of the specified type to this animation's element. Removal of the 
+         * event is handled automatically upon animation end.
+         * 
+         * @param {string} type The type of event to listen to.
+         * @param {EventListener} listener The listener to fire when the event occurs.
+         * @param {boolean} useCapture? Whether to fire the event on the capture or the bubble phase 
+         * of event propagation.
+         * 
+         * @returns {plat.IRemoveListener} A function to call in order to stop listening to the event.
+         */
+        addEventListener(type: string, listener: EventListener, useCapture?: boolean): IRemoveListener {
+            if (!isFunction(listener)) {
+                var _Exception = this._Exception;
+                _Exception.warn('An animation\'s "addEventListener" must take a function as the second argument.', _Exception.EVENT);
+                return noop;
+            }
+
+            listener = listener.bind(this);
+            var removeListener = this.dom.addEventListener(this.element, type, listener, useCapture),
+                eventListeners = this.__eventListeners;
+
+            eventListeners.push(removeListener);
+            return () => {
+                removeListener();
+                var index = eventListeners.indexOf(removeListener);
+                if (index !== -1) {
+                    eventListeners.splice(index, 1);
+                }
+            };
+        }
 
         /**
          * @name instantiate
