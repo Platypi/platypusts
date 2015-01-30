@@ -166,12 +166,12 @@ module plat.ui.controls {
                 ev.preventDefault();
                 element.href = '#';
 
-                postpone(() => {
+                requestAnimationFrameGlobal(() => {
                     this._browser.url(href);
                 });
 
-                //this.removeClickListener();
-                //element.addEventListener('click', this.getListener(element));
+                this.removeClickListener();
+                element.addEventListener('click', this.getListener(element));
             }, false);
         }
 

@@ -201,10 +201,6 @@ module plat.dependency {
                 return __NOOP_INJECTOR;
             } else if (isString(dependency)) {
                 return dependency;
-            } else if (dependency === window) {
-                return __Window;
-            } else if (dependency === window.document) {
-                return __Document;
             }
 
             var Constructor = dependency,
@@ -254,13 +250,33 @@ module plat.dependency {
          * 
          * @returns {any} The instantiated constructor.
          */
-        private static __construct(Constructor: any, args: Array<any>): any {
+        private static __construct(Constructor: any, args: Array<any>, type?: string): any {
             if (isNull(Constructor) || isNull(Constructor.prototype)) {
                 return Constructor;
             }
-            var obj = Object.create(Constructor.prototype);
+            var obj = Object.create(Constructor.prototype),
+                isInstance = type === __INSTANCE,
+                toInject: any;
 
-            Injector.__walk(obj, Object.getPrototypeOf(obj));
+            if (isInstance) {
+                toInject = instanceInjectorDependencies[Constructor.__injectorName];
+            }
+
+            if (!isObject(toInject)) {
+                toInject = Injector.__walk(obj, Object.getPrototypeOf(obj), {});
+
+                if (isInstance) {
+                    instanceInjectorDependencies[Constructor.__injectorName] = toInject;
+                }
+            }
+
+            var dependencies = acquire(map((value) => value, toInject)),
+                keys = Object.keys(toInject),
+                length = keys.length;
+
+            for (var i = 0; i < length; ++i) {
+                obj[keys[i]] = dependencies[i];
+            }
 
             var ret = obj.constructor.apply(obj, args);
 
@@ -287,25 +303,17 @@ module plat.dependency {
          * 
          * @returns {void}
          */
-        private static __walk(obj: any, proto: any): void {
-            if (proto.constructor !== Object) {
-                Injector.__walk(obj, Object.getPrototypeOf(proto));
-            }
-
+        private static __walk(obj: any, proto: any, extendWith: any): any {
             var Constructor = proto.constructor,
-                toInject = _clone(Constructor._inject, true);
-
-            if (!isObject(toInject)) {
-                return;
+                parentInject = {};
+                
+            if (isObject(Constructor._inject) && Constructor !== Object) {
+                parentInject = Injector.__walk(obj, Object.getPrototypeOf(proto), extendWith);
             }
 
-            var dependencies = acquire(map((value) => value, toInject)),
-                keys = Object.keys(toInject),
-                length = keys.length;
+            var toInject = _clone(Constructor._inject, true);
 
-            for (var i = 0; i < length; ++i) {
-                obj[keys[i]] = dependencies[i];
-            }
+            return extend({}, extendWith, parentInject, toInject);
         }
 
         /**
@@ -325,10 +333,6 @@ module plat.dependency {
         private static __locateInjector(Constructor: any): any {
             if (isNull(Constructor)) {
                 return;
-            } else if (Constructor === window) {
-                return (<any>injectableInjectors)._window;
-            } else if (Constructor === window.document) {
-                return (<any>injectableInjectors)._document;
             }
 
             var dependency: string = Constructor;
@@ -342,18 +346,19 @@ module plat.dependency {
                 injector = find(injectableInjectors) ||
                 find(unregisteredInjectors) ||
                 find(staticInjectors) ||
-                find(viewControlInjectors) ||
                 find(controlInjectors) ||
+                find(viewControlInjectors) ||
                 find(animationInjectors) ||
                 find(jsAnimationInjectors);
 
             if (!isObject(injector)) {
                 if (isFunction(Constructor)) {
-                    injector = <Injector<any>>new Injector(dependency, Constructor, isObject(Constructor._inject) ? Constructor._injectorDependencies : []);
+                    if (!isString(dependency)) {
+                        dependency = uniqueId(__Plat);
+                    }
 
-                    if (isString(dependency)) {
-                        unregisteredInjectors[dependency] = injector;
-                    } 
+                    injector = <Injector<any>>new Injector(dependency, Constructor, isObject(Constructor._inject) ? Constructor._injectorDependencies : []);
+                    unregisteredInjectors[dependency] = injector;
                 } else {
                     injector = Injector.__wrap(Constructor);
                 }
@@ -385,18 +390,6 @@ module plat.dependency {
                 return ret;
             } else if (isString(Constructor)) {
                 return injectors[Constructor] || injectors[(<string>Constructor).toLowerCase()];
-            }
-
-            var injector: Injector<any>,
-                keys = Object.keys(injectors),
-                length = keys.length;
-
-            for (var i = 0; i < length; ++i) {
-                injector = injectors[keys[i]];
-
-                if (injector.Constructor === Constructor) {
-                    return injector;
-                }
             }
         }
 
@@ -613,10 +606,9 @@ module plat.dependency {
                 toInject.push(dependency.inject());
             }
 
-            injectable = <T>Injector.__construct(this.Constructor, toInject);
+            injectable = <T>Injector.__construct(this.Constructor, toInject, type);
 
-            if (type === __SINGLETON || type === __FACTORY ||
-                type === __STATIC || type === __CLASS) {
+            if (type !== __INSTANCE) {
                 this._wrapInjector(injectable);
             }
 

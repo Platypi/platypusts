@@ -2079,7 +2079,7 @@ module plat.async {
          * or rejected, will return an {@link plat.async.IAjaxResponse|IAjaxResponse} object.
          */
         ajax<R>(options: IHttpConfig): AjaxPromise<R> {
-            var request: HttpRequest = acquire(HttpRequest);
+            var request: HttpRequest = acquire(__HttpRequestInstance);
             request.initialize(options);
             return request.execute<R>();
         }
@@ -2101,7 +2101,7 @@ module plat.async {
          * {@link plat.async.IAjaxResponse|IAjaxResponse} object.
          */
         jsonp<R>(options: IJsonpConfig): AjaxPromise<R> {
-            var request: HttpRequest = acquire(HttpRequest);
+            var request: HttpRequest = acquire(__HttpRequestInstance);
             request.initialize(options);
             return request.executeJsonp<R>();
         }
@@ -2125,13 +2125,14 @@ module plat.async {
          * being a parsed JSON object (assuming valid JSON).
          */
         json<R>(options: IHttpConfig): AjaxPromise<R> {
-            var request: HttpRequest = acquire(HttpRequest);
+            var request: HttpRequest = acquire(__HttpRequestInstance);
             request.initialize(extend({}, options, { responseType: 'json' }));
             return request.execute<R>();
         }
     }
 
     register.injectable(__Http, Http);
+    register.injectable(__HttpRequestInstance, HttpRequest, null, __INSTANCE);
 
     /**
      * The Type for referencing the '_httpConfig' injectable as a dependency.

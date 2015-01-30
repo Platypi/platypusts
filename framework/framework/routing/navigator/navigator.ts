@@ -276,7 +276,7 @@
         initialize(router: Router): void {
             this.router = router;
 
-            if (router.isRoot && !isObject(Navigator._root)) {
+            if (isObject(router) && router.isRoot && !isObject(Navigator._root)) {
                 this.isRoot = true;
                 Navigator._root = this;
                 this._observeUrl();
@@ -454,11 +454,8 @@
 
             // Protect against accidentally calling this method twice.
             EventManager.dispose(this.uid);
-            EventManager.on(this.uid, __backButton, () => {
-                var ev: events.DispatchEvent = acquire(__DispatchEventInstance);
-                ev.initialize('backButtonPressed', this);
-
-                EventManager.sendEvent(ev);
+            EventManager.on(this.uid, __backButton,() => {
+                var ev = EventManager.dispatch('backButtonPressed', this, EventManager.DIRECT);;
 
                 if (ev.defaultPrevented) {
                     return;

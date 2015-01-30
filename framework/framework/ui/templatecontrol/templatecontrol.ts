@@ -645,7 +645,7 @@ module plat.ui {
          * @returns {plat.ui.TemplateControl} The new {@link plat.ui.TemplateControl|TemplateControl} instance.
          */
         static getInstance(): TemplateControl {
-            return acquire(TemplateControl);
+            return acquire(__TemplateControlInstance);
         }
 
         /**
@@ -1184,6 +1184,8 @@ module plat.ui {
         __Promise,
         __ExceptionStatic
     ], __FACTORY);
+
+    register.injectable(__TemplateControlInstance, TemplateControl, null, __INSTANCE);
 
     /**
      * @name TemplateControlFactory

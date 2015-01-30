@@ -28,7 +28,7 @@
          * @returns {plat.events.LifecycleEvent} The event instance.
          */
         static dispatch(name: string, sender: any): LifecycleEvent {
-            var event: LifecycleEvent = acquire(LifecycleEvent);
+            var event: LifecycleEvent = acquire(__LifecycleEventInstance);
             event.initialize(name, sender);
             EventManager.sendEvent(event);
 
@@ -60,6 +60,8 @@
     }
 
     register.injectable(__LifecycleEventStatic, ILifecycleEventStatic, null, __STATIC);
+
+    register.injectable(__LifecycleEventInstance, LifecycleEvent, null, __INSTANCE);
 
     /**
      * @name LifecycleEventStatic

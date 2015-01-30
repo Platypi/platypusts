@@ -5,14 +5,14 @@
 
             _browserConfig.baseUrl = 'app';
             //_browserConfig.routingType = _browserConfig.STATE;
-            router.configure([
-                { pattern: '', view: viewcontrols.Main },
-                { pattern: '/one', view: viewcontrols.One }
-            ]);
+            //router.configure([
+            //    { pattern: '', view: viewcontrols.Main },
+            //    { pattern: '/one', view: viewcontrols.One }
+            //]);
 
-            router.intercept(() => {
-                return true;
-            });
+            //router.intercept(() => {
+            //    return true;
+            //});
         }
 
         ready() {
@@ -26,6 +26,6 @@
 
     plat.register.app('app', App, [
         plat.web.IBrowserConfig,
-        plat.routing.Router
+        //plat.routing.Router
     ]);
 }

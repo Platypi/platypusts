@@ -515,6 +515,10 @@ module plat.web {
                 baseUrl = $config.baseUrl,
                 isLocal = !this._regex.fullUrlRegex.test(url) || url.indexOf($config.baseUrl) > -1;
 
+            if (!isString(url)) {
+                return '';
+            }
+
             if (url === $config.baseUrl) {
                 return url;
             }

@@ -65,15 +65,16 @@
          * @returns {string} The base URL.
          */
         private static __getBaseUrl(url: string): string {
-            var _regex = acquire(__Regex),
-                origin = (<any>window.location).origin,
-                protocol = window.location.protocol,
-                host = window.location.host;
+            var _regex: expressions.Regex = acquire(__Regex),
+                _location: Location = acquire(__Location),
+                origin = (<any>_location).origin,
+                protocol = _location.protocol,
+                host = _location.host;
 
             if (protocol === 'file:' || protocol.indexOf('wmapp') > -1 || protocol.indexOf('ms-appx') > -1) {
-                origin = window.location.href;
+                origin = _location.href;
             } else if(isUndefined(origin)) {
-                origin = window.location.protocol + '//' + window.location.host;
+                origin = _location.protocol + '//' + _location.host;
             }
 
             origin = origin.replace(_regex.initialUrlRegex, '');

@@ -30,7 +30,7 @@ module plat.processing {
          * responsible for the passed in Comment Node.
          */
         static create(node: Node, parent: ElementManager): CommentManager {
-            var manager = acquire(CommentManager);
+            var manager = acquire(__CommentManagerInstance);
 
             manager.initialize({
                 nodes: [{
@@ -85,6 +85,7 @@ module plat.processing {
     }
 
     register.injectable(__CommentManagerFactory, ICommentManagerFactory, null, __FACTORY);
+    register.injectable(__CommentManagerInstance, CommentManager, null, __INSTANCE);
     
     /**
      * @name CommentManagerFactory

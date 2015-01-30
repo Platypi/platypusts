@@ -153,7 +153,7 @@ module plat.processing {
             }
 
             var elementMap = ElementManager._collectAttributes(element.attributes),
-                manager: ElementManager = acquire(ElementManager);
+                manager: ElementManager = acquire(__ElementManagerInstance);
 
             elementMap.element = <HTMLElement>element;
             elementMap.uiControlNode = uiControlNode;
@@ -449,7 +449,7 @@ module plat.processing {
          * @returns {plat.processing.ElementManager}
          */
         static getInstance(): ElementManager {
-            return acquire(ElementManager);
+            return acquire(__ElementManagerInstance);
         }
 
         /**
@@ -1697,7 +1697,7 @@ module plat.processing {
         (<any>ElementManager)._Exception = _Exception;
         return ElementManager;
     }
-
+    
     register.injectable(__ElementManagerFactory, IElementManagerFactory, [
         __Document,
         __ManagerCache,
@@ -1705,6 +1705,8 @@ module plat.processing {
         __BindableTemplatesFactory,
         __ExceptionStatic
     ], __FACTORY);
+
+    register.injectable(__ElementManagerInstance, ElementManager, null, __INSTANCE);
 
     /**
      * @name ElementManagerFactory

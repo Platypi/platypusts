@@ -149,24 +149,17 @@ module plat.ui.controls {
             this._animationPromise = this._animator.animate(this.element, __Enter);
 
             var viewportManager = this._managerCache.read(this.uid),
-                manager = this._ElementManagerFactory.getInstance(),
-                promise: async.IThenable<void>;
+                manager = this._ElementManagerFactory.getInstance();
 
             viewportManager.children = [];
             manager.initialize(nodeMap, viewportManager);
 
             if (isFunction(control.navigatedTo)) {
-                promise = resolve(control.navigatedTo(routeInfo.parameters, query));
-            } else {
-                promise = resolve();
+                control.navigatedTo(routeInfo.parameters, query);
             }
 
-            return promise
-                .catch(noop)
-                .then(() => {
-                    manager.setUiControlTemplate();
-                    return manager.templatePromise;
-                });
+            manager.setUiControlTemplate();
+            return manager.templatePromise;
         }
 
         navigateFrom() {

@@ -396,6 +396,7 @@ module plat.register {
 
 var controlInjectors: plat.dependency.InjectorObject<plat.Control> = {};
 var viewControlInjectors: plat.dependency.InjectorObject<plat.ui.ViewControl> = {};
+var instanceInjectorDependencies: plat.IObject<plat.IObject<string>> = {};
 var injectableInjectors: plat.dependency.InjectorObject<plat.dependency.Injector<any>> = {};
 var unregisteredInjectors: plat.dependency.InjectorObject<plat.dependency.Injector<any>> = {};
 var staticInjectors: plat.dependency.InjectorObject<plat.dependency.Injector<any>> = {};

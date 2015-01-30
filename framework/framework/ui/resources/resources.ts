@@ -409,7 +409,7 @@ module plat.ui {
          * @returns {plat.ui.Resources} A new {@link plat.ui.Resources|Resources} instance.
          */
         static getInstance(): Resources {
-            return acquire(Resources);
+            return acquire(__ResourcesInstance);
         }
 
         /**
@@ -758,6 +758,8 @@ module plat.ui {
         __Regex,
         __ExceptionStatic
     ], __FACTORY);
+
+    register.injectable(__ResourcesInstance, Resources, null, __INSTANCE);
 
     /**
      * @name ResourcesFactory

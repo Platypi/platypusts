@@ -1,9 +1,8 @@
-﻿<div>
+﻿<!--<div>
     <div class="left">
         <plat-foreach plat-context="views">
             <div>
                 <button plat-tap="navigateTo(@context)">{{@index + 1}}</button>
-                <!--<plat-link plat-options="{ view: @context }">{{@index + 1}}</plat-link>-->
             </div>
         </plat-foreach>
     </div>
@@ -12,4 +11,8 @@
         <button plat-tap="goBack">Back</button>
         <plat-viewport></plat-viewport>
     </div>
-</div>
+</div>-->
+
+<plat-foreach plat-context="items">
+    <div>{{@context}}</div>
+</plat-foreach>

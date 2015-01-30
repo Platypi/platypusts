@@ -105,7 +105,7 @@ module plat.observable {
                 return contextManager;
             }
 
-            contextManager = managers[uid] = acquire(ContextManager);
+            contextManager = managers[uid] = acquire(__ContextManagerInstance);
             contextManager.context = control;
 
             return contextManager;
@@ -1597,6 +1597,7 @@ module plat.observable {
     }
 
     register.injectable(__ContextManagerStatic, IContextManagerStatic, null, __STATIC);
+    register.injectable(__ContextManagerInstance, ContextManager, null, __INSTANCE);
 
     /**
      * @name ContextManagerStatic

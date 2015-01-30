@@ -31,7 +31,7 @@ module plat.processing {
          */
         static create(node: Node, parent: ElementManager): TextManager {
             var value = node.nodeValue,
-                manager = acquire(TextManager);
+                manager = acquire(__TextManagerInstance);
 
             if (NodeManager.hasMarkup(value)) {
                 var expressions = NodeManager.findMarkup(value),
@@ -99,7 +99,7 @@ module plat.processing {
          */
         protected static _clone(sourceManager: NodeManager, node: Node, parent: ElementManager): TextManager {
             var map = sourceManager.nodeMap,
-                manager = acquire(TextManager);
+                manager = acquire(__TextManagerInstance);
 
             if (!isNull(map)) {
                 manager.initialize(TextManager._cloneNodeMap(map, node), parent);
@@ -198,6 +198,7 @@ module plat.processing {
     }
 
     register.injectable(__TextManagerFactory, ITextManagerFactory, null, __FACTORY);
+    register.injectable(__TextManagerInstance, TextManager, null, __INSTANCE);
     
     /**
      * @name TextManagerFactory
