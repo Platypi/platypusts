@@ -21,6 +21,10 @@ module plat.ui {
      * Attributes for this object are converted from dash-notation to camelCase notation.
      */
     export class Attributes {
+        static getInstance() {
+            return new Attributes();
+        }
+
         [property: string]: any;
 
         /**
@@ -138,5 +142,10 @@ module plat.ui {
         }
     }
 
+    export function IAttributesFactory(): typeof Attributes {
+        return Attributes;
+    }
+
     register.injectable(__AttributesInstance, Attributes, null, __INSTANCE);
+    register.injectable(__AttributesFactory, IAttributesFactory, null, __FACTORY);
 }

@@ -45,12 +45,25 @@ module plat.processing {
          * @kind property
          * @access protected
          * 
-         * @type {plat.ui.ResourcesFactory}
+         * @type {plat.ui.IResourcesFactory}
          * 
          * @description
-         * Reference to the {@link plat.ui.ResourcesFactory|ResourcesFactory} injectable.
+         * Reference to the {@link plat.ui.IResourcesFactory|ResourcesFactory} injectable.
          */
         protected static _ResourcesFactory: ui.IResourcesFactory;
+
+        /**
+         * @name _AttributesFactory
+         * @memberof plat.processing.ElementManager
+         * @kind property
+         * @access protected
+         * 
+         * @type {plat.ui.Attributes}
+         * 
+         * @description
+         * Reference to the {@link plat.ui.Attributes|Attributes} injectable.
+         */
+        protected static _AttributesFactory: typeof ui.Attributes;
 
         /**
          * @name _BindableTemplatesFactory
@@ -153,7 +166,7 @@ module plat.processing {
             }
 
             var elementMap = ElementManager._collectAttributes(element.attributes),
-                manager: ElementManager = acquire(__ElementManagerInstance);
+                manager: ElementManager = ElementManager.getInstance();
 
             elementMap.element = <HTMLElement>element;
             elementMap.uiControlNode = uiControlNode;
@@ -230,7 +243,7 @@ module plat.processing {
                     parent.getParentControl(), newControl);
             }
 
-            var manager: ElementManager = acquire(ElementManager),
+            var manager: ElementManager = ElementManager.getInstance(),
                 hasNewControl = !isNull(newControl);
 
             manager.nodeMap = nodeMap;
@@ -282,7 +295,7 @@ module plat.processing {
             var uiControl = uiControlNode.control,
                 newUiControl = <ui.TemplateControl>uiControlNode.injector.inject(),
                 resources = ElementManager._ResourcesFactory.getInstance(),
-                attributes: ui.Attributes = acquire(__AttributesInstance);
+                attributes: ui.Attributes = ElementManager._AttributesFactory.getInstance();
 
             newUiControl.parent = parent;
             parent.controls.push(newUiControl);
@@ -365,7 +378,7 @@ module plat.processing {
                     control.parent = parent;
                     control.element = <HTMLElement>element;
 
-                    newAttributes = acquire(__AttributesInstance);
+                    newAttributes = ElementManager._AttributesFactory.getInstance();
                     newAttributes.initialize(control, attrs);
                     control.attributes = newAttributes;
 
@@ -449,7 +462,17 @@ module plat.processing {
          * @returns {plat.processing.ElementManager}
          */
         static getInstance(): ElementManager {
-            return acquire(__ElementManagerInstance);
+            var manager = new ElementManager();
+
+            manager._Promise = acquire(__Promise);
+            manager._ContextManager = NodeManager._ContextManager;
+            manager._compiler = acquire(__Compiler);
+            manager._CommentManagerFactory = acquire(__CommentManagerFactory);
+            manager._ControlFactory = acquire(__ControlFactory);
+            manager._TemplateControlFactory = NodeManager._TemplateControlFactory;
+            manager._BindableTemplatesFactory = ElementManager._BindableTemplatesFactory;
+            manager._Exception = ElementManager._Exception;
+            return manager;
         }
 
         /**
@@ -1466,7 +1489,7 @@ module plat.processing {
                 resources = uiControl.resources,
                 element = nodeMap.element,
                 childNodes = Array.prototype.slice.call(element.childNodes),
-                newAttributes: ui.Attributes = acquire(__AttributesInstance),
+                newAttributes: ui.Attributes = ElementManager._AttributesFactory.getInstance(),
                 replace = this.replace = (uiControl.replaceWith === null || uiControl.replaceWith === '');
 
             if (!isString(uid)) {
@@ -1688,11 +1711,13 @@ module plat.processing {
         _document?: Document,
         _managerCache?: storage.Cache<ElementManager>,
         _ResourcesFactory?: ui.IResourcesFactory,
+        _AttributesFactory?: typeof ui.Attributes,
         _BindableTemplatesFactory?: ui.IBindableTemplatesFactory,
         _Exception?: IExceptionStatic): IElementManagerFactory {
         (<any>ElementManager)._document = _document;
         (<any>ElementManager)._managerCache = _managerCache;
-        (<any>ElementManager)._ResourcesFactory = _ResourcesFactory;
+        (<any>ElementManager)._ResourcesFactory = _ResourcesFactory; 
+        (<any>ElementManager)._AttributesFactory = _AttributesFactory;
         (<any>ElementManager)._BindableTemplatesFactory = _BindableTemplatesFactory;
         (<any>ElementManager)._Exception = _Exception;
         return ElementManager;
@@ -1702,6 +1727,7 @@ module plat.processing {
         __Document,
         __ManagerCache,
         __ResourcesFactory,
+        __AttributesFactory,
         __BindableTemplatesFactory,
         __ExceptionStatic
     ], __FACTORY);

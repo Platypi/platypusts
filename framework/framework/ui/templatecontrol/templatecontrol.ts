@@ -645,7 +645,7 @@ module plat.ui {
          * @returns {plat.ui.TemplateControl} The new {@link plat.ui.TemplateControl|TemplateControl} instance.
          */
         static getInstance(): TemplateControl {
-            return acquire(__TemplateControlInstance);
+            return new TemplateControl();
         }
 
         /**

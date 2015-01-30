@@ -46,7 +46,7 @@ module plat {
          * @returns {plat.AttributeControl}
          */
         static getInstance(): AttributeControl {
-            return acquire(AttributeControl);
+            return new AttributeControl();
         }
 
         /**

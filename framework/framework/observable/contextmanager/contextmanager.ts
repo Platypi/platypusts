@@ -33,10 +33,6 @@ module plat.observable {
      * facilitating in data-binding.
      */
     export class ContextManager {
-        protected static _inject: any = {
-            _compat: __Compat
-        };
-
         /**
          * @name _Exception
          * @memberof plat.observable.ContextManager
@@ -105,7 +101,7 @@ module plat.observable {
                 return contextManager;
             }
 
-            contextManager = managers[uid] = acquire(__ContextManagerInstance);
+            contextManager = managers[uid] = new ContextManager();
             contextManager.context = control;
 
             return contextManager;
@@ -474,7 +470,7 @@ module plat.observable {
          * @description
          * Reference to the {@link plat.Compat|Compat} injectable.
          */
-        protected _compat: Compat;
+        protected _compat: Compat = acquire(__Compat);
 
         /**
          * @name context
@@ -514,7 +510,7 @@ module plat.observable {
          * An object for quickly accessing child context associations (helps with 
          * notifying child properties).
          */
-        private __identifierHash: IObject<Array<string>> = {};
+        private __identifierHash: IObject<IObject<boolean>> = {};
         /**
          * @name __lengthListeners
          * @memberof plat.observable.ContextManager
@@ -1062,7 +1058,7 @@ module plat.observable {
          * @returns {void}
          */
         protected _notifyChildProperties(identifier: string, newValue: any, oldValue: any): void {
-            var mappings = this.__identifierHash[identifier];
+            var mappings = Object.keys(this.__identifierHash[identifier]);
 
             if (isNull(mappings)) {
                 return;
@@ -1441,7 +1437,7 @@ module plat.observable {
                         return;
                     }
 
-                    var childPropertiesExist = (this.__identifierHash[identifier] || []).length > 0;
+                    var childPropertiesExist = Object.keys(this.__identifierHash[identifier]).length > 0;
                     this._execute(identifier, value, oldValue);
 
                     if (childPropertiesExist) {
@@ -1498,7 +1494,7 @@ module plat.observable {
                         return;
                     }
 
-                    var childPropertiesExist = (this.__identifierHash[identifier] || []).length > 0;
+                    var childPropertiesExist = Object.keys(this.__identifierHash[identifier]).length > 0;
                     this._execute(identifier, newValue, oldValue);
 
                     if (!childPropertiesExist && isEmpty(this.__identifiers[identifier])) {
@@ -1562,14 +1558,14 @@ module plat.observable {
                 hashValue = this.__identifierHash[ident];
 
             if (isNull(hashValue)) {
-                hashValue = this.__identifierHash[ident] = [];
+                hashValue = this.__identifierHash[ident] = {};
                 if (split.length === 0) {
                     return;
                 }
             }
 
-            if (ident !== identifier && hashValue.indexOf(identifier) === -1) {
-                hashValue.push(identifier);
+            if (ident !== identifier && !hashValue[identifier]) {
+                hashValue[identifier] = true;
             }
 
             while (split.length > 0) {
@@ -1577,12 +1573,12 @@ module plat.observable {
                 hashValue = this.__identifierHash[ident];
 
                 if (isNull(hashValue)) {
-                    hashValue = this.__identifierHash[ident] = [];
+                    hashValue = this.__identifierHash[ident] = {};
                     if (ident !== identifier) {
-                        hashValue.push(identifier);
+                        hashValue[identifier] = true;
                     }
-                } else if (ident !== identifier && hashValue.indexOf(identifier) === -1) {
-                    hashValue.push(identifier);
+                } else if (ident !== identifier && !hashValue[identifier]) {
+                    hashValue[identifier] = true;
                 }
             }
         }

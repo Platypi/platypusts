@@ -31,7 +31,7 @@ module plat.processing {
          */
         static create(node: Node, parent: ElementManager): TextManager {
             var value = node.nodeValue,
-                manager = acquire(__TextManagerInstance);
+                manager = new TextManager();
 
             if (NodeManager.hasMarkup(value)) {
                 var expressions = NodeManager.findMarkup(value),
@@ -99,7 +99,7 @@ module plat.processing {
          */
         protected static _clone(sourceManager: NodeManager, node: Node, parent: ElementManager): TextManager {
             var map = sourceManager.nodeMap,
-                manager = acquire(__TextManagerInstance);
+                manager = new TextManager();
 
             if (!isNull(map)) {
                 manager.initialize(TextManager._cloneNodeMap(map, node), parent);

@@ -10,10 +10,33 @@ module plat {
      * class for all types of controls.
      */
     export class Control {
-        protected static _inject: any = {
-            _Exception: __ExceptionStatic,
-            dom: __Dom
-        };
+        /**
+         * @name _Exception
+         * @memberof plat.Control
+         * @kind property
+         * @access protected
+         * @static
+         * 
+         * @type {plat.IExceptionStatic}
+         * 
+         * @description
+         * Reference to the {@link plat.IExceptionStatic|IExceptionStatic} injectable.
+         */
+        protected static _Exception: IExceptionStatic;
+
+        /**
+         * @name _dom
+         * @memberof plat.Control
+         * @kind property
+         * @access protected
+         * @static
+         * 
+         * @type {plat.ui.Dom}
+         * 
+         * @description
+         * Reference to the {@link plat.ui.Dom|Dom} injectable.
+         */
+        protected static _dom: ui.Dom;
 
         /**
          * @name _parser
@@ -284,7 +307,7 @@ module plat {
          * @returns {plat.Control} The newly instantiated control.
          */
         static getInstance(): Control {
-            return acquire(Control);
+            return new Control();
         }
 
         /**
@@ -404,7 +427,7 @@ module plat {
          * @description
          * The plat.IExceptionStatic injectable instance
          */
-        protected _Exception: IExceptionStatic;
+        protected _Exception: IExceptionStatic = Control._Exception;
 
         /**
          * @name uid
@@ -514,7 +537,7 @@ module plat {
          * @description
          * Contains DOM helper methods for manipulating this control's element.
          */
-        dom: ui.Dom;
+        dom: ui.Dom = Control._dom;
 
         /**
          * @name constructor
@@ -1213,11 +1236,15 @@ module plat {
         _parser?: expressions.Parser,
         _ContextManager?: observable.IContextManagerStatic,
         _EventManager?: events.IEventManagerStatic,
-        _Promise?: async.IPromise): IControlFactory {
+        _Promise?: async.IPromise,
+        _dom?: ui.Dom,
+        _Exception?: IExceptionStatic): IControlFactory {
         (<any>Control)._parser = _parser;
         (<any>Control)._ContextManager = _ContextManager;
         (<any>Control)._EventManager = _EventManager;
         (<any>Control)._Promise = _Promise;
+        (<any>Control)._dom = _dom;
+        (<any>Control)._Exception = _Exception;
         return Control;
     }
 
@@ -1225,7 +1252,9 @@ module plat {
         __Parser,
         __ContextManagerStatic,
         __EventManagerStatic,
-        __Promise
+        __Promise,
+        __Dom,
+        __ExceptionStatic
     ], __FACTORY);
 
     /**
