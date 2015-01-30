@@ -129,8 +129,8 @@
                             this.navigating = false;
                             this.currentRouteInfo = routeInfo;
                         },() => {
-                                this.navigating = false;
-                            });
+                            this.navigating = false;
+                        });
                     });
             }
 
@@ -274,7 +274,9 @@
 
             if (!isString(url) || this.navigating || (!force && url === this.previousUrl && queryString === this.previousQuery)) {
                 if (this.navigating) {
-                    return this.finishNavigating;
+                    return this.finishNavigating.then(() => {
+                        return this.navigate(url, query, force);
+                    });
                 }
 
                 return resolve();
@@ -299,7 +301,6 @@
                 routeInfo.query = query;
                 pattern = routeInfo.delegate.pattern;
                 pattern = pattern.substr(0, pattern.length - __CHILD_ROUTE_LENGTH);
-
                 if (this.previousPattern === pattern) {
                     // the pattern for this router is the same as the last pattern so 
                     // only navigate child routers.
@@ -325,9 +326,8 @@
             this.navigating = true;
 
             var routeInfoCopy = _clone(routeInfo, true);
-
             return this.finishNavigating = this.canNavigate(routeInfo)
-                .then((canNavigate: boolean) => {
+            .then((canNavigate: boolean) => {
                 if (!canNavigate) {
                     this.navigating = false;
                     throw new Error('Not cleared to navigate');
@@ -337,24 +337,28 @@
                 this.previousQuery = queryString;
 
                 return this.performNavigation(routeInfo);
-            })
-                .then(() => {
-                this.previousPattern = pattern;
+            }).then(() => {
+                if (!isEmpty(this.ports)) {
+                    this.previousPattern = pattern;
+                }
+
                 this.previousSegment = segment;
                 this.currentRouteInfo = routeInfoCopy;
                 this.navigating = false;
             },(e) => {
-                    this.navigating = false;
-                    throw e;
-                });
+                this.navigating = false;
+                throw e;
+            });
         }
 
-        forceNavigate() {
+        forceNavigate(): async.IThenable<void> {
             var resolve = this._resolve,
                 query: IObject<any>;
 
             if (this.navigating) {
-                return resolve();
+                return this.finishNavigating.then(() => {
+                    return this.forceNavigate();
+                });
             }
 
             if (this.isRoot && isEmpty(this.previousUrl)) {

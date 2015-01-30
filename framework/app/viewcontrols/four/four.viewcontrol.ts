@@ -1,6 +1,6 @@
 ﻿module app.viewcontrols {
     'use strict';
-
+    var count = 0;
     export class Four extends plat.ui.ViewControl {
         templateUrl = 'viewcontrols/four/four.viewcontrol.html';
         context: { views: Array<Function>; } = {
@@ -32,12 +32,11 @@
 
         canNavigateTo() {
             // console.log('canNavigateTo:', this.uid);
-            //return new this.Promise((resolve, reject) => {
-            //    setTimeout(() => {
-            //        console.log(this.navigator.router.navigating);
+            //return this.Promise.resolve().then(() => {
+            //    if (count++ === 3) {
             //        this.navigator.navigate(Three);
-            //        resolve();
-            //    }, 1000);
+            //        return false;
+            //    }
             //});
         }
     }

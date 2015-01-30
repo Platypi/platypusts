@@ -301,35 +301,33 @@
             options = isObject(options) ? options : {};
             var url: string;
             
-            return this._finishNavigating().then(() => {
+            return this.finishNavigating().then(() => {
                 if (options.isUrl) {
                     url = view;
                 } else {
                     url = this._generate(view, options.parameters, options.query);
                 }
-                var x = 'will',
-                    y = `Hello ${x} world`;
 
                 return this._navigate(url, options.replace);
             });
         }
 
         /**
-         * @name _finishNavigating
+         * @name finishNavigating
          * @memberof plat.routing.Navigator
          * @kind function
-         * @access protected
+         * @access public
          * 
          * @description
          * Returns a promise that resolves when all navigation has finished.
          * 
          * @returns {plat.async.IThenable<void>} A promise that resolves when the navigation has finished.
          */
-        protected _finishNavigating(): async.IThenable<void> {
+        finishNavigating(): async.IThenable<void> {
             var router = Navigator._root.router;
 
             if (router.navigating) {
-                return router.finishNavigating.catch(() => { });
+                return router.finishNavigating.catch(noop);
             }
 
             return this._Promise.resolve();
@@ -386,7 +384,7 @@
                 url = _browser.url();
 
             this._backNavigate = true;
-            return this._finishNavigating()
+            return this.finishNavigating()
                 .then(() => {
                     return this._goBack(length);
                 });
@@ -472,35 +470,36 @@
             EventManager.on(this.uid, __urlChanged, (ev: events.DispatchEvent, utils?: web.UrlUtils) => {
                 if (this._ignoreOnce) {
                     this._ignoreOnce = false;
+                    this._resolveNavigate();
                     return;
                 }
 
                 backNavigate = this._backNavigate;
                 this._backNavigate = false;
                 previousUrl = this._previousUrl;
-                this._finishNavigating()
-                    .then(() => {
-                        return this.router.navigate(utils.pathname, utils.query)
-                    }).then(() => {
-                        this._previousUrl = utils.pathname;
-                        if (isFunction(this._resolveNavigate)) {
-                            this._resolveNavigate();
-                        }
-                    }).catch((e: any) => {
-                        this._ignoreOnce = true;
-                        this._previousUrl = previousUrl;
 
-                        this._browser.url(previousUrl, !backNavigate);
-                        this._history.go(-1);
+                this.finishNavigating()
+                .then(() => {
+                    return this.router.navigate(utils.pathname, utils.query);
+                }).then(() => {
+                    this._previousUrl = utils.pathname;
+                    if (isFunction(this._resolveNavigate)) {
+                        this._resolveNavigate();
+                    }
+                }, (e: any) => {
+                    this._ignoreOnce = true;
+                    this._previousUrl = previousUrl;
+                    this._browser.url(previousUrl, !backNavigate);
+                    this._history.go(-1);
 
-                        if (isFunction(this._rejectNavigate)) {
-                            this._rejectNavigate(e);
-                        }
+                    if (isFunction(this._rejectNavigate)) {
+                        this._rejectNavigate(e);
+                    }
 
-                        if (!isEmpty(e)) {
-                            _Exception.warn(e, _Exception.NAVIGATION);
-                        }
-                    });
+                    if (!isEmpty(e)) {
+                        _Exception.warn(e, _Exception.NAVIGATION);
+                    }
+                });
             });
         }
 

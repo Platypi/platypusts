@@ -7184,7 +7184,7 @@ declare module plat {
                 nextInjector: dependency.Injector<ViewControl>;
                 nextView: ViewControl;
                 initialize(): void;
-                setTemplate(): void;
+                loaded(): void;
                 canNavigateTo(routeInfo: routing.IRouteInfo): async.IThenable<boolean>;
                 canNavigateFrom(): async.IThenable<boolean>;
                 navigateTo(routeInfo: routing.IRouteInfo): async.IThenable<void>;
@@ -8853,7 +8853,7 @@ declare module plat {
             /**
               * Returns a promise that resolves when all navigation has finished.
               */
-            protected _finishNavigating(): async.IThenable<void>;
+            finishNavigating(): async.IThenable<void>;
             /**
               * Internal method for navigating to the specified url.
               */
@@ -9442,8 +9442,8 @@ declare module plat {
             queryParam(handler: (value: any, query: any) => any, parameter: string, view: string): Router;
             queryParam(handler: (value: any, query: any) => any, parameter: string, view: new (...args: any[]) => any): Router;
             protected _addHandler(handler: (value: string, values: any, query?: any) => any, parameter: string, view: any, handlers: IObject<IRouteTransforms>): Router;
-            intercept(handler: (routeInfo: IRouteInfo) => any, view: string): Router;
-            intercept(handler: (routeInfo: IRouteInfo) => any, view: new (...args: any[]) => any): Router;
+            intercept(handler: (routeInfo: IRouteInfo) => any, view?: string): Router;
+            intercept(handler: (routeInfo: IRouteInfo) => any, view?: new (...args: any[]) => any): Router;
             navigate(url: string, query?: IObject<any>, force?: boolean): async.IThenable<void>;
             forceNavigate(): async.IThenable<void>;
             generate(name: string, parameters?: IObject<any>, query?: IObject<string>): string;

@@ -78,8 +78,8 @@ module plat.ui.controls {
             this.navigator.initialize(router);
         }
 
-        setTemplate() {
-            postpone(() => {
+        loaded() {
+            this._Promise.resolve(this.router.finishNavigating).then(() => {
                 this.router.register(this);
             });
         }

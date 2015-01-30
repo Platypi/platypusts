@@ -9,6 +9,10 @@
                 { pattern: '', view: viewcontrols.Main },
                 { pattern: '/one', view: viewcontrols.One }
             ]);
+
+            router.intercept(() => {
+                return true;
+            });
         }
 
         ready() {
