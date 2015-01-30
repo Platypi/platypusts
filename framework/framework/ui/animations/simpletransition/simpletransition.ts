@@ -124,18 +124,22 @@
 
             if (transitionProperty === '' || transitionProperty === 'none' ||
                 transitionDuration === '' || transitionDuration === '0s') {
-                this._animate();
-                endFn();
+                requestAnimationFrameGlobal(() => {
+                    this._animate();
+                    endFn();
+                });
                 return;
             }
 
             this.transitionEnd(endFn);
 
-            if (this._animate()) {
-                return;
-            }
+            requestAnimationFrameGlobal(() => {
+                if (this._animate()) {
+                    return;
+                }
 
-            endFn();
+                endFn();
+            });
         }
 
         /**
