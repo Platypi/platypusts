@@ -71,6 +71,45 @@
         protected _modifiedProperties: IObject<string> = {};
 
         /**
+         * @name _normalizeRegex
+         * @memberof plat.ui.animations.SimpleCssTransition
+         * @kind property
+         * @access protected
+         * 
+         * @type {RegExp}
+         * 
+         * @description
+         * A regular expression to normalize modified property keys.
+         */
+        protected _normalizeRegex = /-/g;
+
+        /**
+         * @name _normalizedKeys
+         * @memberof plat.ui.animations.SimpleCssTransition
+         * @kind property
+         * @access protected
+         * 
+         * @type {Array<string>}
+         * 
+         * @description
+         * An Array of the normalized keys of modified properties.
+         */
+        protected _normalizedKeys: Array<string> = [];
+
+        /**
+         * @name _transitionCount
+         * @memberof plat.ui.animations.SimpleCssTransition
+         * @kind property
+         * @access protected
+         * 
+         * @type {number}
+         * 
+         * @description
+         * The "transitionend" event handler call count.
+         */
+        protected _transitionCount = 0;
+
+        /**
          * @name _started
          * @memberof plat.ui.animations.SimpleCssTransition
          * @kind property
@@ -111,12 +150,7 @@
          */
         start(): void {
             var transitionId = this._compat.animationEvents.$transition,
-                element = this.element,
-                endFn = () => {
-                    removeClass(element, this.className);
-                    this.end();
-                },
-                computedStyle = this._window.getComputedStyle(element, (this.options || <ISimpleCssTransitionOptions>{}).pseudo),
+                computedStyle = this._window.getComputedStyle(this.element, (this.options || <ISimpleCssTransitionOptions>{}).pseudo),
                 transitionProperty = computedStyle[<any>(transitionId + 'Property')],
                 transitionDuration = computedStyle[<any>(transitionId + 'Duration')];
 
@@ -126,19 +160,19 @@
                 transitionDuration === '' || transitionDuration === '0s') {
                 requestAnimationFrameGlobal(() => {
                     this._animate();
-                    endFn();
+                    this._done(null, true);
                 });
                 return;
             }
 
-            this.transitionEnd(endFn);
+            this.transitionEnd(this._done);
 
             requestAnimationFrameGlobal(() => {
                 if (this._animate()) {
                     return;
                 }
 
-                endFn();
+                this._done(null, true);
             });
         }
 
@@ -187,6 +221,36 @@
         }
 
         /**
+         * @name _done
+         * @memberof plat.ui.animations.SimpleCssTransition
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * A handler for the "transitionend" event. Will clean up the class and resolve the 
+         * promise when necessary based on the options that were input.
+         * 
+         * @param {TransitionEvent} ev? The transition event object.
+         * @param {boolean} immediate? Whether clean up should be immediate or conditional.
+         * 
+         * @returns {void}
+         */
+        protected _done(ev?: TransitionEvent, immediate?: boolean): void {
+            if (!immediate) {
+                var keys = Object.keys(this._modifiedProperties),
+                    propertyName = ev.propertyName;
+                if (isString(propertyName)) {
+                    propertyName = propertyName.replace(this._normalizeRegex, '').toLowerCase();
+                    if (this._normalizedKeys.indexOf(propertyName) !== -1 && ++this._transitionCount < keys.length) {
+                        return;
+                    }
+                }
+            }
+            removeClass(this.element, this.className);
+            this.end();
+        }
+
+        /**
          * @name _animate
          * @memberof plat.ui.animations.SimpleCssTransition
          * @kind function
@@ -223,6 +287,7 @@
                     unchanged++;
                 } else {
                     modifiedProperties[key] = currentProperty;
+                    this._normalizedKeys.push(key.replace(this._normalizeRegex, '').toLowerCase());
                 }
             }
 

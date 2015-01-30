@@ -22,50 +22,6 @@
          * A set of browser compatible CSS animation events capable of being listened to.
          */
         private __animationEvents: IAnimationEvents = this._compat.animationEvents;
-        /**
-         * @name __subscribers
-         * @memberof plat.ui.animations.CssAnimation
-         * @kind property
-         * @access public
-         * 
-         * @type {Array<() => void>}
-         * 
-         * @description
-         * A collection of animation event subscriptions used for chaining.
-         */
-        private __subscribers: Array<() => void> = [];
-        /**
-         * @name __removeListener
-         * @memberof plat.ui.animations.CssAnimation
-         * @kind property
-         * @access public
-         * 
-         * @type {plat.IRemoveListener}
-         * 
-         * @description
-         * The function to stop listening to the current event/animation in occurrence.
-         */
-        private __removeListener: IRemoveListener;
-
-        /**
-         * @name dispose
-         * @memberof plat.ui.animations.CssAnimation
-         * @kind function
-         * @access public
-         * 
-         * @description
-         * A function for reverting any modifications or changes that may have been made as a 
-         * result of this animation.
-         * 
-         * @returns {void}
-         */
-        dispose(): void {
-            if (isFunction(this.__removeListener)) {
-                this.__removeListener();
-                this.__removeListener = null;
-            }
-            this.__subscribers = [];
-        }
         
         /**
          * @name animationStart
@@ -78,37 +34,15 @@
          * 
          * @param {() => void} listener The function to call when the animation begins.
          * 
-         * @returns {plat.ui.animations.CssAnimation} This instance (for chaining).
+         * @returns {plat.IRemoveListener} A function to call in order to stop listening to the event.
          */
-        animationStart(listener: () => void): CssAnimation {
+        animationStart(listener: (ev?: AnimationEvent) => void): IRemoveListener {
             var animationEvents = this.__animationEvents;
             if (isUndefined(animationEvents)) {
-                return this;
+                return noop;
             }
 
-            return this.__addEventListener(animationEvents.$animationStart, listener);
-        }
-        
-        /**
-         * @name transitionStart
-         * @memberof plat.ui.animations.CssAnimation
-         * @kind function
-         * @access public
-         * 
-         * @description
-         * A function to listen to the start of a transition event.
-         * 
-         * @param {() => void} listener The function to call when the transition begins.
-         * 
-         * @returns {plat.ui.animations.CssAnimation} This instance (for chaining).
-         */
-        transitionStart(listener: () => void): CssAnimation {
-            var animationEvents = this.__animationEvents;
-            if (isUndefined(animationEvents)) {
-                return this;
-            }
-
-            return this.__addEventListener(animationEvents.$transitionStart, listener);
+            return this.addEventListener(animationEvents.$animationStart, listener, false);
         }
         
         /**
@@ -120,17 +54,61 @@
          * @description
          * A function to listen to the end of an animation event.
          * 
-         * @param {() => void} listener The function to call when the animation ends.
+         * @param {(ev?: AnimationEvent) => void} listener The function to call when the animation ends.
          * 
-         * @returns {plat.ui.animations.CssAnimation} This instance (for chaining).
+         * @returns {plat.IRemoveListener} A function to call in order to stop listening to the event.
          */
-        animationEnd(listener: () => void): CssAnimation {
+        animationEnd(listener: (ev?: AnimationEvent) => void): IRemoveListener {
             var animationEvents = this.__animationEvents;
             if (isUndefined(animationEvents)) {
-                return this;
+                return noop;
             }
 
-            return this.__addEventListener(animationEvents.$animationEnd, listener);
+            return this.addEventListener(animationEvents.$animationEnd, listener, false);
+        }
+        
+        /**
+         * @name animationIteration
+         * @memberof plat.ui.animations.CssAnimation
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * A function to listen to the completion of an animation iteration.
+         * 
+         * @param {(ev?: AnimationEvent) => void} listener The function to call when the animation iteration completes.
+         * 
+         * @returns {plat.IRemoveListener} A function to call in order to stop listening to the event.
+         */
+        animationIteration(listener: (ev?: AnimationEvent) => void): IRemoveListener {
+            var animationEvents = this.__animationEvents;
+            if (isUndefined(animationEvents)) {
+                return noop;
+            }
+
+            return this.addEventListener(animationEvents.$animationIteration, listener, false);
+        }
+        
+        /**
+         * @name transitionStart
+         * @memberof plat.ui.animations.CssAnimation
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * A function to listen to the start of a transition event.
+         * 
+         * @param {(ev?: TransitionEvent) => void} listener The function to call when the transition begins.
+         * 
+         * @returns {plat.IRemoveListener} A function to call in order to stop listening to the event.
+         */
+        transitionStart(listener: (ev?: TransitionEvent) => void): IRemoveListener {
+            var animationEvents = this.__animationEvents;
+            if (isUndefined(animationEvents)) {
+                return noop;
+            }
+
+            return this.addEventListener(animationEvents.$transitionStart, listener, false);
         }
         
         /**
@@ -142,63 +120,17 @@
          * @description
          * A function to listen to the end of a transition event.
          * 
-         * @param {() => void} listener The function to call when the transition ends.
+         * @param {(ev?: TransitionEvent) => void} listener The function to call when the transition ends.
          * 
-         * @returns {plat.ui.animations.CssAnimation} This instance (for chaining).
+         * @returns {plat.IRemoveListener} A function to call in order to stop listening to the event.
          */
-        transitionEnd(listener: () => void): CssAnimation {
+        transitionEnd(listener: (ev?: TransitionEvent) => void): IRemoveListener {
             var animationEvents = this.__animationEvents;
             if (isUndefined(animationEvents)) {
-                return this;
+                return noop;
             }
 
-            return this.__addEventListener(animationEvents.$transitionEnd, listener);
-        }
-        
-        /**
-         * @name __addEventListener
-         * @memberof plat.ui.animations.CssAnimation
-         * @kind function
-         * @access public
-         * 
-         * @description
-         * Adds the listener for the desired event and handles subscription management and 
-         * chaining.
-         * 
-         * @param {string} event The event to subscribe to.
-         * @param {() => void} listener The function to call when the event fires.
-         * 
-         * @returns {plat.ui.animations.CssAnimation} This instance (for chaining).
-         */
-        private __addEventListener(event: string, listener: () => void): CssAnimation {
-            var subscribers = this.__subscribers,
-                subscriber = () => {
-                    this.__removeListener = this.dom.addEventListener(this.element, event,(ev: Event) => {
-                        this.__removeListener();
-                        this.__removeListener = null;
-
-                        if (subscribers.length === 0) {
-                            return;
-                        }
-
-                        listener.call(this);
-                        subscribers.shift();
-
-                        if (subscribers.length === 0) {
-                            return;
-                        }
-
-                        subscribers[0]();
-                    }, false);
-                };
-
-            subscribers.push(subscriber);
-
-            if (subscribers.length === 1) {
-                subscriber();
-            }
-
-            return this;
+            return this.addEventListener(animationEvents.$transitionEnd, listener, false);
         }
     }
 }
