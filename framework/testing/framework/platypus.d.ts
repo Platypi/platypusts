@@ -1,5 +1,5 @@
 /**
-  * PlatypusTS v0.10.2 (http://getplatypi.com)
+  * PlatypusTS v0.10.3 (http://getplatypi.com)
   * Copyright 2014 Platypi, LLC. All rights reserved.
   * PlatypusTS is licensed under the GPL-3.0 found at
   * http://opensource.org/licenses/GPL-3.0
@@ -598,12 +598,21 @@ declare module plat {
         mappedEvents: IMappedTouchEvents;
         /**
           * An object containing the properly prefixed animation events.
+          * Undefined if animation isn't supported.
           */
         animationEvents: IAnimationEvents;
         /**
           * An object containing information regarding any potential vendor prefix.
           */
         vendorPrefix: IVendorPrefix;
+        /**
+          * The browser's requestAnimationFrame function if one exists. Otherwise undefined.
+          */
+        requestAnimationFrame: (callback: FrameRequestCallback) => number;
+        /**
+          * The browser's cancelAnimationFrame function if one exists. Otherwise undefined.
+          */
+        cancelAnimationFrame: (handle: number) => void;
         /**
           * The version of Internet Explorer being used. If not Internet Explorer, the value is undefined.
           */
@@ -701,6 +710,10 @@ declare module plat {
           */
         $animationEnd: string;
         /**
+          * The animation iteration event.
+          */
+        $animationIteration: string;
+        /**
           * The transition identifier.
           */
         $transition: string;
@@ -728,10 +741,11 @@ declare module plat {
           */
         css: string;
         /**
-          * The JavaScript representation of the browser's vendor prefix
-          * denoted by it beginning with a capital letter.
+          * The common uppercase representation of the browser's vendor prefix
+          * generally denoted by it beginning with a capital letter or all capital
+          * in the case of MS.
           */
-        js: string;
+        upperCase: string;
     }
     /**
       * An extensible class defining common utilities and helper functions.
