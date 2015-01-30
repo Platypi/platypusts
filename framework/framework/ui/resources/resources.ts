@@ -282,7 +282,7 @@ module plat.ui {
             for (var i = 0; i < length; ++i) {
                 alias = aliases[i];
 
-                if (controlResources.indexOf(alias) !== -1) {
+                if (controlResources[alias] === true) {
                     continue;
                 }
 
@@ -369,7 +369,7 @@ module plat.ui {
                 child = children.pop();
                 nodeName = child.nodeName.toLowerCase();
 
-                if (types.indexOf(nodeName) === -1) {
+                if (!types[nodeName]) {
                     continue;
                 }
 
@@ -495,7 +495,7 @@ module plat.ui {
          * @description
          * A list of resources to place on a control.
          */
-        private static __controlResources = [__CONTROL_RESOURCE, __CONTEXT_RESOURCE, __ROOT_RESOURCE, __ROOT_CONTEXT_RESOURCE];
+        private static __controlResources: IObject<boolean>;
 
         /**
          * @name __resourceTypes
@@ -509,7 +509,7 @@ module plat.ui {
          * @description
          * A list of all resource types.
          */
-        private static __resourceTypes = [__INJECTABLE_RESOURCE, __OBJECT_RESOURCE, __OBSERVABLE_RESOURCE, __FUNCTION_RESOURCE, __LITERAL_RESOURCE];
+        private static __resourceTypes: IObject<boolean>;
 
         /**
          * @name __observableResourceRemoveListeners
@@ -750,6 +750,13 @@ module plat.ui {
         (<any>Resources)._ContextManager = _ContextManager;
         (<any>Resources)._regex = _regex;
         (<any>Resources)._Exception = _Exception;
+        var controlResources: IObject<boolean> = {},
+            resourceTypes: IObject<boolean> = {};
+
+        controlResources[__CONTROL_RESOURCE] = controlResources[__CONTEXT_RESOURCE] = controlResources[__ROOT_RESOURCE] = controlResources[__ROOT_CONTEXT_RESOURCE] = true;
+        resourceTypes[__INJECTABLE_RESOURCE] = resourceTypes[__OBJECT_RESOURCE] = resourceTypes[__OBSERVABLE_RESOURCE] = resourceTypes[__FUNCTION_RESOURCE] = resourceTypes[__LITERAL_RESOURCE] = true;
+        (<any>Resources).__controlResources = controlResources;
+        (<any>Resources).__resourceTypes = resourceTypes;
         return Resources;
     }
 
