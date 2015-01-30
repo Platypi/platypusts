@@ -75,17 +75,8 @@ module plat.ui.animations {
          * @returns {void}
          */
         initialize(): void {
-            var element = this.element,
-                className = this.className,
-                hasClassName = hasClass(element, className);
-
-            removeClass(element, className + ' ' + className + __END_SUFFIX);
-            if (hasClassName) {
-                postpone(addClass, [element, className]);
-                return;
-            }
-
-            addClass(element, className);
+            var className = this.className;
+            removeClass(this.element, className + ' ' + className + __END_SUFFIX);
         }
 
         /**
@@ -102,21 +93,28 @@ module plat.ui.animations {
         start(): void {
             var animationId = this._compat.animationEvents.$animation,
                 element = this.element,
-                className = this.className,
-                computedStyle = this._window.getComputedStyle(element, (this.options || <ISimpleCssAnimationOptions>{}).pseudo),
-                animationName = computedStyle[<any>(animationId + 'Name')];
+                className = this.className;
 
-            if (animationName === '' ||
-                animationName === 'none' ||
-                computedStyle[<any>(animationId + 'PlayState')] === 'paused') {
-                replaceClass(element, className, className + __END_SUFFIX);
-                this.end();
-                return;
-            }
+            requestAnimationFrameGlobal(() => {
+                addClass(element, className);
 
-            this.animationEnd(() => {
-                replaceClass(element, className, className + __END_SUFFIX);
-                this.end();
+                var computedStyle = this._window.getComputedStyle(element,(this.options || <ISimpleCssAnimationOptions>{}).pseudo),
+                    animationName = computedStyle[<any>(animationId + 'Name')];
+
+                if (animationName === '' ||
+                    animationName === 'none' ||
+                    computedStyle[<any>(animationId + 'PlayState')] === 'paused') {
+                    replaceClass(element, className, className + __END_SUFFIX);
+                    this.end();
+                    return;
+                }
+
+                this.animationEnd(() => {
+                    requestAnimationFrameGlobal(() => {
+                        replaceClass(element, className, className + __END_SUFFIX);
+                        this.end();
+                    });
+                });
             });
         }
 

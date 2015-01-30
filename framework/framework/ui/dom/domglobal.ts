@@ -416,13 +416,19 @@ function replaceClass(element: HTMLElement, oldClass: string, newClass: string):
     if (!isString(cName) || !isString(newClass) || newClass === '') {
         return;
     }
+    
+    if (isUndefined(element.classList)) {
+        var startRegex = new RegExp('^' + oldClass + '\\s+', 'g'),
+            midRegex = new RegExp('\\s+' + oldClass + '\\s+', 'g'),
+            endRegex = new RegExp('\\s+' + oldClass + '$', 'g');
+        element.className = cName.replace(startRegex, newClass + ' ')
+            .replace(midRegex, ' ' + newClass + ' ')
+            .replace(endRegex, ' ' + newClass);
+        return;
+    }
 
-    var startRegex = new RegExp('^' + oldClass + '\\s+', 'g'),
-        midRegex = new RegExp('\\s+' + oldClass + '\\s+', 'g'),
-        endRegex = new RegExp('\\s+' + oldClass + '$', 'g');
-    element.className = cName.replace(startRegex, newClass + ' ')
-        .replace(midRegex, ' ' + newClass + ' ')
-        .replace(endRegex, ' ' + newClass);
+    element.classList.add(newClass);
+    element.classList.remove(oldClass);
 }
 
 function hasClass(element: HTMLElement, className: string): boolean {
