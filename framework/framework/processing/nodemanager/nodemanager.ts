@@ -185,10 +185,6 @@ module plat.processing {
                 } else if (!isNull(value)) {
                     text += value;
                 }
-
-                if (expression.oneTime && !isUndefined(value)) {
-                    expressions[i] = NodeManager._wrapExpression(value);
-                }
             }
 
             return text;
