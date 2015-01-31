@@ -198,7 +198,9 @@ module plat {
                 return;
             }
 
-            _compiler.compile(node);
+            postpone(() => {
+                _compiler.compile(node);
+            });
         }
 
         /**

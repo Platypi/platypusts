@@ -563,7 +563,7 @@ module plat.ui {
                 return;
             }
 
-            return templatePromise.then((result: DocumentFragment) => {
+            templatePromise = templatePromise.then((result: DocumentFragment) => {
                 var template = <DocumentFragment>result.cloneNode(true),
                     control = this._createBoundControl(key, template, resources),
                     nodeMap = this._createNodeMap(control, template, relativeIdentifier);
@@ -573,28 +573,37 @@ module plat.ui {
                 }
 
                 return this._bindTemplate(key, nodeMap);
-            }).then((fragment) => {
-                if (noIndex) {
-                    return fragment;
-                }
+            });
 
-                var childNodes = Array.prototype.slice.call(fragment.childNodes),
-                    oldControl = <TemplateControl>this.control.controls[index],
-                    endNode = oldControl.endNode,
-                    parentNode = endNode.parentNode,
-                    nextSibling = endNode.nextSibling;
+            if (!noIndex) {
+                return templatePromise.then((fragment) => {
+                    var childNodes = Array.prototype.slice.call(fragment.childNodes),
+                        oldControl = <TemplateControl>this.control.controls[index],
+                        endNode = oldControl.endNode,
+                        parentNode = endNode.parentNode,
+                        nextSibling = endNode.nextSibling;
 
-                this._TemplateControlFactory.dispose(oldControl);
-                parentNode.insertBefore(fragment, nextSibling);
+                    this._TemplateControlFactory.dispose(oldControl);
+                    parentNode.insertBefore(fragment, nextSibling);
 
-                return childNodes;
-            }).then(null, (error: any) => {
+                    return childNodes;
+                }).then(null,(error: any) => {
+                    postpone(() => {
+                        _Exception.fatal(error, _Exception.BIND);
+                    });
+
+                    return <DocumentFragment>null;
+                });
+            }
+
+            return templatePromise.then(null,(error: any) => {
                 postpone(() => {
                     _Exception.fatal(error, _Exception.BIND);
                 });
 
                 return <DocumentFragment>null;
             });
+
         }
 
         /**
