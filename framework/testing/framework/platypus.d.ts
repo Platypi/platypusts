@@ -203,14 +203,14 @@ declare module plat {
               * @param {any} Constructor The Constructor to call.
               * @param {Array<any>} args The arguments to pass to the constructor.
               */
-            private static __construct(Constructor, args);
+            private static __construct(Constructor, args, type?);
             /**
               * Walks up an object's prototype, injecting dependencies if they are
               * registered on static '_inject' objects.
               * @param {any} obj The object to walk.
               * @param {any} proto the prototype of the object.
               */
-            private static __walk(obj, proto);
+            private static __walk(obj, proto, extendWith);
             /**
               * Finds an injector object with the associated constructor.
               * @param {any} Constructor The Constructor to locate.
@@ -3075,7 +3075,6 @@ declare module plat {
           * facilitating in data-binding.
           */
         class ContextManager {
-            protected static _inject: any;
             /**
               * Reference to the IExceptionStatic injectable.
               */
@@ -4019,7 +4018,14 @@ declare module plat {
       * class for all types of controls.
       */
     class Control {
-        protected static _inject: any;
+        /**
+          * Reference to the IExceptionStatic injectable.
+          */
+        protected static _Exception: IExceptionStatic;
+        /**
+          * Reference to the Dom injectable.
+          */
+        protected static _dom: ui.Dom;
         /**
           * Reference to the Parser injectable.
           */
@@ -4333,7 +4339,7 @@ declare module plat {
     /**
       * The Type for referencing the '_ControlFactory' injectable as a dependency.
       */
-    function IControlFactory(_parser?: expressions.Parser, _ContextManager?: observable.IContextManagerStatic, _EventManager?: events.IEventManagerStatic, _Promise?: async.IPromise): IControlFactory;
+    function IControlFactory(_parser?: expressions.Parser, _ContextManager?: observable.IContextManagerStatic, _EventManager?: events.IEventManagerStatic, _Promise?: async.IPromise, _dom?: ui.Dom, _Exception?: IExceptionStatic): IControlFactory;
     /**
       * Creates and manages instances of Control.
       */
@@ -5443,6 +5449,7 @@ declare module plat {
           * Attributes for this object are converted from dash-notation to camelCase notation.
           */
         class Attributes {
+            static getInstance(): Attributes;
             [property: string]: any;
             /**
               * The set of functions added externally that listens
@@ -5474,6 +5481,7 @@ declare module plat {
               */
             protected _attributeChanged(key: string, newValue: any, oldValue: any): void;
         }
+        function IAttributesFactory(): typeof Attributes;
         /**
           * Resources are used for providing aliases to use in markup expressions. They
           * are particularly useful when trying to access properties outside of the
@@ -6919,9 +6927,17 @@ declare module plat {
             class BaseAnimation {
                 protected static _inject: any;
                 /**
+                  * Reference to the IExceptionStatic injectable.
+                  */
+                protected _Exception: IExceptionStatic;
+                /**
                   * Reference to the Compat injectable.
                   */
                 protected _compat: Compat;
+                /**
+                  * An Array of remove functions to dispose of event listeners.
+                  */
+                private __eventListeners;
                 /**
                   * The node having the animation performed on it.
                   */
@@ -6960,6 +6976,15 @@ declare module plat {
                   */
                 dispose(): void;
                 /**
+                  * Adds an event listener of the specified type to this animation's element. Removal of the
+                  * event is handled automatically upon animation end.
+                  * @param {string} type The type of event to listen to.
+                  * @param {EventListener} listener The listener to fire when the event occurs.
+                  * @param {boolean} useCapture? Whether to fire the event on the capture or the bubble phase
+                  * of event propagation.
+                  */
+                addEventListener(type: string, listener: EventListener, useCapture?: boolean): IRemoveListener;
+                /**
                   * Initializes the element and key properties of this animation and grabs a
                   * reference to its resolve function.
                   * @param {Element} element The element on which the animation will occur.
@@ -6977,45 +7002,30 @@ declare module plat {
                   */
                 private __animationEvents;
                 /**
-                  * A collection of animation event subscriptions used for chaining.
-                  */
-                private __subscribers;
-                /**
-                  * The function to stop listening to the current event/animation in occurrence.
-                  */
-                private __removeListener;
-                /**
-                  * A function for reverting any modifications or changes that may have been made as a
-                  * result of this animation.
-                  */
-                dispose(): void;
-                /**
                   * A function to listen to the start of an animation event.
                   * @param {() => void} listener The function to call when the animation begins.
                   */
-                animationStart(listener: () => void): CssAnimation;
-                /**
-                  * A function to listen to the start of a transition event.
-                  * @param {() => void} listener The function to call when the transition begins.
-                  */
-                transitionStart(listener: () => void): CssAnimation;
+                animationStart(listener: (ev?: AnimationEvent) => void): IRemoveListener;
                 /**
                   * A function to listen to the end of an animation event.
-                  * @param {() => void} listener The function to call when the animation ends.
+                  * @param {(ev?: AnimationEvent) => void} listener The function to call when the animation ends.
                   */
-                animationEnd(listener: () => void): CssAnimation;
+                animationEnd(listener: (ev?: AnimationEvent) => void): IRemoveListener;
+                /**
+                  * A function to listen to the completion of an animation iteration.
+                  * @param {(ev?: AnimationEvent) => void} listener The function to call when the animation iteration completes.
+                  */
+                animationIteration(listener: (ev?: AnimationEvent) => void): IRemoveListener;
+                /**
+                  * A function to listen to the start of a transition event.
+                  * @param {(ev?: TransitionEvent) => void} listener The function to call when the transition begins.
+                  */
+                transitionStart(listener: (ev?: TransitionEvent) => void): IRemoveListener;
                 /**
                   * A function to listen to the end of a transition event.
-                  * @param {() => void} listener The function to call when the transition ends.
+                  * @param {(ev?: TransitionEvent) => void} listener The function to call when the transition ends.
                   */
-                transitionEnd(listener: () => void): CssAnimation;
-                /**
-                  * Adds the listener for the desired event and handles subscription management and
-                  * chaining.
-                  * @param {string} event The event to subscribe to.
-                  * @param {() => void} listener The function to call when the event fires.
-                  */
-                private __addEventListener(event, listener);
+                transitionEnd(listener: (ev?: TransitionEvent) => void): IRemoveListener;
             }
             /**
               * A class for creating a single JavaScript animation for a single element.
@@ -7135,6 +7145,18 @@ declare module plat {
                   */
                 protected _modifiedProperties: IObject<string>;
                 /**
+                  * A regular expression to normalize modified property keys.
+                  */
+                protected _normalizeRegex: RegExp;
+                /**
+                  * An Array of the normalized keys of modified properties.
+                  */
+                protected _normalizedKeys: Array<string>;
+                /**
+                  * The "transitionend" event handler call count.
+                  */
+                protected _transitionCount: number;
+                /**
                   * Denotes whether or not the animation was ever started.
                   */
                 protected _started: boolean;
@@ -7154,6 +7176,13 @@ declare module plat {
                   * A function to be called to reset the last transition to its previous state.
                   */
                 dispose(): void;
+                /**
+                  * A handler for the "transitionend" event. Will clean up the class and resolve the
+                  * promise when necessary based on the options that were input.
+                  * @param {TransitionEvent} ev? The transition event object.
+                  * @param {boolean} immediate? Whether clean up should be immediate or conditional.
+                  */
+                protected _done(ev?: TransitionEvent, immediate?: boolean): void;
                 /**
                   * Animate the element based on the options passed in.
                   * If false, the control should begin cleaning up.
@@ -8303,6 +8332,10 @@ declare module plat {
               */
             protected static _ResourcesFactory: ui.IResourcesFactory;
             /**
+              * Reference to the Attributes injectable.
+              */
+            protected static _AttributesFactory: typeof ui.Attributes;
+            /**
               * Reference to the BindableTemplatesFactory injectable.
               */
             protected static _BindableTemplatesFactory: ui.IBindableTemplatesFactory;
@@ -8594,7 +8627,7 @@ declare module plat {
         /**
           * The Type for referencing the '_ElementManagerFactory' injectable as a dependency.
           */
-        function IElementManagerFactory(_document?: Document, _managerCache?: storage.Cache<ElementManager>, _ResourcesFactory?: ui.IResourcesFactory, _BindableTemplatesFactory?: ui.IBindableTemplatesFactory, _Exception?: IExceptionStatic): IElementManagerFactory;
+        function IElementManagerFactory(_document?: Document, _managerCache?: storage.Cache<ElementManager>, _ResourcesFactory?: ui.IResourcesFactory, _AttributesFactory?: typeof ui.Attributes, _BindableTemplatesFactory?: ui.IBindableTemplatesFactory, _Exception?: IExceptionStatic): IElementManagerFactory;
         /**
           * Creates and manages a class for dealing with Element nodes.
           */

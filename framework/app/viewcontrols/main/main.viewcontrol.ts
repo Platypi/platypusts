@@ -8,10 +8,15 @@ module app.viewcontrols {
         };
 
         title = 'Main';
-        templateUrl = 'viewcontrols/main/main.viewcontrol.html';
+        templateString = `
+            <plat-foreach plat-context="items">
+                <div>{{value}}</div>
+            </plat-foreach>
+        `;
+        //templateUrl = 'viewcontrols/main/main.viewcontrol.html';
         context = {
             views: [One, Two, Three, Four],
-            items: <Array<string>>[]
+            items: <Array<{ value: string|number; }>>[]
         };
 
         constructor(router: plat.routing.Router) {
@@ -22,6 +27,16 @@ module app.viewcontrols {
                 { pattern: '/three', view: Three },
                 { pattern: '/four', view: Four }
             ]);
+        }
+
+        initialize() {
+            var items: Array<{ value: string|number; }> = [];
+
+            for (var i = 0; i < 1000; ++i) {
+                items.push({ value: i });
+            }
+
+            this.context.items = items;
         }
 
         navigateTo(view: string) {

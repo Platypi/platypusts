@@ -524,13 +524,14 @@ module plat.async {
         private static __handleThenable<R>(promise: Promise<R>, value: Promise<R>): boolean {
             var resolved: boolean;
 
-            try {
-                if (promise === value) {
-                    throw new TypeError('A promises callback cannot return the same promise.');
-                }
+            if (promise === value) {
+                Promise.__reject(promise, new TypeError('A promises callback cannot return the same promise.'));
+                return true;
+            }
 
-                if (isPromise(value)) {
-                    value.then.call(value, (val: any) => {
+            if (isPromise(value)) {
+                try {
+                    value.then.call(value,(val: any) => {
                         if (resolved) {
                             return true;
                         }
@@ -541,7 +542,7 @@ module plat.async {
                         } else {
                             Promise.__fulfill<R>(promise, val);
                         }
-                    }, (val: any) => {
+                    },(val: any) => {
                         if (resolved) {
                             return true;
                         }
@@ -551,14 +552,15 @@ module plat.async {
                     });
 
                     return true;
-                }
-            } catch (error) {
-                if (resolved) {
+                } catch (error) {
+                    if (resolved) {
+                        return true;
+                    }
+                    Promise.__reject(promise, error);
                     return true;
                 }
-                Promise.__reject(promise, error);
-                return true;
             }
+
 
             return false;
         }
