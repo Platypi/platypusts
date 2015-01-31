@@ -608,7 +608,7 @@ module plat.dependency {
 
             injectable = <T>Injector.__construct(this.Constructor, toInject, type);
 
-            if (type !== __INSTANCE) {
+            if (isString(type) && type !== __INSTANCE) {
                 this._wrapInjector(injectable);
             }
 
