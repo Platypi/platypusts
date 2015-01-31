@@ -16,21 +16,12 @@ module app.viewcontrols {
 
         constructor(router: plat.routing.Router) {
             super();
-            //router.configure([
-            //    { pattern: '/one', view: One },
-            //    { pattern: '/two', view: Two },
-            //    { pattern: '/three', view: Three },
-            //    { pattern: '/four', view: Four }
-            //]);
-        }
-
-        initialize() {
-            var items: Array<string> = [];
-            for (var i = 0; i < 1000; ++i) {
-                items.push('' + i);
-            }
-
-            this.context.items = items;
+            router.configure([
+                { pattern: '/one', view: One },
+                { pattern: '/two', view: Two },
+                { pattern: '/three', view: Three },
+                { pattern: '/four', view: Four }
+            ]);
         }
 
         navigateTo(view: string) {
@@ -47,6 +38,6 @@ module app.viewcontrols {
     }
 
     plat.register.control('main', Main, [
-        //plat.routing.Router
+        plat.routing.Router
     ]);
 }
