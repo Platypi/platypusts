@@ -10,8 +10,9 @@
     export class BaseAnimation {
         protected static _inject: any = {
             _compat: __Compat,
-            dom: __Dom,
-            _Exception: __ExceptionStatic
+            _Exception: __ExceptionStatic,
+            _Promise: __Promise,
+            dom: __Dom
         };
 
         /**
@@ -20,7 +21,7 @@
          * @kind property
          * @access protected
          * 
-         * @type {plat.Exception}
+         * @type {plat.IExceptionStatic}
          * 
          * @description
          * Reference to the {@link plat.IExceptionStatic|IExceptionStatic} injectable.
@@ -39,6 +40,19 @@
          * Reference to the {@link plat.Compat|Compat} injectable.
          */
         protected _compat: Compat;
+
+        /**
+         * @name _Promise
+         * @memberof plat.ui.animations.BaseAnimation
+         * @kind property
+         * @access protected
+         * 
+         * @type {plat.async.IPromise}
+         * 
+         * @description
+         * Reference to the {@link plat.async.IPromise|IPromise} injectable.
+         */
+        protected _Promise: async.IPromise;
 
         /**
          * @name __eventListeners
@@ -154,6 +168,38 @@
             while (eventListeners.length > 0) {
                 eventListeners.pop()();
             }
+        }
+
+        /**
+         * @name pause
+         * @memberof plat.ui.animations.BaseAnimation
+         * @kind function
+         * @access public
+         * @virtual
+         * 
+         * @description
+         * A function to be called to pause the animation.
+         * 
+         * @returns {plat.async.IThenable<void>} A new promise that resolves when the animation has been paused.
+         */
+        pause(): async.IThenable<void> {
+            return this._Promise.resolve();
+        }
+
+        /**
+         * @name resume
+         * @memberof plat.ui.animations.BaseAnimation
+         * @kind function
+         * @access public
+         * @virtual
+         * 
+         * @description
+         * A function to be called to resume a paused animation.
+         * 
+         * @returns {plat.async.IThenable<void>} A new promise that resolves when the animation has resumed.
+         */
+        resume(): async.IThenable<void> {
+            return this._Promise.resolve();
         }
 
         /**
