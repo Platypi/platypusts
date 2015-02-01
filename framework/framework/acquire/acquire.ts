@@ -7,6 +7,8 @@
  * The entry point into the platypus library.
  */
 module plat {
+    'use strict';
+
     if (!isUndefined(window)) {
         if (isUndefined((<any>window).plat)) {
             (<any>window).plat = plat;

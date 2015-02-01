@@ -1,4 +1,6 @@
 module plat.storage {
+    'use strict';
+
     /**
      * @name LocalStorage
      * @memberof plat.storage

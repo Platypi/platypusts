@@ -1,4 +1,6 @@
 module plat.expressions {
+    'use strict';
+
     /**
      * @name Tokenizer
      * @memberof plat.expressions
@@ -138,7 +140,7 @@ module plat.expressions {
          * Needs to be an array due to the possibility of nested comma operations.
          */
         private __lastCommaChar: Array<string> = [];
-        
+
         /**
          * @name createTokens
          * @memberof plat.expressions.Tokenizer
@@ -265,7 +267,7 @@ module plat.expressions {
 
             return this._isAlphaNumeric(char);
         }
-        
+
         /**
          * @name _lookAhead
          * @memberof plat.expressions.Tokenizer
@@ -297,7 +299,7 @@ module plat.expressions {
 
             return char;
         }
-        
+
         /**
          * @name _lookAheadForOperatorFn
          * @memberof plat.expressions.Tokenizer
@@ -332,7 +334,7 @@ module plat.expressions {
 
             return char;
         }
-        
+
         /**
          * @name _lookAheadForDelimiter
          * @memberof plat.expressions.Tokenizer
@@ -363,7 +365,7 @@ module plat.expressions {
 
             return char;
         }
-        
+
         /**
          * @name _popStackForVal
          * @memberof plat.expressions.Tokenizer
@@ -393,7 +395,7 @@ module plat.expressions {
                 }
             }
         }
-        
+
         /**
          * @name _isValEqual
          * @memberof plat.expressions.Tokenizer
@@ -418,7 +420,7 @@ module plat.expressions {
             }
             return char.indexOf(obj.val) !== -1;
         }
-        
+
         /**
          * @name _isValUnequal
          * @memberof plat.expressions.Tokenizer
@@ -443,7 +445,7 @@ module plat.expressions {
             }
             return char.indexOf(obj.val) === -1;
         }
-        
+
         /**
          * @name _resetTokenizer
          * @memberof plat.expressions.Tokenizer
@@ -465,7 +467,7 @@ module plat.expressions {
             this.__lastColonChar = [];
             this.__lastCommaChar = [];
         }
-        
+
         /**
          * @name _resetTokenizer
          * @memberof plat.expressions.Tokenizer
@@ -483,7 +485,7 @@ module plat.expressions {
             var _Exception: IExceptionStatic = this._Exception;
             _Exception.fatal(error + ' in ' + this._input, _Exception.PARSE);
         }
-        
+
         /**
          * @name _isNumeric
          * @memberof plat.expressions.Tokenizer
@@ -500,7 +502,7 @@ module plat.expressions {
         protected _isNumeric(char: string): boolean {
             return ('0' <= char && char <= '9');
         }
-        
+
         /**
          * @name _isSpace
          * @memberof plat.expressions.Tokenizer
@@ -522,7 +524,7 @@ module plat.expressions {
                 char === '\v' ||
                 char === '\u00A0');
         }
-        
+
         /**
          * @name _isAlphaNumeric
          * @memberof plat.expressions.Tokenizer
@@ -544,7 +546,7 @@ module plat.expressions {
                 '_' === char ||
                 '$' === char);
         }
-        
+
         /**
          * @name _isStringValidVariable
          * @memberof plat.expressions.Tokenizer
@@ -1140,7 +1142,7 @@ module plat.expressions {
     }
 
     register.injectable(__Tokenizer, Tokenizer);
-    
+
     /**
      * @name IToken
      * @memberof plat.expressions
@@ -1162,7 +1164,7 @@ module plat.expressions {
          * The string or number value of the token.
          */
         val: any;
-        
+
         /**
          * @name val
          * @memberof plat.expressions.IToken
@@ -1187,7 +1189,7 @@ module plat.expressions {
          */
         args: number;
     }
-    
+
     /**
      * @name ITokenDetails
      * @memberof plat.expressions
@@ -1210,7 +1212,7 @@ module plat.expressions {
          * evaluation order.
          */
         precedence: number;
-        
+
         /**
          * @name associativity
          * @memberof plat.expressions.ITokenDetails
@@ -1224,7 +1226,7 @@ module plat.expressions {
          * their left or right.
          */
         associativity: string;
-        
+
         /**
          * @name fn
          * @memberof plat.expressions.ITokenDetails

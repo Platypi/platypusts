@@ -1,4 +1,6 @@
 module plat {
+    'use strict';
+
     /**
      * @name Utils
      * @memberof plat

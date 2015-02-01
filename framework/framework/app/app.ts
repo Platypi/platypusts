@@ -1,4 +1,6 @@
 module plat {
+    'use strict';
+
     /**
      * @name App
      * @memberof plat
@@ -9,6 +11,20 @@ module plat {
      * as well as error handling.
      */
     export class App {
+        /**
+         * @name app
+         * @memberof plat.App
+         * @kind property
+         * @access public
+         * @static
+         * 
+         * @type {plat.App}
+         * 
+         * @description
+         * The instance of the registered {@link plat.App|IApp}.
+         */
+        static app: App = null;
+
         /**
          * @name _compat
          * @memberof plat.App
@@ -92,6 +108,47 @@ module plat {
          * Reference to the {@link plat.IExceptionStatic|IExceptionStatic} injectable.
          */
         protected static _Exception: IExceptionStatic;
+
+        /**
+         * @name __injector
+         * @memberof plat.App
+         * @kind property
+         * @access private
+         * @static
+         * 
+         * @type {plat.dependency.Injector<plat.App>}
+         * 
+         * @description
+         * The injector for injecting the instance of the currently registered {@link plat.App|IApp}.
+         */
+        private static __injector: dependency.Injector<App>;
+
+        /**
+         * @name uid
+         * @memberof plat.App
+         * @kind property
+         * @access public
+         * @readonly
+         * 
+         * @type {string}
+         * 
+         * @description
+         * A unique id, created during instantiation.
+         */
+        uid: string = uniqueId(__Plat);
+
+        /**
+         * @name navigator
+         * @memberof plat.App
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.routing.Navigator}
+         * 
+         * @description
+         * A Navigator instance, exists when a router is injected into the app.
+         */
+        navigator: routing.Navigator;
 
         /**
          * @name start
@@ -202,34 +259,6 @@ module plat {
                 _compiler.compile(node);
             });
         }
-
-        /**
-         * @name app
-         * @memberof plat.App
-         * @kind property
-         * @access public
-         * @static
-         * 
-         * @type {plat.App}
-         * 
-         * @description
-         * The instance of the registered {@link plat.App|IApp}.
-         */
-        static app: App = null;
-        
-        /**
-         * @name __injector
-         * @memberof plat.App
-         * @kind property
-         * @access private
-         * @static
-         * 
-         * @type {plat.dependency.Injector<plat.App>}
-         * 
-         * @description
-         * The injector for injecting the instance of the currently registered {@link plat.App|IApp}.
-         */
-        private static __injector: dependency.Injector<App>;
 
         /**
          * @name __ready
@@ -344,33 +373,6 @@ module plat {
             style.textContent = '[plat-hide] { display: none !important; }';
             document.head.appendChild(style);
         }
-
-        /**
-         * @name uid
-         * @memberof plat.App
-         * @kind property
-         * @access public
-         * @readonly
-         * 
-         * @type {string}
-         * 
-         * @description
-         * A unique id, created during instantiation.
-         */
-        uid: string = uniqueId(__Plat);
-
-        /**
-         * @name navigator
-         * @memberof plat.App
-         * @kind property
-         * @access public
-         * 
-         * @type {plat.routing.Navigator}
-         * 
-         * @description
-         * A Navigator instance, exists when a router is injected into the app.
-         */
-        navigator: routing.Navigator;
 
         /**
          * @name constructor

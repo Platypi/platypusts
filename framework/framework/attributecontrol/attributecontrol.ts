@@ -1,4 +1,6 @@
 module plat {
+    'use strict';
+
     /**
      * @name AttributeControl
      * @memberof plat
@@ -12,6 +14,21 @@ module plat {
      * not be used to add, remove, or modify DOM.
      */
     export class AttributeControl extends Control {
+        /**
+         * @name templateControl
+         * @memberof plat.AttributeControl
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.ui.TemplateControl}
+         * 
+         * @description
+         * Specifies the {@link plat.ui.TemplateControl|TemplateControl} associated with this
+         * control's element. Can be null if no {@link plat.ui.TemplateControl|TemplateControl}
+         * exists.
+         */
+        templateControl: ui.TemplateControl = null;
+
         /**
          * @name dispose
          * @memberof plat.AttributeControl
@@ -48,21 +65,6 @@ module plat {
         static getInstance(): AttributeControl {
             return new AttributeControl();
         }
-
-        /**
-         * @name templateControl
-         * @memberof plat.AttributeControl
-         * @kind property
-         * @access public
-         * 
-         * @type {plat.ui.TemplateControl}
-         * 
-         * @description
-         * Specifies the {@link plat.ui.TemplateControl|TemplateControl} associated with this
-         * control's element. Can be null if no {@link plat.ui.TemplateControl|TemplateControl}
-         * exists.
-         */
-        templateControl: ui.TemplateControl = null;
     }
 
     /**

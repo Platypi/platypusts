@@ -1,4 +1,6 @@
 ﻿module plat.events {
+    'use strict';
+
     /**
      * @name LifecycleEvent
      * @memberof plat.events

@@ -1,4 +1,6 @@
 module plat.processing {
+    'use strict';
+
     /**
      * @name TextManager
      * @memberof plat.processing
@@ -10,6 +12,20 @@ module plat.processing {
      * The class responsible for initializing and data-binding values to text nodes.
      */
     export class TextManager extends NodeManager {
+        /**
+         * @name type
+         * @memberof plat.processing.TextManager
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * Specifies the type for this {@link plat.processing.NodeManager|NodeManager}. 
+         * It's value is "text".
+         */
+        type = 'text';
+
         /**
          * @name create
          * @memberof plat.processing.TextManager
@@ -52,7 +68,7 @@ module plat.processing {
 
             return manager;
         }
-        
+
         /**
          * @name _cloneNodeMap
          * @memberof plat.processing.TextManager
@@ -79,7 +95,7 @@ module plat.processing {
                 };
             return nodeMap;
         }
-        
+
         /**
          * @name _clone
          * @memberof plat.processing.TextManager
@@ -110,21 +126,7 @@ module plat.processing {
 
             return manager;
         }
-        
-        /**
-         * @name type
-         * @memberof plat.processing.TextManager
-         * @kind property
-         * @access public
-         * 
-         * @type {string}
-         * 
-         * @description
-         * Specifies the type for this {@link plat.processing.NodeManager|NodeManager}. 
-         * It's value is "text".
-         */
-        type = 'text';
-        
+
         /**
          * @name clone
          * @memberof plat.processing.TextManager
@@ -144,7 +146,7 @@ module plat.processing {
             TextManager._clone(this, newNode, parentManager);
             return 1;
         }
-        
+
         /**
          * @name bind
          * @memberof plat.processing.TextManager
@@ -167,7 +169,7 @@ module plat.processing {
 
             this._setText(textNode, parent, expressions);
         }
-        
+
         /**
          * @name _setText
          * @memberof plat.processing.TextManager
@@ -199,7 +201,7 @@ module plat.processing {
 
     register.injectable(__TextManagerFactory, ITextManagerFactory, null, __FACTORY);
     register.injectable(__TextManagerInstance, TextManager, null, __INSTANCE);
-    
+
     /**
      * @name TextManagerFactory
      * @memberof plat.processing

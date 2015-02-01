@@ -1,4 +1,6 @@
 module plat.storage {
+    'use strict';
+
     /**
      * @name TemplateCache
      * @memberof plat.storage
@@ -58,7 +60,7 @@ module plat.storage {
         constructor() {
             super('__templateCache');
         }
-        
+
         /**
          * @name put
          * @memberof plat.storage.TemplateCache
@@ -108,7 +110,7 @@ module plat.storage {
 
             return Promise.resolve<DocumentFragment>(value);
         }
-        
+
         /**
          * @name read
          * @memberof plat.storage.TemplateCache

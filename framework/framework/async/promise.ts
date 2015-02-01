@@ -1,4 +1,20 @@
 module plat.async {
+    'use strict';
+    var __promiseQueue: Array<any> = [],
+        browserGlobal: any = (typeof window !== 'undefined') ? window : {},
+        BrowserMutationObserver = browserGlobal.MutationObserver || browserGlobal.WebKitMutationObserver,
+        process: any = process,
+        scheduleFlush: () => void;
+
+    // decide what async method to use to triggering processing of queued callbacks:
+    if (typeof process !== 'undefined' && {}.toString.call(process) === '[object process]') {
+        scheduleFlush = useNextTick();
+    } else if (BrowserMutationObserver) {
+        scheduleFlush = useMutationObserver();
+    } else {
+        scheduleFlush = useSetTimeout();
+    }
+
     /**
      * @name Promise
      * @memberof plat.async
@@ -12,6 +28,32 @@ module plat.async {
      * @typeparam {any} R The return type of the promise.
      */
     export class Promise<R> implements IThenable<R> {
+        /**
+         * @name config
+         * @memberof plat.async.Promise
+         * @kind property
+         * @access public
+         * @static
+         * 
+         * @type {any}
+         * 
+         * @description
+         * The configuration for creating asynchronous promise flushing.
+         */
+        static config = {
+            /**
+             * Handles asynchronous flushing of callbacks. If the callback queue is of 
+             * length 1, then we need to schedule a flush. Afterward, any additional 
+             * callbacks added to the queue will be flushed accordingly.
+             */
+            async: (callback: (arg?: IThenable<any>) => void, arg?: IThenable<any>) => {
+                var length = __promiseQueue.push([callback, arg]);
+                if (length === 1) {
+                    scheduleFlush();
+                }
+            }
+        };
+
         /**
          * @name __subscribers
          * @memberof plat.async.Promise
@@ -50,32 +92,6 @@ module plat.async {
          * The return detail of a promise.
          */
         private __detail: any;
-
-        /**
-         * @name config
-         * @memberof plat.async.Promise
-         * @kind property
-         * @access public
-         * @static
-         * 
-         * @type {any}
-         * 
-         * @description
-         * The configuration for creating asynchronous promise flushing.
-         */
-        static config = {
-            /**
-             * Handles asynchronous flushing of callbacks. If the callback queue is of 
-             * length 1, then we need to schedule a flush. Afterward, any additional 
-             * callbacks added to the queue will be flushed accordingly.
-             */
-            async: (callback: (arg?: IThenable<any>) => void, arg?: IThenable<any>) => {
-                var length = queue.push([callback, arg]);
-                if (length === 1) {
-                    scheduleFlush();
-                }
-            }
-        };
 
         /**
          * @name all
@@ -561,7 +577,6 @@ module plat.async {
                 }
             }
 
-
             return false;
         }
 
@@ -916,9 +931,6 @@ module plat.async {
         REJECTED = 2
     };
 
-    var browserGlobal: any = (typeof window !== 'undefined') ? window : {},
-        BrowserMutationObserver = browserGlobal.MutationObserver || browserGlobal.WebKitMutationObserver;
-
     // node
     function useNextTick(): () => void {
         return () => {
@@ -953,31 +965,18 @@ module plat.async {
         };
     }
 
-    var queue: Array<any> = [];
     function flush(): void {
         var tuple: Array<(response: any) => void>,
             callback: (response: any) => void,
             arg: any;
 
-        for (var i = 0; i < queue.length; i++) {
-            tuple = queue[i];
+        for (var i = 0; i < __promiseQueue.length; i++) {
+            tuple = __promiseQueue[i];
             callback = tuple[0];
             arg = tuple[1];
             callback(arg);
         }
-        queue = [];
-    }
-
-    var process: any = process,
-        scheduleFlush: () => void;
-
-    // decide what async method to use to triggering processing of queued callbacks:
-    if (typeof process !== 'undefined' && {}.toString.call(process) === '[object process]') {
-        scheduleFlush = useNextTick();
-    } else if (BrowserMutationObserver) {
-        scheduleFlush = useMutationObserver();
-    } else {
-        scheduleFlush = useSetTimeout();
+        __promiseQueue = [];
     }
 
     /**

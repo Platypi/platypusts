@@ -8,6 +8,8 @@
  * Holds classes and interfaces related to expression handling in platypus.
  */
 module plat.expressions {
+    'use strict';
+
     /**
      * @name Parser
      * @memberof plat.expressions
@@ -289,6 +291,183 @@ module plat.expressions {
             this._resetParser();
 
             return parsedExpression;
+        }
+
+        /**
+         * @name _peek
+         * @memberof plat.expressions.Parser
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Peek at the next {@link plat.expressions.IToken|IToken}.
+         * 
+         * @param {number} index The index before the desired {@link plat.expressions.IToken|IToken} 
+         * in the array.
+         * 
+         * @returns {plat.expressions.IToken} The next {@link plat.expressions.IToken|IToken} 
+         * in the {@link plat.expressions.IToken|IToken} array.
+         */
+        protected _peek(index: number): IToken {
+            return this._tokens[index + 1];
+        }
+
+        /**
+         * @name _lookBack
+         * @memberof plat.expressions.Parser
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Look back at the previous {@link plat.expressions.IToken|IToken}.
+         * 
+         * @param {number} index The index after the desired {@link plat.expressions.IToken|IToken} 
+         * in the array.
+         * 
+         * @returns {plat.expressions.IToken} The previous {@link plat.expressions.IToken|IToken} 
+         * in the {@link plat.expressions.IToken|IToken} array.
+         */
+        protected _lookBack(index: number): IToken {
+            return this._tokens[index - 1];
+        }
+
+        /**
+         * @name _popRemainingIdentifiers
+         * @memberof plat.expressions.Parser
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Evaluate and remove the leftover identifiers.
+         * 
+         * @returns {void}
+         */
+        protected _popRemainingIdentifiers(): void {
+            var identifiers = this.__identifiers,
+                tempIdentifiers = this.__tempIdentifiers,
+                last: string;
+
+            while (tempIdentifiers.length > 0) {
+                last = tempIdentifiers.pop();
+                if (last !== '.') {
+                    identifiers.push(last);
+                }
+            }
+        }
+
+        /**
+         * @name _makeIdentifiersUnique
+         * @memberof plat.expressions.Parser
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Remove duplicate identifiers.
+         * 
+         * @returns {void}
+         */
+        protected _makeIdentifiersUnique(): void {
+            var identifiers = this.__identifiers,
+                uniqueIdentifiers: Array<string> = [],
+                uniqueIdentifierObject: IObject<boolean> = {},
+                identifier: string;
+
+            while (identifiers.length > 0) {
+                identifier = identifiers.pop();
+                if (!uniqueIdentifierObject[identifier]) {
+                    uniqueIdentifierObject[identifier] = true;
+                    uniqueIdentifiers.push(identifier);
+                }
+            }
+
+            this.__identifiers = uniqueIdentifiers;
+        }
+
+        /**
+         * @name _isValEqual
+         * @memberof plat.expressions.Parser
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Check if the "val" property on an {@link plat.expressions.IToken|IToken} 
+         * is present in a particular character string.
+         * 
+         * @param {plat.expressions.IToken} obj The {@link plat.expressions.IToken|IToken} 
+         * with the "val" property to compare.
+         * @param {string} char The char to compare with.
+         * 
+         * @returns {boolean} Whether or not the val is equal to the input character.
+         */
+        protected _isValEqual(obj: IToken, char: string): boolean {
+            if (isNull(obj) || isNull(obj.val)) {
+                return isNull(char);
+            } else if (obj.val === '') {
+                return char === '';
+            }
+            return char.indexOf(obj.val) !== -1;
+        }
+
+        /**
+         * @name _isValUnequal
+         * @memberof plat.expressions.Parser
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Check if the "val" property on an {@link plat.expressions.IToken|IToken} 
+         * is not present in a particular character string.
+         * 
+         * @param {plat.expressions.IToken} obj The {@link plat.expressions.IToken|IToken} 
+         * with the "val" property to compare.
+         * @param {string} char The char to compare with.
+         * 
+         * @returns {boolean} Whether or not the val is not equal to the input character.
+         */
+        protected _isValUnequal(obj: any, char: string): boolean {
+            if (isNull(obj) || isNull(obj.val)) {
+                return !isNull(char);
+            } else if (obj.val === '') {
+                return char !== '';
+            }
+            return char.indexOf(obj.val) === -1;
+        }
+
+        /**
+         * @name _resetParser
+         * @memberof plat.expressions.Parser
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Resets all the parser's properties.
+         * 
+         * @returns {void}
+         */
+        protected _resetParser(): void {
+            this._tokens = [];
+            this.__codeArray = [];
+            this.__identifiers = [];
+            this.__tempIdentifiers = [];
+            this.__aliases = {};
+        }
+
+        /**
+         * @name _throwError
+         * @memberof plat.expressions.Parser
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Throws a fatal exception in the case of an error.
+         * 
+         * @param {string} error The error message to throw.
+         * 
+         * @returns {void}
+         */
+        protected _throwError(error: string): void {
+            var _Exception: IExceptionStatic = this._Exception;
+            _Exception.fatal(error, _Exception.PARSE);
         }
 
         /**
@@ -709,7 +888,6 @@ module plat.expressions {
                 tempStr = '',
                 tempIdentifier: string;
 
-
             while (j++ < args) {
                 tempStr = 'function (context, aliases) { return ' + codeArray.pop() + '; }' + ',' + tempStr;
 
@@ -766,183 +944,6 @@ module plat.expressions {
             if (context !== null && typeof context === 'object') {
                 return context[token];
             }
-        }
-
-        /**
-         * @name _peek
-         * @memberof plat.expressions.Parser
-         * @kind function
-         * @access protected
-         * 
-         * @description
-         * Peek at the next {@link plat.expressions.IToken|IToken}.
-         * 
-         * @param {number} index The index before the desired {@link plat.expressions.IToken|IToken} 
-         * in the array.
-         * 
-         * @returns {plat.expressions.IToken} The next {@link plat.expressions.IToken|IToken} 
-         * in the {@link plat.expressions.IToken|IToken} array.
-         */
-        protected _peek(index: number): IToken {
-            return this._tokens[index + 1];
-        }
-
-        /**
-         * @name _lookBack
-         * @memberof plat.expressions.Parser
-         * @kind function
-         * @access protected
-         * 
-         * @description
-         * Look back at the previous {@link plat.expressions.IToken|IToken}.
-         * 
-         * @param {number} index The index after the desired {@link plat.expressions.IToken|IToken} 
-         * in the array.
-         * 
-         * @returns {plat.expressions.IToken} The previous {@link plat.expressions.IToken|IToken} 
-         * in the {@link plat.expressions.IToken|IToken} array.
-         */
-        protected _lookBack(index: number): IToken {
-            return this._tokens[index - 1];
-        }
-
-        /**
-         * @name _popRemainingIdentifiers
-         * @memberof plat.expressions.Parser
-         * @kind function
-         * @access protected
-         * 
-         * @description
-         * Evaluate and remove the leftover identifiers.
-         * 
-         * @returns {void}
-         */
-        protected _popRemainingIdentifiers(): void {
-            var identifiers = this.__identifiers,
-                tempIdentifiers = this.__tempIdentifiers,
-                last: string;
-
-            while (tempIdentifiers.length > 0) {
-                last = tempIdentifiers.pop();
-                if (last !== '.') {
-                    identifiers.push(last);
-                }
-            }
-        }
-
-        /**
-         * @name _makeIdentifiersUnique
-         * @memberof plat.expressions.Parser
-         * @kind function
-         * @access protected
-         * 
-         * @description
-         * Remove duplicate identifiers.
-         * 
-         * @returns {void}
-         */
-        protected _makeIdentifiersUnique(): void {
-            var identifiers = this.__identifiers,
-                uniqueIdentifiers: Array<string> = [],
-                uniqueIdentifierObject: IObject<boolean> = {},
-                identifier: string;
-
-            while (identifiers.length > 0) {
-                identifier = identifiers.pop();
-                if (!uniqueIdentifierObject[identifier]) {
-                    uniqueIdentifierObject[identifier] = true;
-                    uniqueIdentifiers.push(identifier);
-                }
-            }
-
-            this.__identifiers = uniqueIdentifiers;
-        }
-
-        /**
-         * @name _isValEqual
-         * @memberof plat.expressions.Parser
-         * @kind function
-         * @access protected
-         * 
-         * @description
-         * Check if the "val" property on an {@link plat.expressions.IToken|IToken} 
-         * is present in a particular character string.
-         * 
-         * @param {plat.expressions.IToken} obj The {@link plat.expressions.IToken|IToken} 
-         * with the "val" property to compare.
-         * @param {string} char The char to compare with.
-         * 
-         * @returns {boolean} Whether or not the val is equal to the input character.
-         */
-        protected _isValEqual(obj: IToken, char: string): boolean {
-            if (isNull(obj) || isNull(obj.val)) {
-                return isNull(char);
-            } else if (obj.val === '') {
-                return char === '';
-            }
-            return char.indexOf(obj.val) !== -1;
-        }
-
-        /**
-         * @name _isValUnequal
-         * @memberof plat.expressions.Parser
-         * @kind function
-         * @access protected
-         * 
-         * @description
-         * Check if the "val" property on an {@link plat.expressions.IToken|IToken} 
-         * is not present in a particular character string.
-         * 
-         * @param {plat.expressions.IToken} obj The {@link plat.expressions.IToken|IToken} 
-         * with the "val" property to compare.
-         * @param {string} char The char to compare with.
-         * 
-         * @returns {boolean} Whether or not the val is not equal to the input character.
-         */
-        protected _isValUnequal(obj: any, char: string): boolean {
-            if (isNull(obj) || isNull(obj.val)) {
-                return !isNull(char);
-            } else if (obj.val === '') {
-                return char !== '';
-            }
-            return char.indexOf(obj.val) === -1;
-        }
-
-        /**
-         * @name _resetParser
-         * @memberof plat.expressions.Parser
-         * @kind function
-         * @access protected
-         * 
-         * @description
-         * Resets all the parser's properties.
-         * 
-         * @returns {void}
-         */
-        protected _resetParser(): void {
-            this._tokens = [];
-            this.__codeArray = [];
-            this.__identifiers = [];
-            this.__tempIdentifiers = [];
-            this.__aliases = {};
-        }
-
-        /**
-         * @name _throwError
-         * @memberof plat.expressions.Parser
-         * @kind function
-         * @access protected
-         * 
-         * @description
-         * Throws a fatal exception in the case of an error.
-         * 
-         * @param {string} error The error message to throw.
-         * 
-         * @returns {void}
-         */
-        protected _throwError(error: string): void {
-            var _Exception: IExceptionStatic = this._Exception;
-            _Exception.fatal(error, _Exception.PARSE);
         }
     }
 

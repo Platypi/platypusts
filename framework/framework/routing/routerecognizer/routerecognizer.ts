@@ -116,7 +116,7 @@
             finalState.types = types;
 
             if (isObject(options) && isString(options.name)) {
-                this._namedRoutes[options.name] = {
+                this._namedRoutes[this._toLowerCase(options.name)] = {
                     segments: allSegments,
                     delegates: delegates
                 };
@@ -170,6 +170,7 @@
          * @returns {string} The generated route.
          */
         generate(name: string, parameters?: IObject<string>): string {
+            name = this._toLowerCase(name);
             var route = this._namedRoutes[name],
                 output = '',
                 segments: Array<BaseSegment>,
@@ -212,6 +213,7 @@
          * @returns {Array<IDelegateParameterNames>} The delegates for the named route.
          */
         delegatesFor(name: string): Array<IDelegateParameterNames> {
+            name = this._toLowerCase(name);
             var namedRoute = this._namedRoutes[name],
                 delegates: Array<IDelegateParameterNames>;
 
@@ -242,7 +244,28 @@
          * @returns {boolean} Whether or not the named route exists.
          */
         exists(name: string): boolean {
-            return isObject(this._namedRoutes[name]);
+            return isObject(this._namedRoutes[this._toLowerCase(name)]);
+        }
+
+        /**
+         * @name _toLowerCase
+         * @memberof plat.routing.RouteRecognizer
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Safely converts a string to lower case.
+         * 
+         * @param {string} str The string to convert to lower case.
+         * 
+         * @returns {plat.routing.State} The final state.
+         */
+        protected _toLowerCase(str: string): string {
+            if (!isString(str)) {
+                return str;
+            }
+
+            return str.toLowerCase();
         }
 
         /**

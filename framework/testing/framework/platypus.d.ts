@@ -158,6 +158,10 @@ declare module plat {
             Constructor: new () => T;
             type: string;
             /**
+              * The dependencies for this injector
+              */
+            private __dependencies;
+            /**
               * Initializes all static injectors.
               */
             static initialize(): void;
@@ -235,10 +239,6 @@ declare module plat {
               * @param {plat.dependency.Injector<any>} injector The starting point for the dependency tree search.
               */
             private static __findCircularReferences(injector);
-            /**
-              * The dependencies for this injector
-              */
-            private __dependencies;
             /**
               * The constructor for an injector. Converts any non-string dependencies to strings to support mocking Injectors during runtime.
               * @param {string} name The name of the injected type.
@@ -338,27 +338,6 @@ declare module plat {
       */
     class Exception {
         /**
-          * Method for sending a warning to all listeners. Will
-          * not throw an error.
-          * @param {string} message The message to be sent to the listeners.
-          * @param {number} type? Denotes the type of fatal exception.
-          */
-        static warn(message: string, type?: number): void;
-        /**
-          * Method for sending a fatal error to all listeners. Will
-          * throw an error.
-          * @param {Error} error The Error to be sent to all the listeners.
-          * @param {number} type? Denotes the type of fatal exception.
-          */
-        static fatal(error: Error, type?: number): void;
-        /**
-          * Method for sending a fatal message to all listeners. Will
-          * throw an error.
-          * @param {string} message The message to be sent to all the listeners.
-          * @param {number} type? Denotes the type of fatal exception.
-          */
-        static fatal(message: string, type?: number): void;
-        /**
           * Exception Type for parsing exceptions
           */
         static PARSE: number;
@@ -415,6 +394,27 @@ declare module plat {
           * (e.g. using a particular control incorrectly).
           */
         static CONTROL: number;
+        /**
+          * Method for sending a warning to all listeners. Will
+          * not throw an error.
+          * @param {string} message The message to be sent to the listeners.
+          * @param {number} type? Denotes the type of fatal exception.
+          */
+        static warn(message: string, type?: number): void;
+        /**
+          * Method for sending a fatal error to all listeners. Will
+          * throw an error.
+          * @param {Error} error The Error to be sent to all the listeners.
+          * @param {number} type? Denotes the type of fatal exception.
+          */
+        static fatal(error: Error, type?: number): void;
+        /**
+          * Method for sending a fatal message to all listeners. Will
+          * throw an error.
+          * @param {string} message The message to be sent to all the listeners.
+          * @param {number} type? Denotes the type of fatal exception.
+          */
+        static fatal(message: string, type?: number): void;
     }
     /**
       * The Type for referencing the '_Exception' injectable as a dependency.
@@ -1527,6 +1527,53 @@ declare module plat {
               */
             protected _evaluate(expression: string): IParsedExpression;
             /**
+              * Peek at the next IToken.
+              * @param {number} index The index before the desired IToken
+              * in the array.
+              * in the IToken array.
+              */
+            protected _peek(index: number): IToken;
+            /**
+              * Look back at the previous IToken.
+              * @param {number} index The index after the desired IToken
+              * in the array.
+              * in the IToken array.
+              */
+            protected _lookBack(index: number): IToken;
+            /**
+              * Evaluate and remove the leftover identifiers.
+              */
+            protected _popRemainingIdentifiers(): void;
+            /**
+              * Remove duplicate identifiers.
+              */
+            protected _makeIdentifiersUnique(): void;
+            /**
+              * Check if the "val" property on an IToken
+              * is present in a particular character string.
+              * @param {plat.expressions.IToken} obj The IToken
+              * with the "val" property to compare.
+              * @param {string} char The char to compare with.
+              */
+            protected _isValEqual(obj: IToken, char: string): boolean;
+            /**
+              * Check if the "val" property on an IToken
+              * is not present in a particular character string.
+              * @param {plat.expressions.IToken} obj The IToken
+              * with the "val" property to compare.
+              * @param {string} char The char to compare with.
+              */
+            protected _isValUnequal(obj: any, char: string): boolean;
+            /**
+              * Resets all the parser's properties.
+              */
+            protected _resetParser(): void;
+            /**
+              * Throws a fatal exception in the case of an error.
+              * @param {string} error The error message to throw.
+              */
+            protected _throwError(error: string): void;
+            /**
               * Handles a token that is a primitive value.
               * @param {number} index The current index in the IToken array.
               * @param {string} token The current IToken value.
@@ -1591,53 +1638,6 @@ declare module plat {
               * @param {string} token The property used to drill into the context.
               */
             private __indexIntoContext(context, token);
-            /**
-              * Peek at the next IToken.
-              * @param {number} index The index before the desired IToken
-              * in the array.
-              * in the IToken array.
-              */
-            protected _peek(index: number): IToken;
-            /**
-              * Look back at the previous IToken.
-              * @param {number} index The index after the desired IToken
-              * in the array.
-              * in the IToken array.
-              */
-            protected _lookBack(index: number): IToken;
-            /**
-              * Evaluate and remove the leftover identifiers.
-              */
-            protected _popRemainingIdentifiers(): void;
-            /**
-              * Remove duplicate identifiers.
-              */
-            protected _makeIdentifiersUnique(): void;
-            /**
-              * Check if the "val" property on an IToken
-              * is present in a particular character string.
-              * @param {plat.expressions.IToken} obj The IToken
-              * with the "val" property to compare.
-              * @param {string} char The char to compare with.
-              */
-            protected _isValEqual(obj: IToken, char: string): boolean;
-            /**
-              * Check if the "val" property on an IToken
-              * is not present in a particular character string.
-              * @param {plat.expressions.IToken} obj The IToken
-              * with the "val" property to compare.
-              * @param {string} char The char to compare with.
-              */
-            protected _isValUnequal(obj: any, char: string): boolean;
-            /**
-              * Resets all the parser's properties.
-              */
-            protected _resetParser(): void;
-            /**
-              * Throws a fatal exception in the case of an error.
-              * @param {string} error The error message to throw.
-              */
-            protected _throwError(error: string): void;
         }
         /**
           * Describes an object that is the result of parsing a JavaScript expression string. It contains detailed
@@ -1860,17 +1860,6 @@ declare module plat {
               */
             private static __urlUtilsElement;
             /**
-              * Creates a query object out of the URL's query search string.
-              * @param {string} search The URL's query search string.
-              * representing the query string.
-              */
-            private static __getQuery(search);
-            /**
-              * Obtains the base URL for the app/site for doing STATE type routing.
-              * @param {string} url The initial URL passed into the Browser.
-              */
-            private static __getBaseUrl(url);
-            /**
               * Reference to the Document injectable.
               */
             protected _document: Document;
@@ -1940,6 +1929,17 @@ declare module plat {
               */
             query: any;
             /**
+              * Creates a query object out of the URL's query search string.
+              * @param {string} search The URL's query search string.
+              * representing the query string.
+              */
+            private static __getQuery(search);
+            /**
+              * Obtains the base URL for the app/site for doing STATE type routing.
+              * @param {string} url The initial URL passed into the Browser.
+              */
+            private static __getBaseUrl(url);
+            /**
               * The constructor for a UrlUtils instance.
               * Handles parsing the initial URL and obtain the base URL if necessary.
               */
@@ -1965,6 +1965,12 @@ declare module plat {
           */
         class Promise<R> implements IThenable<R> {
             /**
+              * The configuration for creating asynchronous promise flushing.
+              */
+            static config: {
+                async: (callback: (arg?: IThenable<any>) => void, arg?: IThenable<any>) => void;
+            };
+            /**
               * Holds all the subscriber promises
               */
             private __subscribers;
@@ -1976,12 +1982,6 @@ declare module plat {
               * The return detail of a promise.
               */
             private __detail;
-            /**
-              * The configuration for creating asynchronous promise flushing.
-              */
-            static config: {
-                async: (callback: (arg?: IThenable<any>) => void, arg?: IThenable<any>) => void;
-            };
             /**
               * Returns a promise that fulfills when every item in the array is fulfilled.
               * Casts arguments to promises if necessary. The result argument of the
@@ -2284,6 +2284,7 @@ declare module plat {
           * synchronous requests.
           */
         class HttpRequest {
+            protected static _inject: any;
             /**
               * The timeout ID associated with the specified timeout
               */
@@ -2296,7 +2297,6 @@ declare module plat {
               * The JSONP callback name
               */
             jsonpCallback: string;
-            protected static _inject: any;
             /**
               * The plat.IExceptionStatic injectable instance
               */
@@ -2832,6 +2832,18 @@ declare module plat {
           */
         class Cache<T> {
             /**
+              * The size of this cache specified by its ID.
+              */
+            private __size;
+            /**
+              * The ID of this cache.
+              */
+            private __id;
+            /**
+              * The options for this cache.
+              */
+            private __options;
+            /**
               * Method for creating a new cache object. Takes a generic type to denote the
               * type of objects stored in the new cache.  If a cache with the same ID already exists
               * in the ICacheFactory, a new cache will not be created.
@@ -2849,18 +2861,6 @@ declare module plat {
               * Clears the ICacheFactory and all of its caches.
               */
             static clear(): void;
-            /**
-              * The size of this cache specified by its ID.
-              */
-            private __size;
-            /**
-              * The ID of this cache.
-              */
-            private __id;
-            /**
-              * The options for this cache.
-              */
-            private __options;
             /**
               * The constructor for a Cache.
               * @param {string} id The id to use to retrieve the cache from the ICacheFactory.
@@ -3088,6 +3088,49 @@ declare module plat {
               */
             static postArrayListeners: IObject<IObject<Array<(ev: IPostArrayChangeInfo<any>) => void>>>;
             /**
+              * An object for quickly accessing a previously created ContextManager.
+              */
+            private static __managers;
+            /**
+              * An object for storing functions to remove listeners for observed identifiers.
+              */
+            private static __controls;
+            /**
+              * Reference to the Compat injectable.
+              */
+            protected _compat: Compat;
+            /**
+              * The root context associated with and to be managed by this
+              * ContextManager.
+              */
+            context: any;
+            /**
+              * An object for quickly accessing callbacks associated with a given identifier.
+              */
+            private __identifiers;
+            /**
+              * An object for quickly accessing child context associations (helps with
+              * notifying child properties).
+              */
+            private __identifierHash;
+            /**
+              * An object for storing listeners for Array length changes.
+              */
+            private __lengthListeners;
+            /**
+              * An object for quickly accessing previously accessed or observed objects and properties.
+              */
+            private __contextObjects;
+            /**
+              * Whether or not the property currently being modified is due to an observed array function.
+              */
+            private __isArrayFunction;
+            /**
+              * If attempting to observe a property that is already being observed, this will be set to the
+              * already observed identifier.
+              */
+            private __observedIdentifier;
+            /**
               * Gets the ContextManager associated to the given control. If no
               * ContextManager exists, one is created for that control.
               * @param {plat.Control} control The control on which to locate the ContextManager.
@@ -3165,49 +3208,6 @@ declare module plat {
               * the context path.
               */
             static createContext(control: ui.TemplateControl, identifier: string): any;
-            /**
-              * An object for quickly accessing a previously created ContextManager.
-              */
-            private static __managers;
-            /**
-              * An object for storing functions to remove listeners for observed identifiers.
-              */
-            private static __controls;
-            /**
-              * Reference to the Compat injectable.
-              */
-            protected _compat: Compat;
-            /**
-              * The root context associated with and to be managed by this
-              * ContextManager.
-              */
-            context: any;
-            /**
-              * An object for quickly accessing callbacks associated with a given identifier.
-              */
-            private __identifiers;
-            /**
-              * An object for quickly accessing child context associations (helps with
-              * notifying child properties).
-              */
-            private __identifierHash;
-            /**
-              * An object for storing listeners for Array length changes.
-              */
-            private __lengthListeners;
-            /**
-              * An object for quickly accessing previously accessed or observed objects and properties.
-              */
-            private __contextObjects;
-            /**
-              * Whether or not the property currently being modified is due to an observed array function.
-              */
-            private __isArrayFunction;
-            /**
-              * If attempting to observe a property that is already being observed, this will be set to the
-              * already observed identifier.
-              */
-            private __observedIdentifier;
             /**
               * Safely retrieves the local context for this manager given an Array of
               * property strings and observes it if not found.
@@ -3968,16 +3968,16 @@ declare module plat {
               */
             protected static _EventManager: IEventManagerStatic;
             /**
+              * The error being dispatched.
+              */
+            error: E;
+            /**
               * Creates a new ErrorEvent and fires it.
               * @param {string} name The name of the event.
               * @param {any} sender The sender of the event.
               * @param {E} error The error that occurred, resulting in the event.
               */
             static dispatch<E extends Error>(name: string, sender: any, error: E): ErrorEvent<E>;
-            /**
-              * The error being dispatched.
-              */
-            error: E;
             /**
               * Initializes the event, populating its public properties.
               * @param {string} name The name of the event.
@@ -4047,6 +4047,51 @@ declare module plat {
           */
         private static __eventListeners;
         /**
+          * The plat.IExceptionStatic injectable instance
+          */
+        protected _Exception: IExceptionStatic;
+        /**
+          * A unique id, created during instantiation and found on every Control.
+          */
+        uid: string;
+        /**
+          * The type of a Control.
+          */
+        type: string;
+        /**
+          * Specifies the priority of the control. The purpose of
+          * this is so that controls like plat-bind can have a higher
+          * priority than plat-tap. The plat-bind will be initialized
+          * and loaded before plat-tap, meaning it has the first chance
+          * to respond to events.
+          */
+        priority: number;
+        /**
+          * The parent control that created this control.
+          */
+        parent: ui.TemplateControl;
+        /**
+          * The HTMLElement that represents this Control. Should only be modified by controls that implement
+          * TemplateControl. During initialize the control should populate this element with what it wishes
+          * to render to the user.
+          * When there is innerHTML in the element prior to instantiating the control:
+          *     The element will include the innerHTML
+          * When the control implements templateString or templateUrl:
+          *     The serialized DOM will be auto-generated and included in the element. Any
+          *     innerHTML will be stored in the innerTemplate property on the control.
+          * After an Control is initialized its element will be compiled.
+          */
+        element: HTMLElement;
+        /**
+          * The attributes object representing all the attributes for a Control's element. All attributes are
+          * converted from dash notation to camelCase.
+          */
+        attributes: ui.Attributes;
+        /**
+          * Contains DOM helper methods for manipulating this control's element.
+          */
+        dom: ui.Dom;
+        /**
           * Finds the ancestor control for the given control that contains the root
           * context.
           * @param {plat.Control} control The control with which to find the root.
@@ -4098,51 +4143,6 @@ declare module plat {
           * @param {string} value The expected value used to find similar controls.
           */
         private static __getControls(control, key, value);
-        /**
-          * The plat.IExceptionStatic injectable instance
-          */
-        protected _Exception: IExceptionStatic;
-        /**
-          * A unique id, created during instantiation and found on every Control.
-          */
-        uid: string;
-        /**
-          * The type of a Control.
-          */
-        type: string;
-        /**
-          * Specifies the priority of the control. The purpose of
-          * this is so that controls like plat-bind can have a higher
-          * priority than plat-tap. The plat-bind will be initialized
-          * and loaded before plat-tap, meaning it has the first chance
-          * to respond to events.
-          */
-        priority: number;
-        /**
-          * The parent control that created this control.
-          */
-        parent: ui.TemplateControl;
-        /**
-          * The HTMLElement that represents this Control. Should only be modified by controls that implement
-          * TemplateControl. During initialize the control should populate this element with what it wishes
-          * to render to the user.
-          * When there is innerHTML in the element prior to instantiating the control:
-          *     The element will include the innerHTML
-          * When the control implements templateString or templateUrl:
-          *     The serialized DOM will be auto-generated and included in the element. Any
-          *     innerHTML will be stored in the innerTemplate property on the control.
-          * After an Control is initialized its element will be compiled.
-          */
-        element: HTMLElement;
-        /**
-          * The attributes object representing all the attributes for a Control's element. All attributes are
-          * converted from dash notation to camelCase.
-          */
-        attributes: ui.Attributes;
-        /**
-          * Contains DOM helper methods for manipulating this control's element.
-          */
-        dom: ui.Dom;
         /**
           * The constructor for a control. Any injectables specified during control registration will be
           * passed into the constructor as arguments as long as the control is instantiated with its associated
@@ -4400,6 +4400,12 @@ declare module plat {
       */
     class AttributeControl extends Control {
         /**
+          * Specifies the TemplateControl associated with this
+          * control's element. Can be null if no TemplateControl
+          * exists.
+          */
+        templateControl: ui.TemplateControl;
+        /**
           * Method for disposing an attribute control. Removes any
           * necessary objects from the control.
           * @param {plat.AttributeControl} control The AttributeControl to dispose.
@@ -4409,12 +4415,6 @@ declare module plat {
           * Returns a new instance of AttributeControl.
           */
         static getInstance(): AttributeControl;
-        /**
-          * Specifies the TemplateControl associated with this
-          * control's element. Can be null if no TemplateControl
-          * exists.
-          */
-        templateControl: ui.TemplateControl;
     }
     /**
       * The Type for referencing the '_AttributeControlFactory' injectable as a dependency.
@@ -8107,6 +8107,31 @@ declare module plat {
               */
             protected static _Exception: IExceptionStatic;
             /**
+              * A regular expression for finding markup
+              */
+            protected static _markupRegex: RegExp;
+            /**
+              * A regular expression for finding newline characters.
+              */
+            protected static _newLineRegex: RegExp;
+            /**
+              * The type of NodeManager.
+              */
+            type: string;
+            /**
+              * The INodeMap for this NodeManager.
+              * Contains the compiled Node.
+              */
+            nodeMap: INodeMap;
+            /**
+              * The parent ElementManager.
+              */
+            parent: ElementManager;
+            /**
+              * Whether or not this NodeManager is a clone.
+              */
+            isClone: boolean;
+            /**
               * Determines if a string has the markup notation.
               * @param {string} text The text string in which to search for markup.
               */
@@ -8136,14 +8161,6 @@ declare module plat {
               */
             static observeExpressions(expressions: Array<expressions.IParsedExpression>, control: ui.TemplateControl, listener: (...args: Array<any>) => void): void;
             /**
-              * A regular expression for finding markup
-              */
-            protected static _markupRegex: RegExp;
-            /**
-              * A regular expression for finding newline characters.
-              */
-            protected static _newLineRegex: RegExp;
-            /**
               * Wraps constant text as a static IParsedExpression.
               * @param text The text to wrap into a static expression.
               */
@@ -8164,23 +8181,6 @@ declare module plat {
               * identifier.
               */
             private static __getObservationDetails(identifier, control);
-            /**
-              * The type of NodeManager.
-              */
-            type: string;
-            /**
-              * The INodeMap for this NodeManager.
-              * Contains the compiled Node.
-              */
-            nodeMap: INodeMap;
-            /**
-              * The parent ElementManager.
-              */
-            parent: ElementManager;
-            /**
-              * Whether or not this NodeManager is a clone.
-              */
-            isClone: boolean;
             /**
               * Initializes the manager's properties.
               * @param {plat.processing.INodeMap} nodeMap The mapping associated with this manager. We have to use an
@@ -8319,6 +8319,7 @@ declare module plat {
           * ElementManager.
           */
         class ElementManager extends NodeManager {
+            protected static _inject: any;
             /**
               * Reference to the Document injectable.
               */
@@ -8343,6 +8344,77 @@ declare module plat {
               * Reference to the IExceptionStatic injectable.
               */
             protected static _Exception: IExceptionStatic;
+            /**
+              * Reference to the IPromise injectable.
+              */
+            protected _Promise: async.IPromise;
+            /**
+              * Reference to the Compiler injectable.
+              */
+            protected _compiler: Compiler;
+            /**
+              * Reference to the ContextManagerStatic injectable.
+              */
+            protected _ContextManager: observable.IContextManagerStatic;
+            /**
+              * Reference to the ICommentManagerFactory injectable.
+              */
+            protected _CommentManagerFactory: ICommentManagerFactory;
+            /**
+              * Reference to the IControlFactory injectable.
+              */
+            protected _ControlFactory: IControlFactory;
+            /**
+              * Reference to the ITemplateControlFactory injectable.
+              */
+            protected _TemplateControlFactory: ui.ITemplateControlFactory;
+            /**
+              * Reference to the IBindableTemplatesFactory injectable.
+              */
+            protected _BindableTemplatesFactory: ui.IBindableTemplatesFactory;
+            /**
+              * Reference to the IExceptionStatic injectable.
+              */
+            protected _Exception: IExceptionStatic;
+            /**
+              * The child managers for this manager.
+              */
+            children: Array<NodeManager>;
+            /**
+              * Specifies the type for this NodeManager.
+              * It's value is "element".
+              */
+            type: string;
+            /**
+              * Specifies whether or not this manager has a TemplateControl which has a
+              * replaceWith property set to null or empty string.
+              */
+            replace: boolean;
+            /**
+              * Indicates whether the TemplateControl for this manager has its own context
+              * or inherits it from a parent.
+              */
+            hasOwnContext: boolean;
+            /**
+              * The length of a replaced control, indicates the number of nodes to slice
+              * out of the parent's childNodes.
+              */
+            replaceNodeLength: number;
+            /**
+              * In the event that a control has its own context, we need a promise to fullfill
+              * when the control is loaded to avoid loading its parent control first.
+              */
+            loadedPromise: async.IThenable<void>;
+            /**
+              * In the event that a control does not have its own context, we need a promise to fullfill
+              * when the control's context has been set.
+              */
+            contextPromise: async.IThenable<void>;
+            /**
+              * A promise that is set when an TemplateControl specifies a templateUrl
+              * and its HTML needs to be asynchronously obtained.
+              */
+            templatePromise: async.IThenable<void>;
             /**
               * Determines if the associated Element has controls that need to be instantiated or Attr nodes
               * containing text markup. If controls exist or markup is found a new
@@ -8425,78 +8497,6 @@ declare module plat {
               * to associate with the element.
               */
             protected static _cloneNodeMap(sourceMap: INodeMap, element: Element, parent: ui.TemplateControl, newControl?: ui.TemplateControl): INodeMap;
-            protected static _inject: any;
-            /**
-              * Reference to the IPromise injectable.
-              */
-            protected _Promise: async.IPromise;
-            /**
-              * Reference to the Compiler injectable.
-              */
-            protected _compiler: Compiler;
-            /**
-              * Reference to the ContextManagerStatic injectable.
-              */
-            protected _ContextManager: observable.IContextManagerStatic;
-            /**
-              * Reference to the ICommentManagerFactory injectable.
-              */
-            protected _CommentManagerFactory: ICommentManagerFactory;
-            /**
-              * Reference to the IControlFactory injectable.
-              */
-            protected _ControlFactory: IControlFactory;
-            /**
-              * Reference to the ITemplateControlFactory injectable.
-              */
-            protected _TemplateControlFactory: ui.ITemplateControlFactory;
-            /**
-              * Reference to the IBindableTemplatesFactory injectable.
-              */
-            protected _BindableTemplatesFactory: ui.IBindableTemplatesFactory;
-            /**
-              * Reference to the IExceptionStatic injectable.
-              */
-            protected _Exception: IExceptionStatic;
-            /**
-              * The child managers for this manager.
-              */
-            children: Array<NodeManager>;
-            /**
-              * Specifies the type for this NodeManager.
-              * It's value is "element".
-              */
-            type: string;
-            /**
-              * Specifies whether or not this manager has a TemplateControl which has a
-              * replaceWith property set to null or empty string.
-              */
-            replace: boolean;
-            /**
-              * Indicates whether the TemplateControl for this manager has its own context
-              * or inherits it from a parent.
-              */
-            hasOwnContext: boolean;
-            /**
-              * The length of a replaced control, indicates the number of nodes to slice
-              * out of the parent's childNodes.
-              */
-            replaceNodeLength: number;
-            /**
-              * In the event that a control has its own context, we need a promise to fullfill
-              * when the control is loaded to avoid loading its parent control first.
-              */
-            loadedPromise: async.IThenable<void>;
-            /**
-              * In the event that a control does not have its own context, we need a promise to fullfill
-              * when the control's context has been set.
-              */
-            contextPromise: async.IThenable<void>;
-            /**
-              * A promise that is set when an TemplateControl specifies a templateUrl
-              * and its HTML needs to be asynchronously obtained.
-              */
-            templatePromise: async.IThenable<void>;
             /**
               * Clones the ElementManager with a new node.
               * @param {Node} newNode The new element used to clone the ElementManager.
@@ -8690,6 +8690,11 @@ declare module plat {
           */
         class TextManager extends NodeManager {
             /**
+              * Specifies the type for this NodeManager.
+              * It's value is "text".
+              */
+            type: string;
+            /**
               * Determines if a text node has markup, and creates a TextManager if it does.
               * An TextManager responsible for markup in the passed in node or an empty
               * TextManager if not markup is found will be added to the managers array.
@@ -8713,11 +8718,6 @@ declare module plat {
               * for the new clone.
               */
             protected static _clone(sourceManager: NodeManager, node: Node, parent: ElementManager): TextManager;
-            /**
-              * Specifies the type for this NodeManager.
-              * It's value is "text".
-              */
-            type: string;
             /**
               * Clones this TextManager with a new node.
               * @param {Node} newNode The new node attached to the cloned TextManager.
@@ -8764,6 +8764,11 @@ declare module plat {
           */
         class CommentManager extends NodeManager {
             /**
+              * Specifies the type for this NodeManager.
+              * It's value is "comment".
+              */
+            type: string;
+            /**
               * Creates a new CommentManager for the given Comment node.
               * @param {Node} node The Comment to associate with the new manager.
               * @param {plat.processing.ElementManager} parent The parent
@@ -8771,11 +8776,6 @@ declare module plat {
               * responsible for the passed in Comment Node.
               */
             static create(node: Node, parent: ElementManager): CommentManager;
-            /**
-              * Specifies the type for this NodeManager.
-              * It's value is "comment".
-              */
-            type: string;
             /**
               * A method for cloning this manager with a new Comment.
               * @param {Node} newNode The new Comment node to associate with the cloned
@@ -8973,22 +8973,6 @@ declare module plat {
               */
             protected static _regex: expressions.Regex;
             /**
-              * Parses a route into segments, populating an array of names (for dynamic and splat segments) as well as
-              * an ISegmentTypeCount object.
-              * @param {string} route The route to parse.
-              * @param {Array<string>} names An array to populate with dynamic/splat segment names
-              * @param {plat.routing.ISegmentTypeCount} types An object to use for counting segment types in the route.
-              */
-            static parse(route: string, names: Array<string>, types: ISegmentTypeCount): Array<BaseSegment>;
-            /**
-              * Parses a route into segments, populating an array of names (for dynamic and splat segments) as well as
-              * an ISegmentTypeCount object.
-              * @param {string} name The name of the segment to look for.
-              * @param {string} token The token used to acquire a new segment if necessary.
-              * @param {plat.IObject<plat.routing.BaseSegment>} cache The cache in which to look for/store the segment.
-              */
-            private static __findSegment(name, token, cache);
-            /**
               * Denotes the type of segment for this instance.
               */
             type: string;
@@ -9004,6 +8988,22 @@ declare module plat {
               * A regular expression string which can be used to match the segment.
               */
             protected _specification: ICharacterSpecification;
+            /**
+              * Parses a route into segments, populating an array of names (for dynamic and splat segments) as well as
+              * an ISegmentTypeCount object.
+              * @param {string} route The route to parse.
+              * @param {Array<string>} names An array to populate with dynamic/splat segment names
+              * @param {plat.routing.ISegmentTypeCount} types An object to use for counting segment types in the route.
+              */
+            static parse(route: string, names: Array<string>, types: ISegmentTypeCount): Array<BaseSegment>;
+            /**
+              * Parses a route into segments, populating an array of names (for dynamic and splat segments) as well as
+              * an ISegmentTypeCount object.
+              * @param {string} name The name of the segment to look for.
+              * @param {string} token The token used to acquire a new segment if necessary.
+              * @param {plat.IObject<plat.routing.BaseSegment>} cache The cache in which to look for/store the segment.
+              */
+            private static __findSegment(name, token, cache);
             /**
               * Initializes the segment.
               * @param {string} name? The name for the new segment.
@@ -9144,6 +9144,29 @@ declare module plat {
           */
         class State {
             /**
+              * The possible next states for the current state.
+              */
+            nextStates: Array<State>;
+            /**
+              * The specification for the
+              * assigned route segment for this state.
+              */
+            specification: ICharacterSpecification;
+            /**
+              * The associated delegate objects for this
+              * state, with their parameter names.
+              */
+            delegates: Array<IDelegateParameterNames>;
+            /**
+              * A regular expression to match this state to a path.
+              */
+            regex: RegExp;
+            /**
+              * The totals for the different segment types
+              * for this state.
+              */
+            types: ISegmentTypeCount;
+            /**
               * Compiles a segment into a state tree.
               * @param {plat.routing.BaseSegment} segment The segment to compile.
               * @param {plat.routing.State} state The initial state with which to start compilation.
@@ -9169,29 +9192,6 @@ declare module plat {
               * @param {Array<plat.routing.State>} states The states to sort.
               */
             static sort(states: Array<State>): Array<State>;
-            /**
-              * The possible next states for the current state.
-              */
-            nextStates: Array<State>;
-            /**
-              * The specification for the
-              * assigned route segment for this state.
-              */
-            specification: ICharacterSpecification;
-            /**
-              * The associated delegate objects for this
-              * state, with their parameter names.
-              */
-            delegates: Array<IDelegateParameterNames>;
-            /**
-              * A regular expression to match this state to a path.
-              */
-            regex: RegExp;
-            /**
-              * The totals for the different segment types
-              * for this state.
-              */
-            types: ISegmentTypeCount;
             /**
               * The constructor for a State.
               */
@@ -9312,6 +9312,11 @@ declare module plat {
               * @param {string} name The named route to search for.
               */
             exists(name: string): boolean;
+            /**
+              * Safely converts a string to lower case.
+              * @param {string} str The string to convert to lower case.
+              */
+            protected _toLowerCase(str: string): string;
             /**
               * Finalizes a compiled route, adding a final state if necessary. If the state is equal to the
               * root state for the recognizer, a new state will be created. This is because the root state does not
@@ -9448,15 +9453,7 @@ declare module plat {
           */
         class Router {
             protected static _inject: any;
-            static currentRouter(router?: Router): Router;
             private static __currentRouter;
-            protected _Promise: async.IPromise;
-            protected _Injector: typeof dependency.Injector;
-            protected _EventManager: events.IEventManagerStatic;
-            protected _browser: web.Browser;
-            protected _browserConfig: web.IBrowserConfig;
-            protected _resolve: typeof async.Promise.resolve;
-            protected _reject: typeof async.Promise.reject;
             recognizer: RouteRecognizer;
             childRecognizer: RouteRecognizer;
             paramTransforms: IObject<IRouteTransforms>;
@@ -9475,6 +9472,14 @@ declare module plat {
             uid: string;
             isRoot: boolean;
             ignoreOnce: boolean;
+            protected _Promise: async.IPromise;
+            protected _Injector: typeof dependency.Injector;
+            protected _EventManager: events.IEventManagerStatic;
+            protected _browser: web.Browser;
+            protected _browserConfig: web.IBrowserConfig;
+            protected _resolve: typeof async.Promise.resolve;
+            protected _reject: typeof async.Promise.reject;
+            static currentRouter(router?: Router): Router;
             constructor();
             initialize(parent?: Router): void;
             addChild(child: Router): Router;
@@ -9483,11 +9488,11 @@ declare module plat {
             unregister(port: ISupportRouteNavigation): void;
             configure(routes: IRouteMapping): async.IThenable<void>;
             configure(routes: Array<IRouteMapping>): async.IThenable<void>;
-            protected _configureRoute(route: IRouteMapping): void;
             param(handler: (value: any, parameters: any, query: any) => any, parameter: string, view: string): Router;
             param(handler: (value: any, parameters: any, query: any) => any, parameter: string, view: new (...args: any[]) => any): Router;
             queryParam(handler: (value: any, query: any) => any, parameter: string, view: string): Router;
             queryParam(handler: (value: any, query: any) => any, parameter: string, view: new (...args: any[]) => any): Router;
+            protected _configureRoute(route: IRouteMapping): void;
             protected _addHandler(handler: (value: string, values: any, query?: any) => any, parameter: string, view: any, handlers: IObject<IRouteTransforms>): Router;
             intercept(handler: (routeInfo: IRouteInfo) => any, view?: string): Router;
             intercept(handler: (routeInfo: IRouteInfo) => any, view?: new (...args: any[]) => any): Router;
@@ -10736,6 +10741,10 @@ declare module plat {
       */
     class App {
         /**
+          * The instance of the registered IApp.
+          */
+        static app: App;
+        /**
           * Reference to the Compat injectable.
           */
         protected static _compat: Compat;
@@ -10760,6 +10769,18 @@ declare module plat {
           */
         protected static _Exception: IExceptionStatic;
         /**
+          * The injector for injecting the instance of the currently registered IApp.
+          */
+        private static __injector;
+        /**
+          * A unique id, created during instantiation.
+          */
+        uid: string;
+        /**
+          * A Navigator instance, exists when a router is injected into the app.
+          */
+        navigator: routing.Navigator;
+        /**
           * A static method for initiating the app startup.
           */
         static start(): void;
@@ -10776,14 +10797,6 @@ declare module plat {
           * @param {Node} node The node at which DOM compilation begins.
           */
         static load(node?: Node): void;
-        /**
-          * The instance of the registered IApp.
-          */
-        static app: App;
-        /**
-          * The injector for injecting the instance of the currently registered IApp.
-          */
-        private static __injector;
         /**
           * A static method called when the application is ready. It calls the app instance's
           * ready function as well as checks for the presence of a module loader. If one exists,
@@ -10805,14 +10818,6 @@ declare module plat {
           * hide elements.
           */
         private static __addPlatCss();
-        /**
-          * A unique id, created during instantiation.
-          */
-        uid: string;
-        /**
-          * A Navigator instance, exists when a router is injected into the app.
-          */
-        navigator: routing.Navigator;
         /**
           * Class for every app. This class contains hooks for Application Lifecycle Management (ALM)
           * as well as error handling and navigation events.

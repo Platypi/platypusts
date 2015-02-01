@@ -1,4 +1,6 @@
 module plat.controls {
+    'use strict';
+
     /**
      * @name SimpleEventControl
      * @memberof plat.controls

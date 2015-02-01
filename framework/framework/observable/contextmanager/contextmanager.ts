@@ -8,6 +8,8 @@
  * Holds all classes and interfaces related to observable components in platypus.
  */
 module plat.observable {
+    'use strict';
+
     /**
      * @name arrayMethods
      * @memberof plat.observable
@@ -73,6 +75,141 @@ module plat.observable {
          * A set of functions to be fired when a particular observed array is mutated.
          */
         static postArrayListeners: IObject<IObject<Array<(ev: IPostArrayChangeInfo<any>) => void>>> = {};
+
+        /**
+         * @name __managers
+         * @memberof plat.observable.ContextManager
+         * @kind property
+         * @access private
+         * @static
+         * 
+         * @type {plat.IObject<plat.observable.ContextManager>}
+         * 
+         * @description
+         * An object for quickly accessing a previously created {@link plat.observable.ContextManager|ContextManager}.
+         */
+        private static __managers: IObject<ContextManager> = {};
+
+        /**
+         * @name __controls
+         * @memberof plat.observable.ContextManager
+         * @kind property
+         * @access private
+         * @static
+         * 
+         * @type {plat.IObject<plat.IObject<Array<plat.IRemoveListener>>>}
+         * 
+         * @description
+         * An object for storing functions to remove listeners for observed identifiers.
+         */
+        private static __controls: IObject<IObject<Array<IRemoveListener>>> = {};
+
+        /**
+         * @name _compat
+         * @memberof plat.observable.ContextManager
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.Compat}
+         * 
+         * @description
+         * Reference to the {@link plat.Compat|Compat} injectable.
+         */
+        protected _compat: Compat = acquire(__Compat);
+
+        /**
+         * @name context
+         * @memberof plat.observable.ContextManager
+         * @kind property
+         * @access public
+         * 
+         * @type {any}
+         * 
+         * @description
+         * The root context associated with and to be managed by this 
+         * {@link plat.observable.ContextManager|ContextManager}.
+         */
+        context: any;
+
+        /**
+         * @name __identifiers
+         * @memberof plat.observable.ContextManager
+         * @kind property
+         * @access private
+         * 
+         * @type {plat.IObject<Array<plat.observable.IListener>>}
+         * 
+         * @description
+         * An object for quickly accessing callbacks associated with a given identifier.
+         */
+        private __identifiers: IObject<Array<IListener>> = {};
+
+        /**
+         * @name __identifierHash
+         * @memberof plat.observable.ContextManager
+         * @kind property
+         * @access private
+         * 
+         * @type {plat.IObject<Array<string>>}
+         * 
+         * @description
+         * An object for quickly accessing child context associations (helps with 
+         * notifying child properties).
+         */
+        private __identifierHash: IObject<IObject<boolean>> = {};
+
+        /**
+         * @name __lengthListeners
+         * @memberof plat.observable.ContextManager
+         * @kind property
+         * @access private
+         * 
+         * @type {plat.IObject<plat.observable.IListener>}
+         * 
+         * @description
+         * An object for storing listeners for Array length changes.
+         */
+        private __lengthListeners: IObject<IListener> = {};
+
+        /**
+         * @name __contextObjects
+         * @memberof plat.observable.ContextManager
+         * @kind property
+         * @access private
+         * 
+         * @type {plat.IObject<any>}
+         * 
+         * @description
+         * An object for quickly accessing previously accessed or observed objects and properties.
+         */
+        private __contextObjects: IObject<any> = {};
+
+        /**
+         * @name __isArrayFunction
+         * @memberof plat.observable.ContextManager
+         * @kind property
+         * @access private
+         * 
+         * @type {boolean}
+         * 
+         * @description
+         * Whether or not the property currently being modified is due to an observed array function.
+         */
+        private __isArrayFunction = false;
+
+        /**
+         * @name __observedIdentifier
+         * @memberof plat.observable.ContextManager
+         * @kind property
+         * @access private
+         * 
+         * @type {string}
+         * 
+         * @description
+         * If attempting to observe a property that is already being observed, this will be set to the 
+         * already observed identifier.
+         */
+        private __observedIdentifier: string;
 
         /**
          * @name getManager
@@ -431,135 +568,6 @@ module plat.observable {
 
             return context;
         }
-
-        /**
-         * @name __managers
-         * @memberof plat.observable.ContextManager
-         * @kind property
-         * @access private
-         * @static
-         * 
-         * @type {plat.IObject<plat.observable.ContextManager>}
-         * 
-         * @description
-         * An object for quickly accessing a previously created {@link plat.observable.ContextManager|ContextManager}.
-         */
-        private static __managers: IObject<ContextManager> = {};
-        /**
-         * @name __controls
-         * @memberof plat.observable.ContextManager
-         * @kind property
-         * @access private
-         * @static
-         * 
-         * @type {plat.IObject<plat.IObject<Array<plat.IRemoveListener>>>}
-         * 
-         * @description
-         * An object for storing functions to remove listeners for observed identifiers.
-         */
-        private static __controls: IObject<IObject<Array<IRemoveListener>>> = {};
-
-        /**
-         * @name _compat
-         * @memberof plat.observable.ContextManager
-         * @kind property
-         * @access public
-         * 
-         * @type {plat.Compat}
-         * 
-         * @description
-         * Reference to the {@link plat.Compat|Compat} injectable.
-         */
-        protected _compat: Compat = acquire(__Compat);
-
-        /**
-         * @name context
-         * @memberof plat.observable.ContextManager
-         * @kind property
-         * @access public
-         * 
-         * @type {any}
-         * 
-         * @description
-         * The root context associated with and to be managed by this 
-         * {@link plat.observable.ContextManager|ContextManager}.
-         */
-        context: any;
-
-        /**
-         * @name __identifiers
-         * @memberof plat.observable.ContextManager
-         * @kind property
-         * @access private
-         * 
-         * @type {plat.IObject<Array<plat.observable.IListener>>}
-         * 
-         * @description
-         * An object for quickly accessing callbacks associated with a given identifier.
-         */
-        private __identifiers: IObject<Array<IListener>> = {};
-        /**
-         * @name __identifierHash
-         * @memberof plat.observable.ContextManager
-         * @kind property
-         * @access private
-         * 
-         * @type {plat.IObject<Array<string>>}
-         * 
-         * @description
-         * An object for quickly accessing child context associations (helps with 
-         * notifying child properties).
-         */
-        private __identifierHash: IObject<IObject<boolean>> = {};
-        /**
-         * @name __lengthListeners
-         * @memberof plat.observable.ContextManager
-         * @kind property
-         * @access private
-         * 
-         * @type {plat.IObject<plat.observable.IListener>}
-         * 
-         * @description
-         * An object for storing listeners for Array length changes.
-         */
-        private __lengthListeners: IObject<IListener> = {};
-        /**
-         * @name __contextObjects
-         * @memberof plat.observable.ContextManager
-         * @kind property
-         * @access private
-         * 
-         * @type {plat.IObject<any>}
-         * 
-         * @description
-         * An object for quickly accessing previously accessed or observed objects and properties.
-         */
-        private __contextObjects: IObject<any> = {};
-        /**
-         * @name __isArrayFunction
-         * @memberof plat.observable.ContextManager
-         * @kind property
-         * @access private
-         * 
-         * @type {boolean}
-         * 
-         * @description
-         * Whether or not the property currently being modified is due to an observed array function.
-         */
-        private __isArrayFunction = false;
-        /**
-         * @name __observedIdentifier
-         * @memberof plat.observable.ContextManager
-         * @kind property
-         * @access private
-         * 
-         * @type {string}
-         * 
-         * @description
-         * If attempting to observe a property that is already being observed, this will be set to the 
-         * already observed identifier.
-         */
-        private __observedIdentifier: string;
 
         /**
          * @name getContext

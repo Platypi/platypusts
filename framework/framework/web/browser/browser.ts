@@ -8,6 +8,8 @@
  * Holds classes and interfaces related to web components in platypus.
  */
 module plat.web {
+    'use strict';
+
     /**
      * @name Browser
      * @memberof plat.web

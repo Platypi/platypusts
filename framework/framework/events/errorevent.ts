@@ -1,4 +1,6 @@
 ﻿module plat.events {
+    'use strict';
+
     /**
      * @name ErrorEvent
      * @memberof plat.events
@@ -29,6 +31,20 @@
         protected static _EventManager: IEventManagerStatic;
 
         /**
+         * @name error
+         * @memberof plat.events.ErrorEvent
+         * @kind property
+         * @access public
+         * @static
+         * 
+         * @type {E}
+         * 
+         * @description
+         * The error being dispatched.
+         */
+        error: E;
+
+        /**
          * @name dispatch
          * @memberof plat.events.ErrorEvent
          * @kind function
@@ -54,20 +70,6 @@
 
             return event;
         }
-
-        /**
-         * @name error
-         * @memberof plat.events.ErrorEvent
-         * @kind property
-         * @access public
-         * @static
-         * 
-         * @type {E}
-         * 
-         * @description
-         * The error being dispatched.
-         */
-        error: E;
 
         /**
          * @name initialize

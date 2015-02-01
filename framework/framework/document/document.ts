@@ -1,4 +1,6 @@
 ﻿module plat {
+    'use strict';
+
     /**
      * The Type for referencing the '_document' injectable as a dependency. 
      * Used so that the Window can be mocked.

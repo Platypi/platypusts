@@ -1,4 +1,6 @@
 module plat {
+    'use strict';
+
     /**
      * @name Control
      * @memberof plat
@@ -107,6 +109,129 @@ module plat {
          * An object containing all controls' registered event listeners.
          */
         private static __eventListeners: IObject<Array<IRemoveListener>> = {};
+
+        /**
+         * @name _Exception
+         * @memberof plat.Control
+         * @kind property
+         * @access protected
+         * 
+         * @type {plat.IExceptionStatic}
+         * 
+         * @description
+         * The plat.IExceptionStatic injectable instance
+         */
+        protected _Exception: IExceptionStatic = Control._Exception;
+
+        /**
+         * @name uid
+         * @memberof plat.Control
+         * @kind property
+         * @access public
+         * @readonly
+         * 
+         * @type {string}
+         * 
+         * @description
+         * A unique id, created during instantiation and found on every {@link plat.Control|Control}.
+         */
+        uid: string = uniqueId(__Plat);
+
+        /**
+         * @name type
+         * @memberof plat.Control
+         * @kind property
+         * @access public
+         * @readonly
+         * 
+         * @type {string}
+         * 
+         * @description
+         * The type of a {@link plat.Control|Control}.
+         */
+        type: string;
+
+        /**
+         * @name priority
+         * @memberof plat.Control
+         * @kind property
+         * @access public
+         * 
+         * @type {number}
+         * 
+         * @description
+         * Specifies the priority of the control. The purpose of 
+         * this is so that controls like plat-bind can have a higher 
+         * priority than plat-tap. The plat-bind will be initialized 
+         * and loaded before plat-tap, meaning it has the first chance 
+         * to respond to events.
+         */
+        priority = 0;
+
+        /**
+         * @name parent
+         * @memberof plat.Control
+         * @kind property
+         * @access public
+         * @readonly
+         * 
+         * @type {plat.ui.TemplateControl}
+         * 
+         * @description
+         * The parent control that created this control.
+         */
+        parent: ui.TemplateControl;
+
+        /**
+         * @name element
+         * @memberof plat.Control
+         * @kind property
+         * @access public
+         * 
+         * @type {HTMLElement}
+         * 
+         * @description
+         * The HTMLElement that represents this {@link plat.Control|Control}. Should only be modified by controls that implement 
+         * {@link plat.ui.TemplateControl|TemplateControl}. During initialize the control should populate this element with what it wishes
+         * to render to the user. 
+         * 
+         * @remarks
+         * When there is innerHTML in the element prior to instantiating the control:
+         *     The element will include the innerHTML
+         * When the control implements templateString or templateUrl:
+         *     The serialized DOM will be auto-generated and included in the element. Any
+         *     innerHTML will be stored in the innerTemplate property on the control.
+         * After an {@link plat.Control|Control} is initialized its element will be compiled.
+         */
+        element: HTMLElement;
+
+        /**
+         * @name attributes
+         * @memberof plat.Control
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.ui.Attributes}
+         * 
+         * @description
+         * The attributes object representing all the attributes for a {@link plat.Control|Control's} element. All attributes are 
+         * converted from dash notation to camelCase.
+         */
+        attributes: ui.Attributes;
+
+        /**
+         * @name dom
+         * @memberof plat.Control
+         * @kind property
+         * @access public
+         * @readonly
+         * 
+         * @type {plat.ui.Dom}
+         * 
+         * @description
+         * Contains DOM helper methods for manipulating this control's element.
+         */
+        dom: ui.Dom = Control._dom;
 
         /**
          * @name getRootControl
@@ -415,129 +540,6 @@ module plat {
 
             return controls;
         }
-
-        /**
-         * @name _Exception
-         * @memberof plat.Control
-         * @kind property
-         * @access protected
-         * 
-         * @type {plat.IExceptionStatic}
-         * 
-         * @description
-         * The plat.IExceptionStatic injectable instance
-         */
-        protected _Exception: IExceptionStatic = Control._Exception;
-
-        /**
-         * @name uid
-         * @memberof plat.Control
-         * @kind property
-         * @access public
-         * @readonly
-         * 
-         * @type {string}
-         * 
-         * @description
-         * A unique id, created during instantiation and found on every {@link plat.Control|Control}.
-         */
-        uid: string = uniqueId(__Plat);
-
-        /**
-         * @name type
-         * @memberof plat.Control
-         * @kind property
-         * @access public
-         * @readonly
-         * 
-         * @type {string}
-         * 
-         * @description
-         * The type of a {@link plat.Control|Control}.
-         */
-        type: string;
-
-        /**
-         * @name priority
-         * @memberof plat.Control
-         * @kind property
-         * @access public
-         * 
-         * @type {number}
-         * 
-         * @description
-         * Specifies the priority of the control. The purpose of 
-         * this is so that controls like plat-bind can have a higher 
-         * priority than plat-tap. The plat-bind will be initialized 
-         * and loaded before plat-tap, meaning it has the first chance 
-         * to respond to events.
-         */
-        priority = 0;
-
-        /**
-         * @name parent
-         * @memberof plat.Control
-         * @kind property
-         * @access public
-         * @readonly
-         * 
-         * @type {plat.ui.TemplateControl}
-         * 
-         * @description
-         * The parent control that created this control.
-         */
-        parent: ui.TemplateControl;
-
-        /**
-         * @name element
-         * @memberof plat.Control
-         * @kind property
-         * @access public
-         * 
-         * @type {HTMLElement}
-         * 
-         * @description
-         * The HTMLElement that represents this {@link plat.Control|Control}. Should only be modified by controls that implement 
-         * {@link plat.ui.TemplateControl|TemplateControl}. During initialize the control should populate this element with what it wishes
-         * to render to the user. 
-         * 
-         * @remarks
-         * When there is innerHTML in the element prior to instantiating the control:
-         *     The element will include the innerHTML
-         * When the control implements templateString or templateUrl:
-         *     The serialized DOM will be auto-generated and included in the element. Any
-         *     innerHTML will be stored in the innerTemplate property on the control.
-         * After an {@link plat.Control|Control} is initialized its element will be compiled.
-         */
-        element: HTMLElement;
-
-        /**
-         * @name attributes
-         * @memberof plat.Control
-         * @kind property
-         * @access public
-         * 
-         * @type {plat.ui.Attributes}
-         * 
-         * @description
-         * The attributes object representing all the attributes for a {@link plat.Control|Control's} element. All attributes are 
-         * converted from dash notation to camelCase.
-         */
-        attributes: ui.Attributes;
-
-        /**
-         * @name dom
-         * @memberof plat.Control
-         * @kind property
-         * @access public
-         * @readonly
-         * 
-         * @type {plat.ui.Dom}
-         * 
-         * @description
-         * Contains DOM helper methods for manipulating this control's element.
-         */
-        dom: ui.Dom = Control._dom;
 
         /**
          * @name constructor

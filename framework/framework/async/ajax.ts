@@ -8,6 +8,8 @@
  * Holds all classes and interfaces related to async components in platypus.
  */
 module plat.async {
+    'use strict';
+
     /**
      * @name HttpRequest
      * @memberof plat.async
@@ -19,6 +21,15 @@ module plat.async {
      * synchronous requests.
      */
     export class HttpRequest {
+        protected static _inject: any = {
+            _Exception: __ExceptionStatic,
+            _browser: __Browser,
+            _window: __Window,
+            _document: __Document,
+            _config: __HttpConfig,
+            _compat: __Compat
+        };
+
         /**
          * @name clearTimeout
          * @memberof plat.async.HttpRequest
@@ -57,15 +68,6 @@ module plat.async {
          * The JSONP callback name
          */
         jsonpCallback: string;
-
-        protected static _inject: any = {
-            _Exception: __ExceptionStatic,
-            _browser: __Browser,
-            _window: __Window,
-            _document: __Document,
-            _config: __HttpConfig,
-            _compat: __Compat
-        };
 
         /**
          * @name _Exception
@@ -183,7 +185,7 @@ module plat.async {
          * @returns {plat.async.HttpRequest}
          */
         constructor() {
-            this.__fileSupported = this._compat.fileSupported
+            this.__fileSupported = this._compat.fileSupported;
         }
 
         /**

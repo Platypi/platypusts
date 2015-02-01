@@ -8,6 +8,8 @@
  * Holds all classes and interfaces related to routing components in platypus.
  */
 module plat.routing {
+    'use strict';
+
     /**
      * The Type for referencing the 'History' injectable as a dependency. 
      * Used so that the window.history can be mocked.

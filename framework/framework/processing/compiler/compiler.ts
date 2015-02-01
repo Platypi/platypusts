@@ -8,6 +8,8 @@
  * Holds classes and interfaces related to Document processing in platypus.
  */
 module plat.processing {
+    'use strict';
+
     /**
      * @name Compiler
      * @memberof plat.processing
@@ -166,7 +168,7 @@ module plat.processing {
                 this._compileNodes(childNodes, manager);
             }
         }
-        
+
         /**
          * @name _compileNodes
          * @memberof plat.processing.Compiler

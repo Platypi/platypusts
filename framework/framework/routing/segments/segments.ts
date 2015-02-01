@@ -1,4 +1,6 @@
 ﻿module plat.routing {
+    'use strict';
+
     var specialCharacters = [
         '/', '.', '*', '+', '?', '|',
         '(', ')', '[', ']', '{', '}', '\\'
@@ -32,6 +34,59 @@
          * Reference to the {@link plat.expressions.Regex|Regex} injectable.
          */
         protected static _regex: expressions.Regex;
+
+        /**
+         * @name type
+         * @memberof plat.routing.BaseSegment
+         * @kind property
+         * @access public
+         * @virtual
+         * 
+         * @type {string}
+         * 
+         * @description
+         * Denotes the type of segment for this instance.
+         */
+        type: string = __BASE_SEGMENT_TYPE;
+
+        /**
+         * @name name
+         * @memberof plat.routing.BaseSegment
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * The name of the segment.
+         */
+        name: string = '';
+
+        /**
+         * @name regex
+         * @memberof plat.routing.BaseSegment
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * A regular expression string which can be used to match the segment.
+         */
+        regex: string = '';
+
+        /**
+         * @name regex
+         * @memberof plat.routing.BaseSegment
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * A regular expression string which can be used to match the segment.
+         */
+        protected _specification: ICharacterSpecification;
 
         /**
          * @name parse
@@ -124,59 +179,6 @@
 
             return segment;
         }
-
-        /**
-         * @name type
-         * @memberof plat.routing.BaseSegment
-         * @kind property
-         * @access public
-         * @virtual
-         * 
-         * @type {string}
-         * 
-         * @description
-         * Denotes the type of segment for this instance.
-         */
-        type: string = __BASE_SEGMENT_TYPE;
-
-        /**
-         * @name name
-         * @memberof plat.routing.BaseSegment
-         * @kind property
-         * @access public
-         * 
-         * @type {string}
-         * 
-         * @description
-         * The name of the segment.
-         */
-        name: string = '';
-
-        /**
-         * @name regex
-         * @memberof plat.routing.BaseSegment
-         * @kind property
-         * @access public
-         * 
-         * @type {string}
-         * 
-         * @description
-         * A regular expression string which can be used to match the segment.
-         */
-        regex: string = '';
-
-        /**
-         * @name regex
-         * @memberof plat.routing.BaseSegment
-         * @kind property
-         * @access public
-         * 
-         * @type {string}
-         * 
-         * @description
-         * A regular expression string which can be used to match the segment.
-         */
-        protected _specification: ICharacterSpecification;
 
         /**
          * @name initialize
@@ -548,7 +550,6 @@
          */
         statics: number;
 
-
         /**
          * @name dynamics
          * @memberof plat.routing.ISegmentTypeCount
@@ -560,7 +561,6 @@
          * A count of how many dynamic segments exist in the route.
          */
         dynamics: number;
-
 
         /**
          * @name splats

@@ -1,4 +1,6 @@
 ﻿module plat {
+    'use strict';
+
     /**
      * @name Compat
      * @memberof plat

@@ -1,4 +1,6 @@
 module plat.events {
+    'use strict';
+
     /**
      * @name EventManager
      * @memberof plat.events
@@ -1096,7 +1098,7 @@ module plat.events {
          * An IObject of listener arrays, keyed by event name.
          */
         listeners: IObject<Array<(ev: DispatchEvent, ...args: any[]) => void>>;
-        
+
         /**
          * @name context
          * @memberof plat.events.IEventsListener

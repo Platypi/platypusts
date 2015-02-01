@@ -1,4 +1,6 @@
 module plat {
+    'use strict';
+
     /**
      * @name Exception
      * @memberof plat
@@ -9,63 +11,6 @@ module plat {
      * Manages the throwing and consuming of errors and warnings.
      */
     export class Exception {
-        /**
-         * @name warn
-         * @memberof plat.Exception
-         * @kind function
-         * @access public
-         * @static
-         * 
-         * @description
-         * Method for sending a warning to all listeners. Will 
-         * not throw an error.
-         * 
-         * @param {string} message The message to be sent to the listeners.
-         * @param {number} type? Denotes the type of fatal exception.
-         * 
-         * @returns {void}
-         */
-        static warn(message: string, type?: number): void {
-            raise(message, type, false);
-        }
-
-        /**
-         * @name fatal
-         * @memberof plat.Exception
-         * @kind function
-         * @access public
-         * @static
-         * 
-         * @description
-         * Method for sending a fatal error to all listeners. Will
-         * throw an error.
-         * 
-         * @param {Error} error The Error to be sent to all the listeners.
-         * @param {number} type? Denotes the type of fatal exception. 
-         * 
-         * @returns {void}
-         */
-        static fatal(error: Error, type?: number): void;
-        /**
-         * @name fatal
-         * @memberof plat.Exception
-         * @kind function
-         * @access public
-         * @static
-         * 
-         * @description
-         * Method for sending a fatal message to all listeners. Will
-         * throw an error.
-         * 
-         * @param {string} message The message to be sent to all the listeners.
-         * @param {number} type? Denotes the type of fatal exception. 
-         * 
-         * @returns {void}
-         */
-        static fatal(message: string, type?: number): void;
-        static fatal(message: any, type?: number) {
-            raise(message, type, true);
-        }
 
         /**
          * @name PARSE
@@ -277,6 +222,64 @@ module plat {
          * (e.g. using a particular control incorrectly).
          */
         static CONTROL = 13;
+
+        /**
+         * @name warn
+         * @memberof plat.Exception
+         * @kind function
+         * @access public
+         * @static
+         * 
+         * @description
+         * Method for sending a warning to all listeners. Will 
+         * not throw an error.
+         * 
+         * @param {string} message The message to be sent to the listeners.
+         * @param {number} type? Denotes the type of fatal exception.
+         * 
+         * @returns {void}
+         */
+        static warn(message: string, type?: number): void {
+            raise(message, type, false);
+        }
+
+        /**
+         * @name fatal
+         * @memberof plat.Exception
+         * @kind function
+         * @access public
+         * @static
+         * 
+         * @description
+         * Method for sending a fatal error to all listeners. Will
+         * throw an error.
+         * 
+         * @param {Error} error The Error to be sent to all the listeners.
+         * @param {number} type? Denotes the type of fatal exception. 
+         * 
+         * @returns {void}
+         */
+        static fatal(error: Error, type?: number): void;
+        /**
+         * @name fatal
+         * @memberof plat.Exception
+         * @kind function
+         * @access public
+         * @static
+         * 
+         * @description
+         * Method for sending a fatal message to all listeners. Will
+         * throw an error.
+         * 
+         * @param {string} message The message to be sent to all the listeners.
+         * @param {number} type? Denotes the type of fatal exception. 
+         * 
+         * @returns {void}
+         */
+        static fatal(message: string, type?: number): void;
+        static fatal(message: any, type?: number) {
+            raise(message, type, true);
+        }
     }
 
     /**

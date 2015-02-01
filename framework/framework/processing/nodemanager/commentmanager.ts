@@ -1,4 +1,6 @@
 module plat.processing {
+    'use strict';
+
     /**
      * @name CommentManager
      * @memberof plat.processing
@@ -12,6 +14,20 @@ module plat.processing {
      * clone a Comment node.
      */
     export class CommentManager extends NodeManager {
+        /**
+         * @name type
+         * @memberof plat.processing.CommentManager
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * Specifies the type for this {@link plat.processing.NodeManager|NodeManager}. 
+         * It's value is "comment".
+         */
+        type: string = 'comment';
+
         /**
          * @name create
          * @memberof plat.processing.CommentManager
@@ -40,21 +56,7 @@ module plat.processing {
 
             return manager;
         }
-        
-        /**
-         * @name type
-         * @memberof plat.processing.CommentManager
-         * @kind property
-         * @access public
-         * 
-         * @type {string}
-         * 
-         * @description
-         * Specifies the type for this {@link plat.processing.NodeManager|NodeManager}. 
-         * It's value is "comment".
-         */
-        type: string = 'comment';
-        
+
         /**
          * @name clone
          * @memberof plat.processing.CommentManager
@@ -86,7 +88,7 @@ module plat.processing {
 
     register.injectable(__CommentManagerFactory, ICommentManagerFactory, null, __FACTORY);
     register.injectable(__CommentManagerInstance, CommentManager, null, __INSTANCE);
-    
+
     /**
      * @name CommentManagerFactory
      * @memberof plat.processing

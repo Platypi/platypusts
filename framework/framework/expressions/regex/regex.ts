@@ -1,4 +1,6 @@
 ﻿module plat.expressions {
+    'use strict';
+
     /**
      * @name Regex
      * @memberof plat.expressions

@@ -25,6 +25,19 @@ module plat.dependency {
      */
     export class Injector<T> {
         /**
+         * @name __dependencies
+         * @memberof plat.dependency.Injector
+         * @kind property
+         * @access private
+         * 
+         * @type {Array<string>}
+         * 
+         * @description
+         * The dependencies for this injector
+         */
+        private __dependencies: Array<string>;
+
+        /**
          * @name initialize
          * @memberof plat.dependency.Injector
          * @kind function
@@ -306,7 +319,7 @@ module plat.dependency {
         private static __walk(obj: any, proto: any, extendWith: any): any {
             var Constructor = proto.constructor,
                 parentInject = {};
-                
+
             if (isObject(Constructor._inject) && Constructor !== Object) {
                 parentInject = Injector.__walk(obj, Object.getPrototypeOf(proto), extendWith);
             }
@@ -497,19 +510,6 @@ module plat.dependency {
                 }
             }
         }
-
-        /**
-         * @name __dependencies
-         * @memberof plat.dependency.Injector
-         * @kind property
-         * @access private
-         * 
-         * @type {Array<string>}
-         * 
-         * @description
-         * The dependencies for this injector
-         */
-        private __dependencies: Array<string>;
 
         /**
          * @name constructor

@@ -1,4 +1,6 @@
 ﻿module plat.routing {
+    'use strict';
+
     /**
      * @name State
      * @memberof plat.routing
@@ -12,6 +14,74 @@
      * segment or invalidate the segment.
      */
     export class State {
+        /**
+         * @name nextStates
+         * @memberof plat.routing.State
+         * @kind property
+         * @access public
+         * 
+         * @type {Array<plat.routing.State>}
+         * 
+         * @description
+         * The possible next states for the current state.
+         */
+        nextStates: Array<State>;
+
+        /**
+         * @name specification
+         * @memberof plat.routing.State
+         * @kind property
+         * @access public
+         * 
+         * @type {Array<plat.routing.ICharacterSpecification>}
+         * 
+         * @description
+         * The {@link plat.routing.ICharacterSpecification|specification} for the 
+         * assigned route segment for this state.
+         */
+        specification: ICharacterSpecification;
+
+        /**
+         * @name delegates
+         * @memberof plat.routing.State
+         * @kind property
+         * @access public
+         * 
+         * @type {Array<plat.routing.IDelegateParameterNames>}
+         * 
+         * @description
+         * The associated {@link plat.routing.IDelegateParameterNames|delegate} objects for this 
+         * state, with their parameter names.
+         */
+        delegates: Array<IDelegateParameterNames>;
+
+        /**
+         * @name regex
+         * @memberof plat.routing.State
+         * @kind property
+         * @access public
+         * 
+         * @type {RegExp}
+         * 
+         * @description
+         * A regular expression to match this state to a path.
+         */
+        regex: RegExp;
+
+        /**
+         * @name types
+         * @memberof plat.routing.State
+         * @kind property
+         * @access public
+         * 
+         * @type {Array<plat.routing.ISegmentTypeCount>}
+         * 
+         * @description
+         * The totals for the different segment {@link plat.routing.ISegmentTypeCount|types} 
+         * for this state.
+         */
+        types: ISegmentTypeCount;
+
         /**
          * @name compile
          * @memberof plat.routing.State
@@ -178,74 +248,6 @@
                 return 0;
             });
         }
-
-        /**
-         * @name nextStates
-         * @memberof plat.routing.State
-         * @kind property
-         * @access public
-         * 
-         * @type {Array<plat.routing.State>}
-         * 
-         * @description
-         * The possible next states for the current state.
-         */
-        nextStates: Array<State>;
-
-        /**
-         * @name specification
-         * @memberof plat.routing.State
-         * @kind property
-         * @access public
-         * 
-         * @type {Array<plat.routing.ICharacterSpecification>}
-         * 
-         * @description
-         * The {@link plat.routing.ICharacterSpecification|specification} for the 
-         * assigned route segment for this state.
-         */
-        specification: ICharacterSpecification;
-
-        /**
-         * @name delegates
-         * @memberof plat.routing.State
-         * @kind property
-         * @access public
-         * 
-         * @type {Array<plat.routing.IDelegateParameterNames>}
-         * 
-         * @description
-         * The associated {@link plat.routing.IDelegateParameterNames|delegate} objects for this 
-         * state, with their parameter names.
-         */
-        delegates: Array<IDelegateParameterNames>;
-
-        /**
-         * @name regex
-         * @memberof plat.routing.State
-         * @kind property
-         * @access public
-         * 
-         * @type {RegExp}
-         * 
-         * @description
-         * A regular expression to match this state to a path.
-         */
-        regex: RegExp;
-
-        /**
-         * @name types
-         * @memberof plat.routing.State
-         * @kind property
-         * @access public
-         * 
-         * @type {Array<plat.routing.ISegmentTypeCount>}
-         * 
-         * @description
-         * The totals for the different segment {@link plat.routing.ISegmentTypeCount|types} 
-         * for this state.
-         */
-        types: ISegmentTypeCount;
 
         /**
          * @name constructor
@@ -442,8 +444,6 @@
     }
 
     plat.register.injectable(__StateStatic, IStateStatic, null, __STATIC);
-
-
     plat.register.injectable(__StateInstance, State, null, __INSTANCE);
 
     /**

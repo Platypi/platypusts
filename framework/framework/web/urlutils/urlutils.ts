@@ -1,4 +1,6 @@
 ﻿module plat.web {
+    'use strict';
+
     /**
      * @name UrlUtils
      * @memberof plat.web
@@ -31,56 +33,6 @@
          * Helps with URL initialization through it's href attribute.
          */
         private static __urlUtilsElement: HTMLAnchorElement;
-        /**
-         * @name __getQuery
-         * @memberof plat.web.UrlUtils
-         * @kind function
-         * @access private
-         * @static
-         * 
-         * @description
-         * Creates a query object out of the URL's query search string.
-         * 
-         * @param {string} search The URL's query search string.
-         * 
-         * @returns {plat.IObject<string>} An object consisting of key-value pairs 
-         * representing the query string.
-         */
-        private static __getQuery(search: string): IObject<string> {
-            return deserializeQuery(search);
-        }
-
-        /**
-         * @name __getBaseUrl
-         * @memberof plat.web.UrlUtils
-         * @kind function
-         * @access private
-         * @static
-         * 
-         * @description
-         * Obtains the base URL for the app/site for doing STATE type routing.
-         * 
-         * @param {string} url The initial URL passed into the Browser.
-         * 
-         * @returns {string} The base URL.
-         */
-        private static __getBaseUrl(url: string): string {
-            var _regex: expressions.Regex = acquire(__Regex),
-                _location: Location = acquire(__Location),
-                origin = (<any>_location).origin,
-                protocol = _location.protocol,
-                host = _location.host;
-
-            if (protocol === 'file:' || protocol.indexOf('wmapp') > -1 || protocol.indexOf('ms-appx') > -1) {
-                origin = _location.href;
-            } else if(isUndefined(origin)) {
-                origin = _location.protocol + '//' + _location.host;
-            }
-
-            origin = origin.replace(_regex.initialUrlRegex, '');
-
-            return origin.split('?')[0].split('#')[0] + '/';
-        }
 
         /**
          * @name _document
@@ -304,6 +256,57 @@
         query: any;
 
         /**
+         * @name __getQuery
+         * @memberof plat.web.UrlUtils
+         * @kind function
+         * @access private
+         * @static
+         * 
+         * @description
+         * Creates a query object out of the URL's query search string.
+         * 
+         * @param {string} search The URL's query search string.
+         * 
+         * @returns {plat.IObject<string>} An object consisting of key-value pairs 
+         * representing the query string.
+         */
+        private static __getQuery(search: string): IObject<string> {
+            return deserializeQuery(search);
+        }
+
+        /**
+         * @name __getBaseUrl
+         * @memberof plat.web.UrlUtils
+         * @kind function
+         * @access private
+         * @static
+         * 
+         * @description
+         * Obtains the base URL for the app/site for doing STATE type routing.
+         * 
+         * @param {string} url The initial URL passed into the Browser.
+         * 
+         * @returns {string} The base URL.
+         */
+        private static __getBaseUrl(url: string): string {
+            var _regex: expressions.Regex = acquire(__Regex),
+                _location: Location = acquire(__Location),
+                origin = (<any>_location).origin,
+                protocol = _location.protocol,
+                host = _location.host;
+
+            if (protocol === 'file:' || protocol.indexOf('wmapp') > -1 || protocol.indexOf('ms-appx') > -1) {
+                origin = _location.href;
+            } else if(isUndefined(origin)) {
+                origin = _location.protocol + '//' + _location.host;
+            }
+
+            origin = origin.replace(_regex.initialUrlRegex, '');
+
+            return origin.split('?')[0].split('#')[0] + '/';
+        }
+
+        /**
          * @name constructor
          * @memberof plat.web.UrlUtils
          * @kind function
@@ -397,7 +400,6 @@
                 ? element.pathname
                 : '/' + element.pathname;
             }
-
 
             path = path.replace(this._regex.initialUrlRegex, '/');
 

@@ -8,6 +8,8 @@
  * Holds classes and interfaces related to storage in platypus.
  */
 module plat.storage {
+    'use strict';
+
     /**
      * @name caches
      * @memberof plat.storage
@@ -22,21 +24,21 @@ module plat.storage {
      * The keyed collection of all created {@link plat.storage.Cache|Caches} in the 
      * {@link plat.storage.ICacheFactory|ICacheFactory}.
      */
-    var caches: IObject<Cache<any>> = {};
-    /**
-     * @name internalCaches
-     * @memberof plat.storage
-     * @kind property
-     * @access private
-     * @static
-     * @exported false
-     * 
-     * @type {any}
-     * 
-     * @description
-     * Internal storage for all the items stored in each {@link plat.storage.Cache|Cache}.
-     */
-    var internalCaches: any = {};
+    var caches: IObject<Cache<any>> = {},
+        /**
+         * @name internalCaches
+         * @memberof plat.storage
+         * @kind property
+         * @access private
+         * @static
+         * @exported false
+         * 
+         * @type {any}
+         * 
+         * @description
+         * Internal storage for all the items stored in each {@link plat.storage.Cache|Cache}.
+         */
+        internalCaches: any = {};
 
     /**
      * @name Cache
@@ -52,6 +54,45 @@ module plat.storage {
      * @typeparam {any} T The type of objects stored in the cache.
      */
     export class Cache<T> {
+        /**
+         * @name __size
+         * @memberof plat.storage.Cache
+         * @kind property
+         * @access private
+         * 
+         * @type {number}
+         * 
+         * @description
+         * The size of this cache specified by its ID.
+         */
+        private __size: number;
+
+        /**
+         * @name __id
+         * @memberof plat.storage.Cache
+         * @kind property
+         * @access private
+         * 
+         * @type {string}
+         * 
+         * @description
+         * The ID of this cache.
+         */
+        private __id: string;
+
+        /**
+         * @name __options
+         * @memberof plat.storage.Cache
+         * @kind property
+         * @access private
+         * 
+         * @type {plat.storage.ICacheOptions}
+         * 
+         * @description
+         * The options for this cache.
+         */
+        private __options: ICacheOptions;
+
         /**
          * @name create
          * @memberof plat.storage.Cache
@@ -126,43 +167,6 @@ module plat.storage {
         }
 
         /**
-         * @name __size
-         * @memberof plat.storage.Cache
-         * @kind property
-         * @access private
-         * 
-         * @type {number}
-         * 
-         * @description
-         * The size of this cache specified by its ID.
-         */
-        private __size: number;
-        /**
-         * @name __id
-         * @memberof plat.storage.Cache
-         * @kind property
-         * @access private
-         * 
-         * @type {string}
-         * 
-         * @description
-         * The ID of this cache.
-         */
-        private __id: string;
-        /**
-         * @name __options
-         * @memberof plat.storage.Cache
-         * @kind property
-         * @access private
-         * 
-         * @type {plat.storage.ICacheOptions}
-         * 
-         * @description
-         * The options for this cache.
-         */
-        private __options: ICacheOptions;
-
-        /**
          * @name constructor
          * @memberof plat.storage.Cache
          * @kind function
@@ -209,7 +213,7 @@ module plat.storage {
                 options: this.__options
             };
         }
-        
+
         /**
          * @name put
          * @memberof plat.storage.Cache
@@ -240,7 +244,7 @@ module plat.storage {
 
             return value;
         }
-        
+
         /**
          * @name read
          * @memberof plat.storage.Cache
@@ -257,7 +261,7 @@ module plat.storage {
         read(key: string): T {
             return internalCaches[this.__id][key];
         }
-        
+
         /**
          * @name remove
          * @memberof plat.storage.Cache
@@ -275,7 +279,7 @@ module plat.storage {
             deleteProperty(internalCaches[this.__id], key);
             this.__size--;
         }
-        
+
         /**
          * @name clear
          * @memberof plat.storage.Cache
@@ -291,7 +295,7 @@ module plat.storage {
             internalCaches[this.__id] = {};
             this.__size = 0;
         }
-        
+
         /**
          * @name dispose
          * @memberof plat.storage.Cache
@@ -317,7 +321,7 @@ module plat.storage {
     }
 
     register.injectable(__CacheFactory, ICacheFactory, null, __FACTORY);
-    
+
     /**
      * @name CacheFactory
      * @memberof plat.storage
@@ -381,7 +385,7 @@ module plat.storage {
          */
         clear(): void;
     }
-    
+
     /**
      * A cache for persisting NodeManager trees.
      */
@@ -395,7 +399,7 @@ module plat.storage {
     }
 
     register.injectable(__ManagerCache, IManagerCache);
-    
+
     /**
      * @name ICacheOptions
      * @memberof plat.storage
@@ -422,7 +426,7 @@ module plat.storage {
          */
         timeout?: number;
     }
-    
+
     /**
      * @name ICacheInfo
      * @memberof plat.storage
@@ -445,7 +449,7 @@ module plat.storage {
          * retrieve the {@link plat.storage.Cache|ICache} out of the {@link plat.storage.ICacheFactory|CacheFactory}.
          */
         id: string;
-        
+
         /**
          * @name size
          * @memberof plat.storage.ICacheInfo
@@ -458,7 +462,7 @@ module plat.storage {
          * Represents the number of items in the {@link plat.storage.Cache|Cache}.
          */
         size: number;
-        
+
         /**
          * @name options
          * @memberof plat.storage.ICacheInfo

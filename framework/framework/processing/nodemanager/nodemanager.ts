@@ -1,4 +1,6 @@
 module plat.processing {
+    'use strict';
+
     /**
      * @name NodeManager
      * @memberof plat.processing
@@ -63,6 +65,87 @@ module plat.processing {
          * Reference to the {@link plat.IExceptionStatic|IExceptionStatic} injectable.
          */
         protected static _Exception: IExceptionStatic;
+
+        /**
+         * @name _markupRegex
+         * @memberof plat.processing.NodeManager
+         * @kind property
+         * @access protected
+         * @static
+         * 
+         * @type {RegExp}
+         * 
+         * @description
+         * A regular expression for finding markup
+         */
+        protected static _markupRegex: RegExp;
+
+        /**
+         * @name _newLineRegex
+         * @memberof plat.processing.NodeManager
+         * @kind property
+         * @access protected
+         * @static
+         * 
+         * @type {RegExp}
+         * 
+         * @description
+         * A regular expression for finding newline characters.
+         */
+        protected static _newLineRegex: RegExp;
+
+        /**
+         * @name type
+         * @memberof plat.processing.NodeManager
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * The type of {@link plat.processing.NodeManager|NodeManager}.
+         */
+        type: string;
+
+        /**
+         * @name nodeMap
+         * @memberof plat.processing.NodeManager
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.processing.INodeMap}
+         * 
+         * @description
+         * The {@link plat.processing.INodeMap|INodeMap} for this {@link plat.processing.NodeManager|NodeManager}. 
+         * Contains the compiled Node.
+         */
+        nodeMap: INodeMap;
+
+        /**
+         * @name parent
+         * @memberof plat.processing.NodeManager
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.processing.ElementManager}
+         * 
+         * @description
+         * The parent {@link plat.processing.ElementManager|ElementManager}.
+         */
+        parent: ElementManager;
+
+        /**
+         * @name isClone
+         * @memberof plat.processing.NodeManager
+         * @kind property
+         * @access public
+         * 
+         * @type {boolean}
+         * 
+         * @description
+         * Whether or not this {@link plat.processing.NodeManager|NodeManager} is a clone.
+         */
+        isClone = false;
 
         /**
          * @name hasMarkup
@@ -251,34 +334,6 @@ module plat.processing {
         }
 
         /**
-         * @name _markupRegex
-         * @memberof plat.processing.NodeManager
-         * @kind property
-         * @access protected
-         * @static
-         * 
-         * @type {RegExp}
-         * 
-         * @description
-         * A regular expression for finding markup
-         */
-        protected static _markupRegex: RegExp;
-
-        /**
-         * @name _newLineRegex
-         * @memberof plat.processing.NodeManager
-         * @kind property
-         * @access protected
-         * @static
-         * 
-         * @type {RegExp}
-         * 
-         * @description
-         * A regular expression for finding newline characters.
-         */
-        protected static _newLineRegex: RegExp;
-
-        /**
          * @name _wrapExpression
          * @memberof plat.processing.NodeManager
          * @kind function
@@ -449,56 +504,6 @@ module plat.processing {
                 isDefined: isDefined
             };
         }
-
-        /**
-         * @name type
-         * @memberof plat.processing.NodeManager
-         * @kind property
-         * @access public
-         * 
-         * @type {string}
-         * 
-         * @description
-         * The type of {@link plat.processing.NodeManager|NodeManager}.
-         */
-        type: string;
-        /**
-         * @name nodeMap
-         * @memberof plat.processing.NodeManager
-         * @kind property
-         * @access public
-         * 
-         * @type {plat.processing.INodeMap}
-         * 
-         * @description
-         * The {@link plat.processing.INodeMap|INodeMap} for this {@link plat.processing.NodeManager|NodeManager}. 
-         * Contains the compiled Node.
-         */
-        nodeMap: INodeMap;
-        /**
-         * @name parent
-         * @memberof plat.processing.NodeManager
-         * @kind property
-         * @access public
-         * 
-         * @type {plat.processing.ElementManager}
-         * 
-         * @description
-         * The parent {@link plat.processing.ElementManager|ElementManager}.
-         */
-        parent: ElementManager;
-        /**
-         * @name isClone
-         * @memberof plat.processing.NodeManager
-         * @kind property
-         * @access public
-         * 
-         * @type {boolean}
-         * 
-         * @description
-         * Whether or not this {@link plat.processing.NodeManager|NodeManager} is a clone.
-         */
-        isClone = false;
 
         /**
          * @name initialize

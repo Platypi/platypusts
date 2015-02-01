@@ -1,4 +1,6 @@
 module plat.processing {
+    'use strict';
+
     /**
      * @name ElementManager
      * @memberof plat.processing
@@ -12,6 +14,17 @@ module plat.processing {
      * {@link plat.processing.ElementManager|ElementManager}.
      */
     export class ElementManager extends NodeManager {
+        protected static _inject: any = {
+            _Promise: __Promise,
+            _ContextManager: __ContextManagerStatic,
+            _compiler: __Compiler,
+            _CommentManagerFactory: __CommentManagerFactory,
+            _ControlFactory: __ControlFactory,
+            _TemplateControlFactory: __TemplateControlFactory,
+            _BindableTemplatesFactory: __BindableTemplatesFactory,
+            _Exception: __ExceptionStatic
+        };
+
         /**
          * @name _document
          * @memberof plat.processing.ElementManager
@@ -91,6 +104,221 @@ module plat.processing {
          * Reference to the {@link plat.IExceptionStatic|IExceptionStatic} injectable.
          */
         protected static _Exception: IExceptionStatic;
+
+        /**
+         * @name _Promise
+         * @memberof plat.processing.ElementManager
+         * @kind property
+         * @access protected
+         * 
+         * @type {plat.async.IPromise}
+         * 
+         * @description
+         * Reference to the {@link plat.async.IPromise|IPromise} injectable.
+         */
+        protected _Promise: async.IPromise;
+
+        /**
+         * @name _compiler
+         * @memberof plat.processing.ElementManager
+         * @kind property
+         * @access protected
+         * 
+         * @type {plat.processing.Compiler}
+         * 
+         * @description
+         * Reference to the {@link plat.processing.Compiler|Compiler} injectable.
+         */
+        protected _compiler: Compiler;
+
+        /**
+         * @name _ContextManager
+         * @memberof plat.processing.ElementManager
+         * @kind property
+         * @access protected
+         * 
+         * @type {plat.observable.IContextManagerStatic}
+         * 
+         * @description
+         * Reference to the {@link plat.observable.IContextManagerStatic|ContextManagerStatic} injectable.
+         */
+        protected _ContextManager: observable.IContextManagerStatic;
+
+        /**
+         * @name _CommentManagerFactory
+         * @memberof plat.processing.ElementManager
+         * @kind property
+         * @access protected
+         * 
+         * @type {plat.processing.ICommentManagerFactory}
+         * 
+         * @description
+         * Reference to the {@link plat.processing.ICommentManagerFactory|ICommentManagerFactory} injectable.
+         */
+        protected _CommentManagerFactory: ICommentManagerFactory;
+
+        /**
+         * @name _ControlFactory
+         * @memberof plat.processing.ElementManager
+         * @kind property
+         * @access protected
+         * 
+         * @type {plat.IControlFactory}
+         * 
+         * @description
+         * Reference to the {@link plat.IControlFactory|IControlFactory} injectable.
+         */
+        protected _ControlFactory: IControlFactory;
+
+        /**
+         * @name _TemplateControlFactory
+         * @memberof plat.processing.ElementManager
+         * @kind property
+         * @access protected
+         * 
+         * @type {plat.ui.ITemplateControlFactory}
+         * 
+         * @description
+         * Reference to the {@link plat.ui.ITemplateControlFactory|ITemplateControlFactory} injectable.
+         */
+        protected _TemplateControlFactory: ui.ITemplateControlFactory;
+
+        /**
+         * @name _BindableTemplatesFactory
+         * @memberof plat.processing.ElementManager
+         * @kind property
+         * @access protected
+         * 
+         * @type {plat.ui.IBindableTemplatesFactory}
+         * 
+         * @description
+         * Reference to the {@link plat.ui.IBindableTemplatesFactory|IBindableTemplatesFactory} injectable.
+         */
+        protected _BindableTemplatesFactory: ui.IBindableTemplatesFactory;
+
+        /**
+         * @name _Exception
+         * @memberof plat.processing.ElementManager
+         * @kind property
+         * @access protected
+         * 
+         * @type {plat.IExceptionStatic}
+         * 
+         * @description
+         * Reference to the {@link plat.IExceptionStatic|IExceptionStatic} injectable.
+         */
+        protected _Exception: IExceptionStatic;
+
+        /**
+         * @name children
+         * @memberof plat.processing.ElementManager
+         * @kind property
+         * @access public
+         * 
+         * @type {Array<plat.processing.NodeManager>}
+         * 
+         * @description
+         * The child managers for this manager.
+         */
+        children: Array<NodeManager> = [];
+
+        /**
+         * @name type
+         * @memberof plat.processing.ElementManager
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * Specifies the type for this {@link plat.processing.NodeManager|NodeManager}. 
+         * It's value is "element".
+         */
+        type = 'element';
+
+        /**
+         * @name replace
+         * @memberof plat.processing.ElementManager
+         * @kind property
+         * @access public
+         * 
+         * @type {boolean}
+         * 
+         * @description
+         * Specifies whether or not this manager has a {@link plat.ui.TemplateControl|TemplateControl} which has a 
+         * replaceWith property set to null or empty string.
+         */
+        replace = false;
+
+        /**
+         * @name hasOwnContext
+         * @memberof plat.processing.ElementManager
+         * @kind property
+         * @access public
+         * 
+         * @type {boolean}
+         * 
+         * @description
+         * Indicates whether the {@link plat.ui.TemplateControl|TemplateControl} for this manager has its own context 
+         * or inherits it from a parent.
+         */
+        hasOwnContext = false;
+
+        /**
+         * @name replaceNodeLength
+         * @memberof plat.processing.ElementManager
+         * @kind property
+         * @access public
+         * 
+         * @type {number}
+         * 
+         * @description
+         * The length of a replaced control, indicates the number of nodes to slice 
+         * out of the parent's childNodes.
+         */
+        replaceNodeLength: number;
+
+        /**
+         * @name loadedPromise
+         * @memberof plat.processing.ElementManager
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.async.IThenable<void>}
+         * 
+         * @description
+         * In the event that a control has its own context, we need a promise to fullfill 
+         * when the control is loaded to avoid loading its parent control first.
+         */
+        loadedPromise: async.IThenable<void>;
+
+        /**
+         * @name contextPromise
+         * @memberof plat.processing.ElementManager
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.async.IThenable<void>}
+         * 
+         * @description
+         * In the event that a control does not have its own context, we need a promise to fullfill 
+         * when the control's context has been set.
+         */
+        contextPromise: async.IThenable<void>;
+
+        /**
+         * @name templatePromise
+         * @memberof plat.processing.ElementManager
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.async.IThenable<void>}
+         * 
+         * @description
+         * A promise that is set when an {@link plat.ui.TemplateControl|TemplateControl} specifies a templateUrl 
+         * and its HTML needs to be asynchronously obtained.
+         */
+        templatePromise: async.IThenable<void>;
 
         /**
          * @name create
@@ -649,232 +877,6 @@ module plat.processing {
 
             return nodeMap;
         }
-
-        protected static _inject: any = {
-            _Promise: __Promise,
-            _ContextManager: __ContextManagerStatic,
-            _compiler: __Compiler,
-            _CommentManagerFactory: __CommentManagerFactory,
-            _ControlFactory: __ControlFactory,
-            _TemplateControlFactory: __TemplateControlFactory,
-            _BindableTemplatesFactory: __BindableTemplatesFactory,
-            _Exception: __ExceptionStatic
-        };
-
-        /**
-         * @name _Promise
-         * @memberof plat.processing.ElementManager
-         * @kind property
-         * @access protected
-         * 
-         * @type {plat.async.IPromise}
-         * 
-         * @description
-         * Reference to the {@link plat.async.IPromise|IPromise} injectable.
-         */
-        protected _Promise: async.IPromise;
-
-        /**
-         * @name _compiler
-         * @memberof plat.processing.ElementManager
-         * @kind property
-         * @access protected
-         * 
-         * @type {plat.processing.Compiler}
-         * 
-         * @description
-         * Reference to the {@link plat.processing.Compiler|Compiler} injectable.
-         */
-        protected _compiler: Compiler;
-
-        /**
-         * @name _ContextManager
-         * @memberof plat.processing.ElementManager
-         * @kind property
-         * @access protected
-         * 
-         * @type {plat.observable.IContextManagerStatic}
-         * 
-         * @description
-         * Reference to the {@link plat.observable.IContextManagerStatic|ContextManagerStatic} injectable.
-         */
-        protected _ContextManager: observable.IContextManagerStatic;
-
-        /**
-         * @name _CommentManagerFactory
-         * @memberof plat.processing.ElementManager
-         * @kind property
-         * @access protected
-         * 
-         * @type {plat.processing.ICommentManagerFactory}
-         * 
-         * @description
-         * Reference to the {@link plat.processing.ICommentManagerFactory|ICommentManagerFactory} injectable.
-         */
-        protected _CommentManagerFactory: ICommentManagerFactory;
-
-        /**
-         * @name _ControlFactory
-         * @memberof plat.processing.ElementManager
-         * @kind property
-         * @access protected
-         * 
-         * @type {plat.IControlFactory}
-         * 
-         * @description
-         * Reference to the {@link plat.IControlFactory|IControlFactory} injectable.
-         */
-        protected _ControlFactory: IControlFactory;
-
-        /**
-         * @name _TemplateControlFactory
-         * @memberof plat.processing.ElementManager
-         * @kind property
-         * @access protected
-         * 
-         * @type {plat.ui.ITemplateControlFactory}
-         * 
-         * @description
-         * Reference to the {@link plat.ui.ITemplateControlFactory|ITemplateControlFactory} injectable.
-         */
-        protected _TemplateControlFactory: ui.ITemplateControlFactory;
-
-        /**
-         * @name _BindableTemplatesFactory
-         * @memberof plat.processing.ElementManager
-         * @kind property
-         * @access protected
-         * 
-         * @type {plat.ui.IBindableTemplatesFactory}
-         * 
-         * @description
-         * Reference to the {@link plat.ui.IBindableTemplatesFactory|IBindableTemplatesFactory} injectable.
-         */
-        protected _BindableTemplatesFactory: ui.IBindableTemplatesFactory;
-
-        /**
-         * @name _Exception
-         * @memberof plat.processing.ElementManager
-         * @kind property
-         * @access protected
-         * 
-         * @type {plat.IExceptionStatic}
-         * 
-         * @description
-         * Reference to the {@link plat.IExceptionStatic|IExceptionStatic} injectable.
-         */
-        protected _Exception: IExceptionStatic;
-
-        /**
-         * @name children
-         * @memberof plat.processing.ElementManager
-         * @kind property
-         * @access public
-         * 
-         * @type {Array<plat.processing.NodeManager>}
-         * 
-         * @description
-         * The child managers for this manager.
-         */
-        children: Array<NodeManager> = [];
-
-        /**
-         * @name type
-         * @memberof plat.processing.ElementManager
-         * @kind property
-         * @access public
-         * 
-         * @type {string}
-         * 
-         * @description
-         * Specifies the type for this {@link plat.processing.NodeManager|NodeManager}. 
-         * It's value is "element".
-         */
-        type = 'element';
-
-        /**
-         * @name replace
-         * @memberof plat.processing.ElementManager
-         * @kind property
-         * @access public
-         * 
-         * @type {boolean}
-         * 
-         * @description
-         * Specifies whether or not this manager has a {@link plat.ui.TemplateControl|TemplateControl} which has a 
-         * replaceWith property set to null or empty string.
-         */
-        replace = false;
-
-        /**
-         * @name hasOwnContext
-         * @memberof plat.processing.ElementManager
-         * @kind property
-         * @access public
-         * 
-         * @type {boolean}
-         * 
-         * @description
-         * Indicates whether the {@link plat.ui.TemplateControl|TemplateControl} for this manager has its own context 
-         * or inherits it from a parent.
-         */
-        hasOwnContext = false;
-
-        /**
-         * @name replaceNodeLength
-         * @memberof plat.processing.ElementManager
-         * @kind property
-         * @access public
-         * 
-         * @type {number}
-         * 
-         * @description
-         * The length of a replaced control, indicates the number of nodes to slice 
-         * out of the parent's childNodes.
-         */
-        replaceNodeLength: number;
-
-        /**
-         * @name loadedPromise
-         * @memberof plat.processing.ElementManager
-         * @kind property
-         * @access public
-         * 
-         * @type {plat.async.IThenable<void>}
-         * 
-         * @description
-         * In the event that a control has its own context, we need a promise to fullfill 
-         * when the control is loaded to avoid loading its parent control first.
-         */
-        loadedPromise: async.IThenable<void>;
-
-        /**
-         * @name contextPromise
-         * @memberof plat.processing.ElementManager
-         * @kind property
-         * @access public
-         * 
-         * @type {plat.async.IThenable<void>}
-         * 
-         * @description
-         * In the event that a control does not have its own context, we need a promise to fullfill 
-         * when the control's context has been set.
-         */
-        contextPromise: async.IThenable<void>;
-
-        /**
-         * @name templatePromise
-         * @memberof plat.processing.ElementManager
-         * @kind property
-         * @access public
-         * 
-         * @type {plat.async.IThenable<void>}
-         * 
-         * @description
-         * A promise that is set when an {@link plat.ui.TemplateControl|TemplateControl} specifies a templateUrl 
-         * and its HTML needs to be asynchronously obtained.
-         */
-        templatePromise: async.IThenable<void>;
 
         /**
          * @name clone
@@ -1716,13 +1718,13 @@ module plat.processing {
         _Exception?: IExceptionStatic): IElementManagerFactory {
         (<any>ElementManager)._document = _document;
         (<any>ElementManager)._managerCache = _managerCache;
-        (<any>ElementManager)._ResourcesFactory = _ResourcesFactory; 
+        (<any>ElementManager)._ResourcesFactory = _ResourcesFactory;
         (<any>ElementManager)._AttributesFactory = _AttributesFactory;
         (<any>ElementManager)._BindableTemplatesFactory = _BindableTemplatesFactory;
         (<any>ElementManager)._Exception = _Exception;
         return ElementManager;
     }
-    
+
     register.injectable(__ElementManagerFactory, IElementManagerFactory, [
         __Document,
         __ManagerCache,

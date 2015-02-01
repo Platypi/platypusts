@@ -28,23 +28,7 @@
             childRecognizer: __RouteRecognizerInstance
         };
 
-        static currentRouter(router?: Router) {
-            if (!isNull(router)) {
-                Router.__currentRouter = router;
-            }
-
-            return Router.__currentRouter;
-        }
-
         private static __currentRouter: Router;
-
-        protected _Promise: async.IPromise;
-        protected _Injector: typeof dependency.Injector;
-        protected _EventManager: events.IEventManagerStatic;
-        protected _browser: web.Browser;
-        protected _browserConfig: web.IBrowserConfig;
-        protected _resolve: typeof async.Promise.resolve = this._Promise.resolve.bind(this._Promise);
-        protected _reject: typeof async.Promise.reject = this._Promise.reject.bind(this._Promise);
 
         recognizer: RouteRecognizer;
         childRecognizer: RouteRecognizer;
@@ -69,6 +53,22 @@
         uid: string;
         isRoot: boolean = false;
         ignoreOnce = false;
+
+        protected _Promise: async.IPromise;
+        protected _Injector: typeof dependency.Injector;
+        protected _EventManager: events.IEventManagerStatic;
+        protected _browser: web.Browser;
+        protected _browserConfig: web.IBrowserConfig;
+        protected _resolve: typeof async.Promise.resolve = this._Promise.resolve.bind(this._Promise);
+        protected _reject: typeof async.Promise.reject = this._Promise.reject.bind(this._Promise);
+
+        static currentRouter(router?: Router) {
+            if (!isNull(router)) {
+                Router.__currentRouter = router;
+            }
+
+            return Router.__currentRouter;
+        }
 
         constructor() {
             this.uid = uniqueId(__Plat);
@@ -166,6 +166,18 @@
             return this.forceNavigate();
         }
 
+        param(handler: (value: any, parameters: any, query: any) => any, parameter: string, view: string): Router;
+        param(handler: (value: any, parameters: any, query: any) => any, parameter: string, view: new (...args: any[]) => any): Router;
+        param(handler: (value: any, parameters: any, query: any) => any, parameter: string, view: any) {
+            return this._addHandler(handler, parameter, view, this.paramTransforms);
+        }
+
+        queryParam(handler: (value: any, query: any) => any, parameter: string, view: string): Router;
+        queryParam(handler: (value: any, query: any) => any, parameter: string, view: new (...args: any[]) => any): Router;
+        queryParam(handler: (value: string, query: any) => any, parameter: string, view: any) {
+            return this._addHandler(handler, parameter, view, this.queryTransforms);
+        }
+
         protected _configureRoute(route: IRouteMapping) {
             var resolve = this._resolve,
                 view: string = this._Injector.convertDependency(route.view);
@@ -191,18 +203,6 @@
 
             this.recognizer.register([routeDelegate], { name: view });
             this.childRecognizer.register([childDelegate]);
-        }
-
-        param(handler: (value: any, parameters: any, query: any) => any, parameter: string, view: string): Router;
-        param(handler: (value: any, parameters: any, query: any) => any, parameter: string, view: new (...args: any[]) => any): Router;
-        param(handler: (value: any, parameters: any, query: any) => any, parameter: string, view: any) {
-            return this._addHandler(handler, parameter, view, this.paramTransforms);
-        }
-
-        queryParam(handler: (value: any, query: any) => any, parameter: string, view: string): Router;
-        queryParam(handler: (value: any, query: any) => any, parameter: string, view: new (...args: any[]) => any): Router;
-        queryParam(handler: (value: string, query: any) => any, parameter: string, view: any) {
-            return this._addHandler(handler, parameter, view, this.queryTransforms);
         }
 
         protected _addHandler(handler: (value: string, values: any, query?: any) => any, parameter: string, view: any, handlers: IObject<IRouteTransforms>) {
@@ -320,7 +320,7 @@
                 routeInfo.query = query;
                 pattern = routeInfo.delegate.pattern;
             }
-            
+
             segment = this.recognizer.generate(routeInfo.delegate.view, routeInfo.parameters);
 
             this.navigating = true;
@@ -338,10 +338,7 @@
 
                 return this.performNavigation(routeInfo);
             }).then(() => {
-                if (!isEmpty(this.ports)) {
-                    this.previousPattern = pattern;
-                }
-
+                this.previousPattern = pattern;
                 this.previousSegment = segment;
                 this.currentRouteInfo = routeInfoCopy;
                 this.navigating = false;

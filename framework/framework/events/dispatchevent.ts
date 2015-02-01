@@ -8,6 +8,8 @@
  * Holds classes and interfaces related to event management components in platypus.
  */
 module plat.events {
+    'use strict';
+
     /**
      * @name DispatchEvent
      * @memberof plat.events

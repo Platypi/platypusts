@@ -1,3 +1,12 @@
+var controlInjectors: plat.dependency.InjectorObject<plat.Control> = {},
+    viewControlInjectors: plat.dependency.InjectorObject<plat.ui.ViewControl> = {},
+    instanceInjectorDependencies: plat.IObject<plat.IObject<string>> = {},
+    injectableInjectors: plat.dependency.InjectorObject<plat.dependency.Injector<any>> = {},
+    unregisteredInjectors: plat.dependency.InjectorObject<plat.dependency.Injector<any>> = {},
+    staticInjectors: plat.dependency.InjectorObject<plat.dependency.Injector<any>> = {},
+    animationInjectors: plat.dependency.InjectorObject<plat.ui.animations.BaseAnimation> = {},
+    jsAnimationInjectors: plat.dependency.InjectorObject<plat.ui.animations.BaseAnimation> = {};
+
 /**
  * @name register
  * @memberof plat
@@ -345,7 +354,7 @@ module plat.register {
             animationType = __CSS;
         } else {
             animationType = animationType.toLowerCase();
-            if (!(animationType === animation.CSS || animationType === animation.JS)) {
+            if (!(animationType === __CSS || animationType === __JS)) {
                 throw new Error('Invalid animationType "' + animationType + '" during animation registration.');
             }
         }
@@ -393,12 +402,3 @@ module plat.register {
         export var JS = __JS;
     }
 }
-
-var controlInjectors: plat.dependency.InjectorObject<plat.Control> = {};
-var viewControlInjectors: plat.dependency.InjectorObject<plat.ui.ViewControl> = {};
-var instanceInjectorDependencies: plat.IObject<plat.IObject<string>> = {};
-var injectableInjectors: plat.dependency.InjectorObject<plat.dependency.Injector<any>> = {};
-var unregisteredInjectors: plat.dependency.InjectorObject<plat.dependency.Injector<any>> = {};
-var staticInjectors: plat.dependency.InjectorObject<plat.dependency.Injector<any>> = {};
-var animationInjectors: plat.dependency.InjectorObject<plat.ui.animations.BaseAnimation> = {};
-var jsAnimationInjectors: plat.dependency.InjectorObject<plat.ui.animations.BaseAnimation> = {};

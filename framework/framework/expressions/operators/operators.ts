@@ -326,7 +326,6 @@ function isDelimiter(key: string): boolean {
     return !isNull(DELIMITERS[key]);
 }
 
-
 /**
  * @name isAccessor
  * @memberof plat.expressions
@@ -346,7 +345,6 @@ function isAccessor(key: string): boolean {
     return !isNull(ACCESSORS[key]);
 }
 
-
 /**
  * @name isOperator
  * @memberof plat.expressions
@@ -365,7 +363,6 @@ function isAccessor(key: string): boolean {
 function isOperator(key: string): boolean {
     return !isNull(OPERATORS[key]);
 }
-
 
 /**
  * @name isKeyword

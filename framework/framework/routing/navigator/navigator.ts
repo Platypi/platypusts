@@ -300,7 +300,7 @@
         navigate(view: any, options?: INavigateOptions): async.IThenable<void> {
             options = isObject(options) ? options : {};
             var url: string;
-            
+
             return this.finishNavigating().then(() => {
                 if (options.isUrl) {
                     url = view;

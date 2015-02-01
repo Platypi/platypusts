@@ -14,6 +14,7 @@
     "grunt-ts": "^2.0.0",
     "grunt-ts-bundle": "~0.0.1",
     "grunt-tsd": "latest",
+    "grunt-tslint": "^1.0.1",
     "karma": "latest",
     "karma-chrome-launcher": "latest",
     "karma-cli": "latest",

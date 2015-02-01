@@ -184,6 +184,14 @@ module.exports = exports = function load(grunt) {
                 }
             }
         },
+        tslint: {
+            options: {
+                configuration: grunt.file.readJSON('tslint.json')
+            },
+            files: {
+                src: ['framework/window/**/*.ts']
+            }
+        },
         uglify: {
             main: {
                 options: {
@@ -208,6 +216,7 @@ module.exports = exports = function load(grunt) {
     grunt.loadNpmTasks('grunt-ts-bundle');
     grunt.loadNpmTasks('grunt-ts');
     grunt.loadNpmTasks('grunt-tsd');
+    grunt.loadNpmTasks('grunt-tslint');
 
 
     // By default, run all tests.

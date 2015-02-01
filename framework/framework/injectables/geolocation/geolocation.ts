@@ -1,4 +1,6 @@
 module plat {
+    'use strict';
+
     /**
      * Provides methods for interacting with geolocation services on a device.
      */
@@ -52,6 +54,7 @@ module plat {
 
     register.injectable(__Geolocation, Geolocation);
 
+    /* tslint:disable:interface-name */
     /**
      * Wrapper interface for the Position interface, adding documentation to
      * the members.
@@ -185,4 +188,5 @@ module plat {
          */
         maximumAge?: number;
     }
+    /* tslint:enable:interface-name */
 }

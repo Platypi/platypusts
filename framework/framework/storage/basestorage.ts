@@ -1,4 +1,6 @@
 module plat.storage {
+    'use strict';
+
     /**
      * @name BaseStorage
      * @memberof plat.storage
@@ -57,7 +59,7 @@ module plat.storage {
         get length(): number {
             return this._storage.length;
         }
-        
+
         /**
          * @name clear
          * @memberof plat.storage.BaseStorage
@@ -72,7 +74,7 @@ module plat.storage {
         clear(): void {
             this._storage.clear();
         }
-        
+
         /**
          * @name getItem
          * @memberof plat.storage.BaseStorage
@@ -91,7 +93,7 @@ module plat.storage {
         getItem<T>(key: string): T {
             return this._storage.getItem(key);
         }
-        
+
         /**
          * @name key
          * @memberof plat.storage.BaseStorage
@@ -110,7 +112,7 @@ module plat.storage {
         key(index: number): string {
             return this._storage.key(index);
         }
-        
+
         /**
          * @name removeItem
          * @memberof plat.storage.BaseStorage
@@ -128,7 +130,7 @@ module plat.storage {
         removeItem(key: string): void {
             this._storage.removeItem(key);
         }
-        
+
         /**
          * @name setItem
          * @memberof plat.storage.BaseStorage
