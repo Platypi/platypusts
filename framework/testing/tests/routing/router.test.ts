@@ -147,7 +147,7 @@ module test.routing.router {
                 });
 
                 it('should not navigate if pre-navigation steps resolve false', (done: Function) => {
-                    child.canNavigateFrom = () => { return resolve(false); };
+                    (<any>child)._canNavigateFrom = () => { return resolve(false); };
 
                     router.navigate('/posts/new').then(() => {
                         expect(viewport.canNavigateFrom).toHaveBeenCalled();

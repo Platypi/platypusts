@@ -1066,13 +1066,9 @@ module plat.observable {
          * @returns {void}
          */
         protected _notifyChildProperties(identifier: string, newValue: any, oldValue: any): void {
-            var mappings = Object.keys(this.__identifierHash[identifier]);
-
-            if (isNull(mappings)) {
-                return;
-            }
-
-            var length = mappings.length,
+            var props = this.__identifierHash[identifier] || {},
+                mappings = Object.keys(props),
+                length = mappings.length,
                 binding: string,
                 property: string,
                 parentProperty: string,
@@ -1445,7 +1441,8 @@ module plat.observable {
                         return;
                     }
 
-                    var childPropertiesExist = Object.keys(this.__identifierHash[identifier]).length > 0;
+                    var props = this.__identifierHash[identifier],
+                        childPropertiesExist = isObject(props) && Object.keys(props).length > 0;
                     this._execute(identifier, value, oldValue);
 
                     if (childPropertiesExist) {
@@ -1502,7 +1499,8 @@ module plat.observable {
                         return;
                     }
 
-                    var childPropertiesExist = Object.keys(this.__identifierHash[identifier]).length > 0;
+                    var props = this.__identifierHash[identifier],
+                        childPropertiesExist = isObject(props) && Object.keys(props).length > 0;
                     this._execute(identifier, newValue, oldValue);
 
                     if (!childPropertiesExist && isEmpty(this.__identifiers[identifier])) {

@@ -1185,10 +1185,6 @@ declare module plat {
               * Finds all single and double quotes.
               */
             quotationRegex: RegExp;
-            /**
-              * The constructor for a Regex. Creates the markup regular expression.
-              */
-            constructor();
         }
         /**
           * A class that is responsible for taking in a JavaScript expression string and
@@ -4477,98 +4473,6 @@ declare module plat {
               */
             protected static _Exception: IExceptionStatic;
             /**
-              * Evaluates an expression string with a given control and optional control's context and aliases.
-              * @param {string} expression The expression string (e.g. 'foo + foo').
-              * @param {plat.ui.TemplateControl} control? The control used for evaluation context.
-              * @param {IObject<any>} aliases? An optional alias object containing resource alias values (property keys should
-              * not include the '@' character).
-              */
-            static evaluateExpression(expression: string, control?: TemplateControl, aliases?: IObject<any>): any;
-            /**
-              * Evaluates an expression string with a given control and optional control's context and aliases.
-              * @param {plat.expressions.IParsedExpression} expression A parsed expression object created using the
-              * plat.expressions.Parser injectable.
-              * @param {plat.ui.TemplateControl} control? The control used for evaluation context.
-              * @param {IObject<any>} aliases? An optional alias object containing resource alias values (property keys should
-              * not include the '@' character).
-              */
-            static evaluateExpression(expression: expressions.IParsedExpression, control?: TemplateControl, aliases?: IObject<any>): any;
-            /**
-              * Given a control and Array of aliases, finds the associated resources and builds a context object containing
-              * the values. Returns the object.
-              * @param {plat.ui.TemplateControl} control The control used as the starting point for finding resources.
-              * @param {Array<string>} aliases An array of aliases to search for.
-              * @param {IObject<any>} resources? An optional resources object to extend, if no resources object is passed in a
-              * new one will be created.
-              */
-            static getResources(control: TemplateControl, aliases: Array<string>, resources?: IObject<any>): IObject<any>;
-            /**
-              * Starts at a control and searches up its parent chain for a particular resource alias.
-              * If the resource is found, it will be returned along with the control instance on which
-              * the resource was found.
-              * @param {plat.ui.TemplateControl} control The control on which to start searching for the resource alias.
-              * @param {string} alias The alias to search for.
-              * found resource along with its corresponding control.
-              */
-            static findResource(control: TemplateControl, alias: string): {
-                resource: IResource;
-                control: TemplateControl;
-            };
-            /**
-              * Recursively disposes a control and its children.
-              * @param {plat.ui.TemplateControl} control A control to dispose.
-              */
-            static dispose(control: TemplateControl): void;
-            /**
-              * Loads the control tree depth first (visit children, then visit self).
-              * @param {plat.ui.TemplateControl} control The control serving as the root control to load.
-              */
-            static loadControl(control: TemplateControl): void;
-            /**
-              * Notifies a control that its context has been changed by
-              * calling the "control.contextChanged" method if it exists.
-              * @param {plat.ui.TemplateControl} control The control whose context changed.
-              * @param {any} newValue The new value of the control's context.
-              * @param {any} oldValue The old value of the control's context.
-              */
-            static contextChanged(control: TemplateControl, newValue: any, oldValue: any): void;
-            /**
-              * Sets the 'context' resource value on a TemplateControl. If the control specifies
-              * hasOwnContext as true, the 'rootContext' resource value will be set.
-              * @param {plat.ui.TemplateControl} control The control whose context resources will be set.
-              */
-            static setContextResources(control: TemplateControl): void;
-            /**
-              * Completely removes a control's element from its parentNode. If the
-              * control implements replaceWith=null, All of its nodes between its
-              * startNode and endNode (inclusive) will be removed.
-              * @param {plat.ui.TemplateControl} control The control whose element should be removed.
-              */
-            static removeElement(control: TemplateControl): void;
-            /**
-              * Sets the absoluteContextPath read-only property on a control.
-              * @param {plat.ui.TemplateControl} control The control on which to set the absoluteContextPath.
-              * @param {string} path The path to set on the control.
-              */
-            static setAbsoluteContextPath(control: TemplateControl, path: string): void;
-            /**
-              * Determines the template for a control by searching for a templateUrl,
-              * using the provided templateUrl, or serializing the control's templateString.
-              * @param {plat.ui.TemplateControl} control The control whose template is being determined.
-              * @param {string} templateUrl? The potential template URL to use to grab the template.
-              */
-            static determineTemplate(control: TemplateControl, templateUrl?: string): async.IThenable<DocumentFragment>;
-            /**
-              * Detaches a TemplateControl. Disposes its children,
-              * but does not dispose the TemplateControl.
-              * @param {plat.ui.TemplateControl} control The control to be detached.
-              */
-            static detach(control: TemplateControl): void;
-            /**
-              * Returns a new instance of TemplateControl.
-              */
-            static getInstance(): TemplateControl;
-            /**
               * An object for quickly retrieving previously accessed resources.
               */
             private static __resourceCache;
@@ -4693,6 +4597,98 @@ declare module plat {
               * can be equal to this control.
               */
             root: TemplateControl;
+            /**
+              * Evaluates an expression string with a given control and optional control's context and aliases.
+              * @param {string} expression The expression string (e.g. 'foo + foo').
+              * @param {plat.ui.TemplateControl} control? The control used for evaluation context.
+              * @param {IObject<any>} aliases? An optional alias object containing resource alias values (property keys should
+              * not include the '@' character).
+              */
+            static evaluateExpression(expression: string, control?: TemplateControl, aliases?: IObject<any>): any;
+            /**
+              * Evaluates an expression string with a given control and optional control's context and aliases.
+              * @param {plat.expressions.IParsedExpression} expression A parsed expression object created using the
+              * plat.expressions.Parser injectable.
+              * @param {plat.ui.TemplateControl} control? The control used for evaluation context.
+              * @param {IObject<any>} aliases? An optional alias object containing resource alias values (property keys should
+              * not include the '@' character).
+              */
+            static evaluateExpression(expression: expressions.IParsedExpression, control?: TemplateControl, aliases?: IObject<any>): any;
+            /**
+              * Given a control and Array of aliases, finds the associated resources and builds a context object containing
+              * the values. Returns the object.
+              * @param {plat.ui.TemplateControl} control The control used as the starting point for finding resources.
+              * @param {Array<string>} aliases An array of aliases to search for.
+              * @param {IObject<any>} resources? An optional resources object to extend, if no resources object is passed in a
+              * new one will be created.
+              */
+            static getResources(control: TemplateControl, aliases: Array<string>, resources?: IObject<any>): IObject<any>;
+            /**
+              * Starts at a control and searches up its parent chain for a particular resource alias.
+              * If the resource is found, it will be returned along with the control instance on which
+              * the resource was found.
+              * @param {plat.ui.TemplateControl} control The control on which to start searching for the resource alias.
+              * @param {string} alias The alias to search for.
+              * found resource along with its corresponding control.
+              */
+            static findResource(control: TemplateControl, alias: string): {
+                resource: IResource;
+                control: TemplateControl;
+            };
+            /**
+              * Recursively disposes a control and its children.
+              * @param {plat.ui.TemplateControl} control A control to dispose.
+              */
+            static dispose(control: TemplateControl): void;
+            /**
+              * Loads the control tree depth first (visit children, then visit self).
+              * @param {plat.ui.TemplateControl} control The control serving as the root control to load.
+              */
+            static loadControl(control: TemplateControl): void;
+            /**
+              * Notifies a control that its context has been changed by
+              * calling the "control.contextChanged" method if it exists.
+              * @param {plat.ui.TemplateControl} control The control whose context changed.
+              * @param {any} newValue The new value of the control's context.
+              * @param {any} oldValue The old value of the control's context.
+              */
+            static contextChanged(control: TemplateControl, newValue: any, oldValue: any): void;
+            /**
+              * Sets the 'context' resource value on a TemplateControl. If the control specifies
+              * hasOwnContext as true, the 'rootContext' resource value will be set.
+              * @param {plat.ui.TemplateControl} control The control whose context resources will be set.
+              */
+            static setContextResources(control: TemplateControl): void;
+            /**
+              * Completely removes a control's element from its parentNode. If the
+              * control implements replaceWith=null, All of its nodes between its
+              * startNode and endNode (inclusive) will be removed.
+              * @param {plat.ui.TemplateControl} control The control whose element should be removed.
+              */
+            static removeElement(control: TemplateControl): void;
+            /**
+              * Sets the absoluteContextPath read-only property on a control.
+              * @param {plat.ui.TemplateControl} control The control on which to set the absoluteContextPath.
+              * @param {string} path The path to set on the control.
+              */
+            static setAbsoluteContextPath(control: TemplateControl, path: string): void;
+            /**
+              * Determines the template for a control by searching for a templateUrl,
+              * using the provided templateUrl, or serializing the control's templateString.
+              * @param {plat.ui.TemplateControl} control The control whose template is being determined.
+              * @param {string} templateUrl? The potential template URL to use to grab the template.
+              */
+            static determineTemplate(control: TemplateControl, templateUrl?: string): async.IThenable<DocumentFragment>;
+            /**
+              * Detaches a TemplateControl. Disposes its children,
+              * but does not dispose the TemplateControl.
+              * @param {plat.ui.TemplateControl} control The control to be detached.
+              */
+            static detach(control: TemplateControl): void;
+            /**
+              * Returns a new instance of TemplateControl.
+              */
+            static getInstance(): TemplateControl;
             /**
               * This event is fired when an TemplateControl's context property
               * is changed by an ancestor control.
@@ -4890,10 +4886,22 @@ declare module plat {
             dispose(): void;
         }
         /**
-          * A control used in a Viewport for simulated page navigation. The
-          * control has navigation events that are called when navigating to and from the control.
+          * A control used in a Viewport for page navigation. The
+          * control has navigation events that are called when navigating to and from the control. A ViewControl
+          * represents a routing component on a page (i.e. a piece of a page that is associated with a particular route).
+          * It has the ability to initiate, approve, and reject navigation to/from itself. A ViewControl also has the
+          * ability to inject a Router and configure sub-navigation.
           */
         class ViewControl extends TemplateControl implements ISupportNavigation {
+            /**
+              * Specifies that this control will have its own context, and it should not inherit a context.
+              */
+            hasOwnContext: boolean;
+            /**
+              * Every ViewControl inside a Viewport will have a navigator. The navigator is linked to
+              * the router for the Viewport containing the ViewControl.
+              */
+            navigator: routing.Navigator;
             /**
               * Recursively disposes a ViewControl and its children.
               * @param {plat.ui.ViewControl} control A control to dispose.
@@ -4904,25 +4912,60 @@ declare module plat {
               */
             static getInstance(): ViewControl;
             /**
-              * Specifies that this control will have its own context, and it should not inherit a context.
+              * Allows a ViewControl to asynchronously decide if the app is able to navigate away from the
+              * current view. A possible use of this method might be to popup a confirmation modal. You can
+              * return a boolean or IThenable<boolean> to accept/reject navigation.
+              * A word of caution, this is a navigation-blocking function. It is best to avoid long-running functions.
               */
-            hasOwnContext: boolean;
-            /**
-              * Initializes any events that you might use in the ViewControl. Automatically subscribes to 'backButtonPressed' when
-              * you implement a backButtonPressed function.
-              */
-            constructor();
-            navigator: routing.Navigator;
             canNavigateFrom(): any;
+            /**
+              * Allows a ViewControl to asynchronously decide if it can be navigated to with the given parameters/query.
+              * You can return a boolean or IThenable<boolean> to accept/reject navigation.
+              * A word of caution, this is a navigation-blocking function. It is best to avoid long-running functions.
+              */
             canNavigateTo(parameters: any, query: any): any;
+            /**
+              * This method is called when the ViewControl is going out of scope as a result of a navigation.
+              */
             navigatingFrom(): any;
+            /**
+              * This method is called when the ViewControl has come into scope as a result of navigation. It can
+              * receive the route parameters and query in order to set its context.
+              */
             navigatedTo(parameters: any, query: any): any;
         }
+        /**
+          * A control can implement this interface in order to support app navigation. This means the control can be linked to an
+          * object that implements the ISupportRouteNavigation interface (e.g. a
+          * Viewport).
+          */
         interface ISupportNavigation {
+            /**
+              * When a control is linked to a Viewport, it will have a navigator for facilitating
+              * navigation.
+              */
             navigator?: routing.Navigator;
+            /**
+              * Allows a control to asynchronously decide if the app is able to navigate away from the
+              * current view. A possible use of this method might be to popup a confirmation modal. You can
+              * return a boolean or IThenable<boolean> to accept/reject navigation.
+              * A word of caution, this is a navigation-blocking function. It is best to avoid long-running functions.
+              */
             canNavigateFrom(): any;
+            /**
+              * Allows a control to asynchronously decide if it can be navigated to with the given parameters/query.
+              * You can return a boolean or IThenable<boolean> to accept/reject navigation.
+              * A word of caution, this is a navigation-blocking function. It is best to avoid long-running functions.
+              */
             canNavigateTo(parameters: any, query: any): any;
+            /**
+              * This method is called when the control is going out of scope as a result of a navigation.
+              */
             navigatingFrom(): any;
+            /**
+              * This method is called when the control has come into scope as a result of navigation. It can
+              * receive the route parameters and query in order to set its context.
+              */
             navigatedTo(parameters: any, query: any): any;
         }
         /**
@@ -5178,26 +5221,6 @@ declare module plat {
           */
         class BindableTemplates {
             /**
-              * Creates a new instance of BindableTemplates and returns it. If a BindableTemplates is
-              * passed in, it will use the properties on the original BindableTemplates.
-              * @param {plat.ui.TemplateControl} control The TemplateControl
-              * containing the new BindableTemplates object, used for data
-              * context inheritance for templates.
-              * @param {plat.ui.BindableTemplates} original? An optional BindableTemplates
-              * object to copy.
-              */
-            static create(control: TemplateControl, original?: BindableTemplates): BindableTemplates;
-            /**
-              * Clears the memory being held by control's bindableTemplates.
-              * @param {plat.ui.TemplateControl} control The control whose bindableTemplates will be disposed.
-              */
-            static dispose(control: TemplateControl): void;
-            /**
-              * Determines whether or not a control was created using bindableTemplates.
-              * @param {plat.ui.TemplateControl} control The potential bound control.
-              */
-            static isBoundControl(control: TemplateControl): boolean;
-            /**
               * Reference to the IResourcesFactory injectable.
               */
             protected _ResourcesFactory: IResourcesFactory;
@@ -5244,6 +5267,26 @@ declare module plat {
               * A collection of all the controls created while compiling an added template. Useful during disposal.
               */
             private __compiledControls;
+            /**
+              * Creates a new instance of BindableTemplates and returns it. If a BindableTemplates is
+              * passed in, it will use the properties on the original BindableTemplates.
+              * @param {plat.ui.TemplateControl} control The TemplateControl
+              * containing the new BindableTemplates object, used for data
+              * context inheritance for templates.
+              * @param {plat.ui.BindableTemplates} original? An optional BindableTemplates
+              * object to copy.
+              */
+            static create(control: TemplateControl, original?: BindableTemplates): BindableTemplates;
+            /**
+              * Clears the memory being held by control's bindableTemplates.
+              * @param {plat.ui.TemplateControl} control The control whose bindableTemplates will be disposed.
+              */
+            static dispose(control: TemplateControl): void;
+            /**
+              * Determines whether or not a control was created using bindableTemplates.
+              * @param {plat.ui.TemplateControl} control The potential bound control.
+              */
+            static isBoundControl(control: TemplateControl): boolean;
             /**
               * Method for linking a compiled template to a data context and returning a clone of the template,
               * with all new Controls created if the template contains controls. If no data context
@@ -5449,7 +5492,6 @@ declare module plat {
           * Attributes for this object are converted from dash-notation to camelCase notation.
           */
         class Attributes {
-            static getInstance(): Attributes;
             [property: string]: any;
             /**
               * The set of functions added externally that listens
@@ -5460,6 +5502,7 @@ declare module plat {
               * The control tied to this instance.
               */
             private __control;
+            static getInstance(): Attributes;
             /**
               * Initializes this instance with a Control and the camelCased
               * attribute properties and their values.
@@ -5547,6 +5590,30 @@ declare module plat {
               */
             protected static _Exception: IExceptionStatic;
             /**
+              * A list of resources to place on a control.
+              */
+            private static __controlResources;
+            /**
+              * A list of all resource types.
+              */
+            private static __resourceTypes;
+            /**
+              * An object consisting of keyed arrays containing functions for removing observation listeners.
+              */
+            private static __observableResourceRemoveListeners;
+            /**
+              * An object representing all of the currently available resources.
+              */
+            private __resources;
+            /**
+              * Whether this Resources instance has been bound yet.
+              */
+            private __bound;
+            /**
+              * The control that these resources are for.
+              */
+            private __controlInstance;
+            /**
               * Populates an IResource value if necessary, and adds it to the given
               * control's resources.
               * @param {plat.ui.TemplateControl} control The control for which to create a resource.
@@ -5598,35 +5665,11 @@ declare module plat {
               */
             protected static _removeListeners(control: TemplateControl): void;
             /**
-              * A list of resources to place on a control.
-              */
-            private static __controlResources;
-            /**
-              * A list of all resource types.
-              */
-            private static __resourceTypes;
-            /**
-              * An object consisting of keyed arrays containing functions for removing observation listeners.
-              */
-            private static __observableResourceRemoveListeners;
-            /**
               * Adds a '@root' alias and '@rootContext' to a control, specifying that it contains the root
               * and root context. Root controls are generally the root IViewControl.
               * @param {plat.ui.TemplateControl} control The root control.
               */
             private static __addRoot(control);
-            /**
-              * An object representing all of the currently available resources.
-              */
-            private __resources;
-            /**
-              * Whether this Resources instance has been bound yet.
-              */
-            private __bound;
-            /**
-              * The control that these resources are for.
-              */
-            private __controlInstance;
             /**
               * Initializes this Resources instance.
               * @param {plat.ui.TemplateControl} control The control containing this Resources instance.
@@ -6782,6 +6825,10 @@ declare module plat {
               */
             class AnimationPromise extends async.Promise<IGetAnimatingThenable> implements IAnimatingThenable {
                 /**
+                  * Reference to the IPromise injectable.
+                  */
+                protected _Promise: async.IPromise;
+                /**
                   * The animation instance to cancel if needed.
                   */
                 private __animationInstance;
@@ -6803,6 +6850,16 @@ declare module plat {
                   * @param {plat.ui.animations.BaseAnimation} instance The animation instance for this promise.
                   */
                 initialize(instance: BaseAnimation): void;
+                /**
+                  * Fires the pause method on the animation instance.
+                  * indicates that the animation has been paused.
+                  */
+                pause(): async.IThenable<void>;
+                /**
+                  * Fires the resume method on the animation instance.
+                  * indicates that the animation has resumed.
+                  */
+                resume(): async.IThenable<void>;
                 /**
                   * A method to cancel the associated animation.
                   */
@@ -6858,6 +6915,16 @@ declare module plat {
                   * @param {plat.ui.animations.BaseAnimation} instance The animation instance for this promise.
                   */
                 initialize?(instance: BaseAnimation): void;
+                /**
+                  * Fires the pause method on the animation instance.
+                  * indicates that the animation has been paused.
+                  */
+                pause(): async.IThenable<void>;
+                /**
+                  * Fires the resume method on the animation instance.
+                  * indicates that the animation has resumed.
+                  */
+                resume(): async.IThenable<void>;
                 /**
                   * A method to cancel the associated animation.
                   */
@@ -6935,9 +7002,9 @@ declare module plat {
                   */
                 protected _compat: Compat;
                 /**
-                  * An Array of remove functions to dispose of event listeners.
+                  * Reference to the IPromise injectable.
                   */
-                private __eventListeners;
+                protected _Promise: async.IPromise;
                 /**
                   * The node having the animation performed on it.
                   */
@@ -6955,6 +7022,10 @@ declare module plat {
                   */
                 protected _resolve: () => void;
                 /**
+                  * An Array of remove functions to dispose of event listeners.
+                  */
+                private __eventListeners;
+                /**
                   * A function for initializing the animation or any of its properties before start.
                   */
                 initialize(): void;
@@ -6966,6 +7037,14 @@ declare module plat {
                   * A function to be called when the animation is over.
                   */
                 end(): void;
+                /**
+                  * A function to be called to pause the animation.
+                  */
+                pause(): async.IThenable<void>;
+                /**
+                  * A function to be called to resume a paused animation.
+                  */
+                resume(): async.IThenable<void>;
                 /**
                   * A function to be called to let it be known the animation is being cancelled.
                   */
@@ -7062,6 +7141,14 @@ declare module plat {
                   * A function denoting the start of the animation.
                   */
                 start(): void;
+                /**
+                  * A function to be called to pause the animation.
+                  */
+                pause(): async.IThenable<void>;
+                /**
+                  * A function to be called to resume a paused animation.
+                  */
+                resume(): async.IThenable<void>;
                 /**
                   * A function to be called to let it be known the animation is being cancelled.
                   * Replaces the animation class with the animation class and "-end" appended to it
@@ -7201,12 +7288,33 @@ declare module plat {
           * Holds classes and interfaces related to UI control components in platypus.
           */
         module controls {
+            /**
+              * A control that facilitates routing between ViewControls. A Viewport is
+              * the link between a ViewControl, a Navigator, and a Router.
+              * It registers with a router and receives route change events. It then instantiates the proper viewcontrol and appends it
+              * to the DOM.
+              */
             class Viewport extends TemplateControl implements routing.ISupportRouteNavigation {
                 protected static _inject: any;
-                protected _Router: typeof routing.Router;
+                /**
+                  * Used to grab the current Router instance.
+                  */
+                protected _Router: routing.IRouterStatic;
+                /**
+                  * The Promise injectable.
+                  */
                 protected _Promise: async.IPromise;
+                /**
+                  * The Injector for getting instances of ViewControls.
+                  */
                 protected _Injector: typeof dependency.Injector;
+                /**
+                  * Used for compiling and linking a ViewControl's template.
+                  */
                 protected _ElementManagerFactory: processing.IElementManagerFactory;
+                /**
+                  * The document.
+                  */
                 protected _document: Document;
                 /**
                   * Reference to an injectable that caches ElementManagers.
@@ -7220,20 +7328,83 @@ declare module plat {
                   * A promise used for disposing the end state of the previous animation prior to starting a new one.
                   */
                 protected _animationPromise: animations.IAnimationThenable<animations.IGetAnimatingThenable>;
+                /**
+                  * The navigator associated with this Viewport.
+                  */
                 navigator: routing.Navigator;
+                /**
+                  * The router associated with this Viewport.
+                  */
                 router: routing.Router;
+                /**
+                  * The parent router associated with this Viewport.
+                  */
                 parentRouter: routing.Router;
+                /**
+                  * Viewports contain ViewControls.
+                  */
                 controls: Array<ViewControl>;
+                /**
+                  * The next injector used to instantiate the next ViewControl during navigation.
+                  */
                 nextInjector: dependency.Injector<ViewControl>;
+                /**
+                  * The next ViewControl to which to navigate.
+                  */
                 nextView: ViewControl;
+                /**
+                  * Allows the viewport to initialize its navigator with the current
+                  * router.
+                  */
                 initialize(): void;
+                /**
+                  * The viewport registers itself with its router, notifying the
+                  * router that it is ready to receive navigation events.
+                  */
                 loaded(): void;
+                /**
+                  * The viewport's router has matched a route and is asking the viewport if it is safe to
+                  * navigate. Here the viewport can instantiate the new view and ask it if it is safe to
+                  * navigate to the view.
+                  * @param {plat.routing.IRouteInfo} routeInfo Contains the information necessary to instantiate
+                  * the view and feed it the route parameters/query.
+                  */
                 canNavigateTo(routeInfo: routing.IRouteInfo): async.IThenable<boolean>;
+                /**
+                  * The viewport's router has matched a route and is asking the viewport if it is safe to
+                  * navigate from the current state. Here the viewport can query the current ViewControl and
+                  * ask it if it is safe to navigate from its current state.
+                  */
                 canNavigateFrom(): async.IThenable<boolean>;
+                /**
+                  * The viewport's router has matched a route and determined that it is safe to navigate to the
+                  * next view. The viewport will now go through the steps to compile and link the next view then append
+                  * it to the DOM.
+                  * @param {plat.routing.IRouteInfo} routeInfo Contains the information necessary to instantiate
+                  * the view and feed it the route parameters/query.
+                  * new ViewControl has finished instantiating.
+                  */
                 navigateTo(routeInfo: routing.IRouteInfo): async.IThenable<void>;
+                /**
+                  * The viewport's router has matched a route and determined that it is safe to navigate to the
+                  * next view. It is now safe for the viewport to dispose of the current state.
+                  * has finished navigating from the current state.
+                  */
                 navigateFrom(): async.IThenable<void>;
+                /**
+                  * The viewport is going out of scope, so it needs to unregister from its router in order to stop receiving routing
+                  * events.
+                  */
                 dispose(): void;
+                /**
+                  * Creates an INodeMap for a ViewControl in order to compile it.
+                  * @param {plat.dependency.Injector<plat.ui.ViewControl>} The injector used to instantiate the ViewControl.
+                  */
                 protected _createNodeMap(injector: dependency.Injector<ViewControl>): processing.INodeMap;
+                /**
+                  * Finds the first Viewport in the parent chain. This is useful in order to properly initialize the viewport's
+                  * router as a child of the parent viewport's router.
+                  */
                 protected _getParentViewport(): Viewport;
             }
             /**
@@ -7969,11 +8140,7 @@ declare module plat {
                 /**
                   * The RouterStatic injectable instance
                   */
-                protected _Router: typeof routing.Router;
-                /**
-                  * The Injector injectable instance
-                  */
-                protected _Injector: typeof dependency.Injector;
+                protected _Router: routing.IRouterStatic;
                 /**
                   * The Browser injectable instance
                   */
@@ -7994,7 +8161,6 @@ declare module plat {
                   * The a method for removing the click event listener for this control's element.
                   */
                 removeClickListener: IRemoveListener;
-                constructor();
                 /**
                   * Prevents default on the anchor tag if the href attribute is left empty, also determines internal links.
                   */
@@ -8823,10 +8989,6 @@ declare module plat {
               */
             protected _Promise: async.IPromise;
             /**
-              * The Injector injectable instance
-              */
-            protected _Injector: typeof dependency.Injector;
-            /**
               * The IBrowserConfig injectable instance
               */
             protected _browserConfig: web.IBrowserConfig;
@@ -8902,21 +9064,21 @@ declare module plat {
               */
             finishNavigating(): async.IThenable<void>;
             /**
-              * Internal method for navigating to the specified url.
-              */
-            protected _navigate(url: string, replace?: boolean): async.IThenable<void>;
-            /**
               * Tells the router to go back with the given options.
               */
             goBack(options?: IBackNavigationOptions): async.IThenable<void>;
             /**
-              * Internal method for going back a certain length in history
-              */
-            protected _goBack(length: number): async.IThenable<void>;
-            /**
               * Lets the router dispose of all of the necessary properties.
               */
             dispose(): void;
+            /**
+              * Internal method for navigating to the specified url.
+              */
+            protected _navigate(url: string, replace?: boolean): async.IThenable<void>;
+            /**
+              * Internal method for going back a certain length in history
+              */
+            protected _goBack(length: number): async.IThenable<void>;
             /**
               * The root navigator will always observe for url changes and handle them accordingly. This means instructing the
               * router to navigate, and determining what to do in the event that navigation is prevented.
@@ -9215,7 +9377,7 @@ declare module plat {
               * a match.
               * @param {string} char The character with which to match next states.
               */
-            match(char: string): State[];
+            match(char: string): Array<State>;
             /**
               * Finds the next state that shares the same specification
               * as the input spec.
@@ -9235,7 +9397,7 @@ declare module plat {
               * @param {(child: plat.routing.State) => void} iterator The function with which to call for each
               * State.
               */
-            protected _someChildren(iterator: (child: State) => void): void;
+            protected _someChildren(iterator: (child: State) => void): boolean;
         }
         /**
           * The Type for referencing the '_State' injectable as a dependency.
@@ -9453,82 +9615,402 @@ declare module plat {
           */
         class Router {
             protected static _inject: any;
+            /**
+              * The last instantiated router, useful for components wanting to find the most recently
+              * created router in order to generate routes.
+              */
             private static __currentRouter;
-            recognizer: RouteRecognizer;
-            childRecognizer: RouteRecognizer;
-            paramTransforms: IObject<IRouteTransforms>;
-            queryTransforms: IObject<IRouteTransforms>;
-            interceptors: IObject<Array<(routeInfo: IRouteInfo) => any>>;
+            /**
+              * Whether or not the router is currently navigating.
+              */
             navigating: boolean;
+            /**
+              * A Promise That resolves when the router is done navigating.
+              */
             finishNavigating: async.IThenable<void>;
+            /**
+              * The previous url matched for this router.
+              */
             previousUrl: string;
+            /**
+              * The previous query matched for this router.
+              */
             previousQuery: string;
+            /**
+              * The previous route segment matched for this router.
+              */
             previousSegment: string;
+            /**
+              * The previous registered route pattern matched for this router.
+              */
             previousPattern: string;
+            /**
+              * The route information for the active route state.
+              */
             currentRouteInfo: IRouteInfo;
-            ports: Array<ISupportRouteNavigation>;
+            /**
+              * The parent router to this router. Useful for generating and matching routes.
+              */
             parent: Router;
+            /**
+              * All the registered children for this router. Useful for generating and matching routes.
+              */
             children: Array<Router>;
+            /**
+              * A unique id for the router.
+              */
             uid: string;
+            /**
+              * Whether or not this router is the root router (has no parent).
+              */
             isRoot: boolean;
-            ignoreOnce: boolean;
+            /**
+              * Used for registering, generating, and recognizing routes.
+              */
+            protected _recognizer: RouteRecognizer;
+            /**
+              * Used for registering, generating, and recognizing child routes.
+              */
+            protected _childRecognizer: RouteRecognizer;
+            /**
+              * An object containing transform methods for route parameters.
+              */
+            protected _paramTransforms: IObject<IRouteTransforms>;
+            /**
+              * An object containing transform methods for query parameters.
+              */
+            protected _queryTransforms: IObject<IRouteTransforms>;
+            /**
+              * An object containing interceptor methods for particular routes.
+              */
+            protected _interceptors: IObject<Array<(routeInfo: IRouteInfo) => any>>;
+            /**
+              * All the registered Viewports for the router.
+              */
+            protected _ports: Array<ISupportRouteNavigation>;
+            /**
+              * The Promise injectable
+              */
             protected _Promise: async.IPromise;
+            /**
+              * The Injector class, used to match ViewControls to their registered tokens.
+              */
             protected _Injector: typeof dependency.Injector;
-            protected _EventManager: events.IEventManagerStatic;
+            /**
+              * Used to grab the initial url for the router if necessary.
+              */
             protected _browser: web.Browser;
-            protected _browserConfig: web.IBrowserConfig;
+            /**
+              * A shortcut to the Promise.resolve function.
+              */
             protected _resolve: typeof async.Promise.resolve;
+            /**
+              * A shortcut to the Promise.reject function.
+              */
             protected _reject: typeof async.Promise.reject;
+            /**
+              * Exposes the current router property. Also provides the
+              * ability to set the current router.
+              * @param {plat.routing.Router} router Will set the current router.
+              */
             static currentRouter(router?: Router): Router;
+            /**
+              * Instantiates a new router and sets it as the current router.
+              */
             constructor();
+            /**
+              * Initializes a router, giving it a parent router to link to if necessary.
+              * @param {plat.routing.Router} parent? The parent router to link.
+              */
             initialize(parent?: Router): void;
+            /**
+              * Registers a child router with the current router.
+              * @param {plat.routing.Router} child A child router.
+              */
             addChild(child: Router): Router;
+            /**
+              * Removes a child from the router's children, if it exists.
+              * @param {plat.routing.Router} child The child router to remove.
+              */
             removeChild(child: Router): void;
+            /**
+              * Registers a Viewport (or similar object) with the
+              * router, and triggers a navigation if possible.
+              * @param {plat.routing.ISupportRouteNavigation} port An object that supports all the navigation events.
+              * triggered navigation has finished.
+              */
             register(port: ISupportRouteNavigation): async.IThenable<void>;
+            /**
+              * Unregisters a Viewport (or similar object) with the
+              * router in order to stop receiving navigation events.
+              * @param {plat.routing.ISupportRouteNavigation} port An object that supports all the navigation events.
+              */
             unregister(port: ISupportRouteNavigation): void;
-            configure(routes: IRouteMapping): async.IThenable<void>;
+            /**
+              * Configures routes for the router to match. Routes contain the information necessary to map a
+              * route to a particular ViewControl. Also forces a navigation.
+              * @param {plat.routing.IRouteMapping} route A route mapping to register.
+              * forced navigation is complete.
+              */
+            configure(route: IRouteMapping): async.IThenable<void>;
+            /**
+              * Configures routes for the router to match. Routes contain the information necessary to map a
+              * route to a particular ViewControl. Also forces a navigation.
+              * @param {Array<plat.routing.IRouteMapping>} routes Route mappings to register.
+              * forced navigation is complete.
+              */
             configure(routes: Array<IRouteMapping>): async.IThenable<void>;
-            param(handler: (value: any, parameters: any, query: any) => any, parameter: string, view: string): Router;
-            param(handler: (value: any, parameters: any, query: any) => any, parameter: string, view: new (...args: any[]) => any): Router;
-            queryParam(handler: (value: any, query: any) => any, parameter: string, view: string): Router;
-            queryParam(handler: (value: any, query: any) => any, parameter: string, view: new (...args: any[]) => any): Router;
-            protected _configureRoute(route: IRouteMapping): void;
-            protected _addHandler(handler: (value: string, values: any, query?: any) => any, parameter: string, view: any, handlers: IObject<IRouteTransforms>): Router;
-            intercept(handler: (routeInfo: IRouteInfo) => any, view?: string): Router;
+            /**
+              * Registers a handler for a route parameter. When a route is a variable route (e.g. /posts/:id), all the param handlers
+              * registered for the particular view and parameter "id" will be called. The call to the handler is blocking, so the handler
+              * can return a promise while it processes the parameter. All the handlers for a parameter will be called in the order in which
+              * they were registered, with the catch-all (i.e. '*') handlers being called first. Param handlers will be called after all the
+              * query param handlers have been processed. Param handlers are called prior to calling the "canNavigateTo" pipeline.
+              * @param {(value: any, parameters: any, query: any) => any} handler A method that will manipulate the registered parameter.
+              * @param {string} parameter The parameter that the registered handler will modify.
+              * @param {new (...args: any[]) => any} view The view used to match the route. If left out, all routes will be matched.
+              */
+            param(handler: (value: any, parameters: any, query: any) => any, parameter: string, view?: new (...args: any[]) => any): Router;
+            /**
+              * Registers a handler for a route parameter. When a route is a variable route (e.g. /posts/:id), all the param handlers
+              * registered for the particular view and parameter "id" will be called. The call to the handler is blocking, so the handler
+              * can return a promise while it processes the parameter. All the handlers for a parameter will be called in the order in which
+              * they were registered, with the catch-all (i.e. '*') handlers being called first. Param handlers will be called after all the
+              * query param handlers have been processed. Param handlers are called prior to calling the "canNavigateTo" pipeline.
+              * @param {(value: any, parameters: any, query: any) => any} handler A method that will manipulate the registered parameter.
+              * @param {string} parameter The parameter that the registered handler will modify.
+              * @param {string} view The view's registered token used to match the route. If left out, all routes will be matched.
+              */
+            param(handler: (value: any, parameters: any, query: any) => any, parameter: string, view?: string): Router;
+            /**
+              * Registers a handler for a query parameter. When a route contains a query string (e.g. '?start=0'), it will be serialized into an object.
+              * Then, all the queryParam handlers registered for the particular view and query parameter "start" will be called. The call to the handler
+              * is blocking, so the handler can return a promise while it processes the parameter. All the handlers for a parameter will be called in the
+              * order in which they were registered, with the catch-all (i.e. '*') handlers being called first. Query param handlers are called prior to
+              * calling the "canNavigateTo" pipeline.
+              * @param {(value: any, query: any) => any} handler A method that will manipulate the registered parameter.
+              * @param {string} parameter The parameter that the registered handler will modify.
+              * @param {new (...args: any[]) => any} view The view used to match the route. If left out, all routes will be matched.
+              */
+            queryParam(handler: (value: any, query: any) => any, parameter: string, view?: new (...args: any[]) => any): Router;
+            /**
+              * Registers a handler for a query parameter. When a route contains a query string (e.g. '?start=0'), it will be serialized into an object.
+              * Then, all the queryParam handlers registered for the particular view and query parameter "start" will be called. The call to the handler
+              * is blocking, so the handler can return a promise while it processes the parameter. All the handlers for a parameter will be called in the
+              * order in which they were registered, with the catch-all (i.e. '*') handlers being called first. Query param handlers are called prior to
+              * calling the "canNavigateTo" pipeline.
+              * @param {(value: any, query: any) => any} handler A method that will manipulate the registered parameter.
+              * @param {string} parameter The parameter that the registered handler will modify.
+              * @param {string} view The view's registered token used to match the route. If left out, all routes will be matched.
+              */
+            queryParam(handler: (value: any, query: any) => any, parameter: string, view?: string): Router;
+            /**
+              * Registers a handler for a particular route, or all routes. When the route changes, the interceptors registered for the route will be
+              * called in-order (starting with the catch-all interceptors), and they have the opportunity to modify the route information, as well as
+              * prevent navigation from occuring. Interceptors are called prior to calling the "canNavigateTo" pipeline.
+              * @param {(routeInfo: plat.routing.IRouteInfo) => any} interceptor A method that will process the current route.
+              * @param {new (...args: any[]) => any} view The view used to match the route. If left out, all routes will be matched.
+              */
             intercept(handler: (routeInfo: IRouteInfo) => any, view?: new (...args: any[]) => any): Router;
+            /**
+              * Registers a handler for a particular route, or all routes. When the route changes, the interceptors registered for the route will be
+              * called in-order (starting with the catch-all interceptors), and they have the opportunity to modify the route information, as well as
+              * prevent navigation from occuring. Interceptors are called prior to calling the "canNavigateTo" pipeline.
+              * @param {(routeInfo: plat.routing.IRouteInfo) => any} interceptor A method that will process the current route.
+              * @param {string} view The view's registered token used to match the route. If left out, all routes will be matched.
+              */
+            intercept(interceptor: (routeInfo: IRouteInfo) => any, view?: string): Router;
+            /**
+              * Tells the router to match a new route. The router will attempt to find the route and if it succeeds it will
+              * attempt to navigate to it. If it fails, it will return a Promise that rejects.
+              * @param {string} url The new route to match.
+              * @param {plat.IObject<any>} query The query parameters for the route.
+              * @param {boolean} force Whether or not to force navigation, even if the same url has already been matched.
+              * the navigation.
+              */
             navigate(url: string, query?: IObject<any>, force?: boolean): async.IThenable<void>;
-            forceNavigate(): async.IThenable<void>;
-            generate(name: string, parameters?: IObject<any>, query?: IObject<string>): string;
-            navigateChildren(info: IRouteInfo): async.IThenable<void>;
-            getChildRoute(info: IRouteInfo): string;
-            performNavigation(info: IRouteInfo): async.IThenable<void>;
-            performNavigateFrom(ignorePorts?: boolean): async.IThenable<void>;
-            canNavigate(info: IRouteInfo): async.IThenable<boolean>;
-            callAllHandlers(view: string, parameters: any, query?: any): async.IThenable<void>;
-            callHandlers(allHandlers: IRouteTransforms, obj: any, query?: any): async.IThenable<any[][]>;
-            callInterceptors(info: IRouteInfo): async.IThenable<boolean>;
-            canNavigateFrom(ignorePorts?: boolean): async.IThenable<boolean>;
-            canNavigateTo(info: IRouteInfo, ignorePorts?: boolean): async.IThenable<boolean>;
+            /**
+              * Attempts to generate a route with the specified route name. Will generate the full-path from the root
+              * router.
+              * @param {new (...args: any[]) => any} name The Constructor of the named-route to generate.
+              * @param {plat.IObject<string>} parameters? Any parameters used to generate the route.
+              * @param {plat.IObject<string>} query? Any query parameters to append to the generated route.
+              */
+            generate(name: new (...args: any[]) => any, parameters?: IObject<string>, query?: IObject<string>): string;
+            /**
+              * Attempts to generate a route with the specified route name. Will generate the full-path from the root
+              * router.
+              * @param {string} name The name of the route to generate.
+              * @param {plat.IObject<string>} parameters? Any parameters used to generate the route.
+              * @param {plat.IObject<string>} query? Any query parameters to append to the generated route.
+              */
+            generate(name: string, parameters?: IObject<string>, query?: IObject<string>): string;
+            /**
+              * Configures a route mapping and registers it with the RouteRecognizer and the child
+              * RouteRecognizer.
+              * @param {plat.routing.IRouteMapping} route The mapping used to configure the route.
+              */
+            protected _configureRoute(route: IRouteMapping): void;
+            /**
+              * Generic method for adding a param/queryParam handler to the registered handlers object.
+              * @param {(value: any, query: any) => any} handler A method that will manipulate the registered parameter.
+              * @param {string} parameter The parameter that the registered handler will modify.
+              * @param {any} view The view used to match the route. If undefined, all routes will be matched.
+              * @param {plat.IObject<plat.routing.IRouteTransforms>} handlers The object to which to add the handler.
+              */
+            protected _addHandler(handler: (value: string, values: any, query?: any) => any, parameter: string, view: any, handlers: IObject<IRouteTransforms>): Router;
+            /**
+              * Forces a navigation if possible.
+              */
+            protected _forceNavigate(): async.IThenable<void>;
+            /**
+              * Navigates the child routers.
+              * @param {plat.routing.IRouteInfo} info The information necessary to build the childRoute for the child routers.
+              */
+            protected _navigateChildren(info: IRouteInfo): async.IThenable<void>;
+            /**
+              * Parses out the child route from route information.
+              * @param {plat.routing.IRouteInfo} info The information necessary to get the child route.
+              */
+            protected _getChildRoute(info: IRouteInfo): string;
+            /**
+              * It is safe to navigate, so perform the navigation.
+              * @param {plat.routing.IRouteInfo} info The route information.
+              */
+            protected _performNavigation(info: IRouteInfo): async.IThenable<void>;
+            /**
+              * It is safe to navigate, so fire the navigateFrom events.
+              * @param {boolean} ignorePorts? Ignores the ports if necessary.
+              */
+            protected _performNavigateFrom(ignorePorts?: boolean): async.IThenable<void>;
+            /**
+              * Determines if we can navigate from the current state and navigate to the next state.
+              * @param {plat.routing.IRouteInfo} info The route information.
+              */
+            protected _canNavigate(info: IRouteInfo): async.IThenable<boolean>;
+            /**
+              * Determines if we can navigate from the current state and navigate to the next state.
+              * @param {boolean} ignorePorts Ignores the ports if necessary.
+              */
+            protected _canNavigateFrom(ignorePorts?: boolean): async.IThenable<boolean>;
+            /**
+              * Determines if we can navigate to the next state.
+              * @param {plat.routing.IRouteInfo} info The route information.
+              * @param {boolean} ignorePorts Ignores the ports if necessary.
+              */
+            protected _canNavigateTo(info: IRouteInfo, ignorePorts?: boolean): async.IThenable<boolean>;
+            /**
+              * Calls all the registered query and param transforms for a route.
+              * @param {string} view The associated view for the route.
+              * @param {any} parameters The route parameters.
+              * @param {any} query? The query parameters.
+              */
+            protected _callAllHandlers(view: string, parameters: any, query?: any): async.IThenable<void>;
+            /**
+              * Calls the associated transform functions.
+              * @param {plat.routing.IRouteTransforms} allHandlers The transform functions
+              * @param {any} obj The parameters.
+              * @param {any} query? The query parameters.
+              */
+            protected _callHandlers(allHandlers: IRouteTransforms, obj: any, query?: any): async.IThenable<void>;
+            /**
+              * Calls the interceptors for a particular route.
+              * @param {plat.routing.IRouteInfo} info The route information.
+              */
+            protected _callInterceptors(info: IRouteInfo): async.IThenable<boolean>;
+            /**
+              * Checks a passed-in route against the current route to determine if it is the same.
+              * @param {plat.routing.IRouteInfo} info The route information.
+              */
             protected _isSameRoute(info: IRouteInfo): boolean;
+            /**
+              * Clears all the router information, essentially setting the router back to its initialized state.
+              */
             protected _clearInfo(): void;
         }
-        function IRouterStatic(): typeof Router;
+        /**
+          * The injectable function for IRouterStatic
+          */
+        function IRouterStatic(): IRouterStatic;
+        /**
+          * The static methods and properties on router
+          */
+        interface IRouterStatic {
+            /**
+              * Exposes the current router property. Also provides the
+              * ability to set the current router.
+              * @param {plat.routing.Router} router Will set the current router.
+              */
+            currentRouter(router?: Router): Router;
+        }
+        /**
+          * A route mapping, used for registering and matching routes.
+          */
         interface IRouteMapping {
+            /**
+              * A pattern for the route (e.g. "/posts/:id")
+              */
             pattern: string;
+            /**
+              * Either a Constructor for a registered ViewControl, or the registered token for
+              * that ViewControl.
+              */
             view: any;
         }
+        /**
+          * The result of a recognized route.
+          */
         interface IRouteResult extends Array<IRouteInfo> {
         }
+        /**
+          * The information for a recognized route. Contains the delegate, which
+          * maps directly to a ViewControl.
+          */
         interface IRouteInfo extends IDelegateInfo {
+            /**
+              * Maps to a registered ViewControl.
+              */
             delegate: IRouteMapping;
+            /**
+              * Query parameters for the route.
+              */
             query?: IObject<any>;
         }
+        /**
+          * An object that contains an Array of route transform functions.
+          */
         interface IRouteTransforms extends IObject<Array<(value: string, values: any, query?: any) => any>> {
         }
+        /**
+          * Describes an object that supports all the routing events (e.g. a Viewport).
+          */
         interface ISupportRouteNavigation {
+            /**
+              * The router has matched a route and is asking if it is safe to navigate from the current state.
+              * Here you cancan query the current ViewControl and ask it if it is safe to navigate from its current state.
+              */
             canNavigateFrom(): async.IThenable<boolean>;
+            /**
+              * The router has matched a route and is asking if it is safe to navigate. Here
+              * you can instantiate the new view and ask it if it is safe to navigate to the view.
+              * @param {plat.routing.IRouteInfo} routeInfo Contains the information necessary to instantiate
+              * the view and feed it the route parameters/query.
+              */
             canNavigateTo(routeInfo: IRouteInfo): async.IThenable<boolean>;
+            /**
+              * The router has matched a route and determined that it is safe to navigate to the
+              * next view. It is now safe for to dispose of the current state.
+              * has finished navigating from the current state.
+              */
             navigateFrom(): async.IThenable<any>;
+            /**
+              * The router has matched a route and determined that it is safe to navigate to the
+              * next view. You can now go through the steps to compile and link the next view then append
+              * it to the DOM.
+              * @param {plat.routing.IRouteInfo} routeInfo Contains the information necessary to instantiate
+              * the view and feed it the route parameters/query.
+              * new ViewControl has finished instantiating.
+              */
             navigateTo(routeInfo: IRouteInfo): async.IThenable<any>;
         }
     }

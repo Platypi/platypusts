@@ -256,7 +256,7 @@ module plat.events {
 
                 lifecycleListeners.push({
                     name: __backButton,
-                    value: (): void => {
+                    value: (): boolean => {
                         if (!winJs) {
                             dispatch(__backButton, EventManager);
                         }
@@ -270,7 +270,7 @@ module plat.events {
                 if (winJs) {
                     lifecycleListeners.push({
                         name: __backClick,
-                        value: (): void => {
+                        value: (): boolean => {
                             dispatch(__backButton, EventManager);
                             return true;
                         }

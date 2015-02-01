@@ -51,19 +51,6 @@
         protected _Promise: async.IPromise;
 
         /**
-         * @name _Injector
-         * @memberof plat.routing.Navigator
-         * @kind property
-         * @access protected
-         * 
-         * @type {plat.dependency.Injector}
-         * 
-         * @description
-         * The {@link plat.dependency.Injector|Injector} injectable instance
-         */
-        protected _Injector: typeof dependency.Injector;
-
-        /**
          * @name _browserConfig
          * @memberof plat.routing.Navigator
          * @kind property
@@ -334,29 +321,6 @@
         }
 
         /**
-         * @name _navigate
-         * @memberof plat.routing.Navigator
-         * @kind function
-         * @access protected
-         * 
-         * @description
-         * Internal method for navigating to the specified url.
-         * 
-         * @returns {plat.async.IThenable<void>} A promise that resolves when the navigation has finished.
-         */
-        protected _navigate(url: string, replace?: boolean): async.IThenable<void> {
-            if (!this.isRoot) {
-                return Navigator._root._navigate(url, replace);
-            }
-
-            return new this._Promise<void>((resolve, reject): void => {
-                this._resolveNavigate = resolve;
-                this._rejectNavigate = reject;
-                this._browser.url(url, replace);
-            });
-        }
-
-        /**
          * @name goBack
          * @memberof plat.routing.Navigator
          * @kind function
@@ -391,6 +355,45 @@
         }
 
         /**
+         * @name dispose
+         * @memberof plat.routing.Navigator
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Lets the router dispose of all of the necessary properties.
+         * 
+         * @returns {void}
+         */
+        dispose(): void {
+            this._removeUrlListener();
+            deleteProperty(this, 'router');
+        }
+
+        /**
+         * @name _navigate
+         * @memberof plat.routing.Navigator
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Internal method for navigating to the specified url.
+         * 
+         * @returns {plat.async.IThenable<void>} A promise that resolves when the navigation has finished.
+         */
+        protected _navigate(url: string, replace?: boolean): async.IThenable<void> {
+            if (!this.isRoot) {
+                return Navigator._root._navigate(url, replace);
+            }
+
+            return new this._Promise<void>((resolve, reject): void => {
+                this._resolveNavigate = resolve;
+                this._rejectNavigate = reject;
+                this._browser.url(url, replace);
+            });
+        }
+
+        /**
          * @name _goBack
          * @memberof plat.routing.Navigator
          * @kind function
@@ -407,22 +410,6 @@
                 this._rejectNavigate = reject;
                 this._browser.back(length);
             });
-        }
-
-        /**
-         * @name dispose
-         * @memberof plat.routing.Navigator
-         * @kind function
-         * @access public
-         * 
-         * @description
-         * Lets the router dispose of all of the necessary properties.
-         * 
-         * @returns {void}
-         */
-        dispose(): void {
-            this._removeUrlListener();
-            deleteProperty(this, 'router');
         }
 
         /**
@@ -520,7 +507,6 @@
                 return view;
             }
 
-            view = this._Injector.convertDependency(view);
             return this.router.generate(view, parameters, query);
         }
     }

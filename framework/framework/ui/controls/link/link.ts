@@ -52,20 +52,7 @@ module plat.ui.controls {
          * @description
          * The {@link plat.routing.RouterStatic|RouterStatic} injectable instance
          */
-        protected _Router: typeof routing.Router;
-
-        /**
-         * @name _Injector
-         * @memberof plat.ui.controls.Link
-         * @kind property
-         * @access protected
-         * 
-         * @type {plat.dependency.Injector}
-         * 
-         * @description
-         * The {@link plat.dependency.Injector|Injector} injectable instance
-         */
-        protected _Injector: typeof dependency.Injector;
+        protected _Router: routing.IRouterStatic;
 
         /**
          * @name _browser
@@ -270,7 +257,6 @@ module plat.ui.controls {
                     return href;
                 }
 
-                href = this._Injector.convertDependency(href);
                 href = this.router.generate(href, parameters, query);
             }
 

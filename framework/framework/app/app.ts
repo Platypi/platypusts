@@ -388,7 +388,7 @@ module plat {
          */
         constructor() {
             var navigator: routing.Navigator = this.navigator = acquire(__NavigatorInstance);
-            navigator.initialize((<typeof routing.Router>acquire(__RouterStatic)).currentRouter());
+            navigator.initialize((<routing.IRouterStatic>acquire(__RouterStatic)).currentRouter());
         }
 
         /**

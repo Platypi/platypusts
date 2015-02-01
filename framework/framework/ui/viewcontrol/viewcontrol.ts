@@ -6,7 +6,7 @@ module plat.ui {
      * @memberof plat.ui
      * @kind class
      * 
-     * @extends {plat.ui.BaseViewControl}
+     * @extends {plat.ui.TemplateControl}
      * @implements {plat.ui.ISupportNavigation}
      * 
      * @description
