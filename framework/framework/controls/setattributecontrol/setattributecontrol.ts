@@ -126,7 +126,7 @@ module plat.controls {
          * @returns {void}
          */
         setter(): void {
-            postpone(() => {
+            postpone((): void => {
                 var element = this.element,
                     property = this.property;
 
@@ -402,7 +402,7 @@ module plat.controls {
          * @returns {void}
          */
         setter(): void {
-            postpone(() => {
+            postpone((): void => {
                 if (!isNode(this.element)) {
                     return;
                 }

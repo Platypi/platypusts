@@ -280,7 +280,7 @@ module plat.controls {
                 this._property = 'value';
 
                 this._contextExpression = {
-                    evaluate: () => {
+                    evaluate: (): ui.IResource => {
                         return resourceObj.resource;
                     },
                     aliases: [],
@@ -289,7 +289,7 @@ module plat.controls {
                 };
             } else {
                 this._contextExpression = {
-                    evaluate: () => {
+                    evaluate: (): any => {
                         return parent.context;
                     },
                     aliases: [],
@@ -355,27 +355,27 @@ module plat.controls {
                 composing = false,
                 input = 'input',
                 timeout: IRemoveListener,
-                eventListener = () => {
+                eventListener = (): void => {
                     if (composing) {
                         return;
                     }
 
                     this._propertyChanged();
                 },
-                postponedEventListener = () => {
+                postponedEventListener = (): void => {
                     if (isFunction(timeout)) {
                         return;
                     }
 
-                    timeout = postpone(() => {
+                    timeout = postpone((): void => {
                         eventListener();
                         timeout = null;
                     });
                 };
 
             if (isUndefined(_compat.ANDROID)) {
-                this.addEventListener(element, 'compositionstart', () => (composing = true), false);
-                this.addEventListener(element, 'compositionend', () => {
+                this.addEventListener(element, 'compositionstart',(): void => { composing = true; }, false);
+                this.addEventListener(element, 'compositionend', (): void => {
                     composing = false;
                     eventListener();
                 }, false);
@@ -384,7 +384,7 @@ module plat.controls {
             if (_compat.hasEvent(input)) {
                 this.addEventListener(element, input, eventListener, false);
             } else {
-                this.addEventListener(element, 'keydown', (ev: KeyboardEvent) => {
+                this.addEventListener(element, 'keydown', (ev: KeyboardEvent): void => {
                     var key = ev.keyCode,
                         codes = KeyCodes;
 
@@ -510,7 +510,7 @@ module plat.controls {
                 size: undefined,
                 msDetachStream: noop,
                 msClose: noop,
-                slice: () => <Blob>{ }
+                slice: (): Blob => <Blob>{ }
             };
         }
 
@@ -549,7 +549,7 @@ module plat.controls {
                     size: undefined,
                     msDetachStream: noop,
                     msClose: noop,
-                    slice: () => <Blob>{}
+                    slice: (): Blob => <Blob>{}
                 });
             }
 
@@ -947,7 +947,7 @@ module plat.controls {
                 if (isNull(context[property])) {
                     context[property] = [];
                 }
-                this.observeArray(context, property, null, (arrayInfo: observable.IPostArrayChangeInfo<string>) => {
+                this.observeArray(context, property, null, (arrayInfo: observable.IPostArrayChangeInfo<string>): void => {
                     this._setter(arrayInfo.newArray, arrayInfo.oldArray, true);
                 });
             }
@@ -1075,13 +1075,13 @@ module plat.controls {
                     key = split.pop();
 
                 this.observeArray(this._ContextManager.getContext(this.parent, split), key, null,
-                    (ev: observable.IPostArrayChangeInfo<any>) => {
-                        select.itemsLoaded.then(() => {
+                    (ev: observable.IPostArrayChangeInfo<any>): void => {
+                        select.itemsLoaded.then((): void => {
                             this._setter(this.evaluateExpression(this._expression));
                         });
                     });
 
-                select.itemsLoaded.then(() => {
+                select.itemsLoaded.then((): void => {
                     this._setter(this.evaluateExpression(this._expression));
                 });
 
@@ -1110,8 +1110,8 @@ module plat.controls {
 
             if (isFunction(templateControl.observeProperty) &&
                 isFunction(templateControl.setProperty)) {
-                templateControl.observeProperty((newValue: any) => {
-                    this._getter = () => newValue;
+                templateControl.observeProperty((newValue: any): void => {
+                    this._getter = (): any => newValue;
                     this._propertyChanged();
                 });
 

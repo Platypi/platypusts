@@ -291,7 +291,7 @@ module plat {
 
                 contextManager.observe(ctrl.absoluteContextPath, {
                     uid: control.uid,
-                    listener: (newValue, oldValue) => {
+                    listener: (newValue, oldValue): void => {
                         ui.TemplateControl.contextChanged(<ui.TemplateControl>control, newValue, oldValue);
                     }
                 });
@@ -573,7 +573,7 @@ module plat {
          * 
          * @returns {void}
          */
-        initialize() { }
+        initialize(): void { }
 
         /**
          * @name loaded
@@ -589,7 +589,7 @@ module plat {
          * 
          * @returns {void}
          */
-        loaded() { }
+        loaded(): void { }
 
         /**
          * @name getControlsByName
@@ -642,7 +642,7 @@ module plat {
          * @returns {Array<T>} The controls matching the input type.
          */
         getControlsByType<T extends Control>(Constructor: new () => T): Array<T>;
-        getControlsByType(type: any) {
+        getControlsByType(type: any): Array<any> {
             if (isString(type)) {
                 return Control.__getControls(this, 'type', type);
             }
@@ -702,7 +702,7 @@ module plat {
 
             Control.__addRemoveListener(uid, removeListener);
 
-            return () => {
+            return (): void => {
                 removeListener();
                 Control.__spliceRemoveListener(uid, removeListener);
             };
@@ -866,7 +866,7 @@ module plat {
                 uid = this.uid,
                 removeListener = contextManager.observeArray(uid, preCallback, postCallback, absoluteIdentifier, array, null),
                 removeCallback = contextManager.observe(absoluteIdentifier, {
-                    listener: (newValue: Array<any>, oldValue: Array<any>) => {
+                    listener: (newValue: Array<any>, oldValue: Array<any>): void => {
                         removeListener();
                         removeListener = contextManager
                             .observeArray(uid, preCallback, postCallback, absoluteIdentifier, newValue, oldValue);
@@ -874,7 +874,7 @@ module plat {
                     uid: uid
                 });
 
-            return () => {
+            return (): void => {
                 removeListener();
                 removeCallback();
             };
@@ -999,7 +999,7 @@ module plat {
 
                 listeners.push(managers[identifier].observe(identifier, {
                     uid: uid,
-                    listener: () => {
+                    listener: (): void => {
                         var value = evaluateExpression(expression, control);
                         listener(value, oldValue);
                         oldValue = value;
@@ -1007,7 +1007,7 @@ module plat {
                 }));
             }
 
-            return () => {
+            return (): void => {
                 var length = listeners.length;
 
                 for (var i = 0; i < length; ++i) {
@@ -1175,7 +1175,7 @@ module plat {
          * @returns {void}
          */
         dispatchEvent(name: string, direction?: string, ...args: any[]): void;
-        dispatchEvent(name: string, direction?: string, ...args: any[]) {
+        dispatchEvent(name: string, direction?: string, ...args: any[]): void {
             var manager: events.IEventManagerStatic = Control._EventManager || acquire(__EventManagerStatic);
 
             if (!manager.hasDirection(direction)) {

@@ -90,7 +90,7 @@ module plat.controls {
          * 
          * @returns {void}
          */
-        setter() {
+        setter(): void {
             super.setter();
 
             var templateControl: ui.controls.Link = this.templateControl;
@@ -155,7 +155,7 @@ module plat.controls {
          * 
          * @returns {void}
          */
-        setter() {
+        setter(): void {
             var element = this.element,
                 elementProperty = this.property,
                 expression = this.attributes[this.attribute];

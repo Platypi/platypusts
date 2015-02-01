@@ -397,7 +397,7 @@ module plat.controls {
             if ((keyCode >= 48 && keyCode <= 90) ||
                 (keyCode >= 186) ||
                 (keyCode >= 96 && keyCode <= 111)) {
-                this.cancelEvent = postpone(() => {
+                this.cancelEvent = postpone((): void => {
                     super._onEvent(ev);
                 });
             }
@@ -413,7 +413,7 @@ module plat.controls {
          * 
          * @returns {void}
          */
-        dispose() {
+        dispose(): void {
             this.cancelEvent();
 
             this.cancelEvent = null;
@@ -476,7 +476,7 @@ module plat.controls {
             if ((keyCode >= 48 && keyCode <= 90) ||
                 (keyCode >= 186) ||
                 (keyCode >= 96 && keyCode <= 111)) {
-                this.cancelEvent = postpone(() => {
+                this.cancelEvent = postpone((): void => {
                     super._onEvent(ev);
                 });
             }
@@ -492,7 +492,7 @@ module plat.controls {
          * 
          * @returns {void}
          */
-        dispose() {
+        dispose(): void {
             this.cancelEvent();
 
             this.cancelEvent = null;

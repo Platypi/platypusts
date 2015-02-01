@@ -232,7 +232,7 @@
             listener = listener.bind(this.templateControl);
             listeners.push(listener);
 
-            return () => {
+            return (): void => {
                 var index = listeners.indexOf(listener);
                 if (index === -1) {
                     return;
