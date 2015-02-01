@@ -265,6 +265,7 @@
             }
         }
     }
+
     register.injectable(__Animator, Animator);
 
     /**
@@ -346,6 +347,19 @@
      */
     export class AnimationPromise extends async.Promise<IGetAnimatingThenable> implements IAnimatingThenable {
         /**
+         * @name _Promise
+         * @memberof plat.ui.animations.AnimationPromise
+         * @kind property
+         * @access protected
+         * 
+         * @type {plat.async.IPromise}
+         * 
+         * @description
+         * Reference to the {@link plat.async.IPromise|IPromise} injectable.
+         */
+        protected _Promise: async.IPromise = acquire(__Promise);
+
+        /**
          * @name __animationInstance
          * @memberof plat.ui.animations.AnimationPromise
          * @kind property
@@ -418,6 +432,48 @@
         }
 
         /**
+         * @name pause
+         * @memberof plat.ui.animations.AnimationPromise
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Fires the pause method on the animation instance.
+         * 
+         * @returns {plat.async.IThenable<void>} A new promise that resolves when the animation instance 
+         * indicates that the animation has been paused.
+         */
+        pause(): async.IThenable<void> {
+            var animationInstance = this.__animationInstance;
+            if (!isNull(animationInstance) && isFunction(animationInstance.pause)) {
+                return this._Promise.resolve(<any>animationInstance.pause());
+            }
+
+            return this._Promise.resolve();
+        }
+
+        /**
+         * @name resume
+         * @memberof plat.ui.animations.AnimationPromise
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Fires the resume method on the animation instance.
+         * 
+         * @returns {plat.async.IThenable<void>} A new promise that resolves when the animation instance 
+         * indicates that the animation has resumed.
+         */
+        resume(): async.IThenable<void> {
+            var animationInstance = this.__animationInstance;
+            if (!isNull(animationInstance) && isFunction(animationInstance.resume)) {
+                return this._Promise.resolve(<any>animationInstance.resume());
+            }
+
+            return this._Promise.resolve();
+        }
+
+        /**
          * @name cancel
          * @memberof plat.ui.animations.AnimationPromise
          * @kind function
@@ -456,10 +512,8 @@
          */
         dispose(): IAnimatingThenable {
             var animationInstance = this.__animationInstance;
-            if (!isNull(animationInstance)) {
-                if (isFunction(animationInstance.dispose)) {
-                    animationInstance.dispose();
-                }
+            if (!isNull(animationInstance) && isFunction(animationInstance.dispose)) {
+                animationInstance.dispose();
             }
 
             return this;

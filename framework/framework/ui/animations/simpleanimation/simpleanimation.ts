@@ -91,7 +91,13 @@ module plat.ui.animations {
          * @returns {void}
          */
         start(): void {
-            var animationId = this._compat.animationEvents.$animation,
+            var animationEvents = this._compat.animationEvents;
+            if (isUndefined(animationEvents)) {
+                this.end();
+                return;
+            }
+
+            var animationId = animationEvents.$animation,
                 element = this.element,
                 className = this.className;
 
@@ -114,6 +120,58 @@ module plat.ui.animations {
                         replaceClass(element, className, className + __END_SUFFIX);
                         this.end();
                     });
+                });
+            });
+        }
+
+        /**
+         * @name pause
+         * @memberof plat.ui.animations.BaseAnimation
+         * @kind function
+         * @access public
+         * @virtual
+         * 
+         * @description
+         * A function to be called to pause the animation.
+         * 
+         * @returns {plat.async.IThenable<void>} A new promise that resolves when the animation has been paused.
+         */
+        pause(): async.IThenable<void> {
+            var animationEvents = this._compat.animationEvents;
+            if (isUndefined(animationEvents)) {
+                return this._Promise.resolve();
+            }
+
+            return new this._Promise<void>((resolve) => {
+                requestAnimationFrameGlobal(() => {
+                    this.element.style[<any>(animationEvents.$animation + 'PlayState')] = 'paused';
+                    resolve();
+                });
+            });
+        }
+
+        /**
+         * @name resume
+         * @memberof plat.ui.animations.BaseAnimation
+         * @kind function
+         * @access public
+         * @virtual
+         * 
+         * @description
+         * A function to be called to resume a paused animation.
+         * 
+         * @returns {plat.async.IThenable<void>} A new promise that resolves when the animation has resumed.
+         */
+        resume(): async.IThenable<void> {
+            var animationEvents = this._compat.animationEvents;
+            if (isUndefined(animationEvents)) {
+                return this._Promise.resolve();
+            }
+
+            return new this._Promise<void>((resolve) => {
+                requestAnimationFrameGlobal(() => {
+                    this.element.style[<any>(animationEvents.$animation + 'PlayState')] = 'running';
+                    resolve();
                 });
             });
         }
