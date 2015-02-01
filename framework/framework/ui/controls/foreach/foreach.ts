@@ -1,4 +1,6 @@
 module plat.ui.controls {
+    'use strict';
+
     /**
      * @name ForEach
      * @memberof plat.ui.controls

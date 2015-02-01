@@ -416,7 +416,7 @@ function replaceClass(element: HTMLElement, oldClass: string, newClass: string):
     if (!isString(cName) || !isString(newClass) || newClass === '') {
         return;
     }
-    
+
     if (isUndefined(element.classList)) {
         var startRegex = new RegExp('^' + oldClass + '\\s+', 'g'),
             midRegex = new RegExp('\\s+' + oldClass + '\\s+', 'g'),

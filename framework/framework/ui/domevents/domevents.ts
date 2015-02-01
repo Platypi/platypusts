@@ -1,4 +1,6 @@
 ﻿module plat.ui {
+    'use strict';
+
     /**
      * @name DomEvents
      * @memberof plat.ui
@@ -2487,28 +2489,30 @@
          */
         private __preventClickFromTouch(): void {
             var _document = this._document,
+                preventDefault: (ev: Event) => boolean,
                 delayedClickRemover = defer(() => {
                     _document.removeEventListener('click', preventDefault, true);
                     _document.removeEventListener('mousedown', preventDefault, true);
                     _document.removeEventListener('mouseup', preventDefault, true);
-                }, 400),
-                preventDefault = (ev: Event) => {
-                    ev.preventDefault();
-                    ev.stopPropagation();
-                    _document.removeEventListener(ev.type, preventDefault, true);
-                    if (delayedClickRemover === noop) {
-                        return false;
-                    }
-                    delayedClickRemover();
-                    delayedClickRemover = noop;
+                }, 400);
 
-                    var touchDown = this.__lastTouchDown;
-                    if (isNull(touchDown) || this.__isFocused(touchDown.target)) {
-                        return false;
-                    }
-                    this.__handleInput(<HTMLInputElement>touchDown.target);
+            preventDefault = (ev: Event) => {
+                ev.preventDefault();
+                ev.stopPropagation();
+                _document.removeEventListener(ev.type, preventDefault, true);
+                if (delayedClickRemover === noop) {
                     return false;
-                };
+                }
+                delayedClickRemover();
+                delayedClickRemover = noop;
+
+                var touchDown = this.__lastTouchDown;
+                if (isNull(touchDown) || this.__isFocused(touchDown.target)) {
+                    return false;
+                }
+                this.__handleInput(<HTMLInputElement>touchDown.target);
+                return false;
+            };
 
             postpone(() => {
                 _document.addEventListener('click', preventDefault, true);

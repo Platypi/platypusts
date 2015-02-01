@@ -15,6 +15,21 @@ module plat.ui {
      */
     export class ViewControl extends TemplateControl implements ISupportNavigation {
         /**
+         * @name hasOwnContext
+         * @memberof plat.ui.BaseViewControl
+         * @kind property
+         * @access public
+         * 
+         * @type {boolean}
+         * 
+         * @description
+         * Specifies that this control will have its own context, and it should not inherit a context.
+         */
+        hasOwnContext: boolean = true;
+
+        navigator: routing.Navigator;
+
+        /**
          * @name dispose
          * @memberof plat.ui.ViewControl
          * @kind function
@@ -49,19 +64,6 @@ module plat.ui {
         }
 
         /**
-         * @name hasOwnContext
-         * @memberof plat.ui.BaseViewControl
-         * @kind property
-         * @access public
-         * 
-         * @type {boolean}
-         * 
-         * @description
-         * Specifies that this control will have its own context, and it should not inherit a context.
-         */
-        hasOwnContext: boolean = true;
-
-        /**
          * @name constructor
          * @memberof plat.ui.ViewControl
          * @kind function
@@ -76,8 +78,6 @@ module plat.ui {
         constructor() {
             super();
         }
-
-        navigator: routing.Navigator;
 
         canNavigateFrom(): any { }
 

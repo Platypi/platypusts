@@ -1,4 +1,6 @@
 ﻿module plat.ui {
+    'use strict';
+
     /**
      * @name BindablePropertyControl
      * @memberof plat.ui
@@ -71,7 +73,7 @@
          * @returns {void}
          */
         setProperty(newValue: any, oldValue?: any, firstTime?: boolean): void { }
-        
+
         /**
          * @name propertyChanged
          * @memberof plat.ui.BindablePropertyControl
@@ -98,7 +100,7 @@
                 listeners[i](newValue, oldValue);
             }
         }
-        
+
         /**
          * @name dispose
          * @memberof plat.ui.BindablePropertyControl

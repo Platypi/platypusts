@@ -8,6 +8,8 @@
  * Holds all the classes and interfaces related to UI components for platypus.
  */
 module plat.ui {
+    'use strict';
+
     /**
      * @name Attributes
      * @memberof plat.ui
@@ -21,10 +23,6 @@ module plat.ui {
      * Attributes for this object are converted from dash-notation to camelCase notation.
      */
     export class Attributes {
-        static getInstance() {
-            return new Attributes();
-        }
-
         [property: string]: any;
 
         /**
@@ -52,6 +50,10 @@ module plat.ui {
          * The control tied to this instance.
          */
         private __control: Control;
+
+        static getInstance() {
+            return new Attributes();
+        }
 
         /**
          * @name initialize
@@ -116,7 +118,7 @@ module plat.ui {
                 listeners.splice(index, 1);
             };
         }
-        
+
         /**
          * @name _attributeChanged
          * @memberof plat.ui.Attributes

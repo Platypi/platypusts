@@ -1,4 +1,6 @@
 module plat.ui {
+    'use strict';
+
     /**
      * @name Dom
      * @memberof plat.ui

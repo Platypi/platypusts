@@ -1,4 +1,6 @@
 module plat.ui {
+    'use strict';
+
     /**
      * @name TemplateControl
      * @memberof plat.ui
@@ -121,6 +123,300 @@ module plat.ui {
          * Reference to the {@link plat.IExceptionStatic|IExceptionStatic} injectable.
          */
         protected static _Exception: IExceptionStatic;
+
+        /**
+         * @name __resourceCache
+         * @memberof plat.ui.TemplateControl
+         * @kind property
+         * @access private
+         * @static
+         * 
+         * @type {IObject<any>}
+         * 
+         * @description
+         * An object for quickly retrieving previously accessed resources.
+         */
+        private static __resourceCache: IObject<any> = {};
+
+        /**
+         * @name priority
+         * @memberof plat.ui.TemplateControl
+         * @kind property
+         * @access public
+         * 
+         * @type {number}
+         * 
+         * @description
+         * By default {@link plat.ui.TemplateControl|TemplateControls} have a priority of 100.
+         */
+        priority = 100;
+
+        /**
+         * @name context
+         * @memberof plat.ui.TemplateControl
+         * @kind property
+         * @access public
+         * 
+         * @type {any}
+         * 
+         * @description
+         * The context of an {@link plat.ui.TemplateControl|TemplateControl}, used for inheritance and data-binding.
+         */
+        context: any = null;
+
+        /**
+         * @name name
+         * @memberof plat.ui.TemplateControl
+         * @kind property
+         * @access public
+         * @readonly
+         * 
+         * @type {string}
+         * 
+         * @description
+         * The name of a {@link plat.ui.TemplateControl|TemplateControl} if a {@link plat.controls.Name|Name} 
+         * control is involved.
+         */
+        name: string;
+
+        /**
+         * @name absoluteContextPath
+         * @memberof plat.ui.TemplateControl
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * Specifies the absolute path from where the context was created to this Control's context.
+         * Used by the {@link plat.observable.ContextManager|ContextManager} for maintaining context parity 
+         * (e.g. 'context.childContextProperty.grandChildContextProperty').
+         */
+        absoluteContextPath: string = null;
+
+        /**
+         * @name resources
+         * @memberof plat.ui.TemplateControl
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.ui.Resources}
+         * 
+         * @description
+         * Resources are used for providing aliases to use in markup expressions. They 
+         * are particularly useful when trying to access properties outside of the 
+         * current context, as well as reassigning context at any point in an app.
+         * 
+         * @remarks
+         * By default, every control has a resource for '@control' and '@context'.
+         * {@link plat.ui.IViewControl|IViewControl} objects also have a resource for '@root' and '@rootContext', 
+         * which is a reference to their root control and root context.
+         * 
+         * Resources can be created in HTML, or through the exposed control.resources 
+         * object. If specified in HTML, they must be the first element child of the 
+         * control upon which the resources will be placed. IViewControls that use a 
+         * templateUrl can have resources as their first element in the templateUrl.
+         * 
+         * In the provided example, the resources can be accessed by using '@Cache' and '@testObj'.
+         * The type of resource is denoted by the element name.
+         * 
+         * Only resources of type 'observable' will have data binding. The types of resources are:
+         * function, injectable, observable, and object. Resources of type 'function' will have their
+         * associated function context bound to the control that contains the resource.
+         * 
+         * When an alias is found in a markup expression, the framework will search up the control chain 
+         * to find the alias on a control's resources. This first matching alias will be used.
+         * 
+         * @example
+         * <custom-control>
+         *     <plat-resources>
+         *         <injectable alias="Cache">_CacheFactory</injectable>
+         *         <observable alias="testObj">
+         *              { 
+         *                  foo: 'foo', 
+         *                  bar: 'bar', 
+         *                  baz: 2 
+         *              }
+         *         </observable>
+         *     </plat-resources>
+         * </custom-control>
+         */
+        resources: Resources;
+
+        /**
+         * @name hasOwnContext
+         * @memberof plat.ui.TemplateControl
+         * @kind property
+         * @access public
+         * 
+         * @type {boolean}
+         * 
+         * @description
+         * Flag indicating whether or not the {@link plat.ui.TemplateControl|TemplateControl} defines the context property.
+         */
+        hasOwnContext: boolean = false;
+
+        /**
+         * @name templateString
+         * @memberof plat.ui.TemplateControl
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * A string representing the DOM template for this control. If this property is
+         * defined on a {@link plat.ui.TemplateControl|TemplateControl} then DOM will be created and put in the 
+         * control's element prior to calling the 'setTemplate' method.
+         */
+        templateString: string;
+
+        /**
+         * @name templateUrl
+         * @memberof plat.ui.TemplateControl
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * A url containing a string representing the DOM template for this control. If this property is
+         * defined on a {@link plat.ui.TemplateControl|TemplateControl} then DOM will be created and put in the 
+         * control's element prior to calling the 'setTemplate' method. This property takes 
+         * precedence over templateString. In the event that both are defined, templateString
+         * will be ignored.
+         */
+        templateUrl: string;
+
+        /**
+         * @name innerTemplate
+         * @memberof plat.ui.TemplateControl
+         * @kind property
+         * @access public
+         * 
+         * @type {DocumentFragment}
+         * 
+         * @description
+         * A DocumentFragment representing the innerHTML that existed when this control was instantiated.
+         * This property will only contain the innerHTML when either a templateString or templateUrl is
+         * defined. Its important to clone this property when injecting it somewhere, else its childNodes
+         * will disappear.
+         * 
+         * @example this.innerTemplate.cloneNode(true); //Useful if this is not a one-time injection.
+         */
+        innerTemplate: DocumentFragment;
+
+        /**
+         * @name bindableTemplates
+         * @memberof plat.ui.TemplateControl
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.ui.BindableTemplates}
+         * 
+         * @description
+         * An {@link plat.ui.BindableTemplates|BindableTemplates} object used for binding a data context to a template. 
+         * This is an advanced function of a {@link plat.ui.TemplateControl|TemplateControl}.
+         */
+        bindableTemplates: BindableTemplates;
+
+        /**
+         * @name controls
+         * @memberof plat.ui.TemplateControl
+         * @kind property
+         * @access public
+         * 
+         * @type {Array<plat.Control>}
+         * 
+         * @description
+         * An array of child controls. Any controls created by this control can be found in this array. The controls in
+         * this array will have reference to this control in their parent property.
+         */
+        controls: Array<Control>;
+
+        /**
+         * @name elementNodes
+         * @memberof plat.ui.TemplateControl
+         * @kind property
+         * @access public
+         * 
+         * @type {Array<Node>}
+         * 
+         * @description
+         * A Node array for managing the {@link plat.ui.TemplateControl|TemplateControl's} childNodes in the event that this control 
+         * replaces its element. This property will only exist/be of use for a {@link plat.ui.TemplateControl|TemplateControl} that 
+         * implements the replaceWith property.
+         */
+        elementNodes: Array<Node>;
+
+        /**
+         * @name startNode
+         * @memberof plat.ui.TemplateControl
+         * @kind property
+         * @access public
+         * 
+         * @type {Node}
+         * 
+         * @description
+         * The first node in the {@link plat.ui.TemplateControl|TemplateControl's} body. This property will be a Comment node when the 
+         * control implements replaceWith = null, otherwise it will be null. This property allows an 
+         * {@link plat.ui.TemplateControl|TemplateControl} to add nodes to its body in the event that it replaces its element.
+         * 
+         * @example this.startNode.parentNode.insertBefore(node, this.startNode.nextSibling);
+         */
+        startNode: Node;
+
+        /**
+         * @name endNode
+         * @memberof plat.ui.TemplateControl
+         * @kind property
+         * @access public
+         * 
+         * @type {Node}
+         * 
+         * @description
+         * The last node in the {@link plat.ui.TemplateControl|TemplateControl's} body. This property will be a Comment node when the 
+         * control implements the replaceWith property, otherwise it will be null. This property allows a 
+         * {@link plat.ui.TemplateControl|TemplateControl} to add nodes to its body in the event that it replaces its element.
+         * 
+         * @example this.endNode.parentNode.insertBefore(node, this.endNode);
+         */
+        endNode: Node;
+
+        /**
+         * @name replaceWith
+         * @memberof plat.ui.TemplateControl
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * Allows a {@link plat.ui.TemplateControl|TemplateControl} to either swap its element with another element (e.g. plat-select), 
+         * or replace its element altogether. If null or empty string, the element will be removed from the DOM, and the 
+         * childNodes of the element will be in its place. In addition, when the element is placed startNode and endNode Comments 
+         * are created, and the childNodes are added to the elementNodes property on the control. The replaceWith 
+         * property can be any property that works with document.createElement(). If the control's element had 
+         * attributes (as well as attribute Controls), those attributes will be carried to the swapped element. The default 
+         * replaceWith is 'any,' meaning it will default to a 'div' in the case that the control type is used as the 
+         * element's nodename (e.g. <plat-foreach plat-context="..."></plat-foreach>), but will maintain whatever element type 
+         * is used otherwise (e.g. <tr plat-control="plat-foreach" plat-context="..."></tr>).
+         */
+        replaceWith = 'any';
+
+        /**
+         * @name root
+         * @memberof plat.ui.TemplateControl
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.ui.TemplateControl}
+         * 
+         * @description
+         * Set to the root ancestor control from which this control inherits its context. This value
+         * can be equal to this control.
+         */
+        root: TemplateControl;
 
         /**
          * @name evaluateExpression
@@ -649,300 +945,6 @@ module plat.ui {
         }
 
         /**
-         * @name __resourceCache
-         * @memberof plat.ui.TemplateControl
-         * @kind property
-         * @access private
-         * @static
-         * 
-         * @type {IObject<any>}
-         * 
-         * @description
-         * An object for quickly retrieving previously accessed resources.
-         */
-        private static __resourceCache: IObject<any> = {};
-
-        /**
-         * @name priority
-         * @memberof plat.ui.TemplateControl
-         * @kind property
-         * @access public
-         * 
-         * @type {number}
-         * 
-         * @description
-         * By default {@link plat.ui.TemplateControl|TemplateControls} have a priority of 100.
-         */
-        priority = 100;
-
-        /**
-         * @name context
-         * @memberof plat.ui.TemplateControl
-         * @kind property
-         * @access public
-         * 
-         * @type {any}
-         * 
-         * @description
-         * The context of an {@link plat.ui.TemplateControl|TemplateControl}, used for inheritance and data-binding.
-         */
-        context: any = null;
-
-        /**
-         * @name name
-         * @memberof plat.ui.TemplateControl
-         * @kind property
-         * @access public
-         * @readonly
-         * 
-         * @type {string}
-         * 
-         * @description
-         * The name of a {@link plat.ui.TemplateControl|TemplateControl} if a {@link plat.controls.Name|Name} 
-         * control is involved.
-         */
-        name: string;
-
-        /**
-         * @name absoluteContextPath
-         * @memberof plat.ui.TemplateControl
-         * @kind property
-         * @access public
-         * 
-         * @type {string}
-         * 
-         * @description
-         * Specifies the absolute path from where the context was created to this Control's context.
-         * Used by the {@link plat.observable.ContextManager|ContextManager} for maintaining context parity 
-         * (e.g. 'context.childContextProperty.grandChildContextProperty').
-         */
-        absoluteContextPath: string = null;
-
-        /**
-         * @name resources
-         * @memberof plat.ui.TemplateControl
-         * @kind property
-         * @access public
-         * 
-         * @type {plat.ui.Resources}
-         * 
-         * @description
-         * Resources are used for providing aliases to use in markup expressions. They 
-         * are particularly useful when trying to access properties outside of the 
-         * current context, as well as reassigning context at any point in an app.
-         * 
-         * @remarks
-         * By default, every control has a resource for '@control' and '@context'.
-         * {@link plat.ui.IViewControl|IViewControl} objects also have a resource for '@root' and '@rootContext', 
-         * which is a reference to their root control and root context.
-         * 
-         * Resources can be created in HTML, or through the exposed control.resources 
-         * object. If specified in HTML, they must be the first element child of the 
-         * control upon which the resources will be placed. IViewControls that use a 
-         * templateUrl can have resources as their first element in the templateUrl.
-         * 
-         * In the provided example, the resources can be accessed by using '@Cache' and '@testObj'.
-         * The type of resource is denoted by the element name.
-         * 
-         * Only resources of type 'observable' will have data binding. The types of resources are:
-         * function, injectable, observable, and object. Resources of type 'function' will have their
-         * associated function context bound to the control that contains the resource.
-         * 
-         * When an alias is found in a markup expression, the framework will search up the control chain 
-         * to find the alias on a control's resources. This first matching alias will be used.
-         * 
-         * @example
-         * <custom-control>
-         *     <plat-resources>
-         *         <injectable alias="Cache">_CacheFactory</injectable>
-         *         <observable alias="testObj">
-         *              { 
-         *                  foo: 'foo', 
-         *                  bar: 'bar', 
-         *                  baz: 2 
-         *              }
-         *         </observable>
-         *     </plat-resources>
-         * </custom-control>
-         */
-        resources: Resources;
-
-        /**
-         * @name hasOwnContext
-         * @memberof plat.ui.TemplateControl
-         * @kind property
-         * @access public
-         * 
-         * @type {boolean}
-         * 
-         * @description
-         * Flag indicating whether or not the {@link plat.ui.TemplateControl|TemplateControl} defines the context property.
-         */
-        hasOwnContext: boolean = false;
-
-        /**
-         * @name templateString
-         * @memberof plat.ui.TemplateControl
-         * @kind property
-         * @access public
-         * 
-         * @type {string}
-         * 
-         * @description
-         * A string representing the DOM template for this control. If this property is
-         * defined on a {@link plat.ui.TemplateControl|TemplateControl} then DOM will be created and put in the 
-         * control's element prior to calling the 'setTemplate' method.
-         */
-        templateString: string;
-
-        /**
-         * @name templateUrl
-         * @memberof plat.ui.TemplateControl
-         * @kind property
-         * @access public
-         * 
-         * @type {string}
-         * 
-         * @description
-         * A url containing a string representing the DOM template for this control. If this property is
-         * defined on a {@link plat.ui.TemplateControl|TemplateControl} then DOM will be created and put in the 
-         * control's element prior to calling the 'setTemplate' method. This property takes 
-         * precedence over templateString. In the event that both are defined, templateString
-         * will be ignored.
-         */
-        templateUrl: string;
-
-        /**
-         * @name innerTemplate
-         * @memberof plat.ui.TemplateControl
-         * @kind property
-         * @access public
-         * 
-         * @type {DocumentFragment}
-         * 
-         * @description
-         * A DocumentFragment representing the innerHTML that existed when this control was instantiated.
-         * This property will only contain the innerHTML when either a templateString or templateUrl is
-         * defined. Its important to clone this property when injecting it somewhere, else its childNodes
-         * will disappear.
-         * 
-         * @example this.innerTemplate.cloneNode(true); //Useful if this is not a one-time injection.
-         */
-        innerTemplate: DocumentFragment;
-
-        /**
-         * @name bindableTemplates
-         * @memberof plat.ui.TemplateControl
-         * @kind property
-         * @access public
-         * 
-         * @type {plat.ui.BindableTemplates}
-         * 
-         * @description
-         * An {@link plat.ui.BindableTemplates|BindableTemplates} object used for binding a data context to a template. 
-         * This is an advanced function of a {@link plat.ui.TemplateControl|TemplateControl}.
-         */
-        bindableTemplates: BindableTemplates;
-
-        /**
-         * @name controls
-         * @memberof plat.ui.TemplateControl
-         * @kind property
-         * @access public
-         * 
-         * @type {Array<plat.Control>}
-         * 
-         * @description
-         * An array of child controls. Any controls created by this control can be found in this array. The controls in
-         * this array will have reference to this control in their parent property.
-         */
-        controls: Array<Control>;
-
-        /**
-         * @name elementNodes
-         * @memberof plat.ui.TemplateControl
-         * @kind property
-         * @access public
-         * 
-         * @type {Array<Node>}
-         * 
-         * @description
-         * A Node array for managing the {@link plat.ui.TemplateControl|TemplateControl's} childNodes in the event that this control 
-         * replaces its element. This property will only exist/be of use for a {@link plat.ui.TemplateControl|TemplateControl} that 
-         * implements the replaceWith property.
-         */
-        elementNodes: Array<Node>;
-
-        /**
-         * @name startNode
-         * @memberof plat.ui.TemplateControl
-         * @kind property
-         * @access public
-         * 
-         * @type {Node}
-         * 
-         * @description
-         * The first node in the {@link plat.ui.TemplateControl|TemplateControl's} body. This property will be a Comment node when the 
-         * control implements replaceWith = null, otherwise it will be null. This property allows an 
-         * {@link plat.ui.TemplateControl|TemplateControl} to add nodes to its body in the event that it replaces its element.
-         * 
-         * @example this.startNode.parentNode.insertBefore(node, this.startNode.nextSibling);
-         */
-        startNode: Node;
-
-        /**
-         * @name endNode
-         * @memberof plat.ui.TemplateControl
-         * @kind property
-         * @access public
-         * 
-         * @type {Node}
-         * 
-         * @description
-         * The last node in the {@link plat.ui.TemplateControl|TemplateControl's} body. This property will be a Comment node when the 
-         * control implements the replaceWith property, otherwise it will be null. This property allows a 
-         * {@link plat.ui.TemplateControl|TemplateControl} to add nodes to its body in the event that it replaces its element.
-         * 
-         * @example this.endNode.parentNode.insertBefore(node, this.endNode);
-         */
-        endNode: Node;
-
-        /**
-         * @name replaceWith
-         * @memberof plat.ui.TemplateControl
-         * @kind property
-         * @access public
-         * 
-         * @type {string}
-         * 
-         * @description
-         * Allows a {@link plat.ui.TemplateControl|TemplateControl} to either swap its element with another element (e.g. plat-select), 
-         * or replace its element altogether. If null or empty string, the element will be removed from the DOM, and the 
-         * childNodes of the element will be in its place. In addition, when the element is placed startNode and endNode Comments 
-         * are created, and the childNodes are added to the elementNodes property on the control. The replaceWith 
-         * property can be any property that works with document.createElement(). If the control's element had 
-         * attributes (as well as attribute Controls), those attributes will be carried to the swapped element. The default 
-         * replaceWith is 'any,' meaning it will default to a 'div' in the case that the control type is used as the 
-         * element's nodename (e.g. <plat-foreach plat-context="..."></plat-foreach>), but will maintain whatever element type 
-         * is used otherwise (e.g. <tr plat-control="plat-foreach" plat-context="..."></tr>).
-         */
-        replaceWith = 'any';
-
-        /**
-         * @name root
-         * @memberof plat.ui.TemplateControl
-         * @kind property
-         * @access public
-         * 
-         * @type {plat.ui.TemplateControl}
-         * 
-         * @description
-         * Set to the root ancestor control from which this control inherits its context. This value
-         * can be equal to this control.
-         */
-        root: TemplateControl;
-
-        /**
          * @name contextChanged
          * @memberof plat.ui.TemplateControl
          * @kind function
@@ -1001,7 +1003,6 @@ module plat.ui {
                     context: dataContext,
                     identifier: ''
                 },
-                context: any,
                 length: number,
                 keys: Array<string>,
                 key: string,

@@ -1,4 +1,6 @@
 module plat.ui {
+    'use strict';
+
     /**
      * @name BindableTemplates
      * @memberof plat.ui
@@ -13,114 +15,6 @@ module plat.ui {
      * separate those templates and reuse them accordingly.
      */
     export class BindableTemplates {
-        /**
-         * @name create
-         * @memberof plat.ui.BindableTemplates
-         * @kind function
-         * @access public
-         * @static
-         * @variation 0
-         * 
-         * @description
-         * Creates a new instance of BindableTemplates and returns it. If a BindableTemplates is 
-         * passed in, it will use the properties on the original BindableTemplates.
-         * 
-         * @param {plat.ui.TemplateControl} control The {@link plat.ui.TemplateControl|TemplateControl} 
-         * containing the new {@link plat.ui.BindableTemplates|BindableTemplates} object, used for data 
-         * context inheritance for templates.
-         * @param {plat.ui.BindableTemplates} original? An optional {@link plat.ui.BindableTemplates|BindableTemplates} 
-         * object to copy.
-         * 
-         * @returns {plat.ui.BindableTemplates} The newly instantiated {@link plat.ui.BindableTemplates|BindableTemplates} object.
-         */
-        static create(control: TemplateControl, original?: BindableTemplates): BindableTemplates;
-        /**
-         * @name create
-         * @memberof plat.ui.BindableTemplates
-         * @kind function
-         * @access public
-         * @static
-         * @variation 1
-         * 
-         * @description
-         * Creates a new instance of BindableTemplates and returns it. If a BindableTemplates is 
-         * passed in, it will use the properties on the original BindableTemplates.
-         * 
-         * @param {plat.ui.TemplateControl} control The {@link plat.ui.TemplateControl|TemplateControl} 
-         * containing the new {@link plat.ui.BindableTemplates|BindableTemplates} object, used for data 
-         * context inheritance for templates.
-         * @param {plat.ui.BindableTemplates} original? An optional {@link plat.ui.BindableTemplates|BindableTemplates} 
-         * object to copy.
-         * 
-         * @returns {plat.ui.BindableTemplates} The newly instantiated {@link plat.ui.BindableTemplates|BindableTemplates} object.
-         */
-        static create(control: TemplateControl, original?: BindableTemplates): BindableTemplates {
-            var bindableTemplates = new BindableTemplates();
-            bindableTemplates.control = control;
-
-            if (!isNull(original)) {
-                bindableTemplates.templates = original.templates;
-                bindableTemplates.cache = original.cache;
-            }
-
-            return bindableTemplates;
-        }
-
-        /**
-         * @name dispose
-         * @memberof plat.ui.BindableTemplates
-         * @kind function
-         * @access public
-         * @static
-         * 
-         * @description
-         * Clears the memory being held by control's bindableTemplates.
-         * 
-         * @static
-         * @param {plat.ui.TemplateControl} control The control whose bindableTemplates will be disposed.
-         * 
-         * @returns {void}
-         */
-        static dispose(control: TemplateControl): void {
-            if (isNull(control)) {
-                return;
-            }
-            var instance = control.bindableTemplates;
-
-            if (isNull(instance) || !isFunction(instance.dispose)) {
-                return;
-            }
-
-            instance.dispose();
-        }
-
-        /**
-         * @name isBoundControl
-         * @memberof plat.ui.BindableTemplates
-         * @kind function
-         * @access public
-         * @static
-         * 
-         * @description
-         * Determines whether or not a control was created using bindableTemplates.
-         * 
-         * @static
-         * @param {plat.ui.TemplateControl} control The potential bound control.
-         * 
-         * @returns {boolean} Whether or not the control is a bound control.
-         */
-        static isBoundControl(control: TemplateControl): boolean {
-            if (isNull(control)) {
-                return false;
-            }
-
-            var parent = control.parent;
-            if (isNull(parent)) {
-                return false;
-            }
-
-            return control.type.indexOf(parent.type + __BOUND_PREFIX) === 0;
-        }
 
         /**
          * @name _ResourcesFactory
@@ -266,6 +160,115 @@ module plat.ui {
          * A collection of all the controls created while compiling an added template. Useful during disposal.
          */
         private __compiledControls: Array<TemplateControl> = [];
+
+        /**
+         * @name create
+         * @memberof plat.ui.BindableTemplates
+         * @kind function
+         * @access public
+         * @static
+         * @variation 0
+         * 
+         * @description
+         * Creates a new instance of BindableTemplates and returns it. If a BindableTemplates is 
+         * passed in, it will use the properties on the original BindableTemplates.
+         * 
+         * @param {plat.ui.TemplateControl} control The {@link plat.ui.TemplateControl|TemplateControl} 
+         * containing the new {@link plat.ui.BindableTemplates|BindableTemplates} object, used for data 
+         * context inheritance for templates.
+         * @param {plat.ui.BindableTemplates} original? An optional {@link plat.ui.BindableTemplates|BindableTemplates} 
+         * object to copy.
+         * 
+         * @returns {plat.ui.BindableTemplates} The newly instantiated {@link plat.ui.BindableTemplates|BindableTemplates} object.
+         */
+        static create(control: TemplateControl, original?: BindableTemplates): BindableTemplates;
+        /**
+         * @name create
+         * @memberof plat.ui.BindableTemplates
+         * @kind function
+         * @access public
+         * @static
+         * @variation 1
+         * 
+         * @description
+         * Creates a new instance of BindableTemplates and returns it. If a BindableTemplates is 
+         * passed in, it will use the properties on the original BindableTemplates.
+         * 
+         * @param {plat.ui.TemplateControl} control The {@link plat.ui.TemplateControl|TemplateControl} 
+         * containing the new {@link plat.ui.BindableTemplates|BindableTemplates} object, used for data 
+         * context inheritance for templates.
+         * @param {plat.ui.BindableTemplates} original? An optional {@link plat.ui.BindableTemplates|BindableTemplates} 
+         * object to copy.
+         * 
+         * @returns {plat.ui.BindableTemplates} The newly instantiated {@link plat.ui.BindableTemplates|BindableTemplates} object.
+         */
+        static create(control: TemplateControl, original?: BindableTemplates): BindableTemplates {
+            var bindableTemplates = new BindableTemplates();
+            bindableTemplates.control = control;
+
+            if (!isNull(original)) {
+                bindableTemplates.templates = original.templates;
+                bindableTemplates.cache = original.cache;
+            }
+
+            return bindableTemplates;
+        }
+
+        /**
+         * @name dispose
+         * @memberof plat.ui.BindableTemplates
+         * @kind function
+         * @access public
+         * @static
+         * 
+         * @description
+         * Clears the memory being held by control's bindableTemplates.
+         * 
+         * @static
+         * @param {plat.ui.TemplateControl} control The control whose bindableTemplates will be disposed.
+         * 
+         * @returns {void}
+         */
+        static dispose(control: TemplateControl): void {
+            if (isNull(control)) {
+                return;
+            }
+            var instance = control.bindableTemplates;
+
+            if (isNull(instance) || !isFunction(instance.dispose)) {
+                return;
+            }
+
+            instance.dispose();
+        }
+
+        /**
+         * @name isBoundControl
+         * @memberof plat.ui.BindableTemplates
+         * @kind function
+         * @access public
+         * @static
+         * 
+         * @description
+         * Determines whether or not a control was created using bindableTemplates.
+         * 
+         * @static
+         * @param {plat.ui.TemplateControl} control The potential bound control.
+         * 
+         * @returns {boolean} Whether or not the control is a bound control.
+         */
+        static isBoundControl(control: TemplateControl): boolean {
+            if (isNull(control)) {
+                return false;
+            }
+
+            var parent = control.parent;
+            if (isNull(parent)) {
+                return false;
+            }
+
+            return control.type.indexOf(parent.type + __BOUND_PREFIX) === 0;
+        }
 
         /**
          * @name bind

@@ -1,4 +1,6 @@
 module plat.ui {
+    'use strict';
+
     /**
      * @name Resources
      * @memberof plat.ui
@@ -155,6 +157,87 @@ module plat.ui {
          * Reference to the {@link plat.IExceptionStatic|IExceptionStatic} injectable.
          */
         protected static _Exception: IExceptionStatic;
+
+        /**
+         * @name __controlResources
+         * @memberof plat.ui.Resources
+         * @kind property
+         * @access private
+         * @static
+         * 
+         * @type {Array<string>}
+         * 
+         * @description
+         * A list of resources to place on a control.
+         */
+        private static __controlResources: IObject<boolean>;
+
+        /**
+         * @name __resourceTypes
+         * @memberof plat.ui.Resources
+         * @kind property
+         * @access private
+         * @static
+         * 
+         * @type {Array<string>}
+         * 
+         * @description
+         * A list of all resource types.
+         */
+        private static __resourceTypes: IObject<boolean>;
+
+        /**
+         * @name __observableResourceRemoveListeners
+         * @memberof plat.ui.Resources
+         * @kind property
+         * @access private
+         * @static
+         * 
+         * @type {plat.IObject<Array<plat.IRemoveListener>>}
+         * 
+         * @description
+         * An object consisting of keyed arrays containing functions for removing observation listeners.
+         */
+        private static __observableResourceRemoveListeners: IObject<Array<IRemoveListener>> = {};
+
+        /**
+         * @name __resources
+         * @memberof plat.ui.Resources
+         * @kind property
+         * @access private
+         * 
+         * @type {plat.IObject<plat.ui.IResource>}
+         * 
+         * @description
+         * An object representing all of the currently available resources.
+         */
+        private __resources: IObject<IResource> = {};
+
+        /**
+         * @name __bound
+         * @memberof plat.ui.Resources
+         * @kind property
+         * @access private
+         * 
+         * @type {boolean}
+         * 
+         * @description
+         * Whether this {@link plat.ui.Resources|Resources} instance has been bound yet.
+         */
+        private __bound: boolean = false;
+
+        /**
+         * @name __controlInstance
+         * @memberof plat.ui.Resources
+         * @kind property
+         * @access private
+         * 
+         * @type {plat.ui.TemplateControl}
+         * 
+         * @description
+         * The control that these resources are for.
+         */
+        private __controlInstance: TemplateControl;
 
         /**
          * @name create
@@ -484,48 +567,6 @@ module plat.ui {
         }
 
         /**
-         * @name __controlResources
-         * @memberof plat.ui.Resources
-         * @kind property
-         * @access private
-         * @static
-         * 
-         * @type {Array<string>}
-         * 
-         * @description
-         * A list of resources to place on a control.
-         */
-        private static __controlResources: IObject<boolean>;
-
-        /**
-         * @name __resourceTypes
-         * @memberof plat.ui.Resources
-         * @kind property
-         * @access private
-         * @static
-         * 
-         * @type {Array<string>}
-         * 
-         * @description
-         * A list of all resource types.
-         */
-        private static __resourceTypes: IObject<boolean>;
-
-        /**
-         * @name __observableResourceRemoveListeners
-         * @memberof plat.ui.Resources
-         * @kind property
-         * @access private
-         * @static
-         * 
-         * @type {plat.IObject<Array<plat.IRemoveListener>>}
-         * 
-         * @description
-         * An object consisting of keyed arrays containing functions for removing observation listeners.
-         */
-        private static __observableResourceRemoveListeners: IObject<Array<IRemoveListener>> = {};
-
-        /**
          * @name __addRoot
          * @memberof plat.ui.Resources
          * @kind function
@@ -554,43 +595,6 @@ module plat.ui {
                 }
             });
         }
-
-        /**
-         * @name __resources
-         * @memberof plat.ui.Resources
-         * @kind property
-         * @access private
-         * 
-         * @type {plat.IObject<plat.ui.IResource>}
-         * 
-         * @description
-         * An object representing all of the currently available resources.
-         */
-        private __resources: IObject<IResource> = {};
-        /**
-         * @name __bound
-         * @memberof plat.ui.Resources
-         * @kind property
-         * @access private
-         * 
-         * @type {boolean}
-         * 
-         * @description
-         * Whether this {@link plat.ui.Resources|Resources} instance has been bound yet.
-         */
-        private __bound: boolean = false;
-        /**
-         * @name __controlInstance
-         * @memberof plat.ui.Resources
-         * @kind property
-         * @access private
-         * 
-         * @type {plat.ui.TemplateControl}
-         * 
-         * @description
-         * The control that these resources are for.
-         */
-        private __controlInstance: TemplateControl;
 
         /**
          * @name initialize

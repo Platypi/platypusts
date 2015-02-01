@@ -8,6 +8,8 @@
  * Holds classes and interfaces related to UI control components in platypus.
  */
 module plat.ui.controls {
+    'use strict';
+
     /**
      * @name Link
      * @memberof plat.ui.controls
@@ -187,14 +189,15 @@ module plat.ui.controls {
          * @returns {(ev: Event) => void} The click event listener.
          */
         getListener(element: HTMLAnchorElement) {
-            var listener = (ev: Event) => {
-                ev.preventDefault();
-                this.removeClickListener();
-                cancel();
-                element.removeEventListener('click', listener);
-            };
+            var cancel: IRemoveListener,
+                listener = (ev: Event) => {
+                    ev.preventDefault();
+                    this.removeClickListener();
+                    cancel();
+                    element.removeEventListener('click', listener);
+                };
 
-            var cancel = defer(() => {
+            cancel = defer(() => {
                 element.removeEventListener('click', listener);
             }, 3000);
 
@@ -279,7 +282,6 @@ module plat.ui.controls {
             return this._browser.formatUrl(href);
         }
     }
-
 
     export interface ILinkOptions extends routing.INavigateOptions {
         view: any;
