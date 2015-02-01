@@ -201,7 +201,7 @@ module plat.async {
          * 
          * @returns {void}
          */
-        initialize(options: IHttpConfig) {
+        initialize(options: IHttpConfig): void {
             this.__options = extend({}, this._config, options);
         }
 
@@ -276,7 +276,7 @@ module plat.async {
                 this.jsonpCallback = options.jsonpCallback || uniqueId(__Callback);
             }
 
-            var promise = new AjaxPromise((resolve, reject) => {
+            var promise = new AjaxPromise((resolve, reject): void => {
                 var _window = <any>this._window,
                     _document = this._document,
                     scriptTag = _document.createElement('script'),
@@ -286,7 +286,7 @@ module plat.async {
                 scriptTag.src = url + ((url.indexOf('?') > -1) ? '&' : '?') + jsonpIdentifier + '=' + jsonpCallback;
 
                 var oldValue = _window[jsonpCallback];
-                _window[jsonpCallback] = (response: any) => {
+                _window[jsonpCallback] = (response: any): void => {
                     // clean up
                     if (isFunction(this.clearTimeout)) {
                         this.clearTimeout();
@@ -313,8 +313,8 @@ module plat.async {
                 if (isNumber(timeout) && timeout > 0) {
                     // we first postpone to avoid always timing out when debugging, though this is not
                     // a foolproof method.
-                    this.clearTimeout = postpone(() => {
-                        this.clearTimeout = defer(() => {
+                    this.clearTimeout = postpone((): void => {
+                        this.clearTimeout = defer((): void => {
                             reject(new AjaxError({
                                 response: 'Request timed out in ' + timeout + 'ms for ' + url,
                                 // request timeout
@@ -394,8 +394,8 @@ module plat.async {
                 options = this.__options,
                 method = options.method,
                 url = options.url,
-                promise = new AjaxPromise((resolve, reject) => {
-                    xhr.onreadystatechange = () => {
+                promise = new AjaxPromise((resolve, reject): void => {
+                    xhr.onreadystatechange = (): void => {
                         var success = this._xhrOnReadyStateChange();
 
                         if (isNull(success)) {
@@ -492,9 +492,9 @@ module plat.async {
                                     } else {
                                         // use iframe trick for older browsers (do not send a request)
                                         // this case is the reason for this giant, terrible, nested if-else statement
-                                        this.__submitFramedFormData().then((response) => {
+                                        this.__submitFramedFormData().then((response): void => {
                                             resolve(response);
-                                        }, () => {
+                                        }, (): void => {
                                                 this.xhr = null;
                                             });
                                     }
@@ -528,12 +528,12 @@ module plat.async {
                     if (isNumber(timeout) && timeout > 0) {
                         // we first postpone to avoid always timing out when debugging, though this is not
                         // a foolproof method.
-                        this.clearTimeout = postpone(() => {
-                            this.clearTimeout = defer(() => {
+                        this.clearTimeout = postpone((): void => {
+                            this.clearTimeout = defer((): void => {
                                 reject(new AjaxError({
                                     response: 'Request timed out in ' + timeout + 'ms for ' + options.url,
                                     status: xhr.status,
-                                    getAllResponseHeaders: () => { return xhr.getAllResponseHeaders(); },
+                                    getAllResponseHeaders: (): string => { return xhr.getAllResponseHeaders(); },
                                     xhr: xhr
                                 }));
 
@@ -563,7 +563,7 @@ module plat.async {
          * with an {@link plat.async.AjaxError|IAjaxError}
          */
         protected _invalidOptions(): AjaxPromise<any> {
-            return new AjaxPromise((resolve, reject) => {
+            return new AjaxPromise((resolve, reject): void => {
                 var _Exception: IExceptionStatic = this._Exception;
                 _Exception.warn('Attempting a request without specifying a url', _Exception.AJAX);
                 reject(new AjaxError({
@@ -624,7 +624,7 @@ module plat.async {
             return {
                 response: response,
                 status: status,
-                getAllResponseHeaders: () => { return xhr.getAllResponseHeaders(); },
+                getAllResponseHeaders: (): string => { return xhr.getAllResponseHeaders(); },
                 xhr: xhr
             };
         }
@@ -766,15 +766,15 @@ module plat.async {
                 form.insertBefore(this.__createInput(key, data[key]), null);
             }
 
-            return new Promise<IAjaxResponse<any>>((resolve, reject) => {
-                this.xhr.abort = () => {
+            return new Promise<IAjaxResponse<any>>((resolve, reject): void => {
+                this.xhr.abort = (): void => {
                     iframe.onload = null;
                     $body.removeChild(form);
                     $body.removeChild(iframe);
                     reject();
                 };
 
-                iframe.onload = () => {
+                iframe.onload = (): void => {
                     var content = iframe.contentDocument.body.innerHTML;
 
                     $body.removeChild(form);
@@ -783,7 +783,7 @@ module plat.async {
                     resolve({
                         response: content,
                         status: 200,
-                        getAllResponseHeaders: () => ''
+                        getAllResponseHeaders: (): string => ''
                     });
 
                     this.xhr = iframe.onload = null;
@@ -1477,7 +1477,7 @@ module plat.async {
          * 
          * @returns {void}
          */
-        initialize(http: HttpRequest) {
+        initialize(http: HttpRequest): void {
             if (isObject(http) && isNull(this.__http)) {
                 this.__http = http;
             }

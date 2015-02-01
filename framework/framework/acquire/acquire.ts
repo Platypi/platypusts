@@ -117,7 +117,7 @@ module plat {
      * @returns {Array<any>} The dependencies, in the order they were requested.
      */
     export function acquire(dependencies: Array<any>): Array<any>;
-    export function acquire(dependencies: any) {
+    export function acquire(dependencies: any): Array<any> {
         var deps: Array<dependency.Injector<any>>,
             array = isArray(dependencies);
 

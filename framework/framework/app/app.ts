@@ -207,7 +207,7 @@ module plat {
                 var _LifecycleEvent = App._LifecycleEvent,
                     dispatch = _LifecycleEvent.dispatch;
 
-                postpone(() => {
+                postpone((): void => {
                     dispatch(__ready, _LifecycleEvent);
                 });
             }
@@ -238,7 +238,7 @@ module plat {
 
             if (isNull(node)) {
                 body.setAttribute(__Hide, '');
-                postpone(() => {
+                postpone((): void => {
                     _compiler.compile(head);
                     _compiler.compile(body);
                     body.removeAttribute(__Hide);
@@ -248,14 +248,14 @@ module plat {
 
             if (isFunction((<Element>node).setAttribute)) {
                 (<Element>node).setAttribute(__Hide, '');
-                postpone(() => {
+                postpone((): void => {
                     _compiler.compile(node);
                     (<Element>node).removeAttribute(__Hide);
                 });
                 return;
             }
 
-            postpone(() => {
+            postpone((): void => {
                 _compiler.compile(node);
             });
         }

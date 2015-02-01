@@ -46,7 +46,7 @@ module plat.async {
              * length 1, then we need to schedule a flush. Afterward, any additional 
              * callbacks added to the queue will be flushed accordingly.
              */
-            async: (callback: (arg?: IThenable<any>) => void, arg?: IThenable<any>) => {
+            async: (callback: (arg?: IThenable<any>) => void, arg?: IThenable<any>): void => {
                 var length = __promiseQueue.push([callback, arg]);
                 if (length === 1) {
                     scheduleFlush();
@@ -143,7 +143,7 @@ module plat.async {
                 return Promise.all([promises]);
             }
 
-            return new Promise<Array<any>>((resolve: (value?: Array<any>) => void, reject: (reason?: any) => void) => {
+            return new Promise<Array<any>>((resolve: (value?: Array<any>) => void, reject: (reason?: any) => void): void => {
                 var results: Array<any> = [],
                     remaining = promises.length,
                     promise: Promise<any>;
@@ -152,11 +152,11 @@ module plat.async {
                     resolve(<any>[]);
                 }
 
-                function resolver(index: number) {
-                    return (value: any) => resolveAll(index, value);
+                function resolver(index: number): (value: any) => void {
+                    return (value: any): void => resolveAll(index, value);
                 }
 
-                function resolveAll(index: number, value: any) {
+                function resolveAll(index: number, value: any): void {
                     results[index] = value;
                     if (--remaining === 0) {
                         resolve(<any>results);
@@ -221,7 +221,7 @@ module plat.async {
                 return Promise.race([promises]);
             }
 
-            return new Promise<any>((resolve: (value: any) => any, reject: (error: any) => any) => {
+            return new Promise<any>((resolve: (value: any) => any, reject: (error: any) => any): void => {
                 var promise: Promise<any>;
 
                 for (var i = 0; i < promises.length; i++) {
@@ -267,7 +267,7 @@ module plat.async {
          */
         static resolve<R>(value: R): IThenable<R>;
         static resolve<R>(value?: R): IThenable<R> {
-            return new Promise<R>((resolve: (value: R) => any, reject: (reason: any) => any) => {
+            return new Promise<R>((resolve: (value: R) => any, reject: (reason: any) => any): void => {
                 resolve(value);
             });
         }
@@ -287,7 +287,7 @@ module plat.async {
          * @returns {plat.async.IThenable<any>} A promise that will reject with the error.
          */
         static reject(error?: any): IThenable<any> {
-            return new Promise<any>((resolve: (value: any) => any, reject: (error: any) => any) => {
+            return new Promise<any>((resolve: (value: any) => any, reject: (error: any) => any): void => {
                 reject(error);
             });
         }
@@ -311,11 +311,11 @@ module plat.async {
          */
         private static __invokeResolveFunction<R>(resolveFunction: IResolveFunction<R>,
             promise: Promise<R>): void {
-            function resolvePromise(value?: any) {
+            function resolvePromise(value?: any): void {
                 Promise.__resolve<R>(promise, value);
             }
 
-            function rejectPromise(reason?: any) {
+            function rejectPromise(reason?: any): void {
                 Promise.__reject(promise, reason);
             }
 
@@ -547,7 +547,7 @@ module plat.async {
 
             if (isPromise(value)) {
                 try {
-                    value.then.call(value,(val: any) => {
+                    value.then.call(value, (val: any): boolean => {
                         if (resolved) {
                             return true;
                         }
@@ -558,7 +558,7 @@ module plat.async {
                         } else {
                             Promise.__fulfill<R>(promise, val);
                         }
-                    },(val: any) => {
+                    }, (val: any): boolean => {
                         if (resolved) {
                             return true;
                         }
@@ -725,11 +725,11 @@ module plat.async {
         then<U>(onFulfilled: (success: R) => any, onRejected?: (error: any) => any): IThenable<U> {
             var promise = this;
 
-            var thenPromise = <IThenable<U>>new (<any>this).constructor(() => { }, this);
+            var thenPromise = <IThenable<U>>new (<any>this).constructor((): void => { }, this);
 
             if (this.__state) {
                 var callbacks = arguments;
-                Promise.config.async(() => {
+                Promise.config.async((): void => {
                     Promise.__invokeCallback(promise.__state, thenPromise, callbacks[promise.__state - 1], promise.__detail);
                 });
             } else {
@@ -933,7 +933,7 @@ module plat.async {
 
     // node
     function useNextTick(): () => void {
-        return () => {
+        return (): void => {
             process.nextTick(flush);
         };
     }
@@ -946,12 +946,12 @@ module plat.async {
 
         observer.observe(element, { attributes: true });
 
-        _window.addEventListener('unload', () => {
+        _window.addEventListener('unload', (): void => {
             observer.disconnect();
             observer = null;
         }, false);
 
-        return () => {
+        return (): void => {
             element.setAttribute('drainQueue', 'drainQueue');
         };
     }
@@ -960,7 +960,7 @@ module plat.async {
         var global: any = global,
             local = (typeof global !== 'undefined') ? global : this;
 
-        return () => {
+        return (): void => {
             local.setTimeout(flush, 1);
         };
     }
