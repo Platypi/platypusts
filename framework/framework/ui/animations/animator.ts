@@ -653,6 +653,34 @@
         initialize? (instance: BaseAnimation): void;
 
         /**
+         * @name pause
+         * @memberof plat.ui.animations.IAnimationThenable
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Fires the pause method on the animation instance.
+         * 
+         * @returns {plat.async.IThenable<void>} A new promise that resolves when the animation instance 
+         * indicates that the animation has been paused.
+         */
+        pause(): async.IThenable<void>;
+
+        /**
+         * @name resume
+         * @memberof plat.ui.animations.IAnimationThenable
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Fires the resume method on the animation instance.
+         * 
+         * @returns {plat.async.IThenable<void>} A new promise that resolves when the animation instance 
+         * indicates that the animation has resumed.
+         */
+        resume(): async.IThenable<void>;
+
+        /**
          * @name cancel
          * @memberof plat.ui.animations.IAnimationThenable
          * @kind function
