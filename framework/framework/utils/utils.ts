@@ -656,7 +656,7 @@ module plat {
          * @returns {Array<U>} An array of 'plucked' values from obj.
          */
         pluck<T extends {}>(key: string, array: Array<T>): Array<any> {
-            return map<T, any>((value) => (<any>value)[key], array);
+            return map<T, any>((value): any => (<any>value)[key], array);
         }
 
         /**
@@ -719,7 +719,7 @@ module plat {
          * 
          * @returns {plat.IRemoveListener} A function that will clear the timeout when called.
          */
-        postpone(method: (...args: any[]) => void, args?: Array<any>, context?: any) {
+        postpone(method: (...args: any[]) => void, args?: Array<any>, context?: any): IRemoveListener {
             return defer(method, 0, args, context);
         }
 
@@ -740,7 +740,7 @@ module plat {
          * 
          * @returns {plat.IRemoveListener} A function that will clear the timeout when called.
          */
-        defer(method: (...args: any[]) => void, timeout: number, args?: Array<any>, context?: any) {
+        defer(method: (...args: any[]) => void, timeout: number, args?: Array<any>, context?: any): IRemoveListener {
             return defer(method, timeout, args, context);
         }
 
@@ -776,7 +776,7 @@ module plat {
          * 
          * @returns {string} The prefix-prepended unique ID.
          */
-        uniqueId(prefix?: string) {
+        uniqueId(prefix?: string): string {
             return uniqueId(prefix);
         }
 
@@ -795,7 +795,7 @@ module plat {
          * 
          * @returns {string} The camelCase string.
          */
-        camelCase(str: string) {
+        camelCase(str: string): string {
             return camelCase(str);
         }
     }

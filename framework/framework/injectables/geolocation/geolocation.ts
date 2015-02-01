@@ -20,7 +20,7 @@ module plat {
          */
         getCurrentPosition(positionOptions?: GeolocationPositionOptions)
                 : async.IThenable<GeolocationPosition> {
-            return new this._Promise<GeolocationPosition>((resolve, reject) => {
+            return new this._Promise<GeolocationPosition>((resolve, reject): void => {
                 navigator.geolocation.getCurrentPosition(resolve, reject, positionOptions);
             });
         }
@@ -38,7 +38,7 @@ module plat {
         watchPosition(updateCallback: (position: GeolocationPosition) => void,
             errorCallback?: (error: PositionError) => void,
             positionOptions?: GeolocationPositionOptions): IRemoveListener;
-        watchPosition(updateCallback: any, errorCallback?: any, positionOptions?: any) {
+        watchPosition(updateCallback: any, errorCallback?: any, positionOptions?: any): () => void {
             if (!isNull(errorCallback) && !isFunction(errorCallback)) {
                 positionOptions = errorCallback;
                 errorCallback = null;
@@ -46,7 +46,7 @@ module plat {
 
             var timeoutId = navigator.geolocation.watchPosition(updateCallback, errorCallback, positionOptions);
 
-            return () => {
+            return (): void => {
                 navigator.geolocation.clearWatch(timeoutId);
             };
         }

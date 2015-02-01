@@ -133,9 +133,9 @@ module plat.storage {
                 return <any>this._Promise.reject(null);
             }
 
-            return promise.then((node) => {
+            return promise.then((node): async.IThenable<DocumentFragment> => {
                 return this.put(key, node);
-            }, (error: Error) => {
+            },(error: Error): DocumentFragment => {
                 var _Exception: IExceptionStatic = this._Exception;
                 _Exception.warn('Error retrieving template from promise.', _Exception.TEMPLATE);
                 return <DocumentFragment>null;

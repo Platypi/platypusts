@@ -62,7 +62,7 @@
         protected _resolve: typeof async.Promise.resolve = this._Promise.resolve.bind(this._Promise);
         protected _reject: typeof async.Promise.reject = this._Promise.reject.bind(this._Promise);
 
-        static currentRouter(router?: Router) {
+        static currentRouter(router?: Router): Router {
             if (!isNull(router)) {
                 Router.__currentRouter = router;
             }
@@ -77,11 +77,11 @@
             this.initialize();
         }
 
-        initialize(parent?: Router) {
+        initialize(parent?: Router): void {
             this.parent = parent;
         }
 
-        addChild(child: Router) {
+        addChild(child: Router): Router {
             if (isNull(child) || this.children.indexOf(child) > -1) {
                 return child;
             }
@@ -92,7 +92,7 @@
             return child;
         }
 
-        removeChild(child: Router) {
+        removeChild(child: Router): void {
             var children = this.children,
                 index = this.children.indexOf(child);
 
@@ -103,7 +103,7 @@
             children.splice(index, 1);
         }
 
-        register(port: ISupportRouteNavigation) {
+        register(port: ISupportRouteNavigation): async.IThenable<void> {
             var ports = this.ports;
 
             if (isNull(port) || ports.indexOf(port) > -1) {
@@ -115,20 +115,20 @@
             if (isObject(this.currentRouteInfo)) {
                 this.navigating = true;
                 return this._resolve(this.finishNavigating)
-                    .catch(() => { })
-                    .then(() => {
+                    .catch((): void => { })
+                    .then((): async.IThenable<void> => {
                         var routeInfo = _clone(this.currentRouteInfo, true);
                         return this.finishNavigating = this.canNavigateTo(routeInfo)
-                            .then((canNavigateTo) => {
+                            .then((canNavigateTo): async.IThenable<void> => {
                             if (!canNavigateTo) {
                                 return;
                             }
                             this.currentRouteInfo = undefined;
                             return this.performNavigation(routeInfo);
-                        }).then(() => {
+                        }).then((): void => {
                             this.navigating = false;
                             this.currentRouteInfo = routeInfo;
-                        },() => {
+                        },(): void => {
                             this.navigating = false;
                         });
                     });
@@ -137,7 +137,7 @@
             return this._Promise.resolve();
         }
 
-        unregister(port: ISupportRouteNavigation) {
+        unregister(port: ISupportRouteNavigation): void {
             var ports = this.ports,
                 index = ports.indexOf(port);
 
@@ -154,9 +154,9 @@
 
         configure(routes: IRouteMapping): async.IThenable<void>;
         configure(routes: Array<IRouteMapping>): async.IThenable<void>;
-        configure(routes: any) {
+        configure(routes: any): async.IThenable<void> {
             if (isArray(routes)) {
-                forEach((route: IRouteMapping) => {
+                forEach((route: IRouteMapping): void => {
                     this._configureRoute(route);
                 }, routes);
             } else {
@@ -168,17 +168,17 @@
 
         param(handler: (value: any, parameters: any, query: any) => any, parameter: string, view: string): Router;
         param(handler: (value: any, parameters: any, query: any) => any, parameter: string, view: new (...args: any[]) => any): Router;
-        param(handler: (value: any, parameters: any, query: any) => any, parameter: string, view: any) {
+        param(handler: (value: any, parameters: any, query: any) => any, parameter: string, view: any): Router {
             return this._addHandler(handler, parameter, view, this.paramTransforms);
         }
 
         queryParam(handler: (value: any, query: any) => any, parameter: string, view: string): Router;
         queryParam(handler: (value: any, query: any) => any, parameter: string, view: new (...args: any[]) => any): Router;
-        queryParam(handler: (value: string, query: any) => any, parameter: string, view: any) {
+        queryParam(handler: (value: string, query: any) => any, parameter: string, view: any): Router {
             return this._addHandler(handler, parameter, view, this.queryTransforms);
         }
 
-        protected _configureRoute(route: IRouteMapping) {
+        protected _configureRoute(route: IRouteMapping): void {
             var resolve = this._resolve,
                 view: string = this._Injector.convertDependency(route.view);
 
@@ -205,7 +205,7 @@
             this.childRecognizer.register([childDelegate]);
         }
 
-        protected _addHandler(handler: (value: string, values: any, query?: any) => any, parameter: string, view: any, handlers: IObject<IRouteTransforms>) {
+        protected _addHandler(handler: (value: string, values: any, query?: any) => any, parameter: string, view: any, handlers: IObject<IRouteTransforms>): Router {
             if (isUndefined(view)) {
                 view = '*';
             }
@@ -237,7 +237,7 @@
 
         intercept(handler: (routeInfo: IRouteInfo) => any, view?: string): Router;
         intercept(handler: (routeInfo: IRouteInfo) => any, view?: new (...args: any[]) => any): Router;
-        intercept(handler: (routeInfo: IRouteInfo) => any, view?: any) {
+        intercept(handler: (routeInfo: IRouteInfo) => any, view?: any): Router {
             if (isUndefined(view)) {
                 view = '*';
             }
@@ -274,7 +274,7 @@
 
             if (!isString(url) || this.navigating || (!force && url === this.previousUrl && queryString === this.previousQuery)) {
                 if (this.navigating) {
-                    return this.finishNavigating.then(() => {
+                    return this.finishNavigating.then((): async.IThenable<void> => {
                         return this.navigate(url, query, force);
                     });
                 }
@@ -306,11 +306,11 @@
                     // only navigate child routers.
                     this.navigating = true;
                     return this.finishNavigating = this.navigateChildren(routeInfo)
-                        .then(() => {
+                        .then((): void => {
                         this.previousUrl = url;
                         this.previousQuery = queryString;
                         this.navigating = false;
-                        },(e) => {
+                        },(e: any): void => {
                             this.navigating = false;
                             throw e;
                         });
@@ -327,7 +327,7 @@
 
             var routeInfoCopy = _clone(routeInfo, true);
             return this.finishNavigating = this.canNavigate(routeInfo)
-            .then((canNavigate: boolean) => {
+            .then((canNavigate: boolean): async.IThenable<void> => {
                 if (!canNavigate) {
                     this.navigating = false;
                     throw new Error('Not cleared to navigate');
@@ -337,12 +337,12 @@
                 this.previousQuery = queryString;
 
                 return this.performNavigation(routeInfo);
-            }).then(() => {
+            }).then((): void => {
                 this.previousPattern = pattern;
                 this.previousSegment = segment;
                 this.currentRouteInfo = routeInfoCopy;
                 this.navigating = false;
-            },(e) => {
+            },(e: any): void => {
                 this.navigating = false;
                 throw e;
             });
@@ -353,7 +353,7 @@
                 query: IObject<any>;
 
             if (this.navigating) {
-                return this.finishNavigating.then(() => {
+                return this.finishNavigating.then((): async.IThenable<void> => {
                     return this.forceNavigate();
                 });
             }
@@ -375,7 +375,7 @@
             return resolve();
         }
 
-        generate(name: string, parameters?: IObject<any>, query?: IObject<string>) {
+        generate(name: string, parameters?: IObject<any>, query?: IObject<string>): string {
             var router = this,
                 prefix = '';
 
@@ -399,19 +399,19 @@
             return prefix + path + serializeQuery(query);
         }
 
-        navigateChildren(info: IRouteInfo) {
+        navigateChildren(info: IRouteInfo): async.IThenable<void> {
             var childRoute = this.getChildRoute(info);
 
             if (isNull(childRoute)) {
                 return this._resolve();
             }
 
-            return mapAsync((child: Router) => {
+            return mapAsync((child: Router): async.IThenable<void> => {
                 return child.navigate(childRoute, info.query);
             }, this.children).then(noop);
         }
 
-        getChildRoute(info: IRouteInfo) {
+        getChildRoute(info: IRouteInfo): string {
             if (isNull(info)) {
                 return;
             }
@@ -428,41 +428,41 @@
         performNavigation(info: IRouteInfo): async.IThenable<void> {
             var sameRoute = this._isSameRoute(info);
 
-            return this.performNavigateFrom(sameRoute).then(() => {
+            return this.performNavigateFrom(sameRoute).then((): async.IThenable<Array<void>> => {
                 if (sameRoute) {
                     return;
                 }
 
-                return mapAsync((port: ISupportRouteNavigation) => {
+                return mapAsync((port: ISupportRouteNavigation): async.IThenable<void> => {
                     return port.navigateTo(info);
                 }, this.ports);
             })
-                .then(() => {
+                .then((): async.IThenable<void> => {
                 return this.navigateChildren(info);
             });
         }
 
         performNavigateFrom(ignorePorts?: boolean): async.IThenable<void> {
-            return mapAsync((child: Router) => {
+            return mapAsync((child: Router): async.IThenable<void> => {
                 return child.performNavigateFrom();
             }, this.children)
-                .then(() => {
+                .then((): async.IThenable<Array<void>> => {
                 if (ignorePorts) {
                     return;
                 }
 
-                return mapAsync((port: ISupportRouteNavigation) => {
+                return mapAsync((port: ISupportRouteNavigation): async.IThenable<void> => {
                     return port.navigateFrom();
                 }, this.ports);
             }).then(noop);
         }
 
-        canNavigate(info: IRouteInfo) {
+        canNavigate(info: IRouteInfo): async.IThenable<boolean> {
             var currentRouteInfo = this.currentRouteInfo,
                 sameRoute = this._isSameRoute(info);
 
             return this.canNavigateFrom(sameRoute)
-                .then((canNavigateFrom: boolean) => {
+                .then((canNavigateFrom: boolean): async.IThenable<boolean> => {
                 return canNavigateFrom && this.canNavigateTo(info, sameRoute);
             });
         }
@@ -472,38 +472,39 @@
                 resolve = Promise.resolve.bind(Promise);
 
             return this.callHandlers(this.queryTransforms['*'], query)
-                .then(() => this.callHandlers(this.queryTransforms[view], query))
-                .then(() => this.callHandlers(this.paramTransforms['*'], parameters, query))
-                .then(() => this.callHandlers(this.paramTransforms[view], parameters, query))
+                .then((): async.IThenable<void> => this.callHandlers(this.queryTransforms[view], query))
+                .then((): async.IThenable<void> => this.callHandlers(this.paramTransforms['*'], parameters, query))
+                .then((): async.IThenable<void> => this.callHandlers(this.paramTransforms[view], parameters, query))
                 .then(noop);
         }
 
-        callHandlers(allHandlers: IRouteTransforms, obj: any, query?: any) {
+        callHandlers(allHandlers: IRouteTransforms, obj: any, query?: any): async.IThenable<void> {
             var resolve = this._resolve;
             if (!isObject(obj)) {
                 obj = {};
             }
 
-            return mapAsync((handlers: Array<(value: string, values: any, query?: any) => any>, key: string) => {
-                return mapAsyncInOrder((handler) => {
+            return mapAsync((handlers: Array<(value: string, values: any, query?: any) => any>, key: string): async.IThenable<Array<any>> => {
+                return mapAsyncInOrder((handler): async.IThenable<any> => {
                     return resolve(handler(obj[key], obj, query));
                 }, handlers);
-            }, allHandlers);
+            }, allHandlers)
+                .then(noop);
         }
 
         callInterceptors(info: IRouteInfo): async.IThenable<boolean> {
             var resolve = this._resolve;
 
-            return mapAsyncInOrder((handler: (routeInfo: IRouteInfo) => any) => {
+            return mapAsyncInOrder((handler: (routeInfo: IRouteInfo) => any): async.IThenable<boolean> => {
                 return resolve(handler(info));
             }, this.interceptors['*'])
                 .then(booleanReduce)
-                .then((canNavigate: boolean) => {
+                .then((canNavigate: boolean): async.IThenable<Array<boolean>> => {
                 if (!canNavigate) {
                     return <any>[canNavigate];
                 }
 
-                return mapAsync((handler: (routeInfo: IRouteInfo) => any) => {
+                return mapAsync((handler: (routeInfo: IRouteInfo) => any): async.IThenable<boolean> => {
                     return resolve(handler(info));
                 }, this.interceptors[info.delegate.view]);
             })
@@ -511,16 +512,16 @@
         }
 
         canNavigateFrom(ignorePorts?: boolean): async.IThenable<boolean> {
-            return this._Promise.all(this.children.reduce((promises: Array<async.IThenable<boolean>>, child: Router) => {
+            return this._Promise.all(this.children.reduce((promises: Array<async.IThenable<boolean>>, child: Router): Array<async.IThenable<boolean>> => {
                 return promises.concat(child.canNavigateFrom());
             }, <Array<async.IThenable<boolean>>>[]))
                 .then(booleanReduce)
-                .then((canNavigateFrom: boolean) => {
+                .then((canNavigateFrom: boolean): async.IThenable<Array<boolean>> => {
                 if (!canNavigateFrom || ignorePorts) {
                     return <any>[canNavigateFrom];
                 }
 
-                return mapAsync((port: ISupportRouteNavigation) => {
+                return mapAsync((port: ISupportRouteNavigation): async.IThenable<boolean> => {
                     return port.canNavigateFrom();
                 }, this.ports);
             }).then(booleanReduce);
@@ -532,20 +533,20 @@
                 return this._resolve(true);
             }
             return this.callAllHandlers(info.delegate.view, info.parameters, info.query)
-                .then(() => {
+                .then((): async.IThenable<boolean> => {
                 return this.callInterceptors(info);
             })
-                .then((canNavigateTo) => {
+                .then((canNavigateTo): async.IThenable<Array<boolean>> => {
                 if (canNavigateTo === false || ignorePorts) {
                     return <any>[canNavigateTo];
                 }
 
-                return mapAsync((port: ISupportRouteNavigation) => {
+                return mapAsync((port: ISupportRouteNavigation): async.IThenable<boolean> => {
                     return port.canNavigateTo(info);
                 }, this.ports);
             })
                 .then(booleanReduce)
-                .then((canNavigateTo: boolean) => {
+                .then((canNavigateTo: boolean): async.IThenable<Array<boolean>> => {
                 if (!canNavigateTo) {
                     promises = [canNavigateTo];
                 } else {
@@ -555,7 +556,7 @@
 
                     promises = [];
 
-                    this.children.reduce((promises: Array<async.IThenable<boolean>>, child: Router) => {
+                    this.children.reduce((promises: Array<async.IThenable<boolean>>, child: Router): Array<async.IThenable<boolean>> => {
                         childResult = child.recognizer.recognize(childRoute);
 
                         if (isEmpty(childResult)) {
@@ -574,7 +575,7 @@
                 .then(booleanReduce);
         }
 
-        protected _isSameRoute(info: IRouteInfo) {
+        protected _isSameRoute(info: IRouteInfo): boolean {
             var currentRouteInfo = this.currentRouteInfo;
 
             if (!isObject(currentRouteInfo)) {
@@ -594,14 +595,14 @@
                 currentQuery === query;
         }
 
-        protected _clearInfo() {
+        protected _clearInfo(): void {
             this.previousSegment = undefined;
             this.previousPattern = undefined;
             this.previousUrl = undefined;
             this.previousQuery = undefined;
             this.currentRouteInfo = undefined;
             this.navigating = false;
-            forEach((child) => {
+            forEach((child: Router): void => {
                 child._clearInfo();
             }, this.children);
         }
@@ -609,7 +610,7 @@
 
     plat.register.injectable(__Router, Router, null, __INSTANCE);
 
-    export function IRouterStatic() {
+    export function IRouterStatic(): typeof Router {
         return Router;
     }
 

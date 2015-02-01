@@ -401,7 +401,7 @@ module plat.observable {
          */
         static defineGetter(obj: any, key: string, value: any, enumerable?: boolean, configurable?: boolean): void {
             Object.defineProperty(obj, key, {
-                get: () => value,
+                get: (): any => value,
                 enumerable: enumerable === true,
                 configurable: configurable === true
             });
@@ -638,7 +638,7 @@ module plat.observable {
                 if (hasObservableListener) {
                     if (key === 'length') {
                         this.__lengthListeners[absoluteIdentifier] = observableListener;
-                        ContextManager.pushRemoveListener(absoluteIdentifier, observableListener.uid, () => {
+                        ContextManager.pushRemoveListener(absoluteIdentifier, observableListener.uid, (): void => {
                             deleteProperty(this.__lengthListeners, absoluteIdentifier);
                         });
                     }
@@ -669,7 +669,7 @@ module plat.observable {
                     removeObservedCallback = this._addObservableListener(observedIdentifier, observableListener);
                 }
 
-                removeCallback = () => {
+                removeCallback = (): void => {
                     removeAbsoluteCallback();
                     removeObservedCallback();
                 };
@@ -697,14 +697,14 @@ module plat.observable {
                         removeListener = this.observeArray(uid, null, noop, join, context, null);
                         removeArrayObserve = this.observe(join, {
                             uid: uid,
-                            listener: (newValue: Array<any>, oldValue: Array<any>) => {
+                            listener: (newValue: Array<any>, oldValue: Array<any>): void => {
                                 removeListener();
                                 removeListener = this.observeArray(uid, null, noop, join, newValue, oldValue);
                             }
                         });
                     }
 
-                    removeCallback = () => {
+                    removeCallback = (): void => {
                         removeObservableListener();
                         removeArrayObserve();
                         removeListener();
@@ -778,7 +778,7 @@ module plat.observable {
 
             this._overwriteArray(absoluteIdentifier, array);
 
-            return () => {
+            return (): void => {
                 while (removeListeners.length > 0) {
                     removeListeners.pop()();
                 }
@@ -834,7 +834,7 @@ module plat.observable {
             }
 
             var listenerRemoved = false,
-                removeListener = () => {
+                removeListener = (): void => {
                     if (listenerRemoved) {
                         return;
                     }
@@ -875,7 +875,7 @@ module plat.observable {
          * 
          * @returns {void}
          */
-        protected _restoreArray(array: Array<any>) {
+        protected _restoreArray(array: Array<any>): void {
             var _compat = this._compat;
 
             if (_compat.setProto) {
@@ -907,7 +907,7 @@ module plat.observable {
          * 
          * @returns {void}
          */
-        protected _overwriteArray(absoluteIdentifier: string, array: Array<any>) {
+        protected _overwriteArray(absoluteIdentifier: string, array: Array<any>): void {
             var _compat = this._compat,
                 length = arrayMethods.length,
                 method: string,
@@ -1120,7 +1120,7 @@ module plat.observable {
                             var removeListener = this.observeArray(uid, null, noop, join, newParent, null);
                             this.observe(join, {
                                 uid: uid,
-                                listener: (nValue: Array<any>, oValue: Array<any>) => {
+                                listener: (nValue: Array<any>, oValue: Array<any>): void => {
                                     removeListener();
                                     removeListener = this.observeArray(uid, null, noop, join, nValue, oValue);
                                 }
@@ -1200,7 +1200,7 @@ module plat.observable {
             this.__add(absoluteIdentifier, observableListener);
 
             var uid = observableListener.uid,
-                remove = () => {
+                remove = (): void => {
                     ContextManager.spliceRemoveListener(absoluteIdentifier, uid, remove);
                     this._removeCallback(absoluteIdentifier, observableListener);
                 };
@@ -1254,7 +1254,7 @@ module plat.observable {
                 _this = this;
 
             // we can't use a fat-arrow function here because we need the array context.
-            return function observedArrayFn(...args: any[]) {
+            return function observedArrayFn(...args: any[]): any {
                 var oldArray = this.slice(0),
                     returnValue: any,
                     isShift = method.indexOf('shift') !== -1,
@@ -1429,11 +1429,11 @@ module plat.observable {
             Object.defineProperty(immediateContext, key, {
                 configurable: true,
                 enumerable: true,
-                get: () => {
+                get: (): any => {
                     this.__observedIdentifier = identifier;
                     return value;
                 },
-                set: (newValue) => {
+                set: (newValue): void => {
                     if (value === newValue) {
                         return;
                     }
@@ -1487,11 +1487,11 @@ module plat.observable {
             Object.defineProperty(immediateContext, key, {
                 configurable: true,
                 enumerable: true,
-                get: () => {
+                get: (): any => {
                     this.__observedIdentifier = identifier;
                     return value;
                 },
-                set: (newValue) => {
+                set: (newValue): void => {
                     if (value === newValue) {
                         return;
                     }

@@ -153,7 +153,7 @@ module plat.expressions {
             var identifiers = parsedObject.identifiers;
             if (identifiers.length === 0) {
                 var noModel = parsedObject.evaluate(null);
-                parsedObject.evaluate = () => noModel;
+                parsedObject.evaluate = (): any => noModel;
             }
 
             this.__cache[expression] = parsedObject;

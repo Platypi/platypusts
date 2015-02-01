@@ -324,7 +324,7 @@ module plat.processing {
                     stopObserving = manager.observe(absoluteIdentifier, observableCallback);
                     stopListening = manager.observe(absoluteIdentifier, {
                         uid: control.uid,
-                        listener: () => {
+                        listener: (): void => {
                             stopObserving();
                             stopListening();
                         }
@@ -349,7 +349,7 @@ module plat.processing {
          */
         protected static _wrapExpression(text: string): expressions.IParsedExpression {
             return {
-                evaluate: () => text,
+                evaluate: (): string => text,
                 identifiers: [],
                 aliases: [],
                 expression: text

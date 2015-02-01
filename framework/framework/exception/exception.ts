@@ -277,7 +277,7 @@ module plat {
          * @returns {void}
          */
         static fatal(message: string, type?: number): void;
-        static fatal(message: any, type?: number) {
+        static fatal(message: any, type?: number): void {
             raise(message, type, true);
         }
     }

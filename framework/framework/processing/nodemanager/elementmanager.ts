@@ -402,7 +402,7 @@ module plat.processing {
             manager.initialize(elementMap, parent);
 
             if (!(elementMap.hasControl || hasUiControl)) {
-                manager.bind = () => { return []; };
+                manager.bind = (): Array<Control> => { return []; };
             } else {
                 manager.setUiControlTemplate();
                 return hasUiControl ? null : manager;
@@ -487,7 +487,7 @@ module plat.processing {
             manager.isClone = true;
 
             if (!(nodeMap.hasControl || hasNewControl)) {
-                manager.bind = () => { return []; };
+                manager.bind = (): Array<Control> => { return []; };
             }
 
             if (hasNewControl) {
@@ -642,7 +642,7 @@ module plat.processing {
             }
 
             if (!isClone) {
-                nodes.sort((a, b) => {
+                nodes.sort((a, b): number => {
                     var aControl = <AttributeControl>a.control,
                         bControl = <AttributeControl>b.control;
 
@@ -946,7 +946,7 @@ module plat.processing {
             }
 
             if (clonedManager.hasOwnContext) {
-                postpone(() => {
+                postpone((): void => {
                     clonedManager.observeRootContext(newControl, clonedManager.bindAndLoad);
                 });
             }
@@ -1081,10 +1081,10 @@ module plat.processing {
                 }
 
                 if (awaitContext) {
-                    this.contextPromise = new this._Promise<void>((resolve, reject) => {
+                    this.contextPromise = new this._Promise<void>((resolve, reject): void => {
                         var removeListener = contextManager.observe(absoluteContextPath, {
                             uid: uiControl.uid,
-                            listener: (newValue, oldValue) => {
+                            listener: (newValue, oldValue): void => {
                                 if (isUndefined(newValue)) {
                                     return;
                                 }
@@ -1127,10 +1127,10 @@ module plat.processing {
             if (!isNull(controlNode)) {
                 var control = controlNode.control;
 
-                this.templatePromise = this._TemplateControlFactory.determineTemplate(control, templateUrl).then((template) => {
+                this.templatePromise = this._TemplateControlFactory.determineTemplate(control, templateUrl).then((template): void => {
                     this.templatePromise = null;
                     this._initializeControl(control, <DocumentFragment>template.cloneNode(true));
-                }, (error) => {
+                }, (error: any): void => {
                         this.templatePromise = null;
                         if (isNull(error)) {
                             var template: DocumentFragment = error;
@@ -1141,7 +1141,7 @@ module plat.processing {
 
                             this._initializeControl(control, template);
                         } else {
-                            postpone(() => {
+                            postpone((): void => {
                                 var _Exception: IExceptionStatic = this._Exception;
                                 _Exception.fatal(error, _Exception.COMPILE);
                             });
@@ -1195,7 +1195,7 @@ module plat.processing {
          */
         fulfillTemplate(): async.IThenable<void> {
             if (!isNull(this.templatePromise)) {
-                return this.templatePromise.then(() => {
+                return this.templatePromise.then((): async.IThenable<void> => {
                     return this._fulfillChildTemplates();
                 });
             }
@@ -1217,20 +1217,20 @@ module plat.processing {
          */
         bindAndLoad(): async.IThenable<void> {
             var controls = this.bind(),
-                promise: async.IThenable<void[]>;
+                promise: async.IThenable<Array<void>>;
 
             if (isPromise(this.contextPromise)) {
-                promise = this.contextPromise.then(() => {
+                promise = this.contextPromise.then((): async.IThenable<Array<void>> => {
                     return this._bindChildren();
                 });
             } else {
                 promise = this._bindChildren();
             }
 
-            return promise.then(() => {
+            return promise.then((): async.IThenable<void> => {
                 return this._loadControls(<Array<AttributeControl>>controls, this.getUiControl());
-            }).catch((error: any) => {
-                    postpone(() => {
+            }).catch((error: any): void => {
+                    postpone((): void => {
                         var _Exception: IExceptionStatic = this._Exception;
                         _Exception.fatal(error, _Exception.BIND);
                     });
@@ -1260,16 +1260,16 @@ module plat.processing {
                 return;
             }
 
-            this.loadedPromise = new this._Promise<void>((resolve) => {
+            this.loadedPromise = new this._Promise<void>((resolve): void => {
                 var removeListener = this._ContextManager.getManager(root).observe(__CONTEXT, {
-                    listener: () => {
+                    listener: (): void => {
                         removeListener();
                         loadMethod().then(resolve);
                     },
                     uid: root.uid
                 });
-            }).catch((error) => {
-                    postpone(() => {
+            }).catch((error): void => {
+                    postpone((): void => {
                         var _Exception: IExceptionStatic = this._Exception;
                         _Exception.fatal(error, _Exception.BIND);
                     });
@@ -1297,7 +1297,7 @@ module plat.processing {
 
             (<any>uiControl).zCC__plat = contextManager.observe(absoluteContextPath, {
                 uid: uiControl.uid,
-                listener: (newValue, oldValue) => {
+                listener: (newValue, oldValue): void => {
                     uiControl.context = newValue;
                 }
             });
@@ -1460,10 +1460,10 @@ module plat.processing {
          * its associated controls are bound and loaded.
          */
         protected _fulfillAndLoad(): async.IThenable<void> {
-            return this.fulfillTemplate().then(() => {
+            return this.fulfillTemplate().then((): async.IThenable<void> => {
                 return this.bindAndLoad();
-            }).catch((error) => {
-                    postpone(() => {
+            }).catch((error: any): void => {
+                    postpone((): void => {
                         var _Exception: IExceptionStatic = this._Exception;
                         _Exception.fatal(error, _Exception.BIND);
                     });
@@ -1697,8 +1697,8 @@ module plat.processing {
                 }
             }
 
-            return this._Promise.all(promises).catch((error) => {
-                postpone(() => {
+            return this._Promise.all(promises).catch((error: any): void => {
+                postpone((): void => {
                     var _Exception: IExceptionStatic = this._Exception;
                     _Exception.fatal(error, _Exception.COMPILE);
                 });

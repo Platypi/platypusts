@@ -288,7 +288,7 @@
          * 
          * @returns {void}
          */
-        initialize(name?: string) {
+        initialize(name?: string): void {
             super.initialize(name);
 
             this.regex = this.name.replace(escapeRegex, '\\$1');
@@ -362,7 +362,7 @@
          * 
          * @returns {string} The generated segment.
          */
-        generate(parameters?: IObject<string>) {
+        generate(parameters?: IObject<string>): string {
             if (isObject(parameters)) {
                 return parameters[this.name];
             }

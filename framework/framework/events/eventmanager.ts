@@ -228,7 +228,7 @@ module plat.events {
                     event = eventNames[i];
                     lifecycleListeners.push({
                         name: event,
-                        value: ((ev: string) => () => {
+                        value: ((ev: string): () => void => (): void => {
                             dispatch(ev, EventManager);
                         })(event)
                     });
@@ -238,7 +238,7 @@ module plat.events {
 
                 lifecycleListeners.push({
                     name: __pause,
-                    value: () => {
+                    value: (): void => {
                         dispatch(__suspend, EventManager);
                     }
                 });
@@ -247,7 +247,7 @@ module plat.events {
 
                 lifecycleListeners.push({
                     name: __deviceReady,
-                    value: () => {
+                    value: (): void => {
                         dispatch(__ready, EventManager);
                     }
                 });
@@ -256,7 +256,7 @@ module plat.events {
 
                 lifecycleListeners.push({
                     name: __backButton,
-                    value: () => {
+                    value: (): void => {
                         if (!winJs) {
                             dispatch(__backButton, EventManager);
                         }
@@ -270,7 +270,7 @@ module plat.events {
                 if (winJs) {
                     lifecycleListeners.push({
                         name: __backClick,
-                        value: () => {
+                        value: (): void => {
                             dispatch(__backButton, EventManager);
                             return true;
                         }
@@ -281,7 +281,7 @@ module plat.events {
             } else if (_compat.amd) {
                 return;
             } else {
-                _dom.addEventListener(_window, 'load',() => {
+                _dom.addEventListener(_window, 'load',(): void => {
                     dispatch(__ready, EventManager);
                 });
             }
@@ -343,7 +343,7 @@ module plat.events {
 
             eventListeners.push(listener);
 
-            return () => {
+            return (): void => {
                 var index = eventListeners.indexOf(listener);
                 if (index === -1) {
                     return;
@@ -429,7 +429,7 @@ module plat.events {
          * @returns {plat.events.DispatchEvent} The dispatched event.
          */
         static dispatch(name: string, sender: any, direction: string, args?: Array<any>): DispatchEvent;
-        static dispatch(name: string, sender: any, direction: string, args?: Array<any>) {
+        static dispatch(name: string, sender: any, direction: string, args?: Array<any>): DispatchEvent {
             var _dispatchEvent: DispatchEvent = acquire(__DispatchEventInstance);
             _dispatchEvent.initialize(name, sender, direction);
             EventManager.sendEvent(_dispatchEvent, args);

@@ -191,7 +191,7 @@ module plat.events {
          * @returns {void}
          */
         initialize(name: string, sender: any, direction?: string): void;
-        initialize(name: string, sender: any, direction?: string) {
+        initialize(name: string, sender: any, direction?: string): void {
             this.name = name;
             this.direction = direction || this._EventManager.UP;
             this.sender = sender;

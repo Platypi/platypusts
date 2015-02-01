@@ -283,7 +283,7 @@ module plat.dependency {
                 }
             }
 
-            var dependencies = acquire(map((value) => value, toInject)),
+            var dependencies = acquire(map((value: any): any => value, toInject)),
                 keys = Object.keys(toInject),
                 length = keys.length;
 
@@ -394,11 +394,11 @@ module plat.dependency {
          * 
          * @returns {any} The located injector.
          */
-        private static __findInjector(Constructor: any, injectors: InjectorObject<any>) {
+        private static __findInjector(Constructor: any, injectors: InjectorObject<any>): Injector<any> {
             if (isNull(Constructor)) {
                 return;
             } else if (Constructor === Injector || Constructor === __InjectorStatic) {
-                var ret = Injector.__wrap(Injector);
+                var ret: Injector<any> = Injector.__wrap(Injector);
                 ret.name = __InjectorStatic;
                 return ret;
             } else if (isString(Constructor)) {
@@ -422,7 +422,7 @@ module plat.dependency {
          */
         private static __wrap(value: any): Injector<any> {
             return <any>{
-                inject: () => value,
+                inject: (): any => value,
                 name: __WRAPPED_INJECTOR,
                 __dependencies: [],
                 Constructor: value
@@ -628,8 +628,8 @@ module plat.dependency {
          * @param {any} value The value to wrap
          */
         protected _wrapInjector(value: any): Injector<any> {
-            this.inject = () => {
-                return <T>value;
+            this.inject = (): T => {
+                return value;
             };
 
             return this;

@@ -138,7 +138,7 @@
          * @returns {plat.routing.IRecognizeResult} If the path is recognized, the linked delegates will be 
          * returned.
          */
-        recognize(path: string) {
+        recognize(path: string): IRecognizeResult {
             var isTrailingSlashDropped: boolean = false,
                 solutions: Array<State> = [];
 
@@ -285,7 +285,7 @@
          * 
          * @returns {plat.routing.State} The final state.
          */
-        protected _finalize(state: State, regex: Array<string>) {
+        protected _finalize(state: State, regex: Array<string>): State {
             if (state === this._rootState) {
                 state = state.add({
                     validCharacters: '/'

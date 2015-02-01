@@ -301,7 +301,7 @@
             options = isObject(options) ? options : {};
             var url: string;
 
-            return this.finishNavigating().then(() => {
+            return this.finishNavigating().then((): async.IThenable<void> => {
                 if (options.isUrl) {
                     url = view;
                 } else {
@@ -349,7 +349,7 @@
                 return Navigator._root._navigate(url, replace);
             }
 
-            return new this._Promise<void>((resolve, reject) => {
+            return new this._Promise<void>((resolve, reject): void => {
                 this._resolveNavigate = resolve;
                 this._rejectNavigate = reject;
                 this._browser.url(url, replace);
@@ -385,7 +385,7 @@
 
             this._backNavigate = true;
             return this.finishNavigating()
-                .then(() => {
+                .then((): async.IThenable<void> => {
                     return this._goBack(length);
                 });
         }
@@ -401,8 +401,8 @@
          * 
          * @returns {plat.async.IThenable<void>} A promise that resolves when the navigation has finished.
          */
-        protected _goBack(length: number) {
-            return new this._Promise<void>((resolve, reject) => {
+        protected _goBack(length: number): async.IThenable<void> {
+            return new this._Promise<void>((resolve, reject): void => {
                 this._resolveNavigate = resolve;
                 this._rejectNavigate = reject;
                 this._browser.back(length);
@@ -420,7 +420,7 @@
          * 
          * @returns {void}
          */
-        dispose() {
+        dispose(): void {
             this._removeUrlListener();
             deleteProperty(this, 'router');
         }
@@ -437,7 +437,7 @@
          * 
          * @returns {void}
          */
-        protected _observeUrl() {
+        protected _observeUrl(): void {
             if (!isObject(this.router)) {
                 return;
             }
@@ -454,7 +454,7 @@
 
             // Protect against accidentally calling this method twice.
             EventManager.dispose(this.uid);
-            EventManager.on(this.uid, __backButton,() => {
+            EventManager.on(this.uid, __backButton,(): void => {
                 var ev = EventManager.dispatch('backButtonPressed', this, EventManager.DIRECT);;
 
                 if (ev.defaultPrevented) {
@@ -464,7 +464,7 @@
                 this.goBack();
             });
 
-            EventManager.on(this.uid, __urlChanged, (ev: events.DispatchEvent, utils?: web.UrlUtils) => {
+            EventManager.on(this.uid, __urlChanged, (ev: events.DispatchEvent, utils?: web.UrlUtils): void => {
                 if (this._ignoreOnce) {
                     this._ignoreOnce = false;
                     this._resolveNavigate();
@@ -476,14 +476,14 @@
                 previousUrl = this._previousUrl;
 
                 this.finishNavigating()
-                .then(() => {
+                .then((): async.IThenable<void> => {
                     return this.router.navigate(utils.pathname, utils.query);
-                }).then(() => {
+                }).then((): void => {
                     this._previousUrl = utils.pathname;
                     if (isFunction(this._resolveNavigate)) {
                         this._resolveNavigate();
                     }
-                }, (e: any) => {
+                }, (e: any): void => {
                     this._ignoreOnce = true;
                     this._previousUrl = previousUrl;
                     this._browser.url(previousUrl, !backNavigate);

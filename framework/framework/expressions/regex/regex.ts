@@ -21,7 +21,7 @@
          * @description
          * A regular expression for finding markup in a string.
          */
-        markupRegex: RegExp;
+        markupRegex: RegExp = new RegExp(__startSymbol + '[\\S\\s]*' + __endSymbol);
 
         /**
          * @name argumentRegex
@@ -364,21 +364,6 @@
          */
         get quotationRegex(): RegExp {
             return /'|"/g;
-        }
-
-        /**
-         * @name constructor
-         * @memberof plat.expressions.Regex
-         * @kind function
-         * @access public
-         * 
-         * @description
-         * The constructor for a {@link plat.expressions.Regex|Regex}. Creates the markup regular expression.
-         * 
-         * @returns {plat.expressions.Regex}
-         */
-        constructor() {
-            this.markupRegex = new RegExp(__startSymbol + '[\\S\\s]*' + __endSymbol);
         }
     }
 

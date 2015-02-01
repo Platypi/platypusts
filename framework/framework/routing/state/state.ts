@@ -98,7 +98,7 @@
          * @returns {plat.routing.State} The final state reached for the compiled segment.
          */
         static compile(segment: BaseSegment, state: State): State {
-            return segment.reduceCharacters((s, char) => {
+            return segment.reduceCharacters((s, char): State => {
                 return s.add(char);
             }, state);
         }
@@ -212,7 +212,7 @@
                 bStatics: number,
                 bDynamics: number;
 
-            return states.sort((a, b) => {
+            return states.sort((a, b): number => {
                 aTypes = a.types;
                 bTypes = b.types;
                 aSplats = aTypes.splats;
@@ -277,7 +277,7 @@
          * 
          * @returns {void}
          */
-        initialize(specification?: ICharacterSpecification) {
+        initialize(specification?: ICharacterSpecification): void {
             this.specification = specification;
             this.nextStates = [];
         }
@@ -332,12 +332,12 @@
          * 
          * @returns {Array<plat.routing.State>} The matching states.
          */
-        match(char: string) {
+        match(char: string): Array<State> {
             var matches: Array<State> = [],
                 spec: ICharacterSpecification,
                 chars: string;
 
-            this._someChildren((child) => {
+            this._someChildren((child): boolean => {
                 spec = child.specification;
 
                 // Check for valid characters first
@@ -378,7 +378,7 @@
                 s: ICharacterSpecification,
                 found: State;
 
-            this._someChildren((child) => {
+            this._someChildren((child): boolean => {
                 s = child.specification;
 
                 if (s.validCharacters === validChars &&
@@ -421,10 +421,10 @@
          * @param {(child: plat.routing.State) => void} iterator The function with which to call for each 
          * State.
          * 
-         * @returns {void}
+         * @returns {boolean}
          */
-        protected _someChildren(iterator: (child: State) => void): void;
-        protected _someChildren(iterator: (child: State) => any) {
+        protected _someChildren(iterator: (child: State) => void): boolean;
+        protected _someChildren(iterator: (child: State) => any): boolean {
             var nextStates = this.nextStates,
                 length = nextStates.length;
 
@@ -433,6 +433,8 @@
                     return true;
                 }
             }
+
+            return false;
         }
     }
 

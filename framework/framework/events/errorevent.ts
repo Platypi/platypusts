@@ -105,7 +105,7 @@
          * @returns {void}
          */
         initialize(name: string, sender: any, direction?: string, error?: E): void;
-        initialize(name: string, sender: any, direction?: string, error?: E) {
+        initialize(name: string, sender: any, direction?: string, error?: E): void {
             super.initialize(name, sender, this._EventManager.DIRECT);
 
             this.error = error;

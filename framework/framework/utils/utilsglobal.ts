@@ -42,14 +42,14 @@ function extend(destination: any, ...sources: any[]): any {
     var keys: Array<string>,
         property: any;
 
-    forEach((source, k) => {
+    forEach((source, k): void => {
         if (!isObject(source)) {
             return;
         }
 
         keys = Object.keys(source);
 
-        forEach((key) => {
+        forEach((key): void => {
             property = source[key];
             if (deep) {
                 if (isArray(property)) {
@@ -80,7 +80,7 @@ function deepExtend(destination: any, ...sources: any[]): any {
     return extend.apply(null, [true, destination].concat(sources));
 }
 
-function _clone(obj: any, deep?: boolean) {
+function _clone(obj: any, deep?: boolean): any {
     if (!isObject(obj)) {
         return obj;
     } else if (isDate(obj)) {
@@ -212,7 +212,7 @@ function filter<T>(iterator: (value: T, key: any, obj: any) => boolean, obj: any
         return obj.filter(iterator, context);
     }
 
-    forEach<T>((value: T, key: any, obj: any) => {
+    forEach<T>((value: T, key: any, obj: any): void => {
         if (iterator(value, key, obj)) {
             arr.push(value);
         }
@@ -222,8 +222,8 @@ function filter<T>(iterator: (value: T, key: any, obj: any) => boolean, obj: any
 }
 
 function where(properties: any, obj: any): Array<any> {
-    return filter((value)
-        => !some((property, key)
+    return filter((value): boolean
+        => !some((property, key): boolean
             => (<any>value)[key] !== property, properties), obj);
 }
 
@@ -267,7 +267,7 @@ function map<T, R>(iterator: (value: T, key: any, obj: any) => R, obj: any, cont
         return obj.map(iterator, context);
     }
 
-    forEach((value, key) => {
+    forEach((value, key): void => {
         arr.push(iterator.call(context, value, key, obj));
     }, obj);
 
@@ -295,8 +295,8 @@ function mapAsyncWithOrder<T, R>(iterator: (value: T, index: number, list: Array
     var promise: plat.async.IThenable<Array<R>>,
         inOrder = (previousValue: plat.async.IThenable<Array<R>>, nextValue: T, nextIndex: number,
             array: Array<T>): plat.async.IThenable<Array<R>> => {
-            return previousValue.then((items) => {
-                return iterator(nextValue, nextIndex, array).then((moreItems) => {
+            return previousValue.then((items): plat.async.IThenable<Array<R>> => {
+                return iterator(nextValue, nextIndex, array).then((moreItems): Array<R> => {
                     return items.concat(moreItems);
                 });
             });
@@ -320,7 +320,7 @@ function mapAsyncInDescendingOrder<T, R>(iterator: (value: T, index: number, lis
 }
 
 function pluck<T, U>(key: string, obj: any): Array<U> {
-    return map<T, U>((value) => (<any>value)[key], obj);
+    return map<T, U>((value): any => (<any>value)[key], obj);
 }
 
 function some<T>(iterator: (value: T, key: any, obj: any) => boolean, obj: any, context?: any): boolean {
@@ -362,12 +362,12 @@ function postpone(method: (...args: any[]) => void, args?: Array<any>, context?:
 }
 
 function defer(method: (...args: any[]) => void, timeout: number, args?: Array<any>, context?: any): plat.IRemoveListener {
-    function defer() {
+    function defer(): void {
         method.apply(context, args);
     }
 
     var timeoutId = setTimeout(defer, timeout);
-    return () => {
+    return (): void => {
         clearTimeout(timeoutId);
     };
 }
@@ -377,7 +377,7 @@ function requestAnimationFrameGlobal(method: FrameRequestCallback, context?: any
 
     var requestAnimFrame = _compat.requestAnimationFrame;
     if (isUndefined(requestAnimFrame)) {
-        return postpone(() => {
+        return postpone((): void => {
             method.call(context, Date.now());
         });
     }
@@ -385,7 +385,7 @@ function requestAnimationFrameGlobal(method: FrameRequestCallback, context?: any
     var animationId = requestAnimFrame(method.bind(context)),
         cancelAnimFrame = _compat.cancelAnimationFrame || noop;
 
-    return () => {
+    return (): void => {
         cancelAnimFrame(animationId);
     };
 }
@@ -445,7 +445,7 @@ function camelCase(str: string): string {
     _camelCaseRegex = _camelCaseRegex || (<plat.expressions.Regex>plat.acquire(__Regex)).camelCaseRegex;
 
     return str.replace(_camelCaseRegex,
-        (match: string, delimiter?: string, char?: string, index?: number)
+        (match: string, delimiter?: string, char?: string, index?: number): string
             => index ? char.toUpperCase() : char);
 }
 
@@ -470,7 +470,7 @@ function access(obj: any, property: any): any {
     return obj[property];
 }
 
-function deserializeQuery(search: string) {
+function deserializeQuery(search: string): plat.IObject<string> {
     if (isEmpty(search)) {
         return;
     }
@@ -490,7 +490,7 @@ function deserializeQuery(search: string) {
 }
 
 function serializeQuery(query: plat.IObject<string>): string {
-    return (isArray(query) || isObject(query)) && !isEmpty(query) ? '?' + map((value, key) => {
+    return (isArray(query) || isObject(query)) && !isEmpty(query) ? '?' + map((value, key): string => {
         return key + '=' + value;
     }, query).join('&') : '';
 }
@@ -500,7 +500,7 @@ function booleanReduce(values: Array<boolean>): boolean {
         return isBoolean(values) ? <any>values : true;
     }
 
-    return values.reduce((prev: boolean, current: boolean) => {
+    return values.reduce((prev: boolean, current: boolean): boolean => {
         return prev && current !== false;
     }, true);
 }
