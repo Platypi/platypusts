@@ -1,4 +1,6 @@
 ﻿module plat.ui.animations {
+    'use strict';
+
     /**
      * @name BaseAnimation
      * @memberof plat.ui.animations
@@ -55,19 +57,6 @@
         protected _Promise: async.IPromise;
 
         /**
-         * @name __eventListeners
-         * @memberof plat.ui.animations.BaseAnimation
-         * @kind property
-         * @access private
-         * 
-         * @type {Array<plat.IRemoveListener>}
-         * 
-         * @description
-         * An Array of remove functions to dispose of event listeners.
-         */
-        private __eventListeners: Array<IRemoveListener> = [];
-
-        /**
          * @name element
          * @memberof plat.ui.animations.BaseAnimation
          * @kind property
@@ -118,6 +107,19 @@
          * The resolve function for the end of the animation.
          */
         protected _resolve: () => void;
+
+        /**
+         * @name __eventListeners
+         * @memberof plat.ui.animations.BaseAnimation
+         * @kind property
+         * @access private
+         * 
+         * @type {Array<plat.IRemoveListener>}
+         * 
+         * @description
+         * An Array of remove functions to dispose of event listeners.
+         */
+        private __eventListeners: Array<IRemoveListener> = [];
 
         /**
          * @name initialize

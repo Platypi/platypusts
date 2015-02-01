@@ -1,4 +1,6 @@
 ﻿module plat.ui.animations {
+    'use strict';
+
     /**
      * @name CssAnimation
      * @memberof plat.ui.animations
@@ -22,7 +24,7 @@
          * A set of browser compatible CSS animation events capable of being listened to.
          */
         private __animationEvents: IAnimationEvents = this._compat.animationEvents;
-        
+
         /**
          * @name animationStart
          * @memberof plat.ui.animations.CssAnimation
@@ -44,7 +46,7 @@
 
             return this.addEventListener(animationEvents.$animationStart, listener, false);
         }
-        
+
         /**
          * @name animationEnd
          * @memberof plat.ui.animations.CssAnimation
@@ -66,7 +68,7 @@
 
             return this.addEventListener(animationEvents.$animationEnd, listener, false);
         }
-        
+
         /**
          * @name animationIteration
          * @memberof plat.ui.animations.CssAnimation
@@ -88,7 +90,7 @@
 
             return this.addEventListener(animationEvents.$animationIteration, listener, false);
         }
-        
+
         /**
          * @name transitionStart
          * @memberof plat.ui.animations.CssAnimation
@@ -110,7 +112,7 @@
 
             return this.addEventListener(animationEvents.$transitionStart, listener, false);
         }
-        
+
         /**
          * @name animationEnd
          * @memberof plat.ui.animations.CssAnimation

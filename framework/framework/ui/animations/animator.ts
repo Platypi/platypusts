@@ -1,4 +1,6 @@
 ﻿module plat.ui.animations {
+    'use strict';
+
     /**
      * @name Animator
      * @memberof plat.ui.animations

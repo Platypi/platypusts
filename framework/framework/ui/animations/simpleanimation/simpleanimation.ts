@@ -8,6 +8,8 @@
  * Holds all the classes and interfaces related to UI animation components for platypus.
  */
 module plat.ui.animations {
+    'use strict';
+
     /**
      * @name SimpleCssAnimation
      * @memberof plat.ui.animations

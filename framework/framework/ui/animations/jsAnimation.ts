@@ -1,4 +1,6 @@
 ﻿module plat.ui.animations {
+    'use strict';
+
     /**
      * @name JsAnimation
      * @memberof plat.ui.animations
