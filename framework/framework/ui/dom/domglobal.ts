@@ -282,7 +282,7 @@ function innerHtml(element: HTMLElement, html: string): HTMLElement {
     var _compat: plat.Compat = plat.acquire(__Compat);
 
     if (_compat.msApp) {
-        MSApp.execUnsafeLocalFunction(() => {
+        MSApp.execUnsafeLocalFunction((): void => {
             element.innerHTML = html;
         });
     } else {
@@ -469,7 +469,7 @@ var ___templateCache: plat.storage.TemplateCache,
     ___http: plat.async.Http,
     ___Exception: plat.IExceptionStatic;
 
-function getTemplate(templateUrl: string) {
+function getTemplate(templateUrl: string): plat.async.IThenable<DocumentFragment> {
     ___templateCache = ___templateCache || plat.acquire(__TemplateCache);
     ___http = ___http || plat.acquire(__Http);
 
@@ -477,11 +477,11 @@ function getTemplate(templateUrl: string) {
         ajax = ___http.ajax;
 
     return ___templateCache.put(templateUrl, ___templateCache.read(templateUrl)
-        .catch((error) => {
+        .catch((error: any): plat.async.AjaxPromise<string> => {
             if (isNull(error)) {
                 return ajax<string>({ url: templateUrl });
             }
-        }).then<DocumentFragment>((success) => {
+        }).then<DocumentFragment>((success): plat.async.IThenable<DocumentFragment> => {
             if (isDocumentFragment(success)) {
                 return ___templateCache.put(templateUrl, <any>success);
             } else if (!isObject(success) || !isString(success.response)) {
@@ -497,8 +497,8 @@ function getTemplate(templateUrl: string) {
             }
 
             return ___templateCache.put(templateUrl, serializeHtml(templateString));
-        }).catch((error) => {
-            postpone(() => {
+        }).catch((error: any): any => {
+            postpone((): void => {
                 ___Exception = ___Exception || plat.acquire(__ExceptionStatic);
                 ___Exception.fatal('Failure to get template from ' + templateUrl + '.',
                     ___Exception.TEMPLATE);

@@ -293,7 +293,7 @@ module plat.ui.controls {
 
             if (value) {
                 if (!isNull(this.__leaveAnimation)) {
-                    promise = <any>this.__leaveAnimation.cancel().then(() => {
+                    promise = <any>this.__leaveAnimation.cancel().then((): async.IThenable<void> => {
                         this.__leaveAnimation = null;
                         return this._addItem();
                     });
@@ -302,7 +302,7 @@ module plat.ui.controls {
                 }
             } else {
                 if (!isNull(this.__enterAnimation)) {
-                    promise = this.__enterAnimation.cancel().then(() => {
+                    promise = this.__enterAnimation.cancel().then((): void => {
                         this.__enterAnimation = null;
                         return <any>this._removeItem();
                     });
@@ -335,7 +335,7 @@ module plat.ui.controls {
 
             if (this.__firstTime) {
                 this.__firstTime = false;
-                this.__initialBind = this.bindableTemplates.bind('template').then((template) => {
+                this.__initialBind = this.bindableTemplates.bind('template').then((template): animations.IAnimatingThenable => {
                     var element = this.element;
 
                     element.appendChild(template);
@@ -346,7 +346,7 @@ module plat.ui.controls {
                     }
 
                     return this.__enterAnimation = this._animator.animate(element, __Enter);
-                }).then(() => {
+                }).then((): void => {
                     this.__enterAnimation = null;
                 });
 
@@ -354,7 +354,7 @@ module plat.ui.controls {
             }
 
             if (isPromise(this.__initialBind)) {
-                return this.__initialBind.then(() => {
+                return this.__initialBind.then((): animations.IAnimationThenable<void> => {
                     return this._animateEntrance();
                 });
             }
@@ -378,7 +378,7 @@ module plat.ui.controls {
                 parentNode = commentNode.parentNode;
 
             parentNode.replaceChild(this.fragmentStore, commentNode);
-            return this.__enterAnimation = this._animator.animate(this.element, __Enter).then(() => {
+            return this.__enterAnimation = this._animator.animate(this.element, __Enter).then((): void => {
                 this.__enterAnimation = null;
             });
         }
@@ -396,7 +396,7 @@ module plat.ui.controls {
          */
         protected _removeItem(): async.IThenable<void> {
             if (isPromise(this.__initialBind)) {
-                return this.__initialBind.then(() => {
+                return this.__initialBind.then((): async.IThenable<void> => {
                     return this._animateLeave();
                 });
             }
@@ -418,7 +418,7 @@ module plat.ui.controls {
         protected _animateLeave(): animations.IAnimationThenable<void> {
             var element = this.element;
 
-            return this.__leaveAnimation = this._animator.animate(element, __Leave).then(() => {
+            return this.__leaveAnimation = this._animator.animate(element, __Leave).then((): void => {
                 this.__leaveAnimation = null;
                 element.parentNode.insertBefore(this.commentNode, element);
 

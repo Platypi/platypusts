@@ -870,7 +870,7 @@ module plat.ui {
             } else if (!isNull(control.templateString)) {
                 var type = control.type;
 
-                return templateCache.read(type).catch((template: any) => {
+                return templateCache.read(type).catch((template: any): async.IThenable<DocumentFragment> => {
                     if (isNull(template)) {
                         template = dom.serializeHtml(control.templateString);
                 }

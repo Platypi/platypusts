@@ -16,7 +16,7 @@ module plat.ui {
     export class ViewControl extends TemplateControl implements ISupportNavigation {
         /**
          * @name hasOwnContext
-         * @memberof plat.ui.BaseViewControl
+         * @memberof plat.ui.ViewControl
          * @kind property
          * @access public
          * 
@@ -27,6 +27,18 @@ module plat.ui {
          */
         hasOwnContext: boolean = true;
 
+        /**
+         * @name navigator
+         * @memberof plat.ui.ViewControl
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.routing.Navigator}
+         * 
+         * @description
+         * Every ViewControl inside a {@link plat.ui.Viewport|Viewport} will have a navigator. The navigator is linked to 
+         * the router for the Viewport containing the ViewControl.
+         */
         navigator: routing.Navigator;
 
         /**
@@ -61,22 +73,6 @@ module plat.ui {
          */
         static getInstance(): ViewControl {
             return new ViewControl();
-        }
-
-        /**
-         * @name constructor
-         * @memberof plat.ui.ViewControl
-         * @kind function
-         * @access public
-         * 
-         * @description
-         * Initializes any events that you might use in the ViewControl. Automatically subscribes to 'backButtonPressed' when 
-         * you implement a backButtonPressed function.
-         * 
-         * @returns {plat.ui.ViewControl}
-         */
-        constructor() {
-            super();
         }
 
         canNavigateFrom(): any { }

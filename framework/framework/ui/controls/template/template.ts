@@ -276,14 +276,14 @@ module plat.ui.controls {
 
             var controlPromise: async.IThenable<TemplateControl>;
             if (isPromise(template)) {
-                controlPromise = template.catch((error: Error) => {
+                controlPromise = template.catch((error: Error): async.IThenable<DocumentFragment> => {
                     if (isNull(error)) {
                         return TemplateControl.determineTemplate(this, url);
                     }
-                }).then((template: DocumentFragment) => {
-                        this.bindableTemplates.add(id, template.cloneNode(true));
-                        return this;
-                    });
+                }).then((template: DocumentFragment): TemplateControl => {
+                    this.bindableTemplates.add(id, template.cloneNode(true));
+                    return this;
+                });
             } else {
                 this.bindableTemplates.add(id, template.cloneNode(true));
 
@@ -311,7 +311,7 @@ module plat.ui.controls {
          */
         protected _waitForTemplateControl(templatePromise: async.IThenable<Template>): void {
             var _Exception: IExceptionStatic = this._Exception;
-            templatePromise.then((templateControl: Template) => {
+            templatePromise.then((templateControl: Template): async.IThenable<DocumentFragment> => {
                 if (!(isNull(this._url) || (this._url === templateControl._url))) {
                     _Exception.warn('The specified url: ' + this._url +
                         ' does not match the original ' + this.type + ' with id: ' +
@@ -321,11 +321,11 @@ module plat.ui.controls {
 
                 this.__mapBindableTemplates(templateControl);
                 return this.bindableTemplates.bind(this._id);
-            }).then((clone) => {
+            }).then((clone: DocumentFragment): void => {
                     var endNode = this.endNode;
                     insertBefore(endNode.parentNode, clone, endNode);
-                }).catch((error) => {
-                    postpone(() => {
+                }).catch((error: any): void => {
+                    postpone((): void => {
                         _Exception.warn('Problem resolving ' + this.type + ' url: ' +
                             error.response, _Exception.TEMPLATE);
                     });

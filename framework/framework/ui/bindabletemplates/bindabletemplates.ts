@@ -566,7 +566,7 @@ module plat.ui {
                 return;
             }
 
-            templatePromise = templatePromise.then((result: DocumentFragment) => {
+            templatePromise = templatePromise.then((result: DocumentFragment): async.IThenable<any> => {
                 var template = <DocumentFragment>result.cloneNode(true),
                     control = this._createBoundControl(key, template, resources),
                     nodeMap = this._createNodeMap(control, template, relativeIdentifier);
@@ -579,7 +579,7 @@ module plat.ui {
             });
 
             if (!noIndex) {
-                return templatePromise.then((fragment) => {
+                return templatePromise.then((fragment): async.IThenable<any> => {
                     var childNodes = Array.prototype.slice.call(fragment.childNodes),
                         oldControl = <TemplateControl>this.control.controls[index],
                         endNode = oldControl.endNode,
@@ -590,8 +590,8 @@ module plat.ui {
                     parentNode.insertBefore(fragment, nextSibling);
 
                     return childNodes;
-                }).then(null,(error: any) => {
-                    postpone(() => {
+                }).then(null,(error: any): DocumentFragment => {
+                    postpone((): void => {
                         _Exception.fatal(error, _Exception.BIND);
                     });
 
@@ -599,8 +599,8 @@ module plat.ui {
                 });
             }
 
-            return templatePromise.then(null,(error: any) => {
-                postpone(() => {
+            return templatePromise.then(null,(error: any): DocumentFragment => {
+                postpone((): void => {
                     _Exception.fatal(error, _Exception.BIND);
                 });
 
@@ -629,13 +629,13 @@ module plat.ui {
                 disposed = false,
                 dispose = isFunction(control.dispose) ? control.dispose.bind(control) : noop;
 
-            control.dispose = () => {
+            control.dispose = (): void => {
                 disposed = true;
                 dispose();
                 control.dispose = dispose;
             };
 
-            return this._bindNodeMap(key, nodeMap).then(() => {
+            return this._bindNodeMap(key, nodeMap).then((): DocumentFragment => {
                 var _document = this._document,
                     template = nodeMap.element;
 
@@ -649,8 +649,8 @@ module plat.ui {
                     null);
 
                 return template;
-            }, (error: any) => {
-                    postpone(() => {
+            },(error: any): DocumentFragment => {
+                    postpone((): void => {
                         var _Exception: IExceptionStatic = this._Exception;
                         _Exception.fatal(error, _Exception.COMPILE);
                     });
@@ -738,7 +738,7 @@ module plat.ui {
 
             promises.push(manager.fulfillTemplate());
 
-            this.templates[key] = this._Promise.all(promises).then(() => {
+            this.templates[key] = this._Promise.all(promises).then((): DocumentFragment => {
                 var element = nodeMap.element,
                     startNode: Comment,
                     endNode: Comment;

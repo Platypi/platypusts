@@ -262,7 +262,7 @@
                 eventListeners = this.__eventListeners;
 
             eventListeners.push(removeListener);
-            return () => {
+            return (): void => {
                 removeListener();
                 var index = eventListeners.indexOf(removeListener);
                 if (index !== -1) {
@@ -291,7 +291,7 @@
             this.element = <HTMLElement>element;
             this.options = options;
 
-            var promise = new AnimationPromise((resolve) => {
+            var promise = new AnimationPromise((resolve): void => {
                 this._resolve = resolve;
                 this.initialize();
             });

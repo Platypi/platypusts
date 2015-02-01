@@ -749,7 +749,7 @@
             element.addEventListener(type, listener, useCapture);
 
             if (!isUndefined(element['on' + type]) || isUndefined((<any>gestures)[type]) || mappingExists) {
-                return () => {
+                return (): void => {
                     if (listenerRemoved) {
                         return;
                     } else if (mappingExists) {
@@ -786,7 +786,7 @@
             (<any>this._gestureCount)[countType]++;
             this.__registerElement(element, type);
 
-            return () => {
+            return (): void => {
                 if (listenerRemoved) {
                     return;
                 }
@@ -904,14 +904,14 @@
 
             if (noHolds) {
                 this.__hasRelease = false;
-                this.__cancelDeferredHold = defer(() => {
+                this.__cancelDeferredHold = defer((): void => {
                     this.__hasRelease = true;
                 }, holdInterval);
                 return true;
             } else if (noRelease) {
                 domEvent = this.__findFirstSubscriber(<ICustomElement>ev.target, this._gestures.$hold);
                 if ((domEventFound = !isNull(domEvent))) {
-                    subscribeFn = () => {
+                    subscribeFn = (): void => {
                         domEvent.trigger(ev);
                         this.__cancelDeferredHold = noop;
                     };
@@ -921,7 +921,7 @@
                 // has both hold and release events registered
                 domEvent = this.__findFirstSubscriber(<ICustomElement>ev.target, this._gestures.$hold);
                 if ((domEventFound = !isNull(domEvent))) {
-                    subscribeFn = () => {
+                    subscribeFn = (): void => {
                         domEvent.trigger(ev);
                         this.__hasRelease = true;
                         this.__cancelDeferredHold = noop;
@@ -1232,7 +1232,7 @@
 
             // defer for tap delay in case of something like desired 
             // dbltap zoom
-            this.__cancelDeferredTap = defer(() => {
+            this.__cancelDeferredTap = defer((): void => {
                 ev._buttons = this.__lastTouchDown._buttons;
                 domEvent.trigger(ev);
                 this.__tapCount = 0;
@@ -1867,7 +1867,7 @@
                 _document.addEventListener(mappedEvent, this.__mappedEventListener, useCapture);
             }
 
-            return () => {
+            return (): void => {
                 _document.removeEventListener(mappedEvent, this.__mappedEventListener, useCapture);
             };
         }
@@ -2004,7 +2004,7 @@
          * 
          * @returns {void}
          */
-        private __normalizeButtons(ev: IExtendedEvent) {
+        private __normalizeButtons(ev: IExtendedEvent): void {
             var buttons: number;
             if (isNumber(ev.buttons)) {
                 if (ev.buttons === 0) {
@@ -2407,7 +2407,7 @@
                             if (isFunction(focusedElement.blur)) {
                                 focusedElement.blur();
                             }
-                            postpone(() => {
+                            postpone((): void => {
                                 if (this._document.body.contains(target)) {
                                     target.click();
                                 }
@@ -2416,7 +2416,7 @@
                         default:
                             this.__focusedElement = target;
                             target.focus();
-                            remover = this.addEventListener(target, 'blur', () => {
+                            remover = this.addEventListener(target, 'blur', (): void => {
                                 if (this.__isFocused(target)) {
                                     this.__focusedElement = null;
                                 }
@@ -2431,7 +2431,7 @@
                     if (isFunction(focusedElement.blur)) {
                         focusedElement.blur();
                     }
-                    postpone(() => {
+                    postpone((): void => {
                         if (this._document.body.contains(target)) {
                             target.click();
                         }
@@ -2440,7 +2440,7 @@
                 case 'textarea':
                     this.__focusedElement = target;
                     target.focus();
-                    remover = this.addEventListener(target, 'blur', () => {
+                    remover = this.addEventListener(target, 'blur', (): void => {
                         if (this.__isFocused(target)) {
                             this.__focusedElement = null;
                         }
@@ -2451,7 +2451,7 @@
                     if (isFunction(focusedElement.blur)) {
                         focusedElement.blur();
                     }
-                    postpone(() => {
+                    postpone((): void => {
                         var _document = this._document;
                         if (_document.body.contains(target)) {
                             var event = <MouseEvent>_document.createEvent('MouseEvents');
@@ -2465,7 +2465,7 @@
                     if (isFunction(focusedElement.blur)) {
                         focusedElement.blur();
                     }
-                    postpone(() => {
+                    postpone((): void => {
                         if (this._document.body.contains(target) && isFunction(target.click)) {
                             target.click();
                         }
@@ -2490,13 +2490,13 @@
         private __preventClickFromTouch(): void {
             var _document = this._document,
                 preventDefault: (ev: Event) => boolean,
-                delayedClickRemover = defer(() => {
+                delayedClickRemover = defer((): void => {
                     _document.removeEventListener('click', preventDefault, true);
                     _document.removeEventListener('mousedown', preventDefault, true);
                     _document.removeEventListener('mouseup', preventDefault, true);
                 }, 400);
 
-            preventDefault = (ev: Event) => {
+            preventDefault = (ev: Event): boolean => {
                 ev.preventDefault();
                 ev.stopPropagation();
                 _document.removeEventListener(ev.type, preventDefault, true);
@@ -2514,7 +2514,7 @@
                 return false;
             };
 
-            postpone(() => {
+            postpone((): void => {
                 _document.addEventListener('click', preventDefault, true);
                 _document.addEventListener('mousedown', preventDefault, true);
                 _document.addEventListener('mouseup', preventDefault, true);

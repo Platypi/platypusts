@@ -103,7 +103,7 @@ module plat.ui.animations {
                 element = this.element,
                 className = this.className;
 
-            requestAnimationFrameGlobal(() => {
+            requestAnimationFrameGlobal((): void => {
                 addClass(element, className);
 
                 var computedStyle = this._window.getComputedStyle(element,(this.options || <ISimpleCssAnimationOptions>{}).pseudo),
@@ -117,8 +117,8 @@ module plat.ui.animations {
                     return;
                 }
 
-                this.animationEnd(() => {
-                    requestAnimationFrameGlobal(() => {
+                this.animationEnd((): void => {
+                    requestAnimationFrameGlobal((): void => {
                         replaceClass(element, className, className + __END_SUFFIX);
                         this.end();
                     });
@@ -144,8 +144,8 @@ module plat.ui.animations {
                 return this._Promise.resolve();
             }
 
-            return new this._Promise<void>((resolve) => {
-                requestAnimationFrameGlobal(() => {
+            return new this._Promise<void>((resolve): void => {
+                requestAnimationFrameGlobal((): void => {
                     this.element.style[<any>(animationEvents.$animation + 'PlayState')] = 'paused';
                     resolve();
                 });
@@ -170,8 +170,8 @@ module plat.ui.animations {
                 return this._Promise.resolve();
             }
 
-            return new this._Promise<void>((resolve) => {
-                requestAnimationFrameGlobal(() => {
+            return new this._Promise<void>((resolve): void => {
+                requestAnimationFrameGlobal((): void => {
                     this.element.style[<any>(animationEvents.$animation + 'PlayState')] = 'running';
                     resolve();
                 });

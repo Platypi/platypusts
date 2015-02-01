@@ -189,7 +189,7 @@ module.exports = exports = function load(grunt) {
                 configuration: grunt.file.readJSON('tslint.json')
             },
             files: {
-                src: ['framework/web/**/*.ts']
+                src: ['framework/**/*.ts']
             }
         },
         uglify: {

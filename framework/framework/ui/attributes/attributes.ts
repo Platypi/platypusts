@@ -51,7 +51,7 @@ module plat.ui {
          */
         private __control: Control;
 
-        static getInstance() {
+        static getInstance(): Attributes {
             return new Attributes();
         }
 
@@ -109,7 +109,7 @@ module plat.ui {
             listener = listener.bind(this.__control);
             listeners.push(listener);
 
-            return () => {
+            return (): void => {
                 var index = listeners.indexOf(listener);
                 if (index === -1) {
                     return;

@@ -91,7 +91,7 @@ module plat.ui.controls {
          * @description
          * The {@link plat.routing.Router|router} associated with this link.
          */
-        router: routing.Router;
+        router: routing.Router = this._Router.currentRouter();
 
         /**
          * @name options
@@ -132,11 +132,6 @@ module plat.ui.controls {
          */
         removeClickListener: IRemoveListener = noop;
 
-        constructor() {
-            super();
-            this.router = this._Router.currentRouter();
-        }
-
         /**
          * @name initialize
          * @memberof plat.ui.controls.Link
@@ -151,11 +146,11 @@ module plat.ui.controls {
         initialize(): void {
             var element = this.element;
 
-            this.addEventListener(element, 'click', (ev: Event) => {
+            this.addEventListener(element, 'click', (ev: Event): void => {
                 ev.preventDefault();
             }, false);
 
-            this.addEventListener(element, __tap, (ev: IExtendedEvent) => {
+            this.addEventListener(element, __tap, (ev: IExtendedEvent): void => {
                 if (ev.buttons !== 1) {
                     return;
                 }
@@ -168,7 +163,7 @@ module plat.ui.controls {
                 ev.preventDefault();
                 element.href = '#';
 
-                requestAnimationFrameGlobal(() => {
+                requestAnimationFrameGlobal((): void => {
                     this._browser.url(href);
                 });
 
@@ -188,16 +183,16 @@ module plat.ui.controls {
          * 
          * @returns {(ev: Event) => void} The click event listener.
          */
-        getListener(element: HTMLAnchorElement) {
+        getListener(element: HTMLAnchorElement): (ev: Event) => void {
             var cancel: IRemoveListener,
-                listener = (ev: Event) => {
+                listener = (ev: Event): void => {
                     ev.preventDefault();
                     this.removeClickListener();
                     cancel();
                     element.removeEventListener('click', listener);
                 };
 
-            cancel = defer(() => {
+            cancel = defer((): void => {
                 element.removeEventListener('click', listener);
             }, 3000);
 

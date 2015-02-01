@@ -160,7 +160,7 @@
 
             if (transitionProperty === '' || transitionProperty === 'none' ||
                 transitionDuration === '' || transitionDuration === '0s') {
-                requestAnimationFrameGlobal(() => {
+                requestAnimationFrameGlobal((): void => {
                     this._animate();
                     this._done(null, true);
                 });
@@ -169,7 +169,7 @@
 
             this.transitionEnd(this._done);
 
-            requestAnimationFrameGlobal(() => {
+            requestAnimationFrameGlobal((): void => {
                 if (this._animate()) {
                     return;
                 }

@@ -212,7 +212,7 @@ module plat.ui.controls {
          */
         constructor() {
             super();
-            this.itemsLoaded = new this._Promise<void>((resolve) => {
+            this.itemsLoaded = new this._Promise<void>((resolve): void => {
                 this.__resolveFn = resolve;
             });
         }
@@ -422,7 +422,7 @@ module plat.ui.controls {
             }
 
             if (promises.length > 0) {
-                this.itemsLoaded = this._Promise.all(promises).then(() => {
+                this.itemsLoaded = this._Promise.all(promises).then((): void => {
                     if (isFunction(this.__resolveFn)) {
                         this.__resolveFn();
                         this.__resolveFn = null;
@@ -434,7 +434,7 @@ module plat.ui.controls {
                     this.__resolveFn();
                     this.__resolveFn = null;
                 }
-                this.itemsLoaded = new this._Promise<void>((resolve) => {
+                this.itemsLoaded = new this._Promise<void>((resolve): void => {
                     this.__resolveFn = resolve;
                 });
             }
@@ -469,7 +469,7 @@ module plat.ui.controls {
 
                 if (isNull(optgroup)) {
                     return (groups[newGroup] = <any>this.bindableTemplates.bind('group', index)
-                        .then((groupClone: DocumentFragment) => {
+                        .then((groupClone: DocumentFragment): Element => {
                             optgroup = groups[newGroup] = <Element>groupClone.childNodes[1];
 
                             optgroup.appendChild(optionClone);
@@ -477,7 +477,7 @@ module plat.ui.controls {
                             return optgroup;
                         }));
                 } else if (isPromise(optgroup)) {
-                    return optgroup.then((group: Element) => {
+                    return optgroup.then((group: Element): Element => {
                         group.appendChild(optionClone);
                         return group;
                     });

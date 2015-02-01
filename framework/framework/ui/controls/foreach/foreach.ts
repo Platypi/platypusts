@@ -209,7 +209,7 @@ module plat.ui.controls {
          */
         constructor() {
             super();
-            this.itemsLoaded = new this._Promise<void>((resolve) => {
+            this.itemsLoaded = new this._Promise<void>((resolve): void => {
                 this.__resolveFn = resolve;
             });
         }
@@ -323,7 +323,7 @@ module plat.ui.controls {
          * 
          * @returns {void}
          */
-        protected _setAliases() {
+        protected _setAliases(): void {
             var optionsObj = this.options || <observable.IObservableProperty<IForEachOptions>>{},
                 options = optionsObj.value || <IForEachOptions>{},
                 aliases = options.aliases;
@@ -375,7 +375,7 @@ module plat.ui.controls {
             }
 
             if (promises.length > 0) {
-                this.itemsLoaded = this._Promise.all(promises).then<void>((templates) => {
+                this.itemsLoaded = this._Promise.all(promises).then<void>((templates): void => {
                     this._setBlockLength(templates);
 
                     if (animate === true) {
@@ -391,8 +391,8 @@ module plat.ui.controls {
                         this.__resolveFn();
                         this.__resolveFn = null;
                     }
-                }).catch((error) => {
-                        postpone(() => {
+                }).catch((error: any): void => {
+                        postpone((): void => {
                             var _Exception: IExceptionStatic = this._Exception;
                             _Exception.warn(error, _Exception.BIND);
                         });
@@ -402,7 +402,7 @@ module plat.ui.controls {
                     this.__resolveFn();
                     this.__resolveFn = null;
                 }
-                this.itemsLoaded = new this._Promise<void>((resolve) => {
+                this.itemsLoaded = new this._Promise<void>((resolve): void => {
                     this.__resolveFn = resolve;
                 });
             }
@@ -456,7 +456,7 @@ module plat.ui.controls {
             while (childNodes.length > 0) {
                 childNode = childNodes.shift();
                 if (childNode.nodeType === Node.ELEMENT_NODE) {
-                    currentAnimations.push(_animator.animate(childNode, key).then(() => {
+                    currentAnimations.push(_animator.animate(childNode, key).then((): void => {
                         currentAnimations.shift();
                     }));
                 }
@@ -700,7 +700,7 @@ module plat.ui.controls {
          * @returns {void}
          */
         protected _pop(ev: observable.IPostArrayChangeInfo<any>): void {
-            this._animateItems(ev.newArray.length, 1, __Leave).then(() => {
+            this._animateItems(ev.newArray.length, 1, __Leave).then((): void => {
                 this._removeItems(1);
             });
         }
@@ -915,7 +915,7 @@ module plat.ui.controls {
                 animationPromises.push(currentAnimations[length].cancel());
             }
 
-            return this._Promise.all(animationPromises).then(() => {
+            return this._Promise.all(animationPromises).then((): async.IThenable<void> => {
                 return this.__handleAnimation(startNode, endNode, key, clone);
             });
         }
@@ -954,12 +954,12 @@ module plat.ui.controls {
                         node = node.cloneNode(true);
                         container.insertBefore(node, firstNode);
                         // bind callback to current cloned node due to loop
-                        callback = function () {
+                        callback = function (): void {
                             currentAnimations.shift();
                             container.removeChild(this);
                         }.bind(node);
                     } else {
-                        callback = () => {
+                        callback = (): void => {
                             currentAnimations.shift();
                         };
                     }

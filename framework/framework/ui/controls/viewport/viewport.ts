@@ -65,7 +65,7 @@ module plat.ui.controls {
         nextInjector: dependency.Injector<ViewControl>;
         nextView: ViewControl;
 
-        initialize() {
+        initialize(): void {
             var router = this.router = this._Router.currentRouter(),
                 parentViewport = this._getParentViewport(),
                 parentRouter: routing.Router;
@@ -78,8 +78,8 @@ module plat.ui.controls {
             this.navigator.initialize(router);
         }
 
-        loaded() {
-            this._Promise.resolve(this.router.finishNavigating).then(() => {
+        loaded(): void {
+            this._Promise.resolve(this.router.finishNavigating).then((): void => {
                 this.router.register(this);
             });
         }
@@ -111,7 +111,7 @@ module plat.ui.controls {
                 response = view.canNavigateTo(parameters, routeInfo.query);
             }
 
-            return resolve(response).then((canNavigateTo: boolean) => {
+            return resolve(response).then((canNavigateTo: boolean): boolean => {
                 this.nextInjector = injector;
                 this.nextView = view;
                 return canNavigateTo;
@@ -129,7 +129,7 @@ module plat.ui.controls {
             return this._Promise.resolve(response);
         }
 
-        navigateTo(routeInfo: routing.IRouteInfo) {
+        navigateTo(routeInfo: routing.IRouteInfo): async.IThenable<void> {
             var resolve = this._Promise.resolve.bind(this._Promise),
                 injector = this.nextInjector || this._Injector.getDependency(routeInfo.delegate.view),
                 nodeMap = this._createNodeMap(injector),
@@ -162,7 +162,7 @@ module plat.ui.controls {
             return manager.templatePromise;
         }
 
-        navigateFrom() {
+        navigateFrom(): async.IThenable<void> {
             var view = this.controls[0],
                 promise: async.IThenable<void>;
 
@@ -174,17 +174,17 @@ module plat.ui.controls {
 
             return promise
                 .catch(noop)
-                .then(() => {
+                .then((): void => {
                     Control.dispose(view);
                 });
         }
 
-        dispose() {
+        dispose(): void {
             this.router.unregister(this);
             this.navigator.dispose();
         }
 
-        protected _createNodeMap(injector: dependency.Injector<ViewControl>) {
+        protected _createNodeMap(injector: dependency.Injector<ViewControl>): processing.INodeMap {
             var control = this.nextView || injector.inject(),
                 doc = this._document,
                 type = injector.name,

@@ -86,8 +86,8 @@
 
                 var parent = this._elements[animatingParentId];
                 if (isPromise(parent.promise)) {
-                    return animationPromise.then(() => {
-                        return () => {
+                    return animationPromise.then((): () => IAnimationThenable<any> => {
+                        return (): IAnimationThenable<any> => {
                             return parent.promise;
                         };
                     });
@@ -97,16 +97,16 @@
             }
 
             this.__stopChildAnimations(element);
-            animationPromise = animationPromise.then(() => {
+            animationPromise = animationPromise.then((): () => IAnimationThenable<any> => {
                 animatedElement.promise = null;
                 animatedElement.animationEnd();
-                return () => {
+                return (): IAnimationThenable<any> => {
                     return animationPromise;
                 };
             });
 
             if (isPromise(animatedElement.promise)) {
-                return animatedElement.promise.then(() => {
+                return animatedElement.promise.then((): IAnimationThenable<any> => {
                     animationInstance.start();
                     return (animatedElement.promise = animationPromise);
                 });
@@ -129,8 +129,8 @@
          * {@link plat.ui.animations.AnimationPromise|AnimationPromise}.
          */
         resolve(): IAnimatingThenable {
-            var animationPromise = new AnimationPromise((resolve) => {
-                resolve(<IGetAnimatingThenable>() => {
+            var animationPromise = new AnimationPromise((resolve): void => {
+                resolve(<IGetAnimatingThenable>(): IAnimationThenable<void> => {
                     return <IAnimationThenable<void>><any>animationPromise;
                 });
             });
@@ -201,7 +201,7 @@
             }
 
             var animatedElement = elements[id],
-                removeListener = (cancel?: boolean, reanimating?: boolean) => {
+                removeListener = (cancel?: boolean, reanimating?: boolean): void => {
                     if (cancel === true) {
                         animationInstance.cancel();
                         animationInstance.end();
