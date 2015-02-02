@@ -437,6 +437,8 @@
                 backNavigate: boolean,
                 _Exception = this._Exception,
                 ev: events.DispatchEvent,
+                headControl: ui.controls.Head = acquire(__Head),
+                headExists = isObject(headControl) && isFunction(headControl.navigated),
                 onFailedNavigaton: (e: any) => void = (e: any): void => {
                     this._ignoreOnce = true;
                     this._previousUrl = previousUrl;
@@ -487,18 +489,16 @@
                 this.finishNavigating()
                     .then((): async.IThenable<void> => {
 
-                    ev = EventManager.dispatch(__navigating, this, EventManager.DIRECT, [utils]);
-
-                    if (ev.defaultPrevented) {
-                        throw new Error('Navigation prevented during ' + __navigating + ' event');
-                        return;
-                    }
-
+                    EventManager.dispatch(__navigating, this, EventManager.DIRECT, [utils]);
                     return this._router.navigate(utils.pathname, utils.query);
                 }).then((): void => {
                     this._previousUrl = utils.pathname;
                     if (isFunction(this._resolveNavigate)) {
                         this._resolveNavigate();
+                    }
+
+                    if (headExists) {
+                        headControl.navigated(utils.href);
                     }
 
                     EventManager.dispatch(__navigated, this, EventManager.DIRECT, [utils]);

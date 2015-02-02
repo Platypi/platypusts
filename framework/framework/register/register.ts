@@ -105,6 +105,10 @@ module plat.register {
             throw new Error('A Control must be registered with a string name');
         }
 
+        if (name === 'head') {
+            isStatic = true;
+        }
+
         return add(controlInjectors, name, Type, dependencies, isStatic ? __STATIC : undefined);
     }
 

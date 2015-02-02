@@ -1,19 +1,20 @@
 module app.viewcontrols {
+
     var count = 0,
         arrCount = 6;
     (<any>window).backCalled = 0;
-    export class Main extends plat.ui.ViewControl {
+    export class Main extends BaseViewControl {
         protected static _inject: any = {
             utils: plat.Utils
         };
 
         title = 'Main';
-        templateString = `
-            <plat-foreach plat-context="items">
-                <div>{{value}}</div>
-            </plat-foreach>
-        `;
-        //templateUrl = 'viewcontrols/main/main.viewcontrol.html';
+        //templateString = `
+        //    <plat-foreach plat-context="items">
+        //        <div>{{value}}</div>
+        //    </plat-foreach>
+        //`;
+        templateUrl = 'viewcontrols/main/main.viewcontrol.html';
         context = {
             views: [One, Two, Three, Four],
             items: <Array<{ value: string|number; }>>[]
@@ -49,6 +50,11 @@ module app.viewcontrols {
             this.navigator.goBack().then(() => {
                 console.log('test');
             });
+        }
+
+        loaded() {
+            this.head.title('Main Page');
+            this.head.description('This is the main page');
         }
     }
 

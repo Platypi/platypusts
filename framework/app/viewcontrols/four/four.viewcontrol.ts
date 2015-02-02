@@ -1,7 +1,7 @@
 ﻿module app.viewcontrols {
     'use strict';
     var count = 0;
-    export class Four extends plat.ui.ViewControl {
+    export class Four extends BaseViewControl {
         templateUrl = 'viewcontrols/four/four.viewcontrol.html';
         context: { views: Array<Function>; } = {
             views: [One, Two, Three, Four]
@@ -38,6 +38,14 @@
             //        return false;
             //    }
             //});
+        }
+
+        loaded() {
+            this.head.title('Page Four');
+            //this.head.description('This is the Fourth page');
+            this.head.image('testimage');
+            this.head.author('Will Johnston');
+            this.head.publisher('Platypi');
         }
     }
 

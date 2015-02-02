@@ -239,8 +239,8 @@ module plat {
             if (isNull(node)) {
                 body.setAttribute(__Hide, '');
                 postpone((): void => {
-                    _compiler.compile(head);
-                    _compiler.compile(body);
+                    _compiler.compile([head]);
+                    _compiler.compile([body]);
                     body.removeAttribute(__Hide);
                 });
                 return;
@@ -249,14 +249,14 @@ module plat {
             if (isFunction((<Element>node).setAttribute)) {
                 (<Element>node).setAttribute(__Hide, '');
                 postpone((): void => {
-                    _compiler.compile(node);
+                    _compiler.compile([node]);
                     (<Element>node).removeAttribute(__Hide);
                 });
                 return;
             }
 
             postpone((): void => {
-                _compiler.compile(node);
+                _compiler.compile([node]);
             });
         }
 

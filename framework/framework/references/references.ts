@@ -137,6 +137,22 @@ var __prefix = '$',
      * Control Properties
      */
     __TemplateControlCache = '__templateControlCache',
+    __Head = 'head',
+    __Meta = 'meta',
+    __Title = 'title',
+    __Description = 'description',
+    __Author = 'author',
+    __Publisher = 'publisher',
+    __MetaLink = 'link',
+    __MetaHref = 'href',
+    __MetaName = 'name',
+    __MetaProperty = 'property',
+    __MetaImage = 'image',
+    __Rel = 'rel',
+    __Url = 'url',
+    __OpenGraph = 'og:',
+    __Twitter = 'twitter:',
+    __Content = 'content',
 
     /**
      * Lifecycle events

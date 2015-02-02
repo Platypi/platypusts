@@ -1986,7 +1986,10 @@
 
             ev.touches = touches;
             ev.offset = this.__getOffset(ev);
-            ev.timeStamp = timeStamp;
+
+            if (isUndefined(ev.timeStamp)) {
+                ev.timeStamp = timeStamp;
+            }
 
             return ev;
         }

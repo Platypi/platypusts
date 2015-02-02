@@ -23,6 +23,7 @@
       <Link>lib\%(RecursiveDir)%(Filename)%.ts</Link>
     </TypeScriptCompile>
     <TypeScriptCompile Include="app\app.ts" />
+    <TypeScriptCompile Include="viewcontrols\base.viewcontrol.ts" />
     <TypeScriptCompile Include="viewcontrols\main\main.viewcontrol.ts" />
     <TypeScriptCompile Include="viewcontrols\four\four.viewcontrol.ts" />
     <TypeScriptCompile Include="viewcontrols\three\three.viewcontrol.ts" />

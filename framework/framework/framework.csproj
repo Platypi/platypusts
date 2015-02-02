@@ -70,6 +70,7 @@
     <TypeScriptCompile Include="ui\attributes\attributes.ts" />
     <TypeScriptCompile Include="ui\bindablepropertycontrol\bindablepropertycontrol.ts" />
     <TypeScriptCompile Include="ui\bindabletemplates\bindabletemplates.ts" />
+    <TypeScriptCompile Include="ui\controls\head\head.ts" />
     <TypeScriptCompile Include="ui\controls\link\link.ts" />
     <TypeScriptCompile Include="ui\controls\foreach\foreach.ts" />
     <TypeScriptCompile Include="ui\controls\html\html.ts" />

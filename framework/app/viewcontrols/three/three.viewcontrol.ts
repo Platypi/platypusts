@@ -1,7 +1,7 @@
 ﻿module app.viewcontrols {
     'use strict';
 
-    export class Three extends plat.ui.ViewControl {
+    export class Three extends BaseViewControl {
         templateUrl = 'viewcontrols/three/three.viewcontrol.html';
         context: { views: Array<Function>; } = {
             views: [One, Two, Three, Four]
@@ -33,6 +33,11 @@
 
         canNavigateTo() {
             // console.log('canNavigateTo:', this.uid);
+        }
+
+        loaded() {
+            this.head.title('Page Three');
+            this.head.description('This is the Third page');
         }
     }
 
