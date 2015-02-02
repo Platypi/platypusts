@@ -24,6 +24,34 @@
         };
 
         /**
+         * @name uid
+         * @memberof plat.routing.Navigator
+         * @kind property
+         * @access public
+         * @readonly
+         * 
+         * @type {string}
+         * 
+         * @description
+         * A unique id, created during instantiation and found on every {@link plat.routing.Navigator|Navigator}.
+         */
+        uid = uniqueId(__Plat);
+
+        /**
+         * @name isRoot
+         * @memberof plat.routing.Navigator
+         * @kind property
+         * @access public
+         * @readonly
+         * 
+         * @type {boolean}
+         * 
+         * @description
+         * States whether or not the Navigator is the root Navigator.
+         */
+        isRoot: boolean = false;
+
+        /**
          * @name _root
          * @memberof plat.routing.Navigator
          * @kind property
@@ -132,42 +160,14 @@
          * @name router
          * @memberof plat.routing.Navigator
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.routing.Router}
          * 
          * @description
          * The {@link plat.routing.Router|router} associated with this navigator.
          */
-        router: Router;
-
-        /**
-         * @name uid
-         * @memberof plat.routing.Navigator
-         * @kind property
-         * @access public
-         * @readonly
-         * 
-         * @type {string}
-         * 
-         * @description
-         * A unique id, created during instantiation and found on every {@link plat.routing.Navigator|Navigator}.
-         */
-        uid = uniqueId(__Plat);
-
-        /**
-         * @name isRoot
-         * @memberof plat.routing.Navigator
-         * @kind property
-         * @access public
-         * @readonly
-         * 
-         * @type {boolean}
-         * 
-         * @description
-         * States whether or not the Navigator is the root Navigator.
-         */
-        isRoot: boolean = false;
+        protected _router: Router;
 
         /**
          * @name _removeUrlListener
@@ -261,7 +261,7 @@
          * @returns {void}
          */
         initialize(router: Router): void {
-            this.router = router;
+            this._router = router;
 
             if (isObject(router) && router.isRoot && !isObject(Navigator._root)) {
                 this.isRoot = true;
@@ -311,7 +311,7 @@
          * @returns {plat.async.IThenable<void>} A promise that resolves when the navigation has finished.
          */
         finishNavigating(): async.IThenable<void> {
-            var router = Navigator._root.router;
+            var router = Navigator._root._router;
 
             if (router.navigating) {
                 return router.finishNavigating.catch(noop);
@@ -425,7 +425,7 @@
          * @returns {void}
          */
         protected _observeUrl(): void {
-            if (!isObject(this.router)) {
+            if (!isObject(this._router)) {
                 return;
             }
 
@@ -464,7 +464,7 @@
 
                 this.finishNavigating()
                 .then((): async.IThenable<void> => {
-                    return this.router.navigate(utils.pathname, utils.query);
+                    return this._router.navigate(utils.pathname, utils.query);
                 }).then((): void => {
                     this._previousUrl = utils.pathname;
                     if (isFunction(this._resolveNavigate)) {
@@ -499,7 +499,7 @@
          * @returns {string} The generated url.
          */
         protected _generate(view: any, parameters: any, query: any): string {
-            if (isNull(this.router)) {
+            if (isNull(this._router)) {
                 return;
             }
 
@@ -507,7 +507,7 @@
                 return view;
             }
 
-            return this.router.generate(view, parameters, query);
+            return this._router.generate(view, parameters, query);
         }
     }
 

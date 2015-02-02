@@ -24,8 +24,21 @@ module plat.ui.controls {
             _document: __Document,
             _managerCache: __ManagerCache,
             _animator: __Animator,
-            navigator: __NavigatorInstance
+            _navigator: __NavigatorInstance
         };
+
+        /**
+         * @name controls
+         * @memberof plat.ui.controls.Viewport
+         * @kind property
+         * @access public
+         * 
+         * @type {Array<plat.ui.ViewControl>}
+         * 
+         * @description
+         * Viewports contain ViewControls.
+         */
+        controls: Array<ViewControl>;
 
         /**
          * @name _Router
@@ -135,79 +148,66 @@ module plat.ui.controls {
          * @name navigator
          * @memberof plat.ui.controls.Viewport
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.routing.Navigator}
          * 
          * @description
          * The navigator associated with this Viewport.
          */
-        navigator: routing.Navigator;
+        protected _navigator: routing.Navigator;
 
         /**
          * @name router
          * @memberof plat.ui.controls.Viewport
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.routing.Router}
          * 
          * @description
          * The router associated with this Viewport.
          */
-        router: routing.Router;
+        protected _router: routing.Router;
 
         /**
          * @name parentRouter
          * @memberof plat.ui.controls.Viewport
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.routing.Router}
          * 
          * @description
          * The parent router associated with this Viewport.
          */
-        parentRouter: routing.Router;
-
-        /**
-         * @name controls
-         * @memberof plat.ui.controls.Viewport
-         * @kind property
-         * @access public
-         * 
-         * @type {Array<plat.ui.ViewControl>}
-         * 
-         * @description
-         * Viewports contain ViewControls.
-         */
-        controls: Array<ViewControl>;
+        protected _parentRouter: routing.Router;
 
         /**
          * @name nextInjector
          * @memberof plat.ui.controls.Viewport
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.dependency.Injector<plat.ui.ViewControl>}
          * 
          * @description
          * The next injector used to instantiate the next ViewControl during navigation.
          */
-        nextInjector: dependency.Injector<ViewControl>;
+        protected _nextInjector: dependency.Injector<ViewControl>;
 
         /**
          * @name nextView
          * @memberof plat.ui.controls.Viewport
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.ui.ViewControl}
          * 
          * @description
          * The next ViewControl to which to navigate.
          */
-        nextView: ViewControl;
+        protected _nextView: ViewControl;
 
         /**
          * @name initialize
@@ -222,16 +222,16 @@ module plat.ui.controls {
          * @returns {void}
          */
         initialize(): void {
-            var router = this.router = this._Router.currentRouter(),
+            var router = this._router = this._Router.currentRouter(),
                 parentViewport = this._getParentViewport(),
                 parentRouter: routing.Router;
 
-            if (!(isNull(parentViewport) || isNull(parentViewport.router))) {
-                parentRouter = this.parentRouter = parentViewport.router;
+            if (!(isNull(parentViewport) || isNull(parentViewport._router))) {
+                parentRouter = this._parentRouter = parentViewport._router;
                 parentRouter.addChild(router);
             }
 
-            this.navigator.initialize(router);
+            this._navigator.initialize(router);
         }
 
         /**
@@ -247,8 +247,8 @@ module plat.ui.controls {
          * @returns {void}
          */
         loaded(): void {
-            this._Promise.resolve(this.router.finishNavigating).then((): void => {
-                this.router.register(this);
+            this._Promise.resolve(this._router.finishNavigating).then((): void => {
+                this._router.register(this);
             });
         }
 
@@ -283,12 +283,12 @@ module plat.ui.controls {
             }
 
             if (currentRouter !== nextRouter) {
-                nextRouter.initialize(this.router);
+                nextRouter.initialize(this._router);
                 var navigator: routing.Navigator = acquire(__NavigatorInstance);
                 view.navigator = navigator;
                 navigator.initialize(nextRouter);
             } else {
-                view.navigator = this.navigator;
+                view.navigator = this._navigator;
             }
 
             if (isFunction(view.canNavigateTo)) {
@@ -296,8 +296,8 @@ module plat.ui.controls {
             }
 
             return resolve(response).then((canNavigateTo: boolean): boolean => {
-                this.nextInjector = injector;
-                this.nextView = view;
+                this._nextInjector = injector;
+                this._nextView = view;
                 return canNavigateTo;
             });
         }
@@ -345,7 +345,7 @@ module plat.ui.controls {
          */
         navigateTo(routeInfo: routing.IRouteInfo): async.IThenable<void> {
             var resolve = this._Promise.resolve.bind(this._Promise),
-                injector = this.nextInjector || this._Injector.getDependency(routeInfo.delegate.view),
+                injector = this._nextInjector || this._Injector.getDependency(routeInfo.delegate.view),
                 nodeMap = this._createNodeMap(injector),
                 element = this.element,
                 node = nodeMap.element,
@@ -419,8 +419,8 @@ module plat.ui.controls {
          * @returns {void}
          */
         dispose(): void {
-            this.router.unregister(this);
-            this.navigator.dispose();
+            this._router.unregister(this);
+            this._navigator.dispose();
         }
 
         /**
@@ -437,7 +437,7 @@ module plat.ui.controls {
          * @returns {plat.processing.INodeMap} The INodeMap for the ViewControl
          */
         protected _createNodeMap(injector: dependency.Injector<ViewControl>): processing.INodeMap {
-            var control = this.nextView || injector.inject(),
+            var control = this._nextView || injector.inject(),
                 doc = this._document,
                 type = injector.name,
                 replaceWith = control.replaceWith,

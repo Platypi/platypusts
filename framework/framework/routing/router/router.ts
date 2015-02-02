@@ -70,58 +70,6 @@
         finishNavigating: async.IThenable<void>;
 
         /**
-         * @name previousUrl
-         * @memberof plat.routing.Router
-         * @kind property
-         * @access public
-         * 
-         * @type {string}
-         * 
-         * @description
-         * The previous url matched for this router.
-         */
-        previousUrl: string;
-
-        /**
-         * @name previousQuery
-         * @memberof plat.routing.Router
-         * @kind property
-         * @access public
-         * 
-         * @type {string}
-         * 
-         * @description
-         * The previous query matched for this router.
-         */
-        previousQuery: string;
-
-        /**
-         * @name previousSegment
-         * @memberof plat.routing.Router
-         * @kind property
-         * @access public
-         * 
-         * @type {string}
-         * 
-         * @description
-         * The previous route segment matched for this router.
-         */
-        previousSegment: string;
-
-        /**
-         * @name previousPattern
-         * @memberof plat.routing.Router
-         * @kind property
-         * @access public
-         * 
-         * @type {string}
-         * 
-         * @description
-         * The previous registered route pattern matched for this router.
-         */
-        previousPattern: string;
-
-        /**
          * @name currentRouteInfo
          * @memberof plat.routing.Router
          * @kind property
@@ -185,6 +133,58 @@
          * Whether or not this router is the root router (has no parent).
          */
         isRoot: boolean = false;
+
+        /**
+         * @name previousUrl
+         * @memberof plat.routing.Router
+         * @kind property
+         * @access protected
+         * 
+         * @type {string}
+         * 
+         * @description
+         * The previous url matched for this router.
+         */
+        protected _previousUrl: string;
+
+        /**
+         * @name previousQuery
+         * @memberof plat.routing.Router
+         * @kind property
+         * @access protected
+         * 
+         * @type {string}
+         * 
+         * @description
+         * The previous query matched for this router.
+         */
+        protected _previousQuery: string;
+
+        /**
+         * @name previousSegment
+         * @memberof plat.routing.Router
+         * @kind property
+         * @access protected
+         * 
+         * @type {string}
+         * 
+         * @description
+         * The previous route segment matched for this router.
+         */
+        protected _previousSegment: string;
+
+        /**
+         * @name previousPattern
+         * @memberof plat.routing.Router
+         * @kind property
+         * @access protected
+         * 
+         * @type {string}
+         * 
+         * @description
+         * The previous registered route pattern matched for this router.
+         */
+        protected _previousPattern: string;
 
         /**
          * @name _recognizer
@@ -740,7 +740,7 @@
 
             force = force === true;
 
-            if (!isString(url) || this.navigating || (!force && url === this.previousUrl && queryString === this.previousQuery)) {
+            if (!isString(url) || this.navigating || (!force && url === this._previousUrl && queryString === this._previousQuery)) {
                 if (this.navigating) {
                     return this.finishNavigating.then((): async.IThenable<void> => {
                         return this.navigate(url, query, force);
@@ -760,8 +760,8 @@
 
                 if (isEmpty(result)) {
                     // route has not been matched
-                    this.previousUrl = url;
-                    this.previousQuery = queryString;
+                    this._previousUrl = url;
+                    this._previousQuery = queryString;
                     return resolve();
                 }
 
@@ -769,14 +769,14 @@
                 routeInfo.query = query;
                 pattern = routeInfo.delegate.pattern;
                 pattern = pattern.substr(0, pattern.length - __CHILD_ROUTE_LENGTH);
-                if (this.previousPattern === pattern) {
+                if (this._previousPattern === pattern) {
                     // the pattern for this router is the same as the last pattern so 
                     // only navigate child routers.
                     this.navigating = true;
                     return this.finishNavigating = this._navigateChildren(routeInfo)
                         .then((): void => {
-                        this.previousUrl = url;
-                        this.previousQuery = queryString;
+                        this._previousUrl = url;
+                        this._previousQuery = queryString;
                         this.navigating = false;
                     },(e: any): void => {
                             this.navigating = false;
@@ -801,13 +801,13 @@
                     throw new Error('Not cleared to navigate');
                 }
 
-                this.previousUrl = url;
-                this.previousQuery = queryString;
+                this._previousUrl = url;
+                this._previousQuery = queryString;
 
                 return this._performNavigation(routeInfo);
             }).then((): void => {
-                this.previousPattern = pattern;
-                this.previousSegment = segment;
+                this._previousPattern = pattern;
+                this._previousSegment = segment;
                 this.currentRouteInfo = routeInfoCopy;
                 this.navigating = false;
             },(e: any): void => {
@@ -870,7 +870,7 @@
                 previous: string;
 
             while (!isNull(router = router.parent)) {
-                previous = router.previousSegment;
+                previous = router._previousSegment;
                 previous = (!isNull(previous) && previous !== '/') ? previous : '';
                 prefix = previous + prefix;
             }
@@ -986,18 +986,18 @@
                 });
             }
 
-            if (this.isRoot && isEmpty(this.previousUrl)) {
+            if (this.isRoot && isEmpty(this._previousUrl)) {
                 var utils = this._browser.urlUtils();
-                this.previousUrl = utils.pathname;
+                this._previousUrl = utils.pathname;
                 query = utils.query;
             }
 
-            if (!isEmpty(this.previousQuery)) {
-                query = deserializeQuery(this.previousQuery);
+            if (!isEmpty(this._previousQuery)) {
+                query = deserializeQuery(this._previousQuery);
             }
 
-            if (!isEmpty(this.previousUrl)) {
-                return this.navigate(this.previousUrl, query, true);
+            if (!isEmpty(this._previousUrl)) {
+                return this.navigate(this._previousUrl, query, true);
             }
 
             return resolve();
@@ -1359,10 +1359,10 @@
          * @returns {void}
          */
         protected _clearInfo(): void {
-            this.previousSegment = undefined;
-            this.previousPattern = undefined;
-            this.previousUrl = undefined;
-            this.previousQuery = undefined;
+            this._previousSegment = undefined;
+            this._previousPattern = undefined;
+            this._previousUrl = undefined;
+            this._previousQuery = undefined;
             this.currentRouteInfo = undefined;
             this.navigating = false;
             forEach((child: Router): void => {
