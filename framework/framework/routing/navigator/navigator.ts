@@ -435,7 +435,22 @@
                 previousUrl: string,
                 previousQuery: string,
                 backNavigate: boolean,
-                _Exception = this._Exception;
+                _Exception = this._Exception,
+                ev: events.DispatchEvent,
+                onFailedNavigaton: (e: any) => void = (e: any): void => {
+                    this._ignoreOnce = true;
+                    this._previousUrl = previousUrl;
+                    this._browser.url(previousUrl, !backNavigate);
+                    this._history.go(-1);
+
+                    if (isFunction(this._rejectNavigate)) {
+                        this._rejectNavigate(e);
+                    }
+
+                    if (!isEmpty(e)) {
+                        _Exception.warn(e, _Exception.NAVIGATION);
+                    }
+                };
 
             this._previousUrl = this._browser.url();
 
@@ -462,28 +477,32 @@
                 this._backNavigate = false;
                 previousUrl = this._previousUrl;
 
+                ev = EventManager.dispatch(__beforeNavigate, this, EventManager.DIRECT, [utils]);
+
+                if (ev.defaultPrevented) {
+                    onFailedNavigaton(new Error('Navigation prevented during ' + __beforeNavigate + ' event'));
+                    return;
+                }
+
                 this.finishNavigating()
-                .then((): async.IThenable<void> => {
+                    .then((): async.IThenable<void> => {
+
+                    ev = EventManager.dispatch(__navigating, this, EventManager.DIRECT, [utils]);
+
+                    if (ev.defaultPrevented) {
+                        throw new Error('Navigation prevented during ' + __navigating + ' event');
+                        return;
+                    }
+
                     return this._router.navigate(utils.pathname, utils.query);
                 }).then((): void => {
                     this._previousUrl = utils.pathname;
                     if (isFunction(this._resolveNavigate)) {
                         this._resolveNavigate();
                     }
-                }, (e: any): void => {
-                    this._ignoreOnce = true;
-                    this._previousUrl = previousUrl;
-                    this._browser.url(previousUrl, !backNavigate);
-                    this._history.go(-1);
 
-                    if (isFunction(this._rejectNavigate)) {
-                        this._rejectNavigate(e);
-                    }
-
-                    if (!isEmpty(e)) {
-                        _Exception.warn(e, _Exception.NAVIGATION);
-                    }
-                });
+                    EventManager.dispatch(__navigated, this, EventManager.DIRECT, [utils]);
+                }, onFailedNavigaton);
             });
         }
 

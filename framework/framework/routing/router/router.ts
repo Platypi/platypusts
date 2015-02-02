@@ -863,7 +863,7 @@
             }
 
             if (isNull(router)) {
-                throw new Error('Route: ' + name + ' does not exist');
+                throw new Error('Route for ' + name + ' does not exist.');
             }
 
             var path = router._recognizer.generate(name, parameters),
