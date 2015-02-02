@@ -1,5 +1,5 @@
 /**
-  * PlatypusTS v0.10.3 (http://getplatypi.com)
+  * PlatypusTS v0.10.4 (http://getplatypi.com)
   * Copyright 2014 Platypi, LLC. All rights reserved.
   * PlatypusTS is licensed under the GPL-3.0 found at
   * http://opensource.org/licenses/GPL-3.0
@@ -7297,6 +7297,10 @@ declare module plat {
             class Viewport extends TemplateControl implements routing.ISupportRouteNavigation {
                 protected static _inject: any;
                 /**
+                  * Viewports contain ViewControls.
+                  */
+                controls: Array<ViewControl>;
+                /**
                   * Used to grab the current Router instance.
                   */
                 protected _Router: routing.IRouterStatic;
@@ -7331,27 +7335,23 @@ declare module plat {
                 /**
                   * The navigator associated with this Viewport.
                   */
-                navigator: routing.Navigator;
+                protected _navigator: routing.Navigator;
                 /**
                   * The router associated with this Viewport.
                   */
-                router: routing.Router;
+                protected _router: routing.Router;
                 /**
                   * The parent router associated with this Viewport.
                   */
-                parentRouter: routing.Router;
-                /**
-                  * Viewports contain ViewControls.
-                  */
-                controls: Array<ViewControl>;
+                protected _parentRouter: routing.Router;
                 /**
                   * The next injector used to instantiate the next ViewControl during navigation.
                   */
-                nextInjector: dependency.Injector<ViewControl>;
+                protected _nextInjector: dependency.Injector<ViewControl>;
                 /**
                   * The next ViewControl to which to navigate.
                   */
-                nextView: ViewControl;
+                protected _nextView: ViewControl;
                 /**
                   * Allows the viewport to initialize its navigator with the current
                   * router.
@@ -8981,6 +8981,14 @@ declare module plat {
         class Navigator {
             protected static _inject: any;
             /**
+              * A unique id, created during instantiation and found on every Navigator.
+              */
+            uid: string;
+            /**
+              * States whether or not the Navigator is the root Navigator.
+              */
+            isRoot: boolean;
+            /**
               * The navigator associated with the root router.
               */
             protected static _root: Navigator;
@@ -9015,15 +9023,7 @@ declare module plat {
             /**
               * The router associated with this navigator.
               */
-            router: Router;
-            /**
-              * A unique id, created during instantiation and found on every Navigator.
-              */
-            uid: string;
-            /**
-              * States whether or not the Navigator is the root Navigator.
-              */
-            isRoot: boolean;
+            protected _router: Router;
             /**
               * A method to call to stop listening for url changes, only works on the root navigator.
               */
@@ -9629,22 +9629,6 @@ declare module plat {
               */
             finishNavigating: async.IThenable<void>;
             /**
-              * The previous url matched for this router.
-              */
-            previousUrl: string;
-            /**
-              * The previous query matched for this router.
-              */
-            previousQuery: string;
-            /**
-              * The previous route segment matched for this router.
-              */
-            previousSegment: string;
-            /**
-              * The previous registered route pattern matched for this router.
-              */
-            previousPattern: string;
-            /**
               * The route information for the active route state.
               */
             currentRouteInfo: IRouteInfo;
@@ -9664,6 +9648,22 @@ declare module plat {
               * Whether or not this router is the root router (has no parent).
               */
             isRoot: boolean;
+            /**
+              * The previous url matched for this router.
+              */
+            protected _previousUrl: string;
+            /**
+              * The previous query matched for this router.
+              */
+            protected _previousQuery: string;
+            /**
+              * The previous route segment matched for this router.
+              */
+            protected _previousSegment: string;
+            /**
+              * The previous registered route pattern matched for this router.
+              */
+            protected _previousPattern: string;
             /**
               * Used for registering, generating, and recognizing routes.
               */
