@@ -282,7 +282,7 @@ module plat.ui {
          * @description
          * A url containing a string representing the DOM template for this control. If this property is
          * defined on a {@link plat.ui.TemplateControl|TemplateControl} then DOM will be created and put in the 
-         * control's element prior to calling the 'setTemplate' method. This property takes 
+         * control's element prior to calling the `setTemplate` method. This property takes 
          * precedence over templateString. In the event that both are defined, templateString
          * will be ignored.
          */
@@ -359,7 +359,7 @@ module plat.ui {
          * 
          * @description
          * The first node in the {@link plat.ui.TemplateControl|TemplateControl's} body. This property will be a Comment node when the 
-         * control implements replaceWith = null, otherwise it will be null. This property allows an 
+         * control implements `replaceWith = null`, otherwise it will be null. This property allows an 
          * {@link plat.ui.TemplateControl|TemplateControl} to add nodes to its body in the event that it replaces its element.
          * 
          * @example this.startNode.parentNode.insertBefore(node, this.startNode.nextSibling);
@@ -429,7 +429,7 @@ module plat.ui {
          * @description
          * Evaluates an expression string with a given control and optional control's context and aliases.
          * 
-         * @param {string} expression The expression string (e.g. 'foo + foo').
+         * @param {string} expression The expression string (e.g. `foo + foo`).
          * @param {plat.ui.TemplateControl} control? The control used for evaluation context.
          * @param {IObject<any>} aliases? An optional alias object containing resource alias values (property keys should 
          * not include the `@` character).
@@ -714,7 +714,7 @@ module plat.ui {
          * 
          * @description
          * Notifies a control that its context has been changed by 
-         * calling the "control.contextChanged" method if it exists.
+         * calling the `control.contextChanged` method if it exists.
          * 
          * @param {plat.ui.TemplateControl} control The control whose context changed.
          * @param {any} newValue The new value of the control's context.
@@ -740,8 +740,8 @@ module plat.ui {
          * @static
          * 
          * @description
-         * Sets the 'context' resource value on a {@link plat.ui.TemplateControl|TemplateControl}. If the control specifies 
-         * hasOwnContext as true, the 'rootContext' resource value will be set.
+         * Sets the `context` resource value on a {@link plat.ui.TemplateControl|TemplateControl}. If the control specifies 
+         * hasOwnContext as true, the `rootContext` resource value will be set.
          * 
          * @param {plat.ui.TemplateControl} control The control whose context resources will be set.
          * 
@@ -791,7 +791,7 @@ module plat.ui {
          * 
          * @description
          * Completely removes a control's element from its parentNode. If the 
-         * control implements replaceWith=null, All of its nodes between its 
+         * control implements `replaceWith=null`, All of its nodes between its 
          * startNode and endNode (inclusive) will be removed.
          * 
          * @param {plat.ui.TemplateControl} control The control whose element should be removed.
@@ -1212,7 +1212,7 @@ module plat.ui {
          * @description
          * Evaluates an expression string with a given control and optional control's context and aliases.
          * 
-         * @param {string} expression The expression string (e.g. 'foo + foo').
+         * @param {string} expression The expression string (e.g. `foo + foo`).
          * @param {plat.ui.TemplateControl} control? The control used for evaluation context.
          * @param {IObject<any>} aliases? An optional alias object containing resource alias values
          * 
@@ -1320,7 +1320,7 @@ module plat.ui {
          * 
          * @description
          * Notifies a control that its context has been changed by 
-         * calling the "control.contextChanged" method if it exists.
+         * calling the `control.contextChanged` method if it exists.
          * 
          * @param {plat.ui.TemplateControl} control The control whose context changed.
          * @param {any} newValue The new value of the control's context.
@@ -1338,8 +1338,8 @@ module plat.ui {
          * @static
          * 
          * @description
-         * Sets the 'context' resource value on a {@link plat.ui.TemplateControl|TemplateControl}. If the control specifies 
-         * hasOwnContext as true, the 'rootContext' resource value will be set.
+         * Sets the `context` resource value on a {@link plat.ui.TemplateControl|TemplateControl}. If the control specifies 
+         * hasOwnContext as true, the `rootContext` resource value will be set.
          * 
          * @param {plat.ui.TemplateControl} control The control whose context resources will be set.
          * 
@@ -1356,7 +1356,7 @@ module plat.ui {
          * 
          * @description
          * Completely removes a control's element from its parentNode. If the 
-         * control implements replaceWith=null, All of its nodes between its 
+         * control implements `replaceWith=null`, All of its nodes between its 
          * startNode and endNode (inclusive) will be removed.
          * 
          * @param {plat.ui.TemplateControl} control The control whose element should be removed.
