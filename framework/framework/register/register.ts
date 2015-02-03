@@ -119,15 +119,15 @@ module plat.register {
      * @access public
      * 
      * @description
-     * Registers an {@link plat.ui.IViewControl|IViewControl} with the framework. The framework will 
+     * Registers an {@link plat.ui.ViewControl|ViewControl} with the framework. The framework will 
      * instantiate the control when needed. The dependencies array corresponds to injectables that will be 
      * passed into the Constructor of the control.
      * 
      * @param {string} name The control type, corresponding to the HTML notation for creating a new 
-     * {@link plat.ui.IViewControl|IViewControl}. Used for navigation to the specified {@link plat.ui.IViewControl|IViewControl}.
-     * @param {new (...args: any[]) => plat.ui.IViewControl} Type The constructor for the {@link plat.ui.IViewControl|IViewControl}.
+     * {@link plat.ui.ViewControl|ViewControl}. Used for navigation to the specified {@link plat.ui.ViewControl|ViewControl}.
+     * @param {new (...args: any[]) => plat.ui.ViewControl} Type The constructor for the {@link plat.ui.ViewControl|ViewControl}.
      * @param {Array<any>} dependencies? An optional array of strings representing the dependencies needed for the 
-     * {@link plat.ui.IViewControl|IViewControl} injector.
+     * {@link plat.ui.ViewControl|ViewControl} injector.
      * 
      * @example plat.register.viewControl('my-view-control', MyViewControl);
      * 

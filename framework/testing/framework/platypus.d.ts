@@ -32,14 +32,14 @@ declare module plat {
           */
         function control(name: string, Type: new (...args: any[]) => Control, dependencies?: Array<any>, isStatic?: boolean): typeof register;
         /**
-          * Registers an IViewControl with the framework. The framework will
+          * Registers an ViewControl with the framework. The framework will
           * instantiate the control when needed. The dependencies array corresponds to injectables that will be
           * passed into the Constructor of the control.
           * @param {string} name The control type, corresponding to the HTML notation for creating a new
-          * IViewControl. Used for navigation to the specified IViewControl.
-          * @param {new (...args: any[]) => plat.ui.IViewControl} Type The constructor for the IViewControl.
+          * ViewControl. Used for navigation to the specified ViewControl.
+          * @param {new (...args: any[]) => plat.ui.ViewControl} Type The constructor for the ViewControl.
           * @param {Array<any>} dependencies? An optional array of strings representing the dependencies needed for the
-          * IViewControl injector.
+          * ViewControl injector.
           */
         function viewControl<T extends ui.ViewControl>(name: string, Type: new (...args: any[]) => T, dependencies?: Array<any>): typeof register;
         /**
@@ -1083,7 +1083,7 @@ declare module plat {
               *   // outputs ['context']
               *   exec('@context.foo');
               * // outputs null
-              * exec('@context');
+              * exec(`@context`);
               */
             aliasRegex: RegExp;
             /**
@@ -4461,7 +4461,7 @@ declare module plat {
               */
             protected static _parser: expressions.Parser;
             /**
-              * Reference to the IHttp injectable.
+              * Reference to the Http injectable.
               */
             protected static _http: async.Http;
             /**
@@ -4499,12 +4499,12 @@ declare module plat {
               * Resources are used for providing aliases to use in markup expressions. They
               * are particularly useful when trying to access properties outside of the
               * current context, as well as reassigning context at any point in an app.
-              * By default, every control has a resource for '@control' and '@context'.
-              * IViewControl objects also have a resource for '@root' and '@rootContext',
+              * By default, every control has a resource for `@control` and `@context`.
+              * ViewControl objects also have a resource for `@root` and `@rootContext`,
               * which is a reference to their root control and root context.
               * Resources can be created in HTML, or through the exposed control.resources
               * object. If specified in HTML, they must be the first element child of the
-              * control upon which the resources will be placed. IViewControls that use a
+              * control upon which the resources will be placed. ViewControls that use a
               * templateUrl can have resources as their first element in the templateUrl.
               * In the provided example, the resources can be accessed by using '@Cache' and '@testObj'.
               * The type of resource is denoted by the element name.
@@ -4588,8 +4588,8 @@ declare module plat {
               * property can be any property that works with document.createElement(). If the control's element had
               * attributes (as well as attribute Controls), those attributes will be carried to the swapped element. The default
               * replaceWith is 'any,' meaning it will default to a 'div' in the case that the control type is used as the
-              * element's nodename (e.g. <plat-foreach plat-context="..."></plat-foreach>), but will maintain whatever element type
-              * is used otherwise (e.g. <tr plat-control="plat-foreach" plat-context="..."></tr>).
+              * element's nodename (e.g. `<plat-foreach plat-context="..."></plat-foreach>`), but will maintain whatever element type
+              * is used otherwise (e.g. `<tr plat-control="plat-foreach" plat-context="..."></tr>`).
               */
             replaceWith: string;
             /**
@@ -5529,17 +5529,17 @@ declare module plat {
           * Resources are used for providing aliases to use in markup expressions. They
           * are particularly useful when trying to access properties outside of the
           * current context, as well as reassigning context at any point in an app.
-          * By default, every control has a resource for '@control' and '@context'.
-          * IViewControl objects also have a resource for '@root' and '@rootContext',
+          * By default, every control has a resource for `@control` and `@context`.
+          * ViewControl objects also have a resource for `@root` and `@rootContext`,
           * which is a reference to the control and its context.
           * Resources can be created in HTML, or through the exposed control.resources
           * object. If specified in HTML, they must be the first element child of the
-          * control upon which the resources will be placed. IViewControls that use a
+          * control upon which the resources will be placed. ViewControls that use a
           * templateUrl can have resources as their first element in the templateUrl.
-          * In the provided example, the resources can be accessed by using '@Cache' and '@testObj'.
+          * In the provided example, the resources can be accessed by using `@Cache` and `@testObj`.
           * The type of resource is denoted by the element name.
-          * Only resources of type 'observable' will have data binding. The types of resources are:
-          * function, injectable, observable, and object. Resources of type 'function' will have their
+          * Only resources of type `observable` will have data binding. The types of resources are:
+          * function, injectable, observable, and object. Resources of type `function` will have their
           * associated function context bound to the control that contains the resource.
           * When an alias is found in a markup expression, the framework will search up the control chain
           * to find the alias on a control's resources. This first matching alias will be used.
@@ -5617,11 +5617,11 @@ declare module plat {
               * Populates an Resource value if necessary, and adds it to the given
               * control's resources.
               * @param {plat.ui.TemplateControl} control The control for which to create a resource.
-              * @param {plat.ui.Resource} resource The object used to set the resource values.
+              * @param {plat.ui.IResource} resource The object used to set the resource values.
               */
             static create(control: TemplateControl, resource: IResource): IResource;
             /**
-              * Adds resource aliases for '@control' and '@context'. The resources are
+              * Adds resource aliases for `@control` and `@context`. The resources are
               * aliases for the control instance and the control.context.
               * @param {plat.ui.TemplateControl} control The control on which to add the resources.
               */
@@ -5656,7 +5656,7 @@ declare module plat {
             /**
               * Observes the resource if the type is 'observable'.
               * @param {plat.ui.TemplateControl} control The control in charge of the observable resource.
-              * @param {plat.ui.Resource} resource The resource to observe.
+              * @param {plat.ui.IResource} resource The resource to observe.
               */
             protected static _observeResource(control: TemplateControl, resource: IResource): void;
             /**
@@ -5665,8 +5665,8 @@ declare module plat {
               */
             protected static _removeListeners(control: TemplateControl): void;
             /**
-              * Adds a '@root' alias and '@rootContext' to a control, specifying that it contains the root
-              * and root context. Root controls are generally the root IViewControl.
+              * Adds a `@root` alias and `@rootContext` to a control, specifying that it contains the root
+              * and root context. Root controls are generally the root ViewControl.
               * @param {plat.ui.TemplateControl} control The root control.
               */
             private static __addRoot(control);
@@ -5747,11 +5747,11 @@ declare module plat {
               * Populates an Resource value if necessary, and adds it to the given
               * control's resources.
               * @param {plat.ui.TemplateControl} control The control for which to create a resource.
-              * @param {plat.ui.Resource} resource The object used to set the resource values.
+              * @param {plat.ui.IResource} resource The object used to set the resource values.
               */
             create(control: TemplateControl, resource: IResource): IResource;
             /**
-              * Adds resource aliases for '@control' and '@context'. The resources are
+              * Adds resource aliases for `@control` and `@context`. The resources are
               * aliases for the control instance and the control.context.
               * @param {plat.ui.TemplateControl} control The control on which to add the resources.
               */
@@ -11308,7 +11308,6 @@ declare module plat {
               * the Template Control.
               */
             initialize(): void;
-            setTemplate(): void;
             /**
               * Observes the property and resets the value.
               */

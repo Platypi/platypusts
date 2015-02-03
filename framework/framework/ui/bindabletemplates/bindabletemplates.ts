@@ -595,7 +595,7 @@ module plat.ui {
                         _Exception.fatal(error, _Exception.BIND);
                     });
 
-                    return <DocumentFragment>null;
+                    return this._document.createDocumentFragment();
                 });
             }
 
@@ -604,7 +604,7 @@ module plat.ui {
                     _Exception.fatal(error, _Exception.BIND);
                 });
 
-                return <DocumentFragment>null;
+                return this._document.createDocumentFragment();
             });
 
         }

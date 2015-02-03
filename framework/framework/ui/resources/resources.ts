@@ -12,20 +12,20 @@ module plat.ui {
      * current context, as well as reassigning context at any point in an app.
      * 
      * @remarks
-     * By default, every control has a resource for '@control' and '@context'.
-     * {@link plat.ui.IViewControl|IViewControl} objects also have a resource for '@root' and '@rootContext', 
+     * By default, every control has a resource for `@control` and `@context`.
+     * {@link plat.ui.ViewControl|ViewControl} objects also have a resource for `@root` and `@rootContext`, 
      * which is a reference to the control and its context.
      * 
      * Resources can be created in HTML, or through the exposed control.resources 
      * object. If specified in HTML, they must be the first element child of the 
-     * control upon which the resources will be placed. IViewControls that use a 
+     * control upon which the resources will be placed. ViewControls that use a 
      * templateUrl can have resources as their first element in the templateUrl.
      * 
-     * In the provided example, the resources can be accessed by using '@Cache' and '@testObj'.
+     * In the provided example, the resources can be accessed by using `@Cache` and `@testObj`.
      * The type of resource is denoted by the element name.
      * 
-     * Only resources of type 'observable' will have data binding. The types of resources are:
-     * function, injectable, observable, and object. Resources of type 'function' will have their
+     * Only resources of type `observable` will have data binding. The types of resources are:
+     * function, injectable, observable, and object. Resources of type `function` will have their
      * associated function context bound to the control that contains the resource.
      * 
      * When an alias is found in a markup expression, the framework will search up the control chain 
@@ -247,13 +247,13 @@ module plat.ui {
          * @static
          * 
          * @description
-         * Populates an {@link plat.ui.Resource|Resource} value if necessary, and adds it to the given 
+         * Populates an {@link plat.ui.IResource|IResource} value if necessary, and adds it to the given 
          * control's resources.
          * 
          * @param {plat.ui.TemplateControl} control The control for which to create a resource.
-         * @param {plat.ui.Resource} resource The object used to set the resource values.
+         * @param {plat.ui.IResource} resource The object used to set the resource values.
          * 
-         * @returns {plat.ui.Resource} The newly created {@link plat.ui.Resource|Resource}.
+         * @returns {plat.ui.IResource} The newly created {@link plat.ui.IResource|IResource}.
          */
         static create(control: TemplateControl, resource: IResource): IResource {
             if (isNull(resource)) {
@@ -308,7 +308,7 @@ module plat.ui {
          * @static
          * 
          * @description
-         * Adds resource aliases for '@control' and '@context'. The resources are 
+         * Adds resource aliases for `@control` and `@context`. The resources are 
          * aliases for the control instance and the control.context.
          * 
          * @param {plat.ui.TemplateControl} control The control on which to add the resources.
@@ -506,7 +506,7 @@ module plat.ui {
          * Observes the resource if the type is 'observable'.
          * 
          * @param {plat.ui.TemplateControl} control The control in charge of the observable resource.
-         * @param {plat.ui.Resource} resource The resource to observe.
+         * @param {plat.ui.IResource} resource The resource to observe.
          * 
          * @returns {void}
          */
@@ -574,8 +574,8 @@ module plat.ui {
          * @static
          * 
          * @description
-         * Adds a '@root' alias and '@rootContext' to a control, specifying that it contains the root 
-         * and root context. Root controls are generally the root {@link plat.ui.IViewControl|IViewControl}.
+         * Adds a `@root` alias and `@rootContext` to a control, specifying that it contains the root 
+         * and root context. Root controls are generally the root {@link plat.ui.ViewControl|ViewControl}.
          * 
          * @param {plat.ui.TemplateControl} control The root control.
          * 
@@ -607,7 +607,7 @@ module plat.ui {
          * Initializes this {@link plat.ui.Resources|Resources} instance.
          * 
          * @param {plat.ui.TemplateControl} control The control containing this {@link plat.ui.Resources|Resources} instance.
-         * @param {Element} element? An optional element used to create initial {@link plat.ui.Resource|Resource} objects.
+         * @param {Element} element? An optional element used to create initial {@link plat.ui.IResource|IResource} objects.
          * 
          * @returns {void}
          */
@@ -624,7 +624,7 @@ module plat.ui {
          * 
          * @param {plat.ui.TemplateControl} control The control containing this {@link plat.ui.Resources|Resources} instance.
          * @param {IObject<IResource>} resources? An optional object used to populate initial
-         * {@link plat.ui.Resource|Resource} objects.
+         * {@link plat.ui.IResource|IResource} objects.
          * 
          * @returns {void}
          */
@@ -641,7 +641,7 @@ module plat.ui {
          * 
          * @param {plat.ui.TemplateControl} control The control containing this {@link plat.ui.Resources|Resources} instance.
          * @param {plat.ui.Resources} resources? An optional {@link plat.ui.Resources|Resources} object used to populate initial 
-         * {@link plat.ui.Resource|Resource} objects.
+         * {@link plat.ui.IResource|IResource} objects.
          * 
          * @returns {void}
          */
@@ -677,7 +677,7 @@ module plat.ui {
          * @variation 0
          * 
          * @description
-         * Used for programatically adding {@link plat.ui.Resource|Resource} objects.
+         * Used for programatically adding {@link plat.ui.IResource|IResource} objects.
          * 
          * @param resources An {@link plat.IObject<plat.ui.IResource>|IObject<IResource>} used to add 
          * resources, keyed by their alias.
@@ -703,7 +703,7 @@ module plat.ui {
          * @variation 1
          * 
          * @description
-         * Used for programatically adding {@link plat.ui.Resource|Resource} objects.
+         * Used for programatically adding {@link plat.ui.IResource|IResource} objects.
          * 
          * @param {Element} element An Element containing resource element children.
          * 
@@ -859,13 +859,13 @@ module plat.ui {
          * @static
          * 
          * @description
-         * Populates an {@link plat.ui.Resource|Resource} value if necessary, and adds it to the given 
+         * Populates an {@link plat.ui.IResource|IResource} value if necessary, and adds it to the given 
          * control's resources.
          * 
          * @param {plat.ui.TemplateControl} control The control for which to create a resource.
-         * @param {plat.ui.Resource} resource The object used to set the resource values.
+         * @param {plat.ui.IResource} resource The object used to set the resource values.
          * 
-         * @returns {plat.ui.Resource} The newly created {@link plat.ui.Resource|Resource}.
+         * @returns {plat.ui.IResource} The newly created {@link plat.ui.IResource|IResource}.
          */
         create(control: TemplateControl, resource: IResource): IResource;
 
@@ -877,7 +877,7 @@ module plat.ui {
          * @static
          * 
          * @description
-         * Adds resource aliases for '@control' and '@context'. The resources are 
+         * Adds resource aliases for `@control` and `@context`. The resources are 
          * aliases for the control instance and the control.context.
          * 
          * @param {plat.ui.TemplateControl} control The control on which to add the resources.

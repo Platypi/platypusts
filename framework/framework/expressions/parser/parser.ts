@@ -277,7 +277,6 @@ module plat.expressions {
             this._popRemainingIdentifiers();
             // make the identifiers array unqiue entries only
             this._makeIdentifiersUnique();
-
             var parsedExpression: IParsedExpression = {
                 evaluate: <(context: any, aliases?: IObject<any>) => any>new Function(__CONTEXT, __ALIASES,
                     'var initialContext;' +
@@ -970,7 +969,7 @@ module plat.expressions {
          * 
          * @param {any} context? The primary context for evaluation.
          * @param {IObject<any>} aliases? An object containing resource alias values. 
-         * All property keys must never begin with '@'.
+         * All property keys must never begin with `@`.
          * 
          * @returns {any} The evaluated object or primitive.
          */
@@ -1012,7 +1011,7 @@ module plat.expressions {
          * @type {Array<string>}
          * 
          * @description
-         * Contains all the aliases (denoted without '@' as the first character) for this 
+         * Contains all the aliases (denoted without `@` as the first character) for this 
          * {@link plat.expressions.IParsedExpression|IParsedExpression}.
          */
         aliases: Array<string>;

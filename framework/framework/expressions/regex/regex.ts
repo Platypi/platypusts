@@ -58,7 +58,7 @@
          * 
          * @example
          * // outputs null
-         * exec('@context');
+         * exec(`@context`);
          */
         aliasRegex = /[^@\.\[\(]+(?=[\.\[\(])/;
 

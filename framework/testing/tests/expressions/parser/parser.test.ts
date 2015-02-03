@@ -118,7 +118,7 @@ module tests.expressions.parser {
         {
             name: 'array-notation with alias + identifier indexer',
             returns: 'boss',
-            identifiers: ['index', '@context'],
+            identifiers: ['index', `@context`],
             expression: '@context[index].morgan',
             fn: 'toBe'
         },

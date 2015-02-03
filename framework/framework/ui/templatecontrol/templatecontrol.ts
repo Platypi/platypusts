@@ -93,7 +93,7 @@ module plat.ui {
          * @type {plat.async.Http}
          * 
          * @description
-         * Reference to the {@link plat.async.IHttp|IHttp} injectable.
+         * Reference to the {@link plat.async.Http|Http} injectable.
          */
         protected static _http: async.Http;
 
@@ -208,20 +208,20 @@ module plat.ui {
          * current context, as well as reassigning context at any point in an app.
          * 
          * @remarks
-         * By default, every control has a resource for '@control' and '@context'.
-         * {@link plat.ui.IViewControl|IViewControl} objects also have a resource for '@root' and '@rootContext', 
+         * By default, every control has a resource for `@control` and `@context`.
+         * {@link plat.ui.ViewControl|ViewControl} objects also have a resource for `@root` and `@rootContext`, 
          * which is a reference to their root control and root context.
          * 
          * Resources can be created in HTML, or through the exposed control.resources 
          * object. If specified in HTML, they must be the first element child of the 
-         * control upon which the resources will be placed. IViewControls that use a 
+         * control upon which the resources will be placed. ViewControls that use a 
          * templateUrl can have resources as their first element in the templateUrl.
          * 
-         * In the provided example, the resources can be accessed by using '@Cache' and '@testObj'.
+         * In the provided example, the resources can be accessed by using `@Cache` and `@testObj`.
          * The type of resource is denoted by the element name.
          * 
-         * Only resources of type 'observable' will have data binding. The types of resources are:
-         * function, injectable, observable, and object. Resources of type 'function' will have their
+         * Only resources of type `observable` will have data binding. The types of resources are:
+         * function, injectable, observable, and object. Resources of type `function` will have their
          * associated function context bound to the control that contains the resource.
          * 
          * When an alias is found in a markup expression, the framework will search up the control chain 
@@ -399,8 +399,8 @@ module plat.ui {
          * property can be any property that works with document.createElement(). If the control's element had 
          * attributes (as well as attribute Controls), those attributes will be carried to the swapped element. The default 
          * replaceWith is 'any,' meaning it will default to a 'div' in the case that the control type is used as the 
-         * element's nodename (e.g. <plat-foreach plat-context="..."></plat-foreach>), but will maintain whatever element type 
-         * is used otherwise (e.g. <tr plat-control="plat-foreach" plat-context="..."></tr>).
+         * element's nodename (e.g. `<plat-foreach plat-context="..."></plat-foreach>`), but will maintain whatever element type 
+         * is used otherwise (e.g. `<tr plat-control="plat-foreach" plat-context="..."></tr>`).
          */
         replaceWith = 'any';
 
@@ -432,7 +432,7 @@ module plat.ui {
          * @param {string} expression The expression string (e.g. 'foo + foo').
          * @param {plat.ui.TemplateControl} control? The control used for evaluation context.
          * @param {IObject<any>} aliases? An optional alias object containing resource alias values (property keys should 
-         * not include the '@' character).
+         * not include the `@` character).
          * 
          * @returns {any} The evaluated object.
          */
@@ -452,7 +452,7 @@ module plat.ui {
          * plat.expressions.Parser injectable.
          * @param {plat.ui.TemplateControl} control? The control used for evaluation context.
          * @param {IObject<any>} aliases? An optional alias object containing resource alias values (property keys should 
-         * not include the '@' character).
+         * not include the `@` character).
          * 
          * @returns {any} The evaluated object.
          */
@@ -474,6 +474,10 @@ module plat.ui {
 
             if (expression.aliases.length > 0) {
                 aliases = TemplateControl.getResources(control, expression.aliases, aliases);
+
+                if (isEmpty(aliases)) {
+                    return;
+                }
             }
 
             return expression.evaluate(control.context, aliases);
@@ -544,7 +548,7 @@ module plat.ui {
 
                 if (isNull(resourceObj)) {
                     var _Exception: IExceptionStatic = TemplateControl._Exception;
-                    _Exception.warn('Attempting to use a resource that is not defined.', _Exception.CONTEXT);
+                    _Exception.warn('Resource alias: ' + alias + ' is not defined.', _Exception.CONTEXT);
                     continue;
                 }
 
