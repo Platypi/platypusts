@@ -46,6 +46,8 @@ module plat.ui {
      * </custom-control>
      */
     export class Resources {
+        [property: string]: any;
+
         /**
          * @name INJECTABLE
          * @memberof plat.ui.Resources
