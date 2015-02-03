@@ -617,7 +617,7 @@ module plat.processing {
     ], __STATIC);
 
     /**
-     * @name NodeManagerStatic
+     * @name INodeManagerStatic
      * @memberof plat.processing
      * @kind interface
      * 
@@ -643,7 +643,7 @@ module plat.processing {
 
         /**
          * @name findMarkup
-         * @memberof plat.processing.NodeManager
+         * @memberof plat.processing.INodeManagerStatic
          * @kind function
          * @access public
          * @static
@@ -661,7 +661,7 @@ module plat.processing {
 
         /**
          * @name build
-         * @memberof plat.processing.NodeManager
+         * @memberof plat.processing.INodeManagerStatic
          * @kind function
          * @access public
          * @static
@@ -680,7 +680,7 @@ module plat.processing {
 
         /**
          * @name observeExpressions
-         * @memberof plat.processing.NodeManager
+         * @memberof plat.processing.INodeManagerStatic
          * @kind function
          * @access public
          * @static

@@ -217,7 +217,7 @@ module plat.ui.animations {
     register.animation(__SimpleAnimation, SimpleCssAnimation);
 
     /**
-     * @name SimpleCssAnimationOptions
+     * @name ISimpleCssAnimationOptions
      * @memberof plat.ui.animations
      * @kind interface
      * 
@@ -227,7 +227,7 @@ module plat.ui.animations {
     export interface ISimpleCssAnimationOptions {
         /**
          * @name pseudo
-         * @memberof plat.ui.animations.SimpleCssAnimationOptions
+         * @memberof plat.ui.animations.ISimpleCssAnimationOptions
          * @kind property
          * @access public
          * 

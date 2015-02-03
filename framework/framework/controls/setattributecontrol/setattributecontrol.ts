@@ -156,12 +156,10 @@ module plat.controls {
      * @memberof plat.controls
      * @kind interface
      * 
-     * @extends {plat.AttributeControl}
-     * 
      * @description
      * An {@link plat.AttributeControl|AttributeControl} that deals with binding to a specified property on its element.
      */
-    export interface ISetAttributeControl extends AttributeControl {
+    export interface ISetAttributeControl {
         /**
          * @name property
          * @memberof plat.controls.ISetAttributeControl

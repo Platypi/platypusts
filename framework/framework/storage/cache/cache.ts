@@ -45,8 +45,6 @@ module plat.storage {
      * @memberof plat.storage
      * @kind class
      * 
-     * @implements {plat.storage.Cache<T>}
-     * 
      * @description
      * A Cache class, for use with the {@link plat.storage.ICacheFactory|ICacheFactory} injectable. 
      * Used for storing objects. Takes in a generic type corresponding to the type of objects it contains.
@@ -323,7 +321,7 @@ module plat.storage {
     register.injectable(__CacheFactory, ICacheFactory, null, __FACTORY);
 
     /**
-     * @name CacheFactory
+     * @name ICacheFactory
      * @memberof plat.storage
      * @kind interface
      * 

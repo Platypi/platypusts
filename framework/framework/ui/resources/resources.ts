@@ -247,13 +247,13 @@ module plat.ui {
          * @static
          * 
          * @description
-         * Populates an {@link plat.ui.IResource|IResource} value if necessary, and adds it to the given 
+         * Populates an {@link plat.ui.Resource|Resource} value if necessary, and adds it to the given 
          * control's resources.
          * 
          * @param {plat.ui.TemplateControl} control The control for which to create a resource.
-         * @param {plat.ui.IResource} resource The object used to set the resource values.
+         * @param {plat.ui.Resource} resource The object used to set the resource values.
          * 
-         * @returns {plat.ui.IResource} The newly created {@link plat.ui.IResource|IResource}.
+         * @returns {plat.ui.Resource} The newly created {@link plat.ui.Resource|Resource}.
          */
         static create(control: TemplateControl, resource: IResource): IResource {
             if (isNull(resource)) {
@@ -506,7 +506,7 @@ module plat.ui {
          * Observes the resource if the type is 'observable'.
          * 
          * @param {plat.ui.TemplateControl} control The control in charge of the observable resource.
-         * @param {plat.ui.IResource} resource The resource to observe.
+         * @param {plat.ui.Resource} resource The resource to observe.
          * 
          * @returns {void}
          */
@@ -607,7 +607,7 @@ module plat.ui {
          * Initializes this {@link plat.ui.Resources|Resources} instance.
          * 
          * @param {plat.ui.TemplateControl} control The control containing this {@link plat.ui.Resources|Resources} instance.
-         * @param {Element} element? An optional element used to create initial {@link plat.ui.IResource|IResource} objects.
+         * @param {Element} element? An optional element used to create initial {@link plat.ui.Resource|Resource} objects.
          * 
          * @returns {void}
          */
@@ -624,7 +624,7 @@ module plat.ui {
          * 
          * @param {plat.ui.TemplateControl} control The control containing this {@link plat.ui.Resources|Resources} instance.
          * @param {IObject<IResource>} resources? An optional object used to populate initial
-         * {@link plat.ui.IResource|IResource} objects.
+         * {@link plat.ui.Resource|Resource} objects.
          * 
          * @returns {void}
          */
@@ -641,7 +641,7 @@ module plat.ui {
          * 
          * @param {plat.ui.TemplateControl} control The control containing this {@link plat.ui.Resources|Resources} instance.
          * @param {plat.ui.Resources} resources? An optional {@link plat.ui.Resources|Resources} object used to populate initial 
-         * {@link plat.ui.IResource|IResource} objects.
+         * {@link plat.ui.Resource|Resource} objects.
          * 
          * @returns {void}
          */
@@ -677,7 +677,7 @@ module plat.ui {
          * @variation 0
          * 
          * @description
-         * Used for programatically adding {@link plat.ui.IResource|IResource} objects.
+         * Used for programatically adding {@link plat.ui.Resource|Resource} objects.
          * 
          * @param resources An {@link plat.IObject<plat.ui.IResource>|IObject<IResource>} used to add 
          * resources, keyed by their alias.
@@ -703,7 +703,7 @@ module plat.ui {
          * @variation 1
          * 
          * @description
-         * Used for programatically adding {@link plat.ui.IResource|IResource} objects.
+         * Used for programatically adding {@link plat.ui.Resource|Resource} objects.
          * 
          * @param {Element} element An Element containing resource element children.
          * 
@@ -773,7 +773,7 @@ module plat.ui {
     register.injectable(__ResourcesInstance, Resources, null, __INSTANCE);
 
     /**
-     * @name ResourcesFactory
+     * @name IResourcesFactory
      * @memberof plat.ui
      * @kind interface
      * 
@@ -783,7 +783,7 @@ module plat.ui {
     export interface IResourcesFactory {
         /**
          * @name INJECTABLE
-         * @memberof plat.ui.ResourcesFactory
+         * @memberof plat.ui.IResourcesFactory
          * @kind property
          * @access public
          * @static
@@ -797,7 +797,7 @@ module plat.ui {
 
         /**
          * @name OBJECT
-         * @memberof plat.ui.ResourcesFactory
+         * @memberof plat.ui.IResourcesFactory
          * @kind property
          * @access public
          * @static
@@ -811,7 +811,7 @@ module plat.ui {
 
         /**
          * @name OBSERVABLE
-         * @memberof plat.ui.ResourcesFactory
+         * @memberof plat.ui.IResourcesFactory
          * @kind property
          * @access public
          * @static
@@ -825,7 +825,7 @@ module plat.ui {
 
         /**
          * @name LITERAL
-         * @memberof plat.ui.ResourcesFactory
+         * @memberof plat.ui.IResourcesFactory
          * @kind property
          * @access public
          * @static
@@ -839,7 +839,7 @@ module plat.ui {
 
         /**
          * @name FUNCTION
-         * @memberof plat.ui.ResourcesFactory
+         * @memberof plat.ui.IResourcesFactory
          * @kind property
          * @access public
          * @static
@@ -853,25 +853,25 @@ module plat.ui {
 
         /**
          * @name create
-         * @memberof plat.ui.ResourcesFactory
+         * @memberof plat.ui.IResourcesFactory
          * @kind function
          * @access public
          * @static
          * 
          * @description
-         * Populates an {@link plat.ui.IResource|IResource} value if necessary, and adds it to the given 
+         * Populates an {@link plat.ui.Resource|Resource} value if necessary, and adds it to the given 
          * control's resources.
          * 
          * @param {plat.ui.TemplateControl} control The control for which to create a resource.
-         * @param {plat.ui.IResource} resource The object used to set the resource values.
+         * @param {plat.ui.Resource} resource The object used to set the resource values.
          * 
-         * @returns {plat.ui.IResource} The newly created {@link plat.ui.IResource|IResource}.
+         * @returns {plat.ui.Resource} The newly created {@link plat.ui.Resource|Resource}.
          */
         create(control: TemplateControl, resource: IResource): IResource;
 
         /**
          * @name addControlResources
-         * @memberof plat.ui.ResourcesFactory
+         * @memberof plat.ui.IResourcesFactory
          * @kind function
          * @access public
          * @static
@@ -888,7 +888,7 @@ module plat.ui {
 
         /**
          * @name bindResources
-         * @memberof plat.ui.ResourcesFactory
+         * @memberof plat.ui.IResourcesFactory
          * @kind function
          * @access public
          * @static
@@ -906,7 +906,7 @@ module plat.ui {
 
         /**
          * @name dispose
-         * @memberof plat.ui.ResourcesFactory
+         * @memberof plat.ui.IResourcesFactory
          * @kind function
          * @access public
          * @static
@@ -926,7 +926,7 @@ module plat.ui {
 
         /**
          * @name parseElement
-         * @memberof plat.ui.ResourcesFactory
+         * @memberof plat.ui.IResourcesFactory
          * @kind function
          * @access public
          * @static
@@ -943,7 +943,7 @@ module plat.ui {
 
         /**
          * @name getInstance
-         * @memberof plat.ui.ResourcesFactory
+         * @memberof plat.ui.IResourcesFactory
          * @kind function
          * @access public
          * @static

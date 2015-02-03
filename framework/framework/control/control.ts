@@ -1260,7 +1260,7 @@ module plat {
     ], __FACTORY);
 
     /**
-     * @name ControlFactory
+     * @name IControlFactory
      * @memberof plat
      * @kind interface
      * 

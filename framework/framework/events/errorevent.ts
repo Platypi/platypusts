@@ -123,7 +123,7 @@
     register.injectable(__ErrorEventStatic, IErrorEventStatic, [__EventManagerStatic], __STATIC);
 
     /**
-     * @name ErrorEventStatic
+     * @name IErrorEventStatic
      * @memberof plat.events
      * @kind interface
      * 

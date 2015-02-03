@@ -7,7 +7,6 @@ module plat.processing {
      * @kind class
      * 
      * @extends {plat.processing.NodeManager}
-     * @implements {plat.processing.CommentManager}
      * 
      * @description
      * A class used to manage Comment nodes. Provides a way to 
@@ -90,7 +89,7 @@ module plat.processing {
     register.injectable(__CommentManagerInstance, CommentManager, null, __INSTANCE);
 
     /**
-     * @name CommentManagerFactory
+     * @name ICommentManagerFactory
      * @memberof plat.processing
      * @kind interface
      * 

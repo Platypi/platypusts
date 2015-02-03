@@ -615,7 +615,7 @@ module plat {
     export interface IAppStatic {
         /**
          * @name start
-         * @memberof plat.AppStatic
+         * @memberof plat.IAppStatic
          * @kind function
          * @access public
          * @static
@@ -629,7 +629,7 @@ module plat {
 
         /**
          * @name registerApp
-         * @memberof plat.AppStatic
+         * @memberof plat.IAppStatic
          * @kind function
          * @access public
          * @static
@@ -647,7 +647,7 @@ module plat {
 
         /**
          * @name load
-         * @memberof plat.AppStatic
+         * @memberof plat.IAppStatic
          * @kind function
          * @access public
          * @static
@@ -664,7 +664,7 @@ module plat {
 
         /**
          * @name app
-         * @memberof plat.AppStatic
+         * @memberof plat.IAppStatic
          * @kind property
          * @access public
          * @static

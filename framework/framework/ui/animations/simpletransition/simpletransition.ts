@@ -36,7 +36,7 @@
          * @kind property
          * @access public
          * 
-         * @type {plat.ui.animations.SimpleCssTransitionOptions}
+         * @type {plat.ui.animations.ISimpleCssTransitionOptions}
          * 
          * @description
          * An optional options object that can denote a pseudo element animation and specify 
@@ -299,10 +299,20 @@
 
     register.animation(__SimpleTransition, SimpleCssTransition);
 
+    /**
+     * @name ISimpleCssTransitionOptions
+     * @memberof plat.ui.animations
+     * @kind interface
+     * 
+     * @extends {plat.ui.animations.ISimpleCssAnimationOptions}
+     * 
+     * @description
+     * An interface describing the options for {@link plat.ui.animations.SimpleCssTransition|SimpleCssTransition}.
+     */
     export interface ISimpleCssTransitionOptions extends ISimpleCssAnimationOptions {
         /**
          * @name properties
-         * @memberof plat.ui.animations.SimpleCssTransitionOptions
+         * @memberof plat.ui.animations.ISimpleCssTransitionOptions
          * @kind property
          * @access public
          * 

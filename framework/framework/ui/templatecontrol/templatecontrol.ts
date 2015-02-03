@@ -20,10 +20,10 @@ module plat.ui {
          * @access protected
          * @static
          * 
-         * @type {plat.ui.ResourcesFactory}
+         * @type {plat.ui.IResourcesFactory}
          * 
          * @description
-         * Reference to the {@link plat.ui.ResourcesFactory|IResourcesFactory} injectable.
+         * Reference to the {@link plat.ui.IResourcesFactory|IResourcesFactory} injectable.
          */
         protected static _ResourcesFactory: IResourcesFactory;
 
@@ -1189,7 +1189,7 @@ module plat.ui {
     register.injectable(__TemplateControlInstance, TemplateControl, null, __INSTANCE);
 
     /**
-     * @name TemplateControlFactory
+     * @name ITemplateControlFactory
      * @memberof plat.ui
      * @kind interface
      * 

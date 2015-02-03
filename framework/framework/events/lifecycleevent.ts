@@ -66,7 +66,7 @@
     register.injectable(__LifecycleEventInstance, LifecycleEvent, null, __INSTANCE);
 
     /**
-     * @name LifecycleEventStatic
+     * @name ILifecycleEventStatic
      * @memberof plat.events
      * @kind interface
      * 

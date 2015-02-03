@@ -1602,7 +1602,7 @@ module plat.observable {
     register.injectable(__ContextManagerInstance, ContextManager, null, __INSTANCE);
 
     /**
-     * @name ContextManagerStatic
+     * @name IContextManagerStatic
      * @memberof plat.observable
      * @kind interface
      * 

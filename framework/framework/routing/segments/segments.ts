@@ -528,7 +528,7 @@
     }
 
     /**
-     * @name ISegmentTypes
+     * @name ISegmentTypeCount
      * @memberof plat.routing
      * @kind interface
      * 

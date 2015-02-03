@@ -203,7 +203,7 @@ module plat.processing {
     register.injectable(__TextManagerInstance, TextManager, null, __INSTANCE);
 
     /**
-     * @name TextManagerFactory
+     * @name ITextManagerFactory
      * @memberof plat.processing
      * @kind interface
      * 

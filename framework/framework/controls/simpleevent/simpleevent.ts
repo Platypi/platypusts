@@ -332,12 +332,10 @@ module plat.controls {
      * @memberof plat.controls
      * @kind interface
      * 
-     * @extends {plat.AttributeControl}
-     * 
      * @description
      * An {@link plat.AttributeControl|AttributeControl} that binds to a specified DOM event handler.
      */
-    export interface ISendEvents extends AttributeControl {
+    export interface ISendEvents {
         /**
          * @name event
          * @memberof plat.controls.ISendEvents
@@ -1054,7 +1052,7 @@ module plat.controls {
 
         /**
          * @name _compat
-         * @memberof plat.controls.Input
+         * @memberof plat.controls.React
          * @kind property
          * @access protected
          * @static
@@ -1068,7 +1066,7 @@ module plat.controls {
 
         /**
          * @name event
-         * @memberof plat.controls.Input
+         * @memberof plat.controls.React
          * @kind property
          * @access public
          * 
@@ -1081,7 +1079,7 @@ module plat.controls {
 
         /**
          * @name _addEventListeners
-         * @memberof plat.controls.Input
+         * @memberof plat.controls.React
          * @kind function
          * @access protected
          * 

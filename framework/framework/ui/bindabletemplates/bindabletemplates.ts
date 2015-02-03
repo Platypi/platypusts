@@ -22,10 +22,10 @@ module plat.ui {
          * @kind property
          * @access protected
          * 
-         * @type {plat.ui.ResourcesFactory}
+         * @type {plat.ui.IResourcesFactory}
          * 
          * @description
-         * Reference to the {@link plat.ui.ResourcesFactory|IResourcesFactory} injectable.
+         * Reference to the {@link plat.ui.IResourcesFactory|IResourcesFactory} injectable.
          */
         protected _ResourcesFactory: IResourcesFactory = acquire(__ResourcesFactory);
 
@@ -841,7 +841,7 @@ module plat.ui {
     register.injectable(__BindableTemplatesFactory, IBindableTemplatesFactory, null, __FACTORY);
 
     /**
-     * @name BindableTemplatesFactory
+     * @name IBindableTemplatesFactory
      * @memberof plat.ui
      * @kind interface
      * 

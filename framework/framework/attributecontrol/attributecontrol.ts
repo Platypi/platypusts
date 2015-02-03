@@ -77,7 +77,7 @@ module plat {
     register.injectable(__AttributeControlFactory, IAttributeControlFactory, null, __FACTORY);
 
     /**
-     * @name AttributeControlFactory
+     * @name IAttributeControlFactory
      * @memberof plat
      * @kind interface
      * 

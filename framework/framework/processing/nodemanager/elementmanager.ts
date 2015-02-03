@@ -1737,7 +1737,7 @@ module plat.processing {
     register.injectable(__ElementManagerInstance, ElementManager, null, __INSTANCE);
 
     /**
-     * @name ElementManagerFactory
+     * @name IElementManagerFactory
      * @memberof plat.processing
      * @kind interface
      * 

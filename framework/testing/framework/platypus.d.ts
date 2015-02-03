@@ -5614,10 +5614,10 @@ declare module plat {
               */
             private __controlInstance;
             /**
-              * Populates an IResource value if necessary, and adds it to the given
+              * Populates an Resource value if necessary, and adds it to the given
               * control's resources.
               * @param {plat.ui.TemplateControl} control The control for which to create a resource.
-              * @param {plat.ui.IResource} resource The object used to set the resource values.
+              * @param {plat.ui.Resource} resource The object used to set the resource values.
               */
             static create(control: TemplateControl, resource: IResource): IResource;
             /**
@@ -5656,7 +5656,7 @@ declare module plat {
             /**
               * Observes the resource if the type is 'observable'.
               * @param {plat.ui.TemplateControl} control The control in charge of the observable resource.
-              * @param {plat.ui.IResource} resource The resource to observe.
+              * @param {plat.ui.Resource} resource The resource to observe.
               */
             protected static _observeResource(control: TemplateControl, resource: IResource): void;
             /**
@@ -5673,25 +5673,25 @@ declare module plat {
             /**
               * Initializes this Resources instance.
               * @param {plat.ui.TemplateControl} control The control containing this Resources instance.
-              * @param {Element} element? An optional element used to create initial IResource objects.
+              * @param {Element} element? An optional element used to create initial Resource objects.
               */
             initialize(control: TemplateControl, element?: Element): void;
             /**
               * Initializes this Resources instance.
               * @param {plat.ui.TemplateControl} control The control containing this Resources instance.
               * @param {IObject<IResource>} resources? An optional object used to populate initial
-              * IResource objects.
+              * Resource objects.
               */
             initialize(control: TemplateControl, resources?: IObject<IResource>): void;
             /**
               * Initializes this Resources instance.
               * @param {plat.ui.TemplateControl} control The control containing this Resources instance.
               * @param {plat.ui.Resources} resources? An optional Resources object used to populate initial
-              * IResource objects.
+              * Resource objects.
               */
             initialize(control: TemplateControl, resources?: Resources): void;
             /**
-              * Used for programatically adding IResource objects.
+              * Used for programatically adding Resource objects.
               * @param resources An IObject<IResource> used to add
               * resources, keyed by their alias.
               * control.resources.add({
@@ -5705,7 +5705,7 @@ declare module plat {
               */
             add(resources: IObject<IResource>): void;
             /**
-              * Used for programatically adding IResource objects.
+              * Used for programatically adding Resource objects.
               * @param {Element} element An Element containing resource element children.
               * The resource type is specified by the element name.
               *     <plat-resources>
@@ -5744,10 +5744,10 @@ declare module plat {
               */
             FUNCTION: string;
             /**
-              * Populates an IResource value if necessary, and adds it to the given
+              * Populates an Resource value if necessary, and adds it to the given
               * control's resources.
               * @param {plat.ui.TemplateControl} control The control for which to create a resource.
-              * @param {plat.ui.IResource} resource The object used to set the resource values.
+              * @param {plat.ui.Resource} resource The object used to set the resource values.
               */
             create(control: TemplateControl, resource: IResource): IResource;
             /**
@@ -7276,6 +7276,9 @@ declare module plat {
                   */
                 protected _animate(): boolean;
             }
+            /**
+              * An interface describing the options for SimpleCssTransition.
+              */
             interface ISimpleCssTransitionOptions extends ISimpleCssAnimationOptions {
                 /**
                   * A JavaScript object with key value pairs for adjusting transition values.
@@ -7797,6 +7800,154 @@ declare module plat {
                   * item template.
                   */
                 last?: string;
+            }
+            /**
+              * A special type of TemplateControl for managing meta tags, useful for SEO. This
+              * control will not exist unless you register it as a control with the name 'head'. It is static, so you can inject
+              * it into other components and get access to its properties.
+              */
+            class Head extends plat.ui.TemplateControl {
+                protected static _inject: any;
+                /**
+                  * This control is specifically for use with the <head /> HTML element.
+                  */
+                element: HTMLHeadElement;
+                /**
+                  * Rather than be replaced by a 'div', this control wants to be a 'head' element.
+                  */
+                replaceWith: string;
+                /**
+                  * The Document injectable.
+                  */
+                protected _document: Document;
+                /**
+                  * The Browser injectable.
+                  */
+                protected _browser: web.Browser;
+                /**
+                  * A reference to the the <title /> element.
+                  */
+                protected _titleElement: HTMLTitleElement;
+                /**
+                  * A reference to the the <meta property="og:title" /> element.
+                  */
+                protected _ogTitleElement: HTMLMetaElement;
+                /**
+                  * A reference to the the <meta name="twitter:title" /> element.
+                  */
+                protected _twitterTitleElement: HTMLMetaElement;
+                /**
+                  * A reference to the the <meta name="description" /> element.
+                  */
+                protected _descriptionElement: HTMLMetaElement;
+                /**
+                  * A reference to the the <meta property="og:description" /> element.
+                  */
+                protected _ogDescriptionElement: HTMLMetaElement;
+                /**
+                  * A reference to the the <meta name="twitter:description" /> element.
+                  */
+                protected _twitterDescriptionElement: HTMLMetaElement;
+                /**
+                  * A reference to the the <meta property="og:url" /> element.
+                  */
+                protected _ogUrlElement: HTMLMetaElement;
+                /**
+                  * A reference to the the <meta name="twitter:url" /> element.
+                  */
+                protected _twitterUrlElement: HTMLMetaElement;
+                /**
+                  * A reference to the the <link rel="author" /> element.
+                  */
+                protected _authorElement: HTMLLinkElement;
+                /**
+                  * A reference to the the <link rel="publisher" /> element.
+                  */
+                protected _publisherElement: HTMLLinkElement;
+                /**
+                  * A reference to the the <meta property="og:image" /> element.
+                  */
+                protected _ogImageElement: HTMLMetaElement;
+                /**
+                  * A reference to the the <meta name="twitter:image" /> element.
+                  */
+                protected _twitterImageElement: HTMLMetaElement;
+                /**
+                  * Registers for the navigating event to know when to remove all the elements so they
+                  * don't bleed onto the next page.
+                  */
+                initialize(): void;
+                /**
+                  * Makes sure all the elements exist.
+                  */
+                setTemplate(): void;
+                /**
+                  * Gets the title or sets the title elements.
+                  * @param {string} title? If supplied, the title elements will be set to this value.
+                  */
+                title(title?: string): string;
+                /**
+                  * Gets the description or sets the description elements.
+                  * @param {string} description? If supplied, the description elements will be set to this value.
+                  */
+                description(description?: string): string;
+                /**
+                  * Gets the url or sets the url elements.
+                  * @param {string} url? If supplied, the url elements will be set to this value.
+                  */
+                url(url?: string): string;
+                /**
+                  * Gets the author or sets the author elements.
+                  * @param {string} author? If supplied, the author elements will be set to this value.
+                  */
+                author(author?: string): string;
+                /**
+                  * Gets the publisher or sets the publisher elements.
+                  * @param {string} publisher? If supplied, the publisher elements will be set to this value.
+                  */
+                publisher(publisher?: string): string;
+                /**
+                  * Gets the image or sets the image elements.
+                  * @param {string} image? If supplied, the image elements will be set to this value.
+                  */
+                image(image?: string): string;
+                /**
+                  * Sets the url elements initially.
+                  */
+                loaded(): void;
+                /**
+                  * Sets the url elements.
+                  */
+                navigated(url: string): void;
+                /**
+                  * Gets the innerText/content/href of an element.
+                  * @param {HTMLElement} element The element from which to get the content.
+                  */
+                protected _getContent(element: HTMLElement): string;
+                /**
+                  * Sets the innerText/content/href of a list elements. If an element is not in the DOM, it
+                  * is added to the dom right after the <title /> element.
+                  * @param {Array<HTMLElement>} elements The elements for which to set values.
+                  */
+                protected _setContent(elements: Array<HTMLElement>, value: string): void;
+                /**
+                  * Creates an element with the specified tag and name. The name corresponds to
+                  * the type of the meta/link tag (i.e. title/description/author etc), and is also the
+                  * value that will be set for the proper attribute. The attribute is determined based on
+                  * the tag/name combination.
+                  * @param {string} tag The tag name for the element.
+                  * @param {string} name? The name corresponding to the type of meta/link tag.
+                  */
+                protected _createElement<T extends HTMLElement>(tag: string, name?: string): T;
+                /**
+                  * Removes all the unnecessary elements from the <head /> to avoid having
+                  * incorrect tags on the page.
+                  */
+                protected _removeAllElements(): void;
+                /**
+                  * Removes elements from the <head />
+                  */
+                protected _removeElements(...elements: Array<HTMLElement>): void;
             }
             /**
               * A TemplateControl for adding HTML to the
@@ -10139,7 +10290,7 @@ declare module plat {
         /**
           * An AttributeControl that binds to a specified DOM event handler.
           */
-        interface ISendEvents extends AttributeControl {
+        interface ISendEvents {
             /**
               * The event name.
               */
@@ -10749,7 +10900,7 @@ declare module plat {
         /**
           * An AttributeControl that deals with binding to a specified property on its element.
           */
-        interface ISetAttributeControl extends AttributeControl {
+        interface ISetAttributeControl {
             /**
               * The property to set on the associated template control.
               */
@@ -11157,6 +11308,7 @@ declare module plat {
               * the Template Control.
               */
             initialize(): void;
+            setTemplate(): void;
             /**
               * Observes the property and resets the value.
               */
@@ -11196,7 +11348,7 @@ declare module plat {
         /**
           * An AttributeControl that deals with observing changes for a specified property.
           */
-        interface IObservableAttributeControl extends AttributeControl {
+        interface IObservableAttributeControl {
             /**
               * The property to set on the associated template control.
               */
