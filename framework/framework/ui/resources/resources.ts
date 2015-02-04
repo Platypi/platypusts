@@ -72,7 +72,7 @@ module plat.ui {
          * @type {string}
          * 
          * @description
-         * The object resource type token.
+         * The object resource type token. Objects should be literal objects and won't be observed.
          */
         static OBJECT: string = __OBJECT_RESOURCE;
 
@@ -86,7 +86,8 @@ module plat.ui {
          * @type {string}
          * 
          * @description
-         * The observable resource type token.
+         * The observable resource type token. Observable resources are expected to be 
+         * string identifiers and will be observed.
          */
         static OBSERVABLE: string = __OBSERVABLE_RESOURCE;
 
@@ -100,7 +101,9 @@ module plat.ui {
          * @type {string}
          * 
          * @description
-         * The literal resource type token.
+         * The literal resource type token. Literals will be observed on the resource object, 
+         * so if you change `resources.<alias>.value` it will be reflected everywhere it is 
+         * observed.
          */
         static LITERAL: string = __LITERAL_RESOURCE;
 
