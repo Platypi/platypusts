@@ -9,12 +9,12 @@ module app.viewcontrols {
         };
 
         title = 'Main';
-        //templateString = `
-        //    <plat-foreach plat-context="items">
-        //        <div>{{value}}</div>
-        //    </plat-foreach>
-        //`;
-        templateUrl = 'viewcontrols/main/main.viewcontrol.html';
+        templateString = `
+            <plat-foreach plat-context="items">
+                <div>{{value}}-{{@index}}</div>
+            </plat-foreach>
+        `;
+        // templateUrl = 'viewcontrols/main/main.viewcontrol.html';
         context = {
             views: [One, Two, Three, Four],
             items: <Array<{ value: string|number; }>>[]
@@ -33,11 +33,14 @@ module app.viewcontrols {
         initialize() {
             var items: Array<{ value: string|number; }> = [];
 
-            for (var i = 0; i < 1000; ++i) {
+            for (var i = 0; i < 10; ++i) {
                 items.push({ value: i });
             }
 
             this.context.items = items;
+            setTimeout(() => {
+                items.reverse();
+            });
         }
 
         navigateTo(view: string) {

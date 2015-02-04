@@ -482,9 +482,12 @@ module plat.processing {
                     resourceObj = resources[alias] = control.findResource(alias);
                 }
 
-                if (!isNull(resourceObj) && !isNull(resourceObj.resource) && resourceObj.resource.type === __OBSERVABLE_RESOURCE) {
-                    manager = $contextManager.getManager(resources[alias].control);
-                    absoluteIdentifier = 'resources.' + alias + '.value' + absoluteIdentifier;
+                if (!isNull(resourceObj) && !isNull(resourceObj.resource)) {
+                    var type = resourceObj.resource.type;
+                    if (type === __OBSERVABLE_RESOURCE || type === __LITERAL_RESOURCE) {
+                        manager = $contextManager.getManager(resources[alias].control);
+                        absoluteIdentifier = 'resources.' + alias + '.value' + absoluteIdentifier;
+                    }
                 }
             } else {
                 // look on the control.context

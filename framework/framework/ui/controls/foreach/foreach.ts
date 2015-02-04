@@ -639,7 +639,7 @@ module plat.ui.controls {
             var isEven = (index & 1) === 0,
                 aliases: IObject<ui.IResource> = {},
                 _aliases = this._aliases,
-                type = __OBSERVABLE_RESOURCE;
+                type = __LITERAL_RESOURCE;
 
             aliases[_aliases.index] = {
                 value: index,

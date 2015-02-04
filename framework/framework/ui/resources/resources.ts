@@ -429,7 +429,7 @@ module plat.ui {
          * @static
          * 
          * @description
-         * Parses a resources Element (<plat-resources>) and creates 
+         * Parses a resources Element (`<plat-resources>`) and creates 
          * an {@link plat.IObject<plat.ui.IResource>|IObject<IResource>} with its element children.
          * 
          * @param {Element} element The resources element to parse.
@@ -505,7 +505,7 @@ module plat.ui {
          * @static
          * 
          * @description
-         * Observes the resource if the type is 'observable'.
+         * Observes the resource if the type is `observable`.
          * 
          * @param {plat.ui.TemplateControl} control The control in charge of the observable resource.
          * @param {plat.ui.IResource} resource The resource to observe.
