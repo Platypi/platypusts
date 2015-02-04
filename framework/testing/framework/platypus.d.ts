@@ -5736,11 +5736,14 @@ declare module plat {
               */
             OBJECT: string;
             /**
-              * The observable resource type token.
+              * The observable resource type token. Observable resources are expected to be
+              * string identifiers and will be observed.
               */
             OBSERVABLE: string;
             /**
-              * The literal resource type token.
+              * The literal resource type token. Literals will be observed on the resource object,
+              * so if you change `resources.<alias>.value` it will be reflected everywhere it is
+              * observed.
               */
             LITERAL: string;
             /**
@@ -5777,7 +5780,7 @@ declare module plat {
               */
             dispose(control: TemplateControl, persist?: boolean): void;
             /**
-              * Parses a resources Element (<plat-resources>) and creates
+              * Parses a resources Element (`<plat-resources>`) and creates
               * an IObject<IResource> with its element children.
               * @param {Element} element The resources element to parse.
               */

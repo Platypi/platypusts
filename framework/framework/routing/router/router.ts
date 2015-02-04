@@ -755,7 +755,14 @@
                 pattern: string,
                 segment: string;
 
-            if (isEmpty(result)) {
+            if (!isEmpty(result)) {
+                routeInfo = result[0];
+                routeInfo.query = query;
+            }
+
+            var sameRoute = this._isSameRoute(routeInfo);
+
+            if (isEmpty(result) || sameRoute) {
                 result = this._childRecognizer.recognize(url);
 
                 if (isEmpty(result)) {
@@ -769,7 +776,7 @@
                 routeInfo.query = query;
                 pattern = routeInfo.delegate.pattern;
                 pattern = pattern.substr(0, pattern.length - __CHILD_ROUTE_LENGTH);
-                if (this._previousPattern === pattern) {
+                if (sameRoute || this._previousPattern === pattern) {
                     // the pattern for this router is the same as the last pattern so 
                     // only navigate child routers.
                     this.navigating = true;
@@ -784,8 +791,6 @@
                         });
                 }
             } else {
-                routeInfo = result[0];
-                routeInfo.query = query;
                 pattern = routeInfo.delegate.pattern;
             }
 
@@ -1330,7 +1335,7 @@
         protected _isSameRoute(info: IRouteInfo): boolean {
             var currentRouteInfo = this.currentRouteInfo;
 
-            if (!isObject(currentRouteInfo)) {
+            if (!isObject(currentRouteInfo) || !isObject(info)) {
                 return false;
             }
 
