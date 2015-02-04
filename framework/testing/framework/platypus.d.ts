@@ -1,5 +1,5 @@
 /**
-  * PlatypusTS v0.10.4 (http://getplatypi.com)
+  * PlatypusTS v0.10.5 (http://getplatypi.com)
   * Copyright 2014 Platypi, LLC. All rights reserved.
   * PlatypusTS is licensed under the GPL-3.0 found at
   * http://opensource.org/licenses/GPL-3.0
@@ -1644,7 +1644,7 @@ declare module plat {
               * A method for evaluating an expression with a context.
               * @param {any} context? The primary context for evaluation.
               * @param {IObject<any>} aliases? An object containing resource alias values.
-              * All property keys must never begin with '@'.
+              * All property keys must never begin with `@`.
               */
             evaluate(context?: any, aliases?: IObject<any>): any;
             /**
@@ -1657,7 +1657,7 @@ declare module plat {
               */
             identifiers: Array<string>;
             /**
-              * Contains all the aliases (denoted without '@' as the first character) for this
+              * Contains all the aliases (denoted without `@` as the first character) for this
               * IParsedExpression.
               */
             aliases: Array<string>;
@@ -4506,10 +4506,10 @@ declare module plat {
               * object. If specified in HTML, they must be the first element child of the
               * control upon which the resources will be placed. ViewControls that use a
               * templateUrl can have resources as their first element in the templateUrl.
-              * In the provided example, the resources can be accessed by using '@Cache' and '@testObj'.
+              * In the provided example, the resources can be accessed by using `@Cache` and `@testObj`.
               * The type of resource is denoted by the element name.
-              * Only resources of type 'observable' will have data binding. The types of resources are:
-              * function, injectable, observable, and object. Resources of type 'function' will have their
+              * Only resources of type `observable` will have data binding. The types of resources are:
+              * function, injectable, observable, and object. Resources of type `function` will have their
               * associated function context bound to the control that contains the resource.
               * When an alias is found in a markup expression, the framework will search up the control chain
               * to find the alias on a control's resources. This first matching alias will be used.
@@ -4540,7 +4540,7 @@ declare module plat {
             /**
               * A url containing a string representing the DOM template for this control. If this property is
               * defined on a TemplateControl then DOM will be created and put in the
-              * control's element prior to calling the 'setTemplate' method. This property takes
+              * control's element prior to calling the `setTemplate` method. This property takes
               * precedence over templateString. In the event that both are defined, templateString
               * will be ignored.
               */
@@ -4570,7 +4570,7 @@ declare module plat {
             elementNodes: Array<Node>;
             /**
               * The first node in the TemplateControl's body. This property will be a Comment node when the
-              * control implements replaceWith = null, otherwise it will be null. This property allows an
+              * control implements `replaceWith = null`, otherwise it will be null. This property allows an
               * TemplateControl to add nodes to its body in the event that it replaces its element.
               */
             startNode: Node;
@@ -4599,10 +4599,10 @@ declare module plat {
             root: TemplateControl;
             /**
               * Evaluates an expression string with a given control and optional control's context and aliases.
-              * @param {string} expression The expression string (e.g. 'foo + foo').
+              * @param {string} expression The expression string (e.g. `foo + foo`).
               * @param {plat.ui.TemplateControl} control? The control used for evaluation context.
               * @param {IObject<any>} aliases? An optional alias object containing resource alias values (property keys should
-              * not include the '@' character).
+              * not include the `@` character).
               */
             static evaluateExpression(expression: string, control?: TemplateControl, aliases?: IObject<any>): any;
             /**
@@ -4611,7 +4611,7 @@ declare module plat {
               * plat.expressions.Parser injectable.
               * @param {plat.ui.TemplateControl} control? The control used for evaluation context.
               * @param {IObject<any>} aliases? An optional alias object containing resource alias values (property keys should
-              * not include the '@' character).
+              * not include the `@` character).
               */
             static evaluateExpression(expression: expressions.IParsedExpression, control?: TemplateControl, aliases?: IObject<any>): any;
             /**
@@ -4647,21 +4647,21 @@ declare module plat {
             static loadControl(control: TemplateControl): void;
             /**
               * Notifies a control that its context has been changed by
-              * calling the "control.contextChanged" method if it exists.
+              * calling the `control.contextChanged` method if it exists.
               * @param {plat.ui.TemplateControl} control The control whose context changed.
               * @param {any} newValue The new value of the control's context.
               * @param {any} oldValue The old value of the control's context.
               */
             static contextChanged(control: TemplateControl, newValue: any, oldValue: any): void;
             /**
-              * Sets the 'context' resource value on a TemplateControl. If the control specifies
-              * hasOwnContext as true, the 'rootContext' resource value will be set.
+              * Sets the `context` resource value on a TemplateControl. If the control specifies
+              * hasOwnContext as true, the `rootContext` resource value will be set.
               * @param {plat.ui.TemplateControl} control The control whose context resources will be set.
               */
             static setContextResources(control: TemplateControl): void;
             /**
               * Completely removes a control's element from its parentNode. If the
-              * control implements replaceWith=null, All of its nodes between its
+              * control implements `replaceWith=null`, All of its nodes between its
               * startNode and endNode (inclusive) will be removed.
               * @param {plat.ui.TemplateControl} control The control whose element should be removed.
               */
@@ -4761,7 +4761,7 @@ declare module plat {
         interface ITemplateControlFactory {
             /**
               * Evaluates an expression string with a given control and optional control's context and aliases.
-              * @param {string} expression The expression string (e.g. 'foo + foo').
+              * @param {string} expression The expression string (e.g. `foo + foo`).
               * @param {plat.ui.TemplateControl} control? The control used for evaluation context.
               * @param {IObject<any>} aliases? An optional alias object containing resource alias values
               */
@@ -4807,21 +4807,21 @@ declare module plat {
             loadControl(control: TemplateControl): void;
             /**
               * Notifies a control that its context has been changed by
-              * calling the "control.contextChanged" method if it exists.
+              * calling the `control.contextChanged` method if it exists.
               * @param {plat.ui.TemplateControl} control The control whose context changed.
               * @param {any} newValue The new value of the control's context.
               * @param {any} oldValue The old value of the control's context.
               */
             contextChanged(control: TemplateControl, newValue: any, oldValue: any): void;
             /**
-              * Sets the 'context' resource value on a TemplateControl. If the control specifies
-              * hasOwnContext as true, the 'rootContext' resource value will be set.
+              * Sets the `context` resource value on a TemplateControl. If the control specifies
+              * hasOwnContext as true, the `rootContext` resource value will be set.
               * @param {plat.ui.TemplateControl} control The control whose context resources will be set.
               */
             setContextResources(control: TemplateControl): void;
             /**
               * Completely removes a control's element from its parentNode. If the
-              * control implements replaceWith=null, All of its nodes between its
+              * control implements `replaceWith=null`, All of its nodes between its
               * startNode and endNode (inclusive) will be removed.
               * @param {plat.ui.TemplateControl} control The control whose element should be removed.
               */
@@ -5557,6 +5557,7 @@ declare module plat {
           * </custom-control>
           */
         class Resources {
+            [property: string]: any;
             /**
               * The injectable resource type token.
               */
@@ -5614,7 +5615,7 @@ declare module plat {
               */
             private __controlInstance;
             /**
-              * Populates an Resource value if necessary, and adds it to the given
+              * Populates an IResource value if necessary, and adds it to the given
               * control's resources.
               * @param {plat.ui.TemplateControl} control The control for which to create a resource.
               * @param {plat.ui.IResource} resource The object used to set the resource values.
@@ -5673,25 +5674,25 @@ declare module plat {
             /**
               * Initializes this Resources instance.
               * @param {plat.ui.TemplateControl} control The control containing this Resources instance.
-              * @param {Element} element? An optional element used to create initial Resource objects.
+              * @param {Element} element? An optional element used to create initial IResource objects.
               */
             initialize(control: TemplateControl, element?: Element): void;
             /**
               * Initializes this Resources instance.
               * @param {plat.ui.TemplateControl} control The control containing this Resources instance.
               * @param {IObject<IResource>} resources? An optional object used to populate initial
-              * Resource objects.
+              * IResource objects.
               */
             initialize(control: TemplateControl, resources?: IObject<IResource>): void;
             /**
               * Initializes this Resources instance.
               * @param {plat.ui.TemplateControl} control The control containing this Resources instance.
               * @param {plat.ui.Resources} resources? An optional Resources object used to populate initial
-              * Resource objects.
+              * IResource objects.
               */
             initialize(control: TemplateControl, resources?: Resources): void;
             /**
-              * Used for programatically adding Resource objects.
+              * Used for programatically adding IResource objects.
               * @param resources An IObject<IResource> used to add
               * resources, keyed by their alias.
               * control.resources.add({
@@ -5705,7 +5706,7 @@ declare module plat {
               */
             add(resources: IObject<IResource>): void;
             /**
-              * Used for programatically adding Resource objects.
+              * Used for programatically adding IResource objects.
               * @param {Element} element An Element containing resource element children.
               * The resource type is specified by the element name.
               *     <plat-resources>
@@ -5744,7 +5745,7 @@ declare module plat {
               */
             FUNCTION: string;
             /**
-              * Populates an Resource value if necessary, and adds it to the given
+              * Populates an IResource value if necessary, and adds it to the given
               * control's resources.
               * @param {plat.ui.TemplateControl} control The control for which to create a resource.
               * @param {plat.ui.IResource} resource The object used to set the resource values.
