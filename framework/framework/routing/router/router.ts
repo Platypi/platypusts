@@ -135,6 +135,19 @@
         isRoot: boolean = false;
 
         /**
+         * @name _nextRouteInfo
+         * @memberof plat.routing.Router
+         * @kind property
+         * @access protected
+         * 
+         * @type {plat.routing.IRouteInfo}
+         * 
+         * @description
+         * The route information for the next route state.
+         */
+        protected _nextRouteInfo: IRouteInfo;
+
+        /**
          * @name previousUrl
          * @memberof plat.routing.Router
          * @kind property
@@ -755,14 +768,7 @@
                 pattern: string,
                 segment: string;
 
-            if (!isEmpty(result)) {
-                routeInfo = result[0];
-                routeInfo.query = query;
-            }
-
-            var sameRoute = this._isSameRoute(routeInfo);
-
-            if (isEmpty(result) || sameRoute) {
+            if (isEmpty(result)) {
                 result = this._childRecognizer.recognize(url);
 
                 if (isEmpty(result)) {
@@ -776,7 +782,7 @@
                 routeInfo.query = query;
                 pattern = routeInfo.delegate.pattern;
                 pattern = pattern.substr(0, pattern.length - __CHILD_ROUTE_LENGTH);
-                if (sameRoute || this._previousPattern === pattern) {
+                if (this._previousPattern === pattern) {
                     // the pattern for this router is the same as the last pattern so 
                     // only navigate child routers.
                     this.navigating = true;
@@ -791,6 +797,8 @@
                         });
                 }
             } else {
+                routeInfo = result[0];
+                routeInfo.query = query;
                 pattern = routeInfo.delegate.pattern;
             }
 
@@ -798,7 +806,7 @@
 
             this.navigating = true;
 
-            var routeInfoCopy = _clone(routeInfo, true);
+            var routeInfoCopy = this._nextRouteInfo = _clone(routeInfo, true);
             return this.finishNavigating = this._canNavigate(routeInfo)
                 .then((canNavigate: boolean): async.IThenable<void> => {
                 if (!canNavigate) {
@@ -1074,7 +1082,7 @@
          * @returns {plat.async.IThenable<void>} Resolves when the navigation is complete.
          */
         protected _performNavigation(info: IRouteInfo): async.IThenable<void> {
-            var sameRoute = this._isSameRoute(info);
+            var sameRoute = this._isSameRoute(this._nextRouteInfo);
 
             return this._performNavigateFrom(sameRoute).then((): async.IThenable<Array<void>> => {
                 if (sameRoute) {
@@ -1133,7 +1141,7 @@
          */
         protected _canNavigate(info: IRouteInfo): async.IThenable<boolean> {
             var currentRouteInfo = this.currentRouteInfo,
-                sameRoute = this._isSameRoute(info);
+                sameRoute = this._isSameRoute(this._nextRouteInfo);
 
             return this._canNavigateFrom(sameRoute)
                 .then((canNavigateFrom: boolean): async.IThenable<boolean> => {

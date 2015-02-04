@@ -9,12 +9,12 @@ module app.viewcontrols {
         };
 
         title = 'Main';
-        templateString = `
-            <plat-foreach plat-context="items">
-                <div>{{value}}-{{@index}}</div>
-            </plat-foreach>
-        `;
-        // templateUrl = 'viewcontrols/main/main.viewcontrol.html';
+        //templateString = `
+        //    <plat-foreach plat-context="items">
+        //        <div>{{value}}-{{@index}}</div>
+        //    </plat-foreach>
+        //`;
+        templateUrl = 'viewcontrols/main/main.viewcontrol.html';
         context = {
             views: [One, Two, Three, Four],
             items: <Array<{ value: string|number; }>>[]
@@ -23,7 +23,7 @@ module app.viewcontrols {
         constructor(router: plat.routing.Router) {
             super();
             router.configure([
-                { pattern: '/one', view: One },
+                { pattern: '', view: One },
                 { pattern: '/two', view: Two },
                 { pattern: '/three', view: Three },
                 { pattern: '/four', view: Four }

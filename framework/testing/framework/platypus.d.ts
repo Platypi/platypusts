@@ -9807,6 +9807,10 @@ declare module plat {
               */
             isRoot: boolean;
             /**
+              * The route information for the next route state.
+              */
+            protected _nextRouteInfo: IRouteInfo;
+            /**
               * The previous url matched for this router.
               */
             protected _previousUrl: string;

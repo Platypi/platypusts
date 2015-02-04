@@ -11,7 +11,7 @@
             super();
 
             router.configure([
-                { pattern: '/one', view: One },
+                { pattern: '', view: One },
                 { pattern: '/two', view: Two },
                 { pattern: '/three', view: Three },
                 { pattern: '/four', view: Four }
@@ -20,7 +20,7 @@
 
 
         navigatedTo() {
-            // console.log('navigatedTo:', this.uid);
+            console.log('navto');
         }
 
         navigatingFrom() {
