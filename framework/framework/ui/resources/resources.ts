@@ -813,7 +813,7 @@ module plat.ui {
          * The object resource type token.
          */
         OBJECT: string;
-
+        
         /**
          * @name OBSERVABLE
          * @memberof plat.ui.IResourcesFactory
@@ -824,7 +824,8 @@ module plat.ui {
          * @type {string}
          * 
          * @description
-         * The observable resource type token.
+         * The observable resource type token. Observable resources are expected to be 
+         * string identifiers and will be observed.
          */
         OBSERVABLE: string;
 
@@ -838,7 +839,9 @@ module plat.ui {
          * @type {string}
          * 
          * @description
-         * The literal resource type token.
+         * The literal resource type token. Literals will be observed on the resource object, 
+         * so if you change `resources.<alias>.value` it will be reflected everywhere it is 
+         * observed.
          */
         LITERAL: string;
 
@@ -937,7 +940,7 @@ module plat.ui {
          * @static
          * 
          * @description
-         * Parses a resources Element (<plat-resources>) and creates 
+         * Parses a resources Element (`<plat-resources>`) and creates 
          * an {@link plat.IObject<plat.ui.IResource>|IObject<IResource>} with its element children.
          * 
          * @param {Element} element The resources element to parse.
