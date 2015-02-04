@@ -5563,15 +5563,18 @@ declare module plat {
               */
             static INJECTABLE: string;
             /**
-              * The object resource type token.
+              * The object resource type token. Objects should be literal objects and won't be observed.
               */
             static OBJECT: string;
             /**
-              * The observable resource type token.
+              * The observable resource type token. Observable resources are expected to be
+              * string identifiers and will be observed.
               */
             static OBSERVABLE: string;
             /**
-              * The literal resource type token.
+              * The literal resource type token. Literals will be observed on the resource object,
+              * so if you change `resources.<alias>.value` it will be reflected everywhere it is
+              * observed.
               */
             static LITERAL: string;
             /**
@@ -5645,7 +5648,7 @@ declare module plat {
               */
             static dispose(control: TemplateControl, persist?: boolean): void;
             /**
-              * Parses a resources Element (<plat-resources>) and creates
+              * Parses a resources Element (`<plat-resources>`) and creates
               * an IObject<IResource> with its element children.
               * @param {Element} element The resources element to parse.
               */
@@ -5655,7 +5658,7 @@ declare module plat {
               */
             static getInstance(): Resources;
             /**
-              * Observes the resource if the type is 'observable'.
+              * Observes the resource if the type is `observable`.
               * @param {plat.ui.TemplateControl} control The control in charge of the observable resource.
               * @param {plat.ui.IResource} resource The resource to observe.
               */
