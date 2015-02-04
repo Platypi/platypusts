@@ -246,18 +246,16 @@ module plat.ui.controls {
          * @returns {void}
          */
         contextChanged(newValue?: Array<any>, oldValue?: Array<any>): void {
-            if (!isArray(newValue)) {
+            if (isEmpty(newValue)) {
+                this._removeItems(this.controls.length);
+                return;
+            } else if (!isArray(newValue)) {
                 var _Exception: IExceptionStatic = this._Exception;
                 _Exception.warn(this.type + ' context set to something other than an Array.', _Exception.CONTEXT);
                 return;
             }
 
             this._setListener();
-            if (newValue.length === 0) {
-                this._removeItems(this.controls.length);
-                return;
-            }
-
             this._executeEvent({
                 method: 'splice',
                 arguments: null,
