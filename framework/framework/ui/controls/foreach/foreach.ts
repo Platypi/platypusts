@@ -253,13 +253,13 @@ module plat.ui.controls {
             }
 
             this._setListener();
+            this._setAliases();
 
             if (newValue.length === 0) {
                 this._removeItems(this.controls.length);
                 return;
             }
 
-            this._setAliases();
             this._executeEvent({
                 method: 'splice',
                 arguments: null,
