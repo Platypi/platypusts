@@ -494,10 +494,8 @@ module plat.ui.controls {
          * @returns {void}
          */
         protected _removeItem(): void {
-            var controls = this.controls,
-                length = controls.length - 1;
-
-            TemplateControl.dispose(controls[length]);
+            var controls = this.controls;
+            TemplateControl.dispose(controls[controls.length - 1]);
         }
 
         /**
