@@ -770,15 +770,17 @@ module plat.ui.controls {
          */
         protected _presplice(ev: observable.IPreArrayChangeInfo): void {
             var args = ev.arguments,
-                addCount = args.length - 2,
-                deleteCount = args[1],
-                diff = deleteCount - addCount;
+                addCount = args.length - 2;
 
             // check if adding more items than deleting
             if (addCount > 0) {
                 this._animateItems(args[0], addCount, __Enter);
-            } else if (deleteCount > 0) {
-                this._animationThenable = this._animateItems(args[0] + addCount, diff, __Leave, true);
+                return;
+            }
+
+            var deleteCount = args[1];
+            if (deleteCount > 0) {
+                this._animationThenable = this._animateItems(args[0] + addCount, deleteCount - addCount, __Leave, true);
             }
         }
 
