@@ -1197,11 +1197,9 @@
             if (isEmpty(this._ports)) {
                 return this._resolve(true);
             }
-            return this._callAllHandlers(info.delegate.view, info.parameters, info.query)
-                .then((): async.IThenable<boolean> => {
+            return this._callAllHandlers(info.delegate.view, info.parameters, info.query).then((): async.IThenable<boolean> => {
                 return this._callInterceptors(info);
-            })
-                .then((canNavigateTo): async.IThenable<Array<boolean>> => {
+            }).then((canNavigateTo): async.IThenable<Array<boolean>> => {
                 if (canNavigateTo === false || ignorePorts) {
                     return <any>[canNavigateTo];
                 }
@@ -1209,35 +1207,7 @@
                 return mapAsync((port: ISupportRouteNavigation): async.IThenable<boolean> => {
                     return port.canNavigateTo(info);
                 }, this._ports);
-            })
-                .then(booleanReduce)
-                .then((canNavigateTo: boolean): async.IThenable<Array<boolean>> => {
-                if (!canNavigateTo) {
-                    promises = [canNavigateTo];
-                } else {
-                    var childRoute = this._getChildRoute(info),
-                        childResult: IRouteResult,
-                        childInfo: IRouteInfo;
-
-                    promises = [];
-
-                    this.children.reduce((promises: Array<async.IThenable<boolean>>, child: Router): Array<async.IThenable<boolean>> => {
-                        childResult = child._recognizer.recognize(childRoute);
-
-                        if (isEmpty(childResult)) {
-                            child._clearInfo();
-                            return;
-                        }
-
-                        childInfo = childResult[0];
-                        childInfo.query = info.query;
-                        return promises.concat(child._canNavigateTo(childInfo));
-                    }, promises);
-                }
-
-                return this._Promise.all(promises);
-            })
-                .then(booleanReduce);
+            }).then(booleanReduce);
         }
 
         /**
