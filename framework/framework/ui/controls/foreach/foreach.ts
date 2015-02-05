@@ -159,6 +159,19 @@ module plat.ui.controls {
         protected _blockLength: any = 0;
 
         /**
+         * @name _animationThenable
+         * @memberof plat.ui.controls.ForEach
+         * @kind property
+         * @access protected
+         * 
+         * @type {plat.async.IThenable<void>}
+         * 
+         * @description
+         * An animation promise for pausing functionality for animation.
+         */
+        protected _animationThenable: async.IThenable<void>;
+
+        /**
          * @name _currentAnimations
          * @memberof plat.ui.controls.ForEach
          * @kind property
@@ -365,7 +378,9 @@ module plat.ui.controls {
                 return;
             }
 
-            var promises: Array<async.IThenable<DocumentFragment>> = [];
+            var promises: Array<async.IThenable<DocumentFragment>> = [],
+                initialIndex = index;
+
             while (index < max) {
                 promises.push(this._bindItem(index++));
             }
@@ -382,6 +397,8 @@ module plat.ui.controls {
                     } else {
                         this._appendItems(templates);
                     }
+
+                    this._updateResource(initialIndex - 1);
 
                     if (isFunction(this.__resolveFn)) {
                         this.__resolveFn();
@@ -477,8 +494,9 @@ module plat.ui.controls {
                 this._removeItem();
             }
 
-            if (this.controls.length > 0) {
-                this._updateResources();
+            var length = this.controls.length;
+            if (length > 0) {
+                this._updateResource(length - 1);
             }
         }
 
@@ -534,24 +552,26 @@ module plat.ui.controls {
         }
 
         /**
-         * @name _updateResources
+         * @name _updateResource
          * @memberof plat.ui.controls.ForEach
          * @kind function
          * @access protected
          * 
          * @description
-         * Updates the control's children resource objects when 
+         * Updates a child resource object when 
          * the array changes.
+         * 
+         * @param {number} index The control whose resources we will update.
          * 
          * @returns {void}
          */
-        protected _updateResources(): void {
-            var controls = this.controls,
-                length = controls.length;
-
-            for (var i = 0; i < length; ++i) {
-                controls[i].resources.add(this._getAliases(i));
+        protected _updateResource(index: number): void {
+            var controls = this.controls;
+            if (index <= 0 || index >= controls.length) {
+                return;
             }
+
+            controls[index].resources.add(this._getAliases(index));
         }
 
         /**
@@ -713,7 +733,7 @@ module plat.ui.controls {
          * @returns {void}
          */
         protected _preshift(ev: observable.IPreArrayChangeInfo): void {
-            this._animateItems(0, 1, __Leave, true);
+            this._animationThenable = this._animateItems(0, 1, __Leave, true);
         }
 
         /**
@@ -730,7 +750,9 @@ module plat.ui.controls {
          * @returns {void}
          */
         protected _shift(ev: observable.IPostArrayChangeInfo<any>): void {
-            this._removeItems(1);
+            this._Promise.resolve(this._animationThenable).then(() => {
+                this._removeItems(1);
+            });
         }
 
         /**
@@ -748,16 +770,18 @@ module plat.ui.controls {
          */
         protected _presplice(ev: observable.IPreArrayChangeInfo): void {
             var args = ev.arguments,
-                addCount = args.length - 2,
-                deleteCount = args[1];
+                addCount = args.length - 2;
 
             // check if adding more items than deleting
-            if (addCount >= deleteCount) {
+            if (addCount > 0) {
                 this._animateItems(args[0], addCount, __Enter);
                 return;
             }
 
-            this._animateItems(args[0], deleteCount, __Leave, true);
+            var deleteCount = args[1];
+            if (deleteCount > 0) {
+                this._animationThenable = this._animateItems(args[0] + addCount, deleteCount - addCount, __Leave, true);
+            }
         }
 
         /**
@@ -777,11 +801,13 @@ module plat.ui.controls {
             var oldLength = this.controls.length,
                 newLength = ev.newArray.length;
 
-            if (newLength > oldLength) {
-                this._addItems(newLength - oldLength, oldLength);
-            } else if (oldLength > newLength) {
-                this._removeItems(oldLength - newLength);
-            }
+            this._Promise.resolve(this._animationThenable).then(() => {
+                if (newLength > oldLength) {
+                    this._addItems(newLength - oldLength, oldLength);
+                } else if (oldLength > newLength) {
+                    this._removeItems(oldLength - newLength);
+                }
+            });
         }
 
         /**
@@ -933,7 +959,8 @@ module plat.ui.controls {
         private __handleAnimation(startNode: number, endNode: number, key: string, clone: boolean): async.IThenable<void> {
             var container = this._container,
                 nodes: Array<Node> = Array.prototype.slice.call(container.childNodes, startNode, endNode),
-                node: Node,
+                node: HTMLElement,
+                clonedNode: HTMLElement,
                 firstNode = nodes[0],
                 _animator = this._animator,
                 currentAnimations = this._currentAnimations,
@@ -942,16 +969,19 @@ module plat.ui.controls {
 
             clone = clone === true;
             while (nodes.length > 0) {
-                node = nodes.shift();
+                node = <HTMLElement>nodes.shift();
                 if (node.nodeType === Node.ELEMENT_NODE) {
                     if (clone) {
-                        node = node.cloneNode(true);
-                        container.insertBefore(node, firstNode);
+                        clonedNode = <HTMLElement>node.cloneNode(true);
+                        node.setAttribute(__Hide);
+                        container.insertBefore(clonedNode, firstNode);
                         // bind callback to current cloned node due to loop
-                        callback = function (): void {
+                        callback = function (clone: HTMLElement, node: HTMLElement): void {
                             currentAnimations.shift();
-                            container.removeChild(this);
-                        }.bind(node);
+                            node.removeAttribute(__Hide);
+                            container.removeChild(clone);
+                        }.bind(null, clonedNode, node);
+                        node = clonedNode;
                     } else {
                         callback = (): void => {
                             currentAnimations.shift();
