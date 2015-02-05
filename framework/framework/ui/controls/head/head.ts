@@ -90,7 +90,7 @@
          * @kind property
          * @access protected
          * 
-         * @type {HTMLTitleElement}
+         * @type {HTMLMetaElement}
          * 
          * @description
          * A reference to the the <meta property="og:title" /> element.
@@ -103,7 +103,7 @@
          * @kind property
          * @access protected
          * 
-         * @type {HTMLTitleElement}
+         * @type {HTMLMetaElement}
          * 
          * @description
          * A reference to the the <meta name="twitter:title" /> element.
@@ -116,7 +116,7 @@
          * @kind property
          * @access protected
          * 
-         * @type {HTMLTitleElement}
+         * @type {HTMLMetaElement}
          * 
          * @description
          * A reference to the the <meta name="description" /> element.
@@ -129,7 +129,7 @@
          * @kind property
          * @access protected
          * 
-         * @type {HTMLTitleElement}
+         * @type {HTMLMetaElement}
          * 
          * @description
          * A reference to the the <meta property="og:description" /> element.
@@ -142,7 +142,7 @@
          * @kind property
          * @access protected
          * 
-         * @type {HTMLTitleElement}
+         * @type {HTMLMetaElement}
          * 
          * @description
          * A reference to the the <meta name="twitter:description" /> element.
@@ -155,7 +155,7 @@
          * @kind property
          * @access protected
          * 
-         * @type {HTMLTitleElement}
+         * @type {HTMLMetaElement}
          * 
          * @description
          * A reference to the the <meta property="og:url" /> element.
@@ -168,7 +168,7 @@
          * @kind property
          * @access protected
          * 
-         * @type {HTMLTitleElement}
+         * @type {HTMLMetaElement}
          * 
          * @description
          * A reference to the the <meta name="twitter:url" /> element.
@@ -181,25 +181,51 @@
          * @kind property
          * @access protected
          * 
-         * @type {HTMLTitleElement}
+         * @type {HTMLMetaElement}
          * 
          * @description
-         * A reference to the the <link rel="author" /> element.
+         * A reference to the the <meta name="author" /> element.
          */
-        protected _authorElement: HTMLLinkElement;
+        protected _authorElement: HTMLMetaElement;
 
         /**
-         * @name _publisherElement
+         * @name _authorElement
          * @memberof plat.ui.controls.Head
          * @kind property
          * @access protected
          * 
-         * @type {HTMLTitleElement}
+         * @type {HTMLLinkElement}
          * 
          * @description
-         * A reference to the the <link rel="publisher" /> element.
+         * A reference to the the <link rel="author" /> element.
          */
-        protected _publisherElement: HTMLLinkElement;
+        protected _googleAuthorElement: HTMLLinkElement;
+
+        /**
+         * @name _fbAuthorElement
+         * @memberof plat.ui.controls.Head
+         * @kind property
+         * @access protected
+         * 
+         * @type {HTMLMetaElement}
+         * 
+         * @description
+         * A reference to the the <meta property="article:author" /> element.
+         */
+        protected _fbAuthorElement: HTMLMetaElement;
+
+        /**
+         * @name _twitterCreatorElement
+         * @memberof plat.ui.controls.Head
+         * @kind property
+         * @access protected
+         * 
+         * @type {HTMLMetaElement}
+         * 
+         * @description
+         * A reference to the the <meta property="twitter:creator" /> element.
+         */
+        protected _twitterCreatorElement: HTMLMetaElement;
 
         /**
          * @name _ogImageElement
@@ -207,7 +233,7 @@
          * @kind property
          * @access protected
          * 
-         * @type {HTMLTitleElement}
+         * @type {HTMLMetaElement}
          * 
          * @description
          * A reference to the the <meta property="og:image" /> element.
@@ -220,7 +246,7 @@
          * @kind property
          * @access protected
          * 
-         * @type {HTMLTitleElement}
+         * @type {HTMLMetaElement}
          * 
          * @description
          * A reference to the the <meta name="twitter:image" /> element.
@@ -261,11 +287,12 @@
                 title = __Title,
                 link = __MetaLink,
                 author = __Author,
-                publisher = __Publisher,
+                creator = __Creator,
                 image = __MetaImage,
                 description = __Description,
                 url = __Url,
                 og = __OpenGraph,
+                article = __Article,
                 twitter = __Twitter;
 
             this._titleElement = this._createElement<HTMLTitleElement>(title);
@@ -279,9 +306,10 @@
             this._ogUrlElement = this._createElement<HTMLMetaElement>(meta, og + url);
             this._twitterUrlElement = this._createElement<HTMLMetaElement>(meta, twitter + url);
 
-            this._authorElement = this._createElement<HTMLLinkElement>(link, author);
-
-            this._publisherElement = this._createElement<HTMLLinkElement>(link, publisher);
+            this._authorElement = this._createElement<HTMLMetaElement>(meta, author);
+            this._googleAuthorElement = this._createElement<HTMLLinkElement>(link, author);
+            this._fbAuthorElement = this._createElement<HTMLMetaElement>(meta, article + author);
+            this._twitterCreatorElement = this._createElement<HTMLMetaElement>(meta, twitter + creator);
 
             this._ogImageElement = this._createElement<HTMLMetaElement>(meta, og + image);
             this._twitterImageElement = this._createElement<HTMLMetaElement>(meta, twitter + image);
@@ -376,7 +404,8 @@
          * @description
          * Gets the author or sets the author elements.
          * 
-         * @param {string} author? If supplied, the author elements will be set to this value.
+         * @param {string} author? If supplied, the author elements will be set to this value. The value should be the 
+         * display name of the content author.
          * 
          * @returns {string} The author
          */
@@ -393,28 +422,81 @@
         }
 
         /**
-         * @name publisher
+         * @name googleAuthor
          * @memberof plat.ui.controls.Head
          * @kind function
          * @access public
          * 
          * @description
-         * Gets the publisher or sets the publisher elements.
+         * Gets the author or sets the author elements.
          * 
-         * @param {string} publisher? If supplied, the publisher elements will be set to this value.
+         * @param {string} author? If supplied, the author elements will be set to this value. The value should be the 
+         * Google+ profile url for the author.
          * 
-         * @returns {string} The publisher
+         * @returns {string} The author
          */
-        publisher(publisher?: string): string {
-            if (!isString(publisher)) {
-                return this._getContent(this._publisherElement);
+        googleAuthor(author?: string): string {
+            if (!isString(author)) {
+                return this._getContent(this._googleAuthorElement);
             }
 
             this._setContent([
-                this._publisherElement
-            ], publisher);
+                this._googleAuthorElement,
+            ], author);
 
-            return publisher;
+            return author;
+        }
+
+        /**
+         * @name fbAuthor
+         * @memberof plat.ui.controls.Head
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Gets the author or sets the author elements. This method is for use with the Facebook profile authors.
+         * 
+         * @param {string} author? If supplied, the author elements will be set to this value. The value should be 
+         * the `https://www.facebook.com/username` account, and make sure the user supports followers.
+         * 
+         * @returns {string} The author
+         */
+        fbAuthor(author?: string): string {
+            if (!isString(author)) {
+                return this._getContent(this._fbAuthorElement);
+            }
+
+            this._setContent([
+                this._fbAuthorElement
+            ], author);
+
+            return author;
+        }
+
+        /**
+         * @name twitterCreator
+         * @memberof plat.ui.controls.Head
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Gets the creator or sets the creator elements
+         * 
+         * @param {string} creator? If supplied, the creator elements will be set to this value. The 
+         * value should be the twitter `@username` of the creator
+         * 
+         * @returns {string} The creator
+         */
+        twitterCreator(creator?: string): string {
+            if (!isString(creator)) {
+                return this._getContent(this._twitterCreatorElement);
+            }
+
+            this._setContent([
+                this._twitterCreatorElement
+            ], creator);
+
+            return creator;
         }
 
         /**
@@ -561,7 +643,7 @@
         protected _createElement<T extends HTMLElement>(tag: string, name?: string): T {
             var el: T,
                 hasName = isString(name),
-                attr: string = hasName && name.indexOf(__OpenGraph) === 0 ? __MetaProperty : __MetaName,
+                attr: string = (hasName && (name.indexOf(__OpenGraph) === 0 || name.indexOf(__Article) === 0)) ? __MetaProperty : __MetaName,
                 element: HTMLHeadElement = this.element;
 
             if (tag === __MetaLink) {
@@ -605,7 +687,9 @@
                 this._ogDescriptionElement,
                 this._twitterDescriptionElement,
                 this._authorElement,
-                this._publisherElement,
+                this._googleAuthorElement,
+                this._fbAuthorElement,
+                this._twitterCreatorElement,
                 this._ogImageElement,
                 this._twitterImageElement
             );
