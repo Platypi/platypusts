@@ -10,3 +10,35 @@
 .right {
     margin-left: 100px;
 }
+
+/*.test .plat-enter {
+    animation: FADEIN 2s;
+    animation-fill-mode: forwards;
+}
+
+.test .plat-leave {
+    animation: FADEOUT 2s;
+    animation-fill-mode: forwards;
+}
+
+.test .plat-leave-end {
+    opacity: 0;
+}
+
+@keyframes FADEIN {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes FADEOUT {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}*/

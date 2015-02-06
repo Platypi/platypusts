@@ -60,7 +60,16 @@ module app.viewcontrols {
             this.head.title('Main Page');
             this.head.description('This is the main page');
 
-            this.context.test.pop();
+            var test = this.context.test;
+            setTimeout(() => {
+                //test[0] = 1;
+                test.pop();
+                test.push(0);
+                test.pop();
+                test.pop();
+                test.push(3);
+                test.push(4);
+            }, 1000);
         }
     }
 
