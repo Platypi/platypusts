@@ -678,9 +678,32 @@ module plat.observable {
                 };
             }
 
-            // check if value is defined and context manager hasn't seen this identifier
-            if (!hasIdentifier) {
-                if (key === 'length' && isArray(context)) {
+            var parentIsArray = isArray(context),
+                removeObservableListener = removeCallback,
+                removeListener = noop,
+                removeArrayObserve = noop,
+                numKey = Number(key);
+
+            if (parentIsArray && numKey >= context.length) {
+                removeListener = this.observe(join + '.length', {
+                    uid: observableListener.uid,
+                    listener: (newValue: number, oldValue: number): void => {
+                        if (numKey >= newValue) {
+                            return;
+                        }
+
+                        removeListener();
+                        this._define(absoluteIdentifier, context, key);
+                    }
+                });
+
+                removeCallback = (): void => {
+                    removeObservableListener();
+                    removeListener();
+                };
+            } else if (!hasIdentifier) {
+                // check if value is defined and context manager hasn't seen this identifier
+                if (parentIsArray && key === 'length') {
                     var property = split.pop(),
                         parentContext = this.getContext(split, false);
 
@@ -690,10 +713,6 @@ module plat.observable {
                     if (isString(this.__observedIdentifier)) {
                         join = this.__observedIdentifier;
                     }
-
-                    var removeObservableListener = removeCallback,
-                        removeListener = noop,
-                        removeArrayObserve = noop;
 
                     if (hasObservableListener) {
                         var uid = observableListener.uid;

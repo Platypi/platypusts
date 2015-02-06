@@ -260,12 +260,10 @@ module plat.ui.controls {
          */
         contextChanged(newValue?: Array<any>, oldValue?: Array<any>): void {
             if (isEmpty(newValue)) {
-                this.itemsLoaded.then(() => {
-                    this._removeItems(this.controls.length);
-                });
+                this._removeItems(this.controls.length);
                 return;
             } else if (!isArray(newValue)) {
-                var _Exception: IExceptionStatic = this._Exception;
+                var _Exception = this._Exception;
                 _Exception.warn(this.type + ' context set to something other than an Array.', _Exception.CONTEXT);
                 return;
             }
@@ -374,13 +372,8 @@ module plat.ui.controls {
          * @returns {plat.async.IThenable<void>} The itemsLoaded promise.
          */
         protected _addItems(numberOfItems: number, index: number, animate?: boolean): async.IThenable<void> {
-            var context = this.context,
-                max = +(index + numberOfItems);
-            if (!isArray(context) || !isNumber(max) || (context.length < max)) {
-                return;
-            }
-
-            var promises: Array<async.IThenable<DocumentFragment>> = [],
+            var max = +(index + numberOfItems),
+                promises: Array<async.IThenable<DocumentFragment>> = [],
                 initialIndex = index;
 
             while (index < max) {
@@ -611,9 +604,7 @@ module plat.ui.controls {
         protected _preprocessEvent(ev: observable.IPreArrayChangeInfo): void {
             var method = '_pre' + ev.method;
             if (isFunction((<any>this)[method])) {
-                this.itemsLoaded.then(() => {
-                    (<any>this)[method](ev);
-                });
+                (<any>this)[method](ev);
             }
         }
 
@@ -634,9 +625,9 @@ module plat.ui.controls {
         protected _executeEvent(ev: observable.IPostArrayChangeInfo<any>): void {
             var method = '_' + ev.method;
             if (isFunction((<any>this)[method])) {
-                this.itemsLoaded.then(() => {
+                //this.itemsLoaded.then(() => {
                     (<any>this)[method](ev);
-                });
+                //});
             }
         }
 
@@ -720,9 +711,8 @@ module plat.ui.controls {
          * @returns {void}
          */
         protected _pop(ev: observable.IPostArrayChangeInfo<any>): void {
-            this._animateItems(ev.newArray.length, 1, __Leave).then((): void => {
-                this._removeItems(1);
-            });
+            this._animateItems(ev.newArray.length, 1, __Leave, true);
+            this._removeItems(1);
         }
 
         /**
@@ -983,7 +973,7 @@ module plat.ui.controls {
                 if (node.nodeType === Node.ELEMENT_NODE) {
                     if (clone) {
                         clonedNode = <HTMLElement>node.cloneNode(true);
-                        node.setAttribute(__Hide);
+                        node.setAttribute(__Hide, '');
                         container.insertBefore(clonedNode, firstNode);
                         // bind callback to current cloned node due to loop
                         callback = function (clone: HTMLElement, node: HTMLElement): void {

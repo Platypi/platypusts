@@ -63,12 +63,12 @@ module app.viewcontrols {
             var test = this.context.test;
             setTimeout(() => {
                 //test[0] = 1;
-                test.pop();
-                test.push(0);
-                test.pop();
-                test.pop();
-                test.push(3);
-                test.push(4);
+                test.shift();
+                //test.push(0);
+                //test.pop();
+                //test.pop();
+                //test.push(3);
+                //test.push(4);
             }, 1000);
         }
     }

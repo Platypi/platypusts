@@ -281,8 +281,10 @@ module plat {
          * @returns {plat.async.IThenable<void>} A Promise that resolves when the control has loaded.
          */
         static load(control: Control): async.IThenable<void> {
+            var _Promise = Control._Promise;
+
             if (isNull(control)) {
-                return;
+                return _Promise.resolve();
             }
 
             var ctrl = <ui.TemplateControl>control;
@@ -303,10 +305,10 @@ module plat {
             }
 
             if (isFunction(control.loaded)) {
-                return Control._Promise.resolve(control.loaded());
+                return _Promise.resolve(control.loaded());
             }
 
-            return Control._Promise.resolve(null);
+            return _Promise.resolve();
         }
 
         /**
