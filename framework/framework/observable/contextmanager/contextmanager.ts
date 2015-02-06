@@ -581,15 +581,21 @@ module plat.observable {
          * 
          * @param {Array<string>} split The string array containing properties used to index into
          * the context.
+         * @param {boolean} observe? Whether or not to observe the identifier indicated by the 
+         * split Array.
          * 
          * @returns {any} The obtained context.
          */
-        getContext(split: Array<string>): any {
+        getContext(split: Array<string>, observe?: boolean): any {
             var join = split.join('.'),
                 context = this.__contextObjects[join];
 
             if (isNull(context)) {
-                context = this.__contextObjects[join] = this._observeImmediateContext(split, join);
+                if (observe === true) {
+                    context = this.__contextObjects[join] = this._observeImmediateContext(split, join);
+                } else {
+                    context = this._getImmediateContext(split);
+                }
             }
 
             return context;
@@ -625,10 +631,7 @@ module plat.observable {
 
             if (split.length > 0) {
                 join = split.join('.');
-                context = this.__contextObjects[join];
-                if (isNull(context)) {
-                    context = this.__contextObjects[join] = this._observeImmediateContext(split, join);
-                }
+                context = this.getContext(split, true);
             } else {
                 join = key;
                 context = this.context;
@@ -679,7 +682,7 @@ module plat.observable {
             if (!hasIdentifier) {
                 if (key === 'length' && isArray(context)) {
                     var property = split.pop(),
-                        parentContext = this.getContext(split);
+                        parentContext = this.getContext(split, false);
 
                     this.__observedIdentifier = null;
                     access(parentContext, property);
@@ -694,12 +697,12 @@ module plat.observable {
 
                     if (hasObservableListener) {
                         var uid = observableListener.uid;
-                        removeListener = this.observeArray(uid, null, noop, join, context, null);
+                        removeListener = this.observeArrayMutation(uid, null, noop, join, context, null);
                         removeArrayObserve = this.observe(join, {
                             uid: uid,
                             listener: (newValue: Array<any>, oldValue: Array<any>): void => {
                                 removeListener();
-                                removeListener = this.observeArray(uid, null, noop, join, newValue, oldValue);
+                                removeListener = this.observeArrayMutation(uid, null, noop, join, newValue, oldValue);
                             }
                         });
                     }
@@ -718,7 +721,7 @@ module plat.observable {
         }
 
         /**
-         * @name observeArray
+         * @name observeArrayMutation
          * @memberof plat.observable.ContextManager
          * @kind function
          * @access public
@@ -739,7 +742,7 @@ module plat.observable {
          * 
          * @returns {plat.IRemoveListener} A function to stop observing the array identified by the absoluteIdentifier.
          */
-        observeArray(uid: string, preListener: (ev: IPreArrayChangeInfo) => void,
+        observeArrayMutation(uid: string, preListener: (ev: IPreArrayChangeInfo) => void,
             postListener: (ev: IPostArrayChangeInfo<any>) => void, absoluteIdentifier: string, array: Array<any>,
             oldArray: Array<any>): IRemoveListener {
             var length = arrayMethods.length,
@@ -759,7 +762,7 @@ module plat.observable {
 
             var split = absoluteIdentifier.split('.'),
                 property = split.pop(),
-                context = this.getContext(split);
+                context = this.getContext(split, false);
 
             this.__observedIdentifier = null;
             access(context, property);
@@ -1106,19 +1109,19 @@ module plat.observable {
                             var uid = lengthListener.uid,
                                 arraySplit = identifier.split('.'),
                                 arrayKey = arraySplit.pop(),
-                                arrayParent = this.getContext(arraySplit),
+                                arrayParent = this.getContext(arraySplit, false),
                                 join: string;
 
                             this.__observedIdentifier = null;
                             access(arrayParent, arrayKey);
 
                             join = isString(this.__observedIdentifier) ? this.__observedIdentifier : arraySplit.join('.');
-                            var removeListener = this.observeArray(uid, null, noop, join, newParent, null);
+                            var removeListener = this.observeArrayMutation(uid, null, noop, join, newParent, null);
                             this.observe(join, {
                                 uid: uid,
                                 listener: (nValue: Array<any>, oValue: Array<any>): void => {
                                     removeListener();
-                                    removeListener = this.observeArray(uid, null, noop, join, nValue, oValue);
+                                    removeListener = this.observeArrayMutation(uid, null, noop, join, nValue, oValue);
                                 }
                             });
 
@@ -1181,7 +1184,7 @@ module plat.observable {
 
             if (isLength) {
                 property = split.pop();
-                context = this.getContext(split);
+                context = this.getContext(split, false);
             }
 
             if (isObject(context)) {

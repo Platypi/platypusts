@@ -279,20 +279,6 @@ module plat.processing {
         replaceNodeLength: number;
 
         /**
-         * @name loadedPromise
-         * @memberof plat.processing.ElementManager
-         * @kind property
-         * @access public
-         * 
-         * @type {plat.async.IThenable<void>}
-         * 
-         * @description
-         * In the event that a control has its own context, we need a promise to fullfill 
-         * when the control is loaded to avoid loading its parent control first.
-         */
-        loadedPromise: async.IThenable<void>;
-
-        /**
          * @name contextPromise
          * @memberof plat.processing.ElementManager
          * @kind property
@@ -1074,8 +1060,8 @@ module plat.processing {
                 var awaitContext = false;
 
                 if (inheritsContext) {
-                    uiControl.context = contextManager.getContext(absoluteContextPath.split('.'));
-                    awaitContext = isUndefined(uiControl.context);
+                    uiControl.context = contextManager.getContext(absoluteContextPath.split('.'), false);
+                    awaitContext = isUndefined(uiControl.context) && !this._BindableTemplatesFactory.isBoundControl(uiControl);
                 } else {
                     absoluteContextPath = __CONTEXT;
                 }
@@ -1204,6 +1190,29 @@ module plat.processing {
         }
 
         /**
+         * @name fulfillAndLoad
+         * @memberof plat.processing.ElementManager
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Fulfills the template promise prior to binding and loading the control.
+         * 
+         * @returns {plat.async.IThenable<void>} A promise that fulfills when this manager and 
+         * its associated controls are bound and loaded.
+         */
+        fulfillAndLoad(): async.IThenable<void> {
+            return this.fulfillTemplate().then((): async.IThenable<void> => {
+                return this.bindAndLoad();
+            }).catch((error: any): void => {
+                postpone((): void => {
+                    var _Exception: IExceptionStatic = this._Exception;
+                    _Exception.fatal(error, _Exception.BIND);
+                });
+            });
+        }
+
+        /**
          * @name bindAndLoad
          * @memberof plat.processing.ElementManager
          * @kind function
@@ -1251,16 +1260,15 @@ module plat.processing {
          * @param {() => async.IThenable<void>} loadMethod The function to initiate the loading of the root control and its 
          * children.
          * 
-         * @returns {void}
+         * @returns {plat.async.IThenable<void>} A promise that fulfills when the context has been set on the control.
          */
-        observeRootContext(root: ui.TemplateControl, loadMethod: () => async.IThenable<void>): void {
+        observeRootContext(root: ui.TemplateControl, loadMethod: () => async.IThenable<void>): async.IThenable<void> {
             loadMethod = loadMethod.bind(this);
             if (!isNull(root.context)) {
-                this.loadedPromise = loadMethod();
-                return;
+                return loadMethod();
             }
 
-            this.loadedPromise = new this._Promise<void>((resolve): void => {
+            return new this._Promise<void>((resolve): void => {
                 var removeListener = this._ContextManager.getManager(root).observe(__CONTEXT, {
                     listener: (): void => {
                         removeListener();
@@ -1336,7 +1344,11 @@ module plat.processing {
                 child = <ElementManager>children[i];
 
                 if (child.hasOwnContext) {
-                    promises.push(child.loadedPromise);
+                    if (this.isClone) {
+                        promises.push(child.observeRootContext(child.getUiControl(), child.bindAndLoad));
+                    } else {
+                        promises.push(child.observeRootContext(child.getUiControl(), child.fulfillAndLoad));
+                    }
                 } else if (!isUndefined(child.children)) {
                     promises.push(child.bindAndLoad());
                 } else {
@@ -1445,29 +1457,6 @@ module plat.processing {
             }
 
             return promise;
-        }
-
-        /**
-         * @name _fulfillAndLoad
-         * @memberof plat.processing.ElementManager
-         * @kind function
-         * @access protected
-         * 
-         * @description
-         * Fulfills the template promise prior to binding and loading the control.
-         * 
-         * @returns {plat.async.IThenable<void>} A promise that fulfills when this manager and 
-         * its associated controls are bound and loaded.
-         */
-        protected _fulfillAndLoad(): async.IThenable<void> {
-            return this.fulfillTemplate().then((): async.IThenable<void> => {
-                return this.bindAndLoad();
-            }).catch((error: any): void => {
-                    postpone((): void => {
-                        var _Exception: IExceptionStatic = this._Exception;
-                        _Exception.fatal(error, _Exception.BIND);
-                    });
-                });
         }
 
         /**
@@ -1629,10 +1618,8 @@ module plat.processing {
                 this._compiler.compile(element, uiControl);
             }
 
-            if (uiControl.hasOwnContext && !this.isClone) {
-                this.observeRootContext(uiControl, this._fulfillAndLoad);
-            } else if (isNull(uiControl.parent)) {
-                this._fulfillAndLoad();
+            if (isNull(uiControl.parent)) {
+                this.fulfillAndLoad();
             }
         }
 

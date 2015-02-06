@@ -864,12 +864,12 @@ module plat {
                 preCallback = preIsFunction ? preListener.bind(this) : null,
                 postCallback = postIsFunction ? postListener.bind(this) : null,
                 uid = this.uid,
-                removeListener = contextManager.observeArray(uid, preCallback, postCallback, absoluteIdentifier, array, null),
+                removeListener = contextManager.observeArrayMutation(uid, preCallback, postCallback, absoluteIdentifier, array, null),
                 removeCallback = contextManager.observe(absoluteIdentifier, {
                     listener: (newValue: Array<any>, oldValue: Array<any>): void => {
                         removeListener();
                         removeListener = contextManager
-                            .observeArray(uid, preCallback, postCallback, absoluteIdentifier, newValue, oldValue);
+                            .observeArrayMutation(uid, preCallback, postCallback, absoluteIdentifier, newValue, oldValue);
                     },
                     uid: uid
                 });

@@ -373,7 +373,7 @@ module plat.ui.controls {
             }
 
             manager.setUiControlTemplate();
-            return manager.templatePromise;
+            return manager.observeRootContext(control, manager.fulfillAndLoad);
         }
 
         /**

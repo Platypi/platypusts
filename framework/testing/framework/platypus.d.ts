@@ -3209,8 +3209,10 @@ declare module plat {
               * property strings and observes it if not found.
               * @param {Array<string>} split The string array containing properties used to index into
               * the context.
+              * @param {boolean} observe? Whether or not to observe the identifier indicated by the
+              * split Array.
               */
-            getContext(split: Array<string>): any;
+            getContext(split: Array<string>, observe?: boolean): any;
             /**
               * Given a period-delimited identifier, observes an object and calls the given listener when the
               * object changes.
@@ -3232,7 +3234,7 @@ declare module plat {
               * @param {Array<any>} array The array to be observed.
               * @param {Array<any>} oldArray The old array to stop observing.
               */
-            observeArray(uid: string, preListener: (ev: IPreArrayChangeInfo) => void, postListener: (ev: IPostArrayChangeInfo<any>) => void, absoluteIdentifier: string, array: Array<any>, oldArray: Array<any>): IRemoveListener;
+            observeArrayMutation(uid: string, preListener: (ev: IPreArrayChangeInfo) => void, postListener: (ev: IPostArrayChangeInfo<any>) => void, absoluteIdentifier: string, array: Array<any>, oldArray: Array<any>): IRemoveListener;
             /**
               * Disposes the memory for an ContextManager.
               */
@@ -7585,6 +7587,10 @@ declare module plat {
                   */
                 protected _blockLength: any;
                 /**
+                  * An animation promise for pausing functionality for animation.
+                  */
+                protected _animationThenable: async.IThenable<void>;
+                /**
                   * An array to aggregate all current animation promises.
                   */
                 protected _currentAnimations: Array<animations.IAnimationThenable<any>>;
@@ -7661,10 +7667,11 @@ declare module plat {
                   */
                 protected _setBlockLength(templates: Array<Node>): void;
                 /**
-                  * Updates the control's children resource objects when
+                  * Updates a child resource object when
                   * the array changes.
+                  * @param {number} index The control whose resources we will update.
                   */
-                protected _updateResources(): void;
+                protected _updateResource(index: number): void;
                 /**
                   * Sets a listener for the changes to the array.
                   */
@@ -7864,13 +7871,21 @@ declare module plat {
                   */
                 protected _twitterUrlElement: HTMLMetaElement;
                 /**
+                  * A reference to the the <meta name="author" /> element.
+                  */
+                protected _authorElement: HTMLMetaElement;
+                /**
                   * A reference to the the <link rel="author" /> element.
                   */
-                protected _authorElement: HTMLLinkElement;
+                protected _googleAuthorElement: HTMLLinkElement;
                 /**
-                  * A reference to the the <link rel="publisher" /> element.
+                  * A reference to the the <meta property="article:author" /> element.
                   */
-                protected _publisherElement: HTMLLinkElement;
+                protected _fbAuthorElement: HTMLMetaElement;
+                /**
+                  * A reference to the the <meta property="twitter:creator" /> element.
+                  */
+                protected _twitterCreatorElement: HTMLMetaElement;
                 /**
                   * A reference to the the <meta property="og:image" /> element.
                   */
@@ -7905,14 +7920,28 @@ declare module plat {
                 url(url?: string): string;
                 /**
                   * Gets the author or sets the author elements.
-                  * @param {string} author? If supplied, the author elements will be set to this value.
+                  * @param {string} author? If supplied, the author elements will be set to this value. The value should be the
+                  * display name of the content author.
                   */
                 author(author?: string): string;
                 /**
-                  * Gets the publisher or sets the publisher elements.
-                  * @param {string} publisher? If supplied, the publisher elements will be set to this value.
+                  * Gets the author or sets the author elements.
+                  * @param {string} author? If supplied, the author elements will be set to this value. The value should be the
+                  * Google+ profile url for the author.
                   */
-                publisher(publisher?: string): string;
+                googleAuthor(author?: string): string;
+                /**
+                  * Gets the author or sets the author elements. This method is for use with the Facebook profile authors.
+                  * @param {string} author? If supplied, the author elements will be set to this value. The value should be
+                  * the `https://www.facebook.com/username` account, and make sure the user supports followers.
+                  */
+                fbAuthor(author?: string): string;
+                /**
+                  * Gets the creator or sets the creator elements
+                  * @param {string} creator? If supplied, the creator elements will be set to this value. The
+                  * value should be the twitter `@username` of the creator
+                  */
+                twitterCreator(creator?: string): string;
                 /**
                   * Gets the image or sets the image elements.
                   * @param {string} image? If supplied, the image elements will be set to this value.

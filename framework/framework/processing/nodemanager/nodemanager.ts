@@ -293,9 +293,9 @@ module plat.processing {
          */
         static observeExpressions(expressions: Array<expressions.IParsedExpression>, control: ui.TemplateControl,
             listener: (...args: Array<any>) => void): void {
-            var uniqueIdentiifers = NodeManager.__findUniqueIdentifiers(expressions),
-                identifiers = uniqueIdentiifers.identifiers,
-                oneTimeIdentifiers = uniqueIdentiifers.oneTimeIdentifiers,
+            var uniqueIdentifiers = NodeManager.__findUniqueIdentifiers(expressions),
+                identifiers = uniqueIdentifiers.identifiers,
+                oneTimeIdentifiers = uniqueIdentifiers.oneTimeIdentifiers,
                 oneTimeIdentifier: string,
                 observableCallback = {
                     listener: listener,
@@ -457,7 +457,7 @@ module plat.processing {
          * identifier.
          */
         private static __getObservationDetails(identifier: string, control: ui.TemplateControl): IObservationDetails {
-            var $contextManager = NodeManager._ContextManager,
+            var _ContextManager = NodeManager._ContextManager,
                 manager: observable.ContextManager,
                 split = identifier.split('.'),
                 absoluteIdentifier = '',
@@ -485,16 +485,16 @@ module plat.processing {
                 if (!isNull(resourceObj) && !isNull(resourceObj.resource)) {
                     var type = resourceObj.resource.type;
                     if (type === __OBSERVABLE_RESOURCE || type === __LITERAL_RESOURCE) {
-                        manager = $contextManager.getManager(resources[alias].control);
+                        manager = _ContextManager.getManager(resources[alias].control);
                         absoluteIdentifier = 'resources.' + alias + '.value' + absoluteIdentifier;
                     }
                 }
             } else {
                 // look on the control.context
-                isDefined = !isUndefined($contextManager.getContext(control.context, split));
+                isDefined = !isUndefined(_ContextManager.getContext(control.context, split));
 
-                if (isDefined || isUndefined($contextManager.getContext(control, split))) {
-                    manager = $contextManager.getManager(Control.getRootControl(control));
+                if (isDefined || isUndefined(_ContextManager.getContext(control, split))) {
+                    manager = _ContextManager.getManager(Control.getRootControl(control));
                     absoluteIdentifier = control.absoluteContextPath + '.' + identifier;
                 } else {
                     manager = null;

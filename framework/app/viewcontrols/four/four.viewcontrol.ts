@@ -45,7 +45,6 @@
             //this.head.description('This is the Fourth page');
             this.head.image('testimage');
             this.head.author('Will Johnston');
-            this.head.publisher('Platypi');
         }
     }
 

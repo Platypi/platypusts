@@ -260,7 +260,9 @@ module plat.ui.controls {
          */
         contextChanged(newValue?: Array<any>, oldValue?: Array<any>): void {
             if (isEmpty(newValue)) {
-                this._removeItems(this.controls.length);
+                this.itemsLoaded.then(() => {
+                    this._removeItems(this.controls.length);
+                });
                 return;
             } else if (!isArray(newValue)) {
                 var _Exception: IExceptionStatic = this._Exception;
@@ -609,7 +611,9 @@ module plat.ui.controls {
         protected _preprocessEvent(ev: observable.IPreArrayChangeInfo): void {
             var method = '_pre' + ev.method;
             if (isFunction((<any>this)[method])) {
-                (<any>this)[method](ev);
+                this.itemsLoaded.then(() => {
+                    (<any>this)[method](ev);
+                });
             }
         }
 
@@ -630,7 +634,9 @@ module plat.ui.controls {
         protected _executeEvent(ev: observable.IPostArrayChangeInfo<any>): void {
             var method = '_' + ev.method;
             if (isFunction((<any>this)[method])) {
-                (<any>this)[method](ev);
+                this.itemsLoaded.then(() => {
+                    (<any>this)[method](ev);
+                });
             }
         }
 
@@ -966,6 +972,10 @@ module plat.ui.controls {
                 currentAnimations = this._currentAnimations,
                 callback: () => void,
                 animationPromise: animations.IAnimationThenable<void>;
+
+            if (nodes.length === 0) {
+                return _animator.resolve().then(noop);
+            }
 
             clone = clone === true;
             while (nodes.length > 0) {

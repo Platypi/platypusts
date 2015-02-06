@@ -17,6 +17,7 @@ module app.viewcontrols {
         templateUrl = 'viewcontrols/main/main.viewcontrol.html';
         context = {
             views: [One, Two, Three, Four],
+            test: [0, 1, 2, 3, 4, 5],
             items: <Array<{ value: string|number; }>>[]
         };
 
@@ -58,6 +59,8 @@ module app.viewcontrols {
         loaded() {
             this.head.title('Main Page');
             this.head.description('This is the main page');
+
+            this.context.test.pop();
         }
     }
 

@@ -61,7 +61,7 @@ module tests.observable.contextManagerStatic {
             expect(!!controls[control.uid]).toBe(false);
 
             manager = ContextManager.getManager(control);
-            manager.observeArray('test', () => { }, () => { }, 'foo', [], []);
+            manager.observeArrayMutation('test', () => { }, () => { }, 'foo', [], []);
 
             ContextManager.dispose(control);
 

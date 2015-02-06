@@ -493,11 +493,11 @@ module tests.observable.contextManager {
                 uid: control.uid,
                 listener: (newValue: any, oldValue: any) => {
                     remove();
-                    remove = manager.observeArray(control.uid, () => { }, listener, 'context.arr', newValue, oldValue);
+                    remove = manager.observeArrayMutation(control.uid, () => { }, listener, 'context.arr', newValue, oldValue);
                 }
             });
 
-            var remove = manager.observeArray(control.uid, () => { }, listener, 'context.arr', control.context.arr, null);
+            var remove = manager.observeArrayMutation(control.uid, () => { }, listener, 'context.arr', control.context.arr, null);
 
             oldArray = arr.slice(0);
             arr.push('e', 'f');
