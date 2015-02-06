@@ -1360,52 +1360,6 @@ module plat.processing {
         }
 
         /**
-         * @name _observeControlIdentifiers
-         * @memberof plat.processing.ElementManager
-         * @kind function
-         * @access protected
-         * 
-         * @description
-         * Observes the identifiers associated with this manager's {@link plat.processing.INode|INodes}.
-         * 
-         * @param {Array<plat.processing.INode>} nodes The array of {@link plat.processing.INode|INodes} to iterate through.
-         * @param {plat.ui.TemplateControl} parent The parent {@link plat.ui.TemplateControl|TemplateControl} for context.
-         * @param {Array<plat.Control>} controls The array of controls whose attributes will need to be updated 
-         * upon the context changing.
-         * 
-         * @returns {void}
-         */
-        protected _observeControlIdentifiers(nodes: Array<INode>, parent: ui.TemplateControl, controls: Array<Control>): void {
-            var length = nodes.length,
-                bindings: Array<INode> = [],
-                attributeChanged = this._attributeChanged,
-                hasParent = !isNull(parent),
-                node: INode,
-                control: Control,
-                i = 0;
-
-            for (; i < length; ++i) {
-                node = nodes[i];
-                control = node.control;
-
-                if (hasParent && node.expressions.length > 0) {
-                    NodeManager.observeExpressions(node.expressions, parent,
-                        attributeChanged.bind(this, node, parent, controls));
-                    bindings.push(node);
-                }
-
-                if (!isNull(control)) {
-                    controls.push(control);
-                }
-            }
-
-            length = bindings.length;
-            for (i = 0; i < length; ++i) {
-                this._attributeChanged(bindings[i], parent, controls);
-            }
-        }
-
-        /**
          * @name _loadControls
          * @memberof plat.processing.ElementManager
          * @kind function
@@ -1620,6 +1574,52 @@ module plat.processing {
 
             if (isNull(uiControl.parent)) {
                 this.fulfillAndLoad();
+            }
+        }
+
+        /**
+         * @name _observeControlIdentifiers
+         * @memberof plat.processing.ElementManager
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Observes the identifiers associated with this manager's {@link plat.processing.INode|INodes}.
+         * 
+         * @param {Array<plat.processing.INode>} nodes The array of {@link plat.processing.INode|INodes} to iterate through.
+         * @param {plat.ui.TemplateControl} parent The parent {@link plat.ui.TemplateControl|TemplateControl} for context.
+         * @param {Array<plat.Control>} controls The array of controls whose attributes will need to be updated 
+         * upon the context changing.
+         * 
+         * @returns {void}
+         */
+        protected _observeControlIdentifiers(nodes: Array<INode>, parent: ui.TemplateControl, controls: Array<Control>): void {
+            var length = nodes.length,
+                bindings: Array<INode> = [],
+                attributeChanged = this._attributeChanged,
+                hasParent = !isNull(parent),
+                node: INode,
+                control: Control,
+                i = 0;
+
+            for (; i < length; ++i) {
+                node = nodes[i];
+                control = node.control;
+
+                if (hasParent && node.expressions.length > 0) {
+                    NodeManager.observeExpressions(node.expressions, parent,
+                        attributeChanged.bind(this, node, parent, controls));
+                    bindings.push(node);
+                }
+
+                if (!isNull(control)) {
+                    controls.push(control);
+                }
+            }
+
+            length = bindings.length;
+            for (i = 0; i < length; ++i) {
+                this._attributeChanged(bindings[i], parent, controls);
             }
         }
 
