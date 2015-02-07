@@ -8754,11 +8754,6 @@ declare module plat {
               */
             replaceNodeLength: number;
             /**
-              * In the event that a control has its own context, we need a promise to fullfill
-              * when the control is loaded to avoid loading its parent control first.
-              */
-            loadedPromise: async.IThenable<void>;
-            /**
               * In the event that a control does not have its own context, we need a promise to fullfill
               * when the control's context has been set.
               */
@@ -8896,6 +8891,11 @@ declare module plat {
               */
             fulfillTemplate(): async.IThenable<void>;
             /**
+              * Fulfills the template promise prior to binding and loading the control.
+              * its associated controls are bound and loaded.
+              */
+            fulfillAndLoad(): async.IThenable<void>;
+            /**
               * Binds context to the DOM and loads controls.
               * child manager's controls have been bound and loaded.
               */
@@ -8907,7 +8907,7 @@ declare module plat {
               * @param {() => async.IThenable<void>} loadMethod The function to initiate the loading of the root control and its
               * children.
               */
-            observeRootContext(root: ui.TemplateControl, loadMethod: () => async.IThenable<void>): void;
+            observeRootContext(root: ui.TemplateControl, loadMethod: () => async.IThenable<void>): async.IThenable<void>;
             /**
               * Finalizes all the properties on an TemplateControl
               * before loading.
@@ -8921,14 +8921,6 @@ declare module plat {
               */
             protected _bindChildren(): async.IThenable<void[]>;
             /**
-              * Observes the identifiers associated with this manager's INodes.
-              * @param {Array<plat.processing.INode>} nodes The array of INodes to iterate through.
-              * @param {plat.ui.TemplateControl} parent The parent TemplateControl for context.
-              * @param {Array<plat.Control>} controls The array of controls whose attributes will need to be updated
-              * upon the context changing.
-              */
-            protected _observeControlIdentifiers(nodes: Array<INode>, parent: ui.TemplateControl, controls: Array<Control>): void;
-            /**
               * Loads the potential attribute based controls associated with this
               * ElementManager and
               * attaches the corresponding TemplateControl if available.
@@ -8937,11 +8929,6 @@ declare module plat {
               * associated with this manager.
               */
             protected _loadControls(controls: Array<AttributeControl>, templateControl: ui.TemplateControl): async.IThenable<void>;
-            /**
-              * Fulfills the template promise prior to binding and loading the control.
-              * its associated controls are bound and loaded.
-              */
-            protected _fulfillAndLoad(): async.IThenable<void>;
             /**
               * Populates the TemplateControl properties associated with this manager
               * if one exists.
@@ -8963,6 +8950,14 @@ declare module plat {
               * template.
               */
             protected _initializeControl(uiControl: ui.TemplateControl, template: DocumentFragment): void;
+            /**
+              * Observes the identifiers associated with this manager's INodes.
+              * @param {Array<plat.processing.INode>} nodes The array of INodes to iterate through.
+              * @param {plat.ui.TemplateControl} parent The parent TemplateControl for context.
+              * @param {Array<plat.Control>} controls The array of controls whose attributes will need to be updated
+              * upon the context changing.
+              */
+            protected _observeControlIdentifiers(nodes: Array<INode>, parent: ui.TemplateControl, controls: Array<Control>): void;
             /**
               * A function to handle updating an attribute on all controls that have it
               * as a property upon a change in its value.

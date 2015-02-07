@@ -1086,7 +1086,7 @@ module plat.processing {
                 }
             }
 
-            this._observeControlIdentifiers(nodeMap.nodes, parent, controls);
+            this._observeControlIdentifiers(nodeMap.nodes, parent, controls, nodeMap.element);
 
             return controls;
         }
@@ -1593,23 +1593,25 @@ module plat.processing {
          * 
          * @returns {void}
          */
-        protected _observeControlIdentifiers(nodes: Array<INode>, parent: ui.TemplateControl, controls: Array<Control>): void {
+        protected _observeControlIdentifiers(nodes: Array<INode>, parent: ui.TemplateControl, controls: Array<Control>, element: Element): void {
             var length = nodes.length,
-                bindings: Array<INode> = [],
-                attributeChanged = this._attributeChanged,
                 hasParent = !isNull(parent),
                 node: INode,
                 control: Control,
-                i = 0;
+                i = 0,
+                replace = this.replace,
+                managers: Array<AttributeManager> = [],
+                manager: AttributeManager;
 
             for (; i < length; ++i) {
                 node = nodes[i];
                 control = node.control;
 
                 if (hasParent && node.expressions.length > 0) {
-                    NodeManager.observeExpressions(node.expressions, parent,
-                        attributeChanged.bind(this, node, parent, controls));
-                    bindings.push(node);
+                    manager = AttributeManager.getInstance();
+                    managers.push(manager);
+                    manager.initialize(element, node, parent, controls, replace);
+                    NodeManager.observeExpressions(node.expressions, parent, manager.attributeChanged);
                 }
 
                 if (!isNull(control)) {
@@ -1617,9 +1619,9 @@ module plat.processing {
                 }
             }
 
-            length = bindings.length;
+            length = managers.length;
             for (i = 0; i < length; ++i) {
-                this._attributeChanged(bindings[i], parent, controls);
+                managers[i].attributeChanged();
             }
         }
 

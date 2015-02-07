@@ -18,7 +18,8 @@ module app.viewcontrols {
         context = {
             views: [One, Two, Three, Four],
             test: [0, 1, 2, 3, 4, 5],
-            items: <Array<{ value: string|number; }>>[]
+            items: <Array<{ value: string|number; }>>[],
+            testClass: 'foo'
         };
 
         constructor(router: plat.routing.Router) {
@@ -59,7 +60,8 @@ module app.viewcontrols {
         loaded() {
             this.head.title('Main Page');
             this.head.description('This is the main page');
-
+            this.dom.addClass(this.element.querySelector('.blah'), 'quux');
+            this.context.testClass = 'bar';
             var test = this.context.test;
             setTimeout(() => {
                 //test[0] = 1;
