@@ -118,7 +118,7 @@ module.exports = exports = function load(grunt) {
                     process: function (data) {
                         data = normalizeBlockComments(data.split(/\r\n|\n/));
                         return addNodeTypeDefinition(data.split(/\r\n|\n/))
-                            .join('\r\n')
+                            .join('\r\n');
                     }
                 },
                 src: 'dist/platypus.d.ts',
