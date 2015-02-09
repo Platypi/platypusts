@@ -239,8 +239,7 @@ module plat.ui.controls {
          * @returns {void}
          */
         setTemplate(): void {
-            var childNodes: Array<Node> = Array.prototype.slice.call(this.element.childNodes);
-            this.bindableTemplates.add('item', childNodes);
+            this.bindableTemplates.add('item', this.element.childNodes);
         }
 
         /**
@@ -471,30 +470,14 @@ module plat.ui.controls {
          * @returns {void}
          */
         protected _removeItems(numberOfItems: number): void {
-            for (var i = 0; i < numberOfItems; ++i) {
-                this._removeItem();
+            var dispose = TemplateControl.dispose,
+                controls = this.controls;
+
+            while (numberOfItems-- > 0) {
+                dispose(controls.pop());
             }
 
-            var length = this.controls.length;
-            if (length > 0) {
-                this._updateResource(length - 1);
-            }
-        }
-
-        /**
-         * @name _removeItem
-         * @memberof plat.ui.controls.ForEach
-         * @kind function
-         * @access protected
-         * 
-         * @description
-         * Removes an item from the control's element.
-         * 
-         * @returns {void}
-         */
-        protected _removeItem(): void {
-            var controls = this.controls;
-            TemplateControl.dispose(controls[controls.length - 1]);
+            this._updateResource(controls.length - 1);
         }
 
         /**

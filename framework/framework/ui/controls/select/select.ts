@@ -85,6 +85,19 @@ module plat.ui.controls {
         context: Array<any>;
 
         /**
+         * @name controls
+         * @memberof plat.ui.controls.Select
+         * @kind property
+         * @access public
+         * 
+         * @type {Array<plat.ui.TemplateControl>}
+         * 
+         * @description
+         * The child controls of the control. All will be of type {@link plat.ui.TemplateControl|TemplateControl}.
+         */
+        controls: Array<TemplateControl>;
+
+        /**
          * @name groups
          * @memberof plat.ui.controls.Select
          * @kind property
@@ -125,6 +138,46 @@ module plat.ui.controls {
         itemsLoaded: async.IThenable<void>;
 
         /**
+         * @name _isGrouped
+         * @memberof plat.ui.controls.Select
+         * @kind property
+         * @access protected
+         * 
+         * @type {boolean}
+         * 
+         * @description
+         * Whether or not the select is grouped.
+         */
+        protected _isGrouped: boolean;
+
+        /**
+         * @name _group
+         * @memberof plat.ui.controls.Select
+         * @kind property
+         * @access protected
+         * 
+         * @type {string}
+         * 
+         * @description
+         * The property used to group the objects.
+         */
+        protected _group: string;
+
+        /**
+         * @name _defaultOption
+         * @memberof plat.ui.controls.Select
+         * @kind property
+         * @access protected
+         * 
+         * @type {HTMLOptionElement}
+         * 
+         * @description
+         * An optional default option specified in the control element's 
+         * innerHTML.
+         */
+        protected _defaultOption: HTMLOptionElement;
+
+        /**
          * @name __listenerSet
          * @memberof plat.ui.controls.Select
          * @kind property
@@ -136,56 +189,7 @@ module plat.ui.controls {
          * Whether or not the Array listener has been set.
          */
         private __listenerSet: boolean;
-        /**
-         * @name __isGrouped
-         * @memberof plat.ui.controls.Select
-         * @kind property
-         * @access private
-         * 
-         * @type {boolean}
-         * 
-         * @description
-         * Whether or not the select is grouped.
-         */
-        private __isGrouped = false;
-        /**
-         * @name __isNativeSelect
-         * @memberof plat.ui.controls.Select
-         * @kind property
-         * @access private
-         * 
-         * @type {boolean}
-         * 
-         * @description
-         * Whether or not the select should be treated as a 
-         * native (unbound) select element.
-         */
-        private __isNativeSelect = false;
-        /**
-         * @name __group
-         * @memberof plat.ui.controls.Select
-         * @kind property
-         * @access private
-         * 
-         * @type {string}
-         * 
-         * @description
-         * The property used to group the objects.
-         */
-        private __group: string;
-        /**
-         * @name __defaultOption
-         * @memberof plat.ui.controls.Select
-         * @kind property
-         * @access private
-         * 
-         * @type {HTMLOptionElement}
-         * 
-         * @description
-         * An optional default option specified in the control element's 
-         * innerHTML.
-         */
-        private __defaultOption: HTMLOptionElement;
+
         /**
          * @name __resolveFn
          * @memberof plat.ui.controls.Select
@@ -230,40 +234,33 @@ module plat.ui.controls {
          * @returns {void}
          */
         setTemplate(): void {
-            var _document = this._document,
-                options = this.options || <observable.IObservableProperty<ISelectOptions>>{},
-                platOptions = options.value || <ISelectOptions>{},
-                option = _document.createElement('option'),
-                value = platOptions.value,
-                textContent = platOptions.textContent;
+            this.bindableTemplates.add('option', this.element.childNodes);
 
-            // check if the element should be treated as a normal select.
-            if (isUndefined(value) && isUndefined(textContent)) {
-                this.__isNativeSelect = true;
-                return;
+            var options = this.options || <observable.IObservableProperty<ISelectOptions>>{},
+                platOptions = options.value || <ISelectOptions>{},
+                defaultOptionValues = platOptions.default;
+
+            if (isObject(defaultOptionValues)) {
+                var defaultOption: HTMLOptionElement = this._document.createElement('option'),
+                    defaultValue = defaultOptionValues.value,
+                    defaultTextContent = defaultOptionValues.textContent;
+
+                defaultOption.value = isUndefined(defaultValue) ? defaultTextContent : defaultValue;
+                defaultOption.textContent = isUndefined(defaultTextContent) ? defaultValue : defaultTextContent;
+                this.element.insertBefore(defaultOption, null);
             }
 
             if (!isNull(platOptions.group)) {
-                var group = this.__group = platOptions.group,
-                    optionGroup = _document.createElement('optgroup');
+                var group = this._group = platOptions.group,
+                    optionGroup = this._document.createElement('optgroup');
 
                 optionGroup.label = __startSymbol + group + __endSymbol;
 
                 this.bindableTemplates.add('group', optionGroup);
+                this._isGrouped = true;
+            } else {
+                this._isGrouped = false;
             }
-
-            if (!isString(value) || isEmpty(value)) {
-                value = undefined;
-            }
-
-            if (!isString(textContent) || isEmpty(textContent)) {
-                textContent = undefined;
-            }
-
-            option.value = __startSymbol + (value || textContent) + __endSymbol;
-            option.textContent = __startSymbol + (textContent || value) + __endSymbol;
-
-            this.bindableTemplates.add('option', option);
         }
 
         /**
@@ -282,7 +279,8 @@ module plat.ui.controls {
          * @returns {void}
          */
         contextChanged(newValue?: Array<any>, oldValue?: Array<any>): void {
-            if (this.__isNativeSelect || !isArray(newValue)) {
+            if (!isArray(newValue)) {
+                this._removeItems(this.controls.length);
                 return;
             }
 
@@ -311,26 +309,16 @@ module plat.ui.controls {
          * @returns {void}
          */
         loaded(): void {
-            if (this.__isNativeSelect) {
-                return;
+            if (isUndefined(this._isGrouped)) {
+                var options = this.options || <observable.IObservableProperty<ISelectOptions>>{},
+                    platOptions = options.value || <ISelectOptions>{};
+
+                this._isGrouped = !isNull((this._group = platOptions.group));
             }
 
-            var options = this.options || <observable.IObservableProperty<ISelectOptions>>{},
-                platOptions = options.value || <ISelectOptions>{};
-            if (isUndefined(platOptions.value) && isUndefined(platOptions.textContent)) {
-                this.__isNativeSelect = true;
-                return;
-            }
+            this._defaultOption = <HTMLOptionElement>this.element.firstElementChild;
 
-            var context = this.context,
-                element = this.element,
-                firstElementChild = element.firstElementChild;
-            if (isNode(firstElementChild) && firstElementChild.nodeName.toLowerCase() === 'option') {
-                this.__defaultOption = <HTMLOptionElement>firstElementChild.cloneNode(true);
-            }
-
-            this.__isGrouped = !isNull((this.__group = platOptions.group));
-
+            var context = this.context;
             if (!isArray(context)) {
                 return;
             }
@@ -352,7 +340,7 @@ module plat.ui.controls {
          */
         dispose(): void {
             this.__resolveFn = null;
-            this.__defaultOption = null;
+            this._defaultOption = null;
         }
 
         /**
@@ -404,21 +392,18 @@ module plat.ui.controls {
          * Adds the options to the select element.
          * 
          * @param {number} numberOfItems The number of items to add.
-         * @param {number} length The current index of the next 
+         * @param {number} index The starting index of the next 
          * set of items to add.
          * 
          * @returns {plat.async.IThenable<void>} The itemsLoaded promise.
          */
-        protected _addItems(numberOfItems: number, length: number): async.IThenable<void> {
-            var index = length,
-                item: any,
-                bindableTemplates = this.bindableTemplates,
-                promises: Array<async.IThenable<void>> = [];
+        protected _addItems(numberOfItems: number, index: number): async.IThenable<void> {
+            var bindableTemplates = this.bindableTemplates,
+                promises: Array<async.IThenable<void>> = [],
+                insertOption = this._insertOption;
 
-            for (var i = 0; i < numberOfItems; ++i, ++index) {
-                item = this.context[index];
-
-                promises.push(bindableTemplates.bind('option', index).then<void>(this._insertOptions.bind(this, index, item)));
+            while (numberOfItems-- > 0) {
+                promises.push(bindableTemplates.bind('option', index).then<void>(insertOption.bind(this, index++)));
             }
 
             if (promises.length > 0) {
@@ -443,7 +428,7 @@ module plat.ui.controls {
         }
 
         /**
-         * @name _insertOptions
+         * @name _insertOption
          * @memberof plat.ui.controls.Select
          * @kind function
          * @access protected
@@ -453,63 +438,40 @@ module plat.ui.controls {
          * its template has been bound.
          * 
          * @param {number} index The current index of the item being added.
-         * @param {any} item The item being added.
-         * @param {DocumentFragment} optionClone The bound DocumentFragment to be 
+         * @param {DocumentFragment} option The bound DocumentFragment to be 
          * inserted into the DOM.
          * 
-         * @returns {plat.async.IThenable<void>} A promise that resolves when the option 
+         * @returns {plat.async.IThenable<any>} A promise that resolves when the option 
          * or optgroup has successfully be inserted.
          */
-        protected _insertOptions(index: number, item: any, optionClone: DocumentFragment): async.IThenable<any> {
+        protected _insertOption(index: number, option: DocumentFragment): async.IThenable<any> {
             var element = this.element;
-            if (this.__isGrouped) {
+            if (this._isGrouped) {
                 var groups = this.groups,
-                    newGroup = item[this.__group],
+                    newGroup = (this.context[index] || {})[this._group],
                     optgroup: any = groups[newGroup];
 
                 if (isNull(optgroup)) {
                     return (groups[newGroup] = <any>this.bindableTemplates.bind('group', index)
-                        .then((groupClone: DocumentFragment): Element => {
-                            optgroup = groups[newGroup] = <Element>groupClone.childNodes[1];
+                        .then((groupFragment: DocumentFragment): Element => {
+                            optgroup = groups[newGroup] = <Element>groupFragment.childNodes[1];
 
-                            optgroup.appendChild(optionClone);
-                            element.appendChild(groupClone);
+                            optgroup.insertBefore(option, null);
+                            element.insertBefore(groupFragment, null);
                             return optgroup;
                         }));
                 } else if (isPromise(optgroup)) {
-                    return optgroup.then((group: Element): Element => {
-                        group.appendChild(optionClone);
-                        return group;
+                    return optgroup.then((group: Element) => {
+                        group.insertBefore(option, null);
                     });
                 }
 
-                optgroup.appendChild(optionClone);
-                return this._Promise.resolve(null);
+                optgroup.insertBefore(option, null);
+                return this._Promise.resolve();
             }
 
-            element.appendChild(optionClone);
-            return this._Promise.resolve(null);
-        }
-
-        /**
-         * @name _removeItem
-         * @memberof plat.ui.controls.Select
-         * @kind function
-         * @access protected
-         * 
-         * @description
-         * Removes the specified option item from the DOM.
-         * 
-         * @param {number} index The control index to remove.
-         * 
-         * @returns {void}
-         */
-        protected _removeItem(index: number): void {
-            if (index < 0) {
-                return;
-            }
-
-            TemplateControl.dispose(<TemplateControl>this.controls[index]);
+            element.insertBefore(option, null);
+            return this._Promise.resolve();
         }
 
         /**
@@ -527,32 +489,32 @@ module plat.ui.controls {
          * @returns {void}
          */
         protected _removeItems(numberOfItems: number): void {
-            var controls = this.controls,
-                length = controls.length - 1;
+            var dispose = TemplateControl.dispose,
+                controls = this.controls;
 
             while (numberOfItems-- > 0) {
-                this._removeItem(length--);
+                dispose(controls.pop());
             }
         }
 
         /**
-         * @name _itemRemoved
+         * @name _removeItem
          * @memberof plat.ui.controls.Select
          * @kind function
          * @access protected
          * 
          * @description
          * The function called when an item has been removed 
-         * from the array context.
+         * from the Array context.
          * 
          * @param {plat.observable.IPostArrayChangeInfo<any>} ev The array mutation object
          * 
          * @returns {void}
          */
-        protected _itemRemoved(ev: observable.IPostArrayChangeInfo<any>): void {
+        protected _removeItem(ev: observable.IPostArrayChangeInfo<any>): void {
             if (ev.oldArray.length === 0) {
                 return;
-            } else if (this.__isGrouped) {
+            } else if (this._isGrouped) {
                 this._resetSelect();
                 return;
             }
@@ -573,17 +535,13 @@ module plat.ui.controls {
          * @returns {void}
          */
         protected _resetSelect(): void {
-            var itemLength = this.context.length,
-                element = this.element,
-                nodeLength = element.childNodes.length;
-
-            this._removeItems(nodeLength);
+            this._removeItems(this.controls.length);
             this.groups = {};
-            if (!isNull(this.__defaultOption)) {
-                element.appendChild(this.__defaultOption.cloneNode(true));
+            if (!isNull(this._defaultOption)) {
+                this.element.insertBefore(this._defaultOption.cloneNode(true), null);
             }
 
-            this._addItems(itemLength, 0);
+            this._addItems(this.context.length, 0);
         }
 
         /**
@@ -619,7 +577,7 @@ module plat.ui.controls {
          * @returns {void}
          */
         protected _pop(ev: observable.IPostArrayChangeInfo<any>): void {
-            this._itemRemoved(ev);
+            this._removeItem(ev);
         }
 
         /**
@@ -637,7 +595,7 @@ module plat.ui.controls {
          * @returns {void}
          */
         protected _shift(ev: observable.IPostArrayChangeInfo<any>): void {
-            this._itemRemoved(ev);
+            this._removeItem(ev);
         }
 
         /**
@@ -655,7 +613,7 @@ module plat.ui.controls {
          * @returns {void}
          */
         protected _splice(ev: observable.IPostArrayChangeInfo<any>): void {
-            if (this.__isGrouped) {
+            if (this._isGrouped) {
                 this._resetSelect();
                 return;
             }
@@ -685,7 +643,7 @@ module plat.ui.controls {
          * @returns {void}
          */
         protected _unshift(ev: observable.IPostArrayChangeInfo<any>): void {
-            if (this.__isGrouped) {
+            if (this._isGrouped) {
                 this._resetSelect();
                 return;
             }
@@ -708,7 +666,7 @@ module plat.ui.controls {
          * @returns {void}
          */
         protected _sort(ev: observable.IPostArrayChangeInfo<any>): void {
-            if (this.__isGrouped) {
+            if (this._isGrouped) {
                 this._resetSelect();
             }
         }
@@ -728,7 +686,7 @@ module plat.ui.controls {
          * @returns {void}
          */
         protected _reverse(ev: observable.IPostArrayChangeInfo<any>): void {
-            if (this.__isGrouped) {
+            if (this._isGrouped) {
                 this._resetSelect();
             }
         }
@@ -759,32 +717,55 @@ module plat.ui.controls {
         group: string;
 
         /**
-         * @name value
+         * @name default
          * @memberof plat.ui.controls.ISelectOptions
          * @kind property
          * @access public
          * 
-         * @type {string}
+         * @type {plat.ui.controls.ISelectDefaultOption}
          * 
          * @description
          * The property in your context array of 
          * objects with which to use to bind to the 
          * option's value.
          */
-        value: string;
+        default: ISelectDefaultOption;
 
+
+    }
+
+    /**
+     * @name ISelectDefaultOption
+     * @memberof plat.ui.controls
+     * @kind interface
+     * 
+     * @description
+     * Defines the value and textContent for the default option of a {@link plat.ui.controls.Select|Select}.
+     */
+    export interface ISelectDefaultOption {
         /**
-         * @name textContent
-         * @memberof plat.ui.controls.ISelectOptions
+         * @name value
+         * @memberof plat.ui.controls.ISelectDefaultOption
          * @kind property
          * @access public
          * 
          * @type {string}
          * 
          * @description
-         * The property in your context array of 
-         * objects with which to use to bind to the 
-         * option's textContent.
+         * The value of the default option.
+         */
+        value: string;
+
+        /**
+         * @name textContent
+         * @memberof plat.ui.controls.ISelectDefaultOption
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * The textContent of the default option.
          */
         textContent: string;
     }
