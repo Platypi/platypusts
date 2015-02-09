@@ -77,8 +77,7 @@ module plat.ui.animations {
          * @returns {void}
          */
         initialize(): void {
-            var className = this.className;
-            removeClass(this.element, className + ' ' + className + __END_SUFFIX);
+            addClass(this.element, this.className + __INIT_SUFFIX);
         }
 
         /**
@@ -112,14 +111,14 @@ module plat.ui.animations {
                 if (animationName === '' ||
                     animationName === 'none' ||
                     computedStyle[<any>(animationId + 'PlayState')] === 'paused') {
-                    replaceClass(element, className, className + __END_SUFFIX);
+                    this.cancel();
                     this.end();
                     return;
                 }
 
                 this.animationEnd((): void => {
                     requestAnimationFrameGlobal((): void => {
-                        replaceClass(element, className, className + __END_SUFFIX);
+                        this.cancel();
                         this.end();
                     });
                 });
@@ -186,31 +185,13 @@ module plat.ui.animations {
          * 
          * @description
          * A function to be called to let it be known the animation is being cancelled. 
-         * Replaces the animation class with the animation class and "-end" appended to it 
-         * to allow it to jump to final state.
+         * Removes the animation class and the animation "-init" class.
          * 
          * @returns {void}
          */
         cancel(): void {
             var className = this.className;
-            replaceClass(this.element, className, className + __END_SUFFIX);
-        }
-
-        /**
-         * @name dispose
-         * @memberof plat.ui.animations.SimpleCssAnimation
-         * @kind function
-         * @access public
-         * 
-         * @description
-         * A function to remove the end state from the element. Can be useful when combining 
-         * multiple types of animations on the same element.
-         * 
-         * @returns {void}
-         */
-        dispose(): void {
-            var className = this.className;
-            removeClass(this.element, className + ' ' + className + __END_SUFFIX);
+            removeClass(this.element, className + ' ' + className + __INIT_SUFFIX);
         }
     }
 
@@ -346,4 +327,31 @@ module plat.ui.animations {
     }
 
     register.animation(__Leave, Leave);
+
+    /**
+     * @name Move
+     * @memberof plat.ui.animations
+     * @kind class
+     * 
+     * @extends {plat.ui.animations.SimpleCssAnimation}
+     * 
+     * @description
+     * An animation control that causes an element to move as defined by the included CSS.
+     */
+    export class Move extends SimpleCssAnimation {
+        /**
+         * @name className
+         * @memberof plat.ui.animations.Move
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * The class name added to the leaving element.
+         */
+        className = __Move;
+    }
+
+    register.animation(__Move, Move);
 }

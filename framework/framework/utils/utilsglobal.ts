@@ -1,23 +1,23 @@
 ﻿/* tslint:disable:no-unused-variable */
-var _nativeIsArray = !!Array.isArray,
-    _uids: plat.IObject<Array<string>> = {},
-    _Promise: plat.async.IPromise,
-    _compat: plat.Compat,
-    _camelCaseRegex: RegExp,
-    _objToString = Object.prototype.toString,
-    _toStringClass = '[object ',
-    _errorClass = _toStringClass + 'Error]',
-    _fileClass = _toStringClass + 'File]',
-    _arrayClass = _toStringClass + 'Array]',
-    _boolClass = _toStringClass + 'Boolean]',
-    _dateClass = _toStringClass + 'Date]',
-    _funcClass = _toStringClass + 'Function]',
-    _numberClass = _toStringClass + 'Number]',
-    _objectClass = _toStringClass + 'Object]',
-    _regexpClass = _toStringClass + 'RegExp]',
-    _stringClass = _toStringClass + 'String]',
-    _promiseClass = _toStringClass + 'Promise]',
-    _objectTypes: any = {
+var ___Promise: plat.async.IPromise,
+    ___compat: plat.Compat,
+    __nativeIsArray = !!Array.isArray,
+    __uids: plat.IObject<Array<string>> = {},
+    __camelCaseRegex: RegExp,
+    __objToString = Object.prototype.toString,
+    __toStringClass = '[object ',
+    __errorClass = __toStringClass + 'Error]',
+    __fileClass = __toStringClass + 'File]',
+    __arrayClass = __toStringClass + 'Array]',
+    __boolClass = __toStringClass + 'Boolean]',
+    __dateClass = __toStringClass + 'Date]',
+    __funcClass = __toStringClass + 'Function]',
+    __numberClass = __toStringClass + 'Number]',
+    __objectClass = __toStringClass + 'Object]',
+    __regexpClass = __toStringClass + 'RegExp]',
+    __stringClass = __toStringClass + 'String]',
+    __promiseClass = __toStringClass + 'Promise]',
+    __objectTypes: any = {
         'boolean': false,
         'function': true,
         'object': true,
@@ -107,7 +107,7 @@ function _clone(obj: any, deep?: boolean): any {
 }
 
 function isError(obj: any): boolean {
-    return _objToString.call(obj) === _errorClass;
+    return __objToString.call(obj) === __errorClass;
 }
 
 function isObject(obj: any): boolean {
@@ -131,19 +131,19 @@ function isDocumentFragment(obj: any): boolean {
 }
 
 function isFile(obj: any): boolean {
-    return isObject(obj) && _objToString.call(obj) === _fileClass;
+    return isObject(obj) && __objToString.call(obj) === __fileClass;
 }
 
 function isString(obj: any): boolean {
-    return typeof obj === 'string' || isObject(obj) && _objToString.call(obj) === _stringClass;
+    return typeof obj === 'string' || isObject(obj) && __objToString.call(obj) === __stringClass;
 }
 
 function isRegExp(obj: any): boolean {
-    return isObject(obj) && _objToString.call(obj) === _regexpClass;
+    return isObject(obj) && __objToString.call(obj) === __regexpClass;
 }
 
 function isPromise(obj: any): boolean {
-    return isObject(obj) && (_objToString.call(obj) === _promiseClass || isFunction(obj.then));
+    return isObject(obj) && (__objToString.call(obj) === __promiseClass || isFunction(obj.then));
 }
 
 function isEmpty(obj: any): boolean {
@@ -163,11 +163,11 @@ function isEmpty(obj: any): boolean {
 }
 
 function isBoolean(obj: any): boolean {
-    return obj === true || obj === false || isObject(obj) && _objToString.call(obj) === _boolClass;
+    return obj === true || obj === false || isObject(obj) && __objToString.call(obj) === __boolClass;
 }
 
 function isNumber(obj: any): boolean {
-    return (typeof obj === 'number' || isObject(obj) && _objToString.call(obj) === _numberClass) && !isNaN(obj);
+    return (typeof obj === 'number' || isObject(obj) && __objToString.call(obj) === __numberClass) && !isNaN(obj);
 }
 
 function isFunction(obj: any): boolean {
@@ -183,11 +183,11 @@ function isUndefined(obj: any): boolean {
 }
 
 function isArray(obj: any): boolean {
-    if (_nativeIsArray) {
+    if (__nativeIsArray) {
         return Array.isArray(obj);
     }
 
-    return _objToString.call(obj) === _arrayClass;
+    return __objToString.call(obj) === __arrayClass;
 }
 
 function isArrayLike(obj: any): boolean {
@@ -199,7 +199,7 @@ function isArrayLike(obj: any): boolean {
 }
 
 function isDate(obj: any): boolean {
-    return typeof obj === 'object' && _objToString.call(obj) === _dateClass;
+    return typeof obj === 'object' && __objToString.call(obj) === __dateClass;
 }
 
 function filter<T>(iterator: (value: T, key: any, obj: any) => boolean, obj: any, context?: any): Array<T> {
@@ -276,15 +276,15 @@ function map<T, R>(iterator: (value: T, key: any, obj: any) => R, obj: any, cont
 
 function mapAsync<T, R>(iterator: (value: T, key: any, obj: any) => plat.async.IThenable<R>, obj: any,
     context?: any): plat.async.IThenable<Array<R>> {
-    _Promise = _Promise || plat.acquire(__Promise);
+    ___Promise = ___Promise || plat.acquire(__Promise);
 
-    return _Promise.all(map(iterator, obj, context));
+    return ___Promise.all(map(iterator, obj, context));
 }
 
 function mapAsyncWithOrder<T, R>(iterator: (value: T, index: number, list: Array<T>) => plat.async.IThenable<R>,
     array: Array<T>, context: any, descending?: boolean): plat.async.IThenable<Array<R>> {
-    _Promise = _Promise || plat.acquire(__Promise);
-    var initialValue = _Promise.resolve<Array<R>>([]);
+    ___Promise = ___Promise || plat.acquire(__Promise);
+    var initialValue = ___Promise.resolve<Array<R>>([]);
 
     if (!isArray(array)) {
         return initialValue;
@@ -373,9 +373,9 @@ function defer(method: (...args: any[]) => void, timeout: number, args?: Array<a
 }
 
 function requestAnimationFrameGlobal(method: FrameRequestCallback, context?: any): plat.IRemoveListener {
-    _compat = _compat || (plat.acquire(__Compat));
+    ___compat = ___compat || (plat.acquire(__Compat));
 
-    var requestAnimFrame = _compat.requestAnimationFrame;
+    var requestAnimFrame = ___compat.requestAnimationFrame;
     if (isUndefined(requestAnimFrame)) {
         return postpone((): void => {
             method.call(context, Date.now());
@@ -383,7 +383,7 @@ function requestAnimationFrameGlobal(method: FrameRequestCallback, context?: any
     }
 
     var animationId = requestAnimFrame(method.bind(context)),
-        cancelAnimFrame = _compat.cancelAnimationFrame || noop;
+        cancelAnimFrame = ___compat.cancelAnimationFrame || noop;
 
     return (): void => {
         cancelAnimFrame(animationId);
@@ -395,10 +395,10 @@ function uniqueId(prefix?: string): string {
         prefix = '';
     }
 
-    var puid = _uids[prefix];
+    var puid = __uids[prefix];
 
     if (isNull(puid)) {
-        puid = _uids[prefix] = ['0', '/'];
+        puid = __uids[prefix] = ['0', '/'];
     }
 
     var index = puid.length,
@@ -442,9 +442,9 @@ function camelCase(str: string): string {
     }
 
     str = str.charAt(0).toLowerCase() + str.slice(1);
-    _camelCaseRegex = _camelCaseRegex || (<plat.expressions.Regex>plat.acquire(__Regex)).camelCaseRegex;
+    __camelCaseRegex = __camelCaseRegex || (<plat.expressions.Regex>plat.acquire(__Regex)).camelCaseRegex;
 
-    return str.replace(_camelCaseRegex,
+    return str.replace(__camelCaseRegex,
         (match: string, delimiter?: string, char?: string, index?: number): string
             => index ? char.toUpperCase() : char);
 }

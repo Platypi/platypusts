@@ -179,6 +179,76 @@ module plat.ui {
         }
 
         /**
+         * @name cloneChildren
+         * @memberof plat.ui.Dom
+         * @kind function
+         * @access public
+         * @variation 0
+         * 
+         * @description
+         * Takes a Node Array, clones them, and creates a DocumentFragment and adds the nodes to the Fragment.
+         * 
+         * @param {Array<Node>} nodeList A Node Array to be appended to the DocumentFragment
+         * 
+         * @returns {DocumentFragment} A DocumentFragment.
+         */
+        cloneChildren(nodeList: Array<Node>): DocumentFragment;
+        /**
+         * @name cloneChildren
+         * @memberof plat.ui.Dom
+         * @kind function
+         * @access public
+         * @variation 1
+         * 
+         * @description
+         * Takes a NodeList, clones it, and creates a DocumentFragment and adds the NodeList to the Fragment.
+         * 
+         * @param {NodeList} nodeList A NodeList to be appended to the DocumentFragment
+         * 
+         * @returns {DocumentFragment} A DocumentFragment.
+         */
+        cloneChildren(nodeList: NodeList): DocumentFragment;
+        /**
+         * @name cloneChildren
+         * @memberof plat.ui.Dom
+         * @kind function
+         * @access public
+         * @variation 2
+         * 
+         * @description
+         * Takes a Node Array, clones the nodes, and either adds it to the passed in Node,
+         * or creates a DocumentFragment and adds the nodes to the
+         * Fragment.
+         * 
+         * @param {NodeList} nodeList A NodeList to be appended to the root/DocumentFragment.
+         * @param {Node} root? An optional Node to append the nodeList.
+         * 
+         * @returns {Node} The root Node or a DocumentFragment.
+         */
+        cloneChildren(nodeList: Array<Node>, root?: Node): Node;
+        /**
+         * @name cloneChildren
+         * @memberof plat.ui.Dom
+         * @kind function
+         * @access public
+         * @variation 3
+         * 
+         * @description
+         * Takes a NodeList, clones the nodes, and either adds it to the passed in Node,
+         * or creates a DocumentFragment and adds the NodeList to the
+         * Fragment.
+         * 
+         * @param {NodeList} nodeList A NodeList to be appended to the root/DocumentFragment.
+         * @param {Node} root? An optional Node to append the nodeList.
+         * 
+         * @returns {Node} The root Node or a DocumentFragment.
+         */
+        cloneChildren(nodeList: NodeList, root?: Node): Node;
+        cloneChildren(nodeList: any, root?: Node): any {
+            return appendChildren(nodeList, root, true);
+        }
+
+        /**
          * @name clearNode
          * @memberof plat.ui.Dom
          * @kind function

@@ -136,7 +136,7 @@
          * @returns {void}
          */
         initialize(): void {
-            addClass(this.element, this.className);
+            addClass(this.element, this.className + __INIT_SUFFIX);
         }
 
         /**
@@ -151,8 +151,17 @@
          * @returns {void}
          */
         start(): void {
-            var transitionId = this._compat.animationEvents.$transition,
-                computedStyle = this._window.getComputedStyle(this.element, (this.options || <ISimpleCssTransitionOptions>{}).pseudo),
+            var animationEvents = this._compat.animationEvents;
+            if (isUndefined(animationEvents)) {
+                this.end();
+                return;
+            }
+
+            var element = this.element;
+            addClass(element, this.className);
+
+            var transitionId = animationEvents.$transition,
+                computedStyle = this._window.getComputedStyle(element, (this.options || <ISimpleCssTransitionOptions>{}).pseudo),
                 transitionProperty = computedStyle[<any>(transitionId + 'Property')],
                 transitionDuration = computedStyle[<any>(transitionId + 'Duration')];
 
@@ -200,29 +209,6 @@
         }
 
         /**
-         * @name dispose
-         * @memberof plat.ui.animations.SimpleCssTransition
-         * @kind function
-         * @access public
-         * 
-         * @description
-         * A function to be called to reset the last transition to its previous state.
-         * 
-         * @returns {void}
-         */
-        dispose(): void {
-            var style = this.element.style || {},
-                modifiedProperties = this._modifiedProperties,
-                keys = Object.keys(modifiedProperties),
-                key: any;
-
-            while (keys.length > 0) {
-                key = keys.pop();
-                style[key] = modifiedProperties[key];
-            }
-        }
-
-        /**
          * @name _done
          * @memberof plat.ui.animations.SimpleCssTransition
          * @kind function
@@ -248,7 +234,8 @@
                     }
                 }
             }
-            removeClass(this.element, this.className);
+            var className = this.className;
+            removeClass(this.element, className + ' ' + className + __INIT_SUFFIX);
             this.end();
         }
 

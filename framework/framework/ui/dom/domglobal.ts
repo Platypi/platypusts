@@ -1,5 +1,9 @@
 ﻿/* tslint:disable:no-unused-variable */
-var __nodeNameRegex = /<([\w:]+)/,
+var ___document: Document,
+    ___templateCache: plat.storage.TemplateCache,
+    ___http: plat.async.Http,
+    ___Exception: plat.IExceptionStatic,
+    __nodeNameRegex = /<([\w:]+)/,
     __whiteSpaceRegex = /\s+/g,
     __option = [1, '<select multiple="multiple">', '</select>'],
     __table = [1, '<table>', '</table>'],
@@ -33,27 +37,31 @@ var __nodeNameRegex = /<([\w:]+)/,
         _default: [0, '', '']
     });
 
-function appendChildren(nodeList: any, root?: Node): Node {
+function appendChildren(nodeList: any, root?: Node, clone?: boolean): Node {
     var isFragment = isDocumentFragment(root),
-        nullRoot = isNull(root),
+        nullRoot = !isNode(root),
         fragment: DocumentFragment = isFragment ?
         <DocumentFragment>root :
-        (plat.acquire(__Document)).createDocumentFragment();
+        (___document || (___document = plat.acquire(__Document))).createDocumentFragment();
 
     if (nullRoot) {
         root = fragment;
     }
 
-    var list: Array<Node>;
+    var list: Array<Node> = isArray(nodeList) ? nodeList : Array.prototype.slice.call(nodeList),
+        length = list.length,
+        i: number;
 
-    if (isFunction(nodeList.push)) {
-        list = nodeList;
+    if (clone === true) {
+        var item: Node;
+        for (i = 0; i < length; ++i) {
+            item = list[i].cloneNode(true);
+            fragment.insertBefore(item, null);
+        }
     } else {
-        list = Array.prototype.slice.call(nodeList);
-    }
-
-    while (list.length > 0) {
-        fragment.insertBefore(list.shift(), null);
+        for (i = 0; i < length; ++i) {
+            fragment.insertBefore(list[i], null);
+        }
     }
 
     if (!(isFragment || nullRoot)) {
@@ -102,10 +110,11 @@ function clearNodeBlockWithParent(nodeList: Array<Node>, parent: Node): void {
 }
 
 function stringToNode(html: string): Node {
-    var _compat: plat.Compat = plat.acquire(__Compat),
-        _document: Document = plat.acquire(__Document),
-        nodeName = __nodeNameRegex.exec(html),
-        element = <HTMLElement>_document.createElement('div');
+    // ___compat is a global variable in utilsglobal
+    ___compat = ___compat || (___compat = plat.acquire(__Compat));
+    ___document = ___document || (___document = plat.acquire(__Document));
+    var nodeName = __nodeNameRegex.exec(html),
+        element = <HTMLElement>___document.createElement('div');
 
     if (isNull(nodeName)) {
         element = innerHtml(element, html);
@@ -117,10 +126,10 @@ function stringToNode(html: string): Node {
 
     var mapTag = nodeName[1];
 
-    if (_compat.pushState && isUndefined(__innerTableWrappers[mapTag])) {
+    if (___compat.pushState && isUndefined(__innerTableWrappers[mapTag])) {
         return innerHtml(element, html);
     } else if (mapTag === 'body') {
-        element = innerHtml(_document.createElement('html'), html);
+        element = innerHtml(___document.createElement('html'), html);
         return element.removeChild(element.lastChild);
     }
 
@@ -178,10 +187,10 @@ function insertBefore(parent: Node, nodes: any, endNode?: Node): Array<Node> {
         nodes = Array.prototype.slice.call(nodes);
     }
 
-    var _document = plat.acquire(__Document),
-        length = nodes.length;
+    ___document = ___document || (___document = plat.acquire(__Document));
+    var length = nodes.length;
 
-    fragment = _document.createDocumentFragment();
+    fragment = ___document.createDocumentFragment();
 
     for (var i = 0; i < length; ++i) {
         fragment.insertBefore(nodes[i], null);
@@ -229,8 +238,8 @@ function replaceWith(node: any, newNode: any): any {
 }
 
 function serializeHtml(html?: string): DocumentFragment {
-    var _document = plat.acquire(__Document),
-        templateElement = _document.createDocumentFragment();
+    ___document = ___document || (___document = plat.acquire(__Document));
+    var templateElement = ___document.createDocumentFragment();
 
     if (!isEmpty(html)) {
         setInnerHtml(templateElement, html);
@@ -279,9 +288,9 @@ function removeAll(startNode: Node, endNode?: Node): void {
  * available.
  */
 function innerHtml(element: HTMLElement, html: string): HTMLElement {
-    var _compat: plat.Compat = plat.acquire(__Compat);
+    ___compat = ___compat || (___compat = plat.acquire(__Compat));
 
-    if (_compat.msApp) {
+    if (___compat.msApp) {
         MSApp.execUnsafeLocalFunction((): void => {
             element.innerHTML = html;
         });
@@ -465,27 +474,20 @@ function hasClass(element: HTMLElement, className: string): boolean {
     return true;
 }
 
-var ___templateCache: plat.storage.TemplateCache,
-    ___http: plat.async.Http,
-    ___Exception: plat.IExceptionStatic;
-
 function getTemplate(templateUrl: string): plat.async.IThenable<DocumentFragment> {
-    ___templateCache = ___templateCache || plat.acquire(__TemplateCache);
-    ___http = ___http || plat.acquire(__Http);
-
-    var _Exception: plat.IExceptionStatic,
-        ajax = ___http.ajax;
+    ___templateCache = ___templateCache || (___templateCache = plat.acquire(__TemplateCache));
+    ___http = ___http || (___http = plat.acquire(__Http));
 
     return ___templateCache.put(templateUrl, ___templateCache.read(templateUrl)
         .catch((error: any): plat.async.AjaxPromise<string> => {
             if (isNull(error)) {
-                return ajax<string>({ url: templateUrl });
+                return ___http.ajax<string>({ url: templateUrl });
             }
         }).then<DocumentFragment>((success): plat.async.IThenable<DocumentFragment> => {
             if (isDocumentFragment(success)) {
                 return ___templateCache.put(templateUrl, <any>success);
             } else if (!isObject(success) || !isString(success.response)) {
-                ___Exception = ___Exception || plat.acquire(__ExceptionStatic);
+                ___Exception = ___Exception || (___Exception = plat.acquire(__ExceptionStatic));
                 ___Exception.warn('No template found at ' + templateUrl, ___Exception.AJAX);
                 return ___templateCache.put(templateUrl, serializeHtml());
             }
@@ -499,7 +501,7 @@ function getTemplate(templateUrl: string): plat.async.IThenable<DocumentFragment
             return ___templateCache.put(templateUrl, serializeHtml(templateString));
         }).catch((error: any): any => {
             postpone((): void => {
-                ___Exception = ___Exception || plat.acquire(__ExceptionStatic);
+                ___Exception = ___Exception || (___Exception = plat.acquire(__ExceptionStatic));
                 ___Exception.fatal('Failure to get template from ' + templateUrl + '.',
                     ___Exception.TEMPLATE);
             });

@@ -167,22 +167,22 @@ module plat.ui.controls {
          * @type {plat.async.IThenable<void>}
          * 
          * @description
-         * An animation promise for pausing functionality for animation.
+         * An animation promise for delaying disposal prior to an animation finishing.
          */
         protected _animationThenable: async.IThenable<void>;
 
         /**
-         * @name _currentAnimations
+         * @name _currentAnimation
          * @memberof plat.ui.controls.ForEach
          * @kind property
          * @access protected
          * 
-         * @type {Array<plat.ui.animations.IAnimationThenable<any>>}
+         * @type {plat.ui.animations.IAnimationThenable<any>}
          * 
          * @description
-         * An array to aggregate all current animation promises.
+         * The current animation promise.
          */
-        protected _currentAnimations: Array<animations.IAnimationThenable<any>> = [];
+        protected _currentAnimation: animations.IAnimationThenable<any>;
 
         /**
          * @name __listenerSet
@@ -295,7 +295,7 @@ module plat.ui.controls {
 
             if (!isArray(context)) {
                 if (!isNull(context)) {
-                    var _Exception: IExceptionStatic = this._Exception;
+                    var _Exception = this._Exception;
                     _Exception.warn(this.type + ' context set to something other than an Array.', _Exception.CONTEXT);
                 }
                 return;
@@ -401,7 +401,7 @@ module plat.ui.controls {
                     }
                 }).catch((error: any): void => {
                         postpone((): void => {
-                            var _Exception: IExceptionStatic = this._Exception;
+                            var _Exception = this._Exception;
                             _Exception.warn(error, _Exception.BIND);
                         });
                     });
@@ -454,21 +454,7 @@ module plat.ui.controls {
                 return;
             }
 
-            var _animator = this._animator,
-                childNodes: Array<Element> = Array.prototype.slice.call(item.childNodes),
-                childNode: Element;
-
-            insertBefore(this._container, item);
-
-            var currentAnimations = this._currentAnimations;
-            while (childNodes.length > 0) {
-                childNode = childNodes.shift();
-                if (childNode.nodeType === Node.ELEMENT_NODE) {
-                    currentAnimations.push(_animator.animate(childNode, key).then((): void => {
-                        currentAnimations.shift();
-                    }));
-                }
-            }
+            this._animator.enter(item, __Enter, this._container);
         }
 
         /**
@@ -625,9 +611,7 @@ module plat.ui.controls {
         protected _executeEvent(ev: observable.IPostArrayChangeInfo<any>): void {
             var method = '_' + ev.method;
             if (isFunction((<any>this)[method])) {
-                //this.itemsLoaded.then(() => {
-                    (<any>this)[method](ev);
-                //});
+                (<any>this)[method](ev);
             }
         }
 
@@ -919,19 +903,11 @@ module plat.ui.controls {
          */
         protected _initiateAnimation(startNode: number, endNode: number, key: string, clone?: boolean,
             cancel?: boolean): async.IThenable<void> {
-            var animationPromises: Array<animations.IAnimatingThenable> = [],
-                currentAnimations = this._currentAnimations,
-                length = currentAnimations.length;
-
-            if (length === 0 || cancel === false) {
+            if (cancel === false || isNull(this._currentAnimation)) {
                 return this.__handleAnimation(startNode, endNode, key, clone);
             }
 
-            while (length-- > 0) {
-                animationPromises.push(currentAnimations[length].cancel());
-            }
-
-            return this._Promise.all(animationPromises).then((): async.IThenable<void> => {
+            return this._currentAnimation.cancel().then(() => {
                 return this.__handleAnimation(startNode, endNode, key, clone);
             });
         }
@@ -950,50 +926,31 @@ module plat.ui.controls {
          * @param {string} key The animation key/type
          * @param {boolean} clone Whether to clone the items and animate the clones or simply animate the items itself.
          * 
-         * @returns {plat.async.IThenable<void>} The last element node's animation promise.
+         * @returns {plat.animations.IAnimationThenable<any>} The last element node's animation promise.
          */
-        private __handleAnimation(startNode: number, endNode: number, key: string, clone: boolean): async.IThenable<void> {
+        private __handleAnimation(startNode: number, endNode: number, key: string, clone: boolean): animations.IAnimationThenable<any> {
             var container = this._container,
-                nodes: Array<Node> = Array.prototype.slice.call(container.childNodes, startNode, endNode),
-                node: HTMLElement,
-                clonedNode: HTMLElement,
-                firstNode = nodes[0],
-                _animator = this._animator,
-                currentAnimations = this._currentAnimations,
-                callback: () => void,
-                animationPromise: animations.IAnimationThenable<void>;
+                slice = Array.prototype.slice,
+                nodes: Array<Node> = slice.call(container.childNodes, startNode, endNode);
 
             if (nodes.length === 0) {
-                return _animator.resolve().then(noop);
-            }
+                return this._animator.resolve();
+            } else if (clone === true) {
+                var referenceNode = nodes[nodes.length - 1].nextSibling,
+                    animatedNodes = <DocumentFragment>appendChildren(nodes),
+                    clonedNodes = animatedNodes.cloneNode(true),
+                    removeNodes = slice.call(clonedNodes.childNodes);
 
-            clone = clone === true;
-            while (nodes.length > 0) {
-                node = <HTMLElement>nodes.shift();
-                if (node.nodeType === Node.ELEMENT_NODE) {
-                    if (clone) {
-                        clonedNode = <HTMLElement>node.cloneNode(true);
-                        node.setAttribute(__Hide, '');
-                        container.insertBefore(clonedNode, firstNode);
-                        // bind callback to current cloned node due to loop
-                        callback = function (clone: HTMLElement, node: HTMLElement): void {
-                            currentAnimations.shift();
-                            node.removeAttribute(__Hide);
-                            container.removeChild(clone);
-                        }.bind(null, clonedNode, node);
-                        node = clonedNode;
-                    } else {
-                        callback = (): void => {
-                            currentAnimations.shift();
-                        };
+                container.insertBefore(clonedNodes, referenceNode);
+                return this._currentAnimation = this._animator.animate(removeNodes, key).then(() => {
+                    while (removeNodes.length > 0) {
+                        container.removeChild(removeNodes.pop());
                     }
-
-                    animationPromise = _animator.animate(<Element>node, key).then(callback);
-                    currentAnimations.push(animationPromise);
-                }
+                    container.insertBefore(animatedNodes, referenceNode);
+                });
             }
 
-            return animationPromise;
+            return this._currentAnimation = this._animator.animate(nodes, key);
         }
     }
 

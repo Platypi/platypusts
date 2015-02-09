@@ -61,15 +61,21 @@ module app.viewcontrols {
             this.head.description('This is the main page');
 
             var test = this.context.test;
-            setTimeout(() => {
+            //setTimeout(() => {
                 //test[0] = 1;
-                test.shift();
-                //test.push(0);
+                //test.unshift(10, 5);
+                //test.unshift(10);
+                //test.shift();
+                //test.sort((a, b) => {
+                //    return b - a;
+                //});
+                //test.reverse();
+                //test.push(0, 1);
                 //test.pop();
                 //test.pop();
                 //test.push(3);
                 //test.push(4);
-            }, 1000);
+            //}, 1000);
         }
     }
 

@@ -6,10 +6,12 @@
      * @memberof plat.ui.animations
      * @kind class
      * 
+     * @implements {plat.ui.animations.IAnimationEssentials}
+     * 
      * @description
      * A class representing a single animation for a single element.
      */
-    export class BaseAnimation {
+    export class BaseAnimation implements IAnimationEssentials {
         protected static _inject: any = {
             _compat: __Compat,
             _Exception: __ExceptionStatic,
@@ -217,21 +219,6 @@
          * @returns {void}
          */
         cancel(): void { }
-
-        /**
-         * @name dispose
-         * @memberof plat.ui.animations.BaseAnimation
-         * @kind function
-         * @access public
-         * @virtual
-         * 
-         * @description
-         * A function for reverting any modifications or changes that may have been made as a 
-         * result of this animation.
-         * 
-         * @returns {void}
-         */
-        dispose(): void { }
 
         /**
          * @name addEventListener
