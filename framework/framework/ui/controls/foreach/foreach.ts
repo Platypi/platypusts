@@ -531,7 +531,7 @@ module plat.ui.controls {
          */
         protected _updateResource(index: number): void {
             var controls = this.controls;
-            if (index <= 0 || index >= controls.length) {
+            if (index < 0 || index >= controls.length) {
                 return;
             }
 
