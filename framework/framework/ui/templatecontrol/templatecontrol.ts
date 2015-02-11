@@ -1059,7 +1059,9 @@ module plat.ui {
          * @returns {string} The input context's identifier string as seen from the root context object.
          */
         getAbsoluteIdentifier(context: any): string {
-            if (context === this.context) {
+            if (context === this) {
+                return '';
+            } else if (context === this.context) {
                 return this.absoluteContextPath;
             }
 

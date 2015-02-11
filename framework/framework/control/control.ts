@@ -723,8 +723,8 @@ module plat {
          * 
          * @typeparam {any} T The type of object to observe.
          * 
-         * @param {any} context The immediate parent object containing the property.
-         * @param {string} property The property identifier to watch for changes.
+         * @param {any} context A parent object of the item we're trying to observe.
+         * @param {string} property The property string that denotes the item in the context.
          * @param {(value: T, oldValue: T) => void} listener The method called when the property is changed. This method 
          * will have its 'this' context set to the control instance.
          * 
@@ -744,16 +744,16 @@ module plat {
          * 
          * @typeparam {any} T The type of object to observe.
          * 
-         * @param {any} context The immediate parent object containing the property.
-         * @param {number} property The property identifier to watch for changes.
+         * @param {any} context The parent object of the item we're trying to observe.
+         * @param {number} index The index that denotes the item in the context.
          * @param {(value: T, oldValue: T) => void} listener The method called when the property is changed. This method 
          * will have its 'this' context set to the control instance.
          * 
          * @returns {plat.IRemoveListener} A function to call in order to stop observing the property.
          */
-        observe<T>(context: any, property: number, listener: (value: T, oldValue: T) => void): IRemoveListener;
+        observe<T>(context: any, index: number, listener: (value: T, oldValue: T) => void): IRemoveListener;
         observe(context: any, property: any, listener: (value: any, oldValue: any) => void): IRemoveListener {
-            if (isNull(context) || !context.hasOwnProperty(property)) {
+            if (isNull(context)) {
                 return noop;
             }
 
@@ -763,14 +763,18 @@ module plat {
             }
 
             var absoluteIdentifier = (<ui.TemplateControl>(<any>control)).getAbsoluteIdentifier(context);
-            if (isNull(absoluteIdentifier)) {
+            if (!isEmpty(absoluteIdentifier)) {
+                absoluteIdentifier += '.' + property;
+            } else if (absoluteIdentifier === '' && isString(property) && property.indexOf(__CONTEXT) === 0) {
+                absoluteIdentifier = property;
+            } else {
                 return noop;
             }
 
             var _ContextManager: observable.IContextManagerStatic = Control._ContextManager || acquire(__ContextManagerStatic),
                 contextManager = _ContextManager.getManager(Control.getRootControl(this));
 
-            return contextManager.observe(absoluteIdentifier + '.' + property, {
+            return contextManager.observe(absoluteIdentifier, {
                 listener: listener.bind(this),
                 uid: this.uid
             });
@@ -790,8 +794,8 @@ module plat {
          * 
          * @typeparam {any} T The type of the Array to observe.
          * 
-         * @param {any} context The immediate parent object containing the array as a property.
-         * @param {string} property The array property identifier to watch for changes.
+         * @param {any} context A parent object of the array we're trying to observe.
+         * @param {string} property The property string that denotes the array in the context.
          * @param {(ev: plat.observable.IPreArrayChangeInfo) => void} preListener The method called prior to an array-changing 
          * method is called. This method will have its 'this' context set to the control instance.
          * @param {(ev: plat.observable.IPostArrayChangeInfo<T>) => void} postListener The method called after an array-changing 
@@ -815,8 +819,8 @@ module plat {
          * 
          * @typeparam {any} T The type of the Array to observe.
          * 
-         * @param {any} context The immediate parent object containing the array as a property.
-         * @param {number} property The array property identifier to watch for changes.
+         * @param {any} context The parent object of the array we're trying to observe.
+         * @param {number} index The index that denotes the array in the context.
          * @param {(ev: plat.observable.IPreArrayChangeInfo) => void} preListener The method called prior to an array-changing 
          * method is called. This method will have its 'this' context set to the control instance.
          * @param {(ev: plat.observable.IPostArrayChangeInfo<T>) => void} postListener The method called after an array-changing 
@@ -824,15 +828,18 @@ module plat {
          * 
          * @returns {plat.IRemoveListener} A function to call in order to stop observing the array.
          */
-        observeArray<T>(context: any, property: number, preListener: (ev: observable.IPreArrayChangeInfo) => void,
+        observeArray<T>(context: any, index: number, preListener: (ev: observable.IPreArrayChangeInfo) => void,
             postListener: (ev: observable.IPostArrayChangeInfo<T>) => void): IRemoveListener;
         observeArray(context: any, property: any, preListener: (ev: observable.IPreArrayChangeInfo) => void,
             postListener: (ev: observable.IPostArrayChangeInfo<any>) => void): IRemoveListener {
-            if (isNull(context) || !context.hasOwnProperty(property)) {
+            if (isNull(context)) {
                 return noop;
             }
 
-            var array = context[property];
+            var propertyIsString = isString(property),
+                array: Array<any> = propertyIsString ?
+                    (Control._parser || <expressions.Parser>acquire(__Parser)).parse(property).evaluate(context) :
+                    context[property];
             if (!isArray(array)) {
                 return noop;
             }
@@ -852,14 +859,12 @@ module plat {
             var absoluteIdentifier = (<ui.TemplateControl>control).getAbsoluteIdentifier(context),
                 ContextManager: observable.IContextManagerStatic = Control._ContextManager || acquire(__ContextManagerStatic);
 
-            if (isNull(absoluteIdentifier)) {
-                if (property === __CONTEXT) {
-                    absoluteIdentifier = (<ui.TemplateControl>control).absoluteContextPath;
-                } else {
-                    return noop;
-                }
-            } else {
+            if (!isEmpty(absoluteIdentifier)) {
                 absoluteIdentifier += '.' + property;
+            } else if (absoluteIdentifier === '' && propertyIsString && property.indexOf(__CONTEXT) === 0) {
+                absoluteIdentifier = property;
+            } else {
+                return noop;
             }
 
             var contextManager = ContextManager.getManager(Control.getRootControl(this)),
@@ -922,7 +927,7 @@ module plat {
             }
 
             if (isString(expression)) {
-                expression = Control._parser.parse(expression);
+                expression = (Control._parser || <expressions.Parser>acquire(__Parser)).parse(expression);
             } else if (!isFunction(expression.evaluate)) {
                 return noop;
             }
@@ -1071,7 +1076,7 @@ module plat {
          */
         findProperty(property: string): IControlProperty {
             var control = <Control>this,
-                expression = Control._parser.parse(property),
+                expression = (Control._parser || <expressions.Parser>acquire(__Parser)).parse(property),
                 value: any;
 
             while (!isNull(control)) {
