@@ -764,7 +764,7 @@ module plat {
 
             var absoluteIdentifier = (<ui.TemplateControl>(<any>control)).getAbsoluteIdentifier(context);
             if (!isEmpty(absoluteIdentifier)) {
-                absoluteIdentifier += '.' + property;
+                absoluteIdentifier += isEmpty(property) ? '' : '.' + property;
             } else if (absoluteIdentifier === '' && isString(property) && property.indexOf(__CONTEXT) === 0) {
                 absoluteIdentifier = property;
             } else {
@@ -837,7 +837,7 @@ module plat {
             }
 
             var propertyIsString = isString(property),
-                array: Array<any> = propertyIsString ?
+                array: Array<any> = propertyIsString ? property === '' ? context :
                     (Control._parser || <expressions.Parser>acquire(__Parser)).parse(property).evaluate(context) :
                     context[property];
             if (!isArray(array)) {
@@ -860,7 +860,7 @@ module plat {
                 ContextManager: observable.IContextManagerStatic = Control._ContextManager || acquire(__ContextManagerStatic);
 
             if (!isEmpty(absoluteIdentifier)) {
-                absoluteIdentifier += '.' + property;
+                absoluteIdentifier += isEmpty(property) ? '' : '.' + property;
             } else if (absoluteIdentifier === '' && propertyIsString && property.indexOf(__CONTEXT) === 0) {
                 absoluteIdentifier = property;
             } else {
