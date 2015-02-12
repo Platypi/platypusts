@@ -1118,12 +1118,11 @@ module plat.controls {
          * @access protected
          * 
          * @description
-         * Checks if the associated {@link plat.ui.TemplateControl|TemplateControl} is a 
-         * {@link plat.ui.BindControl|BindControl} and 
-         * initializes all listeners accordingly.
+         * Checks if the associated {@link plat.ui.TemplateControl|TemplateControl} is implementing 
+         * {@link plat.ui.ISupportTwoWayBinding|ISupportTwoWayBinding} and initializes all listeners accordingly.
          * 
          * @returns {boolean} Whether or not the associated {@link plat.ui.TemplateControl|TemplateControl} 
-         * is an {@link plat.ui.BindControl|BindControl}
+         * is implementing {@link plat.ui.ISupportTwoWayBinding|ISupportTwoWayBinding}.
          */
         protected _observingBindableProperty(): boolean {
             var templateControl = <ui.BindControl>this.templateControl;
@@ -1136,7 +1135,6 @@ module plat.controls {
                 });
 
                 templateControl.observeProperties(this._observeProperties.bind(this));
-                this._setter = this._setBindableProperties;
                 return true;
             }
 
@@ -1151,17 +1149,17 @@ module plat.controls {
          * @variation 0
          * 
          * @description
-         * The function that allows a {@link plat.ui.BindControl|BindControl} to observe changes to the 
-         * bound property and/or its child properties.
+         * The function that allows a control implementing {@link plat.ui.ISupportTwoWayBinding|ISupportTwoWayBinding} to observe 
+         * changes to the bound property and/or its child properties.
          * 
          * @param {plat.ui.IBoundPropertyChangedListener} listener The listener to fire when the bound property or its 
          * specified child changes.
-         * @param {string} identifier The identifier of the child property of the bound item.
+         * @param {string} identifier? The identifier of the child property of the bound item.
          * 
          * @returns {void}
          */
         protected _observeProperties(listener: (newValue: any, oldValue: any, identifier: string, firstTime?: boolean) => void,
-            identifier: string): void;
+            identifier?: string): void;
         /**
          * @name _observeProperties
          * @memberof plat.controls.Bind
@@ -1170,44 +1168,55 @@ module plat.controls {
          * @variation 1
          * 
          * @description
-         * The function that allows a {@link plat.ui.BindControl|BindControl} to observe changes to the 
-         * bound property and/or its child properties.
+         * The function that allows a control implementing {@link plat.ui.ISupportTwoWayBinding|ISupportTwoWayBinding} to observe 
+         * changes to the bound property and/or its child properties.
          * 
          * @param {plat.ui.IBoundPropertyChangedListener} listener The listener to fire when the bound property or its 
          * specified child changes.
-         * @param {number} index The index of the child property of the bound item if the bound item is an Array.
+         * @param {number} index? The index of the child property of the bound item if the bound item is an Array.
          * 
          * @returns {void}
          */
         protected _observeProperties(listener: (newValue: any, oldValue: any, identifier: string, firstTime?: boolean) => void,
-            index: number): void;
+            index?: number): void;
         protected _observeProperties(listener: (newValue: any, oldValue: any, identifier: string, firstTime?: boolean) => void,
-            identifier: any): void {
-            
-        }
+            identifier?: any): void {
+            var parsedIdentifier: string;
+            if (isEmpty(identifier)) {
+                parsedIdentifier = this._expression.expression;
+            } else {
+                var _parser = this._parser,
+                    identifierExpression = _parser.parse(identifier),
+                    expression = _parser.parse(this._expression.expression + '.' + identifierExpression.identifiers[0]);
 
-        /**
-         * @name _setBindableProperties
-         * @memberof plat.controls.Bind
-         * @kind function
-         * @access protected
-         * 
-         * @description
-         * Sets the value on a {@link plat.ui.BindControl|BindControl}.
-         * 
-         * @param {any} newValue The new value to set
-         * @param {any} oldValue? The previously bound value
-         * @param {boolean} firstTime? The context is being evaluated for the first time and 
-         * should thus change the property if null
-         * 
-         * @returns {void}
-         */
-        protected _setBindableProperties(newValue: any, oldValue?: any, firstTime?: boolean): void {
-            if (this.__isSelf || newValue === oldValue) {
-                return;
+                parsedIdentifier = expression.identifiers[0];
+
+                var split = parsedIdentifier.split('.'),
+                    key = split.pop(),
+                    contextExpression = split.join('.'),
+                    context = this.evaluateExpression(contextExpression);
+
+                if (!isObject(context)) {
+                    if (isNull(context)) {
+                        context = this._ContextManager.createContext(this.parent, contextExpression);
+                    } else {
+                        var Exception: IExceptionStatic = this._Exception;
+                        Exception.warn('A control implementing ISupportTwoWayBinding is trying to index into a primitive type ' +
+                            'when trying to evaluate ' + this.type + '="' + this._expression.expression + '"', Exception.BIND);
+                        return;
+                    }
+                }
             }
 
-            // (<ui.BindControl>this.templateControl).setProperty(newValue, oldValue, firstTime);
+            listener = listener.bind(this.templateControl);
+            this.observe((newValue: any, oldValue: any): void => {
+                if (this.__isSelf || newValue === oldValue) {
+                    return;
+                }
+
+                listener(newValue, oldValue, identifier);
+            }, parsedIdentifier);
+            listener(this.evaluateExpression(parsedIdentifier), undefined, identifier, true);
         }
     }
 
