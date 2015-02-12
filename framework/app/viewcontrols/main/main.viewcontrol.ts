@@ -19,7 +19,7 @@ module app.viewcontrols {
             views: [One, Two, Three, Four],
             test: [0, 1, 2, 3, 4, 5],
             items: <Array<{ value: string|number; }>>[],
-            testClass: 'foo'
+            testClass: 'foo quux'
         };
 
         constructor(router: plat.routing.Router) {
@@ -63,7 +63,7 @@ module app.viewcontrols {
             var el = this.element.querySelector('.blah');
             this.dom.addClass(el, 'quux');
             el.setAttribute('other-class', '');
-            this.context.testClass = 'bar';
+            this.context.testClass = 'bar baz';
             var test = this.context.test;
             setTimeout(() => {
                 //test[0] = 1;
