@@ -1086,7 +1086,7 @@ module plat.processing {
                 }
             }
 
-            this._observeControlIdentifiers(nodeMap.nodes, parent, controls);
+            this._observeControlIdentifiers(nodeMap.nodes, parent, controls, nodeMap.element);
 
             return controls;
         }
@@ -1593,23 +1593,25 @@ module plat.processing {
          * 
          * @returns {void}
          */
-        protected _observeControlIdentifiers(nodes: Array<INode>, parent: ui.TemplateControl, controls: Array<Control>): void {
+        protected _observeControlIdentifiers(nodes: Array<INode>, parent: ui.TemplateControl, controls: Array<Control>, element: Element): void {
             var length = nodes.length,
-                bindings: Array<INode> = [],
-                attributeChanged = this._attributeChanged,
                 hasParent = !isNull(parent),
                 node: INode,
                 control: Control,
-                i = 0;
+                i = 0,
+                replace = this.replace,
+                managers: Array<AttributeManager> = [],
+                manager: AttributeManager;
 
             for (; i < length; ++i) {
                 node = nodes[i];
                 control = node.control;
 
                 if (hasParent && node.expressions.length > 0) {
-                    NodeManager.observeExpressions(node.expressions, parent,
-                        attributeChanged.bind(this, node, parent, controls));
-                    bindings.push(node);
+                    manager = AttributeManager.getInstance();
+                    managers.push(manager);
+                    manager.initialize(element, node, parent, controls, replace);
+                    NodeManager.observeExpressions(node.expressions, parent, manager.attributeChanged.bind(manager));
                 }
 
                 if (!isNull(control)) {
@@ -1617,45 +1619,9 @@ module plat.processing {
                 }
             }
 
-            length = bindings.length;
+            length = managers.length;
             for (i = 0; i < length; ++i) {
-                this._attributeChanged(bindings[i], parent, controls);
-            }
-        }
-
-        /**
-         * @name _attributeChanged
-         * @memberof plat.processing.ElementManager
-         * @kind function
-         * @access protected
-         * 
-         * @description
-         * A function to handle updating an attribute on all controls that have it 
-         * as a property upon a change in its value.
-         * 
-         * @param {plat.processing.INode} node The {@link plat.processing.INode|INode} where the change occurred.
-         * @param {plat.ui.TemplateControl} parent The parent {@link plat.ui.TemplateControl|TemplateControl} used for context.
-         * @param {Array<plat.Control>} controls The controls that have the changed attribute as a property.
-         * 
-         * @returns {void}
-         */
-        protected _attributeChanged(node: INode, parent: ui.TemplateControl, controls: Array<Control>): void {
-            var length = controls.length,
-                key = camelCase(node.nodeName),
-                value = NodeManager.build(node.expressions, parent),
-                attributes: ui.Attributes,
-                oldValue: any;
-
-            for (var i = 0; i < length; ++i) {
-                attributes = <ui.Attributes>controls[i].attributes;
-                oldValue = attributes[key];
-                attributes[key] = value;
-
-                (<any>attributes)._attributeChanged(key, value, oldValue);
-            }
-
-            if (!this.replace) {
-                (<Attr>node.node).value = value;
+                managers[i].attributeChanged();
             }
         }
 

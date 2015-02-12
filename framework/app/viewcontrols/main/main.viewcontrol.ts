@@ -18,7 +18,8 @@ module app.viewcontrols {
         context = {
             views: [One, Two, Three, Four],
             test: [0, 1, 2, 3, 4, 5],
-            items: <Array<{ value: string|number; }>>[]
+            items: <Array<{ value: string|number; }>>[],
+            testClass: 'foo quux'
         };
 
         constructor(router: plat.routing.Router) {
@@ -59,13 +60,16 @@ module app.viewcontrols {
         loaded() {
             this.head.title('Main Page');
             this.head.description('This is the main page');
-
+            var el = this.element.querySelector('.blah');
+            this.dom.addClass(el, 'quux');
+            el.setAttribute('other-class', '');
+            this.context.testClass = 'bar baz';
             var test = this.context.test;
-            //setTimeout(() => {
+            setTimeout(() => {
                 //test[0] = 1;
                 //test.unshift(10, 5);
                 //test.unshift(10);
-                //test.shift();
+                test.shift();
                 //test.sort((a, b) => {
                 //    return b - a;
                 //});
@@ -75,7 +79,7 @@ module app.viewcontrols {
                 //test.pop();
                 //test.push(3);
                 //test.push(4);
-            //}, 1000);
+            }, 1000);
         }
     }
 

@@ -252,12 +252,12 @@ module plat.ui.controls {
          * Re-syncs the {@link plat.ui.controls.ForEach|ForEach} child controls and DOM with the new 
          * array.
          * 
-         * @param {Array<any>} newValue? The new Array
-         * @param {Array<any>} oldValue? The old Array
+         * @param {Array<any>} newValue The new Array
+         * @param {Array<any>} oldValue The old Array
          * 
          * @returns {void}
          */
-        contextChanged(newValue?: Array<any>, oldValue?: Array<any>): void {
+        contextChanged(newValue: Array<any>, oldValue: Array<any>): void {
             if (isEmpty(newValue)) {
                 this._removeItems(this.controls.length);
                 return;

@@ -86,7 +86,7 @@
          * A function that signifies when this control's bindable property has changed.
          * 
          * @param {any} newValue The new value of the property after the change.
-         * @param {any} oldValue? The old value of the property prior to the change.
+         * @param {any} oldValue The old value of the property prior to the change.
          * 
          * @returns {void}
          */

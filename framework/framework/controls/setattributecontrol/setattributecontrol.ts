@@ -71,7 +71,7 @@ module plat.controls {
 
             this.attribute = camelCase(this.type);
             this.setter();
-            this.__removeListener = this.attributes.observe(this.attribute, this.setter);
+            this.__removeListener = this.attributes.observe(this.setter, this.attribute);
         }
 
         /**

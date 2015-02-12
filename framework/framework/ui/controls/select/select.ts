@@ -273,12 +273,12 @@ module plat.ui.controls {
          * Re-observes the new array context and modifies 
          * the options accordingly.
          * 
-         * @param {Array<any>} newValue? The new array context.
-         * @param {Array<any>} oldValue? The old array context.
+         * @param {Array<any>} newValue The new array context.
+         * @param {Array<any>} oldValue The old array context.
          * 
          * @returns {void}
          */
-        contextChanged(newValue?: Array<any>, oldValue?: Array<any>): void {
+        contextChanged(newValue: Array<any>, oldValue: Array<any>): void {
             if (!isArray(newValue)) {
                 this._removeItems(this.controls.length);
                 return;

@@ -81,7 +81,7 @@
          * The set of functions added by the Template Control that listens 
          * for property changes.
          */
-        protected _listeners: Array<(newValue: any, oldValue?: any) => void> = [];
+        protected _listeners: Array<(newValue: any, oldValue: any) => void> = [];
 
         /**
          * @name _removeListener
