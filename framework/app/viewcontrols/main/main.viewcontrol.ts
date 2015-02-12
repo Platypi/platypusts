@@ -60,7 +60,9 @@ module app.viewcontrols {
         loaded() {
             this.head.title('Main Page');
             this.head.description('This is the main page');
-            this.dom.addClass(this.element.querySelector('.blah'), 'quux');
+            var el = this.element.querySelector('.blah');
+            this.dom.addClass(el, 'quux');
+            el.setAttribute('other-class', '');
             this.context.testClass = 'bar';
             var test = this.context.test;
             setTimeout(() => {
