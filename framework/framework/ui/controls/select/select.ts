@@ -356,7 +356,7 @@ module plat.ui.controls {
          */
         protected _setListener(): void {
             if (!this.__listenerSet) {
-                this.observeArray(this, __CONTEXT, null, this._executeEvent);
+                this.observeArray(null, this._executeEvent);
                 this.__listenerSet = true;
             }
         }
@@ -730,8 +730,6 @@ module plat.ui.controls {
          * option's value.
          */
         default: ISelectDefaultOption;
-
-
     }
 
     /**

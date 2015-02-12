@@ -745,11 +745,38 @@ module plat {
          * @description
          * The method signature for {@link plat.IPropertyChangedListener|IPropertyChangedListener}.
          * 
-         * @param {any} newValue? The new value of the observed property.
-         * @param {any} oldValue? The previous value of the observed property.
+         * @param {any} newValue The new value of the observed property.
+         * @param {any} oldValue The previous value of the observed property.
          * 
          * @returns {void}
          */
-        (newValue?: any, oldValue?: any): void;
+        (newValue: any, oldValue: any): void;
+    }
+
+    /**
+     * @name IIdentifierChangedListener
+     * @memberof plat
+     * @kind interface
+     * 
+     * @description
+     * Defines a function that will be called whenever a property specified by a given identifier has changed.
+     */
+    export interface IIdentifierChangedListener {
+        /**
+         * @memberof plat.IIdentifierChangedListener
+         * @kind function
+         * @access public
+         * @static
+         * 
+         * @description
+         * The method signature for {@link plat.IIdentifierChangedListener|IIdentifierChangedListener}.
+         * 
+         * @param {any} newValue The new value of the observed property.
+         * @param {any} oldValue The previous value of the observed property.
+         * @param {any} identifier The string or number identifier that specifies the changed property.
+         * 
+         * @returns {void}
+         */
+        (newValue: any, oldValue: any, identifier: any): void;
     }
 }

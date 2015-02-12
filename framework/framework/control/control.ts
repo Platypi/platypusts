@@ -723,14 +723,14 @@ module plat {
          * 
          * @typeparam {any} T The type of object to observe.
          * 
-         * @param {any} context A parent object of the item we're trying to observe.
-         * @param {string} property The property string that denotes the item in the context.
-         * @param {(value: T, oldValue: T) => void} listener The method called when the property is changed. This method 
-         * will have its 'this' context set to the control instance.
+         * @param {(value: T, oldValue: T, identifier: string) => void} listener The method called when the property is changed. 
+         * This method will have its 'this' context set to the control instance.
+         * @param {string} identifier? The property string that denotes the item in the context (e.g. "foo.bar.baz" is observing the 
+         * property `baz` in the object `bar` in the object `foo` in the control's context.
          * 
          * @returns {plat.IRemoveListener} A function to call in order to stop observing the property.
          */
-        observe<T>(context: any, property: string, listener: (value: T, oldValue: T) => void): IRemoveListener;
+        observe<T>(listener: (value: T, oldValue: T, identifier: string) => void, identifier?: string): IRemoveListener;
         /**
          * @name observe
          * @memberof plat.Control
@@ -744,38 +744,27 @@ module plat {
          * 
          * @typeparam {any} T The type of object to observe.
          * 
-         * @param {any} context The parent object of the item we're trying to observe.
-         * @param {number} index The index that denotes the item in the context.
-         * @param {(value: T, oldValue: T) => void} listener The method called when the property is changed. This method 
+         * @param {(value: T, oldValue: T, index: number) => void} listener The method called when the property is changed. This method 
          * will have its 'this' context set to the control instance.
+         * @param {number} index? The index that denotes the item in the context if the context is an Array.
          * 
          * @returns {plat.IRemoveListener} A function to call in order to stop observing the property.
          */
-        observe<T>(context: any, index: number, listener: (value: T, oldValue: T) => void): IRemoveListener;
-        observe(context: any, property: any, listener: (value: any, oldValue: any) => void): IRemoveListener {
-            if (isNull(context)) {
+        observe<T>(listener: (value: T, oldValue: T, index: number) => void, index?: number): IRemoveListener;
+        observe(listener: (value: any, oldValue: any, identifier: any) => void, identifier?: any): IRemoveListener {
+            var control = isObject((<ui.TemplateControl>this).context) ? <ui.TemplateControl>this : this.parent;
+            if (isNull(control)) {
                 return noop;
             }
 
-            var control = isFunction((<ui.TemplateControl>(<any>this)).getAbsoluteIdentifier) ? this : <Control>this.parent;
-            if (isNull(control) || !isFunction((<ui.TemplateControl>(<any>control)).getAbsoluteIdentifier)) {
-                return noop;
-            }
-
-            var absoluteIdentifier = (<ui.TemplateControl>(<any>control)).getAbsoluteIdentifier(context);
-            if (!isEmpty(absoluteIdentifier)) {
-                absoluteIdentifier += isEmpty(property) ? '' : '.' + property;
-            } else if (absoluteIdentifier === '' && isString(property) && property.indexOf(__CONTEXT) === 0) {
-                absoluteIdentifier = property;
-            } else {
-                return noop;
-            }
-
-            var _ContextManager: observable.IContextManagerStatic = Control._ContextManager || acquire(__ContextManagerStatic),
-                contextManager = _ContextManager.getManager(Control.getRootControl(this));
+            var absoluteIdentifier = isEmpty(identifier) ? control.absoluteContextPath : control.absoluteContextPath + '.' + identifier,
+                _ContextManager: observable.IContextManagerStatic = Control._ContextManager || acquire(__ContextManagerStatic),
+                contextManager = _ContextManager.getManager(Control.getRootControl(control));
 
             return contextManager.observe(absoluteIdentifier, {
-                listener: listener.bind(this),
+                listener: (newValue: any, oldValue: any): void => {
+                    listener.call(this, newValue, oldValue, identifier);
+                },
                 uid: this.uid
             });
         }
@@ -794,17 +783,16 @@ module plat {
          * 
          * @typeparam {any} T The type of the Array to observe.
          * 
-         * @param {any} context A parent object of the array we're trying to observe.
-         * @param {string} property The property string that denotes the array in the context.
-         * @param {(ev: plat.observable.IPreArrayChangeInfo) => void} preListener The method called prior to an array-changing 
-         * method is called. This method will have its 'this' context set to the control instance.
-         * @param {(ev: plat.observable.IPostArrayChangeInfo<T>) => void} postListener The method called after an array-changing 
-         * method is called. This method will have its 'this' context set to the control instance.
+         * @param {(ev: plat.observable.IPreArrayChangeInfo, identifier: string) => void} preListener The method called 
+         * prior to an array-changing method is called. This method will have its 'this' context set to the control instance.
+         * @param {(ev: plat.observable.IPostArrayChangeInfo<T>, identifier: string) => void} postListener The method called 
+         * after an array-changing method is called. This method will have its 'this' context set to the control instance.
+         * @param {string} identifier? The property string that denotes the array in the context.
          * 
          * @returns {plat.IRemoveListener} A function to call in order to stop observing the array.
          */
-        observeArray<T>(context: any, property: string, preListener: (ev: observable.IPreArrayChangeInfo) => void,
-            postListener: (ev: observable.IPostArrayChangeInfo<T>) => void): IRemoveListener;
+        observeArray<T>(preListener: (ev: observable.IPreArrayChangeInfo, identifier: string) => void,
+            postListener: (ev: observable.IPostArrayChangeInfo<T>, identifier: string) => void, identifier?: string): IRemoveListener;
         /**
          * @name observeArray
          * @memberof plat.Control
@@ -819,33 +807,29 @@ module plat {
          * 
          * @typeparam {any} T The type of the Array to observe.
          * 
-         * @param {any} context The parent object of the array we're trying to observe.
-         * @param {number} index The index that denotes the array in the context.
-         * @param {(ev: plat.observable.IPreArrayChangeInfo) => void} preListener The method called prior to an array-changing 
-         * method is called. This method will have its 'this' context set to the control instance.
-         * @param {(ev: plat.observable.IPostArrayChangeInfo<T>) => void} postListener The method called after an array-changing 
-         * method is called. This method will have its 'this' context set to the control instance.
+         * @param {(ev: plat.observable.IPreArrayChangeInfo, index: number) => void} preListener The method called prior to an 
+         * array-changing method is called. This method will have its 'this' context set to the control instance.
+         * @param {(ev: plat.observable.IPostArrayChangeInfo<T>, index: number) => void} postListener The method called after 
+         * an array-changing method is called. This method will have its 'this' context set to the control instance.
+         * @param {number} index? The index that denotes the array directly off of context if the context is an Array.
          * 
          * @returns {plat.IRemoveListener} A function to call in order to stop observing the array.
          */
-        observeArray<T>(context: any, index: number, preListener: (ev: observable.IPreArrayChangeInfo) => void,
-            postListener: (ev: observable.IPostArrayChangeInfo<T>) => void): IRemoveListener;
-        observeArray(context: any, property: any, preListener: (ev: observable.IPreArrayChangeInfo) => void,
-            postListener: (ev: observable.IPostArrayChangeInfo<any>) => void): IRemoveListener {
-            if (isNull(context)) {
+        observeArray<T>(preListener: (ev: observable.IPreArrayChangeInfo, index: number) => void,
+            postListener: (ev: observable.IPostArrayChangeInfo<T>, index: number) => void, index?: number): IRemoveListener;
+        observeArray(preListener: (ev: observable.IPreArrayChangeInfo, identifier: any) => void,
+            postListener: (ev: observable.IPostArrayChangeInfo<any>, identifier: any) => void, identifier?: any): IRemoveListener {
+            var control = isObject((<ui.TemplateControl>this).context) ? <ui.TemplateControl>this : this.parent,
+                context = control.context;
+            if (isNull(control) || !isObject(context)) {
                 return noop;
             }
 
-            var propertyIsString = isString(property),
-                array: Array<any> = propertyIsString ? property === '' ? context :
-                    (Control._parser || <expressions.Parser>acquire(__Parser)).parse(property).evaluate(context) :
-                    context[property];
+            var identifierIsEmpty = isEmpty(identifier),
+                array: Array<any> = identifierIsEmpty ? context : isString(identifier) ?
+                    (Control._parser || <expressions.Parser>acquire(__Parser)).parse(identifier).evaluate(context) :
+                    context[identifier];
             if (!isArray(array)) {
-                return noop;
-            }
-
-            var control = isFunction((<ui.TemplateControl>this).getAbsoluteIdentifier) ? this : <Control>this.parent;
-            if (isNull(control) || !isFunction((<ui.TemplateControl>control).getAbsoluteIdentifier)) {
                 return noop;
             }
 
@@ -856,21 +840,16 @@ module plat {
                 return noop;
             }
 
-            var absoluteIdentifier = (<ui.TemplateControl>control).getAbsoluteIdentifier(context),
-                ContextManager: observable.IContextManagerStatic = Control._ContextManager || acquire(__ContextManagerStatic);
-
-            if (!isEmpty(absoluteIdentifier)) {
-                absoluteIdentifier += isEmpty(property) ? '' : '.' + property;
-            } else if (absoluteIdentifier === '' && propertyIsString && property.indexOf(__CONTEXT) === 0) {
-                absoluteIdentifier = property;
-            } else {
-                return noop;
-            }
-
-            var contextManager = ContextManager.getManager(Control.getRootControl(this)),
-                preCallback = preIsFunction ? preListener.bind(this) : null,
-                postCallback = postIsFunction ? postListener.bind(this) : null,
+            var absoluteIdentifier = identifierIsEmpty ? control.absoluteContextPath : control.absoluteContextPath + '.' + identifier,
+                ContextManager: observable.IContextManagerStatic = Control._ContextManager || acquire(__ContextManagerStatic),
+                contextManager = ContextManager.getManager(Control.getRootControl(control)),
                 uid = this.uid,
+                preCallback = preIsFunction ? (ev: observable.IPreArrayChangeInfo): void => {
+                    preListener.call(this, ev, identifier);
+                } : null,
+                postCallback = postIsFunction ? (ev: observable.IPostArrayChangeInfo<any>): void => {
+                    postListener.call(this, ev, identifier);
+                } : null,
                 removeListener = contextManager.observeArrayMutation(uid, preCallback, postCallback, absoluteIdentifier, array, null),
                 removeCallback = contextManager.observe(absoluteIdentifier, {
                     listener: (newValue: Array<any>, oldValue: Array<any>): void => {
@@ -898,12 +877,14 @@ module plat {
          * Parses an expression string and observes any associated identifiers. When an identifier
          * value changes, the listener will be called.
          * 
+         * @typeparam {any} T The type of value the expression will evaluate out to.
+         * 
+         * @param {(value: T, oldValue: T, expression: string) => void} listener The listener to call when the expression identifer values change.
          * @param {string} expression The expression string to watch for changes.
-         * @param {(value: any, oldValue: any) => void} listener The listener to call when the expression identifer values change.
          * 
          * @returns {plat.IRemoveListener} A function to call in order to stop observing the expression.
          */
-        observeExpression(expression: string, listener: (value: any, oldValue: any) => void): IRemoveListener;
+        observeExpression<T>(listener: (value: T, oldValue: T, expression: string) => void, expression: string): IRemoveListener;
         /**
          * @name observeExpression
          * @memberof plat.Control
@@ -915,13 +896,15 @@ module plat {
          * Using a {@link plat.expressions.IParsedExpression|IParsedExpression} observes any associated identifiers. When an identifier
          * value changes, the listener will be called.
          * 
+         * @typeparam {any} T The type of value the expression will evaluate out to.
+         * 
+         * @param {(value: T, oldValue: T, expression: string) => void} listener The listener to call when the expression identifer values change.
          * @param {plat.expressions.IParsedExpression} expression The expression string to watch for changes.
-         * @param {(value: any, oldValue: any) => void} listener The listener to call when the expression identifer values change.
          * 
          * @returns {plat.IRemoveListener} A function to call in order to stop observing the expression.
          */
-        observeExpression(expression: expressions.IParsedExpression, listener: (value: any, oldValue: any) => void): IRemoveListener;
-        observeExpression(expression: any, listener: (value: any, oldValue: any) => void): IRemoveListener {
+        observeExpression<T>(listener: (value: T, oldValue: T, expression: string) => void, expression: expressions.IParsedExpression): IRemoveListener;
+        observeExpression(listener: (value: any, oldValue: any, expression: string) => void, expression: any): IRemoveListener {
             if (isEmpty(expression)) {
                 return noop;
             }
@@ -939,8 +922,6 @@ module plat {
             if (isNull(control) || !isString(control.absoluteContextPath)) {
                 return noop;
             }
-
-            listener = listener.bind(this);
 
             var aliases = expression.aliases,
                 alias: string,
@@ -1008,7 +989,7 @@ module plat {
                     uid: uid,
                     listener: (): void => {
                         var value = evaluateExpression(expression, control);
-                        listener(value, oldValue);
+                        listener.call(this, value, oldValue, (<expressions.IParsedExpression>expression).expression);
                         oldValue = value;
                     }
                 }));
