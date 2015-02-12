@@ -37,7 +37,7 @@ module plat.ui {
          * The set of functions added externally that listens 
          * for attribute changes.
          */
-        private __listeners: IObject<Array<(newValue: any, oldValue?: any) => void>> = {};
+        private __listeners: IObject<Array<(newValue: any, oldValue: any) => void>> = {};
         /**
          * @name __control
          * @memberof plat.ui.Attributes
@@ -94,12 +94,12 @@ module plat.ui {
          * @description
          * Provides a way to observe an attribute for changes.
          * 
-         * @param {string} key The attribute to observe for changes (e.g. 'src').
          * @param {plat.IPropertyChangedListener} listener The listener function to be called when the attribute changes.
+         * @param {string} key The attribute to observe for changes (e.g. 'src').
          * 
          * @returns {plat.IRemoveListener} A function to stop observing this attribute for changes.
          */
-        observe(key: string, listener: (newValue: any, oldValue?: any) => void): IRemoveListener {
+        observe(listener: (newValue: any, oldValue: any) => void, key: string): IRemoveListener {
             var listeners = this.__listeners[camelCase(key)];
 
             if (isNull(listeners)) {

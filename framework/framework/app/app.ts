@@ -745,11 +745,11 @@ module plat {
          * @description
          * The method signature for {@link plat.IPropertyChangedListener|IPropertyChangedListener}.
          * 
-         * @param {any} newValue? The new value of the observed property.
-         * @param {any} oldValue? The previous value of the observed property.
+         * @param {any} newValue The new value of the observed property.
+         * @param {any} oldValue The previous value of the observed property.
          * 
          * @returns {void}
          */
-        (newValue?: any, oldValue?: any): void;
+        (newValue: any, oldValue: any): void;
     }
 }

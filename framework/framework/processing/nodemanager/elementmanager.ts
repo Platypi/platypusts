@@ -1611,7 +1611,7 @@ module plat.processing {
                     manager = AttributeManager.getInstance();
                     managers.push(manager);
                     manager.initialize(element, node, parent, controls, replace);
-                    NodeManager.observeExpressions(node.expressions, parent, manager.attributeChanged);
+                    NodeManager.observeExpressions(node.expressions, parent, manager.attributeChanged.bind(manager));
                 }
 
                 if (!isNull(control)) {

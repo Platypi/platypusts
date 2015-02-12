@@ -1,8 +1,14 @@
 ﻿module plat.processing {
     export class AttributeManager {
         static getInstance() {
-            return new AttributeManager();
+            var manager = new AttributeManager();
+            manager._NodeManager = <INodeManagerStatic>acquire(__NodeManagerStatic);
+            manager._markupRegex = (<expressions.Regex>acquire(__Regex)).markupRegex;
+            return manager;
         }
+
+        protected _NodeManager: INodeManagerStatic;
+        protected _markupRegex: RegExp;
 
         element: HTMLElement;
         node: INode;
@@ -21,11 +27,10 @@
             this.replace = replace;
             
             if (node.nodeName !== 'class') {
-                this.attributeChanged = this.attributeChanged2.bind(this);
+                this.attributeChanged = this.anyAttributeChanged;
             } else {
+                this.attributeChanged = this.classAttributeChanged;
                 this.bindingExpressions = this.getBindingExpressions(node.expressions);
-                var first = true;
-                this.attributeChanged = this.classAttributeChanged.bind(this);
             }
         }
 
@@ -38,40 +43,49 @@
         classAttributeChanged(): void {
             var node = this.node,
                 attr: Attr = <Attr>node.node,
-                value = NodeManager.build(this.bindingExpressions, this.parent),
+                value = this._NodeManager.build(this.bindingExpressions, this.parent),
                 classes = value.split(/\s/),
                 last = this.lastClasses,
-                element: HTMLElement = this.element;
+                element: HTMLElement = this.element,
+                c: string,
+                length: number,
+                i: number;
 
-            if (NodeManager.hasMarkup(attr.nodeValue)) {
-                attr.nodeValue = attr.nodeValue.replace((<any>NodeManager)._markupRegex, '');
+            if (this._NodeManager.hasMarkup(attr.nodeValue)) {
+                attr.nodeValue = attr.nodeValue.replace(this._markupRegex, '');
             }
 
-            forEach((c: string) => {
-                last[c] = true;
-            }, classes);
+            length = classes.length;
 
-            forEach((keep: boolean, c: string) => {
-                if (keep) {
+            for (i = 0; i < length; ++i) {
+                last[classes[i]] = true;
+            }
+
+            classes = Object.keys(last);
+            length = classes.length;
+
+            for (i = 0; i < length; ++i) {
+                c = classes[i];
+                if (last[c]) {
                     addClass(element, c);
                     last[c] = false;
                 } else {
                     deleteProperty(last, c);
                     removeClass(element, c);
                 }
-            }, last);
+            }
 
             value = attr.nodeValue;
 
             this.notifyAttributes(node.nodeName, value);
         }
 
-        attributeChanged2(): void {
+        anyAttributeChanged(): void {
             var controls = this.controls,
                 node = this.node,
                 length = controls.length,
                 key = camelCase(node.nodeName),
-                value = NodeManager.build(node.expressions, this.parent),
+                value = this._NodeManager.build(node.expressions, this.parent),
                 attributes: ui.Attributes;
 
             this.notifyAttributes(key, value);
@@ -81,7 +95,7 @@
             }
         }
 
-        notifyAttributes(key: string, value: any) {
+        notifyAttributes(key: string, value: any): void {
             var controls = this.controls,
                 length = controls.length,
                 attributes: ui.Attributes,

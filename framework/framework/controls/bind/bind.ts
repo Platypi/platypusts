@@ -594,13 +594,13 @@ module plat.controls {
          * and input[type=button], and select
          * 
          * @param {any} newValue The new value to set
-         * @param {any} oldValue? The previously bound value
+         * @param {any} oldValue The previously bound value
          * @param {boolean} firstTime? The context is being evaluated for the first time and 
          * should thus change the property if null
          * 
          * @returns {void}
          */
-        protected _setText(newValue: any, oldValue?: any, firstTime?: boolean): void {
+        protected _setText(newValue: any, oldValue: any, firstTime?: boolean): void {
             if (this.__isSelf) {
                 return;
             }
@@ -630,13 +630,13 @@ module plat.controls {
          * Setter for input[type=range]
          * 
          * @param {any} newValue The new value to set
-         * @param {any} oldValue? The previously bound value
+         * @param {any} oldValue The previously bound value
          * @param {boolean} firstTime? The context is being evaluated for the first time and 
          * should thus change the property if null
          * 
          * @returns {void}
          */
-        protected _setRange(newValue: any, oldValue?: any, firstTime?: boolean): void {
+        protected _setRange(newValue: any, oldValue: any, firstTime?: boolean): void {
             if (this.__isSelf) {
                 return;
             }
@@ -666,13 +666,13 @@ module plat.controls {
          * Setter for input[type=checkbox]
          * 
          * @param {any} newValue The new value to set
-         * @param {any} oldValue? The previously bound value
+         * @param {any} oldValue The previously bound value
          * @param {boolean} firstTime? The context is being evaluated for the first time and 
          * should thus change the property if null
          * 
          * @returns {void}
          */
-        protected _setChecked(newValue: any, oldValue?: any, firstTime?: boolean): void {
+        protected _setChecked(newValue: any, oldValue: any, firstTime?: boolean): void {
             if (this.__isSelf) {
                 return;
             } else if (!isBoolean(newValue)) {
@@ -721,13 +721,13 @@ module plat.controls {
          * Setter for select
          * 
          * @param {any} newValue The new value to set
-         * @param {any} oldValue? The previously bound value
+         * @param {any} oldValue The previously bound value
          * @param {boolean} firstTime? The context is being evaluated for the first time and 
          * should thus change the property if null
          * 
          * @returns {void}
          */
-        protected _setSelectedIndex(newValue: any, oldValue?: any, firstTime?: boolean): void {
+        protected _setSelectedIndex(newValue: any, oldValue: any, firstTime?: boolean): void {
             if (this.__isSelf) {
                 return;
             } else if (firstTime === true && this._checkAsynchronousSelect()) {
@@ -788,13 +788,13 @@ module plat.controls {
          * Setter for select-multiple
          * 
          * @param {any} newValue The new value to set
-         * @param {any} oldValue? The previously bound value
+         * @param {any} oldValue The previously bound value
          * @param {boolean} firstTime? The context is being evaluated for the first time and 
          * should thus change the property if null
          * 
          * @returns {void}
          */
-        protected _setSelectedIndices(newValue: any, oldValue?: any, firstTime?: boolean): void {
+        protected _setSelectedIndices(newValue: any, oldValue: any, firstTime?: boolean): void {
             if (this.__isSelf) {
                 return;
             } else if (firstTime === true && this._checkAsynchronousSelect()) {
@@ -1132,13 +1132,13 @@ module plat.controls {
          * Sets the value on a {@link plat.ui.BindablePropertyControl|BindablePropertyControl}.
          * 
          * @param {any} newValue The new value to set
-         * @param {any} oldValue? The previously bound value
+         * @param {any} oldValue The previously bound value
          * @param {boolean} firstTime? The context is being evaluated for the first time and 
          * should thus change the property if null
          * 
          * @returns {void}
          */
-        protected _setBindableProperty(newValue: any, oldValue?: any, firstTime?: boolean): void {
+        protected _setBindableProperty(newValue: any, oldValue: any, firstTime?: boolean): void {
             if (this.__isSelf || newValue === oldValue) {
                 return;
             }

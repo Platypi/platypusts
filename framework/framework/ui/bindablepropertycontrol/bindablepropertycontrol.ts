@@ -25,7 +25,7 @@
          * The set of functions added externally that listens 
          * for property changes.
          */
-        protected _listeners: Array<(newValue: any, oldValue?: any) => void> = [];
+        protected _listeners: Array<(newValue: any, oldValue: any) => void> = [];
 
         /**
          * @name observeProperty
@@ -40,7 +40,7 @@
          * 
          * @returns {plat.IRemoveListener} A function to stop listening for property changes.
          */
-        observeProperty(listener: (newValue: any, oldValue?: any) => void): IRemoveListener {
+        observeProperty(listener: (newValue: any, oldValue: any) => void): IRemoveListener {
             var listeners = this._listeners;
 
             listeners.push(listener);
@@ -67,12 +67,12 @@
          * property has changed.
          * 
          * @param {any} newValue The new value of the bindable property.
-         * @param {any} oldValue? The old value of the bindable property.
+         * @param {any} oldValue The old value of the bindable property.
          * @param {boolean} firstTime? A boolean signifying whether this is the first set of the property.
          * 
          * @returns {void}
          */
-        setProperty(newValue: any, oldValue?: any, firstTime?: boolean): void { }
+        setProperty(newValue: any, oldValue: any, firstTime?: boolean): void { }
 
         /**
          * @name propertyChanged
@@ -84,11 +84,11 @@
          * A function that signifies when this control's bindable property has changed.
          * 
          * @param {any} newValue The new value of the property after the change.
-         * @param {any} oldValue? The old value of the property prior to the change.
+         * @param {any} oldValue The old value of the property prior to the change.
          * 
          * @returns {void}
          */
-        propertyChanged(newValue: any, oldValue?: any): void {
+        propertyChanged(newValue: any, oldValue: any): void {
             if (newValue === oldValue) {
                 return;
             }

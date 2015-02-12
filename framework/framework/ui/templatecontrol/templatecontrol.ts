@@ -958,11 +958,11 @@ module plat.ui {
          * is changed by an ancestor control.
          * 
          * @param {any} newValue? The new value of the context.
-         * @param {any} oldValue? The old value of the context.
+         * @param {any} oldValue The old value of the context.
          * 
          * @returns {void}
          */
-        contextChanged(newValue?: any, oldValue?: any): void { }
+        contextChanged(newValue: any, oldValue: any): void { }
 
         /**
          * @name setTemplate
