@@ -5043,6 +5043,32 @@ declare module plat {
               */
             appendChildren(nodeList: NodeList, root?: Node): Node;
             /**
+              * Takes a Node Array, clones them, and creates a DocumentFragment and adds the nodes to the Fragment.
+              * @param {Array<Node>} nodeList A Node Array to be appended to the DocumentFragment
+              */
+            cloneChildren(nodeList: Array<Node>): DocumentFragment;
+            /**
+              * Takes a NodeList, clones it, and creates a DocumentFragment and adds the NodeList to the Fragment.
+              * @param {NodeList} nodeList A NodeList to be appended to the DocumentFragment
+              */
+            cloneChildren(nodeList: NodeList): DocumentFragment;
+            /**
+              * Takes a Node Array, clones the nodes, and either adds it to the passed in Node,
+              * or creates a DocumentFragment and adds the nodes to the
+              * Fragment.
+              * @param {NodeList} nodeList A NodeList to be appended to the root/DocumentFragment.
+              * @param {Node} root? An optional Node to append the nodeList.
+              */
+            cloneChildren(nodeList: Array<Node>, root?: Node): Node;
+            /**
+              * Takes a NodeList, clones the nodes, and either adds it to the passed in Node,
+              * or creates a DocumentFragment and adds the NodeList to the
+              * Fragment.
+              * @param {NodeList} nodeList A NodeList to be appended to the root/DocumentFragment.
+              * @param {Node} root? An optional Node to append the nodeList.
+              */
+            cloneChildren(nodeList: NodeList, root?: Node): Node;
+            /**
               * Clears a DOM Node by removing all of its childNodes.
               * @param {Node} node The DOM Node to clear.
               */
@@ -6769,6 +6795,10 @@ declare module plat {
                   */
                 protected _compat: Compat;
                 /**
+                  * Reference to the IPromise injectable.
+                  */
+                protected _Promise: async.IPromise;
+                /**
                   * All elements currently being animated.
                   */
                 protected _elements: IObject<IAnimatedElement>;
@@ -6780,26 +6810,317 @@ declare module plat {
                   */
                 animate(element: Element, key: string, options?: any): IAnimatingThenable;
                 /**
+                  * Animates the element with the defined animation denoted by the key.
+                  * @param {DocumentFragment} elements The DocumentFragment whose childNodes are to be animated.
+                  * @param {string} key The identifier specifying the type of animation.
+                  * @param {any} options? Specified options for the animation.
+                  */
+                animate(element: DocumentFragment, key: string, options?: any): IAnimatingThenable;
+                /**
+                  * Animates the element with the defined animation denoted by the key.
+                  * @param {NodeList} elements The list of Nodes to be animated.
+                  * @param {string} key The identifier specifying the type of animation.
+                  * @param {any} options? Specified options for the animation.
+                  */
+                animate(elements: NodeList, key: string, options?: any): IAnimatingThenable;
+                /**
+                  * Animates the element with the defined animation denoted by the key.
+                  * @param {Array<Node>} elements The Array of Nodes to be animated. All nodes in the Array must have
+                  * the same parent, otherwise the animation will not function correctly.
+                  * @param {string} key The identifier specifying the type of animation.
+                  * @param {any} options? Specified options for the animation.
+                  */
+                animate(elements: Array<Node>, key: string, options?: any): IAnimatingThenable;
+                /**
+                  * Adds the element to the DOM and animates it with the defined animation denoted by the key.
+                  * @param {Element} element The Element to be animated.
+                  * @param {string} key The identifier specifying the type of animation.
+                  * @param {Element} parent The parent element used for adding the element to the DOM.
+                  * @param {Node} refChild? An optional reference node used for placing the element into the DOM
+                  * just before itself using the insertBefore function. If this argument is specified, the parent argument
+                  * is ignored.
+                  * @param {any} options? Specified options for the animation.
+                  * added to the DOM and the animation is finished.
+                  */
+                enter(element: Element, key: string, parent: Element, refChild?: Node, options?: any): IAnimatingThenable;
+                /**
+                  * Adds the elements to the DOM and animates them with the defined animation denoted by the key.
+                  * @param {DocumentFragment} elements The DocumentFragment whose childNodes are to be animated.
+                  * @param {string} key The identifier specifying the type of animation.
+                  * @param {Element} parent The parent element used for adding the elements to the DOM.
+                  * @param {Node} refChild? An optional reference node used for placing the element into the DOM
+                  * just before itself using the insertBefore function. If this argument is specified, the parent argument
+                  * is ignored.
+                  * @param {any} options? Specified options for the animation.
+                  * added to the DOM and the animation is finished.
+                  */
+                enter(element: DocumentFragment, key: string, parent: Element, refChild?: Node, options?: any): IAnimatingThenable;
+                /**
+                  * Adds the elements to the DOM and animates them with the defined animation denoted by the key.
+                  * @param {NodeList} elements The list of Nodes to be animated.
+                  * @param {string} key The identifier specifying the type of animation.
+                  * @param {Element} parent The parent element used for adding the elements to the DOM.
+                  * @param {Node} refChild? An optional reference node used for placing the element into the DOM
+                  * just before itself using the insertBefore function. If this argument is specified, the parent argument
+                  * is ignored.
+                  * @param {any} options? Specified options for the animation.
+                  * added to the DOM and the animation is finished.
+                  */
+                enter(elements: NodeList, key: string, parent: Element, refChild?: Node, options?: any): IAnimatingThenable;
+                /**
+                  * Adds the elements to the DOM and animates them with the defined animation denoted by the key.
+                  * @param {Array<Node>} elements The Array of Nodes to be animated. All nodes in the Array must have
+                  * the same parent, otherwise the animation will not function correctly.
+                  * @param {string} key The identifier specifying the type of animation.
+                  * @param {Element} parent The parent element used for adding the elements to the DOM.
+                  * @param {Node} refChild? An optional reference node used for placing the element into the DOM
+                  * just before itself using the insertBefore function. If this argument is specified, the parent argument
+                  * is ignored.
+                  * @param {any} options? Specified options for the animation.
+                  * added to the DOM and the animation is finished.
+                  */
+                enter(elements: Array<Node>, key: string, parent: Element, refChild?: Node, options?: any): IAnimatingThenable;
+                /**
+                  * Animates the element with the defined animation denoted by the key and removes it from the DOM when
+                  * the animation is finished.
+                  * @param {Element} element The Element to be animated.
+                  * @param {string} key The identifier specifying the type of animation.
+                  * @param {Element} parent The parent element used for removing the element from the DOM.
+                  * @param {any} options? Specified options for the animation.
+                  * and the element is removed from the DOM.
+                  */
+                leave(element: Element, key: string, parent: Element, options?: any): IAnimatingThenable;
+                /**
+                  * Animates the elements with the defined animation denoted by the key and removes them from the DOM when
+                  * the animation is finished.
+                  * @param {DocumentFragment} elements The DocumentFragment whose childNodes are to be animated.
+                  * @param {string} key The identifier specifying the type of animation.
+                  * @param {Element} parent The parent element used for removing the elements from the DOM.
+                  * @param {any} options? Specified options for the animation.
+                  * and the elements are removed from the DOM.
+                  */
+                leave(element: DocumentFragment, key: string, parent: Element, options?: any): IAnimatingThenable;
+                /**
+                  * Animates the elements with the defined animation denoted by the key and removes them from the DOM when
+                  * the animation is finished.
+                  * @param {NodeList} elements The list of Nodes to be animated.
+                  * @param {string} key The identifier specifying the type of animation.
+                  * @param {Element} parent The parent element used for removing the elements from the DOM.
+                  * @param {any} options? Specified options for the animation.
+                  * and the elements are removed from the DOM.
+                  */
+                leave(elements: NodeList, key: string, parent: Element, options?: any): IAnimatingThenable;
+                /**
+                  * Animates the elements with the defined animation denoted by the key and removes them from the DOM when
+                  * the animation is finished.
+                  * @param {Array<Node>} elements The Array of Nodes to be animated. All nodes in the Array must have
+                  * the same parent, otherwise the animation will not function correctly.
+                  * @param {string} key The identifier specifying the type of animation.
+                  * @param {Element} parent The parent element used for removing the elements from the DOM.
+                  * @param {any} options? Specified options for the animation.
+                  * and the elements are removed from the DOM.
+                  */
+                leave(elements: Array<Node>, key: string, parent: Element, options?: any): IAnimatingThenable;
+                /**
+                  * Removes the element from the DOM based on the parent argument, initializes it, adds it back to the
+                  * DOM using either the refChild or the parent, and animates it with the defined animation denoted by the key.
+                  * @param {Element} element The Element to be animated.
+                  * @param {string} key The identifier specifying the type of animation.
+                  * @param {Element} parent The parent element used for removing the element from the DOM prior to initialization.
+                  * @param {Node} refChild? An optional reference node used for placing the element into the DOM
+                  * just before itself using the insertBefore function. If this argument is specified, the parent argument
+                  * is ignored during DOM insertion.
+                  * @param {any} options? Specified options for the animation.
+                  * animation is finished.
+                  */
+                move(element: Element, key: string, parent: Element, refChild?: Node, options?: any): IAnimatingThenable;
+                /**
+                  * Removes the elements from the DOM based on the parent argument, initializes them, adds them back to the
+                  * DOM using either the refChild or the parent, and animates them with the defined animation denoted by the key.
+                  * @param {DocumentFragment} elements The DocumentFragment whose childNodes are to be animated.
+                  * @param {string} key The identifier specifying the type of animation.
+                  * @param {Element} parent The parent element used for removing the element from the DOM prior to initialization.
+                  * @param {Node} refChild? An optional reference node used for placing the element into the DOM
+                  * just before itself using the insertBefore function. If this argument is specified, the parent argument
+                  * is ignored during DOM insertion.
+                  * @param {any} options? Specified options for the animation.
+                  * animation is finished.
+                  */
+                move(element: DocumentFragment, key: string, parent: Element, refChild?: Node, options?: any): IAnimatingThenable;
+                /**
+                  * Removes the elements from the DOM based on the parent argument, initializes them, adds them back to the
+                  * DOM using either the refChild or the parent, and animates them with the defined animation denoted by the key.
+                  * @param {NodeList} elements The list of Nodes to be animated.
+                  * @param {string} key The identifier specifying the type of animation.
+                  * @param {Element} parent The parent element used for removing the element from the DOM prior to initialization.
+                  * @param {Node} refChild? An optional reference node used for placing the element into the DOM
+                  * just before itself using the insertBefore function. If this argument is specified, the parent argument
+                  * is ignored during DOM insertion.
+                  * @param {any} options? Specified options for the animation.
+                  * animation is finished.
+                  */
+                move(elements: NodeList, key: string, parent: Element, refChild?: Node, options?: any): IAnimatingThenable;
+                /**
+                  * Removes the elements from the DOM based on the parent argument, initializes them, adds them back to the
+                  * DOM using either the refChild or the parent, and animates them with the defined animation denoted by the key.
+                  * @param {Array<Node>} elements The Array of Nodes to be animated. All nodes in the Array must have
+                  * the same parent, otherwise the animation will not function correctly.
+                  * @param {string} key The identifier specifying the type of animation.
+                  * @param {Element} parent The parent element used for removing the element from the DOM prior to initialization.
+                  * @param {Node} refChild? An optional reference node used for placing the element into the DOM
+                  * just before itself using the insertBefore function. If this argument is specified, the parent argument
+                  * is ignored during DOM insertion.
+                  * @param {any} options? Specified options for the animation.
+                  * animation is finished.
+                  */
+                move(elements: Array<Node>, key: string, parent: Element, refChild?: Node, options?: any): IAnimatingThenable;
+                /**
+                  * Shows the element just after initialization by removing the `plat-hide` attribute and animates them
+                  * with the defined animation denoted by the key.
+                  * @param {Element} element The Element to be animated.
+                  * @param {string} key The identifier specifying the type of animation.
+                  * @param {any} options? Specified options for the animation.
+                  */
+                show(element: Element, key: string, options?: any): IAnimatingThenable;
+                /**
+                  * Shows the elements just after initialization by removing the `plat-hide` attribute and animates them
+                  * with the defined animation denoted by the key.
+                  * @param {DocumentFragment} elements The DocumentFragment whose childNodes are to be animated.
+                  * @param {string} key The identifier specifying the type of animation.
+                  * @param {any} options? Specified options for the animation.
+                  */
+                show(element: DocumentFragment, key: string, options?: any): IAnimatingThenable;
+                /**
+                  * Shows the elements just after initialization by removing the `plat-hide` attribute and animates them
+                  * with the defined animation denoted by the key.
+                  * @param {NodeList} elements The list of Nodes to be animated.
+                  * @param {string} key The identifier specifying the type of animation.
+                  * @param {any} options? Specified options for the animation.
+                  */
+                show(elements: NodeList, key: string, options?: any): IAnimatingThenable;
+                /**
+                  * Shows the elements just after initialization by removing the `plat-hide` attribute and animates them
+                  * with the defined animation denoted by the key.
+                  * @param {Array<Node>} elements The Array of Nodes to be animated. All nodes in the Array must have
+                  * the same parent, otherwise the animation will not function correctly.
+                  * @param {string} key The identifier specifying the type of animation.
+                  * @param {any} options? Specified options for the animation.
+                  */
+                show(elements: Array<Node>, key: string, options?: any): IAnimatingThenable;
+                /**
+                  * Animates the element with the defined animation denoted by the key and hides them by adding the
+                  * `plat-hide` attribute after the animation is finished.
+                  * @param {Element} element The Element to be animated.
+                  * @param {string} key The identifier specifying the type of animation.
+                  * @param {any} options? Specified options for the animation.
+                  */
+                hide(element: Element, key: string, options?: any): IAnimatingThenable;
+                /**
+                  * Animates the elements with the defined animation denoted by the key and hides them by adding the
+                  * `plat-hide` attribute after the animation is finished.
+                  * @param {DocumentFragment} elements The DocumentFragment whose childNodes are to be animated.
+                  * @param {string} key The identifier specifying the type of animation.
+                  * @param {any} options? Specified options for the animation.
+                  */
+                hide(element: DocumentFragment, key: string, options?: any): IAnimatingThenable;
+                /**
+                  * Animates the elements with the defined animation denoted by the key and hides them by adding the
+                  * `plat-hide` attribute after the animation is finished.
+                  * @param {NodeList} elements The list of Nodes to be animated.
+                  * @param {string} key The identifier specifying the type of animation.
+                  * @param {any} options? Specified options for the animation.
+                  */
+                hide(elements: NodeList, key: string, options?: any): IAnimatingThenable;
+                /**
+                  * Animates the elements with the defined animation denoted by the key and hides them by adding the
+                  * `plat-hide` attribute after the animation is finished.
+                  * @param {Array<Node>} elements The Array of Nodes to be animated. All nodes in the Array must have
+                  * the same parent, otherwise the animation will not function correctly.
+                  * @param {string} key The identifier specifying the type of animation.
+                  * @param {any} options? Specified options for the animation.
+                  */
+                hide(elements: Array<Node>, key: string, options?: any): IAnimatingThenable;
+                all(promises: Array<IAnimationThenable<any>>): IAnimationThenable<void>;
+                /**
                   * Immediately resolves an empty AnimationPromise.
                   * AnimationPromise.
                   */
                 resolve(): IAnimatingThenable;
                 /**
-                  * Checks whether or not any parent elements are animating.
-                  * @param {Node} element The element whose parents we need to check.
+                  * Animates the passed in elements with the given key and handles special animation functionality.
+                  * @param {any} elements The Nodes to be animated. All nodes in the Array must have
+                  * the same parent, otherwise the animation will not function correctly.
+                  * @param {string} key The identifier specifying the type of animation.
+                  * @param {any} options? Specified options for the animation.
+                  * @param {plat.ui.animations.IAnimationFunction} functionality An object containing detailed information about
+                  * special animation functionality.
                   */
-                private __parentIsAnimating(element);
+                protected _animate(elements: any, key: string, options: any, functionality: IAnimationFunction): IAnimatingThenable;
                 /**
-                  * Sets an new, unique animation ID and denotes the element as currently being animated.
-                  * @param {Node} element The element being animated.
-                  * @param {plat.ui.animations.BaseAnimation} animationInstance The animation instance doing the animating.
+                  * Handles different specialized functionalities immediately before the init portion of the animation cycle.
+                  * @param {Array<Node>} nodes All the nodes being animated.
+                  * @param {Array<Element>} elementNodes The animatable nodes being animated (only of type Node.ELEMENT_NODE).
+                  * @param {plat.ui.animations.IAnimationFunction} functionality The specialized animation function attributes.
                   */
-                private __setAnimationId(element, animationInstance);
+                protected _handlePreInitFunctionality(nodes: Array<Node>, elementNodes: Array<Element>, functionality: IAnimationFunction): void;
+                /**
+                  * Handles different specialized functionalities immediately after the init portion of the animation cycle.
+                  * @param {Array<Node>} nodes All the nodes being animated.
+                  * @param {Array<Element>} elementNodes The animatable nodes being animated (only of type Node.ELEMENT_NODE).
+                  * @param {plat.ui.animations.IAnimationFunction} functionality The specialized animation function attributes.
+                  */
+                protected _handlePostInitFunctionality(nodes: Array<Node>, elementNodes: Array<Element>, functionality: IAnimationFunction): void;
+                /**
+                  * Handles different specialized functionalities at the end portion of the animation cycle.
+                  * @param {Array<Node>} nodes All the nodes being animated.
+                  * @param {Array<Element>} elementNodes The animatable nodes being animated (only of type Node.ELEMENT_NODE).
+                  * @param {plat.ui.animations.IAnimationFunction} functionality The specialized animation function attributes.
+                  */
+                protected _handleEndFunctionality(nodes: Array<Node>, elementNodes: Array<Element>, functionality: IAnimationFunction): void;
+                /**
+                  * Checks whether or not any parent elements are animating.
+                  * @param {Array<Element>} elements The Elements whose parents we need to check.
+                  */
+                private __isParentAnimating(elements);
+                /**
+                  * Sets an new, unique animation ID and denotes the elements as currently being animated.
+                  * @param {Array<Element>} elements The Array of Elements being animated.
+                  * @param {Array<plat.ui.animations.BaseAnimation>} animationInstances The animation instances doing the animating.
+                  */
+                private __setAnimationId(elements, animationInstances);
                 /**
                   * Forces child nodes of an animating element to stop animating.
                   * @param {Element} element The element being animated.
                   */
-                private __stopChildAnimations(element);
+                private __stopChildAnimations(elements);
+                /**
+                  * Sifts through an Array of Nodes and finds all animatable Elements and creates
+                  * BaseAnimations for them.
+                  * @param {any} elements The Array of Nodes, DocumentFragment, or element to sift through.
+                  * @param {plat.dependency.Injector<plat.ui.animations.BaseAnimation>} animationInjector The injector to instantiate
+                  * BaseAnimations.
+                  * @param {Array<Element>} elementNodes The Array of only animatable elements.
+                  * @param {Array<plat.ui.animations.BaseAnimation>>} animationInstances An empty Array of animation instances to add to.
+                  */
+                private __constructAnimatableElements(elements, animationInjector, elementNodes, animationInstances);
+            }
+            /**
+              * Describes an object representing a special animation functionality.
+              */
+            interface IAnimationFunction {
+                /**
+                  * The special functionality key.
+                  */
+                key: string;
+                /**
+                  * The parent Element of the Element being animated.
+                  */
+                parent?: Element;
+                /**
+                  * The reference child for placing the animated Element just before
+                  * it in the DOM.
+                  */
+                refChild?: Node;
             }
             /**
               * Describes an object representing a currenlty animated element.
@@ -6827,20 +7148,20 @@ declare module plat {
                 (): IAnimationThenable<void>;
             }
             /**
-              * Describes a type of Promise that can be optionally cancelled and/or disposed of.
+              * Describes a type of Promise that can be optionally cancelled.
               * Further, in the case where it may have a parent that is animating (which will cause it to immediately cancel and fulfill
               * itself, it resolves with a IGetAnimatingThenable for acccessing
               * the IAnimationThenable of the animating parent element.
               */
-            class AnimationPromise extends async.Promise<IGetAnimatingThenable> implements IAnimatingThenable {
+            class AnimationPromise<> extends async.Promise<IGetAnimatingThenable> implements IAnimationEssentials, IAnimatingThenable {
                 /**
                   * Reference to the IPromise injectable.
                   */
                 protected _Promise: async.IPromise;
                 /**
-                  * The animation instance to cancel if needed.
+                  * An Array of animation instances linked to this promise.
                   */
-                private __animationInstance;
+                private __animationInstances;
                 /**
                   * The constructor method for the {@link plat.async.AjaxPromise}.
                   * @param {(resolve: (value?: plat.ui.animations.IParentAnimationFn) => any) => void} resolveFunction A resolve function
@@ -6860,6 +7181,11 @@ declare module plat {
                   */
                 initialize(instance: BaseAnimation): void;
                 /**
+                  * Initializes the promise, providing it with the {@link plat.ui.animations.BaseAnimation} instance.
+                  * @param {Array<plat.ui.animations.BaseAnimation>} instances The animation instances for this promise.
+                  */
+                initialize(instances: Array<BaseAnimation>): void;
+                /**
                   * Fires the pause method on the animation instance.
                   * indicates that the animation has been paused.
                   */
@@ -6874,33 +7200,28 @@ declare module plat {
                   */
                 cancel(): IAnimatingThenable;
                 /**
-                  * A method to dispose the associated animation in order to remove any end states
-                  * as determined by the animation class itself.
-                  */
-                dispose(): IAnimatingThenable;
-                /**
                   * Takes in two methods, called when/if the promise fulfills.
                   * next then method in the promise chain.
-                  * @param {(success: plat.ui.animations.IParentAnimationFn) => U} onFulfilled A method called when/if the promise fulfills.
+                  * @param {(success: plat.ui.animations.IGetAnimatingThenable) => U} onFulfilled A method called when/if the promise fulfills.
                   * If undefined the next onFulfilled method in the promise chain will be called.
                   */
-                then<U>(onFulfilled: (success: IGetAnimatingThenable) => U): IAnimationThenable<U>;
+                then<U>(onFulfilled: (success?: IGetAnimatingThenable) => U): IAnimationThenable<U>;
                 /**
                   * Takes in two methods, called when/if the promise fulfills.
                   * next then method in the promise chain.
-                  * @param {(success: plat.ui.animations.IParentAnimationFn) => plat.ui.animations.IAnimationThenable<U>} onFulfilled
+                  * @param {(success: plat.ui.animations.IGetAnimatingThenable) => plat.ui.animations.IAnimationThenable<U>} onFulfilled
                   * A method called when/if the promise fulfills.
                   * If undefined the next onFulfilled method in the promise chain will be called.
                   */
-                then<U>(onFulfilled: (success: IGetAnimatingThenable) => IAnimationThenable<U>): IAnimationThenable<U>;
+                then<U>(onFulfilled: (success?: IGetAnimatingThenable) => IAnimationThenable<U>): IAnimationThenable<U>;
                 /**
                   * Takes in two methods, called when/if the promise fulfills.
                   * next then method in the promise chain.
-                  * @param {(success: plat.ui.animations.IParentAnimationFn) => plat.async.IThenable<U>} onFulfilled
+                  * @param {(success: plat.ui.animations.IGetAnimatingThenable) => plat.async.IThenable<U>} onFulfilled
                   * A method called when/if the promise fulfills.
                   * If undefined the next onFulfilled method in the promise chain will be called.
                   */
-                then<U>(onFulfilled: (success: IGetAnimatingThenable) => async.IThenable<U>): IAnimationThenable<U>;
+                then<U>(onFulfilled: (success?: IGetAnimatingThenable) => async.IThenable<U>): IAnimationThenable<U>;
                 /**
                   * A wrapper method for Promise.then(undefined, onRejected);
                   * @param {(error: any) => plat.ui.animations.IAnimationThenable<U>} onRejected A method called when/if the promise rejects.
@@ -6918,7 +7239,7 @@ declare module plat {
               * Describes a chaining function that fulfills when the previous link is complete and is
               * able to be caught in the case of an error.
               */
-            interface IAnimationThenable<R> extends async.IThenable<R> {
+            interface IAnimationThenable<R> extends async.IThenable<R>, IAnimationEssentials {
                 /**
                   * Initializes the promise, providing it with the {@link plat.ui.animations.BaseAnimation} instance.
                   * @param {plat.ui.animations.BaseAnimation} instance The animation instance for this promise.
@@ -6938,11 +7259,6 @@ declare module plat {
                   * A method to cancel the associated animation.
                   */
                 cancel(): IAnimationThenable<R>;
-                /**
-                  * A method to dispose the associated animation in order to remove any end states
-                  * as determined by the animation class itself.
-                  */
-                dispose(): IAnimationThenable<R>;
                 /**
                   * Takes in two methods, called when/if the promise fulfills/rejects.
                   * @param {(success: R) => plat.ui.animations.IAnimationThenable<U>} onFulfilled A method called when/if the promise fulills.
@@ -6990,7 +7306,7 @@ declare module plat {
             }
             /**
               * Describes a type of IPromise that resolves when an animation is
-              * finished. It can be optionally cancelled and/or disposed of. Further, in the case where it may have
+              * finished. It can be optionally cancelled. Further, in the case where it may have
               * a parent that is animating (which will cause it to immediately cancel and fulfill itself, it resolves
               * with a IGetAnimatingThenable for acccessing
               * the IAnimationThenable of the animating parent element.
@@ -6998,9 +7314,32 @@ declare module plat {
             interface IAnimatingThenable extends IAnimationThenable<IGetAnimatingThenable> {
             }
             /**
+              * Describes base functional requirements for externally referenced animations.
+              */
+            interface IAnimationEssentials {
+                /**
+                  * Fires the pause method on the animation instances.
+                  * indicates that the animation has been paused.
+                  */
+                pause(): async.IThenable<void>;
+                /**
+                  * Fires the resume method on the animation instances.
+                  * indicates that the animation has resumed.
+                  */
+                resume(): async.IThenable<void>;
+                /**
+                  * A method to cancel the associated animations.
+                  */
+                cancel(): any;
+                /**
+                  * A method to denote the end of an animation.
+                  */
+                end?(): void;
+            }
+            /**
               * A class representing a single animation for a single element.
               */
-            class BaseAnimation {
+            class BaseAnimation implements IAnimationEssentials {
                 protected static _inject: any;
                 /**
                   * Reference to the IExceptionStatic injectable.
@@ -7058,11 +7397,6 @@ declare module plat {
                   * A function to be called to let it be known the animation is being cancelled.
                   */
                 cancel(): void;
-                /**
-                  * A function for reverting any modifications or changes that may have been made as a
-                  * result of this animation.
-                  */
-                dispose(): void;
                 /**
                   * Adds an event listener of the specified type to this animation's element. Removal of the
                   * event is handled automatically upon animation end.
@@ -7160,15 +7494,9 @@ declare module plat {
                 resume(): async.IThenable<void>;
                 /**
                   * A function to be called to let it be known the animation is being cancelled.
-                  * Replaces the animation class with the animation class and "-end" appended to it
-                  * to allow it to jump to final state.
+                  * Removes the animation class and the animation "-init" class.
                   */
                 cancel(): void;
-                /**
-                  * A function to remove the end state from the element. Can be useful when combining
-                  * multiple types of animations on the same element.
-                  */
-                dispose(): void;
             }
             /**
               * An interface describing the options for SimpleCssAnimation.
@@ -7210,6 +7538,15 @@ declare module plat {
               * An animation control that causes an element to leave as defined by the included CSS.
               */
             class Leave extends SimpleCssAnimation {
+                /**
+                  * The class name added to the leaving element.
+                  */
+                className: string;
+            }
+            /**
+              * An animation control that causes an element to move as defined by the included CSS.
+              */
+            class Move extends SimpleCssAnimation {
                 /**
                   * The class name added to the leaving element.
                   */
@@ -7268,10 +7605,6 @@ declare module plat {
                   * A function to be called to let it be known the animation is being cancelled.
                   */
                 cancel(): void;
-                /**
-                  * A function to be called to reset the last transition to its previous state.
-                  */
-                dispose(): void;
                 /**
                   * A handler for the "transitionend" event. Will clean up the class and resolve the
                   * promise when necessary based on the options that were input.
@@ -7340,10 +7673,6 @@ declare module plat {
                   * Reference to the Animator injectable.
                   */
                 protected _animator: animations.Animator;
-                /**
-                  * A promise used for disposing the end state of the previous animation prior to starting a new one.
-                  */
-                protected _animationPromise: animations.IAnimationThenable<animations.IGetAnimatingThenable>;
                 /**
                   * The navigator associated with this Viewport.
                   */
@@ -7587,13 +7916,13 @@ declare module plat {
                   */
                 protected _blockLength: any;
                 /**
-                  * An animation promise for pausing functionality for animation.
+                  * An animation promise for delaying disposal prior to an animation finishing.
                   */
                 protected _animationThenable: async.IThenable<void>;
                 /**
-                  * An array to aggregate all current animation promises.
+                  * The current animation promise.
                   */
-                protected _currentAnimations: Array<animations.IAnimationThenable<any>>;
+                protected _currentAnimation: animations.IAnimationThenable<any>;
                 /**
                   * Whether or not the Array listener has been set.
                   */
@@ -7653,10 +7982,6 @@ declare module plat {
                   * @param {number} numberOfItems The number of items to remove.
                   */
                 protected _removeItems(numberOfItems: number): void;
-                /**
-                  * Removes an item from the control's element.
-                  */
-                protected _removeItem(): void;
                 /**
                   * Binds the item to a template at that index.
                   * the a DocumentFragment that represents an item.
@@ -8027,6 +8352,10 @@ declare module plat {
                   */
                 context: Array<any>;
                 /**
+                  * The child controls of the control. All will be of type TemplateControl.
+                  */
+                controls: Array<TemplateControl>;
+                /**
                   * An object that keeps track of unique
                   * optgroups.
                   */
@@ -8040,27 +8369,22 @@ declare module plat {
                   */
                 itemsLoaded: async.IThenable<void>;
                 /**
-                  * Whether or not the Array listener has been set.
-                  */
-                private __listenerSet;
-                /**
                   * Whether or not the select is grouped.
                   */
-                private __isGrouped;
-                /**
-                  * Whether or not the select should be treated as a
-                  * native (unbound) select element.
-                  */
-                private __isNativeSelect;
+                protected _isGrouped: boolean;
                 /**
                   * The property used to group the objects.
                   */
-                private __group;
+                protected _group: string;
                 /**
                   * An optional default option specified in the control element's
                   * innerHTML.
                   */
-                private __defaultOption;
+                protected _defaultOption: HTMLOptionElement;
+                /**
+                  * Whether or not the Array listener has been set.
+                  */
+                private __listenerSet;
                 /**
                   * The function to resolve the itemsLoaded promise.
                   */
@@ -8103,25 +8427,19 @@ declare module plat {
                 /**
                   * Adds the options to the select element.
                   * @param {number} numberOfItems The number of items to add.
-                  * @param {number} length The current index of the next
+                  * @param {number} index The starting index of the next
                   * set of items to add.
                   */
-                protected _addItems(numberOfItems: number, length: number): async.IThenable<void>;
+                protected _addItems(numberOfItems: number, index: number): async.IThenable<void>;
                 /**
                   * The callback used to add an option after
                   * its template has been bound.
                   * @param {number} index The current index of the item being added.
-                  * @param {any} item The item being added.
-                  * @param {DocumentFragment} optionClone The bound DocumentFragment to be
+                  * @param {DocumentFragment} option The bound DocumentFragment to be
                   * inserted into the DOM.
                   * or optgroup has successfully be inserted.
                   */
-                protected _insertOptions(index: number, item: any, optionClone: DocumentFragment): async.IThenable<any>;
-                /**
-                  * Removes the specified option item from the DOM.
-                  * @param {number} index The control index to remove.
-                  */
-                protected _removeItem(index: number): void;
+                protected _insertOption(index: number, option: DocumentFragment): async.IThenable<any>;
                 /**
                   * Removes a specified number of elements.
                   * @param {number} numberOfItems The number of items
@@ -8130,10 +8448,10 @@ declare module plat {
                 protected _removeItems(numberOfItems: number): void;
                 /**
                   * The function called when an item has been removed
-                  * from the array context.
+                  * from the Array context.
                   * @param {plat.observable.IPostArrayChangeInfo<any>} ev The array mutation object
                   */
-                protected _itemRemoved(ev: observable.IPostArrayChangeInfo<any>): void;
+                protected _removeItem(ev: observable.IPostArrayChangeInfo<any>): void;
                 /**
                   * Resets the select element by removing all its
                   * items and adding them back.
@@ -8197,11 +8515,18 @@ declare module plat {
                   * objects with which to use to bind to the
                   * option's value.
                   */
+                default: ISelectDefaultOption;
+            }
+            /**
+              * Defines the value and textContent for the default option of a Select.
+              */
+            interface ISelectDefaultOption {
+                /**
+                  * The value of the default option.
+                  */
                 value: string;
                 /**
-                  * The property in your context array of
-                  * objects with which to use to bind to the
-                  * option's textContent.
+                  * The textContent of the default option.
                   */
                 textContent: string;
             }
@@ -8211,6 +8536,10 @@ declare module plat {
               */
             class If extends TemplateControl {
                 protected static _inject: any;
+                /**
+                  * The document injectable.
+                  */
+                protected _document: Document;
                 /**
                   * Reference to the Animator injectable.
                   */
@@ -8257,11 +8586,6 @@ declare module plat {
                   * A promise that resolves when the template has been bound.
                   */
                 private __initialBind;
-                /**
-                  * The constructor for a If. Creates the
-                  * DocumentFragment for holding the conditional nodes.
-                  */
-                constructor();
                 /**
                   * Checks the options and initializes the
                   * evaluation.

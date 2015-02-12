@@ -15,7 +15,6 @@ module plat.ui {
      * separate those templates and reuse them accordingly.
      */
     export class BindableTemplates {
-
         /**
          * @name _ResourcesFactory
          * @memberof plat.ui.BindableTemplates
@@ -93,6 +92,19 @@ module plat.ui {
          * Reference to the {@link plat.processing.IElementManagerFactory|IElementManagerFactory} injectable.
          */
         protected _ElementManagerFactory: processing.IElementManagerFactory = acquire(__ElementManagerFactory);
+
+        /**
+         * @name _BindableTemplatesFactory
+         * @memberof plat.processing.ElementManager
+         * @kind property
+         * @access protected
+         * 
+         * @type {plat.ui.IBindableTemplatesFactory}
+         * 
+         * @description
+         * Reference to the {@link plat.ui.IBindableTemplatesFactory|BindableTemplatesFactory} injectable.
+         */
+        protected _BindableTemplatesFactory: IBindableTemplatesFactory = acquire(__BindableTemplatesFactory);
 
         /**
          * @name _Exception
@@ -743,10 +755,11 @@ module plat.ui {
                     startNode: Comment,
                     endNode: Comment;
 
-                var clone = <DocumentFragment>nodeMap.element.cloneNode(true);
+                var clone = <DocumentFragment>element.cloneNode(true),
+                    _document = this._document;
 
-                startNode = control.startNode = this._document.createComment(control.type + __START_NODE);
-                endNode = control.endNode = this._document.createComment(control.type + __END_NODE);
+                startNode = control.startNode = _document.createComment(control.type + __START_NODE);
+                endNode = control.endNode = _document.createComment(control.type + __END_NODE);
                 element.insertBefore(startNode, element.firstChild);
                 element.insertBefore(endNode, null);
 
@@ -821,6 +834,8 @@ module plat.ui {
 
             control.resources = _resources;
             _ResourcesFactory.addControlResources(control);
+
+            control.bindableTemplates = this._BindableTemplatesFactory.create(control, parent.bindableTemplates);
 
             control.parent = parent;
             control.controls = [];

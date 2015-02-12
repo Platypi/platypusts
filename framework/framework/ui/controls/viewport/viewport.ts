@@ -132,19 +132,6 @@ module plat.ui.controls {
         protected _animator: animations.Animator;
 
         /**
-         * @name _animationPromise
-         * @memberof plat.ui.controls.Viewport
-         * @kind property
-         * @access protected
-         * 
-         * @type {plat.ui.animations.IAnimationThenable<plat.ui.animations.IParentAnimationFn>}
-         * 
-         * @description
-         * A promise used for disposing the end state of the previous animation prior to starting a new one.
-         */
-        protected _animationPromise: animations.IAnimationThenable<animations.IGetAnimatingThenable>;
-
-        /**
          * @name navigator
          * @memberof plat.ui.controls.Viewport
          * @kind property
@@ -275,11 +262,10 @@ module plat.ui.controls {
                 injector: dependency.Injector<ViewControl> = this._Injector.getDependency(routeInfo.delegate.view),
                 view = injector.inject(),
                 parameters = routeInfo.parameters,
-                resolve = this._Promise.resolve.bind(this._Promise),
                 nextRouter = getRouter();
 
             if (!isObject(view)) {
-                return resolve();
+                return this._Promise.resolve(null);
             }
 
             if (currentRouter !== nextRouter) {
@@ -295,7 +281,7 @@ module plat.ui.controls {
                 response = view.canNavigateTo(parameters, routeInfo.query);
             }
 
-            return resolve(response).then((canNavigateTo: boolean): boolean => {
+            return this._Promise.resolve(response).then((canNavigateTo: boolean): boolean => {
                 this._nextInjector = injector;
                 this._nextView = view;
                 return canNavigateTo;
@@ -353,14 +339,7 @@ module plat.ui.controls {
                 query = routeInfo.query,
                 control = <ViewControl>nodeMap.uiControlNode.control;
 
-            element.appendChild(node);
-
-            var animationPromise = this._animationPromise;
-            if (isPromise(animationPromise)) {
-                animationPromise.dispose();
-            }
-
-            this._animationPromise = this._animator.animate(this.element, __Enter);
+            this._animator.enter(node, __Enter, this.element);
 
             var viewportManager = this._managerCache.read(this.uid),
                 manager = this._ElementManagerFactory.getInstance();

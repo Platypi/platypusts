@@ -619,14 +619,14 @@ module plat.expressions {
                 lookAhead = this._lookAhead(char, index, true);
                 index += lookAhead.length - 1;
                 outputQueue.push({ val: parseFloat(lookAhead), args: 0 });
+            } else if (this._isValEqual(operatorStack[0], char)) {
+                outputQueue.push({ val: char, args: 0 });
             } else if (!(isNull(outputQueue[topOutputLength]) ||
                 !isNumber(Number(outputQueue[topOutputLength].val)) ||
                 this._isValEqual(outputQueue[topOutputLength - 1], char))) {
                 lookAhead = this._lookAhead(char, index, true);
                 index += lookAhead.length - 1;
                 outputQueue[topOutputLength].val += parseFloat(lookAhead);
-            } else if (this._isValEqual(operatorStack[0], char)) {
-                outputQueue.push({ val: char, args: 0 });
             } else {
                 operatorStack.unshift({ val: char, args: 0 });
             }

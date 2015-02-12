@@ -11,7 +11,7 @@
     margin-left: 100px;
 }
 
-.test .plat-enter {
+.test .plat-enter-init {
     -moz-animation: FADEIN 2s;
     -o-animation: FADEIN 2s;
     -webkit-animation: FADEIN 2s;
@@ -31,10 +31,6 @@
     -o-animation-fill-mode: forwards;
     -webkit-animation-fill-mode: forwards;
     animation-fill-mode: forwards;
-}
-
-.test .plat-leave-end {
-    opacity: 0;
 }
 
 @-webkit-keyframes FADEIN {

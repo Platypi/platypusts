@@ -665,7 +665,6 @@ module plat.ui {
             TemplateControl._managerCache.remove(uid);
             Control.removeParent(control);
 
-            define(control, __CONTEXT, null, true, true, true);
             define(control, __RESOURCES, null, true, true, true);
             control.attributes = null;
             control.bindableTemplates = null;
@@ -1002,7 +1001,6 @@ module plat.ui {
         getIdentifier(context: any): string {
             var queue: Array<{ context: any; identifier: string; }> = [],
                 dataContext = this.context,
-                found = false,
                 obj = {
                     context: dataContext,
                     identifier: ''
@@ -1013,41 +1011,36 @@ module plat.ui {
                 newObj: any;
 
             if (dataContext === context) {
-                found = true;
-            } else {
-                queue.push(obj);
+                return '';
             }
+
+            queue.push(obj);
 
             while (queue.length > 0) {
                 obj = queue.pop();
-                context = obj.context;
+                dataContext = obj.context;
 
-                if (!isObject(context) || isEmpty(context)) {
+                if (!isObject(dataContext) || isEmpty(dataContext)) {
                     continue;
                 }
 
-                keys = Object.keys(context);
+                keys = Object.keys(dataContext);
                 length = keys.length;
 
                 for (var i = 0; i < length; ++i) {
                     key = keys[i];
-                    newObj = context[key];
+                    newObj = dataContext[key];
 
                     if (newObj === context) {
-                        return (obj.identifier !== '') ? (obj.identifier + '.' + key) : key;
+                        return (obj.identifier + '.' + key).slice(1);
                     }
 
                     queue.push({
                         context: newObj,
-                        identifier: (obj.identifier !== '') ? (obj.identifier + '.' + key) : key
+                        identifier: obj.identifier + '.' + key
                     });
                 }
             }
-            if (!found) {
-                return;
-            }
-
-            return obj.identifier;
         }
 
         /**
@@ -1065,7 +1058,9 @@ module plat.ui {
          * @returns {string} The input context's identifier string as seen from the root context object.
          */
         getAbsoluteIdentifier(context: any): string {
-            if (context === this.context) {
+            if (context === this) {
+                return '';
+            } else if (context === this.context) {
                 return this.absoluteContextPath;
             }
 

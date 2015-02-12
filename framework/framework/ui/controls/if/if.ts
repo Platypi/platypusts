@@ -15,8 +15,22 @@ module plat.ui.controls {
     export class If extends TemplateControl {
         protected static _inject: any = {
             _animator: __Animator,
-            _Promise: __Promise
+            _Promise: __Promise,
+            _document: __Document
         };
+
+        /**
+         * @name _document
+         * @memberof plat.ui.controls.If
+         * @kind property
+         * @access protected
+         * 
+         * @type {Document}
+         * 
+         * @description
+         * The document injectable.
+         */
+        protected _document: Document;
 
         /**
          * @name _animator
@@ -69,7 +83,7 @@ module plat.ui.controls {
          * @description
          * The Comment used to hold the place of the plat-if element.
          */
-        commentNode: Comment;
+        commentNode: Comment = this._document.createComment(__If + __BOUND_PREFIX + 'placeholder');
 
         /**
          * @name fragmentStore
@@ -97,6 +111,7 @@ module plat.ui.controls {
          * control is visible) of the control.
          */
         private __condition = true;
+
         /**
          * @name __firstTime
          * @memberof plat.ui.controls.If
@@ -110,6 +125,7 @@ module plat.ui.controls {
          * been evaluated.
          */
         private __firstTime = true;
+
         /**
          * @name __removeListener
          * @memberof plat.ui.controls.If
@@ -122,6 +138,7 @@ module plat.ui.controls {
          * A function to stop listening to changes on the options object.
          */
         private __removeListener: IRemoveListener;
+
         /**
          * @name __leaveAnimation
          * @memberof plat.ui.controls.If
@@ -134,6 +151,7 @@ module plat.ui.controls {
          * A promise that resolves when the leave animation is finished.
          */
         private __leaveAnimation: animations.IAnimationThenable<any>;
+
         /**
          * @name __enterAnimation
          * @memberof plat.ui.controls.If
@@ -159,24 +177,6 @@ module plat.ui.controls {
          * A promise that resolves when the template has been bound.
          */
         private __initialBind: async.IThenable<void>;
-
-        /**
-         * @name constructor
-         * @memberof plat.ui.controls.If
-         * @kind function
-         * @access public
-         * 
-         * @description
-         * The constructor for a {@link plat.ui.controls.If|If}. Creates the 
-         * DocumentFragment for holding the conditional nodes.
-         * 
-         * @returns {plat.ui.controls.If} A {@link plat.ui.controls.If|If} instance.
-         */
-        constructor() {
-            super();
-            var _document: Document = acquire(__Document);
-            this.commentNode = _document.createComment('plat-if' + __BOUND_PREFIX + 'placeholder');
-        }
 
         /**
          * @name contextChanged
@@ -231,7 +231,7 @@ module plat.ui.controls {
          */
         loaded(): async.IThenable<void> {
             if (isNull(this.options)) {
-                var _Exception: IExceptionStatic = this._Exception;
+                var _Exception = this._Exception;
                 _Exception.warn('No condition specified in plat-options for plat-if.', _Exception.BIND);
 
                 this.options = {
@@ -423,8 +423,7 @@ module plat.ui.controls {
                 element.parentNode.insertBefore(this.commentNode, element);
 
                 if (!isDocumentFragment(this.fragmentStore)) {
-                    var _document: Document = plat.acquire(__Document);
-                    this.fragmentStore = _document.createDocumentFragment();
+                    this.fragmentStore = this._document.createDocumentFragment();
                 }
 
                 insertBefore(this.fragmentStore, element);

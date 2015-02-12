@@ -63,15 +63,21 @@ module app.viewcontrols {
             this.dom.addClass(this.element.querySelector('.blah'), 'quux');
             this.context.testClass = 'bar';
             var test = this.context.test;
-            setTimeout(() => {
+            //setTimeout(() => {
                 //test[0] = 1;
-                test.shift();
-                //test.push(0);
+                //test.unshift(10, 5);
+                //test.unshift(10);
+                //test.shift();
+                //test.sort((a, b) => {
+                //    return b - a;
+                //});
+                //test.reverse();
+                //test.push(0, 1);
                 //test.pop();
                 //test.pop();
                 //test.push(3);
                 //test.push(4);
-            }, 1000);
+            //}, 1000);
         }
     }
 

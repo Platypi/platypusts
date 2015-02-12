@@ -1,4 +1,6 @@
-﻿module tests.controlFactory {
+﻿/// <reference path="../../references.d.ts" />
+
+module tests.controlFactory {
     var ControlFactory = plat.acquire(plat.IControlFactory),
         control: plat.Control;
 
@@ -23,13 +25,15 @@
             expect(root).toBe(control);
         });
 
-        it('should test loaded', () => {
-            var isUndefined = ControlFactory.load(null),
-                spy = spyOn(control, 'loaded');
+        it('should test loaded', (done: Function) => {
+            var spy = spyOn(control, 'loaded');
 
+            ControlFactory.load(null).then((arg) => {
+                expect(arg).toBeUndefined();
+                done();
+            });
             ControlFactory.load(control);
 
-            expect(isUndefined).toBeUndefined();
             expect(spy).toHaveBeenCalled();
         });
 
