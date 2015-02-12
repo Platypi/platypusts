@@ -1626,42 +1626,6 @@ module plat.processing {
         }
 
         /**
-         * @name _attributeChanged
-         * @memberof plat.processing.ElementManager
-         * @kind function
-         * @access protected
-         * 
-         * @description
-         * A function to handle updating an attribute on all controls that have it 
-         * as a property upon a change in its value.
-         * 
-         * @param {plat.processing.INode} node The {@link plat.processing.INode|INode} where the change occurred.
-         * @param {plat.ui.TemplateControl} parent The parent {@link plat.ui.TemplateControl|TemplateControl} used for context.
-         * @param {Array<plat.Control>} controls The controls that have the changed attribute as a property.
-         * 
-         * @returns {void}
-         */
-        protected _attributeChanged(node: INode, parent: ui.TemplateControl, controls: Array<Control>): void {
-            var length = controls.length,
-                key = camelCase(node.nodeName),
-                value = NodeManager.build(node.expressions, parent),
-                attributes: ui.Attributes,
-                oldValue: any;
-
-            for (var i = 0; i < length; ++i) {
-                attributes = <ui.Attributes>controls[i].attributes;
-                oldValue = attributes[key];
-                attributes[key] = value;
-
-                (<any>attributes)._attributeChanged(key, value, oldValue);
-            }
-
-            if (!this.replace) {
-                (<Attr>node.node).value = value;
-            }
-        }
-
-        /**
          * @name _fulfillChildTemplates
          * @memberof plat.processing.ElementManager
          * @kind function
