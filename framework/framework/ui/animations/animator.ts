@@ -1148,7 +1148,7 @@
      * itself, it resolves with a {@link plat.ui.animations.IGetAnimatingThenable|IGetAnimatingThenable} for acccessing 
      * the {@link plat.ui.animations.IAnimationThenable|IAnimationThenable} of the animating parent element.
      */
-    export class AnimationPromise<> extends async.Promise<IGetAnimatingThenable> implements IAnimationEssentials, IAnimatingThenable {
+    export class AnimationPromise extends async.Promise<IGetAnimatingThenable> implements IAnimationEssentials, IAnimatingThenable {
         /**
          * @name _Promise
          * @memberof plat.ui.animations.AnimationPromise

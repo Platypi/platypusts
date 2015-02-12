@@ -69,7 +69,7 @@
     <TypeScriptCompile Include="ui\animations\simpleanimation\simpleanimation.ts" />
     <TypeScriptCompile Include="ui\animations\simpletransition\simpletransition.ts" />
     <TypeScriptCompile Include="ui\attributes\attributes.ts" />
-    <TypeScriptCompile Include="ui\bindablepropertycontrol\bindablepropertycontrol.ts" />
+    <TypeScriptCompile Include="ui\bindcontrol\bindcontrol.ts" />
     <TypeScriptCompile Include="ui\bindabletemplates\bindabletemplates.ts" />
     <TypeScriptCompile Include="ui\controls\head\head.ts" />
     <TypeScriptCompile Include="ui\controls\link\link.ts" />

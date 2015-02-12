@@ -551,7 +551,7 @@ module plat.ui.controls {
          */
         protected _setListener(): void {
             if (!this.__listenerSet) {
-                this.observeArray(this, __CONTEXT, this._preprocessEvent, this._executeEvent);
+                this.observeArray(this._preprocessEvent, this._executeEvent);
                 this.__listenerSet = true;
             }
         }

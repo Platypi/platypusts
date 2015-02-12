@@ -277,7 +277,7 @@
                 return;
             }
 
-            this._removeListener = this.observeExpression(this.attributes[this.attribute], this._setProperty);
+            this._removeListener = this.observeExpression(this._setProperty, this.attributes[this.attribute]);
         }
     }
 

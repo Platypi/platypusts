@@ -530,9 +530,9 @@ module plat.ui {
                 } else {
                     resource.initialValue = value;
                 }
-                var listener = control.observeExpression(value, (newValue): void => {
+                var listener = control.observeExpression((newValue): void => {
                     resource.value = newValue;
-                });
+                }, value);
                 resource.value = control.evaluateExpression(value);
                 removeListeners.push(listener);
             }
