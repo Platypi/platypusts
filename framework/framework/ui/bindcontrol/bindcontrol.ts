@@ -69,12 +69,12 @@
          * 
          * @param {(listener: plat.ui.IBoundPropertyChangedListener, identifier: string) => void} observe 
          * A function that allows bound properties to be observed with defined listeners.
-         * @param {string} identifier The identifier off of the bound object to listen to for changes.
+         * @param {string} identifier? The identifier off of the bound object to listen to for changes.
          * 
          * @returns {void}
          */
         observeProperties(observe: (listener: (newValue: any, oldValue: any, identifier: string, firstTime?: boolean) => void,
-            identifier: string) => void): void { }
+            identifier?: string) => void): void { }
 
         /**
          * @name inputChanged
@@ -86,7 +86,7 @@
          * A function that signifies when this control's bindable property has changed.
          * 
          * @param {any} newValue The new value of the property after the change.
-         * @param {any} oldValue The old value of the property prior to the change.
+         * @param {any} oldValue? The old value of the property prior to the change.
          * 
          * @returns {void}
          */
@@ -142,7 +142,7 @@
          * 
          * @returns {plat.IRemoveListener} A function to stop listening for property changes.
          */
-        onInput(listener: (newValue: any, oldValue?: any) => void): IRemoveListener;
+        onInput(listener: (newValue: any, oldValue: any) => void): IRemoveListener;
 
         /**
          * @name observeProperties

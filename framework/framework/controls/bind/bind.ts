@@ -93,7 +93,7 @@ module plat.controls {
          * @type {number}
          * 
          * @description
-         * The priority of Bind is set high to precede 
+         * The priority of {@link plat.controls.Bind|Bind} is set high to precede 
          * other controls that may be listening to the same 
          * event.
          */
@@ -179,6 +179,21 @@ module plat.controls {
         protected _property: string;
 
         /**
+         * @name _supportsTwoWayBinding
+         * @memberof plat.controls.Bind
+         * @kind property
+         * @access protected
+         * 
+         * @type {boolean}
+         * 
+         * @description
+         * Whether or not {@link plat.controls.Bind|Bind} is being used in conjunction 
+         * with a {@link plat.ui.TemplateControl|TemplateControl} that implements the 
+         * interface {@link plat.ui.ISupportTwoWayBinding|ISupportTwoWayBinding}.
+         */
+        protected _supportsTwoWayBinding = false;
+
+        /**
          * @name __fileSupported
          * @memberof plat.controls.Bind
          * @kind property
@@ -258,7 +273,7 @@ module plat.controls {
 
             if (identifiers.length !== 1) {
                 var _Exception: IExceptionStatic = this._Exception;
-                _Exception.warn('Only 1 identifier allowed in a plat-bind expression', _Exception.BIND);
+                _Exception.warn('Only 1 identifier allowed in a ' + this.type + ' expression', _Exception.BIND);
                 this._contextExpression = null;
                 return;
             }
@@ -296,6 +311,10 @@ module plat.controls {
                     identifiers: [],
                     expression: ''
                 };
+            }
+
+            if (this._supportsTwoWayBinding) {
+                (<ui.BindControl>this.templateControl).observeProperties(this._observeProperties.bind(this));
             }
 
             this._watchExpression();
@@ -953,7 +972,7 @@ module plat.controls {
                     context = this._ContextManager.createContext(this.parent,
                         contextExpression.identifiers[0]);
                 } else {
-                    var Exception: IExceptionStatic = this._Exception;
+                    var Exception = this._Exception;
                     Exception.warn(this.type + ' is trying to index into a primitive type. ' +
                         this._contextExpression.expression + ' is already defined and not ' +
                         'an object when trying to evaluate ' + this.type + '="' +
@@ -1134,8 +1153,7 @@ module plat.controls {
                     this._propertyChanged();
                 });
 
-                templateControl.observeProperties(this._observeProperties.bind(this));
-                return true;
+                return (this._supportsTwoWayBinding = true);
             }
 
             return false;
@@ -1195,12 +1213,12 @@ module plat.controls {
                     key = split.pop(),
                     contextExpression = split.join('.'),
                     context = this.evaluateExpression(contextExpression);
-            
+
                 if (!isObject(context)) {
                     if (isNull(context)) {
                         context = this._ContextManager.createContext(this.parent, contextExpression);
                     } else {
-                        var Exception: IExceptionStatic = this._Exception;
+                        var Exception = this._Exception;
                         Exception.warn('A control implementing ISupportTwoWayBinding is trying to index into a primitive type ' +
                             'when trying to evaluate ' + this.type + '="' + this._expression.expression + '"', Exception.BIND);
                         return;

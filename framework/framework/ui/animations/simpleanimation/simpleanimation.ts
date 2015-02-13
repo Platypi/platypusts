@@ -72,7 +72,7 @@ module plat.ui.animations {
          * @access public
          * 
          * @description
-         * Adds the class to start the animation.
+         * Adds the class to initialize the animation.
          * 
          * @returns {void}
          */
@@ -92,24 +92,22 @@ module plat.ui.animations {
          * @returns {void}
          */
         start(): void {
-            var animationEvents = this._compat.animationEvents;
-            if (isUndefined(animationEvents)) {
-                this.end();
-                return;
-            }
-
-            var animationId = animationEvents.$animation,
-                element = this.element,
-                className = this.className;
-
             requestAnimationFrameGlobal((): void => {
-                addClass(element, className);
+                var element = this.element;
 
-                var computedStyle = this._window.getComputedStyle(element,(this.options || <ISimpleCssAnimationOptions>{}).pseudo),
+                if (element.offsetParent === null) {
+                    this.cancel();
+                    this.end();
+                    return;
+                }
+
+                addClass(element, this.className);
+
+                var animationId = this._animationEvents.$animation,
+                    computedStyle = this._window.getComputedStyle(element,(this.options || <ISimpleCssAnimationOptions>{}).pseudo),
                     animationName = computedStyle[<any>(animationId + 'Name')];
 
-                if (animationName === '' ||
-                    animationName === 'none' ||
+                if (animationName === '' || animationName === 'none' ||
                     computedStyle[<any>(animationId + 'PlayState')] === 'paused') {
                     this.cancel();
                     this.end();
