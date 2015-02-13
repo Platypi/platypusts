@@ -69,6 +69,23 @@ module plat.storage {
          * @variation 0
          * 
          * @description
+         * Serializes a string into a DocumentFragment and stores it in the cache.
+         * 
+         * @param {string} key The key to use for storage/retrieval of the object.
+         * @param {string} value The string html.
+         * 
+         * @returns {plat.async.IThenable<DocumentFragment>} A promise that resolves with a 
+         * DocumentFragment containing the input Node.
+         */
+        put(key: string, value?: string): async.IThenable<DocumentFragment>;
+        /**
+         * @name put
+         * @memberof plat.storage.TemplateCache
+         * @kind function
+         * @access public
+         * @variation 0
+         * 
+         * @description
          * Stores a Node in the cache as a DocumentFragment.
          * 
          * @param {string} key The key to use for storage/retrieval of the object.
@@ -77,7 +94,7 @@ module plat.storage {
          * @returns {plat.async.IThenable<DocumentFragment>} A promise that resolves with a 
          * DocumentFragment containing the input Node.
          */
-        put(key: string, value: Node): async.IThenable<DocumentFragment>;
+        put(key: string, value?: Node): async.IThenable<DocumentFragment>;
         /**
          * @name put
          * @memberof plat.storage.TemplateCache
@@ -95,8 +112,8 @@ module plat.storage {
          * @returns {plat.async.IThenable<DocumentFragment>} A {@link plat.async.Promise|Promise} that resolves when 
          * the input {@link plat.async.Promise|Promise} resolves.
          */
-        put(key: string, value: async.IThenable<Node>): async.IThenable<DocumentFragment>;
-        put(key: string, value: any): async.IThenable<DocumentFragment> {
+        put(key: string, value?: async.IThenable<Node>): async.IThenable<DocumentFragment>;
+        put(key: string, value?: any): async.IThenable<DocumentFragment> {
             var Promise = this._Promise;
             super.put(key, Promise.resolve<DocumentFragment>(value));
 
@@ -106,6 +123,8 @@ module plat.storage {
                 var fragment = document.createDocumentFragment();
                 fragment.appendChild(value.cloneNode(true));
                 value = fragment;
+            } else if (isString(value) || isNull(value)) {
+                value = serializeHtml(value);
             }
 
             return Promise.resolve<DocumentFragment>(value);

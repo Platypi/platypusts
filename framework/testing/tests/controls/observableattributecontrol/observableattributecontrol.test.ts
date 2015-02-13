@@ -82,7 +82,7 @@
 
             parent.context.foo.bar = 'foo';
 
-            expect(observeExpressionSpy).toHaveBeenCalledWith('foo.bar', (<any>control)._setProperty);
+            expect(observeExpressionSpy).toHaveBeenCalledWith((<any>control)._setProperty, 'foo.bar');
             expect(called).toBe(1);
             expect(spy).toHaveBeenCalled();
         });
@@ -106,7 +106,7 @@
 
             parent.context.foo.bar = 'foo';
 
-            expect(observeExpressionSpy).toHaveBeenCalledWith('foo.bar', (<any>control)._setProperty);
+            expect(observeExpressionSpy).toHaveBeenCalledWith((<any>control)._setProperty, 'foo.bar');
             expect(called).toBe(0);
             expect(spy).toHaveBeenCalled();
         });

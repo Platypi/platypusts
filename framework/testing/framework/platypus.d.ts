@@ -2981,12 +2981,19 @@ declare module plat {
               */
             constructor();
             /**
+              * Serializes a string into a DocumentFragment and stores it in the cache.
+              * @param {string} key The key to use for storage/retrieval of the object.
+              * @param {string} value The string html.
+              * DocumentFragment containing the input Node.
+              */
+            put(key: string, value?: string): async.IThenable<DocumentFragment>;
+            /**
               * Stores a Node in the cache as a DocumentFragment.
               * @param {string} key The key to use for storage/retrieval of the object.
               * @param {Node} value The Node.
               * DocumentFragment containing the input Node.
               */
-            put(key: string, value: Node): async.IThenable<DocumentFragment>;
+            put(key: string, value?: Node): async.IThenable<DocumentFragment>;
             /**
               * Stores a IPromise in the cache.
               * @param {string} key The key to use for storage/retrieval of the object.
@@ -2994,7 +3001,7 @@ declare module plat {
               * should resolve with a Node.
               * the input Promise resolves.
               */
-            put(key: string, value: async.IThenable<Node>): async.IThenable<DocumentFragment>;
+            put(key: string, value?: async.IThenable<Node>): async.IThenable<DocumentFragment>;
             /**
               * Method for retrieving a Node from this cache. The DocumentFragment that resolves from the returned
               * Promise will be cloned to avoid manipulating the cached template.
@@ -4199,59 +4206,56 @@ declare module plat {
         /**
           * Allows a Control to observe any property on its context and receive updates when
           * the property is changed.
-          * @param {any} context The immediate parent object containing the property.
-          * @param {string} property The property identifier to watch for changes.
-          * @param {(value: T, oldValue: T) => void} listener The method called when the property is changed. This method
-          * will have its 'this' context set to the control instance.
+          * @param {(value: T, oldValue: T, identifier: string) => void} listener The method called when the property is changed.
+          * This method will have its 'this' context set to the control instance.
+          * @param {string} identifier? The property string that denotes the item in the context (e.g. "foo.bar.baz" is observing the
+          * property `baz` in the object `bar` in the object `foo` in the control's context.
           */
-        observe<T>(context: any, property: string, listener: (value: T, oldValue: T) => void): IRemoveListener;
+        observe<T>(listener: (value: T, oldValue: T, identifier: string) => void, identifier?: string): IRemoveListener;
         /**
           * Allows a Control to observe any property on its context and receive updates when
           * the property is changed.
-          * @param {any} context The immediate parent object containing the property.
-          * @param {number} property The property identifier to watch for changes.
-          * @param {(value: T, oldValue: T) => void} listener The method called when the property is changed. This method
+          * @param {(value: T, oldValue: T, index: number) => void} listener The method called when the property is changed. This method
           * will have its 'this' context set to the control instance.
+          * @param {number} index? The index that denotes the item in the context if the context is an Array.
           */
-        observe<T>(context: any, property: number, listener: (value: T, oldValue: T) => void): IRemoveListener;
+        observe<T>(listener: (value: T, oldValue: T, index: number) => void, index?: number): IRemoveListener;
         /**
           * Allows a Control to observe an array and receive updates when certain array-changing methods are called.
           * The methods watched are push, pop, shift, sort, splice, reverse, and unshift. This method does not watch
           * every item in the array.
-          * @param {any} context The immediate parent object containing the array as a property.
-          * @param {string} property The array property identifier to watch for changes.
-          * @param {(ev: plat.observable.IPreArrayChangeInfo) => void} preListener The method called prior to an array-changing
-          * method is called. This method will have its 'this' context set to the control instance.
-          * @param {(ev: plat.observable.IPostArrayChangeInfo<T>) => void} postListener The method called after an array-changing
-          * method is called. This method will have its 'this' context set to the control instance.
+          * @param {(ev: plat.observable.IPreArrayChangeInfo, identifier: string) => void} preListener The method called
+          * prior to an array-changing method is called. This method will have its 'this' context set to the control instance.
+          * @param {(ev: plat.observable.IPostArrayChangeInfo<T>, identifier: string) => void} postListener The method called
+          * after an array-changing method is called. This method will have its 'this' context set to the control instance.
+          * @param {string} identifier? The property string that denotes the array in the context.
           */
-        observeArray<T>(context: any, property: string, preListener: (ev: observable.IPreArrayChangeInfo) => void, postListener: (ev: observable.IPostArrayChangeInfo<T>) => void): IRemoveListener;
+        observeArray<T>(preListener: (ev: observable.IPreArrayChangeInfo, identifier: string) => void, postListener: (ev: observable.IPostArrayChangeInfo<T>, identifier: string) => void, identifier?: string): IRemoveListener;
         /**
           * Allows a Control to observe an array and receive updates when certain array-changing methods are called.
           * The methods watched are push, pop, shift, sort, splice, reverse, and unshift. This method does not watch
           * every item in the array.
-          * @param {any} context The immediate parent object containing the array as a property.
-          * @param {number} property The array property identifier to watch for changes.
-          * @param {(ev: plat.observable.IPreArrayChangeInfo) => void} preListener The method called prior to an array-changing
-          * method is called. This method will have its 'this' context set to the control instance.
-          * @param {(ev: plat.observable.IPostArrayChangeInfo<T>) => void} postListener The method called after an array-changing
-          * method is called. This method will have its 'this' context set to the control instance.
+          * @param {(ev: plat.observable.IPreArrayChangeInfo, index: number) => void} preListener The method called prior to an
+          * array-changing method is called. This method will have its 'this' context set to the control instance.
+          * @param {(ev: plat.observable.IPostArrayChangeInfo<T>, index: number) => void} postListener The method called after
+          * an array-changing method is called. This method will have its 'this' context set to the control instance.
+          * @param {number} index? The index that denotes the array directly off of context if the context is an Array.
           */
-        observeArray<T>(context: any, property: number, preListener: (ev: observable.IPreArrayChangeInfo) => void, postListener: (ev: observable.IPostArrayChangeInfo<T>) => void): IRemoveListener;
+        observeArray<T>(preListener: (ev: observable.IPreArrayChangeInfo, index: number) => void, postListener: (ev: observable.IPostArrayChangeInfo<T>, index: number) => void, index?: number): IRemoveListener;
         /**
           * Parses an expression string and observes any associated identifiers. When an identifier
           * value changes, the listener will be called.
+          * @param {(value: T, oldValue: T, expression: string) => void} listener The listener to call when the expression identifer values change.
           * @param {string} expression The expression string to watch for changes.
-          * @param {(value: any, oldValue: any) => void} listener The listener to call when the expression identifer values change.
           */
-        observeExpression(expression: string, listener: (value: any, oldValue: any) => void): IRemoveListener;
+        observeExpression<T>(listener: (value: T, oldValue: T, expression: string) => void, expression: string): IRemoveListener;
         /**
           * Using a IParsedExpression observes any associated identifiers. When an identifier
           * value changes, the listener will be called.
+          * @param {(value: T, oldValue: T, expression: string) => void} listener The listener to call when the expression identifer values change.
           * @param {plat.expressions.IParsedExpression} expression The expression string to watch for changes.
-          * @param {(value: any, oldValue: any) => void} listener The listener to call when the expression identifer values change.
           */
-        observeExpression(expression: expressions.IParsedExpression, listener: (value: any, oldValue: any) => void): IRemoveListener;
+        observeExpression<T>(listener: (value: T, oldValue: T, expression: string) => void, expression: expressions.IParsedExpression): IRemoveListener;
         /**
           * Evaluates an expression string, using the control.parent.context.
           * @param {string} expression The expression string to evaluate.
@@ -4695,9 +4699,9 @@ declare module plat {
               * This event is fired when an TemplateControl's context property
               * is changed by an ancestor control.
               * @param {any} newValue? The new value of the context.
-              * @param {any} oldValue? The old value of the context.
+              * @param {any} oldValue The old value of the context.
               */
-            contextChanged(newValue?: any, oldValue?: any): void;
+            contextChanged(newValue: any, oldValue: any): void;
             /**
               * A method called for TemplateControls to set their template.
               * During this method a control should ready its template for compilation. Whatever is in the control's
@@ -4705,20 +4709,6 @@ declare module plat {
               * and appear on the DOM.
               */
             setTemplate(): void;
-            /**
-              * Finds the identifier string associated with the given context object. The string returned
-              * is the path from a control's context.
-              * @param {any} context The object/primitive to locate on the control's context.
-              *     // returns 'title.font'
-              *     this.getIdentifier(this.context.title.font);
-              */
-            getIdentifier(context: any): string;
-            /**
-              * Finds the absolute identifier string associated with the given context object. The string returned
-              * is the path from a control's root ancestor's context.
-              * @param {any} context The object/primitive to locate on the root control's context.
-              */
-            getAbsoluteIdentifier(context: any): string;
             /**
               * Finds the associated resources and builds a context object containing
               * the values.
@@ -4856,36 +4846,68 @@ declare module plat {
           * An extended TemplateControl that allows for the binding of a value to
           * another listening control (e.g. plat-bind control).
           */
-        class BindablePropertyControl extends TemplateControl {
+        class BindControl extends TemplateControl implements ISupportTwoWayBinding {
             /**
               * The set of functions added externally that listens
               * for property changes.
               */
-            protected _listeners: Array<(newValue: any, oldValue?: any) => void>;
+            protected _listeners: Array<IPropertyChangedListener>;
             /**
               * Adds a listener to be called when the bindable property changes.
               * @param {plat.IPropertyChangedListener} listener The function that acts as a listener.
               */
-            observeProperty(listener: (newValue: any, oldValue?: any) => void): IRemoveListener;
+            onInput(listener: (newValue: any, oldValue: any) => void): IRemoveListener;
             /**
-              * A function that lets this control know when the context's value of the bindable
-              * property has changed.
-              * @param {any} newValue The new value of the bindable property.
-              * @param {any} oldValue? The old value of the bindable property.
-              * @param {boolean} firstTime? A boolean signifying whether this is the first set of the property.
+              * A function that allows this control to observe both the bound property itself as well as
+              * potential child properties if being bound to an object.
+              * @param {(listener: plat.ui.IBoundPropertyChangedListener, identifier: string) => void} observe
+              * A function that allows bound properties to be observed with defined listeners.
+              * @param {string} identifier The identifier off of the bound object to listen to for changes.
               */
-            setProperty(newValue: any, oldValue?: any, firstTime?: boolean): void;
+            observeProperties(observe: (listener: (newValue: any, oldValue: any, identifier: string, firstTime?: boolean) => void, identifier: string) => void): void;
             /**
               * A function that signifies when this control's bindable property has changed.
               * @param {any} newValue The new value of the property after the change.
-              * @param {any} oldValue? The old value of the property prior to the change.
+              * @param {any} oldValue The old value of the property prior to the change.
               */
-            propertyChanged(newValue: any, oldValue?: any): void;
+            inputChanged(newValue: any, oldValue?: any): void;
             /**
               * Removes references to the listeners
               * defined externally.
               */
             dispose(): void;
+        }
+        /**
+          * Defines methods that interface with a control that handles two way databinding (e.g. plat-bind control).
+          */
+        interface ISupportTwoWayBinding {
+            /**
+              * Adds a listener to be called when the bindable property changes.
+              * @param {plat.IPropertyChangedListener} listener The function that acts as a listener.
+              */
+            onInput(listener: (newValue: any, oldValue?: any) => void): IRemoveListener;
+            /**
+              * A function that allows this control to observe both the bound property itself as well as
+              * potential child properties if being bound to an object.
+              * @param {(listener: plat.ui.IBoundPropertyChangedListener, identifier: string) => void}
+              * observe A function that allows bound properties to be observed with defined listeners.
+              * @param {string} identifier? The identifier off of the bound object to listen to for changes. If not defined
+              * the listener will listen for changes to the bound item itself.
+              */
+            observeProperties(observe: (listener: (newValue: any, oldValue: any, identifier: string, firstTime?: boolean) => void, identifier?: string) => void): void;
+        }
+        /**
+          * Defines a function that will be called whenever a bound property specified by a given identifier has changed.
+          */
+        interface IBoundPropertyChangedListener {
+            /**
+              * The method signature for IBoundPropertyChangedListener.
+              * @param {any} newValue The new value of the observed property.
+              * @param {any} oldValue The previous value of the observed property.
+              * @param {any} identifier The string or number identifier that specifies the changed property.
+              * @param {boolean} firstTime? True if this is the first case where the bound property is being set.
+              */
+            (newValue: any, oldValue: any, identifier: any, firstTime?: boolean): void;
         }
         /**
           * A control used in a Viewport for page navigation. The
@@ -5273,6 +5295,10 @@ declare module plat {
               */
             protected _ElementManagerFactory: processing.IElementManagerFactory;
             /**
+              * Reference to the BindableTemplatesFactory injectable.
+              */
+            protected _BindableTemplatesFactory: IBindableTemplatesFactory;
+            /**
               * Reference to the IExceptionStatic injectable.
               */
             protected _Exception: IExceptionStatic;
@@ -5540,10 +5566,10 @@ declare module plat {
             initialize(control: Control, attributes: IObject<string>): void;
             /**
               * Provides a way to observe an attribute for changes.
-              * @param {string} key The attribute to observe for changes (e.g. 'src').
               * @param {plat.IPropertyChangedListener} listener The listener function to be called when the attribute changes.
+              * @param {string} key The attribute to observe for changes (e.g. 'src').
               */
-            observe(key: string, listener: (newValue: any, oldValue?: any) => void): IRemoveListener;
+            observe(listener: (newValue: any, oldValue: any) => void, key: string): IRemoveListener;
             /**
               * Used to show an attribute has been changed and forces listeners to be fired.
               * @param {string} key The attribute being observed for changes (e.g. 'src').
@@ -7153,7 +7179,7 @@ declare module plat {
               * itself, it resolves with a IGetAnimatingThenable for acccessing
               * the IAnimationThenable of the animating parent element.
               */
-            class AnimationPromise<> extends async.Promise<IGetAnimatingThenable> implements IAnimationEssentials, IAnimatingThenable {
+            class AnimationPromise extends async.Promise<IGetAnimatingThenable> implements IAnimationEssentials, IAnimatingThenable {
                 /**
                   * Reference to the IPromise injectable.
                   */
@@ -7942,10 +7968,10 @@ declare module plat {
                 /**
                   * Re-syncs the ForEach child controls and DOM with the new
                   * array.
-                  * @param {Array<any>} newValue? The new Array
-                  * @param {Array<any>} oldValue? The old Array
+                  * @param {Array<any>} newValue The new Array
+                  * @param {Array<any>} oldValue The old Array
                   */
-                contextChanged(newValue?: Array<any>, oldValue?: Array<any>): void;
+                contextChanged(newValue: Array<any>, oldValue: Array<any>): void;
                 /**
                   * Observes the Array context for changes and adds initial items to the DOM.
                   */
@@ -8401,10 +8427,10 @@ declare module plat {
                 /**
                   * Re-observes the new array context and modifies
                   * the options accordingly.
-                  * @param {Array<any>} newValue? The new array context.
-                  * @param {Array<any>} oldValue? The old array context.
+                  * @param {Array<any>} newValue The new array context.
+                  * @param {Array<any>} oldValue The old array context.
                   */
-                contextChanged(newValue?: Array<any>, oldValue?: Array<any>): void;
+                contextChanged(newValue: Array<any>, oldValue: Array<any>): void;
                 /**
                   * Observes the new array context and adds
                   * the options accordingly.
@@ -9281,15 +9307,7 @@ declare module plat {
               * @param {Array<plat.Control>} controls The array of controls whose attributes will need to be updated
               * upon the context changing.
               */
-            protected _observeControlIdentifiers(nodes: Array<INode>, parent: ui.TemplateControl, controls: Array<Control>): void;
-            /**
-              * A function to handle updating an attribute on all controls that have it
-              * as a property upon a change in its value.
-              * @param {plat.processing.INode} node The INode where the change occurred.
-              * @param {plat.ui.TemplateControl} parent The parent TemplateControl used for context.
-              * @param {Array<plat.Control>} controls The controls that have the changed attribute as a property.
-              */
-            protected _attributeChanged(node: INode, parent: ui.TemplateControl, controls: Array<Control>): void;
+            protected _observeControlIdentifiers(nodes: Array<INode>, parent: ui.TemplateControl, controls: Array<Control>, element: Element): void;
             /**
               * Runs through all the children of this manager and calls fulfillTemplate.
               * child managers have fullfilled their templates.
@@ -9473,6 +9491,86 @@ declare module plat {
               * responsible for the passed in Comment Node.
               */
             create(node: Node, parent: ElementManager): CommentManager;
+        }
+        /**
+          * Used to facilitate observing expressions on attributes. Has the ability to alert Attributes
+          * with changes. Handles dynamic and static attributes (dynamic meaning "class"-like attributes).
+          */
+        class AttributeManager {
+            /**
+              * The element that contains the attribute for this manager.
+              */
+            element: HTMLElement;
+            /**
+              * The INode that contains the attribute for this manager.
+              */
+            node: INode;
+            /**
+              * The parent control for the controls associated with this manager.
+              */
+            parent: ui.TemplateControl;
+            /**
+              * Whether or not the element that contains this attribute is replaced in the DOM.
+              */
+            replace: boolean;
+            /**
+              * The public interface for sending notifications of changes to this attribute.
+              */
+            attributeChanged: () => void;
+            /**
+              * Reference to the INodeManagerStatic injectable.
+              */
+            protected _NodeManager: INodeManagerStatic;
+            /**
+              * A regular expression for finding markup in a string.
+              */
+            protected _markupRegex: RegExp;
+            /**
+              * The controls which need to be notified of changes to this attribute.
+              */
+            protected _controls: Array<Control>;
+            /**
+              * The filtered expressions for a "dynamic" attribute.
+              */
+            protected _bindingExpressions: Array<expressions.IParsedExpression>;
+            /**
+              * Keeps track of the previous bound values of a "dynamic" attribute.
+              */
+            protected _lastValues: IObject<boolean>;
+            /**
+              * Returns a new instance of an AttributeManager.
+              */
+            static getInstance(): AttributeManager;
+            /**
+              * Initializes the manager and determines what method should be used to handle attribute changes.
+              * @param {HTMLElement} element The element that contains this attribute.
+              * @param {plat.processing.INode} node The INode associated with this attribute.
+              * @param {plat.ui.TemplateControl} parent The parent control for all the controls associated with
+              * the element.
+              * @param {Array<plat.Control>} controls The controls associated with the element.
+              * @param {boolean} replace? Whether or not the element is replaced.
+              */
+            initialize(element: Element, node: INode, parent: ui.TemplateControl, controls: Array<Control>, replace?: boolean): void;
+            /**
+              * In the event that the attribute is dynamic (i.e. a "class"-like attribute) this will filter out
+              * expressions that don't have identifiers/aliases.
+              * @param {Array<plat.expressions.IParsedExpression>} expressions The expressions to filter.
+              */
+            protected _getBindingExpressions(expressions: Array<expressions.IParsedExpression>): Array<expressions.IParsedExpression>;
+            /**
+              * Handles changes to dynamic attributes. Takes into account that the attribute may have been changed programmatically, and
+              * we need to only mutate the piece of the attribute corresponding to expressions with markup.
+              */
+            protected _dynamicAttributeChanged(): void;
+            /**
+              * Handles changes to static attributes. Builds a string from the node expressions, then sets the attribute value
+              * and notifies the associated Attributes.
+              */
+            protected _staticAttributeChanged(): void;
+            /**
+              * Notifies the necessary Attributes of changes to an attribute.
+              */
+            protected _notifyAttributes(key: string, value: any): void;
         }
     }
     /**
@@ -11528,27 +11626,32 @@ declare module plat {
               * Setter for textarea, input[type=text],
               * and input[type=button], and select
               * @param {any} newValue The new value to set
-              * @param {any} oldValue? The previously bound value
+              * @param {any} oldValue The previously bound value
               * @param {boolean} firstTime? The context is being evaluated for the first time and
               * should thus change the property if null
               */
-            protected _setText(newValue: any, oldValue?: any, firstTime?: boolean): void;
+            protected _setText(newValue: any, oldValue: any, firstTime?: boolean): void;
             /**
               * Setter for input[type=range]
               * @param {any} newValue The new value to set
-              * @param {any} oldValue? The previously bound value
+              * @param {any} oldValue The previously bound value
               * @param {boolean} firstTime? The context is being evaluated for the first time and
               * should thus change the property if null
               */
-            protected _setRange(newValue: any, oldValue?: any, firstTime?: boolean): void;
+            protected _setRange(newValue: any, oldValue: any, firstTime?: boolean): void;
+            /**
+              * Sets the value on an element.
+              * @param {any} newValue The new value to set
+              */
+            protected _setValue(newValue: any): void;
             /**
               * Setter for input[type=checkbox]
               * @param {any} newValue The new value to set
-              * @param {any} oldValue? The previously bound value
+              * @param {any} oldValue The previously bound value
               * @param {boolean} firstTime? The context is being evaluated for the first time and
               * should thus change the property if null
               */
-            protected _setChecked(newValue: any, oldValue?: any, firstTime?: boolean): void;
+            protected _setChecked(newValue: any, oldValue: any, firstTime?: boolean): void;
             /**
               * Setter for input[type=radio]
               * @param {any} newValue The new value to set
@@ -11557,19 +11660,19 @@ declare module plat {
             /**
               * Setter for select
               * @param {any} newValue The new value to set
-              * @param {any} oldValue? The previously bound value
+              * @param {any} oldValue The previously bound value
               * @param {boolean} firstTime? The context is being evaluated for the first time and
               * should thus change the property if null
               */
-            protected _setSelectedIndex(newValue: any, oldValue?: any, firstTime?: boolean): void;
+            protected _setSelectedIndex(newValue: any, oldValue: any, firstTime?: boolean): void;
             /**
               * Setter for select-multiple
               * @param {any} newValue The new value to set
-              * @param {any} oldValue? The previously bound value
+              * @param {any} oldValue The previously bound value
               * @param {boolean} firstTime? The context is being evaluated for the first time and
               * should thus change the property if null
               */
-            protected _setSelectedIndices(newValue: any, oldValue?: any, firstTime?: boolean): void;
+            protected _setSelectedIndices(newValue: any, oldValue: any, firstTime?: boolean): void;
             /**
               * Determines the type of Element being bound to
               * and sets the necessary handlers.
@@ -11598,24 +11701,35 @@ declare module plat {
             protected _checkAsynchronousSelect(): boolean;
             /**
               * Checks if the associated TemplateControl is a
-              * BindablePropertyControl and
+              * BindControl and
               * initializes all listeners accordingly.
-              * is an BindablePropertyControl
+              * is an BindControl
               */
             protected _observingBindableProperty(): boolean;
             /**
-              * Sets the value on a BindablePropertyControl.
+              * The function that allows a BindControl to observe changes to the
+              * bound property and/or its child properties.
+              * @param {plat.ui.IBoundPropertyChangedListener} listener The listener to fire when the bound property or its
+              * specified child changes.
+              * @param {string} identifier The identifier of the child property of the bound item.
+              */
+            protected _observeProperties(listener: (newValue: any, oldValue: any, identifier: string, firstTime?: boolean) => void, identifier: string): void;
+            /**
+              * The function that allows a BindControl to observe changes to the
+              * bound property and/or its child properties.
+              * @param {plat.ui.IBoundPropertyChangedListener} listener The listener to fire when the bound property or its
+              * specified child changes.
+              * @param {number} index The index of the child property of the bound item if the bound item is an Array.
+              */
+            protected _observeProperties(listener: (newValue: any, oldValue: any, identifier: string, firstTime?: boolean) => void, index: number): void;
+            /**
+              * Sets the value on a BindControl.
               * @param {any} newValue The new value to set
               * @param {any} oldValue? The previously bound value
               * @param {boolean} firstTime? The context is being evaluated for the first time and
               * should thus change the property if null
               */
-            protected _setBindableProperty(newValue: any, oldValue?: any, firstTime?: boolean): void;
-            /**
-              * Sets the value on an element.
-              * @param {any} newValue The new value to set
-              */
-            protected _setValue(newValue: any): void;
+            protected _setBindableProperties(newValue: any, oldValue?: any, firstTime?: boolean): void;
         }
         /**
           * A file interface for browsers that do not support the
@@ -11653,7 +11767,7 @@ declare module plat {
               * The set of functions added by the Template Control that listens
               * for property changes.
               */
-            protected _listeners: Array<(newValue: any, oldValue?: any) => void>;
+            protected _listeners: Array<(newValue: any, oldValue: any) => void>;
             /**
               * The function to stop listening for property changes.
               */
@@ -11935,10 +12049,22 @@ declare module plat {
     interface IPropertyChangedListener {
         /**
           * The method signature for IPropertyChangedListener.
-          * @param {any} newValue? The new value of the observed property.
-          * @param {any} oldValue? The previous value of the observed property.
+          * @param {any} newValue The new value of the observed property.
+          * @param {any} oldValue The previous value of the observed property.
           */
-        (newValue?: any, oldValue?: any): void;
+        (newValue: any, oldValue: any): void;
+    }
+    /**
+      * Defines a function that will be called whenever a property specified by a given identifier has changed.
+      */
+    interface IIdentifierChangedListener {
+        /**
+          * The method signature for IIdentifierChangedListener.
+          * @param {any} newValue The new value of the observed property.
+          * @param {any} oldValue The previous value of the observed property.
+          * @param {any} identifier The string or number identifier that specifies the changed property.
+          */
+        (newValue: any, oldValue: any, identifier: any): void;
     }
 }
 

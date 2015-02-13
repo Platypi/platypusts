@@ -875,10 +875,10 @@ module plat.ui {
 
                 return templateCache.read(type).catch((template: any): async.IThenable<DocumentFragment> => {
                     if (isNull(template)) {
-                        template = dom.serializeHtml(control.templateString);
-                }
+                        template = control.templateString;
+                    }
 
-                return templateCache.put(type, template);
+                    return templateCache.put(type, template);
                 });
             } else {
                 return <any>Promise.reject(null);

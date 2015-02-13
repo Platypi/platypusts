@@ -41,31 +41,20 @@
         });
 
         it('should test observe', () => {
-            var remove = control.observe(null, 'foo', () => { });
+            var remove = control.observe(() => { }, 'foo');
 
-            expect(typeof remove).toEqual('function');
-
-            remove = null;
-            control.parent = <any>{ };
-
-            remove = control.observe({ foo: '' }, 'foo', () => { });
             expect(typeof remove).toEqual('function');
         });
 
-        it('should test observeArray', () => {
-            var remove = control.observeArray(null, 'foo', () => { }, () => { });
+        it('should test observeArray',() => {
+            (<any>control).context = { foo: [] }; 
+            var remove = control.observeArray(() => { },() => { }, 'foo');
 
-            expect(typeof remove).toEqual('function');
-
-            remove = null;
-            control.parent = <any>{};
-
-            remove = control.observeArray({ foo: [] }, 'foo', () => { }, () => { });
             expect(typeof remove).toEqual('function');
         });
 
         it('should test observeExpression', () => {
-            var remove = control.observeExpression(null, () => { });
+            var remove = control.observeExpression(() => { }, null);
 
             expect(typeof remove).toEqual('function');
 
@@ -73,7 +62,7 @@
             remove = null;
             control.parent = <any>{};
             
-            remove = control.observeExpression('foo.bar', () => { });
+            remove = control.observeExpression(() => { }, 'foo.bar');
             expect(typeof remove).toEqual('function');
 
             remove();
@@ -82,7 +71,7 @@
                 absoluteContextPath: 'context'
             };
 
-            remove = control.observeExpression('foo.bar', () => { });
+            remove = control.observeExpression(() => { }, 'foo.bar');
             expect(typeof remove).toEqual('function');
             remove();
         });

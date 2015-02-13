@@ -489,16 +489,16 @@ function getTemplate(templateUrl: string): plat.async.IThenable<DocumentFragment
             } else if (!isObject(success) || !isString(success.response)) {
                 ___Exception = ___Exception || (___Exception = plat.acquire(__ExceptionStatic));
                 ___Exception.warn('No template found at ' + templateUrl, ___Exception.AJAX);
-                return ___templateCache.put(templateUrl, serializeHtml());
+                return ___templateCache.put(templateUrl);
             }
 
             var templateString = success.response;
 
             if (isEmpty(templateString.trim())) {
-                return ___templateCache.put(templateUrl, serializeHtml());
+                return ___templateCache.put(templateUrl);
             }
 
-            return ___templateCache.put(templateUrl, serializeHtml(templateString));
+            return ___templateCache.put(templateUrl, templateString);
         }).catch((error: any): any => {
             postpone((): void => {
                 ___Exception = ___Exception || (___Exception = plat.acquire(__ExceptionStatic));
