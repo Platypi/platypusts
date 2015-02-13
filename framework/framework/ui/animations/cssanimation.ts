@@ -13,17 +13,17 @@
      */
     export class CssAnimation extends BaseAnimation {
         /**
-         * @name __animationEvents
+         * @name _animationEvents
          * @memberof plat.ui.animations.CssAnimation
          * @kind property
-         * @access public
+         * @access protected
          * 
          * @type {plat.IAnimationEvents}
          * 
          * @description
          * A set of browser compatible CSS animation events capable of being listened to.
          */
-        private __animationEvents: IAnimationEvents = this._compat.animationEvents;
+        protected _animationEvents = this._compat.animationEvents;
 
         /**
          * @name animationStart
@@ -39,12 +39,7 @@
          * @returns {plat.IRemoveListener} A function to call in order to stop listening to the event.
          */
         animationStart(listener: (ev?: AnimationEvent) => void): IRemoveListener {
-            var animationEvents = this.__animationEvents;
-            if (isUndefined(animationEvents)) {
-                return noop;
-            }
-
-            return this.addEventListener(animationEvents.$animationStart, listener, false);
+            return this.addEventListener(this._animationEvents.$animationStart, listener, false);
         }
 
         /**
@@ -61,12 +56,7 @@
          * @returns {plat.IRemoveListener} A function to call in order to stop listening to the event.
          */
         animationEnd(listener: (ev?: AnimationEvent) => void): IRemoveListener {
-            var animationEvents = this.__animationEvents;
-            if (isUndefined(animationEvents)) {
-                return noop;
-            }
-
-            return this.addEventListener(animationEvents.$animationEnd, listener, false);
+            return this.addEventListener(this._animationEvents.$animationEnd, listener, false);
         }
 
         /**
@@ -83,12 +73,7 @@
          * @returns {plat.IRemoveListener} A function to call in order to stop listening to the event.
          */
         animationIteration(listener: (ev?: AnimationEvent) => void): IRemoveListener {
-            var animationEvents = this.__animationEvents;
-            if (isUndefined(animationEvents)) {
-                return noop;
-            }
-
-            return this.addEventListener(animationEvents.$animationIteration, listener, false);
+            return this.addEventListener(this._animationEvents.$animationIteration, listener, false);
         }
 
         /**
@@ -105,12 +90,7 @@
          * @returns {plat.IRemoveListener} A function to call in order to stop listening to the event.
          */
         transitionStart(listener: (ev?: TransitionEvent) => void): IRemoveListener {
-            var animationEvents = this.__animationEvents;
-            if (isUndefined(animationEvents)) {
-                return noop;
-            }
-
-            return this.addEventListener(animationEvents.$transitionStart, listener, false);
+            return this.addEventListener(this._animationEvents.$transitionStart, listener, false);
         }
 
         /**
@@ -127,12 +107,7 @@
          * @returns {plat.IRemoveListener} A function to call in order to stop listening to the event.
          */
         transitionEnd(listener: (ev?: TransitionEvent) => void): IRemoveListener {
-            var animationEvents = this.__animationEvents;
-            if (isUndefined(animationEvents)) {
-                return noop;
-            }
-
-            return this.addEventListener(animationEvents.$transitionEnd, listener, false);
+            return this.addEventListener(this._animationEvents.$transitionEnd, listener, false);
         }
     }
 }

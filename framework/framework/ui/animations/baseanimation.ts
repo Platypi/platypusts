@@ -20,45 +20,6 @@
         };
 
         /**
-         * @name _Exception
-         * @memberof plat.ui.animations.BaseAnimation
-         * @kind property
-         * @access protected
-         * 
-         * @type {plat.IExceptionStatic}
-         * 
-         * @description
-         * Reference to the {@link plat.IExceptionStatic|IExceptionStatic} injectable.
-         */
-        protected _Exception: IExceptionStatic;
-
-        /**
-         * @name _compat
-         * @memberof plat.ui.animations.BaseAnimation
-         * @kind property
-         * @access protected
-         * 
-         * @type {plat.Compat}
-         * 
-         * @description
-         * Reference to the {@link plat.Compat|Compat} injectable.
-         */
-        protected _compat: Compat;
-
-        /**
-         * @name _Promise
-         * @memberof plat.ui.animations.BaseAnimation
-         * @kind property
-         * @access protected
-         * 
-         * @type {plat.async.IPromise}
-         * 
-         * @description
-         * Reference to the {@link plat.async.IPromise|IPromise} injectable.
-         */
-        protected _Promise: async.IPromise;
-
-        /**
          * @name element
          * @memberof plat.ui.animations.BaseAnimation
          * @kind property
@@ -96,6 +57,45 @@
          * Specified options for the animation.
          */
         options: any;
+
+        /**
+         * @name _Exception
+         * @memberof plat.ui.animations.BaseAnimation
+         * @kind property
+         * @access protected
+         * 
+         * @type {plat.IExceptionStatic}
+         * 
+         * @description
+         * Reference to the {@link plat.IExceptionStatic|IExceptionStatic} injectable.
+         */
+        protected _Exception: IExceptionStatic;
+
+        /**
+         * @name _compat
+         * @memberof plat.ui.animations.BaseAnimation
+         * @kind property
+         * @access protected
+         * 
+         * @type {plat.Compat}
+         * 
+         * @description
+         * Reference to the {@link plat.Compat|Compat} injectable.
+         */
+        protected _compat: Compat;
+
+        /**
+         * @name _Promise
+         * @memberof plat.ui.animations.BaseAnimation
+         * @kind property
+         * @access protected
+         * 
+         * @type {plat.async.IPromise}
+         * 
+         * @description
+         * Reference to the {@link plat.async.IPromise|IPromise} injectable.
+         */
+        protected _Promise: async.IPromise;
 
         /**
          * @name _resolve
@@ -163,14 +163,14 @@
          * @returns {void}
          */
         end(): void {
-            if (isFunction(this._resolve)) {
-                this._resolve();
-                this._resolve = null;
-            }
-
             var eventListeners = this.__eventListeners;
             while (eventListeners.length > 0) {
                 eventListeners.pop()();
+            }
+
+            if (isFunction(this._resolve)) {
+                this._resolve();
+                this._resolve = null;
             }
         }
 
@@ -218,7 +218,9 @@
          * 
          * @returns {void}
          */
-        cancel(): void { }
+        cancel(): void {
+            this.end();
+        }
 
         /**
          * @name addEventListener
@@ -245,7 +247,10 @@
             }
 
             listener = listener.bind(this);
-            var removeListener = this.dom.addEventListener(this.element, type, listener, useCapture),
+            var removeListener = this.dom.addEventListener(this.element, type, (ev: Event) => {
+                ev.stopPropagation();
+                listener(ev);
+            }, useCapture),
                 eventListeners = this.__eventListeners;
 
             eventListeners.push(removeListener);

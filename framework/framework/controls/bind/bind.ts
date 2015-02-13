@@ -93,7 +93,7 @@ module plat.controls {
          * @type {number}
          * 
          * @description
-         * The priority of Bind is set high to precede 
+         * The priority of {@link plat.controls.Bind|Bind} is set high to precede 
          * other controls that may be listening to the same 
          * event.
          */
@@ -179,6 +179,21 @@ module plat.controls {
         protected _property: string;
 
         /**
+         * @name _supportsTwoWayBinding
+         * @memberof plat.controls.Bind
+         * @kind property
+         * @access protected
+         * 
+         * @type {boolean}
+         * 
+         * @description
+         * Whether or not {@link plat.controls.Bind|Bind} is being used in conjunction 
+         * with a {@link plat.ui.TemplateControl|TemplateControl} that implements the 
+         * interface {@link plat.ui.ISupportTwoWayBinding|ISupportTwoWayBinding}.
+         */
+        protected _supportsTwoWayBinding = false;
+
+        /**
          * @name __fileSupported
          * @memberof plat.controls.Bind
          * @kind property
@@ -258,7 +273,7 @@ module plat.controls {
 
             if (identifiers.length !== 1) {
                 var _Exception: IExceptionStatic = this._Exception;
-                _Exception.warn('Only 1 identifier allowed in a plat-bind expression', _Exception.BIND);
+                _Exception.warn('Only 1 identifier allowed in a ' + this.type + ' expression', _Exception.BIND);
                 this._contextExpression = null;
                 return;
             }
@@ -296,6 +311,10 @@ module plat.controls {
                     identifiers: [],
                     expression: ''
                 };
+            }
+
+            if (this._supportsTwoWayBinding) {
+                (<ui.BindControl>this.templateControl).observeProperties(this._observeProperties.bind(this));
             }
 
             this._watchExpression();
@@ -953,7 +972,7 @@ module plat.controls {
                     context = this._ContextManager.createContext(this.parent,
                         contextExpression.identifiers[0]);
                 } else {
-                    var Exception: IExceptionStatic = this._Exception;
+                    var Exception = this._Exception;
                     Exception.warn(this.type + ' is trying to index into a primitive type. ' +
                         this._contextExpression.expression + ' is already defined and not ' +
                         'an object when trying to evaluate ' + this.type + '="' +
@@ -1096,9 +1115,9 @@ module plat.controls {
             var select = <ui.controls.Select>this.templateControl;
             if (!isNull(select) && isPromise(select.itemsLoaded)) {
                 this.observeArray(null,(ev: observable.IPostArrayChangeInfo<any>): void => {
-                        select.itemsLoaded.then((): void => {
-                            this._setter(this.evaluateExpression(this._expression));
-                        });
+                    select.itemsLoaded.then((): void => {
+                        this._setter(this.evaluateExpression(this._expression));
+                    });
                 }, select.absoluteContextPath);
 
                 select.itemsLoaded.then((): void => {
@@ -1118,12 +1137,11 @@ module plat.controls {
          * @access protected
          * 
          * @description
-         * Checks if the associated {@link plat.ui.TemplateControl|TemplateControl} is a 
-         * {@link plat.ui.BindControl|BindControl} and 
-         * initializes all listeners accordingly.
+         * Checks if the associated {@link plat.ui.TemplateControl|TemplateControl} is implementing 
+         * {@link plat.ui.ISupportTwoWayBinding|ISupportTwoWayBinding} and initializes all listeners accordingly.
          * 
          * @returns {boolean} Whether or not the associated {@link plat.ui.TemplateControl|TemplateControl} 
-         * is an {@link plat.ui.BindControl|BindControl}
+         * is implementing {@link plat.ui.ISupportTwoWayBinding|ISupportTwoWayBinding}.
          */
         protected _observingBindableProperty(): boolean {
             var templateControl = <ui.BindControl>this.templateControl;
@@ -1135,9 +1153,7 @@ module plat.controls {
                     this._propertyChanged();
                 });
 
-                templateControl.observeProperties(this._observeProperties.bind(this));
-                this._setter = this._setBindableProperties;
-                return true;
+                return (this._supportsTwoWayBinding = true);
             }
 
             return false;
@@ -1151,17 +1167,17 @@ module plat.controls {
          * @variation 0
          * 
          * @description
-         * The function that allows a {@link plat.ui.BindControl|BindControl} to observe changes to the 
-         * bound property and/or its child properties.
+         * The function that allows a control implementing {@link plat.ui.ISupportTwoWayBinding|ISupportTwoWayBinding} to observe 
+         * changes to the bound property and/or its child properties.
          * 
          * @param {plat.ui.IBoundPropertyChangedListener} listener The listener to fire when the bound property or its 
          * specified child changes.
-         * @param {string} identifier The identifier of the child property of the bound item.
+         * @param {string} identifier? The identifier of the child property of the bound item.
          * 
          * @returns {void}
          */
         protected _observeProperties(listener: (newValue: any, oldValue: any, identifier: string, firstTime?: boolean) => void,
-            identifier: string): void;
+            identifier?: string): void;
         /**
          * @name _observeProperties
          * @memberof plat.controls.Bind
@@ -1170,44 +1186,55 @@ module plat.controls {
          * @variation 1
          * 
          * @description
-         * The function that allows a {@link plat.ui.BindControl|BindControl} to observe changes to the 
-         * bound property and/or its child properties.
+         * The function that allows a control implementing {@link plat.ui.ISupportTwoWayBinding|ISupportTwoWayBinding} to observe 
+         * changes to the bound property and/or its child properties.
          * 
          * @param {plat.ui.IBoundPropertyChangedListener} listener The listener to fire when the bound property or its 
          * specified child changes.
-         * @param {number} index The index of the child property of the bound item if the bound item is an Array.
+         * @param {number} index? The index of the child property of the bound item if the bound item is an Array.
          * 
          * @returns {void}
          */
         protected _observeProperties(listener: (newValue: any, oldValue: any, identifier: string, firstTime?: boolean) => void,
-            index: number): void;
+            index?: number): void;
         protected _observeProperties(listener: (newValue: any, oldValue: any, identifier: string, firstTime?: boolean) => void,
-            identifier: any): void {
+            identifier?: any): void {
+            var parsedIdentifier: string;
+            if (isEmpty(identifier)) {
+                parsedIdentifier = this._expression.expression;
+            } else {
+                var _parser = this._parser,
+                    identifierExpression = _parser.parse(identifier),
+                    expression = _parser.parse(this._expression.expression + '.' + identifierExpression.identifiers[0]);
 
+                parsedIdentifier = expression.identifiers[0];
+
+                var split = parsedIdentifier.split('.'),
+                    key = split.pop(),
+                    contextExpression = split.join('.'),
+                    context = this.evaluateExpression(contextExpression);
+
+                if (!isObject(context)) {
+                    if (isNull(context)) {
+                        context = this._ContextManager.createContext(this.parent, contextExpression);
+                    } else {
+                        var Exception = this._Exception;
+                        Exception.warn('A control implementing ISupportTwoWayBinding is trying to index into a primitive type ' +
+                            'when trying to evaluate ' + this.type + '="' + this._expression.expression + '"', Exception.BIND);
+                        return;
+                    }
+                }
         }
 
-        /**
-         * @name _setBindableProperties
-         * @memberof plat.controls.Bind
-         * @kind function
-         * @access protected
-         * 
-         * @description
-         * Sets the value on a {@link plat.ui.BindControl|BindControl}.
-         * 
-         * @param {any} newValue The new value to set
-         * @param {any} oldValue? The previously bound value
-         * @param {boolean} firstTime? The context is being evaluated for the first time and 
-         * should thus change the property if null
-         * 
-         * @returns {void}
-         */
-        protected _setBindableProperties(newValue: any, oldValue?: any, firstTime?: boolean): void {
+            listener = listener.bind(this.templateControl);
+            this.observe((newValue: any, oldValue: any): void => {
             if (this.__isSelf || newValue === oldValue) {
                 return;
             }
 
-            // (<ui.BindControl>this.templateControl).setProperty(newValue, oldValue, firstTime);
+                listener(newValue, oldValue, identifier);
+            }, parsedIdentifier);
+            listener(this.evaluateExpression(parsedIdentifier), undefined, identifier, true);
         }
     }
 

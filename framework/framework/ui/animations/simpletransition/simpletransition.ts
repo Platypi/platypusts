@@ -151,34 +151,36 @@
          * @returns {void}
          */
         start(): void {
-            var animationEvents = this._compat.animationEvents;
-            if (isUndefined(animationEvents)) {
-                this.end();
-                return;
-            }
-
-            var element = this.element;
-            addClass(element, this.className);
-
-            var transitionId = animationEvents.$transition,
-                computedStyle = this._window.getComputedStyle(element, (this.options || <ISimpleCssTransitionOptions>{}).pseudo),
-                transitionProperty = computedStyle[<any>(transitionId + 'Property')],
-                transitionDuration = computedStyle[<any>(transitionId + 'Duration')];
-
-            this._started = true;
-
-            if (transitionProperty === '' || transitionProperty === 'none' ||
-                transitionDuration === '' || transitionDuration === '0s') {
-                requestAnimationFrameGlobal((): void => {
-                    this._animate();
-                    this._done(null, true);
-                });
-                return;
-            }
-
-            this.transitionEnd(this._done);
-
             requestAnimationFrameGlobal((): void => {
+                var element = this.element;
+
+                if (element.offsetParent === null) {
+                    requestAnimationFrameGlobal((): void => {
+                        this._animate();
+                        this._done(null, true);
+                    });
+                }
+
+                addClass(element, this.className);
+
+                var transitionId = this._animationEvents.$transition,
+                    computedStyle = this._window.getComputedStyle(element, (this.options || <ISimpleCssTransitionOptions>{}).pseudo),
+                    transitionProperty = computedStyle[<any>(transitionId + 'Property')],
+                    transitionDuration = computedStyle[<any>(transitionId + 'Duration')];
+
+                this._started = true;
+
+                if (transitionProperty === '' || transitionProperty === 'none' ||
+                    transitionDuration === '' || transitionDuration === '0s') {
+                    requestAnimationFrameGlobal((): void => {
+                        this._animate();
+                        this._done(null, true);
+                    });
+                    return;
+                }
+
+                this.transitionEnd(this._done);
+
                 if (this._animate()) {
                     return;
                 }
@@ -199,13 +201,13 @@
          * @returns {void}
          */
         cancel(): void {
-            removeClass(this.element, this.className);
-
-            if (this._started) {
-                return;
+            if (!this._started) {
+                requestAnimationFrameGlobal((): void => {
+                    this._animate();
+                });
             }
 
-            this._animate();
+            this._done(null, true);
         }
 
         /**

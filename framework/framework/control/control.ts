@@ -556,8 +556,7 @@ module plat {
          * 
          * @returns {plat.Control}
          */
-        constructor() {
-        }
+        constructor() { }
 
         /**
          * @name initialize
@@ -757,8 +756,17 @@ module plat {
                 return noop;
             }
 
-            var absoluteIdentifier = isEmpty(identifier) ? control.absoluteContextPath : control.absoluteContextPath + '.' + identifier,
-                _ContextManager: observable.IContextManagerStatic = Control._ContextManager || acquire(__ContextManagerStatic),
+            var absoluteIdentifier: string;
+            if (isEmpty(identifier)) {
+                absoluteIdentifier = control.absoluteContextPath;
+            } else if (isString(identifier)) {
+                var identifierExpression = (Control._parser || <expressions.Parser>acquire(__Parser)).parse(identifier);
+                absoluteIdentifier = control.absoluteContextPath + '.' + identifierExpression.identifiers[0];
+            } else {
+                absoluteIdentifier = control.absoluteContextPath + '.' + identifier;
+            }
+
+            var _ContextManager: observable.IContextManagerStatic = Control._ContextManager || acquire(__ContextManagerStatic),
                 contextManager = _ContextManager.getManager(Control.getRootControl(control));
 
             return contextManager.observe(absoluteIdentifier, {
@@ -825,10 +833,21 @@ module plat {
                 return noop;
             }
 
-            var identifierIsEmpty = isEmpty(identifier),
-                array: Array<any> = identifierIsEmpty ? context : isString(identifier) ?
-                    (Control._parser || <expressions.Parser>acquire(__Parser)).parse(identifier).evaluate(context) :
-                    context[identifier];
+            var array: Array<any>,
+                absoluteIdentifier: string;
+
+            if (isEmpty(identifier)) {
+                array = context;
+                absoluteIdentifier = control.absoluteContextPath;
+            } else if (isString(identifier)) {
+                var identifierExpression = (Control._parser || <expressions.Parser>acquire(__Parser)).parse(identifier);
+                array = identifierExpression.evaluate(context);
+                absoluteIdentifier = control.absoluteContextPath + '.' + identifierExpression.identifiers[0];
+            } else {
+                array = context[identifier];
+                absoluteIdentifier = control.absoluteContextPath + '.' + identifier;
+            }
+
             if (!isArray(array)) {
                 return noop;
             }
@@ -840,8 +859,7 @@ module plat {
                 return noop;
             }
 
-            var absoluteIdentifier = identifierIsEmpty ? control.absoluteContextPath : control.absoluteContextPath + '.' + identifier,
-                ContextManager: observable.IContextManagerStatic = Control._ContextManager || acquire(__ContextManagerStatic),
+            var ContextManager: observable.IContextManagerStatic = Control._ContextManager || acquire(__ContextManagerStatic),
                 contextManager = ContextManager.getManager(Control.getRootControl(control)),
                 uid = this.uid,
                 preCallback = preIsFunction ? (ev: observable.IPreArrayChangeInfo): void => {
