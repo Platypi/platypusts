@@ -19,7 +19,13 @@ module app.viewcontrols {
             views: [One, Two, Three, Four],
             test: [0, 1, 2, 3, 4, 5],
             items: <Array<{ value: string|number; }>>[],
-            testClass: 'foo quux'
+            testClass: 'foo quux',
+            select: [
+                { value: 0, textContent: 'foo' },
+                { value: 1, textContent: 'bar' },
+                { value: 2, textContent: 'baz' }
+            ],
+            selectedVal: <any>null
         };
 
         constructor(router: plat.routing.Router) {
@@ -80,6 +86,10 @@ module app.viewcontrols {
                 //test.push(3);
                 //test.push(4);
             }, 1000);
+        }
+
+        tap() {
+            this.context;
         }
     }
 

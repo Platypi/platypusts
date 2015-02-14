@@ -734,8 +734,10 @@ module plat {
      * 
      * @description
      * Defines a function that will be called whenever a property has changed.
+     * 
+     * @typeparam {any} T The type of each value changing.
      */
-    export interface IPropertyChangedListener {
+    export interface IPropertyChangedListener<T> {
         /**
          * @memberof plat.IPropertyChangedListener
          * @kind function
@@ -745,12 +747,14 @@ module plat {
          * @description
          * The method signature for {@link plat.IPropertyChangedListener|IPropertyChangedListener}.
          * 
-         * @param {any} newValue The new value of the observed property.
-         * @param {any} oldValue The previous value of the observed property.
+         * @typeparam {any} T The type of values.
+         * 
+         * @param {T} newValue The new value of the observed property.
+         * @param {T} oldValue The previous value of the observed property.
          * 
          * @returns {void}
          */
-        (newValue: any, oldValue: any): void;
+        (newValue: T, oldValue: T): void;
     }
 
     /**
@@ -760,8 +764,10 @@ module plat {
      * 
      * @description
      * Defines a function that will be called whenever a property specified by a given identifier has changed.
+     * 
+     * @typeparam {any} T The type of each value changing.
      */
-    export interface IIdentifierChangedListener {
+    export interface IIdentifierChangedListener<T> {
         /**
          * @memberof plat.IIdentifierChangedListener
          * @kind function
@@ -771,12 +777,14 @@ module plat {
          * @description
          * The method signature for {@link plat.IIdentifierChangedListener|IIdentifierChangedListener}.
          * 
-         * @param {any} newValue The new value of the observed property.
-         * @param {any} oldValue The previous value of the observed property.
+         * @typeparam {any} T The type of values.
+         * 
+         * @param {T} newValue The new value of the observed property.
+         * @param {T} oldValue The previous value of the observed property.
          * @param {any} identifier The string or number identifier that specifies the changed property.
          * 
          * @returns {void}
          */
-        (newValue: any, oldValue: any, identifier: any): void;
+        (newValue: T, oldValue: T, identifier: any): void;
     }
 }

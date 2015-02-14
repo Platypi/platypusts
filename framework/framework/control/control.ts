@@ -722,7 +722,7 @@ module plat {
          * 
          * @typeparam {any} T The type of object to observe.
          * 
-         * @param {(value: T, oldValue: T, identifier: string) => void} listener The method called when the property is changed. 
+         * @param {plat.IIdentifierChangedListener<T>} listener The method called when the property is changed. 
          * This method will have its 'this' context set to the control instance.
          * @param {string} identifier? The property string that denotes the item in the context (e.g. "foo.bar.baz" is observing the 
          * property `baz` in the object `bar` in the object `foo` in the control's context.
@@ -743,7 +743,7 @@ module plat {
          * 
          * @typeparam {any} T The type of object to observe.
          * 
-         * @param {(value: T, oldValue: T, index: number) => void} listener The method called when the property is changed. This method 
+         * @param {plat.IIdentifierChangedListener<T>} listener The method called when the property is changed. This method 
          * will have its 'this' context set to the control instance.
          * @param {number} index? The index that denotes the item in the context if the context is an Array.
          * 
@@ -897,7 +897,7 @@ module plat {
          * 
          * @typeparam {any} T The type of value the expression will evaluate out to.
          * 
-         * @param {(value: T, oldValue: T, expression: string) => void} listener The listener to call when the expression identifer values change.
+         * @param {plat.IIdentifierChangedListener<T>} listener The listener to call when the expression identifer values change.
          * @param {string} expression The expression string to watch for changes.
          * 
          * @returns {plat.IRemoveListener} A function to call in order to stop observing the expression.
@@ -916,7 +916,7 @@ module plat {
          * 
          * @typeparam {any} T The type of value the expression will evaluate out to.
          * 
-         * @param {(value: T, oldValue: T, expression: string) => void} listener The listener to call when the expression identifer values change.
+         * @param {plat.IIdentifierChangedListener<T>} listener The listener to call when the expression identifer values change.
          * @param {plat.expressions.IParsedExpression} expression The expression string to watch for changes.
          * 
          * @returns {plat.IRemoveListener} A function to call in order to stop observing the expression.
@@ -1473,6 +1473,190 @@ module plat {
              * @returns {plat.IRemoveListener} A method for removing the listener.
              */
             observe(listener: (newValue: T, oldValue: T) => void): IRemoveListener;
+        }
+
+        /**
+         * @name ISupportTwoWayBinding
+         * @memberof plat.observable
+         * @kind interface
+         * 
+         * @description
+         * Defines methods that interact with a control that implements {@link plat.observable.IImplementTwoWayBinding|IImplementTwoWayBinding} 
+         * (e.g. {@link plat.controls.Bind|Bind}.
+         */
+        export interface ISupportTwoWayBinding {
+            /**
+             * @name observeProperty
+             * @memberof plat.observable.ISupportTwoWayBinding
+             * @kind function
+             * @access public
+             * 
+             * @description
+             * Adds a listener to be called when the bindable property changes.
+             * 
+             * @param {plat.IPropertyChangedListener<any>} listener The function that acts as a listener.
+             * 
+             * @returns {plat.IRemoveListener} A function to stop listening for property changes.
+             */
+            onInput(listener: (newValue: any, oldValue: any) => void): IRemoveListener;
+
+            /**
+             * @name observeProperties
+             * @memberof plat.observable.ISupportTwoWayBinding
+             * @kind function
+             * @access public
+             * 
+             * @description
+             * A function that allows this control to observe both the bound property itself as well as 
+             * potential child properties if being bound to an object.
+             * 
+             * @param {plat.observable.IImplementTwoWayBinding} implementer The control that facilitates the 
+             * databinding.
+             * 
+             * @returns {void}
+             */
+            observeProperties(implementer: observable.IImplementTwoWayBinding): void;
+        }
+
+        /**
+         * @name IImplementTwoWayBinding
+         * @memberof plat.observable
+         * @kind interface
+         * 
+         * @description
+         * Defines methods that interact with a control that implements {@link plat.observable.ISupportTwoWayBinding|ISupportTwoWayBinding} 
+         * (e.g. any control that extends {@link plat.ui.BindControl|BindControl}.
+         */
+        export interface IImplementTwoWayBinding {
+            /**
+             * @name observeProperty
+             * @memberof plat.observable.IImplementTwoWayBinding
+             * @kind function
+             * @access public
+             * @variation 0
+             * 
+             * @description
+             * A function that allows a {@link plat.observable.ISupportTwoWayBinding|ISupportTwoWayBinding} to observe both the 
+             * bound property itself as well as potential child properties if being bound to an object.
+             * 
+             * @typeparam {any} T The type of item being observed.
+             * 
+             * @param {plat.observable.IBoundPropertyChangedListener<T>} listener The listener function.
+             * @param {string} identifier? The identifier off of the bound object to listen to for changes. If undefined or empty  
+             * the listener will listen for changes to the bound item itself.
+             * 
+             * @returns {plat.IRemoveListener} A function to stop listening for changes.
+             */
+            observeProperty<T>(listener: IBoundPropertyChangedListener<T>, identifier?: string): IRemoveListener;
+            /**
+             * @name observeProperty
+             * @memberof plat.observable.IImplementTwoWayBinding
+             * @kind function
+             * @access public
+             * @variation 1
+             * 
+             * @description
+             * A function that allows a {@link plat.observable.ISupportTwoWayBinding|ISupportTwoWayBinding} to observe both the 
+             * bound property itself as well as potential child properties if being bound to an object.
+             * 
+             * @typeparam {any} T The type of item being observed.
+             * 
+             * @param {plat.observable.IBoundPropertyChangedListener<T>} listener The listener function.
+             * @param {number} index? The index off of the bound object to listen to for changes if the bound object is an Array. 
+             * If undefined or empty the listener will listen for changes to the bound Array itself.
+             * 
+             * @returns {plat.IRemoveListener} A function to stop listening for changes.
+             */
+            observeProperty<T>(listener: IBoundPropertyChangedListener<T>, index?: number): IRemoveListener;
+            /**
+             * @name observeProperty
+             * @memberof plat.observable.IImplementTwoWayBinding
+             * @kind function
+             * @access public
+             * @variation 2
+             * 
+             * @description
+             * A function that allows a {@link plat.observable.ISupportTwoWayBinding|ISupportTwoWayBinding} to observe both the 
+             * bound property itself as well as potential child properties if being bound to an object.
+             * 
+             * @typeparam {any} T The type of items in the Array if listening for Array mutations. 
+             * 
+             * @param {(ev: plat.observable.IPostArrayChangeInfo<T>, identifier: string) => void} listener The listener function.
+             * @param {string} identifier? The identifier off of the bound object to listen to for changes. If undefined or empty  
+             * the listener will listen for changes to the bound item itself.
+             * @param {boolean} arrayMutationsOnly? Whether or not to listen only for Array mutation changes.
+             * 
+             * @returns {plat.IRemoveListener} A function to stop listening for changes.
+             */
+            observeProperty<T>(listener: (ev: observable.IPostArrayChangeInfo<T>, identifier: string) => void,
+                identifier?: string, arrayMutationsOnly?: boolean): IRemoveListener;
+            /**
+             * @name observeProperty
+             * @memberof plat.observable.IImplementTwoWayBinding
+             * @kind function
+             * @access public
+             * @variation 3
+             * 
+             * @description
+             * A function that allows a {@link plat.observable.ISupportTwoWayBinding|ISupportTwoWayBinding} to observe both the 
+             * bound property itself as well as potential child properties if being bound to an object.
+             * 
+             * @typeparam {any} T The type of items in the Array if listening for Array mutations. 
+             * 
+             * @param {(ev: plat.observable.IPostArrayChangeInfo<T>, identifier: string) => void} listener The listener function.
+             * @param {number} index? The index off of the bound object to listen to for changes if the bound object is an Array. 
+             * If undefined or empty the listener will listen for changes to the bound Array itself.
+             * @param {boolean} arrayMutationsOnly? Whether or not to listen only for Array mutation changes.
+             * 
+             * @returns {plat.IRemoveListener} A function to stop listening for changes.
+             */
+            observeProperty<T>(listener: (ev: observable.IPostArrayChangeInfo<T>, identifier: string) => void,
+                index?: number, arrayMutationsOnly?: boolean): IRemoveListener;
+
+            /**
+             * @name evaluate
+             * @memberof plat.observable.IImplementTwoWayBinding
+             * @kind function
+             * @access public
+             * 
+             * @description
+             * Gets the current value of the bound property.
+             * 
+             * @returns {any} The current value of the bound property.
+             */
+            evaluate(): any;
+        }
+
+        /**
+         * @name IBoundPropertyChangedListener
+         * @memberof plat.observable
+         * @kind interface
+         * 
+         * @description
+         * Defines a function that will be called whenever a bound property specified by a given identifier has changed.
+         * 
+         * @typeparam {any} T The type of each value changing.
+         */
+        export interface IBoundPropertyChangedListener<T> {
+            /**
+             * @memberof plat.observable.IBoundPropertyChangedListener
+             * @kind function
+             * @access public
+             * @static
+             * 
+             * @description
+             * The method signature for {@link plat.observable.IBoundPropertyChangedListener|IBoundPropertyChangedListener}.
+             * 
+             * @typeparam {any} T The type of values.
+             * 
+             * @param {T} newValue The new value of the observed property.
+             * @param {T} oldValue The previous value of the observed property.
+             * @param {any} identifier The string or number identifier that specifies the changed property.
+             * @param {boolean} firstTime? True if this is the first case where the bound property is being set.
+             * 
+             * @returns {void}
+             */
+            (newValue: T, oldValue: T, identifier: any, firstTime?: boolean): void;
         }
     }
 }

@@ -15,6 +15,10 @@
         <plat-viewport></plat-viewport>
     </div>
 </div>-->
+<button plat-tap="tap">tap</button><br />
+<plat-select plat-context="select" plat-bind="selectedVal">
+    <option value="{{value}}">{{textContent}}</option>
+</plat-select>
 
 <plat-foreach class="blah blah2 {{testClass}} {{testClass}} blah3" other-class="{{testClass}}" plat-context="test">
     <div class="foo">
