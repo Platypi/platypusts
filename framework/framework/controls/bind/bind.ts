@@ -16,17 +16,33 @@ module plat.controls {
      * @kind class
      * 
      * @extends {plat.AttributeControl}
+     * @implements {plat.observable.IImplementTwoWayBinding}
      * 
      * @description
      * Facilitates two-way databinding for HTMLInputElements, HTMLSelectElements, and HTMLTextAreaElements.
      */
-    export class Bind extends AttributeControl {
+    export class Bind extends AttributeControl implements observable.IImplementTwoWayBinding {
         protected static _inject: any = {
             _parser: __Parser,
             _ContextManager: __ContextManagerStatic,
             _compat: __Compat,
             _document: __Document
         };
+
+        /**
+         * @name priority
+         * @memberof plat.controls.Bind
+         * @kind property
+         * @access public
+         * 
+         * @type {number}
+         * 
+         * @description
+         * The priority of {@link plat.controls.Bind|Bind} is set high to precede 
+         * other controls that may be listening to the same 
+         * event.
+         */
+        priority: number = 100;
 
         /**
          * @name _parser
@@ -83,21 +99,6 @@ module plat.controls {
          * Reference to the Document injectable.
          */
         protected _document: Document;
-
-        /**
-         * @name priority
-         * @memberof plat.controls.Bind
-         * @kind property
-         * @access public
-         * 
-         * @type {number}
-         * 
-         * @description
-         * The priority of {@link plat.controls.Bind|Bind} is set high to precede 
-         * other controls that may be listening to the same 
-         * event.
-         */
-        priority: number = 100;
 
         /**
          * @name _addEventType
@@ -189,7 +190,7 @@ module plat.controls {
          * @description
          * Whether or not {@link plat.controls.Bind|Bind} is being used in conjunction 
          * with a {@link plat.ui.TemplateControl|TemplateControl} that implements the 
-         * interface {@link plat.ui.ISupportTwoWayBinding|ISupportTwoWayBinding}.
+         * interface {@link plat.observable.ISupportTwoWayBinding|ISupportTwoWayBinding}.
          */
         protected _supportsTwoWayBinding = false;
 
@@ -279,7 +280,6 @@ module plat.controls {
             }
 
             var split = identifiers[0].split('.');
-
             this._property = split.pop();
 
             if (split.length > 0) {
@@ -314,7 +314,7 @@ module plat.controls {
             }
 
             if (this._supportsTwoWayBinding) {
-                (<ui.BindControl>this.templateControl).observeProperties(this._observeProperties.bind(this));
+                (<ui.BindControl>this.templateControl).observeProperties(this);
             }
 
             this._watchExpression();
@@ -357,6 +357,167 @@ module plat.controls {
         }
 
         /**
+         * @name evaluate
+         * @memberof plat.controls.Bind
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Gets the current value of the bound property.
+         * 
+         * @returns {any} The current value of the bound property.
+         */
+        evaluate(): any {
+            var expression = this._expression;
+            if (isUndefined(expression)) {
+                return;
+            }
+
+            return this.evaluateExpression(expression);
+        }
+
+        /**
+         * @name observeProperty
+         * @memberof plat.controls.Bind
+         * @kind function
+         * @access public
+         * @variation 0
+         * 
+         * @description
+         * The function that allows a control implementing {@link plat.observable.ISupportTwoWayBinding|ISupportTwoWayBinding} to observe 
+         * changes to the bound property and/or its child properties.
+         * 
+         * @typeparam {any} T The type of item being observed.
+         * 
+         * @param {plat.observable.IBoundPropertyChangedListener<T>} listener The listener to fire when the bound property or its 
+         * specified child changes.
+         * @param {string} identifier? The identifier of the child property of the bound item.
+         * 
+         * @returns {void}
+         */
+        observeProperty<T>(listener: observable.IBoundPropertyChangedListener<T>, identifier?: string): IRemoveListener;
+        /**
+         * @name observeProperty
+         * @memberof plat.controls.Bind
+         * @kind function
+         * @access public
+         * @variation 1
+         * 
+         * @description
+         * The function that allows a control implementing {@link plat.observable.ISupportTwoWayBinding|ISupportTwoWayBinding} to observe 
+         * changes to the bound property and/or its child properties.
+         * 
+         * @typeparam {any} T The type of item being observed.
+         * 
+         * @param {plat.observable.IBoundPropertyChangedListener<T>} listener The listener to fire when the bound property or its 
+         * specified child changes.
+         * @param {number} index? The index of the child property of the bound item if the bound item is an Array.
+         * 
+         * @returns {plat.IRemoveListener} A listener for removing the function.
+         */
+        observeProperty<T>(listener: observable.IBoundPropertyChangedListener<T>, index?: number): IRemoveListener;
+        /**
+         * @name observeProperty
+         * @memberof plat.observable.IImplementTwoWayBinding
+         * @kind function
+         * @access public
+         * @variation 2
+         * 
+         * @description
+         * A function that allows a {@link plat.observable.ISupportTwoWayBinding|ISupportTwoWayBinding} to observe both the 
+         * bound property itself as well as potential child properties if being bound to an object.
+         * 
+         * @typeparam {any} T The type of items in the Array if listening for Array mutations. 
+         * 
+         * @param {(ev: plat.observable.IPostArrayChangeInfo<T>, identifier: string) => void} listener The listener function.
+         * @param {string} identifier? The identifier off of the bound object to listen to for changes. If undefined or empty  
+         * the listener will listen for changes to the bound item itself.
+         * @param {boolean} arrayMutationsOnly? Whether or not to listen only for Array mutation changes.
+         * 
+         * @returns {plat.IRemoveListener} A function to stop listening for changes.
+         */
+        observeProperty<T>(listener: (ev: observable.IPostArrayChangeInfo<T>, identifier: string) => void,
+            identifier?: string, arrayMutationsOnly?: boolean): IRemoveListener;
+        /**
+         * @name observeProperty
+         * @memberof plat.observable.IImplementTwoWayBinding
+         * @kind function
+         * @access public
+         * @variation 3
+         * 
+         * @description
+         * A function that allows a {@link plat.observable.ISupportTwoWayBinding|ISupportTwoWayBinding} to observe both the 
+         * bound property itself as well as potential child properties if being bound to an object.
+         * 
+         * @typeparam {any} T The type of items in the Array if listening for Array mutations. 
+         * 
+         * @param {(ev: plat.observable.IPostArrayChangeInfo<T>, identifier: string) => void} listener The listener function.
+         * @param {number} index? The index off of the bound object to listen to for changes if the bound object is an Array. 
+         * If undefined or empty the listener will listen for changes to the bound Array itself.
+         * @param {boolean} arrayMutationsOnly? Whether or not to listen only for Array mutation changes.
+         * 
+         * @returns {plat.IRemoveListener} A function to stop listening for changes.
+         */
+        observeProperty<T>(listener: (ev: observable.IPostArrayChangeInfo<T>, identifier: string) => void,
+            index?: number, arrayMutationsOnly?: boolean): IRemoveListener;
+        observeProperty(listener: any, identifier?: any, arrayMutationsOnly?: boolean): IRemoveListener {
+            var parsedIdentifier: string;
+            if (isEmpty(identifier)) {
+                parsedIdentifier = this._expression.expression;
+            } else {
+                var _parser = this._parser,
+                    identifierExpression = _parser.parse(identifier),
+                    identifiers = identifierExpression.identifiers,
+                    _Exception: IExceptionStatic;
+
+                if (identifiers.length !== 1) {
+                    _Exception = this._Exception;
+                    _Exception.warn('Only 1 identifier path allowed when observing changes to a bound property\'s child with a control ' +
+                        'implementing ISupportTwoWayBinding and working with ' + this.type, _Exception.BIND);
+                    return;
+                }
+
+                var expression = _parser.parse(this._expression.expression + '.' + identifiers[0]);
+
+                parsedIdentifier = expression.identifiers[0];
+
+                var split = parsedIdentifier.split('.'),
+                    key = split.pop(),
+                    contextExpression = split.join('.'),
+                    context = this.evaluateExpression(contextExpression);
+
+                if (!isObject(context)) {
+                    if (isNull(context)) {
+                        context = this._ContextManager.createContext(this.parent, contextExpression);
+                    } else {
+                        _Exception = this._Exception;
+                        _Exception.warn('A control implementing ISupportTwoWayBinding is trying to index into a primitive type ' +
+                            'when trying to evaluate ' + this.type + '="' + this._expression.expression + '"', _Exception.BIND);
+                        return;
+                    }
+                }
+            }
+
+            listener = listener.bind(this.templateControl);
+
+            var removeListener: IRemoveListener;
+            if (arrayMutationsOnly === true) {
+                removeListener = this.observeArray(null, listener, parsedIdentifier);
+            } else {
+                removeListener = this.observe((newValue: any, oldValue: any): void => {
+                    if (this.__isSelf || newValue === oldValue) {
+                        return;
+                    }
+
+                    listener(newValue, oldValue, identifier);
+                }, parsedIdentifier);
+            }
+
+            listener(this.evaluateExpression(parsedIdentifier), undefined, identifier, true);
+            return removeListener;
+        }
+
+        /**
          * @name _addTextEventListener
          * @memberof plat.controls.Bind
          * @kind function
@@ -364,7 +525,7 @@ module plat.controls {
          * 
          * @description
          * Adds a text event as the event listener. 
-         * Used for textarea and input[type=text].
+         * Used for textarea and input[type="text"].
          * 
          * @returns {void}
          */
@@ -431,7 +592,7 @@ module plat.controls {
          * 
          * @description
          * Adds a change event as the event listener. 
-         * Used for select, input[type=radio], and input[type=range].
+         * Used for select, input[type="radio"], and input[type="range"].
          * 
          * @returns {void}
          */
@@ -447,7 +608,7 @@ module plat.controls {
          * 
          * @description
          * Adds a $tap event as the event listener. 
-         * Used for input[type=button] and button.
+         * Used for input[type="button"] and button.
          * 
          * @returns {void}
          */
@@ -462,9 +623,9 @@ module plat.controls {
          * @access protected
          * 
          * @description
-         * Getter for input[type=checkbox] and input[type=radio]
+         * Getter for input[type="checkbox"] and input[type="radio"].
          * 
-         * @returns {boolean} Whether or not the input element is checked
+         * @returns {boolean} Whether or not the input element is checked.
          */
         protected _getChecked(): boolean {
             return (<HTMLInputElement>this.element).checked;
@@ -477,10 +638,10 @@ module plat.controls {
          * @access protected
          * 
          * @description
-         * Getter for input[type=text], input[type=range], 
+         * Getter for input[type="text"], input[type="range"], 
          * textarea, and select.
          * 
-         * @returns {string} The input value
+         * @returns {string} The input value.
          */
         protected _getValue(): string {
             return (<HTMLInputElement>this.element).value;
@@ -495,7 +656,7 @@ module plat.controls {
          * @description
          * Getter for button.
          * 
-         * @returns {string} The button textContent
+         * @returns {string} The button textContent.
          */
         protected _getTextContent(): string {
             return (<HTMLInputElement>this.element).textContent;
@@ -511,7 +672,7 @@ module plat.controls {
          * Getter for input[type="file"]. Creates a partial IFile 
          * element if file is not supported.
          * 
-         * @returns {plat.controls.IFile} The input file
+         * @returns {plat.controls.IFile} The input file.
          */
         protected _getFile(): IFile {
             var element = <HTMLInputElement>this.element,
@@ -540,9 +701,9 @@ module plat.controls {
          * @access protected
          * 
          * @description
-         * Getter for input[type="file"]-multiple
+         * Getter for input[type="file"]-multiple.
          * 
-         * @returns {Array<plat.controls.IFile>} The input files
+         * @returns {Array<plat.controls.IFile>} The input files.
          */
         protected _getFiles(): Array<IFile> {
             var element = <HTMLInputElement>this.element;
@@ -582,9 +743,9 @@ module plat.controls {
          * @access protected
          * 
          * @description
-         * Getter for select-multiple
+         * Getter for select-multiple.
          * 
-         * @returns {Array<string>} The selected values
+         * @returns {Array<string>} The selected values.
          */
         protected _getSelectedValues(): Array<string> {
             var options = (<HTMLSelectElement>this.element).options,
@@ -609,8 +770,8 @@ module plat.controls {
          * @access protected
          * 
          * @description
-         * Setter for textarea, input[type=text], 
-         * and input[type=button], and select
+         * Setter for textarea, input[type="text"], 
+         * and input[type="button"], and select.
          * 
          * @param {any} newValue The new value to set
          * @param {any} oldValue The previously bound value
@@ -646,7 +807,7 @@ module plat.controls {
          * @access protected
          * 
          * @description
-         * Setter for input[type=range]
+         * Setter for input[type="range"].
          * 
          * @param {any} newValue The new value to set
          * @param {any} oldValue The previously bound value
@@ -662,6 +823,42 @@ module plat.controls {
 
             if (isEmpty(newValue)) {
                 newValue = 0;
+
+                if (firstTime === true) {
+                    if (isEmpty((<HTMLInputElement>this.element).value)) {
+                        this._setValue(newValue);
+                    }
+                    this._propertyChanged();
+                    return;
+                }
+            }
+
+            this._setValue(newValue);
+        }
+
+        /**
+         * @name _setHidden
+         * @memberof plat.controls.Bind
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Setter for input[type="hidden"].
+         * 
+         * @param {any} newValue The new value to set
+         * @param {any} oldValue The previously bound value
+         * @param {boolean} firstTime? The context is being evaluated for the first time and 
+         * should thus change the property if null
+         * 
+         * @returns {void}
+         */
+        protected _setHidden(newValue: any, oldValue: any, firstTime?: boolean): void {
+            if (this.__isSelf) {
+                return;
+            }
+
+            if (isEmpty(newValue)) {
+                newValue = '';
 
                 if (firstTime === true) {
                     if (isEmpty((<HTMLInputElement>this.element).value)) {
@@ -704,7 +901,7 @@ module plat.controls {
          * @access protected
          * 
          * @description
-         * Setter for input[type=checkbox]
+         * Setter for input[type="checkbox"]
          * 
          * @param {any} newValue The new value to set
          * @param {any} oldValue The previously bound value
@@ -734,7 +931,7 @@ module plat.controls {
          * @access protected
          * 
          * @description
-         * Setter for input[type=radio]
+         * Setter for input[type="radio"]
          * 
          * @param {any} newValue The new value to set
          * 
@@ -771,11 +968,6 @@ module plat.controls {
         protected _setSelectedIndex(newValue: any, oldValue: any, firstTime?: boolean): void {
             if (this.__isSelf) {
                 return;
-            } else if (firstTime === true && this._checkAsynchronousSelect()) {
-                if (isNull(newValue)) {
-                    this._propertyChanged();
-                }
-                return;
             }
 
             var element = <HTMLSelectElement>this.element,
@@ -788,14 +980,14 @@ module plat.controls {
                 element.selectedIndex = -1;
                 return;
             } else if (!isString(newValue)) {
-                var _Exception: IExceptionStatic = this._Exception,
+                var _Exception = this._Exception,
                     message: string;
                 if (isNumber(newValue)) {
                     newValue = newValue.toString();
-                    message = 'Trying to bind a value of type number to a select element. ' +
+                    message = 'Trying to bind a value of type number to a <select> element. ' +
                         'The value will implicitly be converted to type string.';
                 } else {
-                    message = 'Trying to bind a value that is not a string to a select element. ' +
+                    message = 'Trying to bind a value that is not a string to a <select> element. ' +
                         'The element\'s selected index will be set to -1.';
                 }
 
@@ -837,8 +1029,6 @@ module plat.controls {
          */
         protected _setSelectedIndices(newValue: any, oldValue: any, firstTime?: boolean): void {
             if (this.__isSelf) {
-                return;
-            } else if (firstTime === true && this._checkAsynchronousSelect()) {
                 return;
             }
 
@@ -894,7 +1084,7 @@ module plat.controls {
          * @returns {void}
          */
         protected _determineType(): void {
-            if (!isNull(this.templateControl) && this._observingBindableProperty()) {
+            if (this._observingBindableProperty()) {
                 return;
             }
 
@@ -904,16 +1094,12 @@ module plat.controls {
             }
 
             switch (element.nodeName.toLowerCase()) {
-                case 'textarea':
-                    this._addEventType = this._addTextEventListener;
-                    this._getter = this._getValue;
-                    this._setter = this._setText;
-                    break;
                 case 'input':
                     switch ((<HTMLInputElement>element).type) {
                         case 'button':
                         case 'submit':
                         case 'reset':
+                        case 'image':
                             this._addEventType = this._addButtonEventListener;
                             this._getter = this._getValue;
                             break;
@@ -935,12 +1121,21 @@ module plat.controls {
                             this._addEventType = this._addChangeEventListener;
                             this._getter = multi ? this._getFiles : this._getFile;
                             break;
+                        case 'hidden':
+                            this._getter = this._getValue;
+                            this._setter = this._setHidden;
+                            break;
                         default:
                             this._addEventType = this._addTextEventListener;
                             this._getter = this._getValue;
                             this._setter = this._setText;
                             break;
                     }
+                    break;
+                case 'textarea':
+                    this._addEventType = this._addTextEventListener;
+                    this._getter = this._getValue;
+                    this._setter = this._setText;
                     break;
                 case 'select':
                     this._initializeSelect();
@@ -1101,36 +1296,6 @@ module plat.controls {
         }
 
         /**
-         * @name _checkAsynchronousSelect
-         * @memberof plat.controls.Bind
-         * @kind function
-         * @access protected
-         * 
-         * @description
-         * Checks to see if a {@link plat.ui.controls.Select|Select} or {@link plat.ui.controls.ForEach|ForEach} is loading items.
-         * 
-         * @returns {boolean} Whether or not the select is loading items.
-         */
-        protected _checkAsynchronousSelect(): boolean {
-            var select = <ui.controls.Select>this.templateControl;
-            if (!isNull(select) && isPromise(select.itemsLoaded)) {
-                this.observeArray(null,(ev: observable.IPostArrayChangeInfo<any>): void => {
-                    select.itemsLoaded.then((): void => {
-                        this._setter(this.evaluateExpression(this._expression));
-                    });
-                }, select.absoluteContextPath);
-
-                select.itemsLoaded.then((): void => {
-                    this._setter(this.evaluateExpression(this._expression));
-                });
-
-                return true;
-            }
-
-            return false;
-        }
-
-        /**
          * @name _observingBindableProperty
          * @memberof plat.controls.Bind
          * @kind function
@@ -1138,16 +1303,15 @@ module plat.controls {
          * 
          * @description
          * Checks if the associated {@link plat.ui.TemplateControl|TemplateControl} is implementing 
-         * {@link plat.ui.ISupportTwoWayBinding|ISupportTwoWayBinding} and initializes all listeners accordingly.
+         * {@link plat.observable.ISupportTwoWayBinding|ISupportTwoWayBinding} and initializes all listeners accordingly.
          * 
          * @returns {boolean} Whether or not the associated {@link plat.ui.TemplateControl|TemplateControl} 
-         * is implementing {@link plat.ui.ISupportTwoWayBinding|ISupportTwoWayBinding}.
+         * is implementing {@link plat.observable.ISupportTwoWayBinding|ISupportTwoWayBinding}.
          */
         protected _observingBindableProperty(): boolean {
             var templateControl = <ui.BindControl>this.templateControl;
 
-            if (isFunction(templateControl.onInput) &&
-                isFunction(templateControl.observeProperties)) {
+            if (!isNull(templateControl) && isFunction(templateControl.onInput) && isFunction(templateControl.observeProperties)) {
                 templateControl.onInput((newValue: any): void => {
                     this._getter = (): any => newValue;
                     this._propertyChanged();
@@ -1157,84 +1321,6 @@ module plat.controls {
             }
 
             return false;
-        }
-
-        /**
-         * @name _observeProperties
-         * @memberof plat.controls.Bind
-         * @kind function
-         * @access protected
-         * @variation 0
-         * 
-         * @description
-         * The function that allows a control implementing {@link plat.ui.ISupportTwoWayBinding|ISupportTwoWayBinding} to observe 
-         * changes to the bound property and/or its child properties.
-         * 
-         * @param {plat.ui.IBoundPropertyChangedListener} listener The listener to fire when the bound property or its 
-         * specified child changes.
-         * @param {string} identifier? The identifier of the child property of the bound item.
-         * 
-         * @returns {void}
-         */
-        protected _observeProperties(listener: (newValue: any, oldValue: any, identifier: string, firstTime?: boolean) => void,
-            identifier?: string): void;
-        /**
-         * @name _observeProperties
-         * @memberof plat.controls.Bind
-         * @kind function
-         * @access protected
-         * @variation 1
-         * 
-         * @description
-         * The function that allows a control implementing {@link plat.ui.ISupportTwoWayBinding|ISupportTwoWayBinding} to observe 
-         * changes to the bound property and/or its child properties.
-         * 
-         * @param {plat.ui.IBoundPropertyChangedListener} listener The listener to fire when the bound property or its 
-         * specified child changes.
-         * @param {number} index? The index of the child property of the bound item if the bound item is an Array.
-         * 
-         * @returns {void}
-         */
-        protected _observeProperties(listener: (newValue: any, oldValue: any, identifier: string, firstTime?: boolean) => void,
-            index?: number): void;
-        protected _observeProperties(listener: (newValue: any, oldValue: any, identifier: string, firstTime?: boolean) => void,
-            identifier?: any): void {
-            var parsedIdentifier: string;
-            if (isEmpty(identifier)) {
-                parsedIdentifier = this._expression.expression;
-            } else {
-                var _parser = this._parser,
-                    identifierExpression = _parser.parse(identifier),
-                    expression = _parser.parse(this._expression.expression + '.' + identifierExpression.identifiers[0]);
-
-                parsedIdentifier = expression.identifiers[0];
-
-                var split = parsedIdentifier.split('.'),
-                    key = split.pop(),
-                    contextExpression = split.join('.'),
-                    context = this.evaluateExpression(contextExpression);
-
-                if (!isObject(context)) {
-                    if (isNull(context)) {
-                        context = this._ContextManager.createContext(this.parent, contextExpression);
-                    } else {
-                        var Exception = this._Exception;
-                        Exception.warn('A control implementing ISupportTwoWayBinding is trying to index into a primitive type ' +
-                            'when trying to evaluate ' + this.type + '="' + this._expression.expression + '"', Exception.BIND);
-                        return;
-                    }
-                }
-        }
-
-            listener = listener.bind(this.templateControl);
-            this.observe((newValue: any, oldValue: any): void => {
-            if (this.__isSelf || newValue === oldValue) {
-                return;
-            }
-
-                listener(newValue, oldValue, identifier);
-            }, parsedIdentifier);
-            listener(this.evaluateExpression(parsedIdentifier), undefined, identifier, true);
         }
     }
 

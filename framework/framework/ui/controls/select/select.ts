@@ -6,43 +6,17 @@ module plat.ui.controls {
      * @memberof plat.ui.controls
      * @kind class
      * 
-     * @extends {plat.ui.TemplateControl}
+     * @extends {plat.ui.BindControl}
      * 
      * @description
-     * A {@link plat.ui.TemplateControl|TemplateControl} for binding an HTML select element 
+     * A {@link plat.ui.BindControl|BindControl} for binding an HTML select element 
      * to an Array context.
      */
-    export class Select extends TemplateControl {
+    export class Select extends BindControl {
         protected static _inject: any = {
             _Promise: __Promise,
             _document: __Document
         };
-
-        /**
-         * @name _Promise
-         * @memberof plat.ui.controls.Select
-         * @kind property
-         * @access protected
-         * 
-         * @type {plat.async.IPromise}
-         * 
-         * @description
-         * Reference to the {@link plat.async.IPromise|IPromise} injectable.
-         */
-        protected _Promise: async.IPromise;
-
-        /**
-         * @name _document
-         * @memberof plat.ui.controls.Select
-         * @kind property
-         * @access protected
-         * 
-         * @type {Document}
-         * 
-         * @description
-         * Reference to the Document injectable.
-         */
-        protected _document: Document;
 
         /**
          * @name replaceWith
@@ -136,6 +110,32 @@ module plat.ui.controls {
          * A Promise that will fulfill whenever all items are loaded.
          */
         itemsLoaded: async.IThenable<void>;
+
+        /**
+         * @name _Promise
+         * @memberof plat.ui.controls.Select
+         * @kind property
+         * @access protected
+         * 
+         * @type {plat.async.IPromise}
+         * 
+         * @description
+         * Reference to the {@link plat.async.IPromise|IPromise} injectable.
+         */
+        protected _Promise: async.IPromise;
+
+        /**
+         * @name _document
+         * @memberof plat.ui.controls.Select
+         * @kind property
+         * @access protected
+         * 
+         * @type {Document}
+         * 
+         * @description
+         * Reference to the Document injectable.
+         */
+        protected _document: Document;
 
         /**
          * @name _isGrouped
@@ -339,8 +339,210 @@ module plat.ui.controls {
          * @returns {void}
          */
         dispose(): void {
+            super.dispose();
             this.__resolveFn = null;
             this._defaultOption = null;
+        }
+
+        /**
+         * @name observeProperties
+         * @memberof plat.ui.controls.Select
+         * @kind function
+         * @access public
+         * @virtual
+         * 
+         * @description
+         * A function that allows this control to observe both the bound property itself as well as
+         * potential child properties if being bound to an object.
+         *
+         * @param {plat.observable.IImplementTwoWayBinding} implementer The control that facilitates the
+         * databinding.
+         *
+         * @returns {void}
+         */
+        observeProperties(implementer: observable.IImplementTwoWayBinding): void {
+            var element = <HTMLSelectElement>this.element,
+                setter: observable.IBoundPropertyChangedListener<any>;
+
+            if (element.multiple) {
+                setter = this._setSelectedIndices.bind(this);
+                if (isNull(implementer.evaluate())) {
+                    this.inputChanged([]);
+                }
+
+                implementer.observeProperty(() => {
+                    setter(implementer.evaluate(), null, null);
+                }, null, true);
+            } else {
+                setter = this._setSelectedIndex.bind(this);
+            }
+
+            implementer.observeProperty(setter);
+            this.addEventListener(element, 'change', this._observeChange, false);
+        }
+
+        /**
+         * @name _setSelectedIndex
+         * @memberof plat.ui.controls.Select
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Updates the selected index if bound to a property.
+         * 
+         * @param {string} newValue The new value of the bound property.
+         * @param {string} oldValue The old value of the bound property.
+         * @param {string} identifier The child identifier of the bound property.
+         * @param {boolean} firstTime? Whether or not this is the first time being called as a setter.
+         * 
+         * @returns {void}
+         */
+        protected _setSelectedIndex(newValue: string, oldValue: string, identifier: string, firstTime?: boolean): void {
+            var element = <HTMLSelectElement>this.element,
+                value = element.value;
+            if (isNull(newValue)) {
+                if (firstTime === true || !this._document.body.contains(element)) {
+                    this.itemsLoaded.then((): void => {
+                        this.inputChanged(element.value);
+                    });
+                    return;
+                }
+                element.selectedIndex = -1;
+                return;
+            } else if (!isString(newValue)) {
+                var _Exception = this._Exception,
+                    message: string;
+                if (isNumber(newValue)) {
+                    newValue = newValue.toString();
+                    message = 'Trying to bind a value of type number to a ' + this.type + '\'s element. ' +
+                    'The value will implicitly be converted to type string.';
+                } else {
+                    message = 'Trying to bind a value that is not a string to a ' + this.type + '\'s element. ' +
+                    'The element\'s selected index will be set to -1.';
+                }
+
+                _Exception.warn(message, _Exception.BIND);
+            } else if (value === newValue) {
+                return;
+            } else if (!this._document.body.contains(element)) {
+                element.value = newValue;
+                if (element.value !== newValue) {
+                    element.value = value;
+                    this.inputChanged(element.value);
+                }
+                return;
+            }
+
+            this.itemsLoaded.then((): void => {
+                element.value = newValue;
+                // check to make sure the user changed to a valid value
+                // second boolean argument is an ie fix for inconsistency
+                if (element.value !== newValue || element.selectedIndex === -1) {
+                    element.selectedIndex = -1;
+                }
+            });
+        }
+
+        /**
+         * @name _setSelectedIndices
+         * @memberof plat.ui.controls.Select
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Updates the selected index if bound to a property.
+         * 
+         * @param {Array<any>} newValue The new value Array of the bound property.
+         * @param {Array<any>} oldValue The old value Array of the bound property.
+         * @param {string} identifier The child identifier of the bound property.
+         * @param {boolean} firstTime? Whether or not this is the first time being called as a setter.
+         * 
+         * @returns {void}
+         */
+        protected _setSelectedIndices(newValue: Array<any>, oldValue: Array<any>, identifier: string, firstTime?: boolean): void {
+            var element = <HTMLSelectElement>this.element,
+                options = element.options,
+                length = isNull(options) ? 0 : options.length,
+                option: HTMLOptionElement,
+                nullValue = isNull(newValue);
+
+            this.itemsLoaded.then(() => {
+                if (nullValue || !isArray(newValue)) {
+                    if (firstTime === true) {
+                        this.inputChanged(this._getSelectedValues());
+                    }
+                    // unselects the options unless a match is found
+                    while (length-- > 0) {
+                        option = options[length];
+                        if (!nullValue && option.value === '' + newValue) {
+                            option.selected = true;
+                            return;
+                        }
+
+                        option.selected = false;
+                    }
+                    return;
+                }
+
+                var value: any,
+                    numberValue: number;
+
+                while (length-- > 0) {
+                    option = options[length];
+                    value = option.value;
+                    numberValue = Number(value);
+
+                    if (newValue.indexOf(value) !== -1 || (isNumber(numberValue) && newValue.indexOf(numberValue) !== -1)) {
+                        option.selected = true;
+                        continue;
+                    }
+
+                    option.selected = false;
+                }
+            });
+        }
+
+        /**
+         * @name _observeChange
+         * @memberof plat.ui.controls.Select
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Fires the inputChanged event when the select's value changes.
+         * 
+         * @returns {void}
+         */
+        protected _observeChange(): void {
+            var element = <HTMLSelectElement>this.element;
+            this.inputChanged(element.multiple ? this._getSelectedValues() : element.value);
+        }
+
+        /**
+         * @name _getSelectedValues
+         * @memberof plat.ui.controls.Select
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Getter for select-multiple.
+         * 
+         * @returns {Array<string>} The selected values.
+         */
+        protected _getSelectedValues(): Array<string> {
+            var options = (<HTMLSelectElement>this.element).options,
+                length = options.length,
+                option: HTMLOptionElement,
+                selectedValues: Array<string> = [];
+
+            for (var i = 0; i < length; ++i) {
+                option = options[i];
+                if (option.selected) {
+                    selectedValues.push(option.value);
+                }
+            }
+
+            return selectedValues;
         }
 
         /**
