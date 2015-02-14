@@ -814,6 +814,7 @@ module plat {
      */
     export interface IListIterator<T, R> {
         /**
+         * @name iterator
          * @memberof plat.IListIterator
          * @kind function
          * @access public
@@ -844,6 +845,7 @@ module plat {
      */
     export interface IObjectIterator<T, R> {
         /**
+         * @name iterator
          * @memberof plat.IObjectIterator
          * @kind function
          * @access public
