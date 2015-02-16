@@ -786,21 +786,19 @@ module plat {
          * 
          * @description
          * Allows a {@link plat.Control|Control} to observe an array and receive updates when certain array-changing methods are called.
-         * The methods watched are push, pop, shift, sort, splice, reverse, and unshift. This method does not watch
+         * The methods watched are push, pop, shift, sort, splice, reverse, and unshift. This method currently does not watch
          * every item in the array.
          * 
          * @typeparam {any} T The type of the Array to observe.
          * 
-         * @param {(ev: plat.observable.IPreArrayChangeInfo, identifier: string) => void} preListener The method called 
-         * prior to an array-changing method is called. This method will have its 'this' context set to the control instance.
-         * @param {(ev: plat.observable.IPostArrayChangeInfo<T>, identifier: string) => void} postListener The method called 
+         * @param {(changes: Array<plat.observable.IArrayChanges<any>>, identifier: string) => void} listener The method called 
          * after an array-changing method is called. This method will have its 'this' context set to the control instance.
          * @param {string} identifier? The property string that denotes the array in the context.
          * 
          * @returns {plat.IRemoveListener} A function to call in order to stop observing the array.
          */
-        observeArray<T>(preListener: (ev: observable.IPreArrayChangeInfo, identifier: string) => void,
-            postListener: (ev: observable.IPostArrayChangeInfo<T>, identifier: string) => void, identifier?: string): IRemoveListener;
+        observeArray<T>(listener: (changes: Array<observable.IArrayChanges<T>>, identifier: string) => void,
+            identifier?: string): IRemoveListener;
         /**
          * @name observeArray
          * @memberof plat.Control
@@ -810,23 +808,21 @@ module plat {
          * 
          * @description
          * Allows a {@link plat.Control|Control} to observe an array and receive updates when certain array-changing methods are called.
-         * The methods watched are push, pop, shift, sort, splice, reverse, and unshift. This method does not watch
+         * The methods watched are push, pop, shift, sort, splice, reverse, and unshift. This method currently does not watch
          * every item in the array.
          * 
          * @typeparam {any} T The type of the Array to observe.
          * 
-         * @param {(ev: plat.observable.IPreArrayChangeInfo, index: number) => void} preListener The method called prior to an 
-         * array-changing method is called. This method will have its 'this' context set to the control instance.
-         * @param {(ev: plat.observable.IPostArrayChangeInfo<T>, index: number) => void} postListener The method called after 
-         * an array-changing method is called. This method will have its 'this' context set to the control instance.
-         * @param {number} index? The index that denotes the array directly off of context if the context is an Array.
+         * @param {(changes: Array<plat.observable.IArrayChanges<T>>, identifier: number) => void} listener The method called 
+         * after an array-changing method is called. This method will have its 'this' context set to the control instance.
+         * @param {number} identifier? The index that denotes the array in the context if the context is an Array.
          * 
          * @returns {plat.IRemoveListener} A function to call in order to stop observing the array.
          */
-        observeArray<T>(preListener: (ev: observable.IPreArrayChangeInfo, index: number) => void,
-            postListener: (ev: observable.IPostArrayChangeInfo<T>, index: number) => void, index?: number): IRemoveListener;
-        observeArray(preListener: (ev: observable.IPreArrayChangeInfo, identifier: any) => void,
-            postListener: (ev: observable.IPostArrayChangeInfo<any>, identifier: any) => void, identifier?: any): IRemoveListener {
+        observeArray<T>(listener: (changes: Array<observable.IArrayChanges<T>>, identifier: number) => void,
+            identifier?: number): IRemoveListener;
+        observeArray<T>(listener: (changes: Array<observable.IArrayChanges<T>>, identifier: any) => void,
+            identifier?: any): IRemoveListener {
             var control = isObject((<ui.TemplateControl>this).context) ? <ui.TemplateControl>this : this.parent,
                 context = control.context;
             if (isNull(control) || !isObject(context)) {
@@ -852,28 +848,25 @@ module plat {
                 return noop;
             }
 
-            var preIsFunction = isFunction(preListener),
-                postIsFunction = isFunction(postListener);
-
-            if (!(preIsFunction || postIsFunction)) {
+            var listenerIsFunction = isFunction(listener);
+            if (!listenerIsFunction) {
                 return noop;
             }
+
+            listener = listener.bind(this);
 
             var ContextManager: observable.IContextManagerStatic = Control._ContextManager || acquire(__ContextManagerStatic),
                 contextManager = ContextManager.getManager(Control.getRootControl(control)),
                 uid = this.uid,
-                preCallback = preIsFunction ? (ev: observable.IPreArrayChangeInfo): void => {
-                    preListener.call(this, ev, identifier);
-                } : null,
-                postCallback = postIsFunction ? (ev: observable.IPostArrayChangeInfo<any>): void => {
-                    postListener.call(this, ev, identifier);
-                } : null,
-                removeListener = contextManager.observeArrayMutation(uid, preCallback, postCallback, absoluteIdentifier, array, null),
+                callback = (changes: Array<observable.IArrayChanges<any>>): void => {
+                    listener(changes, identifier);
+                },
+                removeListener = contextManager.observeArrayMutation(uid, callback, absoluteIdentifier, array, null),
                 removeCallback = contextManager.observe(absoluteIdentifier, {
                     listener: (newValue: Array<any>, oldValue: Array<any>): void => {
                         removeListener();
                         removeListener = contextManager
-                            .observeArrayMutation(uid, preCallback, postCallback, absoluteIdentifier, newValue, oldValue);
+                            .observeArrayMutation(uid, callback, absoluteIdentifier, newValue, oldValue);
                     },
                     uid: uid
                 });
@@ -1581,14 +1574,15 @@ module plat {
              * 
              * @typeparam {any} T The type of items in the Array if listening for Array mutations. 
              * 
-             * @param {(ev: plat.observable.IPostArrayChangeInfo<T>, identifier: string) => void} listener The listener function.
+             * @param {(changes: Array<plat.observable.IArrayChanges<T>>, identifier: string) => void} listener The listener function.
              * @param {string} identifier? The identifier off of the bound object to listen to for changes. If undefined or empty  
              * the listener will listen for changes to the bound item itself.
-             * @param {boolean} arrayMutationsOnly? Whether or not to listen only for Array mutation changes.
+             * @param {boolean} arrayMutationsOnly? Whether or not to listen only for Array mutation changes. Should be set to true with a 
+             * listener of this type.
              * 
              * @returns {plat.IRemoveListener} A function to stop listening for changes.
              */
-            observeProperty<T>(listener: (ev: observable.IPostArrayChangeInfo<T>, identifier: string) => void,
+            observeProperty<T>(listener: (changes: Array<IArrayChanges<T>>, identifier: string) => void,
                 identifier?: string, arrayMutationsOnly?: boolean): IRemoveListener;
             /**
              * @name observeProperty
@@ -1603,14 +1597,15 @@ module plat {
              * 
              * @typeparam {any} T The type of items in the Array if listening for Array mutations. 
              * 
-             * @param {(ev: plat.observable.IPostArrayChangeInfo<T>, identifier: string) => void} listener The listener function.
+             * @param {(changes: Array<plat.observable.IArrayChanges<T>>, identifier: number) => void} listener The listener function.
              * @param {number} index? The index off of the bound object to listen to for changes if the bound object is an Array. 
              * If undefined or empty the listener will listen for changes to the bound Array itself.
-             * @param {boolean} arrayMutationsOnly? Whether or not to listen only for Array mutation changes.
+             * @param {boolean} arrayMutationsOnly? Whether or not to listen only for Array mutation changes. Should be set to true with a 
+             * listener of this type.
              * 
              * @returns {plat.IRemoveListener} A function to stop listening for changes.
              */
-            observeProperty<T>(listener: (ev: observable.IPostArrayChangeInfo<T>, identifier: string) => void,
+            observeProperty<T>(listener: (changes: Array<IArrayChanges<T>>, identifier: number) => void,
                 index?: number, arrayMutationsOnly?: boolean): IRemoveListener;
 
             /**

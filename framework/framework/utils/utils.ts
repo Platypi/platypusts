@@ -798,6 +798,24 @@ module plat {
         camelCase(str: string): string {
             return camelCase(str);
         }
+
+        /**
+         * @name delimit
+         * @memberof plat.Utils
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Takes a camelCase string and delimits it using the specified delimiter.
+         * 
+         * @param {string} str The camelCased string.
+         * @param {string} delimiter The delimiter to add.
+         * 
+         * @returns {string} The delimited string (e.g. snakeCase -> snake_case).
+         */
+        delimit(str: string, delimiter: string): string {
+            return delimit(str, delimiter);
+        }
     }
     register.injectable(__Utils, Utils);
 

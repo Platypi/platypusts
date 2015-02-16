@@ -1024,6 +1024,12 @@ declare module plat {
           * @param {string} str The spinal-case, dot.case, or snake_case string.
           */
         camelCase(str: string): string;
+        /**
+          * Takes a camelCase string and delimits it using the specified delimiter.
+          * @param {string} str The camelCased string.
+          * @param {string} delimiter The delimiter to add.
+          */
+        delimit(str: string, delimiter: string): string;
     }
     /**
       * The Type for a Utils list iterator callback method.
@@ -1175,6 +1181,10 @@ declare module plat {
               * exec('Hello World');
               */
             camelCaseRegex: RegExp;
+            /**
+              * Finds all capital letters.
+              */
+            capitalCaseRegex: RegExp;
             /**
               * Finds all whitespace and newline characters
               * not in string literals. Needs to be combined
@@ -3083,13 +3093,9 @@ declare module plat {
               */
             protected static _Exception: IExceptionStatic;
             /**
-              * A set of functions to be fired prior to when a particular observed array is mutated.
-              */
-            static preArrayListeners: IObject<IObject<Array<(ev: IPreArrayChangeInfo) => void>>>;
-            /**
               * A set of functions to be fired when a particular observed array is mutated.
               */
-            static postArrayListeners: IObject<IObject<Array<(ev: IPostArrayChangeInfo<any>) => void>>>;
+            static arrayChangeListeners: IObject<IObject<Array<(changes: Array<IArrayChanges<any>>) => void>>>;
             /**
               * An object for quickly accessing a previously created ContextManager.
               */
@@ -3233,15 +3239,13 @@ declare module plat {
               * that array. The watched functions are push, pop, shift, splice, unshift, sort,
               * and reverse.
               * @param {string} uid The unique ID of the object observing the array.
-              * @param {(ev: plat.observable.IPreArrayChangeInfo) => void} preListener The callback for prior to when an observed Array
-              * function has been called.
-              * @param {(ev: plat.observable.IPostArrayChangeInfo<any>) => void} postListener The callback for after when an observed Array
-              * function has been called.
+              * @param {(changes: Array<plat.observable.IArrayChanges<any>>) => void} listener The callback for after
+              * when an observed Array function has been called.
               * @param {string} absoluteIdentifier The identifier from the root context used to find the array.
               * @param {Array<any>} array The array to be observed.
               * @param {Array<any>} oldArray The old array to stop observing.
               */
-            observeArrayMutation(uid: string, preListener: (ev: IPreArrayChangeInfo) => void, postListener: (ev: IPostArrayChangeInfo<any>) => void, absoluteIdentifier: string, array: Array<any>, oldArray: Array<any>): IRemoveListener;
+            observeArrayMutation(uid: string, listener: (changes: Array<IArrayChanges<any>>) => void, absoluteIdentifier: string, array: Array<any>, oldArray: Array<any>): IRemoveListener;
             /**
               * Disposes the memory for an ContextManager.
               */
@@ -3250,11 +3254,9 @@ declare module plat {
               * Pushes Array mutation listeners and removers.
               * @param {string} uid The unique identifier to store the callback.
               * @param {string} absoluteIdentifier The identifier of the Array being observed.
-              * @param {(ev: plat.observable.IPreArrayChangeInfo) => void} listener The Array mutation listener.
-              * @param {plat.IObject<plat.IObject<Array<(ev: plat.observable.IPreArrayChangeInfo) => void>>>} arrayListeners
-              * The Array to hold the new listener.
+              * @param {(changes: Array<plat.observable.IArrayChanges<any>>) => void} listener The Array mutation listener.
               */
-            protected _pushArrayListener(uid: string, absoluteIdentifier: string, listener: (ev: IPreArrayChangeInfo) => void, arrayListeners: IObject<IObject<Array<(ev: IPreArrayChangeInfo) => void>>>): IRemoveListener;
+            protected _pushArrayListener(uid: string, absoluteIdentifier: string, listener: (changes: Array<IArrayChanges<any>>) => void): IRemoveListener;
             /**
               * Restores an array to use Array.prototype instead of listener functions.
               * @param {Array<any>} array The array to restore.
@@ -3381,13 +3383,9 @@ declare module plat {
           */
         interface IContextManagerStatic {
             /**
-              * A set of functions to be fired prior to when a particular observed array is mutated.
-              */
-            preArrayListeners: IObject<IObject<Array<(ev: IPreArrayChangeInfo) => void>>>;
-            /**
               * A set of functions to be fired when a particular observed array is mutated.
               */
-            postArrayListeners: IObject<IObject<Array<(ev: IPostArrayChangeInfo<any>) => void>>>;
+            arrayChangeListeners: IObject<IObject<Array<(changes: Array<IArrayChanges<any>>) => void>>>;
             /**
               * Gets the ContextManager associated to the given control. If no
               * ContextManager exists, one is created for that control.
@@ -3484,37 +3482,45 @@ declare module plat {
             uid: string;
         }
         /**
-          * An object for Array method mutation info prior to the Array being mutated.
-          */
-        interface IPreArrayChangeInfo {
-            /**
-              * The method name that was called. Possible values are:
-              * 'push', 'pop', 'reverse', 'shift', 'sort', 'splice',
-              * and 'unshift'
-              */
-            method: string;
-            /**
-              * The arguments passed into the array function.
-              */
-            arguments: Array<any>;
-        }
-        /**
-          * An object for Array method mutation info after the Array has been mutated. Takes a
+          * An object denoting Array changes after the Array has been mutated. Takes a
           * generic type to denote the type of array it uses.
           */
-        interface IPostArrayChangeInfo<T> extends IPreArrayChangeInfo {
-            /**
-              * The value returned from the called function.
-              */
-            returnValue: any;
-            /**
-              * The previous value of the array.
-              */
-            oldArray: Array<T>;
+        interface IArrayChanges<T> {
             /**
               * The new value of the array.
               */
-            newArray: Array<T>;
+            object: Array<T>;
+            /**
+              * The method name that was called. Array mutation methods are:
+              * 'push', 'pop', 'reverse', 'shift', 'sort', 'splice',
+              * and 'unshift'.
+              */
+            type: string;
+            /**
+              * The name of the property that changed. Unavailable on Array mutation methods.
+              */
+            name?: string;
+            /**
+              * The old value of the property before it changed. Unavailable on Array mutation methods.
+              */
+            oldValue?: T;
+            /**
+              * The index at which the change occurred. Only available on Array mutation methods.
+              */
+            index?: number;
+            /**
+              * An array of the removed elements. Only available on Array mutation methods.
+              */
+            removed?: Array<T>;
+            /**
+              * The number of elements added. Only available on Array mutation methods.
+              */
+            addedCount?: number;
+            /**
+              * The old Array prior to a 'reverse' or 'sort' mutation type.
+              * Only available when the type is either 'reverse' or 'sort'.
+              */
+            oldArray?: Array<T>;
         }
         /**
           * Defines the object added to a template control when its element
@@ -3537,6 +3543,83 @@ declare module plat {
               * template control.
               */
             observe(listener: (newValue: T, oldValue: T) => void): IRemoveListener;
+        }
+        /**
+          * Defines methods that interact with a control that implements IImplementTwoWayBinding
+          * (e.g. Bind.
+          */
+        interface ISupportTwoWayBinding {
+            /**
+              * Adds a listener to be called when the bindable property changes.
+              * @param {plat.IPropertyChangedListener<any>} listener The function that acts as a listener.
+              */
+            onInput(listener: (newValue: any, oldValue: any) => void): IRemoveListener;
+            /**
+              * A function that allows this control to observe both the bound property itself as well as
+              * potential child properties if being bound to an object.
+              * @param {plat.observable.IImplementTwoWayBinding} implementer The control that facilitates the
+              * databinding.
+              */
+            observeProperties(implementer: observable.IImplementTwoWayBinding): void;
+        }
+        /**
+          * Defines methods that interact with a control that implements ISupportTwoWayBinding
+          * (e.g. any control that extends BindControl.
+          */
+        interface IImplementTwoWayBinding {
+            /**
+              * A function that allows a ISupportTwoWayBinding to observe both the
+              * bound property itself as well as potential child properties if being bound to an object.
+              * @param {plat.observable.IBoundPropertyChangedListener<T>} listener The listener function.
+              * @param {string} identifier? The identifier off of the bound object to listen to for changes. If undefined or empty
+              * the listener will listen for changes to the bound item itself.
+              */
+            observeProperty<T>(listener: IBoundPropertyChangedListener<T>, identifier?: string): IRemoveListener;
+            /**
+              * A function that allows a ISupportTwoWayBinding to observe both the
+              * bound property itself as well as potential child properties if being bound to an object.
+              * @param {plat.observable.IBoundPropertyChangedListener<T>} listener The listener function.
+              * @param {number} index? The index off of the bound object to listen to for changes if the bound object is an Array.
+              * If undefined or empty the listener will listen for changes to the bound Array itself.
+              */
+            observeProperty<T>(listener: IBoundPropertyChangedListener<T>, index?: number): IRemoveListener;
+            /**
+              * A function that allows a ISupportTwoWayBinding to observe both the
+              * bound property itself as well as potential child properties if being bound to an object.
+              * @param {(changes: Array<plat.observable.IArrayChanges<T>>, identifier: string) => void} listener The listener function.
+              * @param {string} identifier? The identifier off of the bound object to listen to for changes. If undefined or empty
+              * the listener will listen for changes to the bound item itself.
+              * @param {boolean} arrayMutationsOnly? Whether or not to listen only for Array mutation changes. Should be set to true with a
+              * listener of this type.
+              */
+            observeProperty<T>(listener: (changes: Array<IArrayChanges<T>>, identifier: string) => void, identifier?: string, arrayMutationsOnly?: boolean): IRemoveListener;
+            /**
+              * A function that allows a ISupportTwoWayBinding to observe both the
+              * bound property itself as well as potential child properties if being bound to an object.
+              * @param {(changes: Array<plat.observable.IArrayChanges<T>>, identifier: number) => void} listener The listener function.
+              * @param {number} index? The index off of the bound object to listen to for changes if the bound object is an Array.
+              * If undefined or empty the listener will listen for changes to the bound Array itself.
+              * @param {boolean} arrayMutationsOnly? Whether or not to listen only for Array mutation changes. Should be set to true with a
+              * listener of this type.
+              */
+            observeProperty<T>(listener: (changes: Array<IArrayChanges<T>>, identifier: number) => void, index?: number, arrayMutationsOnly?: boolean): IRemoveListener;
+            /**
+              * Gets the current value of the bound property.
+              */
+            evaluate(): any;
+        }
+        /**
+          * Defines a function that will be called whenever a bound property specified by a given identifier has changed.
+          */
+        interface IBoundPropertyChangedListener<T> {
+            /**
+              * The method signature for IBoundPropertyChangedListener.
+              * @param {T} newValue The new value of the observed property.
+              * @param {T} oldValue The previous value of the observed property.
+              * @param {any} identifier The string or number identifier that specifies the changed property.
+              * @param {boolean} firstTime? True if this is the first case where the bound property is being set.
+              */
+            (newValue: T, oldValue: T, identifier: any, firstTime?: boolean): void;
         }
     }
     /**
@@ -4206,7 +4289,7 @@ declare module plat {
         /**
           * Allows a Control to observe any property on its context and receive updates when
           * the property is changed.
-          * @param {(value: T, oldValue: T, identifier: string) => void} listener The method called when the property is changed.
+          * @param {plat.IIdentifierChangedListener<T>} listener The method called when the property is changed.
           * This method will have its 'this' context set to the control instance.
           * @param {string} identifier? The property string that denotes the item in the context (e.g. "foo.bar.baz" is observing the
           * property `baz` in the object `bar` in the object `foo` in the control's context.
@@ -4215,44 +4298,40 @@ declare module plat {
         /**
           * Allows a Control to observe any property on its context and receive updates when
           * the property is changed.
-          * @param {(value: T, oldValue: T, index: number) => void} listener The method called when the property is changed. This method
+          * @param {plat.IIdentifierChangedListener<T>} listener The method called when the property is changed. This method
           * will have its 'this' context set to the control instance.
           * @param {number} index? The index that denotes the item in the context if the context is an Array.
           */
         observe<T>(listener: (value: T, oldValue: T, index: number) => void, index?: number): IRemoveListener;
         /**
           * Allows a Control to observe an array and receive updates when certain array-changing methods are called.
-          * The methods watched are push, pop, shift, sort, splice, reverse, and unshift. This method does not watch
+          * The methods watched are push, pop, shift, sort, splice, reverse, and unshift. This method currently does not watch
           * every item in the array.
-          * @param {(ev: plat.observable.IPreArrayChangeInfo, identifier: string) => void} preListener The method called
-          * prior to an array-changing method is called. This method will have its 'this' context set to the control instance.
-          * @param {(ev: plat.observable.IPostArrayChangeInfo<T>, identifier: string) => void} postListener The method called
+          * @param {(changes: Array<plat.observable.IArrayChanges<any>>, identifier: string) => void} listener The method called
           * after an array-changing method is called. This method will have its 'this' context set to the control instance.
           * @param {string} identifier? The property string that denotes the array in the context.
           */
-        observeArray<T>(preListener: (ev: observable.IPreArrayChangeInfo, identifier: string) => void, postListener: (ev: observable.IPostArrayChangeInfo<T>, identifier: string) => void, identifier?: string): IRemoveListener;
+        observeArray<T>(listener: (changes: Array<observable.IArrayChanges<T>>, identifier: string) => void, identifier?: string): IRemoveListener;
         /**
           * Allows a Control to observe an array and receive updates when certain array-changing methods are called.
-          * The methods watched are push, pop, shift, sort, splice, reverse, and unshift. This method does not watch
+          * The methods watched are push, pop, shift, sort, splice, reverse, and unshift. This method currently does not watch
           * every item in the array.
-          * @param {(ev: plat.observable.IPreArrayChangeInfo, index: number) => void} preListener The method called prior to an
-          * array-changing method is called. This method will have its 'this' context set to the control instance.
-          * @param {(ev: plat.observable.IPostArrayChangeInfo<T>, index: number) => void} postListener The method called after
-          * an array-changing method is called. This method will have its 'this' context set to the control instance.
-          * @param {number} index? The index that denotes the array directly off of context if the context is an Array.
+          * @param {(changes: Array<plat.observable.IArrayChanges<T>>, identifier: number) => void} listener The method called
+          * after an array-changing method is called. This method will have its 'this' context set to the control instance.
+          * @param {number} identifier? The index that denotes the array in the context if the context is an Array.
           */
-        observeArray<T>(preListener: (ev: observable.IPreArrayChangeInfo, index: number) => void, postListener: (ev: observable.IPostArrayChangeInfo<T>, index: number) => void, index?: number): IRemoveListener;
+        observeArray<T>(listener: (changes: Array<observable.IArrayChanges<T>>, identifier: number) => void, identifier?: number): IRemoveListener;
         /**
           * Parses an expression string and observes any associated identifiers. When an identifier
           * value changes, the listener will be called.
-          * @param {(value: T, oldValue: T, expression: string) => void} listener The listener to call when the expression identifer values change.
+          * @param {plat.IIdentifierChangedListener<T>} listener The listener to call when the expression identifer values change.
           * @param {string} expression The expression string to watch for changes.
           */
         observeExpression<T>(listener: (value: T, oldValue: T, expression: string) => void, expression: string): IRemoveListener;
         /**
           * Using a IParsedExpression observes any associated identifiers. When an identifier
           * value changes, the listener will be called.
-          * @param {(value: T, oldValue: T, expression: string) => void} listener The listener to call when the expression identifer values change.
+          * @param {plat.IIdentifierChangedListener<T>} listener The listener to call when the expression identifer values change.
           * @param {plat.expressions.IParsedExpression} expression The expression string to watch for changes.
           */
         observeExpression<T>(listener: (value: T, oldValue: T, expression: string) => void, expression: expressions.IParsedExpression): IRemoveListener;
@@ -4846,29 +4925,28 @@ declare module plat {
           * An extended TemplateControl that allows for the binding of a value to
           * another listening control (e.g. plat-bind control).
           */
-        class BindControl extends TemplateControl implements ISupportTwoWayBinding {
+        class BindControl extends TemplateControl implements observable.ISupportTwoWayBinding {
             /**
               * The set of functions added externally that listens
               * for property changes.
               */
-            protected _listeners: Array<IPropertyChangedListener>;
+            protected _listeners: Array<IPropertyChangedListener<any>>;
             /**
               * Adds a listener to be called when the bindable property changes.
-              * @param {plat.IPropertyChangedListener} listener The function that acts as a listener.
+              * @param {plat.IPropertyChangedListener<any>} listener The function that acts as a listener.
               */
             onInput(listener: (newValue: any, oldValue: any) => void): IRemoveListener;
             /**
               * A function that allows this control to observe both the bound property itself as well as
               * potential child properties if being bound to an object.
-              * @param {(listener: plat.ui.IBoundPropertyChangedListener, identifier: string) => void} observe
-              * A function that allows bound properties to be observed with defined listeners.
-              * @param {string} identifier The identifier off of the bound object to listen to for changes.
+              * @param {plat.observable.IImplementTwoWayBinding} implementer The control that facilitates the
+              * databinding.
               */
-            observeProperties(observe: (listener: (newValue: any, oldValue: any, identifier: string, firstTime?: boolean) => void, identifier: string) => void): void;
+            observeProperties(implementer: observable.IImplementTwoWayBinding): void;
             /**
               * A function that signifies when this control's bindable property has changed.
               * @param {any} newValue The new value of the property after the change.
-              * @param {any} oldValue The old value of the property prior to the change.
+              * @param {any} oldValue? The old value of the property prior to the change.
               */
             inputChanged(newValue: any, oldValue?: any): void;
             /**
@@ -4876,38 +4954,6 @@ declare module plat {
               * defined externally.
               */
             dispose(): void;
-        }
-        /**
-          * Defines methods that interface with a control that handles two way databinding (e.g. plat-bind control).
-          */
-        interface ISupportTwoWayBinding {
-            /**
-              * Adds a listener to be called when the bindable property changes.
-              * @param {plat.IPropertyChangedListener} listener The function that acts as a listener.
-              */
-            onInput(listener: (newValue: any, oldValue?: any) => void): IRemoveListener;
-            /**
-              * A function that allows this control to observe both the bound property itself as well as
-              * potential child properties if being bound to an object.
-              * @param {(listener: plat.ui.IBoundPropertyChangedListener, identifier: string) => void}
-              * observe A function that allows bound properties to be observed with defined listeners.
-              * @param {string} identifier? The identifier off of the bound object to listen to for changes. If not defined
-              * the listener will listen for changes to the bound item itself.
-              */
-            observeProperties(observe: (listener: (newValue: any, oldValue: any, identifier: string, firstTime?: boolean) => void, identifier?: string) => void): void;
-        }
-        /**
-          * Defines a function that will be called whenever a bound property specified by a given identifier has changed.
-          */
-        interface IBoundPropertyChangedListener {
-            /**
-              * The method signature for IBoundPropertyChangedListener.
-              * @param {any} newValue The new value of the observed property.
-              * @param {any} oldValue The previous value of the observed property.
-              * @param {any} identifier The string or number identifier that specifies the changed property.
-              * @param {boolean} firstTime? True if this is the first case where the bound property is being set.
-              */
-            (newValue: any, oldValue: any, identifier: any, firstTime?: boolean): void;
         }
         /**
           * A control used in a Viewport for page navigation. The
@@ -7368,18 +7414,6 @@ declare module plat {
             class BaseAnimation implements IAnimationEssentials {
                 protected static _inject: any;
                 /**
-                  * Reference to the IExceptionStatic injectable.
-                  */
-                protected _Exception: IExceptionStatic;
-                /**
-                  * Reference to the Compat injectable.
-                  */
-                protected _compat: Compat;
-                /**
-                  * Reference to the IPromise injectable.
-                  */
-                protected _Promise: async.IPromise;
-                /**
                   * The node having the animation performed on it.
                   */
                 element: HTMLElement;
@@ -7391,6 +7425,18 @@ declare module plat {
                   * Specified options for the animation.
                   */
                 options: any;
+                /**
+                  * Reference to the IExceptionStatic injectable.
+                  */
+                protected _Exception: IExceptionStatic;
+                /**
+                  * Reference to the Compat injectable.
+                  */
+                protected _compat: Compat;
+                /**
+                  * Reference to the IPromise injectable.
+                  */
+                protected _Promise: async.IPromise;
                 /**
                   * The resolve function for the end of the animation.
                   */
@@ -7448,7 +7494,7 @@ declare module plat {
                 /**
                   * A set of browser compatible CSS animation events capable of being listened to.
                   */
-                private __animationEvents;
+                protected _animationEvents: IAnimationEvents;
                 /**
                   * A function to listen to the start of an animation event.
                   * @param {() => void} listener The function to call when the animation begins.
@@ -7503,7 +7549,7 @@ declare module plat {
                   */
                 options: ISimpleCssAnimationOptions;
                 /**
-                  * Adds the class to start the animation.
+                  * Adds the class to initialize the animation.
                   */
                 initialize(): void;
                 /**
@@ -8028,17 +8074,11 @@ declare module plat {
                   */
                 protected _setListener(): void;
                 /**
-                  * Receives an event prior to a method being called on an array and maps the array
-                  * method to its associated pre-method handler.
-                  * @param {plat.observable.IPreArrayChangeInfo} ev The Array mutation event information.
-                  */
-                protected _preprocessEvent(ev: observable.IPreArrayChangeInfo): void;
-                /**
                   * Receives an event when a method has been called on an array and maps the array
                   * method to its associated method handler.
-                  * @param {plat.observable.IPostArrayChangeInfo<any>} ev The Array mutation event information.
+                  * @param {Array<plat.observable.IArrayChanges<any>>} changes The Array mutation event information.
                   */
-                protected _executeEvent(ev: observable.IPostArrayChangeInfo<any>): void;
+                protected _executeEvent(changes: Array<observable.IArrayChanges<any>>): void;
                 /**
                   * Returns a resource alias object for an item in the array. The
                   * resource object contains index:number, even:boolean, odd:boolean,
@@ -8048,54 +8088,29 @@ declare module plat {
                 protected _getAliases(index: number): IObject<IResource>;
                 /**
                   * Handles items being pushed into the array.
-                  * @param {plat.observable.IPostArrayChangeInfo<any>} ev The Array mutation event information.
+                  * @param {Array<plat.observable.IArrayChanges<any>>} changes The Array mutation event information.
                   */
-                protected _push(ev: observable.IPostArrayChangeInfo<any>): void;
+                protected _push(changes: Array<observable.IArrayChanges<any>>): void;
                 /**
                   * Handles items being popped off the array.
-                  * @param {plat.observable.IPostArrayChangeInfo<any>} ev The Array mutation event information.
+                  * @param {Array<plat.observable.IArrayChanges<any>>} changes The Array mutation event information.
                   */
-                protected _pop(ev: observable.IPostArrayChangeInfo<any>): void;
-                /**
-                  * Handles items being shifted off the array.
-                  * @param {plat.observable.IPreArrayChangeInfo} ev The Array mutation event information.
-                  */
-                protected _preshift(ev: observable.IPreArrayChangeInfo): void;
-                /**
-                  * Handles items being shifted off the array.
-                  * @param {plat.observable.IPostArrayChangeInfo<any>} ev The Array mutation event information.
-                  */
-                protected _shift(ev: observable.IPostArrayChangeInfo<any>): void;
-                /**
-                  * Handles adding/removing items when an array is spliced.
-                  * @param {plat.observable.IPreArrayChangeInfo} ev The Array mutation event information.
-                  */
-                protected _presplice(ev: observable.IPreArrayChangeInfo): void;
-                /**
-                  * Handles adding/removing items when an array is spliced.
-                  * @param {plat.observable.IPostArrayChangeInfo<any>} ev The Array mutation event information.
-                  */
-                protected _splice(ev: observable.IPostArrayChangeInfo<any>): void;
-                /**
-                  * Handles animating items being unshifted into the array.
-                  * @param {plat.observable.IPreArrayChangeInfo} ev The Array mutation event information.
-                  */
-                protected _preunshift(ev: observable.IPreArrayChangeInfo): void;
+                protected _pop(changes: Array<observable.IArrayChanges<any>>): void;
                 /**
                   * Handles items being unshifted into the array.
-                  * @param {plat.observable.IPostArrayChangeInfo<any>} ev The Array mutation event information.
+                  * @param {Array<plat.observable.IArrayChanges<any>>} changes The Array mutation event information.
                   */
-                protected _unshift(ev: observable.IPostArrayChangeInfo<any>): void;
+                protected _unshift(changes: Array<observable.IArrayChanges<any>>): void;
                 /**
-                  * Handles when the array is sorted.
-                  * @param {plat.observable.IPostArrayChangeInfo<any>} ev The Array mutation event information.
+                  * Handles items being shifted off the array.
+                  * @param {Array<plat.observable.IArrayChanges<any>>} changes The Array mutation event information.
                   */
-                protected _sort(ev: observable.IPostArrayChangeInfo<any>): void;
+                protected _shift(changes: Array<observable.IArrayChanges<any>>): void;
                 /**
-                  * Handles when the array is reversed.
-                  * @param {plat.observable.IPostArrayChangeInfo<any>} ev The Array mutation event information.
+                  * Handles adding/removing items when an array is spliced.
+                  * @param {Array<plat.observable.IArrayChanges<any>>} changes The Array mutation event information.
                   */
-                protected _reverse(ev: observable.IPostArrayChangeInfo<any>): void;
+                protected _splice(changes: Array<observable.IArrayChanges<any>>): void;
                 /**
                   * Animates the indicated items.
                   * @param {number} startIndex The starting index of items to animate.
@@ -8351,19 +8366,11 @@ declare module plat {
                 loaded(): void;
             }
             /**
-              * A TemplateControl for binding an HTML select element
+              * A BindControl for binding an HTML select element
               * to an Array context.
               */
-            class Select extends TemplateControl {
+            class Select extends BindControl {
                 protected static _inject: any;
-                /**
-                  * Reference to the IPromise injectable.
-                  */
-                protected _Promise: async.IPromise;
-                /**
-                  * Reference to the Document injectable.
-                  */
-                protected _document: Document;
                 /**
                   * Replaces the <plat-select> node with
                   * a <select> node.
@@ -8394,6 +8401,14 @@ declare module plat {
                   * A Promise that will fulfill whenever all items are loaded.
                   */
                 itemsLoaded: async.IThenable<void>;
+                /**
+                  * Reference to the IPromise injectable.
+                  */
+                protected _Promise: async.IPromise;
+                /**
+                  * Reference to the Document injectable.
+                  */
+                protected _document: Document;
                 /**
                   * Whether or not the select is grouped.
                   */
@@ -8441,15 +8456,46 @@ declare module plat {
                   */
                 dispose(): void;
                 /**
+                  * A function that allows this control to observe both the bound property itself as well as
+                  * potential child properties if being bound to an object.
+                  * @param {plat.observable.IImplementTwoWayBinding} implementer The control that facilitates the
+                  * databinding.
+                  */
+                observeProperties(implementer: observable.IImplementTwoWayBinding): void;
+                /**
+                  * Updates the selected index if bound to a property.
+                  * @param {string} newValue The new value of the bound property.
+                  * @param {string} oldValue The old value of the bound property.
+                  * @param {string} identifier The child identifier of the bound property.
+                  * @param {boolean} firstTime? Whether or not this is the first time being called as a setter.
+                  */
+                protected _setSelectedIndex(newValue: string, oldValue: string, identifier: string, firstTime?: boolean): void;
+                /**
+                  * Updates the selected index if bound to a property.
+                  * @param {Array<any>} newValue The new value Array of the bound property.
+                  * @param {Array<any>} oldValue The old value Array of the bound property.
+                  * @param {string} identifier The child identifier of the bound property.
+                  * @param {boolean} firstTime? Whether or not this is the first time being called as a setter.
+                  */
+                protected _setSelectedIndices(newValue: Array<any>, oldValue: Array<any>, identifier: string, firstTime?: boolean): void;
+                /**
+                  * Fires the inputChanged event when the select's value changes.
+                  */
+                protected _observeChange(): void;
+                /**
+                  * Getter for select-multiple.
+                  */
+                protected _getSelectedValues(): Array<string>;
+                /**
                   * Sets a listener for the changes to the array.
                   */
                 protected _setListener(): void;
                 /**
                   * Receives an event when a method has been called on an array and maps the array
                   * method to its associated method handler.
-                  * @param {plat.observable.IPostArrayChangeInfo<any>} ev The Array mutation event information.
+                  * @param {Array<plat.observable.IArrayChanges<any>>} changes The Array mutation event information.
                   */
-                protected _executeEvent(ev: observable.IPostArrayChangeInfo<any>): void;
+                protected _executeEvent(changes: Array<observable.IArrayChanges<any>>): void;
                 /**
                   * Adds the options to the select element.
                   * @param {number} numberOfItems The number of items to add.
@@ -8475,9 +8521,8 @@ declare module plat {
                 /**
                   * The function called when an item has been removed
                   * from the Array context.
-                  * @param {plat.observable.IPostArrayChangeInfo<any>} ev The array mutation object
                   */
-                protected _removeItem(ev: observable.IPostArrayChangeInfo<any>): void;
+                protected _removeItem(): void;
                 /**
                   * Resets the select element by removing all its
                   * items and adding them back.
@@ -8486,45 +8531,45 @@ declare module plat {
                 /**
                   * The function called when an element is pushed to
                   * the array context.
-                  * @param {plat.observable.IPostArrayChangeInfo<any>} ev The array mutation object
+                  * @param {Array<plat.observable.IArrayChanges<any>>} changes The Array mutation event information.
                   */
-                protected _push(ev: observable.IPostArrayChangeInfo<any>): void;
+                protected _push(changes: Array<observable.IArrayChanges<any>>): void;
                 /**
                   * The function called when an item is popped
                   * from the array context.
-                  * @param {plat.observable.IPostArrayChangeInfo<any>} ev The array mutation object
+                  * @param {Array<plat.observable.IArrayChanges<any>>} changes The Array mutation event information.
                   */
-                protected _pop(ev: observable.IPostArrayChangeInfo<any>): void;
-                /**
-                  * The function called when an item is shifted
-                  * from the array context.
-                  * @param {plat.observable.IPostArrayChangeInfo<any>} ev The array mutation object
-                  */
-                protected _shift(ev: observable.IPostArrayChangeInfo<any>): void;
-                /**
-                  * The function called when items are spliced
-                  * from the array context.
-                  * @param {plat.observable.IPostArrayChangeInfo<any>} ev The array mutation object
-                  */
-                protected _splice(ev: observable.IPostArrayChangeInfo<any>): void;
+                protected _pop(changes: Array<observable.IArrayChanges<any>>): void;
                 /**
                   * The function called when an item is unshifted
                   * onto the array context.
-                  * @param {plat.observable.IPostArrayChangeInfo<any>} ev The array mutation object
+                  * @param {Array<plat.observable.IArrayChanges<any>>} changes The Array mutation event information.
                   */
-                protected _unshift(ev: observable.IPostArrayChangeInfo<any>): void;
+                protected _unshift(changes: Array<observable.IArrayChanges<any>>): void;
+                /**
+                  * The function called when an item is shifted
+                  * from the array context.
+                  * @param {Array<plat.observable.IArrayChanges<any>>} changes The Array mutation event information.
+                  */
+                protected _shift(changes: Array<observable.IArrayChanges<any>>): void;
+                /**
+                  * The function called when items are spliced
+                  * from the array context.
+                  * @param {Array<plat.observable.IArrayChanges<any>>} changes The Array mutation event information.
+                  */
+                protected _splice(changes: Array<observable.IArrayChanges<any>>): void;
                 /**
                   * The function called when the array context
                   * is sorted.
-                  * @param {plat.observable.IPostArrayChangeInfo<any>} ev The array mutation object
+                  * @param {Array<plat.observable.IArrayChanges<any>>} changes The Array mutation event information.
                   */
-                protected _sort(ev: observable.IPostArrayChangeInfo<any>): void;
+                protected _sort(changes: Array<observable.IArrayChanges<any>>): void;
                 /**
                   * The function called when the array context
                   * is reversed.
-                  * @param {plat.observable.IPostArrayChangeInfo<any>} ev The array mutation object
+                  * @param {Array<plat.observable.IArrayChanges<any>>} changes The Array mutation event information.
                   */
-                protected _reverse(ev: observable.IPostArrayChangeInfo<any>): void;
+                protected _reverse(changes: Array<observable.IArrayChanges<any>>): void;
             }
             /**
               * The available options for the Select control.
@@ -11503,8 +11548,14 @@ declare module plat {
         /**
           * Facilitates two-way databinding for HTMLInputElements, HTMLSelectElements, and HTMLTextAreaElements.
           */
-        class Bind extends AttributeControl {
+        class Bind extends AttributeControl implements observable.IImplementTwoWayBinding {
             protected static _inject: any;
+            /**
+              * The priority of Bind is set high to precede
+              * other controls that may be listening to the same
+              * event.
+              */
+            priority: number;
             /**
               * Reference to the Parser injectable.
               */
@@ -11521,12 +11572,6 @@ declare module plat {
               * Reference to the Document injectable.
               */
             protected _document: Document;
-            /**
-              * The priority of Bind is set high to precede
-              * other controls that may be listening to the same
-              * event.
-              */
-            priority: number;
             /**
               * The function used to add the proper event based on the input type.
               */
@@ -11552,6 +11597,12 @@ declare module plat {
               * The bound property name.
               */
             protected _property: string;
+            /**
+              * Whether or not Bind is being used in conjunction
+              * with a TemplateControl that implements the
+              * interface ISupportTwoWayBinding.
+              */
+            protected _supportsTwoWayBinding: boolean;
             /**
               * Whether or not the File API is supported.
               */
@@ -11582,26 +11633,64 @@ declare module plat {
               */
             dispose(): void;
             /**
+              * Gets the current value of the bound property.
+              */
+            evaluate(): any;
+            /**
+              * The function that allows a control implementing ISupportTwoWayBinding to observe
+              * changes to the bound property and/or its child properties.
+              * @param {plat.observable.IBoundPropertyChangedListener<T>} listener The listener to fire when the bound property or its
+              * specified child changes.
+              * @param {string} identifier? The identifier of the child property of the bound item.
+              */
+            observeProperty<T>(listener: observable.IBoundPropertyChangedListener<T>, identifier?: string): IRemoveListener;
+            /**
+              * The function that allows a control implementing ISupportTwoWayBinding to observe
+              * changes to the bound property and/or its child properties.
+              * @param {plat.observable.IBoundPropertyChangedListener<T>} listener The listener to fire when the bound property or its
+              * specified child changes.
+              * @param {number} index? The index of the child property of the bound item if the bound item is an Array.
+              */
+            observeProperty<T>(listener: observable.IBoundPropertyChangedListener<T>, index?: number): IRemoveListener;
+            /**
+              * A function that allows a ISupportTwoWayBinding to observe both the
+              * bound property itself as well as potential child properties if being bound to an object.
+              * @param {(changes: Array<plat.observable.IArrayChanges<T>>, identifier: string) => void} listener The listener function.
+              * @param {string} identifier? The identifier off of the bound object to listen to for changes. If undefined or empty
+              * the listener will listen for changes to the bound item itself.
+              * @param {boolean} arrayMutationsOnly? Whether or not to listen only for Array mutation changes.
+              */
+            observeProperty<T>(listener: (changes: Array<observable.IArrayChanges<T>>, identifier: string) => void, identifier?: string, arrayMutationsOnly?: boolean): IRemoveListener;
+            /**
+              * A function that allows a ISupportTwoWayBinding to observe both the
+              * bound property itself as well as potential child properties if being bound to an object.
+              * @param {(changes: Array<plat.observable.IArrayChanges<T>>, identifier: number) => void} listener The listener function.
+              * @param {number} index? The index off of the bound object to listen to for changes if the bound object is an Array.
+              * If undefined or empty the listener will listen for changes to the bound Array itself.
+              * @param {boolean} arrayMutationsOnly? Whether or not to listen only for Array mutation changes.
+              */
+            observeProperty<T>(listener: (changes: Array<observable.IArrayChanges<T>>, identifier: number) => void, index?: number, arrayMutationsOnly?: boolean): IRemoveListener;
+            /**
               * Adds a text event as the event listener.
-              * Used for textarea and input[type=text].
+              * Used for textarea and input[type="text"].
               */
             protected _addTextEventListener(): void;
             /**
               * Adds a change event as the event listener.
-              * Used for select, input[type=radio], and input[type=range].
+              * Used for select, input[type="radio"], and input[type="range"].
               */
             protected _addChangeEventListener(): void;
             /**
               * Adds a $tap event as the event listener.
-              * Used for input[type=button] and button.
+              * Used for input[type="button"] and button.
               */
             protected _addButtonEventListener(): void;
             /**
-              * Getter for input[type=checkbox] and input[type=radio]
+              * Getter for input[type="checkbox"] and input[type="radio"].
               */
             protected _getChecked(): boolean;
             /**
-              * Getter for input[type=text], input[type=range],
+              * Getter for input[type="text"], input[type="range"],
               * textarea, and select.
               */
             protected _getValue(): string;
@@ -11615,16 +11704,16 @@ declare module plat {
               */
             protected _getFile(): IFile;
             /**
-              * Getter for input[type="file"]-multiple
+              * Getter for input[type="file"]-multiple.
               */
             protected _getFiles(): Array<IFile>;
             /**
-              * Getter for select-multiple
+              * Getter for select-multiple.
               */
             protected _getSelectedValues(): Array<string>;
             /**
-              * Setter for textarea, input[type=text],
-              * and input[type=button], and select
+              * Setter for textarea, input[type="text"],
+              * and input[type="button"], and select.
               * @param {any} newValue The new value to set
               * @param {any} oldValue The previously bound value
               * @param {boolean} firstTime? The context is being evaluated for the first time and
@@ -11632,7 +11721,7 @@ declare module plat {
               */
             protected _setText(newValue: any, oldValue: any, firstTime?: boolean): void;
             /**
-              * Setter for input[type=range]
+              * Setter for input[type="range"].
               * @param {any} newValue The new value to set
               * @param {any} oldValue The previously bound value
               * @param {boolean} firstTime? The context is being evaluated for the first time and
@@ -11640,12 +11729,20 @@ declare module plat {
               */
             protected _setRange(newValue: any, oldValue: any, firstTime?: boolean): void;
             /**
+              * Setter for input[type="hidden"].
+              * @param {any} newValue The new value to set
+              * @param {any} oldValue The previously bound value
+              * @param {boolean} firstTime? The context is being evaluated for the first time and
+              * should thus change the property if null
+              */
+            protected _setHidden(newValue: any, oldValue: any, firstTime?: boolean): void;
+            /**
               * Sets the value on an element.
               * @param {any} newValue The new value to set
               */
             protected _setValue(newValue: any): void;
             /**
-              * Setter for input[type=checkbox]
+              * Setter for input[type="checkbox"]
               * @param {any} newValue The new value to set
               * @param {any} oldValue The previously bound value
               * @param {boolean} firstTime? The context is being evaluated for the first time and
@@ -11653,7 +11750,7 @@ declare module plat {
               */
             protected _setChecked(newValue: any, oldValue: any, firstTime?: boolean): void;
             /**
-              * Setter for input[type=radio]
+              * Setter for input[type="radio"]
               * @param {any} newValue The new value to set
               */
             protected _setRadio(newValue: any): void;
@@ -11696,40 +11793,11 @@ declare module plat {
               */
             protected _initializeSelect(): void;
             /**
-              * Checks to see if a Select or ForEach is loading items.
-              */
-            protected _checkAsynchronousSelect(): boolean;
-            /**
-              * Checks if the associated TemplateControl is a
-              * BindControl and
-              * initializes all listeners accordingly.
-              * is an BindControl
+              * Checks if the associated TemplateControl is implementing
+              * ISupportTwoWayBinding and initializes all listeners accordingly.
+              * is implementing ISupportTwoWayBinding.
               */
             protected _observingBindableProperty(): boolean;
-            /**
-              * The function that allows a BindControl to observe changes to the
-              * bound property and/or its child properties.
-              * @param {plat.ui.IBoundPropertyChangedListener} listener The listener to fire when the bound property or its
-              * specified child changes.
-              * @param {string} identifier The identifier of the child property of the bound item.
-              */
-            protected _observeProperties(listener: (newValue: any, oldValue: any, identifier: string, firstTime?: boolean) => void, identifier: string): void;
-            /**
-              * The function that allows a BindControl to observe changes to the
-              * bound property and/or its child properties.
-              * @param {plat.ui.IBoundPropertyChangedListener} listener The listener to fire when the bound property or its
-              * specified child changes.
-              * @param {number} index The index of the child property of the bound item if the bound item is an Array.
-              */
-            protected _observeProperties(listener: (newValue: any, oldValue: any, identifier: string, firstTime?: boolean) => void, index: number): void;
-            /**
-              * Sets the value on a BindControl.
-              * @param {any} newValue The new value to set
-              * @param {any} oldValue? The previously bound value
-              * @param {boolean} firstTime? The context is being evaluated for the first time and
-              * should thus change the property if null
-              */
-            protected _setBindableProperties(newValue: any, oldValue?: any, firstTime?: boolean): void;
         }
         /**
           * A file interface for browsers that do not support the
@@ -12046,25 +12114,25 @@ declare module plat {
     /**
       * Defines a function that will be called whenever a property has changed.
       */
-    interface IPropertyChangedListener {
+    interface IPropertyChangedListener<T> {
         /**
           * The method signature for IPropertyChangedListener.
-          * @param {any} newValue The new value of the observed property.
-          * @param {any} oldValue The previous value of the observed property.
+          * @param {T} newValue The new value of the observed property.
+          * @param {T} oldValue The previous value of the observed property.
           */
-        (newValue: any, oldValue: any): void;
+        (newValue: T, oldValue: T): void;
     }
     /**
       * Defines a function that will be called whenever a property specified by a given identifier has changed.
       */
-    interface IIdentifierChangedListener {
+    interface IIdentifierChangedListener<T> {
         /**
           * The method signature for IIdentifierChangedListener.
-          * @param {any} newValue The new value of the observed property.
-          * @param {any} oldValue The previous value of the observed property.
+          * @param {T} newValue The new value of the observed property.
+          * @param {T} oldValue The previous value of the observed property.
           * @param {any} identifier The string or number identifier that specifies the changed property.
           */
-        (newValue: any, oldValue: any, identifier: any): void;
+        (newValue: T, oldValue: T, identifier: any): void;
     }
 }
 

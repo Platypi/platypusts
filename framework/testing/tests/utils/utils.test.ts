@@ -369,6 +369,18 @@ module tests.utils {
             fn: 'camelCase',
             args: ['foo bar'],
             expected: 'fooBar'
+        },
+        {
+            name: 'delimit to spinal',
+            fn: 'delimit',
+            args: ['fooBarBaz', '-'],
+            expected: 'foo-bar-baz'
+        },
+        {
+            name: 'delimit with capital first letter',
+            fn: 'delimit',
+            args: ['FooBarBaz', '.'],
+            expected: 'foo.bar.baz'
         }
     ], toEqualTests: Array<IUtilTest> = [{
             name: 'extend with incorrect arguments',

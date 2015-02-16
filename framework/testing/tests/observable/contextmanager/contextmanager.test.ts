@@ -451,53 +451,51 @@ module tests.observable.contextManager {
                     'd'
                 ];
             
-            function listener(ev: plat.observable.IPostArrayChangeInfo<any>) {
+            function listener(changes: Array<plat.observable.IArrayChanges<any>>) {
+                var ev = changes[0];
                 ++called;
-                switch (ev.method) {
+                switch (ev.type) {
                     case 'push':
-                        expect(ev.arguments).toEqual([arr[arr.length - 2], arr[arr.length - 1]]);
-                        expect(ev.returnValue).toEqual(arr.length);
+                        expect(ev.addedCount).toBe(2);
+                        expect(ev.removed).toEqual([]);
                         break;
                     case 'pop':
-                        expect(ev.arguments).toEqual([]);
-                        expect(ev.returnValue).toEqual(oldArray[oldArray.length - 1]);
+                        expect(ev.addedCount).toBe(0);
+                        expect(ev.removed.length).toBe(1);
                         break;
                     case 'shift':
-                        expect(ev.arguments).toEqual([]);
-                        expect(ev.returnValue).toEqual(oldArray[0]);
+                        expect(ev.addedCount).toBe(0);
+                        expect(ev.removed.length).toBe(1);
                         break;
                     case 'splice':
-                        expect(ev.arguments).toEqual([1, 1, ['splice']]);
-                        expect(ev.returnValue).toEqual([oldArray[1]]);
+                        expect(ev.addedCount).toBe(1);
+                        expect(ev.removed.length).toBe(1);
                         break;
                     case 'unshift':
-                        expect(ev.arguments).toEqual([arr[0], arr[1]]);
-                        expect(ev.returnValue).toEqual(arr.length);
+                        expect(ev.addedCount).toBe(2);
+                        expect(ev.removed).toEqual([]);
                         break;
                     case 'sort':
-                        expect(ev.arguments).toEqual([]);
-                        expect(ev.returnValue).toEqual(arr);
+                        expect(ev.oldArray).toEqual(oldArray);
                         break;
                     case 'reverse':
-                        expect(ev.arguments).toEqual([]);
-                        expect(ev.returnValue).toEqual(arr);
+                        expect(ev.oldArray).toEqual(oldArray);
                         break;
                 }
 
-                expect(ev.newArray).not.toEqual(oldArray);
-                expect(ev.newArray).toBe(arr);
-                expect(ev.oldArray).toEqual(oldArray);
+                expect(ev.object).not.toEqual(oldArray);
+                expect(ev.object).toBe(arr);
             }
 
             manager.observe('context.arr', {
                 uid: control.uid,
                 listener: (newValue: any, oldValue: any) => {
                     remove();
-                    remove = manager.observeArrayMutation(control.uid, () => { }, listener, 'context.arr', newValue, oldValue);
+                    remove = manager.observeArrayMutation(control.uid, listener, 'context.arr', newValue, oldValue);
                 }
             });
 
-            var remove = manager.observeArrayMutation(control.uid, () => { }, listener, 'context.arr', control.context.arr, null);
+            var remove = manager.observeArrayMutation(control.uid, listener, 'context.arr', control.context.arr, null);
 
             oldArray = arr.slice(0);
             arr.push('e', 'f');
