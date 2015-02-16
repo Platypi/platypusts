@@ -804,6 +804,10 @@
 
             segment = this._recognizer.generate(routeInfo.delegate.view, routeInfo.parameters);
 
+            var previousSegment = this._previousSegment;
+
+            this._previousSegment = segment;
+
             this.navigating = true;
 
             var routeInfoCopy = this._nextRouteInfo = _clone(routeInfo, true);
@@ -824,6 +828,7 @@
                 this.currentRouteInfo = routeInfoCopy;
                 this.navigating = false;
             },(e: any): void => {
+                    this._previousSegment = previousSegment;
                     this.navigating = false;
                     throw e;
                 });
