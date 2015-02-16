@@ -185,7 +185,7 @@ module plat.ui.controls {
         protected _currentAnimation: animations.IAnimationThenable<any>;
 
         /**
-         * @name _nullInit
+         * @name _emptyInit
          * @memberof plat.ui.controls.ForEach
          * @kind property
          * @access protected
@@ -193,9 +193,9 @@ module plat.ui.controls {
          * @type {boolean}
          * 
          * @description
-         * Whether or not the initial context value was null.
+         * Whether or not the initial context value was null or empty.
          */
-        protected _nullInit: boolean = false;
+        protected _emptyInit: boolean = false;
 
         /**
          * @name __listenerSet
@@ -272,18 +272,20 @@ module plat.ui.controls {
          * @returns {void}
          */
         contextChanged(newValue: Array<any>, oldValue: Array<any>): void {
+            var emptyInit = this._emptyInit = isEmpty(oldValue);
+
             if (isEmpty(newValue)) {
-                this.itemsLoaded.then((): void => {
-                    this._removeItems(this.controls.length);
-                });
+                if (!emptyInit) {
+                    this.itemsLoaded.then((): void => {
+                        this._removeItems(this.controls.length);
+                    });
+                }
                 return;
             } else if (!isArray(newValue)) {
                 var _Exception = this._Exception;
                 _Exception.warn(this.type + ' context set to something other than an Array.', _Exception.CONTEXT);
                 return;
             }
-
-            this._nullInit = oldValue === null;
 
             this._setListener();
             this._executeEvent([{
@@ -419,14 +421,6 @@ module plat.ui.controls {
                             _Exception.warn(error, _Exception.BIND);
                         });
                     });
-            } else {
-                if (isFunction(this.__resolveFn)) {
-                    this.__resolveFn();
-                    this.__resolveFn = null;
-                }
-                this.itemsLoaded = new this._Promise<void>((resolve): void => {
-                    this.__resolveFn = resolve;
-                });
             }
 
             return this.itemsLoaded;
@@ -747,7 +741,7 @@ module plat.ui.controls {
                 var newLength = change.object.length,
                     promise = this.itemsLoaded;
 
-                if (this._nullInit) {
+                if (this._emptyInit) {
                     promise = null;
                 }
 

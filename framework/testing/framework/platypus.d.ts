@@ -7994,9 +7994,9 @@ declare module plat {
                   */
                 protected _currentAnimation: animations.IAnimationThenable<any>;
                 /**
-                  * Whether or not the initial context was null.
+                  * Whether or not the initial context value was null or empty.
                   */
-                protected _nullInit: boolean;
+                protected _emptyInit: boolean;
                 /**
                   * Whether or not the Array listener has been set.
                   */
