@@ -259,7 +259,7 @@
                 }
             }
 
-            value = attr.nodeValue;
+            value = attr.value;
 
             this._notifyAttributes(node.nodeName, value);
         }

@@ -931,12 +931,6 @@ module plat.processing {
                 }
             }
 
-            if (clonedManager.hasOwnContext) {
-                postpone((): void => {
-                    clonedManager.observeRootContext(newControl, clonedManager.bindAndLoad);
-                });
-            }
-
             var length = children.length,
                 childNodeOffset = 0;
 
