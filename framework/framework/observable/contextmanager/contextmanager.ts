@@ -1919,32 +1919,6 @@ module plat.observable {
         type: string;
 
         /**
-         * @name name
-         * @memberof plat.observable.IArrayChanges
-         * @kind property
-         * @access public
-         * 
-         * @type {string}
-         * 
-         * @description
-         * The name of the property that changed. Unavailable on Array mutation methods.
-         */
-        name?: string;
-
-        /**
-         * @name oldValue
-         * @memberof plat.observable.IArrayChanges
-         * @kind property
-         * @access public
-         * 
-         * @type {T}
-         * 
-         * @description
-         * The old value of the property before it changed. Unavailable on Array mutation methods.
-         */
-        oldValue?: T;
-
-        /**
          * @name index
          * @memberof plat.observable.IArrayChanges
          * @kind property
