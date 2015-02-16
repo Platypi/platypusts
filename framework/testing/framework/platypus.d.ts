@@ -1802,11 +1802,6 @@ declare module plat {
           */
         interface IBrowserConfig {
             /**
-              * Specifies that the application will not be doing
-              * url-based routing.
-              */
-            NONE: string;
-            /**
               * Specifies that the application wants to use hash-based
               * routing.
               */
@@ -3538,6 +3533,81 @@ declare module plat {
               */
             observe(listener: (newValue: T, oldValue: T) => void): IRemoveListener;
         }
+        /**
+          * Defines methods that interact with a control that implements IImplementTwoWayBinding
+          * (e.g. Bind.
+          */
+        interface ISupportTwoWayBinding {
+            /**
+              * Adds a listener to be called when the bindable property changes.
+              * @param {plat.IPropertyChangedListener<any>} listener The function that acts as a listener.
+              */
+            onInput(listener: (newValue: any, oldValue: any) => void): IRemoveListener;
+            /**
+              * A function that allows this control to observe both the bound property itself as well as
+              * potential child properties if being bound to an object.
+              * @param {plat.observable.IImplementTwoWayBinding} implementer The control that facilitates the
+              * databinding.
+              */
+            observeProperties(implementer: observable.IImplementTwoWayBinding): void;
+        }
+        /**
+          * Defines methods that interact with a control that implements ISupportTwoWayBinding
+          * (e.g. any control that extends BindControl.
+          */
+        interface IImplementTwoWayBinding {
+            /**
+              * A function that allows a ISupportTwoWayBinding to observe both the
+              * bound property itself as well as potential child properties if being bound to an object.
+              * @param {plat.observable.IBoundPropertyChangedListener<T>} listener The listener function.
+              * @param {string} identifier? The identifier off of the bound object to listen to for changes. If undefined or empty
+              * the listener will listen for changes to the bound item itself.
+              */
+            observeProperty<T>(listener: IBoundPropertyChangedListener<T>, identifier?: string): IRemoveListener;
+            /**
+              * A function that allows a ISupportTwoWayBinding to observe both the
+              * bound property itself as well as potential child properties if being bound to an object.
+              * @param {plat.observable.IBoundPropertyChangedListener<T>} listener The listener function.
+              * @param {number} index? The index off of the bound object to listen to for changes if the bound object is an Array.
+              * If undefined or empty the listener will listen for changes to the bound Array itself.
+              */
+            observeProperty<T>(listener: IBoundPropertyChangedListener<T>, index?: number): IRemoveListener;
+            /**
+              * A function that allows a ISupportTwoWayBinding to observe both the
+              * bound property itself as well as potential child properties if being bound to an object.
+              * @param {(ev: plat.observable.IPostArrayChangeInfo<T>, identifier: string) => void} listener The listener function.
+              * @param {string} identifier? The identifier off of the bound object to listen to for changes. If undefined or empty
+              * the listener will listen for changes to the bound item itself.
+              * @param {boolean} arrayMutationsOnly? Whether or not to listen only for Array mutation changes.
+              */
+            observeProperty<T>(listener: (ev: observable.IPostArrayChangeInfo<T>, identifier: string) => void, identifier?: string, arrayMutationsOnly?: boolean): IRemoveListener;
+            /**
+              * A function that allows a ISupportTwoWayBinding to observe both the
+              * bound property itself as well as potential child properties if being bound to an object.
+              * @param {(ev: plat.observable.IPostArrayChangeInfo<T>, identifier: string) => void} listener The listener function.
+              * @param {number} index? The index off of the bound object to listen to for changes if the bound object is an Array.
+              * If undefined or empty the listener will listen for changes to the bound Array itself.
+              * @param {boolean} arrayMutationsOnly? Whether or not to listen only for Array mutation changes.
+              */
+            observeProperty<T>(listener: (ev: observable.IPostArrayChangeInfo<T>, identifier: string) => void, index?: number, arrayMutationsOnly?: boolean): IRemoveListener;
+            /**
+              * Gets the current value of the bound property.
+              */
+            evaluate(): any;
+        }
+        /**
+          * Defines a function that will be called whenever a bound property specified by a given identifier has changed.
+          */
+        interface IBoundPropertyChangedListener<T> {
+            /**
+              * The method signature for IBoundPropertyChangedListener.
+              * @param {T} newValue The new value of the observed property.
+              * @param {T} oldValue The previous value of the observed property.
+              * @param {any} identifier The string or number identifier that specifies the changed property.
+              * @param {boolean} firstTime? True if this is the first case where the bound property is being set.
+              */
+            (newValue: T, oldValue: T, identifier: any, firstTime?: boolean): void;
+        }
     }
     /**
       * Holds classes and interfaces related to event management components in platypus.
@@ -4206,7 +4276,7 @@ declare module plat {
         /**
           * Allows a Control to observe any property on its context and receive updates when
           * the property is changed.
-          * @param {(value: T, oldValue: T, identifier: string) => void} listener The method called when the property is changed.
+          * @param {plat.IIdentifierChangedListener<T>} listener The method called when the property is changed.
           * This method will have its 'this' context set to the control instance.
           * @param {string} identifier? The property string that denotes the item in the context (e.g. "foo.bar.baz" is observing the
           * property `baz` in the object `bar` in the object `foo` in the control's context.
@@ -4215,7 +4285,7 @@ declare module plat {
         /**
           * Allows a Control to observe any property on its context and receive updates when
           * the property is changed.
-          * @param {(value: T, oldValue: T, index: number) => void} listener The method called when the property is changed. This method
+          * @param {plat.IIdentifierChangedListener<T>} listener The method called when the property is changed. This method
           * will have its 'this' context set to the control instance.
           * @param {number} index? The index that denotes the item in the context if the context is an Array.
           */
@@ -4245,14 +4315,14 @@ declare module plat {
         /**
           * Parses an expression string and observes any associated identifiers. When an identifier
           * value changes, the listener will be called.
-          * @param {(value: T, oldValue: T, expression: string) => void} listener The listener to call when the expression identifer values change.
+          * @param {plat.IIdentifierChangedListener<T>} listener The listener to call when the expression identifer values change.
           * @param {string} expression The expression string to watch for changes.
           */
         observeExpression<T>(listener: (value: T, oldValue: T, expression: string) => void, expression: string): IRemoveListener;
         /**
           * Using a IParsedExpression observes any associated identifiers. When an identifier
           * value changes, the listener will be called.
-          * @param {(value: T, oldValue: T, expression: string) => void} listener The listener to call when the expression identifer values change.
+          * @param {plat.IIdentifierChangedListener<T>} listener The listener to call when the expression identifer values change.
           * @param {plat.expressions.IParsedExpression} expression The expression string to watch for changes.
           */
         observeExpression<T>(listener: (value: T, oldValue: T, expression: string) => void, expression: expressions.IParsedExpression): IRemoveListener;
@@ -4846,29 +4916,28 @@ declare module plat {
           * An extended TemplateControl that allows for the binding of a value to
           * another listening control (e.g. plat-bind control).
           */
-        class BindControl extends TemplateControl implements ISupportTwoWayBinding {
+        class BindControl extends TemplateControl implements observable.ISupportTwoWayBinding {
             /**
               * The set of functions added externally that listens
               * for property changes.
               */
-            protected _listeners: Array<IPropertyChangedListener>;
+            protected _listeners: Array<IPropertyChangedListener<any>>;
             /**
               * Adds a listener to be called when the bindable property changes.
-              * @param {plat.IPropertyChangedListener} listener The function that acts as a listener.
+              * @param {plat.IPropertyChangedListener<any>} listener The function that acts as a listener.
               */
             onInput(listener: (newValue: any, oldValue: any) => void): IRemoveListener;
             /**
               * A function that allows this control to observe both the bound property itself as well as
               * potential child properties if being bound to an object.
-              * @param {(listener: plat.ui.IBoundPropertyChangedListener, identifier: string) => void} observe
-              * A function that allows bound properties to be observed with defined listeners.
-              * @param {string} identifier The identifier off of the bound object to listen to for changes.
+              * @param {plat.observable.IImplementTwoWayBinding} implementer The control that facilitates the
+              * databinding.
               */
-            observeProperties(observe: (listener: (newValue: any, oldValue: any, identifier: string, firstTime?: boolean) => void, identifier: string) => void): void;
+            observeProperties(implementer: observable.IImplementTwoWayBinding): void;
             /**
               * A function that signifies when this control's bindable property has changed.
               * @param {any} newValue The new value of the property after the change.
-              * @param {any} oldValue The old value of the property prior to the change.
+              * @param {any} oldValue? The old value of the property prior to the change.
               */
             inputChanged(newValue: any, oldValue?: any): void;
             /**
@@ -4876,38 +4945,6 @@ declare module plat {
               * defined externally.
               */
             dispose(): void;
-        }
-        /**
-          * Defines methods that interface with a control that handles two way databinding (e.g. plat-bind control).
-          */
-        interface ISupportTwoWayBinding {
-            /**
-              * Adds a listener to be called when the bindable property changes.
-              * @param {plat.IPropertyChangedListener} listener The function that acts as a listener.
-              */
-            onInput(listener: (newValue: any, oldValue?: any) => void): IRemoveListener;
-            /**
-              * A function that allows this control to observe both the bound property itself as well as
-              * potential child properties if being bound to an object.
-              * @param {(listener: plat.ui.IBoundPropertyChangedListener, identifier: string) => void}
-              * observe A function that allows bound properties to be observed with defined listeners.
-              * @param {string} identifier? The identifier off of the bound object to listen to for changes. If not defined
-              * the listener will listen for changes to the bound item itself.
-              */
-            observeProperties(observe: (listener: (newValue: any, oldValue: any, identifier: string, firstTime?: boolean) => void, identifier?: string) => void): void;
-        }
-        /**
-          * Defines a function that will be called whenever a bound property specified by a given identifier has changed.
-          */
-        interface IBoundPropertyChangedListener {
-            /**
-              * The method signature for IBoundPropertyChangedListener.
-              * @param {any} newValue The new value of the observed property.
-              * @param {any} oldValue The previous value of the observed property.
-              * @param {any} identifier The string or number identifier that specifies the changed property.
-              * @param {boolean} firstTime? True if this is the first case where the bound property is being set.
-              */
-            (newValue: any, oldValue: any, identifier: any, firstTime?: boolean): void;
         }
         /**
           * A control used in a Viewport for page navigation. The
@@ -5275,9 +5312,17 @@ declare module plat {
               */
             protected _ResourcesFactory: IResourcesFactory;
             /**
+              * Reference to the IControlFactory injectable.
+              */
+            protected _ControlFactory: IControlFactory;
+            /**
               * Reference to the ITemplateControlFactory injectable.
               */
             protected _TemplateControlFactory: ITemplateControlFactory;
+            /**
+              * Reference to the IContextManagerStatic injectable.
+              */
+            protected _ContextManager: observable.IContextManagerStatic;
             /**
               * Reference to the IPromise injectable.
               */
@@ -5499,7 +5544,7 @@ declare module plat {
               * @param {plat.IObject<plat.ui.IResource>} resources? A set of resources to add to the control used to
               * compile/bind this template.
               */
-            protected _createBoundControl(key: string, template: DocumentFragment, resources?: IObject<IResource>): TemplateControl;
+            protected _createBoundControl(key: string, template: DocumentFragment, childContext?: string, resources?: IObject<IResource>): TemplateControl;
         }
         /**
           * The Type for referencing the '_BindableTemplatesFactory' injectable as a dependency.
@@ -7368,18 +7413,6 @@ declare module plat {
             class BaseAnimation implements IAnimationEssentials {
                 protected static _inject: any;
                 /**
-                  * Reference to the IExceptionStatic injectable.
-                  */
-                protected _Exception: IExceptionStatic;
-                /**
-                  * Reference to the Compat injectable.
-                  */
-                protected _compat: Compat;
-                /**
-                  * Reference to the IPromise injectable.
-                  */
-                protected _Promise: async.IPromise;
-                /**
                   * The node having the animation performed on it.
                   */
                 element: HTMLElement;
@@ -7391,6 +7424,18 @@ declare module plat {
                   * Specified options for the animation.
                   */
                 options: any;
+                /**
+                  * Reference to the IExceptionStatic injectable.
+                  */
+                protected _Exception: IExceptionStatic;
+                /**
+                  * Reference to the Compat injectable.
+                  */
+                protected _compat: Compat;
+                /**
+                  * Reference to the IPromise injectable.
+                  */
+                protected _Promise: async.IPromise;
                 /**
                   * The resolve function for the end of the animation.
                   */
@@ -7448,7 +7493,7 @@ declare module plat {
                 /**
                   * A set of browser compatible CSS animation events capable of being listened to.
                   */
-                private __animationEvents;
+                protected _animationEvents: IAnimationEvents;
                 /**
                   * A function to listen to the start of an animation event.
                   * @param {() => void} listener The function to call when the animation begins.
@@ -7503,7 +7548,7 @@ declare module plat {
                   */
                 options: ISimpleCssAnimationOptions;
                 /**
-                  * Adds the class to start the animation.
+                  * Adds the class to initialize the animation.
                   */
                 initialize(): void;
                 /**
@@ -8351,19 +8396,11 @@ declare module plat {
                 loaded(): void;
             }
             /**
-              * A TemplateControl for binding an HTML select element
+              * A BindControl for binding an HTML select element
               * to an Array context.
               */
-            class Select extends TemplateControl {
+            class Select extends BindControl {
                 protected static _inject: any;
-                /**
-                  * Reference to the IPromise injectable.
-                  */
-                protected _Promise: async.IPromise;
-                /**
-                  * Reference to the Document injectable.
-                  */
-                protected _document: Document;
                 /**
                   * Replaces the <plat-select> node with
                   * a <select> node.
@@ -8394,6 +8431,14 @@ declare module plat {
                   * A Promise that will fulfill whenever all items are loaded.
                   */
                 itemsLoaded: async.IThenable<void>;
+                /**
+                  * Reference to the IPromise injectable.
+                  */
+                protected _Promise: async.IPromise;
+                /**
+                  * Reference to the Document injectable.
+                  */
+                protected _document: Document;
                 /**
                   * Whether or not the select is grouped.
                   */
@@ -8440,6 +8485,37 @@ declare module plat {
                   * Removes any potentially held memory.
                   */
                 dispose(): void;
+                /**
+                  * A function that allows this control to observe both the bound property itself as well as
+                  * potential child properties if being bound to an object.
+                  * @param {plat.observable.IImplementTwoWayBinding} implementer The control that facilitates the
+                  * databinding.
+                  */
+                observeProperties(implementer: observable.IImplementTwoWayBinding): void;
+                /**
+                  * Updates the selected index if bound to a property.
+                  * @param {string} newValue The new value of the bound property.
+                  * @param {string} oldValue The old value of the bound property.
+                  * @param {string} identifier The child identifier of the bound property.
+                  * @param {boolean} firstTime? Whether or not this is the first time being called as a setter.
+                  */
+                protected _setSelectedIndex(newValue: string, oldValue: string, identifier: string, firstTime?: boolean): void;
+                /**
+                  * Updates the selected index if bound to a property.
+                  * @param {Array<any>} newValue The new value Array of the bound property.
+                  * @param {Array<any>} oldValue The old value Array of the bound property.
+                  * @param {string} identifier The child identifier of the bound property.
+                  * @param {boolean} firstTime? Whether or not this is the first time being called as a setter.
+                  */
+                protected _setSelectedIndices(newValue: Array<any>, oldValue: Array<any>, identifier: string, firstTime?: boolean): void;
+                /**
+                  * Fires the inputChanged event when the select's value changes.
+                  */
+                protected _observeChange(): void;
+                /**
+                  * Getter for select-multiple.
+                  */
+                protected _getSelectedValues(): Array<string>;
                 /**
                   * Sets a listener for the changes to the array.
                   */
@@ -11503,8 +11579,14 @@ declare module plat {
         /**
           * Facilitates two-way databinding for HTMLInputElements, HTMLSelectElements, and HTMLTextAreaElements.
           */
-        class Bind extends AttributeControl {
+        class Bind extends AttributeControl implements observable.IImplementTwoWayBinding {
             protected static _inject: any;
+            /**
+              * The priority of Bind is set high to precede
+              * other controls that may be listening to the same
+              * event.
+              */
+            priority: number;
             /**
               * Reference to the Parser injectable.
               */
@@ -11521,12 +11603,6 @@ declare module plat {
               * Reference to the Document injectable.
               */
             protected _document: Document;
-            /**
-              * The priority of Bind is set high to precede
-              * other controls that may be listening to the same
-              * event.
-              */
-            priority: number;
             /**
               * The function used to add the proper event based on the input type.
               */
@@ -11552,6 +11628,12 @@ declare module plat {
               * The bound property name.
               */
             protected _property: string;
+            /**
+              * Whether or not Bind is being used in conjunction
+              * with a TemplateControl that implements the
+              * interface ISupportTwoWayBinding.
+              */
+            protected _supportsTwoWayBinding: boolean;
             /**
               * Whether or not the File API is supported.
               */
@@ -11582,26 +11664,64 @@ declare module plat {
               */
             dispose(): void;
             /**
+              * Gets the current value of the bound property.
+              */
+            evaluate(): any;
+            /**
+              * The function that allows a control implementing ISupportTwoWayBinding to observe
+              * changes to the bound property and/or its child properties.
+              * @param {plat.observable.IBoundPropertyChangedListener<T>} listener The listener to fire when the bound property or its
+              * specified child changes.
+              * @param {string} identifier? The identifier of the child property of the bound item.
+              */
+            observeProperty<T>(listener: observable.IBoundPropertyChangedListener<T>, identifier?: string): IRemoveListener;
+            /**
+              * The function that allows a control implementing ISupportTwoWayBinding to observe
+              * changes to the bound property and/or its child properties.
+              * @param {plat.observable.IBoundPropertyChangedListener<T>} listener The listener to fire when the bound property or its
+              * specified child changes.
+              * @param {number} index? The index of the child property of the bound item if the bound item is an Array.
+              */
+            observeProperty<T>(listener: observable.IBoundPropertyChangedListener<T>, index?: number): IRemoveListener;
+            /**
+              * A function that allows a ISupportTwoWayBinding to observe both the
+              * bound property itself as well as potential child properties if being bound to an object.
+              * @param {(ev: plat.observable.IPostArrayChangeInfo<T>, identifier: string) => void} listener The listener function.
+              * @param {string} identifier? The identifier off of the bound object to listen to for changes. If undefined or empty
+              * the listener will listen for changes to the bound item itself.
+              * @param {boolean} arrayMutationsOnly? Whether or not to listen only for Array mutation changes.
+              */
+            observeProperty<T>(listener: (ev: observable.IPostArrayChangeInfo<T>, identifier: string) => void, identifier?: string, arrayMutationsOnly?: boolean): IRemoveListener;
+            /**
+              * A function that allows a ISupportTwoWayBinding to observe both the
+              * bound property itself as well as potential child properties if being bound to an object.
+              * @param {(ev: plat.observable.IPostArrayChangeInfo<T>, identifier: string) => void} listener The listener function.
+              * @param {number} index? The index off of the bound object to listen to for changes if the bound object is an Array.
+              * If undefined or empty the listener will listen for changes to the bound Array itself.
+              * @param {boolean} arrayMutationsOnly? Whether or not to listen only for Array mutation changes.
+              */
+            observeProperty<T>(listener: (ev: observable.IPostArrayChangeInfo<T>, identifier: string) => void, index?: number, arrayMutationsOnly?: boolean): IRemoveListener;
+            /**
               * Adds a text event as the event listener.
-              * Used for textarea and input[type=text].
+              * Used for textarea and input[type="text"].
               */
             protected _addTextEventListener(): void;
             /**
               * Adds a change event as the event listener.
-              * Used for select, input[type=radio], and input[type=range].
+              * Used for select, input[type="radio"], and input[type="range"].
               */
             protected _addChangeEventListener(): void;
             /**
               * Adds a $tap event as the event listener.
-              * Used for input[type=button] and button.
+              * Used for input[type="button"] and button.
               */
             protected _addButtonEventListener(): void;
             /**
-              * Getter for input[type=checkbox] and input[type=radio]
+              * Getter for input[type="checkbox"] and input[type="radio"].
               */
             protected _getChecked(): boolean;
             /**
-              * Getter for input[type=text], input[type=range],
+              * Getter for input[type="text"], input[type="range"],
               * textarea, and select.
               */
             protected _getValue(): string;
@@ -11615,16 +11735,16 @@ declare module plat {
               */
             protected _getFile(): IFile;
             /**
-              * Getter for input[type="file"]-multiple
+              * Getter for input[type="file"]-multiple.
               */
             protected _getFiles(): Array<IFile>;
             /**
-              * Getter for select-multiple
+              * Getter for select-multiple.
               */
             protected _getSelectedValues(): Array<string>;
             /**
-              * Setter for textarea, input[type=text],
-              * and input[type=button], and select
+              * Setter for textarea, input[type="text"],
+              * and input[type="button"], and select.
               * @param {any} newValue The new value to set
               * @param {any} oldValue The previously bound value
               * @param {boolean} firstTime? The context is being evaluated for the first time and
@@ -11632,7 +11752,7 @@ declare module plat {
               */
             protected _setText(newValue: any, oldValue: any, firstTime?: boolean): void;
             /**
-              * Setter for input[type=range]
+              * Setter for input[type="range"].
               * @param {any} newValue The new value to set
               * @param {any} oldValue The previously bound value
               * @param {boolean} firstTime? The context is being evaluated for the first time and
@@ -11640,12 +11760,20 @@ declare module plat {
               */
             protected _setRange(newValue: any, oldValue: any, firstTime?: boolean): void;
             /**
+              * Setter for input[type="hidden"].
+              * @param {any} newValue The new value to set
+              * @param {any} oldValue The previously bound value
+              * @param {boolean} firstTime? The context is being evaluated for the first time and
+              * should thus change the property if null
+              */
+            protected _setHidden(newValue: any, oldValue: any, firstTime?: boolean): void;
+            /**
               * Sets the value on an element.
               * @param {any} newValue The new value to set
               */
             protected _setValue(newValue: any): void;
             /**
-              * Setter for input[type=checkbox]
+              * Setter for input[type="checkbox"]
               * @param {any} newValue The new value to set
               * @param {any} oldValue The previously bound value
               * @param {boolean} firstTime? The context is being evaluated for the first time and
@@ -11653,7 +11781,7 @@ declare module plat {
               */
             protected _setChecked(newValue: any, oldValue: any, firstTime?: boolean): void;
             /**
-              * Setter for input[type=radio]
+              * Setter for input[type="radio"]
               * @param {any} newValue The new value to set
               */
             protected _setRadio(newValue: any): void;
@@ -11696,40 +11824,11 @@ declare module plat {
               */
             protected _initializeSelect(): void;
             /**
-              * Checks to see if a Select or ForEach is loading items.
-              */
-            protected _checkAsynchronousSelect(): boolean;
-            /**
-              * Checks if the associated TemplateControl is a
-              * BindControl and
-              * initializes all listeners accordingly.
-              * is an BindControl
+              * Checks if the associated TemplateControl is implementing
+              * ISupportTwoWayBinding and initializes all listeners accordingly.
+              * is implementing ISupportTwoWayBinding.
               */
             protected _observingBindableProperty(): boolean;
-            /**
-              * The function that allows a BindControl to observe changes to the
-              * bound property and/or its child properties.
-              * @param {plat.ui.IBoundPropertyChangedListener} listener The listener to fire when the bound property or its
-              * specified child changes.
-              * @param {string} identifier The identifier of the child property of the bound item.
-              */
-            protected _observeProperties(listener: (newValue: any, oldValue: any, identifier: string, firstTime?: boolean) => void, identifier: string): void;
-            /**
-              * The function that allows a BindControl to observe changes to the
-              * bound property and/or its child properties.
-              * @param {plat.ui.IBoundPropertyChangedListener} listener The listener to fire when the bound property or its
-              * specified child changes.
-              * @param {number} index The index of the child property of the bound item if the bound item is an Array.
-              */
-            protected _observeProperties(listener: (newValue: any, oldValue: any, identifier: string, firstTime?: boolean) => void, index: number): void;
-            /**
-              * Sets the value on a BindControl.
-              * @param {any} newValue The new value to set
-              * @param {any} oldValue? The previously bound value
-              * @param {boolean} firstTime? The context is being evaluated for the first time and
-              * should thus change the property if null
-              */
-            protected _setBindableProperties(newValue: any, oldValue?: any, firstTime?: boolean): void;
         }
         /**
           * A file interface for browsers that do not support the
@@ -12046,25 +12145,25 @@ declare module plat {
     /**
       * Defines a function that will be called whenever a property has changed.
       */
-    interface IPropertyChangedListener {
+    interface IPropertyChangedListener<T> {
         /**
           * The method signature for IPropertyChangedListener.
-          * @param {any} newValue The new value of the observed property.
-          * @param {any} oldValue The previous value of the observed property.
+          * @param {T} newValue The new value of the observed property.
+          * @param {T} oldValue The previous value of the observed property.
           */
-        (newValue: any, oldValue: any): void;
+        (newValue: T, oldValue: T): void;
     }
     /**
       * Defines a function that will be called whenever a property specified by a given identifier has changed.
       */
-    interface IIdentifierChangedListener {
+    interface IIdentifierChangedListener<T> {
         /**
           * The method signature for IIdentifierChangedListener.
-          * @param {any} newValue The new value of the observed property.
-          * @param {any} oldValue The previous value of the observed property.
+          * @param {T} newValue The new value of the observed property.
+          * @param {T} oldValue The previous value of the observed property.
           * @param {any} identifier The string or number identifier that specifies the changed property.
           */
-        (newValue: any, oldValue: any, identifier: any): void;
+        (newValue: T, oldValue: T, identifier: any): void;
     }
 }
 
