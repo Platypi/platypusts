@@ -3495,9 +3495,9 @@ declare module plat {
               * The name of the property that changed. Unavailable on Array mutation methods.
               */
             name?: string;
-        /**
+            /**
               * The old value of the property before it changed. Unavailable on Array mutation methods.
-          */
+              */
             oldValue?: T;
             /**
               * The index at which the change occurred. Only available on Array mutation methods.
@@ -3556,8 +3556,8 @@ declare module plat {
               * databinding.
               */
             observeProperties(implementer: observable.IImplementTwoWayBinding): void;
-    }
-    /**
+        }
+        /**
           * Defines methods that interact with a control that implements ISupportTwoWayBinding
           * (e.g. any control that extends BindControl.
           */
