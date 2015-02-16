@@ -148,7 +148,6 @@ module plat.ui.controls {
                 }
 
                 ev.preventDefault();
-                element.href = '#';
 
                 requestAnimationFrameGlobal((): void => {
                     this._browser.url(href);
