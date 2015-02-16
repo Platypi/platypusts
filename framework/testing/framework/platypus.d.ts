@@ -1812,11 +1812,6 @@ declare module plat {
           */
         interface IBrowserConfig {
             /**
-              * Specifies that the application will not be doing
-              * url-based routing.
-              */
-            NONE: string;
-            /**
               * Specifies that the application wants to use hash-based
               * routing.
               */
@@ -3500,9 +3495,9 @@ declare module plat {
               * The name of the property that changed. Unavailable on Array mutation methods.
               */
             name?: string;
-            /**
+        /**
               * The old value of the property before it changed. Unavailable on Array mutation methods.
-              */
+          */
             oldValue?: T;
             /**
               * The index at which the change occurred. Only available on Array mutation methods.
@@ -3561,8 +3556,8 @@ declare module plat {
               * databinding.
               */
             observeProperties(implementer: observable.IImplementTwoWayBinding): void;
-        }
-        /**
+    }
+    /**
           * Defines methods that interact with a control that implements ISupportTwoWayBinding
           * (e.g. any control that extends BindControl.
           */
@@ -5321,9 +5316,17 @@ declare module plat {
               */
             protected _ResourcesFactory: IResourcesFactory;
             /**
+              * Reference to the IControlFactory injectable.
+              */
+            protected _ControlFactory: IControlFactory;
+            /**
               * Reference to the ITemplateControlFactory injectable.
               */
             protected _TemplateControlFactory: ITemplateControlFactory;
+            /**
+              * Reference to the IContextManagerStatic injectable.
+              */
+            protected _ContextManager: observable.IContextManagerStatic;
             /**
               * Reference to the IPromise injectable.
               */
@@ -5545,7 +5548,7 @@ declare module plat {
               * @param {plat.IObject<plat.ui.IResource>} resources? A set of resources to add to the control used to
               * compile/bind this template.
               */
-            protected _createBoundControl(key: string, template: DocumentFragment, resources?: IObject<IResource>): TemplateControl;
+            protected _createBoundControl(key: string, template: DocumentFragment, childContext?: string, resources?: IObject<IResource>): TemplateControl;
         }
         /**
           * The Type for referencing the '_BindableTemplatesFactory' injectable as a dependency.

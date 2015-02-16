@@ -42,7 +42,6 @@ module plat.web {
          * The {@link plat.web.IBrowserConfig|IBrowserConfig} injectable object.
          */
         static config: IBrowserConfig = {
-            NONE: 'none',
             HASH: 'hash',
             STATE: 'state',
             routingType: 'hash',
@@ -243,10 +242,6 @@ module plat.web {
                 _compat = this._compat;
 
             this._EventManager.dispose(this.uid);
-
-            if ($config.routingType === $config.NONE) {
-                return;
-            }
 
             this.__initializing = true;
 
@@ -575,20 +570,6 @@ module plat.web {
      * injectable.
      */
     export interface IBrowserConfig {
-        /**
-         * @name NONE
-         * @memberof plat.web.IBrowserConfig
-         * @kind property
-         * @access public
-         * 
-         * @type {string}
-         * 
-         * @description
-         * Specifies that the application will not be doing 
-         * url-based routing.
-         */
-        NONE: string;
-
         /**
          * @name HASH
          * @memberof plat.web.IBrowserConfig

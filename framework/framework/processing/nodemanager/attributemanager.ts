@@ -235,8 +235,8 @@
                 length: number,
                 i: number;
 
-            if (this._NodeManager.hasMarkup(attr.nodeValue)) {
-                attr.nodeValue = attr.nodeValue.replace(this._markupRegex, '');
+            if (this._NodeManager.hasMarkup(attr.value)) {
+                attr.value = attr.value.replace(this._markupRegex, '');
             }
 
             length = classes.length;
@@ -287,7 +287,7 @@
             this._notifyAttributes(key, value);
 
             if (!this.replace) {
-                node.node.nodeValue = value;
+                (<Attr>node.node).value = value;
             }
         }
 

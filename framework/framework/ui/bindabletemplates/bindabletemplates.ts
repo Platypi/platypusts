@@ -29,6 +29,19 @@ module plat.ui {
         protected _ResourcesFactory: IResourcesFactory = acquire(__ResourcesFactory);
 
         /**
+         * @name _ControlFactory
+         * @memberof plat.ui.BindableTemplates
+         * @kind property
+         * @access protected
+         * 
+         * @type {plat.ui.IControlFactory}
+         * 
+         * @description
+         * Reference to the {@link plat.ui.IControlFactory|IControlFactory} injectable.
+         */
+        protected _ControlFactory: IControlFactory = acquire(__ControlFactory);
+
+        /**
          * @name _TemplateControlFactory
          * @memberof plat.ui.BindableTemplates
          * @kind property
@@ -40,6 +53,19 @@ module plat.ui {
          * Reference to the {@link plat.ui.ITemplateControlFactory|ITemplateControlFactory} injectable.
          */
         protected _TemplateControlFactory: ITemplateControlFactory = acquire(__TemplateControlFactory);
+
+        /**
+         * @name _ContextManager
+         * @memberof plat.ui.BindableTemplates
+         * @kind property
+         * @access protected
+         * 
+         * @type {plat.observable.IContextManagerStatic}
+         * 
+         * @description
+         * Reference to the {@link plat.observable.IContextManagerStatic|IContextManagerStatic} injectable.
+         */
+        protected _ContextManager: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
 
         /**
          * @name _Promise
@@ -580,7 +606,7 @@ module plat.ui {
 
             templatePromise = templatePromise.then((result: DocumentFragment): async.IThenable<any> => {
                 var template = <DocumentFragment>result.cloneNode(true),
-                    control = this._createBoundControl(key, template, resources),
+                    control = this._createBoundControl(key, template, relativeIdentifier, resources),
                     nodeMap = this._createNodeMap(control, template, relativeIdentifier);
 
                 if (noIndex) {
@@ -815,15 +841,17 @@ module plat.ui {
          * 
          * @returns {plat.ui.TemplateControl} The newly created {@link plat.ui.TemplateControl|TemplateControl}.
          */
-        protected _createBoundControl(key: string, template: DocumentFragment, resources?: IObject<IResource>): TemplateControl {
+        protected _createBoundControl(key: string, template: DocumentFragment, childContext?: string, resources?: IObject<IResource>): TemplateControl {
             var _TemplateControlFactory = this._TemplateControlFactory,
                 control = _TemplateControlFactory.getInstance(),
                 _ResourcesFactory = this._ResourcesFactory,
                 parent = this.control,
                 compiledManager = this.cache[key],
-                _resources = _ResourcesFactory.getInstance();
+                isCompiled = isObject(compiledManager),
+                _resources = _ResourcesFactory.getInstance(),
+                contextManager: observable.ContextManager;
 
-            if (isObject(compiledManager)) {
+            if (isCompiled) {
                 var compiledControl = compiledManager.getUiControl();
 
                 _resources.initialize(control, compiledControl.resources);
@@ -841,6 +869,18 @@ module plat.ui {
             control.controls = [];
             control.element = <HTMLElement>template;
             control.type = parent.type + __BOUND_PREFIX + key;
+            control.root = this._ControlFactory.getRootControl(control);
+            contextManager = this._ContextManager.getManager(control.root);
+
+            if (isCompiled) {
+                control.absoluteContextPath = parent.absoluteContextPath || __Context;
+
+                if (!isNull(childContext)) {
+                    control.absoluteContextPath += '.' + childContext;
+                }
+
+                control.context = contextManager.getContext(control.absoluteContextPath.split('.'), false);
+            }
 
             return control;
         }
