@@ -185,6 +185,19 @@ module plat.ui.controls {
         protected _currentAnimation: animations.IAnimationThenable<any>;
 
         /**
+         * @name _nullInit
+         * @memberof plat.ui.controls.ForEach
+         * @kind property
+         * @access protected
+         * 
+         * @type {boolean}
+         * 
+         * @description
+         * Whether or not the initial context value was null.
+         */
+        protected _nullInit: boolean = false;
+
+        /**
          * @name __listenerSet
          * @memberof plat.ui.controls.ForEach
          * @kind property
@@ -196,6 +209,7 @@ module plat.ui.controls {
          * Whether or not the Array listener has been set.
          */
         private __listenerSet = false;
+
         /**
          * @name __resolveFn
          * @memberof plat.ui.controls.ForEach
@@ -268,6 +282,8 @@ module plat.ui.controls {
                 _Exception.warn(this.type + ' context set to something other than an Array.', _Exception.CONTEXT);
                 return;
             }
+
+            this._nullInit = oldValue === null;
 
             this._setListener();
             this._executeEvent([{
@@ -728,8 +744,14 @@ module plat.ui.controls {
                 addCount = change.addedCount;
 
             if (isNull(addCount)) {
-                var newLength = change.object.length;
-                this.itemsLoaded.then((): void => {
+                var newLength = change.object.length,
+                    promise = this.itemsLoaded;
+
+                if (this._nullInit) {
+                    promise = null;
+                }
+
+                this._Promise.resolve(promise).then((): void => {
                     var currentLength = this.controls.length;
                     if (newLength > currentLength) {
                         this._addItems(newLength - currentLength, currentLength);
