@@ -50,31 +50,18 @@ module plat.observable {
         protected static _Exception: IExceptionStatic;
 
         /**
-         * @name preArrayListeners
+         * @name arrayChangeListeners
          * @memberof plat.observable.ContextManager
          * @kind property
          * @access public
          * @static
          * 
-         * @type {plat.IObject<plat.IObject<Array<(ev: plat.observable.IPreArrayChangeInfo) => void>>>}
-         * 
-         * @description
-         * A set of functions to be fired prior to when a particular observed array is mutated.
-         */
-        static preArrayListeners: IObject<IObject<Array<(ev: IPreArrayChangeInfo) => void>>> = {};
-        /**
-         * @name postArrayListeners
-         * @memberof plat.observable.ContextManager
-         * @kind property
-         * @access public
-         * @static
-         * 
-         * @type {plat.IObject<plat.IObject<Array<(ev: plat.observable.IPostArrayChangeInfo<any>) => void>>>}
+         * @type {plat.IObject<plat.IObject<Array<(changes: Array<plat.observable.IArrayChanges<any>>) => void>>>}
          * 
          * @description
          * A set of functions to be fired when a particular observed array is mutated.
          */
-        static postArrayListeners: IObject<IObject<Array<(ev: IPostArrayChangeInfo<any>) => void>>> = {};
+        static arrayChangeListeners: IObject<IObject<Array<(changes: Array<IArrayChanges<any>>) => void>>> = {};
 
         /**
          * @name __managers
@@ -311,7 +298,7 @@ module plat.observable {
          * @returns {void}
          */
         static removeArrayListeners(absoluteIdentifier: string, uid: string): void {
-            var listeners = ContextManager.postArrayListeners[absoluteIdentifier];
+            var listeners = ContextManager.arrayChangeListeners[absoluteIdentifier];
 
             if (!isNull(listeners)) {
                 deleteProperty(listeners, uid);
@@ -716,12 +703,12 @@ module plat.observable {
 
                     if (hasObservableListener) {
                         var uid = observableListener.uid;
-                        removeListener = this.observeArrayMutation(uid, null, noop, join, context, null);
+                        removeListener = this.observeArrayMutation(uid, noop, join, context, null);
                         removeArrayObserve = this.observe(join, {
                             uid: uid,
                             listener: (newValue: Array<any>, oldValue: Array<any>): void => {
                                 removeListener();
-                                removeListener = this.observeArrayMutation(uid, null, noop, join, newValue, oldValue);
+                                removeListener = this.observeArrayMutation(uid, noop, join, newValue, oldValue);
                             }
                         });
                     }
@@ -751,19 +738,16 @@ module plat.observable {
          * and reverse.
          * 
          * @param {string} uid The unique ID of the object observing the array.
-         * @param {(ev: plat.observable.IPreArrayChangeInfo) => void} preListener The callback for prior to when an observed Array 
-         * function has been called.
-         * @param {(ev: plat.observable.IPostArrayChangeInfo<any>) => void} postListener The callback for after when an observed Array 
-         * function has been called.
+         * @param {(changes: Array<plat.observable.IArrayChanges<any>>) => void} listener The callback for after 
+         * when an observed Array function has been called.
          * @param {string} absoluteIdentifier The identifier from the root context used to find the array.
          * @param {Array<any>} array The array to be observed.
          * @param {Array<any>} oldArray The old array to stop observing.
          * 
          * @returns {plat.IRemoveListener} A function to stop observing the array identified by the absoluteIdentifier.
          */
-        observeArrayMutation(uid: string, preListener: (ev: IPreArrayChangeInfo) => void,
-            postListener: (ev: IPostArrayChangeInfo<any>) => void, absoluteIdentifier: string, array: Array<any>,
-            oldArray: Array<any>): IRemoveListener {
+        observeArrayMutation(uid: string, listener: (changes: Array<IArrayChanges<any>>) => void, absoluteIdentifier: string,
+            array: Array<any>, oldArray: Array<any>): IRemoveListener {
             var length = arrayMethods.length,
                 method: string,
                 i: number,
@@ -791,11 +775,8 @@ module plat.observable {
             }
 
             var removeListeners: Array<IRemoveListener> = [];
-            if (isFunction(preListener)) {
-                removeListeners.push(this._pushArrayListener(uid, absoluteIdentifier, preListener, ContextManager.preArrayListeners));
-            }
-            if (isFunction(postListener)) {
-                removeListeners.push(this._pushArrayListener(uid, absoluteIdentifier, postListener, ContextManager.postArrayListeners));
+            if (isFunction(listener)) {
+                removeListeners.push(this._pushArrayListener(uid, absoluteIdentifier, listener));
             }
 
             this._overwriteArray(absoluteIdentifier, array);
@@ -836,15 +817,14 @@ module plat.observable {
          * 
          * @param {string} uid The unique identifier to store the callback.
          * @param {string} absoluteIdentifier The identifier of the Array being observed.
-         * @param {(ev: plat.observable.IPreArrayChangeInfo) => void} listener The Array mutation listener.
-         * @param {plat.IObject<plat.IObject<Array<(ev: plat.observable.IPreArrayChangeInfo) => void>>>} arrayListeners 
-         * The Array to hold the new listener.
+         * @param {(changes: Array<plat.observable.IArrayChanges<any>>) => void} listener The Array mutation listener.
          * 
          * @returns {plat.IRemoveListener} A function that will remove this listener from execution.
          */
-        protected _pushArrayListener(uid: string, absoluteIdentifier: string, listener: (ev: IPreArrayChangeInfo) => void,
-            arrayListeners: IObject<IObject<Array<(ev: IPreArrayChangeInfo) => void>>>): IRemoveListener {
-            var arrayCallbacks = arrayListeners[absoluteIdentifier];
+        protected _pushArrayListener(uid: string, absoluteIdentifier: string,
+            listener: (changes: Array<IArrayChanges<any>>) => void): IRemoveListener {
+            var arrayListeners = ContextManager.arrayChangeListeners,
+                arrayCallbacks = arrayListeners[absoluteIdentifier];
 
             if (isNull(arrayCallbacks)) {
                 arrayCallbacks = arrayListeners[absoluteIdentifier] = {};
@@ -1135,12 +1115,12 @@ module plat.observable {
                             access(arrayParent, arrayKey);
 
                             join = isString(this.__observedIdentifier) ? this.__observedIdentifier : arraySplit.join('.');
-                            var removeListener = this.observeArrayMutation(uid, null, noop, join, newParent, null);
+                            var removeListener = this.observeArrayMutation(uid, noop, join, newParent, null);
                             this.observe(join, {
                                 uid: uid,
                                 listener: (nValue: Array<any>, oValue: Array<any>): void => {
                                     removeListener();
-                                    removeListener = this.observeArrayMutation(uid, null, noop, join, nValue, oValue);
+                                    removeListener = this.observeArrayMutation(uid, noop, join, nValue, oValue);
                                 }
                             });
 
@@ -1267,64 +1247,86 @@ module plat.observable {
          * array function.
          */
         protected _overwriteArrayFunction(absoluteIdentifier: string, method: string): (...args: any[]) => any {
-            var preCallbackObjects = ContextManager.preArrayListeners[absoluteIdentifier] || {},
-                postCallbackObjects = ContextManager.postArrayListeners[absoluteIdentifier] || {},
+            var callbackObjects = ContextManager.arrayChangeListeners[absoluteIdentifier] || {},
                 _this = this;
 
             // we can't use a fat-arrow function here because we need the array context.
             return function observedArrayFn(...args: any[]): any {
-                var oldArray = this.slice(0),
+                var oldLength = this.length,
+                    originalArray = this.slice(0),
                     returnValue: any,
-                    isShift = method.indexOf('shift') !== -1,
-                    keys = Object.keys(preCallbackObjects),
+                    isUnshift = method === 'unshift',
+                    isShift = method === 'shift',
+                    isShiftOperation = isShift || isUnshift,
+                    isUpdate = method === 'sort' || method === 'reverse',
+                    oldArray: Array<any>,
+                    addedCount: number,
+                    index: number,
+                    newLength: number,
+                    removed: Array<any>;
+
+                if (isShiftOperation) {
+                    _this.__isArrayFunction = true;
+                    returnValue = (<any>Array.prototype)[method].apply(this, args);
+                    _this.__isArrayFunction = false;
+                    newLength = this.length;
+
+                    index = 0;
+                    if (isShift) {
+                        addedCount = 0;
+                        removed = oldLength > 0 ? [returnValue] : [];
+                    } else {
+                        addedCount = args.length;
+                        removed = [];
+                    }
+                } else {
+                    returnValue = (<any>Array.prototype)[method].apply(this, args);
+                    newLength = this.length;
+
+                    if (isUpdate) {
+                        oldArray = originalArray;
+                    } else if (method === 'push') {
+                        addedCount = args.length;
+                        index = oldLength;
+                        removed = [];
+                    } else if (method === 'pop') {
+                        addedCount = 0;
+                        index = newLength;
+                        removed = oldLength > 0 ? [returnValue] : [];
+                    } else if (method === 'splice') {
+                        addedCount = args.length - 2;
+                        index = args[0];
+                        removed = returnValue;
+                    }
+                }
+
+                var keys = Object.keys(callbackObjects),
                     length = keys.length,
-                    callbacks: Array<(ev: IPreArrayChangeInfo) => void>,
+                    callbacks: Array<(changes: Array<IArrayChanges<any>>) => void>,
                     jLength: number,
                     i: number,
                     j: number;
 
                 for (i = 0; i < length; ++i) {
-                    callbacks = preCallbackObjects[keys[i]];
+                    callbacks = callbackObjects[keys[i]];
                     jLength = callbacks.length;
 
                     for (j = 0; j < jLength; ++j) {
-                        callbacks[j]({
-                            method: method,
-                            arguments: args
-                        });
+                        callbacks[j]([{
+                            object: this,
+                            type: method,
+                            index: index,
+                            removed: removed,
+                            addedCount: addedCount,
+                            oldArray: oldArray
+                        }]);
                     }
                 }
 
-                if (isShift) {
-                    _this.__isArrayFunction = true;
-                    returnValue = (<any>Array.prototype)[method].apply(this, args);
-                    _this.__isArrayFunction = false;
-                } else {
-                    returnValue = (<any>Array.prototype)[method].apply(this, args);
-                }
-
-                keys = Object.keys(postCallbackObjects);
-                length = keys.length;
-
-                for (i = 0; i < length; ++i) {
-                    callbacks = postCallbackObjects[keys[i]];
-                    jLength = callbacks.length;
-
-                    for (j = 0; j < jLength; ++j) {
-                        callbacks[j]({
-                            method: method,
-                            returnValue: returnValue,
-                            oldArray: oldArray,
-                            newArray: this,
-                            arguments: args
-                        });
-                    }
-                }
-
-                if (isShift) {
-                    _this._notifyChildProperties(absoluteIdentifier, this, oldArray);
-                } else if (oldArray.length !== this.length) {
-                    _this._execute(absoluteIdentifier + '.length', this.length, oldArray.length);
+                if (isShiftOperation) {
+                    _this._notifyChildProperties(absoluteIdentifier, this, originalArray);
+                } else if (newLength !== oldLength) {
+                    _this._execute(absoluteIdentifier + '.length', newLength, oldLength);
                 }
 
                 return returnValue;
@@ -1634,32 +1636,18 @@ module plat.observable {
      */
     export interface IContextManagerStatic {
         /**
-         * @name preArrayListeners
+         * @name arrayChangeListeners
          * @memberof plat.observable.IContextManagerStatic
          * @kind property
          * @access public
          * @static
          * 
-         * @type {plat.IObject<plat.IObject<Array<(ev: plat.observable.IPreArrayChangeInfo) => void>>>}
-         * 
-         * @description
-         * A set of functions to be fired prior to when a particular observed array is mutated.
-         */
-        preArrayListeners: IObject<IObject<Array<(ev: IPreArrayChangeInfo) => void>>>;
-
-        /**
-         * @name postArrayListeners
-         * @memberof plat.observable.IContextManagerStatic
-         * @kind property
-         * @access public
-         * @static
-         * 
-         * @type {plat.IObject<plat.IObject<Array<(ev: plat.observable.IPostArrayChangeInfo<any>) => void>>>}
+         * @type {plat.IObject<plat.IObject<Array<(changes: Array<plat.observable.IArrayChanges<any>>) => void>>>}
          * 
          * @description
          * A set of functions to be fired when a particular observed array is mutated.
          */
-        postArrayListeners: IObject<IObject<Array<(ev: IPostArrayChangeInfo<any>) => void>>>;
+        arrayChangeListeners: IObject<IObject<Array<(changes: Array<IArrayChanges<any>>) => void>>>;
 
         /**
          * @name getManager
@@ -1891,84 +1879,20 @@ module plat.observable {
     }
 
     /**
-     * @name IPreArrayChangeInfo
+     * @name IArrayChanges
      * @memberof plat.observable
      * @kind interface
      * 
      * @description
-     * An object for Array method mutation info prior to the Array being mutated.
-     */
-    export interface IPreArrayChangeInfo {
-        /**
-         * @name method
-         * @memberof plat.observable.IPreArrayChangeInfo
-         * @kind property
-         * @access public
-         * 
-         * @type {string}
-         * 
-         * @description
-         * The method name that was called. Possible values are:
-         * 'push', 'pop', 'reverse', 'shift', 'sort', 'splice', 
-         * and 'unshift'
-         */
-        method: string;
-
-        /**
-         * @name arguments
-         * @memberof plat.observable.IPreArrayChangeInfo
-         * @kind property
-         * @access public
-         * 
-         * @type {Array<any>}
-         * 
-         * @description
-         * The arguments passed into the array function.
-         */
-        arguments: Array<any>;
-    }
-
-    /**
-     * @name IPostArrayChangeInfo
-     * @memberof plat.observable
-     * @kind interface
-     * 
-     * @description
-     * An object for Array method mutation info after the Array has been mutated. Takes a 
+     * An object denoting Array changes after the Array has been mutated. Takes a 
      * generic type to denote the type of array it uses.
      * 
      * @typeparam T Denotes the type of array it uses.
      */
-    export interface IPostArrayChangeInfo<T> extends IPreArrayChangeInfo {
+    export interface IArrayChanges<T> {
         /**
-         * @name returnValue
-         * @memberof plat.observable.IPostArrayChangeInfo
-         * @kind property
-         * @access public
-         * 
-         * @type {any}
-         * 
-         * @description
-         * The value returned from the called function.
-         */
-        returnValue: any;
-
-        /**
-         * @name oldArray
-         * @memberof plat.observable.IPostArrayChangeInfo
-         * @kind property
-         * @access public
-         * 
-         * @type {Array<T>}
-         * 
-         * @description
-         * The previous value of the array.
-         */
-        oldArray: Array<T>;
-
-        /**
-         * @name newArray
-         * @memberof plat.observable.IPostArrayChangeInfo
+         * @name object
+         * @memberof plat.observable.IArrayChanges
          * @kind property
          * @access public
          * 
@@ -1977,7 +1901,101 @@ module plat.observable {
          * @description
          * The new value of the array.
          */
-        newArray: Array<T>;
+        object: Array<T>;
+
+        /**
+         * @name type
+         * @memberof plat.observable.IArrayChanges
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * The method name that was called. Array mutation methods are:
+         * 'push', 'pop', 'reverse', 'shift', 'sort', 'splice', 
+         * and 'unshift'.
+         */
+        type: string;
+
+        /**
+         * @name name
+         * @memberof plat.observable.IArrayChanges
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * The name of the property that changed. Unavailable on Array mutation methods.
+         */
+        name?: string;
+
+        /**
+         * @name oldValue
+         * @memberof plat.observable.IArrayChanges
+         * @kind property
+         * @access public
+         * 
+         * @type {T}
+         * 
+         * @description
+         * The old value of the property before it changed. Unavailable on Array mutation methods.
+         */
+        oldValue?: T;
+
+        /**
+         * @name index
+         * @memberof plat.observable.IArrayChanges
+         * @kind property
+         * @access public
+         * 
+         * @type {number}
+         * 
+         * @description
+         * The index at which the change occurred. Only available on Array mutation methods.
+         */
+        index?: number;
+
+        /**
+         * @name removed
+         * @memberof plat.observable.IArrayChanges
+         * @kind property
+         * @access public
+         * 
+         * @type {Array<T>}
+         * 
+         * @description
+         * An array of the removed elements. Only available on Array mutation methods.
+         */
+        removed?: Array<T>;
+
+        /**
+         * @name addedCount
+         * @memberof plat.observable.IArrayChanges
+         * @kind property
+         * @access public
+         * 
+         * @type {number}
+         * 
+         * @description
+         * The number of elements added. Only available on Array mutation methods.
+         */
+        addedCount?: number;
+
+        /**
+         * @name oldArray
+         * @memberof plat.observable.IArrayChanges
+         * @kind property
+         * @access public
+         * 
+         * @type {Array<T>}
+         * 
+         * @description
+         * The old Array prior to a 'reverse' or 'sort' mutation type. 
+         * Only available when the type is either 'reverse' or 'sort'.
+         */
+        oldArray?: Array<T>;
     }
 }
 

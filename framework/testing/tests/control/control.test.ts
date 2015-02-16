@@ -48,7 +48,7 @@
 
         it('should test observeArray',() => {
             (<any>control).context = { foo: [] }; 
-            var remove = control.observeArray(() => { },() => { }, 'foo');
+            var remove = control.observeArray(() => { }, 'foo');
 
             expect(typeof remove).toEqual('function');
         });

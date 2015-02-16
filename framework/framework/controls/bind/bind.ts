@@ -429,14 +429,14 @@ module plat.controls {
          * 
          * @typeparam {any} T The type of items in the Array if listening for Array mutations. 
          * 
-         * @param {(ev: plat.observable.IPostArrayChangeInfo<T>, identifier: string) => void} listener The listener function.
+         * @param {(changes: Array<plat.observable.IArrayChanges<T>>, identifier: string) => void} listener The listener function.
          * @param {string} identifier? The identifier off of the bound object to listen to for changes. If undefined or empty  
          * the listener will listen for changes to the bound item itself.
          * @param {boolean} arrayMutationsOnly? Whether or not to listen only for Array mutation changes.
          * 
          * @returns {plat.IRemoveListener} A function to stop listening for changes.
          */
-        observeProperty<T>(listener: (ev: observable.IPostArrayChangeInfo<T>, identifier: string) => void,
+        observeProperty<T>(listener: (changes: Array<observable.IArrayChanges<T>>, identifier: string) => void,
             identifier?: string, arrayMutationsOnly?: boolean): IRemoveListener;
         /**
          * @name observeProperty
@@ -451,19 +451,21 @@ module plat.controls {
          * 
          * @typeparam {any} T The type of items in the Array if listening for Array mutations. 
          * 
-         * @param {(ev: plat.observable.IPostArrayChangeInfo<T>, identifier: string) => void} listener The listener function.
+         * @param {(changes: Array<plat.observable.IArrayChanges<T>>, identifier: number) => void} listener The listener function.
          * @param {number} index? The index off of the bound object to listen to for changes if the bound object is an Array. 
          * If undefined or empty the listener will listen for changes to the bound Array itself.
          * @param {boolean} arrayMutationsOnly? Whether or not to listen only for Array mutation changes.
          * 
          * @returns {plat.IRemoveListener} A function to stop listening for changes.
          */
-        observeProperty<T>(listener: (ev: observable.IPostArrayChangeInfo<T>, identifier: string) => void,
+        observeProperty<T>(listener: (changes: Array<observable.IArrayChanges<T>>, identifier: number) => void,
             index?: number, arrayMutationsOnly?: boolean): IRemoveListener;
         observeProperty(listener: any, identifier?: any, arrayMutationsOnly?: boolean): IRemoveListener {
             var parsedIdentifier: string;
             if (isEmpty(identifier)) {
                 parsedIdentifier = this._expression.expression;
+            } else if (isNumber(identifier)) {
+                parsedIdentifier = this._expression.expression + '.' + identifier;
             } else {
                 var _parser = this._parser,
                     identifierExpression = _parser.parse(identifier),
@@ -502,7 +504,9 @@ module plat.controls {
 
             var removeListener: IRemoveListener;
             if (arrayMutationsOnly === true) {
-                removeListener = this.observeArray(null, listener, parsedIdentifier);
+                removeListener = this.observeArray((changes: Array<observable.IArrayChanges<any>>): void => {
+                    listener(changes, identifier);
+                }, parsedIdentifier);
             } else {
                 removeListener = this.observe((newValue: any, oldValue: any): void => {
                     if (this.__isSelf || newValue === oldValue) {
@@ -1184,8 +1188,8 @@ module plat.controls {
                 if (isNull(context[property])) {
                     context[property] = [];
                 }
-                this.observeArray(null, (arrayInfo: observable.IPostArrayChangeInfo<string>): void => {
-                    this._setter(arrayInfo.newArray, arrayInfo.oldArray, true);
+                this.observeArray((arrayInfo: Array<observable.IArrayChanges<string>>): void => {
+                    this._setter(arrayInfo[0].object, null, true);
                 }, contextExpression + '.' + property);
             }
 

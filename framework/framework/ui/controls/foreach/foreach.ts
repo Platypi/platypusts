@@ -259,7 +259,9 @@ module plat.ui.controls {
          */
         contextChanged(newValue: Array<any>, oldValue: Array<any>): void {
             if (isEmpty(newValue)) {
-                this._removeItems(this.controls.length);
+                this.itemsLoaded.then((): void => {
+                    this._removeItems(this.controls.length);
+                });
                 return;
             } else if (!isArray(newValue)) {
                 var _Exception = this._Exception;
@@ -268,13 +270,10 @@ module plat.ui.controls {
             }
 
             this._setListener();
-            this._executeEvent({
-                method: 'splice',
-                arguments: null,
-                returnValue: null,
-                oldArray: oldValue || [],
-                newArray: newValue || []
-            });
+            this._executeEvent([{
+                object: newValue || [],
+                type: 'splice'
+            }]);
         }
 
         /**
@@ -453,7 +452,7 @@ module plat.ui.controls {
                 return;
             }
 
-            this._animator.enter(item, __Enter, this._container);
+            this._currentAnimation = this._animator.enter(item, __Enter, this._container);
         }
 
         /**
@@ -551,29 +550,8 @@ module plat.ui.controls {
          */
         protected _setListener(): void {
             if (!this.__listenerSet) {
-                this.observeArray(this._preprocessEvent, this._executeEvent);
+                this.observeArray(this._executeEvent);
                 this.__listenerSet = true;
-            }
-        }
-
-        /**
-         * @name _preprocessEvent
-         * @memberof plat.ui.controls.ForEach
-         * @kind function
-         * @access protected
-         * 
-         * @description
-         * Receives an event prior to a method being called on an array and maps the array 
-         * method to its associated pre-method handler.
-         * 
-         * @param {plat.observable.IPreArrayChangeInfo} ev The Array mutation event information.
-         * 
-         * @returns {void}
-         */
-        protected _preprocessEvent(ev: observable.IPreArrayChangeInfo): void {
-            var method = '_pre' + ev.method;
-            if (isFunction((<any>this)[method])) {
-                (<any>this)[method](ev);
             }
         }
 
@@ -587,14 +565,14 @@ module plat.ui.controls {
          * Receives an event when a method has been called on an array and maps the array 
          * method to its associated method handler.
          * 
-         * @param {plat.observable.IPostArrayChangeInfo<any>} ev The Array mutation event information.
+         * @param {Array<plat.observable.IArrayChanges<any>>} changes The Array mutation event information.
          * 
          * @returns {void}
          */
-        protected _executeEvent(ev: observable.IPostArrayChangeInfo<any>): void {
-            var method = '_' + ev.method;
+        protected _executeEvent(changes: Array<observable.IArrayChanges<any>>): void {
+            var method = '_' + changes[0].type;
             if (isFunction((<any>this)[method])) {
-                (<any>this)[method](ev);
+                (<any>this)[method](changes);
             }
         }
 
@@ -656,12 +634,13 @@ module plat.ui.controls {
          * @description
          * Handles items being pushed into the array.
          * 
-         * @param {plat.observable.IPostArrayChangeInfo<any>} ev The Array mutation event information.
+         * @param {Array<plat.observable.IArrayChanges<any>>} changes The Array mutation event information.
          * 
          * @returns {void}
          */
-        protected _push(ev: observable.IPostArrayChangeInfo<any>): void {
-            this._addItems(ev.arguments.length, ev.oldArray.length, true);
+        protected _push(changes: Array<observable.IArrayChanges<any>>): void {
+            var change = changes[0];
+            this._addItems(change.addedCount, change.index, true);
         }
 
         /**
@@ -673,121 +652,19 @@ module plat.ui.controls {
          * @description
          * Handles items being popped off the array.
          * 
-         * @param {plat.observable.IPostArrayChangeInfo<any>} ev The Array mutation event information.
+         * @param {Array<plat.observable.IArrayChanges<any>>} changes The Array mutation event information.
          * 
          * @returns {void}
          */
-        protected _pop(ev: observable.IPostArrayChangeInfo<any>): void {
-            this._animateItems(ev.newArray.length, 1, __Leave, true);
-            this._removeItems(1);
-        }
-
-        /**
-         * @name _preshift
-         * @memberof plat.ui.controls.ForEach
-         * @kind function
-         * @access protected
-         * 
-         * @description
-         * Handles items being shifted off the array.
-         * 
-         * @param {plat.observable.IPreArrayChangeInfo} ev The Array mutation event information.
-         * 
-         * @returns {void}
-         */
-        protected _preshift(ev: observable.IPreArrayChangeInfo): void {
-            this._animationThenable = this._animateItems(0, 1, __Leave, true);
-        }
-
-        /**
-         * @name _shift
-         * @memberof plat.ui.controls.ForEach
-         * @kind function
-         * @access protected
-         * 
-         * @description
-         * Handles items being shifted off the array.
-         * 
-         * @param {plat.observable.IPostArrayChangeInfo<any>} ev The Array mutation event information.
-         * 
-         * @returns {void}
-         */
-        protected _shift(ev: observable.IPostArrayChangeInfo<any>): void {
-            this._Promise.resolve(this._animationThenable).then(() => {
-                this._removeItems(1);
-            });
-        }
-
-        /**
-         * @name _presplice
-         * @memberof plat.ui.controls.ForEach
-         * @kind function
-         * @access protected
-         * 
-         * @description
-         * Handles adding/removing items when an array is spliced.
-         * 
-         * @param {plat.observable.IPreArrayChangeInfo} ev The Array mutation event information.
-         * 
-         * @returns {void}
-         */
-        protected _presplice(ev: observable.IPreArrayChangeInfo): void {
-            var args = ev.arguments,
-                addCount = args.length - 2;
-
-            // check if adding more items than deleting
-            if (addCount > 0) {
-                this._animateItems(args[0], addCount, __Enter);
+        protected _pop(changes: Array<observable.IArrayChanges<any>>): void {
+            var change = changes[0];
+            if (change.removed.length === 0) {
                 return;
             }
-
-            var deleteCount = args[1];
-            if (deleteCount > 0) {
-                this._animationThenable = this._animateItems(args[0] + addCount, deleteCount - addCount, __Leave, true);
-            }
-        }
-
-        /**
-         * @name _splice
-         * @memberof plat.ui.controls.ForEach
-         * @kind function
-         * @access protected
-         * 
-         * @description
-         * Handles adding/removing items when an array is spliced.
-         * 
-         * @param {plat.observable.IPostArrayChangeInfo<any>} ev The Array mutation event information.
-         * 
-         * @returns {void}
-         */
-        protected _splice(ev: observable.IPostArrayChangeInfo<any>): void {
-            var oldLength = this.controls.length,
-                newLength = ev.newArray.length;
-
-            this._Promise.resolve(this._animationThenable).then(() => {
-                if (newLength > oldLength) {
-                    this._addItems(newLength - oldLength, oldLength);
-                } else if (oldLength > newLength) {
-                    this._removeItems(oldLength - newLength);
-                }
+            this.itemsLoaded.then((): void => {
+                this._animateItems(change.object.length, 1, __Leave, true);
+                this._removeItems(1);
             });
-        }
-
-        /**
-         * @name _preunshift
-         * @memberof plat.ui.controls.ForEach
-         * @kind function
-         * @access protected
-         * 
-         * @description
-         * Handles animating items being unshifted into the array.
-         * 
-         * @param {plat.observable.IPreArrayChangeInfo} ev The Array mutation event information.
-         * 
-         * @returns {void}
-         */
-        protected _preunshift(ev: observable.IPreArrayChangeInfo): void {
-            this._animateItems(0, 1, __Enter);
         }
 
         /**
@@ -799,43 +676,64 @@ module plat.ui.controls {
          * @description
          * Handles items being unshifted into the array.
          * 
-         * @param {plat.observable.IPostArrayChangeInfo<any>} ev The Array mutation event information.
+         * @param {Array<plat.observable.IArrayChanges<any>>} changes The Array mutation event information.
          * 
          * @returns {void}
          */
-        protected _unshift(ev: observable.IPostArrayChangeInfo<any>): void {
-            this._addItems(ev.arguments.length, ev.oldArray.length);
+        protected _unshift(changes: Array<observable.IArrayChanges<any>>): void {
+            var change = changes[0],
+                addedCount = change.addedCount;
+            this._addItems(addedCount, change.object.length - addedCount - 1);
         }
 
         /**
-         * @name _sort
+         * @name _shift
          * @memberof plat.ui.controls.ForEach
          * @kind function
          * @access protected
          * 
          * @description
-         * Handles when the array is sorted.
+         * Handles items being shifted off the array.
          * 
-         * @param {plat.observable.IPostArrayChangeInfo<any>} ev The Array mutation event information.
+         * @param {Array<plat.observable.IArrayChanges<any>>} changes The Array mutation event information.
          * 
          * @returns {void}
          */
-        protected _sort(ev: observable.IPostArrayChangeInfo<any>): void { }
+        protected _shift(changes: Array<observable.IArrayChanges<any>>): void {
+            if (changes[0].removed.length === 0) {
+                return;
+            }
+            this.itemsLoaded.then((): void => {
+                this._removeItems(1);
+            });
+        }
 
         /**
-         * @name _reverse
+         * @name _splice
          * @memberof plat.ui.controls.ForEach
          * @kind function
          * @access protected
          * 
          * @description
-         * Handles when the array is reversed.
+         * Handles adding/removing items when an array is spliced.
          * 
-         * @param {plat.observable.IPostArrayChangeInfo<any>} ev The Array mutation event information.
+         * @param {Array<plat.observable.IArrayChanges<any>>} changes The Array mutation event information.
          * 
          * @returns {void}
          */
-        protected _reverse(ev: observable.IPostArrayChangeInfo<any>): void { }
+        protected _splice(changes: Array<observable.IArrayChanges<any>>): void {
+            var change = changes[0],
+                addCount = change.addedCount,
+                removeCount = change.removed.length;
+
+            if (addCount > removeCount) {
+                this._addItems(addCount - removeCount, change.object.length - addCount - 1);
+            } else if (removeCount > addCount) {
+                this.itemsLoaded.then((): void => {
+                    this._removeItems(removeCount - addCount);
+                });
+            }
+        }
 
         /**
          * @name _animateItems
@@ -890,7 +788,7 @@ module plat.ui.controls {
                 return this.__handleAnimation(startNode, endNode, key, clone);
             }
 
-            return this._currentAnimation.cancel().then(() => {
+            return this._currentAnimation.cancel().then((): animations.IAnimationThenable<any> => {
                 return this.__handleAnimation(startNode, endNode, key, clone);
             });
         }
@@ -925,7 +823,7 @@ module plat.ui.controls {
                     removeNodes = slice.call(clonedNodes.childNodes);
 
                 container.insertBefore(clonedNodes, referenceNode);
-                return this._currentAnimation = this._animator.animate(removeNodes, key).then(() => {
+                return this._currentAnimation = this._animator.animate(removeNodes, key).then((): void => {
                     while (removeNodes.length > 0) {
                         container.removeChild(removeNodes.pop());
                     }

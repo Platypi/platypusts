@@ -4,6 +4,7 @@ var ___Promise: plat.async.IPromise,
     __nativeIsArray = !!Array.isArray,
     __uids: plat.IObject<Array<string>> = {},
     __camelCaseRegex: RegExp,
+    __capitalCaseRegex: RegExp,
     __objToString = Object.prototype.toString,
     __toStringClass = '[object ',
     __errorClass = __toStringClass + 'Error]',
@@ -447,6 +448,18 @@ function camelCase(str: string): string {
     return str.replace(__camelCaseRegex,
         (match: string, delimiter?: string, char?: string, index?: number): string
             => index ? char.toUpperCase() : char);
+}
+
+function delimit(str: string, delimiter: string): string {
+    if (!isString(str) || isEmpty(str)) {
+        return str;
+    } else if (isNull(delimiter)) {
+        delimiter = '';
+    }
+
+    __capitalCaseRegex = __capitalCaseRegex || (<plat.expressions.Regex>plat.acquire(__Regex)).capitalCaseRegex;
+    return str.replace(__capitalCaseRegex, (match: string, index?: number): string  =>
+        index ? delimiter + match.toLowerCase() : match.toLowerCase());
 }
 
 function deleteProperty(obj: any, property: number): any;

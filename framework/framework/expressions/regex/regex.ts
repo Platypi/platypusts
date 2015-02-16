@@ -333,6 +333,22 @@
         }
 
         /**
+         * @name capitalCaseRegex
+         * @memberof plat.expressions.Regex
+         * @kind property
+         * @access public
+         * @readonly
+         * 
+         * @type {RegExp}
+         * 
+         * @description
+         * Finds all capital letters.
+         */
+        get capitalCaseRegex(): RegExp {
+            return /[A-Z]/g;
+        }
+
+        /**
          * @name whiteSpaceRegex
          * @memberof plat.expressions.Regex
          * @kind property
