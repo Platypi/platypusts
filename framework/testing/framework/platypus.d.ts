@@ -3492,14 +3492,6 @@ declare module plat {
               */
             type: string;
             /**
-              * The name of the property that changed. Unavailable on Array mutation methods.
-              */
-            name?: string;
-            /**
-              * The old value of the property before it changed. Unavailable on Array mutation methods.
-              */
-            oldValue?: T;
-            /**
               * The index at which the change occurred. Only available on Array mutation methods.
               */
             index?: number;
@@ -7115,6 +7107,9 @@ declare module plat {
                   * @param {any} options? Specified options for the animation.
                   */
                 hide(elements: Array<Node>, key: string, options?: any): IAnimatingThenable;
+                /**
+                  * Returns a promise that fulfills when every animation promise in the input array is fulfilled.
+                  */
                 all(promises: Array<IAnimationThenable<any>>): IAnimationThenable<void>;
                 /**
                   * Immediately resolves an empty AnimationPromise.
