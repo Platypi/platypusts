@@ -32,12 +32,12 @@
              * An object containing the different time intervals that govern the behavior of certain 
              * custom DOM events.
              */
-            intervals: {
+            intervals: <IIntervals>{
                 /**
                  * The max time in milliseconds a user can hold down on the screen 
                  * for a tap event to be fired.
                  */
-                tapInterval: 200,
+                tapInterval: 250,
                 /**
                  * The max time in milliseconds a user can wait between consecutive 
                  * taps for a dbltap event to be fired.
@@ -60,7 +60,7 @@
              * An object containing the different minimum/maximum distances that govern the behavior of certain 
              * custom DOM events.
              */
-            distances: {
+            distances: <IDistances>{
                 /**
                  * The minimum distance in pixels a user must move after touch down to register 
                  * it as a scroll instead of a tap.
@@ -77,7 +77,7 @@
              * An object containing the different minimum/maximum velocities that govern the behavior of certain 
              * custom DOM events.
              */
-            velocities: {
+            velocities: <IVelocities>{
                 /**
                  * The minimum velocity in pixels/ms a user must move after touch down to register 
                  * a swipe event.
@@ -90,7 +90,7 @@
              * platypus.css, you must overwrite the styles in platypus.css or create your own and 
              * change the classNames in the config.
              */
-            styleConfig: [{
+            styleConfig: <Array<IDefaultStyle>>[{
                 /**
                  * The className that will be used to define the custom style for 
                  * allowing the best touch experience. This class is added to every 
@@ -3939,7 +3939,7 @@
          * 
          * @description
          * The max time in milliseconds a user can hold down on the screen 
-         * for a tap event to be fired. Defaults to 200 ms.
+         * for a tap event to be fired. Defaults to 250 ms.
          */
         tapInterval: number;
 
@@ -4008,7 +4008,7 @@
          * 
          * @description
          * The minimum distance a user must move after touch down to register 
-         * it as a scroll instead of a tap. Defaults to 5.
+         * it as a scroll instead of a tap. Defaults to 3.
          */
         minScrollDistance: number;
 

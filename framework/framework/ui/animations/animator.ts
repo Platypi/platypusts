@@ -734,16 +734,14 @@
          * @returns {void}
          */
         protected _handlePreInitFunctionality(nodes: Array<Node>, elementNodes: Array<Element>, functionality: IAnimationFunction): void {
-            var length: number,
-                i: number;
             switch (functionality.key) {
                 case 'move':
                     var parent = functionality.parent;
                     if (!isNode(parent)) {
                         break;
                     }
-                    length = nodes.length;
-                    for (i = 0; i < length; ++i) {
+                    var length = nodes.length;
+                    for (var i = 0; i < length; ++i) {
                         parent.removeChild(nodes[i]);
                     }
                     break;
