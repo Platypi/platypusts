@@ -1,7 +1,7 @@
 ﻿/// <reference path="../../../references.d.ts" />
 
 module tests.observable.contextManagerStatic {
-    var ContextManager = plat.acquire(plat.observable.IContextManagerStatic);
+    var ContextManager: plat.observable.IContextManagerStatic = plat.acquire(plat.observable.IContextManagerStatic);
 
     describe('ContextManagerStatic Tests', () => {
         var control: plat.ui.TemplateControl,
@@ -65,11 +65,11 @@ module tests.observable.contextManagerStatic {
 
             ContextManager.dispose(control);
 
-            expect(!!(<any>ContextManager.postArrayListeners).foo).toBe(false);
+            expect(!!(<any>ContextManager.arrayChangeListeners).foo).toBe(false);
         });
 
         it('should test removeArrayListeners', () => {
-            var arrayListeners = ContextManager.postArrayListeners = {
+            var arrayListeners = ContextManager.arrayChangeListeners = {
                 foo: {
                     test: [() => { }]
                 }

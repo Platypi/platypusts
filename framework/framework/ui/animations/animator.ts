@@ -573,6 +573,17 @@
             });
         }
 
+        /**
+         * @name all
+         * @memberof plat.ui.animations.Animator
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Returns a promise that fulfills when every animation promise in the input array is fulfilled.
+         * 
+         * @returns {plat.ui.animations.IAnimationThenable<void>} A promise that resolves after all the input promises resolve.
+         */
         all(promises: Array<IAnimationThenable<any>>): IAnimationThenable<void> {
             return new AnimationPromise((resolve) => {
                 this._Promise.all(promises).then(() => {

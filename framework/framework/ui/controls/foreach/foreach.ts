@@ -661,8 +661,10 @@ module plat.ui.controls {
             if (change.removed.length === 0) {
                 return;
             }
+
+            var start = change.object.length;
             this.itemsLoaded.then((): void => {
-                this._animateItems(change.object.length, 1, __Leave, true);
+                this._animateItems(start, 1, __Leave, true);
                 this._removeItems(1);
             });
         }
@@ -723,9 +725,22 @@ module plat.ui.controls {
          */
         protected _splice(changes: Array<observable.IArrayChanges<any>>): void {
             var change = changes[0],
-                addCount = change.addedCount,
-                removeCount = change.removed.length;
+                addCount = change.addedCount;
 
+            if (isNull(addCount)) {
+                var newLength = change.object.length;
+                this.itemsLoaded.then((): void => {
+                    var currentLength = this.controls.length;
+                    if (newLength > currentLength) {
+                        this._addItems(newLength - currentLength, currentLength);
+                    } else if (currentLength > newLength) {
+                        this._removeItems(currentLength - newLength);
+                    }
+                });
+                return;
+            }
+
+            var removeCount = change.removed.length;
             if (addCount > removeCount) {
                 this._addItems(addCount - removeCount, change.object.length - addCount - 1);
             } else if (removeCount > addCount) {
