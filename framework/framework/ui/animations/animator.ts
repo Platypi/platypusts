@@ -862,7 +862,7 @@
             var animationId: string,
                 element: Node = elements[0];
 
-            while (!isDocument(element = element.parentNode) && element.nodeType === Node.ELEMENT_NODE) {
+            while (!(isDocument(element = element.parentNode) || isNull(element) || element.nodeType !== Node.ELEMENT_NODE)) {
                 if (hasClass(<HTMLElement>element, __Animating)) {
                     animationId = ((<ICustomElement>element).__plat || <ICustomElementProperty>{}).animation;
                     if (isString(animationId)) {
@@ -1027,12 +1027,11 @@
             }
 
             var length = elements.length,
-                element: Node,
-                body = this._document.body;
+                element: Node;
 
             for (var i = 0; i < length; ++i) {
                 element = elements[i];
-                if (isNode(element) && element.nodeType === Node.ELEMENT_NODE && body.contains(<HTMLElement>element)) {
+                if (isNode(element) && element.nodeType === Node.ELEMENT_NODE) {
                     elementNodes.push(<Element>element);
                     animationInstances.push(animationInjector.inject());
                 }
