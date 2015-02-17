@@ -67,7 +67,7 @@ module plat.ui.controls {
          * @type {string}
          * 
          * @description
-         * Removes the <plat-template> node from the DOM
+         * Removes the `<plat-template>` node from the DOM
          */
         replaceWith: string = null;
 
@@ -311,6 +311,11 @@ module plat.ui.controls {
          */
         protected _waitForTemplateControl(templatePromise: async.IThenable<Template>): void {
             var _Exception: IExceptionStatic = this._Exception;
+
+            if (!isPromise(templatePromise)) {
+                return;
+            }
+
             templatePromise.then((templateControl: Template): async.IThenable<DocumentFragment> => {
                 if (!(isNull(this._url) || (this._url === templateControl._url))) {
                     _Exception.warn('The specified url: ' + this._url +

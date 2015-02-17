@@ -66,7 +66,7 @@ module plat.storage {
         private __size: number;
 
         /**
-         * @name __id
+         * @name __uid
          * @memberof plat.storage.Cache
          * @kind property
          * @access private
@@ -76,7 +76,7 @@ module plat.storage {
          * @description
          * The ID of this cache.
          */
-        private __id: string;
+        private __uid: string;
 
         /**
          * @name __options
@@ -103,7 +103,7 @@ module plat.storage {
          * type of objects stored in the new cache.  If a cache with the same ID already exists
          * in the {@link plat.storage.ICacheFactory|ICacheFactory}, a new cache will not be created.
          * 
-         * @param {string} id The ID of the new Cache.
+         * @param {string} uid The ID of the new Cache.
          * @param {plat.storage.ICacheOptions} options {@link plat.storage.ICacheOptions|ICacheOptions} 
          * for customizing the Cache.
          * 
@@ -111,11 +111,11 @@ module plat.storage {
          * 
          * @returns {plat.storage.Cache<T>} The new cache.
          */
-        static create<T>(id: string, options?: ICacheOptions): Cache<T> {
-            var cache: Cache<T> = caches[id];
+        static create<T>(uid: string, options?: ICacheOptions): Cache<T> {
+            var cache: Cache<T> = caches[uid];
 
             if (isNull(cache)) {
-                cache = caches[id] = new Cache<T>(id, options);
+                cache = caches[uid] = new Cache<T>(uid, options);
             }
 
             return cache;
@@ -131,14 +131,14 @@ module plat.storage {
          * @description
          * Gets a cache out of the {@link plat.storage.ICacheFactory|ICacheFactory} if it exists.
          * 
-         * @param {string} id The identifier used to search for the cache.
+         * @param {string} uid The identifier used to search for the cache.
          * 
          * @typeparam {any} T Denotes the type of objects stored in the new Cache.
          * 
          * @returns {plat.storage.Cache<T>} The cache with the input ID or undefined if it does not exist.
          */
-        static fetch<T>(id: string): Cache<T> {
-            return caches[id];
+        static fetch<T>(uid: string): Cache<T> {
+            return caches[uid];
         }
 
         /**
@@ -178,8 +178,8 @@ module plat.storage {
          * 
          * @returns {plat.storage.Cache} A new {@link plat.storage.Cache|Cache} instance specified by the ID.
          */
-        constructor(id: string, options?: ICacheOptions) {
-            this.__id = id;
+        constructor(uid: string, options?: ICacheOptions) {
+            this.__uid = uid;
             this.__options = options;
             this.__size = 0;
 
@@ -189,7 +189,7 @@ module plat.storage {
                 };
             }
 
-            internalCaches[id] = {};
+            internalCaches[uid] = {};
         }
 
         /**
@@ -206,7 +206,7 @@ module plat.storage {
          */
         info(): ICacheInfo {
             return {
-                id: this.__id,
+                uid: this.__uid,
                 size: this.__size,
                 options: this.__options
             };
@@ -227,8 +227,8 @@ module plat.storage {
          * @returns {T} The value inserted into an {@link plat.storage.Cache|Cache}.
          */
         put(key: string, value: T): T {
-            var val = internalCaches[this.__id][key];
-            internalCaches[this.__id][key] = value;
+            var val = internalCaches[this.__uid][key];
+            internalCaches[this.__uid][key] = value;
 
             if (isUndefined(val)) {
                 this.__size++;
@@ -257,7 +257,7 @@ module plat.storage {
          * @returns {T} The value found at the associated key. Returns undefined for a cache miss.
          */
         read(key: string): T {
-            return internalCaches[this.__id][key];
+            return internalCaches[this.__uid][key];
         }
 
         /**
@@ -274,7 +274,7 @@ module plat.storage {
          * @returns {void}
          */
         remove(key: string): void {
-            deleteProperty(internalCaches[this.__id], key);
+            deleteProperty(internalCaches[this.__uid], key);
             this.__size--;
         }
 
@@ -290,7 +290,7 @@ module plat.storage {
          * @returns {void}
          */
         clear(): void {
-            internalCaches[this.__id] = {};
+            internalCaches[this.__uid] = {};
             this.__size = 0;
         }
 
@@ -307,7 +307,7 @@ module plat.storage {
          */
         dispose(): void {
             this.clear();
-            deleteProperty(caches, this.__id);
+            deleteProperty(caches, this.__uid);
         }
     }
 
@@ -341,7 +341,7 @@ module plat.storage {
          * type of objects stored in the new cache.  If a cache with the same ID already exists
          * in the {@link plat.storage.ICacheFactory|ICacheFactory}, a new cache will not be created.
          * 
-         * @param {string} id The ID of the new Cache.
+         * @param {string} uid The ID of the new Cache.
          * @param {plat.storage.ICacheOptions} options {@link plat.storage.ICacheOptions|ICacheOptions} 
          * for customizing the Cache.
          * 
@@ -349,7 +349,7 @@ module plat.storage {
          * 
          * @returns {plat.storage.Cache<T>} The new cache.
          */
-        create<T>(id: string, options?: ICacheOptions): Cache<T>;
+        create<T>(uid: string, options?: ICacheOptions): Cache<T>;
 
         /**
          * @name fetch
@@ -361,13 +361,13 @@ module plat.storage {
          * @description
          * Gets a cache out of the {@link plat.storage.ICacheFactory|ICacheFactory} if it exists.
          * 
-         * @param {string} id The identifier used to search for the cache.
+         * @param {string} uid The identifier used to search for the cache.
          * 
          * @typeparam {any} T Denotes the type of objects stored in the new Cache.
          * 
          * @returns {plat.storage.Cache<T>} The cache with the input ID or undefined if it does not exist.
          */
-        fetch<T>(id: string): Cache<T>;
+        fetch<T>(uid: string): Cache<T>;
 
         /**
          * @name clear
@@ -435,7 +435,7 @@ module plat.storage {
      */
     export interface ICacheInfo {
         /**
-         * @name id
+         * @name uid
          * @memberof plat.storage.ICacheInfo
          * @kind property
          * @access public
@@ -446,7 +446,7 @@ module plat.storage {
          * A unique id for the {@link plat.storage.Cache|Cache} object, used to 
          * retrieve the {@link plat.storage.Cache|ICache} out of the {@link plat.storage.ICacheFactory|CacheFactory}.
          */
-        id: string;
+        uid: string;
 
         /**
          * @name size
