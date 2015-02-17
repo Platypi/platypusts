@@ -1634,6 +1634,7 @@ module plat {
          */
         export interface IBoundPropertyChangedListener<T> {
             /**
+             * @name listener
              * @memberof plat.observable.IBoundPropertyChangedListener
              * @kind function
              * @access public

@@ -517,6 +517,8 @@
                 return this._getContent(this._ogImageElement);
             }
 
+            image = this._browser.urlUtils(image).href;
+
             this._setContent([
                 this._ogImageElement,
                 this._twitterImageElement

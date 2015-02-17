@@ -1,6 +1,6 @@
 /**
-  * PlatypusTS v0.10.5 (http://getplatypi.com)
-  * Copyright 2014 Platypi, LLC. All rights reserved.
+  * PlatypusTS v0.10.10 (http://getplatypi.com)
+  * Copyright 2015 Platypi, LLC. All rights reserved.
   * PlatypusTS is licensed under the GPL-3.0 found at
   * http://opensource.org/licenses/GPL-3.0
   */
@@ -6760,7 +6760,7 @@ declare module plat {
         interface IIntervals {
             /**
               * The max time in milliseconds a user can hold down on the screen
-              * for a tap event to be fired. Defaults to 200 ms.
+              * for a tap event to be fired. Defaults to 250 ms.
               */
             tapInterval: number;
             /**
@@ -6788,7 +6788,7 @@ declare module plat {
         interface IDistances {
             /**
               * The minimum distance a user must move after touch down to register
-              * it as a scroll instead of a tap. Defaults to 5.
+              * it as a scroll instead of a tap. Defaults to 3.
               */
             minScrollDistance: number;
             /**
