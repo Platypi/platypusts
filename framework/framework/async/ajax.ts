@@ -1074,6 +1074,7 @@ module plat.async {
      */
     export interface IHttpTransformFunction {
         /**
+         * @name transform
          * @memberof plat.async.IHttpTransformFunction
          * @kind function
          * @access public
@@ -1229,6 +1230,7 @@ module plat.async {
      */
     export interface IAjaxResolveFunction<R> {
         /**
+         * @name resolver
          * @memberof plat.async.IAjaxResolveFunction
          * @kind function
          * @access public

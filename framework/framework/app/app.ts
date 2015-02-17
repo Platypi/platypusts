@@ -714,6 +714,7 @@ module plat {
      */
     export interface IRemoveListener {
         /**
+         * @name listener
          * @memberof plat.IRemoveListener
          * @kind function
          * @access public
@@ -739,6 +740,7 @@ module plat {
      */
     export interface IPropertyChangedListener<T> {
         /**
+         * @name listener
          * @memberof plat.IPropertyChangedListener
          * @kind function
          * @access public
@@ -769,6 +771,7 @@ module plat {
      */
     export interface IIdentifierChangedListener<T> {
         /**
+         * @name listener
          * @memberof plat.IIdentifierChangedListener
          * @kind function
          * @access public

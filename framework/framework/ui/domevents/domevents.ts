@@ -3526,6 +3526,7 @@
      */
     export interface IGestureListener {
         /**
+         * @name listen
          * @memberof plat.ui.IGestureListener
          * @kind function
          * @access public

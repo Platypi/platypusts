@@ -1130,6 +1130,7 @@
      */
     export interface IGetAnimatingThenable {
         /**
+         * @name getter
          * @memberof plat.ui.animations.IGetAnimatingThenable
          * @kind function
          * @access public
