@@ -12,7 +12,8 @@
     export class Animator {
         protected static _inject: any = {
             _compat: __Compat,
-            _Promise: __Promise
+            _Promise: __Promise,
+            _document: __Document
         };
 
         /**
@@ -40,6 +41,19 @@
          * Reference to the {@link plat.async.IPromise|IPromise} injectable.
          */
         protected _Promise: async.IPromise;
+
+        /**
+         * @name _document
+         * @memberof plat.ui.animations.Animator
+         * @kind property
+         * @access protected
+         * 
+         * @type {Document}
+         * 
+         * @description
+         * Reference to the Document injectable.
+         */
+        protected _document: Document;
 
         /**
          * @name _elements
@@ -681,12 +695,12 @@
 
             var animatingParentId = this.__isParentAnimating(elementNodes);
             if (!isNull(animatingParentId)) {
+                this._handleEndFunctionality(elements, elementNodes, functionality);
                 animatedElement.animationEnd(true);
 
                 var parent = this._elements[animatingParentId];
                 if (isPromise(parent.promise)) {
                     return animationPromise.then((): () => IAnimationThenable<any> => {
-                        this._handleEndFunctionality(elements, elementNodes, functionality);
                         return (): IAnimationThenable<any> => {
                             return parent.promise;
                         };
@@ -694,7 +708,6 @@
                 }
 
                 return animationPromise.then(() => {
-                    this._handleEndFunctionality(elements, elementNodes, functionality);
                     return (): IAnimationThenable<any> => {
                         return animationPromise;
                     };
@@ -1014,11 +1027,12 @@
             }
 
             var length = elements.length,
-                element: Node;
+                element: Node,
+                body = this._document.body;
 
             for (var i = 0; i < length; ++i) {
                 element = elements[i];
-                if (isNode(element) && element.nodeType === Node.ELEMENT_NODE) {
+                if (isNode(element) && element.nodeType === Node.ELEMENT_NODE && body.contains(<HTMLElement>element)) {
                     elementNodes.push(<Element>element);
                     animationInstances.push(animationInjector.inject());
                 }
@@ -1345,6 +1359,8 @@
                     animationInstance.end();
                 }
             }
+
+            this.__animationInstances = [];
 
             return this;
         }

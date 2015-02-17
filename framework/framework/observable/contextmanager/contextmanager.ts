@@ -1064,13 +1064,13 @@ module plat.observable {
          * @param {string} identifier The identifier for the property that changed.
          * @param {any} newValue The new value of the property.
          * @param {any} oldValue The old value of the property.
+         * @param {Array<string>} mappings? An array of mapped child identifier keys to notify.
          * 
          * @returns {void}
          */
-        protected _notifyChildProperties(identifier: string, newValue: any, oldValue: any): void {
-            var props = this.__identifierHash[identifier] || {},
-                mappings = Object.keys(props),
-                length = mappings.length,
+        protected _notifyChildProperties(identifier: string, newValue: any, oldValue: any, mappings?: Array<string>): void {
+            mappings = mappings || Object.keys(this.__identifierHash[identifier] || {});
+            var length = mappings.length,
                 binding: string,
                 property: string,
                 parentProperty: string,
@@ -1257,7 +1257,8 @@ module plat.observable {
                     returnValue: any,
                     isUnshift = method === 'unshift',
                     isShift = method === 'shift',
-                    isShiftOperation = isShift || isUnshift,
+                    isSplice = method === 'splice',
+                    selfNotify = isShift || isUnshift || isSplice,
                     isUpdate = method === 'sort' || method === 'reverse',
                     oldArray: Array<any>,
                     addedCount: number,
@@ -1265,7 +1266,7 @@ module plat.observable {
                     newLength: number,
                     removed: Array<any>;
 
-                if (isShiftOperation) {
+                if (selfNotify) {
                     _this.__isArrayFunction = true;
                     returnValue = (<any>Array.prototype)[method].apply(this, args);
                     _this.__isArrayFunction = false;
@@ -1275,9 +1276,13 @@ module plat.observable {
                     if (isShift) {
                         addedCount = 0;
                         removed = oldLength > 0 ? [returnValue] : [];
-                    } else {
+                    } else if (isUnshift) {
                         addedCount = args.length;
                         removed = [];
+                    } else {
+                        addedCount = args.length - 2;
+                        index = args[0];
+                        removed = returnValue;
                     }
                 } else {
                     returnValue = (<any>Array.prototype)[method].apply(this, args);
@@ -1293,10 +1298,6 @@ module plat.observable {
                         addedCount = 0;
                         index = newLength;
                         removed = oldLength > 0 ? [returnValue] : [];
-                    } else if (method === 'splice') {
-                        addedCount = args.length - 2;
-                        index = args[0];
-                        removed = returnValue;
                     }
                 }
 
@@ -1323,7 +1324,7 @@ module plat.observable {
                     }
                 }
 
-                if (isShiftOperation) {
+                if (selfNotify) {
                     _this._notifyChildProperties(absoluteIdentifier, this, originalArray);
                 } else if (newLength !== oldLength) {
                     _this._execute(absoluteIdentifier + '.length', newLength, oldLength);
@@ -1466,14 +1467,23 @@ module plat.observable {
                     }
 
                     var props = this.__identifierHash[identifier],
-                        childPropertiesExist = isObject(props) && Object.keys(props).length > 0;
+                        childPropertiesExist = false,
+                        mappings: Array<string>;
+
+                    if (isObject(props)) {
+                        mappings = Object.keys(props);
+                        if (mappings.length > 0) {
+                            childPropertiesExist = true;
+                        } else {
+                            deleteProperty(this.__identifierHash, identifier);
+                        }
+                    }
+
                     this._execute(identifier, value, oldValue);
 
                     if (childPropertiesExist) {
-                        this._notifyChildProperties(identifier, value, oldValue);
-                    }
-
-                    if (!childPropertiesExist && isEmpty(this.__identifiers[identifier])) {
+                        this._notifyChildProperties(identifier, value, oldValue, mappings);
+                    } else if (isEmpty(this.__identifiers[identifier])) {
                         ContextManager.defineProperty(immediateContext, key, value, true, true, true);
                     } else if (!isObject(value)) {
                         this.__definePrimitive(identifier, immediateContext, key);
@@ -1524,7 +1534,18 @@ module plat.observable {
                     }
 
                     var props = this.__identifierHash[identifier],
-                        childPropertiesExist = isObject(props) && Object.keys(props).length > 0;
+                        childPropertiesExist = false,
+                        mappings: Array<string>;
+
+                    if (isObject(props)) {
+                        var mappings = Object.keys(props);
+                        if (mappings.length > 0) {
+                            childPropertiesExist = true;
+                        } else {
+                            deleteProperty(this.__identifierHash, identifier);
+                        }
+                    }
+
                     this._execute(identifier, newValue, oldValue);
 
                     if (!childPropertiesExist && isEmpty(this.__identifiers[identifier])) {
@@ -1532,7 +1553,7 @@ module plat.observable {
                     } else if (isObject(value)) {
                         this.__defineObject(identifier, immediateContext, key);
                         if (childPropertiesExist) {
-                            this._notifyChildProperties(identifier, newValue, oldValue);
+                            this._notifyChildProperties(identifier, newValue, oldValue, mappings);
                         }
                     } else if (!isDefined) {
                         this.__definePrimitive(identifier, immediateContext, key);

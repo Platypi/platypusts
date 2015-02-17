@@ -17,7 +17,7 @@ module app.viewcontrols {
         templateUrl = 'viewcontrols/main/main.viewcontrol.html';
         context = {
             views: [One, Two, Three, Four],
-            test: [0, 1, 2, 3, 4, 5],
+            test: [0, 1, 2, 3, 4, 5, 6],
             items: <Array<{ value: string|number; }>>[],
             testClass: 'foo quux',
             select: [
@@ -66,26 +66,7 @@ module app.viewcontrols {
         loaded() {
             this.head.title('Main Page');
             this.head.description('This is the main page');
-            var el = this.element.querySelector('.blah');
-            this.dom.addClass(el, 'quux');
-            el.setAttribute('other-class', '');
-            this.context.testClass = 'bar baz';
             var test = this.context.test;
-            setTimeout(() => {
-                //test[0] = 1;
-                //test.unshift(10, 5);
-                //test.unshift(10);
-                test.shift();
-                //test.sort((a, b) => {
-                //    return b - a;
-                //});
-                //test.reverse();
-                //test.push(0, 1);
-                //test.pop();
-                //test.pop();
-                //test.push(3);
-                //test.push(4);
-            }, 1000);
         }
 
         tap() {
