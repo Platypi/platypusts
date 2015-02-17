@@ -286,7 +286,6 @@ module plat.ui.controls {
          */
         contextChanged(newValue: Array<any>, oldValue: Array<any>): void {
             var emptyInit = this._emptyInit = isEmpty(oldValue);
-
             if (isEmpty(newValue)) {
                 if (!emptyInit) {
                     this._Promise.all(this._addQueue).then((): void => {
@@ -785,10 +784,16 @@ module plat.ui.controls {
             this._cancelCurrentAnimation();
 
             var change = changes[0],
-                addCount = change.addedCount;
+                addCount = change.addedCount,
+                addQueue = this._addQueue;
             if (isNull(addCount)) {
                 var newLength = change.object.length;
-                this._Promise.all(this._addQueue).then((): void => {
+
+                if (this._emptyInit) {
+                    addQueue = null;
+                }
+
+                this._Promise.all(addQueue).then((): void => {
                     var currentLength = this.controls.length;
                     if (newLength > currentLength) {
                         this._addItems(newLength - currentLength, currentLength);
@@ -799,8 +804,7 @@ module plat.ui.controls {
                 return;
             }
 
-            var removeCount = change.removed.length,
-                addQueue = this._addQueue;
+            var removeCount = change.removed.length;
             if (addCount > removeCount) {
                 var _Promise = this._Promise;
                 if (this._animate) {

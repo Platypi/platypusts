@@ -17,7 +17,7 @@ module app.viewcontrols {
         templateUrl = 'viewcontrols/main/main.viewcontrol.html';
         context = {
             views: [One, Two, Three, Four],
-            test: [0, 1, 2, 3, 4, 5, 6],
+            test: [0, 1, 2, 3, 4, 5],
             items: <Array<{ value: string|number; }>>[],
             testClass: 'foo quux',
             select: [
