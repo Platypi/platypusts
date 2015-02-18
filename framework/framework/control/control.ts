@@ -288,19 +288,26 @@ module plat {
             }
 
             var ctrl = <ui.TemplateControl>control;
-            if (isString(ctrl.absoluteContextPath) && isFunction(ctrl.contextChanged)) {
-                var contextManager = Control._ContextManager.getManager(ctrl.root);
+            if (isString(ctrl.absoluteContextPath)) {
+                if (isFunction(ctrl.contextChanged)) {
+                    var contextManager = Control._ContextManager.getManager(ctrl.root);
 
-                contextManager.observe(ctrl.absoluteContextPath, {
-                    uid: control.uid,
-                    listener: (newValue, oldValue): void => {
-                        ui.TemplateControl.contextChanged(<ui.TemplateControl>control, newValue, oldValue);
+                    contextManager.observe(ctrl.absoluteContextPath, {
+                        uid: control.uid,
+                        listener: (newValue, oldValue): void => {
+                            ui.TemplateControl.contextChanged(<ui.TemplateControl>control, newValue, oldValue);
+                        }
+                    });
+
+                    if (isFunction((<any>ctrl).zCC__plat)) {
+                        (<any>ctrl).zCC__plat();
+                        deleteProperty(ctrl, 'zCC__plat');
                     }
-                });
+                }
 
-                if (isFunction((<any>ctrl).zCC__plat)) {
-                    (<any>ctrl).zCC__plat();
-                    deleteProperty(ctrl, 'zCC__plat');
+                var element = ctrl.element;
+                if (isNode(element) && isFunction(element.removeAttribute)) {
+                    element.removeAttribute(__Hide);
                 }
             }
 

@@ -1307,13 +1307,6 @@ module plat.processing {
             _TemplateControlFactory.setAbsoluteContextPath(uiControl, absoluteContextPath);
             _TemplateControlFactory.setContextResources(uiControl);
             ElementManager._ResourcesFactory.bindResources(uiControl.resources);
-
-            if (!this.replace) {
-                var element = uiControl.element;
-                if (!isNull(element) && isFunction(element.removeAttribute)) {
-                    element.removeAttribute(__Hide);
-                }
-            }
         }
 
         /**
