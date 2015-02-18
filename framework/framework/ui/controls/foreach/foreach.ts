@@ -407,7 +407,7 @@ module plat.ui.controls {
          * 
          * @param {number} index The point in the array to start adding items.
          * @param {number} numberOfItems The number of items to add.
-         * @param {number} animateItems? The number of items to animate.
+         * @param {number} animateItems The number of items to animate.
          * 
          * @returns {plat.async.IThenable<void>} The itemsLoaded promise.
          */
