@@ -2839,7 +2839,7 @@ declare module plat {
             /**
               * The ID of this cache.
               */
-            private __id;
+            private __uid;
             /**
               * The options for this cache.
               */
@@ -2848,16 +2848,16 @@ declare module plat {
               * Method for creating a new cache object. Takes a generic type to denote the
               * type of objects stored in the new cache.  If a cache with the same ID already exists
               * in the ICacheFactory, a new cache will not be created.
-              * @param {string} id The ID of the new Cache.
+              * @param {string} uid The ID of the new Cache.
               * @param {plat.storage.ICacheOptions} options ICacheOptions
               * for customizing the Cache.
               */
-            static create<T>(id: string, options?: ICacheOptions): Cache<T>;
+            static create<T>(uid: string, options?: ICacheOptions): Cache<T>;
             /**
               * Gets a cache out of the ICacheFactory if it exists.
-              * @param {string} id The identifier used to search for the cache.
+              * @param {string} uid The identifier used to search for the cache.
               */
-            static fetch<T>(id: string): Cache<T>;
+            static fetch<T>(uid: string): Cache<T>;
             /**
               * Clears the ICacheFactory and all of its caches.
               */
@@ -2867,7 +2867,7 @@ declare module plat {
               * @param {string} id The id to use to retrieve the cache from the ICacheFactory.
               * @param {plat.storage.ICacheOptions} options The ICacheOptions for customizing the cache.
               */
-            constructor(id: string, options?: ICacheOptions);
+            constructor(uid: string, options?: ICacheOptions);
             /**
               * Retrieves the ICacheInfo about this cache
               * (i.e. ID, size, options)
@@ -2910,16 +2910,16 @@ declare module plat {
               * Method for creating a new cache object. Takes a generic type to denote the
               * type of objects stored in the new cache.  If a cache with the same ID already exists
               * in the ICacheFactory, a new cache will not be created.
-              * @param {string} id The ID of the new Cache.
+              * @param {string} uid The ID of the new Cache.
               * @param {plat.storage.ICacheOptions} options ICacheOptions
               * for customizing the Cache.
               */
-            create<T>(id: string, options?: ICacheOptions): Cache<T>;
+            create<T>(uid: string, options?: ICacheOptions): Cache<T>;
             /**
               * Gets a cache out of the ICacheFactory if it exists.
-              * @param {string} id The identifier used to search for the cache.
+              * @param {string} uid The identifier used to search for the cache.
               */
-            fetch<T>(id: string): Cache<T>;
+            fetch<T>(uid: string): Cache<T>;
             /**
               * Clears the ICacheFactory and all of its caches.
               */
@@ -2954,7 +2954,7 @@ declare module plat {
               * A unique id for the Cache object, used to
               * retrieve the ICache out of the CacheFactory.
               */
-            id: string;
+            uid: string;
             /**
               * Represents the number of items in the Cache.
               */
@@ -7837,7 +7837,7 @@ declare module plat {
                   */
                 protected _document: Document;
                 /**
-                  * Removes the <plat-template> node from the DOM
+                  * Removes the `<plat-template>` node from the DOM
                   */
                 replaceWith: string;
                 /**

@@ -198,6 +198,9 @@ module plat.ui.controls {
          */
         loaded(): void {
             this.setHref();
+            this.options.observe(() => {
+                this.setHref();
+            });
         }
 
         /**
