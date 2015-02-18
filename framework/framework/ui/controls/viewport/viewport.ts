@@ -352,7 +352,12 @@ module plat.ui.controls {
             }
 
             manager.setUiControlTemplate();
-            return manager.observeRootContext(control, manager.fulfillAndLoad);
+
+            if (control.hasOwnContext) {
+                return manager.observeRootContext(control, manager.fulfillAndLoad);
+            }
+
+            return manager.fulfillAndLoad();
         }
 
         /**
