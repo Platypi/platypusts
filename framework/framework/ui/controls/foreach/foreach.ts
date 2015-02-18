@@ -177,12 +177,12 @@ module plat.ui.controls {
          * @kind property
          * @access protected
          * 
-         * @type {Array<{ animation: plat.animations.IAnimationThenable<any>; op: boolean; }>}
+         * @type {Array<{ animation: plat.animations.IAnimationThenable<any>; op: string; }>}
          * 
          * @description
-         * A collection of all the current animations and their animation type.
+         * A collection of all the current animations and their animation operation.
          */
-        protected _animationQueue: Array<{ animation: animations.IAnimationThenable<any>; op: boolean; }>;
+        protected _animationQueue: Array<{ animation: animations.IAnimationThenable<any>; op: string; }>;
 
          /**
          * @name _addQueue
@@ -753,7 +753,8 @@ module plat.ui.controls {
             if (this._animate) {
                 var animationQueue = this._animationQueue,
                     animationLength = animationQueue.length;
-                this._animateItems(0, addedCount, __Enter, null, animationLength > 0 && animationQueue[animationLength - 1].op === true);
+                this._animateItems(0, addedCount, __Enter, null,
+                    animationLength > 0 && animationQueue[animationLength - 1].op === 'clone');
             }
 
             this._addCount += addedCount;
@@ -858,7 +859,7 @@ module plat.ui.controls {
                     }
 
                     this._animateItems(startIndex, animationCount, __Enter, null,
-                        animationLength > 0 && animationQueue[animationLength - 1].op === true);
+                        animationLength > 0 && animationQueue[animationLength - 1].op === 'clone');
 
                     animationCount = addCount - animationCount;
                 } else {
@@ -883,7 +884,7 @@ module plat.ui.controls {
                     if (animating && adding) {
                         var animLength = animationQueue.length;
                         this._animateItems(change.index, addCount, __Enter, null,
-                            animLength > 0 && animationQueue[animLength - 1].op === true);
+                            animLength > 0 && animationQueue[animLength - 1].op === 'clone');
                     }
                     this._removeItems(removeLength - deleteCount, deleteCount);
                 });
@@ -1019,7 +1020,7 @@ module plat.ui.controls {
 
             animationQueue.push({
                 animation: animation,
-                op: false
+                op: 'leave'
             });
 
             return animation;
@@ -1077,11 +1078,11 @@ module plat.ui.controls {
 
             if (cancel && animationQueue.length > 0) {
                 var cancelPromise = this._cancelCurrentAnimations().then(callback);
-                animationQueue.push({ animation: animationPromise, op: true });
+                animationQueue.push({ animation: animationPromise, op: 'clone' });
                 return cancelPromise;
             }
 
-            animationQueue.push({ animation: animationPromise, op: true });
+            animationQueue.push({ animation: animationPromise, op: 'clone' });
             return callback();
         }
 
