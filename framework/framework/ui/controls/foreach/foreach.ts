@@ -159,17 +159,17 @@ module plat.ui.controls {
         protected _blockLength: any = 0;
 
         /**
-         * @name _animationThenable
+         * @name _animate
          * @memberof plat.ui.controls.ForEach
          * @kind property
          * @access protected
          * 
-         * @type {plat.async.IThenable<void>}
+         * @type {boolean}
          * 
          * @description
-         * An animation promise for delaying disposal prior to an animation finishing.
+         * Whether or not to animate Array mutations.
          */
-        protected _animationThenable: async.IThenable<void>;
+        protected _animate: boolean;
 
         /**
          * @name _currentAnimation
@@ -185,6 +185,45 @@ module plat.ui.controls {
         protected _currentAnimation: animations.IAnimationThenable<any>;
 
         /**
+         * @name _animationQueue
+         * @memberof plat.ui.controls.ForEach
+         * @kind property
+         * @access protected
+         * 
+         * @type {Array<{ animation: plat.animations.IAnimationThenable<any>; op: boolean; }>}
+         * 
+         * @description
+         * A collection of all the current animations and their animation type.
+         */
+        protected _animationQueue: Array<{ animation: animations.IAnimationThenable<any>; op: boolean; }> = [];
+
+         /**
+         * @name _addQueue
+         * @memberof plat.ui.controls.ForEach
+         * @kind property
+         * @access protected
+         * 
+         * @type {Array<plat.async.IThenable<void>>}
+         * 
+         * @description
+         * A queue representing all current add operations.
+         */
+        protected _addQueue: Array<async.IThenable<void>> = [];
+
+        /**
+         * @name _addCount
+         * @memberof plat.ui.controls.ForEach
+         * @kind property
+         * @access protected
+         * 
+         * @type {number}
+         * 
+         * @description
+         * The number of items currently being added.
+         */
+        protected _addCount = 0;
+
+        /**
          * @name _emptyInit
          * @memberof plat.ui.controls.ForEach
          * @kind property
@@ -195,7 +234,7 @@ module plat.ui.controls {
          * @description
          * Whether or not the initial context value was null or empty.
          */
-        protected _emptyInit: boolean = false;
+        protected _emptyInit = false;
 
         /**
          * @name __listenerSet
@@ -273,11 +312,10 @@ module plat.ui.controls {
          */
         contextChanged(newValue: Array<any>, oldValue: Array<any>): void {
             var emptyInit = this._emptyInit = isEmpty(oldValue);
-
             if (isEmpty(newValue)) {
                 if (!emptyInit) {
-                    this.itemsLoaded.then((): void => {
-                        this._removeItems(this.controls.length);
+                    this._Promise.all(this._addQueue).then((): void => {
+                        this._removeItems(0, this.controls.length);
                     });
                 }
                 return;
@@ -306,8 +344,12 @@ module plat.ui.controls {
          * @returns {void}
          */
         loaded(): void {
-            var context = this.context;
+            var optionsObj = this.options || (this.options = <observable.IObservableProperty<IForEachOptions>>{}),
+                options = optionsObj.value || (optionsObj.value = <IForEachOptions>{}),
+                context = this.context;
+
             this._container = this.element;
+            this._animate = options.animate === true;
 
             if (!isArray(context)) {
                 if (!isNull(context)) {
@@ -318,7 +360,16 @@ module plat.ui.controls {
             }
 
             this._setAliases();
-            this._addItems(context.length, 0);
+
+            var addQueue = this._addQueue,
+                itemCount = context.length;
+
+            this._addCount += itemCount;
+            addQueue.push(this._addItems(0, itemCount).then((): void => {
+                this._addCount -= itemCount;
+                addQueue.shift();
+            }));
+
             this._setListener();
         }
 
@@ -344,15 +395,12 @@ module plat.ui.controls {
          * @access protected
          * 
          * @description
-         * Sets the alias tokens to use for all the items in the {@link plat.ui.controls.ForEach|ForEach} context array.
+         * Sets the alias tokens to use for all the items in the {@link plat.ui.controls.ForEach|ForEach} context Array.
          * 
          * @returns {void}
          */
         protected _setAliases(): void {
-            var optionsObj = this.options || <observable.IObservableProperty<IForEachOptions>>{},
-                options = optionsObj.value || <IForEachOptions>{},
-                aliases = options.aliases;
-
+            var aliases = this.options.value.aliases;
             if (!isObject(aliases)) {
                 return;
             }
@@ -381,13 +429,13 @@ module plat.ui.controls {
          * Adds new items to the control's element when items are added to 
          * the array.
          * 
-         * @param {number} numberOfItems The number of items to add.
          * @param {number} index The point in the array to start adding items.
+         * @param {number} numberOfItems The number of items to add.
          * @param {boolean} animate? Whether or not to animate the new items
          * 
          * @returns {plat.async.IThenable<void>} The itemsLoaded promise.
          */
-        protected _addItems(numberOfItems: number, index: number, animate?: boolean): async.IThenable<void> {
+        protected _addItems(index: number, numberOfItems: number, animate?: boolean): async.IThenable<void> {
             var max = +(index + numberOfItems),
                 promises: Array<async.IThenable<DocumentFragment>> = [],
                 initialIndex = index;
@@ -462,7 +510,13 @@ module plat.ui.controls {
                 return;
             }
 
-            this._currentAnimation = this._animator.enter(item, __Enter, this._container);
+            var animationQueue = this._animationQueue;
+            animationQueue.push({
+                animation: this._animator.enter(item, __Enter, this._container).then((): void => {
+                    animationQueue.shift();
+                }),
+                op: null
+            });
         }
 
         /**
@@ -474,16 +528,18 @@ module plat.ui.controls {
          * @description
          * Removes items from the control's element.
          * 
+         * @param {number} index The index to start disposing from.
          * @param {number} numberOfItems The number of items to remove.
          * 
          * @returns {void}
          */
-        protected _removeItems(numberOfItems: number): void {
+        protected _removeItems(index: number, numberOfItems: number): void {
             var dispose = TemplateControl.dispose,
-                controls = this.controls;
+                controls = this.controls,
+                max = index + numberOfItems;
 
-            while (numberOfItems-- > 0) {
-                dispose(controls.pop());
+            for (var i = index; i < max; ++i) {
+                dispose(controls[i]);
             }
 
             this._updateResource(controls.length - 1);
@@ -649,8 +705,15 @@ module plat.ui.controls {
          * @returns {void}
          */
         protected _push(changes: Array<observable.IArrayChanges<any>>): void {
-            var change = changes[0];
-            this._addItems(change.addedCount, change.index, true);
+            var change = changes[0],
+                addQueue = this._addQueue,
+                itemCount = change.addedCount;
+
+            this._addCount += itemCount;
+            addQueue.push(this._addItems(change.index, itemCount, this._animate).then((): void => {
+                this._addCount -= itemCount;
+                addQueue.shift();
+            }));
         }
 
         /**
@@ -667,15 +730,23 @@ module plat.ui.controls {
          * @returns {void}
          */
         protected _pop(changes: Array<observable.IArrayChanges<any>>): void {
-            var change = changes[0];
+            var addQueue = this._addQueue,
+                change = changes[0],
+                start = change.object.length;
             if (change.removed.length === 0) {
                 return;
+            } else if (this._animate) {
+                if (addQueue.length === 0) {
+                    var animationQueue = this._animationQueue;
+                    addQueue = addQueue.concat([this._animateItems(start, 1, __Leave, false,
+                        animationQueue.length > 0 && animationQueue[0].op === true)]);
+                }
             }
 
-            var start = change.object.length;
-            this.itemsLoaded.then((): void => {
-                this._animateItems(start, 1, __Leave, true);
-                this._removeItems(1);
+            var removeIndex = change.object.length;
+            this._addCount -= 1;
+            this._Promise.all(addQueue).then((): void => {
+                this._removeItems(removeIndex, 1);
             });
         }
 
@@ -694,8 +765,20 @@ module plat.ui.controls {
          */
         protected _unshift(changes: Array<observable.IArrayChanges<any>>): void {
             var change = changes[0],
-                addedCount = change.addedCount;
-            this._addItems(addedCount, change.object.length - addedCount - 1);
+                addedCount = change.addedCount,
+                _Promise = this._Promise,
+                addQueue = this._addQueue;
+
+            if (this._animate) {
+                var animationQueue = this._animationQueue;
+                this._animateItems(0, addedCount, __Enter, null, animationQueue.length > 0 && animationQueue[0].op === true);
+            }
+
+            this._addCount += addedCount;
+            addQueue.push(this._addItems(change.object.length - addedCount, addedCount).then((): void => {
+                this._addCount -= addedCount;
+                addQueue.shift();
+            }));
         }
 
         /**
@@ -712,11 +795,21 @@ module plat.ui.controls {
          * @returns {void}
          */
         protected _shift(changes: Array<observable.IArrayChanges<any>>): void {
-            if (changes[0].removed.length === 0) {
+            var addQueue = this._addQueue,
+                change = changes[0];
+            if (change.removed.length === 0) {
                 return;
+            } else if (this._animate) {
+                if (addQueue.length === 0) {
+                    var animationQueue = this._animationQueue;
+                    addQueue = addQueue.concat([this._animateItems(0, 1, __Leave, true, true)]);
+                }
             }
-            this.itemsLoaded.then((): void => {
-                this._removeItems(1);
+
+            var removeIndex = change.object.length;
+            this._addCount -= 1;
+            this._Promise.all(addQueue).then((): void => {
+                this._removeItems(removeIndex, 1);
             });
         }
 
@@ -735,35 +828,84 @@ module plat.ui.controls {
          */
         protected _splice(changes: Array<observable.IArrayChanges<any>>): void {
             var change = changes[0],
-                addCount = change.addedCount;
+                addCount = change.addedCount,
+                addQueue = this._addQueue;
 
             if (isNull(addCount)) {
-                var newLength = change.object.length,
-                    promise = this.itemsLoaded;
-
                 if (this._emptyInit) {
-                    promise = null;
+                    addQueue = null;
                 }
 
-                this._Promise.resolve(promise).then((): void => {
-                    var currentLength = this.controls.length;
-                    if (newLength > currentLength) {
-                        this._addItems(newLength - currentLength, currentLength);
-                    } else if (currentLength > newLength) {
-                        this._removeItems(currentLength - newLength);
-                    }
-                });
+                this._cancelCurrentAnimations();
+
+                var newLength = change.object.length,
+                    currentLength = this.controls.length + this._addCount,
+                    itemCount = currentLength - newLength;
+
+                if (newLength > currentLength) {
+                    // itemCount will be negative
+                    this._addCount -= itemCount;
+                    addQueue.push(this._addItems(currentLength, -itemCount).then((): void => {
+                        this._addCount += itemCount;
+                        addQueue.shift();
+                    }));
+                } else if (currentLength > newLength) {
+                    this._addCount -= itemCount;
+                    this._Promise.all(addQueue).then((): void => {
+                        this._removeItems(currentLength - itemCount, itemCount);
+                    });
+                }
                 return;
             }
 
-            var removeCount = change.removed.length;
+            var removeCount = change.removed.length,
+                animationQueue = this._animationQueue;
             if (addCount > removeCount) {
-                this._addItems(addCount - removeCount, change.object.length - addCount - 1);
+                var _Promise = this._Promise,
+                    addCount = addCount - removeCount;
+                if (this._animate) {
+                    this._animateItems(change.index, addCount, __Enter, null, animationQueue.length > 0 && animationQueue[0].op === true);
+                }
+                this._addCount += addCount;
+                addQueue.push(this._addItems(change.object.length - addCount, addCount).then((): void => {
+                    this._addCount -= addCount;
+                    addQueue.shift();
+                }));
             } else if (removeCount > addCount) {
-                this.itemsLoaded.then((): void => {
-                    this._removeItems(removeCount - addCount);
+                var adding = addCount > 0,
+                    animating = this._animate;
+                if (animating && !adding && addQueue.length === 0) {
+                    addQueue = addQueue.concat([this._animateItems(change.index, removeCount, __Leave, true, true)]);
+                }
+
+                var removeLength = this.controls.length + this._addCount,
+                    deleteCount = removeCount - addCount;
+                this._addCount -= deleteCount;
+                this._Promise.all(addQueue).then((): void => {
+                    if (animating && adding) {
+                        this._animateItems(change.index, addCount, __Enter, null, false);
+                    }
+                    this._removeItems(removeLength - deleteCount, deleteCount);
                 });
             }
+        }
+        
+        /**
+         * @name _calculateBlockLength
+         * @memberof plat.ui.controls.ForEach
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Grabs the total blocklength of the specified items.
+         * 
+         * @param {number} startIndex The starting index of items.
+         * @param {number} numberOfItems The number of consecutive items.
+         * 
+         * @returns {number} The calculated block length.
+         */
+        protected _calculateBlockLength(startIndex?: number, numberOfItems?: number): number {
+            return this._blockLength;
         }
 
         /**
@@ -778,91 +920,200 @@ module plat.ui.controls {
          * @param {number} startIndex The starting index of items to animate.
          * @param {number} numberOfItems The number of consecutive items to animate.
          * @param {string} key The animation key/type.
-         * @param {boolean} clone? Whether to clone the items and animate the clones or simply animate the items itself.
-         * @param {boolean} cancel? Whether or not the animation should cancel all current animations. 
-         * Defaults to true.
+         * @param {boolean} cloneContainer Whether to clone the items and animate the clones or simply animate the items itself. If 
+         * set to true, it will clone the whole container. If set to false, it will clone just the item being animated. If not set, 
+         * it will not clone.
+         * @param {boolean} cancel Whether or not to cancel the current animation before beginning this one.
          * 
          * @returns {plat.ui.async.IThenable<void>} A promise that resolves when all animations are complete.
          */
-        protected _animateItems(startIndex: number, numberOfItems: number, key: string, clone?: boolean,
-            cancel?: boolean): async.IThenable<void> {
-            var blockLength = this._blockLength;
+        protected _animateItems(startIndex: number, numberOfItems: number, key: string, cloneContainer: boolean,
+            cancel: boolean): async.IThenable<void> {
+            var blockLength = this._calculateBlockLength();
             if (blockLength === 0) {
                 return this._Promise.resolve();
             }
 
             var start = startIndex * blockLength;
-            return this._initiateAnimation(start, numberOfItems * blockLength + start, key, clone, cancel);
+            if (cloneContainer === true) {
+                return this._handleClonedContainerAnimation(start, numberOfItems * blockLength + start, key, cancel === true);
+            } else if (cloneContainer === false) {
+                return this._handleClonedItemAnimation(start, numberOfItems * blockLength + start, key, cancel === true);
+            } else {
+                return this._handleSimpleAnimation(start, numberOfItems * blockLength + start, key, cancel === true);
+            }
         }
 
         /**
-         * @name _initiateAnimation
+         * @name _handleSimpleAnimation
          * @memberof plat.ui.controls.ForEach
          * @kind function
          * @access protected
          * 
          * @description
-         * Animates a block of elements.
+         * Handles a simple animation of a block of elements.
          * 
          * @param {number} startNode The starting childNode of the ForEach to animate.
          * @param {number} endNode The ending childNode of the ForEach to animate.
          * @param {string} key The animation key/type.
-         * @param {boolean} clone? Whether to clone the items and animate the clones or simply animate the items itself.
-         * @param {boolean} cancel? Whether or not the animation should cancel all current animations. 
-         * Defaults to true.
+         * @param {boolean} cancel Whether or not to cancel the current animation before beginning this one.
          * 
-         * @returns {plat.ui.async.IThenable<void>} A promise that resolves when all animations are complete.
+         * @returns {plat.async.IThenable<void>} A promise that fulfills when the animation is complete.
          */
-        protected _initiateAnimation(startNode: number, endNode: number, key: string, clone?: boolean,
-            cancel?: boolean): async.IThenable<void> {
-            if (cancel === false || isNull(this._currentAnimation)) {
-                return this.__handleAnimation(startNode, endNode, key, clone);
-            }
-
-            return this._currentAnimation.cancel().then((): animations.IAnimationThenable<any> => {
-                return this.__handleAnimation(startNode, endNode, key, clone);
-            });
-        }
-
-        /**
-         * @name __handleAnimation
-         * @memberof plat.ui.controls.ForEach
-         * @kind function
-         * @access private
-         * 
-         * @description
-         * Handles the animation of a block of elements.
-         * 
-         * @param {number} startNode The starting childNode of the ForEach to animate
-         * @param {number} endNode The ending childNode of the ForEach to animate
-         * @param {string} key The animation key/type
-         * @param {boolean} clone Whether to clone the items and animate the clones or simply animate the items itself.
-         * 
-         * @returns {plat.animations.IAnimationThenable<any>} The last element node's animation promise.
-         */
-        private __handleAnimation(startNode: number, endNode: number, key: string, clone: boolean): animations.IAnimationThenable<any> {
+        protected _handleSimpleAnimation(startNode: number, endNode: number, key: string, cancel: boolean): async.IThenable<void> {
             var container = this._container,
                 slice = Array.prototype.slice,
                 nodes: Array<Node> = slice.call(container.childNodes, startNode, endNode);
 
             if (nodes.length === 0) {
-                return this._animator.resolve();
-            } else if (clone === true) {
-                var referenceNode = nodes[nodes.length - 1].nextSibling,
-                    animatedNodes = <DocumentFragment>appendChildren(nodes),
-                    clonedNodes = animatedNodes.cloneNode(true),
-                    removeNodes = slice.call(clonedNodes.childNodes);
-
-                container.insertBefore(clonedNodes, referenceNode);
-                return this._currentAnimation = this._animator.animate(removeNodes, key).then((): void => {
-                    while (removeNodes.length > 0) {
-                        container.removeChild(removeNodes.pop());
-                    }
-                    container.insertBefore(animatedNodes, referenceNode);
-                });
+                return this._Promise.resolve();
             }
 
-            return this._currentAnimation = this._animator.animate(nodes, key);
+            var animationQueue = this._animationQueue,
+                callback = (): animations.IAnimationThenable<any> => {
+                    var animation = this._animator.animate(nodes, key).then((): void => {
+                        animationQueue.shift();
+                    });
+
+                    animationQueue.push({ animation: animation, op: null });
+                    return animation;
+                };
+
+            if (cancel) {
+                return this._cancelCurrentAnimations().then(callback);
+            }
+
+            return callback();
+        }
+
+        /**
+         * @name _handleClonedItemAnimation
+         * @memberof plat.ui.controls.ForEach
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Handles a simple animation of a block of elements.
+         * 
+         * @param {number} startNode The starting childNode of the ForEach to animate.
+         * @param {number} endNode The ending childNode of the ForEach to animate.
+         * @param {string} key The animation key/type.
+         * @param {boolean} cancel Whether or not to cancel the current animation before beginning this one.
+         * 
+         * @returns {plat.async.IThenable<void>} A promise that fulfills when the animation is complete and both  
+         * the cloned item has been removed and the original item has been put back.
+         */
+        protected _handleClonedItemAnimation(startNode: number, endNode: number, key: string, cancel: boolean): async.IThenable<void> {
+            var container = this._container,
+                slice = Array.prototype.slice,
+                nodes: Array<Node> = slice.call(container.childNodes, startNode, endNode);
+
+            if (nodes.length === 0) {
+                return this._Promise.resolve();
+            }
+
+            var referenceNode = nodes[nodes.length - 1].nextSibling,
+                animatedNodes = <DocumentFragment>appendChildren(nodes),
+                clonedNodes = animatedNodes.cloneNode(true),
+                removeNodes: Array<Node> = slice.call(clonedNodes.childNodes),
+                animationQueue = this._animationQueue,
+                callback = (): animations.IAnimationThenable<void> => {
+                    container.insertBefore(clonedNodes, referenceNode);
+                    var animation = this._animator.animate(removeNodes, key).then((): void => {
+                        referenceNode = removeNodes[removeNodes.length - 1].nextSibling;
+                        while (removeNodes.length > 0) {
+                            container.removeChild(removeNodes.pop());
+                        }
+                        container.insertBefore(animatedNodes, referenceNode);
+                    }).then((): void => {
+                        animationQueue.shift();
+                    });
+
+                    animationQueue.push({ animation: animation, op: false });
+                    return animation;
+                };
+
+            if (cancel) {
+                return this._cancelCurrentAnimations().then(callback);
+            }
+
+            return callback();
+        }
+
+        /**
+         * @name _handleClonedItemAnimation
+         * @memberof plat.ui.controls.ForEach
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Handles a simple animation of a block of elements.
+         * 
+         * @param {number} startNode The starting childNode of the ForEach to animate.
+         * @param {number} endNode The ending childNode of the ForEach to animate.
+         * @param {string} key The animation key/type.
+         * @param {boolean} cancel Whether or not to cancel the current animation before beginning this one.
+         * 
+         * @returns {plat.async.IThenable<void>} A promise that fulfills when the animation is complete and both  
+         * the cloned container has been removed and the original container has been put back.
+         */
+        protected _handleClonedContainerAnimation(startNode: number, endNode: number, key: string,
+            cancel: boolean): async.IThenable<void> {
+            var container = this._container,
+                clonedContainer = container.cloneNode(true),
+                slice = Array.prototype.slice,
+                nodes: Array<Node> = slice.call(clonedContainer.childNodes, startNode, endNode);
+
+            if (nodes.length === 0) {
+                return this._Promise.resolve();
+            }
+
+            var parentNode = container.parentNode;
+            if (isNull(parentNode)) {
+                return this._Promise.resolve();
+            }
+
+            var animationQueue = this._animationQueue,
+                callback = (): animations.IAnimationThenable<void> => {
+                    parentNode.replaceChild(clonedContainer, container);
+                    var animation = this._animator.animate(nodes, key).then((): void => {
+                        parentNode.replaceChild(container, clonedContainer);
+                    }).then((): void => {
+                        animationQueue.shift();
+                    });
+
+                    animationQueue.push({ animation: animation, op: true });
+                    return animation;
+                };
+
+            if (cancel) {
+                return this._cancelCurrentAnimations().then(callback);
+            }
+
+            return callback();
+        }
+
+        /**
+         * @name _cancelCurrentAnimations
+         * @memberof plat.ui.controls.ForEach
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Cancels all current animations.
+         * 
+         * @returns {plat.async.IThenable<any>} A promise that resolves when 
+         * all current animations have been canceled.
+         */
+        protected _cancelCurrentAnimations(): async.IThenable<any> {
+            var animationQueue = this._animationQueue,
+                animations = <Array<animations.IAnimationThenable<any>>>[];
+
+            while (animationQueue.length > 0) {
+                animations.push(animationQueue.shift().animation.cancel());
+            }
+
+            return this._Promise.all(animations);
         }
     }
 
@@ -879,6 +1130,18 @@ module plat.ui.controls {
      */
     export interface IForEachOptions {
         /**
+         * @name animate
+         * @memberof plat.ui.controls.IForEachOptions
+         * @kind property
+         * 
+         * @type {boolean}
+         * 
+         * @description
+         * Will animate the Array mutations if set to true.
+         */
+        animate?: boolean;
+
+        /**
          * @name aliases
          * @memberof plat.ui.controls.IForEachOptions
          * @kind property
@@ -886,7 +1149,7 @@ module plat.ui.controls {
          * @type {plat.ui.controls.IForEachAliasOptions}
          * 
          * @description
-         * Used to specify alternative alias tokens for the built-in foreach aliases.
+         * Used to specify alternative alias tokens for the built-in control aliases.
          */
         aliases?: IForEachAliasOptions;
     }
