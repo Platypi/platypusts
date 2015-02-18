@@ -3295,8 +3295,9 @@ declare module plat {
               * @param {string} identifier The identifier for the property that changed.
               * @param {any} newValue The new value of the property.
               * @param {any} oldValue The old value of the property.
+              * @param {Array<string>} mappings? An array of mapped child identifier keys to notify.
               */
-            protected _notifyChildProperties(identifier: string, newValue: any, oldValue: any): void;
+            protected _notifyChildProperties(identifier: string, newValue: any, oldValue: any, mappings?: Array<string>): void;
             /**
               * Adds a listener to be fired for a particular identifier.
               * @param {string} absoluteIdentifier The identifier being observed.
@@ -6866,6 +6867,10 @@ declare module plat {
                   */
                 protected _Promise: async.IPromise;
                 /**
+                  * Reference to the Document injectable.
+                  */
+                protected _document: Document;
+                /**
                   * All elements currently being animated.
                   */
                 protected _elements: IObject<IAnimatedElement>;
@@ -7986,13 +7991,28 @@ declare module plat {
                   */
                 protected _blockLength: any;
                 /**
-                  * An animation promise for delaying disposal prior to an animation finishing.
+                  * Whether or not to animate Array mutations.
                   */
-                protected _animationThenable: async.IThenable<void>;
+                protected _animate: boolean;
                 /**
                   * The current animation promise.
                   */
                 protected _currentAnimation: animations.IAnimationThenable<any>;
+                /**
+                  * A collection of all the current animations and their animation type.
+                  */
+                protected _animationQueue: Array<{
+                    animation: animations.IAnimationThenable<any>;
+                    op: boolean;
+                }>;
+                /**
+                 * A queue representing all current add operations.
+                 */
+                protected _addQueue: Array<async.IThenable<void>>;
+                /**
+                  * The number of items currently being added.
+                  */
+                protected _addCount: number;
                 /**
                   * Whether or not the initial context value was null or empty.
                   */
@@ -8029,17 +8049,17 @@ declare module plat {
                   */
                 dispose(): void;
                 /**
-                  * Sets the alias tokens to use for all the items in the ForEach context array.
+                  * Sets the alias tokens to use for all the items in the ForEach context Array.
                   */
                 protected _setAliases(): void;
                 /**
                   * Adds new items to the control's element when items are added to
                   * the array.
-                  * @param {number} numberOfItems The number of items to add.
                   * @param {number} index The point in the array to start adding items.
+                  * @param {number} numberOfItems The number of items to add.
                   * @param {boolean} animate? Whether or not to animate the new items
                   */
-                protected _addItems(numberOfItems: number, index: number, animate?: boolean): async.IThenable<void>;
+                protected _addItems(index: number, numberOfItems: number, animate?: boolean): async.IThenable<void>;
                 /**
                   * Adds an Array of items to the element without animating.
                   * @param {Array<Node>} items The Array of items to add.
@@ -8053,9 +8073,10 @@ declare module plat {
                 protected _appendAnimatedItem(item: DocumentFragment, key: string): void;
                 /**
                   * Removes items from the control's element.
+                  * @param {number} index The index to start disposing from.
                   * @param {number} numberOfItems The number of items to remove.
                   */
-                protected _removeItems(numberOfItems: number): void;
+                protected _removeItems(index: number, numberOfItems: number): void;
                 /**
                   * Binds the item to a template at that index.
                   * the a DocumentFragment that represents an item.
@@ -8114,33 +8135,53 @@ declare module plat {
                   */
                 protected _splice(changes: Array<observable.IArrayChanges<any>>): void;
                 /**
+                  * Grabs the total blocklength of the specified items.
+                  * @param {number} startIndex The starting index of items.
+                  * @param {number} numberOfItems The number of consecutive items.
+                  */
+                protected _calculateBlockLength(startIndex?: number, numberOfItems?: number): number;
+                /**
                   * Animates the indicated items.
                   * @param {number} startIndex The starting index of items to animate.
                   * @param {number} numberOfItems The number of consecutive items to animate.
                   * @param {string} key The animation key/type.
-                  * @param {boolean} clone? Whether to clone the items and animate the clones or simply animate the items itself.
-                  * @param {boolean} cancel? Whether or not the animation should cancel all current animations.
-                  * Defaults to true.
+                  * @param {boolean} cloneContainer Whether to clone the items and animate the clones or simply animate the items itself. If
+                  * set to true, it will clone the whole container. If set to false, it will clone just the item being animated. If not set,
+                  * it will not clone.
+                  * @param {boolean} cancel Whether or not to cancel the current animation before beginning this one.
                   */
-                protected _animateItems(startIndex: number, numberOfItems: number, key: string, clone?: boolean, cancel?: boolean): async.IThenable<void>;
+                protected _animateItems(startIndex: number, numberOfItems: number, key: string, cloneContainer: boolean, cancel: boolean): async.IThenable<void>;
                 /**
-                  * Animates a block of elements.
+                  * Handles a simple animation of a block of elements.
                   * @param {number} startNode The starting childNode of the ForEach to animate.
                   * @param {number} endNode The ending childNode of the ForEach to animate.
                   * @param {string} key The animation key/type.
-                  * @param {boolean} clone? Whether to clone the items and animate the clones or simply animate the items itself.
-                  * @param {boolean} cancel? Whether or not the animation should cancel all current animations.
-                  * Defaults to true.
+                  * @param {boolean} cancel Whether or not to cancel the current animation before beginning this one.
                   */
-                protected _initiateAnimation(startNode: number, endNode: number, key: string, clone?: boolean, cancel?: boolean): async.IThenable<void>;
+                protected _handleSimpleAnimation(startNode: number, endNode: number, key: string, cancel: boolean): async.IThenable<void>;
                 /**
-                  * Handles the animation of a block of elements.
-                  * @param {number} startNode The starting childNode of the ForEach to animate
-                  * @param {number} endNode The ending childNode of the ForEach to animate
-                  * @param {string} key The animation key/type
-                  * @param {boolean} clone Whether to clone the items and animate the clones or simply animate the items itself.
+                  * Handles a simple animation of a block of elements.
+                  * @param {number} startNode The starting childNode of the ForEach to animate.
+                  * @param {number} endNode The ending childNode of the ForEach to animate.
+                  * @param {string} key The animation key/type.
+                  * @param {boolean} cancel Whether or not to cancel the current animation before beginning this one.
+                  * the cloned item has been removed and the original item has been put back.
                   */
-                private __handleAnimation(startNode, endNode, key, clone);
+                protected _handleClonedItemAnimation(startNode: number, endNode: number, key: string, cancel: boolean): async.IThenable<void>;
+                /**
+                  * Handles a simple animation of a block of elements.
+                  * @param {number} startNode The starting childNode of the ForEach to animate.
+                  * @param {number} endNode The ending childNode of the ForEach to animate.
+                  * @param {string} key The animation key/type.
+                  * @param {boolean} cancel Whether or not to cancel the current animation before beginning this one.
+                  * the cloned container has been removed and the original container has been put back.
+                  */
+                protected _handleClonedContainerAnimation(startNode: number, endNode: number, key: string, cancel: boolean): async.IThenable<void>;
+                /**
+                  * Cancels all current animations.
+                  * all current animations have been canceled.
+                  */
+                protected _cancelCurrentAnimations(): async.IThenable<any>;
             }
             /**
               * The options object for the
@@ -8148,7 +8189,11 @@ declare module plat {
               */
             interface IForEachOptions {
                 /**
-                  * Used to specify alternative alias tokens for the built-in foreach aliases.
+                  * Will animate the Array mutations if set to true.
+                  */
+                animate?: boolean;
+                /**
+                  * Used to specify alternative alias tokens for the built-in control aliases.
                   */
                 aliases?: IForEachAliasOptions;
             }
