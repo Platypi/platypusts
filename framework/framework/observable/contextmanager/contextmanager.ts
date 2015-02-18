@@ -1078,6 +1078,7 @@ module plat.observable {
                 values: IObject<any> = {},
                 value: any,
                 key: string,
+                keyIsLength: boolean,
                 start = identifier.length + 1,
                 newParent: any,
                 oldParent: any,
@@ -1094,6 +1095,7 @@ module plat.observable {
                 property = binding.slice(start);
                 split = property.split('.');
                 key = split.pop();
+                keyIsLength = key === 'length',
                 parentProperty = split.join('.');
 
                 if (isEmpty(parentProperty)) {
@@ -1102,7 +1104,7 @@ module plat.observable {
                     newChild = isNull(newParent) ? undefined : newParent[key];
                     oldChild = isNull(oldParent) ? undefined : oldParent[key];
 
-                    if (key === 'length' && !isArray(oldParent) && isArray(newParent)) {
+                    if (keyIsLength && !isArray(oldParent) && isArray(newParent)) {
                         var lengthListener = this.__lengthListeners[binding];
                         if (!isNull(lengthListener)) {
                             var uid = lengthListener.uid,
@@ -1152,6 +1154,10 @@ module plat.observable {
 
                 if (isObject(newParent) && (!isArray(newParent) || newParent.length > key)) {
                     this._define(binding, newParent, key);
+                }
+
+                if (!(isNull(oldChild) || (isArray(oldParent) && keyIsLength))) {
+                    ContextManager.defineProperty(oldParent, key, oldChild, true, true, true);
                 }
 
                 this._execute(binding, newChild, oldChild);
@@ -1483,6 +1489,9 @@ module plat.observable {
 
                     if (childPropertiesExist) {
                         this._notifyChildProperties(identifier, value, oldValue, mappings);
+                        if (!isObject(value)) {
+                            this.__definePrimitive(identifier, immediateContext, key);
+                        }
                     } else if (isEmpty(this.__identifiers[identifier])) {
                         ContextManager.defineProperty(immediateContext, key, value, true, true, true);
                     } else if (!isObject(value)) {

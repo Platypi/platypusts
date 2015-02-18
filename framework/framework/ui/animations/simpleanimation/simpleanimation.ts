@@ -22,23 +22,6 @@ module plat.ui.animations {
      * element, checks for animation properties, and waits for the animation to end.
      */
     export class SimpleCssAnimation extends CssAnimation {
-        protected static _inject: any = {
-            _window: __Window
-        };
-
-        /**
-         * @name _window
-         * @memberof plat.ui.animations.SimpleCssAnimation
-         * @kind property
-         * @access protected
-         * 
-         * @type {Window}
-         * 
-         * @description
-         * Reference to the Window injectable.
-         */
-        protected _window: Window;
-
         /**
          * @name className
          * @memberof plat.ui.animations.SimpleCssAnimation
@@ -95,8 +78,10 @@ module plat.ui.animations {
             requestAnimationFrameGlobal((): void => {
                 var element = this.element;
 
-                if (element.offsetParent === null) {
-                    this.cancel();
+                if (this._canceled) {
+                    return;
+                } else if (element.offsetParent === null) {
+                    this._dispose();
                     this.end();
                     return;
                 }
@@ -109,17 +94,12 @@ module plat.ui.animations {
 
                 if (animationName === '' || animationName === 'none' ||
                     computedStyle[<any>(animationId + 'PlayState')] === 'paused') {
-                    this.cancel();
+                    this._dispose();
                     this.end();
                     return;
                 }
 
-                this.animationEnd((): void => {
-                    requestAnimationFrameGlobal((): void => {
-                        this.cancel();
-                        this.end();
-                    });
-                });
+                this.animationEnd(this.cancel);
             });
         }
 
@@ -136,11 +116,11 @@ module plat.ui.animations {
          * @returns {plat.async.IThenable<void>} A new promise that resolves when the animation has been paused.
          */
         pause(): async.IThenable<void> {
-            var animationEvents = this._compat.animationEvents;
-            if (isUndefined(animationEvents)) {
+            if (this._canceled) {
                 return this._Promise.resolve();
             }
 
+            var animationEvents = this._compat.animationEvents;
             return new this._Promise<void>((resolve): void => {
                 requestAnimationFrameGlobal((): void => {
                     this.element.style[<any>(animationEvents.$animation + 'PlayState')] = 'paused';
@@ -162,11 +142,11 @@ module plat.ui.animations {
          * @returns {plat.async.IThenable<void>} A new promise that resolves when the animation has resumed.
          */
         resume(): async.IThenable<void> {
-            var animationEvents = this._compat.animationEvents;
-            if (isUndefined(animationEvents)) {
+            if (this._canceled) {
                 return this._Promise.resolve();
             }
 
+            var animationEvents = this._compat.animationEvents;
             return new this._Promise<void>((resolve): void => {
                 requestAnimationFrameGlobal((): void => {
                     this.element.style[<any>(animationEvents.$animation + 'PlayState')] = 'running';
@@ -188,6 +168,25 @@ module plat.ui.animations {
          * @returns {void}
          */
         cancel(): void {
+            super.cancel();
+
+            requestAnimationFrameGlobal((): void => {
+                this._dispose();
+            });
+        }
+
+        /**
+         * @name _dispose
+         * @memberof plat.ui.animations.SimpleCssAnimation
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Removes the animation class and the animation "-init" class.
+         * 
+         * @returns {void}
+         */
+        protected _dispose(): void {
             var className = this.className;
             removeClass(this.element, className + ' ' + className + __INIT_SUFFIX);
         }

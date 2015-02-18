@@ -13,23 +13,6 @@
      * element, checks for transition properties, and waits for the transition to end.
      */
     export class SimpleCssTransition extends CssAnimation {
-        protected static _inject: any = {
-            _window: __Window
-        };
-
-        /**
-         * @name _window
-         * @memberof plat.ui.animations.SimpleCssTransition
-         * @kind property
-         * @access protected
-         * 
-         * @type {Window}
-         * 
-         * @description
-         * Reference to the Window injectable.
-         */
-        protected _window: Window;
-
         /**
          * @name options
          * @memberof plat.ui.animations.SimpleCssTransition
@@ -154,11 +137,12 @@
             requestAnimationFrameGlobal((): void => {
                 var element = this.element;
 
-                if (element.offsetParent === null) {
-                    requestAnimationFrameGlobal((): void => {
-                        this._animate();
-                        this._done(null, true);
-                    });
+                if (this._canceled) {
+                    return;
+                } else if (element.offsetParent === null) {
+                    this._animate();
+                    this._dispose();
+                    this.end();
                 }
 
                 addClass(element, this.className);
@@ -174,7 +158,8 @@
                     transitionDuration === '' || transitionDuration === '0s') {
                     requestAnimationFrameGlobal((): void => {
                         this._animate();
-                        this._done(null, true);
+                        this._dispose();
+                        this.end();
                     });
                     return;
                 }
@@ -185,7 +170,8 @@
                     return;
                 }
 
-                this._done(null, true);
+                this._dispose();
+                this.end();
             });
         }
 
@@ -201,13 +187,31 @@
          * @returns {void}
          */
         cancel(): void {
-            if (!this._started) {
-                requestAnimationFrameGlobal((): void => {
-                    this._animate();
-                });
-            }
+            super.cancel();
 
-            this._done(null, true);
+            requestAnimationFrameGlobal((): void => {
+                if (!this._started) {
+                    this._animate();
+                }
+
+                this._dispose();
+            });
+        }
+
+        /**
+         * @name _dispose
+         * @memberof plat.ui.animations.SimpleCssTransition
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Removes the animation class and the animation "-init" class.
+         * 
+         * @returns {void}
+         */
+        protected _dispose(): void {
+            var className = this.className;
+            removeClass(this.element, className + ' ' + className + __INIT_SUFFIX);
         }
 
         /**
@@ -225,20 +229,20 @@
          * 
          * @returns {void}
          */
-        protected _done(ev?: TransitionEvent, immediate?: boolean): void {
-            if (!immediate) {
-                var keys = Object.keys(this._modifiedProperties),
-                    propertyName = ev.propertyName;
-                if (isString(propertyName)) {
-                    propertyName = propertyName.replace(this._normalizeRegex, '').toLowerCase();
-                    if (this._normalizedKeys.indexOf(propertyName) !== -1 && ++this._transitionCount < keys.length) {
-                        return;
-                    }
+        protected _done(ev: TransitionEvent): void {
+            var keys = Object.keys(this._modifiedProperties),
+                propertyName = ev.propertyName;
+            if (isString(propertyName)) {
+                propertyName = propertyName.replace(this._normalizeRegex, '').toLowerCase();
+                if (this._normalizedKeys.indexOf(propertyName) !== -1 && ++this._transitionCount < keys.length) {
+                    return;
                 }
             }
-            var className = this.className;
-            removeClass(this.element, className + ' ' + className + __INIT_SUFFIX);
+
             this.end();
+            requestAnimationFrameGlobal((): void => {
+                this._dispose();
+            });
         }
 
         /**

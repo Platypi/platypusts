@@ -519,8 +519,8 @@ module plat.ui.controls {
                 controls = this.controls,
                 max = index + numberOfItems;
 
-            for (var i = index; i < max; ++i) {
-                dispose(controls[i]);
+            while (index < max) {
+                dispose(controls[index++]);
             }
 
             this._updateResource(controls.length - 1);

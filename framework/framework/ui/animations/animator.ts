@@ -56,7 +56,7 @@
         protected _document: Document;
 
         /**
-         * @name _elements
+         * @name _animatedElements
          * @memberof plat.ui.animations.Animator
          * @kind property
          * @access protected
@@ -64,9 +64,9 @@
          * @type {plat.IObject<plat.ui.animations.IAnimatedElement>}
          * 
          * @description
-         * All elements currently being animated.
+         * Objects representing collections of all currently animated elements.
          */
-        protected _elements: IObject<IAnimatedElement> = {};
+        protected _animatedElements: IObject<IAnimatedElement> = {};
 
         /**
          * @name create
@@ -225,7 +225,10 @@
                 key: null
             });
 
-            animation.start();
+            requestAnimationFrameGlobal((): void => {
+                animation.start();
+            });
+
             return animation;
         }
 
@@ -325,7 +328,10 @@
                 refChild: refChild
             });
 
-            animation.start();
+            requestAnimationFrameGlobal((): void => {
+                animation.start();
+            });
+
             return animation;
         }
 
@@ -411,7 +417,10 @@
                 key: 'leave'
             });
 
-            animation.start();
+            requestAnimationFrameGlobal((): void => {
+                animation.start();
+            });
+
             return animation;
         }
 
@@ -519,7 +528,10 @@
                 refChild: refChild
             });
 
-            animation.start();
+            requestAnimationFrameGlobal((): void => {
+                animation.start();
+            });
+
             return animation;
         }
 
@@ -601,7 +613,10 @@
                 key: 'show'
             });
 
-            animation.start();
+            requestAnimationFrameGlobal((): void => {
+                animation.start();
+            });
+
             return animation;
         }
 
@@ -683,7 +698,10 @@
                 key: 'hide'
             });
 
-            animation.start();
+            requestAnimationFrameGlobal((): void => {
+                animation.start();
+            });
+
             return animation;
         }
 
@@ -784,30 +802,30 @@
             this._handlePreInitFunctionality(elements, elementNodes, functionality);
 
             var animationPromises: Array<IAnimationThenable<any>> = [],
-                id = this.__setAnimationId(elementNodes, animationInstances),
-                animatedElement = this._elements[id],
-                i: number;
+                id = uniqueId('animation_'),
+                previousAnimations = this.__setAnimationId(id, elementNodes);
 
             // instantiate needs to be called after __setAnimationId in the case that 
             // the same element is animating while in an animation
-            for (i = 0; i < length; ++i) {
+            for (var i = 0; i < length; ++i) {
                 animationPromises.push(animationInstances[i].instantiate(elementNodes[i], options));
             }
 
             this._handlePostInitFunctionality(elements, elementNodes, functionality);
 
             var animationPromise = new AnimationPromise((resolve: any): void => {
-                this._Promise.all(animationPromises).then(resolve);
-            });
+                this._Promise.all(animationPromises.concat(previousAnimations)).then(resolve);
+            })
 
             animationPromise.initialize(animationInstances);
 
-            var animatingParentId = this.__isParentAnimating(elementNodes);
+            var animatingParentId = this.__isParentAnimating(elementNodes),
+                animatedElement = this.__generateAnimatedElement(id, elementNodes, animationPromise);
             if (!isNull(animatingParentId)) {
                 this._handleEndFunctionality(elements, elementNodes, functionality);
                 animatedElement.animationEnd(true);
 
-                var parent = this._elements[animatingParentId];
+                var parent = this._animatedElements[animatingParentId];
                 if (isPromise(parent.promise)) {
                     return animationPromise.then((): () => IAnimationThenable<any> => {
                         return (): IAnimationThenable<any> => {
@@ -948,6 +966,104 @@
         }
 
         /**
+         * @name __setAnimationId
+         * @memberof plat.ui.animations.Animator
+         * @kind function
+         * @access private
+         * 
+         * @description
+         * Sets a new, unique animation ID and denotes the elements as currently being animated.
+         * 
+         * @param {string} id The animation ID.
+         * @param {Array<Element>} elements The Array of Elements being animated.
+         * 
+         * @returns {Array<plat.ui.animations.IAnimationThenable<any>>} An Array of promises representing all current animations on 
+         * the elements trying to be animated.
+         */
+        private __setAnimationId(id: string, elements: Array<Element>): Array<IAnimationThenable<any>> {
+            var animatedElements = this._animatedElements,
+                animatedElement: IAnimatedElement,
+                plat: ICustomElementProperty,
+                promises = <Array<IAnimationThenable<any>>>[],
+                length = elements.length,
+                element: Element;
+
+            for (var i = 0; i < length; ++i) {
+                element = elements[i];
+                plat = (<ICustomElement>element).__plat;
+
+                if (isUndefined(plat)) {
+                    (<ICustomElement>element).__plat = { animation: id };
+                    addClass(<HTMLElement>element, __Animating);
+                } else if (isUndefined(plat.animation)) {
+                    plat.animation = id;
+                    addClass(<HTMLElement>element, __Animating);
+                } else {
+                    animatedElement = animatedElements[plat.animation];
+                    if (!isUndefined(animatedElement)) {
+                        promises.push(animatedElement.promise);
+                        animatedElement.animationEnd(true);
+                    }
+                    plat.animation = id;
+                }
+            }
+
+            return promises
+        }
+        
+        /**
+         * @name __generateAnimatedElement
+         * @memberof plat.ui.animations.Animator
+         * @kind function
+         * @access private
+         * 
+         * @description
+         * Generates a new animated element for the {@link plat.ui.animations.Animator|Animator} to easily reference and be able 
+         * to end later on.
+         * 
+         * @param {string} id The animation ID.
+         * @param {Array<Element>} elements The Array of Elements being animated.
+         * @param {plat.ui.animations.AnimationPromise} animationPromise The animation's associated promise.
+         * 
+         * @returns {plat.ui.animations.IAnimatedElement} The object representing the newly animated collection of elements.
+         */
+        private __generateAnimatedElement(id: string, elements: Array<Element>, animationPromise: AnimationPromise): IAnimatedElement {
+            var animatedElements = this._animatedElements,
+                removeListener = (cancel?: boolean): void => {
+                    var plat: ICustomElementProperty,
+                        element: ICustomElement,
+                        length = elements.length,
+                        animationId: string;
+
+                    if (cancel === true) {
+                        animationPromise.cancel();
+                        deleteProperty(animatedElements, id);
+                        return;
+                    }
+
+                    for (var i = 0; i < length; ++i) {
+                        element = <ICustomElement>elements[i];
+                        plat = element.__plat || {};
+                        animationId = plat.animation;
+                        if (isUndefined(animationId) || animationId !== id) {
+                            continue;
+                        }
+                        removeClass(<HTMLElement>element, __Animating);
+                        deleteProperty(plat, 'animation');
+                        if (isEmpty(plat)) {
+                            deleteProperty(element, '__plat');
+                        }
+                    }
+
+                    deleteProperty(animatedElements, id);
+                };
+
+            return animatedElements[id] = {
+                animationEnd: removeListener
+            };
+        }
+
+        /**
          * @name __isParentAnimating
          * @memberof plat.ui.animations.Animator
          * @kind function
@@ -968,7 +1084,7 @@
                 if (hasClass(<HTMLElement>element, __Animating)) {
                     animationId = ((<ICustomElement>element).__plat || <ICustomElementProperty>{}).animation;
                     if (isString(animationId)) {
-                        if (!isNull(this._elements[animationId])) {
+                        if (!isNull(this._animatedElements[animationId])) {
                             return animationId;
                         }
 
@@ -980,84 +1096,6 @@
                     }
                 }
             }
-        }
-
-        /**
-         * @name __setAnimationId
-         * @memberof plat.ui.animations.Animator
-         * @kind function
-         * @access private
-         * 
-         * @description
-         * Sets an new, unique animation ID and denotes the elements as currently being animated.
-         * 
-         * @param {Array<Element>} elements The Array of Elements being animated.
-         * @param {Array<plat.ui.animations.BaseAnimation>} animationInstances The animation instances doing the animating.
-         * 
-         * @returns {string} The new animation ID.
-         */
-        private __setAnimationId(elements: Array<Element>, animationInstances: Array<BaseAnimation>): string {
-            var animatedElements = this._elements,
-                animatedElement: IAnimatedElement,
-                plat: ICustomElementProperty,
-                length = elements.length,
-                id = uniqueId('animation_'),
-                element: Element,
-                otherId: string,
-                i: number,
-                removeListener = (cancel?: boolean): void => {
-                    var animationInstance: BaseAnimation,
-                        _plat: ICustomElementProperty,
-                        el: ICustomElement;
-                    for (i = 0; i < length; ++i) {
-                        if (cancel === true) {
-                            animationInstance = animationInstances[i];
-                            animationInstance.cancel();
-                            animationInstance.end();
-                        }
-
-                        el = <ICustomElement>elements[i];
-                        _plat = el.__plat;
-                        removeClass(<HTMLElement>el, __Animating);
-                        deleteProperty(_plat, 'animation');
-                        if (isEmpty(plat)) {
-                            deleteProperty(el, '__plat');
-                        }
-                    }
-                    deleteProperty(animatedElements, id);
-                };
-
-            for (i = 0; i < length; ++i) {
-                element = elements[i];
-                plat = (<ICustomElement>element).__plat;
-
-                if (isUndefined(plat)) {
-                    (<ICustomElement>element).__plat = { animation: id };
-                    addClass(<HTMLElement>element, __Animating);
-                } else if (isUndefined(plat.animation)) {
-                    plat.animation = id;
-                    addClass(<HTMLElement>element, __Animating);
-                } else {
-                    otherId = plat.animation;
-                    animatedElement = animatedElements[otherId];
-                    if (!isUndefined(animatedElement)) {
-                        animatedElement.animationEnd(true);
-                        plat = (<ICustomElement>element).__plat;
-
-                        if (isUndefined(plat)) {
-                            plat = (<ICustomElement>element).__plat = { };
-                        }
-                    }
-                    plat.animation = id;
-                    addClass(<HTMLElement>element, __Animating);
-                }
-            }
-
-            animatedElements[id] = {
-                animationEnd: removeListener
-            };
-
-            return id;
         }
 
         /**
@@ -1074,7 +1112,7 @@
          * @returns {void}
          */
         private __stopChildAnimations(elements: Array<Element>): void {
-            var animatingElements = this._elements,
+            var animatingElements = this._animatedElements,
                 slice = Array.prototype.slice,
                 customAnimationElements: Array<ICustomElement>,
                 animatedElement: IAnimatedElement,

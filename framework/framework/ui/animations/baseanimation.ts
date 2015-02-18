@@ -13,6 +13,7 @@
      */
     export class BaseAnimation implements IAnimationEssentials {
         protected static _inject: any = {
+            _window: __Window,
             _compat: __Compat,
             _Exception: __ExceptionStatic,
             _Promise: __Promise,
@@ -72,6 +73,19 @@
         protected _Exception: IExceptionStatic;
 
         /**
+         * @name _window
+         * @memberof plat.ui.animations.BaseAnimation
+         * @kind property
+         * @access protected
+         * 
+         * @type {Window}
+         * 
+         * @description
+         * Reference to the Window injectable.
+         */
+        protected _window: Window;
+
+        /**
          * @name _compat
          * @memberof plat.ui.animations.BaseAnimation
          * @kind property
@@ -96,6 +110,19 @@
          * Reference to the {@link plat.async.IPromise|IPromise} injectable.
          */
         protected _Promise: async.IPromise;
+
+        /**
+         * @name _canceled
+         * @memberof plat.ui.animations.BaseAnimation
+         * @kind property
+         * @access protected
+         * 
+         * @type {boolean}
+         * 
+         * @description
+         * Whether or not the animation has been canceled.
+         */
+        protected _canceled = false;
 
         /**
          * @name _resolve
@@ -219,6 +246,7 @@
          * @returns {void}
          */
         cancel(): void {
+            this._canceled = true;
             this.end();
         }
 
