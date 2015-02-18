@@ -802,14 +802,13 @@ module plat.ui {
                 return;
             }
 
-            var dom = control.dom,
-                element = control.element,
+            var element = control.element,
                 parentNode: Node;
 
             if (control.replaceWith === null ||
             control.replaceWith === '' ||
             isDocumentFragment(element)) {
-                dom.removeAll(control.startNode, control.endNode);
+                removeAll(control.startNode, control.endNode);
                 control.elementNodes = control.startNode = control.endNode = null;
                 return;
             } else if (isNull(element)) {
