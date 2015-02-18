@@ -302,14 +302,14 @@ function innerHtml(element: HTMLElement, html: string): HTMLElement {
 }
 
 function removeNode(node: Node): void {
-    if (isNull(node)) {
+    if (!isNode(node)) {
         return;
     }
 
     var parentNode = node.parentNode;
 
     if (!isNull(parentNode)) {
-        node.parentNode.removeChild(node);
+        parentNode.removeChild(node);
     }
 }
 

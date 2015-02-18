@@ -852,16 +852,8 @@
         protected _handlePreInitFunctionality(nodes: Array<Node>, elementNodes: Array<Element>, functionality: IAnimationFunction): void {
             switch (functionality.key) {
                 case 'move':
-                    var parent: Node,
-                        node: Node,
-                        length = nodes.length;
-
                     for (var i = 0; i < length; ++i) {
-                        node = nodes[i];
-                        parent = node.parentNode;
-                        if (isNode(parent)) {
-                            parent.removeChild(node);
-                        }
+                        removeNode(nodes[i]);
                     }
                     break;
                 default:
@@ -939,16 +931,9 @@
                 i: number;
             switch (functionality.key) {
                 case 'leave':
-                    var parent: Node,
-                        node: Node;
-
                     length = nodes.length;
                     for (i = 0; i < length; ++i) {
-                        node = nodes[i];
-                        parent = node.parentNode;
-                        if (isNode(parent)) {
-                            parent.removeChild(node);
-                        }
+                        removeNode(nodes[i]);
                     }
                     break;
                 case 'hide':
@@ -1020,26 +1005,26 @@
                 element: Element,
                 otherId: string,
                 i: number,
-                removeListener = (cancel?: boolean, reanimating?: boolean): void => {
-                    var animationInstance: BaseAnimation;
+                removeListener = (cancel?: boolean): void => {
+                    var animationInstance: BaseAnimation,
+                        _plat: ICustomElementProperty,
+                        el: ICustomElement;
                     for (i = 0; i < length; ++i) {
                         if (cancel === true) {
                             animationInstance = animationInstances[i];
                             animationInstance.cancel();
                             animationInstance.end();
-                            if (reanimating === true) {
-                                continue;
-                            }
                         }
 
-                        element = elements[i];
-                        removeClass(<HTMLElement>element, __Animating);
-                        deleteProperty(animatedElements, id);
-                        deleteProperty(plat, 'animation');
+                        el = <ICustomElement>elements[i];
+                        _plat = el.__plat;
+                        removeClass(<HTMLElement>el, __Animating);
+                        deleteProperty(_plat, 'animation');
                         if (isEmpty(plat)) {
-                            deleteProperty(element, '__plat');
+                            deleteProperty(el, '__plat');
                         }
                     }
+                    deleteProperty(animatedElements, id);
                 };
 
             for (i = 0; i < length; ++i) {
@@ -1047,21 +1032,24 @@
                 plat = (<ICustomElement>element).__plat;
 
                 if (isUndefined(plat)) {
-                    (<ICustomElement>element).__plat = plat = {};
-                }
-
-                if (isUndefined(plat.animation)) {
+                    (<ICustomElement>element).__plat = { animation: id };
+                    addClass(<HTMLElement>element, __Animating);
+                } else if (isUndefined(plat.animation)) {
                     plat.animation = id;
                     addClass(<HTMLElement>element, __Animating);
                 } else {
                     otherId = plat.animation;
-                    plat.animation = id;
-
                     animatedElement = animatedElements[otherId];
                     if (!isUndefined(animatedElement)) {
-                        animatedElement.animationEnd(true, true);
-                        deleteProperty(animatedElements, otherId);
+                        animatedElement.animationEnd(true);
+                        plat = (<ICustomElement>element).__plat;
+
+                        if (isUndefined(plat)) {
+                            plat = (<ICustomElement>element).__plat = { };
+                        }
                     }
+                    plat.animation = id;
+                    addClass(<HTMLElement>element, __Animating);
                 }
             }
 
@@ -1229,12 +1217,10 @@
          * The function called at the conclusion of the animation.
          * 
          * @param {boolean} cancel? Specifies whether the animation is being cancelled.
-         * @param {boolean} reanimating? Specifies whether the element is being reanimated while 
-         * in a current animation. Cancel must be set to true for reanimation to take effect.
          * 
          * @returns {void}
          */
-        animationEnd: (cancel?: boolean, reanimating?: boolean) => void;
+        animationEnd: (cancel?: boolean) => void;
 
         /**
          * @name promise
