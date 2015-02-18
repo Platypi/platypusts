@@ -1,5 +1,5 @@
 /**
-  * PlatypusTS v0.10.10 (http://getplatypi.com)
+  * PlatypusTS v0.10.11 (http://getplatypi.com)
   * Copyright 2015 Platypi, LLC. All rights reserved.
   * PlatypusTS is licensed under the GPL-3.0 found at
   * http://opensource.org/licenses/GPL-3.0
@@ -7241,10 +7241,8 @@ declare module plat {
                 /**
                   * The function called at the conclusion of the animation.
                   * @param {boolean} cancel? Specifies whether the animation is being cancelled.
-                  * @param {boolean} reanimating? Specifies whether the element is being reanimated while
-                  * in a current animation. Cancel must be set to true for reanimation to take effect.
                   */
-                animationEnd: (cancel?: boolean, reanimating?: boolean) => void;
+                animationEnd: (cancel?: boolean) => void;
                 /**
                   * A promise representing an element's current state of animation.
                   */
@@ -8211,12 +8209,10 @@ declare module plat {
                   * @param {number} startIndex The starting index of items to animate.
                   * @param {number} numberOfItems The number of consecutive items to animate.
                   * @param {string} key The animation key/type.
-                  * @param {boolean} cloneContainer Whether to clone the items and animate the clones or simply animate the items itself. If
-                  * set to true, it will clone the whole container. If set to false, it will mimic an
-                  * Animator leave function. If not set, it will perform a simple animation.
+                  * @param {string} animationOp Denotes animation operation.
                   * @param {boolean} cancel Whether or not to cancel the current animation before beginning this one.
                   */
-                protected _animateItems(startIndex: number, numberOfItems: number, key: string, cloneContainer: boolean, cancel: boolean): async.IThenable<void>;
+                protected _animateItems(startIndex: number, numberOfItems: number, key: string, animationOp: string, cancel: boolean): async.IThenable<void>;
                 /**
                   * Handles a simple animation of a block of elements.
                   * @param {number} startNode The starting childNode of the ForEach to animate.
@@ -8230,10 +8226,9 @@ declare module plat {
                   * @param {number} startNode The starting childNode of the ForEach to animate.
                   * @param {number} endNode The ending childNode of the ForEach to animate.
                   * @param {string} key The animation key/type.
-                  * @param {boolean} cancel Whether or not to cancel the current animation before beginning this one.
                   * the cloned item has been removed and the original item has been put back.
                   */
-                protected _handleClonedItemAnimation(startNode: number, endNode: number, key: string, cancel: boolean): async.IThenable<void>;
+                protected _handleLeave(startNode: number, endNode: number, key: string): async.IThenable<void>;
                 /**
                   * Handles a simple animation of a block of elements.
                   * @param {number} startNode The starting childNode of the ForEach to animate.
