@@ -429,7 +429,7 @@ module plat.ui.controls {
                             container = this._container;
                         for (var i = 0; i < length; ++i) {
                             if (i < animateItems) {
-                                this._appendAnimatedItem(templates[i], __Enter);
+                                this._appendAnimatedItem(templates[i]);
                             } else {
                                 container.insertBefore(templates[i], null);
                             }
@@ -482,11 +482,10 @@ module plat.ui.controls {
          * Adds an item to the control's element animating its elements.
          * 
          * @param {DocumentFragment} item The HTML fragment representing a single item.
-         * @param {string} key The animation key/type.
          * 
          * @returns {void}
          */
-        protected _appendAnimatedItem(item: DocumentFragment, key: string): void {
+        protected _appendAnimatedItem(item: DocumentFragment): void {
             if (!isNode(item)) {
                 return;
             }
