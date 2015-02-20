@@ -738,8 +738,8 @@
          */
         protected _removeAllElements(): void {
             var slice = Array.prototype.slice,
-                og = this._document.head.querySelectorAll('meta[' + __MetaProperty + '%="' + __OpenGraph + '"]'),
-                twitter = this._document.head.querySelectorAll('meta[' + __MetaName + '%="' + __Twitter + '"]');
+                og = this._document.head.querySelectorAll('meta[' + __MetaProperty + '^="' + __OpenGraph + '"]'),
+                twitter = this._document.head.querySelectorAll('meta[' + __MetaName + '^="' + __Twitter + '"]');
 
             this._removeElements.apply(this, [
                 this._descriptionElement,
