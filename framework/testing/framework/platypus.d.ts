@@ -6871,9 +6871,9 @@ declare module plat {
                   */
                 protected _document: Document;
                 /**
-                  * All elements currently being animated.
+                  * Objects representing collections of all currently animated elements.
                   */
-                protected _elements: IObject<IAnimatedElement>;
+                protected _animatedElements: IObject<IAnimatedElement>;
                 /**
                   * Creates the defined animation denoted by the key but does not start the animation.
                   * @param {Element} element The Element to be animated.
@@ -7190,16 +7190,25 @@ declare module plat {
                   */
                 protected _handleEndFunctionality(nodes: Array<Node>, elementNodes: Array<Element>, functionality: IAnimationFunction): void;
                 /**
+                  * Sets a new, unique animation ID and denotes the elements as currently being animated.
+                  * @param {string} id The animation ID.
+                  * @param {Array<Element>} elements The Array of Elements being animated.
+                  * the elements trying to be animated.
+                  */
+                private __setAnimationId(id, elements);
+                /**
+                  * Generates a new animated element for the Animator to easily reference and be able
+                  * to end later on.
+                  * @param {string} id The animation ID.
+                  * @param {Array<Element>} elements The Array of Elements being animated.
+                  * @param {plat.ui.animations.AnimationPromise} animationPromise The animation's associated promise.
+                  */
+                private __generateAnimatedElement(id, elements, animationPromise);
+                /**
                   * Checks whether or not any parent elements are animating.
                   * @param {Array<Element>} elements The Elements whose parents we need to check.
                   */
                 private __isParentAnimating(elements);
-                /**
-                  * Sets an new, unique animation ID and denotes the elements as currently being animated.
-                  * @param {Array<Element>} elements The Array of Elements being animated.
-                  * @param {Array<plat.ui.animations.BaseAnimation>} animationInstances The animation instances doing the animating.
-                  */
-                private __setAnimationId(elements, animationInstances);
                 /**
                   * Forces child nodes of an animating element to stop animating.
                   * @param {Element} element The element being animated.
@@ -7505,6 +7514,10 @@ declare module plat {
                   */
                 protected _Exception: IExceptionStatic;
                 /**
+                  * Reference to the Window injectable.
+                  */
+                protected _window: Window;
+                /**
                   * Reference to the Compat injectable.
                   */
                 protected _compat: Compat;
@@ -7512,6 +7525,10 @@ declare module plat {
                   * Reference to the IPromise injectable.
                   */
                 protected _Promise: async.IPromise;
+                /**
+                  * Whether or not the animation has been canceled.
+                  */
+                protected _canceled: boolean;
                 /**
                   * The resolve function for the end of the animation.
                   */
@@ -7610,11 +7627,6 @@ declare module plat {
               * element, checks for animation properties, and waits for the animation to end.
               */
             class SimpleCssAnimation extends CssAnimation {
-                protected static _inject: any;
-                /**
-                  * Reference to the Window injectable.
-                  */
-                protected _window: Window;
                 /**
                   * The class name added to the animated element.
                   */
@@ -7644,6 +7656,10 @@ declare module plat {
                   * Removes the animation class and the animation "-init" class.
                   */
                 cancel(): void;
+                /**
+                  * Removes the animation class and the animation "-init" class.
+                  */
+                protected _dispose(): void;
             }
             /**
               * An interface describing the options for SimpleCssAnimation.
@@ -7704,11 +7720,6 @@ declare module plat {
               * element, checks for transition properties, and waits for the transition to end.
               */
             class SimpleCssTransition extends CssAnimation {
-                protected static _inject: any;
-                /**
-                  * Reference to the Window injectable.
-                  */
-                protected _window: Window;
                 /**
                   * An optional options object that can denote a pseudo element animation and specify
                   * properties to modify during the transition.
@@ -7753,12 +7764,16 @@ declare module plat {
                   */
                 cancel(): void;
                 /**
+                  * Removes the animation class and the animation "-init" class.
+                  */
+                protected _dispose(): void;
+                /**
                   * A handler for the "transitionend" event. Will clean up the class and resolve the
                   * promise when necessary based on the options that were input.
                   * @param {TransitionEvent} ev? The transition event object.
                   * @param {boolean} immediate? Whether clean up should be immediate or conditional.
                   */
-                protected _done(ev?: TransitionEvent, immediate?: boolean): void;
+                protected _done(ev: TransitionEvent): void;
                 /**
                   * Animate the element based on the options passed in.
                   * If false, the control should begin cleaning up.
@@ -8067,11 +8082,11 @@ declare module plat {
                   */
                 protected _animate: boolean;
                 /**
-                  * A collection of all the current animations and their animation type.
+                  * A collection of all the current animations and their animation operation.
                   */
                 protected _animationQueue: Array<{
                     animation: animations.IAnimationThenable<any>;
-                    op: boolean;
+                    op: string;
                 }>;
                 /**
                  * A queue representing all current add operations.
@@ -8121,7 +8136,7 @@ declare module plat {
                   * the array.
                   * @param {number} index The point in the array to start adding items.
                   * @param {number} numberOfItems The number of items to add.
-                  * @param {number} animateItems? The number of items to animate.
+                  * @param {number} animateItems The number of items to animate.
                   */
                 protected _addItems(index: number, numberOfItems: number, animateItems: number): async.IThenable<void>;
                 /**
@@ -8132,9 +8147,8 @@ declare module plat {
                 /**
                   * Adds an item to the control's element animating its elements.
                   * @param {DocumentFragment} item The HTML fragment representing a single item.
-                  * @param {string} key The animation key/type.
                   */
-                protected _appendAnimatedItem(item: DocumentFragment, key: string): void;
+                protected _appendAnimatedItem(item: DocumentFragment): void;
                 /**
                   * Removes items from the control's element.
                   * @param {number} index The index to start disposing from.
@@ -8361,13 +8375,9 @@ declare module plat {
                   */
                 protected _twitterCreatorElement: HTMLMetaElement;
                 /**
-                  * A reference to the the <meta property="og:image" /> element.
+                  * A reference to the the <meta property="og:type" /> element.
                   */
-                protected _ogImageElement: HTMLMetaElement;
-                /**
-                  * A reference to the the <meta name="twitter:image" /> element.
-                  */
-                protected _twitterImageElement: HTMLMetaElement;
+                protected _ogTypeElement: HTMLMetaElement;
                 /**
                   * Registers for the navigating event to know when to remove all the elements so they
                   * don't bleed onto the next page.
@@ -8417,10 +8427,20 @@ declare module plat {
                   */
                 twitterCreator(creator?: string): string;
                 /**
-                  * Gets the image or sets the image elements.
-                  * @param {string} image? If supplied, the image elements will be set to this value.
+                  * Gets the type or sets the type elements.
+                  * @param {string} type? If supplied, the image elements will be set to this value.
                   */
-                image(image?: string): string;
+                fbType(type?: string): string;
+                /**
+                  * Sets the image elements.
+                  * @param {Array<string>} images For each image, a tag will be created
+                  */
+                images(images: Array<string>): void;
+                /**
+                  * Sets the video elements.
+                  * @param {Array<string>} videos For each video, a tag will be created
+                  */
+                videos(videos: Array<string>): void;
                 /**
                   * Sets the url elements initially.
                   */

@@ -228,7 +228,7 @@
         protected _twitterCreatorElement: HTMLMetaElement;
 
         /**
-         * @name _ogImageElement
+         * @name _ogTypeElement
          * @memberof plat.ui.controls.Head
          * @kind property
          * @access protected
@@ -236,22 +236,9 @@
          * @type {HTMLMetaElement}
          * 
          * @description
-         * A reference to the the <meta property="og:image" /> element.
+         * A reference to the the <meta property="og:type" /> element.
          */
-        protected _ogImageElement: HTMLMetaElement;
-
-        /**
-         * @name _twitterImageElement
-         * @memberof plat.ui.controls.Head
-         * @kind property
-         * @access protected
-         * 
-         * @type {HTMLMetaElement}
-         * 
-         * @description
-         * A reference to the the <meta name="twitter:image" /> element.
-         */
-        protected _twitterImageElement: HTMLMetaElement;
+        protected _ogTypeElement: HTMLMetaElement;
 
         /**
          * @name initialize
@@ -287,8 +274,10 @@
                 title = __Title,
                 link = __MetaLink,
                 author = __Author,
+                type = __MetaType,
                 creator = __Creator,
                 image = __MetaImage,
+                video = __MetaVideo,
                 description = __Description,
                 url = __Url,
                 og = __OpenGraph,
@@ -311,8 +300,7 @@
             this._fbAuthorElement = this._createElement<HTMLMetaElement>(meta, article + author);
             this._twitterCreatorElement = this._createElement<HTMLMetaElement>(meta, twitter + creator);
 
-            this._ogImageElement = this._createElement<HTMLMetaElement>(meta, og + image);
-            this._twitterImageElement = this._createElement<HTMLMetaElement>(meta, twitter + image);
+            this._ogTypeElement = this._createElement<HTMLMetaElement>(meta, og + type);
         }
 
         /**
@@ -500,31 +488,98 @@
         }
 
         /**
-         * @name image
+         * @name fbType
          * @memberof plat.ui.controls.Head
          * @kind function
          * @access public
          * 
          * @description
-         * Gets the image or sets the image elements.
+         * Gets the type or sets the type elements.
          * 
-         * @param {string} image? If supplied, the image elements will be set to this value.
+         * @param {string} type? If supplied, the image elements will be set to this value.
          * 
          * @returns {string} The image
          */
-        image(image?: string): string {
-            if (!isString(image)) {
-                return this._getContent(this._ogImageElement);
+        fbType(type?: string): string {
+            if (!isString(type)) {
+                return this._getContent(this._ogTypeElement);
             }
 
-            image = this._browser.urlUtils(image).href;
-
             this._setContent([
-                this._ogImageElement,
-                this._twitterImageElement
-            ], image);
+                this._ogTypeElement
+            ], type);
 
-            return image;
+            return type;
+        }
+
+        /**
+         * @name images
+         * @memberof plat.ui.controls.Head
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Sets the image elements.
+         * 
+         * @param {Array<string>} images For each image, a tag will be created
+         * 
+         * @returns {void}
+         */
+        images(images: Array<string>): void {
+            if (!isArray(images)) {
+                return;
+            }
+
+            var meta = __Meta,
+                og = __OpenGraph,
+                twitter = __Twitter,
+                ogElement: HTMLMetaElement,
+                twitterElement: HTMLMetaElement;
+
+            forEach((image: string): void => {
+                ogElement = this._createElement<HTMLMetaElement>(meta, og + __MetaImage);
+                twitterElement = this._createElement<HTMLMetaElement>(meta, twitter + __MetaImage);
+
+                image = this._browser.urlUtils(image).href;
+
+                this._setContent([
+                    ogElement,
+                    twitterElement
+                ], image);
+            }, images);
+        }
+
+        /**
+         * @name videos
+         * @memberof plat.ui.controls.Head
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Sets the video elements.
+         * 
+         * @param {Array<string>} videos For each video, a tag will be created
+         * 
+         * @returns {void}
+         */
+        videos(videos: Array<string>): void {
+            if (!isArray(videos)) {
+                return;
+            }
+
+            var meta = __Meta,
+                og = __OpenGraph,
+                twitter = __Twitter,
+                ogElement: HTMLMetaElement;
+
+            forEach((video: string): void => {
+                ogElement = this._createElement<HTMLMetaElement>(meta, og + __MetaVideo);
+                video = this._browser.urlUtils(video).href;
+
+                this._setContent([
+                    ogElement
+                ], video);
+            }, videos);
         }
 
         /**
@@ -682,19 +737,15 @@
          * @returns {void}
          */
         protected _removeAllElements(): void {
-            this._removeElements(
-                this._ogTitleElement,
-                this._twitterTitleElement,
+            var slice = Array.prototype.slice,
+                og = this._document.head.querySelectorAll('meta[' + __MetaProperty + '%="' + __OpenGraph + '"]'),
+                twitter = this._document.head.querySelectorAll('meta[' + __MetaName + '%="' + __Twitter + '"]');
+
+            this._removeElements.apply(this, [
                 this._descriptionElement,
-                this._ogDescriptionElement,
-                this._twitterDescriptionElement,
                 this._authorElement,
-                this._googleAuthorElement,
-                this._fbAuthorElement,
-                this._twitterCreatorElement,
-                this._ogImageElement,
-                this._twitterImageElement
-            );
+                this._googleAuthorElement
+            ].concat(slice.call(og), slice.call(twitter)));
         }
 
         /**
