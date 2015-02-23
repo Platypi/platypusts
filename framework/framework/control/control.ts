@@ -1510,12 +1510,12 @@ module plat {
              * A function that allows this control to observe both the bound property itself as well as 
              * potential child properties if being bound to an object.
              * 
-             * @param {plat.observable.IImplementTwoWayBinding} implementer The control that facilitates the 
+             * @param {plat.observable.IImplementTwoWayBinding} binder The control that facilitates the 
              * databinding.
              * 
              * @returns {void}
              */
-            observeProperties(implementer: observable.IImplementTwoWayBinding): void;
+            observeProperties(binder: observable.IImplementTwoWayBinding): void;
         }
 
         /**

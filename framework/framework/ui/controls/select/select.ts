@@ -178,6 +178,19 @@ module plat.ui.controls {
         protected _defaultOption: HTMLOptionElement;
 
         /**
+         * @name _binder
+         * @memberof plat.ui.controls.Select
+         * @kind property
+         * @access protected
+         * 
+         * @type {plat.observable.IImplementTwoWayBinding}
+         * 
+         * @description
+         * The complementary control implementing two way databinding.
+         */
+        protected _binder: observable.IImplementTwoWayBinding;
+
+        /**
          * @name __listenerSet
          * @memberof plat.ui.controls.Select
          * @kind property
@@ -279,10 +292,16 @@ module plat.ui.controls {
          * @returns {void}
          */
         contextChanged(newValue: Array<any>, oldValue: Array<any>): void {
-            if (!isArray(newValue)) {
-                this.itemsLoaded.then((): void => {
-                    this._removeItems(this.controls.length);
-                });
+            if (isEmpty(newValue)) {
+                if (!isEmpty(oldValue)) {
+                    this.itemsLoaded.then((): void => {
+                        this._removeItems(this.controls.length);
+                    });
+                }
+                return;
+            } else if (!isArray(newValue)) {
+                var _Exception = this._Exception;
+                _Exception.warn(this.type + ' context set to something other than an Array.', _Exception.CONTEXT);
                 return;
             }
 
@@ -322,6 +341,8 @@ module plat.ui.controls {
 
             var context = this.context;
             if (!isArray(context)) {
+                var _Exception = this._Exception;
+                _Exception.warn(this.type + ' context set to something other than an Array.', _Exception.CONTEXT);
                 return;
             }
 
@@ -357,29 +378,31 @@ module plat.ui.controls {
          * A function that allows this control to observe both the bound property itself as well as
          * potential child properties if being bound to an object.
          * 
-         * @param {plat.observable.IImplementTwoWayBinding} implementer The control that facilitates the
+         * @param {plat.observable.IImplementTwoWayBinding} binder The control that facilitates the
          * databinding.
          * 
          * @returns {void}
          */
-        observeProperties(implementer: observable.IImplementTwoWayBinding): void {
+        observeProperties(binder: observable.IImplementTwoWayBinding): void {
             var element = <HTMLSelectElement>this.element,
                 setter: observable.IBoundPropertyChangedListener<any>;
 
+            this._binder = binder;
+
             if (element.multiple) {
                 setter = this._setSelectedIndices.bind(this);
-                if (isNull(implementer.evaluate())) {
+                if (isNull(binder.evaluate())) {
                     this.inputChanged([]);
                 }
 
-                implementer.observeProperty((): void => {
-                    setter(implementer.evaluate(), null, null);
+                binder.observeProperty((): void => {
+                    setter(binder.evaluate(), null, null);
                 }, null, true);
             } else {
                 setter = this._setSelectedIndex.bind(this);
             }
 
-            implementer.observeProperty(setter);
+            binder.observeProperty(setter);
             this.addEventListener(element, 'change', this._observeChange, false);
         }
 
@@ -405,7 +428,9 @@ module plat.ui.controls {
             if (isNull(newValue)) {
                 if (firstTime === true || !this._document.body.contains(element)) {
                     this.itemsLoaded.then((): void => {
-                        this.inputChanged(element.value);
+                        if (isNull(this._binder.evaluate())) {
+                            this.inputChanged(element.value);
+                        }
                     });
                     return;
                 }
@@ -470,7 +495,7 @@ module plat.ui.controls {
 
             this.itemsLoaded.then((): void => {
                 if (nullValue || !isArray(newValue)) {
-                    if (firstTime === true) {
+                    if (firstTime === true && isNull(this._binder.evaluate())) {
                         this.inputChanged(this._getSelectedValues());
                     }
                     // unselects the options unless a match is found
