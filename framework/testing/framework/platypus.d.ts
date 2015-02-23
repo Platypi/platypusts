@@ -3545,10 +3545,10 @@ declare module plat {
             /**
               * A function that allows this control to observe both the bound property itself as well as
               * potential child properties if being bound to an object.
-              * @param {plat.observable.IImplementTwoWayBinding} implementer The control that facilitates the
+              * @param {plat.observable.IImplementTwoWayBinding} binder The control that facilitates the
               * databinding.
               */
-            observeProperties(implementer: observable.IImplementTwoWayBinding): void;
+            observeProperties(binder: observable.IImplementTwoWayBinding): void;
         }
         /**
           * Defines methods that interact with a control that implements ISupportTwoWayBinding
@@ -4923,10 +4923,10 @@ declare module plat {
             /**
               * A function that allows this control to observe both the bound property itself as well as
               * potential child properties if being bound to an object.
-              * @param {plat.observable.IImplementTwoWayBinding} implementer The control that facilitates the
+              * @param {plat.observable.IImplementTwoWayBinding} binder The control that facilitates the
               * databinding.
               */
-            observeProperties(implementer: observable.IImplementTwoWayBinding): void;
+            observeProperties(binder: observable.IImplementTwoWayBinding): void;
             /**
               * A function that signifies when this control's bindable property has changed.
               * @param {any} newValue The new value of the property after the change.
@@ -8547,6 +8547,10 @@ declare module plat {
                   */
                 protected _defaultOption: HTMLOptionElement;
                 /**
+                  * The complementary control implementing two way databinding.
+                  */
+                protected _binder: observable.IImplementTwoWayBinding;
+                /**
                   * Whether or not the Array listener has been set.
                   */
                 private __listenerSet;
@@ -8582,10 +8586,10 @@ declare module plat {
                 /**
                   * A function that allows this control to observe both the bound property itself as well as
                   * potential child properties if being bound to an object.
-                  * @param {plat.observable.IImplementTwoWayBinding} implementer The control that facilitates the
+                  * @param {plat.observable.IImplementTwoWayBinding} binder The control that facilitates the
                   * databinding.
                   */
-                observeProperties(implementer: observable.IImplementTwoWayBinding): void;
+                observeProperties(binder: observable.IImplementTwoWayBinding): void;
                 /**
                   * Updates the selected index if bound to a property.
                   * @param {string} newValue The new value of the bound property.
