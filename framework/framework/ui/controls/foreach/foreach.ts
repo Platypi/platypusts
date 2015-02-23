@@ -746,7 +746,6 @@ module plat.ui.controls {
         protected _unshift(changes: Array<observable.IArrayChanges<any>>): void {
             var change = changes[0],
                 addedCount = change.addedCount,
-                _Promise = this._Promise,
                 addQueue = this._addQueue;
 
             if (this._animate) {
