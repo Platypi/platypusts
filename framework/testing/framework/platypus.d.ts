@@ -1,5 +1,5 @@
 /**
-  * PlatypusTS v0.11.2 (http://getplatypi.com)
+  * PlatypusTS v0.11.3 (http://getplatypi.com)
   * Copyright 2015 Platypi, LLC. All rights reserved.
   * PlatypusTS is licensed under the GPL-3.0 found at
   * http://opensource.org/licenses/GPL-3.0
@@ -4638,21 +4638,21 @@ declare module plat {
             /**
               * A Node array for managing the TemplateControl's childNodes in the event that this control
               * replaces its element. This property will only exist/be of use for a TemplateControl that
-              * implements the replaceWith property.
+              * implements the replaceWith property. This is an expirimental API.
               */
             elementNodes: Array<Node>;
             /**
-              * The first node in the TemplateControl's body. This property will be a Comment node when the
-              * control implements `replaceWith = null`, otherwise it will be null. This property allows an
+              * The first node in the TemplateControl's body. This property allows an
               * TemplateControl to add nodes to its body in the event that it replaces its element.
+              * This is an expirimental API.
               */
-            startNode: Node;
+            startNode: Comment;
             /**
-              * The last node in the TemplateControl's body. This property will be a Comment node when the
-              * control implements the replaceWith property, otherwise it will be null. This property allows a
+              * The last node in the TemplateControl's body. This property allows a
               * TemplateControl to add nodes to its body in the event that it replaces its element.
+              * This is an expirimental API.
               */
-            endNode: Node;
+            endNode: Comment;
             /**
               * Allows a TemplateControl to either swap its element with another element (e.g. plat-select),
               * or replace its element altogether. If null or empty string, the element will be removed from the DOM, and the
@@ -4733,9 +4733,7 @@ declare module plat {
               */
             static setContextResources(control: TemplateControl): void;
             /**
-              * Completely removes a control's element from its parentNode. If the
-              * control implements `replaceWith=null`, All of its nodes between its
-              * startNode and endNode (inclusive) will be removed.
+              * Completely removes a control's element from its parentNode.
               * @param {plat.ui.TemplateControl} control The control whose element should be removed.
               */
             static removeElement(control: TemplateControl): void;
@@ -4879,9 +4877,7 @@ declare module plat {
               */
             setContextResources(control: TemplateControl): void;
             /**
-              * Completely removes a control's element from its parentNode. If the
-              * control implements `replaceWith=null`, All of its nodes between its
-              * startNode and endNode (inclusive) will be removed.
+              * Completely removes a control's element from its parentNode.
               * @param {plat.ui.TemplateControl} control The control whose element should be removed.
               */
             removeElement(control: TemplateControl): void;
@@ -11644,15 +11640,6 @@ declare module plat {
               * Used to set the element's href property.
               */
             property: string;
-            /**
-              * The TemplateControl for a plat-href is an Link control.
-              */
-            templateControl: ui.controls.Link;
-            /**
-              * Sets the href property, then calls the Link control to
-              * normalize the href.
-              */
-            setter(): void;
         }
         /**
           * A type of ElementPropertyControl used to set 'src' on an anchor tag.
