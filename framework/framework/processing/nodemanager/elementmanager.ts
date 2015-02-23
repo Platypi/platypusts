@@ -906,8 +906,8 @@ module plat.processing {
                 childNodes = arrayProto.slice.call(nodes, startIndex + 1, startIndex + this.replaceNodeLength);
                 clonedManager = ElementManager.clone(this, parentManager, null, newControl, nodeMap);
                 newControl.elementNodes = childNodes;
-                newControl.startNode = newNode;
-                newControl.endNode = childNodes.pop();
+                newControl.startNode = <Comment>newNode;
+                newControl.endNode = <Comment>childNodes.pop();
 
                 startNodeManager = children.shift();
                 endNodeManager = children.shift();

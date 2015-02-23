@@ -143,6 +143,7 @@ module plat.ui.controls {
                     return;
                 }
 
+                element.removeAttribute('data-href');
                 ev.preventDefault();
 
                 requestAnimationFrameGlobal((): void => {

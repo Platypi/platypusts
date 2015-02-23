@@ -681,9 +681,9 @@ module plat.ui {
                     return _document.createDocumentFragment();
                 }
 
-                control.startNode = template.insertBefore(_document.createComment(control.type + __START_NODE),
+                control.startNode = <Comment>template.insertBefore(_document.createComment(control.type + __START_NODE),
                     template.firstChild);
-                control.endNode = template.insertBefore(_document.createComment(control.type + __END_NODE),
+                control.endNode = <Comment>template.insertBefore(_document.createComment(control.type + __END_NODE),
                     null);
 
                 return template;

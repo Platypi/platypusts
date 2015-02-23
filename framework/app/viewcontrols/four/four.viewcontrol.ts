@@ -43,7 +43,7 @@
         loaded() {
             this.head.title('Page Four');
             //this.head.description('This is the Fourth page');
-            this.head.image('testimage');
+            this.head.images(['testimage']);
             this.head.author('Will Johnston');
         }
     }

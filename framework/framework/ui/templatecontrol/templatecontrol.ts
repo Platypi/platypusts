@@ -345,7 +345,7 @@ module plat.ui {
          * @description
          * A Node array for managing the {@link plat.ui.TemplateControl|TemplateControl's} childNodes in the event that this control 
          * replaces its element. This property will only exist/be of use for a {@link plat.ui.TemplateControl|TemplateControl} that 
-         * implements the replaceWith property.
+         * implements the replaceWith property. This is an expirimental API.
          */
         elementNodes: Array<Node>;
 
@@ -358,13 +358,13 @@ module plat.ui {
          * @type {Node}
          * 
          * @description
-         * The first node in the {@link plat.ui.TemplateControl|TemplateControl's} body. This property will be a Comment node when the 
-         * control implements `replaceWith = null`, otherwise it will be null. This property allows an 
-         * {@link plat.ui.TemplateControl|TemplateControl} to add nodes to its body in the event that it replaces its element.
+         * The first node in the {@link plat.ui.TemplateControl|TemplateControl's} body. This property allows an 
+         * {@link plat.ui.TemplateControl|TemplateControl} to add nodes to its body in the event that it replaces its element. 
+         * This is an expirimental API.
          * 
          * @example this.startNode.parentNode.insertBefore(node, this.startNode.nextSibling);
          */
-        startNode: Node;
+        startNode: Comment;
 
         /**
          * @name endNode
@@ -375,13 +375,13 @@ module plat.ui {
          * @type {Node}
          * 
          * @description
-         * The last node in the {@link plat.ui.TemplateControl|TemplateControl's} body. This property will be a Comment node when the 
-         * control implements the replaceWith property, otherwise it will be null. This property allows a 
-         * {@link plat.ui.TemplateControl|TemplateControl} to add nodes to its body in the event that it replaces its element.
+         * The last node in the {@link plat.ui.TemplateControl|TemplateControl's} body. This property allows a 
+         * {@link plat.ui.TemplateControl|TemplateControl} to add nodes to its body in the event that it replaces its element. 
+         * This is an expirimental API.
          * 
          * @example this.endNode.parentNode.insertBefore(node, this.endNode);
          */
-        endNode: Node;
+        endNode: Comment;
 
         /**
          * @name replaceWith
@@ -789,9 +789,7 @@ module plat.ui {
          * @static
          * 
          * @description
-         * Completely removes a control's element from its parentNode. If the 
-         * control implements `replaceWith=null`, All of its nodes between its 
-         * startNode and endNode (inclusive) will be removed.
+         * Completely removes a control's element from its parentNode.
          * 
          * @param {plat.ui.TemplateControl} control The control whose element should be removed.
          * 
@@ -1257,9 +1255,7 @@ module plat.ui {
          * @static
          * 
          * @description
-         * Completely removes a control's element from its parentNode. If the 
-         * control implements `replaceWith=null`, All of its nodes between its 
-         * startNode and endNode (inclusive) will be removed.
+         * Completely removes a control's element from its parentNode.
          * 
          * @param {plat.ui.TemplateControl} control The control whose element should be removed.
          * 
