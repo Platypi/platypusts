@@ -574,18 +574,7 @@ module plat.observable {
          * @returns {any} The obtained context.
          */
         getContext(split: Array<string>, observe?: boolean): any {
-            var join = split.join('.'),
-                context = this.__contextObjects[join];
-
-            if (isNull(context)) {
-                if (observe === true) {
-                    context = this.__contextObjects[join] = this._observeImmediateContext(split, join);
-                } else {
-                    context = this._getImmediateContext(split);
-                }
-            }
-
-            return context;
+            return this._getContext(split.join('.'), split, observe);
         }
 
         /**
@@ -611,6 +600,7 @@ module plat.observable {
 
             var split = absoluteIdentifier.split('.'),
                 key = split.pop(),
+                isLength = key === 'length',
                 hasIdentifier = this._hasIdentifier(absoluteIdentifier),
                 hasObservableListener = !isNull(observableListener),
                 join: string,
@@ -618,7 +608,7 @@ module plat.observable {
 
             if (split.length > 0) {
                 join = split.join('.');
-                context = this.getContext(split, true);
+                context = this._getContext(join, split, true);
             } else {
                 join = key;
                 context = this.context;
@@ -626,13 +616,13 @@ module plat.observable {
 
             if (!isObject(context)) {
                 if (hasObservableListener) {
-                    if (key === 'length') {
+                    if (isLength) {
                         this.__lengthListeners[absoluteIdentifier] = observableListener;
                         ContextManager.pushRemoveListener(absoluteIdentifier, observableListener.uid, (): void => {
                             deleteProperty(this.__lengthListeners, absoluteIdentifier);
                         });
                     }
-                    return this._addObservableListener(absoluteIdentifier, observableListener);
+                    return this._addObservableListener(absoluteIdentifier, observableListener, isLength);
                 }
 
                 return noop;
@@ -653,10 +643,10 @@ module plat.observable {
 
             if (hasObservableListener) {
                 var removeObservedCallback = noop,
-                    removeAbsoluteCallback = this._addObservableListener(absoluteIdentifier, observableListener);
+                    removeAbsoluteCallback = this._addObservableListener(absoluteIdentifier, observableListener, isLength);
 
                 if (isObserved && absoluteIdentifier !== observedIdentifier) {
-                    removeObservedCallback = this._addObservableListener(observedIdentifier, observableListener);
+                    removeObservedCallback = this._addObservableListener(observedIdentifier, observableListener, isLength);
                 }
 
                 removeCallback = (): void => {
@@ -690,7 +680,7 @@ module plat.observable {
                 };
             } else if (!hasIdentifier) {
                 // check if value is defined and context manager hasn't seen this identifier
-                if (parentIsArray && key === 'length') {
+                if (parentIsArray && isLength) {
                     var property = split.pop(),
                         parentContext = this.getContext(split, false);
 
@@ -940,6 +930,37 @@ module plat.observable {
         }
 
         /**
+         * @name _getContext
+         * @memberof plat.observable.ContextManager
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Gets the context object of an identifier.
+         * 
+         * @param {string} identifier The identifier for which we're getting the context.
+         * @param {Array<string>} split The string array containing properties used to index into
+         * the context.
+         * @param {boolean} observe? Whether or not to observe the identifier indicated by the 
+         * split Array.
+         * 
+         * @returns {any} The immediate context denoted by the identifier.
+         */
+        protected _getContext(identifier: string, split: Array<string>, observe?: boolean): any {
+            var context = this.__contextObjects[identifier];
+
+            if (isNull(context)) {
+                if (observe === true) {
+                    context = this.__contextObjects[identifier] = this._observeImmediateContext(split, identifier);
+                } else {
+                    context = this._getImmediateContext(split);
+                }
+            }
+
+            return context;
+        }
+
+        /**
          * @name _getImmediateContext
          * @memberof plat.observable.ContextManager
          * @kind function
@@ -1077,6 +1098,8 @@ module plat.observable {
                 split: Array<string>,
                 values: IObject<any> = {},
                 value: any,
+                period = '.',
+                lengthStr = 'length',
                 key: string,
                 keyIsLength: boolean,
                 start = identifier.length + 1,
@@ -1093,10 +1116,10 @@ module plat.observable {
             for (var i = 0; i < length; ++i) {
                 binding = mappings[i];
                 property = binding.slice(start);
-                split = property.split('.');
+                split = property.split(period);
                 key = split.pop();
-                keyIsLength = key === 'length',
-                parentProperty = split.join('.');
+                keyIsLength = key === lengthStr,
+                parentProperty = split.join(period);
 
                 if (isEmpty(parentProperty)) {
                     newParent = newValue;
@@ -1108,15 +1131,17 @@ module plat.observable {
                         var lengthListener = this.__lengthListeners[binding];
                         if (!isNull(lengthListener)) {
                             var uid = lengthListener.uid,
-                                arraySplit = identifier.split('.'),
+                                arraySplit = identifier.split(period),
                                 arrayKey = arraySplit.pop(),
-                                arrayParent = this.getContext(arraySplit, false),
-                                join: string;
+                                join = arraySplit.join(period),
+                                arrayParent = this._getContext(join, arraySplit, false);
 
                             this.__observedIdentifier = null;
                             access(arrayParent, arrayKey);
+                            if (isString(this.__observedIdentifier)) {
+                                join = this.__observedIdentifier;
+                            }
 
-                            join = isString(this.__observedIdentifier) ? this.__observedIdentifier : arraySplit.join('.');
                             var removeListener = this.observeArrayMutation(uid, noop, join, newParent, null);
                             this.observe(join, {
                                 uid: uid,
@@ -1178,26 +1203,26 @@ module plat.observable {
          * @param {string} absoluteIdentifier The identifier being observed.
          * @param {plat.observable.IListener} observableListener The function and associated unique ID to be fired 
          * for this identifier.
+         * @param {boolean} isLength? Indicates the property being observed is an Array's length.
          * 
          * @returns {plat.IRemoveListener} A function for removing the given listener for the given absoluteIdentifier.
          */
-        protected _addObservableListener(absoluteIdentifier: string, observableListener: IListener): IRemoveListener {
-            var split = absoluteIdentifier.split('.'),
-                property = split.pop(),
-                isLength = property === 'length',
-                context: any;
+        protected _addObservableListener(absoluteIdentifier: string, observableListener: IListener, isLength?: boolean): IRemoveListener {
+            if (isLength === true) {
+                var split = absoluteIdentifier.split('.');
+                // pop length key
+                split.pop();
 
-            if (isLength) {
-                property = split.pop();
-                context = this.getContext(split, false);
-            }
+                var property = split.pop(),
+                    context = this.getContext(split, false);
 
-            if (isObject(context)) {
-                this.__observedIdentifier = null;
-                access(context, property);
+                if (isObject(context)) {
+                    this.__observedIdentifier = null;
+                    access(context, property);
 
-                if (isString(this.__observedIdentifier)) {
-                    absoluteIdentifier = this.__observedIdentifier + (isLength ? '.length' : '');
+                    if (isString(this.__observedIdentifier)) {
+                        absoluteIdentifier = this.__observedIdentifier + (isLength === true ? '.length' : '');
+                    }
                 }
             }
 
@@ -1368,8 +1393,7 @@ module plat.observable {
 
             callbacks.splice(index, 1);
 
-            if (isEmpty(this.__identifiers[identifier])) {
-                deleteProperty(this.__identifierHash, identifier);
+            if (callbacks.length === 0) {
                 deleteProperty(this.__contextObjects, identifier);
             }
         }
@@ -1613,27 +1637,23 @@ module plat.observable {
          * @returns {void}
          */
         private __addHashValues(identifier: string): void {
-            var split = identifier.split('.'),
-                ident = split.shift(),
-                hashValue = this.__identifierHash[ident];
-
-            if (isNull(hashValue)) {
-                hashValue = this.__identifierHash[ident] = {};
-                if (split.length === 0) {
-                    return;
-                }
+            var identifierHash = this.__identifierHash;
+            if (isObject(identifierHash[identifier])) {
+                return;
             }
 
-            if (ident !== identifier && !hashValue[identifier]) {
-                hashValue[identifier] = true;
-            }
+            identifierHash[identifier] = {};
 
-            while (split.length > 0) {
-                ident += '.' + split.shift();
-                hashValue = this.__identifierHash[ident];
+            var index: number,
+                period = '.',
+                ident = identifier,
+                hashValue: IObject<boolean>;
+            while ((index = ident.lastIndexOf(period)) !== -1) {
+                ident = ident.slice(0, index);
+                hashValue = identifierHash[ident];
 
                 if (isNull(hashValue)) {
-                    hashValue = this.__identifierHash[ident] = {};
+                    hashValue = identifierHash[ident] = {};
                     if (ident !== identifier) {
                         hashValue[identifier] = true;
                     }
