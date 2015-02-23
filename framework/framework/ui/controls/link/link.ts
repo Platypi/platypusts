@@ -133,10 +133,6 @@ module plat.ui.controls {
         initialize(): void {
             var element = this.element;
 
-            this.addEventListener(element, 'click', (ev: Event): void => {
-                ev.preventDefault();
-            }, false);
-
             this.addEventListener(element, __tap, (ev: IExtendedEvent): void => {
                 if (ev.buttons !== 1) {
                     return;
