@@ -1033,8 +1033,8 @@
                             ev.preventDefault();
                         }
                     } else if (this._inTouch === true) {
-                        // handInput must be called prior to preventClickFromTouch due to an 
-                        // order of operations
+                        // handleInput must be called prior to preventClickFromTouch due to an 
+                        // order of operations issue / potential race condition
                         this.__handleInput(<HTMLInputElement>ev.target);
                         if (ev.cancelable === true) {
                             ev.preventDefault();
@@ -1961,15 +1961,20 @@
                 touches = ev.touches || this.__pointerEvents,
                 changedTouches = ev.changedTouches,
                 changedTouchesExist = !isUndefined(changedTouches),
+                preventDefault: () => void,
                 timeStamp = ev.timeStamp;
 
             if (changedTouchesExist) {
                 if (isStart) {
+                    preventDefault = ev.preventDefault.bind(ev);
                     ev = changedTouches[0];
+                    ev.preventDefault = preventDefault;
                 } else {
                     var changedTouchIndex = this.__getTouchIndex(changedTouches);
                     if (changedTouchIndex >= 0) {
+                        preventDefault = ev.preventDefault.bind(ev);
                         ev = changedTouches[changedTouchIndex];
+                        ev.preventDefault = preventDefault;
                     } else if (this.__getTouchIndex(touches) >= 0) {
                         // we want to return null because our point of interest is in touches 
                         // but was not in changedTouches so it is still playing a part on the page
