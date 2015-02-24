@@ -1108,17 +1108,12 @@ module plat.observable {
                 newChild: any,
                 oldChild: any;
 
-            if (length === 0) {
-                deleteProperty(this.__identifierHash, identifier);
-                return;
-            }
-
             for (var i = 0; i < length; ++i) {
                 binding = mappings[i];
                 property = binding.slice(start);
                 split = property.split(period);
                 key = split.pop();
-                keyIsLength = key === lengthStr,
+                keyIsLength = (key === lengthStr),
                 parentProperty = split.join(period);
 
                 if (isEmpty(parentProperty)) {
@@ -1502,11 +1497,7 @@ module plat.observable {
 
                     if (isObject(props)) {
                         mappings = Object.keys(props);
-                        if (mappings.length > 0) {
-                            childPropertiesExist = true;
-                        } else {
-                            deleteProperty(this.__identifierHash, identifier);
-                        }
+                        childPropertiesExist = mappings.length > 0;
                     }
 
                     this._execute(identifier, value, oldValue);
@@ -1571,12 +1562,8 @@ module plat.observable {
                         mappings: Array<string>;
 
                     if (isObject(props)) {
-                        var mappings = Object.keys(props);
-                        if (mappings.length > 0) {
-                            childPropertiesExist = true;
-                        } else {
-                            deleteProperty(this.__identifierHash, identifier);
-                        }
+                        mappings = Object.keys(props);
+                        childPropertiesExist = mappings.length > 0;
                     }
 
                     this._execute(identifier, newValue, oldValue);
