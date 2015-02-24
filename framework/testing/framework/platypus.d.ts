@@ -3264,6 +3264,15 @@ declare module plat {
               */
             protected _overwriteArray(absoluteIdentifier: string, array: Array<any>): void;
             /**
+              * Gets the context object of an identifier.
+              * @param {string} identifier The identifier for which we're getting the context.
+              * @param {Array<string>} split The string array containing properties used to index into
+              * the context.
+              * @param {boolean} observe? Whether or not to observe the identifier indicated by the
+              * split Array.
+              */
+            protected _getContext(identifier: string, split: Array<string>, observe?: boolean): any;
+            /**
               * Gets the immediate context of identifier by splitting on ".".
               * @param {Array<string>} split The string array containing properties used to index into
               * the context.
@@ -3303,8 +3312,9 @@ declare module plat {
               * @param {string} absoluteIdentifier The identifier being observed.
               * @param {plat.observable.IListener} observableListener The function and associated unique ID to be fired
               * for this identifier.
+              * @param {boolean} isLength? Indicates the property being observed is an Array's length.
               */
-            protected _addObservableListener(absoluteIdentifier: string, observableListener: IListener): IRemoveListener;
+            protected _addObservableListener(absoluteIdentifier: string, observableListener: IListener, isLength?: boolean): IRemoveListener;
             /**
               * Observes a property on a given context specified by an identifier.
               * @param {string} identifier The full identifier path for the property being observed.
@@ -8848,6 +8858,14 @@ declare module plat {
                   */
                 replaceWith: string;
                 /**
+                  * The options for Link, if ignore is true, anchor will ignore changing the url.
+                  */
+                options: observable.IObservableProperty<ILinkOptions>;
+                /**
+                  * The control's anchor element.
+                  */
+                element: HTMLAnchorElement;
+                /**
                   * The RouterStatic injectable instance
                   */
                 protected _Router: routing.IRouterStatic;
@@ -8858,27 +8876,15 @@ declare module plat {
                 /**
                   * The router associated with this link.
                   */
-                router: routing.Router;
-                /**
-                  * The options for Link, if ignore is true, anchor will ignore changing the url.
-                  */
-                options: observable.IObservableProperty<ILinkOptions>;
-                /**
-                  * The control's anchor element.
-                  */
-                element: HTMLAnchorElement;
+                protected _router: routing.Router;
                 /**
                   * The a method for removing the click event listener for this control's element.
                   */
-                removeClickListener: IRemoveListener;
+                protected _removeClickListener: IRemoveListener;
                 /**
-                  * Prevents default on the anchor tag if the href attribute is left empty, also determines internal links.
+                  * Initializes both tap and click events.
                   */
                 initialize(): void;
-                /**
-                  * Returns a click event listener. Also handles disposing of the listener.
-                  */
-                getListener(element: HTMLAnchorElement): (ev: Event) => void;
                 /**
                   * Calls to normalize the href for internal links.
                   */
@@ -8891,8 +8897,23 @@ declare module plat {
                   * Determines the href based on the input options.
                   */
                 getHref(): string;
+                /**
+                  * Determines Whether or not the default click behavior should be prevented.
+                  */
+                protected _handleClick(ev: Event): void;
+                /**
+                  * Determines the proper link upon $tap.
+                  */
+                protected _handleTap(ev: IGestureEvent): void;
             }
+            /**
+              * The available options for the Link control.
+              */
             interface ILinkOptions extends routing.INavigateOptions {
+                /**
+                  * The view to which the Navigator should navigate. Can be specified by either a string path, the
+                  * registered name of the view, or the registered Constructor.
+                  */
                 view: any;
             }
         }
