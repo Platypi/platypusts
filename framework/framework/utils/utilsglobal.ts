@@ -363,13 +363,24 @@ function postpone(method: (...args: any[]) => void, args?: Array<any>, context?:
 }
 
 function defer(method: (...args: any[]) => void, timeout: number, args?: Array<any>, context?: any): plat.IRemoveListener {
-    function defer(): void {
+    function execDefer(): void {
         method.apply(context, args);
     }
 
-    var timeoutId = setTimeout(defer, timeout);
+    var timeoutId = setTimeout(execDefer, timeout);
     return (): void => {
         clearTimeout(timeoutId);
+    };
+}
+
+function setIntervalGlobal(method: (...args: any[]) => void, interval: number, args?: Array<any>, context?: any): plat.IRemoveListener {
+    function execInterval(): void {
+        method.apply(context, args);
+    }
+
+    var intervalId = setInterval(execInterval, interval);
+    return (): void => {
+        clearInterval(intervalId);
     };
 }
 

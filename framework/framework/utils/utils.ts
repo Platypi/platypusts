@@ -734,7 +734,7 @@ module plat {
          * after the current call stack is clear. Equivalent to a setTimeout with the specified timeout value.
          * 
          * @param {(...args: Array<any>) => void} method The method to call.
-         * @param {number} timeout The time (in milliseconds) to delay before calling the provided method
+         * @param {number} timeout The time (in milliseconds) to delay before calling the provided method.
          * @param {Array<any>} args? The arguments to apply to the method.
          * @param {any} context? An optional context to bind to the method.
          * 
@@ -742,6 +742,27 @@ module plat {
          */
         defer(method: (...args: any[]) => void, timeout: number, args?: Array<any>, context?: any): IRemoveListener {
             return defer(method, timeout, args, context);
+        }
+
+        /**
+         * @name setInterval
+         * @memberof plat.Utils
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Takes in a method and array of arguments to pass to that method. Adds the method to the call stack every 
+         * interval amount of time. Equivalent to a setInterval with the specified interval value.
+         * 
+         * @param {(...args: Array<any>) => void} method The method to call.
+         * @param {number} interval The time (in milliseconds) between each consecutive call of the provided method.
+         * @param {Array<any>} args? The arguments to apply to the method.
+         * @param {any} context? An optional context to bind to the method.
+         * 
+         * @returns {plat.IRemoveListener} A function that will clear the timeout when called.
+         */
+        setInterval(method: (...args: any[]) => void, interval: number, args?: Array<any>, context?: any): IRemoveListener {
+            return setIntervalGlobal(method, interval, args, context);
         }
 
         /**
