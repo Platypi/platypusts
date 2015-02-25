@@ -112,19 +112,6 @@
         protected _Promise: async.IPromise;
 
         /**
-         * @name _canceled
-         * @memberof plat.ui.animations.BaseAnimation
-         * @kind property
-         * @access protected
-         * 
-         * @type {boolean}
-         * 
-         * @description
-         * Whether or not the animation has been canceled.
-         */
-        protected _canceled = false;
-
-        /**
          * @name _resolve
          * @memberof plat.ui.animations.BaseAnimation
          * @kind property
@@ -241,12 +228,12 @@
          * @virtual
          * 
          * @description
-         * A function to be called to let it be known the animation is being cancelled.
+         * A function to be called to let it be known the animation is being cancelled. Although not 
+         * necessary, we call end() in this function as well for safe measure.
          * 
          * @returns {void}
          */
         cancel(): void {
-            this._canceled = true;
             this.end();
         }
 

@@ -801,55 +801,55 @@
 
             this._handlePreInitFunctionality(elements, elementNodes, functionality);
 
-            var animationPromises: Array<IAnimationThenable<any>> = [],
-                id = uniqueId('animation_'),
-                previousAnimations = this.__setAnimationId(id, elementNodes);
+            var id = uniqueId('animation_'),
+                previousAnimations = this.__setAnimationId(id, elementNodes),
+                animationPromise = new AnimationPromise((resolve: any): void => {
+                    var _Promise = this._Promise;
+                    _Promise.all(previousAnimations).then((): void => {
+                        var animationPromises: Array<IAnimationThenable<any>> = [];
 
-            // instantiate needs to be called after __setAnimationId in the case that 
-            // the same element is animating while in an animation
-            for (var i = 0; i < length; ++i) {
-                animationPromises.push(animationInstances[i].instantiate(elementNodes[i], options));
-            }
+                        for (var i = 0; i < length; ++i) {
+                            animationPromises.push(animationInstances[i].instantiate(elementNodes[i], options));
+                        }
 
-            this._handlePostInitFunctionality(elements, elementNodes, functionality);
+                        this._handlePostInitFunctionality(elements, elementNodes, functionality);
 
-            var animationPromise = new AnimationPromise((resolve: any): void => {
-                this._Promise.all(animationPromises.concat(previousAnimations)).then(resolve);
-            })
+                        var animationsFinished = _Promise.all(animationPromises),
+                            animatingParentId = this.__isParentAnimating(elementNodes),
+                            animatedElement = this.__generateAnimatedElement(id, elementNodes, animationPromise);
+
+                        if (!isNull(animatingParentId)) {
+                            this._handleEndFunctionality(elements, elementNodes, functionality);
+                            animatedElement.animationEnd(true);
+
+                            var parent = this._animatedElements[animatingParentId],
+                                resolvedPromise = isPromise(parent.promise) ?
+                                    (): IAnimationThenable<any> => {
+                                        return parent.promise;
+                                    } : (): IAnimationThenable<any> => {
+                                        return animationPromise;
+                                    };
+
+                            animationsFinished.then((): void => {
+                                resolve(resolvedPromise);
+                            });
+                        }
+
+                        this.__stopChildAnimations(elementNodes);
+
+                        animatedElement.promise = animationPromise;
+                        animationsFinished.then((): void => {
+                            this._handleEndFunctionality(elements, elementNodes, functionality);
+                            animatedElement.animationEnd();
+                            resolve((): IAnimationThenable<any> => {
+                                return animationPromise;
+                            });
+                        });
+                    });
+                });
 
             animationPromise.initialize(animationInstances);
-
-            var animatingParentId = this.__isParentAnimating(elementNodes),
-                animatedElement = this.__generateAnimatedElement(id, elementNodes, animationPromise);
-            if (!isNull(animatingParentId)) {
-                this._handleEndFunctionality(elements, elementNodes, functionality);
-                animatedElement.animationEnd(true);
-
-                var parent = this._animatedElements[animatingParentId];
-                if (isPromise(parent.promise)) {
-                    return animationPromise.then((): () => IAnimationThenable<any> => {
-                        return (): IAnimationThenable<any> => {
-                            return parent.promise;
-                        };
-                    });
-                }
-
-                return animationPromise.then((): () => IAnimationThenable<any> => {
-                    return (): IAnimationThenable<any> => {
-                        return animationPromise;
-                    };
-                });
-            }
-
-            this.__stopChildAnimations(elementNodes);
-
-            return animatedElement.promise = animationPromise.then((): () => IAnimationThenable<any> => {
-                this._handleEndFunctionality(elements, elementNodes, functionality);
-                animatedElement.animationEnd();
-                return (): IAnimationThenable<any> => {
-                    return animationPromise;
-                };
-            });
+            return animationPromise;
         }
 
         /**

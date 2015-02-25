@@ -41,6 +41,19 @@
         className = __SimpleTransition;
 
         /**
+         * @name _stopAnimation
+         * @memberof plat.ui.animations.SimpleCssTransition
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.IRemoveListener}
+         * 
+         * @description
+         * A function for stopping a potential callback in the animation chain.
+         */
+        protected _stopAnimation: IRemoveListener = noop;
+
+        /**
          * @name _modifiedProperties
          * @memberof plat.ui.animations.SimpleCssTransition
          * @kind property
@@ -134,37 +147,32 @@
          * @returns {void}
          */
         start(): void {
-            requestAnimationFrameGlobal((): void => {
+            this._stopAnimation = requestAnimationFrameGlobal((): void => {
                 var element = this.element;
 
-                if (this._canceled) {
-                    return;
-                } else if (element.offsetParent === null) {
+                if (element.offsetParent === null) {
                     this._animate();
                     this._dispose();
                     this.end();
                 }
 
                 addClass(element, this.className);
+                this._started = true;
 
                 var transitionId = this._animationEvents.$transition,
                     computedStyle = this._window.getComputedStyle(element, (this.options || <ISimpleCssTransitionOptions>{}).pseudo),
                     transitionProperty = computedStyle[<any>(transitionId + 'Property')],
                     transitionDuration = computedStyle[<any>(transitionId + 'Duration')];
 
-                this._started = true;
-
                 if (transitionProperty === '' || transitionProperty === 'none' ||
                     transitionDuration === '' || transitionDuration === '0s') {
-                    requestAnimationFrameGlobal((): void => {
-                        this._animate();
-                        this._dispose();
-                        this.end();
-                    });
+                    this._animate();
+                    this._dispose();
+                    this.end();
                     return;
                 }
 
-                this.transitionEnd(this._done);
+                this._stopAnimation = this.transitionEnd(this._done);
 
                 if (this._animate()) {
                     return;
@@ -187,15 +195,14 @@
          * @returns {void}
          */
         cancel(): void {
-            super.cancel();
+            this._stopAnimation();
 
-            requestAnimationFrameGlobal((): void => {
-                if (!this._started) {
-                    this._animate();
-                }
+            if (!this._started) {
+                this._animate();
+            }
 
-                this._dispose();
-            });
+            this._dispose();
+            this.end();
         }
 
         /**
@@ -212,6 +219,7 @@
         protected _dispose(): void {
             var className = this.className;
             removeClass(this.element, className + ' ' + className + __INIT_SUFFIX);
+            this._stopAnimation = noop;
         }
 
         /**
@@ -239,10 +247,8 @@
                 }
             }
 
+            this._dispose();
             this.end();
-            requestAnimationFrameGlobal((): void => {
-                this._dispose();
-            });
         }
 
         /**
