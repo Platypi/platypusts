@@ -5954,17 +5954,17 @@ declare module plat {
               */
             protected _subscribers: IObject<IEventSubscriber>;
             /**
-              * The touch start events defined by this browser.
+              * The space delimited touch start events defined by this browser.
               */
-            protected _startEvents: Array<string>;
+            protected _startEvents: string;
             /**
-              * The touch move events defined by this browser.
+              * The space delimited touch move events defined by this browser.
               */
-            protected _moveEvents: Array<string>;
+            protected _moveEvents: string;
             /**
-              * The touch end events defined by this browser.
+              * The space delimited touch end events defined by this browser.
               */
-            protected _endEvents: Array<string>;
+            protected _endEvents: string;
             /**
               * An object containing the event types for all of the
               * supported gestures.
@@ -5975,18 +5975,6 @@ declare module plat {
               * events of each base type.
               */
             protected _gestureCount: IBaseGestures<number>;
-            /**
-              * A constant for specifying the start condition.
-              */
-            private __START;
-            /**
-              * A constant for specifying the move condition.
-              */
-            private __MOVE;
-            /**
-              * A constant for specifying the end condition.
-              */
-            private __END;
             /**
               * Whether or not the user moved while in touch.
               */
@@ -6199,14 +6187,14 @@ declare module plat {
             private __unregisterTypes();
             /**
               * Registers for and begins listening to a particular touch event type.
-              * @param {string} event The event type to begin listening for.
+              * @param {string} events The events to begin listening for.
               */
-            private __registerType(event);
+            private __registerType(events);
             /**
               * Unregisters for and stops listening to a particular touch event type.
-              * @param {string} event The event type to stop listening for.
+              * @param {string} events The events to stop listening for.
               */
-            private __unregisterType(event);
+            private __unregisterType(events);
             /**
               * Registers and associates an element with an event.
               * @param {plat.ui.ICustomElement} element The element being tied to a custom event.

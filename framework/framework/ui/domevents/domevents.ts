@@ -222,12 +222,12 @@
          * @kind property
          * @access protected
          * 
-         * @type {Array<string>}
+         * @type {string}
          * 
          * @description
-         * The touch start events defined by this browser.
+         * The space delimited touch start events defined by this browser.
          */
-        protected _startEvents: Array<string>;
+        protected _startEvents: string;
 
         /**
          * @name _moveEvents
@@ -235,12 +235,12 @@
          * @kind property
          * @access protected
          * 
-         * @type {Array<string>}
+         * @type {string}
          * 
          * @description
-         * The touch move events defined by this browser.
+         * The space delimited touch move events defined by this browser.
          */
-        protected _moveEvents: Array<string>;
+        protected _moveEvents: string;
 
         /**
          * @name _endEvents
@@ -248,12 +248,12 @@
          * @kind property
          * @access protected
          * 
-         * @type {Array<string>}
+         * @type {string}
          * 
          * @description
-         * The touch end events defined by this browser.
+         * The space delimited touch end events defined by this browser.
          */
-        protected _endEvents: Array<string>;
+        protected _endEvents: string;
 
         /**
          * @name _gestures
@@ -307,42 +307,6 @@
             $trackend: 0
         };
 
-        /**
-         * @name __START
-         * @memberof plat.ui.DomEvents
-         * @kind property
-         * @access private
-         * 
-         * @type {string}
-         * 
-         * @description
-         * A constant for specifying the start condition.
-         */
-        private __START = 'start';
-        /**
-         * @name __MOVE
-         * @memberof plat.ui.DomEvents
-         * @kind property
-         * @access private
-         * 
-         * @type {string}
-         * 
-         * @description
-         * A constant for specifying the move condition.
-         */
-        private __MOVE = 'move';
-        /**
-         * @name __END
-         * @memberof plat.ui.DomEvents
-         * @kind property
-         * @access private
-         * 
-         * @type {string}
-         * 
-         * @description
-         * A constant for specifying the end condition.
-         */
-        private __END = 'end';
         /**
          * @name __hasMoved
          * @memberof plat.ui.DomEvents
@@ -620,16 +584,12 @@
          * @kind property
          * @access private
          * 
-         * @type {plat.ui.ICustomEventListener}
+         * @type {IObject<EventListener>}
          * 
          * @description
          * A set of touch start, move, and end listeners to be place on the document.
          */
-        private __listeners: ICustomEventListener = {
-            start: this._onTouchStart.bind(this),
-            move: this._onTouchMove.bind(this),
-            end: this._onTouchEnd.bind(this)
-        };
+        private __listeners: IObject<EventListener> = {};
 
         /**
          * @name constructor
@@ -855,7 +815,8 @@
                 return true;
             }
 
-            if (ev.type !== 'mousedown') {
+            var eventType = ev.type;
+            if (eventType !== 'mousedown') {
                 this._inTouch = true;
             } else if (this._inTouch === true) {
                 // return immediately if mouse event and currently in a touch
@@ -887,8 +848,9 @@
                 noRelease = gestureCount.$release <= 0;
 
             // if any moving events registered, register move
-            if (gestureCount.$track > 0 || gestureCount.$trackend > 0 || gestureCount.$swipe > 0) {
-                this.__registerType(this.__MOVE);
+            if (eventType === 'touchstart' || gestureCount.$track > 0 ||
+                gestureCount.$trackend > 0 || gestureCount.$swipe > 0) {
+                this.__registerType(this._moveEvents);
                 this.__detectingMove = true;
             }
 
@@ -1143,7 +1105,7 @@
             this.__cancelDeferredHold = noop;
 
             if (this.__detectingMove) {
-                this.__unregisterType(this.__MOVE);
+                this.__unregisterType(this._moveEvents);
                 this.__detectingMove = false;
             }
         }
@@ -1430,24 +1392,30 @@
          */
         private __getTypes(): void {
             var _compat = this._compat,
-                touchEvents = _compat.mappedEvents;
+                touchEvents = _compat.mappedEvents,
+                listeners = this.__listeners,
+                startEvents: string,
+                moveEvents: string,
+                endEvents: string;
 
             if (_compat.hasPointerEvents) {
-                this._startEvents = [touchEvents.$touchstart];
-                this._moveEvents = [touchEvents.$touchmove];
-                this._endEvents = [touchEvents.$touchend, touchEvents.$touchcancel];
-                return;
+                startEvents = this._startEvents = touchEvents.$touchstart;
+                moveEvents = this._moveEvents = touchEvents.$touchmove;
+                endEvents = this._endEvents = touchEvents.$touchend + ' ' + touchEvents.$touchcancel;
             } else if (_compat.hasTouchEvents) {
-                this._startEvents = [touchEvents.$touchstart, 'mousedown'];
-                this._moveEvents = [touchEvents.$touchmove, 'mousemove'];
-                this._endEvents = [touchEvents.$touchend, touchEvents.$touchcancel, 'mouseup'];
-                return;
+                startEvents = this._startEvents = touchEvents.$touchstart + ' mousedown';
+                moveEvents = this._moveEvents = touchEvents.$touchmove + ' mousemove';
+                endEvents = this._endEvents = touchEvents.$touchend + ' mouseup ' + touchEvents.$touchcancel;
+            } else {
+                var cancelEvent = touchEvents.$touchcancel;
+                startEvents = this._startEvents = touchEvents.$touchstart;
+                moveEvents = this._moveEvents = touchEvents.$touchmove;
+                endEvents = this._endEvents = touchEvents.$touchend + (!cancelEvent ? '' : (' ' + cancelEvent));
             }
 
-            var cancelEvent = touchEvents.$touchcancel;
-            this._startEvents = [touchEvents.$touchstart];
-            this._moveEvents = [touchEvents.$touchmove];
-            this._endEvents = isNull(cancelEvent) ? [touchEvents.$touchend] : [touchEvents.$touchend, cancelEvent];
+            listeners[startEvents] = this._onTouchStart.bind(this);
+            listeners[moveEvents] = this._onTouchMove.bind(this);
+            listeners[endEvents] = this._onTouchEnd.bind(this);
         }
 
         /**
@@ -1462,8 +1430,8 @@
          * @returns {void}
          */
         private __registerTypes(): void {
-            this.__registerType(this.__START);
-            this.__registerType(this.__END);
+            this.__registerType(this._startEvents);
+            this.__registerType(this._endEvents);
         }
 
         /**
@@ -1478,9 +1446,12 @@
          * @returns {void}
          */
         private __unregisterTypes(): void {
-            this.__unregisterType(this.__START);
-            this.__unregisterType(this.__MOVE);
-            this.__unregisterType(this.__END);
+            this.__unregisterType(this._startEvents);
+            this.__unregisterType(this._endEvents);
+            if (this.__detectingMove) {
+                this.__unregisterType(this._moveEvents);
+                this.__detectingMove = false;
+            }
         }
 
         /**
@@ -1492,32 +1463,18 @@
          * @description
          * Registers for and begins listening to a particular touch event type.
          * 
-         * @param {string} event The event type to begin listening for.
+         * @param {string} events The events to begin listening for.
          * 
          * @returns {void}
          */
-        private __registerType(event: string): void {
-            var events: Array<string>,
-                listener = this.__listeners[event],
-                _document = this._document;
+        private __registerType(events: string): void {
+            var listener = this.__listeners[events],
+                _document = this._document,
+                eventSplit = events.split(' '),
+                index = eventSplit.length;
 
-            switch (event) {
-                case this.__START:
-                    events = this._startEvents;
-                    break;
-                case this.__MOVE:
-                    events = this._moveEvents;
-                    break;
-                case this.__END:
-                    events = this._endEvents;
-                    break;
-                default:
-                    return;
-            }
-
-            var index = events.length;
             while (index-- > 0) {
-                _document.addEventListener(events[index], listener, false);
+                _document.addEventListener(eventSplit[index], listener, false);
             }
         }
 
@@ -1530,32 +1487,18 @@
          * @description
          * Unregisters for and stops listening to a particular touch event type.
          * 
-         * @param {string} event The event type to stop listening for.
+         * @param {string} events The events to stop listening for.
          * 
          * @returns {void}
          */
-        private __unregisterType(event: string): void {
-            var events: Array<string>,
-                listener = this.__listeners[event],
-                _document = this._document;
+        private __unregisterType(events: string): void {
+            var listener = this.__listeners[events],
+                _document = this._document,
+                eventSplit = events.split(' '),
+                index = eventSplit.length;
 
-            switch (event) {
-                case this.__START:
-                    events = this._startEvents;
-                    break;
-                case this.__MOVE:
-                    events = this._moveEvents;
-                    break;
-                case this.__END:
-                    events = this._endEvents;
-                    break;
-                default:
-                    return;
-            }
-
-            var index = events.length;
             while (index-- > 0) {
-                _document.removeEventListener(events[index], listener, false);
+                _document.removeEventListener(eventSplit[index], listener, false);
             }
         }
 
@@ -2911,58 +2854,6 @@
 
             return (eventType.indexOf('mouse') === -1) ? 'touch' : 'mouse';
         }
-    }
-
-    /**
-     * @name ICustomEventListener
-     * @memberof plat.ui
-     * @kind interface
-     * @exported false
-     * 
-     * @extends {plat.IObject<EventListener>}
-     * 
-     * @description
-     * Describes the touch event listeners for the document.
-     */
-    interface ICustomEventListener extends IObject<EventListener> {
-        /**
-         * @name start
-         * @memberof plat.ui.ICustomEventListener
-         * @kind property
-         * @access public
-         * 
-         * @type {EventListener}
-         * 
-         * @description
-         * The touch start event.
-         */
-        start: EventListener;
-
-        /**
-         * @name end
-         * @memberof plat.ui.ICustomEventListener
-         * @kind property
-         * @access public
-         * 
-         * @type {EventListener}
-         * 
-         * @description
-         * The touch end event.
-         */
-        end: EventListener;
-
-        /**
-         * @name move
-         * @memberof plat.ui.ICustomEventListener
-         * @kind property
-         * @access public
-         * 
-         * @type {EventListener}
-         * 
-         * @description
-         * The touch move event.
-         */
-        move: EventListener;
     }
 
     /**
