@@ -725,7 +725,7 @@ module plat.async {
         then<U>(onFulfilled: (success: R) => any, onRejected?: (error: any) => any): IThenable<U> {
             var promise = this;
 
-            var thenPromise = <IThenable<U>>new (<any>this).constructor((): void => { }, this);
+            var thenPromise = <IThenable<U>>new (<any>this).constructor(noop, this);
 
             if (this.__state) {
                 var callbacks = arguments;

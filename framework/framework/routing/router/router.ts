@@ -479,7 +479,7 @@
 
             this.navigating = true;
             return this._resolve(this.finishNavigating)
-                .catch((): void => { })
+                .catch(noop)
                 .then((): async.IThenable<void> => {
                 var routeInfo = _clone(this.currentRouteInfo, true);
                 return this.finishNavigating = this._canNavigateTo(routeInfo)
