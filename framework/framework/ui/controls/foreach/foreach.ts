@@ -185,16 +185,16 @@ module plat.ui.controls {
         protected _animationQueue: Array<{ animation: animations.IAnimationThenable<any>; op: string; }>;
 
          /**
-         * @name _addQueue
-         * @memberof plat.ui.controls.ForEach
-         * @kind property
-         * @access protected
-         * 
-         * @type {Array<plat.async.IThenable<void>>}
-         * 
-         * @description
-         * A queue representing all current add operations.
-         */
+          * @name _addQueue
+          * @memberof plat.ui.controls.ForEach
+          * @kind property
+          * @access protected
+          * 
+          * @type {Array<plat.async.IThenable<void>>}
+          * 
+          * @description
+          * A queue representing all current add operations.
+          */
         protected _addQueue: Array<async.IThenable<void>> = [];
 
         /**
@@ -394,7 +394,7 @@ module plat.ui.controls {
                 }
             }
         }
-        
+
         /**
          * @name _addItems
          * @memberof plat.ui.controls.ForEach
@@ -844,7 +844,7 @@ module plat.ui.controls {
                 var _Promise = this._Promise,
                     itemAddCount = addCount - removeCount,
                     animationCount: number;
-                    
+
                 if (animating) {
                     animationCount = addCount;
 
@@ -888,7 +888,7 @@ module plat.ui.controls {
                 });
             }
         }
-        
+
         /**
          * @name _calculateBlockLength
          * @memberof plat.ui.controls.ForEach
@@ -968,7 +968,7 @@ module plat.ui.controls {
             }
 
             var animationQueue = this._animationQueue,
-                animationPromise = this._animator.create(nodes, key).then((): void => {
+                animationPromise = this._animator.create(nodes, key).current.then((): void => {
                     animationQueue.shift();
                 }),
                 callback = (): animations.IAnimationThenable<any> => {
@@ -1054,7 +1054,7 @@ module plat.ui.controls {
 
             var parentNode: Node,
                 animationQueue = this._animationQueue,
-                animationPromise = this._animator.create(nodes, key).then((): void => {
+                animationPromise = this._animator.create(nodes, key).current.then((): void => {
                     animationQueue.shift();
                     if (isNull(parentNode)) {
                         return;

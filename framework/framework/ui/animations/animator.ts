@@ -82,10 +82,10 @@
          * @param {string} key The identifier specifying the type of animation.
          * @param {any} options? Specified options for the animation.
          * 
-         * @returns {plat.ui.animations.IAnimatingThenable} A promise that allows you to start the animation and 
-         * resolves when the animation is complete.
+         * @returns {plat.ui.animations.IAnimationCreation} An object containing both a promise that resolves when the 
+         * previous animation is finished and a promise that resolves when the current animation is finished.
          */
-        create(element: Element, key: string, options?: any): IAnimatingThenable;
+        create(element: Element, key: string, options?: any): IAnimationCreation;
         /**
          * @name create
          * @memberof plat.ui.animations.Animator
@@ -100,10 +100,10 @@
          * @param {string} key The identifier specifying the type of animation.
          * @param {any} options? Specified options for the animation.
          * 
-         * @returns {plat.ui.animations.IAnimatingThenable} A promise that allows you to start the animation and 
-         * resolves when the animation is complete.
+         * @returns {plat.ui.animations.IAnimationCreation} An object containing both a promise that resolves when the 
+         * previous animation is finished and a promise that resolves when the current animation is finished.
          */
-        create(element: DocumentFragment, key: string, options?: any): IAnimatingThenable;
+        create(element: DocumentFragment, key: string, options?: any): IAnimationCreation;
         /**
          * @name create
          * @memberof plat.ui.animations.Animator
@@ -118,10 +118,10 @@
          * @param {string} key The identifier specifying the type of animation.
          * @param {any} options? Specified options for the animation.
          * 
-         * @returns {plat.ui.animations.IAnimatingThenable} A promise that allows you to start the animation and 
-         * resolves when the animation is complete.
+         * @returns {plat.ui.animations.IAnimationCreation} An object containing both a promise that resolves when the 
+         * previous animation is finished and a promise that resolves when the current animation is finished.
          */
-        create(elements: NodeList, key: string, options?: any): IAnimatingThenable;
+        create(elements: NodeList, key: string, options?: any): IAnimationCreation;
         /**
          * @name create
          * @memberof plat.ui.animations.Animator
@@ -137,11 +137,11 @@
          * @param {string} key The identifier specifying the type of animation.
          * @param {any} options? Specified options for the animation.
          * 
-         * @returns {plat.ui.animations.IAnimatingThenable} A promise that allows you to start the animation and 
-         * resolves when the animation is complete.
+         * @returns {plat.ui.animations.IAnimationCreation} An object containing both a promise that resolves when the 
+         * previous animation is finished and a promise that resolves when the current animation is finished.
          */
-        create(elements: Array<Node>, key: string, options?: any): IAnimatingThenable;
-        create(elements: any, key: string, options?: any): IAnimatingThenable {
+        create(elements: Array<Node>, key: string, options?: any): IAnimationCreation;
+        create(elements: any, key: string, options?: any): IAnimationCreation {
             return this._create(elements, key, options, {
                 key: null
             });
@@ -221,15 +221,9 @@
          */
         animate(elements: Array<Node>, key: string, options?: any): IAnimatingThenable;
         animate(elements: any, key: string, options?: any): IAnimatingThenable {
-            var animation = this._create(elements, key, options, {
+            return this._animate(elements, key, options, {
                 key: null
             });
-
-            requestAnimationFrameGlobal((): void => {
-                animation.start();
-            });
-
-            return animation;
         }
 
         /**
@@ -322,17 +316,11 @@
          */
         enter(elements: Array<Node>, key: string, parent: Element, refChild?: Node, options?: any): IAnimatingThenable;
         enter(elements: any, key: string, parent: Element, refChild?: Node, options?: any): IAnimatingThenable {
-            var animation = this._create(elements, key, options, {
+            return this._animate(elements, key, options, {
                 key: 'enter',
                 parent: parent,
                 refChild: refChild
             });
-
-            requestAnimationFrameGlobal((): void => {
-                animation.start();
-            });
-
-            return animation;
         }
 
         /**
@@ -413,15 +401,9 @@
          */
         leave(elements: Array<Node>, key: string, options?: any): IAnimatingThenable;
         leave(elements: any, key: string, options?: any): IAnimatingThenable {
-            var animation = this._create(elements, key, options, {
+            return this._animate(elements, key, options, {
                 key: 'leave'
             });
-
-            requestAnimationFrameGlobal((): void => {
-                animation.start();
-            });
-
-            return animation;
         }
 
         /**
@@ -522,17 +504,11 @@
          */
         move(elements: Array<Node>, key: string, parent: Element, refChild?: Node, options?: any): IAnimatingThenable;
         move(elements: any, key: string, parent: Element, refChild?: Node, options?: any): IAnimatingThenable {
-            var animation = this._create(elements, key, options, {
+            return this._animate(elements, key, options, {
                 key: 'move',
                 parent: parent,
                 refChild: refChild
             });
-
-            requestAnimationFrameGlobal((): void => {
-                animation.start();
-            });
-
-            return animation;
         }
 
         /**
@@ -609,15 +585,9 @@
          */
         show(elements: Array<Node>, key: string, options?: any): IAnimatingThenable;
         show(elements: any, key: string, options?: any): IAnimatingThenable {
-            var animation = this._create(elements, key, options, {
+            return this._animate(elements, key, options, {
                 key: 'show'
             });
-
-            requestAnimationFrameGlobal((): void => {
-                animation.start();
-            });
-
-            return animation;
         }
 
         /**
@@ -694,15 +664,9 @@
          */
         hide(elements: Array<Node>, key: string, options?: any): IAnimatingThenable;
         hide(elements: any, key: string, options?: any): IAnimatingThenable {
-            var animation = this._create(elements, key, options, {
+            return this._animate(elements, key, options, {
                 key: 'hide'
             });
-
-            requestAnimationFrameGlobal((): void => {
-                animation.start();
-            });
-
-            return animation;
         }
 
         /**
@@ -719,8 +683,8 @@
         all(promises: Array<IAnimationThenable<any>>): IAnimationThenable<void> {
             var length = promises.length,
                 args = <Array<IAnimationEssentials>>[],
-                animationPromise = new AnimationPromise((resolve) => {
-                    this._Promise.all(promises).then(() => {
+                animationPromise = new AnimationPromise((resolve): void => {
+                    this._Promise.all(promises).then((): void => {
                         resolve();
                     });
                 });
@@ -756,7 +720,7 @@
         }
 
         /**
-         * @name _create
+         * @name _animate
          * @memberof plat.ui.animations.Animator
          * @kind function
          * @access protected
@@ -771,12 +735,46 @@
          * @param {plat.ui.animations.IAnimationFunction} functionality An object containing detailed information about 
          * special animation functionality.
          * 
-         * @returns {plat.ui.animations.IAnimatingThenable} A promise that resolves when the animation is finished.
+         * @returns {plat.ui.animations.IAnimatingThenable} A promise that resolves when the current animation is finished.
          */
-        protected _create(elements: any, key: string, options: any, functionality: IAnimationFunction): IAnimatingThenable {
+        protected _animate(elements: any, key: string, options: any, functionality: IAnimationFunction): IAnimatingThenable {
+            var animation = this._create(elements, key, options, functionality),
+                current = animation.current;
+
+            animation.previous.then((): void => {
+                requestAnimationFrameGlobal((): void => {
+                    current.start();
+                });
+            });
+
+            return current;
+        }
+
+        /**
+         * @name _create
+         * @memberof plat.ui.animations.Animator
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Animates the passed in elements with the given key and handles special animation functionality. Returns both 
+         * the previous and current animations for the given element(s).
+         * 
+         * @param {any} elements The Nodes to be animated. All nodes in the Array must have 
+         * the same parent, otherwise the animation will not function correctly.
+         * @param {string} key The identifier specifying the type of animation.
+         * @param {any} options? Specified options for the animation.
+         * @param {plat.ui.animations.IAnimationFunction} functionality An object containing detailed information about 
+         * special animation functionality.
+         * 
+         * @returns {plat.ui.animations.IAnimationCreation} An object containing both a promise that resolves when the 
+         * previous animation is finished and a promise that resolves when the current animation is finished.
+         */
+        protected _create(elements: any, key: string, options: any, functionality: IAnimationFunction): IAnimationCreation {
             var animationInjector = animationInjectors[key],
                 animationInstances: Array<BaseAnimation> = [],
-                elementNodes: Array<Element> = [];
+                elementNodes: Array<Element> = [],
+                immediateResolve: IAnimationThenable<any>;
 
             if (!this._compat.animationSupported || isUndefined(animationInjector)) {
                 animationInjector = jsAnimationInjectors[key];
@@ -785,7 +783,8 @@
                     this._handlePreInitFunctionality(elements, elementNodes, functionality);
                     this._handlePostInitFunctionality(elements, elementNodes, functionality);
                     this._handleEndFunctionality(elements, elementNodes, functionality);
-                    return this.resolve();
+                    immediateResolve = this.resolve();
+                    return { previous: immediateResolve, current: immediateResolve };
                 }
             }
 
@@ -796,16 +795,18 @@
                 this._handlePreInitFunctionality(elements, elementNodes, functionality);
                 this._handlePostInitFunctionality(elements, elementNodes, functionality);
                 this._handleEndFunctionality(elements, elementNodes, functionality);
-                return this.resolve();
+                immediateResolve = this.resolve();
+                return { previous: immediateResolve, current: immediateResolve };
             }
 
             this._handlePreInitFunctionality(elements, elementNodes, functionality);
 
             var id = uniqueId('animation_'),
                 previousAnimations = this.__setAnimationId(id, elementNodes),
+                previousPromise: async.IThenable<void>,
                 animationPromise = new AnimationPromise((resolve: any): void => {
                     var _Promise = this._Promise;
-                    _Promise.all(previousAnimations).then((): void => {
+                    previousPromise = _Promise.all(previousAnimations).then((): void => {
                         var animationPromises: Array<IAnimationThenable<any>> = [];
 
                         for (var i = 0; i < length; ++i) {
@@ -849,7 +850,7 @@
                 });
 
             animationPromise.initialize(animationInstances);
-            return animationPromise;
+            return { previous: previousPromise, current: animationPromise };
         }
 
         /**
@@ -1008,9 +1009,9 @@
                 }
             }
 
-            return promises
+            return promises;
         }
-        
+
         /**
          * @name __generateAnimatedElement
          * @memberof plat.ui.animations.Animator
@@ -1496,7 +1497,7 @@
          */
         pause(): async.IThenable<void> {
             if (this.__animationState !== 1) {
-                return;
+                return this._Promise.resolve();
             }
 
             var animationInstances = this.__animationInstances,
@@ -1528,7 +1529,7 @@
          */
         resume(): async.IThenable<void> {
             if (this.__animationState !== 1) {
-                return;
+                return this._Promise.resolve();
             }
 
             var animationInstances = this.__animationInstances,
@@ -1559,7 +1560,7 @@
          */
         cancel(): IAnimatingThenable {
             if (this.__animationState === 2) {
-                return;
+                return this;
             }
 
             var animationInstances = this.__animationInstances,
@@ -1945,6 +1946,43 @@
      * the {@link plat.ui.animations.IAnimationThenable|IAnimationThenable} of the animating parent element.
      */
     export interface IAnimatingThenable extends IAnimationThenable<IGetAnimatingThenable> { }
+
+    /**
+     * @name IAnimationCreation
+     * @memberof plat.ui.animations
+     * @kind interface
+     * 
+     * @description
+     * Describes an object containing two promises. One that resolves when the previous animation is finished, the 
+     * other that resolves when the current animation is finished.
+     */
+    export interface IAnimationCreation {
+        /**
+         * @name previous
+         * @memberof plat.ui.animations.IAnimationCreation
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.async.IThenable<void>}
+         * 
+         * @description
+         * A promise that resolves when a potential previous animation is done.
+         */
+        previous: async.IThenable<void>;
+
+        /**
+         * @name current
+         * @memberof plat.ui.animations.IAnimationCreation
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.ui.animations.IAnimatingThenable}
+         * 
+         * @description
+         * An animation promise that resolves when the current animation is complete.
+         */
+        current: IAnimatingThenable;
+    }
 
     /**
      * @name IAnimationEssentials
