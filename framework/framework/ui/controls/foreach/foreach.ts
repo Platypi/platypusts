@@ -979,11 +979,14 @@ module plat.ui.controls {
             }
 
             var animationQueue = this._animationQueue,
-                animationPromise = this._animator.create(nodes, key).current.then((): void => {
+                animationCreation = this._animator.create(nodes, key),
+                animationPromise = animationCreation.current.then((): void => {
                     animationQueue.shift();
                 }),
                 callback = (): animations.IAnimationThenable<any> => {
-                    animationPromise.start();
+                    animationCreation.previous.then((): void => {
+                        animationPromise.start();
+                    });
                     return animationPromise;
                 };
 
@@ -1065,7 +1068,8 @@ module plat.ui.controls {
 
             var parentNode: Node,
                 animationQueue = this._animationQueue,
-                animationPromise = this._animator.create(nodes, key).current.then((): void => {
+                animationCreation = this._animator.create(nodes, key),
+                animationPromise = animationCreation.current.then((): void => {
                     animationQueue.shift();
                     if (isNull(parentNode)) {
                         return;
@@ -1081,7 +1085,9 @@ module plat.ui.controls {
                     }
 
                     parentNode.replaceChild(clonedContainer, container);
-                    animationPromise.start();
+                    animationCreation.previous.then((): void => {
+                        animationPromise.start();
+                    });
                     return animationPromise;
                 };
 
