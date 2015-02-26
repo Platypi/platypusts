@@ -516,10 +516,10 @@ module plat.ui.controls {
         protected _removeItems(index: number, numberOfItems: number): void {
             var dispose = TemplateControl.dispose,
                 controls = this.controls,
-                max = index + numberOfItems;
+                last = index + numberOfItems;
 
-            while (index < max) {
-                dispose(controls[index++]);
+            while (last-- > index) {
+                dispose(controls[last]);
             }
 
             this._updateResource(controls.length - 1);
