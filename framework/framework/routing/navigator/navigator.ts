@@ -280,7 +280,7 @@
          * Tells the navigator to navigate to the url registered for a particular view.
          * 
          * @param {any} view The view to which the Navigator should navigate.
-         * @param {plat.routing.INavigationOptions} Options used to generate the url and perform navigation.
+         * @param {plat.routing.INavigateOptions} options used to generate the url and perform navigation.
          * 
          * @returns {plat.async.IThenable<void>} A promise that resolves when the navigation has finished.
          */
