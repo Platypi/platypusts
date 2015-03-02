@@ -197,6 +197,12 @@ module plat.ui.controls {
         getHref(): string {
             if (isNull(this._router)) {
                 return;
+            } else if (!isObject(this.options)) {
+                this._Exception.warn('No options specified for ' +
+                    this.type +
+                    ' please send in options of type plat.ui.controls.ILinkOptions.',
+                    this._Exception.CONTROL);
+                return;
             }
 
             var value = this.options.value,
