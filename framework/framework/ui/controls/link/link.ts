@@ -200,7 +200,7 @@ module plat.ui.controls {
             } else if (!isObject(this.options)) {
                 this._Exception.warn('No options specified for ' +
                     this.type +
-                    ' please send in options of type plat.ui.controls.ILinkOptions.',
+                    '. Please send in options of type plat.ui.controls.ILinkOptions.',
                     this._Exception.CONTROL);
                 return;
             }
