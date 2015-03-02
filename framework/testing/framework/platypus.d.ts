@@ -1,5 +1,5 @@
 /**
-  * PlatypusTS v0.12.1 (http://getplatypi.com)
+  * PlatypusTS v0.12.2 (http://getplatypi.com)
   * Copyright 2015 Platypi, LLC. All rights reserved.
   * PlatypusTS is licensed under the GPL-3.0 found at
   * http://opensource.org/licenses/GPL-3.0
@@ -1000,11 +1000,20 @@ declare module plat {
           * Takes in a method and array of arguments to pass to that method. Delays calling the method until
           * after the current call stack is clear. Equivalent to a setTimeout with the specified timeout value.
           * @param {(...args: Array<any>) => void} method The method to call.
-          * @param {number} timeout The time (in milliseconds) to delay before calling the provided method
+          * @param {number} timeout The time (in milliseconds) to delay before calling the provided method.
           * @param {Array<any>} args? The arguments to apply to the method.
           * @param {any} context? An optional context to bind to the method.
           */
         defer(method: (...args: any[]) => void, timeout: number, args?: Array<any>, context?: any): IRemoveListener;
+        /**
+          * Takes in a method and array of arguments to pass to that method. Adds the method to the call stack every
+          * interval amount of time. Equivalent to a setInterval with the specified interval value.
+          * @param {(...args: Array<any>) => void} method The method to call.
+          * @param {number} interval The time (in milliseconds) between each consecutive call of the provided method.
+          * @param {Array<any>} args? The arguments to apply to the method.
+          * @param {any} context? An optional context to bind to the method.
+          */
+        setInterval(method: (...args: any[]) => void, interval: number, args?: Array<any>, context?: any): IRemoveListener;
         /**
           * Uses requestAnimationFrame if it is available, else it does a setTimeout.
           * @param {FrameRequestCallback} method The method to call when the request is fulfilled.
@@ -6873,34 +6882,34 @@ declare module plat {
                   * @param {Element} element The Element to be animated.
                   * @param {string} key The identifier specifying the type of animation.
                   * @param {any} options? Specified options for the animation.
-                  * resolves when the animation is complete.
+                  * previous animation is finished and a promise that resolves when the current animation is finished.
                   */
-                create(element: Element, key: string, options?: any): IAnimatingThenable;
+                create(element: Element, key: string, options?: any): IAnimationCreation;
                 /**
                   * Creates the defined animation denoted by the key but does not start the animation.
                   * @param {DocumentFragment} elements The DocumentFragment whose childNodes are to be animated.
                   * @param {string} key The identifier specifying the type of animation.
                   * @param {any} options? Specified options for the animation.
-                  * resolves when the animation is complete.
+                  * previous animation is finished and a promise that resolves when the current animation is finished.
                   */
-                create(element: DocumentFragment, key: string, options?: any): IAnimatingThenable;
+                create(element: DocumentFragment, key: string, options?: any): IAnimationCreation;
                 /**
                   * Creates the defined animation denoted by the key but does not start the animation.
                   * @param {NodeList} elements The list of Nodes to be animated.
                   * @param {string} key The identifier specifying the type of animation.
                   * @param {any} options? Specified options for the animation.
-                  * resolves when the animation is complete.
+                  * previous animation is finished and a promise that resolves when the current animation is finished.
                   */
-                create(elements: NodeList, key: string, options?: any): IAnimatingThenable;
+                create(elements: NodeList, key: string, options?: any): IAnimationCreation;
                 /**
                   * Creates the defined animation denoted by the key but does not start the animation.
                   * @param {Array<Node>} elements The Array of Nodes to be animated. All nodes in the Array must have
                   * the same parent, otherwise the animation will not function correctly.
                   * @param {string} key The identifier specifying the type of animation.
                   * @param {any} options? Specified options for the animation.
-                  * resolves when the animation is complete.
+                  * previous animation is finished and a promise that resolves when the current animation is finished.
                   */
-                create(elements: Array<Node>, key: string, options?: any): IAnimatingThenable;
+                create(elements: Array<Node>, key: string, options?: any): IAnimationCreation;
                 /**
                   * Animates the element with the defined animation denoted by the key. Similar to `create` but
                   * immediately begins the animation.
@@ -7161,7 +7170,19 @@ declare module plat {
                   * @param {plat.ui.animations.IAnimationFunction} functionality An object containing detailed information about
                   * special animation functionality.
                   */
-                protected _create(elements: any, key: string, options: any, functionality: IAnimationFunction): IAnimatingThenable;
+                protected _animate(elements: any, key: string, options: any, functionality: IAnimationFunction): IAnimatingThenable;
+                /**
+                  * Animates the passed in elements with the given key and handles special animation functionality. Returns both
+                  * the previous and current animations for the given element(s).
+                  * @param {any} elements The Nodes to be animated. All nodes in the Array must have
+                  * the same parent, otherwise the animation will not function correctly.
+                  * @param {string} key The identifier specifying the type of animation.
+                  * @param {any} options? Specified options for the animation.
+                  * @param {plat.ui.animations.IAnimationFunction} functionality An object containing detailed information about
+                  * special animation functionality.
+                  * previous animation is finished and a promise that resolves when the current animation is finished.
+                  */
+                protected _create(elements: any, key: string, options: any, functionality: IAnimationFunction): IAnimationCreation;
                 /**
                   * Handles different specialized functionalities immediately before the init portion of the animation cycle.
                   * @param {Array<Node>} nodes All the nodes being animated.
@@ -7460,6 +7481,20 @@ declare module plat {
             interface IAnimatingThenable extends IAnimationThenable<IGetAnimatingThenable> {
             }
             /**
+              * Describes an object containing two promises. One that resolves when the previous animation is finished, the
+              * other that resolves when the current animation is finished.
+              */
+            interface IAnimationCreation {
+                /**
+                  * A promise that resolves when a potential previous animation is done.
+                  */
+                previous: async.IThenable<void>;
+                /**
+                  * An animation promise that resolves when the current animation is complete.
+                  */
+                current: IAnimatingThenable;
+            }
+            /**
               * Describes base functional requirements for externally referenced animations.
               */
             interface IAnimationEssentials {
@@ -7520,10 +7555,6 @@ declare module plat {
                   */
                 protected _Promise: async.IPromise;
                 /**
-                  * Whether or not the animation has been canceled.
-                  */
-                protected _canceled: boolean;
-                /**
                   * The resolve function for the end of the animation.
                   */
                 protected _resolve: () => void;
@@ -7552,7 +7583,8 @@ declare module plat {
                   */
                 resume(): async.IThenable<void>;
                 /**
-                  * A function to be called to let it be known the animation is being cancelled.
+                  * A function to be called to let it be known the animation is being cancelled. Although not
+                  * necessary, we call end() in this function as well for safe measure.
                   */
                 cancel(): void;
                 /**
@@ -7629,6 +7661,10 @@ declare module plat {
                   * An optional options object that can denote a pseudo element animation.
                   */
                 options: ISimpleCssAnimationOptions;
+                /**
+                  * A function for stopping a potential callback in the animation chain.
+                  */
+                protected _stopAnimation: IRemoveListener;
                 /**
                   * Adds the class to initialize the animation.
                   */
@@ -7723,6 +7759,10 @@ declare module plat {
                   * The class name added to the animated element.
                   */
                 className: string;
+                /**
+                  * A function for stopping a potential callback in the animation chain.
+                  */
+                protected _stopAnimation: IRemoveListener;
                 /**
                   * A JavaScript object containing all modified properties as a result
                   * of this animation. Used in the case of a disposal to reset the changed
@@ -8083,8 +8123,8 @@ declare module plat {
                     op: string;
                 }>;
                 /**
-                 * A queue representing all current add operations.
-                 */
+                  * A queue representing all current add operations.
+                  */
                 protected _addQueue: Array<async.IThenable<void>>;
                 /**
                   * The number of items currently being added.
@@ -9842,7 +9882,7 @@ declare module plat {
             /**
               * Tells the navigator to navigate to the url registered for a particular view.
               * @param {any} view The view to which the Navigator should navigate.
-              * @param {plat.routing.INavigationOptions} Options used to generate the url and perform navigation.
+              * @param {plat.routing.INavigateOptions} options used to generate the url and perform navigation.
               */
             navigate(view: any, options?: INavigateOptions): async.IThenable<void>;
             /**
