@@ -57,6 +57,14 @@ module app.viewcontrols {
             });
         }
 
+        navigatedTo() {
+            this.navigator.navigate({}, {
+                query: {
+                    test: 'foo'
+                }
+            });
+        }
+
         goBack() {
             this.navigator.goBack().then(() => {
                 console.log('test');

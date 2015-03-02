@@ -295,6 +295,11 @@
                     url = this._generate(view, options.parameters, options.query);
                 }
 
+                if (!isString(url)) {
+                    var error = new Error('Cannot serialize url from input parameters, check your view reference.');
+                    this._Exception.fatal(error, this._Exception.NAVIGATION);
+                }
+
                 return this._navigate(url, options.replace);
             });
         }
