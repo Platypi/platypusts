@@ -464,7 +464,7 @@
             // Protect against accidentally calling this method twice.
             EventManager.dispose(this.uid);
             EventManager.on(this.uid, __backButton,(): void => {
-                var ev = EventManager.dispatch('backButtonPressed', this, EventManager.DIRECT);;
+                var ev = EventManager.dispatch(__backButtonPressed, this, EventManager.DIRECT);
 
                 if (ev.defaultPrevented) {
                     return;
