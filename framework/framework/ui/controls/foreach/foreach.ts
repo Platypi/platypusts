@@ -291,6 +291,10 @@ module plat.ui.controls {
                         this._removeItems(0, this.controls.length);
                     });
                 }
+
+                if (isArray(newValue)) {
+                    this._setListener();
+                }
                 return;
             } else if (!isArray(newValue)) {
                 var _Exception = this._Exception;
