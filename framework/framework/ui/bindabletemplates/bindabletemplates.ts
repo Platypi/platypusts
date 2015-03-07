@@ -848,8 +848,7 @@ module plat.ui {
                 parent = this.control,
                 compiledManager = this.cache[key],
                 isCompiled = isObject(compiledManager),
-                _resources = _ResourcesFactory.getInstance(),
-                contextManager: observable.ContextManager;
+                _resources = _ResourcesFactory.getInstance();
 
             if (isCompiled) {
                 var compiledControl = compiledManager.getUiControl();
@@ -870,9 +869,9 @@ module plat.ui {
             control.element = <HTMLElement>template;
             control.type = parent.type + __BOUND_PREFIX + key;
             control.root = this._ControlFactory.getRootControl(control);
-            contextManager = this._ContextManager.getManager(control.root);
 
             if (isCompiled) {
+                var contextManager = this._ContextManager.getManager(control.root);
                 control.absoluteContextPath = parent.absoluteContextPath || __Context;
 
                 if (!isNull(childContext)) {
