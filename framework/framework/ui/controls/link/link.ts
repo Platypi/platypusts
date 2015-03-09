@@ -126,14 +126,12 @@ module plat.ui.controls {
          * @access public
          * 
          * @description
-         * Initializes both tap and click events.
+         * Initializes click event.
          * 
          * @returns {void}
          */
         initialize(): void {
-            var element = this.element;
-            this._removeClickListener = this.dom.addEventListener(element, 'click', this._handleClick, false);
-            this.addEventListener(element, __tap, this._handleTap, false);
+            this._removeClickListener = this.dom.addEventListener(this.element, 'click', this._handleClick, false);
         }
 
         /**
@@ -143,23 +141,31 @@ module plat.ui.controls {
          * @access public
          * 
          * @description
-         * Calls to normalize the href for internal links.
+         * Calls to normalize the href for internal links and initializes the tap event.
          * 
          * @returns {void}
          */
         loaded(): void {
-            this.setHref();
+            var options = this.options,
+                setHref = this.setHref.bind(this);
 
-            var options = this.options;
             if (!isObject(options)) {
+                var _Exception = this._Exception;
+                _Exception.warn('No options specified for ' + this.type +
+                    '. Please send in options of type plat.ui.controls.ILinkOptions.',
+                    _Exception.CONTROL);
                 options = this.options = <observable.IObservableProperty<ILinkOptions>>{};
                 options.value = <ILinkOptions>{ view: '' };
+                this.setHref();
                 return;
             } else if (!isObject(options.value)) {
                 options.value = <ILinkOptions>{ view: '' };
             }
 
-            options.observe(this.setHref.bind(this));
+            this.addEventListener(this.element, __tap, this._handleTap, false);
+
+            setHref();
+            options.observe(setHref);
         }
 
         /**
@@ -196,12 +202,6 @@ module plat.ui.controls {
          */
         getHref(): string {
             if (isNull(this._router)) {
-                return;
-            } else if (!isObject(this.options)) {
-                this._Exception.warn('No options specified for ' +
-                    this.type +
-                    '. Please send in options of type plat.ui.controls.ILinkOptions.',
-                    this._Exception.CONTROL);
                 return;
             }
 
