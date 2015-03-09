@@ -263,6 +263,12 @@ module plat {
                 control = control.parent;
             }
 
+            if (!control.hasOwnContext && isObject(control.context)) {
+                var _Exception = Control._Exception;
+                _Exception.warn('Root control found that sets its context to an Object but does not set the hasOwnContext ' +
+                    'flag to true. Please set the flag if the control intends to use its own context.', _Exception.CONTEXT);
+            }
+
             return control;
         }
 
