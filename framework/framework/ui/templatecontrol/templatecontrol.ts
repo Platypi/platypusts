@@ -590,22 +590,26 @@ module plat.ui {
             var resource: IResource;
 
             if (isNull(control) || isNull(control.resources) || !isString(alias) || isEmpty(alias)) {
-                return null;
+                return;
             }
 
             if (alias[0] === '@') {
                 alias = alias.slice(1);
             }
 
-            if (alias === __ROOT_CONTEXT_RESOURCE) {
-                control = Control.getRootControl(control);
+            var isRootContext = alias === __ROOT_CONTEXT_RESOURCE;
+            if (isRootContext || alias === __CONTEXT_RESOURCE || alias === __CONTROL_RESOURCE) {
+                if (isRootContext) {
+                    control = Control.getRootControl(control);
+                }
+
+                resource = ((<any>control.resources) || {})[alias];
+                if (isNull(resource)) {
+                    return;
+                }
+
                 return {
-                    resource: (<any>control.resources)[alias],
-                    control: control
-                };
-            } else if (alias === __CONTEXT_RESOURCE || alias === __CONTROL_RESOURCE) {
-                return {
-                    resource: ((<any>control.resources) || {})[alias],
+                    resource: resource,
                     control: control
                 };
             }
