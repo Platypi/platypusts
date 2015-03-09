@@ -300,6 +300,7 @@ module plat {
 
                     contextManager.observe(ctrl.absoluteContextPath, {
                         uid: control.uid,
+                        priority: __CONTEXT_CHANGED_PRIORITY,
                         listener: (newValue, oldValue): void => {
                             ui.TemplateControl.contextChanged(<ui.TemplateControl>control, newValue, oldValue);
                         }

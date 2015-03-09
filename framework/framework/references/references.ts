@@ -265,6 +265,7 @@ var __prefix = '$',
     /**
      * Constants
      */
+    __CONTEXT_CHANGED_PRIORITY = 1000,
     __startSymbol = '{{',
     __endSymbol = '}}',
     __STATIC = 'static',

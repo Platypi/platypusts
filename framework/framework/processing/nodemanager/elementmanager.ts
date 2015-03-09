@@ -1031,13 +1031,14 @@ module plat.processing {
 
                         if (isObject(resourceObj)) {
                             var resource = resourceObj.resource;
+                            childContext = (split.length > 0 ? ('.' + split.join('.')) : '');
 
                             if (alias === __CONTEXT_RESOURCE) {
-                                absoluteContextPath += '.' + childContext;
+                                absoluteContextPath += childContext;
                             } else if (alias === __ROOT_CONTEXT_RESOURCE) {
-                                absoluteContextPath = __CONTEXT + '.' + childContext;
+                                absoluteContextPath = __CONTEXT + childContext;
                             } else if (resource.type === __OBSERVABLE_RESOURCE || resource.type === __LITERAL_RESOURCE) {
-                                absoluteContextPath = 'resources.' + alias + '.value' + (split.length > 0 ? ('.' + split.join('.')) : '');
+                                absoluteContextPath = 'resources.' + alias + '.value' + childContext;
                                 uiControl.root = resourceObj.control;
                             } else {
                                 _Exception.warn('Only resources of type "observable" can be set as context.',
@@ -1307,6 +1308,7 @@ module plat.processing {
 
             (<any>uiControl).zCC__plat = contextManager.observe(absoluteContextPath, {
                 uid: uiControl.uid,
+                priority: __CONTEXT_CHANGED_PRIORITY,
                 listener: (newValue, oldValue): void => {
                     uiControl.context = newValue;
                 }

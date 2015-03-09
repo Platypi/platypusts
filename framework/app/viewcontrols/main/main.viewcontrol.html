@@ -22,21 +22,12 @@
 
 <plat-foreach class="test" plat-context="test" plat-options="{animate:true}">
     <div class="foo">
-        <div>
+        {{@context}}
+        <plat-foreach plat-context="@rootContext.test">
             <div>
-                <div>
-                    <div>
-                        <div>
-                            <div>
-                                <div>
-                                    {{@context}}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                {{@context}}-2
             </div>
-        </div>
+        </plat-foreach>
     </div>
 </plat-foreach>
 <div>length = {{test.length}}</div>

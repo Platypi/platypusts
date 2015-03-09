@@ -1598,13 +1598,31 @@ module plat.observable {
          * @returns {void}
          */
         private __add(identifier: string, observableListener: IListener): void {
-            var callbacks = this.__identifiers[identifier];
+            var callbacks = this.__identifiers[identifier],
+                priority = observableListener.priority,
+                found = false;
 
             if (isNull(callbacks)) {
                 callbacks = this.__identifiers[identifier] = [];
             }
 
-            callbacks.push(observableListener);
+            if (isNumber(priority)) {
+                var length = callbacks.length;
+
+                for (var i = 0; i < length; ++i) {
+                    if (priority >= callbacks[i].priority) {
+                        callbacks.splice(i, 0, observableListener);
+                        found = true;
+                        break;
+                    }
+                }
+            } else {
+                observableListener.priority = -1;
+            }
+
+            if (!found) {
+                callbacks.push(observableListener);
+            }
 
             this.__addHashValues(identifier);
         }
@@ -1913,6 +1931,20 @@ module plat.observable {
          * A unique id used to manage the listener.
          */
         uid: string;
+
+        /**
+         * @name priority
+         * @memberof plat.observable.IListener
+         * @kind property
+         * @access public
+         * 
+         * @type {number}
+         * 
+         * @description
+         * A high priority means this listener wants to be notified earlier than other listeners. The 
+         * listeners will be fired in priority order when necessary.
+         */
+        priority?: number;
     }
 
     /**
