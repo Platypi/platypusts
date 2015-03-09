@@ -282,26 +282,35 @@ module plat.controls {
             var split = identifiers[0].split('.');
             this._property = split.pop();
 
-            if (split.length > 0) {
-                this._contextExpression = _parser.parse(split.join('.'));
-            } else if (expression.aliases.length > 0) {
+            if (expression.aliases.length > 0) {
                 var alias = expression.aliases[0],
-                    resourceObj = parent.findResource(alias);
+                    resourceObj = parent.findResource(alias),
+                    type: string;
 
-                if (isNull(resourceObj) || resourceObj.resource.type !== __OBSERVABLE_RESOURCE) {
-                    return;
+                if (isNull(resourceObj)) {
+                    type = resourceObj.resource.type;
+
+                    if (type !== __OBSERVABLE_RESOURCE && type !== __LITERAL_RESOURCE) {
+                        return;
+                    }
                 }
 
-                this._property = 'value';
+                if (alias === __CONTEXT_RESOURCE || alias === __ROOT_CONTEXT_RESOURCE) {
+                    this._contextExpression = _parser.parse(split.join('.'));
+                } else {
+                    this._property = 'value';
 
-                this._contextExpression = {
-                    evaluate: (): ui.IResource => {
-                        return resourceObj.resource;
-                    },
-                    aliases: [],
-                    identifiers: [],
-                    expression: ''
-                };
+                    this._contextExpression = {
+                        evaluate: (): ui.IResource => {
+                            return resourceObj.resource;
+                        },
+                        aliases: [],
+                        identifiers: [],
+                        expression: ''
+                    };
+                }
+            } else if (split.length > 0) {
+                this._contextExpression = _parser.parse(split.join('.'));
             } else {
                 this._contextExpression = {
                     evaluate: (): any => {

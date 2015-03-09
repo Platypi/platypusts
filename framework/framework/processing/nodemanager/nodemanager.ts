@@ -470,7 +470,8 @@ module plat.processing {
                         resource: ui.IResource;
                         control: ui.TemplateControl;
                     }> = {},
-                    alias = split.shift().slice(1);
+                    topIdentifier = split.shift(),
+                    alias = topIdentifier.slice(1);
 
                 if (split.length > 0) {
                     absoluteIdentifier = '.' + split.join('.');
@@ -484,7 +485,13 @@ module plat.processing {
 
                 if (!isNull(resourceObj) && !isNull(resourceObj.resource)) {
                     var type = resourceObj.resource.type;
-                    if (type === __OBSERVABLE_RESOURCE || type === __LITERAL_RESOURCE) {
+                    if (alias === __CONTEXT_RESOURCE) {
+                        manager = _ContextManager.getManager(Control.getRootControl(control));
+                        absoluteIdentifier = control.absoluteContextPath + absoluteIdentifier;
+                    } else if (alias === __ROOT_CONTEXT_RESOURCE) {
+                        manager = _ContextManager.getManager(resources[alias].control);
+                        absoluteIdentifier = 'context' + absoluteIdentifier;
+                    } else if (type === __OBSERVABLE_RESOURCE || type === __LITERAL_RESOURCE) {
                         manager = _ContextManager.getManager(resources[alias].control);
                         absoluteIdentifier = 'resources.' + alias + '.value' + absoluteIdentifier;
                     }

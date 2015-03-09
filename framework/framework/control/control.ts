@@ -957,14 +957,18 @@ module plat {
                 TemplateControl = ui.TemplateControl,
                 findResource = TemplateControl.findResource,
                 evaluateExpression = TemplateControl.evaluateExpression,
+                type: string,
                 i: number;
 
             for (i = 0; i < length; ++i) {
                 alias = aliases[i];
                 resourceObj = findResource(control, alias);
 
-                if (!isNull(resourceObj) && resourceObj.resource.type === __OBSERVABLE_RESOURCE) {
-                    resources[alias] = getManager(resourceObj.control);
+                if (!isNull(resourceObj)) {
+                    type = resourceObj.resource.type;
+                    if (type === __OBSERVABLE_RESOURCE || type === __LITERAL_RESOURCE) {
+                        resources[alias] = getManager(resourceObj.control);
+                    }
                 }
             }
 
@@ -973,7 +977,8 @@ module plat {
                 identifier: string,
                 split: Array<string> = [],
                 topIdentifier: string,
-                absolutePath = control.absoluteContextPath + '.',
+                absoluteContextPath = control.absoluteContextPath,
+                absolutePath = absoluteContextPath + '.',
                 managers: IObject<observable.ContextManager> = {};
 
             length = identifiers.length;
@@ -983,14 +988,19 @@ module plat {
                 split = identifier.split('.');
                 topIdentifier = split[0];
 
-                if (topIdentifier === 'this') {
-                    identifier = identifier.slice(5);
-                } else if (identifier[0] === '@') {
+                if (identifier[0] === '@') {
                     alias = topIdentifier.slice(1);
-                    identifier = identifier.replace(topIdentifier, 'resources.' + alias + '.value');
 
-                    if (!isNull(resources[alias])) {
-                        managers[identifier] = resources[alias];
+                    if (alias === __CONTEXT_RESOURCE) {
+                        managers[absoluteContextPath + identifier.replace(topIdentifier, '')] = contextManager;
+                    } else if (alias === __ROOT_CONTEXT_RESOURCE) {
+                        managers[identifier.replace(topIdentifier, 'context')] = contextManager;
+                    } else {
+                        identifier = identifier.replace(topIdentifier, 'resources.' + alias + '.value');
+
+                        if (!isNull(resources[alias])) {
+                            managers[identifier] = resources[alias];
+                        }
                     }
 
                     continue;

@@ -416,7 +416,7 @@ module plat.ui {
                 key = keys[i];
                 resource = (<any>resources)[key];
 
-                if (!isNull(resource) && resource.type === __OBSERVABLE_RESOURCE) {
+                if (!isNull(resource) && (resource.type === __OBSERVABLE_RESOURCE || resource.type === __LITERAL_RESOURCE)) {
                     define(resources, key, persist ? _clone(resource, true) : null, true, true, true);
                 }
             }

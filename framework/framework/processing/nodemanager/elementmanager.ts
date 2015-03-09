@@ -1024,13 +1024,19 @@ module plat.processing {
                 if (inheritsContext && !isNull(childContext)) {
                     if (childContext[0] === '@') {
                         var split = childContext.split('.'),
-                            alias = split.shift().slice(1),
+                            topIdentifier = split.shift(),
+                            alias = topIdentifier.slice(1),
                             resourceObj = _TemplateControlFactory.findResource(uiControl, alias),
                             _Exception: IExceptionStatic = this._Exception;
 
                         if (isObject(resourceObj)) {
                             var resource = resourceObj.resource;
-                            if (isObject(resource) && resource.type === __OBSERVABLE_RESOURCE) {
+
+                            if (alias === __CONTEXT_RESOURCE) {
+                                absoluteContextPath += '.' + childContext;
+                            } else if (alias === __ROOT_CONTEXT_RESOURCE) {
+                                absoluteContextPath = __CONTEXT + '.' + childContext;
+                            } else if (resource.type === __OBSERVABLE_RESOURCE || resource.type === __LITERAL_RESOURCE) {
                                 absoluteContextPath = 'resources.' + alias + '.value' + (split.length > 0 ? ('.' + split.join('.')) : '');
                                 uiControl.root = resourceObj.control;
                             } else {
@@ -1047,7 +1053,9 @@ module plat.processing {
                     }
                 }
 
-                uiControl.root = this._ControlFactory.getRootControl(uiControl) || uiControl;
+                if (!isObject(uiControl.root)) {
+                    uiControl.root = this._ControlFactory.getRootControl(uiControl) || uiControl;
+                }
 
                 contextManager = getManager(uiControl.root);
 
