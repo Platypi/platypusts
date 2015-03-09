@@ -528,10 +528,18 @@ module plat.ui {
                     alias = alias.slice(1);
                 }
 
+                if (alias === __CONTEXT_RESOURCE) {
+                    resources[alias] = control.context;
+                    continue;
+                } else if (alias === __ROOT_CONTEXT_RESOURCE) {
+                    resources[alias] = Control.getRootControl(control).context;
+                    continue;
+                }
+
                 if (!isNull(resources[alias])) {
                     continue;
                 } else if (!isNull(cache[alias])) {
-                    var resourceControl = cache[alias].control,
+                    var resourceControl: TemplateControl = cache[alias].control,
                         controlResources = resourceControl.resources;
 
                     if (isNull(controlResources)) {

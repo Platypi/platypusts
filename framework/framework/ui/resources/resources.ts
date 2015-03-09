@@ -328,7 +328,7 @@ module plat.ui {
                 },
                 control: {
                     value: control,
-                    type: __FUNCTION_RESOURCE
+                    type: __OBJECT_RESOURCE
                 }
             });
 
