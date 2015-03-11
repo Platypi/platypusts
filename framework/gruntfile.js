@@ -2,12 +2,22 @@ function stripDocs(data) {
     var linkRegex = /\{@link (.*?)[|](.*?)\}/g,
         out = [],
         onDescription = false,
-        onParam = false;
+        onParam = false,
+        first = false;
 
     data.forEach(function (line) {
         line = line.replace(linkRegex, function(value, qualifiedPath, linkValue, index, content) {
             return linkValue;
         });
+
+        if (!first) {
+            out.push(line);
+            return;
+        }
+
+        if(line.trim().indexOf('* @')) {
+            first = true;
+        }
 
         if (line.trim() === '*') {
             onDescription = onParam = false;
