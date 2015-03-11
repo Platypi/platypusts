@@ -234,7 +234,6 @@ module plat.ui.controls {
          */
         protected _handleClick(ev: Event): void {
             var buttons: number;
-            console.log('clicked');
             if (isNumber((<any>ev).buttons)) {
                 if ((<any>ev).buttons === 0) {
                     buttons = 1;
@@ -268,9 +267,7 @@ module plat.ui.controls {
                         break;
                 }
             }
-            console.log('buttons:', buttons);
             if (buttons === 1) {
-                console.log('preventing default');
                 ev.preventDefault();
             }
         }
@@ -295,7 +292,6 @@ module plat.ui.controls {
             if (isUndefined(href)) {
                 return;
             }
-            console.log('going to:', href);
             ev.preventDefault();
 
             requestAnimationFrameGlobal((): void => {
