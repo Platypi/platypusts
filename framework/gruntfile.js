@@ -1,18 +1,27 @@
 function stripDocs(data) {
     var linkRegex = /\{@link (.*?)[|](.*?)\}/g,
-        out = [];
+        out = [],
+        onDescription = false,
+        onParam = false;
 
     data.forEach(function (line) {
         line = line.replace(linkRegex, function(value, qualifiedPath, linkValue, index, content) {
             return linkValue;
         });
 
-        if(line.trim() === '*') {
-            return;
-        } else if (line.indexOf('* @') === -1) {
+        if (line.trim() === '*') {
+            onDescription = onParam = false;
+        } else if (line.indexOf('@description') > -1) {
+            onDescription = true;
+        } else if (((onDescription || onParam) && line.indexOf('* @') === -1) || line.trim().indexOf('*/') > -1 || line.trim().indexOf('/*') > -1 || line.trim()[0] !== '*') {
             out.push(line);
         } else if (line.indexOf('@param') > -1) {
+            onParam = true;
             out.push(line);
+        }
+
+        if (line.trim().indexOf('*/') > -1) {
+            onDescription = onParam = false;
         }
     });
 
