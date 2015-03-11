@@ -1610,7 +1610,7 @@ module plat.observable {
                 var length = callbacks.length;
 
                 for (var i = 0; i < length; ++i) {
-                    if (priority >= callbacks[i].priority) {
+                    if (priority > callbacks[i].priority) {
                         callbacks.splice(i, 0, observableListener);
                         found = true;
                         break;
