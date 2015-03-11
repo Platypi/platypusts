@@ -185,7 +185,6 @@ module plat.ui.controls {
             if (!isEmpty(href)) {
                 var element = this.element;
                 element.href = href;
-                element.setAttribute('data-href', href);
             }
         }
 
@@ -235,6 +234,7 @@ module plat.ui.controls {
          */
         protected _handleClick(ev: Event): void {
             var buttons: number;
+            console.log('clicked');
             if (isNumber((<any>ev).buttons)) {
                 if ((<any>ev).buttons === 0) {
                     buttons = 1;
@@ -268,8 +268,9 @@ module plat.ui.controls {
                         break;
                 }
             }
-
+            console.log('buttons:', buttons);
             if (buttons === 1) {
+                console.log('preventing default');
                 ev.preventDefault();
             }
         }
@@ -294,14 +295,26 @@ module plat.ui.controls {
             if (isUndefined(href)) {
                 return;
             }
-
-            this.element.removeAttribute('data-href');
+            console.log('going to:', href);
             ev.preventDefault();
 
             requestAnimationFrameGlobal((): void => {
                 this._browser.url(href);
             });
+        }
 
+        /**
+         * @name dispose
+         * @memberof plat.ui.controls.Link
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Calls to remove the click eater after a delay.
+         * 
+         * @returns {void}
+         */
+        dispose(): void {
             defer(this._removeClickListener, 3000);
         }
     }

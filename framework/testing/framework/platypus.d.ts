@@ -3495,6 +3495,11 @@ declare module plat {
               * A unique id used to manage the listener.
               */
             uid: string;
+            /**
+              * A high priority means this listener wants to be notified earlier than other listeners. The
+              * listeners will be fired in priority order when necessary.
+              */
+            priority?: number;
         }
         /**
           * An object denoting Array changes after the Array has been mutated. Takes a
@@ -8910,11 +8915,11 @@ declare module plat {
                   */
                 protected _removeClickListener: IRemoveListener;
                 /**
-                  * Initializes both tap and click events.
+                  * Initializes click event.
                   */
                 initialize(): void;
                 /**
-                  * Calls to normalize the href for internal links.
+                  * Calls to normalize the href for internal links and initializes the tap event.
                   */
                 loaded(): void;
                 /**
@@ -8933,6 +8938,7 @@ declare module plat {
                   * Determines the proper link upon $tap.
                   */
                 protected _handleTap(ev: IGestureEvent): void;
+                dispose(): void;
             }
             /**
               * The available options for the Link control.
