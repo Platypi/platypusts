@@ -10,13 +10,13 @@ function stripDocs(data) {
             return linkValue;
         });
 
+        if (line.trim().indexOf('* @') > -1) {
+            first = true;
+        }
+
         if (!first) {
             out.push(line);
             return;
-        }
-
-        if(line.trim().indexOf('* @')) {
-            first = true;
         }
 
         if (line.trim() === '*') {
