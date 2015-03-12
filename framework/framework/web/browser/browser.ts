@@ -285,7 +285,7 @@ module plat.web {
             var location = this._location;
 
             if (isString(url) && this.__lastUrl !== url) {
-                if (isArray(this._stack)) {
+                if (!replace && isArray(this._stack)) {
                     this._stack.push(location.href);
                 }
 
