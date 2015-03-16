@@ -1,7 +1,7 @@
 ﻿<!--<plat-foreach plat-context="items">
     <div>{{value}}</div>
 </plat-foreach>-->
-<!--<div>
+<div>
     <div class="left">
         <plat-foreach plat-context="views">
             <div>
@@ -14,20 +14,4 @@
         <button plat-tap="goBack">Back</button>
         <plat-viewport></plat-viewport>
     </div>
-</div>-->
-<button plat-tap="tap">tap</button><br />
-<plat-select plat-context="select" plat-bind="selectedVal">
-    <option value="{{value}}">{{textContent}}</option>
-</plat-select>
-
-<plat-foreach class="test" plat-context="test" plat-options="{animate:true}">
-    <div class="foo">
-        {{@context}}
-        <plat-foreach plat-context="@rootContext.test">
-            <div>
-                {{@context}}-2
-            </div>
-        </plat-foreach>
-    </div>
-</plat-foreach>
-<div>length = {{test.length}}</div>
+</div>

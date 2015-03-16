@@ -706,8 +706,14 @@
                 view = '*';
             }
 
+            var alias = view;
+
             if (view !== '*') {
                 view = this._Injector.convertDependency(view);
+            }
+
+            if (view === __NOOP_INJECTOR) {
+                view = alias;
             }
 
             var interceptors = this._interceptors[view];
@@ -871,7 +877,13 @@
          */
         generate(name: string, parameters?: IObject<string>, query?: IObject<string>): string;
         generate(name: any, parameters?: IObject<string>, query?: IObject<string>): string {
+            var alias = name;
+
             name = this._Injector.convertDependency(name);
+
+            if (name === __NOOP_INJECTOR) {
+                name = alias;
+            }
 
             var router = this,
                 prefix = '';
@@ -912,13 +924,15 @@
          */
         protected _configureRoute(route: IRouteMapping): void {
             var resolve = this._resolve,
-                view: string = this._Injector.convertDependency(route.view);
+                view: string = this._Injector.convertDependency(route.view),
+                alias = route.alias || view;
 
             if (view === __NOOP_INJECTOR) {
                 return;
             }
 
             route.view = view;
+            route.alias = alias || view;
 
             var routeDelegate: IRouteDelegate = {
                 pattern: route.pattern,
@@ -929,11 +943,12 @@
                     pattern: childPattern,
                     delegate: {
                         pattern: childPattern,
-                        view: view
+                        view: view,
+                        alias: alias
                     }
                 };
 
-            this._recognizer.register([routeDelegate], { name: view });
+            this._recognizer.register([routeDelegate], { name: alias });
             this._childRecognizer.register([childDelegate]);
         }
 
@@ -958,8 +973,14 @@
                 view = '*';
             }
 
+            var alias = view;
+
             if (view !== '*') {
                 view = this._Injector.convertDependency(view);
+            }
+
+            if (view === __NOOP_INJECTOR) {
+                view = alias;
             }
 
             if (isEmpty(view) || isEmpty(parameter)) {
@@ -1202,7 +1223,7 @@
             if (isEmpty(this._ports)) {
                 return this._resolve(true);
             }
-            return this._callAllHandlers(info.delegate.view, info.parameters, info.query).then((): async.IThenable<boolean> => {
+            return this._callAllHandlers(info.delegate.alias, info.parameters, info.query).then((): async.IThenable<boolean> => {
                 return this._callInterceptors(info);
             }).then((canNavigateTo): async.IThenable<Array<boolean>> => {
                 if (canNavigateTo === false || ignorePorts) {
@@ -1297,7 +1318,7 @@
 
                 return mapAsync((handler: (routeInfo: IRouteInfo) => any): async.IThenable<boolean> => {
                     return resolve(handler(info));
-                }, this._interceptors[info.delegate.view]);
+                }, this._interceptors[info.delegate.alias]);
             })
                 .then(booleanReduce);
         }
@@ -1330,6 +1351,7 @@
                 query = serializeQuery(info.query);
 
             return currentDelegate.view === delegate.view &&
+                currentDelegate.alias === delegate.alias &&
                 currentDelegate.pattern === delegate.pattern &&
                 currentParameters === parameters &&
                 currentQuery === query;
@@ -1432,6 +1454,19 @@
          * that ViewControl.
          */
         view: any;
+
+        /**
+         * @name alias
+         * @memberof plat.routing.IRouteMapping
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * An optional alias with which to associate this mapping. Alias is used over view when specified.
+         */
+        alias?: string;
     }
 
     /**

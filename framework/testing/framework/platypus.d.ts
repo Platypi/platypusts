@@ -10502,6 +10502,10 @@ declare module plat {
               * that ViewControl.
               */
             view: any;
+            /**
+              * An optional alias with which to associate this mapping. Alias is used over view when specified.
+              */
+            alias?: string;
         }
         /**
           * The result of a recognized route.
@@ -11935,6 +11939,10 @@ declare module plat {
           * @param {Node} node The node where at which DOM compilation begins.
           */
         load(node?: Node): void;
+        /**
+          * Calls to exit the application. Makes the necessary calls to the device is possible.
+          */
+        exit(): void;
     }
     /**
       */
