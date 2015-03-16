@@ -565,6 +565,21 @@ module plat {
         load(node?: Node): void {
             App.load(node);
         }
+
+        /**
+         * @name exit
+         * @memberof plat.App
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Calls to exit the application. Makes the necessary calls to the device is possible.
+         * 
+         * @returns {void}
+         */
+        exit(): void {
+            this.dispatchEvent(__shutdown);
+        }
     }
 
     /**
