@@ -8573,6 +8573,11 @@ declare module plat {
                   */
                 private __initialBind;
                 /**
+                  * The constructor for a If. Creates the comment node and document fragment storage
+                  * used by this control.
+                  */
+                constructor();
+                /**
                   * Checks the options and initializes the
                   * evaluation.
                   */

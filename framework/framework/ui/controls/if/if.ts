@@ -83,7 +83,7 @@ module plat.ui.controls {
          * @description
          * The Comment used to hold the place of the plat-if element.
          */
-        commentNode: Comment = this._document.createComment(__If + __BOUND_PREFIX + 'placeholder');
+        commentNode: Comment;
 
         /**
          * @name fragmentStore
@@ -179,6 +179,26 @@ module plat.ui.controls {
         private __initialBind: async.IThenable<void>;
 
         /**
+         * @name constructor
+         * @memberof plat.ui.controls.If
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * The constructor for a {@link plat.ui.controls.If|If}. Creates the comment node and document fragment storage 
+         * used by this control.
+         * 
+         * @returns {plat.ui.controls.If} A {@link plat.ui.controls.If|If} instance.
+         */
+        constructor() {
+            super();
+
+            var _document = this._document;
+            this.commentNode = _document.createComment(__If + __BOUND_PREFIX + 'placeholder');
+            this.fragmentStore = _document.createDocumentFragment();
+        }
+
+        /**
          * @name contextChanged
          * @memberof plat.ui.controls.If
          * @kind function
@@ -212,8 +232,7 @@ module plat.ui.controls {
          * @returns {void}
          */
         setTemplate(): void {
-            var childNodes: Array<Node> = Array.prototype.slice.call(this.element.childNodes);
-            this.bindableTemplates.add('template', childNodes);
+            this.bindableTemplates.add('template', Array.prototype.slice.call(this.element.childNodes));
         }
 
         /**
@@ -232,7 +251,7 @@ module plat.ui.controls {
         loaded(): async.IThenable<void> {
             if (isNull(this.options)) {
                 var _Exception = this._Exception;
-                _Exception.warn('No condition specified in plat-options for plat-if.', _Exception.BIND);
+                _Exception.warn('No condition specified in ' + __Options + ' for ' + this.type + '.', _Exception.BIND);
 
                 this.options = {
                     value: {
@@ -337,15 +356,16 @@ module plat.ui.controls {
                 this.__firstTime = false;
                 this.__initialBind = this.bindableTemplates.bind('template').then((template): animations.IAnimatingThenable => {
                     var element = this.element;
-
-                    element.appendChild(template);
                     this.__initialBind = null;
 
                     if (element.parentNode === this.fragmentStore) {
+                        element.insertBefore(template, null);
                         return <any>this._animateEntrance();
                     }
 
-                    return this.__enterAnimation = this._animator.animate(element, __Enter);
+                    this.__enterAnimation = this._animator.animate(element, __Enter);
+                    element.insertBefore(template, null);
+                    return this.__enterAnimation;
                 }).then((): void => {
                     this.__enterAnimation = null;
                 });
@@ -377,8 +397,11 @@ module plat.ui.controls {
             var commentNode = this.commentNode,
                 parentNode = commentNode.parentNode;
 
-            parentNode.replaceChild(this.fragmentStore, commentNode);
-            return this.__enterAnimation = this._animator.animate(this.element, __Enter).then((): void => {
+            if (!isNode(parentNode)) {
+                return this._animator.resolve().then(noop);
+            }
+
+            return this.__enterAnimation = this._animator.enter(this.element, __Enter, <Element>parentNode, commentNode).then((): void => {
                 this.__enterAnimation = null;
             });
         }
@@ -416,17 +439,18 @@ module plat.ui.controls {
          * @returns {plat.animations.IAnimationThenable<void>} A promise that resolves when the template is done animating
          */
         protected _animateLeave(): animations.IAnimationThenable<void> {
-            var element = this.element;
+            var element = this.element,
+                parent = element.parentElement,
+                nextSibling = element.nextSibling;
 
-            return this.__leaveAnimation = this._animator.animate(element, __Leave).then((): void => {
+            if (!isNode(parent)) {
+                return this._animator.resolve().then(noop);
+            }
+
+            return this.__leaveAnimation = this._animator.leave(element, __Leave).then((): void => {
                 this.__leaveAnimation = null;
-                element.parentNode.insertBefore(this.commentNode, element);
-
-                if (!isDocumentFragment(this.fragmentStore)) {
-                    this.fragmentStore = this._document.createDocumentFragment();
-                }
-
-                insertBefore(this.fragmentStore, element);
+                parent.insertBefore(this.commentNode, nextSibling);
+                this.fragmentStore.insertBefore(element, null);
             });
         }
     }
