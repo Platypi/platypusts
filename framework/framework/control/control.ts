@@ -234,6 +234,19 @@ module plat {
         dom: ui.Dom = Control._dom;
 
         /**
+         * @name utils
+         * @memberof plat.Control
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.Utils}
+         * 
+         * @description
+         * Contains helper methods for data manipulation.
+         */
+        utils: Utils = acquire(__Utils);
+
+        /**
          * @name getRootControl
          * @memberof plat.Control
          * @kind function

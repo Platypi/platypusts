@@ -17,7 +17,8 @@
             _compat: __Compat,
             _Exception: __ExceptionStatic,
             _Promise: __Promise,
-            dom: __Dom
+            dom: __Dom,
+            utils: __Utils
         };
 
         /**
@@ -45,6 +46,19 @@
          * Contains DOM helper methods for manipulating this control's element.
          */
         dom: Dom;
+
+        /**
+         * @name utils
+         * @memberof plat.ui.animations.BaseAnimation
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.Utils}
+         * 
+         * @description
+         * Contains helper methods for data manipulation.
+         */
+        utils: Utils;
 
         /**
          * @name options
