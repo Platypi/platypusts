@@ -5791,10 +5791,6 @@ declare module plat {
               */
             private __hasMoved;
             /**
-              * Whether or not the user swiped while in touch.
-              */
-            private __hasSwiped;
-            /**
               * Whether or not their is a registered "release" event.
               */
             private __hasRelease;
@@ -5864,10 +5860,6 @@ declare module plat {
               * events of each type.
               */
             private __mappedCount;
-            /**
-              * An array of subscribers for the swipe gesture.
-              */
-            private __swipeSubscribers;
             /**
               * A hash of the current pointer touch points on the page.
               */
@@ -6102,9 +6094,10 @@ declare module plat {
               * Calculates the velocity between two (x, y) coordinate points over a given time.
               * @param {number} dx The change in x position.
               * @param {number} dy The change in y position.
-              * @param {number} dt The change in time.
+              * @param {number} dtx The change in time in x direction.
+              * @param {number} dty The change in time in y direction.
               */
-            private __getVelocity(dx, dy, dt);
+            private __getVelocity(dx, dy, dtx, dty);
             /**
               * Calculates the direction of movement.
               * @param {number} dx The change in x position.
@@ -6121,8 +6114,10 @@ declare module plat {
               * Checks to see if a swipe event has been registered.
               * @param {plat.ui.IDirection} direction The current horizontal and vertical directions of movement.
               * @param {plat.ui.IVelocity} velocity The current horizontal and vertical velocities.
+              * @param {number} dx The distance in the x direction.
+              * @param {number} dy The distance in the y direction.
               */
-            private __setRegisteredSwipes(direction, velocity);
+            private __getRegisteredSwipes(direction, velocity, dx, dy);
             /**
               * Checks to see if a swipe event has been registered.
               * @param {string} direction The current direction of movement.
@@ -6220,7 +6215,7 @@ declare module plat {
         /**
           * An extended event object containing coordinate, time, and target info.
           */
-        interface IBaseEventProperties {
+        interface ITouchStartEventProperties {
             /**
               * Indicates which mouse button is being pressed in a mouse event.
               */
@@ -6247,6 +6242,37 @@ declare module plat {
               * The target of an Event object.
               */
             target?: EventTarget;
+        }
+        /**
+          * An extended event object containing coordinate, time, and target info for a swipe origin.
+          */
+        interface ISwipeOriginProperties {
+            /**
+              * The x-coordinate of the event on the screen relative to the upper left corner of the
+              * browser window. This value cannot be affected by scrolling.
+              */
+            clientX?: number;
+            /**
+              * The y-coordinate of the event on the screen relative to the upper left corner of the
+              * browser window. This value cannot be affected by scrolling.
+              */
+            clientY?: number;
+            /**
+              * A timestamp.
+              */
+            xTimestamp?: number;
+            /**
+              * A timestamp.
+              */
+            yTimestamp?: number;
+            /**
+              * The target of an Event object.
+              */
+            xTarget?: EventTarget;
+            /**
+              * The target of an Event object.
+              */
+            yTarget?: EventTarget;
         }
         /**
           * An extended event object potentially containing coordinate and movement information.

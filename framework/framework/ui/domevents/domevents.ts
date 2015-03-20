@@ -70,7 +70,7 @@
                  * The maximum distance in pixels between consecutive taps a user is allowed to 
                  * register a dbltap event.
                  */
-                maxDblTapDistance: 20
+                maxDblTapDistance: 10
             },
 
             /**
@@ -80,9 +80,9 @@
             velocities: <IVelocities>{
                 /**
                  * The minimum velocity in pixels/ms a user must move after touch down to register 
-                 * a swipe event.
+                 * a swipe event, adjusted to account for rounding.
                  */
-                minSwipeVelocity: 0.8
+                minSwipeVelocity: 0.645
             },
 
             /**
@@ -320,18 +320,6 @@
          */
         private __hasMoved = false;
         /**
-         * @name __hasSwiped
-         * @memberof plat.ui.DomEvents
-         * @kind property
-         * @access private
-         * 
-         * @type {boolean}
-         * 
-         * @description
-         * Whether or not the user swiped while in touch.
-         */
-        private __hasSwiped = false;
-        /**
          * @name __hasRelease
          * @memberof plat.ui.DomEvents
          * @kind property
@@ -434,24 +422,24 @@
          * @kind property
          * @access private
          * 
-         * @type {plat.ui.IBaseEventProperties}
+         * @type {plat.ui.ITouchStartEventProperties}
          * 
          * @description
          * The user's last touch down.
          */
-        private __lastTouchDown: IBaseEventProperties;
+        private __lastTouchDown: ITouchStartEventProperties;
         /**
          * @name __swipeOrigin
          * @memberof plat.ui.DomEvents
          * @kind property
          * @access private
          * 
-         * @type {plat.ui.IBaseEventProperties}
+         * @type {plat.ui.ISwipeOriginProperties}
          * 
          * @description
          * The starting place of an initiated swipe gesture.
          */
-        private __swipeOrigin: IBaseEventProperties;
+        private __swipeOrigin: ISwipeOriginProperties;
         /**
          * @name __lastMoveEvent
          * @memberof plat.ui.DomEvents
@@ -542,18 +530,6 @@
             $touchend: 0,
             $touchcancel: 0
         };
-        /**
-         * @name __swipeSubscribers
-         * @memberof plat.ui.DomEvents
-         * @kind property
-         * @access private
-         * 
-         * @type {Array<plat.ui.DomEvent>}
-         * 
-         * @description
-         * An array of subscribers for the swipe gesture.
-         */
-        private __swipeSubscribers: Array<DomEvent>;
         /**
          * @name __pointerHash
          * @memberof plat.ui.DomEvents
@@ -791,7 +767,7 @@
             this.__pointerHash = {};
             this.__reverseMap = {};
             this.__tapCount = this.__touchCount = 0;
-            this.__detectingMove = this.__hasMoved = this.__hasRelease = this.__hasSwiped = false;
+            this.__detectingMove = this.__hasMoved = this.__hasRelease = false;
             this.__lastMoveEvent = this.__lastTouchDown = this.__lastTouchUp = null;
             this.__swipeOrigin = this.__capturedTarget = this.__focusedElement = null;
             this.__cancelDeferredHold = this.__cancelDeferredTap = noop;
@@ -834,13 +810,28 @@
             // set any captured target and last move back to null
             this.__capturedTarget = this.__lastMoveEvent = null;
             this.__hasMoved = false;
-            this.__lastTouchDown = this.__swipeOrigin = {
+
+            var clientX = ev.clientX,
+                clientY = ev.clientY,
+                timeStamp = ev.timeStamp,
+                target = ev.target;
+
+            this.__lastTouchDown = {
                 _buttons: ev._buttons,
-                clientX: ev.clientX,
-                clientY: ev.clientY,
-                timeStamp: ev.timeStamp,
-                target: ev.target,
+                clientX: clientX,
+                clientY: clientY,
+                timeStamp: timeStamp,
+                target: target,
                 identifier: ev.identifier
+            };
+
+            this.__swipeOrigin = {
+                clientX: clientX,
+                clientY: clientY,
+                xTimestamp: timeStamp,
+                yTimestamp: timeStamp,
+                xTarget: target,
+                yTarget: target
             };
 
             var gestureCount = this._gestureCount,
@@ -948,16 +939,15 @@
                 return true;
             }
 
-            var lastMove = <IBaseEventProperties>this.__lastMoveEvent || swipeOrigin,
-                direction = evt.direction = this.__getDirection(x - lastMove.clientX, y - lastMove.clientY),
-                originChanged = this.__checkForOriginChanged(direction),
-                velocity = evt.velocity = this.__getVelocity(x - swipeOrigin.clientX, y - swipeOrigin.clientY,
-                    evt.timeStamp - swipeOrigin.timeStamp);
+            var lastMove = <ITouchStartEventProperties>this.__lastMoveEvent || swipeOrigin,
+                direction = evt.direction = this.__getDirection(x - lastMove.clientX, y - lastMove.clientY);
 
-            // if swiping events exist
-            if (!(noSwiping || (this.__hasSwiped && !originChanged))) {
-                this.__setRegisteredSwipes(direction, velocity);
-            }
+            this.__checkForOriginChanged(direction);
+            
+            var dx = Math.abs(x - swipeOrigin.clientX),
+                dy = Math.abs(y - swipeOrigin.clientY),
+                velocity = evt.velocity = this.__getVelocity(dx, dy,
+                    evt.timeStamp - swipeOrigin.xTimestamp, evt.timeStamp - swipeOrigin.yTimestamp);
 
             // if tracking events exist
             if (!noTracking) {
@@ -1047,9 +1037,7 @@
             }
 
             // handle swipe events
-            if (this.__hasSwiped) {
-                this.__handleSwipe();
-            }
+            this.__handleSwipe();
 
             var config = DomEvents.config,
                 intervals = config.intervals,
@@ -1123,7 +1111,7 @@
          */
         private __resetTouchEnd(): void {
             this.__tapCount = this.__touchCount = 0;
-            this._inTouch = this.__hasRelease = this.__hasSwiped = false;
+            this._inTouch = this.__hasRelease = false;
             this.__pointerHash = {};
             this.__pointerEvents = [];
             this.__capturedTarget = null;
@@ -1270,21 +1258,27 @@
          * @returns {void}
          */
         private __handleSwipe(): void {
-            var lastMove = this.__lastMoveEvent;
-            if (isNull(lastMove)) {
-                this.__hasSwiped = false;
-                this.__swipeSubscribers = null;
+            // if swiping events exist
+            if (this._gestureCount.$swipe <= 0) {
                 return;
             }
 
-            var swipeSubscribers = this.__swipeSubscribers || [];
+            var lastMove = this.__lastMoveEvent;
+
+            if (isNull(lastMove)) {
+                return;
+            }
+
+            var origin = this.__swipeOrigin,
+                dx = Math.abs(lastMove.clientX - origin.clientX),
+                dy = Math.abs(lastMove.clientY - origin.clientY),
+                swipeSubscribers = this.__getRegisteredSwipes(lastMove.direction, lastMove.velocity, dx, dy);
+
             while (swipeSubscribers.length > 0) {
                 swipeSubscribers.pop().trigger(lastMove);
             }
 
-            this.__hasSwiped = false;
             this.__lastMoveEvent = null;
-            this.__swipeSubscribers = null;
         }
 
         /**
@@ -2011,7 +2005,7 @@
          * not found.
          */
         private __getTouchIndex(touches: Array<IExtendedEvent>): number {
-            var identifier = (this.__lastTouchDown || <IBaseEventProperties>{}).identifier,
+            var identifier = (this.__lastTouchDown || <ITouchStartEventProperties>{}).identifier,
                 length = touches.length;
 
             for (var i = 0; i < length; ++i) {
@@ -2098,14 +2092,26 @@
          * 
          * @param {number} dx The change in x position.
          * @param {number} dy The change in y position.
-         * @param {number} dt The change in time.
+         * @param {number} dtx The change in time in x direction.
+         * @param {number} dty The change in time in y direction.
          * 
          * @returns {plat.ui.IVelocity} A velocity object containing horiztonal and vertical velocities.
          */
-        private __getVelocity(dx: number, dy: number, dt: number): IVelocity {
+        private __getVelocity(dx: number, dy: number, dtx: number, dty: number): IVelocity {
+            var x = 0,
+                y = 0;
+
+            if (dtx > 0) {
+                x = (dx / dtx) || 0;
+            }
+
+            if (dty > 0) {
+                y = (dy / dty) || 0;
+            }
+
             return {
-                x: Math.abs(dx / dt) || 0,
-                y: Math.abs(dy / dt) || 0
+                x: x,
+                y: y
             };
         }
 
@@ -2150,34 +2156,39 @@
          * 
          * @param {plat.ui.IDirection} direction The current vertical and horiztonal directions of movement.
          * 
-         * @returns {boolean} Whether or not the origin has changed.
+         * @returns {void}
          */
-        private __checkForOriginChanged(direction: IDirection): boolean {
+        private __checkForOriginChanged(direction: IDirection): void {
             var lastMove = this.__lastMoveEvent;
             if (isNull(lastMove)) {
-                this.__hasSwiped = false;
-                return true;
+                return;
             }
 
-            var swipeDirection = lastMove.direction;
-            if (swipeDirection.x === direction.x && swipeDirection.y === direction.y) {
-                return false;
+            var swipeDirection = lastMove.direction,
+                xSame = swipeDirection.x === direction.x,
+                ySame = swipeDirection.y === direction.y;
+
+            if (xSame && ySame) {
+                return;
             }
 
-            this.__swipeOrigin = {
-                clientX: lastMove.clientX,
-                clientY: lastMove.clientY,
-                timeStamp: lastMove.timeStamp,
-                target: lastMove.target,
-                identifier: lastMove.identifier
-            };
+            var origin = this.__swipeOrigin;
 
-            this.__hasSwiped = false;
-            return true;
+            if (!xSame) {
+                origin.clientX = lastMove.clientX;
+                origin.xTimestamp = lastMove.timeStamp;
+                origin.xTarget = lastMove.target;
+            }
+
+            if (!ySame) {
+                origin.clientY = lastMove.clientY;
+                origin.yTimestamp = lastMove.timeStamp;
+                origin.yTarget = lastMove.target;
+            }
         }
 
         /**
-         * @name __checkForRegisteredSwipe
+         * @name __getRegisteredSwipes
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access private
@@ -2187,26 +2198,33 @@
          * 
          * @param {plat.ui.IDirection} direction The current horizontal and vertical directions of movement.
          * @param {plat.ui.IVelocity} velocity The current horizontal and vertical velocities.
+         * @param {number} dx The distance in the x direction.
+         * @param {number} dy The distance in the y direction.
          * 
-         * @returns {void}
+         * @returns {Array<plat.ui.DomEvent>} The swipe event subscribers.
          */
-        private __setRegisteredSwipes(direction: IDirection, velocity: IVelocity): void {
-            var swipeTarget = <ICustomElement>(this.__swipeOrigin || <IBaseEventProperties>{}).target,
+        private __getRegisteredSwipes(direction: IDirection, velocity: IVelocity, dx: number, dy: number): Array<DomEvent> {
+            var swipeTarget: ICustomElement,
                 swipeGesture = this._gestures.$swipe,
                 minSwipeVelocity = DomEvents.config.velocities.minSwipeVelocity,
-                events = [swipeGesture];
+                events = [swipeGesture],
+                origin = (this.__swipeOrigin || <ISwipeOriginProperties>{});
 
-            if (velocity.x >= minSwipeVelocity) {
-                this.__hasSwiped = true;
-                events.push(swipeGesture + direction.x);
+            if (dx > dy) {
+                swipeTarget = <ICustomElement>origin.xTarget;
+
+                if (velocity.x >= minSwipeVelocity) {
+                    events.push(swipeGesture + direction.x);
+                }
+            } else if (dy > dx) {
+                swipeTarget = <ICustomElement>origin.yTarget;
+
+                if (velocity.y >= minSwipeVelocity) {
+                    events.push(swipeGesture + direction.y);
+                }
             }
 
-            if (velocity.y >= minSwipeVelocity) {
-                this.__hasSwiped = true;
-                events.push(swipeGesture + direction.y);
-            }
-
-            this.__swipeSubscribers = this.__findFirstSubscribers(swipeTarget, events);
+            return this.__findFirstSubscribers(swipeTarget, events);
         }
 
         /**
@@ -2857,17 +2875,17 @@
     }
 
     /**
-     * @name IBaseEventProperties
+     * @name ITouchStartEventProperties
      * @memberof plat.ui
      * @kind interface
      * 
      * @description
      * An extended event object containing coordinate, time, and target info.
      */
-    export interface IBaseEventProperties {
+    export interface ITouchStartEventProperties {
         /**
          * @name buttons
-         * @memberof plat.ui.IBaseEventProperties
+         * @memberof plat.ui.ITouchStartEventProperties
          * @kind property
          * @access public
          * 
@@ -2880,7 +2898,7 @@
 
         /**
          * @name clientX
-         * @memberof plat.ui.IBaseEventProperties
+         * @memberof plat.ui.ITouchStartEventProperties
          * @kind property
          * @access public
          * 
@@ -2894,7 +2912,7 @@
 
         /**
          * @name clientY
-         * @memberof plat.ui.IBaseEventProperties
+         * @memberof plat.ui.ITouchStartEventProperties
          * @kind property
          * @access public
          * 
@@ -2908,7 +2926,7 @@
 
         /**
          * @name identifier
-         * @memberof plat.ui.IBaseEventProperties
+         * @memberof plat.ui.ITouchStartEventProperties
          * @kind property
          * @access public
          * 
@@ -2921,7 +2939,7 @@
 
         /**
          * @name timeStamp
-         * @memberof plat.ui.IBaseEventProperties
+         * @memberof plat.ui.ITouchStartEventProperties
          * @kind property
          * @access public
          * 
@@ -2934,16 +2952,106 @@
 
         /**
          * @name target
-         * @memberof plat.ui.IBaseEventProperties
+         * @memberof plat.ui.ITouchStartEventProperties
+         * @kind property
+         * @access public
+         * 
+         * @type {EventTarget}
+         * 
+         * @description
+         * The target of an Event object.
+         */
+        target?: EventTarget;
+    }
+
+    /**
+     * @name ISwipeOriginProperties
+     * @memberof plat.ui
+     * @kind interface
+     * 
+     * @description
+     * An extended event object containing coordinate, time, and target info for a swipe origin.
+     */
+    export interface ISwipeOriginProperties {
+        /**
+         * @name clientX
+         * @memberof plat.ui.ISwipeOriginProperties
          * @kind property
          * @access public
          * 
          * @type {number}
          * 
          * @description
+         * The x-coordinate of the event on the screen relative to the upper left corner of the 
+         * browser window. This value cannot be affected by scrolling.
+         */
+        clientX?: number;
+
+        /**
+         * @name clientY
+         * @memberof plat.ui.ISwipeOriginProperties
+         * @kind property
+         * @access public
+         * 
+         * @type {number}
+         * 
+         * @description
+         * The y-coordinate of the event on the screen relative to the upper left corner of the 
+         * browser window. This value cannot be affected by scrolling.
+         */
+        clientY?: number;
+
+        /**
+         * @name xTimestamp
+         * @memberof plat.ui.ISwipeOriginProperties
+         * @kind property
+         * @access public
+         * 
+         * @type {number}
+         * 
+         * @description
+         * A timestamp.
+         */
+        xTimestamp?: number;
+
+        /**
+         * @name yTimestamp
+         * @memberof plat.ui.ISwipeOriginProperties
+         * @kind property
+         * @access public
+         * 
+         * @type {number}
+         * 
+         * @description
+         * A timestamp.
+         */
+        yTimestamp?: number;
+
+        /**
+         * @name xTarget
+         * @memberof plat.ui.ISwipeOriginProperties
+         * @kind property
+         * @access public
+         * 
+         * @type {EventTarget}
+         * 
+         * @description
          * The target of an Event object.
          */
-        target?: EventTarget;
+        xTarget?: EventTarget;
+
+        /**
+         * @name yTarget
+         * @memberof plat.ui.ISwipeOriginProperties
+         * @kind property
+         * @access public
+         * 
+         * @type {EventTarget}
+         * 
+         * @description
+         * The target of an Event object.
+         */
+        yTarget?: EventTarget;
     }
 
     /**
