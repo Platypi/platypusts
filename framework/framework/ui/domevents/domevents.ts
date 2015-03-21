@@ -162,6 +162,34 @@
         protected _compat: Compat;
 
         /**
+         * @name _androidVersion
+         * @memberof plat.ui.DomEvents
+         * @kind property
+         * @access protected
+         * @static
+         * 
+         * @type {number}
+         * 
+         * @description
+         * The version of android, or -1 if not on android.
+         */
+        protected _androidVersion: number = isUndefined(this._compat.ANDROID) ? -1 : this._compat.ANDROID;
+
+        /**
+         * @name _onAndroid44
+         * @memberof plat.ui.DomEvents
+         * @kind property
+         * @access protected
+         * @static
+         * 
+         * @type {boolean}
+         * 
+         * @description
+         * Whether or not we're on Android 4.4.x
+         */
+        protected _android44orBelow: boolean = Math.floor(this._androidVersion / 10) <= 44;
+
+        /**
          * @name _isActive
          * @memberof plat.ui.DomEvents
          * @kind property
@@ -440,6 +468,18 @@
          * The starting place of an initiated swipe gesture.
          */
         private __swipeOrigin: ISwipeOriginProperties;
+        /**
+         * @name __haveSwipeSubscribers
+         * @memberof plat.ui.DomEvents
+         * @kind property
+         * @access private
+         * 
+         * @type {boolean}
+         * 
+         * @description
+         * Whether or not there are any swipe subscribers for the current target during touch move events.
+         */
+        private __haveSwipeSubscribers: boolean;
         /**
          * @name __lastMoveEvent
          * @memberof plat.ui.DomEvents
@@ -767,7 +807,7 @@
             this.__pointerHash = {};
             this.__reverseMap = {};
             this.__tapCount = this.__touchCount = 0;
-            this.__detectingMove = this.__hasMoved = this.__hasRelease = false;
+            this.__detectingMove = this.__hasMoved = this.__hasRelease = this.__haveSwipeSubscribers = false;
             this.__lastMoveEvent = this.__lastTouchDown = this.__lastTouchUp = null;
             this.__swipeOrigin = this.__capturedTarget = this.__focusedElement = null;
             this.__cancelDeferredHold = this.__cancelDeferredTap = noop;
@@ -814,7 +854,8 @@
             var clientX = ev.clientX,
                 clientY = ev.clientY,
                 timeStamp = ev.timeStamp,
-                target = ev.target;
+                target = ev.target,
+                gestures = this._gestures;
 
             this.__lastTouchDown = {
                 _buttons: ev._buttons,
@@ -833,6 +874,9 @@
                 xTarget: target,
                 yTarget: target
             };
+
+            this.__haveSwipeSubscribers = this.__findFirstSubscribers(<ICustomElement>target,
+                [gestures.$swipe, gestures.$swipedown, gestures.$swipeleft, gestures.$swiperight, gestures.$swipeup]).length > 0;
 
             var gestureCount = this._gestureCount,
                 noHolds = gestureCount.$hold <= 0,
@@ -940,14 +984,17 @@
             }
 
             var lastMove = <ITouchStartEventProperties>this.__lastMoveEvent || swipeOrigin,
-                direction = evt.direction = this.__getDirection(x - lastMove.clientX, y - lastMove.clientY);
-
-            this.__checkForOriginChanged(direction);
+                direction = evt.direction = this.__getDirection(x - lastMove.clientX, y - lastMove.clientY),
+                haveSubscribers = this.__handleOriginChange(direction);
             
             var dx = Math.abs(x - swipeOrigin.clientX),
                 dy = Math.abs(y - swipeOrigin.clientY),
                 velocity = evt.velocity = this.__getVelocity(dx, dy,
                     evt.timeStamp - swipeOrigin.xTimestamp, evt.timeStamp - swipeOrigin.yTimestamp);
+
+            if (!noSwiping && this._android44orBelow && this.__haveSwipeSubscribers) {
+                ev.preventDefault();
+            }
 
             // if tracking events exist
             if (!noTracking) {
@@ -1139,6 +1186,12 @@
             ev = index >= 0 ? touches[index] : this.__standardizeEventObject(ev);
             this.__clearTempStates();
             if (this.__hasMoved) {
+                // Android 4.4.x fires touchcancel when the finger moves off an element that
+                // is listening for touch events, so we should handle swipes here in that case.
+                if (this._android44orBelow) {
+                    this.__handleSwipe();
+                }
+
                 this.__handleTrackEnd(ev);
             }
             this.__resetTouchEnd();
@@ -1268,7 +1321,7 @@
             if (isNull(lastMove)) {
                 return;
             }
-
+            
             var origin = this.__swipeOrigin,
                 dx = Math.abs(lastMove.clientX - origin.clientX),
                 dy = Math.abs(lastMove.clientY - origin.clientY),
@@ -1297,14 +1350,26 @@
          * @returns {void}
          */
         private __handleTrack(ev: IPointerEvent, originalEv: IPointerEvent): void {
-            var trackGesture = this._gestures.$track,
+            var gestures = this._gestures,
+                trackGesture = gestures.$track,
                 direction = ev.direction,
                 eventTarget = this.__capturedTarget || <ICustomElement>ev.target;
 
             var domEvents = this.__findFirstSubscribers(eventTarget,
                 [trackGesture, (trackGesture + direction.x), (trackGesture + direction.y)]);
+
+            if (this._android44orBelow) {
+                var anyEvents = this.__findFirstSubscribers(eventTarget,
+                    [trackGesture, gestures.$trackdown, gestures.$trackup,
+                        gestures.$trackleft, gestures.$trackright, gestures.$trackend]);
+
+                if (anyEvents.length > 0) {
+                    originalEv.preventDefault();
+                }
+            }
+
             if (domEvents.length > 0) {
-                if (!isUndefined(this._compat.ANDROID)) {
+                if (this._androidVersion > -1) {
                     originalEv.preventDefault();
                 }
 
@@ -1929,7 +1994,7 @@
             ev.touches = touches;
             ev.offset = this.__getOffset(ev);
 
-            if (isUndefined(ev.timeStamp)) {
+            if (isUndefined(ev.timeStamp) || timeStamp > ev.timeStamp) {
                 ev.timeStamp = timeStamp;
             }
 
@@ -2158,7 +2223,7 @@
          * 
          * @returns {void}
          */
-        private __checkForOriginChanged(direction: IDirection): void {
+        private __handleOriginChange(direction: IDirection): void {
             var lastMove = this.__lastMoveEvent;
             if (isNull(lastMove)) {
                 return;
@@ -2172,18 +2237,28 @@
                 return;
             }
 
-            var origin = this.__swipeOrigin;
+            var origin = this.__swipeOrigin,
+                gestures = this._gestures,
+                swipes = [gestures.$swipe, gestures.$swipedown, gestures.$swipeleft, gestures.$swiperight, gestures.$swipeup];
 
             if (!xSame) {
                 origin.clientX = lastMove.clientX;
                 origin.xTimestamp = lastMove.timeStamp;
                 origin.xTarget = lastMove.target;
+
+                if (this._android44orBelow) {
+                    this.__haveSwipeSubscribers = this.__findFirstSubscribers(<ICustomElement>origin.xTarget, swipes).length > 0;
+                }
             }
 
             if (!ySame) {
                 origin.clientY = lastMove.clientY;
                 origin.yTimestamp = lastMove.timeStamp;
                 origin.yTarget = lastMove.target;
+
+                if (this._android44orBelow) {
+                    this.__haveSwipeSubscribers = this.__findFirstSubscribers(<ICustomElement>origin.yTarget, swipes).length > 0;
+                }
             }
         }
 

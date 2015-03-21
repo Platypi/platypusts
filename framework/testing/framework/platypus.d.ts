@@ -5746,6 +5746,14 @@ declare module plat {
               */
             protected _compat: Compat;
             /**
+              * The version of android, or -1 if not on android.
+              */
+            protected _androidVersion: number;
+            /**
+              * Whether or not we're on Android 4.4.x
+              */
+            protected _android44orBelow: boolean;
+            /**
               * Whether or not the DomEvents are currently active.
               * They become active at least one element on the current
               * page is listening for a custom event.
@@ -5831,6 +5839,10 @@ declare module plat {
               * The starting place of an initiated swipe gesture.
               */
             private __swipeOrigin;
+            /**
+              * Whether or not there are any swipe subscribers for the current target during touch move events.
+              */
+            private __haveSwipeSubscribers;
             /**
               * The user's last move while in touch.
               */
@@ -6109,7 +6121,7 @@ declare module plat {
               * an origin point.
               * @param {plat.ui.IDirection} direction The current vertical and horiztonal directions of movement.
               */
-            private __checkForOriginChanged(direction);
+            private __handleOriginChange(direction);
             /**
               * Checks to see if a swipe event has been registered.
               * @param {plat.ui.IDirection} direction The current horizontal and vertical directions of movement.

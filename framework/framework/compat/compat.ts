@@ -442,7 +442,11 @@
                 def = (<any>_window).define,
                 msA = (<any>_window).MSApp,
                 winJs = (<any>_window).WinJS,
-                android = parseInt((<any>/android (\d+)/.exec(userAgent) || [])[1], 10);
+                android = (<any>/android ((?:\d|\.)+)/.exec(userAgent) || [])[1];
+
+            if (isString(android)) {
+                android = parseInt(android.replace(/\./g, ''), 10);
+            }
 
             this.isCompatible = isFunction(Object.defineProperty) && isFunction(this._document.querySelector);
             this.cordova = !isNull((<any>_window).cordova);
