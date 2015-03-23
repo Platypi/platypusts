@@ -433,7 +433,16 @@ module plat.async {
                         responseType = '';
                     }
 
-                    xhr.responseType = responseType;
+                    // Android < 4.4 will throw a DOM Exception 12 if responseType is set to json.
+                    // The only way to do feature detection is with try/catch.
+                    if (responseType === 'json') {
+                        try {
+                            xhr.responseType = responseType;
+                        } catch (e) {
+                            xhr.responseType = '';
+                        }
+                    }
+
                     xhr.withCredentials = options.withCredentials;
 
                     var mimeType = options.overrideMimeType,
