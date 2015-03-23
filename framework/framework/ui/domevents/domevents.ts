@@ -2452,7 +2452,7 @@
                                 focusedElement.blur();
                             }
                             postpone((): void => {
-                                if (this._document.body.contains(target)) {
+                                if (this._document.body.contains(target) && isFunction(target.click)) {
                                     target.click();
                                 }
                             });
@@ -2476,7 +2476,7 @@
                         focusedElement.blur();
                     }
                     postpone((): void => {
-                        if (this._document.body.contains(target)) {
+                        if (this._document.body.contains(target) && isFunction(target.click)) {
                             target.click();
                         }
                     });
