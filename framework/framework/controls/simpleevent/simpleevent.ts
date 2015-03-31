@@ -280,20 +280,25 @@ module plat.controls {
         protected _findAliases(args: Array<string>): Array<string> {
             var length = args.length,
                 arg: string,
-                exec: RegExpExecArray,
-                aliases: IObject<boolean> = {},
-                _regex = this._regex;
+                hash: IObject<boolean> = {},
+                aliases: Array<string> = [],
+                parsedAliases: Array<string> = [],
+                _parser = this._parser;
 
-            for (var i = 0; i < length; ++i) {
-                arg = args[i].trim();
+            while (length-- > 0) {
+                arg = args[length].trim();
+                parsedAliases = parsedAliases.concat(_parser.parse(arg).aliases);
+            }
 
-                if (arg[0] === '@') {
-                    exec = _regex.aliasRegex.exec(arg);
-                    aliases[!isNull(exec) ? exec[0] : arg.slice(1)] = true;
+            while (parsedAliases.length > 0) {
+                arg = parsedAliases.pop();
+                if (!hash[arg]) {
+                    aliases.push(arg);
+                    hash[arg] = true;
                 }
             }
 
-            return Object.keys(aliases);
+            return aliases;
         }
 
         /**
