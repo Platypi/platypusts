@@ -380,7 +380,7 @@ module plat {
 
             if ((<IInternal>control).__injectable__type === __STATIC) {
                 var injector = controlInjectors[control.type];
-                register.control(control.type,(<any>control).constructor, injector.dependencies, true);
+                register.control(control.type, (<any>control).constructor, injector.dependencies, true);
             }
         }
 
