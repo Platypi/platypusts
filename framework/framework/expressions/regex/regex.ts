@@ -41,28 +41,6 @@
         argumentRegex = /\((.*)\)/;
 
         /**
-         * @name aliasRegex
-         * @memberof plat.expressions.Regex
-         * @kind property
-         * @access public
-         * 
-         * @type {RegExp}
-         * 
-         * @description
-         * Given a string, finds the root alias name if that string is an
-         * alias path.
-         * 
-         * @example
-         *   // outputs ['context']
-         *   exec('@context.foo');
-         * 
-         * @example
-         * // outputs null
-         * exec(`@context`);
-         */
-        aliasRegex = /[^@\.\[\(]+(?=[\.\[\(])/;
-
-        /**
          * @name initialUrlRegex
          * @memberof plat.expressions.Regex
          * @kind property
