@@ -1,5 +1,5 @@
 /**
-  * PlatypusTS v0.12.10 (http://getplatypi.com)
+  * PlatypusTS v0.12.11 (http://getplatypi.com)
   * Copyright 2015 Platypi, LLC. All rights reserved.
   *
   * PlatypusTS is licensed under the GPL-3.0 found at
@@ -157,7 +157,7 @@ declare module plat {
             /**
               * The dependencies for this injector
               */
-            private __dependencies;
+            dependencies: Array<string>;
             /**
               * Initializes all static injectors.
               */
@@ -1080,11 +1080,6 @@ declare module plat {
               * Finds the arguments in a method expression.
               */
             argumentRegex: RegExp;
-            /**
-              * Given a string, finds the root alias name if that string is an
-              * alias path.
-              */
-            aliasRegex: RegExp;
             /**
               * Finds '/*.html' or '/*.htm' in a url. Useful for removing
               * the html file out of the url.
