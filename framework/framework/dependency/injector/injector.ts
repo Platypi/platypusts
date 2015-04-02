@@ -25,17 +25,17 @@ module plat.dependency {
      */
     export class Injector<T> {
         /**
-         * @name __dependencies
+         * @name dependencies
          * @memberof plat.dependency.Injector
          * @kind property
-         * @access private
+         * @access public
          * 
          * @type {Array<string>}
          * 
          * @description
          * The dependencies for this injector
          */
-        private __dependencies: Array<string>;
+        dependencies: Array<string>;
 
         /**
          * @name initialize
@@ -424,7 +424,7 @@ module plat.dependency {
             return <any>{
                 inject: (): any => value,
                 name: __WRAPPED_INJECTOR,
-                __dependencies: [],
+                dependencies: [],
                 Constructor: value
             };
         }
@@ -446,7 +446,7 @@ module plat.dependency {
                 inject: noop,
                 type: __NOOP_INJECTOR,
                 name: __NOOP_INJECTOR,
-                __dependencies: [],
+                dependencies: [],
                 Constructor: <any>noop
             };
         }
@@ -466,12 +466,12 @@ module plat.dependency {
          * @returns {string} The end of the circular dependency chain, if one exists.
          */
         private static __findCircularReferences(injector: Injector<any>): string {
-            if (!(isObject(injector) && isArray(injector.__dependencies))) {
+            if (!(isObject(injector) && isArray(injector.dependencies))) {
                 return;
             }
 
             var source = injector.name,
-                dependencies = injector.__dependencies,
+                dependencies = injector.dependencies,
                 node: {
                     name: string;
                     dependencies: Array<string>;
@@ -499,13 +499,13 @@ module plat.dependency {
 
                     injector = locate(dependency);
 
-                    if (!(isObject(injector) && isArray(injector.__dependencies))) {
+                    if (!(isObject(injector) && isArray(injector.dependencies))) {
                         continue;
                     }
 
                     stack.push({
                         name: injector.name,
-                        dependencies: injector.__dependencies.slice(0)
+                        dependencies: injector.dependencies.slice(0)
                     });
                 }
             }
@@ -531,7 +531,7 @@ module plat.dependency {
          * @returns {plat.dependency.Injector}
          */
         constructor(public name: string, public Constructor: new () => T, dependencies?: Array<any>, public type: string = null) {
-            var deps = this.__dependencies = Injector.convertDependencies(dependencies),
+            var deps = this.dependencies = Injector.convertDependencies(dependencies),
                 index = deps.indexOf(__NOOP_INJECTOR),
                 circularReference: string;
 
@@ -573,7 +573,7 @@ module plat.dependency {
 
             if (name === __AppStatic) {
                 var App: IAppStatic = <IAppStatic>(<any>this).inject();
-                this.__dependencies = deps;
+                this.dependencies = deps;
                 App.start();
             }
         }
@@ -596,7 +596,7 @@ module plat.dependency {
             var toInject: any = [],
                 type = this.type;
 
-            var dependencies = this.__dependencies,
+            var dependencies = this.dependencies,
                 length = dependencies.length,
                 dependency: Injector<any>,
                 injectable: any;
@@ -611,7 +611,8 @@ module plat.dependency {
             if (isString(type) && type !== __INSTANCE) {
                 this._wrapInjector(injectable);
             }
-
+            
+            (<IInternal>injectable).__injectable__type = type;
             return injectable;
         }
 

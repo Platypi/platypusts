@@ -377,6 +377,11 @@ module plat {
             Control._ContextManager.dispose(control);
             control.element = null;
             Control.removeParent(control);
+
+            if ((<IInternal>control).__injectable__type === __STATIC) {
+                var injector = controlInjectors[control.type];
+                register.control(control.type,(<any>control).constructor, injector.dependencies, true);
+            }
         }
 
         /**

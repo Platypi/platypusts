@@ -300,3 +300,7 @@ var __prefix = '$',
     __CONTROL_RESOURCE = 'control',
     __CONTEXT_RESOURCE = __CONTEXT;
 /* tslint:enable:no-unused-variable */
+
+interface IInternal {
+    __injectable__type?: string;
+}
