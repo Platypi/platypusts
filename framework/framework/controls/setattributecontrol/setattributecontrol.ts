@@ -126,7 +126,7 @@ module plat.controls {
          * @returns {void}
          */
         setter(): void {
-            postpone((): void => {
+            requestAnimationFrameGlobal((): void => {
                 var element = this.element,
                     property = this.property;
 
@@ -146,6 +146,7 @@ module plat.controls {
                     default:
                         element.setAttribute(property, property);
                         (<any>element)[property] = true;
+                        break;
                 }
             });
         }
@@ -400,7 +401,7 @@ module plat.controls {
          * @returns {void}
          */
         setter(): void {
-            postpone((): void => {
+            requestAnimationFrameGlobal((): void => {
                 if (!isNode(this.element)) {
                     return;
                 }
@@ -468,6 +469,19 @@ module plat.controls {
      */
     export class Style extends SetAttributeControl {
         /**
+         * @name property
+         * @memberof plat.controls.Style
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * The property to set on the associated template control.
+         */
+        property: string = 'style';
+
+        /**
          * @name setter
          * @memberof plat.controls.Style
          * @kind function
@@ -479,35 +493,16 @@ module plat.controls {
          * @returns {void}
          */
         setter(): void {
-            var expression: string = this.attributes[this.attribute];
+            var element = this.element,
+                expression = this.attributes[this.attribute];
 
-            if (isEmpty(expression)) {
+            if (isEmpty(expression) || isNull(element)) {
                 return;
             }
 
-            var attributes = expression.split(';'),
-                elementStyle = this.element.style || {},
-                length = attributes.length,
-                splitStyles: Array<string>,
-                styleType: string,
-                styleValue: string;
-
-            for (var i = 0; i < length; ++i) {
-                splitStyles = attributes[i].split(':');
-
-                if (splitStyles.length < 2) {
-                    continue;
-                } else if (splitStyles.length > 2) {
-                    splitStyles = [splitStyles.shift(), splitStyles.join(':')];
-                }
-
-                styleType = camelCase(splitStyles[0].trim());
-                styleValue = splitStyles[1].trim();
-
-                if (!isUndefined((<any>elementStyle)[styleType])) {
-                    (<any>elementStyle)[styleType] = styleValue;
-                }
-            }
+            requestAnimationFrameGlobal((): void => {
+                element.setAttribute(this.property, expression);
+            });
         }
     }
 
