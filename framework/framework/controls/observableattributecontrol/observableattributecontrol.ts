@@ -7,12 +7,11 @@
      * @kind class
      * 
      * @extends {plat.AttributeControl}
-     * @implements {plat.controls.IObservableAttributeControl}
      * 
      * @description
      * An {@link plat.AttributeControl|AttributeControl} that deals with observing changes for a specified property.
      */
-    export class ObservableAttributeControl extends AttributeControl implements IObservableAttributeControl {
+    export class ObservableAttributeControl extends AttributeControl {
         protected static _inject: any = {
             _ContextManager: __ContextManagerStatic
         };
@@ -279,42 +278,6 @@
 
             this._removeListener = this.observeExpression(this._setProperty, this.attributes[this.attribute]);
         }
-    }
-
-    /**
-     * @name IObservableAttributeControl
-     * @memberof plat.controls
-     * @kind interface
-     * 
-     * @description
-     * An {@link plat.AttributeControl|AttributeControl} that deals with observing changes for a specified property.
-     */
-    export interface IObservableAttributeControl {
-        /**
-         * @name property
-         * @memberof plat.controls.IObservableAttributeControl
-         * @kind property
-         * @access public
-         * 
-         * @type {string}
-         * 
-         * @description
-         * The property to set on the associated template control.
-         */
-        property: string;
-
-        /**
-         * @name attribute
-         * @memberof plat.controls.IObservableAttributeControl
-         * @kind property
-         * @access public
-         * 
-         * @type {string}
-         * 
-         * @description
-         * The camel-cased name of the control as it appears as an attribute.
-         */
-        attribute: string;
     }
 
     /**
