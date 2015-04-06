@@ -47,7 +47,7 @@ module plat.ui.controls {
          * @kind property
          * @access public
          * 
-         * @type {plat.observable.IObservableProperty<{ view: any; parameters?: plat.IObject<string>; }>}
+         * @type {plat.observable.IObservableProperty<plat.ui.controls.ILinkOptions>}
          * 
          * @description
          * The options for Link, if ignore is true, anchor will ignore changing the url.

@@ -1177,8 +1177,7 @@ module plat.controls {
 
             if (!isObject(context)) {
                 if (isNull(context) && contextExpression.identifiers.length > 0) {
-                    context = this._ContextManager.createContext(this.parent,
-                        contextExpression.identifiers[0]);
+                    context = this._createContext(contextExpression.identifiers[0]);
                 } else {
                     var Exception = this._Exception;
                     Exception.warn(this.type + ' is trying to index into a primitive type. ' +
@@ -1207,6 +1206,32 @@ module plat.controls {
                 this._setter(newValue, oldValue);
             }, expression);
             this._setter(this.evaluateExpression(expression), undefined, true);
+        }
+
+        /**
+         * @name _createContext
+         * @memberof plat.controls.Bind
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Handles creating context with an identifier.
+         * 
+         * @returns {any}
+         */
+        protected _createContext(identifier: string): any {
+            var split = identifier.split('.'),
+                start = split.shift().slice(1),
+                parent = this.parent;
+
+            if (start === __ROOT_CONTEXT_RESOURCE) {
+                identifier = split.join('.');
+                parent = this.parent.root;
+            } else if (start === __CONTEXT) {
+                identifier = split.join('.');
+            }
+
+            return this._ContextManager.createContext(parent, identifier); 
         }
 
         /**

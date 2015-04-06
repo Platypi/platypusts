@@ -783,7 +783,8 @@ module plat {
          */
         observe<T>(listener: (value: T, oldValue: T, index: number) => void, index?: number): IRemoveListener;
         observe(listener: (value: any, oldValue: any, identifier: any) => void, identifier?: any): IRemoveListener {
-            var control = isObject((<ui.TemplateControl>this).context) ? <ui.TemplateControl>this : this.parent;
+            var control = isObject((<ui.TemplateControl>this).context) ? <ui.TemplateControl>this : this.parent,
+                root = Control.getRootControl(control);
             if (isNull(control)) {
                 return noop;
             }
@@ -792,14 +793,25 @@ module plat {
             if (isEmpty(identifier)) {
                 absoluteIdentifier = control.absoluteContextPath;
             } else if (isString(identifier)) {
-                var identifierExpression = (Control._parser || <expressions.Parser>acquire(__Parser)).parse(identifier);
-                absoluteIdentifier = control.absoluteContextPath + '.' + identifierExpression.identifiers[0];
+                var identifierExpression = (Control._parser || <expressions.Parser>acquire(__Parser)).parse(identifier),
+                    expression = identifierExpression.identifiers[0],
+                    split: Array<string> = expression.split('.'),
+                    start = split.shift().slice(1),
+                    join = split.length > 0 ? ('.' + split.join('.')) : '';
+
+                if (start === __ROOT_CONTEXT_RESOURCE) {
+                    absoluteIdentifier = __CONTEXT + join;
+                } else if (start === __CONTEXT_RESOURCE) {
+                    absoluteIdentifier = control.absoluteContextPath + join;
+                } else {
+                    absoluteIdentifier = control.absoluteContextPath + '.' + expression;
+                }
             } else {
                 absoluteIdentifier = control.absoluteContextPath + '.' + identifier;
             }
 
             var _ContextManager: observable.IContextManagerStatic = Control._ContextManager || acquire(__ContextManagerStatic),
-                contextManager = _ContextManager.getManager(Control.getRootControl(control));
+                contextManager = _ContextManager.getManager(root);
 
             return contextManager.observe(absoluteIdentifier, {
                 listener: (newValue: any, oldValue: any): void => {

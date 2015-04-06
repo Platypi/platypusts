@@ -11432,6 +11432,10 @@ declare module plat {
           */
         class Style extends SetAttributeControl {
             /**
+              * The property to set on the associated template control.
+              */
+            property: string;
+            /**
               * Sets the evaluated styles on the element.
               */
             setter(): void;
@@ -11708,6 +11712,7 @@ declare module plat {
               * Observes the expression to bind to.
               */
             protected _watchExpression(): void;
+            protected _createContext(identifier: string): any;
             /**
               * Sets the context property being bound to when the
               * element's property is changed.
@@ -11741,7 +11746,7 @@ declare module plat {
         /**
           * An AttributeControl that deals with observing changes for a specified property.
           */
-        class ObservableAttributeControl extends AttributeControl implements IObservableAttributeControl {
+        class ObservableAttributeControl extends AttributeControl {
             protected static _inject: any;
             /**
               * Reference to the IContextManagerStatic injectable.
@@ -11812,19 +11817,6 @@ declare module plat {
               * Observes the attribute's value.
               */
             protected _observeProperty(): void;
-        }
-        /**
-          * An AttributeControl that deals with observing changes for a specified property.
-          */
-        interface IObservableAttributeControl {
-            /**
-              * The property to set on the associated template control.
-              */
-            property: string;
-            /**
-              * The camel-cased name of the control as it appears as an attribute.
-              */
-            attribute: string;
         }
         /**
           * An ObservableAttributeControl that sets 'options' as the
