@@ -2,13 +2,13 @@
     <div>{{value}}</div>
 </plat-foreach>-->
 <div>
-    <div class="left">
+    <ul class="left">
         <plat-foreach plat-context="views">
-            <div>
+            <li>
                 <button plat-tap="navigateTo(@context)">{{@index + 1}}</button>
-            </div>
+            </li>
         </plat-foreach>
-    </div>
+    </ul>
     <div class="right">
         <div>Main View</div>
         <button plat-tap="goBack">Back</button>

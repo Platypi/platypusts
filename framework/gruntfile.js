@@ -24,8 +24,16 @@ function stripDocs(data) {
         } else if (line.indexOf('@description') > -1) {
             onDescription = true;
         } else if (((onDescription || onParam) && line.indexOf('* @') === -1) || line.trim().indexOf('*/') > -1 || line.trim().indexOf('/*') > -1 || line.trim()[0] !== '*') {
+            if (line[line.length - 1] !== ' ') {
+                line += ' ';
+            }
+
             out.push(line);
         } else if (line.indexOf('@param') > -1) {
+            if (line[line.length - 1] !== ' ') {
+                line += ' ';
+            }
+
             onParam = true;
             out.push(line);
         }

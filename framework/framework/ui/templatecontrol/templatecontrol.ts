@@ -280,10 +280,10 @@ module plat.ui {
          * @type {string}
          * 
          * @description
-         * A url containing a string representing the DOM template for this control. If this property is
+         * A url containing a string representing the DOM template for this control. If this property is 
          * defined on a {@link plat.ui.TemplateControl|TemplateControl} then DOM will be created and put in the 
          * control's element prior to calling the `setTemplate` method. This property takes 
-         * precedence over templateString. In the event that both are defined, templateString
+         * precedence over templateString. In the event that both are defined, templateString 
          * will be ignored.
          */
         templateUrl: string;
@@ -297,9 +297,9 @@ module plat.ui {
          * @type {DocumentFragment}
          * 
          * @description
-         * A DocumentFragment representing the innerHTML that existed when this control was instantiated.
-         * This property will only contain the innerHTML when either a templateString or templateUrl is
-         * defined. Its important to clone this property when injecting it somewhere, else its childNodes
+         * A DocumentFragment representing the innerHTML that existed when this control was instantiated. 
+         * This property will only contain the innerHTML when either a templateString or templateUrl is 
+         * defined. Its important to clone this property when injecting it somewhere, else its childNodes 
          * will disappear.
          * 
          * @example this.innerTemplate.cloneNode(true); //Useful if this is not a one-time injection.
