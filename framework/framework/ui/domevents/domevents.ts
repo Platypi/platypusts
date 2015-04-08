@@ -134,6 +134,36 @@
         };
 
         /**
+         * @name _gestures
+         * @memberof plat.ui.DomEvents
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.ui.IGestures<string>}
+         * 
+         * @description
+         * An object containing the event types for all of the 
+         * supported gestures.
+         */
+        gestures: IGestures<string> = {
+            $tap: __tap,
+            $dbltap: __dbltap,
+            $hold: __hold,
+            $release: __release,
+            $swipe: __swipe,
+            $swipeleft: __swipeleft,
+            $swiperight: __swiperight,
+            $swipeup: __swipeup,
+            $swipedown: __swipedown,
+            $track: __track,
+            $trackleft: __trackleft,
+            $trackright: __trackright,
+            $trackup: __trackup,
+            $trackdown: __trackdown,
+            $trackend: __trackend
+        };
+
+        /**
          * @name _document
          * @memberof plat.ui.DomEvents
          * @kind property
@@ -282,36 +312,6 @@
          * The space delimited touch end events defined by this browser.
          */
         protected _endEvents: string;
-
-        /**
-         * @name _gestures
-         * @memberof plat.ui.DomEvents
-         * @kind property
-         * @access protected
-         * 
-         * @type {plat.ui.IGestures<string>}
-         * 
-         * @description
-         * An object containing the event types for all of the 
-         * supported gestures.
-         */
-        protected _gestures: IGestures<string> = {
-            $tap: __tap,
-            $dbltap: __dbltap,
-            $hold: __hold,
-            $release: __release,
-            $swipe: __swipe,
-            $swipeleft: __swipeleft,
-            $swiperight: __swiperight,
-            $swipeup: __swipeup,
-            $swipedown: __swipedown,
-            $track: __track,
-            $trackleft: __trackleft,
-            $trackright: __trackright,
-            $trackup: __trackup,
-            $trackdown: __trackdown,
-            $trackend: __trackend
-        };
 
         /**
          * @name _gestureCount
@@ -702,7 +702,7 @@
                 mappedCount = this.__mappedCount,
                 mappedRemoveListener = noop,
                 mappedTouchRemoveListener = noop,
-                gestures = this._gestures,
+                gestures = this.gestures,
                 listenerRemoved = false;
 
             if (mappingExists) {
@@ -855,7 +855,7 @@
                 clientY = ev.clientY,
                 timeStamp = ev.timeStamp,
                 target = ev.target,
-                gestures = this._gestures;
+                gestures = this.gestures;
 
             this.__lastTouchDown = {
                 _buttons: ev._buttons,
@@ -906,7 +906,7 @@
                 }, holdInterval);
                 return true;
             } else if (noRelease) {
-                domEvent = this.__findFirstSubscriber(<ICustomElement>ev.target, this._gestures.$hold);
+                domEvent = this.__findFirstSubscriber(<ICustomElement>ev.target, this.gestures.$hold);
                 if ((domEventFound = !isNull(domEvent))) {
                     subscribeFn = (): void => {
                         domEvent.trigger(ev);
@@ -916,7 +916,7 @@
             } else {
                 this.__hasRelease = false;
                 // has both hold and release events registered
-                domEvent = this.__findFirstSubscriber(<ICustomElement>ev.target, this._gestures.$hold);
+                domEvent = this.__findFirstSubscriber(<ICustomElement>ev.target, this.gestures.$hold);
                 if ((domEventFound = !isNull(domEvent))) {
                     subscribeFn = (): void => {
                         domEvent.trigger(ev);
@@ -1217,7 +1217,7 @@
                 return;
             }
 
-            var gestures = this._gestures,
+            var gestures = this.gestures,
                 domEvent = this.__findFirstSubscriber(<ICustomElement>ev.target, gestures.$tap);
 
             if (isNull(domEvent)) {
@@ -1266,7 +1266,7 @@
                 return;
             }
 
-            var domEvent = this.__findFirstSubscriber(<ICustomElement>ev.target, this._gestures.$dbltap);
+            var domEvent = this.__findFirstSubscriber(<ICustomElement>ev.target, this.gestures.$dbltap);
             if (isNull(domEvent)) {
                 return;
             }
@@ -1291,7 +1291,7 @@
          * @returns {void}
          */
         private __handleRelease(ev: IPointerEvent): void {
-            var domEvent = this.__findFirstSubscriber(<ICustomElement>ev.target, this._gestures.$release);
+            var domEvent = this.__findFirstSubscriber(<ICustomElement>ev.target, this.gestures.$release);
             if (!isNull(domEvent)) {
                 domEvent.trigger(ev);
             }
@@ -1350,7 +1350,7 @@
          * @returns {void}
          */
         private __handleTrack(ev: IPointerEvent, originalEv: IPointerEvent): void {
-            var gestures = this._gestures,
+            var gestures = this.gestures,
                 trackGesture = gestures.$track,
                 direction = ev.direction,
                 eventTarget = this.__capturedTarget || <ICustomElement>ev.target;
@@ -1398,7 +1398,7 @@
             }
 
             var eventTarget = this.__capturedTarget || <ICustomElement>ev.target,
-                domEvent = this.__findFirstSubscriber(eventTarget, this._gestures.$trackend);
+                domEvent = this.__findFirstSubscriber(eventTarget, this.gestures.$trackend);
             if (isNull(domEvent)) {
                 return;
             }
@@ -1892,7 +1892,7 @@
          */
         private __removeEventListener(element: ICustomElement, type: string, listener: IGestureListener,
             useCapture?: boolean): void {
-            var gestures = this._gestures;
+            var gestures = this.gestures;
 
             element.removeEventListener(type, listener, useCapture);
 
@@ -2238,7 +2238,7 @@
             }
 
             var origin = this.__swipeOrigin,
-                gestures = this._gestures,
+                gestures = this.gestures,
                 swipes = [gestures.$swipe, gestures.$swipedown, gestures.$swipeleft, gestures.$swiperight, gestures.$swipeup];
 
             if (!xSame) {
@@ -2280,7 +2280,7 @@
          */
         private __getRegisteredSwipes(direction: IDirection, velocity: IVelocity, dx: number, dy: number): Array<DomEvent> {
             var swipeTarget: ICustomElement,
-                swipeGesture = this._gestures.$swipe,
+                swipeGesture = this.gestures.$swipe,
                 minSwipeVelocity = DomEvents.config.velocities.minSwipeVelocity,
                 events = [swipeGesture],
                 origin = (this.__swipeOrigin || <ISwipeOriginProperties>{});
