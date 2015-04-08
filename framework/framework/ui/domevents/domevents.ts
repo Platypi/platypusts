@@ -3731,7 +3731,7 @@
      * @memberof plat.ui
      * @kind interface
      * 
-     * @extends {plat.ui.IBaseGestures}
+     * @extends {plat.ui.IBaseGestures<T>}
      * 
      * @description
      * Describes an object containing information 
