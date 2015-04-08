@@ -3731,6 +3731,8 @@
      * @memberof plat.ui
      * @kind interface
      * 
+     * @extends {plat.ui.IBaseGestures}
+     * 
      * @description
      * Describes an object containing information 
      * regarding all our custom events.
