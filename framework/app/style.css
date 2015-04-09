@@ -11,6 +11,28 @@
     margin-left: 100px;
 }
 
+.test-block {
+    position: absolute;
+    left: 1em;
+    top: 1em;
+    background-color: blue;
+    width: 100px;
+    height: 100px;
+}
+
+    .test-block.plat-transition-init {
+        left: 10em;
+        top: 10em;
+    }
+
+    .test-block.plat-transition {
+        -moz-transition: all 500ms ease-out, top 1s ease-out;
+        -webkit-transition: all 500ms ease-out, top 1s ease-out;
+        transition: all 500ms ease-out, top 1s ease-out;
+        left: 1em;
+        top: 1em;
+    }
+
 .test .plat-enter-init {
     -moz-animation: FADEIN 2s;
     -o-animation: FADEIN 2s;

@@ -82,17 +82,30 @@
         protected _normalizeRegex = /-/g;
 
         /**
+         * @name _nonNumRegex
+         * @memberof plat.ui.animations.SimpleCssTransition
+         * @kind property
+         * @access protected
+         * 
+         * @type {RegExp}
+         * 
+         * @description
+         * A regular expression grab everything that is not a number.
+         */
+        protected _nonNumRegex = /[^\-0-9\.]/g;
+
+        /**
          * @name _normalizedKeys
          * @memberof plat.ui.animations.SimpleCssTransition
          * @kind property
          * @access protected
          * 
-         * @type {Array<string>}
+         * @type {plat.IObject<boolean>}
          * 
          * @description
-         * An Array of the normalized keys of modified properties.
+         * An Object whose keys are the normalized keys of modified properties.
          */
-        protected _normalizedKeys: Array<string> = [];
+        protected _normalizedKeys: IObject<boolean> = {};
 
         /**
          * @name _transitionCount
@@ -106,6 +119,19 @@
          * The "transitionend" event handler call count.
          */
         protected _transitionCount = 0;
+
+        /**
+         * @name _count
+         * @memberof plat.ui.animations.SimpleCssTransition
+         * @kind property
+         * @access protected
+         * 
+         * @type {number}
+         * 
+         * @description
+         * The user defined "transitionend" event handler call count.
+         */
+        protected _count = 0;
 
         /**
          * @name _started
@@ -160,11 +186,17 @@
                 addClass(element, className);
                 this._started = true;
 
-                var transitionId = this._animationEvents.$transition,
+                var utils = this.utils,
+                    transitionId = this._animationEvents.$transition,
                     options = this.options || <ISimpleCssTransitionOptions>{},
+                    count = options.count,
                     computedStyle = this._window.getComputedStyle(element, options.pseudo),
                     transitionProperty = computedStyle[<any>(transitionId + 'Property')],
                     transitionDuration = computedStyle[<any>(transitionId + 'Duration')];
+
+                if (utils.isNumber(count) && count > 0) {
+                    this._count = count;
+                }
 
                 if (transitionProperty === '' || transitionProperty === 'none' ||
                     transitionDuration === '' || transitionDuration === '0s') {
@@ -181,6 +213,39 @@
                 this._stopAnimation = this.transitionEnd(this._done);
 
                 if (this._animate()) {
+                    return;
+                } else if (utils.isEmpty(options.properties)) {
+                    var properties = transitionProperty.split(','),
+                        property: any,
+                        length = properties.length,
+                        computedProperties = <Array<string>>[],
+                        normalizedKeys = this._normalizedKeys,
+                        normalizeRegex = this._normalizeRegex,
+                        i = 0;
+
+                    for (; i < length; ++i) {
+                        property = properties[i];
+                        normalizedKeys[property.replace(normalizeRegex, '').toLowerCase()] = true;
+                        computedProperties.push(computedStyle[property]);
+                    }
+
+                    utils.defer((): void => {
+                        if (this._stopAnimation === noop) {
+                            // disposal has already occurred
+                            return;
+                        }
+
+                        for (i = 0; i < length; ++i) {
+                            property = properties[i];
+                            if (property === 'all' || computedStyle[property] !== computedProperties[i]) {
+                                // we know the transition started or we can't know due to 'all' being set
+                                return;
+                            }
+                        }
+
+                        this._dispose();
+                        this.end();
+                    }, this._toMs(transitionDuration) + this._toMs(computedStyle[<any>(transitionId + 'Delay')]));
                     return;
                 }
 
@@ -248,7 +313,8 @@
                 propertyName = ev.propertyName;
             if (isString(propertyName)) {
                 propertyName = propertyName.replace(this._normalizeRegex, '').toLowerCase();
-                if (this._normalizedKeys.indexOf(propertyName) !== -1 && ++this._transitionCount < keys.length) {
+                var count = ++this._transitionCount;
+                if ((this._normalizedKeys[propertyName] === true && count < keys.length) || (count < this._count)) {
                     return;
                 }
             }
@@ -276,6 +342,8 @@
                 length = keys.length,
                 key: any,
                 modifiedProperties = this._modifiedProperties,
+                normalizedKeys = this._normalizedKeys,
+                normalizeRegex = this._normalizeRegex,
                 currentProperty: string,
                 newProperty: string,
                 unchanged = 0;
@@ -294,11 +362,41 @@
                     unchanged++;
                 } else {
                     modifiedProperties[key] = currentProperty;
-                    this._normalizedKeys.push(key.replace(this._normalizeRegex, '').toLowerCase());
+                    normalizedKeys[key.replace(normalizeRegex, '').toLowerCase()] = true;
                 }
             }
 
             return unchanged < length;
+        }
+
+        /**
+         * @name _toMs
+         * @memberof plat.ui.animations.SimpleCssTransition
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * A function that converts a string value expressed as either seconds or milliseconds 
+         * to a numerical millisecond value.
+         * 
+         * @param {string} duration The transition duration specified by the computed style.
+         * 
+         * @returns {number} The millisecond value as a number.
+         */
+        protected _toMs(duration: string): number {
+            var regex = this._nonNumRegex,
+                units = duration.match(regex)[0],
+                time = Number(duration.replace(regex, ''));
+
+            if (!this.utils.isNumber(time)) {
+                return 0;
+            } else if (units === 's') {
+                return time * 1000;
+            } else if (units === 'ms') {
+                return time;
+            }
+
+            return 0;
         }
     }
 
@@ -344,5 +442,20 @@
          * (and/or initial transition states will be overwritten upon start).
          */
         preserveInit: boolean;
+
+        /**
+         * @name count
+         * @memberof plat.ui.animations.ISimpleCssTransitionOptions
+         * @kind property
+         * @access public
+         * 
+         * @type {number}
+         * 
+         * @description
+         * A defined transition count number. Useful when the transition property name 'all' 
+         * is used in conjunction with another transition property and transitions are being 
+         * performed through CSS.
+         */
+        count: number;
     }
 }
