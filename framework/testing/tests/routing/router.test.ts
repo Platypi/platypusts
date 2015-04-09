@@ -171,21 +171,57 @@ module test.routing.router {
 
         describe('with variable routes', () => {
             beforeEach(() => {
-                router.configure({
+                router.configure([{
                     pattern: '/posts/:id',
                     view: 'posts'
-                });
+                }, {
+                    pattern: '/posts/:id/create/:name',
+                    view: 'createpost'
+                }]);
             });
 
-            it('should test navigating with different parameters', (done) => {
+            it('should test navigating with different parameters',(done) => {
                 router.navigate('/posts/1')
                     .then(() => {
                         expectAllTo(viewport);
                         resetAll(viewport);
+                        expectAllNot(viewport);
                         return router.navigate('/posts/2');
                     })
                     .then(() => {
                         expectAllTo(viewport);
+                        resetAll(viewport);
+                        expectAllNot(viewport);
+                        return router.navigate('/posts/3');
+                    })
+                    .then(() => {
+                        expectAllTo(viewport);
+                        done();
+                    });
+            });
+
+            it('should test navigating with different parameters and a complex route',(done) => {
+                router.navigate('/posts/1/create/foo')
+                    .then(() => {
+                        expectAllTo(viewport);
+                        resetAll(viewport);
+                        expectAllNot(viewport);
+                        return router.navigate('/posts/1/create/bar');
+                    })
+                    .then(() => {
+                        expectAllTo(viewport);
+                        resetAll(viewport);
+                        expectAllNot(viewport);
+                        return router.navigate('/posts/2/create/bar');
+                        })
+                    .then(() => {
+                        expectAllTo(viewport);
+                        resetAll(viewport);
+                        expectAllNot(viewport);
+                        return router.navigate('/posts/2/create/bar');
+                    })
+                    .then(() => {
+                        expectAllNot(viewport);
                         done();
                     });
             });
