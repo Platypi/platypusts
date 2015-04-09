@@ -148,7 +148,8 @@
          */
         start(): void {
             this._stopAnimation = requestAnimationFrameGlobal((): void => {
-                var element = this.element;
+                var element = this.element,
+                    className = this.className;
 
                 if (element.offsetParent === null) {
                     this._animate();
@@ -156,11 +157,12 @@
                     this.end();
                 }
 
-                addClass(element, this.className);
+                addClass(element, className);
                 this._started = true;
 
                 var transitionId = this._animationEvents.$transition,
-                    computedStyle = this._window.getComputedStyle(element, (this.options || <ISimpleCssTransitionOptions>{}).pseudo),
+                    options = this.options || <ISimpleCssTransitionOptions>{},
+                    computedStyle = this._window.getComputedStyle(element, options.pseudo),
                     transitionProperty = computedStyle[<any>(transitionId + 'Property')],
                     transitionDuration = computedStyle[<any>(transitionId + 'Duration')];
 
@@ -170,6 +172,10 @@
                     this._dispose();
                     this.end();
                     return;
+                }
+
+                if (options.preserveInit === false) {
+                    removeClass(element, className + __INIT_SUFFIX);
                 }
 
                 this._stopAnimation = this.transitionEnd(this._done);
@@ -322,5 +328,21 @@
          * (e.g. { width: '800px' } would set the element's width to 800px.
          */
         properties: IObject<string>;
+
+        /**
+         * @name preserveInit
+         * @memberof plat.ui.animations.ISimpleCssTransitionOptions
+         * @kind property
+         * @access public
+         * 
+         * @type {boolean}
+         * 
+         * @description
+         * A boolean specifying whether or not to leave the '*-init' class on the element 
+         * after the transition has started. Defaults to true as we want to keep all  
+         * initial states and definitions throughout the transition 
+         * (and/or initial transition states will be overwritten upon start).
+         */
+        preserveInit: boolean;
     }
 }

@@ -89,7 +89,8 @@ module plat.ui.animations {
          */
         start(): void {
             this._stopAnimation = requestAnimationFrameGlobal((): void => {
-                var element = this.element;
+                var element = this.element,
+                    className = this.className;
 
                 if (element.offsetParent === null) {
                     this._dispose();
@@ -97,10 +98,11 @@ module plat.ui.animations {
                     return;
                 }
 
-                addClass(element, this.className);
+                addClass(element, className);
 
                 var animationId = this._animationEvents.$animation,
-                    computedStyle = this._window.getComputedStyle(element,(this.options || <ISimpleCssAnimationOptions>{}).pseudo),
+                    options = this.options || <ISimpleCssAnimationOptions>{},
+                    computedStyle = this._window.getComputedStyle(element, options.pseudo),
                     animationName = computedStyle[<any>(animationId + 'Name')];
 
                 if (animationName === '' || animationName === 'none' ||
@@ -108,6 +110,10 @@ module plat.ui.animations {
                     this._dispose();
                     this.end();
                     return;
+                }
+
+                if (!options.preserveInit) {
+                    removeClass(element, className + __INIT_SUFFIX);
                 }
 
                 this._stopAnimation = this.animationEnd((): void => {
@@ -233,6 +239,21 @@ module plat.ui.animations {
          * The pseudo element identifier (i.e. '::before' if defined as .red::before).
          */
         pseudo?: string;
+
+        /**
+         * @name preserveInit
+         * @memberof plat.ui.animations.ISimpleCssAnimationOptions
+         * @kind property
+         * @access public
+         * 
+         * @type {boolean}
+         * 
+         * @description
+         * A boolean specifying whether or not to leave the '*-init' class on the element 
+         * after the animation has started. Defaults to false as we want to remove 
+         * any initial state after an animation has kicked off.
+         */
+        preserveInit: boolean;
     }
 
     /**
