@@ -336,7 +336,7 @@
          * 
          * @returns {plat.async.IThenable<void>} A promise that resolves when the navigation has finished.
          */
-        goBack(options?: IBackNavigationOptions): async.IThenable<void> {
+        goBack(options?: IBackNavigateOptions): async.IThenable<void> {
             options = isObject(options) ? options : {};
 
             var length = Number(options.length);
@@ -605,17 +605,17 @@
     }
 
     /**
-     * @name IBackNavigationOptions
+     * @name IBackNavigateOptions
      * @memberof plat.routing
      * @kind interface
      * 
      * @description
      * Specifies options used during backward navigation.
      */
-    export interface IBackNavigationOptions {
+    export interface IBackNavigateOptions {
         /**
          * @name length
-         * @memberof plat.routing.IBackNavigationOptions
+         * @memberof plat.routing.IBackNavigateOptions
          * @kind function
          * @access public
          * @optional

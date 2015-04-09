@@ -287,12 +287,14 @@ module plat.controls {
                     resourceObj = parent.findResource(alias),
                     type: string;
 
-                if (isNull(resourceObj)) {
+                if (isObject(resourceObj)) {
                     type = resourceObj.resource.type;
 
                     if (type !== __OBSERVABLE_RESOURCE && type !== __LITERAL_RESOURCE) {
                         return;
                     }
+                } else {
+                    resourceObj = <any>{ resource: {} };
                 }
 
                 if (alias === __CONTEXT_RESOURCE || alias === __ROOT_CONTEXT_RESOURCE) {

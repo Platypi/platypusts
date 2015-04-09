@@ -2405,7 +2405,7 @@ declare module plat {
             /**
               * The identifier the server uses to get the name of the JSONP
               * callback. The default is 'callback' as seen in
-              * http://www.platyfi.com/data?callback=plat_fnName.
+              * http://platypi.io/data?callback=plat_fnName.
               */
             jsonpIdentifier?: string;
             /**
@@ -2413,7 +2413,7 @@ declare module plat {
               * it hardcoded and/or does not get it from the given url). The
               * default is a unique plat id generated separately for
               * each JSONP callback seen as 'plat_callback00' in
-              * http://www.platyfi.com/data?callback=plat_callback00.
+              * http://platypi.io/data?callback=plat_callback00.
               */
             jsonpCallback?: string;
         }
@@ -5733,6 +5733,11 @@ declare module plat {
               */
             static config: IDomEventsConfig;
             /**
+              * An object containing the event types for all of the
+              * supported gestures.
+              */
+            gestures: IGestures<string>;
+            /**
               * Reference to the Document injectable.
               */
             protected _document: Document;
@@ -5779,11 +5784,6 @@ declare module plat {
               * The space delimited touch end events defined by this browser.
               */
             protected _endEvents: string;
-            /**
-              * An object containing the event types for all of the
-              * supported gestures.
-              */
-            protected _gestures: IGestures<string>;
             /**
               * An object containing the number of currently active
               * events of each base type.
@@ -9669,7 +9669,7 @@ declare module plat {
             /**
               * Tells the router to go back with the given options.
               */
-            goBack(options?: IBackNavigationOptions): async.IThenable<void>;
+            goBack(options?: IBackNavigateOptions): async.IThenable<void>;
             /**
               * Lets the router dispose of all of the necessary properties.
               */
@@ -9717,7 +9717,7 @@ declare module plat {
         /**
           * Specifies options used during backward navigation.
           */
-        interface IBackNavigationOptions {
+        interface IBackNavigateOptions {
             /**
               * The length in history to go back.
               */
@@ -11712,6 +11712,9 @@ declare module plat {
               * Observes the expression to bind to.
               */
             protected _watchExpression(): void;
+            /**
+              * Handles creating context with an identifier.
+              */
             protected _createContext(identifier: string): any;
             /**
               * Sets the context property being bound to when the

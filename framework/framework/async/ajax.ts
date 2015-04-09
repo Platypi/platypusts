@@ -1135,7 +1135,7 @@ module plat.async {
          * @description
          * The identifier the server uses to get the name of the JSONP
          * callback. The default is 'callback' as seen in 
-         * http://www.platyfi.com/data?callback=plat_fnName.
+         * http://platypi.io/data?callback=plat_fnName.
          */
         jsonpIdentifier?: string;
 
@@ -1153,7 +1153,7 @@ module plat.async {
          * it hardcoded and/or does not get it from the given url). The 
          * default is a unique plat id generated separately for 
          * each JSONP callback seen as 'plat_callback00' in
-         * http://www.platyfi.com/data?callback=plat_callback00.
+         * http://platypi.io/data?callback=plat_callback00.
          */
         jsonpCallback?: string;
     }

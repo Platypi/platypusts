@@ -74,7 +74,7 @@
             expect((<any>control)._expression.aliases).toEqual(['foo']);
             expect((<any>control)._expression.expression).toEqual('@foo');
             expect((<any>control)._expression.identifiers).toEqual(['@foo']);
-            expect((<any>control)._property).toEqual('@foo');
+            expect((<any>control)._property).toEqual('value');
         });
 
         it('should test loaded with alias identifier and no observable resources', () => {
