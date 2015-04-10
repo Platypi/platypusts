@@ -26,9 +26,14 @@
     }
 
     .test-block.plat-transition {
-        -moz-transition: all 500ms ease-out, top 1s ease-out;
-        -webkit-transition: all 500ms ease-out, top 1s ease-out;
-        transition: all 500ms ease-out, top 1s ease-out;
+        -moz-transition: left 500ms ease-out, top 1s ease-out;
+        -webkit-transition: left 500ms ease-out, top 1s ease-out;
+        -o-transition: left 500ms ease-out, top 1s ease-out;
+        transition: left 500ms ease-out, top 1s ease-out;
+        -moz-transition-delay: 1s;
+        -o-transition-delay: 1s;
+        -webkit-transition-delay: 1s;
+        transition-delay: 1s;
         left: 1em;
         top: 1em;
     }

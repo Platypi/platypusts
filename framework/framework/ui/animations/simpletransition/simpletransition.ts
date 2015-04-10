@@ -41,7 +41,7 @@
         className = __SimpleTransition;
 
         /**
-         * @name _stopAnimation
+         * @name _animationCanceled
          * @memberof plat.ui.animations.SimpleCssTransition
          * @kind property
          * @access public
@@ -51,7 +51,7 @@
          * @description
          * A function for stopping a potential callback in the animation chain.
          */
-        protected _stopAnimation: IRemoveListener = noop;
+        protected _animationCanceled: IRemoveListener = noop;
 
         /**
          * @name _modifiedProperties
@@ -142,9 +142,23 @@
          * @type {boolean}
          * 
          * @description
-         * Denotes whether or not the animation was ever started.
+         * Denotes whether or not the transition was ever started.
          */
         protected _started = false;
+
+        /**
+         * @name _usingCss
+         * @memberof plat.ui.animations.SimpleCssTransition
+         * @kind property
+         * @access protected
+         * 
+         * @type {boolean}
+         * 
+         * @description
+         * Denotes whether or not the transition changes are being performed 
+         * with CSS or with JS through this.options.
+         */
+        protected _usingCss = false;
 
         /**
          * @name initialize
@@ -173,7 +187,7 @@
          * @returns {void}
          */
         start(): void {
-            this._stopAnimation = requestAnimationFrameGlobal((): void => {
+            this._animationCanceled = requestAnimationFrameGlobal((): void => {
                 var element = this.element,
                     className = this.className;
 
@@ -210,42 +224,12 @@
                     removeClass(element, className + __INIT_SUFFIX);
                 }
 
-                this._stopAnimation = this.transitionEnd(this._done);
+                this._animationCanceled = this.transitionEnd(this._done);
 
                 if (this._animate()) {
                     return;
                 } else if (utils.isEmpty(options.properties)) {
-                    var properties = transitionProperty.split(','),
-                        property: any,
-                        length = properties.length,
-                        computedProperties = <Array<string>>[],
-                        normalizedKeys = this._normalizedKeys,
-                        normalizeRegex = this._normalizeRegex,
-                        i = 0;
-
-                    for (; i < length; ++i) {
-                        property = properties[i];
-                        normalizedKeys[property.replace(normalizeRegex, '').toLowerCase()] = true;
-                        computedProperties.push(computedStyle[property]);
-                    }
-
-                    utils.defer((): void => {
-                        if (this._stopAnimation === noop) {
-                            // disposal has already occurred
-                            return;
-                        }
-
-                        for (i = 0; i < length; ++i) {
-                            property = properties[i];
-                            if (property === 'all' || computedStyle[property] !== computedProperties[i]) {
-                                // we know the transition started or we can't know due to 'all' being set
-                                return;
-                            }
-                        }
-
-                        this._dispose();
-                        this.end();
-                    }, this._toMs(transitionDuration) + this._toMs(computedStyle[<any>(transitionId + 'Delay')]));
+                    this._cssTransition(computedStyle);
                     return;
                 }
 
@@ -266,7 +250,7 @@
          * @returns {void}
          */
         cancel(): void {
-            this._stopAnimation();
+            this._animationCanceled();
 
             if (!this._started) {
                 this._animate();
@@ -290,7 +274,7 @@
         protected _dispose(): void {
             var className = this.className;
             removeClass(this.element, className + ' ' + className + __INIT_SUFFIX);
-            this._stopAnimation = noop;
+            this._animationCanceled = noop;
         }
 
         /**
@@ -309,12 +293,15 @@
          * @returns {void}
          */
         protected _done(ev: TransitionEvent): void {
-            var keys = Object.keys(this._modifiedProperties),
-                propertyName = ev.propertyName;
+            var propertyName = ev.propertyName;
             if (isString(propertyName)) {
-                propertyName = propertyName.replace(this._normalizeRegex, '').toLowerCase();
                 var count = ++this._transitionCount;
-                if ((this._normalizedKeys[propertyName] === true && count < keys.length) || (count < this._count)) {
+                propertyName = propertyName.replace(this._normalizeRegex, '').toLowerCase();
+
+                if ((count < this._count) ||
+                    (!this._usingCss &&
+                        this._normalizedKeys[propertyName] === true &&
+                        count < Object.keys(this._modifiedProperties).length)) {
                     return;
                 }
             }
@@ -367,6 +354,72 @@
             }
 
             return unchanged < length;
+        }
+
+        /**
+         * @name _cssTransition
+         * @memberof plat.ui.animations.SimpleCssTransition
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Handles element transitions that are defined with CSS.
+         * 
+         * @param {CSSStyleDeclaration} computedStyle The computed style of the 
+         * element.
+         * 
+         * @returns {void}
+         */
+        protected _cssTransition(computedStyle: CSSStyleDeclaration): void {
+            var transitionId = this._animationEvents.$transition,
+                durations = computedStyle[<any>(transitionId + 'Duration')].split(','),
+                delays = computedStyle[<any>(transitionId + 'Delay')].split(','),
+                properties = computedStyle[<any>(transitionId + 'Property')].split(','),
+                property: any,
+                duration: string,
+                delay: string,
+                length = properties.length,
+                computedProperties = <Array<string>>[],
+                computedProperty: string,
+                normalizedKeys = this._normalizedKeys,
+                normalizeRegex = this._normalizeRegex,
+                modifiedProperties = this._modifiedProperties,
+                i = 0,
+                count = 0,
+                changed = false,
+                defer = this.utils.defer.bind(this, (prop: any, computedProp: string): void => {
+                    if (this._animationCanceled === noop) {
+                        // disposal has already occurred
+                        return;
+                    } else if (prop === 'all') {
+                        // we can't know if the transition started due to 'all' being set and have to rely on this.options.count
+                        changed = true;
+                    } else if (computedStyle[prop] !== computedProp) {
+                        // we know the transition started
+                        changed = true;
+                        modifiedProperties[prop] = computedProp;
+                    }
+
+                    if (++count < length || changed) {
+                        return;
+                    }
+
+                    this._dispose();
+                    this.end();
+                });
+
+            this._usingCss = true;
+            this._count = this._count || length;
+
+            for (; i < length; ++i) {
+                property = properties[i] = properties[i].trim();
+                duration = durations.length > i ? durations[i].trim() : durations[durations.length - 1].trim();
+                delay = delays.length > i ? delays[i].trim() : delays[delays.length - 1].trim();
+                normalizedKeys[property.replace(normalizeRegex, '').toLowerCase()] = true;
+                computedProperty = computedStyle[property];
+                computedProperties.push(computedProperty);
+                defer(this._toMs(duration) + this._toMs(delay), [property, computedProperty]);
+            }
         }
 
         /**
