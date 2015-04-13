@@ -265,6 +265,19 @@
         protected _interceptors: IObject<Array<(routeInfo: IRouteInfo) => any>> = {};
 
         /**
+         * @name _unknownHandler
+         * @memberof plat.routing.Router
+         * @kind property
+         * @access protected
+         * 
+         * @type {(info: plat.routing.IUnknownRouteInfo) => any}
+         * 
+         * @description
+         * A handler for unknown routes.
+         */
+        protected _unknownHandler: (info: IUnknownRouteInfo) => any;
+
+        /**
          * @name _ports
          * @memberof plat.routing.Router
          * @kind property
@@ -574,6 +587,25 @@
         }
 
         /**
+         * @name unknown
+         * @memberof plat.routing.Router
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Allows for dynamic routing. Call this method in order to register a handler for dynamically determining what view to 
+         * use when a registered route is not found.
+         * 
+         * @param {(info: IUnknownRouteInfo) => any} handler A method called to determine what view is associated with a route.
+         * 
+         * @returns {plat.routing.Router} The router, for method chaining.
+         */
+        unknown(handler: (info: IUnknownRouteInfo) => any): Router {
+            this._unknownHandler = handler;
+            return this;
+        }
+
+        /**
          * @name param
          * @memberof plat.routing.Router
          * @kind function
@@ -781,6 +813,26 @@
                     // route has not been matched
                     this._previousUrl = url;
                     this._previousQuery = queryString;
+
+                    if (isFunction(this._unknownHandler)) {
+                        var unknownRouteConfig: IUnknownRouteInfo = {
+                            segment: url,
+                            view: <any>undefined
+                        };
+
+                        return resolve(this._unknownHandler(unknownRouteConfig)).then(() => {
+                            var view = unknownRouteConfig.view;
+                            if (isUndefined(view)) {
+                                return;
+                            }
+
+                            return this.configure({
+                                pattern: url,
+                                view: view
+                            });
+                        });
+                    }
+
                     return resolve();
                 }
 
@@ -1518,6 +1570,44 @@
          * Query parameters for the route.
          */
         query?: IObject<any>;
+    }
+
+    /**
+     * @name IUnknownRouteInfo
+     * @memberof plat.routing
+     * @kind interface
+     * 
+     * @description
+     * Information for an unkown route. If an unknown handler is registered with the router, it will be called. 
+     * The handler can use the `segment` property to figure out what `view` to use. Setting the `view` property will
+     * tell the router what view to use. The `view` will become the configured view for that route.
+     */
+    export interface IUnknownRouteInfo { 
+        /**
+         * @name segment
+         * @memberof plat.routing.IUnknownRouteInfo
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * The url segment that has not been matched to a registered view.
+         */
+        segment: string; 
+
+        /**
+         * @name view
+         * @memberof plat.routing.IUnknownRouteInfo
+         * @kind property
+         * @access public
+         * 
+         * @type {any}
+         * 
+         * @description
+         * Set this to tell the router what view to navigate to.
+         */
+        view: any; 
     }
 
     /**

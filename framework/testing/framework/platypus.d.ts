@@ -10282,6 +10282,10 @@ declare module plat {
               */
             protected _interceptors: IObject<Array<(routeInfo: IRouteInfo) => any>>;
             /**
+              * A handler for unknown routes.
+              */
+            protected _unknownHandler: (info: IUnknownRouteInfo) => any;
+            /**
               * All the registered Viewports for the router.
               */
             protected _ports: Array<ISupportRouteNavigation>;
@@ -10354,6 +10358,7 @@ declare module plat {
               * @param {Array<plat.routing.IRouteMapping>} routes Route mappings to register.
               */
             configure(routes: Array<IRouteMapping>): async.IThenable<void>;
+            unknown(handler: (info: IUnknownRouteInfo) => any): Router;
             /**
               * Registers a handler for a route parameter. When a route is a variable route (e.g. /posts/:id), all the param handlers
               * registered for the particular view and parameter "id" will be called. The call to the handler is blocking, so the handler
@@ -10571,6 +10576,21 @@ declare module plat {
               * Query parameters for the route.
               */
             query?: IObject<any>;
+        }
+        /**
+          * Information for an unkown route. If an unknown handler is registered with the router, it will be called.
+          * The handler can use the `segment` property to figure out what `view` to use. Setting the `view` property will
+          * tell the router what view to use. The `view` will become the configured view for that route.
+          */
+        interface IUnknownRouteInfo {
+            /**
+              * The url segment that has not been matched to a registered view.
+              */
+            segment: string;
+            /**
+              * Set this to tell the router what view to navigate to.
+              */
+            view: any;
         }
         /**
           * An object that contains an Array of route transform functions.

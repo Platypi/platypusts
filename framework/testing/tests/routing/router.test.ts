@@ -107,6 +107,19 @@ module test.routing.router {
                     }).then(<any>done, <any>done);
             });
 
+            it('should test unknown route handler',(done: Function) => {
+                router.unknown((info: plat.routing.IUnknownRouteInfo) => {
+                    expect(info.segment).toBe('/404');
+                    info.view = EditPostViewControl;
+                });
+
+                router.navigate('/404')
+                    .then(() => {
+                        expectAllTo(viewport);
+                        done();
+                    });
+            });
+
             describe('with child routers', () => {
                 var child: plat.routing.Router,
                     childViewport: IViewport;
