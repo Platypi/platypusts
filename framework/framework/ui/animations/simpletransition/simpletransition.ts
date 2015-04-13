@@ -41,7 +41,7 @@
         className = __SimpleTransition;
 
         /**
-         * @name _stopAnimation
+         * @name _animationCanceled
          * @memberof plat.ui.animations.SimpleCssTransition
          * @kind property
          * @access public
@@ -51,7 +51,7 @@
          * @description
          * A function for stopping a potential callback in the animation chain.
          */
-        protected _stopAnimation: IRemoveListener = noop;
+        protected _animationCanceled: IRemoveListener = noop;
 
         /**
          * @name _modifiedProperties
@@ -82,17 +82,30 @@
         protected _normalizeRegex = /-/g;
 
         /**
+         * @name _nonNumRegex
+         * @memberof plat.ui.animations.SimpleCssTransition
+         * @kind property
+         * @access protected
+         * 
+         * @type {RegExp}
+         * 
+         * @description
+         * A regular expression grab everything that is not a number.
+         */
+        protected _nonNumRegex = /[^\-0-9\.]/g;
+
+        /**
          * @name _normalizedKeys
          * @memberof plat.ui.animations.SimpleCssTransition
          * @kind property
          * @access protected
          * 
-         * @type {Array<string>}
+         * @type {plat.IObject<boolean>}
          * 
          * @description
-         * An Array of the normalized keys of modified properties.
+         * An Object whose keys are the normalized keys of modified properties.
          */
-        protected _normalizedKeys: Array<string> = [];
+        protected _normalizedKeys: IObject<boolean> = {};
 
         /**
          * @name _transitionCount
@@ -108,6 +121,19 @@
         protected _transitionCount = 0;
 
         /**
+         * @name _count
+         * @memberof plat.ui.animations.SimpleCssTransition
+         * @kind property
+         * @access protected
+         * 
+         * @type {number}
+         * 
+         * @description
+         * The user defined "transitionend" event handler call count.
+         */
+        protected _count = 0;
+
+        /**
          * @name _started
          * @memberof plat.ui.animations.SimpleCssTransition
          * @kind property
@@ -116,9 +142,23 @@
          * @type {boolean}
          * 
          * @description
-         * Denotes whether or not the animation was ever started.
+         * Denotes whether or not the transition was ever started.
          */
         protected _started = false;
+
+        /**
+         * @name _usingCss
+         * @memberof plat.ui.animations.SimpleCssTransition
+         * @kind property
+         * @access protected
+         * 
+         * @type {boolean}
+         * 
+         * @description
+         * Denotes whether or not the transition changes are being performed 
+         * with CSS or with JS through this.options.
+         */
+        protected _usingCss = false;
 
         /**
          * @name initialize
@@ -147,8 +187,9 @@
          * @returns {void}
          */
         start(): void {
-            this._stopAnimation = requestAnimationFrameGlobal((): void => {
-                var element = this.element;
+            this._animationCanceled = requestAnimationFrameGlobal((): void => {
+                var element = this.element,
+                    className = this.className;
 
                 if (element.offsetParent === null) {
                     this._animate();
@@ -156,13 +197,20 @@
                     this.end();
                 }
 
-                addClass(element, this.className);
+                addClass(element, className);
                 this._started = true;
 
-                var transitionId = this._animationEvents.$transition,
-                    computedStyle = this._window.getComputedStyle(element, (this.options || <ISimpleCssTransitionOptions>{}).pseudo),
+                var utils = this.utils,
+                    transitionId = this._animationEvents.$transition,
+                    options = this.options || <ISimpleCssTransitionOptions>{},
+                    count = options.count,
+                    computedStyle = this._window.getComputedStyle(element, options.pseudo),
                     transitionProperty = computedStyle[<any>(transitionId + 'Property')],
                     transitionDuration = computedStyle[<any>(transitionId + 'Duration')];
+
+                if (utils.isNumber(count) && count > 0) {
+                    this._count = count;
+                }
 
                 if (transitionProperty === '' || transitionProperty === 'none' ||
                     transitionDuration === '' || transitionDuration === '0s') {
@@ -172,9 +220,16 @@
                     return;
                 }
 
-                this._stopAnimation = this.transitionEnd(this._done);
+                if (options.preserveInit === false) {
+                    removeClass(element, className + __INIT_SUFFIX);
+                }
+
+                this._animationCanceled = this.transitionEnd(this._done);
 
                 if (this._animate()) {
+                    return;
+                } else if (utils.isEmpty(options.properties)) {
+                    this._cssTransition(computedStyle);
                     return;
                 }
 
@@ -195,7 +250,7 @@
          * @returns {void}
          */
         cancel(): void {
-            this._stopAnimation();
+            this._animationCanceled();
 
             if (!this._started) {
                 this._animate();
@@ -219,7 +274,7 @@
         protected _dispose(): void {
             var className = this.className;
             removeClass(this.element, className + ' ' + className + __INIT_SUFFIX);
-            this._stopAnimation = noop;
+            this._animationCanceled = noop;
         }
 
         /**
@@ -238,11 +293,15 @@
          * @returns {void}
          */
         protected _done(ev: TransitionEvent): void {
-            var keys = Object.keys(this._modifiedProperties),
-                propertyName = ev.propertyName;
+            var propertyName = ev.propertyName;
             if (isString(propertyName)) {
+                var count = ++this._transitionCount;
                 propertyName = propertyName.replace(this._normalizeRegex, '').toLowerCase();
-                if (this._normalizedKeys.indexOf(propertyName) !== -1 && ++this._transitionCount < keys.length) {
+
+                if ((count < this._count) ||
+                    (!this._usingCss &&
+                        this._normalizedKeys[propertyName] === true &&
+                        count < Object.keys(this._modifiedProperties).length)) {
                     return;
                 }
             }
@@ -270,6 +329,8 @@
                 length = keys.length,
                 key: any,
                 modifiedProperties = this._modifiedProperties,
+                normalizedKeys = this._normalizedKeys,
+                normalizeRegex = this._normalizeRegex,
                 currentProperty: string,
                 newProperty: string,
                 unchanged = 0;
@@ -288,11 +349,107 @@
                     unchanged++;
                 } else {
                     modifiedProperties[key] = currentProperty;
-                    this._normalizedKeys.push(key.replace(this._normalizeRegex, '').toLowerCase());
+                    normalizedKeys[key.replace(normalizeRegex, '').toLowerCase()] = true;
                 }
             }
 
             return unchanged < length;
+        }
+
+        /**
+         * @name _cssTransition
+         * @memberof plat.ui.animations.SimpleCssTransition
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * Handles element transitions that are defined with CSS.
+         * 
+         * @param {CSSStyleDeclaration} computedStyle The computed style of the 
+         * element.
+         * 
+         * @returns {void}
+         */
+        protected _cssTransition(computedStyle: CSSStyleDeclaration): void {
+            var transitionId = this._animationEvents.$transition,
+                durations = computedStyle[<any>(transitionId + 'Duration')].split(','),
+                delays = computedStyle[<any>(transitionId + 'Delay')].split(','),
+                properties = computedStyle[<any>(transitionId + 'Property')].split(','),
+                property: any,
+                duration: string,
+                delay: string,
+                length = properties.length,
+                computedProperties = <Array<string>>[],
+                computedProperty: string,
+                normalizedKeys = this._normalizedKeys,
+                normalizeRegex = this._normalizeRegex,
+                modifiedProperties = this._modifiedProperties,
+                i = 0,
+                count = 0,
+                changed = false,
+                defer = this.utils.defer.bind(this, (prop: any, computedProp: string): void => {
+                    if (this._animationCanceled === noop) {
+                        // disposal has already occurred
+                        return;
+                    } else if (prop === 'all') {
+                        // we can't know if the transition started due to 'all' being set and have to rely on this.options.count
+                        changed = true;
+                    } else if (computedStyle[prop] !== computedProp) {
+                        // we know the transition started
+                        changed = true;
+                        modifiedProperties[prop] = computedProp;
+                    }
+
+                    if (++count < length || changed) {
+                        return;
+                    }
+
+                    this._dispose();
+                    this.end();
+                });
+
+            this._usingCss = true;
+            this._count = this._count || length;
+
+            for (; i < length; ++i) {
+                property = properties[i] = properties[i].trim();
+                duration = durations.length > i ? durations[i].trim() : durations[durations.length - 1].trim();
+                delay = delays.length > i ? delays[i].trim() : delays[delays.length - 1].trim();
+                normalizedKeys[property.replace(normalizeRegex, '').toLowerCase()] = true;
+                computedProperty = computedStyle[property];
+                computedProperties.push(computedProperty);
+                defer(this._toMs(duration) + this._toMs(delay), [property, computedProperty]);
+            }
+        }
+
+        /**
+         * @name _toMs
+         * @memberof plat.ui.animations.SimpleCssTransition
+         * @kind function
+         * @access protected
+         * 
+         * @description
+         * A function that converts a string value expressed as either seconds or milliseconds 
+         * to a numerical millisecond value.
+         * 
+         * @param {string} duration The transition duration specified by the computed style.
+         * 
+         * @returns {number} The millisecond value as a number.
+         */
+        protected _toMs(duration: string): number {
+            var regex = this._nonNumRegex,
+                units = duration.match(regex)[0],
+                time = Number(duration.replace(regex, ''));
+
+            if (!this.utils.isNumber(time)) {
+                return 0;
+            } else if (units === 's') {
+                return time * 1000;
+            } else if (units === 'ms') {
+                return time;
+            }
+
+            return 0;
         }
     }
 
@@ -322,5 +479,36 @@
          * (e.g. { width: '800px' } would set the element's width to 800px.
          */
         properties: IObject<string>;
+
+        /**
+         * @name preserveInit
+         * @memberof plat.ui.animations.ISimpleCssTransitionOptions
+         * @kind property
+         * @access public
+         * 
+         * @type {boolean}
+         * 
+         * @description
+         * A boolean specifying whether or not to leave the '*-init' class on the element 
+         * after the transition has started. Defaults to true as we want to keep all  
+         * initial states and definitions throughout the transition 
+         * (and/or initial transition states will be overwritten upon start).
+         */
+        preserveInit: boolean;
+
+        /**
+         * @name count
+         * @memberof plat.ui.animations.ISimpleCssTransitionOptions
+         * @kind property
+         * @access public
+         * 
+         * @type {number}
+         * 
+         * @description
+         * A defined transition count number. Useful when the transition property name 'all' 
+         * is used in conjunction with another transition property and transitions are being 
+         * performed through CSS.
+         */
+        count: number;
     }
 }

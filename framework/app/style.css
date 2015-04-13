@@ -11,6 +11,33 @@
     margin-left: 100px;
 }
 
+.test-block {
+    position: absolute;
+    left: 1em;
+    top: 1em;
+    background-color: blue;
+    width: 100px;
+    height: 100px;
+}
+
+    .test-block.plat-transition-init {
+        left: 10em;
+        top: 10em;
+    }
+
+    .test-block.plat-transition {
+        -moz-transition: left 500ms ease-out, top 1s ease-out;
+        -webkit-transition: left 500ms ease-out, top 1s ease-out;
+        -o-transition: left 500ms ease-out, top 1s ease-out;
+        transition: left 500ms ease-out, top 1s ease-out;
+        -moz-transition-delay: 1s;
+        -o-transition-delay: 1s;
+        -webkit-transition-delay: 1s;
+        transition-delay: 1s;
+        left: 1em;
+        top: 1em;
+    }
+
 .test .plat-enter-init {
     -moz-animation: FADEIN 2s;
     -o-animation: FADEIN 2s;

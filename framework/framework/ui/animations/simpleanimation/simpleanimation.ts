@@ -49,7 +49,7 @@ module plat.ui.animations {
         options: ISimpleCssAnimationOptions;
 
         /**
-         * @name _stopAnimation
+         * @name _animationCanceled
          * @memberof plat.ui.animations.SimpleCssAnimation
          * @kind property
          * @access public
@@ -59,7 +59,7 @@ module plat.ui.animations {
          * @description
          * A function for stopping a potential callback in the animation chain.
          */
-        protected _stopAnimation: IRemoveListener = noop;
+        protected _animationCanceled: IRemoveListener = noop;
 
         /**
          * @name initialize
@@ -88,8 +88,9 @@ module plat.ui.animations {
          * @returns {void}
          */
         start(): void {
-            this._stopAnimation = requestAnimationFrameGlobal((): void => {
-                var element = this.element;
+            this._animationCanceled = requestAnimationFrameGlobal((): void => {
+                var element = this.element,
+                    className = this.className;
 
                 if (element.offsetParent === null) {
                     this._dispose();
@@ -97,10 +98,11 @@ module plat.ui.animations {
                     return;
                 }
 
-                addClass(element, this.className);
+                addClass(element, className);
 
                 var animationId = this._animationEvents.$animation,
-                    computedStyle = this._window.getComputedStyle(element,(this.options || <ISimpleCssAnimationOptions>{}).pseudo),
+                    options = this.options || <ISimpleCssAnimationOptions>{},
+                    computedStyle = this._window.getComputedStyle(element, options.pseudo),
                     animationName = computedStyle[<any>(animationId + 'Name')];
 
                 if (animationName === '' || animationName === 'none' ||
@@ -110,8 +112,12 @@ module plat.ui.animations {
                     return;
                 }
 
-                this._stopAnimation = this.animationEnd((): void => {
-                    this._stopAnimation = requestAnimationFrameGlobal((): void => {
+                if (!options.preserveInit) {
+                    removeClass(element, className + __INIT_SUFFIX);
+                }
+
+                this._animationCanceled = this.animationEnd((): void => {
+                    this._animationCanceled = requestAnimationFrameGlobal((): void => {
                         this._dispose();
                     });
                 });
@@ -131,14 +137,14 @@ module plat.ui.animations {
          * @returns {plat.async.IThenable<void>} A new promise that resolves when the animation has been paused.
          */
         pause(): async.IThenable<void> {
-            if (this._stopAnimation === noop) {
+            if (this._animationCanceled === noop) {
                 return this._Promise.resolve();
             }
 
             var animationEvents = this._compat.animationEvents;
             return new this._Promise<void>((resolve): void => {
                 requestAnimationFrameGlobal((): void => {
-                    if (this._stopAnimation !== noop) {
+                    if (this._animationCanceled !== noop) {
                         this.element.style[<any>(animationEvents.$animation + 'PlayState')] = 'paused';
                     }
                     resolve();
@@ -159,14 +165,14 @@ module plat.ui.animations {
          * @returns {plat.async.IThenable<void>} A new promise that resolves when the animation has resumed.
          */
         resume(): async.IThenable<void> {
-            if (this._stopAnimation === noop) {
+            if (this._animationCanceled === noop) {
                 return this._Promise.resolve();
             }
 
             var animationEvents = this._compat.animationEvents;
             return new this._Promise<void>((resolve): void => {
                 requestAnimationFrameGlobal((): void => {
-                    if (this._stopAnimation !== noop) {
+                    if (this._animationCanceled !== noop) {
                         this.element.style[<any>(animationEvents.$animation + 'PlayState')] = 'running';
                     }
                     resolve();
@@ -187,7 +193,7 @@ module plat.ui.animations {
          * @returns {void}
          */
         cancel(): void {
-            this._stopAnimation();
+            this._animationCanceled();
             this._dispose();
             this.end();
         }
@@ -206,7 +212,7 @@ module plat.ui.animations {
         protected _dispose(): void {
             var className = this.className;
             removeClass(this.element, className + ' ' + className + __INIT_SUFFIX);
-            this._stopAnimation = noop;
+            this._animationCanceled = noop;
         }
     }
 
@@ -233,6 +239,21 @@ module plat.ui.animations {
          * The pseudo element identifier (i.e. '::before' if defined as .red::before).
          */
         pseudo?: string;
+
+        /**
+         * @name preserveInit
+         * @memberof plat.ui.animations.ISimpleCssAnimationOptions
+         * @kind property
+         * @access public
+         * 
+         * @type {boolean}
+         * 
+         * @description
+         * A boolean specifying whether or not to leave the '*-init' class on the element 
+         * after the animation has started. Defaults to false as we want to remove 
+         * any initial state after an animation has kicked off.
+         */
+        preserveInit: boolean;
     }
 
     /**

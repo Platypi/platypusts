@@ -340,7 +340,7 @@ module plat.register {
      * is desired.
      * 
      * @param {string} name The unique idenitifer of the animation.
-     * @param {new (...args: any[]) => plat.ui.animations.JsAnimation} Type The constructor for the custom animation.
+     * @param {new (...args: any[]) => plat.ui.animations.BaseAnimation} Type The constructor for the custom animation.
      * @param {Array<any>} dependencies? Any dependencies that need to be injected into the animation at 
      * instantiation.
      * @param {string} animationType The type of animation. Both the intended type and default value are 
@@ -348,15 +348,13 @@ module plat.register {
      * 
      * @returns {plat.register} The object that contains the register methods (for method chaining).
      */
-    export function animation(name: string, Type: new (...args: any[]) => ui.animations.JsAnimation,
+    export function animation(name: string, Type: new (...args: any[]) => ui.animations.BaseAnimation,
         dependencies: Array<any>, animationType: 'js'): typeof register;
-    export function animation(name: string, Type: new (...args: any[]) => ui.animations.JsAnimation,
+    export function animation(name: string, Type: new (...args: any[]) => ui.animations.BaseAnimation,
         dependencies: Array<any>, animationType: string): typeof register;
     export function animation(name: string, Type: new (...args: any[]) => ui.animations.BaseAnimation,
         dependencies?: Array<any>, animationType?: string): typeof register {
-        if (!isString(animationType)) {
-            animationType = __CSS;
-        } else {
+        if (isString(animationType)) {
             animationType = animationType.toLowerCase();
             if (!(animationType === __CSS || animationType === __JS)) {
                 throw new Error('Invalid animationType "' + animationType + '" during animation registration.');
