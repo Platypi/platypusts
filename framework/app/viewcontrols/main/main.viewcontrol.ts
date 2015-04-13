@@ -31,7 +31,7 @@ module app.viewcontrols {
         constructor(router: plat.routing.Router) {
             super();
             router.configure([
-                //{ pattern: '', view: One, alias: 'alias-one' },
+                { pattern: '', view: One, alias: 'alias-one' },
                 { pattern: '/two', view: One, alias: 'alias-two' },
                 { pattern: '/6', view: Three, alias: 'alias-three' },
                 { pattern: '/7', view: Three, alias: 'alias-four' },
@@ -41,8 +41,11 @@ module app.viewcontrols {
             ]);
 
             router.unknown((info) => {
-                console.log('test');
                 info.view = viewcontrols.ErrorViewControl;
+            });
+
+            router.intercept((info) => {
+                info.delegate.view = Four;
             });
         }
 
