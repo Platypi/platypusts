@@ -24,6 +24,7 @@
     </TypeScriptCompile>
     <TypeScriptCompile Include="app\app.ts" />
     <TypeScriptCompile Include="viewcontrols\base.viewcontrol.ts" />
+    <TypeScriptCompile Include="viewcontrols\error\error.viewcontrol.ts" />
     <TypeScriptCompile Include="viewcontrols\main\main.viewcontrol.ts" />
     <TypeScriptCompile Include="viewcontrols\four\four.viewcontrol.ts" />
     <TypeScriptCompile Include="viewcontrols\three\three.viewcontrol.ts" />
@@ -35,6 +36,7 @@
       <Link>lib\%(RecursiveDir)%(Filename)%.css</Link>
     </Content>
     <Content Include="style.css" />
+    <Content Include="viewcontrols\error\error.viewcontrol.html" />
     <Content Include="viewcontrols\main\main.viewcontrol.html" />
     <Content Include="viewcontrols\four\four.viewcontrol.html" />
     <Content Include="viewcontrols\three\three.viewcontrol.html" />

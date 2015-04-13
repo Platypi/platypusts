@@ -118,14 +118,14 @@ declare module plat {
           * Adds a JS animation denoted by its name. If  Intended to be used when JS animation implementations for legacy browsers
           * is desired.
           * @param {string} name The unique idenitifer of the animation.
-          * @param {new (...args: any[]) => plat.ui.animations.JsAnimation} Type The constructor for the custom animation.
+          * @param {new (...args: any[]) => plat.ui.animations.BaseAnimation} Type The constructor for the custom animation.
           * @param {Array<any>} dependencies? Any dependencies that need to be injected into the animation at
           * instantiation.
           * @param {string} animationType The type of animation. Both the intended type and default value are
           * JS.
           */
-        function animation(name: string, Type: new (...args: any[]) => ui.animations.JsAnimation, dependencies: Array<any>, animationType: 'js'): typeof register;
-        function animation(name: string, Type: new (...args: any[]) => ui.animations.JsAnimation, dependencies: Array<any>, animationType: string): typeof register;
+        function animation(name: string, Type: new (...args: any[]) => ui.animations.BaseAnimation, dependencies: Array<any>, animationType: 'js'): typeof register;
+        function animation(name: string, Type: new (...args: any[]) => ui.animations.BaseAnimation, dependencies: Array<any>, animationType: string): typeof register;
         /**
           * Contains constants for animation type.
           */
@@ -7438,15 +7438,6 @@ declare module plat {
                 transitionEnd(listener: (ev?: TransitionEvent) => void): IRemoveListener;
             }
             /**
-              * A class for creating a single JavaScript animation for a single element.
-              */
-            class JsAnimation extends BaseAnimation {
-                /**
-                  * A flag specifying that this animation is a JavaScript implementation.
-                  */
-                isJs: boolean;
-            }
-            /**
               * A simple CSS Animation class that places the 'plat-animation' class on an
               * element, checks for animation properties, and waits for the animation to end.
               */
@@ -7462,7 +7453,7 @@ declare module plat {
                 /**
                   * A function for stopping a potential callback in the animation chain.
                   */
-                protected _stopAnimation: IRemoveListener;
+                protected _animationCanceled: IRemoveListener;
                 /**
                   * Adds the class to initialize the animation.
                   */
@@ -7497,6 +7488,12 @@ declare module plat {
                   * The pseudo element identifier (i.e. '::before' if defined as .red::before).
                   */
                 pseudo?: string;
+                /**
+                  * A boolean specifying whether or not to leave the '*-init' class on the element
+                  * after the animation has started. Defaults to false as we want to remove
+                  * any initial state after an animation has kicked off.
+                  */
+                preserveInit: boolean;
             }
             /**
               * An animation control that fades in an element as defined by the included CSS.
@@ -7560,7 +7557,7 @@ declare module plat {
                 /**
                   * A function for stopping a potential callback in the animation chain.
                   */
-                protected _stopAnimation: IRemoveListener;
+                protected _animationCanceled: IRemoveListener;
                 /**
                   * A JavaScript object containing all modified properties as a result
                   * of this animation. Used in the case of a disposal to reset the changed
@@ -7572,17 +7569,30 @@ declare module plat {
                   */
                 protected _normalizeRegex: RegExp;
                 /**
-                  * An Array of the normalized keys of modified properties.
+                  * A regular expression grab everything that is not a number.
                   */
-                protected _normalizedKeys: Array<string>;
+                protected _nonNumRegex: RegExp;
+                /**
+                  * An Object whose keys are the normalized keys of modified properties.
+                  */
+                protected _normalizedKeys: IObject<boolean>;
                 /**
                   * The "transitionend" event handler call count.
                   */
                 protected _transitionCount: number;
                 /**
-                  * Denotes whether or not the animation was ever started.
+                  * The user defined "transitionend" event handler call count.
+                  */
+                protected _count: number;
+                /**
+                  * Denotes whether or not the transition was ever started.
                   */
                 protected _started: boolean;
+                /**
+                  * Denotes whether or not the transition changes are being performed
+                  * with CSS or with JS through this.options.
+                  */
+                protected _usingCss: boolean;
                 /**
                   * Adds the class to enable the transition.
                   */
@@ -7610,6 +7620,18 @@ declare module plat {
                   * Animate the element based on the options passed in.
                   */
                 protected _animate(): boolean;
+                /**
+                  * Handles element transitions that are defined with CSS.
+                  * @param {CSSStyleDeclaration} computedStyle The computed style of the
+                  * element.
+                  */
+                protected _cssTransition(computedStyle: CSSStyleDeclaration): void;
+                /**
+                  * A function that converts a string value expressed as either seconds or milliseconds
+                  * to a numerical millisecond value.
+                  * @param {string} duration The transition duration specified by the computed style.
+                  */
+                protected _toMs(duration: string): number;
             }
             /**
               * An interface describing the options for SimpleCssTransition.
@@ -7620,6 +7642,19 @@ declare module plat {
                   * (e.g. { width: '800px' } would set the element's width to 800px.
                   */
                 properties: IObject<string>;
+                /**
+                  * A boolean specifying whether or not to leave the '*-init' class on the element
+                  * after the transition has started. Defaults to true as we want to keep all
+                  * initial states and definitions throughout the transition
+                  * (and/or initial transition states will be overwritten upon start).
+                  */
+                preserveInit: boolean;
+                /**
+                  * A defined transition count number. Useful when the transition property name 'all'
+                  * is used in conjunction with another transition property and transitions are being
+                  * performed through CSS.
+                  */
+                count: number;
             }
         }
         /**
@@ -10358,6 +10393,11 @@ declare module plat {
               * @param {Array<plat.routing.IRouteMapping>} routes Route mappings to register.
               */
             configure(routes: Array<IRouteMapping>): async.IThenable<void>;
+            /**
+              * Allows for dynamic routing. Call this method in order to register a handler for dynamically determining what view to
+              * use when a registered route is not found.
+              * @param {(info: IUnknownRouteInfo) => any} handler A method called to determine what view is associated with a route.
+              */
             unknown(handler: (info: IUnknownRouteInfo) => any): Router;
             /**
               * Registers a handler for a route parameter. When a route is a variable route (e.g. /posts/:id), all the param handlers
