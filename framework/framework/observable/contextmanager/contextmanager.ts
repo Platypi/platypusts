@@ -1442,15 +1442,11 @@ module plat.observable {
                 return;
             }
 
-            var length = observableListeners.length,
-                newLength = length,
-                i = 0;
+            var listeners = observableListeners.slice(0),
+                length = listeners.length;
 
-            while (i < length) {
-                observableListeners[i].listener(value, oldValue);
-                newLength = observableListeners.length;
-                i += newLength - length + 1;
-                length = newLength;
+            for (var i = 0; i < length; ++i) {
+                listeners[i].listener(value, oldValue);
             }
         }
 

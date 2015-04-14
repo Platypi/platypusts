@@ -32,20 +32,6 @@ module tests.expressions.regex {
             expected: ['("foo", bar(quux()), "baz")', '"foo", bar(quux()), "baz"']
         },
         {
-            name: 'alias regex',
-            regex: regex.aliasRegex,
-            input: '@context.baz[bar](quux)',
-            replace: '@.baz[bar](quux)',
-            expected: ['context']
-        },
-        {
-            name: 'alias regex with multiple',
-            regex: regex.aliasRegex,
-            input: '@context.baz["@bar"](quux)',
-            replace: '@.baz["@bar"](quux)',
-            expected: ['context']
-        },
-        {
             name: 'optional route regex',
             regex: regex.optionalRouteRegex,
             input: '(/foo)/bar(/quux)',

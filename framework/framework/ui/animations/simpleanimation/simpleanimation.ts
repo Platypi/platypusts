@@ -253,7 +253,7 @@ module plat.ui.animations {
          * after the animation has started. Defaults to false as we want to remove 
          * any initial state after an animation has kicked off.
          */
-        preserveInit: boolean;
+        preserveInit?: boolean;
     }
 
     /**

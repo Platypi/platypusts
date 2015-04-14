@@ -478,7 +478,7 @@
          * A JavaScript object with key value pairs for adjusting transition values. 
          * (e.g. { width: '800px' } would set the element's width to 800px.
          */
-        properties: IObject<string>;
+        properties?: IObject<string>;
 
         /**
          * @name preserveInit
@@ -494,7 +494,7 @@
          * initial states and definitions throughout the transition 
          * (and/or initial transition states will be overwritten upon start).
          */
-        preserveInit: boolean;
+        preserveInit?: boolean;
 
         /**
          * @name count
@@ -509,6 +509,6 @@
          * is used in conjunction with another transition property and transitions are being 
          * performed through CSS.
          */
-        count: number;
+        count?: number;
     }
 }
