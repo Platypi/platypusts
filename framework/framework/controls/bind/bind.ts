@@ -569,7 +569,7 @@ module plat.controls {
                 };
 
             if (isUndefined(_compat.ANDROID)) {
-                this.addEventListener(element, 'compositionstart',(): void => { composing = true; }, false);
+                this.addEventListener(element, 'compositionstart', (): void => { composing = true; }, false);
                 this.addEventListener(element, 'compositionend', (): void => {
                     composing = false;
                     eventListener();
