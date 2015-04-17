@@ -1,5 +1,5 @@
 /**
-  * PlatypusTS v0.12.11 (http://getplatypi.com)
+  * PlatypusTS v0.12.12 (http://getplatypi.com)
   * Copyright 2015 Platypi, LLC. All rights reserved.
   *
   * PlatypusTS is licensed under the GPL-3.0 found at
@@ -7493,7 +7493,7 @@ declare module plat {
                   * after the animation has started. Defaults to false as we want to remove
                   * any initial state after an animation has kicked off.
                   */
-                preserveInit: boolean;
+                preserveInit?: boolean;
             }
             /**
               * An animation control that fades in an element as defined by the included CSS.
@@ -7641,20 +7641,20 @@ declare module plat {
                   * A JavaScript object with key value pairs for adjusting transition values.
                   * (e.g. { width: '800px' } would set the element's width to 800px.
                   */
-                properties: IObject<string>;
+                properties?: IObject<string>;
                 /**
                   * A boolean specifying whether or not to leave the '*-init' class on the element
                   * after the transition has started. Defaults to true as we want to keep all
                   * initial states and definitions throughout the transition
                   * (and/or initial transition states will be overwritten upon start).
                   */
-                preserveInit: boolean;
+                preserveInit?: boolean;
                 /**
                   * A defined transition count number. Useful when the transition property name 'all'
                   * is used in conjunction with another transition property and transitions are being
                   * performed through CSS.
                   */
-                count: number;
+                count?: number;
             }
         }
         /**
