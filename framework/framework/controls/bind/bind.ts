@@ -580,7 +580,7 @@ module plat.controls {
                 this.addEventListener(element, input, eventListener, false);
             } else {
                 this.addEventListener(element, 'keydown', (ev: KeyboardEvent): void => {
-                    var key = ev.keyCode,
+                    var key = ev.keyCode || ev.which,
                         codes = KeyCodes;
 
                     if (key === codes.lwk ||
