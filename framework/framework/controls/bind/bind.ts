@@ -569,7 +569,7 @@ module plat.controls {
                 };
 
             if (isUndefined(_compat.ANDROID)) {
-                this.addEventListener(element, 'compositionstart',(): void => { composing = true; }, false);
+                this.addEventListener(element, 'compositionstart', (): void => { composing = true; }, false);
                 this.addEventListener(element, 'compositionend', (): void => {
                     composing = false;
                     eventListener();
@@ -580,7 +580,7 @@ module plat.controls {
                 this.addEventListener(element, input, eventListener, false);
             } else {
                 this.addEventListener(element, 'keydown', (ev: KeyboardEvent): void => {
-                    var key = ev.keyCode,
+                    var key = ev.keyCode || ev.which,
                         codes = KeyCodes;
 
                     if (key === codes.lwk ||
