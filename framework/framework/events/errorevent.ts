@@ -35,7 +35,6 @@
          * @memberof plat.events.ErrorEvent
          * @kind property
          * @access public
-         * @static
          * 
          * @type {E}
          * 
@@ -43,6 +42,19 @@
          * The error being dispatched.
          */
         error: E;
+
+        /**
+         * @name fatal
+         * @memberof plat.events.ErrorEvent
+         * @kind property
+         * @access public
+         * 
+         * @type {boolean}
+         * 
+         * @description
+         * Whether or not the error is fatal.
+         */
+        fatal: boolean = false;
 
         /**
          * @name dispatch
@@ -59,13 +71,19 @@
          * @param {string} name The name of the event.
          * @param {any} sender The sender of the event.
          * @param {E} error The error that occurred, resulting in the event.
+         * @param {boolean} isFatal Whether or not the error is fatal
          * 
          * @returns {plat.events.ErrorEvent<E>} The event instance.
          */
-        static dispatch<E extends Error>(name: string, sender: any, error: E): ErrorEvent<E> {
+        static dispatch<E extends Error>(name: string, sender: any, error: E, isFatal?: boolean): ErrorEvent<E> {
             var event: ErrorEvent<E> = acquire(ErrorEvent);
 
             event.initialize(name, sender, null, error);
+            
+            if (isFatal) {
+                event.fatal = true;
+            }
+
             ErrorEvent._EventManager.sendEvent(event);
 
             return event;
@@ -146,9 +164,10 @@
          * @param {string} name The name of the event.
          * @param {any} sender The sender of the event.
          * @param {E} error The error that occurred, resulting in the event.
+         * @param {boolean} isFatal Whether or not the error is fatal
          * 
          * @returns {plat.events.ErrorEvent<E>} The event instance.
          */
-        dispatch<E extends Error>(name: string, sender: any, error: E): ErrorEvent<E>;
+        dispatch<E extends Error>(name: string, sender: any, error: E, isFatal?: boolean): ErrorEvent<E>;
     }
 }

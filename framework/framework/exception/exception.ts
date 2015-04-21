@@ -738,7 +738,7 @@ module plat {
 
         var ErrorEvent: events.IErrorEventStatic = acquire(__ErrorEventStatic);
 
-        ErrorEvent.dispatch(__error, Exception, error);
+        ErrorEvent.dispatch(__error, Exception, error, isFatal);
 
         if (isFatal) {
             if (message instanceof Error) {

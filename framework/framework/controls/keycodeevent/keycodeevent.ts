@@ -364,60 +364,6 @@ module plat.controls {
          * The event name.
          */
         event: string = 'keydown';
-
-        /**
-         * @name cancelEvent
-         * @memberof plat.controls.KeyDown
-         * @kind property
-         * @access public
-         * 
-         * @type {plat.IRemoveListener}
-         * 
-         * @description
-         * The a method to remove the currently postponed event.
-         */
-        cancelEvent: IRemoveListener = noop;
-
-        /**
-         * @name _onEvent
-         * @memberof plat.controls.KeyDown
-         * @kind function
-         * @access protected
-         * 
-         * @description
-         * Delays execution of the event
-         * 
-         * @param {KeyboardEvent} ev The KeyboardEvent object.
-         * 
-         * @returns {void}
-         */
-        protected _onEvent(ev: KeyboardEvent): void {
-            var keyCode = ev.keyCode;
-
-            if ((keyCode >= 48 && keyCode <= 90) ||
-                (keyCode >= 186) ||
-                (keyCode >= 96 && keyCode <= 111)) {
-                this.cancelEvent = postpone((): void => {
-                    super._onEvent(ev);
-                });
-            }
-        }
-
-        /**
-         * @name dispose
-         * @memberof plat.controls.KeyDown
-         * @kind function
-         * 
-         * @description
-         * Calls to cancel an event if it is in progress.
-         * 
-         * @returns {void}
-         */
-        dispose(): void {
-            this.cancelEvent();
-
-            this.cancelEvent = null;
-        }
     }
 
     /**
@@ -442,7 +388,7 @@ module plat.controls {
          * @description
          * The event name.
          */
-        event: string = 'keydown';
+        event: string = 'keypress';
 
         /**
          * @name cancelEvent
@@ -476,9 +422,7 @@ module plat.controls {
             if ((keyCode >= 48 && keyCode <= 90) ||
                 (keyCode >= 186) ||
                 (keyCode >= 96 && keyCode <= 111)) {
-                this.cancelEvent = postpone((): void => {
-                    super._onEvent(ev);
-                });
+                super._onEvent(ev);
             }
         }
 

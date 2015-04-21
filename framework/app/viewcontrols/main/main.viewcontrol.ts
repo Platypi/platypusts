@@ -104,6 +104,15 @@ module app.viewcontrols {
         tap() {
             this.context;
         }
+
+        keydown(ev: KeyboardEvent) {
+        }
+
+        key(type: string, ev: KeyboardEvent) {
+            (<any>window).__ev = ev;
+            console.log(ev);
+            console.log('type: ' + type + ' locked: ' + ev.getModifierState('CapsLock'));
+        }
     }
 
     plat.register.control('main', Main, [
