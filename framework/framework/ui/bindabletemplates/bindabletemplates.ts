@@ -872,7 +872,7 @@ module plat.ui {
 
             if (isCompiled) {
                 var contextManager = this._ContextManager.getManager(control.root);
-                control.absoluteContextPath = parent.absoluteContextPath || __Context;
+                control.absoluteContextPath = parent.absoluteContextPath || __CONTEXT;
 
                 if (!isNull(childContext)) {
                     control.absoluteContextPath += '.' + childContext;
