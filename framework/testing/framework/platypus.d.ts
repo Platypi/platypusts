@@ -1,5 +1,5 @@
 /**
-  * PlatypusTS v0.12.12 (http://getplatypi.com)
+  * PlatypusTS v0.12.13 (http://getplatypi.com)
   * Copyright 2015 Platypi, LLC. All rights reserved.
   *
   * PlatypusTS is licensed under the GPL-3.0 found at
@@ -3951,12 +3951,17 @@ declare module plat {
               */
             error: E;
             /**
+              * Whether or not the error is fatal.
+              */
+            fatal: boolean;
+            /**
               * Creates a new ErrorEvent and fires it.
               * @param {string} name The name of the event.
               * @param {any} sender The sender of the event.
               * @param {E} error The error that occurred, resulting in the event.
+              * @param {boolean} isFatal Whether or not the error is fatal
               */
-            static dispatch<E extends Error>(name: string, sender: any, error: E): ErrorEvent<E>;
+            static dispatch<E extends Error>(name: string, sender: any, error: E, isFatal?: boolean): ErrorEvent<E>;
             /**
               * Initializes the event, populating its public properties.
               * @param {string} name The name of the event.
@@ -3986,8 +3991,9 @@ declare module plat {
               * @param {string} name The name of the event.
               * @param {any} sender The sender of the event.
               * @param {E} error The error that occurred, resulting in the event.
+              * @param {boolean} isFatal Whether or not the error is fatal
               */
-            dispatch<E extends Error>(name: string, sender: any, error: E): ErrorEvent<E>;
+            dispatch<E extends Error>(name: string, sender: any, error: E, isFatal?: boolean): ErrorEvent<E>;
         }
     }
     /**
@@ -11249,28 +11255,30 @@ declare module plat {
           * Base class used for filtering keys on KeyboardEvents.
           */
         class KeyCodeEventControl extends SimpleEventControl implements IKeyCodeEventControl {
-            protected static _inject: any;
-            /**
-              * Reference to the Regex injectable.
-              */
-            protected _regex: plat.expressions.Regex;
             /**
               * Holds the key mappings to filter for in a KeyboardEvent.
               */
-            keyCodes: IObject<{
-                shifted: boolean;
-            }>;
+            keyCodes: IObject<boolean>;
             /**
               * Checks if the IKeyboardEventInput is an expression object
               * and sets the necessary listener.
               */
             protected _setListener(): void;
             /**
+              * Parses the proper method args and finds any key code filters.
+              */
+            protected _filterArgs(input: IKeyboardEventInput): Array<any>;
+            /**
               * Matches the event's keyCode if necessary and then handles the event if
               * a match is found or if there are no filter keyCodes.
               * @param {KeyboardEvent} ev The keyboard event object.
               */
             protected _onEvent(ev: KeyboardEvent): void;
+            /**
+              * Matches the event's keyCode if necessary.
+              * @param {KeyboardEvent} ev The keyboard event object.
+              */
+            protected _compareKeys(ev: KeyboardEvent): boolean;
             /**
               * Sets the defined key codes as they correspond to
               * the KeyCodes map.
@@ -11286,9 +11294,7 @@ declare module plat {
             /**
               * Holds the key mappings to filter for in a KeyboardEvent.
               */
-            keyCodes: IObject<{
-                shifted: boolean;
-            }>;
+            keyCodes: IObject<boolean>;
         }
         /**
           * The available options for KeyCodeEventControl.
@@ -11300,38 +11306,38 @@ declare module plat {
             method: string;
             /**
               * The key to satisfy the press condition. Can be specified either as a numeric key code
-              * or a string representation as seen by the KeyCodes mapping.
+              * or a string representation as seen by the KeyCodes mapping. Used for keydown,
+              * keypress, and keyup events where capitalization is disregarded.
               */
-            key?: string;
+            key?: any;
             /**
-              * An optional array of keys if more than one key can satisfy the condition.
+              * An optional array of keys or key codes if more than one key can satisfy the condition. Used for keydown,
+              * keypress, and keyup events where capitalization is disregarded.
               */
-            keys?: Array<string>;
+            keys?: Array<any>;
+            /**
+              * The character to satisfy the press condition. Can be specified either as a numeric char code
+              * or the char itself. Used for the charpress event where capitalization is regarded.
+              */
+            char?: any;
+            /**
+              * An optional array of characters or char codes if more than one char can satisfy the condition.
+              * Used for the charpress event where capitalization is regarded.
+              */
+            chars?: Array<any>;
         }
         /**
-          * Used for filtering keys on keydown events.
+          * Used for filtering keys on keydown events. Does not take capitalization into account.
           */
         class KeyDown extends KeyCodeEventControl {
             /**
               * The event name.
               */
             event: string;
-            /**
-              * The a method to remove the currently postponed event.
-              */
-            cancelEvent: IRemoveListener;
-            /**
-              * Delays execution of the event
-              * @param {KeyboardEvent} ev The KeyboardEvent object.
-              */
-            protected _onEvent(ev: KeyboardEvent): void;
-            /**
-              * Calls to cancel an event if it is in progress.
-              */
-            dispose(): void;
         }
         /**
           * Used for filtering only printing keys (a-z, A-Z, 0-9, and special characters) on keydown events.
+          * Does not take capitalization into account.
           */
         class KeyPress extends KeyCodeEventControl {
             /**
@@ -11339,27 +11345,55 @@ declare module plat {
               */
             event: string;
             /**
-              * The a method to remove the currently postponed event.
-              */
-            cancelEvent: IRemoveListener;
-            /**
-              * Filters only 'printing keys' (a-z, A-Z, 0-9, and special characters)
+              * Filters only 'printing keys' (a-z, A-Z, 0-9, and special characters).
               * @param {KeyboardEvent} ev The KeyboardEvent object.
               */
             _onEvent(ev: KeyboardEvent): void;
             /**
-              * Calls to cancel an event if it is in progress.
+              * Matches the event's keyCode if necessary.
+              * @param {KeyboardEvent} ev The keyboard event object.
               */
-            dispose(): void;
+            protected _compareKeys(ev: KeyboardEvent): boolean;
         }
         /**
-          * Used for filtering keys on keyup events.
+          * Used for filtering keys on keyup events. Does not take capitalization into account.
           */
         class KeyUp extends KeyCodeEventControl {
             /**
               * The event name.
               */
             event: string;
+        }
+        /**
+          * Used for filtering keys on keypress events. Takes capitalization into account.
+          */
+        class CharPress extends KeyCodeEventControl {
+            /**
+              * The event name.
+              */
+            event: string;
+            /**
+              * Parses the proper method args and finds any char code filters.
+              */
+            protected _filterArgs(input: IKeyboardEventInput): Array<any>;
+            /**
+              * Matches the event's keyCode if necessary and then handles the event if
+              * a match is found or if there are no filter keyCodes.
+              * @param {KeyboardEvent} ev The keyboard event object.
+              */
+            protected _onEvent(ev: KeyboardEvent): void;
+            /**
+              * Matches the event's keyCode if necessary.
+              * @param {KeyboardEvent} ev The keyboard event object.
+              */
+            protected _compareKeys(ev: KeyboardEvent): boolean;
+            /**
+              * Sets the defined key codes as they correspond to
+              * the KeyCodes map.
+              * @param {Array<string>} keys? The array of defined keys to satisfy the
+              * key press condition.
+              */
+            protected _setKeyCodes(keys?: Array<string>): void;
         }
         /**
           * An AttributeControl that deals with binding to a specified property on its element.
