@@ -556,19 +556,9 @@
             (<any>_window)[prefix + 'CancelRequestAnimationFrame'] ||
             (<any>_window)[prefix + 'CancelAnimationFrame'];
 
-            var style = documentElement.style,
-                animationSupported: boolean;
-            if (animationSupported = !isUndefined(style.animation)) {
-                this.animationEvents = {
-                    $animation: 'animation',
-                    $animationStart: 'animationstart',
-                    $animationEnd: 'animationend',
-                    $animationIteration: 'animationiteration',
-                    $transition: 'transition',
-                    $transitionStart: 'transitionstart',
-                    $transitionEnd: 'transitionend'
-                };
-            } else if (animationSupported = !isUndefined((<any>style)[jsSyntax + 'Animation'])) {
+            var style = documentElement.style;
+            if (!(isUndefined((<any>style)[jsSyntax + 'Animation']) || isUndefined((<any>style)[jsSyntax + 'Transition']))) {
+                this.animationSupported = true;
                 this.animationEvents = {
                     $animation: prefix + 'Animation',
                     $animationStart: prefix + 'AnimationStart',
@@ -578,9 +568,18 @@
                     $transitionStart: prefix + 'TransitionStart',
                     $transitionEnd: prefix + 'TransitionEnd'
                 };
+            } else if (!(isUndefined(style.animation) || isUndefined(style.transition))) {
+                this.animationSupported = true;
+                this.animationEvents = {
+                    $animation: 'animation',
+                    $animationStart: 'animationstart',
+                    $animationEnd: 'animationend',
+                    $animationIteration: 'animationiteration',
+                    $transition: 'transition',
+                    $transitionStart: 'transitionstart',
+                    $transitionEnd: 'transitionend'
+                };
             }
-
-            this.animationSupported = animationSupported;
         }
 
         /**
