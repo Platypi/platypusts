@@ -2,7 +2,7 @@ module plat.ui.controls {
     'use strict';
 
     /**
-     * @name Html
+     * @name InnerHtml
      * @memberof plat.ui.controls
      * @kind class
      * 
@@ -12,10 +12,10 @@ module plat.ui.controls {
      * A {@link plat.ui.TemplateControl|TemplateControl} for adding HTML to the 
      * DOM through bound context strings.
      */
-    export class Html extends TemplateControl {
+    export class InnerHtml extends TemplateControl {
         /**
          * @name contextChanged
-         * @memberof plat.ui.controls.Html
+         * @memberof plat.ui.controls.InnerHtml
          * @kind function
          * @access public
          * 
@@ -30,7 +30,7 @@ module plat.ui.controls {
 
         /**
          * @name loaded
-         * @memberof plat.ui.controls.Html
+         * @memberof plat.ui.controls.InnerHtml
          * @kind function
          * @access public
          * 
@@ -50,5 +50,5 @@ module plat.ui.controls {
         }
     }
 
-    register.control(__Html, Html);
+    register.control(__Html, InnerHtml);
 }
