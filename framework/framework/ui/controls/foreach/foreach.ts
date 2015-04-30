@@ -345,10 +345,16 @@ module plat.ui.controls {
                 itemCount = context.length;
 
             this._addCount += itemCount;
-            addQueue.push(this._addItems(0, itemCount, 0).then((): void => {
+            var addPromise = this._addItems(0, itemCount, 0).then((): void => {
+                var index = addQueue.indexOf(addPromise);
+                if (index !== -1) {
+                    addQueue.splice(index, 1);
+                }
+
                 this._addCount -= itemCount;
-                addQueue.shift();
-            }));
+            });
+
+            addQueue.push(addPromise);
 
             this._setListener();
         }
@@ -694,10 +700,16 @@ module plat.ui.controls {
                 itemCount = change.addedCount;
 
             this._addCount += itemCount;
-            addQueue.push(this._addItems(change.index, itemCount, this._animate ? itemCount : 0).then((): void => {
+            var addPromise = this._addItems(change.index, itemCount, this._animate ? itemCount : 0).then((): void => {
+                var index = addQueue.indexOf(addPromise);
+                if (index !== -1) {
+                    addQueue.splice(index, 1);
+                }
+
                 this._addCount -= itemCount;
-                addQueue.shift();
-            }));
+            });
+
+            addQueue.push(addPromise);
         }
 
         /**
@@ -714,9 +726,9 @@ module plat.ui.controls {
          * @returns {void}
          */
         protected _pop(changes: Array<observable.IArrayChanges<any>>): void {
-            var addQueue = this._addQueue,
-                change = changes[0],
+            var change = changes[0],
                 start = change.object.length;
+
             if (change.removed.length === 0) {
                 return;
             }
@@ -725,13 +737,15 @@ module plat.ui.controls {
             if (this._addCount > 0) {
                 this._addCount -= 1;
             }
-            this._Promise.all(addQueue).then((): async.IThenable<void> => {
+
+            this._Promise.all(this._addQueue).then((): async.IThenable<void> => {
                 if (this._animate) {
                     this._animateItems(start, 1, __Leave, 'leave', false).then((): void => {
                         this._removeItems(removeIndex, 1);
                     });
                     return;
                 }
+
                 this._removeItems(removeIndex, 1);
             });
         }
@@ -762,10 +776,16 @@ module plat.ui.controls {
             }
 
             this._addCount += addedCount;
-            addQueue.push(this._addItems(change.object.length - addedCount, addedCount, 0).then((): void => {
+            var addPromise = this._addItems(change.object.length - addedCount, addedCount, 0).then((): void => {
+                var index = addQueue.indexOf(addPromise);
+                if (index !== -1) {
+                    addQueue.splice(index, 1);
+                }
+
                 this._addCount -= addedCount;
-                addQueue.shift();
-            }));
+            });
+
+            addQueue.push(addPromise);
         }
 
         /**
@@ -797,6 +817,7 @@ module plat.ui.controls {
             if (this._addCount > 0) {
                 this._addCount -= 1;
             }
+
             this._Promise.all(addQueue).then((): void => {
                 this._removeItems(removeIndex, 1);
             });
@@ -819,6 +840,7 @@ module plat.ui.controls {
             var change = changes[0],
                 addCount = change.addedCount,
                 addQueue = this._addQueue,
+                addPromise: async.IThenable<void>,
                 animating = this._animate;
 
             if (isNull(addCount)) {
@@ -833,10 +855,16 @@ module plat.ui.controls {
                 if (newLength > currentLength) {
                     // itemCount will be negative
                     this._addCount -= itemCount;
-                    addQueue.push(this._addItems(currentLength, -itemCount, 0).then((): void => {
+                    addPromise = this._addItems(currentLength, -itemCount, 0).then((): void => {
+                        var index = addQueue.indexOf(addPromise);
+                        if (index !== -1) {
+                            addQueue.splice(index, 1);
+                        }
+
                         this._addCount += itemCount;
-                        addQueue.shift();
-                    }));
+                    });
+
+                    addQueue.push(addPromise);
                 } else if (currentLength > newLength) {
                     if (this._addCount > 0) {
                         this._addCount -= itemCount;
@@ -876,10 +904,16 @@ module plat.ui.controls {
                 }
 
                 this._addCount += itemAddCount;
-                addQueue.push(this._addItems(change.object.length - itemAddCount, itemAddCount, animationCount).then((): void => {
+                addPromise = this._addItems(change.object.length - itemAddCount, itemAddCount, animationCount).then((): void => {
+                    var index = addQueue.indexOf(addPromise);
+                    if (index !== -1) {
+                        addQueue.splice(index, 1);
+                    }
+
                     this._addCount -= itemAddCount;
-                    addQueue.shift();
-                }));
+                });
+
+                addQueue.push(addPromise);
             } else if (removeCount > addCount) {
                 var adding = addCount > 0;
                 if (animating && !adding && addQueue.length === 0) {
@@ -899,6 +933,7 @@ module plat.ui.controls {
                         this._animateItems(change.index, addCount, __Enter, null,
                             animLength > 0 && animationQueue[animLength - 1].op === 'clone');
                     }
+
                     this._removeItems(removeLength - deleteCount, deleteCount);
                 });
             }
