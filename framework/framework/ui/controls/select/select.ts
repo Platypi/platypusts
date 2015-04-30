@@ -27,7 +27,7 @@ module plat.ui.controls {
          * @type {string}
          * 
          * @description
-         * Replaces the <plat-select> node with 
+         * Replaces the `<plat-select>` node with 
          * a <select> node.
          */
         replaceWith = 'select';
