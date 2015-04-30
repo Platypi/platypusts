@@ -1,5 +1,5 @@
 /**
-  * PlatypusTS v0.12.13 (http://getplatypi.com)
+  * PlatypusTS v0.12.14 (http://getplatypi.com)
   * Copyright 2015 Platypi, LLC. All rights reserved.
   *
   * PlatypusTS is licensed under the GPL-3.0 found at
@@ -8349,7 +8349,7 @@ declare module plat {
               * A TemplateControl for adding HTML to the
               * DOM through bound context strings.
               */
-            class Html extends TemplateControl {
+            class InnerHtml extends TemplateControl {
                 /**
                   * Loads the DOM with the new HTML String.
                   */
@@ -8366,7 +8366,7 @@ declare module plat {
             class Select extends BindControl {
                 protected static _inject: any;
                 /**
-                  * Replaces the <plat-select> node with
+                  * Replaces the `<plat-select>` node with
                   * a <select> node.
                   */
                 replaceWith: string;
