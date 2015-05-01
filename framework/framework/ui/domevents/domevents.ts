@@ -827,10 +827,11 @@
          * @returns {boolean} Prevents default and stops propagation if false is returned.
          */
         protected _onTouchStart(ev: IPointerEvent): boolean {
+            console.log('start');
             if (this.__touchCount++ > 0) {
                 return true;
             }
-
+            
             var eventType = ev.type;
             if (eventType !== 'mousedown') {
                 this._inTouch = true;
@@ -950,6 +951,7 @@
             this.__cancelDeferredHold();
             this.__cancelDeferredHold = noop;
 
+            console.log('move');
             // return immediately if there are multiple touches present, or 
             // if it is a mouse event and currently in a touch
             if (this._inTouch === true && ev.type === 'mousemove') {
@@ -1021,6 +1023,12 @@
             var eventType = ev.type,
                 hasMoved = this.__hasMoved;
 
+            this.__touchCount--;
+
+            if (this.__touchCount < 0) {
+                this.__touchCount = 0;
+            }
+
             if (eventType !== 'mouseup') {
                 // all non mouse cases
                 if (eventType === 'touchend') {
@@ -1048,8 +1056,6 @@
 
                     this.__preventClickFromTouch();
                 }
-
-                this._inTouch = false;
             } else if (!isUndefined(this._inTouch)) {
                 if (!this._inMouse) {
                     // this is case where touchend fired and now 
@@ -1074,9 +1080,8 @@
                 return true;
             }
 
+            this._inTouch = false;
             this.__clearTempStates();
-
-            this.__touchCount = ev.touches.length;
 
             // handle release event
             if (this.__hasRelease) {
@@ -1184,6 +1189,7 @@
                 index = this.__getTouchIndex(touches);
 
             ev = index >= 0 ? touches[index] : this.__standardizeEventObject(ev);
+            this._inTouch = false;
             this.__clearTempStates();
             if (this.__hasMoved) {
                 // Android 4.4.x fires touchcancel when the finger moves off an element that
