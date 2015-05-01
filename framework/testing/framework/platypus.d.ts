@@ -1,5 +1,5 @@
 /**
-  * PlatypusTS v0.12.14 (http://getplatypi.com)
+  * PlatypusTS v0.12.15 (http://getplatypi.com)
   * Copyright 2015 Platypi, LLC. All rights reserved.
   *
   * PlatypusTS is licensed under the GPL-3.0 found at
