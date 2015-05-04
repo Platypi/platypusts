@@ -827,7 +827,6 @@
          * @returns {boolean} Prevents default and stops propagation if false is returned.
          */
         protected _onTouchStart(ev: IPointerEvent): boolean {
-            console.log('start');
             if (this.__touchCount++ > 0) {
                 return true;
             }
@@ -950,8 +949,6 @@
             // clear hold event
             this.__cancelDeferredHold();
             this.__cancelDeferredHold = noop;
-
-            console.log('move');
             // return immediately if there are multiple touches present, or 
             // if it is a mouse event and currently in a touch
             if (this._inTouch === true && ev.type === 'mousemove') {
