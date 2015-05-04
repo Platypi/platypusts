@@ -1018,7 +1018,8 @@
          */
         protected _onTouchEnd(ev: IPointerEvent): boolean {
             var eventType = ev.type,
-                hasMoved = this.__hasMoved;
+                hasMoved = this.__hasMoved,
+                notMouseUp = eventType !== 'mouseup';
 
             this.__touchCount--;
 
@@ -1026,7 +1027,7 @@
                 this.__touchCount = 0;
             }
 
-            if (eventType !== 'mouseup') {
+            if (notMouseUp) {
                 // all non mouse cases
                 if (eventType === 'touchend') {
                     // all to handle a strange issue when touch clicking certain types 
@@ -1073,11 +1074,13 @@
 
             // standardizeEventObject creates touches
             ev = this.__standardizeEventObject(ev);
+
             if (isNull(ev)) {
                 return true;
+            } else if (notMouseUp) {
+                this._inTouch = false;
             }
 
-            this._inTouch = false;
             this.__clearTempStates();
 
             // handle release event
