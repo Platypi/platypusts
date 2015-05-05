@@ -1,5 +1,5 @@
 /**
-  * PlatypusTS v0.12.17 (http://getplatypi.com)
+  * PlatypusTS v0.13.0 (http://getplatypi.com)
   * Copyright 2015 Platypi, LLC. All rights reserved.
   *
   * PlatypusTS is licensed under the GPL-3.0 found at
@@ -5742,7 +5742,12 @@ declare module plat {
               * An object containing the event types for all of the
               * supported gestures.
               */
-            gestures: IGestures<string>;
+            static gestures: IGestures<string>;
+            /**
+              * An object containing the event types for all of the
+              * supported gestures.
+              */
+            protected _gestures: IGestures<string>;
             /**
               * Reference to the Document injectable.
               */
