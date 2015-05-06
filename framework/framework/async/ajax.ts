@@ -202,7 +202,7 @@ module plat.async {
          * @returns {void}
          */
         initialize(options: IHttpConfig): void {
-            this.__options = extend({}, this._config, options);
+            this.__options = _extend(false, false, {}, this._config, options);
         }
 
         /**
@@ -2139,7 +2139,7 @@ module plat.async {
          */
         json<R>(options: IHttpConfig): AjaxPromise<R> {
             var request: HttpRequest = acquire(__HttpRequestInstance);
-            request.initialize(extend({}, options, { responseType: 'json' }));
+            request.initialize(_extend(false, false, {}, options, { responseType: 'json' }));
             return request.execute<R>();
         }
     }

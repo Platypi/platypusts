@@ -29,19 +29,47 @@ var ___Promise: plat.async.IPromise,
 
 function noop(): void { }
 
-function extend(destination: any, ...sources: any[]): any {
+function _defineProperty(obj: any, key: string, value: any, enumerable?: boolean, configurable?: boolean, writable?: boolean): void {
+    Object.defineProperty(obj, key, {
+        value: value,
+        enumerable: enumerable === true,
+        configurable: configurable === true,
+        writable: writable === true
+    });
+}
+
+function _defineGetter(obj: any, key: string, value: any, enumerable?: boolean, configurable?: boolean): void {
+    Object.defineProperty(obj, key, {
+        get: (): any => value,
+        enumerable: enumerable === true,
+        configurable: configurable === true
+    });
+}
+
+function _extend(deep: boolean, redefine: any, destination: any, ...sources: any[]): any {
     if (isNull(destination)) {
         return destination;
     }
 
-    var deep = isBoolean(destination);
+    var keys: Array<string>,
+        property: any,
+        define: (obj: any, key: string, value: any) => void;
 
-    if (deep) {
-        destination = sources.shift();
+    if (isFunction(redefine)) {
+        define = redefine;
+    } else if (redefine) {
+        define = (obj: any, key: string, value: any) => {
+            _defineProperty(obj, key, value, true, true, true);
+        };
+    } else {
+        define = (obj: any, key: string, value: any) => {
+            obj[key] = value;
+        };
     }
 
-    var keys: Array<string>,
-        property: any;
+    if (isEmpty(sources)) {
+        sources.push(destination);
+    }
 
     forEach((source, k): void => {
         if (!isObject(source)) {
@@ -54,31 +82,27 @@ function extend(destination: any, ...sources: any[]): any {
             property = source[key];
             if (deep) {
                 if (isArray(property)) {
-                    extend(deep, destination[key] || (destination[key] = []), property);
+                    _extend(deep, define, destination[key] || (destination[key] = []), property);
                     return;
                 } else if (isDate(property)) {
-                    destination[key] = new Date(property.getTime());
+                    define(destination, key, new Date(property.getTime()));
                     return;
                 } else if (isRegExp(property)) {
-                    destination[key] = new RegExp(property);
+                    define(destination, key, new RegExp(property));
                     return;
                 } else if (isNode(property)) {
-                    destination[key] = (<Node>property).cloneNode(true);
+                    define(destination, key, (<Node>property).cloneNode(true));
                     return;
                 } else if (isObject(property)) {
-                    extend(deep, destination[key] || (destination[key] = {}), property);
+                    _extend(deep, define, destination[key] || (destination[key] = {}), property);
                     return;
                 }
             }
-            destination[key] = property;
+            define(destination, key, property);
         }, keys);
     }, sources);
 
     return destination;
-}
-
-function deepExtend(destination: any, ...sources: any[]): any {
-    return extend.apply(null, [true, destination].concat(sources));
 }
 
 function _clone(obj: any, deep?: boolean): any {
@@ -101,10 +125,10 @@ function _clone(obj: any, deep?: boolean): any {
     }
 
     if (isBoolean(deep) && deep) {
-        return deepExtend(type, obj);
+        return _extend(true, false, type, obj);
     }
 
-    return extend(type, obj);
+    return _extend(false, false, type, obj);
 }
 
 function isError(obj: any): boolean {

@@ -242,13 +242,11 @@ module plat.observable {
          * Removes all the listeners for a given control's unique ID.
          * 
          * @param {plat.Control} control The control whose manager is being disposed.
-         * @param {boolean} persist? Whether or not the control's context needs to 
-         * be persisted post-disposal or can be set to null.
          * 
          * @returns {void}
          */
-        static dispose(control: Control, persist?: boolean): void;
-        static dispose(control: ui.TemplateControl, persist?: boolean): void {
+        static dispose(control: Control): void;
+        static dispose(control: ui.TemplateControl): void {
             if (isNull(control)) {
                 return;
             }
@@ -277,8 +275,8 @@ module plat.observable {
             deleteProperty(controls, uid);
 
             if (!isNull(control.context)) {
-                ContextManager.defineProperty(control, __CONTEXT,
-                    persist === true ? _clone(control.context, true) : null, true, true, true);
+                ContextManager.unObserve(control.context);
+                ContextManager.defineProperty(control, __CONTEXT, control.context, true, true, true);
             }
         }
 
@@ -359,12 +357,7 @@ module plat.observable {
          * @returns {void}
          */
         static defineProperty(obj: any, key: string, value: any, enumerable?: boolean, configurable?: boolean, writable?: boolean): void {
-            Object.defineProperty(obj, key, {
-                value: value,
-                enumerable: enumerable === true,
-                configurable: configurable === true,
-                writable: writable === true
-            });
+            _defineProperty(obj, key, value, enumerable, configurable, writable);
         }
 
         /**
@@ -387,11 +380,7 @@ module plat.observable {
          * @returns {void}
          */
         static defineGetter(obj: any, key: string, value: any, enumerable?: boolean, configurable?: boolean): void {
-            Object.defineProperty(obj, key, {
-                get: (): any => value,
-                enumerable: enumerable === true,
-                configurable: configurable === true
-            });
+            _defineGetter(obj, key, value, enumerable, configurable);
         }
 
         /**
@@ -554,6 +543,24 @@ module plat.observable {
             }
 
             return context;
+        }
+
+        /**
+         * @name unObserve
+         * @memberof plat.observable.ContextManager
+         * @kind function
+         * @access public
+         * @static
+         * 
+         * @description
+         * Iterates through all the nested properties in an object and redefines the properties to not use getters/setters
+         * 
+         * @param {any} obj The object to stop observing.
+         * 
+         * @returns {void} The newly created context object.
+         */
+        static unObserve(obj: any): void {
+            _extend(true, true, obj);
         }
 
         /**
@@ -1176,10 +1183,6 @@ module plat.observable {
                     this._define(binding, newParent, key);
                 }
 
-                if (!(isNull(oldChild) || (isArray(oldParent) && keyIsLength))) {
-                    ContextManager.defineProperty(oldParent, key, oldChild, true, true, true);
-                }
-
                 this._execute(binding, newChild, oldChild);
             }
 
@@ -1325,6 +1328,10 @@ module plat.observable {
                         index = newLength;
                         removed = oldLength > 0 ? [returnValue] : [];
                     }
+                }
+
+                if (isShift || isSplice || method === 'pop') {
+                    ContextManager.unObserve(returnValue);
                 }
 
                 var keys = Object.keys(callbackObjects),
@@ -1486,6 +1493,8 @@ module plat.observable {
                     if (this.__isArrayFunction) {
                         return;
                     }
+
+                    ContextManager.unObserve(oldValue);
 
                     var props = this.__identifierHash[identifier],
                         childPropertiesExist = false,
@@ -1729,12 +1738,10 @@ module plat.observable {
          * Removes all the listeners for a given control's unique ID.
          * 
          * @param {plat.Control} control The control whose manager is being disposed.
-         * @param {boolean} persist? Whether or not the control's context needs to 
-         * be persisted post-disposal or can be set to null.
          * 
          * @returns {void}
          */
-        dispose(control: Control, persist?: boolean): void;
+        dispose(control: Control): void;
 
         /**
          * @name removeArrayListeners

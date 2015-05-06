@@ -42,7 +42,7 @@ module plat {
          * @returns {any} The extended destination object.
          */
         extend(destination: any, ...sources: any[]): any {
-            return extend.apply(null, [destination].concat(sources));
+            return _extend.apply(null, [false, false, destination].concat(sources));
         }
 
         /**
@@ -64,7 +64,7 @@ module plat {
          * @returns {any} The extended destination object.
          */
         deepExtend(destination: any, ...sources: any[]): any {
-            return extend.apply(null, [true, destination].concat(sources));
+            return _extend.apply(null, [true, false, destination].concat(sources));
         }
 
         /**

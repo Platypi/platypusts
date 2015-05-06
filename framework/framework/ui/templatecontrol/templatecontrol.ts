@@ -935,7 +935,7 @@ module plat.ui {
 
             deleteProperty(TemplateControl.__resourceCache, control.uid);
 
-            Control._ContextManager.dispose(control, true);
+            Control._ContextManager.dispose(control);
             events.EventManager.dispose(control.uid);
 
             TemplateControl._managerCache.remove(control.uid);

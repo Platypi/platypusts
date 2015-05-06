@@ -85,19 +85,17 @@ module app.viewcontrols {
         loaded() {
             this.head.title('Main Page');
             this.head.description('This is the main page');
-            var test = this.context.test;
+
+            var x = this.context.select[0];
+            this.context.select[0] = { value: 4, textContent: 'bar' };
+            x.value = 6;
+
             setTimeout(() => {
-                //this.context.test = [0, 32, 43];
-                //test.push(1, 1);
-                //test.splice(0, 1, 43, 676, 34, 100, 1, 1, 3, 4, 555, 532, 11, 12);
-                //test.splice(0, 1, 1, 2, 3);
-                //test.pop();
-                //test.pop();
-                test.unshift(10);
-                //test.reverse();
-                //test.shift();
-                //test.pop();
-                test;
+                var item = this.context.select.shift();
+
+                setTimeout(() => {
+                    item.value = 3;
+                }, 1000);
             }, 1000);
         }
 

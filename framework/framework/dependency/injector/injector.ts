@@ -326,7 +326,7 @@ module plat.dependency {
 
             var toInject = _clone(Constructor._inject, true);
 
-            return extend({}, extendWith, parentInject, toInject);
+            return _extend(false, false, {}, extendWith, parentInject, toInject);
         }
 
         /**

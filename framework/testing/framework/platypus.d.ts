@@ -3044,10 +3044,8 @@ declare module plat {
             /**
               * Removes all the listeners for a given control's unique ID.
               * @param {plat.Control} control The control whose manager is being disposed.
-              * @param {boolean} persist? Whether or not the control's context needs to
-              * be persisted post-disposal or can be set to null.
               */
-            static dispose(control: Control, persist?: boolean): void;
+            static dispose(control: Control): void;
             /**
               * Removes all listeners for an Array associated with a given uid.
               * @param {string} absoluteIdentifier The identifier used to locate the array.
@@ -3112,6 +3110,11 @@ declare module plat {
               * the context path.
               */
             static createContext(control: ui.TemplateControl, identifier: string): any;
+            /**
+              * Iterates through all the nested properties in an object and redefines the properties to not use getters/setters
+              * @param {any} obj The object to stop observing.
+              */
+            static unObserve(obj: any): void;
             /**
               * Safely retrieves the local context for this manager given an Array of
               * property strings and observes it if not found.
@@ -3298,10 +3301,8 @@ declare module plat {
             /**
               * Removes all the listeners for a given control's unique ID.
               * @param {plat.Control} control The control whose manager is being disposed.
-              * @param {boolean} persist? Whether or not the control's context needs to
-              * be persisted post-disposal or can be set to null.
               */
-            dispose(control: Control, persist?: boolean): void;
+            dispose(control: Control): void;
             /**
               * Removes all listeners for an Array associated with a given uid.
               * @param {string} absoluteIdentifier The identifier used to locate the array.

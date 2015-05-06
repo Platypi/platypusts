@@ -20,7 +20,7 @@ var ___document: Document,
         td: __tableData,
         th: __tableData
     },
-    __innerHtmlWrappers: plat.IObject<Array<any>> = extend({}, __innerTableWrappers, {
+    __innerHtmlWrappers: plat.IObject<Array<any>> = _extend(false, false, {}, __innerTableWrappers, {
         option: __option,
         optgroup: __option,
         legend: [1, '<fieldset>', '</fieldset>'],

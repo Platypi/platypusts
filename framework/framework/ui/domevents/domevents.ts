@@ -2806,7 +2806,7 @@
         trigger(eventExtension?: Object, detailArg?: any, dispatchElement?: Node): boolean {
             var customEv = <CustomEvent>this._document.createEvent(this.eventType);
             if (isObject(eventExtension)) {
-                extend(customEv, eventExtension);
+                _extend(false, false, customEv, eventExtension);
             }
             customEv.initCustomEvent(this.event, true, true, isNull(detailArg) ? 0 : detailArg);
             return <boolean>(dispatchElement || this.element).dispatchEvent(customEv);
