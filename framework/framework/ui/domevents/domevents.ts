@@ -1036,10 +1036,10 @@
                 hasMoved = this.__hasMoved,
                 notMouseUp = eventType !== 'mouseup';
 
-            this.__touchCount--;
-
-            if (this.__touchCount < 0) {
+            if (this.__touchCount <= 0) {
                 this.__touchCount = 0;
+            } else {
+                this.__touchCount--;
             }
 
             if (notMouseUp) {
@@ -1094,6 +1094,11 @@
                 return true;
             } else if (notMouseUp) {
                 this._inTouch = false;
+            }
+
+            // additional check for mousedown/touchstart - mouseup/touchend inconsistencies
+            if (this.__touchCount > 0) {
+                this.__touchCount = ev.touches.length;
             }
 
             this.__clearTempStates();
@@ -1206,6 +1211,7 @@
             ev = index >= 0 ? touches[index] : this.__standardizeEventObject(ev);
             this._inTouch = false;
             this.__clearTempStates();
+
             if (this.__hasMoved) {
                 // Android 4.4.x fires touchcancel when the finger moves off an element that
                 // is listening for touch events, so we should handle swipes here in that case.
@@ -1215,6 +1221,7 @@
 
                 this.__handleTrackEnd(ev);
             }
+
             this.__resetTouchEnd();
         }
 
