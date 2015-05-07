@@ -1,3 +1,4 @@
+// ts-bundle-start
 /// <reference path="references/references.ts" />
 /// <reference path="utils/utilsglobal.ts" />
 /// <reference path="ui/dom/domglobal.ts" />
@@ -72,3 +73,4 @@
 /// <reference path="ui/controls/if/if.ts" />
 /// <reference path="ui/controls/link/link.ts" />
 /// <reference path="app/app.ts" />
+// ts-bundle-end

@@ -10,6 +10,10 @@ function stripDocs(data) {
             return linkValue;
         });
 
+        if(line.trim().indexOf('/// <reference') > -1) {
+            return;
+        }
+
         if (line.trim().indexOf('* @') > -1) {
             first = true;
         }
@@ -97,7 +101,7 @@ module.exports = exports = function load(grunt) {
                 rootModule: 'plat',
                 license: './license.txt',
                 version: '<%= pkg.version %>',
-                src: './app/index.html',
+                src: './src/references.d.ts',
                 dest: [
                     './platypus.ts'
                 ],
@@ -232,8 +236,8 @@ module.exports = exports = function load(grunt) {
             },
             app: {
                 files: {
-                    'app/app.min.js': [
-                        'app/app.js'
+                    'examples/app.min.js': [
+                        'examples/app.js'
                     ]
                 }
             }
@@ -246,7 +250,7 @@ module.exports = exports = function load(grunt) {
     grunt.loadNpmTasks('grunt-contrib-connect');
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-uglify');
-    grunt.loadNpmTasks('grunt-karma');
+    //grunt.loadNpmTasks('grunt-karma');
     grunt.loadNpmTasks('grunt-ts-bundle');
     grunt.loadNpmTasks('grunt-ts');
     grunt.loadNpmTasks('grunt-tsd');
