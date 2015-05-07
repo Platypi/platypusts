@@ -1,0 +1,39 @@
+{
+  "name": "framework",
+  "version": "0.13.1",
+  "description": "",
+  "main": "gruntfile.js",
+  "devDependencies": {
+    "grunt": "~0.4.5",
+    "grunt-cli": "~0.1.13",
+    "grunt-contrib-clean": "^0.6.0",
+    "grunt-contrib-connect": "^0.9.0",
+    "grunt-contrib-copy": "^0.7.0",
+    "grunt-contrib-uglify": "^0.7.0",
+    "grunt-karma": "latest",
+    "grunt-ts": "^2.0.0",
+    "grunt-ts-bundle": "~0.0.1",
+    "grunt-tsd": "latest",
+    "grunt-tslint": "^1.0.1",
+    "karma": "latest",
+    "karma-chrome-launcher": "latest",
+    "karma-cli": "latest",
+    "karma-coverage": "latest",
+    "karma-firefox-launcher": "latest",
+    "karma-html-reporter": "latest",
+    "karma-ie-launcher": "latest",
+    "karma-jasmine": "latest",
+    "rimraf": "^2.3.3",
+    "tsd": "^0.6.0-beta.5",
+    "typescript": "latest"
+  },
+  "scripts": {
+    "prepublish": "node_modules/.bin/grunt install",
+    "build-framework": "node_modules/.bin/tsc -p framework",
+    "build-app": "node_modules/.bin/tsc -p app",
+    "build-test": "node_modules/.bin/tsc -p test",
+    "clean": "node_modules/.bin/rimrag"
+  },
+  "author": "",
+  "license": "ISC"
+}

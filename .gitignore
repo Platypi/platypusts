@@ -162,7 +162,7 @@ $RECYCLE.BIN/
 coverage
 node_modules
 reporter
-typings/
+typings
 .tscache
 tscommand*
 dist
@@ -171,9 +171,4 @@ dist
 !*.less
 !*.ts
 
-framework/*.html
-framework/*/*.html
-framework/*/*/*.html
-framework/*/*/*/*.html
-framework/*/*/*/*/*.html
-/framework/platypus.ts
+platypus.ts
