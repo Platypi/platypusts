@@ -1,4 +1,4 @@
-﻿/// <reference path="../framework/references.d.ts" />
+﻿/// <reference path="../src/references.d.ts" />
 /// <reference path="typings/tsd.d.ts" />
 /// <reference path="tests/acquire/acquire.test.ts" />
 /// <reference path="tests/app/app.test.ts" />

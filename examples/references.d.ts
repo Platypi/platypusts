@@ -1,4 +1,4 @@
-/// <reference path="../framework/references.d.ts" />
+/// <reference path="../src/references.d.ts" />
 /// <reference path="app/app.ts" />
 /// <reference path="viewcontrols/base.viewcontrol.ts" />
 /// <reference path="viewcontrols/error/error.viewcontrol.ts" />

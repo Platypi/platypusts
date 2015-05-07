@@ -6,7 +6,8 @@
         "removeComments": true,
         "preserveConstEnums": true,
         "out": "test/test.js",
-        "sourceMap": true
+        "sourceMap": true,
+		"watch": false
 	},
 	"files": [
 		"references.d.ts"
