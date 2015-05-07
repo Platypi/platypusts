@@ -71,11 +71,11 @@ module app.viewcontrols {
         }
 
         navigatedTo() {
-            this.navigator.navigate({}, {
-                query: {
-                    test: 'foo'
-                }
-            });
+//            this.navigator.navigate({}, {
+//                query: {
+//                    test: 'foo'
+//                }
+//            });
         }
 
         goBack() {
