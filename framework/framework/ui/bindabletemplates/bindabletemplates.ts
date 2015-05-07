@@ -443,12 +443,30 @@ module plat.ui {
          * @returns {void}
          */
         add(key: string, template: Node): void;
+        /**
+         * @name add
+         * @memberof plat.ui.BindableTemplates
+         * @kind function
+         * @access public
+         * @variation 5
+         * 
+         * @description
+         * Adds a template to this object. The template will be stored with the key,
+         * and it will be transformed into a DocumentFragment.
+         * 
+         * @param {string} key The key used to store the template.
+         * @param {string} template A template string representing the DOM template.
+         * 
+         * @returns {void}
+         */
+        add(key: string, template: string): void;
         add(key: string, template: any): void {
             if (isNull(template)) {
                 return;
-            }
-
-            if (isDocumentFragment(template)) {
+            } else if (isString(template)) {
+                this._compile(key, serializeHtml(template));
+                return;
+            } else if (isDocumentFragment(template)) {
                 this._compile(key, template);
                 return;
             }
