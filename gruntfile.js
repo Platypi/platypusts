@@ -39,7 +39,7 @@ var config = {
     }
 };
 
-module.exports = exports = function load(grunt) {
+module.exports = function load(grunt) {
     grunt.initConfig(_.extend({
         pkg: grunt.file.readJSON('package.json')
     }, loadConfig('./build/options', config, grunt)));
@@ -47,7 +47,7 @@ module.exports = exports = function load(grunt) {
     require('load-grunt-tasks')(grunt);
 
     // By default, run all tests.
-    grunt.registerTask('default', ['clean', 'bundle', 'copy:main', 'ts:main', 'uglify', 'copy:typings', 'clean:after']);
+    grunt.registerTask('default', ['clean:before', 'bundle', 'copy:main', 'ts:main', 'uglify', 'copy:typings', 'clean:after']);
 
     grunt.registerTask('docs', ['clean:after', 'bundle']);
     grunt.registerTask('test', ['karma']);
