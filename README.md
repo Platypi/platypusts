@@ -6,6 +6,10 @@ This library contains the [Platypi](https://platypi.io) framework, PlatypusTS. I
 
 None, PlatypusTS is meant to ship with no dependencies.
 
+### Development Dependencies
+
+While developing, ensure that [NodeJS](http://nodejs.org/) is installed.
+
 ## Platform support
 
 PlatypusTS is designer for use in a browser only. It works in all modern browsers (IE >= 9)
@@ -14,11 +18,32 @@ PlatypusTS is designer for use in a browser only. It works in all modern browser
 
 Find all the documentation on PlatypusTS [here](https://platypi.io/docs)
 
+## Developing the Code
+
+While developing the code, there are a few useful npm scripts:
+
+0. `watch-examples`: Builds and watches the examples directory
+0. `watch-src`: Builds and watches the src directory
+0. `watch-test`: Builds and watches the test directory
+
+Run any of these scripts with the following command:
+
+```shell
+npm run <script>
+```
+
+### Using the Examples
+
+The examples directory is a playground for quickly testing functionality. You can run the examples using the following command:
+
+```shell
+npm run examples
+```
+
 ## Building the Code
 
 To build the code take the following steps:
 
-0. Ensure that [NodeJS](http://nodejs.org/) is installed.
 0. From the root project folder run:
 ```shell
 npm install
