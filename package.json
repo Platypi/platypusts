@@ -15,6 +15,7 @@
     "grunt-tslint": "^1.0.1",
     "http-server": "^0.8.0",
     "karma": "latest",
+    "karma-cli": "latest",
     "karma-chrome-launcher": "latest",
     "karma-coverage": "latest",
     "karma-firefox-launcher": "latest",
