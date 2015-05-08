@@ -1584,7 +1584,7 @@ module plat.routing {
      * The handler can use the `segment` property to figure out what `view` to use. Setting the `view` property will
      * tell the router what view to use. The `view` will become the configured view for that route.
      */
-    export interface IUnknownRouteInfo { 
+    export interface IUnknownRouteInfo {
         /**
          * @name segment
          * @memberof plat.routing.IUnknownRouteInfo
@@ -1596,7 +1596,7 @@ module plat.routing {
          * @description
          * The url segment that has not been matched to a registered view.
          */
-        segment: string; 
+        segment: string;
 
         /**
          * @name view
@@ -1609,7 +1609,7 @@ module plat.routing {
          * @description
          * Set this to tell the router what view to navigate to.
          */
-        view: any; 
+        view: any;
     }
 
     /**

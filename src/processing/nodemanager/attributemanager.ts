@@ -154,7 +154,7 @@ module plat.processing {
          * 
          * @returns {plat.processing.AttributeManager}
          */
-        static getInstance() {
+        static getInstance(): AttributeManager {
             var manager = new AttributeManager();
             manager._NodeManager = <INodeManagerStatic>acquire(__NodeManagerStatic);
             manager._markupRegex = (<expressions.Regex>acquire(__Regex)).markupRegex;

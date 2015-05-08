@@ -81,7 +81,7 @@ module plat.events {
             var event: ErrorEvent<E> = acquire(ErrorEvent);
 
             event.initialize(name, sender, null, error);
-            
+
             if (isFatal) {
                 event.fatal = true;
             }

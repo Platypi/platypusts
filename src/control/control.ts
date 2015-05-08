@@ -168,7 +168,7 @@ module plat {
          * and loaded before plat-tap, meaning it has the first chance 
          * to respond to events.
          */
-        priority = 0;
+        priority: number = 0;
 
         /**
          * @name parent

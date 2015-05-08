@@ -35,7 +35,7 @@ module plat.ui.animations {
          * @description
          * The class name added to the animated element.
          */
-        className = __SimpleAnimation;
+        className: string = __SimpleAnimation;
 
         /**
          * @name options
@@ -280,7 +280,7 @@ module plat.ui.animations {
          * @description
          * The class name added to the element fading in.
          */
-        className = __FadeIn;
+        className: string = __FadeIn;
     }
 
     register.animation(__FadeIn, FadeIn);
@@ -307,7 +307,7 @@ module plat.ui.animations {
          * @description
          * The class name added to the element fading out.
          */
-        className = __FadeOut;
+        className: string = __FadeOut;
     }
 
     register.animation(__FadeOut, FadeOut);
@@ -334,7 +334,7 @@ module plat.ui.animations {
          * @description
          * The class name added to the entering element.
          */
-        className = __Enter;
+        className: string = __Enter;
     }
 
     register.animation(__Enter, Enter);
@@ -361,7 +361,7 @@ module plat.ui.animations {
          * @description
          * The class name added to the leaving element.
          */
-        className = __Leave;
+        className: string = __Leave;
     }
 
     register.animation(__Leave, Leave);
@@ -388,7 +388,7 @@ module plat.ui.animations {
          * @description
          * The class name added to the leaving element.
          */
-        className = __Move;
+        className: string = __Move;
     }
 
     register.animation(__Move, Move);

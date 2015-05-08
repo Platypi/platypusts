@@ -68,7 +68,7 @@ module plat.controls {
          * @description
          * This control needs to load before its templateControl
          */
-        priority = 200;
+        priority: number = 200;
 
         /**
          * @name _listeners
@@ -103,12 +103,12 @@ module plat.controls {
          * @kind property
          * @access protected
          * 
-         * @type {(listener: (newValue: any, oldValue: any) => void) => IRemoveListener}
+         * @type {plat.controls.ObservableAttributeControl._addListener}
          * 
          * @description
          * The _addListener function bound to this control.
          */
-        protected _boundAddListener = this._addListener.bind(this);
+        protected _boundAddListener: typeof ObservableAttributeControl.prototype._addListener = this._addListener.bind(this);
 
         /**
          * @name initialize

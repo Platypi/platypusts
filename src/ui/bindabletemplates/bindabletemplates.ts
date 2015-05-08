@@ -998,6 +998,6 @@ module plat.ui {
          * 
          * @returns {boolean} Whether or not the control is a bound control.
          */
-        isBoundControl(control: TemplateControl): boolean
+        isBoundControl(control: TemplateControl): boolean;
     }
 }

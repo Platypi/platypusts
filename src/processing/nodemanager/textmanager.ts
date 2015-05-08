@@ -26,7 +26,7 @@ module plat.processing {
          * Specifies the type for this {@link plat.processing.NodeManager|NodeManager}. 
          * It's value is "text".
          */
-        type = 'text';
+        type: string = 'text';
 
         /**
          * @name create

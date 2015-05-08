@@ -42,7 +42,7 @@ module plat.async {
          * @description
          * The configuration for creating asynchronous promise flushing.
          */
-        static config = {
+        static config: { async: (callback: (arg?: IThenable<any>) => void, arg?: IThenable<any>) => void; } = {
             /**
              * Handles asynchronous flushing of callbacks. If the callback queue is of 
              * length 1, then we need to schedule a flush. Afterward, any additional 
@@ -789,8 +789,10 @@ module plat.async {
          * 
          * @description
          * Outputs the Promise as a readable string.
+         * 
+         * @returns {string} `[object Promise]`
          */
-        toString() {
+        toString(): string {
             return '[object Promise]';
         }
     }

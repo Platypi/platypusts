@@ -275,7 +275,7 @@ module plat.ui {
          * @description
          * Whether or not the user is using mouse when touch events are present.
          */
-        protected _inMouse = false;
+        protected _inMouse: boolean = false;
 
         /**
          * @name _subscribers
@@ -363,7 +363,7 @@ module plat.ui {
          * @description
          * Whether or not the user moved while in touch.
          */
-        private __hasMoved = false;
+        private __hasMoved: boolean = false;
         /**
          * @name __hasRelease
          * @memberof plat.ui.DomEvents
@@ -375,7 +375,7 @@ module plat.ui {
          * @description
          * Whether or not their is a registered "release" event.
          */
-        private __hasRelease = false;
+        private __hasRelease: boolean = false;
         /**
          * @name __detectingMove
          * @memberof plat.ui.DomEvents
@@ -387,7 +387,7 @@ module plat.ui {
          * @description
          * Whether or not we should be detecting move events.
          */
-        private __detectingMove = false;
+        private __detectingMove: boolean = false;
         /**
          * @name __tapCount
          * @memberof plat.ui.DomEvents
@@ -399,7 +399,7 @@ module plat.ui {
          * @description
          * The current tap count to help distinguish single from double taps.
          */
-        private __tapCount = 0;
+        private __tapCount: number = 0;
         /**
          * @name __touchCount
          * @memberof plat.ui.DomEvents
@@ -411,7 +411,7 @@ module plat.ui {
          * @description
          * The total number of touches on the screen.
          */
-        private __touchCount = 0;
+        private __touchCount: number = 0;
         /**
          * @name __cancelDeferredTap
          * @memberof plat.ui.DomEvents
@@ -424,7 +424,7 @@ module plat.ui {
          * A function to remove a deferred tap given the case that a tap delay was needed for 
          * something such as a double tap to zoom feature.
          */
-        private __cancelDeferredTap = noop;
+        private __cancelDeferredTap: IRemoveListener = noop;
         /**
          * @name __cancelDeferredHold
          * @memberof plat.ui.DomEvents
@@ -436,7 +436,7 @@ module plat.ui {
          * @description
          * A function for removing a deferred hold event.
          */
-        private __cancelDeferredHold = noop;
+        private __cancelDeferredHold: IRemoveListener = noop;
         /**
          * @name __cancelRegex
          * @memberof plat.ui.DomEvents
@@ -448,7 +448,7 @@ module plat.ui {
          * @description
          * A regular expressino for determining a "cancel" event.
          */
-        private __cancelRegex = /cancel/i;
+        private __cancelRegex: RegExp = /cancel/i;
         /**
          * @name __pointerEndRegex
          * @memberof plat.ui.DomEvents
@@ -460,7 +460,7 @@ module plat.ui {
          * @description
          * A regular expressino for determining a pointer end event.
          */
-        private __pointerEndRegex = /up|cancel/i;
+        private __pointerEndRegex: RegExp = /up|cancel/i;
         /**
          * @name __lastTouchDown
          * @memberof plat.ui.DomEvents
@@ -551,12 +551,12 @@ module plat.ui {
          * @kind property
          * @access private
          * 
-         * @type {{}}
+         * @type {plat.IObject<string>}
          * 
          * @description
          * A hash map for mapping custom events to standard events.
          */
-        private __reverseMap = {};
+        private __reverseMap: IObject<string> = {};
         /**
          * @name __mappedEventListener
          * @memberof plat.ui.DomEvents
@@ -724,7 +724,7 @@ module plat.ui {
 
             if (mappingExists) {
                 var count = mappedCount[type];
-                (<any>this.__reverseMap)[mappedType] = type;
+                this.__reverseMap[mappedType] = type;
                 this.__registerElement(element, type);
                 mappedCount[type]++;
                 mappedRemoveListener = this.__addMappedEvent(count, mappedType, useCapture);
@@ -734,7 +734,7 @@ module plat.ui {
                         .replace('touch', 'mouse')
                         .replace('start', 'down')
                         .replace('end', 'up');
-                    (<any>this.__reverseMap)[mappedType] = type;
+                    this.__reverseMap[mappedType] = type;
                     mappedTouchRemoveListener = this.__addMappedEvent(count, mappedType, useCapture);
                 }
             }
@@ -847,7 +847,7 @@ module plat.ui {
             if (this.__touchCount++ > 0) {
                 return true;
             }
-            
+
             var eventType = ev.type;
             if (eventType !== 'mousedown') {
                 this._inTouch = true;
@@ -1002,7 +1002,7 @@ module plat.ui {
             var lastMove = <ITouchStartEventProperties>this.__lastMoveEvent || swipeOrigin,
                 direction = evt.direction = this.__getDirection(x - lastMove.clientX, y - lastMove.clientY),
                 haveSubscribers = this.__handleOriginChange(direction);
-            
+
             var dx = Math.abs(x - swipeOrigin.clientX),
                 dy = Math.abs(y - swipeOrigin.clientY),
                 velocity = evt.velocity = this.__getVelocity(dx, dy,
@@ -1351,7 +1351,7 @@ module plat.ui {
             if (isNull(lastMove)) {
                 return;
             }
-            
+
             var origin = this.__swipeOrigin,
                 dx = Math.abs(lastMove.clientX - origin.clientX),
                 dy = Math.abs(lastMove.clientY - origin.clientY),
@@ -1451,7 +1451,7 @@ module plat.ui {
          */
         private __handleMappedEvent(ev: IExtendedEvent): void {
             var mappedType = ev.type,
-                eventType = (<any>this.__reverseMap)[mappedType],
+                eventType = this.__reverseMap[mappedType],
                 domEvent = this.__findFirstSubscriber(<ICustomElement>ev.target, eventType);
 
             if (isNull(domEvent)) {
@@ -2840,7 +2840,7 @@ module plat.ui {
          * @description
          * The number of listeners added for this event on this element.
          */
-        count = 0;
+        count: number = 0;
 
         /**
          * @name constructor

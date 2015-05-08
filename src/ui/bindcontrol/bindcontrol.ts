@@ -17,6 +17,20 @@ module plat.ui {
      */
     export class BindControl extends TemplateControl implements observable.ISupportTwoWayBinding {
         /**
+         * @name priority
+         * @memberof plat.ui.BindControl
+         * @kind property
+         * @access public
+         * 
+         * @type {number}
+         * 
+         * @description
+         * Set to 120, higher than {@link plat.controls.Bind|`plat-bind`} to ensure that BinControls load 
+         * prior to the `plat-bind`.
+         */
+        priority: number = 120;
+
+        /**
          * @name _listeners
          * @memberof plat.ui.BindControl
          * @kind property

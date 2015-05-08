@@ -40,7 +40,7 @@ module plat.ui.animations {
          * @description
          * The class name added to the animated element.
          */
-        className = __SimpleTransition;
+        className: string = __SimpleTransition;
 
         /**
          * @name _animationCanceled
@@ -81,7 +81,7 @@ module plat.ui.animations {
          * @description
          * A regular expression to normalize modified property keys.
          */
-        protected _normalizeRegex = /-/g;
+        protected _normalizeRegex: RegExp = /-/g;
 
         /**
          * @name _nonNumRegex
@@ -94,7 +94,7 @@ module plat.ui.animations {
          * @description
          * A regular expression grab everything that is not a number.
          */
-        protected _nonNumRegex = /[^\-0-9\.]/g;
+        protected _nonNumRegex: RegExp = /[^\-0-9\.]/g;
 
         /**
          * @name _normalizedKeys
@@ -120,7 +120,7 @@ module plat.ui.animations {
          * @description
          * The "transitionend" event handler call count.
          */
-        protected _transitionCount = 0;
+        protected _transitionCount: number = 0;
 
         /**
          * @name _count
@@ -133,7 +133,7 @@ module plat.ui.animations {
          * @description
          * The user defined "transitionend" event handler call count.
          */
-        protected _count = 0;
+        protected _count: number = 0;
 
         /**
          * @name _started
@@ -146,7 +146,7 @@ module plat.ui.animations {
          * @description
          * Denotes whether or not the transition was ever started.
          */
-        protected _started = false;
+        protected _started: boolean = false;
 
         /**
          * @name _usingCss
@@ -160,7 +160,7 @@ module plat.ui.animations {
          * Denotes whether or not the transition changes are being performed 
          * with CSS or with JS through this.options.
          */
-        protected _usingCss = false;
+        protected _usingCss: boolean = false;
 
         /**
          * @name initialize

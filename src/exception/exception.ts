@@ -27,7 +27,7 @@ module plat {
          * @description
          * Exception Type for parsing exceptions
          */
-        static PARSE = 0;
+        static PARSE: number = 0;
 
         /**
          * @name COMPILE
@@ -42,7 +42,7 @@ module plat {
          * @description
          * Exception Type for compiling exceptions
          */
-        static COMPILE = 1;
+        static COMPILE: number = 1;
 
         /**
          * @name BIND
@@ -57,7 +57,7 @@ module plat {
          * @description
          * Exception Type for binding exceptions
          */
-        static BIND = 2;
+        static BIND: number = 2;
 
         /**
          * @name NAME
@@ -72,7 +72,7 @@ module plat {
          * @description
          * Exception Type for name exceptions
          */
-        static NAME = 3;
+        static NAME: number = 3;
 
         /**
          * @name NAVIGATION
@@ -87,7 +87,7 @@ module plat {
          * @description
          * Exception Type for navigation exceptions
          */
-        static NAVIGATION = 4;
+        static NAVIGATION: number = 4;
 
         /**
          * @name TEMPLATE
@@ -102,7 +102,7 @@ module plat {
          * @description
          * Exception Type for template exceptions
          */
-        static TEMPLATE = 5;
+        static TEMPLATE: number = 5;
 
         /**
          * @name AJAX
@@ -117,7 +117,7 @@ module plat {
          * @description
          * Exception Type for ajax exceptions
          */
-        static AJAX = 6;
+        static AJAX: number = 6;
 
         /**
          * @name CONTEXT
@@ -132,7 +132,7 @@ module plat {
          * @description
          * Exception Type for context exceptions
          */
-        static CONTEXT = 7;
+        static CONTEXT: number = 7;
 
         /**
          * @name EVENT
@@ -147,7 +147,7 @@ module plat {
          * @description
          * Exception Type for event exceptions
          */
-        static EVENT = 8;
+        static EVENT: number = 8;
 
         /**
          * @name INJECTABLE
@@ -162,7 +162,7 @@ module plat {
          * @description
          * Exception Type for injectable exceptions
          */
-        static INJECTABLE = 9;
+        static INJECTABLE: number = 9;
 
         /**
          * @name COMPAT
@@ -177,7 +177,7 @@ module plat {
          * @description
          * Exception Type for compat exceptions
          */
-        static COMPAT = 10;
+        static COMPAT: number = 10;
 
         /**
          * @name PROMISE
@@ -192,7 +192,7 @@ module plat {
          * @description
          * Exception Type for promise exceptions
          */
-        static PROMISE = 11;
+        static PROMISE: number = 11;
 
         /**
          * @name ANIMATION
@@ -207,7 +207,7 @@ module plat {
          * @description
          * Exception Type for animation exceptions
          */
-        static ANIMATION = 12;
+        static ANIMATION: number = 12;
 
         /**
          * @name CONTROL
@@ -223,7 +223,22 @@ module plat {
          * Exception Type for individual control exceptions 
          * (e.g. using a particular control incorrectly).
          */
-        static CONTROL = 13;
+        static CONTROL: number = 13;
+
+        /**
+         * @name CUSTOM
+         * @memberof plat.Exception
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         * 
+         * @type {number}
+         * 
+         * @description
+         * Exception Type for custom exceptions
+         */
+        static CUSTOM: number = 99;
 
         /**
          * @name warn
@@ -303,59 +318,6 @@ module plat {
      * Manages the throwing and consuming of errors and warnings.
      */
     export interface IExceptionStatic {
-        /**
-         * @name warn
-         * @memberof plat.IExceptionStatic
-         * @kind function
-         * @access public
-         * @static
-         * 
-         * @description
-         * Method for sending a warning to all listeners. Will 
-         * not throw an error.
-         * 
-         * @param {string} message The message to be sent to the listeners.
-         * @param {number} type? Denotes the type of fatal exception.
-         * 
-         * @returns {void}
-         */
-        warn(message: string, type?: number): void;
-
-        /**
-         * @name fatal
-         * @memberof plat.IExceptionStatic
-         * @kind function
-         * @access public
-         * @static
-         * 
-         * @description
-         * Method for sending a fatal error to all listeners. Will
-         * throw an error.
-         * 
-         * @param {Error} error The Error to be sent to all the listeners.
-         * @param {number} type? Denotes the type of fatal exception.
-         * 
-         * @returns {void}
-         */
-        fatal(error: Error, type?: number): void;
-        /**
-         * @name fatal
-         * @memberof plat.IExceptionStatic
-         * @kind function
-         * @access public
-         * @static
-         * 
-         * @description
-         * Method for sending a fatal message to all listeners. Will
-         * throw an error.
-         * 
-         * @param {string} message The message to be sent to all the listeners.
-         * @param {number} type? Denotes the type of fatal exception.
-         * 
-         * @returns {void}
-         */
-        fatal(message: string, type?: number): void;
-
         /**
          * @name PARSE
          * @memberof plat.IExceptionStatic
@@ -566,6 +528,74 @@ module plat {
          * (e.g. using a particular control incorrectly).
          */
         CONTROL: number;
+
+        /**
+         * @name CUSTOM
+         * @memberof plat.IExceptionStatic
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         * 
+         * @type {number}
+         * 
+         * @description
+         * Exception Type for custom exceptions
+         */
+        CUSTOM: number;
+
+        /**
+         * @name warn
+         * @memberof plat.IExceptionStatic
+         * @kind function
+         * @access public
+         * @static
+         * 
+         * @description
+         * Method for sending a warning to all listeners. Will 
+         * not throw an error.
+         * 
+         * @param {string} message The message to be sent to the listeners.
+         * @param {number} type? Denotes the type of fatal exception.
+         * 
+         * @returns {void}
+         */
+        warn(message: string, type?: number): void;
+
+        /**
+         * @name fatal
+         * @memberof plat.IExceptionStatic
+         * @kind function
+         * @access public
+         * @static
+         * 
+         * @description
+         * Method for sending a fatal error to all listeners. Will
+         * throw an error.
+         * 
+         * @param {Error} error The Error to be sent to all the listeners.
+         * @param {number} type? Denotes the type of fatal exception.
+         * 
+         * @returns {void}
+         */
+        fatal(error: Error, type?: number): void;
+        /**
+         * @name fatal
+         * @memberof plat.IExceptionStatic
+         * @kind function
+         * @access public
+         * @static
+         * 
+         * @description
+         * Method for sending a fatal message to all listeners. Will
+         * throw an error.
+         * 
+         * @param {string} message The message to be sent to all the listeners.
+         * @param {number} type? Denotes the type of fatal exception.
+         * 
+         * @returns {void}
+         */
+        fatal(message: string, type?: number): void;
     }
 
     /**
@@ -622,7 +652,7 @@ module plat {
          * @description
          * The name of the error.
          */
-        name = __platError;
+        name: string = __platError;
 
         /**
          * @name constructor
@@ -718,6 +748,7 @@ module plat {
             case Exception.COMPAT:
                 error.name = __CompatError;
                 break;
+            case Exception.CUSTOM:
             default:
                 error = new PlatError(message);
                 break;

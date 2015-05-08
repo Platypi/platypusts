@@ -194,7 +194,7 @@ module plat.controls {
          * with a {@link plat.ui.TemplateControl|TemplateControl} that implements the 
          * interface {@link plat.observable.ISupportTwoWayBinding|ISupportTwoWayBinding}.
          */
-        protected _supportsTwoWayBinding = false;
+        protected _supportsTwoWayBinding: boolean = false;
 
         /**
          * @name __fileSupported
@@ -207,7 +207,7 @@ module plat.controls {
          * @description
          * Whether or not the File API is supported.
          */
-        private __fileSupported = (<Compat>acquire(__Compat)).fileSupported;
+        private __fileSupported: boolean = (<Compat>acquire(__Compat)).fileSupported;
 
         /**
          * @name __fileNameRegex
@@ -220,7 +220,7 @@ module plat.controls {
          * @description
          * Used to grab a filename from input[type="file"].
          */
-        private __fileNameRegex = (<expressions.Regex>acquire(__Regex)).fileNameRegex;
+        private __fileNameRegex: RegExp = (<expressions.Regex>acquire(__Regex)).fileNameRegex;
 
         /**
          * @name __isSelf
@@ -233,7 +233,7 @@ module plat.controls {
          * @description
          * Used to denote that a property change happened from within this control.
          */
-        private __isSelf = false;
+        private __isSelf: boolean = false;
 
         /**
          * @name initialize
@@ -1235,7 +1235,7 @@ module plat.controls {
                 identifier = split.join('.');
             }
 
-            return this._ContextManager.createContext(parent, identifier); 
+            return this._ContextManager.createContext(parent, identifier);
         }
 
         /**

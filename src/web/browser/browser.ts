@@ -193,7 +193,7 @@ module plat.web {
          * @description
          * The browser's last URL.
          */
-        private __lastUrl = this._location.href;
+        private __lastUrl: string = this._location.href;
 
         /**
          * @name __initializing
@@ -206,7 +206,7 @@ module plat.web {
          * @description
          * Whether or not the browser is in an initialization state.
          */
-        private __initializing = false;
+        private __initializing: boolean = false;
 
         /**
          * @name constructor

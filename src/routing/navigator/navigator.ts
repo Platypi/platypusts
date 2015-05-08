@@ -26,6 +26,20 @@ module plat.routing {
         };
 
         /**
+         * @name _root
+         * @memberof plat.routing.Navigator
+         * @kind property
+         * @access protected
+         * @static
+         * 
+         * @type {plat.routing.Navigator}
+         * 
+         * @description
+         * The navigator associated with the root router.
+         */
+        protected static _root: Navigator;
+
+        /**
          * @name uid
          * @memberof plat.routing.Navigator
          * @kind property
@@ -37,7 +51,7 @@ module plat.routing {
          * @description
          * A unique id, created during instantiation and found on every {@link plat.routing.Navigator|Navigator}.
          */
-        uid = uniqueId(__Plat);
+        uid: string = uniqueId(__Plat);
 
         /**
          * @name isRoot
@@ -52,20 +66,6 @@ module plat.routing {
          * States whether or not the Navigator is the root Navigator.
          */
         isRoot: boolean = false;
-
-        /**
-         * @name _root
-         * @memberof plat.routing.Navigator
-         * @kind property
-         * @access protected
-         * @static
-         * 
-         * @type {plat.routing.Navigator}
-         * 
-         * @description
-         * The navigator associated with the root router.
-         */
-        protected static _root: Navigator;
 
         /**
          * @name _Promise
@@ -195,7 +195,7 @@ module plat.routing {
          * @description
          * A method to call to stop listening for url changes, only works on the root navigator.
          */
-        protected _ignoreOnce = false;
+        protected _ignoreOnce: boolean = false;
 
         /**
          * @name _previousUrl

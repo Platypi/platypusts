@@ -184,7 +184,7 @@ module plat.observable {
          * @description
          * Whether or not the property currently being modified is due to an observed array function.
          */
-        private __isArrayFunction = false;
+        private __isArrayFunction: boolean = false;
 
         /**
          * @name __observedIdentifier
@@ -1122,7 +1122,7 @@ module plat.observable {
                 property = binding.slice(start);
                 split = property.split(period);
                 key = split.pop();
-                keyIsLength = (key === lengthStr),
+                keyIsLength = (key === lengthStr);
                 parentProperty = split.join(period);
 
                 if (isEmpty(parentProperty)) {
@@ -1909,22 +1909,6 @@ module plat.observable {
      */
     export interface IListener {
         /**
-         * @name listener
-         * @memberof plat.observable.IListener
-         * @kind function
-         * @access public
-         * 
-         * @description
-         * A listener method called when the object it is observing is changed.
-         * 
-         * @param {any} value The new value of the object.
-         * @param {any} oldValue The previous value of the object.
-         * 
-         * @returns {void}
-         */
-        listener(value: any, oldValue: any): void;
-
-        /**
          * @name uid
          * @memberof plat.observable.IListener
          * @kind property
@@ -1950,6 +1934,22 @@ module plat.observable {
          * listeners will be fired in priority order when necessary.
          */
         priority?: number;
+
+        /**
+         * @name listener
+         * @memberof plat.observable.IListener
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * A listener method called when the object it is observing is changed.
+         * 
+         * @param {any} value The new value of the object.
+         * @param {any} oldValue The previous value of the object.
+         * 
+         * @returns {void}
+         */
+        listener(value: any, oldValue: any): void;
     }
 
     /**

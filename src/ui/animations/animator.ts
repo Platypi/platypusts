@@ -1341,7 +1341,7 @@ module plat.ui.animations {
          * The state of the animation. 0 prior to start, 1 if started, and 
          * 2 if canceled.
          */
-        private __animationState = 0;
+        private __animationState: number = 0;
 
         /**
          * @name __animationInstance

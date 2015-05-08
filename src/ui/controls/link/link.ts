@@ -41,7 +41,7 @@ module plat.ui.controls {
          * @description
          * Replaces the {@link plat.ui.controls.Link|Link's} element with a native anchor tag.
          */
-        replaceWith = 'a';
+        replaceWith: string = 'a';
 
         /**
          * @name options

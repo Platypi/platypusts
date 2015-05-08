@@ -19,21 +19,21 @@ function loadConfig(path, config, grunt) {
 };
 
 var config = {
-    license: './license.txt',
+    license: 'license.txt',
     version: '<%= pkg.version %>',
     name: 'platypus',
     folders: {
-        src: './src/',
-        examples: './examples/',
-        test: './test/',
-        dist: './dist'
+        src: 'src/',
+        examples: 'examples/',
+        test: 'test/',
+        dist: 'dist'
     },
     build: {
         dest: {
-            ts: './dist/platypus.ts',
-            dts: './dist/platypus.d.ts',
-            js: './dist/platypus.js',
-            min: './dist/platypus.min.js'
+            ts: 'dist/platypus.ts',
+            dts: 'dist/platypus.d.ts',
+            js: 'dist/platypus.js',
+            min: 'dist/platypus.min.js'
         }
     }
 };

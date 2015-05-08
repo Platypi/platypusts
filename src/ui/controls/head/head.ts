@@ -45,7 +45,7 @@ module plat.ui.controls {
          * @description
          * Rather than be replaced by a 'div', this control wants to be a 'head' element.
          */
-        replaceWith = __Head;
+        replaceWith: string = __Head;
 
         /**
          * @name _document
@@ -111,7 +111,7 @@ module plat.ui.controls {
          * A reference to the the <meta name="twitter:title" /> element.
          */
         protected _twitterTitleElement: HTMLMetaElement;
-        
+
         /**
          * @name _descriptionElement
          * @memberof plat.ui.controls.Head

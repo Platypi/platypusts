@@ -120,13 +120,13 @@ module plat.ui.controls {
          * @kind property
          * @access private
          * 
-         * @type {string}
+         * @type {boolean}
          * 
          * @description
          * Whether or not this is the first instance of the control, 
          * specifying that it defines the template to copy.
          */
-        private __isFirst = false;
+        private __isFirst: boolean = false;
 
         /**
          * @name __templatePromise

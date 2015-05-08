@@ -97,7 +97,7 @@ module plat.events {
          * An upward-moving event will start at the sender and move 
          * up the parent chain.
          */
-        static UP = 'up';
+        static UP: string = 'up';
 
         /**
          * @name DOWN
@@ -113,7 +113,7 @@ module plat.events {
          * A downward-moving event will start at the sender and move 
          * to its children and beyond.
          */
-        static DOWN = 'down';
+        static DOWN: string = 'down';
 
         /**
          * @name DIRECT
@@ -128,7 +128,7 @@ module plat.events {
          * @description
          * Goes through all listeners for an event name, ignoring order.
          */
-        static DIRECT = 'direct';
+        static DIRECT: string = 'direct';
 
         /**
          * @name propagatingEvents
@@ -184,7 +184,7 @@ module plat.events {
          * @description
          * whether or not the event manager has been initialized.
          */
-        private static __initialized = false;
+        private static __initialized: boolean = false;
 
         /**
          * @name initialize

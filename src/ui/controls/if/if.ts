@@ -112,7 +112,7 @@ module plat.ui.controls {
          * The current evaluated condition (whether or not the 
          * control is visible) of the control.
          */
-        private __condition = true;
+        private __condition: boolean = true;
 
         /**
          * @name __firstTime
@@ -126,7 +126,7 @@ module plat.ui.controls {
          * A boolean value stating whether or not the condition has already 
          * been evaluated.
          */
-        private __firstTime = true;
+        private __firstTime: boolean = true;
 
         /**
          * @name __removeListener

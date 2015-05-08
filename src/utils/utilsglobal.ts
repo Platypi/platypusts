@@ -251,7 +251,7 @@ function filter<T>(iterator: (value: T, key: any, obj: any) => boolean, obj: any
 function where(properties: any, obj: any): Array<any> {
     return filter((value): boolean => {
         return !some((property, key): boolean => {
-            return (<any>value)[key] !== property
+            return (<any>value)[key] !== property;
         }, properties);
     }, obj);
 }

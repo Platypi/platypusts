@@ -365,7 +365,7 @@ module plat.controls {
          * @description
          * The initial value of the property to be set.
          */
-        protected _initialValue = '';
+        protected _initialValue: string = '';
 
         /**
          * @name initialize

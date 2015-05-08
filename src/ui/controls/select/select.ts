@@ -32,7 +32,7 @@ module plat.ui.controls {
          * Replaces the `<plat-select>` node with 
          * a <select> node.
          */
-        replaceWith = 'select';
+        replaceWith: string = 'select';
 
         /**
          * @name priority
@@ -45,7 +45,7 @@ module plat.ui.controls {
          * @description
          * The load priority of the control (needs to load before a {@link plat.controls.Bind|Bind} control).
          */
-        priority = 120;
+        priority: number = 120;
 
         /**
          * @name context

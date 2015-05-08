@@ -70,7 +70,7 @@ module plat.ui.controls {
          * @description
          * The load priority of the control (needs to load before a {@link plat.controls.Bind|Bind} control).
          */
-        priority = 120;
+        priority: number = 120;
 
         /**
          * @name controls
@@ -211,7 +211,7 @@ module plat.ui.controls {
          * The number of items currently in the list or in the process of being added 
          * or removed from the list.
          */
-        protected _itemLength = 0;
+        protected _itemLength: number = 0;
 
         /**
          * @name __listenerSet
@@ -224,7 +224,7 @@ module plat.ui.controls {
          * @description
          * Whether or not the Array listener has been set.
          */
-        private __listenerSet = false;
+        private __listenerSet: boolean = false;
 
         /**
          * @name __resolveFn

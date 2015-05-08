@@ -54,7 +54,7 @@ module plat.expressions {
          * @description
          * The previous character during tokenization.
          */
-        private __previousChar = '';
+        private __previousChar: string = '';
         /**
          * @name __variableRegex
          * @memberof plat.expressions.Tokenizer
@@ -66,7 +66,7 @@ module plat.expressions {
          * @description
          * A regular expression for determining if a potential variable is valid syntax.
          */
-        private __variableRegex = (<expressions.Regex>acquire(__Regex)).invalidVariableRegex;
+        private __variableRegex: RegExp = (<expressions.Regex>acquire(__Regex)).invalidVariableRegex;
         /**
          * @name __outputQueue
          * @memberof plat.expressions.Tokenizer

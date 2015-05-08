@@ -236,7 +236,7 @@ module plat.processing {
          * Specifies the type for this {@link plat.processing.NodeManager|NodeManager}. 
          * It's value is "element".
          */
-        type = 'element';
+        type: string = 'element';
 
         /**
          * @name replace
@@ -250,7 +250,7 @@ module plat.processing {
          * Specifies whether or not this manager has a {@link plat.ui.TemplateControl|TemplateControl} which has a 
          * replaceWith property set to null or empty string.
          */
-        replace = false;
+        replace: boolean = false;
 
         /**
          * @name hasOwnContext
@@ -264,7 +264,7 @@ module plat.processing {
          * Indicates whether the {@link plat.ui.TemplateControl|TemplateControl} for this manager has its own context 
          * or inherits it from a parent.
          */
-        hasOwnContext = false;
+        hasOwnContext: boolean = false;
 
         /**
          * @name replaceNodeLength

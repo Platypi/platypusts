@@ -961,23 +961,6 @@ module plat.expressions {
      */
     export interface IParsedExpression {
         /**
-         * @name evaluate
-         * @memberof plat.expressions.IParsedExpression
-         * @kind function
-         * @access public
-         * 
-         * @description
-         * A method for evaluating an expression with a context.
-         * 
-         * @param {any} context? The primary context for evaluation.
-         * @param {IObject<any>} aliases? An object containing resource alias values. 
-         * All property keys must never begin with `@`.
-         * 
-         * @returns {any} The evaluated object or primitive.
-         */
-        evaluate(context?: any, aliases?: IObject<any>): any;
-
-        /**
          * @name expression
          * @memberof plat.expressions.IParsedExpression
          * @kind property
@@ -1032,5 +1015,22 @@ module plat.expressions {
          * {@link plat.expressions.IParsedExpression|IParsedExpression}.
          */
         oneTime?: boolean;
+
+        /**
+         * @name evaluate
+         * @memberof plat.expressions.IParsedExpression
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * A method for evaluating an expression with a context.
+         * 
+         * @param {any} context? The primary context for evaluation.
+         * @param {IObject<any>} aliases? An object containing resource alias values. 
+         * All property keys must never begin with `@`.
+         * 
+         * @returns {any} The evaluated object or primitive.
+         */
+        evaluate(context?: any, aliases?: IObject<any>): any;
     }
 }

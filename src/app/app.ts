@@ -631,6 +631,20 @@ module plat {
      */
     export interface IAppStatic {
         /**
+         * @name app
+         * @memberof plat.IAppStatic
+         * @kind property
+         * @access public
+         * @static
+         * 
+         * @type {plat.App}
+         * 
+         * @description
+         * The instance of the registered {@link plat.App|IApp}.
+         */
+        app: App;
+
+        /**
          * @name start
          * @memberof plat.IAppStatic
          * @kind function
@@ -678,20 +692,6 @@ module plat {
          * @returns {void}
          */
         load(node?: Node): void;
-
-        /**
-         * @name app
-         * @memberof plat.IAppStatic
-         * @kind property
-         * @access public
-         * @static
-         * 
-         * @type {plat.App}
-         * 
-         * @description
-         * The instance of the registered {@link plat.App|IApp}.
-         */
-        app: App;
     }
 
     /**
@@ -717,7 +717,7 @@ module plat {
          * @description
          * Every key must be of type T
          */
-        [key: string]: T
+        [key: string]: T;
     }
 
     /**

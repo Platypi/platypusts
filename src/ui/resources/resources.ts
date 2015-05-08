@@ -815,7 +815,7 @@ module plat.ui {
          * The object resource type token.
          */
         OBJECT: string;
-        
+
         /**
          * @name OBSERVABLE
          * @memberof plat.ui.IResourcesFactory

@@ -151,7 +151,7 @@ module plat.ui {
          * @description
          * By default {@link plat.ui.TemplateControl|TemplateControls} have a priority of 100.
          */
-        priority = 100;
+        priority: number = 100;
 
         /**
          * @name context
@@ -404,7 +404,7 @@ module plat.ui {
          * element's nodename (e.g. `<plat-foreach plat-context="..."></plat-foreach>`), but will maintain whatever element type 
          * is used otherwise (e.g. `<tr plat-control="plat-foreach" plat-context="..."></tr>`).
          */
-        replaceWith = 'any';
+        replaceWith: string = 'any';
 
         /**
          * @name root

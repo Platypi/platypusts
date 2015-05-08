@@ -25,7 +25,7 @@ module plat.ui.animations {
          * @description
          * A set of browser compatible CSS animation events capable of being listened to.
          */
-        protected _animationEvents = this._compat.animationEvents;
+        protected _animationEvents: plat.IAnimationEvents = this._compat.animationEvents;
 
         /**
          * @name animationStart

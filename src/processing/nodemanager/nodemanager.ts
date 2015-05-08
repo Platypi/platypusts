@@ -147,7 +147,7 @@ module plat.processing {
          * @description
          * Whether or not this {@link plat.processing.NodeManager|NodeManager} is a clone.
          */
-        isClone = false;
+        isClone: boolean = false;
 
         /**
          * @name hasMarkup
@@ -468,10 +468,7 @@ module plat.processing {
             if (identifier[0] === '@') {
                 // we found an alias
                 var resourceObj: { resource: ui.IResource; control: ui.TemplateControl; },
-                    resources: IObject<{
-                        resource: ui.IResource;
-                        control: ui.TemplateControl;
-                    }> = {},
+                    resources: IObject<{ resource: ui.IResource; control: ui.TemplateControl; }> = {},
                     topIdentifier = split.shift(),
                     alias = topIdentifier.slice(1);
 

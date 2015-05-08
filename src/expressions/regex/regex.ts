@@ -40,7 +40,7 @@ module plat.expressions {
          * // outputs ["('foo', 'bar', 'baz')", "'foo', 'bar', 'baz'"]
          * exec("myFunction('foo', 'bar', 'baz')");
          */
-        argumentRegex = /\((.*)\)/;
+        argumentRegex: RegExp = /\((.*)\)/;
 
         /**
          * @name initialUrlRegex
@@ -58,7 +58,7 @@ module plat.expressions {
          * // outputs ['/index.html']
          * exec('http://localhost:8080/index.html');
          */
-        initialUrlRegex = /\/[^\/]*\.(?:html|htm)/;
+        initialUrlRegex: RegExp = /\/[^\/]*\.(?:html|htm)/;
 
         /**
          * @name protocolRegex
@@ -71,7 +71,7 @@ module plat.expressions {
          * @description
          * Finds a protocol delimeter in a string (e.g. ://).
          */
-        protocolRegex = /:\/\//;
+        protocolRegex: RegExp = /:\/\//;
 
         /**
          * @name invalidVariableRegex
@@ -84,7 +84,7 @@ module plat.expressions {
          * @description
          * Looks for any invalid variable syntax.
          */
-        invalidVariableRegex = /[^a-zA-Z0-9@_$]/;
+        invalidVariableRegex: RegExp = /[^a-zA-Z0-9@_$]/;
 
         /**
          * @name fileNameRegex
@@ -97,7 +97,7 @@ module plat.expressions {
          * @description
          * Grabs the file name from a file path.
          */
-        fileNameRegex = /.*(?:\/|\\)/;
+        fileNameRegex: RegExp = /.*(?:\/|\\)/;
 
         /**
          * @name shiftedKeyRegex
@@ -110,7 +110,7 @@ module plat.expressions {
          * @description
          * Determines if a character is correlated with a shifted key code.
          */
-        shiftedKeyRegex = /[A-Z!@#$%^&*()_+}{":?><|~]/;
+        shiftedKeyRegex: RegExp = /[A-Z!@#$%^&*()_+}{":?><|~]/;
 
         /**
          * @name fullUrlRegex
@@ -123,7 +123,7 @@ module plat.expressions {
          * @description
          * Determines if a url is relative or absolute.
          */
-        fullUrlRegex = /^(?:[a-z0-9\-]+:)(?:\/\/)?|(?:\/\/)/i;
+        fullUrlRegex: RegExp = /^(?:[a-z0-9\-]+:)(?:\/\/)?|(?:\/\/)/i;
 
         /**
          * @name validateEmail
@@ -136,7 +136,7 @@ module plat.expressions {
          * @description
          * Determines if an email address is valid.
          */
-        validateEmail = new RegExp('^(([^<>()[\\]\\\.,;:\\s@\\"]+(\\.[^<>()[\\]\\\.,;:\\s@\\"]+)*)|' +
+        validateEmail: RegExp = new RegExp('^(([^<>()[\\]\\\.,;:\\s@\\"]+(\\.[^<>()[\\]\\\.,;:\\s@\\"]+)*)|' +
             '(\\".+\\"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|' +
             '(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$');
 
@@ -151,7 +151,7 @@ module plat.expressions {
          * @description
          * Determines if a telephone number is valid.
          */
-        validateTelephone = /^\+?[0-9\.\-\s]*$/;
+        validateTelephone: RegExp = /^\+?[0-9\.\-\s]*$/;
 
         /**
          * @name splatSegmentRegex
@@ -164,7 +164,7 @@ module plat.expressions {
          * @description
          * A regular expression for matching dynamic segments in a route.
          */
-        dynamicSegmentsRegex = /^:([^\/]+)$/;
+        dynamicSegmentsRegex: RegExp = /^:([^\/]+)$/;
 
         /**
          * @name splatSegmentRegex
@@ -177,7 +177,7 @@ module plat.expressions {
          * @description
          * A regular expression for matching splat segments in a route.
          */
-        splatSegmentRegex = /^\*([^\/]+)$/;
+        splatSegmentRegex: RegExp = /^\*([^\/]+)$/;
 
         /**
          * @name newLineRegex

@@ -613,7 +613,7 @@ module plat.dependency {
             if (isString(type) && type !== __INSTANCE) {
                 this._wrapInjector(injectable);
             }
-            
+
             (<IInternal>injectable).__injectable__type = type;
             return injectable;
         }
