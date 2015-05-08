@@ -48,8 +48,10 @@ To build the code take the following steps:
 ```shell
 npm install
 ```
-
-The `prepublish` npm task will build the `src`, `examples`, and `test` directories.
+0. Run the following task:
+```
+npm run build-all
+```
 
 ### Building for Deployment
 
