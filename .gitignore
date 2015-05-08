@@ -157,6 +157,8 @@ $RECYCLE.BIN/
 # TypeScript
 *.js
 *.js.map
+!build/*.js
+!build/options/*.js
 
 coverage
 node_modules
