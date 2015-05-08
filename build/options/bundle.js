@@ -6,7 +6,7 @@ module.exports = function(config, grunt) {
             version: config.version,
             src: config.folders.src + 'references.d.ts',
             dest: [
-                config.build.src
+                config.build.dest.ts
             ],
             disableLint: true
         }

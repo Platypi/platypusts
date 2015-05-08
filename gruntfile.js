@@ -29,7 +29,6 @@ var config = {
         dist: './dist'
     },
     build: {
-        src: './platypus.ts',
         dest: {
             ts: './dist/platypus.ts',
             dts: './dist/platypus.d.ts',

@@ -104,7 +104,7 @@ module.exports = function(config, grunt) {
                         .join('\r\n');
                 }
             },
-            src: config.build.src,
+            src: config.build.dest.ts,
             dest: config.build.dest.ts
         },
         typings: {
