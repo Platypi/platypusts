@@ -170,5 +170,3 @@ dist
 !*.ts
 !build/*.js
 !build/options/*.js
-
-platypus.ts

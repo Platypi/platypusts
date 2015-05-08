@@ -1,0 +1,16 @@
+.git
+.tscache
+*.log
+tscommand*
+build
+examples
+node_modules
+src
+test
+.gitattributes
+.gitignore
+gruntfile.js
+karma.conf.js
+license.txt
+tsd.test.json
+tslint.json
