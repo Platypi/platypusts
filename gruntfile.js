@@ -49,5 +49,4 @@ module.exports = function load(grunt) {
     grunt.registerTask('default', ['clean:before', 'bundle', 'copy:main', 'ts:main', 'uglify', 'copy:typings', 'clean:after']);
 
     grunt.registerTask('docs', ['clean:after', 'bundle', 'ts:main', 'uglify', 'copy:typings']);
-    grunt.registerTask('test', ['karma']);
 };
