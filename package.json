@@ -12,7 +12,7 @@
     "grunt-contrib-uglify": "^0.7.0",
     "grunt-karma": "latest",
     "grunt-ts": "^2.0.0",
-    "grunt-ts-bundle": "~0.0.1",
+    "grunt-ts-bundle": "latest",
     "grunt-tsd": "latest",
     "grunt-tslint": "^1.0.1",
     "karma": "latest",
@@ -28,7 +28,7 @@
     "typescript": "latest"
   },
   "scripts": {
-    "prepublish": "node_modules/.bin/grunt install",
+    "prepublish": "node_modules/.bin/grunt install --force",
 
     "build-all": "npm run build-examples && npm run build-test && npm run build-src",
     "build-src": "node_modules/.bin/tsc -p src",
