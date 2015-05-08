@@ -96,6 +96,8 @@ npm install karma-cli -g
 npm test
 ```
 
+When you run tests they output code coverage. You can find the code coverage files in the `test/coverage` directory.
+
 ## Cleaning the Build
 
 To clean all the built-files execute the following command:
