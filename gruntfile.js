@@ -154,10 +154,6 @@ module.exports = exports = function load(grunt) {
                 },
                 src: 'dist/platypus.d.ts',
                 dest: 'dist/platypus.d.ts'
-            },
-            test: {
-                src: 'dist/platypus.d.ts',
-                dest: 'testing/framework/platypus.d.ts'
             }
         },
         karma: {
@@ -258,7 +254,7 @@ module.exports = exports = function load(grunt) {
 
 
     // By default, run all tests.
-    grunt.registerTask('default', ['clean', 'bundle', 'copy:main', 'ts:main', 'uglify', 'copy:typings', 'copy:test', 'clean:after']);
+    grunt.registerTask('default', ['clean', 'bundle', 'copy:main', 'ts:main', 'uglify', 'copy:typings', 'clean:after']);
 
     grunt.registerTask('install', ['tsd']);
     grunt.registerTask('docs', ['clean:after', 'bundle']);
