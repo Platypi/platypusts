@@ -1,264 +1,54 @@
-function stripDocs(data) {
-    var linkRegex = /\{@link (.*?)[|](.*?)\}/g,
-        out = [],
-        onDescription = false,
-        onParam = false,
-        first = false;
+var _ = require('lodash');
+var path = require('path');
 
-    data.forEach(function (line) {
-        line = line.replace(linkRegex, function(value, qualifiedPath, linkValue, index, content) {
-            return linkValue;
-        });
+function loadConfig(path, config, grunt) {
+    var glob = require('glob'),
+        obj = {},
+        key;
 
-        if(line.trim().indexOf('/// <reference') > -1) {
-            return;
-        }
+    if(path[path.length - 1] !== '/') {
+        path += '/';
+    }
 
-        if (line.trim().indexOf('* @') > -1) {
-            first = true;
-        }
-
-        if (!first) {
-            out.push(line);
-            return;
-        }
-
-        if (line.trim() === '*') {
-            onDescription = onParam = false;
-        } else if (line.indexOf('@description') > -1) {
-            onDescription = true;
-        } else if (((onDescription || onParam) && line.indexOf('* @') === -1) || line.trim().indexOf('*/') > -1 || line.trim().indexOf('/*') > -1 || line.trim()[0] !== '*') {
-            if (line[line.length - 1] !== ' ') {
-                line += ' ';
-            }
-
-            out.push(line);
-        } else if (line.indexOf('@param') > -1) {
-            if (line[line.length - 1] !== ' ') {
-                line += ' ';
-            }
-
-            onParam = true;
-            out.push(line);
-        }
-
-        if (line.trim().indexOf('*/') > -1) {
-            onDescription = onParam = false;
-        }
+    glob.sync('*', {cwd: path}).forEach(function(option) {
+        key = option.replace(/\.js$/,'');
+        obj[key] = require(path + option)(config, grunt);
     });
 
-    return out;
-}
+    return obj;
+};
 
-function useStrict(data) {
-    var plat;
-
-    data = data
-        .map(function (line, index, lines) {
-            var trim = line.trim();
-            if (trim === '\'use strict\';') {
-                return '';
-            } else if (trim.indexOf('module plat ') > -1) {
-                plat = index+1;
-            }
-
-            return line;
-        });
-
-    data.splice(plat, 0, '    \'use strict;\'');
-    return data;
-}
-
-function normalizeBlockComments(data) {
-    return data
-        .map(function (line, index, lines) {
-            if (line.trim()[0] === '*') {
-                return ' ' + line;
-            }
-
-            return line;
-        })
-        .join('\r\n');
-
-}
-
-function addNodeTypeDefinition(data) {
-    return data
-        .slice(0, -2)
-        .concat([
-            '',
-            'declare module \'platypus\' {',
-            '    export = plat;',
-            '}',
-            ''
-        ]);
-}
+var config = {
+    license: './license.txt',
+    version: '<%= pkg.version %>',
+    name: 'platypus',
+    folders: {
+        src: './src/',
+        examples: './examples/',
+        test: './test/',
+        dist: './dist'
+    },
+    build: {
+        src: './platypus.ts',
+        dest: {
+            ts: './dist/platypus.ts',
+            dts: './dist/platypus.d.ts',
+            js: './dist/platypus.js',
+            min: './dist/platypus.min.js'
+        }
+    }
+};
 
 module.exports = exports = function load(grunt) {
-    var config = {
-        bundle: {
-            main: {
-                rootModule: 'plat',
-                license: './license.txt',
-                version: '<%= pkg.version %>',
-                src: './src/references.d.ts',
-                dest: [
-                    './platypus.ts'
-                ],
-                disableLint: true
-            }
-        },
-        clean: {
-            before: {
-                force: true,
-                src: [
-                    'dist/'
-                ]
-            },
-            after: {
-                force: true,
-                src: [
-                    'platypus.ts',
-                    'dist/platypus.ts'
-                ]
-            }
-        },
-        connect: {
-            server: {
-                options: {
-                    port: 8080,
-                    base: './',
-                    keepalive: true
-                }
-            }
-        },
-        copy: {
-            main: {
-                options: {
-                    process: function (data) {
-                        return stripDocs(useStrict(data.split(/\r\n|\n/)))
-                            .concat(['export = plat;', ''])
-                            .join('\r\n');
-                    }
-                },
-                src: 'platypus.ts',
-                dest: 'dist/platypus.ts'
-            },
-            typings: {
-                options: {
-                    process: function (data) {
-                        data = normalizeBlockComments(data.split(/\r\n|\n/));
-                        return addNodeTypeDefinition(data.split(/\r\n|\n/))
-                            .join('\r\n');
-                    }
-                },
-                src: 'dist/platypus.d.ts',
-                dest: 'dist/platypus.d.ts'
-            }
-        },
-        karma: {
-            unit: {
-                configFile: 'karma.conf.js'
-            }
-        },
-        ts: {
-            options: {
-                target: 'es5',
-                module: 'commonjs',
-                sourceMap: true,
-                removeComments: false,
-                fast: 'always'
-            },
-            main: {
-                options: {
-                    fast: 'never',
-                    sourceMap: false,
-                    declaration: true
-                },
-                src: [
-                    'dist/platypus.ts'
-                ]
-            },
-            all: {
-                src: [
-                    'framework/**/*.ts',
-                    'app/**/*.ts',
-                    //'testing/**/*.ts',
-                    //'!testing/framework/**',
-                    '!node_modules/**'
-                ]
-            },
-            test: {
-                options: {
-                    sourceMap: false
-                },
-                src: [
-                    'testing/**/*.ts'
-                ]
-            }
-        },
-        tsd: {
-            refresh: {
-                options: {
-                    // execute a command
-                    command: 'reinstall',
-
-                    //optional: always get from HEAD
-                    latest: true,
-
-                    // specify config file
-                    config: './tsd.test.json'
-                }
-            }
-        },
-        tslint: {
-            options: {
-                configuration: grunt.file.readJSON('tslint.json')
-            },
-            files: {
-                src: ['framework/**/*.ts']
-            }
-        },
-        uglify: {
-            options: {
-                screwIE8: true
-            },
-            main: {
-                files: {
-                    'dist/platypus.min.js': [
-                        'dist/platypus.js'
-                    ]
-                }
-            },
-            app: {
-                files: {
-                    'examples/app.min.js': [
-                        'examples/app.js'
-                    ]
-                }
-            }
-        },
+    grunt.initConfig(_.extend({
         pkg: grunt.file.readJSON('package.json')
-    };
-    
-    grunt.initConfig(config);
-    grunt.loadNpmTasks('grunt-contrib-clean');
-    grunt.loadNpmTasks('grunt-contrib-connect');
-    grunt.loadNpmTasks('grunt-contrib-copy');
-    grunt.loadNpmTasks('grunt-contrib-uglify');
-    //grunt.loadNpmTasks('grunt-karma');
-    grunt.loadNpmTasks('grunt-ts-bundle');
-    grunt.loadNpmTasks('grunt-ts');
-    grunt.loadNpmTasks('grunt-tsd');
-    grunt.loadNpmTasks('grunt-tslint');
+    }, loadConfig('./build/options', config, grunt)));
 
+    require('load-grunt-tasks')(grunt);
 
     // By default, run all tests.
     grunt.registerTask('default', ['clean', 'bundle', 'copy:main', 'ts:main', 'uglify', 'copy:typings', 'clean:after']);
 
-    grunt.registerTask('install', ['tsd']);
     grunt.registerTask('docs', ['clean:after', 'bundle']);
-    grunt.registerTask('test', ['ts:test', 'karma']);
-    grunt.registerTask('app', ['ts:all', 'connect']);
-    grunt.registerTask('compile', ['ts:all']);
+    grunt.registerTask('test', ['karma']);
 };
