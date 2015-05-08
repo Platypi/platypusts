@@ -82,6 +82,9 @@ The examples directory is a playground for quickly testing functionality. You ca
 npm run examples
 ```
 
+This will open a server in the `examples` directory running on port 3000. You can then open you browser to http://localhost:3000 to 
+use the examples.
+
 ## Running the Tests
 
 To run the unit tests for PlatypusTS take the following steps:
