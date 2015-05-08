@@ -1,8 +1,8 @@
 {
-  "name": "framework",
+  "name": "platypus",
   "version": "0.13.1",
-  "description": "",
-  "main": "gruntfile.js",
+  "description": "A front-end MVVM framework written in TypeScript",
+  "main": "dist/platypus.js",
   "devDependencies": {
     "glob": "^5.0.5",
     "grunt": "~0.4.5",
@@ -47,6 +47,17 @@
     "watch-src": "node_modules/.bin/tsc -p build/tsc/src/watch",
     "watch-test": "node_modules/.bin/tsc -p build/tsc/test/watch"
   },
-  "author": "",
-  "license": "ISC"
+  "author": "Platypi <support@platypi.io> (https://platypi.io)",
+  "license": "GPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Platypi/platypusts.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Platypi/platypusts/issues"
+  },
+  "homepage": "https://platypi.io",
+  "typescript": {
+    "definition": "dist/platypus.d.ts"
+  }
 }
