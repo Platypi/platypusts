@@ -10,6 +10,10 @@ None, PlatypusTS is meant to ship with no dependencies.
 
 PlatypusTS is designer for use in a browser only. It works in all modern browsers (IE >= 9)
 
+## Documentation
+
+Find all the documentation on PlatypusTS [here](https://platypi.io/docs)
+
 ## Building the Code
 
 To build the code take the following steps:
@@ -36,6 +40,21 @@ grunt
 ```
 0. You will find the compiled package in the `dist` directory.
 
+### Building for Documentation Output
+
+PlatypusTS is heavily documented using JSDoc format. However, for distribution many of the comments are stripped out in order to make 
+them easier to read in various IDEs. To get a build of the framework with full documentation take the following steps:
+
+0. Ensure that [Grunt](http://gruntjs.com/) is installed. If you need to install it you can use the following command:
+```shell
+npm install grunt -g
+```
+0. Run the following command:
+```shell
+grunt docs
+```
+0. You will find the compiled package in the `dist` directory.
+
 ## Running the Tests
 
 To run the unit tests for PlatypusTS take the following steps:
@@ -58,5 +77,4 @@ To clean all the built-files execute the following command:
 npm run clean-all
 ```
 
-___
->> **NOTE:** More tasks can be found in the `package.json`
+> **NOTE:** More tasks can be found in the `package.json`
