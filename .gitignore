@@ -11,7 +11,6 @@
 [Dd]ebug/
 [Rr]elease/
 x64/
-build/
 [Bb]in/
 [Oo]bj/
 
@@ -157,8 +156,6 @@ $RECYCLE.BIN/
 # TypeScript
 *.js
 *.js.map
-!build/*.js
-!build/options/*.js
 
 coverage
 node_modules
@@ -171,5 +168,7 @@ dist
 !gruntfile.js
 !*.less
 !*.ts
+!build/*.js
+!build/options/*.js
 
 platypus.ts

@@ -1,0 +1,15 @@
+{
+	"compilerOptions": {
+		"module": "commonjs",
+		"target": "ES5",
+		"noImplicitAny": true,
+        "removeComments": true,
+        "preserveConstEnums": true,
+        "out": "examples/app.js",
+        "sourceMap": true,
+		"watch": true
+	},
+	"files": [
+		"../../../../test/references.d.ts"
+	]
+}
