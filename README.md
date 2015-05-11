@@ -1,112 +1,71 @@
-# platypi-framework
+PlatypusTS Distribution
+==============
 
-This library contains the [Platypi](https://platypi.io) framework, PlatypusTS. It serves as the basis for many of the other Platypi products.
+This repo is for distribution of PlatypusTS through bower and npm.
 
-## Dependencies
+## Install
 
-None, PlatypusTS is meant to ship with no dependencies.
+You can use either `npm` or `bower` to install this package.
 
-### Development Dependencies
+### npm
 
-While developing, ensure that [NodeJS](http://nodejs.org/) is installed.
+```shell
+npm install platypus --save
+```
 
-## Platform support
+This package works in CommonJS and on window, so if you are using 
+[Browserify](https://github.com/substack/node-browserify) or other CommonJS 
+module loaders you can use `require('platypus')`. If you want to use `plat` on 
+`window`, you need to include it in your `index.html`:
 
-PlatypusTS is designer for use in a browser only. It works in all modern browsers (IE >= 9)
+```html
+<script src="/node_modules/platypus/dist/platypus.min.js"></script>
+```
+
+### bower
+
+```
+bower install platypus --save
+```
+
+This package works with CommonJS and on window. We recommend using  [Browserify](https://github.com/substack/node-browserify) 
+with [debowerify](https://github.com/eugeneware/debowerify), which gives you the ability to use `require('platypus')` with bower components. 
+If you want to use `plat` on `window`, you need to include it in your `index.html`:
+
+```html
+<script src="/bower_components/platypus/dist/platypus.min.js"></script>
+```
+
+## Use with TypeScript
+
+This package includes a declaration file, as well as the source `.js` and `.min.js` file. If you are 
+using TypeScript, you will want to reference the declaration file. The recommended way is through TSD.
+
+### with TSD
+
+```shell
+tsd link
+```
+
+```
+/// <reference path="/typings/tsd.d.ts" />
+```
+
+### without TSD
+
+```ts
+/// <reference path="/node_modules/platypus/dist/platypus.d.ts" />
+```
+
+```ts
+/// <reference path="/bower_components/platypus/dist/platypus.d.ts" />
+```
+
+## Recommendations
+
+It is recommended that you use a CommonJS module loader with PlatypusTS in favor of 
+using `window.plat`.
 
 ## Documentation
 
-Find all the documentation on PlatypusTS [here](https://platypi.io/docs)
-
-## Building the Code
-
-To build the code take the following steps:
-
-0. From the root project folder run:
-```shell
-npm install
-```
-0. Run the following task:
-```
-npm run build-all
-```
-
-### Building for Deployment
-
-To build a deployment package of PlatypusTS take the following steps:
-
-0. Ensure that [Grunt](http://gruntjs.com/) is installed. If you need to install it you can use the following command:
-```shell
-npm install grunt -g
-```
-0. Run the following command:
-```shell
-grunt
-```
-0. You will find the compiled package in the `dist` directory.
-
-### Building for Documentation Output
-
-PlatypusTS is heavily documented using JSDoc format. However, for distribution many of the comments are stripped out in order to make 
-them easier to read in various IDEs. To get a build of the framework with full documentation take the following steps:
-
-0. Ensure that [Grunt](http://gruntjs.com/) is installed. If you need to install it you can use the following command:
-```shell
-npm install grunt -g
-```
-0. Run the following command:
-```shell
-grunt docs
-```
-0. You will find the compiled package in the `dist` directory.
-
-## Developing the Code
-
-While developing the code, there are a few useful npm scripts:
-
-0. `watch-examples`: Builds and watches the examples directory
-0. `watch-src`: Builds and watches the src directory
-0. `watch-test`: Builds and watches the test directory
-
-Run any of these scripts with the following command:
-
-```shell
-npm run <script>
-```
-
-### Using the Examples
-
-The examples directory is a playground for quickly testing functionality. You can run the examples using the following command:
-
-```shell
-npm run examples
-```
-
-This will open a server in the `examples` directory running on port 3000. You can then open you browser to http://localhost:3000 to 
-use the examples.
-
-## Running the Tests
-
-To run the unit tests for PlatypusTS take the following steps:
-
-0. Ensure that [NodeJS](http://nodejs.org/) is installed.
-0. Ensure that [Karma CLI](http://karma-runner.github.io/) is installed. If you need to install it you can use the following command:
-```shell
-npm install karma-cli -g
-```
-0. Run the following command:
-```shell
-npm test
-```
-
-When you run tests they output code coverage. You can find the code coverage files in the `test/coverage` directory.
-
-## Cleaning the Build
-
-To clean all the built-files execute the following command:
-
-```shell
-npm run clean-all
-```
-
-> **NOTE:** More tasks can be found in the `package.json`
+Documentation is available on the [Platypi website](https://platypi.io/docs).

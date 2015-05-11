@@ -26,7 +26,7 @@ var config = {
         src: 'src/',
         examples: 'examples/',
         test: 'test/',
-        dist: 'dist'
+        dist: 'dist/'
     },
     build: {
         dest: {
