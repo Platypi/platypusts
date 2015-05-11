@@ -1,0 +1,41 @@
+{
+  "name": "platypus",
+  "version": "0.13.2",
+  "homepage": "https://platypi.io",
+  "authors": [
+    "Platypi <support@platypi.io> (https://platypi.io)"
+  ],
+  "description": "A front-end MVVM framework written in TypeScript",
+  "main": "dist/platypus.js",
+  "moduleType": [
+    "globals",
+    "node"
+  ],
+  "keywords": [
+    "platypi",
+    "platypus",
+    "typescript",
+    "mvvm",
+    "mvc"
+  ],
+  "license": "GPL-3.0",
+  "ignore": [
+    "**/.*",
+    "*.log",
+    "tscommand*",
+    "build",
+    "examples",
+    "node_modules",
+    "src",
+    "test",
+    "gruntfile.js",
+    "karma.conf.js",
+    "license.txt",
+    "tsd.test.json",
+    "tslint.json",
+    "CONTRIBUTE.md"
+  ],
+  "typescript": {
+    "definition": "dist/platypus.d.ts"
+  }
+}
