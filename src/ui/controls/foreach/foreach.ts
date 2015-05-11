@@ -324,9 +324,8 @@ module plat.ui.controls {
          * @returns {void}
          */
         loaded(): void {
-            var optionsObj = this.options || (this.options = <observable.IObservableProperty<IForEachOptions>>{}),
-                options = optionsObj.value || (optionsObj.value = <IForEachOptions>{}),
-                animating = this._animate = options.animate === true,
+            var options: observable.IObservableProperty<IForEachOptions> = this.options,
+                animating: boolean = this._animate = !isUndefined(options) && options.value.animate === true,
                 context = this.context;
 
             this._container = this.element;
@@ -386,7 +385,13 @@ module plat.ui.controls {
          * @returns {void}
          */
         protected _setAliases(): void {
-            var aliases = this.options.value.aliases;
+            var options: observable.IObservableProperty<IForEachOptions> = this.options;
+            
+            if(isUndefined(options)) {
+                return;
+            }
+            
+            var aliases = options.value.aliases;
             if (!isObject(aliases)) {
                 return;
             }

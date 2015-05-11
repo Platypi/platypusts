@@ -12,7 +12,7 @@ While developing, ensure that [NodeJS](http://nodejs.org/) is installed.
 
 ## Platform support
 
-PlatypusTS is designer for use in a browser only. It works in all modern browsers (IE >= 9)
+PlatypusTS is designed for use in a browser only. It works in all modern browsers (IE >= 9)
 
 ## Documentation
 
