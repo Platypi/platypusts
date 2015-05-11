@@ -95,11 +95,6 @@ function addNodeTypeDefinition(data) {
 }
 
 module.exports = function(config, grunt) {
-    console.log([
-                { src: 'distreadme.md', dest: config.folders.dist + 'README.md' },
-                { src: 'LICENSE', dest: config.folders.dist + 'LICENSE' },
-                { src: 'package.json', dest: }
-            ]);
 	return {
 		main: {
             options: {
