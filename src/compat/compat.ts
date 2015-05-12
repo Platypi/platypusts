@@ -392,7 +392,7 @@ module plat {
         constructor() {
             this.__defineBooleans();
             this.__defineMappedEvents();
-            this.__defineAnimationEvents();
+            this.__defineVendorDependencies();
             this.__determineCss();
         }
 
@@ -521,35 +521,44 @@ module plat {
         }
 
         /**
-         * @name __defineAnimationEvents
+         * @name __defineVendorDependencies
          * @memberof plat.Compat
          * @kind function
          * @access private
          * 
          * @description
-         * Define {@link plat.IAnimationEvents|animation events}
+         * Define {@link plat.IAnimationEvents|animation events} and other vendor prefix 
+         * dependencies.
          * 
          * @returns {void}
          */
-        private __defineAnimationEvents(): void {
+        private __defineVendorDependencies(): void {
             var _window = this._window,
                 documentElement = this._document.documentElement,
                 styles = _window.getComputedStyle(documentElement, ''),
+                matches = Array.prototype.slice.call(styles).join('').match(/-(moz|webkit|ms)-/),
                 prefix: string,
+                dom: string,
+                css: string,
                 jsSyntax: string;
-
-            if (!isUndefined((<any>styles).OLink)) {
-                prefix = 'o';
-                jsSyntax = 'O';
-            } else {
-                var matches = Array.prototype.slice.call(styles).join('').match(/-(moz|webkit|ms)-/);
+                
+            if ((isArray(matches) && matches.length > 1)) {
                 prefix = (isArray(matches) && matches.length > 1) ? matches[1] : '';
-                jsSyntax = prefix === 'ms' ? 'MS' : prefix[0].toUpperCase() + prefix.slice(1);
+                jsSyntax = prefix[0].toUpperCase() + prefix.slice(1);
+                dom = ('WebKit|Moz|MS').match(new RegExp('(' + prefix + ')', 'i'))[1];
+                css = '-' + prefix + '-';
+            } else if (!isUndefined((<any>styles).OLink)) {
+                prefix = 'o';
+                jsSyntax = dom = 'O';
+                css = '-o-';
+            } else {
+                prefix = jsSyntax = dom = css = '';
             }
-
+            
             this.vendorPrefix = {
+                dom: dom,
                 lowerCase: prefix,
-                css: prefix === '' ? '' : '-' + prefix + '-',
+                css: css,
                 upperCase: jsSyntax
             };
 
@@ -557,20 +566,12 @@ module plat {
             this.cancelAnimationFrame = _window.cancelAnimationFrame ||
             (<any>_window)[prefix + 'CancelRequestAnimationFrame'] ||
             (<any>_window)[prefix + 'CancelAnimationFrame'];
-
+            
             var style = documentElement.style;
-            if (!(isUndefined((<any>style)[jsSyntax + 'Animation']) || isUndefined((<any>style)[jsSyntax + 'Transition']))) {
-                this.animationSupported = true;
-                this.animationEvents = {
-                    $animation: prefix + 'Animation',
-                    $animationStart: prefix + 'AnimationStart',
-                    $animationEnd: prefix + 'AnimationEnd',
-                    $animationIteration: prefix + 'AnimationIteration',
-                    $transition: prefix + 'Transition',
-                    $transitionStart: prefix + 'TransitionStart',
-                    $transitionEnd: prefix + 'TransitionEnd'
-                };
-            } else if (!(isUndefined(style.animation) || isUndefined(style.transition))) {
+            // handle Android issue where style.transition exists but transition events still need vendor prefix
+            // should only affect version 4.1 but we will handle for < 4.4.
+            if ((isUndefined(this.ANDROID) || Math.floor(this.ANDROID / 10) >= 44) && 
+                !(isUndefined(style.animation) || isUndefined(style.transition))) {
                 this.animationSupported = true;
                 this.animationEvents = {
                     $animation: 'animation',
@@ -580,6 +581,17 @@ module plat {
                     $transition: 'transition',
                     $transitionStart: 'transitionstart',
                     $transitionEnd: 'transitionend'
+                };
+            } else if (!(isUndefined((<any>style)[jsSyntax + 'Animation']) || isUndefined((<any>style)[jsSyntax + 'Transition']))) {
+                this.animationSupported = true;
+                this.animationEvents = {
+                    $animation: prefix + 'Animation',
+                    $animationStart: prefix + 'AnimationStart',
+                    $animationEnd: prefix + 'AnimationEnd',
+                    $animationIteration: prefix + 'AnimationIteration',
+                    $transition: prefix + 'Transition',
+                    $transitionStart: prefix + 'TransitionStart',
+                    $transitionEnd: prefix + 'TransitionEnd'
                 };
             }
         }
@@ -607,11 +619,7 @@ module plat {
                 display = computedStyle.display,
                 visibility = computedStyle.visibility;
 
-            if (display === 'none' || visibility === 'hidden') {
-                this.platCss = true;
-            } else {
-                this.platCss = false;
-            }
+            this.platCss = display === 'none' || visibility === 'hidden';
 
             head.removeChild(element);
         }
@@ -865,6 +873,20 @@ module plat {
      */
     export interface IVendorPrefix extends IObject<string> {
         /**
+         * @name dom
+         * @memberof plat.IVendorPrefix
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * The DOM based representation of the browser's vendor prefix generally denoted 
+         * by it beginning with a capital letter and camel-cased throughout.
+         */
+        dom: string;
+        
+        /**
          * @name lowerCase
          * @memberof plat.IVendorPrefix
          * @kind property
@@ -901,8 +923,7 @@ module plat {
          * 
          * @description
          * The common uppercase representation of the browser's vendor prefix 
-         * generally denoted by it beginning with a capital letter or all capital 
-         * in the case of MS.
+         * generally denoted by it beginning with a capital letter.
          */
         upperCase: string;
     }
