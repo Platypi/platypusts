@@ -163,10 +163,10 @@ reporter
 typings
 .tscache
 tscommand*
-dist
 
 !gruntfile.js
 !*.less
 !*.ts
 !build/*.js
 !build/options/*.js
+!dist/*
