@@ -304,7 +304,12 @@ declare module plat {
       * Returns the requested injectable dependency.
       * @param {() => T} dependency The dependency Type to return.
       */
-    function acquire<T>(dependency: () => T): T;
+    function acquire<T>(dependency: (...args: Array<any>) => T): T;
+    /**
+      * Returns the requested injectable dependency.
+      * @param {() => T} dependency The dependency Type to return.
+      */
+    function acquire<T>(dependency: new (...args: Array<any>) => T): T;
     /**
       * Returns the requested injectable dependency.
       * @param {Function} dependency The dependency Type to return.

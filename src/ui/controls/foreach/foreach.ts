@@ -288,26 +288,16 @@ module plat.ui.controls {
          * @returns {void}
          */
         contextChanged(newValue: Array<any>, oldValue: Array<any>): void {
-            if (isEmpty(newValue)) {
-                if (!isEmpty(oldValue)) {
-                    this._Promise.all(this._addQueue).then((): void => {
-                        this._removeItems(0, this.controls.length);
-                    });
-                }
-
-                if (isArray(newValue)) {
-                    this._setListener();
-                }
-                return;
-            } else if (!isArray(newValue)) {
-                var _Exception = this._Exception;
+            if (isArray(newValue)) {
+                this._setListener();
+            } else {
+               var _Exception = this._Exception;
                 _Exception.warn(this.type + ' context set to something other than an Array.', _Exception.CONTEXT);
-                return;
+                newValue = [];
             }
 
-            this._setListener();
             this._executeEvent([{
-                object: newValue || [],
+                object: newValue,
                 type: 'splice'
             }]);
         }

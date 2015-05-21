@@ -11959,26 +11959,16 @@ var plat;
                  * @param {Array<any>} oldValue The old Array
                  */
                 ForEach.prototype.contextChanged = function (newValue, oldValue) {
-                    var _this = this;
-                    if (isEmpty(newValue)) {
-                        if (!isEmpty(oldValue)) {
-                            this._Promise.all(this._addQueue).then(function () {
-                                _this._removeItems(0, _this.controls.length);
-                            });
-                        }
-                        if (isArray(newValue)) {
-                            this._setListener();
-                        }
-                        return;
+                    if (isArray(newValue)) {
+                        this._setListener();
                     }
-                    else if (!isArray(newValue)) {
+                    else {
                         var _Exception = this._Exception;
                         _Exception.warn(this.type + ' context set to something other than an Array.', _Exception.CONTEXT);
-                        return;
+                        newValue = [];
                     }
-                    this._setListener();
                     this._executeEvent([{
-                            object: newValue || [],
+                            object: newValue,
                             type: 'splice'
                         }]);
                 };
@@ -18974,9 +18964,8 @@ var plat;
         App.start = function () {
             if (!App._compat.isCompatible) {
                 var _Exception = App._Exception;
-                _Exception.fatal('PlatypusTS only supports modern browsers where ' +
+                return _Exception.fatal('PlatypusTS only supports modern browsers where ' +
                     'Object.defineProperty is defined', _Exception.COMPAT);
-                return;
             }
             App.__addPlatCss();
             var _EventManager = App._EventManager;
