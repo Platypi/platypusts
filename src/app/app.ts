@@ -167,9 +167,8 @@ module plat {
         static start(): void {
             if (!App._compat.isCompatible) {
                 var _Exception: IExceptionStatic = App._Exception;
-                _Exception.fatal('PlatypusTS only supports modern browsers where ' +
+                return _Exception.fatal('PlatypusTS only supports modern browsers where ' +
                     'Object.defineProperty is defined', _Exception.COMPAT);
-                return;
             }
 
             App.__addPlatCss();

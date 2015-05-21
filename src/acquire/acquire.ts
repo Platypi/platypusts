@@ -38,7 +38,25 @@ module plat {
      * 
      * @returns T The requested dependency.
      */
-    export function acquire<T>(dependency: () => T): T;
+    export function acquire<T>(dependency: (...args: Array<any>) => T): T;
+    /**
+     * @name acquire
+     * @memberof plat
+     * @kind function
+     * @variation 0
+     * @access public
+     * @static
+     * 
+     * @description
+     * Returns the requested injectable dependency.
+     * 
+     * @typeparam {any} T The type of the requested dependency.
+     * 
+     * @param {() => T} dependency The dependency Type to return.
+     * 
+     * @returns T The requested dependency.
+     */
+    export function acquire<T>(dependency: new (...args: Array<any>) => T): T;
     /**
      * @name acquire
      * @memberof plat
