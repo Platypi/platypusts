@@ -6,7 +6,7 @@ var __extends = this.__extends || function (d, b) {
 };
 /* tslint:disable */
 /**
- * PlatypusTS v0.13.4 (http://getplatypi.com)
+ * PlatypusTS v0.13.5 (http://getplatypi.com)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the GPL-3.0 found at
