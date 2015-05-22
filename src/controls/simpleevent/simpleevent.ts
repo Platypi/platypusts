@@ -187,12 +187,10 @@ module plat.controls {
             }
 
             if (listenerStr[0] !== '@') {
-                var _Exception: IExceptionStatic = this._Exception;
                 listener = this.findProperty(listenerStr);
 
                 if (isNull(listener)) {
-                    _Exception.warn('Could not find property ' + listenerStr + ' on any parent control.',
-                        _Exception.CONTROL);
+                    this._log.warn('Could not find property ' + listenerStr + ' on any parent control.');
                     return {
                         fn: noop,
                         context: <ui.TemplateControl>{},
@@ -204,8 +202,8 @@ module plat.controls {
                     identifiers = parsedExpression.identifiers;
 
                 if (identifiers.length > 1) {
-                    _Exception.warn('Cannot have more than one identifier in a ' + this.type +
-                        '\'s expression.', _Exception.CONTROL);
+                    this._log.warn('Cannot have more than one identifier in a ' + this.type +
+                        '\'s expression.');
                     return {
                         fn: noop,
                         context: <ui.TemplateControl>{},
@@ -257,9 +255,8 @@ module plat.controls {
                 fn = expression.fn;
 
             if (!isFunction(fn)) {
-                var _Exception: IExceptionStatic = this._Exception;
-                _Exception.warn('Cannot find registered event method ' +
-                    this._expression[0] + ' for control: ' + this.type, _Exception.BIND);
+                this._log.warn('Cannot find registered event method ' +
+                    this._expression[0] + ' for control: ' + this.type);
                 return;
             }
 

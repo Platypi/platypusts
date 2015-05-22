@@ -38,18 +38,17 @@ module plat.observable {
      */
     export class ContextManager {
         /**
-         * @name _Exception
+         * @name _log
          * @memberof plat.observable.ContextManager
          * @kind property
          * @access protected
          * @static
          * 
-         * @type {plat.IExceptionStatic}
-         * 
+         * @type {plat.debug.Log}
          * @description
-         * Reference to the {@link plat.IExceptionStatic|IExceptionStatic} injectable.
+         * Reference to the {@link plat.debug.Log|Log} injectable.
          */
-        protected static _Exception: IExceptionStatic;
+        protected static _log: debug.Log;
 
         /**
          * @name arrayChangeListeners
@@ -517,9 +516,8 @@ module plat.observable {
                 if (isNull(context)) {
                     context = control.context = {};
                 } else {
-                    var _Exception: IExceptionStatic = ContextManager._Exception;
-                    _Exception.warn('A child control is trying to create a child context that has ' +
-                        'a parent control with a primitive type context', _Exception.BIND);
+                    ContextManager._log.warn('A child control is trying to create a child context that has ' +
+                        'a parent control with a primitive type context');
                     return;
                 }
             }
@@ -1679,12 +1677,14 @@ module plat.observable {
     /**
      * The Type for referencing the '_ContextManager' injectable as a dependency.
      */
-    export function IContextManagerStatic(_Exception: IExceptionStatic): IContextManagerStatic {
-        (<any>ContextManager)._Exception = _Exception;
+    export function IContextManagerStatic(_log?: debug.Log): IContextManagerStatic {
+        (<any>ContextManager)._log = _log;
         return ContextManager;
     }
 
-    register.injectable(__ContextManagerStatic, IContextManagerStatic, null, __STATIC);
+    register.injectable(__ContextManagerStatic, IContextManagerStatic, [
+        __Log
+    ], __STATIC);
     register.injectable(__ContextManagerInstance, ContextManager, null, __INSTANCE);
 
     /**

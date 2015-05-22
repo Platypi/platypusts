@@ -24,12 +24,12 @@ module plat.async {
      */
     export class HttpRequest {
         protected static _inject: any = {
-            _Exception: __ExceptionStatic,
             _browser: __Browser,
             _window: __Window,
             _document: __Document,
             _config: __HttpConfig,
-            _compat: __Compat
+            _compat: __Compat,
+            _log: __Log
         };
 
         /**
@@ -72,17 +72,16 @@ module plat.async {
         jsonpCallback: string;
 
         /**
-         * @name _Exception
+         * @name _log
          * @memberof plat.async.HttpRequest
          * @kind property
          * @access protected
          * 
-         * @type {plat.IExceptionStatic}
-         * 
+         * @type {plat.debug.Log}
          * @description
-         * The plat.IExceptionStatic injectable instance
+         * Reference to the {@link plat.debug.Log|Log} injectable.
          */
-        protected _Exception: IExceptionStatic;
+        protected _log: debug.Log;
 
         /**
          * @name _browser
@@ -416,8 +415,7 @@ module plat.async {
                     };
 
                     if (!isString(method)) {
-                        var _Exception: IExceptionStatic = this._Exception;
-                        _Exception.warn('AjaxOptions method was not of type string. Defaulting to "GET".', _Exception.AJAX);
+                        this._log.info('AjaxOptions method was not of type string. Defaulting to "GET".');
                         method = 'GET';
                     }
 
@@ -575,8 +573,7 @@ module plat.async {
          */
         protected _invalidOptions(): AjaxPromise<any> {
             return new AjaxPromise((resolve, reject): void => {
-                var _Exception: IExceptionStatic = this._Exception;
-                _Exception.warn('Attempting a request without specifying a url', _Exception.AJAX);
+                this._log.warn('Attempting a request without specifying a url');
                 reject(new AjaxError({
                     response: 'Attempting a request without specifying a url',
                     status: null,
@@ -690,8 +687,7 @@ module plat.async {
                     val = '';
                 } else if (isObject(val)) {
                     // may throw a fatal error but this is an invalid case
-                    var _Exception: IExceptionStatic = this._Exception;
-                    _Exception.warn('Invalid form entry with key "' + key + '" and value "' + val, _Exception.AJAX);
+                    this._log.warn('Invalid form entry with key "' + key + '" and value "' + val);
                     val = JSON.stringify(val);
                 }
 
@@ -729,8 +725,7 @@ module plat.async {
                         formData.append(key, val, val.name || val.fileName || 'blob');
                     } else {
                         // may throw a fatal error but this is an invalid case
-                        var _Exception: IExceptionStatic = this._Exception;
-                        _Exception.warn('Invalid form entry with key "' + key + '" and value "' + val, _Exception.AJAX);
+                        this._log.warn('Invalid form entry with key "' + key + '" and value "' + val);
                         formData.append(key, JSON.stringify(val));
                     }
                 } else {
@@ -819,7 +814,6 @@ module plat.async {
          */
         private __createInput(key: string, val: any): HTMLInputElement {
             var _document = this._document,
-                _Exception: IExceptionStatic = this._Exception,
                 input = <HTMLInputElement>_document.createElement('input');
 
             input.type = 'hidden';
@@ -834,8 +828,8 @@ module plat.async {
                         length = fileList.length;
                     // if no inputs found, stringify the data
                     if (length === 0) {
-                        _Exception.warn('Could not find input[type="file"] with [name="' + key +
-                            '"]. Stringifying data instead.', _Exception.AJAX);
+                        this._log.info('Could not find input[type="file"] with [name="' + key +
+                            '"]. Stringifying data instead.');
                         input.value = JSON.stringify(val);
                     } else if (length === 1) {
                         input = <HTMLInputElement>fileList[0];
@@ -860,14 +854,14 @@ module plat.async {
 
                         // could not find the right file
                         if (length === -1) {
-                            _Exception.warn('Could not find input[type="file"] with [name="' + key + '"] and [value="' +
-                                val.path + '"]. Stringifying data instead.', _Exception.AJAX);
+                            this._log.info('Could not find input[type="file"] with [name="' + key + '"] and [value="' +
+                                val.path + '"]. Stringifying data instead.');
                             input.value = JSON.stringify(val);
                         }
                     }
                 } else {
                     // may throw a fatal error but this is an invalid case
-                    _Exception.warn('Invalid form entry with key "' + key + '" and value "' + val, _Exception.AJAX);
+                    this._log.info('Invalid form entry with key "' + key + '" and value "' + val);
                     input.value = JSON.stringify(val);
                 }
             } else {

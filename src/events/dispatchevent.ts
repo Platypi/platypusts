@@ -22,7 +22,7 @@ module plat.events {
      * An event class that propagates through a control tree. 
      * Propagation of the event always starts at the sender, allowing a control to both 
      * initialize and consume an event. If a consumer of an event throws an error while 
-     * handling the event it will be logged to the app using exception.warn. Errors will 
+     * handling the event it will be logged to the app using {@link plat.debug.Log.debug|Log.debug}. Errors will 
      * not stop propagation of the event.
      */
     export class DispatchEvent {

@@ -302,8 +302,7 @@ module plat.ui.controls {
                 }
                 return;
             } else if (!isArray(newValue)) {
-                var _Exception = this._Exception;
-                _Exception.warn(this.type + ' context set to something other than an Array.', _Exception.CONTEXT);
+                this._log.debug(this.type + ' context set to something other than an Array.');
                 return;
             }
 
@@ -343,8 +342,7 @@ module plat.ui.controls {
 
             var context = this.context;
             if (!isArray(context)) {
-                var _Exception = this._Exception;
-                _Exception.warn(this.type + ' context set to something other than an Array.', _Exception.CONTEXT);
+                this._log.debug(this.type + ' context set to something other than an Array.');
                 return;
             }
 
@@ -439,8 +437,7 @@ module plat.ui.controls {
                 element.selectedIndex = -1;
                 return;
             } else if (!isString(newValue)) {
-                var _Exception = this._Exception,
-                    message: string;
+                var message: string;
                 if (isNumber(newValue)) {
                     newValue = newValue.toString();
                     message = 'Trying to bind a value of type number to a ' + this.type + '\'s element. ' +
@@ -450,7 +447,7 @@ module plat.ui.controls {
                     'The element\'s selected index will be set to -1.';
                 }
 
-                _Exception.warn(message, _Exception.BIND);
+                this._log.debug(message);
             } else if (value === newValue) {
                 return;
             } else if (!this._document.body.contains(element)) {

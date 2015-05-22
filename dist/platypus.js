@@ -22,7 +22,7 @@ var plat;
     /* tslint:disable:no-unused-variable */
     /*
      */
-    var __prefix = '$', __CONTEXT = 'context', __AppStatic = __prefix + 'AppStatic', __App = __prefix + 'App', __Http = __prefix + 'Http', __HttpRequestInstance = __prefix + 'HttpRequestInstance', __HttpConfig = __prefix + 'HttpConfig', __Promise = __prefix + 'Promise', __Compat = __prefix + 'Compat', __ControlFactory = __prefix + 'ControlFactory', __AttributeControlFactory = __prefix + 'AttributeControlFactory', __Document = __prefix + 'Document', __DispatchEventInstance = __prefix + 'DispatchEventInstance', __ErrorEventStatic = __prefix + 'ErrorEventStatic', __EventManagerStatic = __prefix + 'EventManagerStatic', __LifecycleEventStatic = __prefix + 'LifecycleEventStatic', __LifecycleEventInstance = __prefix + 'LifecycleEventInstance', __ExceptionStatic = __prefix + 'ExceptionStatic', __Parser = __prefix + 'Parser', __Regex = __prefix + 'Regex', __Tokenizer = __prefix + 'Tokenizer', __NavigatorInstance = __prefix + 'NavigatorInstance', __ContextManagerStatic = __prefix + 'ContextManagerStatic', __ContextManagerInstance = __prefix + 'ContextManagerInstance', __Compiler = __prefix + 'Compiler', __CommentManagerFactory = __prefix + 'CommentManagerFactory', __CommentManagerInstance = __prefix + 'CommentManagerInstance', __ElementManagerFactory = __prefix + 'ElementManagerFactory', __ElementManagerInstance = __prefix + 'ElementManagerInstance', __NodeManagerStatic = __prefix + 'NodeManagerStatic', __TextManagerFactory = __prefix + 'TextManagerFactory', __TextManagerInstance = __prefix + 'TextManagerInstance', __CacheFactory = __prefix + 'CacheFactory', __ManagerCache = __prefix + 'ManagerCache', __TemplateCache = __prefix + 'TemplateCache', __Animator = __prefix + 'Animator', __AttributesFactory = __prefix + 'AttributesFactory', __AttributesInstance = __prefix + 'AttributesInstance', __BindableTemplatesFactory = __prefix + 'BindableTemplatesFactory', __Dom = __prefix + 'Dom', __DomEvents = __prefix + 'DomEvents', __IDomEventsConfig = __prefix + 'IDomEventsConfig', __DomEventInstance = __prefix + 'DomEventInstance', __ResourcesFactory = __prefix + 'ResourcesFactory', __ResourcesInstance = __prefix + 'ResourcesInstance', __TemplateControlFactory = __prefix + 'TemplateControlFactory', __TemplateControlInstance = __prefix + 'TemplateControlInstance', __Utils = __prefix + 'Utils', __Browser = __prefix + 'Browser', __BrowserConfig = __prefix + 'BrowserConfig', __Router = __prefix + 'Router', __RouterStatic = __prefix + 'RouterStatic', __UrlUtilsInstance = __prefix + 'UrlUtilsInstance', __Window = __prefix + 'Window', __LocalStorage = __prefix + 'LocalStorage', __SessionStorage = __prefix + 'SessionStorage', __Geolocation = __prefix + 'Geolocation', __BaseSegmentFactory = __prefix + 'BaseSegmentFactory', __BaseSegmentInstance = __prefix + 'BaseSegmentInstance', __StaticSegmentInstance = __prefix + 'StaticSegmentInstance', __VariableSegmentInstance = __prefix + 'VariableSegmentInstance', __DynamicSegmentInstance = __prefix + 'DynamicSegmentInstance', __SplatSegmentInstance = __prefix + 'SplatSegmentInstance', __StateStatic = __prefix + 'StateStatic', __StateInstance = __prefix + 'StateInstance', __RouteRecognizerInstance = __prefix + 'RouteRecognizerInstance', __InjectorStatic = __prefix + 'InjectorStatic', __History = __prefix + 'History', __Location = __prefix + 'Location', 
+    var __prefix = '$', __CONTEXT = 'context', __AppStatic = __prefix + 'AppStatic', __App = __prefix + 'App', __Http = __prefix + 'Http', __HttpRequestInstance = __prefix + 'HttpRequestInstance', __HttpConfig = __prefix + 'HttpConfig', __Promise = __prefix + 'Promise', __Compat = __prefix + 'Compat', __ControlFactory = __prefix + 'ControlFactory', __AttributeControlFactory = __prefix + 'AttributeControlFactory', __Document = __prefix + 'Document', __DispatchEventInstance = __prefix + 'DispatchEventInstance', __ErrorEventStatic = __prefix + 'ErrorEventStatic', __EventManagerStatic = __prefix + 'EventManagerStatic', __LifecycleEventStatic = __prefix + 'LifecycleEventStatic', __LifecycleEventInstance = __prefix + 'LifecycleEventInstance', __Log = __prefix + 'Log', __Parser = __prefix + 'Parser', __Regex = __prefix + 'Regex', __Tokenizer = __prefix + 'Tokenizer', __NavigatorInstance = __prefix + 'NavigatorInstance', __ContextManagerStatic = __prefix + 'ContextManagerStatic', __ContextManagerInstance = __prefix + 'ContextManagerInstance', __Compiler = __prefix + 'Compiler', __CommentManagerFactory = __prefix + 'CommentManagerFactory', __CommentManagerInstance = __prefix + 'CommentManagerInstance', __ElementManagerFactory = __prefix + 'ElementManagerFactory', __ElementManagerInstance = __prefix + 'ElementManagerInstance', __NodeManagerStatic = __prefix + 'NodeManagerStatic', __TextManagerFactory = __prefix + 'TextManagerFactory', __TextManagerInstance = __prefix + 'TextManagerInstance', __CacheFactory = __prefix + 'CacheFactory', __ManagerCache = __prefix + 'ManagerCache', __TemplateCache = __prefix + 'TemplateCache', __Animator = __prefix + 'Animator', __AttributesFactory = __prefix + 'AttributesFactory', __AttributesInstance = __prefix + 'AttributesInstance', __BindableTemplatesFactory = __prefix + 'BindableTemplatesFactory', __Dom = __prefix + 'Dom', __DomEvents = __prefix + 'DomEvents', __IDomEventsConfig = __prefix + 'IDomEventsConfig', __DomEventInstance = __prefix + 'DomEventInstance', __ResourcesFactory = __prefix + 'ResourcesFactory', __ResourcesInstance = __prefix + 'ResourcesInstance', __TemplateControlFactory = __prefix + 'TemplateControlFactory', __TemplateControlInstance = __prefix + 'TemplateControlInstance', __Utils = __prefix + 'Utils', __Browser = __prefix + 'Browser', __BrowserConfig = __prefix + 'BrowserConfig', __Router = __prefix + 'Router', __RouterStatic = __prefix + 'RouterStatic', __UrlUtilsInstance = __prefix + 'UrlUtilsInstance', __Window = __prefix + 'Window', __LocalStorage = __prefix + 'LocalStorage', __SessionStorage = __prefix + 'SessionStorage', __Geolocation = __prefix + 'Geolocation', __BaseSegmentFactory = __prefix + 'BaseSegmentFactory', __BaseSegmentInstance = __prefix + 'BaseSegmentInstance', __StaticSegmentInstance = __prefix + 'StaticSegmentInstance', __VariableSegmentInstance = __prefix + 'VariableSegmentInstance', __DynamicSegmentInstance = __prefix + 'DynamicSegmentInstance', __SplatSegmentInstance = __prefix + 'SplatSegmentInstance', __StateStatic = __prefix + 'StateStatic', __StateInstance = __prefix + 'StateInstance', __RouteRecognizerInstance = __prefix + 'RouteRecognizerInstance', __InjectorStatic = __prefix + 'InjectorStatic', __History = __prefix + 'History', __Location = __prefix + 'Location', 
     /**
      */
     __Plat = 'plat-', __Bind = __Plat + 'bind', __Href = __Plat + 'href', __Src = __Plat + 'src', __KeyDown = __Plat + 'keydown', __KeyPress = __Plat + 'keypress', __KeyUp = __Plat + 'keyup', __CharPress = __Plat + 'charpress', __Name = __Plat + 'name', __Options = __Plat + 'options', __Checked = __Plat + 'checked', __Disabled = __Plat + 'disabled', __Selected = __Plat + 'selected', __ReadOnly = __Plat + 'readonly', __Visible = __Plat + 'visible', __Style = __Plat + 'style', __Tap = __Plat + 'tap', __Blur = __Plat + 'blur', __Change = __Plat + 'change', __Copy = __Plat + 'copy', __Cut = __Plat + 'cut', __Paste = __Plat + 'paste', __DblTap = __Plat + 'dbltap', __Focus = __Plat + 'focus', __Submit = __Plat + 'submit', __TouchStart = __Plat + 'touchstart', __TouchEnd = __Plat + 'touchend', __TouchMove = __Plat + 'touchmove', __TouchCancel = __Plat + 'touchcancel', __Hold = __Plat + 'hold', __Release = __Plat + 'release', __Swipe = __Plat + 'swipe', __SwipeLeft = __Plat + 'swipeleft', __SwipeRight = __Plat + 'swiperight', __SwipeUp = __Plat + 'swipeup', __SwipeDown = __Plat + 'swipedown', __Track = __Plat + 'track', __TrackLeft = __Plat + 'trackleft', __TrackRight = __Plat + 'trackright', __TrackUp = __Plat + 'trackup', __TrackDown = __Plat + 'trackdown', __TrackEnd = __Plat + 'trackend', __React = __Plat + 'react', __Link = __Plat + 'link', __ForEach = __Plat + 'foreach', __Html = __Plat + 'html', __If = __Plat + 'if', __Ignore = __Plat + 'ignore', __Select = __Plat + 'select', __Template = __Plat + 'template', __Routeport = __Plat + 'routeport', __Viewport = __Plat + 'viewport', __Control = __Plat + 'control', __ViewControl = __Plat + 'viewcontrol', __Resources = __Plat + 'resources', __Context = __Plat + __CONTEXT, __Callback = __Plat + 'callback', __AttributePrefix = 'data-', 
@@ -493,7 +493,7 @@ var plat;
     }
     /* tslint:enable:no-unused-variable */
     /* tslint:disable:no-unused-variable */
-    var ___document, ___templateCache, ___http, ___Exception, __nodeNameRegex = /<([\w:]+)/, __whiteSpaceRegex = /\s+/g, __option = [1, '<select multiple="multiple">', '</select>'], __table = [1, '<table>', '</table>'], __tableData = [3, '<table><tbody><tr>', '</tr></tbody></table>'], __svg = [1, '<svg xmlns="http://www.w3.org/2000/svg" version="1.1">', '</svg>'], __innerTableWrappers = {
+    var ___document, ___templateCache, ___http, ___log, __nodeNameRegex = /<([\w:]+)/, __whiteSpaceRegex = /\s+/g, __option = [1, '<select multiple="multiple">', '</select>'], __table = [1, '<table>', '</table>'], __tableData = [3, '<table><tbody><tr>', '</tr></tbody></table>'], __svg = [1, '<svg xmlns="http://www.w3.org/2000/svg" version="1.1">', '</svg>'], __innerTableWrappers = {
         thead: __table,
         tbody: __table,
         tfoot: __table,
@@ -865,8 +865,8 @@ var plat;
                 return ___templateCache.put(templateUrl, success);
             }
             else if (!isObject(success) || !isString(success.response)) {
-                ___Exception = ___Exception || (___Exception = plat.acquire(__ExceptionStatic));
-                ___Exception.warn('No template found at ' + templateUrl, ___Exception.AJAX);
+                ___log = ___log || (___log = plat.acquire(__Log));
+                ___log.warn('No template found at ' + templateUrl);
                 return ___templateCache.put(templateUrl);
             }
             var templateString = success.response;
@@ -876,8 +876,8 @@ var plat;
             return ___templateCache.put(templateUrl, templateString);
         }).catch(function (error) {
             postpone(function () {
-                ___Exception = ___Exception || (___Exception = plat.acquire(__ExceptionStatic));
-                ___Exception.fatal('Failure to get template from ' + templateUrl + '.', ___Exception.TEMPLATE);
+                ___log = ___log || (___log = plat.acquire(__Log));
+                ___log.error(new Error('Failure to get template from ' + templateUrl + '.'));
             });
             return error;
         }));
@@ -1459,204 +1459,105 @@ var plat;
     }
     plat_1.acquire = acquire;
     /**
-     * Manages the throwing and consuming of errors and warnings.
+     * Holds all classes and interfaces related to debugging components in platypus.
      */
-    var Exception = (function () {
-        function Exception() {
-        }
+    var debug;
+    (function (debug) {
         /**
-         * Method for sending a warning to all listeners. Will
-         * not throw an error.
-         * @param {string} message The message to be sent to the listeners.
-         * @param {number} type? Denotes the type of fatal exception.
+         * Handles all logging/debugging for the framework. All logs will be bubbled up to the
+         * App.error event to allow for easy debugging.
          */
-        Exception.warn = function (message, type) {
-            raise(message, type, false);
-        };
-        Exception.fatal = function (message, type) {
-            raise(message, type, true);
-        };
-        /**
-         * Exception Type for parsing exceptions
-         */
-        Exception.PARSE = 0;
-        /**
-         * Exception Type for compiling exceptions
-         */
-        Exception.COMPILE = 1;
-        /**
-         * Exception Type for binding exceptions
-         */
-        Exception.BIND = 2;
-        /**
-         * Exception Type for name exceptions
-         */
-        Exception.NAME = 3;
-        /**
-         * Exception Type for navigation exceptions
-         */
-        Exception.NAVIGATION = 4;
-        /**
-         * Exception Type for template exceptions
-         */
-        Exception.TEMPLATE = 5;
-        /**
-         * Exception Type for ajax exceptions
-         */
-        Exception.AJAX = 6;
-        /**
-         * Exception Type for context exceptions
-         */
-        Exception.CONTEXT = 7;
-        /**
-         * Exception Type for event exceptions
-         */
-        Exception.EVENT = 8;
-        /**
-         * Exception Type for injectable exceptions
-         */
-        Exception.INJECTABLE = 9;
-        /**
-         * Exception Type for compat exceptions
-         */
-        Exception.COMPAT = 10;
-        /**
-         * Exception Type for promise exceptions
-         */
-        Exception.PROMISE = 11;
-        /**
-         * Exception Type for animation exceptions
-         */
-        Exception.ANIMATION = 12;
-        /**
-         * Exception Type for individual control exceptions
-         * (e.g. using a particular control incorrectly).
-         */
-        Exception.CONTROL = 13;
-        /**
-         * Exception Type for custom exceptions
-         */
-        Exception.CUSTOM = 99;
-        return Exception;
-    })();
-    plat_1.Exception = Exception;
-    /**
-     */
-    function IExceptionStatic() {
-        return Exception;
-    }
-    plat_1.IExceptionStatic = IExceptionStatic;
-    register.injectable(__ExceptionStatic, IExceptionStatic, null, __STATIC);
-    /**
-     * A class for exceptions with platypus-specific names
-     */
-    var PlatException = (function () {
-        /**
-         * Creates a new PlatException
-         * @param {string} message The message for the exception
-         * @param {string} name The name of the exception
-         */
-        function PlatException(message, name) {
-            this.message = message;
-            this.name = name;
-        }
-        return PlatException;
-    })();
-    /**
-     * A class for errors with platypus-specific names
-     */
-    var PlatError = (function () {
-        /**
-         * Creates a new PlatError
-         * @param {string} message? The message for the exception
-         */
-        function PlatError(message) {
-            this.message = message;
+        var Log = (function () {
+            function Log() {
+                /**
+                 * The ERROR log level
+                 */
+                this.ERROR = 5;
+                /**
+                 * The WARN log level
+                 */
+                this.WARN = 4;
+                /**
+                 * The INFO log level
+                 */
+                this.INFO = 3;
+                /**
+                 * The DEBUG log level
+                 */
+                this.DEBUG = 2;
+                /**
+                 * The TRACE log level
+                 */
+                this.TRACE = 1;
+                /**
+                 * A configurable log level (defaults to INFO). Any logs sent below this
+                 * will be silent.
+                 */
+                this._level = this.INFO;
+            }
             /**
-             * The name of the error.
+             * Logs fatal errors. This will throw the error after it is logged.
+             * @param {Error} error The error to log.
              */
-            this.name = __platError;
-            this.message = message || '';
-        }
-        return PlatError;
-    })();
-    /**
-     * Sets the PlatException and PlatError prototypes to the passed in Error type
-     * @param {T} platError The prototype of the Error.
-     */
-    function setPrototypes(platError) {
-        PlatError.prototype = platError || Error.prototype;
-        PlatException.prototype = new PlatError();
-    }
-    /**
-     * Dispatches error events, and throws an Error if it is fatal.
-     * @param {any} message Either a string or error to raise.
-     * @param {boolean} isFatal? Whether or not the error is fatal.
-     */
-    function raise(message, type, isFatal) {
-        var error;
-        if (message instanceof Error) {
-            setPrototypes(Object.getPrototypeOf(message));
-        }
-        else if (PlatError.prototype !== Error.prototype) {
-            setPrototypes();
-        }
-        error = new PlatException(message, '');
-        switch (type) {
-            case Exception.PARSE:
-                error.name = __parseError;
-                break;
-            case Exception.BIND:
-                error.name = __bindError;
-                break;
-            case Exception.COMPILE:
-                error.name = __compileError;
-                break;
-            case Exception.NAME:
-                error.name = __nameError;
-                break;
-            case Exception.NAVIGATION:
-                error.name = __navigationError;
-                break;
-            case Exception.TEMPLATE:
-                error.name = __templateError;
-                break;
-            case Exception.CONTEXT:
-                error.name = __contextError;
-                break;
-            case Exception.EVENT:
-                error.name = __eventError;
-                break;
-            case Exception.INJECTABLE:
-                error.name = __injectableError;
-                break;
-            case Exception.COMPAT:
-                error.name = __CompatError;
-                break;
-            case Exception.CUSTOM:
-            default:
-                error = new PlatError(message);
-                break;
-        }
-        if (message instanceof Error) {
-            var properties = Object.getOwnPropertyNames(message), length = properties.length;
-            error.message = '';
-            error = Object.create(error);
-            for (var i = 0; i < length; ++i) {
-                error[properties[i]] = message[properties[i]];
-            }
-            error.stack = message.stack;
-            error.code = message.code;
-        }
-        var ErrorEvent = acquire(__ErrorEventStatic);
-        ErrorEvent.dispatch(__error, Exception, error, isFatal);
-        if (isFatal) {
-            if (message instanceof Error) {
-                throw message;
-            }
-            throw error;
-        }
-    }
+            Log.prototype.error = function (error) {
+                this._log(error, this.ERROR, true);
+                throw error;
+            };
+            Log.prototype.warn = function (message) {
+                this._log(message, this.WARN);
+            };
+            Log.prototype.info = function (message) {
+                this._log(message, this.INFO);
+            };
+            Log.prototype.debug = function (message) {
+                this._log(message, this.DEBUG);
+            };
+            Log.prototype.trace = function (message) {
+                this._log(message, this.TRACE);
+            };
+            Log.prototype.setLogLevel = function (level) {
+                if (isString(level)) {
+                    level = Log[level.toUpperCase()];
+                }
+                switch (level) {
+                    case this.ERROR:
+                    case this.WARN:
+                    case this.INFO:
+                    case this.DEBUG:
+                    case this.TRACE:
+                        this._level = level;
+                        break;
+                    default:
+                        this._level = this.INFO;
+                }
+            };
+            Log.prototype._log = function (message, level, isFatal) {
+                if (!this._shouldLog(level)) {
+                    return;
+                }
+                if (isString(message)) {
+                    message = new Error(message);
+                }
+                this._ErrorEvent.dispatch(__error, Log, message, isFatal);
+            };
+            /**
+             * Detemines whether or not a log level is at or above the current minimum log level.
+             * @param {number} level The log level to check against the current minimum log level.
+             */
+            Log.prototype._shouldLog = function (level) {
+                if (!isNumber(level)) {
+                    level = this.INFO;
+                }
+                return this._level >= level;
+            };
+            Log._inject = {
+                _ErrorEvent: __ErrorEventStatic
+            };
+            return Log;
+        })();
+        debug.Log = Log;
+        register.injectable(__Log, Log);
+    })(debug = plat_1.debug || (plat_1.debug = {}));
     /**
      * A class containing boolean values signifying browser
      * and/or platform compatibilities.
@@ -2570,8 +2471,7 @@ var plat;
              * @param {string} error The error message to throw.
              */
             Tokenizer.prototype._throwError = function (error) {
-                var _Exception = this._Exception;
-                _Exception.fatal(error + ' in ' + this._input, _Exception.PARSE);
+                this._log.error(new Error(error + ' in ' + this._input));
             };
             /**
              * Checks if a single character is numeric.
@@ -2951,7 +2851,7 @@ var plat;
                 return atLeastOne;
             };
             Tokenizer._inject = {
-                _Exception: __ExceptionStatic
+                _log: __Log
             };
             return Tokenizer;
         })();
@@ -3194,8 +3094,7 @@ var plat;
              * @param {string} error The error message to throw.
              */
             Parser.prototype._throwError = function (error) {
-                var _Exception = this._Exception;
-                _Exception.fatal(error, _Exception.PARSE);
+                this._log.error(new Error(error));
             };
             /**
              * Handles a token that is a primitive value.
@@ -3504,7 +3403,7 @@ var plat;
             };
             Parser._inject = {
                 _tokenizer: __Tokenizer,
-                _Exception: __ExceptionStatic
+                _log: __Log
             };
             return Parser;
         })();
@@ -3898,7 +3797,6 @@ var plat;
              * @param {plat.async.IResolveFunction<R>} resolveFunction A IResolveFunction for fulfilling/rejecting the Promise.
              */
             function Promise(resolveFunction) {
-                var _Exception;
                 if (!isFunction(resolveFunction)) {
                     throw new TypeError('You must pass a resolver function as the first argument to the promise constructor');
                 }
@@ -4400,8 +4298,7 @@ var plat;
                         _this.xhr = options = null;
                     };
                     if (!isString(method)) {
-                        var _Exception = _this._Exception;
-                        _Exception.warn('AjaxOptions method was not of type string. Defaulting to "GET".', _Exception.AJAX);
+                        _this._log.info('AjaxOptions method was not of type string. Defaulting to "GET".');
                         method = 'GET';
                     }
                     xhr.open(method.toUpperCase(), url, 
@@ -4534,8 +4431,7 @@ var plat;
             HttpRequest.prototype._invalidOptions = function () {
                 var _this = this;
                 return new AjaxPromise(function (resolve, reject) {
-                    var _Exception = _this._Exception;
-                    _Exception.warn('Attempting a request without specifying a url', _Exception.AJAX);
+                    _this._log.warn('Attempting a request without specifying a url');
                     reject(new AjaxError({
                         response: 'Attempting a request without specifying a url',
                         status: null,
@@ -4604,8 +4500,7 @@ var plat;
                     }
                     else if (isObject(val)) {
                         // may throw a fatal error but this is an invalid case 
-                        var _Exception = this._Exception;
-                        _Exception.warn('Invalid form entry with key "' + key + '" and value "' + val, _Exception.AJAX);
+                        this._log.warn('Invalid form entry with key "' + key + '" and value "' + val);
                         val = JSON.stringify(val);
                     }
                     formBuffer.push(encodeURIComponent(key) + '=' + encodeURIComponent(val));
@@ -4629,8 +4524,7 @@ var plat;
                         }
                         else {
                             // may throw a fatal error but this is an invalid case 
-                            var _Exception = this._Exception;
-                            _Exception.warn('Invalid form entry with key "' + key + '" and value "' + val, _Exception.AJAX);
+                            this._log.warn('Invalid form entry with key "' + key + '" and value "' + val);
                             formData.append(key, JSON.stringify(val));
                         }
                     }
@@ -4683,7 +4577,7 @@ var plat;
              * Creates input for form data submissions.
              */
             HttpRequest.prototype.__createInput = function (key, val) {
-                var _document = this._document, _Exception = this._Exception, input = _document.createElement('input');
+                var _document = this._document, input = _document.createElement('input');
                 input.type = 'hidden';
                 input.name = key;
                 if (isNull(val)) {
@@ -4695,8 +4589,8 @@ var plat;
                         var fileList = _document.querySelectorAll('input[type="file"][name="' + key + '"]'), length = fileList.length;
                         // if no inputs found, stringify the data 
                         if (length === 0) {
-                            _Exception.warn('Could not find input[type="file"] with [name="' + key +
-                                '"]. Stringifying data instead.', _Exception.AJAX);
+                            this._log.info('Could not find input[type="file"] with [name="' + key +
+                                '"]. Stringifying data instead.');
                             input.value = JSON.stringify(val);
                         }
                         else if (length === 1) {
@@ -4721,15 +4615,15 @@ var plat;
                             }
                             // could not find the right file 
                             if (length === -1) {
-                                _Exception.warn('Could not find input[type="file"] with [name="' + key + '"] and [value="' +
-                                    val.path + '"]. Stringifying data instead.', _Exception.AJAX);
+                                this._log.info('Could not find input[type="file"] with [name="' + key + '"] and [value="' +
+                                    val.path + '"]. Stringifying data instead.');
                                 input.value = JSON.stringify(val);
                             }
                         }
                     }
                     else {
                         // may throw a fatal error but this is an invalid case 
-                        _Exception.warn('Invalid form entry with key "' + key + '" and value "' + val, _Exception.AJAX);
+                        this._log.info('Invalid form entry with key "' + key + '" and value "' + val);
                         input.value = JSON.stringify(val);
                     }
                 }
@@ -4739,12 +4633,12 @@ var plat;
                 return input;
             };
             HttpRequest._inject = {
-                _Exception: __ExceptionStatic,
                 _browser: __Browser,
                 _window: __Window,
                 _document: __Document,
                 _config: __HttpConfig,
-                _compat: __Compat
+                _compat: __Compat,
+                _log: __Log
             };
             return HttpRequest;
         })();
@@ -5113,14 +5007,13 @@ var plat;
                 return promise.then(function (node) {
                     return _this.put(key, node);
                 }, function (error) {
-                    var _Exception = _this._Exception;
-                    _Exception.warn('Error retrieving template from promise.', _Exception.TEMPLATE);
+                    _this._log.warn('Error retrieving template, ' + key + ', from promise.');
                     return null;
                 });
             };
             TemplateCache._inject = {
                 _Promise: __Promise,
-                _Exception: __ExceptionStatic
+                _log: __Log
             };
             return TemplateCache;
         })(Cache);
@@ -5379,57 +5272,57 @@ var plat;
         '=': {
             precedence: 17, associativity: 'rtl',
             fn: function (context, aliases, a, b) {
-                var _Exception = plat.acquire(__ExceptionStatic);
-                _Exception.fatal('Assignment operators are not supported', _Exception.PARSE);
+                var _log = plat.acquire(__Log);
+                _log.error(new Error('Assignment operators are not supported'));
             }
         },
         '++': {
             precedence: 3, associativity: '',
             fn: function (context, aliases, a) {
-                var _Exception = plat.acquire(__ExceptionStatic);
-                _Exception.fatal('Assignment operators are not supported', _Exception.PARSE);
+                var _log = plat.acquire(__Log);
+                _log.error(new Error('Assignment operators are not supported'));
             }
         },
         '--': {
             precedence: 3, associativity: '',
             fn: function (context, aliases, a) {
-                var _Exception = plat.acquire(__ExceptionStatic);
-                _Exception.fatal('Assignment operators are not supported', _Exception.PARSE);
+                var _log = plat.acquire(__Log);
+                _log.error(new Error('Assignment operators are not supported'));
             }
         },
         '+=': {
             precedence: 17, associativity: 'rtl',
             fn: function (context, aliases, a, b) {
-                var _Exception = plat.acquire(__ExceptionStatic);
-                _Exception.fatal('Assignment operators are not supported', _Exception.PARSE);
+                var _log = plat.acquire(__Log);
+                _log.error(new Error('Assignment operators are not supported'));
             }
         },
         '-=': {
             precedence: 17, associativity: 'rtl',
             fn: function (context, aliases, a, b) {
-                var _Exception = plat.acquire(__ExceptionStatic);
-                _Exception.fatal('Assignment operators are not supported', _Exception.PARSE);
+                var _log = plat.acquire(__Log);
+                _log.error(new Error('Assignment operators are not supported'));
             }
         },
         '*=': {
             precedence: 17, associativity: 'rtl',
             fn: function (context, aliases, a, b) {
-                var _Exception = plat.acquire(__ExceptionStatic);
-                _Exception.fatal('Assignment operators are not supported', _Exception.PARSE);
+                var _log = plat.acquire(__Log);
+                _log.error(new Error('Assignment operators are not supported'));
             }
         },
         '/=': {
             precedence: 17, associativity: 'rtl',
             fn: function (context, aliases, a, b) {
-                var _Exception = plat.acquire(__ExceptionStatic);
-                _Exception.fatal('Assignment operators are not supported', _Exception.PARSE);
+                var _log = plat.acquire(__Log);
+                _log.error(new Error('Assignment operators are not supported'));
             }
         },
         '%=': {
             precedence: 17, associativity: 'rtl',
             fn: function (context, aliases, a, b) {
-                var _Exception = plat.acquire(__ExceptionStatic);
-                _Exception.fatal('Assignment operators are not supported', _Exception.PARSE);
+                var _log = plat.acquire(__Log);
+                _log.error(new Error('Assignment operators are not supported'));
             }
         }
     };
@@ -5700,9 +5593,8 @@ var plat;
                         context = control.context = {};
                     }
                     else {
-                        var _Exception = ContextManager._Exception;
-                        _Exception.warn('A child control is trying to create a child context that has ' +
-                            'a parent control with a primitive type context', _Exception.BIND);
+                        ContextManager._log.warn('A child control is trying to create a child context that has ' +
+                            'a parent control with a primitive type context');
                         return;
                     }
                 }
@@ -6470,12 +6362,14 @@ var plat;
         observable.ContextManager = ContextManager;
         /**
          */
-        function IContextManagerStatic(_Exception) {
-            ContextManager._Exception = _Exception;
+        function IContextManagerStatic(_log) {
+            ContextManager._log = _log;
             return ContextManager;
         }
         observable.IContextManagerStatic = IContextManagerStatic;
-        register.injectable(__ContextManagerStatic, IContextManagerStatic, null, __STATIC);
+        register.injectable(__ContextManagerStatic, IContextManagerStatic, [
+            __Log
+        ], __STATIC);
         register.injectable(__ContextManagerInstance, ContextManager, null, __INSTANCE);
     })(observable = plat_1.observable || (plat_1.observable = {}));
     /**
@@ -6487,7 +6381,7 @@ var plat;
          * An event class that propagates through a control tree.
          * Propagation of the event always starts at the sender, allowing a control to both
          * initialize and consume an event. If a consumer of an event throws an error while
-         * handling the event it will be logged to the app using exception.warn. Errors will
+         * handling the event it will be logged to the app using Log.debug. Errors will
          * not stop propagation of the event.
          */
         var DispatchEvent = (function () {
@@ -6809,8 +6703,7 @@ var plat;
                         listeners[index].apply(context, args);
                     }
                     catch (e) {
-                        var _Exception = EventManager._Exception;
-                        _Exception.warn(e, _Exception.EVENT);
+                        EventManager._log.debug(e);
                     }
                 }
             };
@@ -6849,8 +6742,8 @@ var plat;
         events.EventManager = EventManager;
         /**
          */
-        function IEventManagerStatic(_Exception, _compat, _document, _window, _dom) {
-            EventManager._Exception = _Exception;
+        function IEventManagerStatic(_log, _compat, _document, _window, _dom) {
+            EventManager._log = _log;
             EventManager._compat = _compat;
             EventManager._document = _document;
             EventManager._window = _window;
@@ -6859,7 +6752,7 @@ var plat;
         }
         events.IEventManagerStatic = IEventManagerStatic;
         register.injectable(__EventManagerStatic, IEventManagerStatic, [
-            __ExceptionStatic,
+            __Log,
             __Compat,
             __Document,
             __Window,
@@ -6924,10 +6817,6 @@ var plat;
          */
         function Control() {
             /**
-             * The plat.IExceptionStatic injectable instance
-             */
-            this._Exception = Control._Exception;
-            /**
              * A unique id, created during instantiation and found on every Control.
              */
             this.uid = uniqueId(__Plat);
@@ -6947,6 +6836,10 @@ var plat;
              * Contains helper methods for data manipulation.
              */
             this.utils = acquire(__Utils);
+            /**
+             * Reference to the Log injectable.
+             */
+            this._log = Control._log;
         }
         Control.getRootControl = function (control) {
             if (isNull(control)) {
@@ -6962,9 +6855,8 @@ var plat;
                 control = control.parent;
             }
             if (!control.hasOwnContext && isObject(control.context)) {
-                var _Exception = Control._Exception;
-                _Exception.warn('Root control: ' + control.type + ' found that sets its context to an Object but does not set the hasOwnContext ' +
-                    'flag to true. Please set the flag if the control intends to use its own context.', _Exception.CONTEXT);
+                Control._log.debug('Root control: ' + control.type + ' found that sets its context to an Object but does not set the hasOwnContext ' +
+                    'flag to true. Please set the flag if the control intends to use its own context.');
             }
             return control;
         };
@@ -7166,8 +7058,7 @@ var plat;
         };
         Control.prototype.addEventListener = function (element, type, listener, useCapture) {
             if (!isFunction(listener)) {
-                var _Exception = this._Exception;
-                _Exception.warn('"Control.addEventListener" must take a function as the third argument.', _Exception.EVENT);
+                this._log.warn('"Control.addEventListener" must take a function as the third argument.');
                 return noop;
             }
             listener = listener.bind(this);
@@ -7392,13 +7283,13 @@ var plat;
     plat_1.Control = Control;
     /**
      */
-    function IControlFactory(_parser, _ContextManager, _EventManager, _Promise, _dom, _Exception) {
+    function IControlFactory(_parser, _ContextManager, _EventManager, _Promise, _dom, _log) {
         Control._parser = _parser;
         Control._ContextManager = _ContextManager;
         Control._EventManager = _EventManager;
         Control._Promise = _Promise;
         Control._dom = _dom;
-        Control._Exception = _Exception;
+        Control._log = _log;
         return Control;
     }
     plat_1.IControlFactory = IControlFactory;
@@ -7408,7 +7299,7 @@ var plat;
         __EventManagerStatic,
         __Promise,
         __Dom,
-        __ExceptionStatic
+        __Log
     ], __FACTORY);
     /**
      * A type of control that can be used as an attribute but will
@@ -7564,8 +7455,7 @@ var plat;
                         resourceObj = TemplateControl.findResource(control, alias);
                     }
                     if (isNull(resourceObj)) {
-                        var _Exception = TemplateControl._Exception;
-                        _Exception.warn('Resource alias: ' + alias + ' is not defined.', _Exception.CONTEXT);
+                        TemplateControl._log.warn('Resource alias: ' + alias + ' is not defined.');
                         continue;
                     }
                     cache[alias] = resourceObj;
@@ -7853,7 +7743,7 @@ var plat;
         ui.TemplateControl = TemplateControl;
         /**
          */
-        function ITemplateControlFactory(_ResourcesFactory, _BindableTemplatesFactory, _managerCache, _templateCache, _parser, _http, _Promise, _Exception) {
+        function ITemplateControlFactory(_ResourcesFactory, _BindableTemplatesFactory, _managerCache, _templateCache, _parser, _http, _Promise, _log) {
             TemplateControl._ResourcesFactory = _ResourcesFactory;
             TemplateControl._BindableTemplatesFactory = _BindableTemplatesFactory;
             TemplateControl._managerCache = _managerCache;
@@ -7861,7 +7751,7 @@ var plat;
             TemplateControl._parser = _parser;
             TemplateControl._http = _http;
             TemplateControl._Promise = _Promise;
-            TemplateControl._Exception = _Exception;
+            TemplateControl._log = _log;
             return TemplateControl;
         }
         ui.ITemplateControlFactory = ITemplateControlFactory;
@@ -7873,7 +7763,7 @@ var plat;
             __Parser,
             __Http,
             __Promise,
-            __ExceptionStatic
+            __Log
         ], __FACTORY);
         register.injectable(__TemplateControlInstance, TemplateControl, null, __INSTANCE);
         /**
@@ -8181,9 +8071,9 @@ var plat;
                  */
                 this._BindableTemplatesFactory = acquire(__BindableTemplatesFactory);
                 /**
-                 * Reference to the IExceptionStatic injectable.
+                 * Reference to the Log injectable.
                  */
-                this._Exception = acquire(__ExceptionStatic);
+                this._log = acquire(__Log);
                 /**
                  * Stores promises that resolve to all the compiled templates for this object, ready to be bound to a data context.
                  * All created templates are DocumentFragments, allowing an TemplateControl to
@@ -8274,16 +8164,16 @@ var plat;
                 this._compile(key, fragment);
             };
             BindableTemplates.prototype.replace = function (index, key, relativeIdentifier, resources) {
-                var control = this.control.controls[index], _Exception = this._Exception;
+                var control = this.control.controls[index];
                 if (!BindableTemplates.isBoundControl(control)) {
-                    _Exception.warn('The child control at the specified index: ' + index + ' is not a bound control and thus cannot be ' +
-                        'replaced by BindableTemplates.', _Exception.BIND);
+                    this._log.warn('The child control at the specified index: ' + index + ' is not a bound control and thus cannot be ' +
+                        'replaced by BindableTemplates.');
                     return this._Promise.resolve([]);
                 }
                 var endNode = control.endNode;
                 if (!(isNode(endNode) && isNode(endNode.parentNode))) {
-                    _Exception.warn('The child control at the specified index: ' + index + ' had either no placeholding comment nodes ' +
-                        'or its comment nodes had no parent and thus cannot be replaced by BindableTemplates.', _Exception.BIND);
+                    this._log.warn('The child control at the specified index: ' + index + ' had either no placeholding comment nodes ' +
+                        'or its comment nodes had no parent and thus cannot be replaced by BindableTemplates.');
                     return this._Promise.resolve([]);
                 }
                 return this._bind(key, relativeIdentifier, resources, index);
@@ -8317,14 +8207,14 @@ var plat;
              */
             BindableTemplates.prototype._bind = function (key, relativeIdentifier, resources, index) {
                 var _this = this;
-                var templatePromise = this.templates[key], _Exception = this._Exception, noIndex = isNull(index);
+                var templatePromise = this.templates[key], noIndex = isNull(index);
                 if (isNull(templatePromise)) {
-                    _Exception.fatal('Cannot bind template, no template stored with key: ' + key, _Exception.TEMPLATE);
+                    this._log.error(new Error('Cannot bind template, no template stored with key: ' + key));
                     return;
                 }
                 if (!(isNull(relativeIdentifier) || isNumber(relativeIdentifier) || isString(relativeIdentifier))) {
-                    _Exception.warn('Cannot bind template with relativeIdentifier: ' + relativeIdentifier +
-                        '. Identifier must be either a string or number', _Exception.BIND);
+                    this._log.warn('Cannot bind template with relativeIdentifier: ' + relativeIdentifier +
+                        '. Identifier must be either a string or number');
                     return;
                 }
                 templatePromise = templatePromise.then(function (result) {
@@ -8342,14 +8232,20 @@ var plat;
                         return childNodes;
                     }).then(null, function (error) {
                         postpone(function () {
-                            _Exception.fatal(error, _Exception.BIND);
+                            if (isString(error)) {
+                                error = new Error(error);
+                            }
+                            _this._log.error(error);
                         });
                         return _this._document.createDocumentFragment();
                     });
                 }
                 return templatePromise.then(null, function (error) {
                     postpone(function () {
-                        _Exception.fatal(error, _Exception.BIND);
+                        if (isString(error)) {
+                            error = new Error(error);
+                        }
+                        _this._log.error(error);
                     });
                     return _this._document.createDocumentFragment();
                 });
@@ -8378,8 +8274,10 @@ var plat;
                     return template;
                 }, function (error) {
                     postpone(function () {
-                        var _Exception = _this._Exception;
-                        _Exception.fatal(error, _Exception.COMPILE);
+                        if (isString(error)) {
+                            error = new Error(error);
+                        }
+                        _this._log.error(error);
                     });
                     return null;
                 });
@@ -8623,9 +8521,8 @@ var plat;
                                 resource.value = value.bind(control);
                             }
                             else {
-                                var _Exception = Resources._Exception;
-                                _Exception.warn('Attempted to create a "function" ' +
-                                    'type Resource with a function not found on your control.', _Exception.BIND);
+                                Resources._log.warn('Attempted to create a "function" ' +
+                                    'type Resource, but the function ' + value + 'cannot be found on your control.');
                                 resource.value = noop;
                             }
                         }
@@ -8853,10 +8750,10 @@ var plat;
         ui.Resources = Resources;
         /**
          */
-        function IResourcesFactory(_ContextManager, _regex, _Exception) {
+        function IResourcesFactory(_ContextManager, _regex, _log) {
             Resources._ContextManager = _ContextManager;
             Resources._regex = _regex;
-            Resources._Exception = _Exception;
+            Resources._log = _log;
             var controlResources = {}, resourceTypes = {};
             controlResources[__CONTROL_RESOURCE] = controlResources[__CONTEXT_RESOURCE] = controlResources[__ROOT_RESOURCE] = controlResources[__ROOT_CONTEXT_RESOURCE] = true;
             resourceTypes[__INJECTABLE_RESOURCE] = resourceTypes[__OBJECT_RESOURCE] = resourceTypes[__OBSERVABLE_RESOURCE] = resourceTypes[__FUNCTION_RESOURCE] = resourceTypes[__LITERAL_RESOURCE] = true;
@@ -8868,7 +8765,7 @@ var plat;
         register.injectable(__ResourcesFactory, IResourcesFactory, [
             __ContextManagerStatic,
             __Regex,
-            __ExceptionStatic
+            __Log
         ], __FACTORY);
         register.injectable(__ResourcesInstance, Resources, null, __INSTANCE);
         /**
@@ -11033,8 +10930,7 @@ var plat;
                  */
                 BaseAnimation.prototype.addEventListener = function (type, listener, useCapture) {
                     if (!isFunction(listener)) {
-                        var _Exception = this._Exception;
-                        _Exception.warn('An animation\'s "addEventListener" must take a function as the second argument.', _Exception.EVENT);
+                        this._log.warn('An animation\'s "addEventListener" must take a function as the second argument.');
                         return noop;
                     }
                     listener = listener.bind(this);
@@ -11071,7 +10967,7 @@ var plat;
                 BaseAnimation._inject = {
                     _window: __Window,
                     _compat: __Compat,
-                    _Exception: __ExceptionStatic,
+                    _log: __Log,
                     _Promise: __Promise,
                     dom: __Dom,
                     utils: __Utils
@@ -11748,8 +11644,7 @@ var plat;
                 Template.prototype.initialize = function () {
                     var optionsObj = this.options || {}, options = optionsObj.value || {}, id = this._id = options.id;
                     if (isNull(id)) {
-                        var _Exception = this._Exception;
-                        _Exception.warn(this.type + ' instantiated without an id option', _Exception.COMPILE);
+                        this._log.warn(this.type + ' instantiated without an id option');
                         return;
                     }
                     this._url = options.templateUrl;
@@ -11828,15 +11723,14 @@ var plat;
                  */
                 Template.prototype._waitForTemplateControl = function (templatePromise) {
                     var _this = this;
-                    var _Exception = this._Exception;
                     if (!isPromise(templatePromise)) {
                         return;
                     }
                     templatePromise.then(function (templateControl) {
                         if (!(isNull(_this._url) || (_this._url === templateControl._url))) {
-                            _Exception.warn('The specified url: ' + _this._url +
+                            _this._log.warn('The specified url: ' + _this._url +
                                 ' does not match the original ' + _this.type + ' with id: ' +
-                                '"' + _this._id + '". The original url will be loaded.', _Exception.TEMPLATE);
+                                '"' + _this._id + '". The original url will be loaded.');
                         }
                         _this.__mapBindableTemplates(templateControl);
                         return _this.bindableTemplates.bind(_this._id);
@@ -11845,8 +11739,8 @@ var plat;
                         insertBefore(endNode.parentNode, clone, endNode);
                     }).catch(function (error) {
                         postpone(function () {
-                            _Exception.warn('Problem resolving ' + _this.type + ' url: ' +
-                                error.response, _Exception.TEMPLATE);
+                            _this._log.warn('Problem resolving ' + _this.type + ' url: ' +
+                                error.response);
                         });
                     });
                 };
@@ -11963,8 +11857,7 @@ var plat;
                         this._setListener();
                     }
                     else {
-                        var _Exception = this._Exception;
-                        _Exception.warn(this.type + ' context set to something other than an Array.', _Exception.CONTEXT);
+                        this._log.debug(this.type + ' context set to something other than an Array.');
                         newValue = [];
                     }
                     this._executeEvent([{
@@ -11983,8 +11876,7 @@ var plat;
                     }
                     if (!isArray(context)) {
                         if (!isNull(context)) {
-                            var _Exception = this._Exception;
-                            _Exception.warn(this.type + ' context set to something other than an Array.', _Exception.CONTEXT);
+                            this._log.debug(this.type + ' context set to something other than an Array.');
                         }
                         return;
                     }
@@ -12063,8 +11955,10 @@ var plat;
                             }
                         }).catch(function (error) {
                             postpone(function () {
-                                var _Exception = _this._Exception;
-                                _Exception.warn(error, _Exception.BIND);
+                                if (isString(error)) {
+                                    error = new Error(error);
+                                }
+                                _this._log.error(error);
                             });
                         });
                     }
@@ -12880,8 +12774,7 @@ var plat;
                         return;
                     }
                     else if (!isArray(newValue)) {
-                        var _Exception = this._Exception;
-                        _Exception.warn(this.type + ' context set to something other than an Array.', _Exception.CONTEXT);
+                        this._log.debug(this.type + ' context set to something other than an Array.');
                         return;
                     }
                     var newLength = isArray(newValue) ? newValue.length : 0, oldLength = isArray(oldValue) ? oldValue.length : 0;
@@ -12905,8 +12798,7 @@ var plat;
                     this._defaultOption = this.element.firstElementChild;
                     var context = this.context;
                     if (!isArray(context)) {
-                        var _Exception = this._Exception;
-                        _Exception.warn(this.type + ' context set to something other than an Array.', _Exception.CONTEXT);
+                        this._log.debug(this.type + ' context set to something other than an Array.');
                         return;
                     }
                     this._addItems(context.length, 0);
@@ -12967,7 +12859,7 @@ var plat;
                         return;
                     }
                     else if (!isString(newValue)) {
-                        var _Exception = this._Exception, message;
+                        var message;
                         if (isNumber(newValue)) {
                             newValue = newValue.toString();
                             message = 'Trying to bind a value of type number to a ' + this.type + '\'s element. ' +
@@ -12977,7 +12869,7 @@ var plat;
                             message = 'Trying to bind a value that is not a string to a ' + this.type + '\'s element. ' +
                                 'The element\'s selected index will be set to -1.';
                         }
-                        _Exception.warn(message, _Exception.BIND);
+                        this._log.debug(message);
                     }
                     else if (value === newValue) {
                         return;
@@ -13324,8 +13216,7 @@ var plat;
                  */
                 If.prototype.loaded = function () {
                     if (isNull(this.options)) {
-                        var _Exception = this._Exception;
-                        _Exception.warn('No condition specified in ' + __Options + ' for ' + this.type + '.', _Exception.BIND);
+                        this._log.warn('No condition specified in ' + __Options + ' for ' + this.type + '.');
                         this.options = {
                             value: {
                                 condition: true
@@ -13495,9 +13386,8 @@ var plat;
                 Link.prototype.loaded = function () {
                     var options = this.options, setHref = this.setHref.bind(this);
                     if (!isObject(options)) {
-                        var _Exception = this._Exception;
-                        _Exception.warn('No options specified for ' + this.type +
-                            '. Please send in options of type plat.ui.controls.ILinkOptions.', _Exception.CONTROL);
+                        this._log.warn('No options specified for ' + this.type +
+                            '. Please send in options of type plat.ui.controls.ILinkOptions.');
                         options = this.options = {};
                         options.value = { view: '' };
                         this.setHref();
@@ -13773,8 +13663,7 @@ var plat;
                                 e.description = 'Cannot stringify object: ' + e.description;
                             }
                             e.message = 'Cannot stringify object: ' + e.message;
-                            var _Exception = NodeManager._Exception;
-                            _Exception.warn(e, _Exception.PARSE);
+                            NodeManager._log.warn(e);
                         }
                     }
                     else if (!isNull(value)) {
@@ -13984,14 +13873,14 @@ var plat;
         processing.NodeManager = NodeManager;
         /**
          */
-        function INodeManagerStatic(_regex, _ContextManager, _parser, _TemplateControlFactory, _Exception) {
+        function INodeManagerStatic(_regex, _ContextManager, _parser, _TemplateControlFactory, _log) {
             // NOTE: This is not advised by TypeScript, but we want to do this. 
             NodeManager._markupRegex = _regex.markupRegex;
             NodeManager._newLineRegex = _regex.newLineRegex;
             NodeManager._ContextManager = _ContextManager;
             NodeManager._parser = _parser;
             NodeManager._TemplateControlFactory = _TemplateControlFactory;
-            NodeManager._Exception = _Exception;
+            NodeManager._log = _log;
             return NodeManager;
         }
         processing.INodeManagerStatic = INodeManagerStatic;
@@ -13999,7 +13888,8 @@ var plat;
             __Regex,
             __ContextManagerStatic,
             __Parser,
-            __TemplateControlFactory
+            __TemplateControlFactory,
+            __Log
         ], __STATIC);
         /**
          * A class used to manage element nodes. Provides a way for compiling and binding the
@@ -14267,7 +14157,7 @@ var plat;
                 manager._ControlFactory = acquire(__ControlFactory);
                 manager._TemplateControlFactory = NodeManager._TemplateControlFactory;
                 manager._BindableTemplatesFactory = ElementManager._BindableTemplatesFactory;
-                manager._Exception = ElementManager._Exception;
+                manager._log = ElementManager._log;
                 return manager;
             };
             /**
@@ -14287,9 +14177,8 @@ var plat;
                         if (value !== '') {
                             childContext = _parser.parse(value);
                             if (childContext.identifiers.length !== 1) {
-                                var _Exception = ElementManager._Exception;
-                                _Exception.warn('Incorrect ' + __Context + ': ' +
-                                    value + ', must contain a single identifier.', _Exception.COMPILE);
+                                ElementManager._log.warn('Incorrect ' + __Context + ': ' +
+                                    value + ', must contain a single identifier.');
                             }
                             childIdentifier = childContext.identifiers[0];
                         }
@@ -14462,7 +14351,7 @@ var plat;
                     controls.push(uiControl);
                     if (inheritsContext && !isNull(childContext)) {
                         if (childContext[0] === '@') {
-                            var split = childContext.split('.'), topIdentifier = split.shift(), alias = topIdentifier.slice(1), resourceObj = _TemplateControlFactory.findResource(uiControl, alias), _Exception = this._Exception;
+                            var split = childContext.split('.'), topIdentifier = split.shift(), alias = topIdentifier.slice(1), resourceObj = _TemplateControlFactory.findResource(uiControl, alias);
                             if (isObject(resourceObj)) {
                                 var resource = resourceObj.resource;
                                 childContext = (split.length > 0 ? ('.' + split.join('.')) : '');
@@ -14477,12 +14366,12 @@ var plat;
                                     uiControl.root = resourceObj.control;
                                 }
                                 else {
-                                    _Exception.warn('Only resources of type "observable" can be set as context.', _Exception.CONTEXT);
+                                    this._log.warn('Only resources of type "observable" can be set as context.');
                                 }
                             }
                             else {
-                                _Exception.warn('Could not set the context of ' + uiControl.type +
-                                    ' with the resource specified as "' + childContext + '".', _Exception.CONTEXT);
+                                this._log.warn('Could not set the context of ' + uiControl.type +
+                                    ' with the resource specified as "' + childContext + '".');
                             }
                         }
                         else {
@@ -14550,8 +14439,10 @@ var plat;
                         }
                         else {
                             postpone(function () {
-                                var _Exception = _this._Exception;
-                                _Exception.fatal(error, _Exception.COMPILE);
+                                if (isString(error)) {
+                                    error = new Error(error);
+                                }
+                                _this._log.error(error);
                             });
                         }
                     });
@@ -14595,8 +14486,10 @@ var plat;
                     return _this.bindAndLoad();
                 }).catch(function (error) {
                     postpone(function () {
-                        var _Exception = _this._Exception;
-                        _Exception.fatal(error, _Exception.BIND);
+                        if (isString(error)) {
+                            error = new Error(error);
+                        }
+                        _this._log.error(error);
                     });
                 });
             };
@@ -14618,8 +14511,10 @@ var plat;
                     return _this._loadControls(controls, _this.getUiControl());
                 }).catch(function (error) {
                     postpone(function () {
-                        var _Exception = _this._Exception;
-                        _Exception.fatal(error, _Exception.BIND);
+                        if (isString(error)) {
+                            error = new Error(error);
+                        }
+                        _this._log.error(error);
                     });
                 });
             };
@@ -14646,8 +14541,10 @@ var plat;
                     });
                 }).catch(function (error) {
                     postpone(function () {
-                        var _Exception = _this._Exception;
-                        _Exception.fatal(error, _Exception.BIND);
+                        if (isString(error)) {
+                            error = new Error(error);
+                        }
+                        _this._log.error(error);
                     });
                 });
             };
@@ -14865,8 +14762,10 @@ var plat;
                 }
                 return this._Promise.all(promises).catch(function (error) {
                     postpone(function () {
-                        var _Exception = _this._Exception;
-                        _Exception.fatal(error, _Exception.COMPILE);
+                        if (isString(error)) {
+                            error = new Error(error);
+                        }
+                        _this._log.error(error);
                     });
                 });
             };
@@ -14878,20 +14777,20 @@ var plat;
                 _ControlFactory: __ControlFactory,
                 _TemplateControlFactory: __TemplateControlFactory,
                 _BindableTemplatesFactory: __BindableTemplatesFactory,
-                _Exception: __ExceptionStatic
+                _log: __Log
             };
             return ElementManager;
         })(NodeManager);
         processing.ElementManager = ElementManager;
         /**
          */
-        function IElementManagerFactory(_document, _managerCache, _ResourcesFactory, _AttributesFactory, _BindableTemplatesFactory, _Exception) {
+        function IElementManagerFactory(_document, _managerCache, _ResourcesFactory, _AttributesFactory, _BindableTemplatesFactory, _log) {
             ElementManager._document = _document;
             ElementManager._managerCache = _managerCache;
             ElementManager._ResourcesFactory = _ResourcesFactory;
             ElementManager._AttributesFactory = _AttributesFactory;
             ElementManager._BindableTemplatesFactory = _BindableTemplatesFactory;
-            ElementManager._Exception = _Exception;
+            ElementManager._log = _log;
             return ElementManager;
         }
         processing.IElementManagerFactory = IElementManagerFactory;
@@ -14901,7 +14800,7 @@ var plat;
             __ResourcesFactory,
             __AttributesFactory,
             __BindableTemplatesFactory,
-            __ExceptionStatic
+            __Log
         ], __FACTORY);
         register.injectable(__ElementManagerInstance, ElementManager, null, __INSTANCE);
         /**
@@ -15237,7 +15136,7 @@ var plat;
                     }
                     if (!isString(url)) {
                         var error = new Error('Cannot serialize url from input parameters, check your view reference.');
-                        _this._Exception.fatal(error, _this._Exception.NAVIGATION);
+                        _this._log.error(error);
                     }
                     return _this._navigate(url, options.replace);
                 });
@@ -15313,7 +15212,7 @@ var plat;
                 if (!isObject(this._router)) {
                     return;
                 }
-                var config = this._browserConfig, EventManager = this._EventManager, prefix, previousUrl, previousQuery, backNavigate, _Exception = this._Exception, ev, headControl = acquire(__Head), headExists = isObject(headControl) && isFunction(headControl.navigated), onFailedNavigaton = function (e) {
+                var config = this._browserConfig, EventManager = this._EventManager, prefix, previousUrl, previousQuery, backNavigate, ev, headControl = acquire(__Head), headExists = isObject(headControl) && isFunction(headControl.navigated), onFailedNavigaton = function (e) {
                     _this._ignoreOnce = true;
                     _this._previousUrl = previousUrl;
                     _this._browser.url(previousUrl, !backNavigate);
@@ -15322,7 +15221,7 @@ var plat;
                         _this._rejectNavigate(e);
                     }
                     if (!isEmpty(e)) {
-                        _Exception.warn(e, _Exception.NAVIGATION);
+                        _this._log.warn(e);
                     }
                 };
                 this._previousUrl = this._browser.url();
@@ -15338,7 +15237,9 @@ var plat;
                 EventManager.on(this.uid, __urlChanged, function (ev, utils) {
                     if (_this._ignoreOnce) {
                         _this._ignoreOnce = false;
-                        _this._resolveNavigate();
+                        if (isFunction(_this._resolveNavigate)) {
+                            _this._resolveNavigate();
+                        }
                         return;
                     }
                     backNavigate = _this._backNavigate;
@@ -15384,7 +15285,7 @@ var plat;
                 _browser: __Browser,
                 _EventManager: __EventManagerStatic,
                 _window: __Window,
-                _Exception: __ExceptionStatic,
+                _log: __Log,
                 _history: __History
             };
             return Navigator;
@@ -16823,10 +16724,9 @@ var plat;
                     argContext = parent.context;
                 }
                 if (listenerStr[0] !== '@') {
-                    var _Exception = this._Exception;
                     listener = this.findProperty(listenerStr);
                     if (isNull(listener)) {
-                        _Exception.warn('Could not find property ' + listenerStr + ' on any parent control.', _Exception.CONTROL);
+                        this._log.warn('Could not find property ' + listenerStr + ' on any parent control.');
                         return {
                             fn: noop,
                             context: {},
@@ -16835,8 +16735,8 @@ var plat;
                     }
                     var parsedExpression = listener.expresssion, identifiers = parsedExpression.identifiers;
                     if (identifiers.length > 1) {
-                        _Exception.warn('Cannot have more than one identifier in a ' + this.type +
-                            '\'s expression.', _Exception.CONTROL);
+                        this._log.warn('Cannot have more than one identifier in a ' + this.type +
+                            '\'s expression.');
                         return {
                             fn: noop,
                             context: {},
@@ -16870,9 +16770,8 @@ var plat;
             SimpleEventControl.prototype._onEvent = function (ev) {
                 var expression = this._buildExpression(), fn = expression.fn;
                 if (!isFunction(fn)) {
-                    var _Exception = this._Exception;
-                    _Exception.warn('Cannot find registered event method ' +
-                        this._expression[0] + ' for control: ' + this.type, _Exception.BIND);
+                    this._log.warn('Cannot find registered event method ' +
+                        this._expression[0] + ' for control: ' + this.type);
                     return;
                 }
                 fn.apply(expression.context, expression.args.concat(ev));
@@ -17563,9 +17462,8 @@ var plat;
                 }
                 else {
                     if (!(isNull(input.char) && isNull(input.chars))) {
-                        var _Exception = this._Exception;
-                        _Exception.warn(this.type +
-                            ' should be using the property key or keys to denote key codes or keys and not char codes or characters.', _Exception.CONTROL);
+                        this._log.warn(this.type +
+                            ' should be using the property key or keys to denote key codes or keys and not char codes or characters.');
                     }
                 }
             };
@@ -17707,9 +17605,8 @@ var plat;
                 }
                 else {
                     if (!(isNull(input.key) && isNull(input.keys))) {
-                        var _Exception = this._Exception;
-                        _Exception.warn(this.type +
-                            ' should be using the property key or keys to denote key codes or keys and not char codes or characters.', _Exception.CONTROL);
+                        this._log.warn(this.type +
+                            ' should be using the property key or keys to denote key codes or keys and not char codes or characters.');
                     }
                 }
             };
@@ -18135,8 +18032,7 @@ var plat;
                 var attr = camelCase(this.type), _parser = this._parser, expression = this._expression = _parser.parse(this.attributes[attr]);
                 var identifiers = expression.identifiers;
                 if (identifiers.length !== 1) {
-                    var _Exception = this._Exception;
-                    _Exception.warn('Only 1 identifier allowed in a ' + this.type + ' expression', _Exception.BIND);
+                    this._log.warn('Only 1 identifier allowed in a ' + this.type + ' expression');
                     this._contextExpression = null;
                     return;
                 }
@@ -18222,11 +18118,10 @@ var plat;
                     parsedIdentifier = this._expression.expression + '.' + identifier;
                 }
                 else {
-                    var _parser = this._parser, identifierExpression = _parser.parse(identifier), identifiers = identifierExpression.identifiers, _Exception;
+                    var _parser = this._parser, identifierExpression = _parser.parse(identifier), identifiers = identifierExpression.identifiers;
                     if (identifiers.length !== 1) {
-                        _Exception = this._Exception;
-                        _Exception.warn('Only 1 identifier path allowed when observing changes to a bound property\'s child with a control ' +
-                            'implementing ISupportTwoWayBinding and working with ' + this.type, _Exception.BIND);
+                        this._log.warn('Only 1 identifier path allowed when observing changes to a bound property\'s child with a control ' +
+                            'implementing ISupportTwoWayBinding and working with ' + this.type);
                         return;
                     }
                     var expression = _parser.parse(this._expression.expression + '.' + identifiers[0]);
@@ -18237,9 +18132,8 @@ var plat;
                             context = this._ContextManager.createContext(this.parent, contextExpression);
                         }
                         else {
-                            _Exception = this._Exception;
-                            _Exception.warn('A control implementing ISupportTwoWayBinding is trying to index into a primitive type ' +
-                                'when trying to evaluate ' + this.type + '="' + this._expression.expression + '"', _Exception.BIND);
+                            this._log.warn('A control implementing ISupportTwoWayBinding is trying to index into a primitive type ' +
+                                'when trying to evaluate ' + this.type + '="' + this._expression.expression + '"');
                             return;
                         }
                     }
@@ -18537,7 +18431,7 @@ var plat;
                     return;
                 }
                 else if (!isString(newValue)) {
-                    var _Exception = this._Exception, message;
+                    var message;
                     if (isNumber(newValue)) {
                         newValue = newValue.toString();
                         message = 'Trying to bind a value of type number to a <select> element. ' +
@@ -18547,7 +18441,7 @@ var plat;
                         message = 'Trying to bind a value that is not a string to a <select> element. ' +
                             'The element\'s selected index will be set to -1.';
                     }
-                    _Exception.warn(message, _Exception.BIND);
+                    this._log.info(message);
                 }
                 else if (value === newValue) {
                     return;
@@ -18682,11 +18576,10 @@ var plat;
                         context = this._createContext(contextExpression.identifiers[0]);
                     }
                     else {
-                        var Exception = this._Exception;
-                        Exception.warn(this.type + ' is trying to index into a primitive type. ' +
+                        this._log.warn(this.type + ' is trying to index into a primitive type. ' +
                             this._contextExpression.expression + ' is already defined and not ' +
                             'an object when trying to evaluate ' + this.type + '="' +
-                            this._expression.expression + '"', Exception.BIND);
+                            this._expression.expression + '"');
                         return;
                     }
                 }
@@ -18963,9 +18856,8 @@ var plat;
          */
         App.start = function () {
             if (!App._compat.isCompatible) {
-                var _Exception = App._Exception;
-                return _Exception.fatal('PlatypusTS only supports modern browsers where ' +
-                    'Object.defineProperty is defined', _Exception.COMPAT);
+                return App._log.error(new Error('PlatypusTS only supports modern browsers where ' +
+                    'Object.defineProperty is defined'));
             }
             App.__addPlatCss();
             var _EventManager = App._EventManager;
@@ -19171,13 +19063,13 @@ var plat;
     plat_1.App = App;
     /**
      */
-    function IAppStatic(_compat, _EventManager, _document, _compiler, _LifecycleEvent, _Exception) {
+    function IAppStatic(_compat, _EventManager, _document, _compiler, _LifecycleEvent, _log) {
         App._compat = _compat;
         App._EventManager = _EventManager;
         App._document = _document;
         App._compiler = _compiler;
         App._LifecycleEvent = _LifecycleEvent;
-        App._Exception = _Exception;
+        App._log = _log;
         return App;
     }
     plat_1.IAppStatic = IAppStatic;
@@ -19187,7 +19079,7 @@ var plat;
         __Document,
         __Compiler,
         __LifecycleEventStatic,
-        __ExceptionStatic
+        __Log
     ], __STATIC);
     /**
      */

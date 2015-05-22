@@ -188,8 +188,7 @@ module plat.ui.controls {
                 id = this._id = options.id;
 
             if (isNull(id)) {
-                var _Exception: IExceptionStatic = this._Exception;
-                _Exception.warn(this.type + ' instantiated without an id option', _Exception.COMPILE);
+                this._log.warn(this.type + ' instantiated without an id option');
                 return;
             }
 
@@ -312,7 +311,6 @@ module plat.ui.controls {
          * @returns {void}
          */
         protected _waitForTemplateControl(templatePromise: async.IThenable<Template>): void {
-            var _Exception: IExceptionStatic = this._Exception;
 
             if (!isPromise(templatePromise)) {
                 return;
@@ -320,10 +318,9 @@ module plat.ui.controls {
 
             templatePromise.then((templateControl: Template): async.IThenable<DocumentFragment> => {
                 if (!(isNull(this._url) || (this._url === templateControl._url))) {
-                    _Exception.warn('The specified url: ' + this._url +
+                    this._log.warn('The specified url: ' + this._url +
                         ' does not match the original ' + this.type + ' with id: ' +
-                        '"' + this._id + '". The original url will be loaded.',
-                        _Exception.TEMPLATE);
+                        '"' + this._id + '". The original url will be loaded.');
                 }
 
                 this.__mapBindableTemplates(templateControl);
@@ -333,8 +330,8 @@ module plat.ui.controls {
                     insertBefore(endNode.parentNode, clone, endNode);
                 }).catch((error: any): void => {
                     postpone((): void => {
-                        _Exception.warn('Problem resolving ' + this.type + ' url: ' +
-                            error.response, _Exception.TEMPLATE);
+                        this._log.warn('Problem resolving ' + this.type + ' url: ' +
+                            error.response);
                     });
                 });
         }

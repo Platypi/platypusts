@@ -55,18 +55,17 @@ module plat.processing {
         protected static _TemplateControlFactory: ui.ITemplateControlFactory;
 
         /**
-         * @name _Exception
+         * @name _log
          * @memberof plat.processing.NodeManager
          * @kind property
          * @access protected
          * @static
          * 
-         * @type {plat.IExceptionStatic}
-         * 
+         * @type {plat.debug.Log}
          * @description
-         * Reference to the {@link plat.IExceptionStatic|IExceptionStatic} injectable.
+         * Reference to the {@link plat.debug.Log|Log} injectable.
          */
-        protected static _Exception: IExceptionStatic;
+        protected static _log: debug.Log;
 
         /**
          * @name _markupRegex
@@ -264,8 +263,7 @@ module plat.processing {
                         }
                         e.message = 'Cannot stringify object: ' + e.message;
 
-                        var _Exception: IExceptionStatic = NodeManager._Exception;
-                        _Exception.warn(e, _Exception.PARSE);
+                        NodeManager._log.warn(e);
                     }
                 } else if (!isNull(value)) {
                     text += value;
@@ -607,14 +605,14 @@ module plat.processing {
         _ContextManager?: observable.IContextManagerStatic,
         _parser?: expressions.Parser,
         _TemplateControlFactory?: ui.ITemplateControlFactory,
-        _Exception?: IExceptionStatic): INodeManagerStatic {
+        _log?: debug.Log): INodeManagerStatic {
         // NOTE: This is not advised by TypeScript, but we want to do this.
         (<any>NodeManager)._markupRegex = _regex.markupRegex;
         (<any>NodeManager)._newLineRegex = _regex.newLineRegex;
         (<any>NodeManager)._ContextManager = _ContextManager;
         (<any>NodeManager)._parser = _parser;
         (<any>NodeManager)._TemplateControlFactory = _TemplateControlFactory;
-        (<any>NodeManager)._Exception = _Exception;
+        (<any>NodeManager)._log = _log;
         return NodeManager;
     }
 
@@ -622,7 +620,8 @@ module plat.processing {
         __Regex,
         __ContextManagerStatic,
         __Parser,
-        __TemplateControlFactory
+        __TemplateControlFactory,
+        __Log
     ], __STATIC);
 
     /**

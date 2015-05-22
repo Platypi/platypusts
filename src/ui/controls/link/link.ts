@@ -152,10 +152,8 @@ module plat.ui.controls {
                 setHref = this.setHref.bind(this);
 
             if (!isObject(options)) {
-                var _Exception = this._Exception;
-                _Exception.warn('No options specified for ' + this.type +
-                    '. Please send in options of type plat.ui.controls.ILinkOptions.',
-                    _Exception.CONTROL);
+                this._log.warn('No options specified for ' + this.type +
+                    '. Please send in options of type plat.ui.controls.ILinkOptions.');
                 options = this.options = <observable.IObservableProperty<ILinkOptions>>{};
                 options.value = <ILinkOptions>{ view: '' };
                 this.setHref();

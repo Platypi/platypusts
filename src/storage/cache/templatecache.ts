@@ -18,7 +18,7 @@ module plat.storage {
     export class TemplateCache extends Cache<async.IThenable<DocumentFragment>> {
         protected static _inject: any = {
             _Promise: __Promise,
-            _Exception: __ExceptionStatic
+            _log: __Log
         };
 
         /**
@@ -35,17 +35,16 @@ module plat.storage {
         protected _Promise: async.IPromise;
 
         /**
-         * @name _Exception
+         * @name _log
          * @memberof plat.storage.TemplateCache
          * @kind property
          * @access protected
          * 
-         * @type {plat.IExceptionStatic}
-         * 
+         * @type {plat.debug.Log}
          * @description
-         * Reference to the {@link plat.IExceptionStatic|IExceptionStatic} injectable.
+         * Reference to the {@link plat.debug.Log|Log} injectable.
          */
-        protected _Exception: IExceptionStatic;
+        protected _log: debug.Log;
 
         /**
          * @name constructor
@@ -157,8 +156,7 @@ module plat.storage {
             return promise.then((node): async.IThenable<DocumentFragment> => {
                 return this.put(key, node);
             },(error: Error): DocumentFragment => {
-                var _Exception: IExceptionStatic = this._Exception;
-                _Exception.warn('Error retrieving template from promise.', _Exception.TEMPLATE);
+                this._log.warn('Error retrieving template, ' + key + ', from promise.');
                 return <DocumentFragment>null;
             });
         }

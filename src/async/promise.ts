@@ -629,7 +629,6 @@ module plat.async {
          * @returns {plat.async.Promise<R>} A promise object.
          */
         constructor(resolveFunction: IResolveFunction<R>) {
-            var _Exception: IExceptionStatic;
             if (!isFunction(resolveFunction)) {
                 throw new TypeError('You must pass a resolver function as the first argument to the promise constructor');
             }

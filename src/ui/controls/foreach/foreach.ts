@@ -291,8 +291,7 @@ module plat.ui.controls {
             if (isArray(newValue)) {
                 this._setListener();
             } else {
-               var _Exception = this._Exception;
-                _Exception.warn(this.type + ' context set to something other than an Array.', _Exception.CONTEXT);
+                this._log.debug(this.type + ' context set to something other than an Array.');
                 newValue = [];
             }
 
@@ -325,8 +324,7 @@ module plat.ui.controls {
 
             if (!isArray(context)) {
                 if (!isNull(context)) {
-                    var _Exception = this._Exception;
-                    _Exception.warn(this.type + ' context set to something other than an Array.', _Exception.CONTEXT);
+                    this._log.debug(this.type + ' context set to something other than an Array.');
                 }
                 return;
             }
@@ -453,8 +451,10 @@ module plat.ui.controls {
                     }
                 }).catch((error: any): void => {
                         postpone((): void => {
-                            var _Exception = this._Exception;
-                            _Exception.warn(error, _Exception.BIND);
+                            if(isString(error)) {
+                                error = new Error(error);
+                            }
+                            this._log.error(error);
                         });
                     });
             }

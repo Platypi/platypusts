@@ -170,3 +170,4 @@ tscommand*
 !build/*.js
 !build/options/*.js
 !dist/*
+!src/debug/

@@ -4,7 +4,7 @@
 var ___document: Document,
     ___templateCache: plat.storage.TemplateCache,
     ___http: plat.async.Http,
-    ___Exception: plat.IExceptionStatic,
+    ___log: plat.debug.Log,
     __nodeNameRegex = /<([\w:]+)/,
     __whiteSpaceRegex = /\s+/g,
     __option = [1, '<select multiple="multiple">', '</select>'],
@@ -489,8 +489,8 @@ function getTemplate(templateUrl: string): plat.async.IThenable<DocumentFragment
             if (isDocumentFragment(success)) {
                 return ___templateCache.put(templateUrl, <any>success);
             } else if (!isObject(success) || !isString(success.response)) {
-                ___Exception = ___Exception || (___Exception = plat.acquire(__ExceptionStatic));
-                ___Exception.warn('No template found at ' + templateUrl, ___Exception.AJAX);
+                ___log = ___log || (___log = plat.acquire(__Log));
+                ___log.warn('No template found at ' + templateUrl);
                 return ___templateCache.put(templateUrl);
             }
 
@@ -503,9 +503,8 @@ function getTemplate(templateUrl: string): plat.async.IThenable<DocumentFragment
             return ___templateCache.put(templateUrl, templateString);
         }).catch((error: any): any => {
             postpone((): void => {
-                ___Exception = ___Exception || (___Exception = plat.acquire(__ExceptionStatic));
-                ___Exception.fatal('Failure to get template from ' + templateUrl + '.',
-                    ___Exception.TEMPLATE);
+                ___log = ___log || (___log = plat.acquire(__Log));
+                ___log.error(new Error('Failure to get template from ' + templateUrl + '.'));
             });
             return error;
         }));

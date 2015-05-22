@@ -152,18 +152,17 @@ module plat.ui {
         protected static _regex: expressions.Regex;
 
         /**
-         * @name _Exception
+         * @name _log
          * @memberof plat.ui.Resources
          * @kind property
          * @access protected
          * @static
          * 
-         * @type {plat.IExceptionStatic}
-         * 
+         * @type {plat.debug.Log}
          * @description
-         * Reference to the {@link plat.IExceptionStatic|IExceptionStatic} injectable.
+         * Reference to the {@link plat.debug.Log|Log} injectable.
          */
-        protected static _Exception: IExceptionStatic;
+        protected static _log: debug.Log;
 
         /**
          * @name __controlResources
@@ -294,10 +293,8 @@ module plat.ui {
                         if (isFunction(value)) {
                             resource.value = value.bind(control);
                         } else {
-                            var _Exception: IExceptionStatic = Resources._Exception;
-                            _Exception.warn('Attempted to create a "function" ' +
-                                'type Resource with a function not found on your control.',
-                                _Exception.BIND);
+                            Resources._log.warn('Attempted to create a "function" ' +
+                                'type Resource, but the function ' + value + 'cannot be found on your control.');
                             resource.value = noop;
                         }
                     }
@@ -757,10 +754,10 @@ module plat.ui {
     export function IResourcesFactory(
         _ContextManager?: observable.IContextManagerStatic,
         _regex?: expressions.Regex,
-        _Exception?: IExceptionStatic): IResourcesFactory {
+        _log?: debug.Log): IResourcesFactory {
         (<any>Resources)._ContextManager = _ContextManager;
         (<any>Resources)._regex = _regex;
-        (<any>Resources)._Exception = _Exception;
+        (<any>Resources)._log = _log;
         var controlResources: IObject<boolean> = {},
             resourceTypes: IObject<boolean> = {};
 
@@ -774,7 +771,7 @@ module plat.ui {
     register.injectable(__ResourcesFactory, IResourcesFactory, [
         __ContextManagerStatic,
         __Regex,
-        __ExceptionStatic
+        __Log
     ], __FACTORY);
 
     register.injectable(__ResourcesInstance, Resources, null, __INSTANCE);

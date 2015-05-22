@@ -195,10 +195,8 @@ module plat.controls {
                 return [key];
             } else {
                 if (!(isNull(input.char) && isNull(input.chars))) {
-                    var _Exception = this._Exception;
-                    _Exception.warn(this.type +
-                        ' should be using the property key or keys to denote key codes or keys and not char codes or characters.',
-                        _Exception.CONTROL);
+                    this._log.warn(this.type +
+                        ' should be using the property key or keys to denote key codes or keys and not char codes or characters.');
                 }
             }
         }
@@ -551,10 +549,8 @@ module plat.controls {
                 return [char];
             } else {
                 if (!(isNull(input.key) && isNull(input.keys))) {
-                    var _Exception = this._Exception;
-                    _Exception.warn(this.type +
-                        ' should be using the property key or keys to denote key codes or keys and not char codes or characters.',
-                        _Exception.CONTROL);
+                    this._log.warn(this.type +
+                        ' should be using the property key or keys to denote key codes or keys and not char codes or characters.');
                 }
             }
         }

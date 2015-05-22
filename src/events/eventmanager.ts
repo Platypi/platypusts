@@ -14,18 +14,17 @@ module plat.events {
      */
     export class EventManager {
         /**
-         * @name _Exception
+         * @name _log
          * @memberof plat.events.EventManager
          * @kind property
          * @access protected
          * @static
          * 
-         * @type {plat.IExceptionStatic}
-         * 
+         * @type {plat.debug.Log}
          * @description
-         * Reference to the {@link plat.IExceptionStatic|IExceptionStatic} injectable.
+         * Reference to the {@link plat.debug.Log|Log} injectable.
          */
-        protected static _Exception: IExceptionStatic;
+        protected static _log: debug.Log;
 
         /**
          * @name _compat
@@ -663,8 +662,7 @@ module plat.events {
                 try {
                     listeners[index].apply(context, args);
                 } catch (e) {
-                    var _Exception: IExceptionStatic = EventManager._Exception;
-                    _Exception.warn(e, _Exception.EVENT);
+                    EventManager._log.debug(e);
                 }
             }
         }
@@ -674,12 +672,12 @@ module plat.events {
      * The Type for referencing the '_EventManagerStatic' injectable as a dependency.
      */
     export function IEventManagerStatic(
-        _Exception?: IExceptionStatic,
+        _log?: debug.Log,
         _compat?: Compat,
         _document?: Document,
         _window?: Window,
         _dom?: ui.Dom): IEventManagerStatic {
-        (<any>EventManager)._Exception = _Exception;
+        (<any>EventManager)._log = _log;
         (<any>EventManager)._compat = _compat;
         (<any>EventManager)._document = _document;
         (<any>EventManager)._window = _window;
@@ -688,7 +686,7 @@ module plat.events {
     }
 
     register.injectable(__EventManagerStatic, IEventManagerStatic, [
-        __ExceptionStatic,
+        __Log,
         __Compat,
         __Document,
         __Window,

@@ -114,17 +114,17 @@ module plat.ui {
         protected static _Promise: async.IPromise;
 
         /**
-         * @name _Exception
-         * @memberof plat.ui.TemplateControl
+         * @name _log
+         * @memberof plat.Control
          * @kind property
          * @access protected
+         * @static
          * 
-         * @type {plat.IExceptionStatic}
-         * 
+         * @type {plat.debug.Log}
          * @description
-         * Reference to the {@link plat.IExceptionStatic|IExceptionStatic} injectable.
+         * Reference to the {@link plat.debug.Log|Log} injectable.
          */
-        protected static _Exception: IExceptionStatic;
+        protected static _log: debug.Log;
 
         /**
          * @name __resourceCache
@@ -557,8 +557,7 @@ module plat.ui {
                 }
 
                 if (isNull(resourceObj)) {
-                    var _Exception: IExceptionStatic = TemplateControl._Exception;
-                    _Exception.warn('Resource alias: ' + alias + ' is not defined.', _Exception.CONTEXT);
+                    TemplateControl._log.warn('Resource alias: ' + alias + ' is not defined.');
                     continue;
                 }
 
@@ -1086,7 +1085,7 @@ module plat.ui {
         _parser?: expressions.Parser,
         _http?: async.Http,
         _Promise?: async.IPromise,
-        _Exception?: IExceptionStatic): ITemplateControlFactory {
+        _log?: debug.Log): ITemplateControlFactory {
         (<any>TemplateControl)._ResourcesFactory = _ResourcesFactory;
         (<any>TemplateControl)._BindableTemplatesFactory = _BindableTemplatesFactory;
         (<any>TemplateControl)._managerCache = _managerCache;
@@ -1094,7 +1093,7 @@ module plat.ui {
         (<any>TemplateControl)._parser = _parser;
         (<any>TemplateControl)._http = _http;
         (<any>TemplateControl)._Promise = _Promise;
-        (<any>TemplateControl)._Exception = _Exception;
+        (<any>TemplateControl)._log = _log;
         return TemplateControl;
     }
 
@@ -1106,7 +1105,7 @@ module plat.ui {
         __Parser,
         __Http,
         __Promise,
-        __ExceptionStatic
+        __Log
     ], __FACTORY);
 
     register.injectable(__TemplateControlInstance, TemplateControl, null, __INSTANCE);

@@ -14,21 +14,20 @@ module plat.expressions {
      */
     export class Tokenizer {
         protected static _inject: any = {
-            _Exception: __ExceptionStatic
+            _log: __Log
         };
 
         /**
-         * @name _Exception
+         * @name _log
          * @memberof plat.expressions.Tokenizer
          * @kind property
          * @access protected
          * 
-         * @type {plat.IExceptionStatic}
-         * 
+         * @type {plat.debug.Log}
          * @description
-         * Reference to the {@link plat.IExceptionStatic|IExceptionStatic} injectable.
+         * Reference to the {@link plat.debug.Log|Log} injectable.
          */
-        protected _Exception: IExceptionStatic;
+        protected _log: debug.Log;
 
         /**
          * @name _input
@@ -484,8 +483,7 @@ module plat.expressions {
          * @returns {void}
          */
         protected _throwError(error: string): void {
-            var _Exception: IExceptionStatic = this._Exception;
-            _Exception.fatal(error + ' in ' + this._input, _Exception.PARSE);
+            this._log.error(new Error(error + ' in ' + this._input));
         }
 
         /**

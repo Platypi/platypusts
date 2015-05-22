@@ -252,8 +252,7 @@ module plat.ui.controls {
          */
         loaded(): async.IThenable<void> {
             if (isNull(this.options)) {
-                var _Exception = this._Exception;
-                _Exception.warn('No condition specified in ' + __Options + ' for ' + this.type + '.', _Exception.BIND);
+                this._log.warn('No condition specified in ' + __Options + ' for ' + this.type + '.');
 
                 this.options = {
                     value: {

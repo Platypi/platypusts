@@ -135,17 +135,16 @@ module plat.ui {
         protected _BindableTemplatesFactory: IBindableTemplatesFactory = acquire(__BindableTemplatesFactory);
 
         /**
-         * @name _Exception
+         * @name _log
          * @memberof plat.ui.BindableTemplates
          * @kind property
          * @access protected
          * 
-         * @type {plat.IExceptionStatic}
-         * 
+         * @type {plat.debug.Log}
          * @description
-         * Reference to the {@link plat.IExceptionStatic|IExceptionStatic} injectable.
+         * Reference to the {@link plat.debug.Log|Log} injectable.
          */
-        protected _Exception: IExceptionStatic = acquire(__ExceptionStatic);
+        protected _log: debug.Log = acquire(__Log);
 
         /**
          * @name control
@@ -539,18 +538,18 @@ module plat.ui {
          */
         replace(index: number, key: string, relativeIdentifier?: number, resources?: IObject<IResource>): async.IThenable<Array<Node>>;
         replace(index: number, key: string, relativeIdentifier?: any, resources?: IObject<IResource>): async.IThenable<Array<Node>> {
-            var control = <TemplateControl>this.control.controls[index],
-                _Exception = this._Exception;
+            var control = <TemplateControl>this.control.controls[index];
+
             if (!BindableTemplates.isBoundControl(control)) {
-                _Exception.warn('The child control at the specified index: ' + index + ' is not a bound control and thus cannot be ' +
-                    'replaced by BindableTemplates.', _Exception.BIND);
+                this._log.warn('The child control at the specified index: ' + index + ' is not a bound control and thus cannot be ' +
+                    'replaced by BindableTemplates.');
                 return this._Promise.resolve([]);
             }
 
             var endNode = control.endNode;
             if (!(isNode(endNode) && isNode(endNode.parentNode))) {
-                _Exception.warn('The child control at the specified index: ' + index + ' had either no placeholding comment nodes ' +
-                    'or its comment nodes had no parent and thus cannot be replaced by BindableTemplates.', _Exception.BIND);
+                this._log.warn('The child control at the specified index: ' + index + ' had either no placeholding comment nodes ' +
+                    'or its comment nodes had no parent and thus cannot be replaced by BindableTemplates.');
                 return this._Promise.resolve([]);
             }
 
@@ -609,18 +608,16 @@ module plat.ui {
          */
         protected _bind(key: any, relativeIdentifier?: any, resources?: IObject<IResource>, index?: number): async.IThenable<any> {
             var templatePromise = this.templates[key],
-                _Exception: IExceptionStatic = this._Exception,
                 noIndex = isNull(index);
 
             if (isNull(templatePromise)) {
-                _Exception.fatal('Cannot bind template, no template stored with key: ' + key,
-                    _Exception.TEMPLATE);
+                this._log.error(new Error('Cannot bind template, no template stored with key: ' + key));
                 return;
             }
 
             if (!(isNull(relativeIdentifier) || isNumber(relativeIdentifier) || isString(relativeIdentifier))) {
-                _Exception.warn('Cannot bind template with relativeIdentifier: ' + relativeIdentifier +
-                    '. Identifier must be either a string or number', _Exception.BIND);
+                this._log.warn('Cannot bind template with relativeIdentifier: ' + relativeIdentifier +
+                    '. Identifier must be either a string or number');
                 return;
             }
 
@@ -650,7 +647,10 @@ module plat.ui {
                     return childNodes;
                 }).then(null,(error: any): DocumentFragment => {
                     postpone((): void => {
-                        _Exception.fatal(error, _Exception.BIND);
+                        if(isString(error)) {
+                            error = new Error(error);
+                        }
+                        this._log.error(error);
                     });
 
                     return this._document.createDocumentFragment();
@@ -659,7 +659,10 @@ module plat.ui {
 
             return templatePromise.then(null,(error: any): DocumentFragment => {
                 postpone((): void => {
-                    _Exception.fatal(error, _Exception.BIND);
+                    if(isString(error)) {
+                        error = new Error(error);
+                    }
+                    this._log.error(error);
                 });
 
                 return this._document.createDocumentFragment();
@@ -709,8 +712,10 @@ module plat.ui {
                 return template;
             },(error: any): DocumentFragment => {
                     postpone((): void => {
-                        var _Exception: IExceptionStatic = this._Exception;
-                        _Exception.fatal(error, _Exception.COMPILE);
+                        if(isString(error)) {
+                            error = new Error(error);
+                        }
+                        this._log.error(error);
                     });
 
                     return <DocumentFragment>null;

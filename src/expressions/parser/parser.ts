@@ -24,7 +24,7 @@ module plat.expressions {
     export class Parser {
         protected static _inject: any = {
             _tokenizer: __Tokenizer,
-            _Exception: __ExceptionStatic
+            _log: __Log
         };
 
         /**
@@ -41,17 +41,16 @@ module plat.expressions {
         protected _tokenizer: Tokenizer;
 
         /**
-         * @name _Exception
+         * @name _log
          * @memberof plat.expressions.Parser
          * @kind property
          * @access protected
          * 
-         * @type {plat.IExceptionStatic}
-         * 
+         * @type {plat.debug.Log}
          * @description
-         * Reference to the {@link plat.IExceptionStatic|IExceptionStatic} injectable.
+         * Reference to the {@link plat.debug.Log|Log} injectable.
          */
-        protected _Exception: IExceptionStatic;
+        protected _log: debug.Log;
 
         /**
          * @name _tokens
@@ -467,8 +466,7 @@ module plat.expressions {
          * @returns {void}
          */
         protected _throwError(error: string): void {
-            var _Exception: IExceptionStatic = this._Exception;
-            _Exception.fatal(error, _Exception.PARSE);
+            this._log.error(new Error(error));
         }
 
         /**

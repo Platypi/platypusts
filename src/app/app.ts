@@ -96,20 +96,19 @@ module plat {
          * Reference to the {@link plat.events.ILifecycleEventStatic|ILifecycleEventStatic} injectable.
          */
         protected static _LifecycleEvent: events.ILifecycleEventStatic;
-
+        
         /**
-         * @name _Exception
+         * @name _log
          * @memberof plat.App
          * @kind property
          * @access protected
          * @static
          * 
-         * @type {plat.IExceptionStatic}
-         * 
+         * @type {plat.debug.Log}
          * @description
-         * Reference to the {@link plat.IExceptionStatic|IExceptionStatic} injectable.
+         * Reference to the {@link plat.debug.Log|Log} injectable.
          */
-        protected static _Exception: IExceptionStatic;
+        protected static _log: debug.Log;
 
         /**
          * @name __injector
@@ -166,9 +165,8 @@ module plat {
          */
         static start(): void {
             if (!App._compat.isCompatible) {
-                var _Exception: IExceptionStatic = App._Exception;
-                return _Exception.fatal('PlatypusTS only supports modern browsers where ' +
-                    'Object.defineProperty is defined', _Exception.COMPAT);
+                return App._log.error(new Error('PlatypusTS only supports modern browsers where ' +
+                    'Object.defineProperty is defined'));
             }
 
             App.__addPlatCss();
@@ -592,13 +590,13 @@ module plat {
         _document?: Document,
         _compiler?: processing.Compiler,
         _LifecycleEvent?: events.ILifecycleEventStatic,
-        _Exception?: IExceptionStatic): IAppStatic {
+        _log?: debug.Log): IAppStatic {
         (<any>App)._compat = _compat;
         (<any>App)._EventManager = _EventManager;
         (<any>App)._document = _document;
         (<any>App)._compiler = _compiler;
         (<any>App)._LifecycleEvent = _LifecycleEvent;
-        (<any>App)._Exception = _Exception;
+        (<any>App)._log = _log;
         return App;
     }
 
@@ -608,7 +606,7 @@ module plat {
         __Document,
         __Compiler,
         __LifecycleEventStatic,
-        __ExceptionStatic
+        __Log
     ], __STATIC);
 
     /**

@@ -21,7 +21,7 @@ module plat.routing {
             _browser: __Browser,
             _EventManager: __EventManagerStatic,
             _window: __Window,
-            _Exception: __ExceptionStatic,
+            _log: __Log,
             _history: __History
         };
 
@@ -133,17 +133,16 @@ module plat.routing {
         protected _window: Window;
 
         /**
-         * @name _Exception
+         * @name _log
          * @memberof plat.routing.Navigator
          * @kind property
          * @access protected
          * 
-         * @type {plat.IExceptionStatic}
-         * 
+         * @type {plat.debug.Log}
          * @description
-         * The {@link plat.IExceptionStatic|IExceptionStatic} injectable instance
+         * Reference to the {@link plat.debug.Log|Log} injectable.
          */
-        protected _Exception: IExceptionStatic;
+        protected _log: debug.Log;
 
         /**
          * @name _history
@@ -299,7 +298,7 @@ module plat.routing {
 
                 if (!isString(url)) {
                     var error = new Error('Cannot serialize url from input parameters, check your view reference.');
-                    this._Exception.fatal(error, this._Exception.NAVIGATION);
+                    this._log.error(error);
                 }
 
                 return this._navigate(url, options.replace);
@@ -442,7 +441,6 @@ module plat.routing {
                 previousUrl: string,
                 previousQuery: string,
                 backNavigate: boolean,
-                _Exception = this._Exception,
                 ev: events.DispatchEvent,
                 headControl: ui.controls.Head = acquire(__Head),
                 headExists = isObject(headControl) && isFunction(headControl.navigated),
@@ -457,7 +455,7 @@ module plat.routing {
                     }
 
                     if (!isEmpty(e)) {
-                        _Exception.warn(e, _Exception.NAVIGATION);
+                        this._log.warn(e);
                     }
                 };
 
@@ -478,7 +476,11 @@ module plat.routing {
             EventManager.on(this.uid, __urlChanged, (ev: events.DispatchEvent, utils?: web.UrlUtils): void => {
                 if (this._ignoreOnce) {
                     this._ignoreOnce = false;
-                    this._resolveNavigate();
+
+                    if (isFunction(this._resolveNavigate)) {
+                        this._resolveNavigate();
+                    }
+
                     return;
                 }
 

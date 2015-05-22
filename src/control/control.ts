@@ -15,18 +15,17 @@ module plat {
      */
     export class Control {
         /**
-         * @name _Exception
+         * @name _log
          * @memberof plat.Control
          * @kind property
          * @access protected
          * @static
          * 
-         * @type {plat.IExceptionStatic}
-         * 
+         * @type {plat.debug.Log}
          * @description
-         * Reference to the {@link plat.IExceptionStatic|IExceptionStatic} injectable.
+         * Reference to the {@link plat.debug.Log|Log} injectable.
          */
-        protected static _Exception: IExceptionStatic;
+        protected static _log: debug.Log;
 
         /**
          * @name _dom
@@ -111,19 +110,6 @@ module plat {
          * An object containing all controls' registered event listeners.
          */
         private static __eventListeners: IObject<Array<IRemoveListener>> = {};
-
-        /**
-         * @name _Exception
-         * @memberof plat.Control
-         * @kind property
-         * @access protected
-         * 
-         * @type {plat.IExceptionStatic}
-         * 
-         * @description
-         * The plat.IExceptionStatic injectable instance
-         */
-        protected _Exception: IExceptionStatic = Control._Exception;
 
         /**
          * @name uid
@@ -247,6 +233,18 @@ module plat {
          * Contains helper methods for data manipulation.
          */
         utils: Utils = acquire(__Utils);
+        
+        /**
+         * @name _log
+         * @memberof plat.Control
+         * @kind property
+         * @access protected
+         * 
+         * @type {plat.debug.Log}
+         * @description
+         * Reference to the {@link plat.debug.Log|Log} injectable.
+         */
+        protected _log: debug.Log = Control._log;
 
         /**
          * @name getRootControl
@@ -279,9 +277,8 @@ module plat {
             }
 
             if (!control.hasOwnContext && isObject(control.context)) {
-                var _Exception = Control._Exception;
-                _Exception.warn('Root control: ' + control.type + ' found that sets its context to an Object but does not set the hasOwnContext ' +
-                    'flag to true. Please set the flag if the control intends to use its own context.', _Exception.CONTEXT);
+                Control._log.debug('Root control: ' + control.type + ' found that sets its context to an Object but does not set the hasOwnContext ' +
+                    'flag to true. Please set the flag if the control intends to use its own context.');
             }
 
             return control;
@@ -726,8 +723,7 @@ module plat {
         addEventListener(element: EventTarget, type: string, listener: EventListener, useCapture?: boolean): IRemoveListener;
         addEventListener(element: any, type: string, listener: ui.IGestureListener, useCapture?: boolean): IRemoveListener {
             if (!isFunction(listener)) {
-                var _Exception: IExceptionStatic = this._Exception;
-                _Exception.warn('"Control.addEventListener" must take a function as the third argument.', _Exception.EVENT);
+                this._log.warn('"Control.addEventListener" must take a function as the third argument.');
                 return noop;
             }
 
@@ -1295,13 +1291,13 @@ module plat {
         _EventManager?: events.IEventManagerStatic,
         _Promise?: async.IPromise,
         _dom?: ui.Dom,
-        _Exception?: IExceptionStatic): IControlFactory {
+        _log?: debug.Log): IControlFactory {
         (<any>Control)._parser = _parser;
         (<any>Control)._ContextManager = _ContextManager;
         (<any>Control)._EventManager = _EventManager;
         (<any>Control)._Promise = _Promise;
         (<any>Control)._dom = _dom;
-        (<any>Control)._Exception = _Exception;
+        (<any>Control)._log = _log;
         return Control;
     }
 
@@ -1311,7 +1307,7 @@ module plat {
         __EventManagerStatic,
         __Promise,
         __Dom,
-        __ExceptionStatic
+        __Log
     ], __FACTORY);
 
     /**

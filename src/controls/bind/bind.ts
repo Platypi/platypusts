@@ -275,8 +275,7 @@ module plat.controls {
             var identifiers = expression.identifiers;
 
             if (identifiers.length !== 1) {
-                var _Exception: IExceptionStatic = this._Exception;
-                _Exception.warn('Only 1 identifier allowed in a ' + this.type + ' expression', _Exception.BIND);
+                this._log.warn('Only 1 identifier allowed in a ' + this.type + ' expression');
                 this._contextExpression = null;
                 return;
             }
@@ -482,13 +481,11 @@ module plat.controls {
             } else {
                 var _parser = this._parser,
                     identifierExpression = _parser.parse(identifier),
-                    identifiers = identifierExpression.identifiers,
-                    _Exception: IExceptionStatic;
+                    identifiers = identifierExpression.identifiers;
 
                 if (identifiers.length !== 1) {
-                    _Exception = this._Exception;
-                    _Exception.warn('Only 1 identifier path allowed when observing changes to a bound property\'s child with a control ' +
-                        'implementing ISupportTwoWayBinding and working with ' + this.type, _Exception.BIND);
+                    this._log.warn('Only 1 identifier path allowed when observing changes to a bound property\'s child with a control ' +
+                        'implementing ISupportTwoWayBinding and working with ' + this.type);
                     return;
                 }
 
@@ -505,9 +502,8 @@ module plat.controls {
                     if (isNull(context)) {
                         context = this._ContextManager.createContext(this.parent, contextExpression);
                     } else {
-                        _Exception = this._Exception;
-                        _Exception.warn('A control implementing ISupportTwoWayBinding is trying to index into a primitive type ' +
-                            'when trying to evaluate ' + this.type + '="' + this._expression.expression + '"', _Exception.BIND);
+                        this._log.warn('A control implementing ISupportTwoWayBinding is trying to index into a primitive type ' +
+                            'when trying to evaluate ' + this.type + '="' + this._expression.expression + '"');
                         return;
                     }
                 }
@@ -997,8 +993,7 @@ module plat.controls {
                 element.selectedIndex = -1;
                 return;
             } else if (!isString(newValue)) {
-                var _Exception = this._Exception,
-                    message: string;
+                var message: string;
                 if (isNumber(newValue)) {
                     newValue = newValue.toString();
                     message = 'Trying to bind a value of type number to a <select> element. ' +
@@ -1008,7 +1003,7 @@ module plat.controls {
                         'The element\'s selected index will be set to -1.';
                 }
 
-                _Exception.warn(message, _Exception.BIND);
+                this._log.info(message);
             } else if (value === newValue) {
                 return;
             } else if (!this._document.body.contains(element)) {
@@ -1183,11 +1178,10 @@ module plat.controls {
                 if (isNull(context) && contextExpression.identifiers.length > 0) {
                     context = this._createContext(contextExpression.identifiers[0]);
                 } else {
-                    var Exception = this._Exception;
-                    Exception.warn(this.type + ' is trying to index into a primitive type. ' +
+                    this._log.warn(this.type + ' is trying to index into a primitive type. ' +
                         this._contextExpression.expression + ' is already defined and not ' +
                         'an object when trying to evaluate ' + this.type + '="' +
-                        this._expression.expression + '"', Exception.BIND);
+                        this._expression.expression + '"');
                     return;
                 }
             }

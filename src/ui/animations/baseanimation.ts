@@ -17,7 +17,7 @@ module plat.ui.animations {
         protected static _inject: any = {
             _window: __Window,
             _compat: __Compat,
-            _Exception: __ExceptionStatic,
+            _log: __Log,
             _Promise: __Promise,
             dom: __Dom,
             utils: __Utils
@@ -76,17 +76,16 @@ module plat.ui.animations {
         options: any;
 
         /**
-         * @name _Exception
+         * @name _log
          * @memberof plat.ui.animations.BaseAnimation
          * @kind property
          * @access protected
          * 
-         * @type {plat.IExceptionStatic}
-         * 
+         * @type {plat.debug.Log}
          * @description
-         * Reference to the {@link plat.IExceptionStatic|IExceptionStatic} injectable.
+         * Reference to the {@link plat.debug.Log|Log} injectable.
          */
-        protected _Exception: IExceptionStatic;
+        protected _log: debug.Log;
 
         /**
          * @name _window
@@ -272,8 +271,7 @@ module plat.ui.animations {
          */
         addEventListener(type: string, listener: EventListener, useCapture?: boolean): IRemoveListener {
             if (!isFunction(listener)) {
-                var _Exception = this._Exception;
-                _Exception.warn('An animation\'s "addEventListener" must take a function as the second argument.', _Exception.EVENT);
+                this._log.warn('An animation\'s "addEventListener" must take a function as the second argument.');
                 return noop;
             }
 

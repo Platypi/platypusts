@@ -336,181 +336,121 @@ declare module plat {
       */
     function acquire(dependencies: Array<any>): Array<any>;
     /**
-      * Manages the throwing and consuming of errors and warnings.
+      * Holds all classes and interfaces related to debugging components in platypus.
       */
-    class Exception {
+    module debug {
         /**
-          * Exception Type for parsing exceptions
+          * Handles all logging/debugging for the framework. All logs will be bubbled up to the
+          * App.error event to allow for easy debugging.
           */
-        static PARSE: number;
-        /**
-          * Exception Type for compiling exceptions
-          */
-        static COMPILE: number;
-        /**
-          * Exception Type for binding exceptions
-          */
-        static BIND: number;
-        /**
-          * Exception Type for name exceptions
-          */
-        static NAME: number;
-        /**
-          * Exception Type for navigation exceptions
-          */
-        static NAVIGATION: number;
-        /**
-          * Exception Type for template exceptions
-          */
-        static TEMPLATE: number;
-        /**
-          * Exception Type for ajax exceptions
-          */
-        static AJAX: number;
-        /**
-          * Exception Type for context exceptions
-          */
-        static CONTEXT: number;
-        /**
-          * Exception Type for event exceptions
-          */
-        static EVENT: number;
-        /**
-          * Exception Type for injectable exceptions
-          */
-        static INJECTABLE: number;
-        /**
-          * Exception Type for compat exceptions
-          */
-        static COMPAT: number;
-        /**
-          * Exception Type for promise exceptions
-          */
-        static PROMISE: number;
-        /**
-          * Exception Type for animation exceptions
-          */
-        static ANIMATION: number;
-        /**
-          * Exception Type for individual control exceptions
-          * (e.g. using a particular control incorrectly).
-          */
-        static CONTROL: number;
-        /**
-          * Exception Type for custom exceptions
-          */
-        static CUSTOM: number;
-        /**
-          * Method for sending a warning to all listeners. Will
-          * not throw an error.
-          * @param {string} message The message to be sent to the listeners.
-          * @param {number} type? Denotes the type of fatal exception.
-          */
-        static warn(message: string, type?: number): void;
-        /**
-          * Method for sending a fatal error to all listeners. Will
-          * throw an error.
-          * @param {Error} error The Error to be sent to all the listeners.
-          * @param {number} type? Denotes the type of fatal exception.
-          */
-        static fatal(error: Error, type?: number): void;
-        /**
-          * Method for sending a fatal message to all listeners. Will
-          * throw an error.
-          * @param {string} message The message to be sent to all the listeners.
-          * @param {number} type? Denotes the type of fatal exception.
-          */
-        static fatal(message: string, type?: number): void;
-    }
-    /**
-      */
-    function IExceptionStatic(): IExceptionStatic;
-    /**
-      * Manages the throwing and consuming of errors and warnings.
-      */
-    interface IExceptionStatic {
-        /**
-          * Exception Type for parsing exceptions
-          */
-        PARSE: number;
-        /**
-          * Exception Type for compiling exceptions
-          */
-        COMPILE: number;
-        /**
-          * Exception Type for binding exceptions
-          */
-        BIND: number;
-        /**
-          * Exception Type for name exceptions
-          */
-        NAME: number;
-        /**
-          * Exception Type for navigation exceptions
-          */
-        NAVIGATION: number;
-        /**
-          * Exception Type for template exceptions
-          */
-        TEMPLATE: number;
-        /**
-          * Exception Type for ajax exceptions
-          */
-        AJAX: number;
-        /**
-          * Exception Type for context exceptions
-          */
-        CONTEXT: number;
-        /**
-          * Exception Type for event exceptions
-          */
-        EVENT: number;
-        /**
-          * Exception Type for injectable exceptions
-          */
-        INJECTABLE: number;
-        /**
-          * Exception Type for compat exceptions
-          */
-        COMPAT: number;
-        /**
-          * Exception Type for promise exceptions
-          */
-        PROMISE: number;
-        /**
-          * Exception Type for animation exceptions
-          */
-        ANIMATION: number;
-        /**
-          * Exception Type for individual control exceptions
-          * (e.g. using a particular control incorrectly).
-          */
-        CONTROL: number;
-        /**
-          * Exception Type for custom exceptions
-          */
-        CUSTOM: number;
-        /**
-          * Method for sending a warning to all listeners. Will
-          * not throw an error.
-          * @param {string} message The message to be sent to the listeners.
-          * @param {number} type? Denotes the type of fatal exception.
-          */
-        warn(message: string, type?: number): void;
-        /**
-          * Method for sending a fatal error to all listeners. Will
-          * throw an error.
-          * @param {Error} error The Error to be sent to all the listeners.
-          * @param {number} type? Denotes the type of fatal exception.
-          */
-        fatal(error: Error, type?: number): void;
-        /**
-          * Method for sending a fatal message to all listeners. Will
-          * throw an error.
-          * @param {string} message The message to be sent to all the listeners.
-          * @param {number} type? Denotes the type of fatal exception.
-          */
-        fatal(message: string, type?: number): void;
+        class Log {
+            protected static _inject: any;
+            /**
+              * The ERROR log level
+              */
+            ERROR: number;
+            /**
+              * The WARN log level
+              */
+            WARN: number;
+            /**
+              * The INFO log level
+              */
+            INFO: number;
+            /**
+              * The DEBUG log level
+              */
+            DEBUG: number;
+            /**
+              * The TRACE log level
+              */
+            TRACE: number;
+            /**
+              * A configurable log level (defaults to INFO). Any logs sent below this
+              * will be silent.
+              */
+            protected _level: number;
+            /**
+              * The IErrorEventStatic injectable instance
+              */
+            protected _ErrorEvent: events.IErrorEventStatic;
+            /**
+              * Logs fatal errors. This will throw the error after it is logged.
+              * @param {Error} error The error to log.
+              */
+            error(error: Error): void;
+            /**
+              * Logs at the warn level.
+              * @param {string} message The message to log.
+              */
+            warn(message: string): void;
+            /**
+              * Logs at the warn level.
+              * @param {Error} message The message to log.
+              */
+            warn(message: Error): void;
+            /**
+              * Logs at the info level.
+              * @param {string} message The message to log.
+              */
+            info(message: string): void;
+            /**
+              * Logs at the info level.
+              * @param {string} message The message to log.
+              */
+            info(message: Error): void;
+            /**
+              * Logs at the debug level.
+              * @param {string} message The message to log.
+              */
+            debug(message: string): void;
+            /**
+              * Logs at the debug level.
+              * @param {string} message The message to log.
+              */
+            debug(message: Error): void;
+            /**
+              * Logs at the trace level.
+              * @param {string} message The message to log.
+              */
+            trace(message: string): void;
+            /**
+              * Logs at the trace level.
+              * @param {string} message The message to log.
+              */
+            trace(message: Error): void;
+            /**
+              * Sets the log level level.
+              * @param {number} level The log level to set.
+              */
+            setLogLevel(level: number): void;
+            /**
+              * Sets the log level level.
+              * @param {string} level A string related to the log level to set (e.g. 'error'). It will be mapped to
+              * the proper number. If the corresponding number level is not found, INFO
+              * will be used.
+              */
+            setLogLevel(level: string): void;
+            /**
+              * Dispatches an ErrorEvent to the app.
+              * @param {string} message The message to send
+              * @param {number} level The log level denoting the severity of the message.
+              * @param {boolean} isFatal? Whether or not the severity of the error is fatal.
+              */
+            protected _log(message: string, level: number, isFatal?: boolean): void;
+            /**
+              * Dispatches an ErrorEvent to the app.
+              * @param {Error} message The message to send
+              * @param {number} level The log level denoting the severity of the message.
+              * @param {boolean} isFatal? Whether or not the severity of the error is fatal.
+              */
+            protected _log(message: Error, level: number, isFatal?: boolean): void;
+            /**
+              * Detemines whether or not a log level is at or above the current minimum log level.
+              * @param {number} level The log level to check against the current minimum log level.
+              */
+            protected _shouldLog(level: number): boolean;
+        }
     }
     /**
       * A class containing boolean values signifying browser
@@ -1188,9 +1128,9 @@ declare module plat {
         class Tokenizer {
             protected static _inject: any;
             /**
-              * Reference to the IExceptionStatic injectable.
+              * Reference to the Log injectable.
               */
-            protected _Exception: IExceptionStatic;
+            protected _log: debug.Log;
             /**
               * The input string to tokenize.
               */
@@ -1458,9 +1398,9 @@ declare module plat {
               */
             protected _tokenizer: Tokenizer;
             /**
-              * Reference to the IExceptionStatic injectable.
+              * Reference to the Log injectable.
               */
-            protected _Exception: IExceptionStatic;
+            protected _log: debug.Log;
             /**
               * A single expression's token representation created by a Tokenizer.
               */
@@ -2244,9 +2184,9 @@ declare module plat {
               */
             jsonpCallback: string;
             /**
-              * The plat.IExceptionStatic injectable instance
+              * Reference to the Log injectable.
               */
-            protected _Exception: IExceptionStatic;
+            protected _log: debug.Log;
             /**
               * The plat.web.Browser injectable instance
               */
@@ -2900,9 +2840,9 @@ declare module plat {
               */
             protected _Promise: async.IPromise;
             /**
-              * Reference to the IExceptionStatic injectable.
+              * Reference to the Log injectable.
               */
-            protected _Exception: IExceptionStatic;
+            protected _log: debug.Log;
             /**
               * The constructor for a TemplateCache. Creates a new Cache
               * with the ID "__templateCache".
@@ -3003,9 +2943,9 @@ declare module plat {
           */
         class ContextManager {
             /**
-              * Reference to the IExceptionStatic injectable.
+              * Reference to the Log injectable.
               */
-            protected static _Exception: IExceptionStatic;
+            protected static _log: debug.Log;
             /**
               * A set of functions to be fired when a particular observed array is mutated.
               */
@@ -3300,7 +3240,7 @@ declare module plat {
         }
         /**
           */
-        function IContextManagerStatic(_Exception: IExceptionStatic): IContextManagerStatic;
+        function IContextManagerStatic(_log?: debug.Log): IContextManagerStatic;
         /**
           * Creates and manages ContextManagers and has
           * additional helper functions for observing objects and primitives.
@@ -3542,7 +3482,7 @@ declare module plat {
           * An event class that propagates through a control tree.
           * Propagation of the event always starts at the sender, allowing a control to both
           * initialize and consume an event. If a consumer of an event throws an error while
-          * handling the event it will be logged to the app using exception.warn. Errors will
+          * handling the event it will be logged to the app using Log.debug. Errors will
           * not stop propagation of the event.
           */
         class DispatchEvent {
@@ -3651,9 +3591,9 @@ declare module plat {
           */
         class EventManager {
             /**
-              * Reference to the IExceptionStatic injectable.
+              * Reference to the Log injectable.
               */
-            protected static _Exception: IExceptionStatic;
+            protected static _log: debug.Log;
             /**
               * Reference to the Compat injectable.
               */
@@ -3802,7 +3742,7 @@ declare module plat {
         }
         /**
           */
-        function IEventManagerStatic(_Exception?: IExceptionStatic, _compat?: Compat, _document?: Document, _window?: Window, _dom?: ui.Dom): IEventManagerStatic;
+        function IEventManagerStatic(_log?: debug.Log, _compat?: Compat, _document?: Document, _window?: Window, _dom?: ui.Dom): IEventManagerStatic;
         /**
           * Manages dispatching events, handling all propagating events as well as any error handling.
           */
@@ -4022,9 +3962,9 @@ declare module plat {
       */
     class Control {
         /**
-          * Reference to the IExceptionStatic injectable.
+          * Reference to the Log injectable.
           */
-        protected static _Exception: IExceptionStatic;
+        protected static _log: debug.Log;
         /**
           * Reference to the Dom injectable.
           */
@@ -4049,10 +3989,6 @@ declare module plat {
           * An object containing all controls' registered event listeners.
           */
         private static __eventListeners;
-        /**
-          * The plat.IExceptionStatic injectable instance
-          */
-        protected _Exception: IExceptionStatic;
         /**
           * A unique id, created during instantiation and found on every Control.
           */
@@ -4092,6 +4028,10 @@ declare module plat {
           * Contains helper methods for data manipulation.
           */
         utils: Utils;
+        /**
+          * Reference to the Log injectable.
+          */
+        protected _log: debug.Log;
         /**
           * Finds the ancestor control for the given control that contains the root
           * context.
@@ -4331,7 +4271,7 @@ declare module plat {
     }
     /**
       */
-    function IControlFactory(_parser?: expressions.Parser, _ContextManager?: observable.IContextManagerStatic, _EventManager?: events.IEventManagerStatic, _Promise?: async.IPromise, _dom?: ui.Dom, _Exception?: IExceptionStatic): IControlFactory;
+    function IControlFactory(_parser?: expressions.Parser, _ContextManager?: observable.IContextManagerStatic, _EventManager?: events.IEventManagerStatic, _Promise?: async.IPromise, _dom?: ui.Dom, _log?: debug.Log): IControlFactory;
     /**
       * Creates and manages instances of Control.
       */
@@ -4464,9 +4404,9 @@ declare module plat {
               */
             protected static _Promise: async.IPromise;
             /**
-              * Reference to the IExceptionStatic injectable.
+              * Reference to the Log injectable.
               */
-            protected static _Exception: IExceptionStatic;
+            protected static _log: debug.Log;
             /**
               * An object for quickly retrieving previously accessed resources.
               */
@@ -4704,7 +4644,7 @@ declare module plat {
         }
         /**
           */
-        function ITemplateControlFactory(_ResourcesFactory?: IResourcesFactory, _BindableTemplatesFactory?: IBindableTemplatesFactory, _managerCache?: storage.Cache<processing.ElementManager>, _templateCache?: storage.TemplateCache, _parser?: expressions.Parser, _http?: async.Http, _Promise?: async.IPromise, _Exception?: IExceptionStatic): ITemplateControlFactory;
+        function ITemplateControlFactory(_ResourcesFactory?: IResourcesFactory, _BindableTemplatesFactory?: IBindableTemplatesFactory, _managerCache?: storage.Cache<processing.ElementManager>, _templateCache?: storage.TemplateCache, _parser?: expressions.Parser, _http?: async.Http, _Promise?: async.IPromise, _log?: debug.Log): ITemplateControlFactory;
         /**
           * Creates and manages TemplateControls.
           */
@@ -5231,9 +5171,9 @@ declare module plat {
               */
             protected _BindableTemplatesFactory: IBindableTemplatesFactory;
             /**
-              * Reference to the IExceptionStatic injectable.
+              * Reference to the Log injectable.
               */
-            protected _Exception: IExceptionStatic;
+            protected _log: debug.Log;
             /**
               * The control containing this BindableTemplates object.
               */
@@ -5549,9 +5489,9 @@ declare module plat {
               */
             protected static _regex: expressions.Regex;
             /**
-              * Reference to the IExceptionStatic injectable.
+              * Reference to the Log injectable.
               */
-            protected static _Exception: IExceptionStatic;
+            protected static _log: debug.Log;
             /**
               * A list of resources to place on a control.
               */
@@ -5667,7 +5607,7 @@ declare module plat {
         }
         /**
           */
-        function IResourcesFactory(_ContextManager?: observable.IContextManagerStatic, _regex?: expressions.Regex, _Exception?: IExceptionStatic): IResourcesFactory;
+        function IResourcesFactory(_ContextManager?: observable.IContextManagerStatic, _regex?: expressions.Regex, _log?: debug.Log): IResourcesFactory;
         /**
           * Creates and manages Resources for TemplateControls.
           */
@@ -7380,9 +7320,9 @@ declare module plat {
                   */
                 options: any;
                 /**
-                  * Reference to the IExceptionStatic injectable.
+                  * Reference to the Log injectable.
                   */
-                protected _Exception: IExceptionStatic;
+                protected _log: debug.Log;
                 /**
                   * Reference to the Window injectable.
                   */
@@ -8903,9 +8843,9 @@ declare module plat {
               */
             protected static _TemplateControlFactory: ui.ITemplateControlFactory;
             /**
-              * Reference to the IExceptionStatic injectable.
+              * Reference to the Log injectable.
               */
-            protected static _Exception: IExceptionStatic;
+            protected static _log: debug.Log;
             /**
               * A regular expression for finding markup
               */
@@ -9003,7 +8943,7 @@ declare module plat {
         }
         /**
           */
-        function INodeManagerStatic(_regex?: expressions.Regex, _ContextManager?: observable.IContextManagerStatic, _parser?: expressions.Parser, _TemplateControlFactory?: ui.ITemplateControlFactory, _Exception?: IExceptionStatic): INodeManagerStatic;
+        function INodeManagerStatic(_regex?: expressions.Regex, _ContextManager?: observable.IContextManagerStatic, _parser?: expressions.Parser, _TemplateControlFactory?: ui.ITemplateControlFactory, _log?: debug.Log): INodeManagerStatic;
         /**
           * Performs essential Node management and binding functions.
           */
@@ -9136,9 +9076,9 @@ declare module plat {
               */
             protected static _BindableTemplatesFactory: ui.IBindableTemplatesFactory;
             /**
-              * Reference to the IExceptionStatic injectable.
+              * Reference to the Log injectable.
               */
-            protected static _Exception: IExceptionStatic;
+            protected static _log: debug.Log;
             /**
               * Reference to the IPromise injectable.
               */
@@ -9168,9 +9108,9 @@ declare module plat {
               */
             protected _BindableTemplatesFactory: ui.IBindableTemplatesFactory;
             /**
-              * Reference to the IExceptionStatic injectable.
+              * Reference to the Log injectable.
               */
-            protected _Exception: IExceptionStatic;
+            protected _log: debug.Log;
             /**
               * The child managers for this manager.
               */
@@ -9400,7 +9340,7 @@ declare module plat {
         }
         /**
           */
-        function IElementManagerFactory(_document?: Document, _managerCache?: storage.Cache<ElementManager>, _ResourcesFactory?: ui.IResourcesFactory, _AttributesFactory?: typeof ui.Attributes, _BindableTemplatesFactory?: ui.IBindableTemplatesFactory, _Exception?: IExceptionStatic): IElementManagerFactory;
+        function IElementManagerFactory(_document?: Document, _managerCache?: storage.Cache<ElementManager>, _ResourcesFactory?: ui.IResourcesFactory, _AttributesFactory?: typeof ui.Attributes, _BindableTemplatesFactory?: ui.IBindableTemplatesFactory, _log?: debug.Log): IElementManagerFactory;
         /**
           * Creates and manages a class for dealing with Element nodes.
           */
@@ -9694,9 +9634,9 @@ declare module plat {
               */
             protected _window: Window;
             /**
-              * The IExceptionStatic injectable instance
+              * Reference to the Log injectable.
               */
-            protected _Exception: IExceptionStatic;
+            protected _log: debug.Log;
             /**
               * The History injectable instance
               */
@@ -11993,9 +11933,9 @@ declare module plat {
           */
         protected static _LifecycleEvent: events.ILifecycleEventStatic;
         /**
-          * Reference to the IExceptionStatic injectable.
+          * Reference to the Log injectable.
           */
-        protected static _Exception: IExceptionStatic;
+        protected static _log: debug.Log;
         /**
           * The injector for injecting the instance of the currently registered IApp.
           */
@@ -12118,7 +12058,7 @@ declare module plat {
     }
     /**
       */
-    function IAppStatic(_compat?: Compat, _EventManager?: events.IEventManagerStatic, _document?: Document, _compiler?: processing.Compiler, _LifecycleEvent?: events.ILifecycleEventStatic, _Exception?: IExceptionStatic): IAppStatic;
+    function IAppStatic(_compat?: Compat, _EventManager?: events.IEventManagerStatic, _document?: Document, _compiler?: processing.Compiler, _LifecycleEvent?: events.ILifecycleEventStatic, _log?: debug.Log): IAppStatic;
     /**
       */
     function IApp(_AppStatic?: IAppStatic): App;
