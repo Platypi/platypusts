@@ -12,91 +12,87 @@
 module plat.debug {
     'use strict';
 
-	/**
+    /**
      * @name Log
      * @memberof plat.debug
      * @kind class
      * 
      * @description
      * Handles all logging/debugging for the framework. All logs will be bubbled up to the 
-	 * {@link plat.App.error|App.error} event to allow for easy debugging.
+     * {@link plat.App.error|App.error} event to allow for easy debugging.
      */
-	export class Log {
-		protected static _inject: any = {
-			_ErrorEvent: __ErrorEventStatic
-		};
-
-		/**
+    export class Log {
+        /**
          * @name ERROR
          * @memberof plat.debug.Log
          * @kind property
          * @access public
-		 * @readonly
+         * @readonly
          * 
          * @type {number}
          * 
          * @description
          * The ERROR log level
          */
-		ERROR: number = 5;
+        ERROR: number = 5;
 		
-		/**
+        /**
          * @name WARN
          * @memberof plat.debug.Log
          * @kind property
          * @access public
-		 * @readonly
+         * @readonly
          * 
          * @type {number}
          * 
          * @description
          * The WARN log level
          */
-		WARN: number = 4;
+        WARN: number = 4;
 		
-		/**
+        /**
          * @name INFO
          * @memberof plat.debug.Log
          * @kind property
          * @access public
-		 * @readonly
+         * @readonly
          * 
          * @type {number}
          * 
          * @description
          * The INFO log level
          */
-		INFO: number = 3;
+        INFO: number = 3;
 		
-		/**
+        /**
          * @name DEBUG
          * @memberof plat.debug.Log
          * @kind property
          * @access public
-		 * @readonly
+         * @readonly
          * 
          * @type {number}
          * 
          * @description
          * The DEBUG log level
          */
-		DEBUG: number = 2;
-		
-		/**
+        DEBUG: number = 2;
+
+        /**
          * @name TRACE
          * @memberof plat.debug.Log
          * @kind property
          * @access public
-		 * @readonly
+         * @readonly
          * 
          * @type {number}
          * 
          * @description
          * The TRACE log level
          */
-		TRACE: number = 1;
+        TRACE: number = 1;
 		
-		/**
+        /**
          * @name _level
          * @memberof plat.debug.Log
          * @kind property
@@ -106,11 +102,11 @@ module plat.debug {
          * 
          * @description
          * A configurable log level (defaults to INFO). Any logs sent below this 
-		 * will be silent.
+         * will be silent.
          */
-		protected _level: number = this.INFO;
+        protected _level: number = this.INFO;
 
-		/**
+        /**
          * @name _ErrorEvent
          * @memberof plat.debug.Log
          * @kind property
@@ -121,9 +117,9 @@ module plat.debug {
          * @description
          * The {@link plat.events.IErrorEventStatic|IErrorEventStatic} injectable instance
          */
-		protected _ErrorEvent: events.IErrorEventStatic;
+        protected _ErrorEvent: events.IErrorEventStatic;
 
-		/**
+        /**
          * @name error
          * @memberof plat.debug.Log
          * @kind function
@@ -136,17 +132,17 @@ module plat.debug {
          * 
          * @returns {void}
          */
-		error(error: Error): void {
-			this._log(error, this.ERROR, true);
-			throw error;
-		}
+        error(error: Error): void {
+            this._log(error, this.ERROR);
+            throw error;
+        }
 
 		/**
          * @name warn
          * @memberof plat.debug.Log
          * @kind function
          * @access public
-		 * @variation 0
+         * @variation 0
          * 
          * @description
          * Logs at the warn level.
@@ -155,13 +151,13 @@ module plat.debug {
          * 
          * @returns {void}
          */
-		warn(message: string): void;
-		/**
+        warn(message: string): void;
+        /**
          * @name warn
          * @memberof plat.debug.Log
          * @kind function
          * @access public
-		 * @variation 1
+         * @variation 1
          * 
          * @description
          * Logs at the warn level.
@@ -170,17 +166,17 @@ module plat.debug {
          * 
          * @returns {void}
          */
-		warn(message: Error): void;
-		warn(message: any): void {
-			this._log(message, this.WARN);
-		}
+        warn(message: Error): void;
+        warn(message: any): void {
+            this._log(message, this.WARN);
+        }
 
-		/**
+        /**
          * @name info
          * @memberof plat.debug.Log
          * @kind function
          * @access public
-		 * @variation 0
+         * variation 0
          * 
          * @description
          * Logs at the info level.
@@ -189,13 +185,13 @@ module plat.debug {
          * 
          * @returns {void}
          */
-		info(message: string): void;
-		/**
+        info(message: string): void;
+        /**
          * @name info
          * @memberof plat.debug.Log
          * @kind function
          * @access public
-		 * @variation 1
+         * variation 1
          * 
          * @description
          * Logs at the info level.
@@ -204,17 +200,17 @@ module plat.debug {
          * 
          * @returns {void}
          */
-		info(message: Error): void;
-		info(message: any): void {
-			this._log(message, this.INFO);
-		}
+        info(message: Error): void;
+        info(message: any): void {
+            this._log(message, this.INFO);
+        }
 
-		/**
+        /**
          * @name debug
          * @memberof plat.debug.Log
          * @kind function
          * @access public
-		 * @variation 0
+         * variation 0
          * 
          * @description
          * Logs at the debug level.
@@ -223,13 +219,13 @@ module plat.debug {
          * 
          * @returns {void}
          */
-		debug(message: string): void;
-		/**
+        debug(message: string): void;
+        /**
          * @name debug
          * @memberof plat.debug.Log
          * @kind function
          * @access public
-		 * @variation 1
+         * @variation 1
          * 
          * @description
          * Logs at the debug level.
@@ -238,17 +234,17 @@ module plat.debug {
          * 
          * @returns {void}
          */
-		debug(message: Error): void;
-		debug(message: any): void {
-			this._log(message, this.DEBUG);
-		}
+        debug(message: Error): void;
+        debug(message: any): void {
+            this._log(message, this.DEBUG);
+        }
 
-		/**
+        /**
          * @name trace
          * @memberof plat.debug.Log
          * @kind function
          * @access public
-		 * @variation 0
+         * variation 0
          * 
          * @description
          * Logs at the trace level.
@@ -257,13 +253,13 @@ module plat.debug {
          * 
          * @returns {void}
          */
-		trace(message: string): void;
-		/**
+        trace(message: string): void;
+        /**
          * @name trace
          * @memberof plat.debug.Log
          * @kind function
          * @access public
-		 * @variation 1
+         * variation 1
          * 
          * @description
          * Logs at the trace level.
@@ -272,17 +268,17 @@ module plat.debug {
          * 
          * @returns {void}
          */
-		trace(message: Error): void;
-		trace(message: any): void {
-			this._log(message, this.TRACE);
-		}
+        trace(message: Error): void;
+        trace(message: any): void {
+            this._log(message, this.TRACE);
+        }
 
-		/**
+        /**
          * @name setLogLevel
          * @memberof plat.debug.Log
          * @kind function
          * @access public
-		 * @variation 0
+         * variation 0
          * 
          * @description
          * Sets the log level level.
@@ -291,89 +287,93 @@ module plat.debug {
          * 
          * @returns {void}
          */
-		setLogLevel(level: number): void;
+        setLogLevel(level: number): void;
 		/**
          * @name setLogLevel
          * @memberof plat.debug.Log
          * @kind function
          * @access public
-		 * @variation 1
+	     * @variation 1
          * 
          * @description
          * Sets the log level level.
          * 
          * @param {string} level A string related to the log level to set (e.g. 'error'). It will be mapped to 
-		 * the proper number. If the corresponding number level is not found, {@link plat.debug.Log.INFO|INFO} 
-		 * will be used.
+         * the proper number. If the corresponding number level is not found, {@link plat.debug.Log.INFO|INFO} 
+         * will be used.
          * 
          * @returns {void}
          */
-		setLogLevel(level: string): void;
-		setLogLevel(level: any): void {
-			if(isString(level)) {
-				level = Log[(<string>level).toUpperCase()];
-			}
+        setLogLevel(level: string): void;
+        setLogLevel(level: any): void {
+            if (isString(level)) {
+                level = (<any>this)[(<string>level).toUpperCase()];
+            }
 
-			switch(level) {
-				case this.ERROR:
-				case this.WARN:
-				case this.INFO:
-				case this.DEBUG:
-				case this.TRACE:
-					this._level = level;
-					break;
-				default:
-					this._level = this.INFO;
-			}
-		}
+            switch (level) {
+                case this.ERROR:
+                case this.WARN:
+                case this.INFO:
+                case this.DEBUG:
+                case this.TRACE:
+                    this._level = level;
+                    break;
+                default:
+                    this._level = this.INFO;
+            }
+        }
 
-		/**
+        /**
          * @name _log
          * @memberof plat.debug.Log
          * @kind function
          * @access protected
-		 * @variation 0
+         * variation 0
          * 
          * @description
          * Dispatches an {@link plat.events.ErrorEvent|ErrorEvent} to the app.
          * 
-		 * @param {string} message The message to send
+         * param {string} message The message to send
          * @param {number} level The log level denoting the severity of the message.
-		 * @param {boolean} isFatal? Whether or not the severity of the error is fatal.
+         * param {boolean} isFatal? Whether or not the severity of the error is fatal.
          * 
          * @returns {void}
          */
-		protected _log(message: string, level: number, isFatal?: boolean): void;
-		/**
+        protected _log(message: string, level: number, isFatal?: boolean): void;
+        /**
          * @name _log
          * @memberof plat.debug.Log
          * @kind function
          * @access protected
-		 * @variation 1
+         * variation 1
          * 
          * @description
          * Dispatches an {@link plat.events.ErrorEvent|ErrorEvent} to the app.
          * 
-		 * @param {Error} message The message to send
+         * param {Error} message The message to send
          * @param {number} level The log level denoting the severity of the message.
-		 * @param {boolean} isFatal? Whether or not the severity of the error is fatal.
          * 
          * @returns {void}
          */
-		protected _log(message: Error, level: number, isFatal?: boolean): void;
-		protected _log(message: any, level: number, isFatal?: boolean): void {
-			if(!this._shouldLog(level)) {
-				return;
-			}
+        protected _log(message: Error, level: number): void;
+        protected _log(message: any, level: number): void {
+            if (!this._shouldLog(level)) {
+                return;
+            }
 
-			if(isString(message)) {
-				message = new Error(message);
-			}
+            if (isString(message)) {
+                message = new Error(message);
+            }
+            var _ErrorEvent = this._ErrorEvent;
+            
+            if(isNull(_ErrorEvent)) {
+                _ErrorEvent = this._ErrorEvent = acquire(__ErrorEventStatic);
+            }
 
-			this._ErrorEvent.dispatch(__error, Log, message, isFatal);
-		}
+            _ErrorEvent.dispatch(__error, Log, message, level);
+        }
 
-		/**
+        /**
          * @name _shouldLog
          * @memberof plat.debug.Log
          * @kind function
@@ -386,14 +386,14 @@ module plat.debug {
          * 
          * @returns {void}
          */
-		protected _shouldLog(level: number): boolean {
-			if(!isNumber(level)) {
-				level = this.INFO;
-			}
+        protected _shouldLog(level: number): boolean {
+            if (!isNumber(level)) {
+                level = this.INFO;
+            }
 
-			return this._level >= level;
-		}
-	}
+            return this._level < level;
+        }
+    }
 
-	register.injectable(__Log, Log);
+    register.injectable(__Log, Log);
 }

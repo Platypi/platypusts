@@ -1,5 +1,5 @@
 /**
-  * PlatypusTS v0.13.5 (http://getplatypi.com)
+  * PlatypusTS v0.13.6 (http://getplatypi.com)
   * Copyright 2015 Platypi, LLC. All rights reserved.
   *
   * PlatypusTS is licensed under the GPL-3.0 found at
@@ -344,7 +344,6 @@ declare module plat {
           * App.error event to allow for easy debugging.
           */
         class Log {
-            protected static _inject: any;
             /**
               * The ERROR log level
               */
@@ -433,18 +432,15 @@ declare module plat {
             setLogLevel(level: string): void;
             /**
               * Dispatches an ErrorEvent to the app.
-              * @param {string} message The message to send
               * @param {number} level The log level denoting the severity of the message.
-              * @param {boolean} isFatal? Whether or not the severity of the error is fatal.
+              * param {boolean} isFatal? Whether or not the severity of the error is fatal.
               */
             protected _log(message: string, level: number, isFatal?: boolean): void;
             /**
               * Dispatches an ErrorEvent to the app.
-              * @param {Error} message The message to send
               * @param {number} level The log level denoting the severity of the message.
-              * @param {boolean} isFatal? Whether or not the severity of the error is fatal.
               */
-            protected _log(message: Error, level: number, isFatal?: boolean): void;
+            protected _log(message: Error, level: number): void;
             /**
               * Detemines whether or not a log level is at or above the current minimum log level.
               * @param {number} level The log level to check against the current minimum log level.
@@ -3910,17 +3906,17 @@ declare module plat {
               */
             error: E;
             /**
-              * Whether or not the error is fatal.
+              * The severity level of the error.
               */
-            fatal: boolean;
+            logLevel: number;
             /**
               * Creates a new ErrorEvent and fires it.
               * @param {string} name The name of the event.
               * @param {any} sender The sender of the event.
               * @param {E} error The error that occurred, resulting in the event.
-              * @param {boolean} isFatal Whether or not the error is fatal
+              * @param {number} logLevel The severity level of the error
               */
-            static dispatch<E extends Error>(name: string, sender: any, error: E, isFatal?: boolean): ErrorEvent<E>;
+            static dispatch<E extends Error>(name: string, sender: any, error: E, logLevel: number): ErrorEvent<E>;
             /**
               * Initializes the event, populating its public properties.
               * @param {string} name The name of the event.
@@ -3950,9 +3946,9 @@ declare module plat {
               * @param {string} name The name of the event.
               * @param {any} sender The sender of the event.
               * @param {E} error The error that occurred, resulting in the event.
-              * @param {boolean} isFatal Whether or not the error is fatal
+              * @param {number} logLevel The severity level of the error
               */
-            dispatch<E extends Error>(name: string, sender: any, error: E, isFatal?: boolean): ErrorEvent<E>;
+            dispatch<E extends Error>(name: string, sender: any, error: E, logLevel: number): ErrorEvent<E>;
         }
     }
     /**
@@ -11948,6 +11944,10 @@ declare module plat {
           * A Navigator instance, exists when a router is injected into the app.
           */
         navigator: routing.Navigator;
+        /**
+          * Reference to the Log injectable.
+          */
+        protected _log: debug.Log;
         /**
           * A static method for initiating the app startup.
           */

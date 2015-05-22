@@ -152,6 +152,18 @@ module plat {
         navigator: routing.Navigator;
 
         /**
+         * @name _log
+         * @memberof plat.App
+         * @kind property
+         * @access protected
+         * 
+         * @type {plat.debug.Log}
+         * @description
+         * Reference to the {@link plat.debug.Log|Log} injectable.
+         */
+        protected _log: debug.Log = App._log;
+
+        /**
          * @name start
          * @memberof plat.App
          * @kind function

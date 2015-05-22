@@ -46,7 +46,7 @@ module plat.events {
         error: E;
 
         /**
-         * @name fatal
+         * @name logLevel
          * @memberof plat.events.ErrorEvent
          * @kind property
          * @access public
@@ -54,9 +54,9 @@ module plat.events {
          * @type {boolean}
          * 
          * @description
-         * Whether or not the error is fatal.
+         * The severity level of the error.
          */
-        fatal: boolean = false;
+        logLevel: number;
 
         /**
          * @name dispatch
@@ -73,18 +73,15 @@ module plat.events {
          * @param {string} name The name of the event.
          * @param {any} sender The sender of the event.
          * @param {E} error The error that occurred, resulting in the event.
-         * @param {boolean} isFatal Whether or not the error is fatal
+         * @param {number} logLevel The severity level of the error
          * 
          * @returns {plat.events.ErrorEvent<E>} The event instance.
          */
-        static dispatch<E extends Error>(name: string, sender: any, error: E, isFatal?: boolean): ErrorEvent<E> {
+        static dispatch<E extends Error>(name: string, sender: any, error: E, logLevel: number): ErrorEvent<E> {
             var event: ErrorEvent<E> = acquire(ErrorEvent);
 
             event.initialize(name, sender, null, error);
-
-            if (isFatal) {
-                event.fatal = true;
-            }
+            event.logLevel = logLevel;
 
             ErrorEvent._EventManager.sendEvent(event);
 
@@ -166,10 +163,10 @@ module plat.events {
          * @param {string} name The name of the event.
          * @param {any} sender The sender of the event.
          * @param {E} error The error that occurred, resulting in the event.
-         * @param {boolean} isFatal Whether or not the error is fatal
+         * @param {number} logLevel The severity level of the error
          * 
          * @returns {plat.events.ErrorEvent<E>} The event instance.
          */
-        dispatch<E extends Error>(name: string, sender: any, error: E, isFatal?: boolean): ErrorEvent<E>;
+        dispatch<E extends Error>(name: string, sender: any, error: E, logLevel: number): ErrorEvent<E>;
     }
 }

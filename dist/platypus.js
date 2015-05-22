@@ -6,7 +6,7 @@ var __extends = this.__extends || function (d, b) {
 };
 /* tslint:disable */
 /**
- * PlatypusTS v0.13.5 (http://getplatypi.com)
+ * PlatypusTS v0.13.6 (http://getplatypi.com)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the GPL-3.0 found at
@@ -1500,7 +1500,7 @@ var plat;
              * @param {Error} error The error to log.
              */
             Log.prototype.error = function (error) {
-                this._log(error, this.ERROR, true);
+                this._log(error, this.ERROR);
                 throw error;
             };
             Log.prototype.warn = function (message) {
@@ -1517,7 +1517,7 @@ var plat;
             };
             Log.prototype.setLogLevel = function (level) {
                 if (isString(level)) {
-                    level = Log[level.toUpperCase()];
+                    level = this[level.toUpperCase()];
                 }
                 switch (level) {
                     case this.ERROR:
@@ -1531,14 +1531,18 @@ var plat;
                         this._level = this.INFO;
                 }
             };
-            Log.prototype._log = function (message, level, isFatal) {
+            Log.prototype._log = function (message, level) {
                 if (!this._shouldLog(level)) {
                     return;
                 }
                 if (isString(message)) {
                     message = new Error(message);
                 }
-                this._ErrorEvent.dispatch(__error, Log, message, isFatal);
+                var _ErrorEvent = this._ErrorEvent;
+                if (isNull(_ErrorEvent)) {
+                    _ErrorEvent = this._ErrorEvent = acquire(__ErrorEventStatic);
+                }
+                _ErrorEvent.dispatch(__error, Log, message, level);
             };
             /**
              * Detemines whether or not a log level is at or above the current minimum log level.
@@ -1548,10 +1552,7 @@ var plat;
                 if (!isNumber(level)) {
                     level = this.INFO;
                 }
-                return this._level >= level;
-            };
-            Log._inject = {
-                _ErrorEvent: __ErrorEventStatic
+                return this._level < level;
             };
             return Log;
         })();
@@ -6767,24 +6768,18 @@ var plat;
             __extends(ErrorEvent, _super);
             function ErrorEvent() {
                 _super.apply(this, arguments);
-                /**
-                 * Whether or not the error is fatal.
-                 */
-                this.fatal = false;
             }
             /**
              * Creates a new ErrorEvent and fires it.
              * @param {string} name The name of the event.
              * @param {any} sender The sender of the event.
              * @param {E} error The error that occurred, resulting in the event.
-             * @param {boolean} isFatal Whether or not the error is fatal
+             * @param {number} logLevel The severity level of the error
              */
-            ErrorEvent.dispatch = function (name, sender, error, isFatal) {
+            ErrorEvent.dispatch = function (name, sender, error, logLevel) {
                 var event = acquire(ErrorEvent);
                 event.initialize(name, sender, null, error);
-                if (isFatal) {
-                    event.fatal = true;
-                }
+                event.logLevel = logLevel;
                 ErrorEvent._EventManager.sendEvent(event);
                 return event;
             };
@@ -18848,6 +18843,10 @@ var plat;
              * A unique id, created during instantiation.
              */
             this.uid = uniqueId(__Plat);
+            /**
+             * Reference to the Log injectable.
+             */
+            this._log = App._log;
             var navigator = this.navigator = acquire(__NavigatorInstance);
             navigator.initialize(acquire(__RouterStatic).currentRouter());
         }
