@@ -151,7 +151,7 @@ module plat.expressions {
          * @description
          * Determines if a telephone number is valid.
          */
-        validateTelephone: RegExp = /^\+?[0-9\.\-\s]*$/;
+        validateTelephone: RegExp = /^\+?[0-9\.\(\)\s-]*$/;
 
         /**
          * @name splatSegmentRegex
