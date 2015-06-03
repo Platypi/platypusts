@@ -1359,9 +1359,9 @@ module plat.observable {
 
                 if (selfNotify) {
                     _this._notifyChildProperties(absoluteIdentifier, this, originalArray);
-                } else if (newLength !== oldLength) {
-                    _this._execute(absoluteIdentifier + '.length', newLength, oldLength);
                 }
+                
+                _this._execute(absoluteIdentifier + '.length', newLength, oldLength);
 
                 return returnValue;
             };
@@ -1445,7 +1445,7 @@ module plat.observable {
                 this.__contextObjects[identifier] = value;
             }
 
-            if (isNull(observableListeners)) {
+            if (value === oldValue || isNull(observableListeners)) {
                 return;
             }
 
