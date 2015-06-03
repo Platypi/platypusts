@@ -1,5 +1,3 @@
-/// <reference path="../references.d.ts" />
-
 module plat.async {
     'use strict';
     var __promiseQueue: Array<any> = [],

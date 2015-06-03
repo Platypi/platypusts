@@ -1,5 +1,3 @@
-/// <reference path="../../references.d.ts" />
-
 /* tslint:disable:no-unused-variable */
 /**
  * @name OPERATORS

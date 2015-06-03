@@ -1,6 +1,4 @@
-﻿/// <reference path="../../references.d.ts" />
-
-module plat.controls {
+﻿module plat.controls {
     'use strict';
 
     /**

@@ -1,5 +1,3 @@
-/// <reference path="../references.d.ts" />
-
 /**
  * @name debug
  * @memberof plat
@@ -35,7 +33,7 @@ module plat.debug {
          * The ERROR log level
          */
         ERROR: number = 5;
-		
+
         /**
          * @name WARN
          * @memberof plat.debug.Log
@@ -49,7 +47,7 @@ module plat.debug {
          * The WARN log level
          */
         WARN: number = 4;
-		
+
         /**
          * @name INFO
          * @memberof plat.debug.Log
@@ -63,7 +61,7 @@ module plat.debug {
          * The INFO log level
          */
         INFO: number = 3;
-		
+
         /**
          * @name DEBUG
          * @memberof plat.debug.Log
@@ -91,7 +89,7 @@ module plat.debug {
          * The TRACE log level
          */
         TRACE: number = 1;
-		
+
         /**
          * @name _level
          * @memberof plat.debug.Log
@@ -137,7 +135,7 @@ module plat.debug {
             throw error;
         }
 
-		/**
+        /**
          * @name warn
          * @memberof plat.debug.Log
          * @kind function
@@ -288,12 +286,12 @@ module plat.debug {
          * @returns {void}
          */
         setLogLevel(level: number): void;
-		/**
+        /**
          * @name setLogLevel
          * @memberof plat.debug.Log
          * @kind function
          * @access public
-	     * @variation 1
+         * @variation 1
          * 
          * @description
          * Sets the log level level.
@@ -365,7 +363,7 @@ module plat.debug {
                 message = new Error(message);
             }
             var _ErrorEvent = this._ErrorEvent;
-            
+
             if(isNull(_ErrorEvent)) {
                 _ErrorEvent = this._ErrorEvent = acquire(__ErrorEventStatic);
             }

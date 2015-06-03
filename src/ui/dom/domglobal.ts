@@ -1,6 +1,4 @@
-﻿/// <reference path="../../references.d.ts" />
-
-/* tslint:disable:no-unused-variable */
+﻿/* tslint:disable:no-unused-variable */
 var ___document: Document,
     ___templateCache: plat.storage.TemplateCache,
     ___http: plat.async.Http,

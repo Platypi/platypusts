@@ -1,6 +1,4 @@
-﻿/// <reference path="../references.d.ts" />
-
-module plat {
+﻿module plat {
     'use strict';
 
     /**
@@ -541,7 +539,7 @@ module plat {
                 dom: string,
                 css: string,
                 jsSyntax: string;
-                
+
             if ((isArray(matches) && matches.length > 1)) {
                 prefix = (isArray(matches) && matches.length > 1) ? matches[1] : '';
                 jsSyntax = prefix[0].toUpperCase() + prefix.slice(1);
@@ -554,7 +552,7 @@ module plat {
             } else {
                 prefix = jsSyntax = dom = css = '';
             }
-            
+
             this.vendorPrefix = {
                 dom: dom,
                 lowerCase: prefix,
@@ -566,11 +564,11 @@ module plat {
             this.cancelAnimationFrame = _window.cancelAnimationFrame ||
             (<any>_window)[prefix + 'CancelRequestAnimationFrame'] ||
             (<any>_window)[prefix + 'CancelAnimationFrame'];
-            
+
             var style = documentElement.style;
             // handle Android issue where style.transition exists but transition events still need vendor prefix
             // should only affect version 4.1 but we will handle for < 4.4.
-            if ((isUndefined(this.ANDROID) || Math.floor(this.ANDROID / 10) >= 44) && 
+            if ((isUndefined(this.ANDROID) || Math.floor(this.ANDROID / 10) >= 44) &&
                 !(isUndefined(style.animation) || isUndefined(style.transition))) {
                 this.animationSupported = true;
                 this.animationEvents = {
@@ -885,7 +883,7 @@ module plat {
          * by it beginning with a capital letter and camel-cased throughout.
          */
         dom: string;
-        
+
         /**
          * @name lowerCase
          * @memberof plat.IVendorPrefix

@@ -1,5 +1,3 @@
-/// <reference path="../references.d.ts" />
-
 module plat.events {
     'use strict';
 

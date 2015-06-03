@@ -1,5 +1,3 @@
-/// <reference path="../../../references.d.ts" />
-
 module plat.ui.controls {
     'use strict';
 
@@ -374,11 +372,11 @@ module plat.ui.controls {
          */
         protected _setAliases(): void {
             var options: observable.IObservableProperty<IForEachOptions> = this.options;
-            
+
             if(isUndefined(options)) {
                 return;
             }
-            
+
             var aliases = options.value.aliases;
             if (!isObject(aliases)) {
                 return;

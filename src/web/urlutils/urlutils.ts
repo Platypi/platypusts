@@ -1,6 +1,4 @@
-﻿/// <reference path="../../references.d.ts" />
-
-module plat.web {
+﻿module plat.web {
     'use strict';
 
     /**

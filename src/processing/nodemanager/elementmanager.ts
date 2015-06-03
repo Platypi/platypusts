@@ -1,5 +1,3 @@
-/// <reference path="../../references.d.ts" />
-
 module plat.processing {
     'use strict';
 
@@ -1248,7 +1246,7 @@ module plat.processing {
                         if(isString(error)) {
                             error = new Error(error);
                         }
-    
+
                         this._log.error(error);
                     });
                 });
@@ -1289,7 +1287,7 @@ module plat.processing {
                         if(isString(error)) {
                             error = new Error(error);
                         }
-    
+
                         this._log.error(error);
                     });
                 });

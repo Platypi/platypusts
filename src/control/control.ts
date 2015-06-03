@@ -1,5 +1,3 @@
-/// <reference path="../references.d.ts" />
-
 module plat {
     'use strict';
 
@@ -233,7 +231,7 @@ module plat {
          * Contains helper methods for data manipulation.
          */
         utils: Utils = acquire(__Utils);
-        
+
         /**
          * @name _log
          * @memberof plat.Control
