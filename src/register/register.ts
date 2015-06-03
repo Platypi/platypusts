@@ -1,5 +1,3 @@
-/// <reference path="../references.d.ts" />
-
 var controlInjectors: plat.dependency.InjectorObject<plat.Control> = {},
     viewControlInjectors: plat.dependency.InjectorObject<plat.ui.ViewControl> = {},
     instanceInjectorDependencies: plat.IObject<plat.IObject<string>> = {},

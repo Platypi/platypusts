@@ -1,6 +1,4 @@
-﻿/// <reference path="../../references.d.ts" />
-
-module plat.processing {
+﻿module plat.processing {
 
     /**
      * @name AttributeManager

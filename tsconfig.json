@@ -1,0 +1,226 @@
+{
+    "lintOptions": {
+        "rules": {
+            "ban": [
+                true,
+                [
+                    "_",
+                    "extend"
+                ],
+                [
+                    "_",
+                    "isNull"
+                ],
+                [
+                    "_",
+                    "isDefined"
+                ]
+            ],
+            "class-name": true,
+            "comment-format": [
+                true,
+                "check-space"
+            ],
+            "curly": true,
+            "eofline": true,
+            "forin": true,
+            "indent": [
+                true,
+                4
+            ],
+            "interface-name": true,
+            "jsdoc-format": true,
+            "label-position": true,
+            "label-undefined": true,
+            "max-line-length": [
+                false,
+                140
+            ],
+            "member-ordering": [
+                true,
+                "public-before-private",
+                "static-before-instance",
+                "variables-before-functions"
+            ],
+            "no-any": false,
+            "no-arg": true,
+            "no-bitwise": false,
+            "no-console": [
+                true,
+                "debug",
+                "info",
+                "time",
+                "timeEnd",
+                "trace"
+            ],
+            "no-consecutive-blank-lines": true,
+            "no-construct": true,
+            "no-constructor-vars": false,
+            "no-debugger": true,
+            "no-duplicate-key": true,
+            "no-duplicate-variable": true,
+            "no-empty": false,
+            "no-eval": true,
+            "no-string-literal": true,
+            "no-trailing-comma": true,
+            "no-trailing-whitespace": true,
+            "no-unreachable": true,
+            "no-unused-expression": true,
+            "no-unused-variable": false,
+            "no-use-before-declare": true,
+            "one-line": [
+                true,
+                "check-open-brace",
+                "check-catch",
+                "check-else",
+                "check-whitespace"
+            ],
+            "quotemark": [
+                true,
+                "single"
+            ],
+            "radix": true,
+            "semicolon": true,
+            "triple-equals": [
+                true,
+                "allow-null-check"
+            ],
+            "typedef": [
+                true,
+                "property-declaration",
+                "member-variable-declaration",
+                "call-signature"
+            ],
+            "typedef-whitespace": [
+                true,
+                [
+                    "call-signature",
+                    "nospace"
+                ],
+                [
+                    "catch-clause",
+                    "nospace"
+                ],
+                [
+                    "index-signature",
+                    "space"
+                ],
+                [
+                    "parameter",
+                    "nospace"
+                ],
+                [
+                    "property-declaration",
+                    "nospace"
+                ],
+                [
+                    "variable-declaration",
+                    "nospace"
+                ]
+            ],
+            "use-strict": [
+                true,
+                "check-module"
+            ],
+            "variable-name": false,
+            "whitespace": [
+                false,
+                "check-branch",
+                "check-decl",
+                "check-operator",
+                "check-separator",
+                "check-type"
+            ]
+        }
+    },
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "ES5",
+        "noImplicitAny": true,
+        "removeComments": true,
+        "preserveConstEnums": true,
+        "sourceMap": true,
+        "watch": false
+    },
+    "filesGlob": [
+        "src/**/*.ts"
+    ],
+    "files": [
+        "src/references.d.ts",
+        "src/routing/router/router.ts",
+        "src/async/ajax.ts",
+        "src/async/promise.ts",
+        "src/attributecontrol/attributecontrol.ts",
+        "src/compat/compat.ts",
+        "src/control/control.ts",
+        "src/controls/bind/bind.ts",
+        "src/controls/elementpropertycontrol/elementpropertycontrol.ts",
+        "src/controls/keycodeevent/keycodeevent.ts",
+        "src/controls/name/namecontrol.ts",
+        "src/controls/observableattributecontrol/observableattributecontrol.ts",
+        "src/controls/setattributecontrol/setattributecontrol.ts",
+        "src/controls/simpleevent/simpleevent.ts",
+        "src/debug/log.ts",
+        "src/dependency/injector/injector.ts",
+        "src/document/document.ts",
+        "src/events/dispatchevent.ts",
+        "src/events/errorevent.ts",
+        "src/events/eventmanager.ts",
+        "src/events/lifecycleevent.ts",
+        "src/expressions/operators/operators.ts",
+        "src/expressions/parser/parser.ts",
+        "src/expressions/regex/regex.ts",
+        "src/expressions/tokenizer/tokenizer.ts",
+        "src/injectables/geolocation/geolocation.ts",
+        "src/observable/contextmanager/contextmanager.ts",
+        "src/processing/compiler/compiler.ts",
+        "src/processing/nodemanager/attributemanager.ts",
+        "src/processing/nodemanager/commentmanager.ts",
+        "src/processing/nodemanager/elementmanager.ts",
+        "src/processing/nodemanager/nodemanager.ts",
+        "src/processing/nodemanager/textmanager.ts",
+        "src/acquire/acquire.ts",
+        "src/references/references.ts",
+        "src/register/register.ts",
+        "src/routing/history/history.ts",
+        "src/routing/navigator/navigator.ts",
+        "src/app/app.ts",
+        "src/routing/routerecognizer/routerecognizer.ts",
+        "src/routing/segments/segments.ts",
+        "src/routing/state/state.ts",
+        "src/storage/basestorage.ts",
+        "src/storage/cache/cache.ts",
+        "src/storage/cache/templatecache.ts",
+        "src/storage/localstorage.ts",
+        "src/storage/sessionstorage.ts",
+        "src/ui/animations/animator.ts",
+        "src/ui/animations/baseanimation.ts",
+        "src/ui/animations/cssanimation.ts",
+        "src/ui/animations/simpleanimation/simpleanimation.ts",
+        "src/ui/animations/simpletransition/simpletransition.ts",
+        "src/ui/attributes/attributes.ts",
+        "src/ui/bindabletemplates/bindabletemplates.ts",
+        "src/ui/bindcontrol/bindcontrol.ts",
+        "src/ui/controls/foreach/foreach.ts",
+        "src/ui/controls/head/head.ts",
+        "src/ui/controls/html/html.ts",
+        "src/ui/controls/if/if.ts",
+        "src/ui/controls/ignore/ignore.ts",
+        "src/ui/controls/link/link.ts",
+        "src/ui/controls/select/select.ts",
+        "src/ui/controls/template/template.ts",
+        "src/ui/controls/viewport/viewport.ts",
+        "src/ui/dom/dom.ts",
+        "src/ui/dom/domglobal.ts",
+        "src/ui/domevents/domevents.ts",
+        "src/ui/resources/resources.ts",
+        "src/ui/templatecontrol/templatecontrol.ts",
+        "src/ui/viewcontrol/viewcontrol.ts",
+        "src/utils/utils.ts",
+        "src/utils/utilsglobal.ts",
+        "src/web/browser/browser.ts",
+        "src/web/location/location.ts",
+        "src/web/urlutils/urlutils.ts",
+        "src/window/window.ts"
+    ]
+}

@@ -1,5 +1,3 @@
-/// <reference path="../references.d.ts" />
-
 module plat {
     'use strict';
 
@@ -96,7 +94,7 @@ module plat {
          * Reference to the {@link plat.events.ILifecycleEventStatic|ILifecycleEventStatic} injectable.
          */
         protected static _LifecycleEvent: events.ILifecycleEventStatic;
-        
+
         /**
          * @name _log
          * @memberof plat.App

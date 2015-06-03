@@ -1,6 +1,4 @@
-﻿/// <reference path="../../references.d.ts" />
-
-module plat.expressions {
+﻿module plat.expressions {
     'use strict';
 
     /**

@@ -1,5 +1,3 @@
-/// <reference path="../../references.d.ts" />
-
 /**
  * @name ui
  * @memberof plat

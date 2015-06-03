@@ -1,6 +1,4 @@
-﻿/// <reference path="../../references.d.ts" />
-
-module plat.routing {
+﻿module plat.routing {
     'use strict';
 
     var specialCharacters = [

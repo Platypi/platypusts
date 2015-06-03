@@ -1,6 +1,4 @@
-﻿/// <reference path="../../../references.d.ts" />
-
-module plat.ui.animations {
+﻿module plat.ui.animations {
     'use strict';
 
     /**

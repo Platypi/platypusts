@@ -1,5 +1,4 @@
-﻿/// <reference path="../../../references.d.ts" />
-
+﻿
 /**
  * @name controls
  * @memberof plat.ui
