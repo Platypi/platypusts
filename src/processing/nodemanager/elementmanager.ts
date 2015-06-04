@@ -381,7 +381,20 @@ module plat.processing {
                 manager: ElementManager = ElementManager.getInstance();
 
             elementMap.element = <HTMLElement>element;
-            elementMap.uiControlNode = uiControlNode;
+            
+            if (!hasUiControl && isString(elementMap.childContext)) {
+                injector = injectableInjectors[__TemplateControlInstance];
+                hasUiControl = true;
+                elementMap.uiControlNode = {
+                    control: <ui.TemplateControl>injector.inject(),
+                    resourceElement: null,
+                    nodeName: __TemplateContext,
+                    expressions: [],
+                    injector: injector
+                };
+            } else {
+                elementMap.uiControlNode = uiControlNode;
+            }
 
             manager.initialize(elementMap, parent);
 

@@ -694,7 +694,7 @@ module plat.dependency {
          * @access public
          * @static
          * 
-         * @type {plat.dependency.InjectorObject<plat.dependency.Injector<any>>}
+         * @type {plat.dependency.InjectorObject<any>}
          * 
          * @description
          * An {@link plat.dependency.InjectorObject|InjectorObject} of objects. Contains all the registered 
@@ -709,7 +709,7 @@ module plat.dependency {
          * @access public
          * @static
          * 
-         * @type {plat.dependency.InjectorObject<plat.dependency.Injector<any>>}
+         * @type {plat.dependency.InjectorObject<any>}
          * 
          * @description
          * An {@link plat.dependency.InjectorObject|InjectorObject} of static objects. Contains all the registered 

@@ -1,9 +1,9 @@
 var controlInjectors: plat.dependency.InjectorObject<plat.Control> = {},
     viewControlInjectors: plat.dependency.InjectorObject<plat.ui.ViewControl> = {},
     instanceInjectorDependencies: plat.IObject<plat.IObject<string>> = {},
-    injectableInjectors: plat.dependency.InjectorObject<plat.dependency.Injector<any>> = {},
-    unregisteredInjectors: plat.dependency.InjectorObject<plat.dependency.Injector<any>> = {},
-    staticInjectors: plat.dependency.InjectorObject<plat.dependency.Injector<any>> = {},
+    injectableInjectors: plat.dependency.InjectorObject<any> = {},
+    unregisteredInjectors: plat.dependency.InjectorObject<any> = {},
+    staticInjectors: plat.dependency.InjectorObject<any> = {},
     animationInjectors: plat.dependency.InjectorObject<plat.ui.animations.BaseAnimation> = {},
     jsAnimationInjectors: plat.dependency.InjectorObject<plat.ui.animations.BaseAnimation> = {};
 
