@@ -6,7 +6,7 @@ var __extends = this.__extends || function (d, b) {
 };
 /* tslint:disable */
 /**
- * PlatypusTS v0.13.7 (https://platypi.io)
+ * PlatypusTS v0.13.8 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
@@ -25,7 +25,7 @@ var plat;
     var __prefix = '$', __CONTEXT = 'context', __AppStatic = __prefix + 'AppStatic', __App = __prefix + 'App', __Http = __prefix + 'Http', __HttpRequestInstance = __prefix + 'HttpRequestInstance', __HttpConfig = __prefix + 'HttpConfig', __Promise = __prefix + 'Promise', __Compat = __prefix + 'Compat', __ControlFactory = __prefix + 'ControlFactory', __AttributeControlFactory = __prefix + 'AttributeControlFactory', __Document = __prefix + 'Document', __DispatchEventInstance = __prefix + 'DispatchEventInstance', __ErrorEventStatic = __prefix + 'ErrorEventStatic', __EventManagerStatic = __prefix + 'EventManagerStatic', __LifecycleEventStatic = __prefix + 'LifecycleEventStatic', __LifecycleEventInstance = __prefix + 'LifecycleEventInstance', __Log = __prefix + 'Log', __Parser = __prefix + 'Parser', __Regex = __prefix + 'Regex', __Tokenizer = __prefix + 'Tokenizer', __NavigatorInstance = __prefix + 'NavigatorInstance', __ContextManagerStatic = __prefix + 'ContextManagerStatic', __ContextManagerInstance = __prefix + 'ContextManagerInstance', __Compiler = __prefix + 'Compiler', __CommentManagerFactory = __prefix + 'CommentManagerFactory', __CommentManagerInstance = __prefix + 'CommentManagerInstance', __ElementManagerFactory = __prefix + 'ElementManagerFactory', __ElementManagerInstance = __prefix + 'ElementManagerInstance', __NodeManagerStatic = __prefix + 'NodeManagerStatic', __TextManagerFactory = __prefix + 'TextManagerFactory', __TextManagerInstance = __prefix + 'TextManagerInstance', __CacheFactory = __prefix + 'CacheFactory', __ManagerCache = __prefix + 'ManagerCache', __TemplateCache = __prefix + 'TemplateCache', __Animator = __prefix + 'Animator', __AttributesFactory = __prefix + 'AttributesFactory', __AttributesInstance = __prefix + 'AttributesInstance', __BindableTemplatesFactory = __prefix + 'BindableTemplatesFactory', __Dom = __prefix + 'Dom', __DomEvents = __prefix + 'DomEvents', __IDomEventsConfig = __prefix + 'IDomEventsConfig', __DomEventInstance = __prefix + 'DomEventInstance', __ResourcesFactory = __prefix + 'ResourcesFactory', __ResourcesInstance = __prefix + 'ResourcesInstance', __TemplateControlFactory = __prefix + 'TemplateControlFactory', __TemplateControlInstance = __prefix + 'TemplateControlInstance', __Utils = __prefix + 'Utils', __Browser = __prefix + 'Browser', __BrowserConfig = __prefix + 'BrowserConfig', __Router = __prefix + 'Router', __RouterStatic = __prefix + 'RouterStatic', __UrlUtilsInstance = __prefix + 'UrlUtilsInstance', __Window = __prefix + 'Window', __LocalStorage = __prefix + 'LocalStorage', __SessionStorage = __prefix + 'SessionStorage', __Geolocation = __prefix + 'Geolocation', __BaseSegmentFactory = __prefix + 'BaseSegmentFactory', __BaseSegmentInstance = __prefix + 'BaseSegmentInstance', __StaticSegmentInstance = __prefix + 'StaticSegmentInstance', __VariableSegmentInstance = __prefix + 'VariableSegmentInstance', __DynamicSegmentInstance = __prefix + 'DynamicSegmentInstance', __SplatSegmentInstance = __prefix + 'SplatSegmentInstance', __StateStatic = __prefix + 'StateStatic', __StateInstance = __prefix + 'StateInstance', __RouteRecognizerInstance = __prefix + 'RouteRecognizerInstance', __InjectorStatic = __prefix + 'InjectorStatic', __History = __prefix + 'History', __Location = __prefix + 'Location', 
     /**
      */
-    __Plat = 'plat-', __Bind = __Plat + 'bind', __Href = __Plat + 'href', __Src = __Plat + 'src', __KeyDown = __Plat + 'keydown', __KeyPress = __Plat + 'keypress', __KeyUp = __Plat + 'keyup', __CharPress = __Plat + 'charpress', __Name = __Plat + 'name', __Options = __Plat + 'options', __Checked = __Plat + 'checked', __Disabled = __Plat + 'disabled', __Selected = __Plat + 'selected', __ReadOnly = __Plat + 'readonly', __Visible = __Plat + 'visible', __Style = __Plat + 'style', __Tap = __Plat + 'tap', __Blur = __Plat + 'blur', __Change = __Plat + 'change', __Copy = __Plat + 'copy', __Cut = __Plat + 'cut', __Paste = __Plat + 'paste', __DblTap = __Plat + 'dbltap', __Focus = __Plat + 'focus', __Submit = __Plat + 'submit', __TouchStart = __Plat + 'touchstart', __TouchEnd = __Plat + 'touchend', __TouchMove = __Plat + 'touchmove', __TouchCancel = __Plat + 'touchcancel', __Hold = __Plat + 'hold', __Release = __Plat + 'release', __Swipe = __Plat + 'swipe', __SwipeLeft = __Plat + 'swipeleft', __SwipeRight = __Plat + 'swiperight', __SwipeUp = __Plat + 'swipeup', __SwipeDown = __Plat + 'swipedown', __Track = __Plat + 'track', __TrackLeft = __Plat + 'trackleft', __TrackRight = __Plat + 'trackright', __TrackUp = __Plat + 'trackup', __TrackDown = __Plat + 'trackdown', __TrackEnd = __Plat + 'trackend', __React = __Plat + 'react', __Link = __Plat + 'link', __ForEach = __Plat + 'foreach', __Html = __Plat + 'html', __If = __Plat + 'if', __Ignore = __Plat + 'ignore', __Select = __Plat + 'select', __Template = __Plat + 'template', __Routeport = __Plat + 'routeport', __Viewport = __Plat + 'viewport', __Control = __Plat + 'control', __ViewControl = __Plat + 'viewcontrol', __Resources = __Plat + 'resources', __Context = __Plat + __CONTEXT, __Callback = __Plat + 'callback', __AttributePrefix = 'data-', 
+    __Plat = 'plat-', __Bind = __Plat + 'bind', __Href = __Plat + 'href', __Src = __Plat + 'src', __KeyDown = __Plat + 'keydown', __KeyPress = __Plat + 'keypress', __KeyUp = __Plat + 'keyup', __CharPress = __Plat + 'charpress', __Name = __Plat + 'name', __Options = __Plat + 'options', __Checked = __Plat + 'checked', __Disabled = __Plat + 'disabled', __Selected = __Plat + 'selected', __ReadOnly = __Plat + 'readonly', __Visible = __Plat + 'visible', __Style = __Plat + 'style', __Tap = __Plat + 'tap', __Blur = __Plat + 'blur', __Change = __Plat + 'change', __Copy = __Plat + 'copy', __Cut = __Plat + 'cut', __Paste = __Plat + 'paste', __DblTap = __Plat + 'dbltap', __Focus = __Plat + 'focus', __Submit = __Plat + 'submit', __TouchStart = __Plat + 'touchstart', __TouchEnd = __Plat + 'touchend', __TouchMove = __Plat + 'touchmove', __TouchCancel = __Plat + 'touchcancel', __Hold = __Plat + 'hold', __Release = __Plat + 'release', __Swipe = __Plat + 'swipe', __SwipeLeft = __Plat + 'swipeleft', __SwipeRight = __Plat + 'swiperight', __SwipeUp = __Plat + 'swipeup', __SwipeDown = __Plat + 'swipedown', __Track = __Plat + 'track', __TrackLeft = __Plat + 'trackleft', __TrackRight = __Plat + 'trackright', __TrackUp = __Plat + 'trackup', __TrackDown = __Plat + 'trackdown', __TrackEnd = __Plat + 'trackend', __React = __Plat + 'react', __Link = __Plat + 'link', __ForEach = __Plat + 'foreach', __Html = __Plat + 'html', __If = __Plat + 'if', __Ignore = __Plat + 'ignore', __Select = __Plat + 'select', __Template = __Plat + 'template', __Routeport = __Plat + 'routeport', __Viewport = __Plat + 'viewport', __Control = __Plat + 'control', __ViewControl = __Plat + 'viewcontrol', __Resources = __Plat + 'resources', __Context = __Plat + __CONTEXT, __TemplateContext = __Template + '-' + __CONTEXT, __Callback = __Plat + 'callback', __AttributePrefix = 'data-', 
     /**
      */
     __TemplateControlCache = '__templateControlCache', __Head = 'head', __Meta = 'meta', __Title = 'title', __Description = 'description', __Author = 'author', __Creator = 'creator', __MetaLink = 'link', __MetaHref = 'href', __MetaName = 'name', __MetaProperty = 'property', __MetaImage = 'image', __MetaVideo = 'video', __MetaType = 'type', __Rel = 'rel', __Url = 'url', __Article = 'article:', __OpenGraph = 'og:', __Twitter = 'twitter:', __Content = 'content', 
@@ -2103,7 +2103,7 @@ var plat;
                 /**
                  * Determines if a telephone number is valid.
                  */
-                this.validateTelephone = /^\+?[0-9\.\-\s]*$/;
+                this.validateTelephone = /^\+?[0-9\.\(\)\s-]*$/;
                 /**
                  * A regular expression for matching dynamic segments in a route.
                  */
@@ -6136,9 +6136,7 @@ var plat;
                     if (selfNotify) {
                         _this._notifyChildProperties(absoluteIdentifier, this, originalArray);
                     }
-                    else if (newLength !== oldLength) {
-                        _this._execute(absoluteIdentifier + '.length', newLength, oldLength);
-                    }
+                    _this._execute(absoluteIdentifier + '.length', newLength, oldLength);
                     return returnValue;
                 };
             };
@@ -6187,7 +6185,7 @@ var plat;
                 else {
                     this.__contextObjects[identifier] = value;
                 }
-                if (isNull(observableListeners)) {
+                if (value === oldValue || isNull(observableListeners)) {
                     return;
                 }
                 var listeners = observableListeners.slice(0), length = listeners.length;
@@ -13966,7 +13964,20 @@ var plat;
                 }
                 var elementMap = ElementManager._collectAttributes(element.attributes), manager = ElementManager.getInstance();
                 elementMap.element = element;
-                elementMap.uiControlNode = uiControlNode;
+                if (!hasUiControl && isString(elementMap.childContext)) {
+                    injector = injectableInjectors[__TemplateControlInstance];
+                    hasUiControl = true;
+                    elementMap.uiControlNode = {
+                        control: injector.inject(),
+                        resourceElement: null,
+                        nodeName: __TemplateContext,
+                        expressions: [],
+                        injector: injector
+                    };
+                }
+                else {
+                    elementMap.uiControlNode = uiControlNode;
+                }
                 manager.initialize(elementMap, parent);
                 if (!(elementMap.hasControl || hasUiControl)) {
                     manager.bind = function () { return []; };

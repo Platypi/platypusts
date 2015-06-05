@@ -1,5 +1,5 @@
 /**
-  * PlatypusTS v0.13.7 (https://platypi.io)
+  * PlatypusTS v0.13.8 (https://platypi.io)
   * Copyright 2015 Platypi, LLC. All rights reserved.
   *
   * PlatypusTS is licensed under the MIT license found at
@@ -284,12 +284,12 @@ declare module plat {
               * An InjectorObject of objects. Contains all the registered
               * injectables for an application.
               */
-            var injectable: InjectorObject<Injector<any>>;
+            var injectable: InjectorObject<any>;
             /**
               * An InjectorObject of static objects. Contains all the registered
               * static injectables for an application. Once the injectables have been injected, they are removed from this object.
               */
-            var staticInjectable: InjectorObject<Injector<any>>;
+            var staticInjectable: InjectorObject<any>;
             /**
               * An InjectorObject of animations. Can be either CSS or JS implementations.
               */
