@@ -233,12 +233,9 @@ module plat.ui.controls {
          */
         protected _handleClick(ev: Event): void {
             var buttons: number;
-            if (isNumber((<any>ev).buttons)) {
-                if ((<any>ev).buttons === 0) {
-                    buttons = 1;
-                } else {
-                    buttons = (<any>ev).buttons;
-                }
+
+            if (isNumber((<any>ev).buttons) && (<any>ev).buttons !== 0) {
+                buttons = (<any>ev).buttons;
             } else if (isNumber((<any>ev).which) && (<any>ev).which > 0) {
                 buttons = (<any>ev).which;
             } else {
@@ -266,6 +263,7 @@ module plat.ui.controls {
                         break;
                 }
             }
+
             if (buttons === 1) {
                 ev.preventDefault();
             }

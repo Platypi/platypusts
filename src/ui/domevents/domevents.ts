@@ -2044,12 +2044,8 @@
          */
         private __normalizeButtons(ev: IExtendedEvent): void {
             var buttons: number;
-            if (isNumber(ev.buttons)) {
-                if (ev.buttons === 0) {
-                    buttons = 1;
-                } else {
-                    buttons = ev.buttons;
-                }
+            if (isNumber(ev.buttons) && ev.buttons !== 0) {
+                buttons = ev.buttons;
             } else if (isNumber((<any>ev).which) && (<any>ev).which > 0) {
                 buttons = (<any>ev).which;
             } else {
