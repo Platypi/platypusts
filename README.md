@@ -1,3 +1,6 @@
+[![npm version](https://badge.fury.io/js/platypus.svg)](http://badge.fury.io/js/platypus)
+[![Downloads](http://img.shields.io/npm/dm/platypus.svg)](https://npmjs.org/package/platypus)
+
 PlatypusTS Distribution
 ==============
 
