@@ -374,7 +374,7 @@ module plat.processing {
 
             if (length === 1) {
                 expression = expressions[0];
-                if (expression.oneTime) {
+                if (expression.oneTime === true) {
                     return {
                         identifiers: [],
                         oneTimeIdentifiers: expression.identifiers.slice(0)

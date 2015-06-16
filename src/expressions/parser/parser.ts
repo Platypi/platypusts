@@ -142,7 +142,12 @@ module plat.expressions {
             var parsedObject = this.__cache[expression];
 
             if (!isNull(parsedObject)) {
-                return parsedObject;
+                return {
+                  expression: parsedObject.expression,
+                  identifiers: parsedObject.identifiers.slice(0),
+                  aliases: parsedObject.aliases.slice(0),
+                  evaluate: parsedObject.evaluate
+                };
             }
 
             this._tokens = this._tokenizer.createTokens(expression);
