@@ -743,13 +743,6 @@ module plat.observable {
          */
         observeArrayMutation(uid: string, listener: (changes: Array<IArrayChanges<any>>) => void, absoluteIdentifier: string,
             array: Array<any>, oldArray: Array<any>): IRemoveListener {
-            var length = arrayMethods.length,
-                method: string,
-                i: number,
-                _compat = this._compat,
-                proto = _compat.proto,
-                setProto = _compat.setProto;
-
             if (isArray(oldArray)) {
                 this._restoreArray(oldArray);
             }

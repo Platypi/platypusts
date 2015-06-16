@@ -797,7 +797,6 @@ module plat.ui.controls {
                 return;
             } else if (this._animate) {
                 if (addQueue.length === 0) {
-                    var animationQueue = this._animationQueue;
                     addQueue = addQueue.concat([this._animateItems(0, 1, __Leave, 'clone', true)]);
                 }
             }
@@ -868,8 +867,7 @@ module plat.ui.controls {
             var removeCount = change.removed.length,
                 animationQueue = this._animationQueue;
             if (addCount > removeCount) {
-                var _Promise = this._Promise,
-                    itemAddCount = addCount - removeCount,
+                var itemAddCount = addCount - removeCount,
                     animationCount: number;
 
                 if (animating) {

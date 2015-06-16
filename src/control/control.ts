@@ -1041,18 +1041,19 @@ module plat {
 
             var oldValue = evaluateExpression(expression, control),
                 listeners: Array<IRemoveListener> = [],
-                uid = this.uid;
+                uid = this.uid,
+                observableListener = (): void => {
+                    var value = evaluateExpression(expression, control);
+                    listener.call(this, value, oldValue, (<expressions.IParsedExpression>expression).expression);
+                    oldValue = value;
+                };
 
             for (i = 0; i < length; ++i) {
                 identifier = identifiers[i];
 
                 listeners.push(managers[identifier].observe(identifier, {
                     uid: uid,
-                    listener: (): void => {
-                        var value = evaluateExpression(expression, control);
-                        listener.call(this, value, oldValue, (<expressions.IParsedExpression>expression).expression);
-                        oldValue = value;
-                    }
+                    listener: observableListener
                 }));
             }
 

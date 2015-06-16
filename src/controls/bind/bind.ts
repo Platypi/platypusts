@@ -491,9 +491,10 @@ module plat.controls {
 
                 parsedIdentifier = expression.identifiers[0];
 
-                var split = parsedIdentifier.split('.'),
-                    key = split.pop(),
-                    contextExpression = split.join('.'),
+                var split = parsedIdentifier.split('.');
+                split.pop();
+                
+                var contextExpression = split.join('.'),
                     context = this.evaluateExpression(contextExpression);
 
                 if (!isObject(context)) {
@@ -728,7 +729,8 @@ module plat.controls {
             var filelist = element.value.split(/,|;/g),
                 length = filelist.length,
                 files: Array<IFile> = [],
-                fileValue: string;
+                fileValue: string,
+                blobSlice = (): Blob => <Blob>{};
 
             for (var i = 0; i < length; ++i) {
                 fileValue = filelist[i];
@@ -740,7 +742,7 @@ module plat.controls {
                     size: undefined,
                     msDetachStream: noop,
                     msClose: noop,
-                    slice: (): Blob => <Blob>{}
+                    slice: blobSlice
                 });
             }
 

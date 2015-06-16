@@ -203,7 +203,6 @@ module plat.events {
             EventManager.__initialized = true;
 
             var lifecycleListeners = EventManager.__lifecycleEventListeners,
-                length = lifecycleListeners.length,
                 _compat = EventManager._compat,
                 _document = EventManager._document,
                 _window = EventManager._window,
@@ -219,68 +218,70 @@ module plat.events {
             if (_compat.cordova) {
                 var eventNames = [__resume, __online, __offline],
                     winJs = _compat.winJs,
-                    event: string;
+                    length = eventNames.length,
+                    event: string,
+                    dispatcher = (ev: string): () => void => (): void => {
+                        dispatch(ev, EventManager);
+                    },
+                    fn: () => void;
 
-                length = eventNames.length;
-
-                for (var i = 0; i < eventNames.length; ++i) {
+                for (var i = 0; i < length; ++i) {
                     event = eventNames[i];
+                    fn = dispatcher(event);
                     lifecycleListeners.push({
                         name: event,
-                        value: ((ev: string): () => void => (): void => {
-                            dispatch(ev, EventManager);
-                        })(event)
+                        value: fn
                     });
 
-                    _dom.addEventListener(_document, event, lifecycleListeners[i].value, false);
+                    _dom.addEventListener(_document, event, fn, false);
                 }
-
+                
+                fn = dispatcher(__suspend);
                 lifecycleListeners.push({
                     name: __pause,
-                    value: (): void => {
-                        dispatch(__suspend, EventManager);
-                    }
+                    value: fn
                 });
 
-                _dom.addEventListener(_document, __pause, lifecycleListeners[lifecycleListeners.length - 1].value, false);
+                _dom.addEventListener(_document, __pause, fn, false);
 
+                fn = dispatcher(__ready);
                 lifecycleListeners.push({
                     name: __deviceReady,
-                    value: (): void => {
-                        dispatch(__ready, EventManager);
-                    }
+                    value: fn
                 });
 
-                _dom.addEventListener(_document, __deviceReady, lifecycleListeners[lifecycleListeners.length - 1].value, false);
+                _dom.addEventListener(_document, __deviceReady, fn, false);
 
+                fn = (): boolean => {
+                    if (!winJs) {
+                        dispatch(__backButton, EventManager);
+                    }
+
+                    return true;
+                };
                 lifecycleListeners.push({
                     name: __backButton,
-                    value: (): boolean => {
-                        if (!winJs) {
-                            dispatch(__backButton, EventManager);
-                        }
-
-                        return true;
-                    }
+                    value: fn
                 });
 
-                _dom.addEventListener(_document, __backButton, lifecycleListeners[lifecycleListeners.length - 1].value, false);
+                _dom.addEventListener(_document, __backButton, fn, false);
 
                 if (winJs) {
+                    fn = (): boolean => {
+                        dispatch(__backButton, EventManager);
+                        return true;
+                    };
                     lifecycleListeners.push({
                         name: __backClick,
-                        value: (): boolean => {
-                            dispatch(__backButton, EventManager);
-                            return true;
-                        }
+                        value: fn
                     });
 
-                    (<any>_window).WinJS.Application.addEventListener(__backClick, lifecycleListeners[lifecycleListeners.length - 1].value, false);
+                    (<any>_window).WinJS.Application.addEventListener(__backClick, fn, false);
                 }
             } else if (_compat.amd) {
                 return;
             } else {
-                _dom.addEventListener(_window, 'load',(): void => {
+                _dom.addEventListener(_window, 'load', (): void => {
                     dispatch(__ready, EventManager);
                 });
             }

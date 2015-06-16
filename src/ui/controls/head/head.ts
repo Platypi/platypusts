@@ -569,12 +569,13 @@
 
             var meta = __Meta,
                 og = __OpenGraph,
-                twitter = __Twitter,
+                metaVideo = __MetaVideo,
+                _browser = this._browser,
                 ogElement: HTMLMetaElement;
 
             forEach((video: string): void => {
-                ogElement = this._createElement<HTMLMetaElement>(meta, og + __MetaVideo);
-                video = this._browser.urlUtils(video).href;
+                ogElement = this._createElement<HTMLMetaElement>(meta, og + metaVideo);
+                video = _browser.urlUtils(video).href;
 
                 this._setContent([
                     ogElement
@@ -652,17 +653,17 @@
          * @returns {void}
          */
         protected _setContent(elements: Array<HTMLElement>, value: string): void {
-            var nodes: Array<HTMLElement> = Array.prototype.slice.call(this.element.children),
+            var el: HTMLHeadElement = this.element,
+                nodes: Array<HTMLElement> = Array.prototype.slice.call(el.children),
                 length = elements.length,
                 content = __Content,
                 href = __MetaHref,
-                el: HTMLHeadElement = this.element,
                 sibling = this._titleElement.nextSibling,
                 dom = this.dom,
                 nodeName: string,
                 element: HTMLElement;
 
-            for (var i = 0; i < elements.length; ++i) {
+            for (var i = 0; i < length; ++i) {
                 element = elements[i];
                 nodeName = element.nodeName.toLowerCase();
 

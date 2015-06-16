@@ -330,8 +330,7 @@ module plat.ui.controls {
          * new ViewControl has finished instantiating.
          */
         navigateTo(routeInfo: routing.IRouteInfo): async.IThenable<void> {
-            var resolve = this._Promise.resolve.bind(this._Promise),
-                injector = this._nextInjector || this._Injector.getDependency(routeInfo.delegate.view),
+            var injector = this._nextInjector || this._Injector.getDependency(routeInfo.delegate.view),
                 nodeMap = this._createNodeMap(injector),
                 element = this.element,
                 node = nodeMap.element,

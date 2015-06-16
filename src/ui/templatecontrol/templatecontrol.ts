@@ -874,8 +874,7 @@ module plat.ui {
          * @returns {plat.async.IThenable<DocumentFragment>} A promise that resolves to the proper template.
          */
         static determineTemplate(control: TemplateControl, templateUrl?: string): async.IThenable<DocumentFragment> {
-            var template: any,
-                templateCache = TemplateControl._templateCache,
+            var templateCache = TemplateControl._templateCache,
                 dom = control.dom,
                 Promise = TemplateControl._Promise;
 

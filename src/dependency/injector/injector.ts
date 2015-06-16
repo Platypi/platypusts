@@ -138,9 +138,7 @@ module plat.dependency {
             }
             var convert = Injector.convertDependency,
                 deps: Array<string> = [],
-                length = dependencies.length,
-                dependency: any,
-                value: string;
+                length = dependencies.length;
 
             for (var i = 0; i < length; ++i) {
                 deps.push(convert(dependencies[i]));

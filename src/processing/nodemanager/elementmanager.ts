@@ -727,7 +727,6 @@ module plat.processing {
                 hasMarkupFn = NodeManager.hasMarkup,
                 findMarkup = NodeManager.findMarkup,
                 _parser = NodeManager._parser,
-                build = NodeManager.build,
                 expressions: Array<expressions.IParsedExpression>,
                 hasControl = false,
                 injector: dependency.Injector<Control>,

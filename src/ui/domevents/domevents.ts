@@ -998,13 +998,14 @@
             }
 
             var lastMove = <ITouchStartEventProperties>this.__lastMoveEvent || swipeOrigin,
-                direction = evt.direction = this.__getDirection(x - lastMove.clientX, y - lastMove.clientY),
-                haveSubscribers = this.__handleOriginChange(direction);
+                direction = evt.direction = this.__getDirection(x - lastMove.clientX, y - lastMove.clientY);
+            
+            this.__handleOriginChange(direction);
 
             var dx = Math.abs(x - swipeOrigin.clientX),
-                dy = Math.abs(y - swipeOrigin.clientY),
-                velocity = evt.velocity = this.__getVelocity(dx, dy,
-                    evt.timeStamp - swipeOrigin.xTimestamp, evt.timeStamp - swipeOrigin.yTimestamp);
+                dy = Math.abs(y - swipeOrigin.clientY);
+            
+            evt.velocity = this.__getVelocity(dx, dy, evt.timeStamp - swipeOrigin.xTimestamp, evt.timeStamp - swipeOrigin.yTimestamp);
 
             if (!noSwiping && this._android44orBelow && this.__haveSwipeSubscribers) {
                 ev.preventDefault();

@@ -570,7 +570,6 @@ module plat.controls {
         protected _onEvent(ev: KeyboardEvent): void {
             var keyCodes = this.keyCodes,
                 keyCode = ev.charCode || ev.which,
-                isShifted: boolean,
                 key: string;
 
             if (!keyCode) {

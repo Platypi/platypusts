@@ -239,8 +239,7 @@ module plat.web {
          * @returns {void}
          */
         initialize(): void {
-            var $config = Browser.config,
-                _compat = this._compat;
+            var _compat = this._compat;
 
             this._EventManager.dispose(this.uid);
 
@@ -509,15 +508,15 @@ module plat.web {
          * @returns {string} The formatted URL.
          */
         formatUrl(url: string): string {
-            var $config = Browser.config,
-                baseUrl = $config.baseUrl,
-                isLocal = !this._regex.fullUrlRegex.test(url) || url.indexOf($config.baseUrl) > -1;
+            var config = Browser.config,
+                baseUrl = config.baseUrl,
+                isLocal = !this._regex.fullUrlRegex.test(url) || url.indexOf(baseUrl) > -1;
 
             if (!isString(url)) {
                 return '';
             }
 
-            if (url === $config.baseUrl) {
+            if (url === baseUrl) {
                 return url;
             }
 
@@ -525,25 +524,25 @@ module plat.web {
                 url = url.slice(1);
             }
 
-            if (isLocal && $config.routingType === $config.HASH) {
+            if (isLocal && config.routingType === config.HASH) {
                 var hasProtocol = url.indexOf(this.urlUtils().protocol) !== -1,
-                    prefix = $config.hashPrefix || '',
+                    prefix = config.hashPrefix || '',
                     append = '#' + prefix,
-                    hashRegex = new RegExp('#' + prefix + '|#/');
+                    hashRegex = new RegExp(append + '|#/');
 
                 if (url[url.length - 1] !== '/' && url.indexOf('?') === -1) {
                     url += '/';
                 }
 
                 if (hasProtocol && !hashRegex.test(url)) {
-                    url = url + '#' + prefix + '/';
+                    url = url + append + '/';
                 } else if (!hashRegex.test(url)) {
-                    url = '#' + prefix + ((url[0] !== '/') ? '/' : '') + url;
+                    url = append + ((url[0] !== '/') ? '/' : '') + url;
                 }
             }
 
-            if (isLocal && url.indexOf($config.baseUrl) === -1) {
-                url = $config.baseUrl + url;
+            if (isLocal && url.indexOf(baseUrl) === -1) {
+                url = baseUrl + url;
             }
 
             return url;

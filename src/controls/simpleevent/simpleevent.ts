@@ -171,7 +171,6 @@ module plat.controls {
             var expression = this._expression.slice(0),
                 _parser = this._parser,
                 parent = this.parent,
-                hasParent = !isNull(parent),
                 listenerStr = expression.shift(),
                 listener: IControlProperty,
                 context: any,

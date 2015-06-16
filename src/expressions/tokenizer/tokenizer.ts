@@ -1059,8 +1059,7 @@ module plat.expressions {
          * @returns {void}
          */
         private __determinePrecedence(operator: string): void {
-            var determined = false,
-                operatorFn = this.__determineOperator(operator),
+            var operatorFn = this.__determineOperator(operator),
                 operatorPrecedence = operatorFn.precedence,
                 isLtR = operatorFn.associativity === 'ltr',
                 operatorStack = this.__operatorStack,

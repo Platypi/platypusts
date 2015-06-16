@@ -114,9 +114,8 @@
 
             var segments: Array<string> = route.split('/'),
                 length = segments.length,
-                __findSegment = BaseSegment.__findSegment,
+                findSegment = BaseSegment.__findSegment,
                 results: Array<BaseSegment> = [],
-                result: BaseSegment,
                 segment: string,
                 name: string,
                 match: RegExpMatchArray,
@@ -134,17 +133,17 @@
                 } else if (match = segment.match(_regex.dynamicSegmentsRegex)) {
                     name = match[1];
 
-                    results.push(__findSegment(name, __DynamicSegmentInstance, dynamicSegments));
+                    results.push(findSegment(name, __DynamicSegmentInstance, dynamicSegments));
                     names.push(name);
                     types.dynamics++;
                 } else if (match = segment.match(_regex.splatSegmentRegex)) {
                     name = match[1];
 
-                    results.push(__findSegment(name, __SplatSegmentInstance, splatSegments));
+                    results.push(findSegment(name, __SplatSegmentInstance, splatSegments));
                     names.push(name);
                     types.splats++;
                 } else {
-                    results.push(__findSegment(segment, __StaticSegmentInstance, staticSegments));
+                    results.push(findSegment(segment, __StaticSegmentInstance, staticSegments));
                     types.statics++;
                 }
             }

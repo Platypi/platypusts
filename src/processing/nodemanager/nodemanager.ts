@@ -301,9 +301,7 @@ module plat.processing {
                 },
                 observationDetails: IObservationDetails,
                 manager: observable.ContextManager,
-                absoluteIdentifier: string,
-                stopObserving: IRemoveListener,
-                stopListening: IRemoveListener;
+                absoluteIdentifier: string;
 
             while (identifiers.length > 0) {
                 observationDetails = NodeManager.__getObservationDetails(identifiers.pop(), control);
@@ -319,14 +317,14 @@ module plat.processing {
                 manager = observationDetails.manager;
                 if (!(isNull(manager) || observationDetails.isDefined)) {
                     absoluteIdentifier = observationDetails.absoluteIdentifier;
-                    stopObserving = manager.observe(absoluteIdentifier, observableCallback);
-                    stopListening = manager.observe(absoluteIdentifier, {
-                        uid: control.uid,
-                        listener: (): void => {
-                            stopObserving();
-                            stopListening();
-                        }
-                    });
+                    var stopObserving = manager.observe(absoluteIdentifier, observableCallback),
+                        stopListening = manager.observe(absoluteIdentifier, {
+                            uid: control.uid,
+                            listener: (): void => {
+                                stopObserving();
+                                stopListening();
+                            }
+                        });
                 }
             }
         }

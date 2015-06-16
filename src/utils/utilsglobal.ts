@@ -319,8 +319,7 @@ function mapAsyncWithOrder<T, R>(iterator: (value: T, index: number, list: Array
 
     iterator = iterator.bind(context);
 
-    var promise: plat.async.IThenable<Array<R>>,
-        inOrder = (previousValue: plat.async.IThenable<Array<R>>, nextValue: T, nextIndex: number,
+    var inOrder = (previousValue: plat.async.IThenable<Array<R>>, nextValue: T, nextIndex: number,
             array: Array<T>): plat.async.IThenable<Array<R>> => {
             return previousValue.then((items): plat.async.IThenable<Array<R>> => {
                 return iterator(nextValue, nextIndex, array).then((moreItems): Array<R> => {

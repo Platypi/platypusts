@@ -319,11 +319,13 @@
          * @returns {plat.web.UrlUtils}
          */
         constructor() {
-            var $config = this._browserConfig;
-            if (isEmpty($config.baseUrl) || !this._regex.fullUrlRegex.test($config.baseUrl)) {
+            var config = this._browserConfig,
+                baseUrl = config.baseUrl;
+                
+            if (isEmpty(baseUrl) || !this._regex.fullUrlRegex.test(baseUrl)) {
                 var url = this._window.location.href,
                     trimmedUrl = url.replace(this._regex.initialUrlRegex, '/'),
-                    baseUrl = $config.baseUrl;
+                    baseUrl = baseUrl;
 
                 if (isString(baseUrl)) {
                     if (baseUrl.indexOf('/') === 0) {
@@ -339,7 +341,7 @@
                     baseUrl = baseUrl.slice(0, -1);
                 }
 
-                $config.baseUrl = baseUrl + '/';
+                config.baseUrl = baseUrl + '/';
             }
         }
 
@@ -380,8 +382,6 @@
             // we need to do this twice for cerain browsers (e.g. win8)
             element.setAttribute('href', url);
             url = element.href;
-
-            var protocol = element.protocol ? element.protocol.replace(/:$/, '') : '';
 
             this.href = url;
             this.protocol = element.protocol ? element.protocol.replace(/:$/, '') : '';

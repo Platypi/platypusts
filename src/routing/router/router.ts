@@ -782,7 +782,6 @@
             }
 
             var resolve = this._resolve,
-                reject = this._reject,
                 queryString = serializeQuery(query);
 
             if (url === '/') {
@@ -885,11 +884,11 @@
                 this._previousSegment = segment;
                 this.currentRouteInfo = routeInfoCopy;
                 this.navigating = false;
-            },(e: any): void => {
-                    this._previousSegment = previousSegment;
-                    this.navigating = false;
-                    throw e;
-                });
+            }, (e: any): void => {
+                this._previousSegment = previousSegment;
+                this.navigating = false;
+                throw e;
+            });
         }
 
         /**
@@ -975,8 +974,7 @@
          * @returns {void}
          */
         protected _configureRoute(route: IRouteMapping): void {
-            var resolve = this._resolve,
-                view: string = this._Injector.convertDependency(route.view),
+            var view: string = this._Injector.convertDependency(route.view),
                 alias = route.alias || view;
 
             if (view === __NOOP_INJECTOR) {
@@ -1026,7 +1024,6 @@
             }
 
             var alias = view;
-
             if (view !== '*') {
                 view = this._Injector.convertDependency(view);
             }
@@ -1040,13 +1037,11 @@
             }
 
             var viewHandlers = handlers[view];
-
             if (!isObject(viewHandlers)) {
                 viewHandlers = handlers[view] = {};
             }
 
             var transforms = viewHandlers[parameter];
-
             if (!isArray(transforms)) {
                 transforms = viewHandlers[parameter] = [];
             }
@@ -1218,8 +1213,7 @@
          * @returns {plat.async.IThenable<boolean>} Whether or not we can navigate to the next state.
          */
         protected _canNavigate(info: IRouteInfo): async.IThenable<boolean> {
-            var currentRouteInfo = this.currentRouteInfo,
-                sameRoute = this._isSameRoute(this._nextRouteInfo);
+            var sameRoute = this._isSameRoute(this._nextRouteInfo);
 
             return this._canNavigateFrom(sameRoute)
                 .then((canNavigateFrom: boolean): async.IThenable<boolean> => {
@@ -1271,7 +1265,6 @@
          * @returns {plat.async.IThenable<boolean>} Whether or not we can navigate to the next state.
          */
         protected _canNavigateTo(info: IRouteInfo, ignorePorts?: boolean): async.IThenable<boolean> {
-            var promises: Array<any> = [];
             if (isEmpty(this._ports)) {
                 return this._resolve(true);
             }
@@ -1304,9 +1297,6 @@
          * @returns {plat.async.IThenable<void>} Resolves when the handlers have finished execution.
          */
         protected _callAllHandlers(view: string, parameters: any, query?: any): async.IThenable<void> {
-            var Promise = this._Promise,
-                resolve = Promise.resolve.bind(Promise);
-
             return this._callHandlers(this._queryTransforms['*'], query)
                 .then((): async.IThenable<void> => this._callHandlers(this._queryTransforms[view], query))
                 .then((): async.IThenable<void> => this._callHandlers(this._paramTransforms['*'], parameters, query))

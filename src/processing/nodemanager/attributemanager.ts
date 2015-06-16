@@ -279,10 +279,8 @@
         protected _staticAttributeChanged(): void {
             var controls = this._controls,
                 node = this.node,
-                length = controls.length,
                 key = camelCase(node.nodeName),
-                value = this._NodeManager.build(node.expressions, this.parent),
-                attributes: ui.Attributes;
+                value = this._NodeManager.build(node.expressions, this.parent);
 
             this._notifyAttributes(key, value);
 

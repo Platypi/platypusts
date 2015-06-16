@@ -656,7 +656,7 @@ module plat {
          * @returns {Array<U>} An array of 'plucked' values from obj.
          */
         pluck<T extends {}>(key: string, array: Array<T>): Array<any> {
-            return map<T, any>((value): any => (<any>value)[key], array);
+            return pluck<T, any>(key, array);
         }
 
         /**

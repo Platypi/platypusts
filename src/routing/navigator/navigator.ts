@@ -339,7 +339,6 @@
             options = isObject(options) ? options : {};
 
             var length = Number(options.length);
-
             if (!isNumber(length)) {
                 length = 1;
             }
@@ -348,14 +347,10 @@
                 return Navigator._root.goBack(options);
             }
 
-            var _browser = this._browser,
-                url = _browser.url();
-
             this._backNavigate = true;
-            return this.finishNavigating()
-                .then((): async.IThenable<void> => {
-                    return this._goBack(length);
-                });
+            return this.finishNavigating().then((): async.IThenable<void> => {
+                return this._goBack(length);
+            });
         }
 
         /**
@@ -433,13 +428,9 @@
                 return;
             }
 
-            var config = this._browserConfig,
-                EventManager = this._EventManager,
-                prefix: string,
+            var EventManager = this._EventManager,
                 previousUrl: string,
-                previousQuery: string,
                 backNavigate: boolean,
-                ev: events.DispatchEvent,
                 headControl: ui.controls.Head = acquire(__Head),
                 headExists = isObject(headControl) && isFunction(headControl.navigated),
                 onFailedNavigaton: (e: any) => void = (e: any): void => {
@@ -463,7 +454,6 @@
             EventManager.dispose(this.uid);
             EventManager.on(this.uid, __backButton,(): void => {
                 var ev = EventManager.dispatch(__backButtonPressed, this, EventManager.DIRECT);
-
                 if (ev.defaultPrevented) {
                     return;
                 }
