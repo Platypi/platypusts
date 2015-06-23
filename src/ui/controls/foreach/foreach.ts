@@ -992,8 +992,7 @@ module plat.ui.controls {
          */
         protected _handleSimpleAnimation(startNode: number, endNode: number, key: string, cancel: boolean): async.IThenable<void> {
             var container = this._container,
-                slice = Array.prototype.slice,
-                nodes: Array<Node> = slice.call(container.childNodes, startNode, endNode);
+                nodes: Array<Node> = Array.prototype.slice.call(container.childNodes, startNode, endNode);
 
             if (nodes.length === 0) {
                 return this._Promise.resolve();
@@ -1039,8 +1038,7 @@ module plat.ui.controls {
          */
         protected _handleLeave(startNode: number, endNode: number, key: string): async.IThenable<void> {
             var container = this._container,
-                slice = Array.prototype.slice,
-                nodes: Array<Node> = slice.call(container.childNodes, startNode, endNode);
+                nodes: Array<Node> = Array.prototype.slice.call(container.childNodes, startNode, endNode);
 
             if (nodes.length === 0) {
                 return this._Promise.resolve();
@@ -1080,8 +1078,7 @@ module plat.ui.controls {
             cancel: boolean): async.IThenable<void> {
             var container = this._container,
                 clonedContainer = container.cloneNode(true),
-                slice = Array.prototype.slice,
-                nodes: Array<Node> = slice.call(clonedContainer.childNodes, startNode, endNode);
+                nodes: Array<Node> = Array.prototype.slice.call(clonedContainer.childNodes, startNode, endNode);
 
             if (nodes.length === 0) {
                 return this._Promise.resolve();
