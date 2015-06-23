@@ -1,5 +1,5 @@
 /**
-  * PlatypusTS v0.13.8 (https://platypi.io)
+  * PlatypusTS v0.13.9 (https://platypi.io)
   * Copyright 2015 Platypi, LLC. All rights reserved.
   *
   * PlatypusTS is licensed under the MIT license found at
@@ -8323,14 +8323,56 @@ declare module plat {
               * DOM through bound context strings.
               */
             class InnerHtml extends TemplateControl {
+                protected static _inject: any;
                 /**
-                  * Loads the DOM with the new HTML String.
+                  * The options for the InnerHtml control.
                   */
-                contextChanged(): void;
+                options: observable.IObservableProperty<IInnerHtmlOptions>;
                 /**
-                  * Loads the context string as the innerHTML of the element.
+                  * The child controls of the control. All will be of type TemplateControl.
+                  */
+                controls: Array<TemplateControl>;
+                /**
+                  * Reference to the ITemplateControlFactory injectable.
+                  */
+                protected _TemplateControlFactory: ITemplateControlFactory;
+                /**
+                  * The string representation of the current bound html template.
+                  */
+                protected _html: string;
+                /**
+                  * Clears the inner template if one exists.
+                  */
+                setTemplate(): void;
+                /**
+                  * Checks options and initializes bindings.
                   */
                 loaded(): void;
+                /**
+                  * The function called when any of the options for this control changes.
+                  * @param {IInnerHtmlOptions} newValue The new value of the options property.
+                  * @param {IInnerHtmlOptions} oldValue? The old value of the options property.
+                  */
+                protected _onOptionsChanged(newValue: IInnerHtmlOptions, oldValue?: IInnerHtmlOptions): void;
+                /**
+                  * Compiles the bound template and adds it to the element.
+                  * @param {string} templateString The template string to compile and bind.
+                  */
+                protected _generateTemplate(templateString: string): void;
+            }
+            /**
+              * The options object for the
+              * InnerHtml control.
+              */
+            interface IInnerHtmlOptions {
+                /**
+                  * The HTML string to bind to the DOM.
+                  */
+                html?: string;
+                /**
+                  * Will compile the template string if set to true.
+                  */
+                compile?: boolean;
             }
             /**
               * A BindControl for binding an HTML select element
