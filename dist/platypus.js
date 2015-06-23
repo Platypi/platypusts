@@ -6,7 +6,7 @@ var __extends = this.__extends || function (d, b) {
 };
 /* tslint:disable */
 /**
- * PlatypusTS v0.13.8 (https://platypi.io)
+ * PlatypusTS v0.13.9 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
@@ -312,7 +312,7 @@ var plat;
             return initialValue;
         }
         iterator = iterator.bind(context);
-        var promise, inOrder = function (previousValue, nextValue, nextIndex, array) {
+        var inOrder = function (previousValue, nextValue, nextIndex, array) {
             return previousValue.then(function (items) {
                 return iterator(nextValue, nextIndex, array).then(function (moreItems) {
                     return items.concat(moreItems);
@@ -1152,7 +1152,7 @@ var plat;
                 if (!isArray(dependencies)) {
                     return [];
                 }
-                var convert = Injector.convertDependency, deps = [], length = dependencies.length, dependency, value;
+                var convert = Injector.convertDependency, deps = [], length = dependencies.length;
                 for (var i = 0; i < length; ++i) {
                     deps.push(convert(dependencies[i]));
                 }
@@ -1963,7 +1963,7 @@ var plat;
          * @param {Array<T>} array The array to pluck the key from
          */
         Utils.prototype.pluck = function (key, array) {
-            return map(function (value) { return value[key]; }, array);
+            return pluck(key, array);
         };
         Utils.prototype.some = function (iterator, obj, context) {
             return some(iterator, obj, context);
@@ -2801,7 +2801,7 @@ var plat;
              * @param {string} operator The operator whose precedence is being determined.
              */
             Tokenizer.prototype.__determinePrecedence = function (operator) {
-                var determined = false, operatorFn = this.__determineOperator(operator), operatorPrecedence = operatorFn.precedence, isLtR = operatorFn.associativity === 'ltr', operatorStack = this.__operatorStack, outputQueue = this.__outputQueue, firstArrayOperator, firstArrayVal;
+                var operatorFn = this.__determineOperator(operator), operatorPrecedence = operatorFn.precedence, isLtR = operatorFn.associativity === 'ltr', operatorStack = this.__operatorStack, outputQueue = this.__outputQueue, firstArrayOperator, firstArrayVal;
                 if (operatorStack.length === 0) {
                     operatorStack.unshift({ val: operator, args: operatorFn.fn.length - 2 });
                     return;
@@ -2896,7 +2896,12 @@ var plat;
             Parser.prototype.parse = function (expression) {
                 var parsedObject = this.__cache[expression];
                 if (!isNull(parsedObject)) {
-                    return parsedObject;
+                    return {
+                        expression: parsedObject.expression,
+                        identifiers: parsedObject.identifiers.slice(0),
+                        aliases: parsedObject.aliases.slice(0),
+                        evaluate: parsedObject.evaluate
+                    };
                 }
                 this._tokens = this._tokenizer.createTokens(expression);
                 parsedObject = this._evaluate(expression);
@@ -3453,7 +3458,7 @@ var plat;
              * adds events for popstate and hashchange.
              */
             Browser.prototype.initialize = function () {
-                var $config = Browser.config, _compat = this._compat;
+                var _compat = this._compat;
                 this._EventManager.dispose(this.uid);
                 this.__initializing = true;
                 acquire(__UrlUtilsInstance);
@@ -3602,30 +3607,30 @@ var plat;
              * @param url The URL to format.
              */
             Browser.prototype.formatUrl = function (url) {
-                var $config = Browser.config, baseUrl = $config.baseUrl, isLocal = !this._regex.fullUrlRegex.test(url) || url.indexOf($config.baseUrl) > -1;
+                var config = Browser.config, baseUrl = config.baseUrl, isLocal = !this._regex.fullUrlRegex.test(url) || url.indexOf(baseUrl) > -1;
                 if (!isString(url)) {
                     return '';
                 }
-                if (url === $config.baseUrl) {
+                if (url === baseUrl) {
                     return url;
                 }
                 if (url[0] === '/') {
                     url = url.slice(1);
                 }
-                if (isLocal && $config.routingType === $config.HASH) {
-                    var hasProtocol = url.indexOf(this.urlUtils().protocol) !== -1, prefix = $config.hashPrefix || '', append = '#' + prefix, hashRegex = new RegExp('#' + prefix + '|#/');
+                if (isLocal && config.routingType === config.HASH) {
+                    var hasProtocol = url.indexOf(this.urlUtils().protocol) !== -1, prefix = config.hashPrefix || '', append = '#' + prefix, hashRegex = new RegExp(append + '|#/');
                     if (url[url.length - 1] !== '/' && url.indexOf('?') === -1) {
                         url += '/';
                     }
                     if (hasProtocol && !hashRegex.test(url)) {
-                        url = url + '#' + prefix + '/';
+                        url = url + append + '/';
                     }
                     else if (!hashRegex.test(url)) {
-                        url = '#' + prefix + ((url[0] !== '/') ? '/' : '') + url;
+                        url = append + ((url[0] !== '/') ? '/' : '') + url;
                     }
                 }
-                if (isLocal && url.indexOf($config.baseUrl) === -1) {
-                    url = $config.baseUrl + url;
+                if (isLocal && url.indexOf(baseUrl) === -1) {
+                    url = baseUrl + url;
                 }
                 return url;
             };
@@ -3669,9 +3674,9 @@ var plat;
              * Handles parsing the initial URL and obtain the base URL if necessary.
              */
             function UrlUtils() {
-                var $config = this._browserConfig;
-                if (isEmpty($config.baseUrl) || !this._regex.fullUrlRegex.test($config.baseUrl)) {
-                    var url = this._window.location.href, trimmedUrl = url.replace(this._regex.initialUrlRegex, '/'), baseUrl = $config.baseUrl;
+                var config = this._browserConfig, baseUrl = config.baseUrl;
+                if (isEmpty(baseUrl) || !this._regex.fullUrlRegex.test(baseUrl)) {
+                    var url = this._window.location.href, trimmedUrl = url.replace(this._regex.initialUrlRegex, '/'), baseUrl = baseUrl;
                     if (isString(baseUrl)) {
                         if (baseUrl.indexOf('/') === 0) {
                             baseUrl = baseUrl.slice(1);
@@ -3684,7 +3689,7 @@ var plat;
                     while (baseUrl[baseUrl.length - 1] === '/') {
                         baseUrl = baseUrl.slice(0, -1);
                     }
-                    $config.baseUrl = baseUrl + '/';
+                    config.baseUrl = baseUrl + '/';
                 }
             }
             /**
@@ -3731,7 +3736,6 @@ var plat;
                 // we need to do this twice for cerain browsers (e.g. win8) 
                 element.setAttribute('href', url);
                 url = element.href;
-                var protocol = element.protocol ? element.protocol.replace(/:$/, '') : '';
                 this.href = url;
                 this.protocol = element.protocol ? element.protocol.replace(/:$/, '') : '';
                 this.host = element.host;
@@ -5745,7 +5749,6 @@ var plat;
              * @param {Array<any>} oldArray The old array to stop observing.
              */
             ContextManager.prototype.observeArrayMutation = function (uid, listener, absoluteIdentifier, array, oldArray) {
-                var length = arrayMethods.length, method, i, _compat = this._compat, proto = _compat.proto, setProto = _compat.setProto;
                 if (isArray(oldArray)) {
                     this._restoreArray(oldArray);
                 }
@@ -6479,57 +6482,57 @@ var plat;
                     return;
                 }
                 EventManager.__initialized = true;
-                var lifecycleListeners = EventManager.__lifecycleEventListeners, length = lifecycleListeners.length, _compat = EventManager._compat, _document = EventManager._document, _window = EventManager._window, _dom = EventManager._dom, dispatch = LifecycleEvent.dispatch, listener;
+                var lifecycleListeners = EventManager.__lifecycleEventListeners, _compat = EventManager._compat, _document = EventManager._document, _window = EventManager._window, _dom = EventManager._dom, dispatch = LifecycleEvent.dispatch, listener;
                 while (lifecycleListeners.length > 0) {
                     listener = lifecycleListeners.pop();
                     _document.removeEventListener(listener.name, listener.value, false);
                 }
                 if (_compat.cordova) {
-                    var eventNames = [__resume, __online, __offline], winJs = _compat.winJs, event;
-                    length = eventNames.length;
-                    for (var i = 0; i < eventNames.length; ++i) {
+                    var eventNames = [__resume, __online, __offline], winJs = _compat.winJs, length = eventNames.length, event, dispatcher = function (ev) { return function () {
+                        dispatch(ev, EventManager);
+                    }; }, fn;
+                    for (var i = 0; i < length; ++i) {
                         event = eventNames[i];
+                        fn = dispatcher(event);
                         lifecycleListeners.push({
                             name: event,
-                            value: (function (ev) { return function () {
-                                dispatch(ev, EventManager);
-                            }; })(event)
+                            value: fn
                         });
-                        _dom.addEventListener(_document, event, lifecycleListeners[i].value, false);
+                        _dom.addEventListener(_document, event, fn, false);
                     }
+                    fn = dispatcher(__suspend);
                     lifecycleListeners.push({
                         name: __pause,
-                        value: function () {
-                            dispatch(__suspend, EventManager);
-                        }
+                        value: fn
                     });
-                    _dom.addEventListener(_document, __pause, lifecycleListeners[lifecycleListeners.length - 1].value, false);
+                    _dom.addEventListener(_document, __pause, fn, false);
+                    fn = dispatcher(__ready);
                     lifecycleListeners.push({
                         name: __deviceReady,
-                        value: function () {
-                            dispatch(__ready, EventManager);
-                        }
+                        value: fn
                     });
-                    _dom.addEventListener(_document, __deviceReady, lifecycleListeners[lifecycleListeners.length - 1].value, false);
+                    _dom.addEventListener(_document, __deviceReady, fn, false);
+                    fn = function () {
+                        if (!winJs) {
+                            dispatch(__backButton, EventManager);
+                        }
+                        return true;
+                    };
                     lifecycleListeners.push({
                         name: __backButton,
-                        value: function () {
-                            if (!winJs) {
-                                dispatch(__backButton, EventManager);
-                            }
-                            return true;
-                        }
+                        value: fn
                     });
-                    _dom.addEventListener(_document, __backButton, lifecycleListeners[lifecycleListeners.length - 1].value, false);
+                    _dom.addEventListener(_document, __backButton, fn, false);
                     if (winJs) {
+                        fn = function () {
+                            dispatch(__backButton, EventManager);
+                            return true;
+                        };
                         lifecycleListeners.push({
                             name: __backClick,
-                            value: function () {
-                                dispatch(__backButton, EventManager);
-                                return true;
-                            }
+                            value: fn
                         });
-                        _window.WinJS.Application.addEventListener(__backClick, lifecycleListeners[lifecycleListeners.length - 1].value, false);
+                        _window.WinJS.Application.addEventListener(__backClick, fn, false);
                     }
                 }
                 else if (_compat.amd) {
@@ -7191,16 +7194,16 @@ var plat;
             }
             identifiers = Object.keys(managers);
             length = identifiers.length;
-            var oldValue = evaluateExpression(expression, control), listeners = [], uid = this.uid;
+            var oldValue = evaluateExpression(expression, control), listeners = [], uid = this.uid, observableListener = function () {
+                var value = evaluateExpression(expression, control);
+                listener.call(_this, value, oldValue, expression.expression);
+                oldValue = value;
+            };
             for (i = 0; i < length; ++i) {
                 identifier = identifiers[i];
                 listeners.push(managers[identifier].observe(identifier, {
                     uid: uid,
-                    listener: function () {
-                        var value = evaluateExpression(expression, control);
-                        listener.call(_this, value, oldValue, expression.expression);
-                        oldValue = value;
-                    }
+                    listener: observableListener
                 }));
             }
             return function () {
@@ -7641,7 +7644,7 @@ var plat;
              * @param {string} templateUrl? The potential template URL to use to grab the template.
              */
             TemplateControl.determineTemplate = function (control, templateUrl) {
-                var template, templateCache = TemplateControl._templateCache, dom = control.dom, Promise = TemplateControl._Promise;
+                var templateCache = TemplateControl._templateCache, dom = control.dom, Promise = TemplateControl._Promise;
                 if (!isNull(templateUrl)) {
                 }
                 else if (!isNull(control.templateUrl)) {
@@ -9082,8 +9085,10 @@ var plat;
                 if (noTracking && noSwiping) {
                     return true;
                 }
-                var lastMove = this.__lastMoveEvent || swipeOrigin, direction = evt.direction = this.__getDirection(x - lastMove.clientX, y - lastMove.clientY), haveSubscribers = this.__handleOriginChange(direction);
-                var dx = Math.abs(x - swipeOrigin.clientX), dy = Math.abs(y - swipeOrigin.clientY), velocity = evt.velocity = this.__getVelocity(dx, dy, evt.timeStamp - swipeOrigin.xTimestamp, evt.timeStamp - swipeOrigin.yTimestamp);
+                var lastMove = this.__lastMoveEvent || swipeOrigin, direction = evt.direction = this.__getDirection(x - lastMove.clientX, y - lastMove.clientY);
+                this.__handleOriginChange(direction);
+                var dx = Math.abs(x - swipeOrigin.clientX), dy = Math.abs(y - swipeOrigin.clientY);
+                evt.velocity = this.__getVelocity(dx, dy, evt.timeStamp - swipeOrigin.xTimestamp, evt.timeStamp - swipeOrigin.yTimestamp);
                 if (!noSwiping && this._android44orBelow && this.__haveSwipeSubscribers) {
                     ev.preventDefault();
                 }
@@ -9714,13 +9719,8 @@ var plat;
              */
             DomEvents.prototype.__normalizeButtons = function (ev) {
                 var buttons;
-                if (isNumber(ev.buttons)) {
-                    if (ev.buttons === 0) {
-                        buttons = 1;
-                    }
-                    else {
-                        buttons = ev.buttons;
-                    }
+                if (isNumber(ev.buttons) && ev.buttons !== 0) {
+                    buttons = ev.buttons;
                 }
                 else if (isNumber(ev.which) && ev.which > 0) {
                     buttons = ev.which;
@@ -11521,7 +11521,7 @@ var plat;
                  * the view and feed it the route parameters/query.
                  */
                 Viewport.prototype.navigateTo = function (routeInfo) {
-                    var resolve = this._Promise.resolve.bind(this._Promise), injector = this._nextInjector || this._Injector.getDependency(routeInfo.delegate.view), nodeMap = this._createNodeMap(injector), element = this.element, node = nodeMap.element, parameters = routeInfo.parameters, query = routeInfo.query, control = nodeMap.uiControlNode.control;
+                    var injector = this._nextInjector || this._Injector.getDependency(routeInfo.delegate.view), nodeMap = this._createNodeMap(injector), element = this.element, node = nodeMap.element, parameters = routeInfo.parameters, query = routeInfo.query, control = nodeMap.uiControlNode.control;
                     this._animator.enter(node, __Enter, this.element);
                     var viewportManager = this._managerCache.read(this.uid), manager = this._ElementManagerFactory.getInstance();
                     viewportManager.children = [];
@@ -12137,7 +12137,6 @@ var plat;
                     }
                     else if (this._animate) {
                         if (addQueue.length === 0) {
-                            var animationQueue = this._animationQueue;
                             addQueue = addQueue.concat([this._animateItems(0, 1, __Leave, 'clone', true)]);
                         }
                     }
@@ -12186,7 +12185,7 @@ var plat;
                     }
                     var removeCount = change.removed.length, animationQueue = this._animationQueue;
                     if (addCount > removeCount) {
-                        var _Promise = this._Promise, itemAddCount = addCount - removeCount, animationCount;
+                        var itemAddCount = addCount - removeCount, animationCount;
                         if (animating) {
                             animationCount = addCount;
                             var animationLength = animationQueue.length, startIndex = change.index;
@@ -12267,7 +12266,7 @@ var plat;
                  * @param {boolean} cancel Whether or not to cancel the current animation before beginning this one.
                  */
                 ForEach.prototype._handleSimpleAnimation = function (startNode, endNode, key, cancel) {
-                    var container = this._container, slice = Array.prototype.slice, nodes = slice.call(container.childNodes, startNode, endNode);
+                    var container = this._container, nodes = Array.prototype.slice.call(container.childNodes, startNode, endNode);
                     if (nodes.length === 0) {
                         return this._Promise.resolve();
                     }
@@ -12294,7 +12293,7 @@ var plat;
                  * @param {string} key The animation key/type.
                  */
                 ForEach.prototype._handleLeave = function (startNode, endNode, key) {
-                    var container = this._container, slice = Array.prototype.slice, nodes = slice.call(container.childNodes, startNode, endNode);
+                    var container = this._container, nodes = Array.prototype.slice.call(container.childNodes, startNode, endNode);
                     if (nodes.length === 0) {
                         return this._Promise.resolve();
                     }
@@ -12315,7 +12314,7 @@ var plat;
                  * @param {boolean} cancel Whether or not to cancel the current animation before beginning this one.
                  */
                 ForEach.prototype._handleClonedContainerAnimation = function (startNode, endNode, key, cancel) {
-                    var container = this._container, clonedContainer = container.cloneNode(true), slice = Array.prototype.slice, nodes = slice.call(clonedContainer.childNodes, startNode, endNode);
+                    var container = this._container, clonedContainer = container.cloneNode(true), nodes = Array.prototype.slice.call(clonedContainer.childNodes, startNode, endNode);
                     if (nodes.length === 0) {
                         return this._Promise.resolve();
                     }
@@ -12548,10 +12547,10 @@ var plat;
                     if (!isArray(videos)) {
                         return;
                     }
-                    var meta = __Meta, og = __OpenGraph, twitter = __Twitter, ogElement;
+                    var meta = __Meta, og = __OpenGraph, metaVideo = __MetaVideo, _browser = this._browser, ogElement;
                     forEach(function (video) {
-                        ogElement = _this._createElement(meta, og + __MetaVideo);
-                        video = _this._browser.urlUtils(video).href;
+                        ogElement = _this._createElement(meta, og + metaVideo);
+                        video = _browser.urlUtils(video).href;
                         _this._setContent([
                             ogElement
                         ], video);
@@ -12591,8 +12590,8 @@ var plat;
                  * @param {Array<HTMLElement>} elements The elements for which to set values.
                  */
                 Head.prototype._setContent = function (elements, value) {
-                    var nodes = Array.prototype.slice.call(this.element.children), length = elements.length, content = __Content, href = __MetaHref, el = this.element, sibling = this._titleElement.nextSibling, dom = this.dom, nodeName, element;
-                    for (var i = 0; i < elements.length; ++i) {
+                    var el = this.element, nodes = Array.prototype.slice.call(el.children), length = elements.length, content = __Content, href = __MetaHref, sibling = this._titleElement.nextSibling, dom = this.dom, nodeName, element;
+                    for (var i = 0; i < length; ++i) {
                         element = elements[i];
                         nodeName = element.nodeName.toLowerCase();
                         if (nodeName === __Meta) {
@@ -12678,20 +12677,79 @@ var plat;
                     _super.apply(this, arguments);
                 }
                 /**
-                 * Loads the DOM with the new HTML String.
+                 * Clears the inner template if one exists.
                  */
-                InnerHtml.prototype.contextChanged = function () {
-                    this.loaded();
+                InnerHtml.prototype.setTemplate = function () {
+                    this.dom.clearNode(this.element);
                 };
                 /**
-                 * Loads the context string as the innerHTML of the element.
+                 * Checks options and initializes bindings.
                  */
                 InnerHtml.prototype.loaded = function () {
-                    var context = this.context;
-                    if (!isString(context)) {
+                    var options = this.options;
+                    if (!isObject(options)) {
                         return;
                     }
-                    setInnerHtml(this.element, context);
+                    this._onOptionsChanged(options.value);
+                    options.observe(this._onOptionsChanged);
+                };
+                /**
+                 * The function called when any of the options for this control changes.
+                 * @param {IInnerHtmlOptions} newValue The new value of the options property.
+                 * @param {IInnerHtmlOptions} oldValue? The old value of the options property.
+                 */
+                InnerHtml.prototype._onOptionsChanged = function (newValue, oldValue) {
+                    if (newValue === oldValue) {
+                        return;
+                    }
+                    else if (!isObject(newValue)) {
+                        this._log.debug('plat-options for ' + this.type + ' must be an object.');
+                        return;
+                    }
+                    var html = newValue.html, oldHtml = this._html;
+                    this._html = html;
+                    if (html === oldHtml) {
+                        return;
+                    }
+                    else if (isNull(html)) {
+                        if (this.controls.length > 0) {
+                            this._TemplateControlFactory.dispose(this.controls[0]);
+                        }
+                        else {
+                            this.dom.clearNode(this.element);
+                        }
+                        return;
+                    }
+                    else if (!isString(html)) {
+                        this._log.debug('Trying to bind a non-string value to ' + this.type + '.');
+                        return;
+                    }
+                    else if (newValue.compile === true) {
+                        if (this.controls.length > 0) {
+                            this._TemplateControlFactory.dispose(this.controls[0]);
+                        }
+                        else {
+                            this.dom.clearNode(this.element);
+                        }
+                        this._generateTemplate(html);
+                        return;
+                    }
+                    setInnerHtml(this.element, html);
+                };
+                /**
+                 * Compiles the bound template and adds it to the element.
+                 * @param {string} templateString The template string to compile and bind.
+                 */
+                InnerHtml.prototype._generateTemplate = function (templateString) {
+                    var _this = this;
+                    var bindableTemplates = this.bindableTemplates, key = 'html';
+                    bindableTemplates.add(key, templateString);
+                    bindableTemplates.bind(key).then(function (template) {
+                        _this.element.insertBefore(template, null);
+                    });
+                };
+                InnerHtml._inject = {
+                    _TemplateControlFactory: __TemplateControlFactory
                 };
                 return InnerHtml;
             })(TemplateControl);
@@ -13425,13 +13483,8 @@ var plat;
                  */
                 Link.prototype._handleClick = function (ev) {
                     var buttons;
-                    if (isNumber(ev.buttons)) {
-                        if (ev.buttons === 0) {
-                            buttons = 1;
-                        }
-                        else {
-                            buttons = ev.buttons;
-                        }
+                    if (isNumber(ev.buttons) && ev.buttons !== 0) {
+                        buttons = ev.buttons;
                     }
                     else if (isNumber(ev.which) && ev.which > 0) {
                         buttons = ev.which;
@@ -13677,7 +13730,7 @@ var plat;
                 var uniqueIdentifiers = NodeManager.__findUniqueIdentifiers(expressions), identifiers = uniqueIdentifiers.identifiers, oneTimeIdentifiers = uniqueIdentifiers.oneTimeIdentifiers, oneTimeIdentifier, observableCallback = {
                     listener: listener,
                     uid: control.uid
-                }, observationDetails, manager, absoluteIdentifier, stopObserving, stopListening;
+                }, observationDetails, manager, absoluteIdentifier;
                 while (identifiers.length > 0) {
                     observationDetails = NodeManager.__getObservationDetails(identifiers.pop(), control);
                     manager = observationDetails.manager;
@@ -13691,8 +13744,7 @@ var plat;
                     manager = observationDetails.manager;
                     if (!(isNull(manager) || observationDetails.isDefined)) {
                         absoluteIdentifier = observationDetails.absoluteIdentifier;
-                        stopObserving = manager.observe(absoluteIdentifier, observableCallback);
-                        stopListening = manager.observe(absoluteIdentifier, {
+                        var stopObserving = manager.observe(absoluteIdentifier, observableCallback), stopListening = manager.observe(absoluteIdentifier, {
                             uid: control.uid,
                             listener: function () {
                                 stopObserving();
@@ -13723,7 +13775,7 @@ var plat;
                 var length = expressions.length, expression;
                 if (length === 1) {
                     expression = expressions[0];
-                    if (expression.oneTime) {
+                    if (expression.oneTime === true) {
                         return {
                             identifiers: [],
                             oneTimeIdentifiers: expression.identifiers.slice(0)
@@ -14173,7 +14225,7 @@ var plat;
              * @param {NamedNodeMap} attributes The attributes used to create the INodeMap.
              */
             ElementManager._collectAttributes = function (attributes) {
-                var nodes = [], attribute, name, value, childContext, childIdentifier, hasMarkup, hasMarkupFn = NodeManager.hasMarkup, findMarkup = NodeManager.findMarkup, _parser = NodeManager._parser, build = NodeManager.build, expressions, hasControl = false, injector, length = attributes.length, controlAttributes = {};
+                var nodes = [], attribute, name, value, childContext, childIdentifier, hasMarkup, hasMarkupFn = NodeManager.hasMarkup, findMarkup = NodeManager.findMarkup, _parser = NodeManager._parser, expressions, hasControl = false, injector, length = attributes.length, controlAttributes = {};
                 for (var i = 0; i < length; ++i) {
                     attribute = attributes[i];
                     value = attribute.value;
@@ -15057,7 +15109,7 @@ var plat;
              * and notifies the associated Attributes.
              */
             AttributeManager.prototype._staticAttributeChanged = function () {
-                var controls = this._controls, node = this.node, length = controls.length, key = camelCase(node.nodeName), value = this._NodeManager.build(node.expressions, this.parent), attributes;
+                var controls = this._controls, node = this.node, key = camelCase(node.nodeName), value = this._NodeManager.build(node.expressions, this.parent);
                 this._notifyAttributes(key, value);
                 if (!this.replace) {
                     node.node.value = value;
@@ -15170,10 +15222,8 @@ var plat;
                 if (!this.isRoot) {
                     return Navigator._root.goBack(options);
                 }
-                var _browser = this._browser, url = _browser.url();
                 this._backNavigate = true;
-                return this.finishNavigating()
-                    .then(function () {
+                return this.finishNavigating().then(function () {
                     return _this._goBack(length);
                 });
             };
@@ -15218,7 +15268,7 @@ var plat;
                 if (!isObject(this._router)) {
                     return;
                 }
-                var config = this._browserConfig, EventManager = this._EventManager, prefix, previousUrl, previousQuery, backNavigate, ev, headControl = acquire(__Head), headExists = isObject(headControl) && isFunction(headControl.navigated), onFailedNavigaton = function (e) {
+                var EventManager = this._EventManager, previousUrl, backNavigate, headControl = acquire(__Head), headExists = isObject(headControl) && isFunction(headControl.navigated), onFailedNavigaton = function (e) {
                     _this._ignoreOnce = true;
                     _this._previousUrl = previousUrl;
                     _this._browser.url(previousUrl, !backNavigate);
@@ -15342,7 +15392,7 @@ var plat;
                 else if (route[0] === '/') {
                     route = route.slice(1);
                 }
-                var segments = route.split('/'), length = segments.length, __findSegment = BaseSegment.__findSegment, results = [], result, segment, name, match, _regex = BaseSegment._regex;
+                var segments = route.split('/'), length = segments.length, findSegment = BaseSegment.__findSegment, results = [], segment, name, match, _regex = BaseSegment._regex;
                 for (var i = 0; i < length; ++i) {
                     segment = segments[i];
                     if (segment === '') {
@@ -15353,18 +15403,18 @@ var plat;
                     }
                     else if (match = segment.match(_regex.dynamicSegmentsRegex)) {
                         name = match[1];
-                        results.push(__findSegment(name, __DynamicSegmentInstance, dynamicSegments));
+                        results.push(findSegment(name, __DynamicSegmentInstance, dynamicSegments));
                         names.push(name);
                         types.dynamics++;
                     }
                     else if (match = segment.match(_regex.splatSegmentRegex)) {
                         name = match[1];
-                        results.push(__findSegment(name, __SplatSegmentInstance, splatSegments));
+                        results.push(findSegment(name, __SplatSegmentInstance, splatSegments));
                         names.push(name);
                         types.splats++;
                     }
                     else {
-                        results.push(__findSegment(segment, __StaticSegmentInstance, staticSegments));
+                        results.push(findSegment(segment, __StaticSegmentInstance, staticSegments));
                         types.statics++;
                     }
                 }
@@ -16182,7 +16232,7 @@ var plat;
                 if (!isObject(query)) {
                     query = {};
                 }
-                var resolve = this._resolve, reject = this._reject, queryString = serializeQuery(query);
+                var resolve = this._resolve, queryString = serializeQuery(query);
                 if (url === '/') {
                     url = '';
                 }
@@ -16296,7 +16346,7 @@ var plat;
              * @param {plat.routing.IRouteMapping} route The mapping used to configure the route.
              */
             Router.prototype._configureRoute = function (route) {
-                var resolve = this._resolve, view = this._Injector.convertDependency(route.view), alias = route.alias || view;
+                var view = this._Injector.convertDependency(route.view), alias = route.alias || view;
                 if (view === __NOOP_INJECTOR) {
                     return;
                 }
@@ -16442,7 +16492,7 @@ var plat;
              */
             Router.prototype._canNavigate = function (info) {
                 var _this = this;
-                var currentRouteInfo = this.currentRouteInfo, sameRoute = this._isSameRoute(this._nextRouteInfo);
+                var sameRoute = this._isSameRoute(this._nextRouteInfo);
                 return this._canNavigateFrom(sameRoute)
                     .then(function (canNavigateFrom) {
                     return canNavigateFrom && _this._canNavigateTo(info, sameRoute);
@@ -16474,7 +16524,6 @@ var plat;
              */
             Router.prototype._canNavigateTo = function (info, ignorePorts) {
                 var _this = this;
-                var promises = [];
                 if (isEmpty(this._ports)) {
                     return this._resolve(true);
                 }
@@ -16497,7 +16546,6 @@ var plat;
              */
             Router.prototype._callAllHandlers = function (view, parameters, query) {
                 var _this = this;
-                var Promise = this._Promise, resolve = Promise.resolve.bind(Promise);
                 return this._callHandlers(this._queryTransforms['*'], query)
                     .then(function () { return _this._callHandlers(_this._queryTransforms[view], query); })
                     .then(function () { return _this._callHandlers(_this._paramTransforms['*'], parameters, query); })
@@ -16724,7 +16772,7 @@ var plat;
              * into account.
              */
             SimpleEventControl.prototype._buildExpression = function () {
-                var expression = this._expression.slice(0), _parser = this._parser, parent = this.parent, hasParent = !isNull(parent), listenerStr = expression.shift(), listener, context, fn, aliases, argContext;
+                var expression = this._expression.slice(0), _parser = this._parser, parent = this.parent, listenerStr = expression.shift(), listener, context, fn, aliases, argContext;
                 if (!isNull(parent)) {
                     aliases = parent.getResources(this._aliases);
                     argContext = parent.context;
@@ -17622,7 +17670,7 @@ var plat;
              * @param {KeyboardEvent} ev The keyboard event object.
              */
             CharPress.prototype._onEvent = function (ev) {
-                var keyCodes = this.keyCodes, keyCode = ev.charCode || ev.which, isShifted, key;
+                var keyCodes = this.keyCodes, keyCode = ev.charCode || ev.which, key;
                 if (!keyCode) {
                     key = ev.key;
                     if (!key) {
@@ -18132,7 +18180,9 @@ var plat;
                     }
                     var expression = _parser.parse(this._expression.expression + '.' + identifiers[0]);
                     parsedIdentifier = expression.identifiers[0];
-                    var split = parsedIdentifier.split('.'), key = split.pop(), contextExpression = split.join('.'), context = this.evaluateExpression(contextExpression);
+                    var split = parsedIdentifier.split('.');
+                    split.pop();
+                    var contextExpression = split.join('.'), context = this.evaluateExpression(contextExpression);
                     if (!isObject(context)) {
                         if (isNull(context)) {
                             context = this._ContextManager.createContext(this.parent, contextExpression);
@@ -18271,7 +18321,7 @@ var plat;
                 }
                 // this case should never be hit since ie9 does not support multi-file uploads, 
                 // but kept in here for now for consistency's sake 
-                var filelist = element.value.split(/,|;/g), length = filelist.length, files = [], fileValue;
+                var filelist = element.value.split(/,|;/g), length = filelist.length, files = [], fileValue, blobSlice = function () { return {}; };
                 for (var i = 0; i < length; ++i) {
                     fileValue = filelist[i];
                     files.push({
@@ -18282,7 +18332,7 @@ var plat;
                         size: undefined,
                         msDetachStream: noop,
                         msClose: noop,
-                        slice: function () { return {}; }
+                        slice: blobSlice
                     });
                 }
                 return files;
