@@ -120,6 +120,7 @@ module plat.ui.animations {
                 this._animationCanceled = this.animationEnd((): void => {
                     this._animationCanceled = requestAnimationFrameGlobal((): void => {
                         this._dispose();
+                        this.end();
                     });
                 });
             });
