@@ -495,13 +495,20 @@ module plat.ui.controls {
                 return;
             }
 
-            var animationQueue = this._animationQueue;
-            animationQueue.push({
-                animation: this._animator.enter(item, __Enter, this._container).then((): void => {
-                    animationQueue.shift();
-                }),
-                op: null
-            });
+            var animationQueue = this._animationQueue,
+                animation = {
+                    animation: this._animator.enter(item, __Enter, this._container).then((): void => {
+                        var index = animationQueue.indexOf(animation);
+                        if (index === -1) {
+                            return;
+                        }
+                        
+                        animationQueue.splice(index, 1);
+                    }),
+                    op: <string>null
+                };
+                
+            animationQueue.push(animation);
         }
 
         /**
@@ -1001,8 +1008,16 @@ module plat.ui.controls {
             var animationQueue = this._animationQueue,
                 animationCreation = this._animator.create(nodes, key),
                 animationPromise = animationCreation.current.then((): void => {
-                    animationQueue.shift();
+                    var index = animationQueue.indexOf(animation);
+                    if (index === -1) {
+                        return;
+                    }
+                    animationQueue.splice(index, 1);
                 }),
+                animation = {
+                    animation: animationPromise, 
+                    op: <string>null
+                },
                 callback = (): animations.IAnimationThenable<any> => {
                     animationCreation.previous.then((): void => {
                         animationPromise.start();
@@ -1012,11 +1027,11 @@ module plat.ui.controls {
 
             if (cancel && animationQueue.length > 0) {
                 var cancelPromise = this._cancelCurrentAnimations().then(callback);
-                animationQueue.push({ animation: animationPromise, op: null });
+                animationQueue.push(animation);
                 return cancelPromise;
             }
 
-            animationQueue.push({ animation: animationPromise, op: null });
+            animationQueue.push(animation);
             return callback();
         }
 
@@ -1045,16 +1060,21 @@ module plat.ui.controls {
             }
 
             var animationQueue = this._animationQueue,
-                animation = this._animator.leave(nodes, key).then((): void => {
-                    animationQueue.shift();
-                });
+                animationPromise = this._animator.leave(nodes, key).then((): void => {
+                    var index = animationQueue.indexOf(animation);
+                    if (index === -1) {
+                        return;
+                    }
+                    animationQueue.splice(index, 1);
+                }),
+                animation = {
+                    animation: animationPromise,
+                    op: 'leave'
+                };
 
-            animationQueue.push({
-                animation: animation,
-                op: 'leave'
-            });
+            animationQueue.push(animation);
 
-            return animation;
+            return animationPromise;
         }
 
         /**
@@ -1088,17 +1108,24 @@ module plat.ui.controls {
                 animationQueue = this._animationQueue,
                 animationCreation = this._animator.create(nodes, key),
                 animationPromise = animationCreation.current.then((): void => {
-                    animationQueue.shift();
+                    var index = animationQueue.indexOf(animation);
+                    if (index > -1) {
+                        animationQueue.splice(index, 1);
+                    }
+                    
                     if (isNull(parentNode)) {
                         return;
                     }
 
                     parentNode.replaceChild(container, clonedContainer);
                 }),
+                animation = {
+                    animation: animationPromise,
+                    op: 'clone'
+                },
                 callback = (): async.IThenable<void> => {
                     parentNode = container.parentNode;
                     if (isNull(parentNode) || animationPromise.isCanceled()) {
-                        animationQueue.shift();
                         return animationPromise;
                     }
 
@@ -1111,11 +1138,11 @@ module plat.ui.controls {
 
             if (cancel && animationQueue.length > 0) {
                 var cancelPromise = this._cancelCurrentAnimations().then(callback);
-                animationQueue.push({ animation: animationPromise, op: 'clone' });
+                animationQueue.push(animation);
                 return cancelPromise;
             }
 
-            animationQueue.push({ animation: animationPromise, op: 'clone' });
+            animationQueue.push(animation);
             return callback();
         }
 
