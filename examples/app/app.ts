@@ -4,6 +4,7 @@ module app {
     export class App extends plat.App {
         constructor(_browserConfig: plat.web.IBrowserConfig, router: plat.routing.Router) {
             super();
+            _browserConfig.baseUrl = 'examples';
 
             router.configure([
                 { pattern: '', view: viewcontrols.Main },

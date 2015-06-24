@@ -44,7 +44,7 @@
     "examples": "npm run build:examples && npm run server:examples",
     "karma": "karma start karma.conf.js",
     "lint": "tsconfig-lint -u",
-    "server:examples": "http-server -p 3000 examples",
+    "server:examples": "http-server -p 3000",
     "test": "npm run build:test && npm run karma",
     "tsd": "tsd update -so && tsd link",
     "watch:examples": "npm run build:examples -- -w",
