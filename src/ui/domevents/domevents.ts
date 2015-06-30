@@ -5,7 +5,7 @@
      * @name DomEvents
      * @memberof plat.ui
      * @kind class
-     * 
+     *
      * @description
      * A class for managing DOM event registration and handling.
      */
@@ -21,84 +21,84 @@
          * @kind property
          * @access public
          * @static
-         * 
+         *
          * @type {plat.ui.IDomEventsConfig}
-         * 
+         *
          * @description
          * A configuration object for all DOM events.
          */
         static config: IDomEventsConfig = {
             /**
-             * An object containing the different time intervals that govern the behavior of certain 
+             * An object containing the different time intervals that govern the behavior of certain
              * custom DOM events.
              */
             intervals: <IIntervals>{
                 /**
-                 * The max time in milliseconds a user can hold down on the screen 
+                 * The max time in milliseconds a user can hold down on the screen
                  * for a tap event to be fired.
                  */
                 tapInterval: 250,
                 /**
-                 * The max time in milliseconds a user can wait between consecutive 
+                 * The max time in milliseconds a user can wait between consecutive
                  * taps for a dbltap event to be fired.
                  */
                 dblTapInterval: 300,
                 /**
-                 * The time in milliseconds a user must hold down on the screen 
+                 * The time in milliseconds a user must hold down on the screen
                  * before a hold event is fired or a release event can be fired.
                  */
                 holdInterval: 400,
                 /**
-                 * The delay in milliseconds between the time a user taps to the time 
-                 * the tap event fires. Used in the case where a double-tap-to-zoom 
+                 * The delay in milliseconds between the time a user taps to the time
+                 * the tap event fires. Used in the case where a double-tap-to-zoom
                  * feature is required.
                  */
                 dblTapZoomDelay: 0
             },
 
             /**
-             * An object containing the different minimum/maximum distances that govern the behavior of certain 
+             * An object containing the different minimum/maximum distances that govern the behavior of certain
              * custom DOM events.
              */
             distances: <IDistances>{
                 /**
-                 * The minimum distance in pixels a user must move after touch down to register 
+                 * The minimum distance in pixels a user must move after touch down to register
                  * it as a scroll instead of a tap.
                  */
                 minScrollDistance: 3,
                 /**
-                 * The maximum distance in pixels between consecutive taps a user is allowed to 
+                 * The maximum distance in pixels between consecutive taps a user is allowed to
                  * register a dbltap event.
                  */
                 maxDblTapDistance: 10
             },
 
             /**
-             * An object containing the different minimum/maximum velocities that govern the behavior of certain 
+             * An object containing the different minimum/maximum velocities that govern the behavior of certain
              * custom DOM events.
              */
             velocities: <IVelocities>{
                 /**
-                 * The minimum velocity in pixels/ms a user must move after touch down to register 
+                 * The minimum velocity in pixels/ms a user must move after touch down to register
                  * a swipe event, adjusted to account for rounding.
                  */
                 minSwipeVelocity: 0.645
             },
 
             /**
-             * The default CSS styles applied to elements listening for custom DOM events. If using 
-             * platypus.css, you must overwrite the styles in platypus.css or create your own and 
+             * The default CSS styles applied to elements listening for custom DOM events. If using
+             * platypus.css, you must overwrite the styles in platypus.css or create your own and
              * change the classNames in the config.
              */
             styleConfig: <Array<IDefaultStyle>>[{
                 /**
-                 * The className that will be used to define the custom style for 
-                 * allowing the best touch experience. This class is added to every 
+                 * The className that will be used to define the custom style for
+                 * allowing the best touch experience. This class is added to every
                  * element that registers for a custom DOM event (denoted by a prefixed '$').
                  */
                 className: 'plat-gesture',
                 /**
-                 * An array of string styles to be placed on an element to allow for the 
+                 * An array of string styles to be placed on an element to allow for the
                  * best touch experience. In the format 'CSS identifier: value'
                  * (e.g. 'width : 100px')
                  */
@@ -116,12 +116,12 @@
                 ]
             }, {
                     /**
-                     * The className that will be used to define the custom style for 
+                     * The className that will be used to define the custom style for
                      * blocking touch action scrolling, zooming, etc on the element.
                      */
                     className: 'plat-no-touch-action',
                     /**
-                     * An array of string styles that block touch action scrolling, zooming, etc. 
+                     * An array of string styles that block touch action scrolling, zooming, etc.
                      * Primarily useful on elements such as a canvas.
                      * In the format 'CSS identifier: value'
                      * (e.g. 'width : 100px')
@@ -139,11 +139,11 @@
          * @kind property
          * @access public
          * @static
-         * 
+         *
          * @type {plat.ui.IGestures<string>}
-         * 
+         *
          * @description
-         * An object containing the event types for all of the 
+         * An object containing the event types for all of the
          * supported gestures.
          */
         static gestures: IGestures<string> = {
@@ -169,11 +169,11 @@
          * @memberof plat.ui.DomEvents
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.ui.IGestures<string>}
-         * 
+         *
          * @description
-         * An object containing the event types for all of the 
+         * An object containing the event types for all of the
          * supported gestures.
          */
         protected _gestures: IGestures<string> = DomEvents.gestures;
@@ -184,9 +184,9 @@
          * @kind property
          * @access protected
          * @static
-         * 
+         *
          * @type {Document}
-         * 
+         *
          * @description
          * Reference to the Document injectable.
          */
@@ -198,9 +198,9 @@
          * @kind property
          * @access protected
          * @static
-         * 
+         *
          * @type {plat.Compat}
-         * 
+         *
          * @description
          * Reference to the {@link plat.Compat|Compat} injectable.
          */
@@ -212,9 +212,9 @@
          * @kind property
          * @access protected
          * @static
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
          * The version of android, or -1 if not on android.
          */
@@ -226,25 +226,25 @@
          * @kind property
          * @access protected
          * @static
-         * 
+         *
          * @type {boolean}
-         * 
+         *
          * @description
-         * Whether or not we're on Android 4.4.x
+         * Whether or not we're on Android 4.4.x or below.
          */
-        protected _android44orBelow: boolean = Math.floor(this._androidVersion / 10) <= 44;
+        protected _android44orBelow: boolean = this._androidVersion > -1 && Math.floor(this._androidVersion / 10) <= 44;
 
         /**
          * @name _isActive
          * @memberof plat.ui.DomEvents
          * @kind property
          * @access protected
-         * 
+         *
          * @type {boolean}
-         * 
+         *
          * @description
-         * Whether or not the {@link plat.ui.DomEvents|DomEvents} are currently active. 
-         * They become active at least one element on the current 
+         * Whether or not the {@link plat.ui.DomEvents|DomEvents} are currently active.
+         * They become active at least one element on the current
          * page is listening for a custom event.
          */
         protected _isActive: boolean;
@@ -254,9 +254,9 @@
          * @memberof plat.ui.DomEvents
          * @kind property
          * @access protected
-         * 
+         *
          * @type {boolean}
-         * 
+         *
          * @description
          * Whether or not the user is currently touching the screen.
          */
@@ -267,9 +267,9 @@
          * @memberof plat.ui.DomEvents
          * @kind property
          * @access protected
-         * 
+         *
          * @type {boolean}
-         * 
+         *
          * @description
          * Whether or not the user is using mouse when touch events are present.
          */
@@ -280,11 +280,11 @@
          * @memberof plat.ui.DomEvents
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.IObject<plat.ui.IEventSubscriber>}
-         * 
+         *
          * @description
-         * An object with keyed subscribers that keep track of all of the 
+         * An object with keyed subscribers that keep track of all of the
          * events registered on a particular element.
          */
         protected _subscribers: IObject<IEventSubscriber> = {};
@@ -294,9 +294,9 @@
          * @memberof plat.ui.DomEvents
          * @kind property
          * @access protected
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The space delimited touch start events defined by this browser.
          */
@@ -307,9 +307,9 @@
          * @memberof plat.ui.DomEvents
          * @kind property
          * @access protected
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The space delimited touch move events defined by this browser.
          */
@@ -320,9 +320,9 @@
          * @memberof plat.ui.DomEvents
          * @kind property
          * @access protected
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The space delimited touch end events defined by this browser.
          */
@@ -333,11 +333,11 @@
          * @memberof plat.ui.DomEvents
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.ui.IBaseGestures<number>}
-         * 
+         *
          * @description
-         * An object containing the number of currently active 
+         * An object containing the number of currently active
          * events of each base type.
          */
         protected _gestureCount: IBaseGestures<number> = {
@@ -355,9 +355,9 @@
          * @memberof plat.ui.DomEvents
          * @kind property
          * @access private
-         * 
+         *
          * @type {boolean}
-         * 
+         *
          * @description
          * Whether or not the user moved while in touch.
          */
@@ -367,9 +367,9 @@
          * @memberof plat.ui.DomEvents
          * @kind property
          * @access private
-         * 
+         *
          * @type {boolean}
-         * 
+         *
          * @description
          * Whether or not their is a registered "release" event.
          */
@@ -379,9 +379,9 @@
          * @memberof plat.ui.DomEvents
          * @kind property
          * @access private
-         * 
+         *
          * @type {boolean}
-         * 
+         *
          * @description
          * Whether or not we should be detecting move events.
          */
@@ -391,9 +391,9 @@
          * @memberof plat.ui.DomEvents
          * @kind property
          * @access private
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
          * The current tap count to help distinguish single from double taps.
          */
@@ -403,9 +403,9 @@
          * @memberof plat.ui.DomEvents
          * @kind property
          * @access private
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
          * The total number of touches on the screen.
          */
@@ -415,11 +415,11 @@
          * @memberof plat.ui.DomEvents
          * @kind property
          * @access private
-         * 
+         *
          * @type {plat.IRemoveListener}
-         * 
+         *
          * @description
-         * A function to remove a deferred tap given the case that a tap delay was needed for 
+         * A function to remove a deferred tap given the case that a tap delay was needed for
          * something such as a double tap to zoom feature.
          */
         private __cancelDeferredTap: IRemoveListener = noop;
@@ -428,9 +428,9 @@
          * @memberof plat.ui.DomEvents
          * @kind property
          * @access private
-         * 
+         *
          * @type {plat.IRemoveListener}
-         * 
+         *
          * @description
          * A function for removing a deferred hold event.
          */
@@ -440,9 +440,9 @@
          * @memberof plat.ui.DomEvents
          * @kind property
          * @access private
-         * 
+         *
          * @type {RegExp}
-         * 
+         *
          * @description
          * A regular expressino for determining a "cancel" event.
          */
@@ -452,9 +452,9 @@
          * @memberof plat.ui.DomEvents
          * @kind property
          * @access private
-         * 
+         *
          * @type {RegExp}
-         * 
+         *
          * @description
          * A regular expressino for determining a pointer end event.
          */
@@ -464,9 +464,9 @@
          * @memberof plat.ui.DomEvents
          * @kind property
          * @access private
-         * 
+         *
          * @type {plat.ui.ITouchStartEventProperties}
-         * 
+         *
          * @description
          * The user's last touch down.
          */
@@ -476,9 +476,9 @@
          * @memberof plat.ui.DomEvents
          * @kind property
          * @access private
-         * 
+         *
          * @type {plat.ui.ISwipeOriginProperties}
-         * 
+         *
          * @description
          * The starting place of an initiated swipe gesture.
          */
@@ -488,21 +488,21 @@
          * @memberof plat.ui.DomEvents
          * @kind property
          * @access private
-         * 
+         *
          * @type {boolean}
-         * 
+         *
          * @description
          * Whether or not there are any swipe subscribers for the current target during touch move events.
          */
-        private __haveSwipeSubscribers: boolean;
+        private __haveSwipeSubscribers: boolean = false;
         /**
          * @name __lastMoveEvent
          * @memberof plat.ui.DomEvents
          * @kind property
          * @access private
-         * 
+         *
          * @type {plat.ui.IPointerEvent}
-         * 
+         *
          * @description
          * The user's last move while in touch.
          */
@@ -512,9 +512,9 @@
          * @memberof plat.ui.DomEvents
          * @kind property
          * @access private
-         * 
+         *
          * @type {plat.ui.IPointerEvent}
-         * 
+         *
          * @description
          * The user's last touch up.
          */
@@ -524,9 +524,9 @@
          * @memberof plat.ui.DomEvents
          * @kind property
          * @access private
-         * 
+         *
          * @type {plat.ui.ICustomElement}
-         * 
+         *
          * @description
          * The captured target that the user first initiated a gesture on.
          */
@@ -536,9 +536,9 @@
          * @memberof plat.ui.DomEvents
          * @kind property
          * @access private
-         * 
+         *
          * @type {HTMLInputElement}
-         * 
+         *
          * @description
          * The currently focused element on the screen. Used in the case of WebKit touch events.
          */
@@ -548,9 +548,9 @@
          * @memberof plat.ui.DomEvents
          * @kind property
          * @access private
-         * 
+         *
          * @type {plat.IObject<string>}
-         * 
+         *
          * @description
          * A hash map for mapping custom events to standard events.
          */
@@ -560,9 +560,9 @@
          * @memberof plat.ui.DomEvents
          * @kind property
          * @access private
-         * 
+         *
          * @type {EventListener}
-         * 
+         *
          * @description
          * An EventListener with a bound context for registering mapped events.
          */
@@ -572,11 +572,11 @@
          * @memberof plat.ui.DomEvents
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.ITouchMapping<number>}
-         * 
+         *
          * @description
-         * An object containing the number of currently active mapped touch 
+         * An object containing the number of currently active mapped touch
          * events of each type.
          */
         private __mappedCount: ITouchMapping<number> = {
@@ -590,9 +590,9 @@
          * @memberof plat.ui.DomEvents
          * @kind property
          * @access private
-         * 
+         *
          * @type {plat.IObject<plat.ui.IPointerEvent>}
-         * 
+         *
          * @description
          * A hash of the current pointer touch points on the page.
          */
@@ -602,9 +602,9 @@
          * @memberof plat.ui.DomEvents
          * @kind property
          * @access private
-         * 
+         *
          * @type {Array<plat.ui.IPointerEvent>}
-         * 
+         *
          * @description
          * An array containing all current pointer touch points on the page.
          */
@@ -614,9 +614,9 @@
          * @memberof plat.ui.DomEvents
          * @kind property
          * @access private
-         * 
+         *
          * @type {IObject<EventListener>}
-         * 
+         *
          * @description
          * A set of touch start, move, and end listeners to be place on the document.
          */
@@ -627,10 +627,10 @@
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Retrieve the type of touch events for this browser and create the default gesture style.
-         * 
+         *
          * @returns {plat.ui.DomEvents}
          */
         constructor() {
@@ -643,15 +643,15 @@
          * @kind function
          * @access public
          * @variation 0
-         * 
+         *
          * @description
          * Add an event listener for the specified event type on the specified element.
-         * 
+         *
          * @param {Node} element The node listening for the event.
          * @param {string} type The type of event being listened to.
          * @param {plat.ui.IGestureListener} listener The listener to be fired.
          * @param {boolean} useCapture? Whether to fire the event on the capture or bubble phase of propagation.
-         * 
+         *
          * @returns {plat.IRemoveListener} A function for removing the event listener and stop listening to the event.
          */
         addEventListener(element: Node, type: string, listener: IGestureListener, useCapture?: boolean): IRemoveListener;
@@ -661,15 +661,15 @@
          * @kind function
          * @access public
          * @variation 1
-         * 
+         *
          * @description
          * Add an event listener for the specified event type on the specified element.
-         * 
+         *
          * @param {Window} element The window object.
          * @param {string} type The type of event being listened to.
          * @param {plat.ui.IGestureListener} listener The listener to be fired.
          * @param {boolean} useCapture? Whether to fire the event on the capture or bubble phase of propagation.
-         * 
+         *
          * @returns {plat.IRemoveListener} A function for removing the event listener and stop listening to the event.
          */
         addEventListener(element: Window, type: string, listener: IGestureListener, useCapture?: boolean): IRemoveListener;
@@ -679,15 +679,15 @@
          * @kind function
          * @access public
          * @variation 2
-         * 
+         *
          * @description
          * Add an event listener for the specified event type on the specified element.
-         * 
+         *
          * @param {Node} element The node listening for the event.
          * @param {string} type The type of event being listened to.
          * @param {EventListener} listener The listener to be fired.
          * @param {boolean} useCapture? Whether to fire the event on the capture or bubble phase of propagation.
-         * 
+         *
          * @returns {plat.IRemoveListener} A function for removing the event listener and stop listening to the event.
          */
         addEventListener(element: Node, type: string, listener: EventListener, useCapture?: boolean): IRemoveListener;
@@ -697,15 +697,15 @@
          * @kind function
          * @access public
          * @variation 3
-         * 
+         *
          * @description
          * Add an event listener for the specified event type on the specified element.
-         * 
+         *
          * @param {Window} element The window object.
          * @param {string} type The type of event being listened to.
          * @param {EventListener} listener The listener to be fired.
          * @param {boolean} useCapture? Whether to fire the event on the capture or bubble phase of propagation.
-         * 
+         *
          * @returns {plat.IRemoveListener} A function for removing the event listener and stop listening to the event.
          */
         addEventListener(element: Window, type: string, listener: EventListener, useCapture?: boolean): IRemoveListener;
@@ -792,10 +792,10 @@
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Stops listening for touch events and resets the DomEvents instance.
-         * 
+         *
          * @returns {void}
          */
         dispose(): void {
@@ -833,12 +833,12 @@
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * A listener for touch/mouse start events.
-         * 
+         *
          * @param {plat.ui.IPointerEvent} ev The touch start event object.
-         * 
+         *
          * @returns {boolean} Prevents default and stops propagation if false is returned.
          */
         protected _onTouchStart(ev: IPointerEvent): boolean {
@@ -890,8 +890,10 @@
                 yTarget: target
             };
 
-            this.__haveSwipeSubscribers = this.__findFirstSubscribers(<ICustomElement>target,
-                [gestures.$swipe, gestures.$swipedown, gestures.$swipeleft, gestures.$swiperight, gestures.$swipeup]).length > 0;
+            if (this._android44orBelow) {
+                this.__haveSwipeSubscribers = this.__findFirstSubscribers(<ICustomElement>target,
+                    [gestures.$swipe, gestures.$swipedown, gestures.$swipeleft, gestures.$swiperight, gestures.$swipeup]).length > 0;
+            }
 
             var gestureCount = this._gestureCount,
                 noHolds = gestureCount.$hold <= 0,
@@ -952,19 +954,19 @@
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * A listener for touch/mouse move events.
-         * 
+         *
          * @param {plat.ui.IPointerEvent} ev The touch move event object.
-         * 
+         *
          * @returns {boolean} Prevents default and stops propagation if false is returned.
          */
         protected _onTouchMove(ev: IPointerEvent): boolean {
             // clear hold event
             this.__cancelDeferredHold();
             this.__cancelDeferredHold = noop;
-            // return immediately if there are multiple touches present, or 
+            // return immediately if there are multiple touches present, or
             // if it is a mouse event and currently in a touch
             if (this._inTouch === true && ev.type === 'mousemove') {
                 return true;
@@ -999,12 +1001,12 @@
 
             var lastMove = <ITouchStartEventProperties>this.__lastMoveEvent || swipeOrigin,
                 direction = evt.direction = this.__getDirection(x - lastMove.clientX, y - lastMove.clientY);
-            
+
             this.__handleOriginChange(direction);
 
             var dx = Math.abs(x - swipeOrigin.clientX),
                 dy = Math.abs(y - swipeOrigin.clientY);
-            
+
             evt.velocity = this.__getVelocity(dx, dy, evt.timeStamp - swipeOrigin.xTimestamp, evt.timeStamp - swipeOrigin.yTimestamp);
 
             if (!noSwiping && this._android44orBelow && this.__haveSwipeSubscribers) {
@@ -1024,12 +1026,12 @@
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * A listener for touch/mouse end events.
-         * 
+         *
          * @param {plat.ui.IPointerEvent} ev The touch end event object.
-         * 
+         *
          * @returns {boolean} Prevents default and stops propagation if false is returned.
          */
         protected _onTouchEnd(ev: IPointerEvent): boolean {
@@ -1046,7 +1048,7 @@
             if (notMouseUp) {
                 // all non mouse cases
                 if (eventType === 'touchend') {
-                    // all to handle a strange issue when touch clicking certain types 
+                    // all to handle a strange issue when touch clicking certain types
                     // of DOM elements
                     if (hasMoved) {
                         // we check ev.cancelable in the END case in case of scrolling conditions
@@ -1054,7 +1056,7 @@
                             ev.preventDefault();
                         }
                     } else if (this._inTouch === true) {
-                        // handleInput must be called prior to preventClickFromTouch due to an 
+                        // handleInput must be called prior to preventClickFromTouch due to an
                         // order of operations issue / potential race condition
                         this.__handleInput(<HTMLInputElement>ev.target);
                         if (ev.cancelable === true) {
@@ -1072,7 +1074,7 @@
                 }
             } else if (!isUndefined(this._inTouch)) {
                 if (!this._inMouse) {
-                    // this is case where touchend fired and now 
+                    // this is case where touchend fired and now
                     // mouse end is also being fired
                     if (ev.cancelable === true) {
                         ev.preventDefault();
@@ -1132,7 +1134,7 @@
                 x = ev.clientX,
                 y = ev.clientY;
 
-            // check if can be a double tap event by checking number of taps, distance between taps, 
+            // check if can be a double tap event by checking number of taps, distance between taps,
             // and time between taps
             if (this.__tapCount > 0 &&
                 this.__getDistance(x, lastTouchUp.clientX, y, lastTouchUp.clientY) <= config.distances.maxDblTapDistance &&
@@ -1154,10 +1156,10 @@
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * Clears all temporary states like move and hold events.
-         * 
+         *
          * @returns {void}
          */
         private __clearTempStates(): void {
@@ -1176,10 +1178,10 @@
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * A function for resetting all values potentially modified during the touch event sequence.
-         * 
+         *
          * @returns {void}
          */
         private __resetTouchEnd(): void {
@@ -1197,12 +1199,12 @@
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * A function for handling when gestures are canceled via the Browser.
-         * 
+         *
          * @param {plat.ui.IPointerEvent} ev The touch cancel event object.
-         * 
+         *
          * @returns {void}
          */
         private __handleCanceled(ev: IPointerEvent): void {
@@ -1231,12 +1233,12 @@
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * A function for handling and firing tap events.
-         * 
+         *
          * @param {plat.ui.IPointerEvent} ev The touch end event object.
-         * 
+         *
          * @returns {void}
          */
         private __handleTap(ev: IPointerEvent): void {
@@ -1253,7 +1255,7 @@
                 return;
             }
 
-            // fire tap event immediately if no dbltap zoom delay 
+            // fire tap event immediately if no dbltap zoom delay
             // or a mouse is being used
             if (DomEvents.config.intervals.dblTapZoomDelay <= 0 ||
                 ev.pointerType === 'mouse' || ev.type === 'mouseup') {
@@ -1262,7 +1264,7 @@
                 return;
             }
 
-            // defer for tap delay in case of something like desired 
+            // defer for tap delay in case of something like desired
             // dbltap zoom
             this.__cancelDeferredTap = defer((): void => {
                 ev._buttons = this.__lastTouchDown._buttons;
@@ -1277,12 +1279,12 @@
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * A function for handling and firing double tap events.
-         * 
+         *
          * @param {plat.ui.IPointerEvent} ev The touch end event object.
-         * 
+         *
          * @returns {void}
          */
         private __handleDbltap(ev: IPointerEvent): void {
@@ -1311,12 +1313,12 @@
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * A function for handling and firing release events.
-         * 
+         *
          * @param {plat.ui.IPointerEvent} ev The touch end event object.
-         * 
+         *
          * @returns {void}
          */
         private __handleRelease(ev: IPointerEvent): void {
@@ -1333,10 +1335,10 @@
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * A function for handling and firing swipe events.
-         * 
+         *
          * @returns {void}
          */
         private __handleSwipe(): void {
@@ -1368,14 +1370,14 @@
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * A function for handling and firing track events.
-         * 
+         *
          * @param {plat.ui.IPointerEvent} ev The touch move event object.
-         * @param {plat.ui.IPointerEvent} originalEv The original touch move event object 
+         * @param {plat.ui.IPointerEvent} originalEv The original touch move event object
          * used for preventing default in the case of an ANDROID device.
-         * 
+         *
          * @returns {void}
          */
         private __handleTrack(ev: IPointerEvent, originalEv: IPointerEvent): void {
@@ -1413,12 +1415,12 @@
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * A function for handling and firing track end events.
-         * 
+         *
          * @param {plat.ui.IPointerEvent} ev The touch end event object.
-         * 
+         *
          * @returns {void}
          */
         private __handleTrackEnd(ev: IPointerEvent): void {
@@ -1440,12 +1442,12 @@
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * A function for handling and firing custom events that are mapped to standard events.
-         * 
+         *
          * @param {plat.ui.IExtendedEvent} ev The touch event object.
-         * 
+         *
          * @returns {void}
          */
         private __handleMappedEvent(ev: IExtendedEvent): void {
@@ -1472,10 +1474,10 @@
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * A function for determining the proper touch events.
-         * 
+         *
          * @returns {void}
          */
         private __getTypes(): void {
@@ -1511,10 +1513,10 @@
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * Registers for and starts listening to start and end touch events on the document.
-         * 
+         *
          * @returns {void}
          */
         private __registerTypes(): void {
@@ -1527,10 +1529,10 @@
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * Unregisters for and stops listening to all touch events on the document.
-         * 
+         *
          * @returns {void}
          */
         private __unregisterTypes(): void {
@@ -1547,12 +1549,12 @@
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * Registers for and begins listening to a particular touch event type.
-         * 
+         *
          * @param {string} events The events to begin listening for.
-         * 
+         *
          * @returns {void}
          */
         private __registerType(events: string): void {
@@ -1571,12 +1573,12 @@
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * Unregisters for and stops listening to a particular touch event type.
-         * 
+         *
          * @param {string} events The events to stop listening for.
-         * 
+         *
          * @returns {void}
          */
         private __unregisterType(events: string): void {
@@ -1595,13 +1597,13 @@
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * Registers and associates an element with an event.
-         * 
+         *
          * @param {plat.ui.ICustomElement} element The element being tied to a custom event.
          * @param {string} type The type of event.
-         * 
+         *
          * @returns {void}
          */
         private __registerElement(element: ICustomElement, type: string): void {
@@ -1657,13 +1659,13 @@
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * Unregisters and disassociates an element with an event.
-         * 
+         *
          * @param {plat.ui.ICustomElement} element The element being disassociated with the given custom event.
          * @param {string} type The type of event.
-         * 
+         *
          * @returns {void}
          */
         private __unregisterElement(element: ICustomElement, type: string): void {
@@ -1697,12 +1699,12 @@
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * Sets the current touch point and helps standardize the given event object.
-         * 
+         *
          * @param {plat.ui.IPointerEvent} ev The current point being touched.
-         * 
+         *
          * @returns {void}
          */
         private __setTouchPoint(ev: IPointerEvent): void {
@@ -1722,12 +1724,12 @@
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * Sets the captured target.
-         * 
+         *
          * @param {EventTarget} target The target to capture.
-         * 
+         *
          * @returns {void}
          */
         private __setCapture(target: EventTarget): void {
@@ -1741,13 +1743,13 @@
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * Sets the captured target.
-         * 
+         *
          * @param {plat.ui.IPointerEvent} ev The current touch point.
          * @param {boolean} remove Whether to remove the touch point or add it.
-         * 
+         *
          * @returns {void}
          */
         private __updatePointers(ev: IPointerEvent, remove: boolean): void {
@@ -1788,16 +1790,16 @@
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access private
-         * 
+         *
          * @description
-         * Searches from the EventTarget up the DOM tree looking for an element with the 
+         * Searches from the EventTarget up the DOM tree looking for an element with the
          * registered event type.
-         * 
+         *
          * @param {plat.ui.ICustomElement} eventTarget The current target of the touch event.
          * @param {string} type The type of event being searched for.
-         * 
-         * @returns {plat.ui.DomEvent} The found {@link plat.ui.DomEvent} associated 
-         * with the first found element in the tree and the event type. Used to trigger the event at this 
+         *
+         * @returns {plat.ui.DomEvent} The found {@link plat.ui.DomEvent} associated
+         * with the first found element in the tree and the event type. Used to trigger the event at this
          * point in the DOM tree.
          */
         private __findFirstSubscriber(eventTarget: ICustomElement, type: string): DomEvent {
@@ -1830,16 +1832,16 @@
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access private
-         * 
+         *
          * @description
-         * Searches from the EventTarget up the DOM tree looking for all elements with the 
+         * Searches from the EventTarget up the DOM tree looking for all elements with the
          * registered event types.
-         * 
+         *
          * @param {plat.ui.ICustomElement} eventTarget The current target of the touch event.
          * @param {Array<string>} types An array of the types of events being searched for.
-         * 
-         * @returns {Array<plat.ui.DomEvent>} The found {@link plat.ui.DomEvent|DomEvents} associated 
-         * with the first found element in the tree and the corresponding event type. Used to trigger the events at their lowest 
+         *
+         * @returns {Array<plat.ui.DomEvent>} The found {@link plat.ui.DomEvent|DomEvents} associated
+         * with the first found element in the tree and the corresponding event type. Used to trigger the events at their lowest
          * points in the DOM tree.
          */
         private __findFirstSubscribers(eventTarget: ICustomElement, types: Array<string>): Array<DomEvent> {
@@ -1881,14 +1883,14 @@
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * Adds a listener for listening to a standard event and mapping it to a custom event.
-         * 
+         *
          * @param {number} count The number of mapped events registered.
          * @param {string} mappedEvent The mapped event type.
          * @param {boolean} useCapture? Whether the mapped event listener is fired on the capture or bubble phase.
-         * 
+         *
          * @returns {plat.IRemoveListener} A function for removing the added mapped listener.
          */
         private __addMappedEvent(count: number, mappedEvent: string, useCapture?: boolean): IRemoveListener {
@@ -1908,15 +1910,15 @@
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * Removes an event listener for a given event type.
-         * 
+         *
          * @param {plat.ui.ICustomElement} element The element to remove the listener from.
          * @param {string} type The type of event being removed.
          * @param {plat.ui.IGestureListener} listener The listener being removed.
          * @param {boolean} useCapture? Whether the listener is fired on the capture or bubble phase.
-         * 
+         *
          * @returns {void}
          */
         private __removeEventListener(element: ICustomElement, type: string, listener: IGestureListener,
@@ -1945,12 +1947,12 @@
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * Removes an element from the subscriber object.
-         * 
+         *
          * @param {plat.ui.ICustomElement} element The element being removed.
-         * 
+         *
          * @returns {void}
          */
         private __removeElement(element: ICustomElement): void {
@@ -1977,12 +1979,12 @@
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * Standardizes certain properties on the event object for custom events.
-         * 
+         *
          * @param {plat.ui.IExtendedEvent} ev The event object to be standardized.
-         * 
+         *
          * @returns {plat.ui.IExtendedEvent} The potentially new Event object
          */
         private __standardizeEventObject(ev: IExtendedEvent): IExtendedEvent {
@@ -2007,7 +2009,7 @@
                         ev = changedTouches[changedTouchIndex];
                         ev.preventDefault = preventDefault;
                     } else if (this.__getTouchIndex(touches) >= 0) {
-                        // we want to return null because our point of interest is in touches 
+                        // we want to return null because our point of interest is in touches
                         // but was not in changedTouches so it is still playing a part on the page
                         return null;
                     }
@@ -2035,12 +2037,12 @@
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access private
-         * 
+         *
          * @description
-         * Normalizes the 'buttons' property on an IExetendedEvent. 
-         * 
+         * Normalizes the 'buttons' property on an IExetendedEvent.
+         *
          * @param {plat.ui.IExtendedEvent} ev The event.
-         * 
+         *
          * @returns {void}
          */
         private __normalizeButtons(ev: IExtendedEvent): void {
@@ -2083,15 +2085,15 @@
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access private
-         * 
+         *
          * @description
-         * Searches through the input array looking for the primary 
+         * Searches through the input array looking for the primary
          * touch down index.
-         * 
-         * @param {Array<plat.ui.IExtendedEvent>} ev The array of touch event objects 
+         *
+         * @param {Array<plat.ui.IExtendedEvent>} ev The array of touch event objects
          * to search through.
-         * 
-         * @returns {number} The array index where the touch down was found or -1 if 
+         *
+         * @returns {number} The array index where the touch down was found or -1 if
          * not found.
          */
         private __getTouchIndex(touches: Array<IExtendedEvent>): number {
@@ -2112,12 +2114,12 @@
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * Grabs the x and y offsets of an event object's target.
-         * 
+         *
          * @param {plat.ui.IExtendedEvent} ev The current event object.
-         * 
+         *
          * @returns {plat.ui.IPoint} An object containing the x and y offsets.
          */
         private __getOffset(ev: IExtendedEvent): IPoint {
@@ -2154,15 +2156,15 @@
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * Calculates the distance between two (x, y) coordinate points.
-         * 
+         *
          * @param {number} x1 The x-coordinate of the first point.
          * @param {number} x2 The x-coordinate of the second point.
          * @param {number} y1 The y-coordinate of the first point.
          * @param {number} y2 The y-coordinate of the second point.
-         * 
+         *
          * @returns {number} The distance between the points.
          */
         private __getDistance(x1: number, x2: number, y1: number, y2: number): number {
@@ -2176,15 +2178,15 @@
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * Calculates the velocity between two (x, y) coordinate points over a given time.
-         * 
+         *
          * @param {number} dx The change in x position.
          * @param {number} dy The change in y position.
          * @param {number} dtx The change in time in x direction.
          * @param {number} dty The change in time in y direction.
-         * 
+         *
          * @returns {plat.ui.IVelocity} A velocity object containing horiztonal and vertical velocities.
          */
         private __getVelocity(dx: number, dy: number, dtx: number, dty: number): IVelocity {
@@ -2210,14 +2212,14 @@
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * Calculates the direction of movement.
-         * 
+         *
          * @param {number} dx The change in x position.
          * @param {number} dy The change in y position.
-         * 
-         * @returns {plat.ui.IDirection} An object containing the 
+         *
+         * @returns {plat.ui.IDirection} An object containing the
          * horiztonal and vertical directions of movement.
          */
         private __getDirection(dx: number, dy: number): IDirection {
@@ -2239,13 +2241,13 @@
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access private
-         * 
+         *
          * @description
-         * Checks to see if a swipe direction has changed to recalculate 
+         * Checks to see if a swipe direction has changed to recalculate
          * an origin point.
-         * 
+         *
          * @param {plat.ui.IDirection} direction The current vertical and horiztonal directions of movement.
-         * 
+         *
          * @returns {void}
          */
         private __handleOriginChange(direction: IDirection): void {
@@ -2292,15 +2294,15 @@
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * Checks to see if a swipe event has been registered.
-         * 
+         *
          * @param {plat.ui.IDirection} direction The current horizontal and vertical directions of movement.
          * @param {plat.ui.IVelocity} velocity The current horizontal and vertical velocities.
          * @param {number} dx The distance in the x direction.
          * @param {number} dy The distance in the y direction.
-         * 
+         *
          * @returns {Array<plat.ui.DomEvent>} The swipe event subscribers.
          */
         private __getRegisteredSwipes(direction: IDirection, velocity: IVelocity, dx: number, dy: number): Array<DomEvent> {
@@ -2332,12 +2334,12 @@
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * Checks to see if a swipe event has been registered.
-         * 
+         *
          * @param {string} direction The current direction of movement.
-         * 
+         *
          * @returns {boolean} Whether or not the current movement is horizontal.
          */
         private __isHorizontal(direction: string): boolean {
@@ -2349,10 +2351,10 @@
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * Appends CSS to the head for gestures if needed.
-         * 
+         *
          * @returns {void}
          */
         private __appendGestureStyle(): void {
@@ -2391,13 +2393,13 @@
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * Creates a style text to append to the document head.
-         * 
-         * @param {plat.ui.IDefaultStyle} styleClass The object containing the custom styles for 
+         *
+         * @param {plat.ui.IDefaultStyle} styleClass The object containing the custom styles for
          * gestures.
-         * 
+         *
          * @returns {string} The style text.
          */
         private __createStyle(styleClass: IDefaultStyle): string {
@@ -2422,12 +2424,12 @@
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * Determines whether the target is the currently focused element.
-         * 
+         *
          * @param {EventTarget} target The event target.
-         * 
+         *
          * @returns {boolean} Whether or not the target is focused.
          */
         private __isFocused(target: EventTarget): boolean {
@@ -2439,12 +2441,12 @@
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * Handles HTMLInputElements in WebKit based touch applications.
-         * 
+         *
          * @param {HTMLInputElement} target The event target.
-         * 
+         *
          * @returns {void}
          */
         private __handleInput(target: HTMLInputElement): void {
@@ -2550,10 +2552,10 @@
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * Handles the phantom click in WebKit based touch applications.
-         * 
+         *
          * @returns {void}
          */
         private __preventClickFromTouch(): void {
@@ -2595,12 +2597,12 @@
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * Removes selection capability from the element.
-         * 
+         *
          * @param {Node} element The element to remove selections on.
-         * 
+         *
          * @returns {void}
          */
         private __removeSelections(element: Node): void {
@@ -2621,12 +2623,12 @@
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * Returns selection capability from the element.
-         * 
+         *
          * @param {Node} element The element to return selections on.
-         * 
+         *
          * @returns {void}
          */
         private __returnSelections(element: Node): void {
@@ -2647,13 +2649,13 @@
          * @memberof plat.ui.DomEvents
          * @kind function
          * @access private
-         * 
+         *
          * @description
-         * Prevents default and stops propagation in all elements other than 
+         * Prevents default and stops propagation in all elements other than
          * inputs and textareas.
-         * 
+         *
          * @param {Event} ev The event object.
-         * 
+         *
          * @returns {boolean} Prevents default and stops propagation if false.
          */
         private __preventDefault(ev: Event): boolean {
@@ -2685,7 +2687,7 @@
      * @name DomEvent
      * @memberof plat.ui
      * @kind class
-     * 
+     *
      * @description
      * A class for managing a single custom event.
      */
@@ -2695,9 +2697,9 @@
          * @memberof plat.ui.DomEvent
          * @kind property
          * @access public
-         * 
+         *
          * @type {Document}
-         * 
+         *
          * @description
          * Reference to the Document injectable.
          */
@@ -2708,9 +2710,9 @@
          * @memberof plat.ui.DomEvent
          * @kind property
          * @access public
-         * 
+         *
          * @type {any}
-         * 
+         *
          * @description
          * The node or window object associated with this {@link plat.ui.DomEvent|DomEvent} object.
          */
@@ -2721,9 +2723,9 @@
          * @memberof plat.ui.DomEvent
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The event type associated with this {@link plat.ui.DomEvent|DomEvent} object.
          */
@@ -2734,9 +2736,9 @@
          * @memberof plat.ui.DomEvent
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The event type to dispatch. Defaults to 'CustomEvent'.
          */
@@ -2748,15 +2750,15 @@
          * @kind function
          * @access public
          * @variation 0
-         * 
+         *
          * @description
          * Initializes the element and event of this {@link plat.ui.DomEvent|DomEvent} object.
-         * 
+         *
          * @param {Node} element The element associated with this {@link plat.ui.DomEvent|DomEvent} object.
          * @param {string} event The event associated with this {@link plat.ui.DomEvent|DomEvent} object.
-         * @param {string} eventType? The event type associated with this {@link plat.ui.DomEvent|DomEvent} object. 
+         * @param {string} eventType? The event type associated with this {@link plat.ui.DomEvent|DomEvent} object.
          * If not specified, it will default to 'CustomEvent'.
-         * 
+         *
          * @returns {void}
          */
         initialize(element: Node, event: string, eventType?: string): void;
@@ -2766,15 +2768,15 @@
          * @kind function
          * @access public
          * @variation 1
-         * 
+         *
          * @description
          * Initializes the element and event of this {@link plat.ui.DomEvent|DomEvent} object.
-         * 
+         *
          * @param {Window} element The window object.
          * @param {string} event The event associated with this {@link plat.ui.DomEvent|DomEvent} object.
-         * @param {string} eventType? The event type associated with this {@link plat.ui.DomEvent|DomEvent} object. 
+         * @param {string} eventType? The event type associated with this {@link plat.ui.DomEvent|DomEvent} object.
          * If not specified, it will default to 'CustomEvent'.
-         * 
+         *
          * @returns {void}
          */
         initialize(element: Window, event: string, eventType?: string): void;
@@ -2789,15 +2791,15 @@
          * @memberof plat.ui.DomEvent
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Triggers its event on its element.
-         * 
+         *
          * @param {Object} eventExtension? An event extension to extend the dispatched CustomEvent.
          * @param {any} detailArg? The detail arg to include in the event object
-         * @param {Node} dispatchElement? The element to dispatch the Event from. If not specified, 
+         * @param {Node} dispatchElement? The element to dispatch the Event from. If not specified,
          * this instance's element will be used.
-         * 
+         *
          * @returns {boolean} Whether or not the Event was cancelled in at least one Event handler.
          */
         trigger(eventExtension?: Object, detailArg?: any, dispatchElement?: Node): boolean {
@@ -2817,9 +2819,9 @@
      * @memberof plat.ui
      * @kind class
      * @exported false
-     * 
+     *
      * @extends {plat.ui.DomEvent}
-     * 
+     *
      * @description
      * A specialized class for managing a single custom touch event in {@link plat.ui.DomEvents|DomEvents}.
      */
@@ -2829,9 +2831,9 @@
          * @memberof plat.ui.CustomDomEvent
          * @kind property
          * @access public
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
          * The number of listeners added for this event on this element.
          */
@@ -2843,14 +2845,14 @@
          * @kind function
          * @access public
          * @variation 0
-         * 
+         *
          * @description
-         * The constructor for a {@link plat.ui.CustomDomEvent|CustomDomEvent}. Assigns the 
+         * The constructor for a {@link plat.ui.CustomDomEvent|CustomDomEvent}. Assigns the
          * associated element and event.
-         * 
+         *
          * @param {Node} element The associated element.
          * @param {string} event The associated event.
-         * 
+         *
          * @returns {plat.ui.CustomDomEvent}
          */
         constructor(element: Node, event: string);
@@ -2860,14 +2862,14 @@
          * @kind function
          * @access public
          * @variation 1
-         * 
+         *
          * @description
-         * The constructor for a {@link plat.ui.CustomDomEvent|CustomDomEvent}. Assigns the 
+         * The constructor for a {@link plat.ui.CustomDomEvent|CustomDomEvent}. Assigns the
          * associated element and event.
-         * 
+         *
          * @param {Window} element The window object.
          * @param {string} event The associated event.
-         * 
+         *
          * @returns {plat.ui.CustomDomEvent} A {@link plat.ui.CustomDomEvent|CustomDomEvent} instance.
          */
         constructor(element: Window, event: string);
@@ -2883,13 +2885,13 @@
          * @memberof plat.ui.CustomDomEvent
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Triggers its event on its element.
-         * 
-         * @param {plat.ui.IPointerEvent} ev The current touch event object used to extend the 
+         *
+         * @param {plat.ui.IPointerEvent} ev The current touch event object used to extend the
          * newly created custom event.
-         * 
+         *
          * @returns {boolean} Whether or not the Event was cancelled in at least one Event handler.
          */
         trigger(ev: IPointerEvent): boolean {
@@ -2913,13 +2915,13 @@
          * @memberof plat.ui.CustomDomEvent
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * Extends the custom event to mimic a standardized touch event.
-         * 
+         *
          * @param {plat.ui.IGestureEvent} customEv The newly created custom event object.
          * @param {plat.ui.IPointerEvent} ev The current touch event object.
-         * 
+         *
          * @returns {void}
          */
         private __extendEventObject(customEv: IGestureEvent, ev: IPointerEvent): void {
@@ -2951,13 +2953,13 @@
          * @memberof plat.ui.DomEvent
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * Converts pointer type to a standardized string.
-         * 
+         *
          * @param {any} pointerType The pointer type as either a number or a string.
          * @param {string} eventType The touch event type.
-         * 
+         *
          * @returns {string} The standardized pointer type.
          */
         private __convertPointerType(pointerType: any, eventType: string): string {
@@ -2978,7 +2980,7 @@
      * @name ITouchStartEventProperties
      * @memberof plat.ui
      * @kind interface
-     * 
+     *
      * @description
      * An extended event object containing coordinate, time, and target info.
      */
@@ -2988,9 +2990,9 @@
          * @memberof plat.ui.ITouchStartEventProperties
          * @kind property
          * @access public
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
          * Indicates which mouse button is being pressed in a mouse event.
          */
@@ -3001,11 +3003,11 @@
          * @memberof plat.ui.ITouchStartEventProperties
          * @kind property
          * @access public
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
-         * The x-coordinate of the event on the screen relative to the upper left corner of the 
+         * The x-coordinate of the event on the screen relative to the upper left corner of the
          * browser window. This value cannot be affected by scrolling.
          */
         clientX?: number;
@@ -3015,11 +3017,11 @@
          * @memberof plat.ui.ITouchStartEventProperties
          * @kind property
          * @access public
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
-         * The y-coordinate of the event on the screen relative to the upper left corner of the 
+         * The y-coordinate of the event on the screen relative to the upper left corner of the
          * browser window. This value cannot be affected by scrolling.
          */
         clientY?: number;
@@ -3029,9 +3031,9 @@
          * @memberof plat.ui.ITouchStartEventProperties
          * @kind property
          * @access public
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
          * A unique touch identifier.
          */
@@ -3042,9 +3044,9 @@
          * @memberof plat.ui.ITouchStartEventProperties
          * @kind property
          * @access public
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
          * A timestamp.
          */
@@ -3055,9 +3057,9 @@
          * @memberof plat.ui.ITouchStartEventProperties
          * @kind property
          * @access public
-         * 
+         *
          * @type {EventTarget}
-         * 
+         *
          * @description
          * The target of an Event object.
          */
@@ -3068,7 +3070,7 @@
      * @name ISwipeOriginProperties
      * @memberof plat.ui
      * @kind interface
-     * 
+     *
      * @description
      * An extended event object containing coordinate, time, and target info for a swipe origin.
      */
@@ -3078,11 +3080,11 @@
          * @memberof plat.ui.ISwipeOriginProperties
          * @kind property
          * @access public
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
-         * The x-coordinate of the event on the screen relative to the upper left corner of the 
+         * The x-coordinate of the event on the screen relative to the upper left corner of the
          * browser window. This value cannot be affected by scrolling.
          */
         clientX?: number;
@@ -3092,11 +3094,11 @@
          * @memberof plat.ui.ISwipeOriginProperties
          * @kind property
          * @access public
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
-         * The y-coordinate of the event on the screen relative to the upper left corner of the 
+         * The y-coordinate of the event on the screen relative to the upper left corner of the
          * browser window. This value cannot be affected by scrolling.
          */
         clientY?: number;
@@ -3106,9 +3108,9 @@
          * @memberof plat.ui.ISwipeOriginProperties
          * @kind property
          * @access public
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
          * A timestamp.
          */
@@ -3119,9 +3121,9 @@
          * @memberof plat.ui.ISwipeOriginProperties
          * @kind property
          * @access public
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
          * A timestamp.
          */
@@ -3132,9 +3134,9 @@
          * @memberof plat.ui.ISwipeOriginProperties
          * @kind property
          * @access public
-         * 
+         *
          * @type {EventTarget}
-         * 
+         *
          * @description
          * The target of an Event object.
          */
@@ -3145,9 +3147,9 @@
          * @memberof plat.ui.ISwipeOriginProperties
          * @kind property
          * @access public
-         * 
+         *
          * @type {EventTarget}
-         * 
+         *
          * @description
          * The target of an Event object.
          */
@@ -3158,9 +3160,9 @@
      * @name IExtendedEvent
      * @memberof plat.ui
      * @kind interface
-     * 
+     *
      * @extends {Event}
-     * 
+     *
      * @description
      * An extended event object potentially containing coordinate and movement information.
      */
@@ -3172,9 +3174,9 @@
          * @memberof plat.ui.IExtendedEvent
          * @kind property
          * @access public
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
          * Indicates which mouse button is being pressed in a mouse event.
          */
@@ -3185,11 +3187,11 @@
          * @memberof plat.ui.IExtendedEvent
          * @kind property
          * @access public
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
-         * The x-coordinate of the event on the screen relative to the upper left corner of the 
+         * The x-coordinate of the event on the screen relative to the upper left corner of the
          * browser window. This value cannot be affected by scrolling.
          */
         clientX?: number;
@@ -3199,11 +3201,11 @@
          * @memberof plat.ui.IExtendedEvent
          * @kind property
          * @access public
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
-         * The y-coordinate of the event on the screen relative to the upper left corner of the 
+         * The y-coordinate of the event on the screen relative to the upper left corner of the
          * browser window. This value cannot be affected by scrolling.
          */
         clientY?: number;
@@ -3213,11 +3215,11 @@
          * @memberof plat.ui.IExtendedEvent
          * @kind property
          * @access public
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
-         * The x-coordinate of the event on the screen relative to the upper left corner of the 
+         * The x-coordinate of the event on the screen relative to the upper left corner of the
          * physical screen or monitor.
          */
         screenX?: number;
@@ -3227,11 +3229,11 @@
          * @memberof plat.ui.IExtendedEvent
          * @kind property
          * @access public
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
-         * The y-coordinate of the event on the screen relative to the upper left corner of the 
+         * The y-coordinate of the event on the screen relative to the upper left corner of the
          * physical screen or monitor.
          */
         screenY?: number;
@@ -3241,12 +3243,12 @@
          * @memberof plat.ui.IExtendedEvent
          * @kind property
          * @access public
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
-         * The x-coordinate of the event on the screen relative to the upper left corner of the 
-         * fully rendered content area in the browser window. This value can be altered and/or affected by 
+         * The x-coordinate of the event on the screen relative to the upper left corner of the
+         * fully rendered content area in the browser window. This value can be altered and/or affected by
          * embedded scrollable pages when the scroll bar is moved.
          */
         pageX?: number;
@@ -3256,12 +3258,12 @@
          * @memberof plat.ui.IExtendedEvent
          * @kind property
          * @access public
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
-         * The y-coordinate of the event on the screen relative to the upper left corner of the 
-         * fully rendered content area in the browser window. This value can be altered and/or affected by 
+         * The y-coordinate of the event on the screen relative to the upper left corner of the
+         * fully rendered content area in the browser window. This value can be altered and/or affected by
          * embedded scrollable pages when the scroll bar is moved.
          */
         pageY?: number;
@@ -3271,11 +3273,11 @@
          * @memberof plat.ui.IExtendedEvent
          * @kind property
          * @access public
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
-         * The x-coordinate of the event relative to the top-left corner of the 
+         * The x-coordinate of the event relative to the top-left corner of the
          * offsetParent element that fires the event.
          */
         offsetX?: number;
@@ -3285,11 +3287,11 @@
          * @memberof plat.ui.IExtendedEvent
          * @kind property
          * @access public
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
-         * The y-coordinate of the event relative to the top-left corner of the 
+         * The y-coordinate of the event relative to the top-left corner of the
          * offsetParent element that fires the event.
          */
         offsetY?: number;
@@ -3299,11 +3301,11 @@
          * @memberof plat.ui.IExtendedEvent
          * @kind property
          * @access public
-         * 
+         *
          * @type {plat.ui.IPoint}
-         * 
+         *
          * @description
-         * The x and y-coordinates of the event as an object relative to the top-left corner of the 
+         * The x and y-coordinates of the event as an object relative to the top-left corner of the
          * offsetParent element that fires the event.
          */
         offset: IPoint;
@@ -3313,9 +3315,9 @@
          * @memberof plat.ui.IExtendedEvent
          * @kind property
          * @access public
-         * 
+         *
          * @type {plat.ui.IDirection}
-         * 
+         *
          * @description
          * The horizontal and vertical directions associated with this event.
          */
@@ -3326,9 +3328,9 @@
          * @memberof plat.ui.IExtendedEvent
          * @kind property
          * @access public
-         * 
+         *
          * @type {plat.ui.IVelocity}
-         * 
+         *
          * @description
          * The potential velocity associated with the event.
          */
@@ -3339,11 +3341,11 @@
          * @memberof plat.ui.IExtendedEvent
          * @kind property
          * @access public
-         * 
+         *
          * @type {Array<plat.ui.IExtendedEvent>}
-         * 
+         *
          * @description
-         * An array containing all current touch points. The IExtendedEvents 
+         * An array containing all current touch points. The IExtendedEvents
          * may slightly differ depending on the browser implementation.
          */
         touches?: Array<IExtendedEvent>;
@@ -3353,11 +3355,11 @@
          * @memberof plat.ui.IExtendedEvent
          * @kind property
          * @access public
-         * 
+         *
          * @type {Array<plat.ui.IExtendedEvent>}
-         * 
+         *
          * @description
-         * An array containing all recently changed touch points. This should not be present on 
+         * An array containing all recently changed touch points. This should not be present on
          * the triggered custom event.
          */
         changedTouches?: Array<IExtendedEvent>;
@@ -3367,9 +3369,9 @@
          * @memberof plat.ui.IExtendedEvent
          * @kind property
          * @access public
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
          * A unique touch identifier.
          */
@@ -3380,11 +3382,11 @@
      * @name IPointerEvent
      * @memberof plat.ui
      * @kind interface
-     * 
+     *
      * @extends {plat.ui.IExtendedEvent}
-     * 
+     *
      * @description
-     * An extended event object potentially containing coordinate and movement information as 
+     * An extended event object potentially containing coordinate and movement information as
      * well as pointer type for pointer events.
      */
     export interface IPointerEvent extends IExtendedEvent {
@@ -3393,9 +3395,9 @@
          * @memberof plat.ui.IPointerEvent
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The type of interaction associated with the touch event ('touch', 'pen', 'mouse', '').
          */
@@ -3406,9 +3408,9 @@
          * @memberof plat.ui.IPointerEvent
          * @kind property
          * @access public
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
          * A unique touch identifier.
          */
@@ -3419,9 +3421,9 @@
      * @name IGestureEvent
      * @memberof plat.ui
      * @kind interface
-     * 
+     *
      * @extends {CustomEvent}
-     * 
+     *
      * @description
      * The type of event object passed into the listeners for our custom events.
      */
@@ -3431,9 +3433,9 @@
          * @memberof plat.ui.IGestureEvent
          * @kind property
          * @access public
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
          * Indicates which mouse button is being pressed in a mouse event.
          */
@@ -3444,11 +3446,11 @@
          * @memberof plat.ui.IGestureEvent
          * @kind property
          * @access public
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
-         * The x-coordinate of the event on the screen relative to the upper left corner of the 
+         * The x-coordinate of the event on the screen relative to the upper left corner of the
          * browser window. This value cannot be affected by scrolling.
          */
         clientX?: number;
@@ -3458,11 +3460,11 @@
          * @memberof plat.ui.IGestureEvent
          * @kind property
          * @access public
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
-         * The y-coordinate of the event on the screen relative to the upper left corner of the 
+         * The y-coordinate of the event on the screen relative to the upper left corner of the
          * browser window. This value cannot be affected by scrolling.
          */
         clientY?: number;
@@ -3472,11 +3474,11 @@
          * @memberof plat.ui.IGestureEvent
          * @kind property
          * @access public
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
-         * The x-coordinate of the event on the screen relative to the upper left corner of the 
+         * The x-coordinate of the event on the screen relative to the upper left corner of the
          * physical screen or monitor.
          */
         screenX?: number;
@@ -3486,11 +3488,11 @@
          * @memberof plat.ui.IGestureEvent
          * @kind property
          * @access public
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
-         * The y-coordinate of the event on the screen relative to the upper left corner of the 
+         * The y-coordinate of the event on the screen relative to the upper left corner of the
          * physical screen or monitor.
          */
         screenY?: number;
@@ -3500,12 +3502,12 @@
          * @memberof plat.ui.IGestureEvent
          * @kind property
          * @access public
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
-         * The x-coordinate of the event on the screen relative to the upper left corner of the 
-         * fully rendered content area in the browser window. This value can be altered and/or affected by 
+         * The x-coordinate of the event on the screen relative to the upper left corner of the
+         * fully rendered content area in the browser window. This value can be altered and/or affected by
          * embedded scrollable pages when the scroll bar is moved.
          */
         pageX?: number;
@@ -3515,12 +3517,12 @@
          * @memberof plat.ui.IGestureEvent
          * @kind property
          * @access public
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
-         * The y-coordinate of the event on the screen relative to the upper left corner of the 
-         * fully rendered content area in the browser window. This value can be altered and/or affected by 
+         * The y-coordinate of the event on the screen relative to the upper left corner of the
+         * fully rendered content area in the browser window. This value can be altered and/or affected by
          * embedded scrollable pages when the scroll bar is moved.
          */
         pageY?: number;
@@ -3530,11 +3532,11 @@
          * @memberof plat.ui.IGestureEvent
          * @kind property
          * @access public
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
-         * The x-coordinate of the event relative to the top-left corner of the 
+         * The x-coordinate of the event relative to the top-left corner of the
          * offsetParent element that fires the event.
          */
         offsetX?: number;
@@ -3544,11 +3546,11 @@
          * @memberof plat.ui.IGestureEvent
          * @kind property
          * @access public
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
-         * The y-coordinate of the event relative to the top-left corner of the 
+         * The y-coordinate of the event relative to the top-left corner of the
          * offsetParent element that fires the event.
          */
         offsetY?: number;
@@ -3558,9 +3560,9 @@
          * @memberof plat.ui.IGestureEvent
          * @kind property
          * @access public
-         * 
+         *
          * @type {plat.ui.IDirection}
-         * 
+         *
          * @description
          * The horizontal and vertical directions associated with this event.
          */
@@ -3571,9 +3573,9 @@
          * @memberof plat.ui.IGestureEvent
          * @kind property
          * @access public
-         * 
+         *
          * @type {plat.ui.IVelocity}
-         * 
+         *
          * @description
          * The potential velocity associated with the event.
          */
@@ -3584,11 +3586,11 @@
          * @memberof plat.ui.IGestureEvent
          * @kind property
          * @access public
-         * 
+         *
          * @type {Array<plat.ui.IExtendedEvent>}
-         * 
+         *
          * @description
-         * An array containing all current touch points. The IExtendedEvents 
+         * An array containing all current touch points. The IExtendedEvents
          * may slightly differ depending on the browser implementation.
          */
         touches?: Array<IExtendedEvent>;
@@ -3598,9 +3600,9 @@
          * @memberof plat.ui.IGestureEvent
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The type of interaction associated with the touch event ('touch', 'pen', 'mouse', '').
          */
@@ -3611,9 +3613,9 @@
          * @memberof plat.ui.IGestureEvent
          * @kind property
          * @access public
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
          * A unique touch identifier.
          */
@@ -3624,7 +3626,7 @@
      * @name IGestureListener
      * @memberof plat.ui
      * @kind interface
-     * 
+     *
      * @description
      * The listener interface for our custom DOM events.
      */
@@ -3635,13 +3637,13 @@
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
-         * The method signature for a {@link plat.ui.IGestureListener|IGestureListener}. 
+         * The method signature for a {@link plat.ui.IGestureListener|IGestureListener}.
          * An EventListener with the argument as an {@link plat.ui.IGestureEvent|IGestureEvent}.
-         * 
+         *
          * @param {plat.ui.IGestureEvent} ev The gesture event object.
-         * 
+         *
          * @returns {void}
          */
         (ev?: IGestureEvent): void;
@@ -3651,11 +3653,11 @@
      * @name IBaseGestures
      * @memberof plat.ui
      * @kind interface
-     * 
+     *
      * @description
-     * Describes an object containing information 
+     * Describes an object containing information
      * regarding our base custom events.
-     * 
+     *
      * @typeparam {any} T The type of objects/primitives contained in this object.
      */
     export interface IBaseGestures<T> {
@@ -3664,9 +3666,9 @@
          * @memberof plat.ui.IBaseGestures
          * @kind property
          * @access public
-         * 
+         *
          * @type {T}
-         * 
+         *
          * @description
          * The string type|number of events associated with the tap event.
          */
@@ -3677,9 +3679,9 @@
          * @memberof plat.ui.IBaseGestures
          * @kind property
          * @access public
-         * 
+         *
          * @type {T}
-         * 
+         *
          * @description
          * The string type|number of events associated with the dbltap event.
          */
@@ -3690,9 +3692,9 @@
          * @memberof plat.ui.IBaseGestures
          * @kind property
          * @access public
-         * 
+         *
          * @type {T}
-         * 
+         *
          * @description
          * The string type|number of events associated with the hold event.
          */
@@ -3703,9 +3705,9 @@
          * @memberof plat.ui.IBaseGestures
          * @kind property
          * @access public
-         * 
+         *
          * @type {T}
-         * 
+         *
          * @description
          * The string type|number of events associated with the release event.
          */
@@ -3716,9 +3718,9 @@
          * @memberof plat.ui.IBaseGestures
          * @kind property
          * @access public
-         * 
+         *
          * @type {T}
-         * 
+         *
          * @description
          * The string type|number of events associated with the swipe event.
          */
@@ -3729,9 +3731,9 @@
          * @memberof plat.ui.IBaseGestures
          * @kind property
          * @access public
-         * 
+         *
          * @type {T}
-         * 
+         *
          * @description
          * The string type|number of events associated with the track event.
          */
@@ -3742,9 +3744,9 @@
          * @memberof plat.ui.IBaseGestures
          * @kind property
          * @access public
-         * 
+         *
          * @type {T}
-         * 
+         *
          * @description
          * The string type|number of events associated with the trackend event.
          */
@@ -3755,13 +3757,13 @@
      * @name IGestures
      * @memberof plat.ui
      * @kind interface
-     * 
+     *
      * @extends {plat.ui.IBaseGestures<T>}
-     * 
+     *
      * @description
-     * Describes an object containing information 
+     * Describes an object containing information
      * regarding all our custom events.
-     * 
+     *
      * @typeparam {any} T The type of objects/primitives contained in this object.
      */
     export interface IGestures<T> extends IBaseGestures<T> {
@@ -3770,9 +3772,9 @@
          * @memberof plat.ui.IGestures
          * @kind property
          * @access public
-         * 
+         *
          * @type {T}
-         * 
+         *
          * @description
          * The string type|number of events associated with the swipeleft event.
          */
@@ -3783,9 +3785,9 @@
          * @memberof plat.ui.IGestures
          * @kind property
          * @access public
-         * 
+         *
          * @type {T}
-         * 
+         *
          * @description
          * The string type|number of events associated with the swiperight event.
          */
@@ -3796,9 +3798,9 @@
          * @memberof plat.ui.IGestures
          * @kind property
          * @access public
-         * 
+         *
          * @type {T}
-         * 
+         *
          * @description
          * The string type|number of events associated with the swipeup event.
          */
@@ -3809,9 +3811,9 @@
          * @memberof plat.ui.IGestures
          * @kind property
          * @access public
-         * 
+         *
          * @type {T}
-         * 
+         *
          * @description
          * The string type|number of events associated with the swipedown event.
          */
@@ -3822,9 +3824,9 @@
          * @memberof plat.ui.IGestures
          * @kind property
          * @access public
-         * 
+         *
          * @type {T}
-         * 
+         *
          * @description
          * The string type|number of events associated with the trackleft event.
          */
@@ -3835,9 +3837,9 @@
          * @memberof plat.ui.IGestures
          * @kind property
          * @access public
-         * 
+         *
          * @type {T}
-         * 
+         *
          * @description
          * The string type|number of events associated with the trackright event.
          */
@@ -3848,9 +3850,9 @@
          * @memberof plat.ui.IGestures
          * @kind property
          * @access public
-         * 
+         *
          * @type {T}
-         * 
+         *
          * @description
          * The string type|number of events associated with the trackup event.
          */
@@ -3861,9 +3863,9 @@
          * @memberof plat.ui.IGestures
          * @kind property
          * @access public
-         * 
+         *
          * @type {T}
-         * 
+         *
          * @description
          * The string type|number of events associated with the trackdown event.
          */
@@ -3874,11 +3876,11 @@
      * @name IEventSubscriber
      * @memberof plat.ui
      * @kind interface
-     * 
+     *
      * @extends {plat.ui.IGestures<plat.ui.DomEvent>}
-     * 
+     *
      * @description
-     * Describes an object to keep track of a single 
+     * Describes an object to keep track of a single
      * element's registered custom event types.
      */
     export interface IEventSubscriber extends IGestures<DomEvent> {
@@ -3887,9 +3889,9 @@
          * @memberof plat.ui.IEventSubscriber
          * @kind property
          * @access public
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
          * The total registered gesture count for the associated element.
          */
@@ -3900,7 +3902,7 @@
      * @name IPoint
      * @memberof plat.ui
      * @kind interface
-     * 
+     *
      * @description
      * Describes an object containing x and y coordinates.
      */
@@ -3910,9 +3912,9 @@
          * @memberof plat.ui.IPoint
          * @kind property
          * @access public
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
          * The x-coordinate.
          */
@@ -3923,9 +3925,9 @@
          * @memberof plat.ui.IPoint
          * @kind property
          * @access public
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
          * The y-coordinate.
          */
@@ -3936,7 +3938,7 @@
      * @name IDirection
      * @memberof plat.ui
      * @kind interface
-     * 
+     *
      * @description
      * Describes an object containing a direction in both the horizontal and vertical directions.
      */
@@ -3946,12 +3948,12 @@
          * @memberof plat.ui.IDirection
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The horizontal, x-direction
-         * 
+         *
          * @remarks
          * Can be either "left" or "right".
          */
@@ -3962,12 +3964,12 @@
          * @memberof plat.ui.IDirection
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The vertical, y-direction.
-         * 
+         *
          * @remarks
          * Can be either "up" or "down".
          */
@@ -3978,12 +3980,12 @@
          * @memberof plat.ui.IDirection
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The direction whose vector magnitude is the greatest.
-         * 
+         *
          * @remarks
          * Can be "left", "right", "up", "down".
          */
@@ -3994,7 +3996,7 @@
      * @name IVelocity
      * @memberof plat.ui
      * @kind interface
-     * 
+     *
      * @description
      * Describes an object containing a speed in both the horizontal and vertical directions.
      */
@@ -4004,9 +4006,9 @@
          * @memberof plat.ui.IVelocity
          * @kind property
          * @access public
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
          * The horizontal, x velocity.
          */
@@ -4017,9 +4019,9 @@
          * @memberof plat.ui.IVelocity
          * @kind property
          * @access public
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
          * The vertical, y velocity.
          */
@@ -4030,9 +4032,9 @@
      * @name IIntervals
      * @memberof plat.ui
      * @kind interface
-     * 
+     *
      * @description
-     * Describes an object containing time interval information that 
+     * Describes an object containing time interval information that
      * governs the behavior of certain custom DOM events.
      */
     export interface IIntervals {
@@ -4041,11 +4043,11 @@
          * @memberof plat.ui.IIntervals
          * @kind property
          * @access public
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
-         * The max time in milliseconds a user can hold down on the screen 
+         * The max time in milliseconds a user can hold down on the screen
          * for a tap event to be fired. Defaults to 250 ms.
          */
         tapInterval: number;
@@ -4055,11 +4057,11 @@
          * @memberof plat.ui.IIntervals
          * @kind property
          * @access public
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
-         * The max time in milliseconds a user can wait between consecutive 
+         * The max time in milliseconds a user can wait between consecutive
          * taps for a dbltap event to be fired. Defaults to 300 ms.
          */
         dblTapInterval: number;
@@ -4069,12 +4071,12 @@
          * @memberof plat.ui.IIntervals
          * @kind property
          * @access public
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
-         * The time in milliseconds a user must hold down on the screen 
-         * before a hold event is fired or a release event can be fired. 
+         * The time in milliseconds a user must hold down on the screen
+         * before a hold event is fired or a release event can be fired.
          * Defaults to 400 ms.
          */
         holdInterval: number;
@@ -4084,12 +4086,12 @@
          * @memberof plat.ui.IIntervals
          * @kind property
          * @access public
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
-         * The delay in milliseconds between the time a user taps to the time 
-         * the tap event fires. Used in the case where a double-tap-to-zoom 
+         * The delay in milliseconds between the time a user taps to the time
+         * the tap event fires. Used in the case where a double-tap-to-zoom
          * feature is required. Defaults to 0 ms.
          */
         dblTapZoomDelay: number;
@@ -4099,9 +4101,9 @@
      * @name IDistances
      * @memberof plat.ui
      * @kind interface
-     * 
+     *
      * @description
-     * Describes an object containing distance information that 
+     * Describes an object containing distance information that
      * governs the behavior of certain custom DOM events.
      */
     export interface IDistances {
@@ -4110,11 +4112,11 @@
          * @memberof plat.ui.IDistances
          * @kind property
          * @access public
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
-         * The minimum distance a user must move after touch down to register 
+         * The minimum distance a user must move after touch down to register
          * it as a scroll instead of a tap. Defaults to 3.
          */
         minScrollDistance: number;
@@ -4124,11 +4126,11 @@
          * @memberof plat.ui.IDistances
          * @kind property
          * @access public
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
-         * The maximum distance between consecutive taps a user is allowed to 
+         * The maximum distance between consecutive taps a user is allowed to
          * register a dbltap event. Defaults to 20.
          */
         maxDblTapDistance: number;
@@ -4138,9 +4140,9 @@
      * @name IVelocities
      * @memberof plat.ui
      * @kind interface
-     * 
+     *
      * @description
-     * Describes an object containing velocity information that 
+     * Describes an object containing velocity information that
      * governs the behavior of certain custom DOM events.
      */
     export interface IVelocities {
@@ -4149,11 +4151,11 @@
          * @memberof plat.ui.IVelocities
          * @kind property
          * @access public
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
-         * The minimum velocity a user must move after touch down to register 
+         * The minimum velocity a user must move after touch down to register
          * a swipe event. Defaults to 0.8.
          */
         minSwipeVelocity: number;
@@ -4163,9 +4165,9 @@
      * @name IDefaultStyle
      * @memberof plat.ui
      * @kind interface
-     * 
+     *
      * @description
-     * Describes an object used for creating a custom class for styling an element 
+     * Describes an object used for creating a custom class for styling an element
      * listening for a custom DOM event.
      */
     export interface IDefaultStyle {
@@ -4174,9 +4176,9 @@
          * @memberof plat.ui.IDefaultStyle
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The className that will be used to define the custom style.
          */
@@ -4187,9 +4189,9 @@
          * @memberof plat.ui.IDefaultStyle
          * @kind property
          * @access public
-         * 
+         *
          * @type {Array<string>}
-         * 
+         *
          * @description
          * An array of string styles in the format:
          * CSS identifier : value
@@ -4202,7 +4204,7 @@
      * @name IDomEventsConfig
      * @memberof plat.ui
      * @kind interface
-     * 
+     *
      * @description
      * Describes a configuration object for all custom DOM events.
      */
@@ -4212,11 +4214,11 @@
          * @memberof plat.ui.IDomEventsConfig
          * @kind property
          * @access public
-         * 
+         *
          * @type {plat.ui.IIntervals}
-         * 
+         *
          * @description
-         * An object containing the different time intervals that govern the behavior of certain 
+         * An object containing the different time intervals that govern the behavior of certain
          * custom DOM events.
          */
         intervals: IIntervals;
@@ -4226,11 +4228,11 @@
          * @memberof plat.ui.IDomEventsConfig
          * @kind property
          * @access public
-         * 
+         *
          * @type {plat.ui.IDistances}
-         * 
+         *
          * @description
-         * An object containing the different minimum/maximum distances that govern the behavior of certain 
+         * An object containing the different minimum/maximum distances that govern the behavior of certain
          * custom DOM events.
          */
         distances: IDistances;
@@ -4240,11 +4242,11 @@
          * @memberof plat.ui.IDomEventsConfig
          * @kind property
          * @access public
-         * 
+         *
          * @type {plat.ui.IVelocities}
-         * 
+         *
          * @description
-         * An object containing the different minimum/maximum velocities that govern the behavior of certain 
+         * An object containing the different minimum/maximum velocities that govern the behavior of certain
          * custom DOM events.
          */
         velocities: IVelocities;
@@ -4254,9 +4256,9 @@
          * @memberof plat.ui.IDomEventsConfig
          * @kind property
          * @access public
-         * 
+         *
          * @type {Array<plat.ui.IDefaultStyle>}
-         * 
+         *
          * @description
          * The default CSS styles applied to elements listening for custom DOM events.
          */
