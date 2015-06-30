@@ -6,7 +6,7 @@ var __extends = this.__extends || function (d, b) {
 };
 /* tslint:disable */
 /**
- * PlatypusTS v0.13.10 (https://platypi.io)
+ * PlatypusTS v0.13.11 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
@@ -8782,9 +8782,9 @@ var plat;
                  */
                 this._androidVersion = isUndefined(this._compat.ANDROID) ? -1 : this._compat.ANDROID;
                 /**
-                 * Whether or not we're on Android 4.4.x
+                 * Whether or not we're on Android 4.4.x or below.
                  */
-                this._android44orBelow = Math.floor(this._androidVersion / 10) <= 44;
+                this._android44orBelow = this._androidVersion > -1 && Math.floor(this._androidVersion / 10) <= 44;
                 /**
                  * Whether or not the user is using mouse when touch events are present.
                  */
@@ -8844,6 +8844,10 @@ var plat;
                  * A regular expressino for determining a pointer end event.
                  */
                 this.__pointerEndRegex = /up|cancel/i;
+                /**
+                 * Whether or not there are any swipe subscribers for the current target during touch move events.
+                 */
+                this.__haveSwipeSubscribers = false;
                 /**
                  * A hash map for mapping custom events to standard events.
                  */
@@ -9011,7 +9015,9 @@ var plat;
                     xTarget: target,
                     yTarget: target
                 };
-                this.__haveSwipeSubscribers = this.__findFirstSubscribers(target, [gestures.$swipe, gestures.$swipedown, gestures.$swipeleft, gestures.$swiperight, gestures.$swipeup]).length > 0;
+                if (this._android44orBelow) {
+                    this.__haveSwipeSubscribers = this.__findFirstSubscribers(target, [gestures.$swipe, gestures.$swipedown, gestures.$swipeleft, gestures.$swiperight, gestures.$swipeup]).length > 0;
+                }
                 var gestureCount = this._gestureCount, noHolds = gestureCount.$hold <= 0, noRelease = gestureCount.$release <= 0;
                 // if any moving events registered, register move 
                 if (eventType === 'touchstart' || gestureCount.$track > 0 ||
