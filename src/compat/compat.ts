@@ -5,9 +5,9 @@
      * @name Compat
      * @memberof plat
      * @kind class
-     * 
+     *
      * @description
-     * A class containing boolean values signifying browser 
+     * A class containing boolean values signifying browser
      * and/or platform compatibilities.
      */
     export class Compat {
@@ -22,9 +22,9 @@
          * @memberof plat.Compat
          * @kind property
          * @access protected
-         * 
+         *
          * @type {Window}
-         * 
+         *
          * @description
          * The window injectable.
          */
@@ -35,9 +35,9 @@
          * @memberof plat.Compat
          * @kind property
          * @access protected
-         * 
+         *
          * @type {Window}
-         * 
+         *
          * @description
          * The window.history injectable.
          */
@@ -48,9 +48,9 @@
          * @memberof plat.Compat
          * @kind property
          * @access protected
-         * 
+         *
          * @type {Document}
-         * 
+         *
          * @description
          * The document injectable.
          */
@@ -61,11 +61,11 @@
          * @memberof plat.Compat
          * @kind property
          * @access public
-         * 
+         *
          * @type {boolean}
-         * 
+         *
          * @description
-         * Determines if the browser is modern enough to correctly 
+         * Determines if the browser is modern enough to correctly
          * run PlatypusTS.
          */
         isCompatible: boolean;
@@ -75,11 +75,11 @@
          * @memberof plat.Compat
          * @kind property
          * @access public
-         * 
+         *
          * @type {boolean}
-         * 
+         *
          * @description
-         * Signifies whether or not Cordova is defined. If it is, 
+         * Signifies whether or not Cordova is defined. If it is,
          * we hook up ALM events to Cordova's functions.
          */
         cordova: boolean;
@@ -89,9 +89,9 @@
          * @memberof plat.Compat
          * @kind property
          * @access public
-         * 
+         *
          * @type {boolean}
-         * 
+         *
          * @description
          * Signifies whether window.history.pushState is defined.
          */
@@ -102,9 +102,9 @@
          * @memberof plat.Compat
          * @kind property
          * @access public
-         * 
+         *
          * @type {boolean}
-         * 
+         *
          * @description
          * Signifies whether the File API is supported.
          */
@@ -115,12 +115,12 @@
          * @memberof plat.Compat
          * @kind property
          * @access public
-         * 
+         *
          * @type {boolean}
-         * 
+         *
          * @description
-         * Signifies whether Require is present. If it is, we assume 
-         * it is going to be used and leave the loading of the app up 
+         * Signifies whether Require is present. If it is, we assume
+         * it is going to be used and leave the loading of the app up
          * to the developer.
          */
         amd: boolean;
@@ -130,9 +130,9 @@
          * @memberof plat.Compat
          * @kind property
          * @access public
-         * 
+         *
          * @type {boolean}
-         * 
+         *
          * @description
          * Signifies whether we are in the context of a Windows 8 app.
          */
@@ -143,9 +143,9 @@
          * @memberof plat.Compat
          * @kind property
          * @access public
-         * 
+         *
          * @type {boolean}
-         * 
+         *
          * @description
          * Signifies whether we are in the context of a WinJS app.
          */
@@ -156,9 +156,9 @@
          * @memberof plat.Compat
          * @kind property
          * @access public
-         * 
+         *
          * @type {boolean}
-         * 
+         *
          * @description
          * Signifies whether indexedDB exists on the window.
          */
@@ -169,9 +169,9 @@
          * @memberof plat.Compat
          * @kind property
          * @access public
-         * 
+         *
          * @type {boolean}
-         * 
+         *
          * @description
          * Signifies whether Object.prototype.__proto__ exists.
          */
@@ -182,9 +182,9 @@
          * @memberof plat.Compat
          * @kind property
          * @access public
-         * 
+         *
          * @type {boolean}
-         * 
+         *
          * @description
          * Signifies whether Object.prototype.getPrototypeOf exists.
          */
@@ -195,9 +195,9 @@
          * @memberof plat.Compat
          * @kind property
          * @access public
-         * 
+         *
          * @type {boolean}
-         * 
+         *
          * @description
          * Signifies whether Object.prototype.setPrototypeOf exists.
          */
@@ -208,11 +208,11 @@
          * @memberof plat.Compat
          * @kind property
          * @access public
-         * 
+         *
          * @type {boolean}
-         * 
+         *
          * @description
-         * Whether or not the current browser has touch events 
+         * Whether or not the current browser has touch events
          * like touchstart, touchmove, touchend, etc.
          */
         hasTouchEvents: boolean;
@@ -222,11 +222,11 @@
          * @memberof plat.Compat
          * @kind property
          * @access public
-         * 
+         *
          * @type {boolean}
-         * 
+         *
          * @description
-         * Whether or not the current browser has pointer events 
+         * Whether or not the current browser has pointer events
          * like pointerdown, MSPointerMove, pointerup, etc.
          */
         hasPointerEvents: boolean;
@@ -236,11 +236,11 @@
          * @memberof plat.Compat
          * @kind property
          * @access public
-         * 
+         *
          * @type {boolean}
-         * 
+         *
          * @description
-         * Whether or not the current browser has touch events 
+         * Whether or not the current browser has touch events
          * like MSPointerDown, touchmove, MSPointerUp, etc.
          */
         hasMsPointerEvents: boolean;
@@ -250,9 +250,9 @@
          * @memberof plat.Compat
          * @kind property
          * @access public
-         * 
+         *
          * @type {boolean}
-         * 
+         *
          * @description
          * Whether or not the browser supports animations.
          */
@@ -263,9 +263,9 @@
          * @memberof plat.Compat
          * @kind property
          * @access public
-         * 
+         *
          * @type {boolean}
-         * 
+         *
          * @description
          * Whether the platypus.css file was included or not.
          */
@@ -276,9 +276,9 @@
          * @memberof plat.Compat
          * @kind property
          * @access public
-         * 
+         *
          * @type {plat.IMappedEvents}
-         * 
+         *
          * @description
          * An object containing the correctly mapped touch events for the browser.
          */
@@ -289,11 +289,11 @@
          * @memberof plat.Compat
          * @kind property
          * @access public
-         * 
+         *
          * @type {plat.IAnimationEvents}
-         * 
+         *
          * @description
-         * An object containing the properly prefixed animation events. 
+         * An object containing the properly prefixed animation events.
          * Undefined if animation isn't supported.
          */
         animationEvents: IAnimationEvents;
@@ -303,9 +303,9 @@
          * @memberof plat.Compat
          * @kind property
          * @access public
-         * 
+         *
          * @type {plat.IVendorPrefix}
-         * 
+         *
          * @description
          * An object containing information regarding any potential vendor prefix.
          */
@@ -316,9 +316,9 @@
          * @memberof plat.Compat
          * @kind property
          * @access public
-         * 
+         *
          * @type {(callback: FrameRequestCallback) => number}
-         * 
+         *
          * @description
          * The browser's requestAnimationFrame function if one exists. Otherwise undefined.
          */
@@ -329,9 +329,9 @@
          * @memberof plat.Compat
          * @kind property
          * @access public
-         * 
+         *
          * @type {(handle: number) => void}
-         * 
+         *
          * @description
          * The browser's cancelAnimationFrame function if one exists. Otherwise undefined.
          */
@@ -342,9 +342,9 @@
          * @memberof plat.Compat
          * @kind property
          * @access public
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
          * The version of Internet Explorer being used. If not Internet Explorer, the value is undefined.
          */
@@ -355,9 +355,9 @@
          * @memberof plat.Compat
          * @kind property
          * @access public
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
          * The version of Android being used. If not Android, the value is undefined.
          */
@@ -368,9 +368,9 @@
          * @memberof plat.Compat
          * @kind property
          * @access public
-         * 
+         *
          * @type {plat.IObject<boolean>}
-         * 
+         *
          * @description
          * An object containing all event lookups.
          */
@@ -381,10 +381,10 @@
          * @memberof plat.Compat
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Define everything.
-         * 
+         *
          * @returns {void}
          */
         constructor() {
@@ -399,12 +399,12 @@
          * @memberof plat.Compat
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Check whether or not an event exists.
-         * 
+         *
          * @param {string} event The event to check the existence of.
-         * 
+         *
          * @returns {boolean} Whether or not the event exists.
          */
         hasEvent(event: string): boolean {
@@ -428,10 +428,10 @@
          * @memberof plat.Compat
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * Define booleans.
-         * 
+         *
          * @returns {void}
          */
         private __defineBooleans(): void {
@@ -444,7 +444,7 @@
                 winJs = (<any>_window).WinJS,
                 android = (<any>/android ((?:\d|\.)+)/.exec(userAgent) || [])[1];
 
-            if (isString(android)) {
+            if (isString(android) && !/iemobile/i.test(userAgent)) {
                 android = parseInt(android.replace(/\./g, ''), 10);
             }
 
@@ -480,10 +480,10 @@
          * @memberof plat.Compat
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * Define {@link plat.IMappedEvents|mapped events}
-         * 
+         *
          * @returns {void}
          */
         private __defineMappedEvents(): void {
@@ -523,11 +523,11 @@
          * @memberof plat.Compat
          * @kind function
          * @access private
-         * 
+         *
          * @description
-         * Define {@link plat.IAnimationEvents|animation events} and other vendor prefix 
+         * Define {@link plat.IAnimationEvents|animation events} and other vendor prefix
          * dependencies.
-         * 
+         *
          * @returns {void}
          */
         private __defineVendorDependencies(): void {
@@ -580,7 +580,9 @@
                     $transitionStart: 'transitionstart',
                     $transitionEnd: 'transitionend'
                 };
-            } else if (!(isUndefined((<any>style)[jsSyntax + 'Animation']) || isUndefined((<any>style)[jsSyntax + 'Transition']))) {
+            } else if (!(isUndefined((<any>style)[jsSyntax + 'Animation']) || isUndefined((<any>style)[jsSyntax + 'Transition'])) ||
+                !(isUndefined((<any>style)[prefix + 'Animation']) || isUndefined((<any>style)[prefix + 'Transition'])) ||
+                !(isUndefined((<any>style)[dom + 'Animation']) || isUndefined((<any>style)[dom + 'Transition']))) {
                 this.animationSupported = true;
                 this.animationEvents = {
                     $animation: prefix + 'Animation',
@@ -599,10 +601,10 @@
          * @memberof plat.Compat
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * Determines whether or not platypus css styles exist.
-         * 
+         *
          * @returns {void}
          */
         private __determineCss(): void {
@@ -629,11 +631,11 @@
      * @name ITouchMapping
      * @memberof plat
      * @kind interface
-     * 
+     *
      * @extends {plat.IObject<T>}
-     * 
+     *
      * @typeparam T The type of value being mapped to touch events.
-     * 
+     *
      * @description
      * Describes an object containing the correctly mapped touch events for the browser.
      */
@@ -643,9 +645,9 @@
          * @memberof plat.ITouchMapping
          * @kind property
          * @access public
-         * 
+         *
          * @type {T}
-         * 
+         *
          * @description
          * An event type for touch start.
          */
@@ -656,9 +658,9 @@
          * @memberof plat.ITouchMapping
          * @kind property
          * @access public
-         * 
+         *
          * @type {T}
-         * 
+         *
          * @description
          * An event type for touch end.
          */
@@ -669,9 +671,9 @@
          * @memberof plat.ITouchMapping
          * @kind property
          * @access public
-         * 
+         *
          * @type {T}
-         * 
+         *
          * @description
          * An event type for touch move.
          */
@@ -682,9 +684,9 @@
          * @memberof plat.ITouchMapping
          * @kind property
          * @access public
-         * 
+         *
          * @type {T}
-         * 
+         *
          * @description
          * An event type for touch cancel.
          */
@@ -695,9 +697,9 @@
      * @name IMappedEvents
      * @memberof plat
      * @kind interface
-     * 
+     *
      * @extends {plat.ITouchMapping<string>}
-     * 
+     *
      * @description
      * Describes an object containing the correctly mapped touch events for the browser.
      */
@@ -707,9 +709,9 @@
          * @memberof plat.IMappedEvents
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * An event type for touch start.
          */
@@ -720,9 +722,9 @@
          * @memberof plat.IMappedEvents
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * An event type for touch end.
          */
@@ -733,9 +735,9 @@
          * @memberof plat.IMappedEvents
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * An event type for touch move.
          */
@@ -746,9 +748,9 @@
          * @memberof plat.IMappedEvents
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * An event type for touch cancel.
          */
@@ -759,9 +761,9 @@
      * @name IAnimationEvents
      * @memberof plat
      * @kind interface
-     * 
+     *
      * @extends {plat.IObject}
-     * 
+     *
      * @description
      * Describes an object containing the properly prefixed animation events.
      */
@@ -771,9 +773,9 @@
          * @memberof plat.IAnimationEvents
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The animation identifier.
          */
@@ -784,9 +786,9 @@
          * @memberof plat.IAnimationEvents
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The animation start event.
          */
@@ -797,9 +799,9 @@
          * @memberof plat.IAnimationEvents
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The animation end event.
          */
@@ -810,9 +812,9 @@
          * @memberof plat.IAnimationEvents
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The animation iteration event.
          */
@@ -823,9 +825,9 @@
          * @memberof plat.IAnimationEvents
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The transition identifier.
          */
@@ -836,9 +838,9 @@
          * @memberof plat.IAnimationEvents
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The transition start event.
          */
@@ -849,9 +851,9 @@
          * @memberof plat.IAnimationEvents
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The transition end event.
          */
@@ -862,11 +864,11 @@
      * @name IVendorPrefix
      * @memberof plat
      * @kind interface
-     * 
+     *
      * @extends {plat.IObject}
-     * 
+     *
      * @description
-     * Describes an object that contains information regarding the browser's 
+     * Describes an object that contains information regarding the browser's
      * vendor prefix.
      */
     export interface IVendorPrefix extends IObject<string> {
@@ -875,11 +877,11 @@
          * @memberof plat.IVendorPrefix
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
-         * The DOM based representation of the browser's vendor prefix generally denoted 
+         * The DOM based representation of the browser's vendor prefix generally denoted
          * by it beginning with a capital letter and camel-cased throughout.
          */
         dom: string;
@@ -889,9 +891,9 @@
          * @memberof plat.IVendorPrefix
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The lowercase representation of the browser's vendor prefix.
          */
@@ -902,11 +904,11 @@
          * @memberof plat.IVendorPrefix
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
-         * The css representation of the browser's vendor prefix 
+         * The css representation of the browser's vendor prefix
          * denoted by -{prefix}-.
          */
         css: string;
@@ -916,11 +918,11 @@
          * @memberof plat.IVendorPrefix
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
-         * The common uppercase representation of the browser's vendor prefix 
+         * The common uppercase representation of the browser's vendor prefix
          * generally denoted by it beginning with a capital letter.
          */
         upperCase: string;
