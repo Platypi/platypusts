@@ -6,7 +6,7 @@ var __extends = this.__extends || function (d, b) {
 };
 /* tslint:disable */
 /**
- * PlatypusTS v0.13.9 (https://platypi.io)
+ * PlatypusTS v0.13.12 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
@@ -1599,7 +1599,7 @@ var plat;
          */
         Compat.prototype.__defineBooleans = function () {
             var _window = this._window, navigator = _window.navigator || {}, userAgent = (navigator.userAgent || '').toLowerCase(), history = this._history, def = _window.define, msA = _window.MSApp, winJs = _window.WinJS, android = (/android ((?:\d|\.)+)/.exec(userAgent) || [])[1];
-            if (isString(android)) {
+            if (isString(android) && !/iemobile/i.test(userAgent)) {
                 android = parseInt(android.replace(/\./g, ''), 10);
             }
             this.isCompatible = isFunction(Object.defineProperty) && isFunction(this._document.querySelector);
@@ -1709,7 +1709,9 @@ var plat;
                     $transitionEnd: 'transitionend'
                 };
             }
-            else if (!(isUndefined(style[jsSyntax + 'Animation']) || isUndefined(style[jsSyntax + 'Transition']))) {
+            else if (!(isUndefined(style[jsSyntax + 'Animation']) || isUndefined(style[jsSyntax + 'Transition'])) ||
+                !(isUndefined(style[prefix + 'Animation']) || isUndefined(style[prefix + 'Transition'])) ||
+                !(isUndefined(style[dom + 'Animation']) || isUndefined(style[dom + 'Transition']))) {
                 this.animationSupported = true;
                 this.animationEvents = {
                     $animation: prefix + 'Animation',
@@ -8782,9 +8784,9 @@ var plat;
                  */
                 this._androidVersion = isUndefined(this._compat.ANDROID) ? -1 : this._compat.ANDROID;
                 /**
-                 * Whether or not we're on Android 4.4.x
+                 * Whether or not we're on Android 4.4.x or below.
                  */
-                this._android44orBelow = Math.floor(this._androidVersion / 10) <= 44;
+                this._android44orBelow = this._androidVersion > -1 && Math.floor(this._androidVersion / 10) <= 44;
                 /**
                  * Whether or not the user is using mouse when touch events are present.
                  */
@@ -8844,6 +8846,10 @@ var plat;
                  * A regular expressino for determining a pointer end event.
                  */
                 this.__pointerEndRegex = /up|cancel/i;
+                /**
+                 * Whether or not there are any swipe subscribers for the current target during touch move events.
+                 */
+                this.__haveSwipeSubscribers = false;
                 /**
                  * A hash map for mapping custom events to standard events.
                  */
@@ -9011,7 +9017,9 @@ var plat;
                     xTarget: target,
                     yTarget: target
                 };
-                this.__haveSwipeSubscribers = this.__findFirstSubscribers(target, [gestures.$swipe, gestures.$swipedown, gestures.$swipeleft, gestures.$swiperight, gestures.$swipeup]).length > 0;
+                if (this._android44orBelow) {
+                    this.__haveSwipeSubscribers = this.__findFirstSubscribers(target, [gestures.$swipe, gestures.$swipedown, gestures.$swipeleft, gestures.$swiperight, gestures.$swipeup]).length > 0;
+                }
                 var gestureCount = this._gestureCount, noHolds = gestureCount.$hold <= 0, noRelease = gestureCount.$release <= 0;
                 // if any moving events registered, register move 
                 if (eventType === 'touchstart' || gestureCount.$track > 0 ||
@@ -11067,6 +11075,7 @@ var plat;
                         _this._animationCanceled = _this.animationEnd(function () {
                             _this._animationCanceled = requestAnimationFrameGlobal(function () {
                                 _this._dispose();
+                                _this.end();
                             });
                         });
                     });
@@ -11972,13 +11981,17 @@ var plat;
                     if (!isNode(item)) {
                         return;
                     }
-                    var animationQueue = this._animationQueue;
-                    animationQueue.push({
+                    var animationQueue = this._animationQueue, animation = {
                         animation: this._animator.enter(item, __Enter, this._container).then(function () {
-                            animationQueue.shift();
+                            var index = animationQueue.indexOf(animation);
+                            if (index === -1) {
+                                return;
+                            }
+                            animationQueue.splice(index, 1);
                         }),
                         op: null
-                    });
+                    };
+                    animationQueue.push(animation);
                 };
                 /**
                  * Removes items from the control's element.
@@ -12271,8 +12284,15 @@ var plat;
                         return this._Promise.resolve();
                     }
                     var animationQueue = this._animationQueue, animationCreation = this._animator.create(nodes, key), animationPromise = animationCreation.current.then(function () {
-                        animationQueue.shift();
-                    }), callback = function () {
+                        var index = animationQueue.indexOf(animation);
+                        if (index === -1) {
+                            return;
+                        }
+                        animationQueue.splice(index, 1);
+                    }), animation = {
+                        animation: animationPromise,
+                        op: null
+                    }, callback = function () {
                         animationCreation.previous.then(function () {
                             animationPromise.start();
                         });
@@ -12280,10 +12300,10 @@ var plat;
                     };
                     if (cancel && animationQueue.length > 0) {
                         var cancelPromise = this._cancelCurrentAnimations().then(callback);
-                        animationQueue.push({ animation: animationPromise, op: null });
+                        animationQueue.push(animation);
                         return cancelPromise;
                     }
-                    animationQueue.push({ animation: animationPromise, op: null });
+                    animationQueue.push(animation);
                     return callback();
                 };
                 /**
@@ -12297,14 +12317,18 @@ var plat;
                     if (nodes.length === 0) {
                         return this._Promise.resolve();
                     }
-                    var animationQueue = this._animationQueue, animation = this._animator.leave(nodes, key).then(function () {
-                        animationQueue.shift();
-                    });
-                    animationQueue.push({
-                        animation: animation,
+                    var animationQueue = this._animationQueue, animationPromise = this._animator.leave(nodes, key).then(function () {
+                        var index = animationQueue.indexOf(animation);
+                        if (index === -1) {
+                            return;
+                        }
+                        animationQueue.splice(index, 1);
+                    }), animation = {
+                        animation: animationPromise,
                         op: 'leave'
-                    });
-                    return animation;
+                    };
+                    animationQueue.push(animation);
+                    return animationPromise;
                 };
                 /**
                  * Handles a simple animation of a block of elements.
@@ -12319,15 +12343,20 @@ var plat;
                         return this._Promise.resolve();
                     }
                     var parentNode, animationQueue = this._animationQueue, animationCreation = this._animator.create(nodes, key), animationPromise = animationCreation.current.then(function () {
-                        animationQueue.shift();
+                        var index = animationQueue.indexOf(animation);
+                        if (index > -1) {
+                            animationQueue.splice(index, 1);
+                        }
                         if (isNull(parentNode)) {
                             return;
                         }
                         parentNode.replaceChild(container, clonedContainer);
-                    }), callback = function () {
+                    }), animation = {
+                        animation: animationPromise,
+                        op: 'clone'
+                    }, callback = function () {
                         parentNode = container.parentNode;
                         if (isNull(parentNode) || animationPromise.isCanceled()) {
-                            animationQueue.shift();
                             return animationPromise;
                         }
                         parentNode.replaceChild(clonedContainer, container);
@@ -12338,10 +12367,10 @@ var plat;
                     };
                     if (cancel && animationQueue.length > 0) {
                         var cancelPromise = this._cancelCurrentAnimations().then(callback);
-                        animationQueue.push({ animation: animationPromise, op: 'clone' });
+                        animationQueue.push(animation);
                         return cancelPromise;
                     }
-                    animationQueue.push({ animation: animationPromise, op: 'clone' });
+                    animationQueue.push(animation);
                     return callback();
                 };
                 /**

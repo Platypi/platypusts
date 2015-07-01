@@ -1,5 +1,5 @@
 /**
-  * PlatypusTS v0.13.9 (https://platypi.io)
+  * PlatypusTS v0.13.12 (https://platypi.io)
   * Copyright 2015 Platypi, LLC. All rights reserved.
   *
   * PlatypusTS is licensed under the MIT license found at
@@ -5728,7 +5728,7 @@ declare module plat {
               */
             protected _androidVersion: number;
             /**
-              * Whether or not we're on Android 4.4.x
+              * Whether or not we're on Android 4.4.x or below.
               */
             protected _android44orBelow: boolean;
             /**
