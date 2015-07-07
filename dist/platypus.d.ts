@@ -1,5 +1,5 @@
 /**
-  * PlatypusTS v0.13.12 (https://platypi.io)
+  * PlatypusTS v0.13.13 (https://platypi.io)
   * Copyright 2015 Platypi, LLC. All rights reserved.
   *
   * PlatypusTS is licensed under the MIT license found at
@@ -2199,10 +2199,6 @@ declare module plat {
               * The configuration for an HTTP Request
               */
             protected _config: IHttpConfig;
-            /**
-              * The injectable instance of Compat
-              */
-            protected _compat: Compat;
             /**
               * Whether or not the browser supports the File API.
               */
@@ -5209,6 +5205,150 @@ declare module plat {
               * @param {plat.ui.TemplateControl} control The potential bound control.
               */
             static isBoundControl(control: TemplateControl): boolean;
+            /**
+              * Adds a template to this object. The template will be stored with the key,
+              * and it will be transformed into a DocumentFragment.
+              * @param {Element} template An Element representing the DOM template.
+              * @param {string} relativeIdentifier? The identifier string relative to this control's context
+              * (e.g. 'foo.bar.baz' would signify the object this.context.foo.bar.baz). This is the
+              * most efficient way of specifying context, else the framework has to search for the
+              * object.
+              * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
+              * controls created in the template.
+              */
+            once(template: Element, relativeIdentifier?: string, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
+            /**
+              * Adds a template to this object. The template will be stored with the key,
+              * and it will be transformed into a DocumentFragment.
+              * @param {Element} template An Element representing the DOM template.
+              * @param {number} relativeIdentifier? The identifier number relative to this control's context
+              * (e.g. '1' would signify the object this.context[1]). Only necessary when context is an array.
+              * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
+              * controls created in the template.
+              * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
+              * controls created in the template.
+              */
+            once(template: Element, relativeIdentifier?: number, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
+            /**
+              * Adds a template to this object. The template will be stored with the key,
+              * and it will be transformed into a DocumentFragment.
+              * @param {Array<Node>} template A node Array representing the DOM template.
+              * @param {string} relativeIdentifier? The identifier string relative to this control's context
+              * (e.g. 'foo.bar.baz' would signify the object this.context.foo.bar.baz). This is the
+              * most efficient way of specifying context, else the framework has to search for the
+              * object.
+              * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
+              * controls created in the template.
+              */
+            once(template: Array<Node>, relativeIdentifier?: string, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
+            /**
+              * Adds a template to this object. The template will be stored with the key,
+              * and it will be transformed into a DocumentFragment.
+              * @param {Array<Node>} template A node Array representing the DOM template.
+              * @param {number} relativeIdentifier? The identifier number relative to this control's context
+              * (e.g. '1' would signify the object this.context[1]). Only necessary when context is an array.
+              * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
+              * controls created in the template.
+              * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
+              * controls created in the template.
+              */
+            once(template: Array<Node>, relativeIdentifier?: number, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
+            /**
+              * Adds a template to this object. The template will be stored with the key,
+              * and it will be transformed into a DocumentFragment.
+              * @param {NodeList} template A NodeList representing the DOM template.
+              * @param {string} relativeIdentifier? The identifier string relative to this control's context
+              * (e.g. 'foo.bar.baz' would signify the object this.context.foo.bar.baz). This is the
+              * most efficient way of specifying context, else the framework has to search for the
+              * object.
+              * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
+              * controls created in the template.
+              */
+            once(template: NodeList, relativeIdentifier?: string, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
+            /**
+              * Adds a template to this object. The template will be stored with the key,
+              * and it will be transformed into a DocumentFragment.
+              * @param {NodeList} template A NodeList representing the DOM template.
+              * @param {number} relativeIdentifier? The identifier number relative to this control's context
+              * (e.g. '1' would signify the object this.context[1]). Only necessary when context is an array.
+              * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
+              * controls created in the template.
+              * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
+              * controls created in the template.
+              */
+            once(template: NodeList, relativeIdentifier?: number, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
+            /**
+              * Adds a template to this object. The template will be stored with the key,
+              * and it will be transformed into a DocumentFragment.
+              * @param {DocumentFragment} template A DocumentFragment representing the DOM template.
+              * @param {string} relativeIdentifier? The identifier string relative to this control's context
+              * (e.g. 'foo.bar.baz' would signify the object this.context.foo.bar.baz). This is the
+              * most efficient way of specifying context, else the framework has to search for the
+              * object.
+              * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
+              * controls created in the template.
+              */
+            once(template: DocumentFragment, relativeIdentifier?: string, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
+            /**
+              * Adds a template to this object. The template will be stored with the key,
+              * and it will be transformed into a DocumentFragment.
+              * @param {DocumentFragment} template A DocumentFragment representing the DOM template.
+              * @param {number} relativeIdentifier? The identifier number relative to this control's context
+              * (e.g. '1' would signify the object this.context[1]). Only necessary when context is an array.
+              * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
+              * controls created in the template.
+              * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
+              * controls created in the template.
+              */
+            once(template: DocumentFragment, relativeIdentifier?: number, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
+            /**
+              * Adds a template to this object. The template will be stored with the key,
+              * and it will be transformed into a DocumentFragment.
+              * @param {Node} template A Node representing the DOM template.
+              * @param {string} relativeIdentifier? The identifier string relative to this control's context
+              * (e.g. 'foo.bar.baz' would signify the object this.context.foo.bar.baz). This is the
+              * most efficient way of specifying context, else the framework has to search for the
+              * object.
+              * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
+              * controls created in the template.
+              */
+            once(template: Node, relativeIdentifier?: string, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
+            /**
+              * Adds a template to this object. The template will be stored with the key,
+              * and it will be transformed into a DocumentFragment.
+              * @param {Node} template A Node representing the DOM template.
+              * @param {number} relativeIdentifier? The identifier number relative to this control's context
+              * (e.g. '1' would signify the object this.context[1]). Only necessary when context is an array.
+              * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
+              * controls created in the template.
+              * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
+              * controls created in the template.
+              */
+            once(template: Node, relativeIdentifier?: number, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
+            /**
+              * Adds a template to this object. The template will be stored with the key,
+              * and it will be transformed into a DocumentFragment.
+              * @param {string} template A template string representing the DOM template.
+              * @param {string} relativeIdentifier? The identifier string relative to this control's context
+              * (e.g. 'foo.bar.baz' would signify the object this.context.foo.bar.baz). This is the
+              * most efficient way of specifying context, else the framework has to search for the
+              * object.
+              * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
+              * controls created in the template.
+              */
+            once(template: string, relativeIdentifier?: string, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
+            /**
+              * Adds a template to this object. The template will be stored with the key,
+              * and it will be transformed into a DocumentFragment.
+              * @param {string} template A template string representing the DOM template.
+              * @param {number} relativeIdentifier? The identifier number relative to this control's context
+              * (e.g. '1' would signify the object this.context[1]). Only necessary when context is an array.
+              * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
+              * controls created in the template.
+              * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
+              * controls created in the template.
+              */
+            once(template: string, relativeIdentifier?: number, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
             /**
               * Method for linking a compiled template to a data context and returning a clone of the template,
               * with all new Controls created if the template contains controls. If no data context
@@ -8354,11 +8494,6 @@ declare module plat {
                   * @param {IInnerHtmlOptions} oldValue? The old value of the options property.
                   */
                 protected _onOptionsChanged(newValue: IInnerHtmlOptions, oldValue?: IInnerHtmlOptions): void;
-                /**
-                  * Compiles the bound template and adds it to the element.
-                  * @param {string} templateString The template string to compile and bind.
-                  */
-                protected _generateTemplate(templateString: string): void;
             }
             /**
               * The options object for the
@@ -9696,7 +9831,7 @@ declare module plat {
               */
             protected _previousUrl: string;
             /**
-              * A method to call to stop listening for url changes, only works on the root navigator.
+              * Whether or not the current navigation is a backward navigation
               */
             protected _backNavigate: boolean;
             /**
@@ -9726,6 +9861,10 @@ declare module plat {
               * Tells the router to go back with the given options.
               */
             goBack(options?: IBackNavigateOptions): async.IThenable<void>;
+            /**
+              * Indicates whether or not the current navigation is a backward navigation.
+              */
+            isBackNavigation(): boolean;
             /**
               * Lets the router dispose of all of the necessary properties.
               */
