@@ -364,13 +364,13 @@
          *
          * @returns {boolean} Whether or not the current navigation is a backward navigation.
          */
-         isBackNavigation(): boolean {
-             if (!this.isRoot) {
-                 return Navigator._root.isBackNavigation();
-             }
-
-             return this._backNavigate;
-         }
+        isBackNavigation(): boolean {
+            if (!this.isRoot) {
+                return Navigator._root.isBackNavigation();
+            }
+            
+            return this._backNavigate;
+        }
 
         /**
          * @name dispose
