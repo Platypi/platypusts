@@ -6,7 +6,7 @@ var __extends = this.__extends || function (d, b) {
 };
 /* tslint:disable */
 /**
- * PlatypusTS v0.13.13 (https://platypi.io)
+ * PlatypusTS v0.13.14 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
@@ -11518,6 +11518,13 @@ var plat;
                  */
                 Viewport.prototype.loaded = function () {
                     var _this = this;
+                    if (isObject(this.options)) {
+                        var animate = this.options.value.animate === true;
+                        if (animate) {
+                            this.dom.addClass(this.element, __Viewport + '-animate');
+                        }
+                        this._animate = animate;
+                    }
                     this._Promise.resolve(this._router.finishNavigating).then(function () {
                         _this._router.register(_this);
                     });
@@ -11573,24 +11580,31 @@ var plat;
                  * the view and feed it the route parameters/query.
                  */
                 Viewport.prototype.navigateTo = function (routeInfo) {
-                    var injector = this._nextInjector || this._Injector.getDependency(routeInfo.delegate.view), nodeMap = this._createNodeMap(injector), element = this.element, node = nodeMap.element, parameters = routeInfo.parameters, query = routeInfo.query, control = nodeMap.uiControlNode.control, animator = this._animator, dom = this.dom, isNavigatingBack = this._navigator.isBackNavigation(), view = this.controls[0];
-                    if (isObject(view)) {
-                        var oldElement = view.element;
-                        if (isNavigatingBack) {
-                            dom.addClass(oldElement, __NavigatingBack);
+                    var injector = this._nextInjector || this._Injector.getDependency(routeInfo.delegate.view), nodeMap = this._createNodeMap(injector), element = this.element, node = nodeMap.element, parameters = routeInfo.parameters, query = routeInfo.query, control = nodeMap.uiControlNode.control;
+                    if (this._animate) {
+                        var animator = this._animator, dom = this.dom, isNavigatingBack = this._navigator.isBackNavigation(), view = this.controls[0];
+                        if (isObject(view)) {
+                            var oldElement = view.element;
+                            if (isNavigatingBack) {
+                                dom.addClass(oldElement, __NavigatingBack);
+                            }
+                            animator.leave(oldElement, __Leave).then(function () {
+                                Control.dispose(view);
+                            });
                         }
-                        animator.leave(oldElement, __Leave).then(function () {
-                            Control.dispose(view);
-                        });
-                    }
-                    if (isNavigatingBack) {
-                        dom.addClass(node, __NavigatingBack);
-                        animator.enter(node, __Enter, this.element).then(function () {
-                            dom.removeClass(node, __NavigatingBack);
-                        });
+                        if (isNavigatingBack) {
+                            dom.addClass(node, __NavigatingBack);
+                            animator.enter(node, __Enter, this.element).then(function () {
+                                dom.removeClass(node, __NavigatingBack);
+                            });
+                        }
+                        else {
+                            animator.enter(node, __Enter, this.element);
+                        }
                     }
                     else {
-                        animator.enter(node, __Enter, this.element);
+                        Control.dispose(this.controls[0]);
+                        this.element.insertBefore(node, null);
                     }
                     var viewportManager = this._managerCache.read(this.uid), manager = this._ElementManagerFactory.getInstance();
                     viewportManager.children = [];

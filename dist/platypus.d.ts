@@ -1,5 +1,5 @@
 /**
-  * PlatypusTS v0.13.13 (https://platypi.io)
+  * PlatypusTS v0.13.14 (https://platypi.io)
   * Copyright 2015 Platypi, LLC. All rights reserved.
   *
   * PlatypusTS is licensed under the MIT license found at
@@ -7792,6 +7792,10 @@ declare module plat {
                   */
                 controls: Array<ViewControl>;
                 /**
+                  * The options for the Viewport control.
+                  */
+                options: observable.IObservableProperty<IViewportOptions>;
+                /**
                   * Used to grab the current Router instance.
                   */
                 protected _Router: routing.IRouterStatic;
@@ -7839,6 +7843,10 @@ declare module plat {
                   * The next ViewControl to which to navigate.
                   */
                 protected _nextView: ViewControl;
+                /**
+                  * Whether or not to animate Array mutations.
+                  */
+                protected _animate: boolean;
                 /**
                   * Allows the viewport to initialize its navigator with the current
                   * router.
@@ -7891,6 +7899,15 @@ declare module plat {
                   * router as a child of the parent viewport's router.
                   */
                 protected _getParentViewport(): Viewport;
+            }
+            /**
+              * The available options for the Viewport control.
+              */
+            interface IViewportOptions {
+                /**
+                  * Will allow for page transition animations if set to true.
+                  */
+                animate: boolean;
             }
             /**
               * A TemplateControl for easily reusing a
@@ -8243,7 +8260,7 @@ declare module plat {
               */
             interface IForEachOptions {
                 /**
-                  * Will animate the Array mutations if set to true.
+                  * Will allow for Array mutation animations if set to true.
                   */
                 animate?: boolean;
                 /**
