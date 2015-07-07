@@ -41,6 +41,19 @@ module plat.ui.controls {
         controls: Array<ViewControl>;
 
         /**
+         * @name options
+         * @memberof plat.ui.controls.Viewport
+         * @kind property
+         * @access public
+         *
+         * @type {plat.observable.IObservableProperty<plat.ui.controls.IViewportOptions>}
+         *
+         * @description
+         * The {@link plat.ui.controls.IViewportOptions|options} for the {@link plat.ui.controls.Viewport|Viewport} control.
+         */
+        options: observable.IObservableProperty<IViewportOptions>;
+
+        /**
          * @name _Router
          * @memberof plat.ui.controls.Viewport
          * @kind property
@@ -197,6 +210,19 @@ module plat.ui.controls {
         protected _nextView: ViewControl;
 
         /**
+         * @name _animate
+         * @memberof plat.ui.controls.Viewport
+         * @kind property
+         * @access protected
+         *
+         * @type {boolean}
+         *
+         * @description
+         * Whether or not to animate Array mutations.
+         */
+        protected _animate: boolean;
+
+        /**
          * @name initialize
          * @memberof plat.ui.controls.Viewport
          * @kind function
@@ -234,6 +260,15 @@ module plat.ui.controls {
          * @returns {void}
          */
         loaded(): void {
+            if (isObject(this.options)) {
+                var animate = this.options.value.animate === true;
+                if (animate) {
+                    this.dom.addClass(this.element, __Viewport + '-animate');
+                }
+
+                this._animate = animate;
+            }
+
             this._Promise.resolve(this._router.finishNavigating).then((): void => {
                 this._router.register(this);
             });
@@ -336,30 +371,36 @@ module plat.ui.controls {
                 node = nodeMap.element,
                 parameters = routeInfo.parameters,
                 query = routeInfo.query,
-                control = <ViewControl>nodeMap.uiControlNode.control,
-                animator = this._animator,
-                dom = this.dom,
-                isNavigatingBack = this._navigator.isBackNavigation(),
-                view = this.controls[0];
+                control = <ViewControl>nodeMap.uiControlNode.control;
 
-            if (isObject(view)) {
-                var oldElement = view.element;
-                if (isNavigatingBack) {
-                    dom.addClass(oldElement, __NavigatingBack);
+            if (this._animate) {
+                var animator = this._animator,
+                    dom = this.dom,
+                    isNavigatingBack = this._navigator.isBackNavigation(),
+                    view = this.controls[0];
+
+                if (isObject(view)) {
+                    var oldElement = view.element;
+                    if (isNavigatingBack) {
+                        dom.addClass(oldElement, __NavigatingBack);
+                    }
+
+                    animator.leave(oldElement, __Leave).then((): void => {
+                       Control.dispose(view);
+                    });
                 }
 
-                animator.leave(oldElement, __Leave).then((): void => {
-                   Control.dispose(view);
-                });
-            }
-
-            if (isNavigatingBack) {
-                dom.addClass(node, __NavigatingBack);
-                animator.enter(node, __Enter, this.element).then((): void => {
-                    dom.removeClass(node, __NavigatingBack);
-                });
+                if (isNavigatingBack) {
+                    dom.addClass(node, __NavigatingBack);
+                    animator.enter(node, __Enter, this.element).then((): void => {
+                        dom.removeClass(node, __NavigatingBack);
+                    });
+                } else {
+                    animator.enter(node, __Enter, this.element);
+                }
             } else {
-                animator.enter(node, __Enter, this.element);
+                Control.dispose(this.controls[0]);
+                this.element.insertBefore(node, null);
             }
 
             var viewportManager = this._managerCache.read(this.uid),
@@ -499,4 +540,27 @@ module plat.ui.controls {
     }
 
     register.control(__Viewport, Viewport);
+
+    /**
+     * @name IViewportOptions
+     * @memberof plat.ui.controls
+     * @kind interface
+     *
+     * @description
+     * The available {@link plat.controls.Options|options} for the {@link plat.ui.controls.Viewport|Viewport} control.
+     */
+    export interface IViewportOptions {
+        /**
+         * @name animate
+         * @memberof plat.ui.controls.IViewportOptions
+         * @kind property
+         * @access public
+         *
+         * @type {boolean}
+         *
+         * @description
+         * Will allow for page transition animations if set to true.
+         */
+        animate: boolean;
+    }
 }

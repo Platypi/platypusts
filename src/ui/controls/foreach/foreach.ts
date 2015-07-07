@@ -5,11 +5,11 @@ module plat.ui.controls {
      * @name ForEach
      * @memberof plat.ui.controls
      * @kind class
-     * 
+     *
      * @extends {plat.ui.TemplateControl}
-     * 
+     *
      * @description
-     * A {@link plat.ui.TemplateControl|TemplateControl} for repeating a block of 
+     * A {@link plat.ui.TemplateControl|TemplateControl} for repeating a block of
      * DOM nodes bound to an array.
      */
     export class ForEach extends TemplateControl {
@@ -23,9 +23,9 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.ForEach
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.ui.animations.Animator}
-         * 
+         *
          * @description
          * Reference to the {@link plat.ui.animations.Animator|Animator} injectable.
          */
@@ -36,9 +36,9 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.ForEach
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.async.IPromise}
-         * 
+         *
          * @description
          * Reference to the {@link plat.async.IPromise|IPromise} injectable.
          */
@@ -49,9 +49,9 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.ForEach
          * @kind property
          * @access public
-         * 
+         *
          * @type {Array<any>}
-         * 
+         *
          * @description
          * The required context of the control (must be of type Array).
          */
@@ -62,9 +62,9 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.ForEach
          * @kind property
          * @access public
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
          * The load priority of the control (needs to load before a {@link plat.controls.Bind|Bind} control).
          */
@@ -75,9 +75,9 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.ForEach
          * @kind property
          * @access public
-         * 
+         *
          * @type {Array<plat.ui.TemplateControl>}
-         * 
+         *
          * @description
          * The child controls of the control. All will be of type {@link plat.ui.TemplateControl|TemplateControl}.
          */
@@ -88,9 +88,9 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.ForEach
          * @kind property
          * @access public
-         * 
+         *
          * @type {plat.async.IThenable<void>}
-         * 
+         *
          * @description
          * A Promise that fulfills when the items are loaded.
          */
@@ -101,9 +101,9 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.ForEach
          * @kind property
          * @access public
-         * 
+         *
          * @type {plat.observable.IObservableProperty<plat.ui.controls.IForEachAliasOptions>}
-         * 
+         *
          * @description
          * The {@link plat.ui.controls.IForEachOptions|options} for the {@link plat.ui.controls.ForEach|ForEach} control.
          */
@@ -114,13 +114,13 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.ForEach
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.ui.controls.IForEachAliasOptions}
-         * 
+         *
          * @description
-         * Used to hold the alias tokens for the built-in foreach aliases. You 
-         * can overwrite these with the {@link plat.ui.controls.IForEachOptions|options} for 
-         * the {@link plat.ui.controls.ForEach|ForEach} control. 
+         * Used to hold the alias tokens for the built-in foreach aliases. You
+         * can overwrite these with the {@link plat.ui.controls.IForEachOptions|options} for
+         * the {@link plat.ui.controls.ForEach|ForEach} control.
          */
         protected _aliases: IForEachAliasOptions = {
             index: __forEachAliasOptions.index,
@@ -135,9 +135,9 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.ForEach
          * @kind property
          * @access protected
-         * 
+         *
          * @type {HTMLElement}
-         * 
+         *
          * @description
          * The container to which items will be added.
          */
@@ -148,12 +148,12 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.ForEach
          * @kind property
          * @access protected
-         * 
+         *
          * @type {any}
-         * 
+         *
          * @description
-         * The node length of each item's childNodes (innerHTML). 
-         * For the {@link plat.ui.controls.ForEach|ForEach} it should be a 
+         * The node length of each item's childNodes (innerHTML).
+         * For the {@link plat.ui.controls.ForEach|ForEach} it should be a
          * single constant number.
          */
         protected _blockLength: any = 0;
@@ -163,9 +163,9 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.ForEach
          * @kind property
          * @access protected
-         * 
+         *
          * @type {boolean}
-         * 
+         *
          * @description
          * Whether or not to animate Array mutations.
          */
@@ -176,9 +176,9 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.ForEach
          * @kind property
          * @access protected
-         * 
+         *
          * @type {Array<{ animation: plat.animations.IAnimationThenable<any>; op: string; }>}
-         * 
+         *
          * @description
          * A collection of all the current animations and their animation operation.
          */
@@ -189,9 +189,9 @@ module plat.ui.controls {
           * @memberof plat.ui.controls.ForEach
           * @kind property
           * @access protected
-          * 
+          *
           * @type {Array<plat.async.IThenable<void>>}
-          * 
+          *
           * @description
           * A queue representing all current add operations.
           */
@@ -202,11 +202,11 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.ForEach
          * @kind property
          * @access protected
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
-         * The number of items currently in the list or in the process of being added 
+         * The number of items currently in the list or in the process of being added
          * or removed from the list.
          */
         protected _itemLength: number = 0;
@@ -216,9 +216,9 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.ForEach
          * @kind property
          * @access private
-         * 
+         *
          * @type {boolean}
-         * 
+         *
          * @description
          * Whether or not the Array listener has been set.
          */
@@ -229,9 +229,9 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.ForEach
          * @kind property
          * @access private
-         * 
+         *
          * @type {() => void}
-         * 
+         *
          * @description
          * The resolve function for the itemsLoaded promise.
          */
@@ -242,10 +242,10 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.ForEach
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * The constructor for a {@link plat.ui.controls.ForEach|ForEach}. Creates the itemsLoaded promise.
-         * 
+         *
          * @returns {plat.ui.controls.ForEach} A {@link plat.ui.controls.ForEach|ForEach} instance.
          */
         constructor() {
@@ -260,10 +260,10 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.ForEach
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Creates a bindable template with the control element's childNodes (innerHTML).
-         * 
+         *
          * @returns {void}
          */
         setTemplate(): void {
@@ -275,14 +275,14 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.ForEach
          * @kind function
          * @access public
-         * 
+         *
          * @description
-         * Re-syncs the {@link plat.ui.controls.ForEach|ForEach} child controls and DOM with the new 
+         * Re-syncs the {@link plat.ui.controls.ForEach|ForEach} child controls and DOM with the new
          * array.
-         * 
+         *
          * @param {Array<any>} newValue The new Array
          * @param {Array<any>} oldValue The old Array
-         * 
+         *
          * @returns {void}
          */
         contextChanged(newValue: Array<any>, oldValue: Array<any>): void {
@@ -304,10 +304,10 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.ForEach
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Observes the Array context for changes and adds initial items to the DOM.
-         * 
+         *
          * @returns {void}
          */
         loaded(): void {
@@ -349,10 +349,10 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.ForEach
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Removes any potentially held memory.
-         * 
+         *
          * @returns {void}
          */
         dispose(): void {
@@ -364,10 +364,10 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.ForEach
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Sets the alias tokens to use for all the items in the {@link plat.ui.controls.ForEach|ForEach} context Array.
-         * 
+         *
          * @returns {void}
          */
         protected _setAliases(): void {
@@ -401,15 +401,15 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.ForEach
          * @kind function
          * @access protected
-         * 
+         *
          * @description
-         * Adds new items to the control's element when items are added to 
+         * Adds new items to the control's element when items are added to
          * the array.
-         * 
+         *
          * @param {number} index The point in the array to start adding items.
          * @param {number} numberOfItems The number of items to add.
          * @param {number} animateItems The number of items to animate.
-         * 
+         *
          * @returns {plat.async.IThenable<void>} The itemsLoaded promise.
          */
         protected _addItems(index: number, numberOfItems: number, animateItems: number): async.IThenable<void>  {
@@ -465,12 +465,12 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.ForEach
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Adds an Array of items to the element without animating.
-         * 
+         *
          * @param {Array<Node>} items The Array of items to add.
-         * 
+         *
          * @returns {void}
          */
         protected _appendItems(items: Array<Node>): void {
@@ -482,12 +482,12 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.ForEach
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Adds an item to the control's element animating its elements.
-         * 
+         *
          * @param {DocumentFragment} item The HTML fragment representing a single item.
-         * 
+         *
          * @returns {void}
          */
         protected _appendAnimatedItem(item: DocumentFragment): void {
@@ -502,12 +502,12 @@ module plat.ui.controls {
                         if (index === -1) {
                             return;
                         }
-                        
+
                         animationQueue.splice(index, 1);
                     }),
                     op: <string>null
                 };
-                
+
             animationQueue.push(animation);
         }
 
@@ -516,13 +516,13 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.ForEach
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Removes items from the control's element.
-         * 
+         *
          * @param {number} index The index to start disposing from.
          * @param {number} numberOfItems The number of items to remove.
-         * 
+         *
          * @returns {void}
          */
         protected _removeItems(index: number, numberOfItems: number): void {
@@ -542,11 +542,11 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.ForEach
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Binds the item to a template at that index.
-         * 
-         * @returns {plat.async.IThenable<DocumentFragment>} A promise that resolves with 
+         *
+         * @returns {plat.async.IThenable<DocumentFragment>} A promise that resolves with
          * the a DocumentFragment that represents an item.
          */
         protected _bindItem(index: number): async.IThenable<DocumentFragment> {
@@ -558,10 +558,10 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.ForEach
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Sets the corresponding block length for animation.
-         * 
+         *
          * @returns {void}
          */
         protected _setBlockLength(templates: Array<Node>): void {
@@ -577,13 +577,13 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.ForEach
          * @kind function
          * @access protected
-         * 
+         *
          * @description
-         * Updates a child resource object when 
+         * Updates a child resource object when
          * the array changes.
-         * 
+         *
          * @param {number} index The control whose resources we will update.
-         * 
+         *
          * @returns {void}
          */
         protected _updateResource(index: number): void {
@@ -600,10 +600,10 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.ForEach
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Sets a listener for the changes to the array.
-         * 
+         *
          * @returns {void}
          */
         protected _setListener(): void {
@@ -618,13 +618,13 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.ForEach
          * @kind function
          * @access protected
-         * 
+         *
          * @description
-         * Receives an event when a method has been called on an array and maps the array 
+         * Receives an event when a method has been called on an array and maps the array
          * method to its associated method handler.
-         * 
+         *
          * @param {Array<plat.observable.IArrayChanges<any>>} changes The Array mutation event information.
-         * 
+         *
          * @returns {void}
          */
         protected _executeEvent(changes: Array<observable.IArrayChanges<any>>): void {
@@ -639,14 +639,14 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.ForEach
          * @kind function
          * @access protected
-         * 
+         *
          * @description
-         * Returns a resource alias object for an item in the array. The 
-         * resource object contains index:number, even:boolean, odd:boolean, 
+         * Returns a resource alias object for an item in the array. The
+         * resource object contains index:number, even:boolean, odd:boolean,
          * first:boolean, and last:boolean.
-         * 
+         *
          * @param {number} index The index used to create the resource aliases.
-         * 
+         *
          * @returns {plat.IObject<plat.ui.IResource>} An object consisting of {@link plat.ui.IResource|Resources}.
          */
         protected _getAliases(index: number): IObject<IResource> {
@@ -688,12 +688,12 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.ForEach
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Handles items being pushed into the array.
-         * 
+         *
          * @param {Array<plat.observable.IArrayChanges<any>>} changes The Array mutation event information.
-         * 
+         *
          * @returns {void}
          */
         protected _push(changes: Array<observable.IArrayChanges<any>>): void {
@@ -716,12 +716,12 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.ForEach
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Handles items being popped off the array.
-         * 
+         *
          * @param {Array<plat.observable.IArrayChanges<any>>} changes The Array mutation event information.
-         * 
+         *
          * @returns {void}
          */
         protected _pop(changes: Array<observable.IArrayChanges<any>>): void {
@@ -754,12 +754,12 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.ForEach
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Handles items being unshifted into the array.
-         * 
+         *
          * @param {Array<plat.observable.IArrayChanges<any>>} changes The Array mutation event information.
-         * 
+         *
          * @returns {void}
          */
         protected _unshift(changes: Array<observable.IArrayChanges<any>>): void {
@@ -789,12 +789,12 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.ForEach
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Handles items being shifted off the array.
-         * 
+         *
          * @param {Array<plat.observable.IArrayChanges<any>>} changes The Array mutation event information.
-         * 
+         *
          * @returns {void}
          */
         protected _shift(changes: Array<observable.IArrayChanges<any>>): void {
@@ -823,12 +823,12 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.ForEach
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Handles adding/removing items when an array is spliced.
-         * 
+         *
          * @param {Array<plat.observable.IArrayChanges<any>>} changes The Array mutation event information.
-         * 
+         *
          * @returns {void}
          */
         protected _splice(changes: Array<observable.IArrayChanges<any>>): void {
@@ -933,13 +933,13 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.ForEach
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Grabs the total blocklength of the specified items.
-         * 
+         *
          * @param {number} startIndex The starting index of items.
          * @param {number} numberOfItems The number of consecutive items.
-         * 
+         *
          * @returns {number} The calculated block length.
          */
         protected _calculateBlockLength(startIndex?: number, numberOfItems?: number): number {
@@ -951,16 +951,16 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.ForEach
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Animates the indicated items.
-         * 
+         *
          * @param {number} startIndex The starting index of items to animate.
          * @param {number} numberOfItems The number of consecutive items to animate.
          * @param {string} key The animation key/type.
          * @param {string} animationOp Denotes animation operation.
          * @param {boolean} cancel Whether or not to cancel the current animation before beginning this one.
-         * 
+         *
          * @returns {plat.ui.async.IThenable<void>} A promise that resolves when all animations are complete.
          */
         protected _animateItems(startIndex: number, numberOfItems: number, key: string, animationOp: string,
@@ -986,15 +986,15 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.ForEach
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Handles a simple animation of a block of elements.
-         * 
+         *
          * @param {number} startNode The starting childNode of the ForEach to animate.
          * @param {number} endNode The ending childNode of the ForEach to animate.
          * @param {string} key The animation key/type.
          * @param {boolean} cancel Whether or not to cancel the current animation before beginning this one.
-         * 
+         *
          * @returns {plat.async.IThenable<void>} A promise that fulfills when the animation is complete.
          */
         protected _handleSimpleAnimation(startNode: number, endNode: number, key: string, cancel: boolean): async.IThenable<void> {
@@ -1015,7 +1015,7 @@ module plat.ui.controls {
                     animationQueue.splice(index, 1);
                 }),
                 animation = {
-                    animation: animationPromise, 
+                    animation: animationPromise,
                     op: <string>null
                 },
                 callback = (): animations.IAnimationThenable<any> => {
@@ -1040,15 +1040,15 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.ForEach
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Handles a simple animation of a block of elements.
-         * 
+         *
          * @param {number} startNode The starting childNode of the ForEach to animate.
          * @param {number} endNode The ending childNode of the ForEach to animate.
          * @param {string} key The animation key/type.
-         * 
-         * @returns {plat.async.IThenable<void>} A promise that fulfills when the animation is complete and both  
+         *
+         * @returns {plat.async.IThenable<void>} A promise that fulfills when the animation is complete and both
          * the cloned item has been removed and the original item has been put back.
          */
         protected _handleLeave(startNode: number, endNode: number, key: string): async.IThenable<void> {
@@ -1082,16 +1082,16 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.ForEach
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Handles a simple animation of a block of elements.
-         * 
+         *
          * @param {number} startNode The starting childNode of the ForEach to animate.
          * @param {number} endNode The ending childNode of the ForEach to animate.
          * @param {string} key The animation key/type.
          * @param {boolean} cancel Whether or not to cancel the current animation before beginning this one.
-         * 
-         * @returns {plat.async.IThenable<void>} A promise that fulfills when the animation is complete and both  
+         *
+         * @returns {plat.async.IThenable<void>} A promise that fulfills when the animation is complete and both
          * the cloned container has been removed and the original container has been put back.
          */
         protected _handleClonedContainerAnimation(startNode: number, endNode: number, key: string,
@@ -1112,7 +1112,7 @@ module plat.ui.controls {
                     if (index > -1) {
                         animationQueue.splice(index, 1);
                     }
-                    
+
                     if (isNull(parentNode)) {
                         return;
                     }
@@ -1151,11 +1151,11 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.ForEach
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Cancels all current animations.
-         * 
-         * @returns {plat.async.IThenable<any>} A promise that resolves when 
+         *
+         * @returns {plat.async.IThenable<any>} A promise that resolves when
          * all current animations have been canceled.
          */
         protected _cancelCurrentAnimations(): async.IThenable<any> {
@@ -1177,9 +1177,9 @@ module plat.ui.controls {
      * @name IForEachOptions
      * @memberof plat.ui.controls
      * @kind interface
-     * 
+     *
      * @description
-     * The {@link plat.observable.IObservableProperty|options} object for the 
+     * The {@link plat.observable.IObservableProperty|options} object for the
      * {@link plat.ui.controls.ForEach|ForEach} control.
      */
     export interface IForEachOptions {
@@ -1187,11 +1187,11 @@ module plat.ui.controls {
          * @name animate
          * @memberof plat.ui.controls.IForEachOptions
          * @kind property
-         * 
+         *
          * @type {boolean}
-         * 
+         *
          * @description
-         * Will animate the Array mutations if set to true.
+         * Will allow for Array mutation animations if set to true.
          */
         animate?: boolean;
 
@@ -1199,9 +1199,9 @@ module plat.ui.controls {
          * @name aliases
          * @memberof plat.ui.controls.IForEachOptions
          * @kind property
-         * 
+         *
          * @type {plat.ui.controls.IForEachAliasOptions}
-         * 
+         *
          * @description
          * Used to specify alternative alias tokens for the built-in control aliases.
          */
@@ -1212,11 +1212,11 @@ module plat.ui.controls {
      * @name IForEachAliasOptions
      * @memberof plat.ui.controls
      * @kind interface
-     * 
+     *
      * @extends {plat.IObject<string>}
-     * 
+     *
      * @description
-     * The alias tokens for the {@link plat.ui.controls.IForEachOptions|ForEach options} object for the 
+     * The alias tokens for the {@link plat.ui.controls.IForEachOptions|ForEach options} object for the
      * {@link plat.ui.controls.ForEach|ForEach} control.
      */
     export interface IForEachAliasOptions extends IObject<string> {
@@ -1224,11 +1224,11 @@ module plat.ui.controls {
          * @name index
          * @memberof plat.ui.controls.IForEachAliasOptions
          * @kind property
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
-         * Used to specify an alternative alias for the index in a {@link plat.ui.controls.ForEach|ForEach} 
+         * Used to specify an alternative alias for the index in a {@link plat.ui.controls.ForEach|ForEach}
          * item template.
          */
         index?: string;
@@ -1237,11 +1237,11 @@ module plat.ui.controls {
          * @name even
          * @memberof plat.ui.controls.IForEachAliasOptions
          * @kind property
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
-         * Used to specify an alternative alias for the even in a {@link plat.ui.controls.ForEach|ForEach} 
+         * Used to specify an alternative alias for the even in a {@link plat.ui.controls.ForEach|ForEach}
          * item template.
          */
         even?: string;
@@ -1250,11 +1250,11 @@ module plat.ui.controls {
          * @name odd
          * @memberof plat.ui.controls.IForEachAliasOptions
          * @kind property
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
-         * Used to specify an alternative alias for the odd in a {@link plat.ui.controls.ForEach|ForEach} 
+         * Used to specify an alternative alias for the odd in a {@link plat.ui.controls.ForEach|ForEach}
          * item template.
          */
         odd?: string;
@@ -1263,11 +1263,11 @@ module plat.ui.controls {
          * @name first
          * @memberof plat.ui.controls.IForEachAliasOptions
          * @kind property
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
-         * Used to specify an alternative alias for the first in a {@link plat.ui.controls.ForEach|ForEach} 
+         * Used to specify an alternative alias for the first in a {@link plat.ui.controls.ForEach|ForEach}
          * item template.
          */
         first?: string;
@@ -1276,11 +1276,11 @@ module plat.ui.controls {
          * @name last
          * @memberof plat.ui.controls.IForEachAliasOptions
          * @kind property
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
-         * Used to specify an alternative alias for the last in a {@link plat.ui.controls.ForEach|ForEach} 
+         * Used to specify an alternative alias for the last in a {@link plat.ui.controls.ForEach|ForEach}
          * item template.
          */
         last?: string;
