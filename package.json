@@ -49,7 +49,7 @@
     "test": "npm run build:test && npm run karma",
     "tsd": "tsd update -so && tsd link",
     "watch:examples": "npm run build:examples -- -w",
-    "watch:src": "npm run build-src -- -w",
+    "watch:src": "npm run build:src -- -w",
     "watch:test": "npm run build:test -- -w"
   },
   "author": "Platypi <support@platypi.io> (https://platypi.io)",
