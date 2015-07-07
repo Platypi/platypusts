@@ -5,10 +5,10 @@
      * @name Navigator
      * @memberof plat.routing
      * @kind class
-     * 
+     *
      * @description
-     * Ties the browser and routers together, facilitating app navigation at every router level. 
-     * Listens for url changes and responds accordingly. Also contains functionality for generating 
+     * Ties the browser and routers together, facilitating app navigation at every router level.
+     * Listens for url changes and responds accordingly. Also contains functionality for generating
      * and changing the url.
      */
     export class Navigator {
@@ -29,9 +29,9 @@
          * @kind property
          * @access protected
          * @static
-         * 
+         *
          * @type {plat.routing.Navigator}
-         * 
+         *
          * @description
          * The navigator associated with the root router.
          */
@@ -43,9 +43,9 @@
          * @kind property
          * @access public
          * @readonly
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * A unique id, created during instantiation and found on every {@link plat.routing.Navigator|Navigator}.
          */
@@ -57,9 +57,9 @@
          * @kind property
          * @access public
          * @readonly
-         * 
+         *
          * @type {boolean}
-         * 
+         *
          * @description
          * States whether or not the Navigator is the root Navigator.
          */
@@ -70,9 +70,9 @@
          * @memberof plat.routing.Navigator
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.async.IPromise}
-         * 
+         *
          * @description
          * The {@link plat.async.IPromise|IPromise} injectable instance
          */
@@ -83,9 +83,9 @@
          * @memberof plat.routing.Navigator
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.web.IBrowserConfig}
-         * 
+         *
          * @description
          * The {@link plat.web.IBrowserConfig|IBrowserConfig} injectable instance
          */
@@ -96,9 +96,9 @@
          * @memberof plat.routing.Navigator
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.web.Browser}
-         * 
+         *
          * @description
          * The {@link plat.web.Browser|Browser} injectable instance
          */
@@ -109,9 +109,9 @@
          * @memberof plat.routing.Navigator
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.events.IEventManagerStatic}
-         * 
+         *
          * @description
          * The {@link plat.events.IEventManagerStatic|IEventManagerStatic} injectable instance
          */
@@ -122,9 +122,9 @@
          * @memberof plat.routing.Navigator
          * @kind property
          * @access protected
-         * 
+         *
          * @type {Window}
-         * 
+         *
          * @description
          * The window injectable instance
          */
@@ -135,7 +135,7 @@
          * @memberof plat.routing.Navigator
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.debug.Log}
          * @description
          * Reference to the {@link plat.debug.Log|Log} injectable.
@@ -147,9 +147,9 @@
          * @memberof plat.routing.Navigator
          * @kind property
          * @access protected
-         * 
+         *
          * @type {History}
-         * 
+         *
          * @description
          * The History injectable instance
          */
@@ -160,9 +160,9 @@
          * @memberof plat.routing.Navigator
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.routing.Router}
-         * 
+         *
          * @description
          * The {@link plat.routing.Router|router} associated with this navigator.
          */
@@ -173,9 +173,9 @@
          * @memberof plat.routing.Navigator
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.IRemoveListener}
-         * 
+         *
          * @description
          * A method to call to stop listening for url changes, only works on the root navigator.
          */
@@ -186,9 +186,9 @@
          * @memberof plat.routing.Navigator
          * @kind property
          * @access protected
-         * 
+         *
          * @type {boolean}
-         * 
+         *
          * @description
          * A method to call to stop listening for url changes, only works on the root navigator.
          */
@@ -199,9 +199,9 @@
          * @memberof plat.routing.Navigator
          * @kind property
          * @access protected
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * A method to call to stop listening for url changes, only works on the root navigator.
          */
@@ -212,11 +212,11 @@
          * @memberof plat.routing.Navigator
          * @kind property
          * @access protected
-         * 
+         *
          * @type {boolean}
-         * 
+         *
          * @description
-         * A method to call to stop listening for url changes, only works on the root navigator.
+         * Whether or not the current navigation is a backward navigation
          */
         protected _backNavigate: boolean = false;
 
@@ -225,9 +225,9 @@
          * @memberof plat.routing.Navigator
          * @kind property
          * @access protected
-         * 
+         *
          * @type {() => void}
-         * 
+         *
          * @description
          * A method to resolve the current navigation.
          */
@@ -238,9 +238,9 @@
          * @memberof plat.routing.Navigator
          * @kind property
          * @access protected
-         * 
+         *
          * @type {(err: any) => void}
-         * 
+         *
          * @description
          * A method to reject the current navigation.
          */
@@ -251,12 +251,12 @@
          * @memberof plat.routing.Navigator
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Initializes this Navigator with a router.
-         * 
+         *
          * @param {plat.routing.Router} router The router that the navigator should use to match/generate routes.
-         * 
+         *
          * @returns {void}
          */
         initialize(router: Router): void {
@@ -274,13 +274,13 @@
          * @memberof plat.routing.Navigator
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Tells the navigator to navigate to the url registered for a particular view.
-         * 
+         *
          * @param {any} view The view to which the Navigator should navigate.
          * @param {plat.routing.INavigateOptions} options used to generate the url and perform navigation.
-         * 
+         *
          * @returns {plat.async.IThenable<void>} A promise that resolves when the navigation has finished.
          */
         navigate(view: any, options?: INavigateOptions): async.IThenable<void> {
@@ -308,10 +308,10 @@
          * @memberof plat.routing.Navigator
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Returns a promise that resolves when all navigation has finished.
-         * 
+         *
          * @returns {plat.async.IThenable<void>} A promise that resolves when the navigation has finished.
          */
         finishNavigating(): async.IThenable<void> {
@@ -329,10 +329,10 @@
          * @memberof plat.routing.Navigator
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Tells the router to go back with the given options.
-         * 
+         *
          * @returns {plat.async.IThenable<void>} A promise that resolves when the navigation has finished.
          */
         goBack(options?: IBackNavigateOptions): async.IThenable<void> {
@@ -347,21 +347,36 @@
                 return Navigator._root.goBack(options);
             }
 
-            this._backNavigate = true;
             return this.finishNavigating().then((): async.IThenable<void> => {
+                this._backNavigate = true;
                 return this._goBack(length);
             });
         }
+
+        /**
+         * @name isBackNavigation
+         * @memberof plat.routing.Navigator
+         * @kind function
+         * @access public
+         *
+         * @description
+         * Indicates whether or not the current navigation is a backward navigation.
+         *
+         * @returns {boolean} Whether or not the current navigation is a backward navigation.
+         */
+         isBackNavigation(): boolean {
+             return this._backNavigate;
+         }
 
         /**
          * @name dispose
          * @memberof plat.routing.Navigator
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Lets the router dispose of all of the necessary properties.
-         * 
+         *
          * @returns {void}
          */
         dispose(): void {
@@ -374,10 +389,10 @@
          * @memberof plat.routing.Navigator
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Internal method for navigating to the specified url.
-         * 
+         *
          * @returns {plat.async.IThenable<void>} A promise that resolves when the navigation has finished.
          */
         protected _navigate(url: string, replace?: boolean): async.IThenable<void> {
@@ -397,10 +412,10 @@
          * @memberof plat.routing.Navigator
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Internal method for going back a certain length in history
-         * 
+         *
          * @returns {plat.async.IThenable<void>} A promise that resolves when the navigation has finished.
          */
         protected _goBack(length: number): async.IThenable<void> {
@@ -416,11 +431,11 @@
          * @memberof plat.routing.Navigator
          * @kind function
          * @access protected
-         * 
+         *
          * @description
-         * The root navigator will always observe for url changes and handle them accordingly. This means instructing the 
+         * The root navigator will always observe for url changes and handle them accordingly. This means instructing the
          * router to navigate, and determining what to do in the event that navigation is prevented.
-         * 
+         *
          * @returns {void}
          */
         protected _observeUrl(): void {
@@ -430,13 +445,13 @@
 
             var EventManager = this._EventManager,
                 previousUrl: string,
-                backNavigate: boolean,
                 headControl: ui.controls.Head = acquire(__Head),
                 headExists = isObject(headControl) && isFunction(headControl.navigated),
                 onFailedNavigaton: (e: any) => void = (e: any): void => {
                     this._ignoreOnce = true;
                     this._previousUrl = previousUrl;
-                    this._browser.url(previousUrl, !backNavigate);
+                    this._browser.url(previousUrl, !this._backNavigate);
+                    this._backNavigate = false;
                     this._history.go(-1);
 
                     if (isFunction(this._rejectNavigate)) {
@@ -466,14 +481,13 @@
                     this._ignoreOnce = false;
 
                     if (isFunction(this._resolveNavigate)) {
+                        this._backNavigate = false;
                         this._resolveNavigate();
                     }
 
                     return;
                 }
 
-                backNavigate = this._backNavigate;
-                this._backNavigate = false;
                 previousUrl = this._previousUrl;
 
                 ev = EventManager.dispatch(__beforeNavigate, this, EventManager.DIRECT, [utils]);
@@ -490,7 +504,9 @@
                     return this._router.navigate(utils.pathname, utils.query);
                 }).then((): void => {
                     this._previousUrl = utils.pathname;
+
                     if (isFunction(this._resolveNavigate)) {
+                        this._backNavigate = false;
                         this._resolveNavigate();
                     }
 
@@ -508,10 +524,10 @@
          * @memberof plat.routing.Navigator
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Generates a url with the given view, parameters, and query.
-         * 
+         *
          * @returns {string} The generated url.
          */
         protected _generate(view: any, parameters: any, query: any): string {
@@ -533,9 +549,9 @@
      * @name INavigateOptions
      * @memberof plat.routing
      * @kind interface
-     * 
+     *
      * @description
-     * Specifies options used during navigation. Can help build the url, as well as change 
+     * Specifies options used during navigation. Can help build the url, as well as change
      * the behavior of the navigation.
      */
     export interface INavigateOptions {
@@ -545,9 +561,9 @@
          * @kind function
          * @access public
          * @optional
-         * 
+         *
          * @type {boolean}
-         * 
+         *
          * @description
          * Indicates that the url is specified and does not need to be generated.
          */
@@ -559,9 +575,9 @@
          * @kind function
          * @access public
          * @optional
-         * 
+         *
          * @type {plat.IObject<any>}
-         * 
+         *
          * @description
          * Url parameters, used to generate a url if the associated view is a variable route (i.e. '/posts/:id')
          */
@@ -573,9 +589,9 @@
          * @kind function
          * @access public
          * @optional
-         * 
+         *
          * @type {plat.IObject<any>}
-         * 
+         *
          * @description
          * An object used to generate a query string.
          */
@@ -587,9 +603,9 @@
          * @kind function
          * @access public
          * @optional
-         * 
+         *
          * @type {boolean}
-         * 
+         *
          * @description
          * Whether or not this url should replace the current url in the browser history.
          */
@@ -600,7 +616,7 @@
      * @name IBackNavigateOptions
      * @memberof plat.routing
      * @kind interface
-     * 
+     *
      * @description
      * Specifies options used during backward navigation.
      */
@@ -611,9 +627,9 @@
          * @kind function
          * @access public
          * @optional
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
          * The length in history to go back.
          */
