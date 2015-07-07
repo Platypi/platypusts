@@ -13,7 +13,6 @@
     "grunt-contrib-uglify": "latest",
     "grunt-ts": "latest",
     "grunt-ts-bundle": "latest",
-    "grunt-tslint": "latest",
     "http-server": "latest",
     "karma": "latest",
     "karma-chrome-launcher": "latest",
