@@ -621,6 +621,13 @@ module plat.ui {
             manager.setUiControlTemplate();
 
             return manager.fulfillAndLoad().then((): DocumentFragment => {
+                var _document = this._document;
+
+                control.startNode = <Comment>fragment.insertBefore(_document.createComment(control.type + __START_NODE),
+                    fragment.firstChild);
+                control.endNode = <Comment>fragment.insertBefore(_document.createComment(control.type + __END_NODE),
+                    null);
+
                return fragment;
             });
         }
@@ -1032,16 +1039,16 @@ module plat.ui {
                     null);
 
                 return template;
-            },(error: any): DocumentFragment => {
-                    postpone((): void => {
-                        if(isString(error)) {
-                            error = new Error(error);
-                        }
-                        this._log.error(error);
-                    });
-
-                    return <DocumentFragment>null;
+            }, (error: any): DocumentFragment => {
+                postpone((): void => {
+                    if(isString(error)) {
+                        error = new Error(error);
+                    }
+                    this._log.error(error);
                 });
+
+                return <DocumentFragment>null;
+            });
         }
 
         /**
