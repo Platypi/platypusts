@@ -5,14 +5,14 @@ module plat.ui.controls {
      * @name Viewport
      * @memberof plat.ui.controls
      * @kind class
-     * 
+     *
      * @extends {plat.ui.TemplateControl}
      * @implements {plat.routing.ISupportRouteNavigation}
-     * 
+     *
      * @description
-     * A control that facilitates routing between {@link plat.ui.ViewControl|ViewControls}. A Viewport is 
+     * A control that facilitates routing between {@link plat.ui.ViewControl|ViewControls}. A Viewport is
      * the link between a ViewControl, a {@link plat.routing.Navigator|Navigator}, and a {@link plat.routing.Router|Router}.
-     * It registers with a router and receives route change events. It then instantiates the proper viewcontrol and appends it 
+     * It registers with a router and receives route change events. It then instantiates the proper viewcontrol and appends it
      * to the DOM.
      */
     export class Viewport extends TemplateControl implements routing.ISupportRouteNavigation {
@@ -32,9 +32,9 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Viewport
          * @kind property
          * @access public
-         * 
+         *
          * @type {Array<plat.ui.ViewControl>}
-         * 
+         *
          * @description
          * Viewports contain ViewControls.
          */
@@ -45,9 +45,9 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Viewport
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.routing.Router}
-         * 
+         *
          * @description
          * Used to grab the current {@link plat.routing.Router|Router} instance.
          */
@@ -58,9 +58,9 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Viewport
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.async.IPromise}
-         * 
+         *
          * @description
          * The Promise injectable.
          */
@@ -71,9 +71,9 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Viewport
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.dependency.Injector}
-         * 
+         *
          * @description
          * The Injector for getting instances of {@link plat.ui.ViewControl|ViewControls}.
          */
@@ -84,9 +84,9 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Viewport
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.processing.IElementManagerFactory}
-         * 
+         *
          * @description
          * Used for compiling and linking a {@link plat.ui.ViewControl|ViewControl's} template.
          */
@@ -97,9 +97,9 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Viewport
          * @kind property
          * @access protected
-         * 
+         *
          * @type {Document}
-         * 
+         *
          * @description
          * The document.
          */
@@ -110,9 +110,9 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Viewport
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.storage.Cache<plat.processing.ElementManager>}
-         * 
+         *
          * @description
          * Reference to an injectable that caches {@link plat.processing.ElementManager|ElementManagers}.
          */
@@ -123,9 +123,9 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Viewport
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.ui.animations.Animator}
-         * 
+         *
          * @description
          * Reference to the {@link plat.ui.animations.Animator|Animator} injectable.
          */
@@ -136,9 +136,9 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Viewport
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.routing.Navigator}
-         * 
+         *
          * @description
          * The navigator associated with this Viewport.
          */
@@ -149,9 +149,9 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Viewport
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.routing.Router}
-         * 
+         *
          * @description
          * The router associated with this Viewport.
          */
@@ -162,9 +162,9 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Viewport
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.routing.Router}
-         * 
+         *
          * @description
          * The parent router associated with this Viewport.
          */
@@ -175,9 +175,9 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Viewport
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.dependency.Injector<plat.ui.ViewControl>}
-         * 
+         *
          * @description
          * The next injector used to instantiate the next ViewControl during navigation.
          */
@@ -188,9 +188,9 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Viewport
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.ui.ViewControl}
-         * 
+         *
          * @description
          * The next ViewControl to which to navigate.
          */
@@ -201,11 +201,11 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Viewport
          * @kind function
          * @access public
-         * 
+         *
          * @description
-         * Allows the viewport to initialize its {@link plat.routing.Navigator|navigator} with the current 
+         * Allows the viewport to initialize its {@link plat.routing.Navigator|navigator} with the current
          * {@link plat.routing.Router|router}.
-         * 
+         *
          * @returns {void}
          */
         initialize(): void {
@@ -226,11 +226,11 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Viewport
          * @kind function
          * @access public
-         * 
+         *
          * @description
-         * The viewport registers itself with its {@link plat.routing.Router|router}, notifying the 
+         * The viewport registers itself with its {@link plat.routing.Router|router}, notifying the
          * router that it is ready to receive navigation events.
-         * 
+         *
          * @returns {void}
          */
         loaded(): void {
@@ -244,15 +244,15 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Viewport
          * @kind function
          * @access public
-         * 
+         *
          * @description
-         * The viewport's router has matched a route and is asking the viewport if it is safe to 
-         * navigate. Here the viewport can instantiate the new view and ask it if it is safe to 
+         * The viewport's router has matched a route and is asking the viewport if it is safe to
+         * navigate. Here the viewport can instantiate the new view and ask it if it is safe to
          * navigate to the view.
-         * 
-         * @param {plat.routing.IRouteInfo} routeInfo Contains the information necessary to instantiate 
+         *
+         * @param {plat.routing.IRouteInfo} routeInfo Contains the information necessary to instantiate
          * the view and feed it the route parameters/query.
-         * 
+         *
          * @returns {plat.async.IThenable<boolean>} Whether or not it is safe to navigate.
          */
         canNavigateTo(routeInfo: routing.IRouteInfo): async.IThenable<boolean> {
@@ -293,12 +293,12 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Viewport
          * @kind function
          * @access public
-         * 
+         *
          * @description
-         * The viewport's router has matched a route and is asking the viewport if it is safe to 
-         * navigate from the current state. Here the viewport can query the current ViewControl and 
+         * The viewport's router has matched a route and is asking the viewport if it is safe to
+         * navigate from the current state. Here the viewport can query the current ViewControl and
          * ask it if it is safe to navigate from its current state.
-         * 
+         *
          * @returns {plat.async.IThenable<boolean>} Whether or not it is safe to navigate.
          */
         canNavigateFrom(): async.IThenable<boolean> {
@@ -317,16 +317,16 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Viewport
          * @kind function
          * @access public
-         * 
+         *
          * @description
-         * The viewport's router has matched a route and determined that it is safe to navigate to the 
-         * next view. The viewport will now go through the steps to compile and link the next view then append 
+         * The viewport's router has matched a route and determined that it is safe to navigate to the
+         * next view. The viewport will now go through the steps to compile and link the next view then append
          * it to the DOM.
-         * 
-         * @param {plat.routing.IRouteInfo} routeInfo Contains the information necessary to instantiate 
+         *
+         * @param {plat.routing.IRouteInfo} routeInfo Contains the information necessary to instantiate
          * the view and feed it the route parameters/query.
-         * 
-         * @returns {plat.async.IThenable<void>} A {@link plat.async.IPromise|Promise} that resolves when the 
+         *
+         * @returns {plat.async.IThenable<void>} A {@link plat.async.IPromise|Promise} that resolves when the
          * new ViewControl has finished instantiating.
          */
         navigateTo(routeInfo: routing.IRouteInfo): async.IThenable<void> {
@@ -336,9 +336,31 @@ module plat.ui.controls {
                 node = nodeMap.element,
                 parameters = routeInfo.parameters,
                 query = routeInfo.query,
-                control = <ViewControl>nodeMap.uiControlNode.control;
+                control = <ViewControl>nodeMap.uiControlNode.control,
+                animator = this._animator,
+                dom = this.dom,
+                isNavigatingBack = this._navigator.isBackNavigation(),
+                view = this.controls[0];
 
-            this._animator.enter(node, __Enter, this.element);
+            if (isObject(view)) {
+                var oldElement = view.element;
+                if (isNavigatingBack) {
+                    dom.addClass(oldElement, __NavigatingBack);
+                }
+
+                animator.leave(oldElement, __Leave).then((): void => {
+                   Control.dispose(view);
+                });
+            }
+
+            if (isNavigatingBack) {
+                dom.addClass(node, __NavigatingBack);
+                animator.enter(node, __Enter, this.element).then((): void => {
+                    dom.removeClass(node, __NavigatingBack);
+                });
+            } else {
+                animator.enter(node, __Enter, this.element);
+            }
 
             var viewportManager = this._managerCache.read(this.uid),
                 manager = this._ElementManagerFactory.getInstance();
@@ -364,12 +386,12 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Viewport
          * @kind function
          * @access public
-         * 
+         *
          * @description
-         * The viewport's router has matched a route and determined that it is safe to navigate to the 
+         * The viewport's router has matched a route and determined that it is safe to navigate to the
          * next view. It is now safe for the viewport to dispose of the current state.
-         * 
-         * @returns {plat.async.IThenable<void>} A {@link plat.async.IPromise|Promise} that resolves when the viewport 
+         *
+         * @returns {plat.async.IThenable<void>} A {@link plat.async.IPromise|Promise} that resolves when the viewport
          * has finished navigating from the current state.
          */
         navigateFrom(): async.IThenable<void> {
@@ -382,11 +404,19 @@ module plat.ui.controls {
                 promise = this._Promise.resolve();
             }
 
-            return promise
-                .catch(noop)
-                .then((): void => {
-                    Control.dispose(view);
-                });
+            return promise.catch((error: any): void => {
+                if (isObject(error)) {
+                    if (isString(error.message)) {
+                        this._log.debug(this.type + ' error: ' + error.message);
+                        return;
+                    }
+
+                    this._log.debug(this.type + ' error: ' + JSON.stringify(error));
+                    return;
+                }
+
+                this._log.debug(error);
+            });
         }
 
         /**
@@ -394,11 +424,11 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Viewport
          * @kind function
          * @access public
-         * 
+         *
          * @description
-         * The viewport is going out of scope, so it needs to unregister from its router in order to stop receiving routing 
+         * The viewport is going out of scope, so it needs to unregister from its router in order to stop receiving routing
          * events.
-         * 
+         *
          * @returns {void}
          */
         dispose(): void {
@@ -411,12 +441,12 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Viewport
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Creates an {@link plat.processing.INodeMap|INodeMap} for a ViewControl in order to compile it.
-         * 
+         *
          * @param {plat.dependency.Injector<plat.ui.ViewControl>} The injector used to instantiate the ViewControl.
-         * 
+         *
          * @returns {plat.processing.INodeMap} The INodeMap for the ViewControl
          */
         protected _createNodeMap(injector: dependency.Injector<ViewControl>): processing.INodeMap {
@@ -449,11 +479,11 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Viewport
          * @kind function
          * @access protected
-         * 
+         *
          * @description
-         * Finds the first Viewport in the parent chain. This is useful in order to properly initialize the viewport's 
+         * Finds the first Viewport in the parent chain. This is useful in order to properly initialize the viewport's
          * router as a child of the parent viewport's router.
-         * 
+         *
          * @returns {plat.ui.controls.Viewport} The parent Viewport.
          */
         protected _getParentViewport(): Viewport {

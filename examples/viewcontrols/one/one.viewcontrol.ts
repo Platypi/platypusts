@@ -8,6 +8,10 @@ module app.viewcontrols {
             this.head.title('Page One');
             this.head.description('This is the first page');
         }
+
+        goBack() {
+            this.navigator.goBack();
+        }
     }
 
     plat.register.viewControl('one', One);
