@@ -368,7 +368,7 @@
             if (!this.isRoot) {
                 return Navigator._root.isBackNavigation();
             }
-            
+
             return this._backNavigate;
         }
 
