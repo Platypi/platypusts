@@ -12,12 +12,8 @@
     <div class="right">
         <div>Main View</div>
         <button plat-tap="goBack">Back</button>
-        <plat-viewport></plat-viewport>
+        <!--<plat-viewport></plat-viewport>-->
     </div>
-
-    <plat-foreach plat-context="select">
-        {{value}} - {{textContent}}
-    </plat-foreach>
 </div>
 
 <input plat-bind="inputText" plat-keypress="key('press')" plat-keydown="key('down')" id="1" type="text" />

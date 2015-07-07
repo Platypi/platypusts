@@ -1,6 +1,13 @@
 ﻿html, body {
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     font-size: 24px;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    overflow-x: hidden;
 }
 
 .left {
@@ -9,6 +16,101 @@
 
 .right {
     margin-left: 100px;
+}
+
+div[plat-control="plat-viewport"] {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.viewport > .plat-viewcontrol {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+    background-color: white;
+}
+
+@media all and (max-width: 450px) {
+    .viewport > .plat-viewcontrol.plat-enter-init {
+        z-index: 1;
+        left: 100%;
+    }
+
+    .viewport > .plat-viewcontrol.plat-enter {
+        -moz-animation: SLIDEIN 250ms;
+        -o-animation: SLIDEIN 250ms;
+        -webkit-animation: SLIDEIN 250ms;
+        animation: SLIDEIN 250ms;
+        z-index: 1;
+    }
+
+    .viewport > .plat-viewcontrol.plat-leave {
+        -moz-animation: SLIDEOUT 250ms;
+        -o-animation: SLIDEOUT 250ms;
+        -webkit-animation: SLIDEOUT 250ms;
+        animation: SLIDEOUT 250ms;
+        -moz-animation-fill-mode: forwards;
+        -o-animation-fill-mode: forwards;
+        -webkit-animation-fill-mode: forwards;
+        animation-fill-mode: forwards;
+    }
+
+    .viewport > .plat-viewcontrol.plat-back-nav.plat-enter-init {
+        z-index: 0;
+        left: -30%;
+    }
+
+    .viewport > .plat-viewcontrol.plat-back-nav.plat-enter {
+        -moz-animation: SLIDEOUT 250ms;
+        -o-animation: SLIDEOUT 250ms;
+        -webkit-animation: SLIDEOUT 250ms;
+        animation: SLIDEOUT 250ms;
+        -moz-animation-direction: reverse;
+        -o-animation-direction: reverse;
+        -webkit-animation-direction: reverse;
+        animation-direction: reverse;
+        z-index: 0;
+    }
+
+    .viewport > .plat-viewcontrol.plat-back-nav.plat-leave-init {
+        z-index: 1;
+    }
+
+    .viewport > .plat-viewcontrol.plat-back-nav.plat-leave {
+        -moz-animation: SLIDEIN 250ms;
+        -o-animation: SLIDEIN 250ms;
+        -webkit-animation: SLIDEIN 250ms;
+        animation: SLIDEIN 250ms;
+        -moz-animation-direction: reverse;
+        -o-animation-direction: reverse;
+        -webkit-animation-direction: reverse;
+        animation-direction: reverse;
+        -moz-animation-fill-mode: forwards;
+        -o-animation-fill-mode: forwards;
+        -webkit-animation-fill-mode: forwards;
+        animation-fill-mode: forwards;
+        z-index: 1;
+    }
+
+    /*.viewport .plat-viewcontrol.plat-leave-init {
+        z-index: 1;
+    }
+
+    .viewport .plat-viewcontrol.plat-leave {
+        z-index: 1;
+        -moz-animation: FADEOUT 1s;
+        -o-animation: FADEOUT 1s;
+        -webkit-animation: FADEOUT 1s;
+        animation: FADEOUT 1s;
+        -moz-animation-fill-mode: forwards;
+        -o-animation-fill-mode: forwards;
+        -webkit-animation-fill-mode: forwards;
+        animation-fill-mode: forwards;
+    }*/
 }
 
 .test-block {
@@ -80,6 +182,46 @@
     }
 }
 
+@-webkit-keyframes SLIDEIN {
+    0% {
+        left: 100%;
+    }
+
+    100% {
+        left: 0;
+    }
+}
+
+@keyframes SLIDEIN {
+    0% {
+        left: 100%;
+    }
+
+    100% {
+        left: 0;
+    }
+}
+
+@-webkit-keyframes SLIDEOUT {
+    0% {
+        left: 0;
+    }
+
+    100% {
+        left: -30%;
+    }
+}
+
+@keyframes SLIDEOUT {
+    0% {
+        left: 0;
+    }
+
+    100% {
+        left: -30%;
+    }
+}
+
 @-webkit-keyframes FADEOUT {
     0% {
         opacity: 1;
@@ -97,5 +239,25 @@
 
     100% {
         opacity: 0;
+    }
+}
+
+@-webkit-keyframes FADENOTHING {
+    0% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes FADENOTHING {
+    0% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 1;
     }
 }

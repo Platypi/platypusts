@@ -203,6 +203,7 @@ var __prefix = '$',
     __Move = __Plat + 'move',
     __FadeIn = __Plat + 'fadein',
     __FadeOut = __Plat + 'fadeout',
+    __NavigatingBack = __Plat + 'back-nav',
 
     /**
      * Custom DOM events

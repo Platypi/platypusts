@@ -18,7 +18,7 @@ module app.viewcontrols {
         //`;
         templateUrl = 'viewcontrols/main/main.viewcontrol.html';
         context = {
-            views: ['alias-one', 'alias-two', 'alias-three', 'alias-four', 'alias-five', Three, Four],
+            views: [One],
             test: <Array<any>>[1, 2, 3, 4],
             items: <Array<{ value: string|number; }>>[],
             testClass: 'foo quux',
@@ -32,23 +32,23 @@ module app.viewcontrols {
 
         constructor(router: plat.routing.Router) {
             super();
-            router.configure([
-                { pattern: '', view: One, alias: 'alias-one' },
-                { pattern: '/two', view: One, alias: 'alias-two' },
-                { pattern: '/6', view: Three, alias: 'alias-three' },
-                { pattern: '/7', view: Three, alias: 'alias-four' },
-                { pattern: '/8', view: One, alias: 'alias-five' },
-                { pattern: '/three', view: Three },
-                { pattern: '/four', view: Four }
-            ]);
-
-            router.unknown((info) => {
-                info.view = viewcontrols.ErrorViewControl;
-            });
-
-            router.intercept((info) => {
-                info.delegate.view = Four;
-            });
+//             router.configure([
+//                 { pattern: '', view: One, alias: 'alias-one' },
+//                 { pattern: '/two', view: One, alias: 'alias-two' },
+//                 { pattern: '/6', view: Three, alias: 'alias-three' },
+//                 { pattern: '/7', view: Three, alias: 'alias-four' },
+//                 { pattern: '/8', view: One, alias: 'alias-five' },
+//                 { pattern: '/three', view: Three },
+//                 { pattern: '/four', view: Four }
+//             ]);
+//
+//             router.unknown((info) => {
+//                 info.view = viewcontrols.ErrorViewControl;
+//             });
+//
+//             router.intercept((info) => {
+//                 info.delegate.view = Four;
+//             });
         }
 
         initialize() {
