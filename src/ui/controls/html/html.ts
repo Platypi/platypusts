@@ -147,40 +147,20 @@ module plat.ui.controls {
                 this._log.debug('Trying to bind a non-string value to ' + this.type + '.');
                 return;
             } else if (newValue.compile === true) {
-                if (this.controls.length > 0) {
-                    this._TemplateControlFactory.dispose(this.controls[0]);
-                } else {
-                    this.dom.clearNode(this.element);
-                }
+                var hasControl = this.controls.length > 0;
+                this.bindableTemplates.once(html).then((template) => {
+                    if (hasControl) {
+                        this._TemplateControlFactory.dispose(this.controls[0]);
+                    } else {
+                        this.dom.clearNode(this.element);
+                    }
 
-                this._generateTemplate(html);
+                    this.element.insertBefore(template, null);
+                });
                 return;
             }
 
             setInnerHtml(this.element, html);
-        }
-
-        /**
-         * @name _generateTemplate
-         * @memberof plat.ui.controls.InnerHtml
-         * @kind function
-         * @access protected
-         *
-         * @description
-         * Compiles the bound template and adds it to the element.
-         *
-         * @param {string} templateString The template string to compile and bind.
-         *
-         * @returns {void}
-         */
-        protected _generateTemplate(templateString: string): void {
-            var bindableTemplates = this.bindableTemplates,
-                key = 'html';
-
-            bindableTemplates.add(key, templateString);
-            bindableTemplates.bind(key).then((template) => {
-                this.element.insertBefore(template, null);
-            });
         }
     }
 
