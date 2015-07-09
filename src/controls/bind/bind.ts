@@ -3,7 +3,7 @@
  * @memberof plat
  * @kind namespace
  * @access public
- * 
+ *
  * @description
  * Holds all classes and interfaces related to attribute control components in platypus.
  */
@@ -14,10 +14,10 @@ module plat.controls {
      * @name Bind
      * @memberof plat.controls
      * @kind class
-     * 
+     *
      * @extends {plat.AttributeControl}
      * @implements {plat.observable.IImplementTwoWayBinding}
-     * 
+     *
      * @description
      * Facilitates two-way databinding for HTMLInputElements, HTMLSelectElements, and HTMLTextAreaElements.
      */
@@ -34,12 +34,12 @@ module plat.controls {
          * @memberof plat.controls.Bind
          * @kind property
          * @access public
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
-         * The priority of {@link plat.controls.Bind|Bind} is set high to precede 
-         * other controls that may be listening to the same 
+         * The priority of {@link plat.controls.Bind|Bind} is set high to precede
+         * other controls that may be listening to the same
          * event.
          */
         priority: number = 100;
@@ -50,9 +50,9 @@ module plat.controls {
          * @kind property
          * @access protected
          * @static
-         * 
+         *
          * @type {plat.expressions.Parser}
-         * 
+         *
          * @description
          * Reference to the {@link plat.expressions.Parser|Parser} injectable.
          */
@@ -64,9 +64,9 @@ module plat.controls {
          * @kind property
          * @access protected
          * @static
-         * 
+         *
          * @type {plat.observable.IContextManagerStatic}
-         * 
+         *
          * @description
          * Reference to the {@link plat.observable.IContextManagerStatic|IContextManagerStatic} injectable.
          */
@@ -78,9 +78,9 @@ module plat.controls {
          * @kind property
          * @access protected
          * @static
-         * 
+         *
          * @type {plat.Compat}
-         * 
+         *
          * @description
          * Reference to the {@link plat.Compat|Compat} injectable.
          */
@@ -92,9 +92,9 @@ module plat.controls {
          * @kind property
          * @access protected
          * @static
-         * 
+         *
          * @type {Document}
-         * 
+         *
          * @description
          * Reference to the Document injectable.
          */
@@ -105,10 +105,10 @@ module plat.controls {
          * @memberof plat.controls.Bind
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * The function used to add the proper event based on the input type.
-         * 
+         *
          * @returns {void}
          */
         protected _addEventType: () => void;
@@ -118,10 +118,10 @@ module plat.controls {
          * @memberof plat.controls.Bind
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * The function used to get the bound value.
-         * 
+         *
          * @returns {any} The bound value.
          */
         protected _getter: () => any;
@@ -131,10 +131,10 @@ module plat.controls {
          * @memberof plat.controls.Bind
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * The function used to set the bound value.
-         * 
+         *
          * @returns {void}
          */
         protected _setter: (newValue: any, oldValue?: any, firstTime?: boolean) => void;
@@ -144,9 +144,9 @@ module plat.controls {
          * @memberof plat.controls.Bind
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.expressions.IParsedExpression}
-         * 
+         *
          * @description
          * The expression to evaluate as the bound value.
          */
@@ -157,11 +157,11 @@ module plat.controls {
          * @memberof plat.controls.Bind
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.expressions.IParsedExpression}
-         * 
+         *
          * @description
-         * The IParsedExpression used to evaluate the context 
+         * The IParsedExpression used to evaluate the context
          * of the bound property.
          */
         protected _contextExpression: expressions.IParsedExpression;
@@ -171,9 +171,9 @@ module plat.controls {
          * @memberof plat.controls.Bind
          * @kind property
          * @access protected
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The bound property name.
          */
@@ -184,12 +184,12 @@ module plat.controls {
          * @memberof plat.controls.Bind
          * @kind property
          * @access protected
-         * 
+         *
          * @type {boolean}
-         * 
+         *
          * @description
-         * Whether or not {@link plat.controls.Bind|Bind} is being used in conjunction 
-         * with a {@link plat.ui.TemplateControl|TemplateControl} that implements the 
+         * Whether or not {@link plat.controls.Bind|Bind} is being used in conjunction
+         * with a {@link plat.ui.TemplateControl|TemplateControl} that implements the
          * interface {@link plat.observable.ISupportTwoWayBinding|ISupportTwoWayBinding}.
          */
         protected _supportsTwoWayBinding: boolean = false;
@@ -199,9 +199,9 @@ module plat.controls {
          * @memberof plat.controls.Bind
          * @kind property
          * @access private
-         * 
+         *
          * @type {boolean}
-         * 
+         *
          * @description
          * Whether or not the File API is supported.
          */
@@ -212,9 +212,9 @@ module plat.controls {
          * @memberof plat.controls.Bind
          * @kind property
          * @access private
-         * 
+         *
          * @type {RegExp}
-         * 
+         *
          * @description
          * Used to grab a filename from input[type="file"].
          */
@@ -225,9 +225,9 @@ module plat.controls {
          * @memberof plat.controls.Bind
          * @kind property
          * @access private
-         * 
+         *
          * @type {boolean}
-         * 
+         *
          * @description
          * Used to denote that a property change happened from within this control.
          */
@@ -238,11 +238,11 @@ module plat.controls {
          * @memberof plat.controls.Bind
          * @kind function
          * @access public
-         * 
+         *
          * @description
-         * Determines the type of Element being bound to 
+         * Determines the type of Element being bound to
          * and sets the necessary handlers.
-         * 
+         *
          * @returns {void}
          */
         initialize(): void {
@@ -254,23 +254,23 @@ module plat.controls {
          * @memberof plat.controls.Bind
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Parses and watches the expression being bound to.
-         * 
+         *
          * @returns {void}
          */
         loaded(): void {
-            var parent = this.parent;
+            let parent = this.parent;
             if (isNull(parent) || isNull(this.element)) {
                 return;
             }
 
-            var attr = camelCase(this.type),
+            let attr = camelCase(this.type),
                 _parser = this._parser,
                 expression = this._expression = _parser.parse(this.attributes[attr]);
 
-            var identifiers = expression.identifiers;
+            let identifiers = expression.identifiers;
 
             if (identifiers.length !== 1) {
                 this._log.warn('Only 1 identifier allowed in a ' + this.type + ' expression');
@@ -278,11 +278,11 @@ module plat.controls {
                 return;
             }
 
-            var split = identifiers[0].split('.');
+            let split = identifiers[0].split('.');
             this._property = split.pop();
 
             if (expression.aliases.length > 0) {
-                var alias = expression.aliases[0],
+                let alias = expression.aliases[0],
                     resourceObj = parent.findResource(alias),
                     type: string;
 
@@ -341,10 +341,10 @@ module plat.controls {
          * @memberof plat.controls.Bind
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Re-observes the expression with the new context.
-         * 
+         *
          * @returns {void}
          */
         contextChanged(): void {
@@ -356,10 +356,10 @@ module plat.controls {
          * @memberof plat.controls.Bind
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Removes all of the element's event listeners.
-         * 
+         *
          * @returns {void}
          */
         dispose(): void {
@@ -371,14 +371,14 @@ module plat.controls {
          * @memberof plat.controls.Bind
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Gets the current value of the bound property.
-         * 
+         *
          * @returns {any} The current value of the bound property.
          */
         evaluate(): any {
-            var expression = this._expression;
+            let expression = this._expression;
             if (isUndefined(expression)) {
                 return;
             }
@@ -392,17 +392,17 @@ module plat.controls {
          * @kind function
          * @access public
          * @variation 0
-         * 
+         *
          * @description
-         * The function that allows a control implementing {@link plat.observable.ISupportTwoWayBinding|ISupportTwoWayBinding} to observe 
+         * The function that allows a control implementing {@link plat.observable.ISupportTwoWayBinding|ISupportTwoWayBinding} to observe
          * changes to the bound property and/or its child properties.
-         * 
+         *
          * @typeparam {any} T The type of item being observed.
-         * 
-         * @param {plat.observable.IBoundPropertyChangedListener<T>} listener The listener to fire when the bound property or its 
+         *
+         * @param {plat.observable.IBoundPropertyChangedListener<T>} listener The listener to fire when the bound property or its
          * specified child changes.
          * @param {string} identifier? The identifier of the child property of the bound item.
-         * 
+         *
          * @returns {void}
          */
         observeProperty<T>(listener: observable.IBoundPropertyChangedListener<T>, identifier?: string): IRemoveListener;
@@ -412,17 +412,17 @@ module plat.controls {
          * @kind function
          * @access public
          * @variation 1
-         * 
+         *
          * @description
-         * The function that allows a control implementing {@link plat.observable.ISupportTwoWayBinding|ISupportTwoWayBinding} to observe 
+         * The function that allows a control implementing {@link plat.observable.ISupportTwoWayBinding|ISupportTwoWayBinding} to observe
          * changes to the bound property and/or its child properties.
-         * 
+         *
          * @typeparam {any} T The type of item being observed.
-         * 
-         * @param {plat.observable.IBoundPropertyChangedListener<T>} listener The listener to fire when the bound property or its 
+         *
+         * @param {plat.observable.IBoundPropertyChangedListener<T>} listener The listener to fire when the bound property or its
          * specified child changes.
          * @param {number} index? The index of the child property of the bound item if the bound item is an Array.
-         * 
+         *
          * @returns {plat.IRemoveListener} A listener for removing the function.
          */
         observeProperty<T>(listener: observable.IBoundPropertyChangedListener<T>, index?: number): IRemoveListener;
@@ -432,18 +432,18 @@ module plat.controls {
          * @kind function
          * @access public
          * @variation 2
-         * 
+         *
          * @description
-         * A function that allows a {@link plat.observable.ISupportTwoWayBinding|ISupportTwoWayBinding} to observe both the 
+         * A function that allows a {@link plat.observable.ISupportTwoWayBinding|ISupportTwoWayBinding} to observe both the
          * bound property itself as well as potential child properties if being bound to an object.
-         * 
-         * @typeparam {any} T The type of items in the Array if listening for Array mutations. 
-         * 
+         *
+         * @typeparam {any} T The type of items in the Array if listening for Array mutations.
+         *
          * @param {(changes: Array<plat.observable.IArrayChanges<T>>, identifier: string) => void} listener The listener function.
-         * @param {string} identifier? The identifier off of the bound object to listen to for changes. If undefined or empty  
+         * @param {string} identifier? The identifier off of the bound object to listen to for changes. If undefined or empty
          * the listener will listen for changes to the bound item itself.
          * @param {boolean} arrayMutationsOnly? Whether or not to listen only for Array mutation changes.
-         * 
+         *
          * @returns {plat.IRemoveListener} A function to stop listening for changes.
          */
         observeProperty<T>(listener: (changes: Array<observable.IArrayChanges<T>>, identifier: string) => void,
@@ -454,30 +454,30 @@ module plat.controls {
          * @kind function
          * @access public
          * @variation 3
-         * 
+         *
          * @description
-         * A function that allows a {@link plat.observable.ISupportTwoWayBinding|ISupportTwoWayBinding} to observe both the 
+         * A function that allows a {@link plat.observable.ISupportTwoWayBinding|ISupportTwoWayBinding} to observe both the
          * bound property itself as well as potential child properties if being bound to an object.
-         * 
-         * @typeparam {any} T The type of items in the Array if listening for Array mutations. 
-         * 
+         *
+         * @typeparam {any} T The type of items in the Array if listening for Array mutations.
+         *
          * @param {(changes: Array<plat.observable.IArrayChanges<T>>, identifier: number) => void} listener The listener function.
-         * @param {number} index? The index off of the bound object to listen to for changes if the bound object is an Array. 
+         * @param {number} index? The index off of the bound object to listen to for changes if the bound object is an Array.
          * If undefined or empty the listener will listen for changes to the bound Array itself.
          * @param {boolean} arrayMutationsOnly? Whether or not to listen only for Array mutation changes.
-         * 
+         *
          * @returns {plat.IRemoveListener} A function to stop listening for changes.
          */
         observeProperty<T>(listener: (changes: Array<observable.IArrayChanges<T>>, identifier: number) => void,
             index?: number, arrayMutationsOnly?: boolean): IRemoveListener;
         observeProperty(listener: any, identifier?: any, arrayMutationsOnly?: boolean): IRemoveListener {
-            var parsedIdentifier: string;
+            let parsedIdentifier: string;
             if (isEmpty(identifier)) {
                 parsedIdentifier = this._expression.expression;
             } else if (isNumber(identifier)) {
                 parsedIdentifier = this._expression.expression + '.' + identifier;
             } else {
-                var _parser = this._parser,
+                let _parser = this._parser,
                     identifierExpression = _parser.parse(identifier),
                     identifiers = identifierExpression.identifiers;
 
@@ -487,14 +487,14 @@ module plat.controls {
                     return;
                 }
 
-                var expression = _parser.parse(this._expression.expression + '.' + identifiers[0]);
+                let expression = _parser.parse(this._expression.expression + '.' + identifiers[0]);
 
                 parsedIdentifier = expression.identifiers[0];
 
-                var split = parsedIdentifier.split('.');
+                let split = parsedIdentifier.split('.');
                 split.pop();
-                
-                var contextExpression = split.join('.'),
+
+                let contextExpression = split.join('.'),
                     context = this.evaluateExpression(contextExpression);
 
                 if (!isObject(context)) {
@@ -510,7 +510,7 @@ module plat.controls {
 
             listener = listener.bind(this.templateControl);
 
-            var removeListener: IRemoveListener;
+            let removeListener: IRemoveListener;
             if (arrayMutationsOnly === true) {
                 removeListener = this.observeArray((changes: Array<observable.IArrayChanges<any>>): void => {
                     listener(changes, identifier);
@@ -534,15 +534,15 @@ module plat.controls {
          * @memberof plat.controls.Bind
          * @kind function
          * @access protected
-         * 
+         *
          * @description
-         * Adds a text event as the event listener. 
+         * Adds a text event as the event listener.
          * Used for textarea and input[type="text"].
-         * 
+         *
          * @returns {void}
          */
         protected _addTextEventListener(): void {
-            var element = this.element,
+            let element = this.element,
                 _compat = this._compat,
                 composing = false,
                 input = 'input',
@@ -577,7 +577,7 @@ module plat.controls {
                 this.addEventListener(element, input, eventListener, false);
             } else {
                 this.addEventListener(element, 'keydown', (ev: KeyboardEvent): void => {
-                    var key = ev.keyCode || ev.which,
+                    let key = ev.keyCode || ev.which,
                         codes = KeyCodes;
 
                     if (key === codes.lwk ||
@@ -601,11 +601,11 @@ module plat.controls {
          * @memberof plat.controls.Bind
          * @kind function
          * @access protected
-         * 
+         *
          * @description
-         * Adds a change event as the event listener. 
+         * Adds a change event as the event listener.
          * Used for select, input[type="radio"], and input[type="range"].
-         * 
+         *
          * @returns {void}
          */
         protected _addChangeEventListener(): void {
@@ -617,11 +617,11 @@ module plat.controls {
          * @memberof plat.controls.Bind
          * @kind function
          * @access protected
-         * 
+         *
          * @description
-         * Adds a $tap event as the event listener. 
+         * Adds a $tap event as the event listener.
          * Used for input[type="button"] and button.
-         * 
+         *
          * @returns {void}
          */
         protected _addButtonEventListener(): void {
@@ -633,10 +633,10 @@ module plat.controls {
          * @memberof plat.controls.Bind
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Getter for input[type="checkbox"] and input[type="radio"].
-         * 
+         *
          * @returns {boolean} Whether or not the input element is checked.
          */
         protected _getChecked(): boolean {
@@ -648,11 +648,11 @@ module plat.controls {
          * @memberof plat.controls.Bind
          * @kind function
          * @access protected
-         * 
+         *
          * @description
-         * Getter for input[type="text"], input[type="range"], 
+         * Getter for input[type="text"], input[type="range"],
          * textarea, and select.
-         * 
+         *
          * @returns {string} The input value.
          */
         protected _getValue(): string {
@@ -664,10 +664,10 @@ module plat.controls {
          * @memberof plat.controls.Bind
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Getter for button.
-         * 
+         *
          * @returns {string} The button textContent.
          */
         protected _getTextContent(): string {
@@ -679,15 +679,15 @@ module plat.controls {
          * @memberof plat.controls.Bind
          * @kind function
          * @access protected
-         * 
+         *
          * @description
-         * Getter for input[type="file"]. Creates a partial IFile 
+         * Getter for input[type="file"]. Creates a partial IFile
          * element if file is not supported.
-         * 
+         *
          * @returns {plat.controls.IFile} The input file.
          */
         protected _getFile(): IFile {
-            var element = <HTMLInputElement>this.element,
+            let element = <HTMLInputElement>this.element,
                 value = element.value;
 
             if (this.__fileSupported && element.files.length > 0) {
@@ -711,28 +711,28 @@ module plat.controls {
          * @memberof plat.controls.Bind
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Getter for input[type="file"]-multiple.
-         * 
+         *
          * @returns {Array<plat.controls.IFile>} The input files.
          */
         protected _getFiles(): Array<IFile> {
-            var element = <HTMLInputElement>this.element;
+            let element = <HTMLInputElement>this.element;
 
             if (this.__fileSupported) {
                 return Array.prototype.slice.call(element.files);
             }
 
-            // this case should never be hit since ie9 does not support multi-file uploads, 
+            // this case should never be hit since ie9 does not support multi-file uploads,
             // but kept in here for now for consistency's sake
-            var filelist = element.value.split(/,|;/g),
+            let filelist = element.value.split(/,|;/g),
                 length = filelist.length,
                 files: Array<IFile> = [],
                 fileValue: string,
                 blobSlice = (): Blob => <Blob>{};
 
-            for (var i = 0; i < length; ++i) {
+            for (let i = 0; i < length; ++i) {
                 fileValue = filelist[i];
                 files.push({
                     name: fileValue.replace(this.__fileNameRegex, ''),
@@ -754,19 +754,19 @@ module plat.controls {
          * @memberof plat.controls.Bind
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Getter for select-multiple.
-         * 
+         *
          * @returns {Array<string>} The selected values.
          */
         protected _getSelectedValues(): Array<string> {
-            var options = (<HTMLSelectElement>this.element).options,
+            let options = (<HTMLSelectElement>this.element).options,
                 length = options.length,
                 option: HTMLOptionElement,
                 selectedValues: Array<string> = [];
 
-            for (var i = 0; i < length; ++i) {
+            for (let i = 0; i < length; ++i) {
                 option = options[i];
                 if (option.selected) {
                     selectedValues.push(option.value);
@@ -781,16 +781,16 @@ module plat.controls {
          * @memberof plat.controls.Bind
          * @kind function
          * @access protected
-         * 
+         *
          * @description
-         * Setter for textarea, input[type="text"], 
+         * Setter for textarea, input[type="text"],
          * and input[type="button"], and select.
-         * 
+         *
          * @param {any} newValue The new value to set
          * @param {any} oldValue The previously bound value
-         * @param {boolean} firstTime? The context is being evaluated for the first time and 
+         * @param {boolean} firstTime? The context is being evaluated for the first time and
          * should thus change the property if null
-         * 
+         *
          * @returns {void}
          */
         protected _setText(newValue: any, oldValue: any, firstTime?: boolean): void {
@@ -818,15 +818,15 @@ module plat.controls {
          * @memberof plat.controls.Bind
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Setter for input[type="range"].
-         * 
+         *
          * @param {any} newValue The new value to set
          * @param {any} oldValue The previously bound value
-         * @param {boolean} firstTime? The context is being evaluated for the first time and 
+         * @param {boolean} firstTime? The context is being evaluated for the first time and
          * should thus change the property if null
-         * 
+         *
          * @returns {void}
          */
         protected _setRange(newValue: any, oldValue: any, firstTime?: boolean): void {
@@ -854,15 +854,15 @@ module plat.controls {
          * @memberof plat.controls.Bind
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Setter for input[type="hidden"].
-         * 
+         *
          * @param {any} newValue The new value to set
          * @param {any} oldValue The previously bound value
-         * @param {boolean} firstTime? The context is being evaluated for the first time and 
+         * @param {boolean} firstTime? The context is being evaluated for the first time and
          * should thus change the property if null
-         * 
+         *
          * @returns {void}
          */
         protected _setHidden(newValue: any, oldValue: any, firstTime?: boolean): void {
@@ -890,16 +890,16 @@ module plat.controls {
          * @memberof plat.controls.Bind
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Sets the value on an element.
-         * 
+         *
          * @param {any} newValue The new value to set
-         * 
+         *
          * @returns {void}
          */
         protected _setValue(newValue: any): void {
-            var element = <HTMLInputElement>this.element;
+            let element = <HTMLInputElement>this.element;
             if (element.value === newValue) {
                 return;
             }
@@ -912,15 +912,15 @@ module plat.controls {
          * @memberof plat.controls.Bind
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Setter for input[type="checkbox"]
-         * 
+         *
          * @param {any} newValue The new value to set
          * @param {any} oldValue The previously bound value
-         * @param {boolean} firstTime? The context is being evaluated for the first time and 
+         * @param {boolean} firstTime? The context is being evaluated for the first time and
          * should thus change the property if null
-         * 
+         *
          * @returns {void}
          */
         protected _setChecked(newValue: any, oldValue: any, firstTime?: boolean): void {
@@ -942,16 +942,16 @@ module plat.controls {
          * @memberof plat.controls.Bind
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Setter for input[type="radio"]
-         * 
+         *
          * @param {any} newValue The new value to set
-         * 
+         *
          * @returns {void}
          */
         protected _setRadio(newValue: any): void {
-            var element = (<HTMLInputElement>this.element);
+            let element = (<HTMLInputElement>this.element);
             if (this.__isSelf) {
                 return;
             } else if (isNull(newValue) && element.checked) {
@@ -967,15 +967,15 @@ module plat.controls {
          * @memberof plat.controls.Bind
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Setter for select
-         * 
+         *
          * @param {any} newValue The new value to set
          * @param {any} oldValue The previously bound value
-         * @param {boolean} firstTime? The context is being evaluated for the first time and 
+         * @param {boolean} firstTime? The context is being evaluated for the first time and
          * should thus change the property if null
-         * 
+         *
          * @returns {void}
          */
         protected _setSelectedIndex(newValue: any, oldValue: any, firstTime?: boolean): void {
@@ -983,7 +983,7 @@ module plat.controls {
                 return;
             }
 
-            var element = <HTMLSelectElement>this.element,
+            let element = <HTMLSelectElement>this.element,
                 value = element.value;
             if (isNull(newValue)) {
                 if (firstTime === true || !this._document.body.contains(element)) {
@@ -993,7 +993,7 @@ module plat.controls {
                 element.selectedIndex = -1;
                 return;
             } else if (!isString(newValue)) {
-                var message: string;
+                let message: string;
                 if (isNumber(newValue)) {
                     newValue = newValue.toString();
                     message = 'Trying to bind a value of type number to a <select> element. ' +
@@ -1028,15 +1028,15 @@ module plat.controls {
          * @memberof plat.controls.Bind
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Setter for select-multiple
-         * 
+         *
          * @param {any} newValue The new value to set
          * @param {any} oldValue The previously bound value
-         * @param {boolean} firstTime? The context is being evaluated for the first time and 
+         * @param {boolean} firstTime? The context is being evaluated for the first time and
          * should thus change the property if null
-         * 
+         *
          * @returns {void}
          */
         protected _setSelectedIndices(newValue: any, oldValue: any, firstTime?: boolean): void {
@@ -1044,7 +1044,7 @@ module plat.controls {
                 return;
             }
 
-            var options = (<HTMLSelectElement>this.element).options,
+            let options = (<HTMLSelectElement>this.element).options,
                 length = isNull(options) ? 0 : options.length,
                 option: HTMLOptionElement,
                 nullValue = isNull(newValue);
@@ -1066,7 +1066,7 @@ module plat.controls {
                 return;
             }
 
-            var value: any,
+            let value: any,
                 numberValue: number;
 
             while (length-- > 0) {
@@ -1088,11 +1088,11 @@ module plat.controls {
          * @memberof plat.controls.Bind
          * @kind function
          * @access protected
-         * 
+         *
          * @description
-         * Determines the type of Element being bound to 
+         * Determines the type of Element being bound to
          * and sets the necessary handlers.
-         * 
+         *
          * @returns {void}
          */
         protected _determineType(): void {
@@ -1100,7 +1100,7 @@ module plat.controls {
                 return;
             }
 
-            var element = this.element;
+            let element = this.element;
             if (isNull(element)) {
                 return;
             }
@@ -1129,7 +1129,7 @@ module plat.controls {
                             this._setter = this._setRange;
                             break;
                         case 'file':
-                            var multi = (<HTMLInputElement>element).multiple;
+                            let multi = (<HTMLInputElement>element).multiple;
                             this._addEventType = this._addChangeEventListener;
                             this._getter = multi ? this._getFiles : this._getFile;
                             break;
@@ -1164,14 +1164,14 @@ module plat.controls {
          * @memberof plat.controls.Bind
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Observes the expression to bind to.
-         * 
+         *
          * @returns {void}
          */
         protected _watchExpression(): void {
-            var contextExpression = this._contextExpression,
+            let contextExpression = this._contextExpression,
                 context = this.evaluateExpression(contextExpression);
 
             if (!isObject(context)) {
@@ -1186,7 +1186,7 @@ module plat.controls {
                 }
             }
 
-            var property: string;
+            let property: string;
             if (!isFunction(this._setter)) {
                 return;
             } else if (this._setter === this._setSelectedIndices) {
@@ -1199,7 +1199,7 @@ module plat.controls {
                 }, contextExpression + '.' + property);
             }
 
-            var expression = this._expression;
+            let expression = this._expression;
             this.observeExpression((newValue: any, oldValue: any): void => {
                 this._setter(newValue, oldValue);
             }, expression);
@@ -1211,14 +1211,14 @@ module plat.controls {
          * @memberof plat.controls.Bind
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Handles creating context with an identifier.
-         * 
+         *
          * @returns {any}
          */
         protected _createContext(identifier: string): any {
-            var split = identifier.split('.'),
+            let split = identifier.split('.'),
                 start = split.shift().slice(1),
                 parent = this.parent;
 
@@ -1237,11 +1237,11 @@ module plat.controls {
          * @memberof plat.controls.Bind
          * @kind function
          * @access protected
-         * 
+         *
          * @description
-         * Sets the context property being bound to when the 
+         * Sets the context property being bound to when the
          * element's property is changed.
-         * 
+         *
          * @returns {void}
          */
         protected _propertyChanged(): void {
@@ -1249,10 +1249,10 @@ module plat.controls {
                 return;
             }
 
-            var context = this.evaluateExpression(this._contextExpression),
+            let context = this.evaluateExpression(this._contextExpression),
                 property = this._property;
 
-            var newValue = this._getter();
+            let newValue = this._getter();
 
             if (isNull(context) || context[property] === newValue) {
                 return;
@@ -1269,21 +1269,21 @@ module plat.controls {
          * @memberof plat.controls.Bind
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Normalizes input[type="radio"] for cross-browser compatibility.
-         * 
+         *
          * @returns {void}
          */
         protected _initializeRadio(): void {
-            var element = this.element;
+            let element = this.element;
 
             this._addEventType = this._addChangeEventListener;
             this._getter = this._getValue;
             this._setter = this._setRadio;
 
             if (!element.hasAttribute('name')) {
-                var attr = camelCase(this.type),
+                let attr = camelCase(this.type),
                     expression = this.attributes[attr];
 
                 element.setAttribute('name', expression);
@@ -1301,14 +1301,14 @@ module plat.controls {
          * @memberof plat.controls.Bind
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Normalizes HTMLSelectElements for cross-browser compatibility.
-         * 
+         *
          * @returns {void}
          */
         protected _initializeSelect(): void {
-            var element = <HTMLSelectElement>this.element,
+            let element = <HTMLSelectElement>this.element,
                 multiple = element.multiple,
                 options = element.options,
                 length = options.length,
@@ -1323,7 +1323,7 @@ module plat.controls {
                 this._setter = this._setSelectedIndex;
             }
 
-            for (var i = 0; i < length; ++i) {
+            for (let i = 0; i < length; ++i) {
                 option = options[i];
                 if (!option.hasAttribute('value')) {
                     option.setAttribute('value', option.textContent);
@@ -1336,16 +1336,16 @@ module plat.controls {
          * @memberof plat.controls.Bind
          * @kind function
          * @access protected
-         * 
+         *
          * @description
-         * Checks if the associated {@link plat.ui.TemplateControl|TemplateControl} is implementing 
+         * Checks if the associated {@link plat.ui.TemplateControl|TemplateControl} is implementing
          * {@link plat.observable.ISupportTwoWayBinding|ISupportTwoWayBinding} and initializes all listeners accordingly.
-         * 
-         * @returns {boolean} Whether or not the associated {@link plat.ui.TemplateControl|TemplateControl} 
+         *
+         * @returns {boolean} Whether or not the associated {@link plat.ui.TemplateControl|TemplateControl}
          * is implementing {@link plat.observable.ISupportTwoWayBinding|ISupportTwoWayBinding}.
          */
         protected _observingBindableProperty(): boolean {
-            var templateControl = <ui.BindControl>this.templateControl;
+            let templateControl = <ui.BindControl>this.templateControl;
 
             if (!isNull(templateControl) && isFunction(templateControl.onInput) && isFunction(templateControl.observeProperties)) {
                 templateControl.onInput((newValue: any): void => {
@@ -1366,11 +1366,11 @@ module plat.controls {
      * @name IFile
      * @memberof plat.controls
      * @kind interface
-     * 
+     *
      * @extends {File}
-     * 
+     *
      * @description
-     * A file interface for browsers that do not support the 
+     * A file interface for browsers that do not support the
      * File API.
      */
     export interface IFile extends File {
@@ -1380,11 +1380,11 @@ module plat.controls {
          * @kind property
          * @access public
          * @readonly
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
-         * An absolute path to the file. The property is not added to 
+         * An absolute path to the file. The property is not added to
          * File types.
          */
         path?: string;

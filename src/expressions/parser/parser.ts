@@ -3,7 +3,7 @@
  * @memberof plat
  * @kind namespace
  * @access public
- * 
+ *
  * @description
  * Holds classes and interfaces related to expression handling in platypus.
  */
@@ -14,9 +14,9 @@ module plat.expressions {
      * @name Parser
      * @memberof plat.expressions
      * @kind class
-     * 
+     *
      * @description
-     * A class for parsing JavaScript expression strings and creating 
+     * A class for parsing JavaScript expression strings and creating
      * {@link plat.expressions.IParsedExpression|IParsedExpressions}.
      */
     export class Parser {
@@ -30,9 +30,9 @@ module plat.expressions {
          * @memberof plat.expressions.Parser
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.expressions.Tokenizer}
-         * 
+         *
          * @description
          * Reference to the {@link plat.expressions.Tokenizer|Tokenizer} injectable.
          */
@@ -43,7 +43,7 @@ module plat.expressions {
          * @memberof plat.expressions.Parser
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.debug.Log}
          * @description
          * Reference to the {@link plat.debug.Log|Log} injectable.
@@ -55,9 +55,9 @@ module plat.expressions {
          * @memberof plat.expressions.Parser
          * @kind property
          * @access protected
-         * 
+         *
          * @type {Array<plat.expressions.IToken>}
-         * 
+         *
          * @description
          * A single expression's token representation created by a {@link plat.expressions.Tokenizer|Tokenizer}.
          */
@@ -68,9 +68,9 @@ module plat.expressions {
          * @memberof plat.expressions.Parser
          * @kind property
          * @access private
-         * 
+         *
          * @type {plat.IObject<plat.expressions.IParsedExpression>}
-         * 
+         *
          * @description
          * An expression cache. Used so that a JavaScript expression is only ever parsed once.
          */
@@ -80,9 +80,9 @@ module plat.expressions {
          * @memberof plat.expressions.Parser
          * @kind property
          * @access private
-         * 
+         *
          * @type {Array<string>}
-         * 
+         *
          * @description
          * A dynamically built string array that represents the evaluation function.
          */
@@ -92,9 +92,9 @@ module plat.expressions {
          * @memberof plat.expressions.Parser
          * @kind property
          * @access private
-         * 
+         *
          * @type {Array<string>}
-         * 
+         *
          * @description
          * A list of all the identifiers discovered in the JavaScript expression string.
          */
@@ -104,9 +104,9 @@ module plat.expressions {
          * @memberof plat.expressions.Parser
          * @kind property
          * @access private
-         * 
+         *
          * @type {Array<string>}
-         * 
+         *
          * @description
          * A temporary list of identifiers found used to build and evaluate each actual identifier.
          */
@@ -116,9 +116,9 @@ module plat.expressions {
          * @memberof plat.expressions.Parser
          * @kind property
          * @access private
-         * 
+         *
          * @type {plat.IObject<boolean>}
-         * 
+         *
          * @description
          * An object whose keys represent a list of all unique aliases found in the JavaScript expression string.
          */
@@ -129,17 +129,17 @@ module plat.expressions {
          * @memberof plat.expressions.Parser
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Parses a JavaScript expression string.
-         * 
+         *
          * @param {string} expression The JavaScript expression string to parse.
-         * 
-         * @returns {plat.expressions.IParsedExpression} The parsed expression containing detailed 
+         *
+         * @returns {plat.expressions.IParsedExpression} The parsed expression containing detailed
          * information about the expression as well as a way to evaluate its value.
          */
         parse(expression: string): IParsedExpression {
-            var parsedObject = this.__cache[expression];
+            let parsedObject = this.__cache[expression];
 
             if (!isNull(parsedObject)) {
                 return {
@@ -154,9 +154,9 @@ module plat.expressions {
 
             parsedObject = this._evaluate(expression);
 
-            var identifiers = parsedObject.identifiers;
+            let identifiers = parsedObject.identifiers;
             if (identifiers.length === 0) {
-                var noModel = parsedObject.evaluate(null);
+                let noModel = parsedObject.evaluate(null);
                 parsedObject.evaluate = (): any => noModel;
             }
 
@@ -170,14 +170,14 @@ module plat.expressions {
          * @memberof plat.expressions.Parser
          * @kind function
          * @access public
-         * 
+         *
          * @description
-         * If a key is passed in, it clears that single value in the expression cache. If no 
+         * If a key is passed in, it clears that single value in the expression cache. If no
          * key is present, the entire expression cache will be cleared.
-         * 
-         * @param {string} key? An optional key that will clear its stored value in the expression 
+         *
+         * @param {string} key? An optional key that will clear its stored value in the expression
          * cache if passed in.
-         * 
+         *
          * @returns {void}
          */
         clearCache(key?: string): void {
@@ -194,17 +194,17 @@ module plat.expressions {
          * @memberof plat.expressions.Parser
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Evaluate the current {@link plat.expressions.IToken|IToken} array.
-         * 
+         *
          * @param {string} expression The JavaScript expression to evaluate.
-         * 
-         * @returns {plat.expressions.IParsedExpression} The parsed expression containing detailed 
+         *
+         * @returns {plat.expressions.IParsedExpression} The parsed expression containing detailed
          * information about the expression as well as a way to evaluate its value.
          */
         protected _evaluate(expression: string): IParsedExpression {
-            var tokens = this._tokens,
+            let tokens = this._tokens,
                 length = tokens.length,
                 tempIdentifiers = this.__tempIdentifiers,
                 codeArray = this.__codeArray,
@@ -213,7 +213,7 @@ module plat.expressions {
                 token: any,
                 args: number;
 
-            for (var index = 0; index < length; index++) {
+            for (let index = 0; index < length; index++) {
                 tokenObj = tokens[index];
                 token = tokenObj.val;
                 args = tokenObj.args;
@@ -281,8 +281,8 @@ module plat.expressions {
             this._popRemainingIdentifiers();
             // make the identifiers array unqiue entries only
             this._makeIdentifiersUnique();
-            var parsedExpression: IParsedExpression = {
-                evaluate: <(context: any, aliases?: IObject<any>) => any>new Function(__CONTEXT, __ALIASES,
+            let parsedExpression: IParsedExpression = {
+                evaluate: <any>new Function(__CONTEXT, __ALIASES,
                     'var initialContext;' +
                     'return ' + (codeArray.length === 0 ? ('"' + expression + '"') : codeArray.join('')) + ';'),
                 expression: expression,
@@ -301,14 +301,14 @@ module plat.expressions {
          * @memberof plat.expressions.Parser
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Peek at the next {@link plat.expressions.IToken|IToken}.
-         * 
-         * @param {number} index The index before the desired {@link plat.expressions.IToken|IToken} 
+         *
+         * @param {number} index The index before the desired {@link plat.expressions.IToken|IToken}
          * in the array.
-         * 
-         * @returns {plat.expressions.IToken} The next {@link plat.expressions.IToken|IToken} 
+         *
+         * @returns {plat.expressions.IToken} The next {@link plat.expressions.IToken|IToken}
          * in the {@link plat.expressions.IToken|IToken} array.
          */
         protected _peek(index: number): IToken {
@@ -320,14 +320,14 @@ module plat.expressions {
          * @memberof plat.expressions.Parser
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Look back at the previous {@link plat.expressions.IToken|IToken}.
-         * 
-         * @param {number} index The index after the desired {@link plat.expressions.IToken|IToken} 
+         *
+         * @param {number} index The index after the desired {@link plat.expressions.IToken|IToken}
          * in the array.
-         * 
-         * @returns {plat.expressions.IToken} The previous {@link plat.expressions.IToken|IToken} 
+         *
+         * @returns {plat.expressions.IToken} The previous {@link plat.expressions.IToken|IToken}
          * in the {@link plat.expressions.IToken|IToken} array.
          */
         protected _lookBack(index: number): IToken {
@@ -339,14 +339,14 @@ module plat.expressions {
          * @memberof plat.expressions.Parser
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Evaluate and remove the leftover identifiers.
-         * 
+         *
          * @returns {void}
          */
         protected _popRemainingIdentifiers(): void {
-            var identifiers = this.__identifiers,
+            let identifiers = this.__identifiers,
                 tempIdentifiers = this.__tempIdentifiers,
                 last: string;
 
@@ -363,14 +363,14 @@ module plat.expressions {
          * @memberof plat.expressions.Parser
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Remove duplicate identifiers.
-         * 
+         *
          * @returns {void}
          */
         protected _makeIdentifiersUnique(): void {
-            var identifiers = this.__identifiers,
+            let identifiers = this.__identifiers,
                 uniqueIdentifiers: Array<string> = [],
                 uniqueIdentifierObject: IObject<boolean> = {},
                 identifier: string;
@@ -391,15 +391,15 @@ module plat.expressions {
          * @memberof plat.expressions.Parser
          * @kind function
          * @access protected
-         * 
+         *
          * @description
-         * Check if the "val" property on an {@link plat.expressions.IToken|IToken} 
+         * Check if the "val" property on an {@link plat.expressions.IToken|IToken}
          * is present in a particular character string.
-         * 
-         * @param {plat.expressions.IToken} obj The {@link plat.expressions.IToken|IToken} 
+         *
+         * @param {plat.expressions.IToken} obj The {@link plat.expressions.IToken|IToken}
          * with the "val" property to compare.
          * @param {string} char The char to compare with.
-         * 
+         *
          * @returns {boolean} Whether or not the val is equal to the input character.
          */
         protected _isValEqual(obj: IToken, char: string): boolean {
@@ -416,15 +416,15 @@ module plat.expressions {
          * @memberof plat.expressions.Parser
          * @kind function
          * @access protected
-         * 
+         *
          * @description
-         * Check if the "val" property on an {@link plat.expressions.IToken|IToken} 
+         * Check if the "val" property on an {@link plat.expressions.IToken|IToken}
          * is not present in a particular character string.
-         * 
-         * @param {plat.expressions.IToken} obj The {@link plat.expressions.IToken|IToken} 
+         *
+         * @param {plat.expressions.IToken} obj The {@link plat.expressions.IToken|IToken}
          * with the "val" property to compare.
          * @param {string} char The char to compare with.
-         * 
+         *
          * @returns {boolean} Whether or not the val is not equal to the input character.
          */
         protected _isValUnequal(obj: any, char: string): boolean {
@@ -441,10 +441,10 @@ module plat.expressions {
          * @memberof plat.expressions.Parser
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Resets all the parser's properties.
-         * 
+         *
          * @returns {void}
          */
         protected _resetParser(): void {
@@ -460,12 +460,12 @@ module plat.expressions {
          * @memberof plat.expressions.Parser
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Throws a fatal exception in the case of an error.
-         * 
+         *
          * @param {string} error The error message to throw.
-         * 
+         *
          * @returns {void}
          */
         protected _throwError(error: string): void {
@@ -477,14 +477,14 @@ module plat.expressions {
          * @memberof plat.expressions.Parser
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * Handles a token that is a primitive value.
-         * 
+         *
          * @param {number} index The current index in the {@link plat.expressions.IToken|IToken} array.
          * @param {string} token The current {@link plat.expressions.IToken|IToken} value.
          * @param {number} args The current {@link plat.expressions.IToken|IToken} args.
-         * 
+         *
          * @returns {string} The correctly evaluated primitive.
          */
         private __convertPrimitive(index: number, token: string, args: number): string {
@@ -493,7 +493,7 @@ module plat.expressions {
                 return token;
             }
 
-            var castTokenIsNumberLike = isNumber(Number(token)),
+            let castTokenIsNumberLike = isNumber(Number(token)),
                 peek = this._peek(index),
                 isPeekIndexer = !(isNull(peek) || peek.args >= 1),
                 isValEqual = this._isValEqual;
@@ -522,14 +522,14 @@ module plat.expressions {
          * @memberof plat.expressions.Parser
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * Handles a potential function or object that needs to be indexed into.
-         * 
+         *
          * @param {number} index The current index in the {@link plat.expressions.IToken|IToken} array.
          * @param {string} token The current {@link plat.expressions.IToken|IToken} value.
          * @param {boolean} useLocalContext Whether or not we need to use an already parsed object as the current context.
-         * 
+         *
          * @returns {string} The correctly evaluated object or function represented as a string.
          */
         private __convertFunction(index: number, token: string, useLocalContext: boolean): string {
@@ -540,7 +540,7 @@ module plat.expressions {
                 return token;
             }
 
-            var nextToken = this._peek(index),
+            let nextToken = this._peek(index),
                 isValEqual = this._isValEqual;
 
             if (isValEqual(this._tokens[index - 1], '()') && isValEqual(nextToken, '.[]')) {
@@ -569,16 +569,16 @@ module plat.expressions {
          * @memberof plat.expressions.Parser
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * Handles an object literal.
-         * 
+         *
          * @param {number} args The current {@link plat.expressions.IToken|IToken} args.
-         * 
+         *
          * @returns {string} The correctly evaluated object literal represented as a string.
          */
         private __convertObject(args: number): string {
-            var identifiers = this.__identifiers,
+            let identifiers = this.__identifiers,
                 tempIdentifiers = this.__tempIdentifiers,
                 codeArray = this.__codeArray,
                 j = 0,
@@ -609,16 +609,16 @@ module plat.expressions {
          * @memberof plat.expressions.Parser
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * Handles an Array literal.
-         * 
+         *
          * @param {number} args The current {@link plat.expressions.IToken|IToken} args.
-         * 
+         *
          * @returns {string} The correctly evaluated Array literal represented as a string.
          */
         private __convertArrayLiteral(args: number): string {
-            var identifiers = this.__identifiers,
+            let identifiers = this.__identifiers,
                 tempIdentifiers = this.__tempIdentifiers,
                 codeArray = this.__codeArray,
                 j = 0,
@@ -644,18 +644,18 @@ module plat.expressions {
          * @memberof plat.expressions.Parser
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * Handles an accessor type function token "()".
-         * 
+         *
          * @param {number} index The current index in the {@link plat.expressions.IToken|IToken} array.
          * @param {number} args The current {@link plat.expressions.IToken|IToken} args.
          * @param {boolean} useLocalContext Whether or not we need to use an already parsed object as the current context.
-         * 
+         *
          * @returns {boolean} Whether we need to use the current parsed object as the new current context.
          */
         private __handleFunction(index: number, args: number, useLocalContext: boolean): boolean {
-            var identifiers = this.__identifiers,
+            let identifiers = this.__identifiers,
                 tempIdentifiers = this.__tempIdentifiers,
                 codeArray = this.__codeArray,
                 j = 0,
@@ -694,7 +694,7 @@ module plat.expressions {
             if (useLocalContext) {
                 useLocalContext = false;
                 if (codeArray.length > 0) {
-                    var context = codeArray.pop(),
+                    let context = codeArray.pop(),
                         lastIndex = tempIdentifiers.length - 1;
 
                     if (!(lastIndex < 0 || tempIdentifiers[lastIndex] === '.' || identifierFnName === '')) {
@@ -730,7 +730,7 @@ module plat.expressions {
 
             codeArray.push(codeStr);
 
-            var length = tempIdentifiers.length;
+            let length = tempIdentifiers.length;
             if (this._isValEqual(this._peek(index), '[]') && length > 0 && tempIdentifiers[length - 1] !== '.') {
                 identifiers.push(tempIdentifiers.pop());
             }
@@ -742,24 +742,24 @@ module plat.expressions {
          * @memberof plat.expressions.Parser
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * Handles an accessor type token that is for indexing (i.e. "." or "[]").
-         * 
+         *
          * @param {number} index The current index in the {@link plat.expressions.IToken|IToken} array.
          * @param {string} token The current {@link plat.expressions.IToken|IToken} value.
          * @param {boolean} useLocalContext Whether or not we need to use an already parsed object as the current context.
-         * 
+         *
          * @returns {boolean} Whether we need to use the current parsed object as the new current context.
          */
         private __indexIntoObject(index: number, token: string, useLocalContext: boolean): boolean {
-            var isValEqual = this._isValEqual;
+            let isValEqual = this._isValEqual;
 
             if (isValEqual(this._peek(index), '()')) {
                 return true;
             }
 
-            var codeArray = this.__codeArray,
+            let codeArray = this.__codeArray,
                 codeStr = codeArray.pop(),
                 identifiers = this.__identifiers,
                 tempIdentifiers = this.__tempIdentifiers,
@@ -811,20 +811,20 @@ module plat.expressions {
          * @memberof plat.expressions.Parser
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * Handles the "?" operator.
-         * 
+         *
          * @returns {void}
          */
         private __handleQuestion(): void {
-            var identifiers = this.__identifiers,
+            let identifiers = this.__identifiers,
                 tempIdentifiers = this.__tempIdentifiers,
                 codeArray = this.__codeArray,
                 temp = codeArray.pop(),
                 tempIdentifier: string;
 
-            for (var i = 0; i < 2; i++) {
+            for (let i = 0; i < 2; i++) {
                 if (tempIdentifiers.length > 0) {
                     tempIdentifier = tempIdentifiers.pop();
                     if (tempIdentifier !== '.') {
@@ -842,20 +842,20 @@ module plat.expressions {
          * @memberof plat.expressions.Parser
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * Handles the ":" operator.
-         * 
+         *
          * @returns {void}
          */
         private __handleColon(): void {
-            var identifiers = this.__identifiers,
+            let identifiers = this.__identifiers,
                 tempIdentifiers = this.__tempIdentifiers,
                 codeArray = this.__codeArray,
                 temp = codeArray.pop(),
                 tempIdentifier: string;
 
-            for (var i = 0; i < 2; i++) {
+            for (let i = 0; i < 2; i++) {
                 if (tempIdentifiers.length > 0) {
                     tempIdentifier = tempIdentifiers.pop();
                     if (tempIdentifier !== '.') {
@@ -873,17 +873,17 @@ module plat.expressions {
          * @memberof plat.expressions.Parser
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * Handles all other operators.
-         * 
+         *
          * @param {string} token The current {@link plat.expressions.IToken|IToken} value.
          * @param {number} args The current {@link plat.expressions.IToken|IToken} args.
-         * 
+         *
          * @returns {void}
          */
         private __handleOperator(token: string, args: number): void {
-            var identifiers = this.__identifiers,
+            let identifiers = this.__identifiers,
                 tempIdentifiers = this.__tempIdentifiers,
                 codeArray = this.__codeArray,
                 j = 0,
@@ -911,14 +911,14 @@ module plat.expressions {
          * @memberof plat.expressions.Parser
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * Safely finds an initial context.
-         * 
+         *
          * @param {any} context The context object.
          * @param {any} aliases Any aliases that may exist.
          * @param {string} token The property used to find the initial context.
-         * 
+         *
          * @returns {any} The correct initial context.
          */
         private __findInitialContext(context: any, aliases: any, token: string): any {
@@ -933,13 +933,13 @@ module plat.expressions {
          * @memberof plat.expressions.Parser
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * Safely drills down into a specified context with a given token.
-         * 
+         *
          * @param {any} context The context object.
          * @param {string} token The property used to drill into the context.
-         * 
+         *
          * @returns {any} The property of the context denoted by the token.
          */
         private __indexIntoContext(context: any, token: string): any {
@@ -955,9 +955,9 @@ module plat.expressions {
      * @name IParsedExpression
      * @memberof plat.expressions
      * @kind interface
-     * 
+     *
      * @description
-     * Describes an object that is the result of parsing a JavaScript expression string. It contains detailed 
+     * Describes an object that is the result of parsing a JavaScript expression string. It contains detailed
      * information about the expression as well as a way to evaluate the expression with a context.
      */
     export interface IParsedExpression {
@@ -966,9 +966,9 @@ module plat.expressions {
          * @memberof plat.expressions.IParsedExpression
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The original expression string.
          */
@@ -979,9 +979,9 @@ module plat.expressions {
          * @memberof plat.expressions.IParsedExpression
          * @kind property
          * @access public
-         * 
+         *
          * @type {Array<string>}
-         * 
+         *
          * @description
          * Contains all the identifiers found in an expression. Useful for determining
          * properties to watch on a context.
@@ -993,11 +993,11 @@ module plat.expressions {
          * @memberof plat.expressions.IParsedExpression
          * @kind property
          * @access public
-         * 
+         *
          * @type {Array<string>}
-         * 
+         *
          * @description
-         * Contains all the aliases (denoted without `@` as the first character) for this 
+         * Contains all the aliases (denoted without `@` as the first character) for this
          * {@link plat.expressions.IParsedExpression|IParsedExpression}.
          */
         aliases: Array<string>;
@@ -1007,12 +1007,12 @@ module plat.expressions {
          * @memberof plat.expressions.IParsedExpression
          * @kind property
          * @access public
-         * 
+         *
          * @type {boolean}
-         * 
+         *
          * @description
-         * Specifies whether or not you want to do a one-time binding on identifiers 
-         * for this expression. Typically this is added to a clone of this 
+         * Specifies whether or not you want to do a one-time binding on identifiers
+         * for this expression. Typically this is added to a clone of this
          * {@link plat.expressions.IParsedExpression|IParsedExpression}.
          */
         oneTime?: boolean;
@@ -1022,14 +1022,14 @@ module plat.expressions {
          * @memberof plat.expressions.IParsedExpression
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * A method for evaluating an expression with a context.
-         * 
+         *
          * @param {any} context? The primary context for evaluation.
-         * @param {IObject<any>} aliases? An object containing resource alias values. 
+         * @param {IObject<any>} aliases? An object containing resource alias values.
          * All property keys must never begin with `@`.
-         * 
+         *
          * @returns {any} The evaluated object or primitive.
          */
         evaluate(context?: any, aliases?: IObject<any>): any;

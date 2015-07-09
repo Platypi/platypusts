@@ -240,7 +240,7 @@ module plat.ui {
          * @returns {plat.ui.BindableTemplates} The newly instantiated {@link plat.ui.BindableTemplates|BindableTemplates} object.
          */
         static create(control: TemplateControl, original?: BindableTemplates): BindableTemplates {
-            var bindableTemplates = new BindableTemplates();
+            let bindableTemplates = new BindableTemplates();
             bindableTemplates.control = control;
 
             if (!isNull(original)) {
@@ -270,7 +270,7 @@ module plat.ui {
             if (isNull(control)) {
                 return;
             }
-            var instance = control.bindableTemplates;
+            let instance = control.bindableTemplates;
 
             if (isNull(instance) || !isFunction(instance.dispose)) {
                 return;
@@ -299,7 +299,7 @@ module plat.ui {
                 return false;
             }
 
-            var parent = control.parent;
+            let parent = control.parent;
             if (isNull(parent)) {
                 return false;
             }
@@ -584,7 +584,7 @@ module plat.ui {
          */
         once(template: string, relativeIdentifier?: number, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
         once(template: any, relativeIdentifier?: any, resources?: IObject<IResource>): async.IThenable<DocumentFragment> {
-            var fragment: DocumentFragment;
+            let fragment: DocumentFragment;
             if (isNull(template)) {
                 return this._Promise.resolve(this._document.createDocumentFragment());
             } else if (isString(template)) {
@@ -609,7 +609,7 @@ module plat.ui {
                 return;
             }
 
-            var parent = this.control,
+            let parent = this.control,
                 controlManager = this._managerCache.read(parent.uid),
                 manager = this._ElementManagerFactory.getInstance(),
                 control = this._createBoundControl('', fragment, relativeIdentifier, resources),
@@ -621,7 +621,7 @@ module plat.ui {
             manager.setUiControlTemplate();
 
             return manager.fulfillAndLoad().then((): DocumentFragment => {
-                var _document = this._document;
+                let _document = this._document;
 
                 control.startNode = <Comment>fragment.insertBefore(_document.createComment(control.type + __START_NODE),
                     fragment.firstChild);
@@ -800,7 +800,7 @@ module plat.ui {
                 return;
             }
 
-            var fragment = this._document.createDocumentFragment();
+            let fragment = this._document.createDocumentFragment();
 
             if (isNode(template)) {
                 fragment.appendChild(template);
@@ -866,7 +866,7 @@ module plat.ui {
          */
         replace(index: number, key: string, relativeIdentifier?: number, resources?: IObject<IResource>): async.IThenable<Array<Node>>;
         replace(index: number, key: string, relativeIdentifier?: any, resources?: IObject<IResource>): async.IThenable<Array<Node>> {
-            var control = <TemplateControl>this.control.controls[index];
+            let control = <TemplateControl>this.control.controls[index];
 
             if (!BindableTemplates.isBoundControl(control)) {
                 this._log.warn('The child control of ' + this.control.type + ' at the specified index: ' + index +
@@ -874,7 +874,7 @@ module plat.ui {
                 return this._Promise.resolve([]);
             }
 
-            var endNode = control.endNode;
+            let endNode = control.endNode;
             if (!(isNode(endNode) && isNode(endNode.parentNode))) {
                 this._log.warn('The child control of ' + this.control.type + ' at the specified index: ' + index +
                     ' had either no placeholding comment nodes or its comment nodes had no parent and thus ' +
@@ -897,11 +897,11 @@ module plat.ui {
          * @returns {void}
          */
         dispose(): void {
-            var dispose = this._TemplateControlFactory.dispose,
+            let dispose = this._TemplateControlFactory.dispose,
                 compiledControls = this.__compiledControls,
                 length = compiledControls.length;
 
-            for (var i = 0; i < length; ++i) {
+            for (let i = 0; i < length; ++i) {
                 dispose(compiledControls[i]);
             }
 
@@ -936,7 +936,7 @@ module plat.ui {
          * ready to return or after the template and its control have replaced the bound control specified by the index.
          */
         protected _bind(key: any, relativeIdentifier?: any, resources?: IObject<IResource>, index?: number): async.IThenable<any> {
-            var templatePromise = this.templates[key],
+            let templatePromise = this.templates[key],
                 noIndex = isNull(index);
 
             if (isNull(templatePromise)) {
@@ -951,7 +951,7 @@ module plat.ui {
             }
 
             templatePromise = templatePromise.then((result: DocumentFragment): async.IThenable<any> => {
-                var template = <DocumentFragment>result.cloneNode(true),
+                let template = <DocumentFragment>result.cloneNode(true),
                     control = this._createBoundControl(key, template, relativeIdentifier, resources),
                     nodeMap = this._createNodeMap(control, template, relativeIdentifier);
 
@@ -964,7 +964,7 @@ module plat.ui {
 
             if (!noIndex) {
                 return templatePromise.then((fragment): async.IThenable<any> => {
-                    var childNodes = Array.prototype.slice.call(fragment.childNodes),
+                    let childNodes = Array.prototype.slice.call(fragment.childNodes),
                         oldControl = <TemplateControl>this.control.controls[index],
                         endNode = oldControl.endNode,
                         parentNode = endNode.parentNode,
@@ -1015,7 +1015,7 @@ module plat.ui {
          * @returns {plat.async.IThenable<DocumentFragment>} A promise that resolves when the template is bound.
          */
         protected _bindTemplate(key: string, nodeMap: processing.INodeMap): async.IThenable<DocumentFragment> {
-            var control = nodeMap.uiControlNode.control,
+            let control = nodeMap.uiControlNode.control,
                 disposed = false,
                 dispose = isFunction(control.dispose) ? control.dispose.bind(control) : noop;
 
@@ -1026,7 +1026,7 @@ module plat.ui {
             };
 
             return this._bindNodeMap(key, nodeMap).then((): DocumentFragment => {
-                var _document = this._document,
+                let _document = this._document,
                     template = nodeMap.element;
 
                 if (disposed) {
@@ -1069,7 +1069,7 @@ module plat.ui {
          * {@link plat.processing.ElementManager|ElementManager} is bound and loaded.
          */
         protected _bindNodeMap(key: string, nodeMap: processing.INodeMap): async.IThenable<void> {
-            var manager = this.cache[key],
+            let manager = this.cache[key],
                 child = nodeMap.uiControlNode.control,
                 template = nodeMap.element,
                 _managerCache = this._managerCache;
@@ -1094,7 +1094,7 @@ module plat.ui {
          * @returns {void}
          */
         protected _compile(key: string, template: DocumentFragment): void {
-            var control = this._createBoundControl(key + __COMPILED, template),
+            let control = this._createBoundControl(key + __COMPILED, template),
                 nodeMap = this._createNodeMap(control, template);
 
             this.__compiledControls.push(control);
@@ -1119,7 +1119,7 @@ module plat.ui {
          * @returns {void}
          */
         protected _compileNodeMap(control: TemplateControl, nodeMap: processing.INodeMap, key: string): void {
-            var manager = this._ElementManagerFactory.getInstance(),
+            let manager = this._ElementManagerFactory.getInstance(),
                 promises: Array<async.IThenable<void>> = [];
 
             manager.isClone = true;
@@ -1131,7 +1131,7 @@ module plat.ui {
             promises.push(manager.fulfillTemplate());
 
             this.templates[key] = this._Promise.all(promises).then((): DocumentFragment => {
-                var element = nodeMap.element,
+                let element = nodeMap.element,
                     clone = <DocumentFragment>element.cloneNode(true),
                     _document = this._document,
                     startNode = control.startNode = _document.createComment(control.type + __START_NODE),
@@ -1193,7 +1193,7 @@ module plat.ui {
          * @returns {plat.ui.TemplateControl} The newly created {@link plat.ui.TemplateControl|TemplateControl}.
          */
         protected _createBoundControl(key: string, template: DocumentFragment, childContext?: string, resources?: IObject<IResource>): TemplateControl {
-            var _TemplateControlFactory = this._TemplateControlFactory,
+            let _TemplateControlFactory = this._TemplateControlFactory,
                 control = _TemplateControlFactory.getInstance(),
                 _ResourcesFactory = this._ResourcesFactory,
                 parent = this.control,
@@ -1202,7 +1202,7 @@ module plat.ui {
                 _resources = _ResourcesFactory.getInstance();
 
             if (isCompiled) {
-                var compiledControl = compiledManager.getUiControl();
+                let compiledControl = compiledManager.getUiControl();
 
                 _resources.initialize(control, compiledControl.resources);
                 _resources.add(resources);
@@ -1222,7 +1222,7 @@ module plat.ui {
             control.root = this._ControlFactory.getRootControl(control);
 
             if (isCompiled) {
-                var contextManager = this._ContextManager.getManager(control.root);
+                let contextManager = this._ContextManager.getManager(control.root);
                 control.absoluteContextPath = parent.absoluteContextPath || __CONTEXT;
 
                 if (!isNull(childContext)) {

@@ -1,10 +1,11 @@
 ﻿/* tslint:disable:no-unused-variable */
 var ___Promise: plat.async.IPromise,
     ___compat: plat.Compat,
-    __nativeIsArray = !!Array.isArray,
-    __uids: plat.IObject<Array<string>> = {},
     __camelCaseRegex: RegExp,
     __capitalCaseRegex: RegExp,
+    __nativeIsArray = !!Array.isArray;
+
+const __uids: plat.IObject<Array<string>> = {},
     __objToString = Object.prototype.toString,
     __toStringClass = '[object ',
     __errorClass = __toStringClass + 'Error]',
@@ -51,7 +52,7 @@ function _extend(deep: boolean, redefine: any, destination: any, ...sources: any
         return destination;
     }
 
-    var keys: Array<string>,
+    let keys: Array<string>,
         property: any,
         define: (obj: any, key: string, value: any) => void;
 
@@ -118,7 +119,7 @@ function _clone(obj: any, deep?: boolean): any {
         return new obj.constructor((<Error>obj).message);
     }
 
-    var type = {};
+    let type = {};
 
     if (isArray(obj)) {
         type = [];
@@ -228,7 +229,7 @@ function isDate(obj: any): boolean {
 }
 
 function filter<T>(iterator: (value: T, key: any, obj: any) => boolean, obj: any, context?: any): Array<T> {
-    var arr: Array<T> = [];
+    let arr: Array<T> = [];
     if (isNull(obj)) {
         return arr;
     }
@@ -261,7 +262,7 @@ function forEach<T>(iterator: (value: T, key: any, obj: any) => void, obj: any, 
         return obj;
     }
 
-    var i: number,
+    let i: number,
         key: string,
         length: number;
 
@@ -272,7 +273,7 @@ function forEach<T>(iterator: (value: T, key: any, obj: any) => void, obj: any, 
             iterator.call(context, obj[i], i, obj);
         }
     } else {
-        var keys = Object.keys(obj);
+        let keys = Object.keys(obj);
         length = keys.length;
         while (keys.length > 0) {
             key = keys.shift();
@@ -284,7 +285,7 @@ function forEach<T>(iterator: (value: T, key: any, obj: any) => void, obj: any, 
 }
 
 function map<T, R>(iterator: (value: T, key: any, obj: any) => R, obj: any, context?: any): Array<R> {
-    var arr: Array<R> = [];
+    let arr: Array<R> = [];
 
     if (isNull(obj)) {
         return arr;
@@ -311,7 +312,7 @@ function mapAsync<T, R>(iterator: (value: T, key: any, obj: any) => plat.async.I
 function mapAsyncWithOrder<T, R>(iterator: (value: T, index: number, list: Array<T>) => plat.async.IThenable<R>,
     array: Array<T>, context: any, descending?: boolean): plat.async.IThenable<Array<R>> {
     ___Promise = ___Promise || plat.acquire(__Promise);
-    var initialValue = ___Promise.resolve<Array<R>>([]);
+    let initialValue = ___Promise.resolve<Array<R>>([]);
 
     if (!isArray(array)) {
         return initialValue;
@@ -319,7 +320,7 @@ function mapAsyncWithOrder<T, R>(iterator: (value: T, index: number, list: Array
 
     iterator = iterator.bind(context);
 
-    var inOrder = (previousValue: plat.async.IThenable<Array<R>>, nextValue: T, nextIndex: number,
+    let inOrder = (previousValue: plat.async.IThenable<Array<R>>, nextValue: T, nextIndex: number,
             array: Array<T>): plat.async.IThenable<Array<R>> => {
             return previousValue.then((items): plat.async.IThenable<Array<R>> => {
                 return iterator(nextValue, nextIndex, array).then((moreItems): Array<R> => {
@@ -354,7 +355,7 @@ function some<T>(iterator: (value: T, key: any, obj: any) => boolean, obj: any, 
         return false;
     }
 
-    var i: number,
+    let i: number,
         key: string,
         length: number,
         ret: boolean;
@@ -369,7 +370,7 @@ function some<T>(iterator: (value: T, key: any, obj: any) => boolean, obj: any, 
             }
         }
     } else {
-        var keys = Object.keys(obj);
+        let keys = Object.keys(obj);
         length = keys.length;
         while (keys.length > 0) {
             key = keys.shift();
@@ -392,7 +393,7 @@ function defer(method: (...args: any[]) => void, timeout: number, args?: Array<a
         method.apply(context, args);
     }
 
-    var timeoutId = setTimeout(execDefer, timeout);
+    let timeoutId = setTimeout(execDefer, timeout);
     return (): void => {
         clearTimeout(timeoutId);
     };
@@ -403,7 +404,7 @@ function setIntervalGlobal(method: (...args: any[]) => void, interval: number, a
         method.apply(context, args);
     }
 
-    var intervalId = setInterval(execInterval, interval);
+    let intervalId = setInterval(execInterval, interval);
     return (): void => {
         clearInterval(intervalId);
     };
@@ -412,14 +413,14 @@ function setIntervalGlobal(method: (...args: any[]) => void, interval: number, a
 function requestAnimationFrameGlobal(method: FrameRequestCallback, context?: any): plat.IRemoveListener {
     ___compat = ___compat || (plat.acquire(__Compat));
 
-    var requestAnimFrame = ___compat.requestAnimationFrame;
+    let requestAnimFrame = ___compat.requestAnimationFrame;
     if (isUndefined(requestAnimFrame)) {
         return postpone((): void => {
             method.call(context, Date.now());
         });
     }
 
-    var animationId = requestAnimFrame(method.bind(context)),
+    let animationId = requestAnimFrame(method.bind(context)),
         cancelAnimFrame = ___compat.cancelAnimationFrame || noop;
 
     return (): void => {
@@ -432,13 +433,13 @@ function uniqueId(prefix?: string): string {
         prefix = '';
     }
 
-    var puid = __uids[prefix];
+    let puid = __uids[prefix];
 
     if (isNull(puid)) {
         puid = __uids[prefix] = ['0', '/'];
     }
 
-    var index = puid.length,
+    let index = puid.length,
         charCode: number;
 
     while (index--) {
@@ -525,12 +526,12 @@ function deserializeQuery(search: string): plat.IObject<string> {
         return;
     }
 
-    var split = search.split('&'),
+    let split = search.split('&'),
         query: plat.IObject<string> = {},
         length = split.length,
         item: Array<string>;
 
-    for (var i = 0; i < length; ++i) {
+    for (let i = 0; i < length; ++i) {
         item = split[i].split('=');
 
         query[item[0]] = item[1];

@@ -5,10 +5,10 @@ module plat.controls {
      * @name SetAttributeControl
      * @memberof plat.controls
      * @kind class
-     * 
+     *
      * @extends {plat.AttributeControl}
      * @implements {plat.controls.ISetAttributeControl}
-     * 
+     *
      * @description
      * An {@link plat.AttributeControl|AttributeControl} that deals with binding to a specified property on its element.
      */
@@ -18,9 +18,9 @@ module plat.controls {
          * @memberof plat.controls.SetAttributeControl
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The property to set on the associated element.
          */
@@ -31,9 +31,9 @@ module plat.controls {
          * @memberof plat.controls.SetAttributeControl
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The camel-cased name of the control as it appears as an attribute.
          */
@@ -44,9 +44,9 @@ module plat.controls {
          * @memberof plat.controls.SetAttributeControl
          * @kind property
          * @access private
-         * 
+         *
          * @type {IRemoveListener}
-         * 
+         *
          * @description
          * The function to stop listening for attribute changes.
          */
@@ -57,11 +57,11 @@ module plat.controls {
          * @memberof plat.controls.SetAttributeControl
          * @kind function
          * @access public
-         * 
+         *
          * @description
-         * Sets the corresponding attribute {property} value and 
+         * Sets the corresponding attribute {property} value and
          * observes the attribute for changes.
-         * 
+         *
          * @returns {void}
          */
         loaded(): void {
@@ -79,11 +79,11 @@ module plat.controls {
          * @memberof plat.controls.SetAttributeControl
          * @kind function
          * @access public
-         * 
+         *
          * @description
-         * Resets the corresponding attribute property value upon 
+         * Resets the corresponding attribute property value upon
          * a change of context.
-         * 
+         *
          * @returns {void}
          */
         contextChanged(): void {
@@ -99,10 +99,10 @@ module plat.controls {
          * @memberof plat.controls.SetAttributeControl
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Stops listening to attribute changes.
-         * 
+         *
          * @returns {void}
          */
         dispose(): void {
@@ -118,16 +118,16 @@ module plat.controls {
          * @kind function
          * @access public
          * @virtual
-         * 
+         *
          * @description
-         * The function for setting the corresponding 
+         * The function for setting the corresponding
          * attribute property value.
-         * 
+         *
          * @returns {void}
          */
         setter(): void {
             requestAnimationFrameGlobal((): void => {
-                var element = this.element,
+                let element = this.element,
                     property = this.property;
 
                 if (!isNode(element)) {
@@ -156,7 +156,7 @@ module plat.controls {
      * @name ISetAttributeControl
      * @memberof plat.controls
      * @kind interface
-     * 
+     *
      * @description
      * An {@link plat.AttributeControl|AttributeControl} that deals with binding to a specified property on its element.
      */
@@ -166,9 +166,9 @@ module plat.controls {
          * @memberof plat.controls.ISetAttributeControl
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The property to set on the associated template control.
          */
@@ -179,9 +179,9 @@ module plat.controls {
          * @memberof plat.controls.ISetAttributeControl
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The camel-cased name of the control as it appears as an attribute.
          */
@@ -192,11 +192,11 @@ module plat.controls {
          * @memberof plat.controls.ISetAttributeControl
          * @kind function
          * @access public
-         * 
+         *
          * @description
-         * The function for setting the corresponding 
+         * The function for setting the corresponding
          * attribute property value.
-         * 
+         *
          * @returns {void}
          */
         setter(): void;
@@ -206,9 +206,9 @@ module plat.controls {
      * @name Checked
      * @memberof plat.controls
      * @kind class
-     * 
+     *
      * @extends {plat.controls.SetAttributeControl}
-     * 
+     *
      * @description
      * A {@link plat.controls.SetAttributeControl|SetAttributeControl} for the 'checked' attribute.
      */
@@ -218,9 +218,9 @@ module plat.controls {
          * @memberof plat.controls.Checked
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The property to set on the associated template control.
          */
@@ -231,9 +231,9 @@ module plat.controls {
      * @name Disabled
      * @memberof plat.controls
      * @kind class
-     * 
+     *
      * @extends {plat.controls.SetAttributeControl}
-     * 
+     *
      * @description
      * A {@link plat.controls.SetAttributeControl|SetAttributeControl} for the 'disabled' attribute.
      */
@@ -243,9 +243,9 @@ module plat.controls {
          * @memberof plat.controls.Disabled
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The property to set on the associated template control.
          */
@@ -256,9 +256,9 @@ module plat.controls {
      * @name Selected
      * @memberof plat.controls
      * @kind class
-     * 
+     *
      * @extends {plat.controls.SetAttributeControl}
-     * 
+     *
      * @description
      * A {@link plat.controls.SetAttributeControl|SetAttributeControl} for the 'selected' attribute.
      */
@@ -268,9 +268,9 @@ module plat.controls {
          * @memberof plat.controls.Selected
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The property to set on the associated template control.
          */
@@ -281,9 +281,9 @@ module plat.controls {
      * @name ReadOnly
      * @memberof plat.controls
      * @kind class
-     * 
+     *
      * @extends {plat.controls.SetAttributeControl}
-     * 
+     *
      * @description
      * A {@link plat.controls.SetAttributeControl|SetAttributeControl} for the 'readonly' attribute.
      */
@@ -293,9 +293,9 @@ module plat.controls {
          * @memberof plat.controls.ReadOnly
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The property to set on the associated template control.
          */
@@ -306,9 +306,9 @@ module plat.controls {
      * @name Visible
      * @memberof plat.controls
      * @kind class
-     * 
+     *
      * @extends {plat.controls.SetAttributeControl}
-     * 
+     *
      * @description
      * A {@link plat.controls.SetAttributeControl|SetAttributeControl} for the 'plat-hide' attribute.
      */
@@ -318,9 +318,9 @@ module plat.controls {
          * @memberof plat.controls.Visible
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The property to set on the associated element.
          */
@@ -331,9 +331,9 @@ module plat.controls {
          * @memberof plat.controls.Visible
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The value to associate with the property.
          */
@@ -344,9 +344,9 @@ module plat.controls {
          * @memberof plat.controls.Visible
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The importance to set on the property.
          */
@@ -357,9 +357,9 @@ module plat.controls {
          * @memberof plat.controls.Visible
          * @kind property
          * @access protected
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The initial value of the property to be set.
          */
@@ -370,14 +370,14 @@ module plat.controls {
          * @memberof plat.controls.Visible
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Hides the element.
-         * 
+         *
          * @returns {void}
          */
         initialize(): void {
-            var style: CSSStyleDeclaration = this.element.style || <any>{ getPropertyValue: noop },
+            let style: CSSStyleDeclaration = this.element.style || <any>{ getPropertyValue: noop },
                 initialValue = style.getPropertyValue(this.property);
 
             this._setValue(this.value, this.importance);
@@ -394,10 +394,10 @@ module plat.controls {
          * @memberof plat.controls.Visible
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Hides or shows the element depending upon the attribute value
-         * 
+         *
          * @returns {void}
          */
         setter(): void {
@@ -425,18 +425,18 @@ module plat.controls {
          * @memberof plat.controls.Visible
          * @kind function
          * @access protected
-         * 
+         *
          * @description
-         * Sets the value of the property element with the given importance. If the 
+         * Sets the value of the property element with the given importance. If the
          * value is null or empty string, the property will be removed.
-         * 
+         *
          * @param {string} value The value to set.
          * @param {string} importance? The priority or importance level to set.
-         * 
+         *
          * @returns {void}
          */
         protected _setValue(value: string, importance?: string): void {
-            var property = this.property,
+            let property = this.property,
                 style: CSSStyleDeclaration = this.element.style || <any>{
                     setProperty: noop,
                     removeProperty: noop,
@@ -461,9 +461,9 @@ module plat.controls {
      * @name Style
      * @memberof plat.controls
      * @kind class
-     * 
+     *
      * @extends {plat.controls.SetAttributeControl}
-     * 
+     *
      * @description
      * A {@link plat.controls.SetAttributeControl|SetAttributeControl} for the 'style' attribute.
      */
@@ -473,9 +473,9 @@ module plat.controls {
          * @memberof plat.controls.Style
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The property to set on the associated template control.
          */
@@ -486,14 +486,14 @@ module plat.controls {
          * @memberof plat.controls.Style
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Sets the evaluated styles on the element.
-         * 
+         *
          * @returns {void}
          */
         setter(): void {
-            var element = this.element,
+            let element = this.element,
                 expression = this.attributes[this.attribute];
 
             if (isEmpty(expression) || isNull(element)) {

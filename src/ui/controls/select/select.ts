@@ -5,11 +5,11 @@ module plat.ui.controls {
      * @name Select
      * @memberof plat.ui.controls
      * @kind class
-     * 
+     *
      * @extends {plat.ui.BindControl}
-     * 
+     *
      * @description
-     * A {@link plat.ui.BindControl|BindControl} for binding an HTML select element 
+     * A {@link plat.ui.BindControl|BindControl} for binding an HTML select element
      * to an Array context.
      */
     export class Select extends BindControl {
@@ -23,11 +23,11 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Select
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
-         * Replaces the `<plat-select>` node with 
+         * Replaces the `<plat-select>` node with
          * a <select> node.
          */
         replaceWith: string = 'select';
@@ -37,9 +37,9 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Select
          * @kind property
          * @access public
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
          * The load priority of the control (needs to load before a {@link plat.controls.Bind|Bind} control).
          */
@@ -50,9 +50,9 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Select
          * @kind property
          * @access public
-         * 
+         *
          * @type {Array<any>}
-         * 
+         *
          * @description
          * The required context of the control (must be of type Array).
          */
@@ -63,9 +63,9 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Select
          * @kind property
          * @access public
-         * 
+         *
          * @type {Array<plat.ui.TemplateControl>}
-         * 
+         *
          * @description
          * The child controls of the control. All will be of type {@link plat.ui.TemplateControl|TemplateControl}.
          */
@@ -76,11 +76,11 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Select
          * @kind property
          * @access public
-         * 
+         *
          * @type {plat.IObject<Element>}
-         * 
+         *
          * @description
-         * An object that keeps track of unique 
+         * An object that keeps track of unique
          * optgroups.
          */
         groups: IObject<Element> = {};
@@ -90,9 +90,9 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Select
          * @kind property
          * @access public
-         * 
+         *
          * @type {plat.observable.IObservableProperty<plat.ui.controls.ISelectOptions>}
-         * 
+         *
          * @description
          * The evaluated {@link plat.controls.Options|plat-options} object.
          */
@@ -103,9 +103,9 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Select
          * @kind property
          * @access public
-         * 
+         *
          * @type {plat.async.IThenable<void>}
-         * 
+         *
          * @description
          * A Promise that will fulfill whenever all items are loaded.
          */
@@ -116,9 +116,9 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Select
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.async.IPromise}
-         * 
+         *
          * @description
          * Reference to the {@link plat.async.IPromise|IPromise} injectable.
          */
@@ -129,9 +129,9 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Select
          * @kind property
          * @access protected
-         * 
+         *
          * @type {Document}
-         * 
+         *
          * @description
          * Reference to the Document injectable.
          */
@@ -142,9 +142,9 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Select
          * @kind property
          * @access protected
-         * 
+         *
          * @type {boolean}
-         * 
+         *
          * @description
          * Whether or not the select is grouped.
          */
@@ -155,9 +155,9 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Select
          * @kind property
          * @access protected
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The property used to group the objects.
          */
@@ -168,11 +168,11 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Select
          * @kind property
          * @access protected
-         * 
+         *
          * @type {HTMLOptionElement}
-         * 
+         *
          * @description
-         * An optional default option specified in the control element's 
+         * An optional default option specified in the control element's
          * innerHTML.
          */
         protected _defaultOption: HTMLOptionElement;
@@ -182,9 +182,9 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Select
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.observable.IImplementTwoWayBinding}
-         * 
+         *
          * @description
          * The complementary control implementing two way databinding.
          */
@@ -195,9 +195,9 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Select
          * @kind property
          * @access private
-         * 
+         *
          * @type {boolean}
-         * 
+         *
          * @description
          * Whether or not the Array listener has been set.
          */
@@ -208,9 +208,9 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Select
          * @kind property
          * @access private
-         * 
+         *
          * @type {() => void}
-         * 
+         *
          * @description
          * The function to resolve the itemsLoaded promise.
          */
@@ -221,10 +221,10 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Select
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * The constructor for a {@link plat.ui.controls.Select|Select}. Creates the itemsLoaded promise.
-         * 
+         *
          * @returns {plat.ui.controls.Select} A {@link plat.ui.controls.Select|Select} instance.
          */
         constructor() {
@@ -239,22 +239,22 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Select
          * @kind function
          * @access public
-         * 
+         *
          * @description
-         * Creates the bindable option template and grouping 
+         * Creates the bindable option template and grouping
          * template if necessary.
-         * 
+         *
          * @returns {void}
          */
         setTemplate(): void {
             this.bindableTemplates.add('option', this.element.childNodes);
 
-            var options = this.options || <observable.IObservableProperty<ISelectOptions>>{},
+            let options = this.options || <observable.IObservableProperty<ISelectOptions>>{},
                 platOptions = options.value || <ISelectOptions>{},
                 defaultOptionValues = platOptions.default;
 
             if (isObject(defaultOptionValues)) {
-                var defaultOption: HTMLOptionElement = this._document.createElement('option'),
+                let defaultOption: HTMLOptionElement = this._document.createElement('option'),
                     defaultValue = defaultOptionValues.value,
                     defaultTextContent = defaultOptionValues.textContent;
 
@@ -264,7 +264,7 @@ module plat.ui.controls {
             }
 
             if (!isNull(platOptions.group)) {
-                var group = this._group = platOptions.group,
+                let group = this._group = platOptions.group,
                     optionGroup = this._document.createElement('optgroup');
 
                 optionGroup.label = __startSymbol + group + __endSymbol;
@@ -281,14 +281,14 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Select
          * @kind function
          * @access public
-         * 
+         *
          * @description
-         * Re-observes the new array context and modifies 
+         * Re-observes the new array context and modifies
          * the options accordingly.
-         * 
+         *
          * @param {Array<any>} newValue The new array context.
          * @param {Array<any>} oldValue The old array context.
-         * 
+         *
          * @returns {void}
          */
         contextChanged(newValue: Array<any>, oldValue: Array<any>): void {
@@ -304,7 +304,7 @@ module plat.ui.controls {
                 return;
             }
 
-            var newLength = isArray(newValue) ? newValue.length : 0,
+            let newLength = isArray(newValue) ? newValue.length : 0,
                 oldLength = isArray(oldValue) ? oldValue.length : 0;
 
             this._setListener();
@@ -321,16 +321,16 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Select
          * @kind function
          * @access public
-         * 
+         *
          * @description
-         * Observes the new array context and adds 
+         * Observes the new array context and adds
          * the options accordingly.
-         * 
+         *
          * @returns {void}
          */
         loaded(): void {
             if (isUndefined(this._isGrouped)) {
-                var options = this.options || <observable.IObservableProperty<ISelectOptions>>{},
+                let options = this.options || <observable.IObservableProperty<ISelectOptions>>{},
                     platOptions = options.value || <ISelectOptions>{};
 
                 this._isGrouped = !isNull((this._group = platOptions.group));
@@ -338,7 +338,7 @@ module plat.ui.controls {
 
             this._defaultOption = <HTMLOptionElement>this.element.firstElementChild;
 
-            var context = this.context;
+            let context = this.context;
             if (!isArray(context)) {
                 this._log.debug(this.type + ' context set to something other than an Array.');
                 return;
@@ -353,10 +353,10 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Select
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Removes any potentially held memory.
-         * 
+         *
          * @returns {void}
          */
         dispose(): void {
@@ -371,18 +371,18 @@ module plat.ui.controls {
          * @kind function
          * @access public
          * @virtual
-         * 
+         *
          * @description
          * A function that allows this control to observe both the bound property itself as well as
          * potential child properties if being bound to an object.
-         * 
+         *
          * @param {plat.observable.IImplementTwoWayBinding} binder The control that facilitates the
          * databinding.
-         * 
+         *
          * @returns {void}
          */
         observeProperties(binder: observable.IImplementTwoWayBinding): void {
-            var element = <HTMLSelectElement>this.element,
+            let element = <HTMLSelectElement>this.element,
                 setter: observable.IBoundPropertyChangedListener<any>;
 
             this._binder = binder;
@@ -409,19 +409,19 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Select
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Updates the selected index if bound to a property.
-         * 
+         *
          * @param {string} newValue The new value of the bound property.
          * @param {string} oldValue The old value of the bound property.
          * @param {string} identifier The child identifier of the bound property.
          * @param {boolean} firstTime? Whether or not this is the first time being called as a setter.
-         * 
+         *
          * @returns {void}
          */
         protected _setSelectedIndex(newValue: string, oldValue: string, identifier: string, firstTime?: boolean): void {
-            var element = <HTMLSelectElement>this.element,
+            let element = <HTMLSelectElement>this.element,
                 value = element.value;
             if (isNull(newValue)) {
                 if (firstTime === true || !this._document.body.contains(element)) {
@@ -435,7 +435,7 @@ module plat.ui.controls {
                 element.selectedIndex = -1;
                 return;
             } else if (!isString(newValue)) {
-                var message: string;
+                let message: string;
                 if (isNumber(newValue)) {
                     newValue = newValue.toString();
                     message = 'Trying to bind a value of type number to a ' + this.type + '\'s element. ' +
@@ -472,19 +472,19 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Select
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Updates the selected index if bound to a property.
-         * 
+         *
          * @param {Array<any>} newValue The new value Array of the bound property.
          * @param {Array<any>} oldValue The old value Array of the bound property.
          * @param {string} identifier The child identifier of the bound property.
          * @param {boolean} firstTime? Whether or not this is the first time being called as a setter.
-         * 
+         *
          * @returns {void}
          */
         protected _setSelectedIndices(newValue: Array<any>, oldValue: Array<any>, identifier: string, firstTime?: boolean): void {
-            var element = <HTMLSelectElement>this.element,
+            let element = <HTMLSelectElement>this.element,
                 options = element.options,
                 length = isNull(options) ? 0 : options.length,
                 option: HTMLOptionElement,
@@ -508,7 +508,7 @@ module plat.ui.controls {
                     return;
                 }
 
-                var value: any,
+                let value: any,
                     numberValue: number;
 
                 while (length-- > 0) {
@@ -531,14 +531,14 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Select
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Fires the inputChanged event when the select's value changes.
-         * 
+         *
          * @returns {void}
          */
         protected _observeChange(): void {
-            var element = <HTMLSelectElement>this.element;
+            let element = <HTMLSelectElement>this.element;
             this.inputChanged(element.multiple ? this._getSelectedValues() : element.value);
         }
 
@@ -547,19 +547,19 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Select
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Getter for select-multiple.
-         * 
+         *
          * @returns {Array<string>} The selected values.
          */
         protected _getSelectedValues(): Array<string> {
-            var options = (<HTMLSelectElement>this.element).options,
+            let options = (<HTMLSelectElement>this.element).options,
                 length = options.length,
                 option: HTMLOptionElement,
                 selectedValues: Array<string> = [];
 
-            for (var i = 0; i < length; ++i) {
+            for (let i = 0; i < length; ++i) {
                 option = options[i];
                 if (option.selected) {
                     selectedValues.push(option.value);
@@ -574,10 +574,10 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Select
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Sets a listener for the changes to the array.
-         * 
+         *
          * @returns {void}
          */
         protected _setListener(): void {
@@ -592,17 +592,17 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Select
          * @kind function
          * @access protected
-         * 
+         *
          * @description
-         * Receives an event when a method has been called on an array and maps the array 
+         * Receives an event when a method has been called on an array and maps the array
          * method to its associated method handler.
-         * 
+         *
          * @param {Array<plat.observable.IArrayChanges<any>>} changes The Array mutation event information.
-         * 
+         *
          * @returns {void}
          */
         protected _executeEvent(changes: Array<observable.IArrayChanges<any>>): void {
-            var method = '_' + changes[0].type;
+            let method = '_' + changes[0].type;
             if (isFunction((<any>this)[method])) {
                 (<any>this)[method](changes);
             }
@@ -613,18 +613,18 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Select
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Adds the options to the select element.
-         * 
+         *
          * @param {number} numberOfItems The number of items to add.
-         * @param {number} index The starting index of the next 
+         * @param {number} index The starting index of the next
          * set of items to add.
-         * 
+         *
          * @returns {plat.async.IThenable<void>} The itemsLoaded promise.
          */
         protected _addItems(numberOfItems: number, index: number): async.IThenable<void> {
-            var bindableTemplates = this.bindableTemplates,
+            let bindableTemplates = this.bindableTemplates,
                 promises: Array<async.IThenable<void>> = [],
                 insertOption = this._insertOption;
 
@@ -658,22 +658,22 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Select
          * @kind function
          * @access protected
-         * 
+         *
          * @description
-         * The callback used to add an option after 
+         * The callback used to add an option after
          * its template has been bound.
-         * 
+         *
          * @param {number} index The current index of the item being added.
-         * @param {DocumentFragment} option The bound DocumentFragment to be 
+         * @param {DocumentFragment} option The bound DocumentFragment to be
          * inserted into the DOM.
-         * 
-         * @returns {plat.async.IThenable<any>} A promise that resolves when the option 
+         *
+         * @returns {plat.async.IThenable<any>} A promise that resolves when the option
          * or optgroup has successfully be inserted.
          */
         protected _insertOption(index: number, option: DocumentFragment): async.IThenable<any> {
-            var element = this.element;
+            let element = this.element;
             if (this._isGrouped) {
-                var groups = this.groups,
+                let groups = this.groups,
                     newGroup = (this.context[index] || {})[this._group],
                     optgroup: any = groups[newGroup];
 
@@ -705,17 +705,17 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Select
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Removes a specified number of elements.
-         * 
-         * @param {number} numberOfItems The number of items 
+         *
+         * @param {number} numberOfItems The number of items
          * to remove.
-         * 
+         *
          * @returns {void}
          */
         protected _removeItems(numberOfItems: number): void {
-            var dispose = TemplateControl.dispose,
+            let dispose = TemplateControl.dispose,
                 controls = this.controls;
 
             while (numberOfItems-- > 0) {
@@ -728,11 +728,11 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Select
          * @kind function
          * @access protected
-         * 
+         *
          * @description
-         * The function called when an item has been removed 
+         * The function called when an item has been removed
          * from the Array context.
-         * 
+         *
          * @returns {void}
          */
         protected _removeItem(): void {
@@ -749,11 +749,11 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Select
          * @kind function
          * @access protected
-         * 
+         *
          * @description
-         * Resets the select element by removing all its 
+         * Resets the select element by removing all its
          * items and adding them back.
-         * 
+         *
          * @returns {void}
          */
         protected _resetSelect(): void {
@@ -771,17 +771,17 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Select
          * @kind function
          * @access protected
-         * 
+         *
          * @description
-         * The function called when an element is pushed to 
+         * The function called when an element is pushed to
          * the array context.
-         * 
+         *
          * @param {Array<plat.observable.IArrayChanges<any>>} changes The Array mutation event information.
-         * 
+         *
          * @returns {void}
          */
         protected _push(changes: Array<observable.IArrayChanges<any>>): void {
-            var change = changes[0];
+            let change = changes[0];
             this._addItems(change.addedCount, change.index);
         }
 
@@ -790,13 +790,13 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Select
          * @kind function
          * @access protected
-         * 
+         *
          * @description
-         * The function called when an item is popped 
+         * The function called when an item is popped
          * from the array context.
-         * 
+         *
          * @param {Array<plat.observable.IArrayChanges<any>>} changes The Array mutation event information.
-         * 
+         *
          * @returns {void}
          */
         protected _pop(changes: Array<observable.IArrayChanges<any>>): void {
@@ -813,13 +813,13 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Select
          * @kind function
          * @access protected
-         * 
+         *
          * @description
-         * The function called when an item is unshifted 
+         * The function called when an item is unshifted
          * onto the array context.
-         * 
+         *
          * @param {Array<plat.observable.IArrayChanges<any>>} changes The Array mutation event information.
-         * 
+         *
          * @returns {void}
          */
         protected _unshift(changes: Array<observable.IArrayChanges<any>>): void {
@@ -828,7 +828,7 @@ module plat.ui.controls {
                 return;
             }
 
-            var change = changes[0],
+            let change = changes[0],
                 addedCount = change.addedCount;
             this._addItems(addedCount, change.object.length - addedCount - 1);
         }
@@ -838,13 +838,13 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Select
          * @kind function
          * @access protected
-         * 
+         *
          * @description
-         * The function called when an item is shifted 
+         * The function called when an item is shifted
          * from the array context.
-         * 
+         *
          * @param {Array<plat.observable.IArrayChanges<any>>} changes The Array mutation event information.
-         * 
+         *
          * @returns {void}
          */
         protected _shift(changes: Array<observable.IArrayChanges<any>>): void {
@@ -861,13 +861,13 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Select
          * @kind function
          * @access protected
-         * 
+         *
          * @description
-         * The function called when items are spliced 
+         * The function called when items are spliced
          * from the array context.
-         * 
+         *
          * @param {Array<plat.observable.IArrayChanges<any>>} changes The Array mutation event information.
-         * 
+         *
          * @returns {void}
          */
         protected _splice(changes: Array<observable.IArrayChanges<any>>): void {
@@ -876,7 +876,7 @@ module plat.ui.controls {
                 return;
             }
 
-            var change = changes[0],
+            let change = changes[0],
                 addCount = change.addedCount,
                 removeCount = change.removed.length;
 
@@ -894,13 +894,13 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Select
          * @kind function
          * @access protected
-         * 
+         *
          * @description
-         * The function called when the array context 
+         * The function called when the array context
          * is sorted.
-         * 
+         *
          * @param {Array<plat.observable.IArrayChanges<any>>} changes The Array mutation event information.
-         * 
+         *
          * @returns {void}
          */
         protected _sort(changes: Array<observable.IArrayChanges<any>>): void {
@@ -914,13 +914,13 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Select
          * @kind function
          * @access protected
-         * 
+         *
          * @description
-         * The function called when the array context 
+         * The function called when the array context
          * is reversed.
-         * 
+         *
          * @param {Array<plat.observable.IArrayChanges<any>>} changes The Array mutation event information.
-         * 
+         *
          * @returns {void}
          */
         protected _reverse(changes: Array<observable.IArrayChanges<any>>): void {
@@ -934,7 +934,7 @@ module plat.ui.controls {
      * @name ISelectOptions
      * @memberof plat.ui.controls
      * @kind interface
-     * 
+     *
      * @description
      * The available {@link plat.controls.Options|options} for the {@link plat.ui.controls.Select|Select} control.
      */
@@ -944,12 +944,12 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.ISelectOptions
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
-         * The property in your context array 
-         * of objects to use to group the objects 
+         * The property in your context array
+         * of objects to use to group the objects
          * into optgroups.
          */
         group: string;
@@ -959,12 +959,12 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.ISelectOptions
          * @kind property
          * @access public
-         * 
+         *
          * @type {plat.ui.controls.ISelectDefaultOption}
-         * 
+         *
          * @description
-         * The property in your context array of 
-         * objects with which to use to bind to the 
+         * The property in your context array of
+         * objects with which to use to bind to the
          * option's value.
          */
         default: ISelectDefaultOption;
@@ -974,7 +974,7 @@ module plat.ui.controls {
      * @name ISelectDefaultOption
      * @memberof plat.ui.controls
      * @kind interface
-     * 
+     *
      * @description
      * Defines the value and textContent for the default option of a {@link plat.ui.controls.Select|Select}.
      */
@@ -984,9 +984,9 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.ISelectDefaultOption
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The value of the default option.
          */
@@ -997,9 +997,9 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.ISelectDefaultOption
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The textContent of the default option.
          */

@@ -5,12 +5,12 @@ module plat.processing {
      * @name ElementManager
      * @memberof plat.processing
      * @kind class
-     * 
+     *
      * @extends {plat.processing.NodeManager}
-     * 
+     *
      * @description
-     * A class used to manage element nodes. Provides a way for compiling and binding the 
-     * element/template. Also provides methods for cloning an 
+     * A class used to manage element nodes. Provides a way for compiling and binding the
+     * element/template. Also provides methods for cloning an
      * {@link plat.processing.ElementManager|ElementManager}.
      */
     export class ElementManager extends NodeManager {
@@ -31,9 +31,9 @@ module plat.processing {
          * @kind property
          * @access protected
          * @static
-         * 
+         *
          * @type {Document}
-         * 
+         *
          * @description
          * Reference to the Document injectable.
          */
@@ -44,9 +44,9 @@ module plat.processing {
          * @memberof plat.processing.ElementManager
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.storage.Cache<processing.ElementManager>}
-         * 
+         *
          * @description
          * Reference to a cache injectable that stores {@link plat.processing.ElementManager|ElementManagers}.
          */
@@ -57,9 +57,9 @@ module plat.processing {
          * @memberof plat.processing.ElementManager
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.ui.IResourcesFactory}
-         * 
+         *
          * @description
          * Reference to the {@link plat.ui.IResourcesFactory|ResourcesFactory} injectable.
          */
@@ -70,9 +70,9 @@ module plat.processing {
          * @memberof plat.processing.ElementManager
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.ui.Attributes}
-         * 
+         *
          * @description
          * Reference to the {@link plat.ui.Attributes|Attributes} injectable.
          */
@@ -83,9 +83,9 @@ module plat.processing {
          * @memberof plat.processing.ElementManager
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.ui.IBindableTemplatesFactory}
-         * 
+         *
          * @description
          * Reference to the {@link plat.ui.IBindableTemplatesFactory|BindableTemplatesFactory} injectable.
          */
@@ -97,7 +97,7 @@ module plat.processing {
          * @kind property
          * @access protected
          * @static
-         * 
+         *
          * @type {plat.debug.Log}
          * @description
          * Reference to the {@link plat.debug.Log|Log} injectable.
@@ -109,9 +109,9 @@ module plat.processing {
          * @memberof plat.processing.ElementManager
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.async.IPromise}
-         * 
+         *
          * @description
          * Reference to the {@link plat.async.IPromise|IPromise} injectable.
          */
@@ -122,9 +122,9 @@ module plat.processing {
          * @memberof plat.processing.ElementManager
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.processing.Compiler}
-         * 
+         *
          * @description
          * Reference to the {@link plat.processing.Compiler|Compiler} injectable.
          */
@@ -135,9 +135,9 @@ module plat.processing {
          * @memberof plat.processing.ElementManager
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.observable.IContextManagerStatic}
-         * 
+         *
          * @description
          * Reference to the {@link plat.observable.IContextManagerStatic|ContextManagerStatic} injectable.
          */
@@ -148,9 +148,9 @@ module plat.processing {
          * @memberof plat.processing.ElementManager
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.processing.ICommentManagerFactory}
-         * 
+         *
          * @description
          * Reference to the {@link plat.processing.ICommentManagerFactory|ICommentManagerFactory} injectable.
          */
@@ -161,9 +161,9 @@ module plat.processing {
          * @memberof plat.processing.ElementManager
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.IControlFactory}
-         * 
+         *
          * @description
          * Reference to the {@link plat.IControlFactory|IControlFactory} injectable.
          */
@@ -174,9 +174,9 @@ module plat.processing {
          * @memberof plat.processing.ElementManager
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.ui.ITemplateControlFactory}
-         * 
+         *
          * @description
          * Reference to the {@link plat.ui.ITemplateControlFactory|ITemplateControlFactory} injectable.
          */
@@ -187,9 +187,9 @@ module plat.processing {
          * @memberof plat.processing.ElementManager
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.ui.IBindableTemplatesFactory}
-         * 
+         *
          * @description
          * Reference to the {@link plat.ui.IBindableTemplatesFactory|IBindableTemplatesFactory} injectable.
          */
@@ -200,7 +200,7 @@ module plat.processing {
          * @memberof plat.processing.ElementManager
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.debug.Log}
          * @description
          * Reference to the {@link plat.debug.Log|Log} injectable.
@@ -212,9 +212,9 @@ module plat.processing {
          * @memberof plat.processing.ElementManager
          * @kind property
          * @access public
-         * 
+         *
          * @type {Array<plat.processing.NodeManager>}
-         * 
+         *
          * @description
          * The child managers for this manager.
          */
@@ -225,11 +225,11 @@ module plat.processing {
          * @memberof plat.processing.ElementManager
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
-         * Specifies the type for this {@link plat.processing.NodeManager|NodeManager}. 
+         * Specifies the type for this {@link plat.processing.NodeManager|NodeManager}.
          * It's value is "element".
          */
         type: string = 'element';
@@ -239,11 +239,11 @@ module plat.processing {
          * @memberof plat.processing.ElementManager
          * @kind property
          * @access public
-         * 
+         *
          * @type {boolean}
-         * 
+         *
          * @description
-         * Specifies whether or not this manager has a {@link plat.ui.TemplateControl|TemplateControl} which has a 
+         * Specifies whether or not this manager has a {@link plat.ui.TemplateControl|TemplateControl} which has a
          * replaceWith property set to null or empty string.
          */
         replace: boolean = false;
@@ -253,11 +253,11 @@ module plat.processing {
          * @memberof plat.processing.ElementManager
          * @kind property
          * @access public
-         * 
+         *
          * @type {boolean}
-         * 
+         *
          * @description
-         * Indicates whether the {@link plat.ui.TemplateControl|TemplateControl} for this manager has its own context 
+         * Indicates whether the {@link plat.ui.TemplateControl|TemplateControl} for this manager has its own context
          * or inherits it from a parent.
          */
         hasOwnContext: boolean = false;
@@ -267,11 +267,11 @@ module plat.processing {
          * @memberof plat.processing.ElementManager
          * @kind property
          * @access public
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
-         * The length of a replaced control, indicates the number of nodes to slice 
+         * The length of a replaced control, indicates the number of nodes to slice
          * out of the parent's childNodes.
          */
         replaceNodeLength: number;
@@ -281,11 +281,11 @@ module plat.processing {
          * @memberof plat.processing.ElementManager
          * @kind property
          * @access public
-         * 
+         *
          * @type {plat.async.IThenable<void>}
-         * 
+         *
          * @description
-         * In the event that a control does not have its own context, we need a promise to fullfill 
+         * In the event that a control does not have its own context, we need a promise to fullfill
          * when the control's context has been set.
          */
         contextPromise: async.IThenable<void>;
@@ -295,11 +295,11 @@ module plat.processing {
          * @memberof plat.processing.ElementManager
          * @kind property
          * @access public
-         * 
+         *
          * @type {plat.async.IThenable<void>}
-         * 
+         *
          * @description
-         * A promise that is set when an {@link plat.ui.TemplateControl|TemplateControl} specifies a templateUrl 
+         * A promise that is set when an {@link plat.ui.TemplateControl|TemplateControl} specifies a templateUrl
          * and its HTML needs to be asynchronously obtained.
          */
         templatePromise: async.IThenable<void>;
@@ -310,22 +310,22 @@ module plat.processing {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
          * Determines if the associated Element has controls that need to be instantiated or Attr nodes
-         * containing text markup. If controls exist or markup is found a new 
+         * containing text markup. If controls exist or markup is found a new
          * {@link plat.processing.ElementManager|ElementManager} will be created,
-         * else an empty {@link plat.processing.NodeManager|NodeManager} will be added to the Array of 
+         * else an empty {@link plat.processing.NodeManager|NodeManager} will be added to the Array of
          * {@link plat.processing.NodeManager|NodeManagers}.
-         * 
+         *
          * @param {Element} element The Element to use to identifier markup and controls.
-         * @param {plat.processing.ElementManager} parent? The parent {@link plat.processing.ElementManager|ElementManager} 
+         * @param {plat.processing.ElementManager} parent? The parent {@link plat.processing.ElementManager|ElementManager}
          * used for context inheritance.
-         * 
+         *
          * @returns {plat.processing.ElementManager}
          */
         static create(element: Element, parent?: ElementManager): ElementManager {
-            var name = element.nodeName.toLowerCase(),
+            let name = element.nodeName.toLowerCase(),
                 nodeName = name,
                 injector = controlInjectors[name] || viewControlInjectors[name],
                 noControlAttribute = true,
@@ -345,7 +345,7 @@ module plat.processing {
             }
 
             if (!isNull(injector)) {
-                var uiControl = <ui.TemplateControl>injector.inject(),
+                let uiControl = <ui.TemplateControl>injector.inject(),
                     resourceElement = ElementManager.locateResources(element);
 
                 uiControlNode = {
@@ -362,7 +362,7 @@ module plat.processing {
                     element.setAttribute(__Control, name);
                 }
 
-                var replacementType = uiControl.replaceWith,
+                let replacementType = uiControl.replaceWith,
                     replaceWithDiv = replacementType === 'any' && noControlAttribute;
                 if (!isEmpty(replacementType) && (replacementType !== 'any' || replaceWithDiv) &&
                     replacementType.toLowerCase() !== nodeName) {
@@ -370,18 +370,18 @@ module plat.processing {
                         replacementType = 'div';
                     }
 
-                    var replacement = ElementManager._document.createElement(replacementType);
+                    let replacement = ElementManager._document.createElement(replacementType);
                     if (replacement.nodeType === Node.ELEMENT_NODE) {
                         element = replaceWith(element, <HTMLElement>replacement);
                     }
                 }
             }
 
-            var elementMap = ElementManager._collectAttributes(element.attributes),
+            let elementMap = ElementManager._collectAttributes(element.attributes),
                 manager: ElementManager = ElementManager.getInstance();
 
             elementMap.element = <HTMLElement>element;
-            
+
             if (!hasUiControl && isString(elementMap.childContext)) {
                 injector = injectableInjectors[__TemplateControlInstance];
                 hasUiControl = true;
@@ -414,17 +414,17 @@ module plat.processing {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
-         * Looks through the Node's child nodes to try and find any 
+         * Looks through the Node's child nodes to try and find any
          * defined {@link plat.ui.Resources|Resources} in a <plat-resources> tags.
-         * 
+         *
          * @param {Node} node The node whose child nodes may contain {@link plat.ui.Resources|Resources}.
-         * 
+         *
          * @returns {HTMLElement} The HTML element that represents the defined {@link plat.ui.Resources|Resources}.
          */
         static locateResources(node: Node): HTMLElement {
-            var childNodes: Array<Node> = Array.prototype.slice.call(node.childNodes),
+            let childNodes: Array<Node> = Array.prototype.slice.call(node.childNodes),
                 childNode: Node,
                 nodeName: string;
 
@@ -446,18 +446,18 @@ module plat.processing {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
          * Clones an {@link plat.processing.ElementManager|ElementManager} with a new element.
-         * 
+         *
          * @param {plat.processing.ElementManager} sourceManager The original {@link plat.processing.ElementManager|ElementManager}.
-         * @param {plat.processing.ElementManager} parent The parent {@link plat.processing.ElementManager|ElementManager} 
+         * @param {plat.processing.ElementManager} parent The parent {@link plat.processing.ElementManager|ElementManager}
          * for the new clone.
          * @param {Element} element The new element to associate with the clone.
          * @param {plat.ui.TemplateControl} newControl? An optional control to associate with the clone.
-         * @param {plat.processing.INodeMap} nodeMap? The {@link plat.processing.INodeMap} used to clone this 
+         * @param {plat.processing.INodeMap} nodeMap? The {@link plat.processing.INodeMap} used to clone this
          * {@link plat.processing.ElementManager|ElementManager}.
-         * 
+         *
          * @returns {plat.processing.ElementManager} The cloned {@link plat.processing.ElementManager|ElementManager}.
          */
         static clone(sourceManager: ElementManager, parent: ElementManager,
@@ -468,7 +468,7 @@ module plat.processing {
                     parent.getParentControl(), newControl);
             }
 
-            var manager: ElementManager = ElementManager.getInstance(),
+            let manager: ElementManager = ElementManager.getInstance(),
                 hasNewControl = !isNull(newControl);
 
             manager.nodeMap = nodeMap;
@@ -500,24 +500,24 @@ module plat.processing {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
          * Clones an {@link plat.ui.TemplateControl|TemplateControl} with a new {@link plat.processing.INodeMap|INodeMap}.
-         * 
-         * @param {plat.processing.INodeMap} sourceMap The source {@link plat.processing.INodeMap|INodeMap} used to clone the 
+         *
+         * @param {plat.processing.INodeMap} sourceMap The source {@link plat.processing.INodeMap|INodeMap} used to clone the
          * {@link plat.ui.TemplateControl|TemplateControl}.
          * @param {plat.ui.TemplateControl} parent The parent control of the clone.
-         * 
+         *
          * @returns {plat.ui.TemplateControl} The cloned {@link plat.ui.TemplateControl|TemplateControl}.
          */
         static cloneUiControl(sourceMap: INodeMap, parent: ui.TemplateControl): ui.TemplateControl {
-            var uiControlNode = sourceMap.uiControlNode;
+            let uiControlNode = sourceMap.uiControlNode;
 
             if (isNull(uiControlNode) || isNull(uiControlNode.injector)) {
                 return;
             }
 
-            var uiControl = uiControlNode.control,
+            let uiControl = uiControlNode.control,
                 newUiControl = <ui.TemplateControl>uiControlNode.injector.inject(),
                 resources = ElementManager._ResourcesFactory.getInstance(),
                 attributes: ui.Attributes = ElementManager._AttributesFactory.getInstance();
@@ -551,25 +551,25 @@ module plat.processing {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
-         * Creates new {@link plat.processing.INode|INodes} corresponding to the element 
+         * Creates new {@link plat.processing.INode|INodes} corresponding to the element
          * associated with the {@link plat.processing.INodeMap|INodeMap} or the passed-in element.
-         * 
-         * @param {plat.processing.INodeMap} nodeMap The {@link plat.processing.INodeMap|INodeMap} that contains 
+         *
+         * @param {plat.processing.INodeMap} nodeMap The {@link plat.processing.INodeMap|INodeMap} that contains
          * the attribute nodes.
-         * @param {plat.ui.TemplateControl} parent The parent {@link plat.ui.TemplateControl|TemplateControl} for 
+         * @param {plat.ui.TemplateControl} parent The parent {@link plat.ui.TemplateControl|TemplateControl} for
          * the newly created controls.
-         * @param {plat.ui.TemplateControl} templateControl? The {@link plat.ui.TemplateControl|TemplateControl} 
+         * @param {plat.ui.TemplateControl} templateControl? The {@link plat.ui.TemplateControl|TemplateControl}
          * linked to these created controls if one exists.
          * @param {Element} newElement? An optional element to use for attributes (used in cloning).
          * @param {boolean} isClone? Whether or not these controls are clones.
-         * 
+         *
          * @returns {Array<plat.processing.INode>} An array of the newly created {@link plat.processing.INode|INodes}.
          */
         static createAttributeControls(nodeMap: INodeMap, parent: ui.TemplateControl,
             templateControl?: ui.TemplateControl, newElement?: Element, isClone?: boolean): Array<INode> {
-            var nodes = nodeMap.nodes,
+            let nodes = nodeMap.nodes,
                 element = isClone === true ? newElement : nodeMap.element,
                 attributes: NamedNodeMap;
 
@@ -581,7 +581,7 @@ module plat.processing {
                 attributes = element.attributes;
             }
 
-            var attrs = nodeMap.attributes,
+            let attrs = nodeMap.attributes,
                 newAttributes: ui.Attributes,
                 node: INode,
                 injector: dependency.Injector<Control>,
@@ -640,7 +640,7 @@ module plat.processing {
 
             if (!isClone) {
                 nodes.sort((a, b): number => {
-                    var aControl = <AttributeControl>a.control,
+                    let aControl = <AttributeControl>a.control,
                         bControl = <AttributeControl>b.control;
 
                     if (isNull(aControl)) {
@@ -649,7 +649,7 @@ module plat.processing {
                         return -1;
                     }
 
-                    var aPriority = isNumber(aControl.priority) ? aControl.priority : 0,
+                    let aPriority = isNumber(aControl.priority) ? aControl.priority : 0,
                         bPriority = isNumber(bControl.priority) ? bControl.priority : 0;
 
                     return bPriority - aPriority;
@@ -680,14 +680,14 @@ module plat.processing {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
          * Returns a new instance of an {@link plat.processing.ElementManager|ElementManager}.
-         * 
+         *
          * @returns {plat.processing.ElementManager}
          */
         static getInstance(): ElementManager {
-            var manager = new ElementManager();
+            let manager = new ElementManager();
 
             manager._Promise = acquire(__Promise);
             manager._ContextManager = NodeManager._ContextManager;
@@ -706,18 +706,18 @@ module plat.processing {
          * @kind function
          * @access protected
          * @static
-         * 
+         *
          * @description
-         * Iterates over the attributes (NamedNodeMap), creating an {@link plat.processing.INodeMap|INodeMap}. 
-         * This map will contain injectors for all the {@link plat.Control|Controls} as well as parsed expressions 
+         * Iterates over the attributes (NamedNodeMap), creating an {@link plat.processing.INodeMap|INodeMap}.
+         * This map will contain injectors for all the {@link plat.Control|Controls} as well as parsed expressions
          * and identifiers found for each Attribute (useful for data binding).
-         * 
+         *
          * @param {NamedNodeMap} attributes The attributes used to create the {@link plat.processing.INodeMap|INodeMap}.
-         * 
+         *
          * @returns {plat.processing.INodeMap} The compiled {@link plat.processing.INodeMap|INodeMap}.
          */
         protected static _collectAttributes(attributes: NamedNodeMap): INodeMap {
-            var nodes: Array<INode> = [],
+            let nodes: Array<INode> = [],
                 attribute: Attr,
                 name: string,
                 value: string,
@@ -783,17 +783,17 @@ module plat.processing {
          * @kind function
          * @access protected
          * @static
-         * 
+         *
          * @description
          * Used to copy the attribute nodes during the cloning process.
-         * 
-         * @param {Array<plat.processing.INode>} nodes The compiled {@link plat.processing.INode|INodes} 
+         *
+         * @param {Array<plat.processing.INode>} nodes The compiled {@link plat.processing.INode|INodes}
          * to be cloned.
-         * 
+         *
          * @returns {Array<plat.processing.INode>} The cloned array of {@link plat.processing.INode|INodes}.
          */
         protected static _copyAttributeNodes(nodes: Array<INode>): Array<INode> {
-            var newNodes: Array<INode> = [],
+            let newNodes: Array<INode> = [],
                 length = nodes.length,
                 node: INode;
 
@@ -814,14 +814,14 @@ module plat.processing {
          * @kind function
          * @access protected
          * @static
-         * 
+         *
          * @description
          * Clones an {@link plat.processing.INode|INode} with a new node.
-         * 
+         *
          * @param {plat.processing.INode} sourceNode The original {@link plat.processing.INode|INode}.
          * @param {Node} node The new node used for cloning.
          * @param {plat.ui.TemplateControl} newControl? An optional new control to associate with the cloned node.
-         * 
+         *
          * @returns {plat.processing.INode} The cloned {@link plat.processing.INode|INode}.
          */
         protected static _cloneNode(sourceNode: INode, node: Node, newControl?: ui.TemplateControl): INode {
@@ -840,22 +840,22 @@ module plat.processing {
          * @kind function
          * @access protected
          * @static
-         * 
+         *
          * @description
          * Clones an {@link plat.processing.INodeMap|INodeMap} with a new element.
-         * 
+         *
          * @param {plat.processing.INodeMap} sourceMap The original {@link plat.processing.INodeMap|INodeMap}.
          * @param {Element} element The new Element used for cloning.
-         * @param {plat.ui.TemplateControl} parent The {@link plat.ui.TemplateControl|TemplateControl} associated 
-         * with the parent {@link plat.processing.ElementManager|ElementManager}. 
-         * @param {plat.ui.TemplateControl} newControl? An optional new {@link plat.ui.TemplateControl|TemplateControl} 
+         * @param {plat.ui.TemplateControl} parent The {@link plat.ui.TemplateControl|TemplateControl} associated
+         * with the parent {@link plat.processing.ElementManager|ElementManager}.
+         * @param {plat.ui.TemplateControl} newControl? An optional new {@link plat.ui.TemplateControl|TemplateControl}
          * to associate with the element.
-         * 
+         *
          * @returns {plat.processing.INodeMap} The cloned {@link plat.processing.INodeMap|INodeMap}.
          */
         protected static _cloneNodeMap(sourceMap: INodeMap, element: Element,
             parent: ui.TemplateControl, newControl?: ui.TemplateControl): INodeMap {
-            var hasControl = sourceMap.hasControl,
+            let hasControl = sourceMap.hasControl,
                 nodeMap: INodeMap = {
                     attributes: sourceMap.attributes,
                     childContext: sourceMap.childContext,
@@ -878,18 +878,18 @@ module plat.processing {
          * @memberof plat.processing.ElementManager
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Clones the {@link plat.processing.ElementManager|ElementManager} with a new node.
-         * 
+         *
          * @param {Node} newNode The new element used to clone the ElementManager.
          * @param {plat.processing.ElementManager} parentManager The parent manager for the clone.
          * @param {plat.processing.INodeMap} nodeMap? An optional INodeMap to clone a ui control if needed.
-         * 
+         *
          * @returns {number} The number of nodes to advance while node traversal is in progress.
          */
         clone(newNode: Node, parentManager: ElementManager, nodeMap?: INodeMap): number {
-            var childNodes: Array<Node>,
+            let childNodes: Array<Node>,
                 clonedManager: ElementManager,
                 replace = this.replace,
                 children = this.children,
@@ -908,7 +908,7 @@ module plat.processing {
 
             if (replace) {
                 // definitely have newControl
-                var nodes = newNode.parentNode.childNodes,
+                let nodes = newNode.parentNode.childNodes,
                     arrayProto = Array.prototype,
                     startIndex = arrayProto.indexOf.call(nodes, newNode);
 
@@ -940,7 +940,7 @@ module plat.processing {
                 }
             }
 
-            var length = children.length,
+            let length = children.length,
                 childNodeOffset = 0;
 
             for (var i = 0; i < length; ++i) {
@@ -963,25 +963,25 @@ module plat.processing {
          * @memberof plat.processing.ElementManager
          * @kind function
          * @access public
-         * 
+         *
          * @description
-         * Initializes both the manager itself and all the controls associated to the manager's 
+         * Initializes both the manager itself and all the controls associated to the manager's
          * {@link plat.processing.INodeMap|INodeMap}.
-         * 
-         * @param {plat.processing.INodeMap} nodeMap A map of the nodes (element and attributes) 
+         *
+         * @param {plat.processing.INodeMap} nodeMap A map of the nodes (element and attributes)
          * associated with this {@link plat.processing.ElementManager|ElementManager}.
-         * @param {plat.processing.ElementManager} parent The parent 
+         * @param {plat.processing.ElementManager} parent The parent
          * {@link plat.processing.ElementManager|ElementManager}.
-         * @param {boolean} dontInitialize? Specifies whether or not the initialize method should 
-         * be called for a {@link plat.ui.TemplateControl|TemplateControl} if one is attached 
+         * @param {boolean} dontInitialize? Specifies whether or not the initialize method should
+         * be called for a {@link plat.ui.TemplateControl|TemplateControl} if one is attached
          * to this {@link plat.processing.ElementManager|ElementManager}.
-         * 
+         *
          * @returns {void}
          */
         initialize(nodeMap: INodeMap, parent: ElementManager, dontInitialize?: boolean): void {
             super.initialize(nodeMap, parent);
 
-            var controlNode = nodeMap.uiControlNode,
+            let controlNode = nodeMap.uiControlNode,
                 hasUiControl = !isNull(controlNode),
                 control: ui.TemplateControl;
 
@@ -1005,22 +1005,22 @@ module plat.processing {
          * @memberof plat.processing.ElementManager
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Links the data context to the DOM (data-binding).
-         * 
-         * @returns {Array<plat.Control>} An array of the controls contained within this 
-         * {@link plat.processing.ElementManager|ElementManager's} associated 
+         *
+         * @returns {Array<plat.Control>} An array of the controls contained within this
+         * {@link plat.processing.ElementManager|ElementManager's} associated
          * {@link plat.processing.INodeMap|INodeMap}.
          */
         bind(): Array<Control> {
-            var nodeMap = this.nodeMap,
+            let nodeMap = this.nodeMap,
                 parent = this.getParentControl(),
                 controlNode = nodeMap.uiControlNode,
                 controls: Array<Control> = [];
 
             if (!isNull(controlNode)) {
-                var uiControl = controlNode.control,
+                let uiControl = controlNode.control,
                     childContext = nodeMap.childContext,
                     getManager = this._ContextManager.getManager,
                     contextManager: observable.ContextManager,
@@ -1032,13 +1032,13 @@ module plat.processing {
 
                 if (inheritsContext && !isNull(childContext)) {
                     if (childContext[0] === '@') {
-                        var split = childContext.split('.'),
+                        let split = childContext.split('.'),
                             topIdentifier = split.shift(),
                             alias = topIdentifier.slice(1),
                             resourceObj = _TemplateControlFactory.findResource(uiControl, alias);
 
                         if (isObject(resourceObj)) {
-                            var resource = resourceObj.resource;
+                            let resource = resourceObj.resource;
                             childContext = (split.length > 0 ? ('.' + split.join('.')) : '');
 
                             if (alias === __CONTEXT_RESOURCE) {
@@ -1066,7 +1066,7 @@ module plat.processing {
 
                 contextManager = getManager(uiControl.root);
 
-                var awaitContext = false;
+                let awaitContext = false;
 
                 if (inheritsContext) {
                     uiControl.context = contextManager.getContext(absoluteContextPath.split('.'), false);
@@ -1077,7 +1077,7 @@ module plat.processing {
 
                 if (awaitContext) {
                     this.contextPromise = new this._Promise<void>((resolve, reject): void => {
-                        var removeListener = contextManager.observe(absoluteContextPath, {
+                        let removeListener = contextManager.observe(absoluteContextPath, {
                             uid: uiControl.uid,
                             listener: (newValue, oldValue): void => {
                                 if (isUndefined(newValue)) {
@@ -1105,22 +1105,22 @@ module plat.processing {
          * @memberof plat.processing.ElementManager
          * @kind function
          * @access public
-         * 
+         *
          * @description
-         * Sets the template for an manager by obtaining any needed HTML templates and 
-         * calling its associated {@link plat.ui.TemplateControl|TemplateControl's} 
+         * Sets the template for an manager by obtaining any needed HTML templates and
+         * calling its associated {@link plat.ui.TemplateControl|TemplateControl's}
          * setTemplate method.
-         * 
-         * @param {string} templateUrl? The URL for the associated {@link plat.ui.TemplateControl|TemplateControl's} 
+         *
+         * @param {string} templateUrl? The URL for the associated {@link plat.ui.TemplateControl|TemplateControl's}
          * HTML template.
-         * 
+         *
          * @returns {void}
          */
         setUiControlTemplate(templateUrl?: string): void {
-            var controlNode = this.nodeMap.uiControlNode;
+            let controlNode = this.nodeMap.uiControlNode;
 
             if (!isNull(controlNode)) {
-                var control = controlNode.control;
+                let control = controlNode.control;
 
                 this.templatePromise = this._TemplateControlFactory.determineTemplate(control, templateUrl).then((template): void => {
                     this.templatePromise = null;
@@ -1128,7 +1128,7 @@ module plat.processing {
                 }, (error: any): void => {
                         this.templatePromise = null;
                         if (isNull(error)) {
-                            var template: DocumentFragment = error;
+                            let template: DocumentFragment = error;
 
                             if (this._BindableTemplatesFactory.isBoundControl(control)) {
                                 template = <DocumentFragment>appendChildren(control.element.childNodes);
@@ -1161,16 +1161,16 @@ module plat.processing {
          * @memberof plat.processing.ElementManager
          * @kind function
          * @access public
-         * 
+         *
          * @description
-         * Retrieves the {@link plat.ui.TemplateControl|TemplateControl} instance 
+         * Retrieves the {@link plat.ui.TemplateControl|TemplateControl} instance
          * associated with this {@link plat.processing.ElementManager|ElementManager}.
-         * 
-         * @returns {plat.ui.TemplateControl} The {@link plat.ui.TemplateControl|TemplateControl} instance 
+         *
+         * @returns {plat.ui.TemplateControl} The {@link plat.ui.TemplateControl|TemplateControl} instance
          * associated with this {@link plat.processing.ElementManager|ElementManager}.
          */
         getUiControl(): ui.TemplateControl {
-            var uiControlNode = this.nodeMap.uiControlNode;
+            let uiControlNode = this.nodeMap.uiControlNode;
             if (isNull(uiControlNode)) {
                 return;
             }
@@ -1183,12 +1183,12 @@ module plat.processing {
          * @memberof plat.processing.ElementManager
          * @kind function
          * @access public
-         * 
+         *
          * @description
-         * Fullfills any template promises and finishes the compile phase for the HTML template associated 
+         * Fullfills any template promises and finishes the compile phase for the HTML template associated
          * with this {@link plat.processing.ElementManager|ElementManager}.
-         * 
-         * @returns {plat.async.IThenable<void>} A promise that resolves when this manager's template and all 
+         *
+         * @returns {plat.async.IThenable<void>} A promise that resolves when this manager's template and all
          * child manager's templates have been fulfilled.
          */
         fulfillTemplate(): async.IThenable<void> {
@@ -1206,11 +1206,11 @@ module plat.processing {
          * @memberof plat.processing.ElementManager
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Fulfills the template promise prior to binding and loading the control.
-         * 
-         * @returns {plat.async.IThenable<void>} A promise that fulfills when this manager and 
+         *
+         * @returns {plat.async.IThenable<void>} A promise that fulfills when this manager and
          * its associated controls are bound and loaded.
          */
         fulfillAndLoad(): async.IThenable<void> {
@@ -1232,15 +1232,15 @@ module plat.processing {
          * @memberof plat.processing.ElementManager
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Binds context to the DOM and loads controls.
-         * 
-         * @returns {plat.async.IThenable<void>} A promise that resolves when this manager's controls and all 
+         *
+         * @returns {plat.async.IThenable<void>} A promise that resolves when this manager's controls and all
          * child manager's controls have been bound and loaded.
          */
         bindAndLoad(): async.IThenable<void> {
-            var controls = this.bind(),
+            let controls = this.bind(),
                 promise: async.IThenable<Array<void>>;
 
             if (isPromise(this.contextPromise)) {
@@ -1269,15 +1269,15 @@ module plat.processing {
          * @memberof plat.processing.ElementManager
          * @kind function
          * @access public
-         * 
+         *
          * @description
-         * Observes the root context for controls that specify their own context, and initiates 
+         * Observes the root context for controls that specify their own context, and initiates
          * a load upon a successful set of the context.
-         * 
+         *
          * @param {plat.ui.TemplateControl} root The {@link plat.ui.TemplateControl|TemplateControl} specifying its own context.
-         * @param {() => async.IThenable<void>} loadMethod The function to initiate the loading of the root control and its 
+         * @param {() => async.IThenable<void>} loadMethod The function to initiate the loading of the root control and its
          * children.
-         * 
+         *
          * @returns {plat.async.IThenable<void>} A promise that fulfills when the context has been set on the control.
          */
         observeRootContext(root: ui.TemplateControl, loadMethod: () => async.IThenable<void>): async.IThenable<void> {
@@ -1287,7 +1287,7 @@ module plat.processing {
             }
 
             return new this._Promise<void>((resolve): void => {
-                var removeListener = this._ContextManager.getManager(root).observe(__CONTEXT, {
+                let removeListener = this._ContextManager.getManager(root).observe(__CONTEXT, {
                     listener: (): void => {
                         removeListener();
                         loadMethod().then(resolve);
@@ -1310,18 +1310,18 @@ module plat.processing {
          * @memberof plat.processing.ElementManager
          * @kind function
          * @access protected
-         * 
+         *
          * @description
-         * Finalizes all the properties on an {@link plat.ui.TemplateControl|TemplateControl} 
+         * Finalizes all the properties on an {@link plat.ui.TemplateControl|TemplateControl}
          * before loading.
-         * 
+         *
          * @param {plat.ui.TemplateControl} uiControl The control to finalize.
          * @param {string} absoluteContextPath The absoluteContextPath of the uiControl.
-         * 
+         *
          * @returns {void}
          */
         protected _beforeLoad(uiControl: ui.TemplateControl, absoluteContextPath: string): void {
-            var contextManager = this._ContextManager.getManager(uiControl.root),
+            let contextManager = this._ContextManager.getManager(uiControl.root),
                 _TemplateControlFactory = this._TemplateControlFactory;
 
             (<any>uiControl).zCC__plat = contextManager.observe(absoluteContextPath, {
@@ -1342,15 +1342,15 @@ module plat.processing {
          * @memberof plat.processing.ElementManager
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Binds context to the DOM and calls bindAndLoad on all children.
-         * 
-         * @returns {plat.async.IThenable<void[]>} A promise that resolves when this manager's controls and all 
+         *
+         * @returns {plat.async.IThenable<void[]>} A promise that resolves when this manager's controls and all
          * child manager's controls have been bound and loaded.
          */
         protected _bindChildren(): async.IThenable<void[]> {
-            var children = this.children,
+            let children = this.children,
                 length = children.length,
                 child: ElementManager,
                 promises: Array<async.IThenable<void>> = [];
@@ -1379,20 +1379,20 @@ module plat.processing {
          * @memberof plat.processing.ElementManager
          * @kind function
          * @access protected
-         * 
+         *
          * @description
-         * Loads the potential attribute based controls associated with this 
-         * {@link plat.processing.ElementManager|ElementManager} and 
+         * Loads the potential attribute based controls associated with this
+         * {@link plat.processing.ElementManager|ElementManager} and
          * attaches the corresponding {@link plat.ui.TemplateControl|TemplateControl} if available.
-         * 
+         *
          * @param {Array<plat.AttributeControl>} controls The array of attribute based controls to load.
-         * @param {plat.ui.TemplateControl} templateControl The {@link plat.ui.TemplateControl|TemplateControl} 
+         * @param {plat.ui.TemplateControl} templateControl The {@link plat.ui.TemplateControl|TemplateControl}
          * associated with this manager.
-         * 
+         *
          * @returns {void}
          */
         protected _loadControls(controls: Array<AttributeControl>, templateControl: ui.TemplateControl): async.IThenable<void> {
-            var length = controls.length,
+            let length = controls.length,
                 control: AttributeControl,
                 load = this._ControlFactory.load,
                 templateControlLoaded = isNull(templateControl),
@@ -1404,7 +1404,7 @@ module plat.processing {
                 // don't need to set templateControlPriority because it will never be checked.
                 i = 0;
             } else {
-                var priority = templateControl.priority;
+                let priority = templateControl.priority;
                 templateControlPriority = isNumber(priority) ? priority : 100;
                 i = 1;
             }
@@ -1433,15 +1433,15 @@ module plat.processing {
          * @memberof plat.processing.ElementManager
          * @kind function
          * @access protected
-         * 
+         *
          * @description
-         * Populates the {@link plat.ui.TemplateControl|TemplateControl} properties associated with this manager  
+         * Populates the {@link plat.ui.TemplateControl|TemplateControl} properties associated with this manager
          * if one exists.
-         * 
+         *
          * @returns {void}
          */
         protected _populateUiControl(): void {
-            var nodeMap = this.nodeMap,
+            let nodeMap = this.nodeMap,
                 parent = this.getParentControl(),
                 controlNode = nodeMap.uiControlNode,
                 uiControl = controlNode.control,
@@ -1500,19 +1500,19 @@ module plat.processing {
          * @memberof plat.processing.ElementManager
          * @kind function
          * @access protected
-         * 
+         *
          * @description
-         * Removes the {@link plat.ui.TemplateControl|TemplateControl's} element. Called if its replaceWith property is 
+         * Removes the {@link plat.ui.TemplateControl|TemplateControl's} element. Called if its replaceWith property is
          * null or empty string.
-         * 
-         * @param {plat.ui.TemplateControl} control The {@link plat.ui.TemplateControl|TemplateControl} whose element 
+         *
+         * @param {plat.ui.TemplateControl} control The {@link plat.ui.TemplateControl|TemplateControl} whose element
          * will be removed.
          * @param {plat.processing.INodeMap} nodeMap The {@link plat.processing.INodeMap|INodeMap} associated with this manager.
-         * 
+         *
          * @returns {void}
          */
         protected _replaceElement(control: ui.TemplateControl, nodeMap: INodeMap): void {
-            var element = nodeMap.element,
+            let element = nodeMap.element,
                 parentNode = element.parentNode,
                 _document = ElementManager._document,
                 controlType = control.type,
@@ -1536,25 +1536,25 @@ module plat.processing {
          * @memberof plat.processing.ElementManager
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Initializes a control's template and compiles the control.
-         * 
-         * @param {plat.ui.TemplateControl} uiControl The {@link plat.ui.TemplateControl|TemplateControl} 
+         *
+         * @param {plat.ui.TemplateControl} uiControl The {@link plat.ui.TemplateControl|TemplateControl}
          * associated with this manager.
-         * @param {DocumentFragment} template The associated {@link plat.ui.TemplateControl|TemplateControl's} 
+         * @param {DocumentFragment} template The associated {@link plat.ui.TemplateControl|TemplateControl's}
          * template.
-         * 
+         *
          * @returns {void}
          */
         protected _initializeControl(uiControl: ui.TemplateControl, template: DocumentFragment): void {
-            var element = this.nodeMap.element,
+            let element = this.nodeMap.element,
                 // have to check if null since isNull checks for undefined case
                 replaceElement = this.replace,
                 endNode: Node;
 
             if (!isNull(template)) {
-                var resourceElement = ElementManager.locateResources(template);
+                let resourceElement = ElementManager.locateResources(template);
 
                 if (!isNull(resourceElement)) {
                     uiControl.resources.add(ElementManager._ResourcesFactory.parseElement(resourceElement));
@@ -1575,7 +1575,7 @@ module plat.processing {
 
             if (replaceElement) {
                 this._compiler.compile(uiControl.elementNodes, uiControl);
-                var startNode = uiControl.startNode,
+                let startNode = uiControl.startNode,
                     parentNode = startNode.parentNode,
                     childNodes: Array<Node> = Array.prototype.slice.call(parentNode.childNodes);
 
@@ -1597,19 +1597,19 @@ module plat.processing {
          * @memberof plat.processing.ElementManager
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Observes the identifiers associated with this manager's {@link plat.processing.INode|INodes}.
-         * 
+         *
          * @param {Array<plat.processing.INode>} nodes The array of {@link plat.processing.INode|INodes} to iterate through.
          * @param {plat.ui.TemplateControl} parent The parent {@link plat.ui.TemplateControl|TemplateControl} for context.
-         * @param {Array<plat.Control>} controls The array of controls whose attributes will need to be updated 
+         * @param {Array<plat.Control>} controls The array of controls whose attributes will need to be updated
          * upon the context changing.
-         * 
+         *
          * @returns {void}
          */
         protected _observeControlIdentifiers(nodes: Array<INode>, parent: ui.TemplateControl, controls: Array<Control>, element: Element): void {
-            var length = nodes.length,
+            let length = nodes.length,
                 hasParent = !isNull(parent),
                 node: INode,
                 control: Control,
@@ -1645,15 +1645,15 @@ module plat.processing {
          * @memberof plat.processing.ElementManager
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Runs through all the children of this manager and calls fulfillTemplate.
-         * 
-         * @returns {plat.async.IThenable<void>} A promise that fullfills when all 
+         *
+         * @returns {plat.async.IThenable<void>} A promise that fullfills when all
          * child managers have fullfilled their templates.
          */
         protected _fulfillChildTemplates(): async.IThenable<void> {
-            var children = this.children,
+            let children = this.children,
                 child: ElementManager,
                 length = children.length,
                 promises: Array<async.IThenable<void>> = [];
@@ -1711,7 +1711,7 @@ module plat.processing {
      * @name IElementManagerFactory
      * @memberof plat.processing
      * @kind interface
-     * 
+     *
      * @description
      * Creates and manages a class for dealing with Element nodes.
      */
@@ -1722,18 +1722,18 @@ module plat.processing {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
          * Determines if the associated Element has controls that need to be instantiated or Attr nodes
-         * containing text markup. If controls exist or markup is found a new 
+         * containing text markup. If controls exist or markup is found a new
          * {@link plat.processing.ElementManager|ElementManager} will be created,
-         * else an empty {@link plat.processing.NodeManager|NodeManager} will be added to the Array of 
+         * else an empty {@link plat.processing.NodeManager|NodeManager} will be added to the Array of
          * {@link plat.processing.NodeManager|NodeManagers}.
-         * 
+         *
          * @param {Element} element The Element to use to identifier markup and controls.
-         * @param {plat.processing.ElementManager} parent? The parent {@link plat.processing.ElementManager|ElementManager} 
+         * @param {plat.processing.ElementManager} parent? The parent {@link plat.processing.ElementManager|ElementManager}
          * used for context inheritance.
-         * 
+         *
          * @returns {plat.processing.ElementManager}
          */
         create(element: Element, parent?: ElementManager): ElementManager;
@@ -1744,20 +1744,20 @@ module plat.processing {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
-         * Creates new {@link plat.processing.INode|INodes} corresponding to the element 
+         * Creates new {@link plat.processing.INode|INodes} corresponding to the element
          * associated with the {@link plat.processing.INodeMap|INodeMap} or the passed-in element.
-         * 
-         * @param {plat.processing.INodeMap} nodeMap The {@link plat.processing.INodeMap|INodeMap} that contains 
+         *
+         * @param {plat.processing.INodeMap} nodeMap The {@link plat.processing.INodeMap|INodeMap} that contains
          * the attribute nodes.
-         * @param {plat.ui.TemplateControl} parent The parent {@link plat.ui.TemplateControl|TemplateControl} for 
+         * @param {plat.ui.TemplateControl} parent The parent {@link plat.ui.TemplateControl|TemplateControl} for
          * the newly created controls.
-         * @param {plat.ui.TemplateControl} templateControl? The {@link plat.ui.TemplateControl|TemplateControl} 
+         * @param {plat.ui.TemplateControl} templateControl? The {@link plat.ui.TemplateControl|TemplateControl}
          * linked to these created controls if one exists.
          * @param {Element} newElement? An optional element to use for attributes (used in cloning).
          * @param {boolean} isClone? Whether or not these controls are clones.
-         * 
+         *
          * @returns {Array<plat.processing.INode>} An array of the newly created {@link plat.processing.INode|INodes}.
          */
         createAttributeControls(nodeMap: INodeMap, parent: ui.TemplateControl,
@@ -1769,14 +1769,14 @@ module plat.processing {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
          * Clones an {@link plat.ui.TemplateControl|TemplateControl} with a new {@link plat.processing.INodeMap|INodeMap}.
-         * 
-         * @param {plat.processing.INodeMap} sourceMap The source {@link plat.processing.INodeMap|INodeMap} used to clone the 
+         *
+         * @param {plat.processing.INodeMap} sourceMap The source {@link plat.processing.INodeMap|INodeMap} used to clone the
          * {@link plat.ui.TemplateControl|TemplateControl}.
          * @param {plat.ui.TemplateControl} parent The parent control of the clone.
-         * 
+         *
          * @returns {plat.ui.TemplateControl} The cloned {@link plat.ui.TemplateControl|TemplateControl}.
          */
         cloneUiControl(sourceMap: INodeMap, parent: ui.TemplateControl): ui.TemplateControl;
@@ -1787,18 +1787,18 @@ module plat.processing {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
          * Clones an {@link plat.processing.ElementManager|ElementManager} with a new element.
-         * 
+         *
          * @param {plat.processing.ElementManager} sourceManager The original {@link plat.processing.ElementManager|ElementManager}.
-         * @param {plat.processing.ElementManager} parent The parent {@link plat.processing.ElementManager|ElementManager} 
+         * @param {plat.processing.ElementManager} parent The parent {@link plat.processing.ElementManager|ElementManager}
          * for the new clone.
          * @param {Element} element The new element to associate with the clone.
          * @param {plat.ui.TemplateControl} newControl? An optional control to associate with the clone.
-         * @param {plat.processing.INodeMap} nodeMap? The {@link plat.processing.INodeMap} used to clone this 
+         * @param {plat.processing.INodeMap} nodeMap? The {@link plat.processing.INodeMap} used to clone this
          * {@link plat.processing.ElementManager|ElementManager}.
-         * 
+         *
          * @returns {plat.processing.ElementManager} The cloned {@link plat.processing.ElementManager|ElementManager}.
          */
         clone(sourceManager: ElementManager, parent: ElementManager,
@@ -1810,13 +1810,13 @@ module plat.processing {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
-         * Looks through the Node's child nodes to try and find any 
+         * Looks through the Node's child nodes to try and find any
          * defined {@link plat.ui.Resources|Resources} in a <plat-resources> tags.
-         * 
+         *
          * @param {Node} node The node whose child nodes may contain {@link plat.ui.Resources|Resources}.
-         * 
+         *
          * @returns {HTMLElement} The HTML element that represents the defined {@link plat.ui.Resources|Resources}.
          */
         locateResources(node: Node): HTMLElement;
@@ -1827,10 +1827,10 @@ module plat.processing {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
          * Returns a new instance of an {@link plat.processing.ElementManager|ElementManager}.
-         * 
+         *
          * @returns {plat.processing.ElementManager}
          */
         getInstance(): ElementManager;

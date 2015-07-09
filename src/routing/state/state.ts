@@ -5,12 +5,12 @@
      * @name State
      * @memberof plat.routing
      * @kind class
-     * 
+     *
      * @description
-     * Route segment matching is done using a state machine. Each state contains 
-     * a specification indicating valid and invalid characters. Each State has a 
-     * list of potential next states. When matching a route segment you start with 
-     * a root state and then iteratively match next states until you complete the 
+     * Route segment matching is done using a state machine. Each state contains
+     * a specification indicating valid and invalid characters. Each State has a
+     * list of potential next states. When matching a route segment you start with
+     * a root state and then iteratively match next states until you complete the
      * segment or invalidate the segment.
      */
     export class State {
@@ -19,9 +19,9 @@
          * @memberof plat.routing.State
          * @kind property
          * @access public
-         * 
+         *
          * @type {Array<plat.routing.State>}
-         * 
+         *
          * @description
          * The possible next states for the current state.
          */
@@ -32,11 +32,11 @@
          * @memberof plat.routing.State
          * @kind property
          * @access public
-         * 
+         *
          * @type {Array<plat.routing.ICharacterSpecification>}
-         * 
+         *
          * @description
-         * The {@link plat.routing.ICharacterSpecification|specification} for the 
+         * The {@link plat.routing.ICharacterSpecification|specification} for the
          * assigned route segment for this state.
          */
         specification: ICharacterSpecification;
@@ -46,11 +46,11 @@
          * @memberof plat.routing.State
          * @kind property
          * @access public
-         * 
+         *
          * @type {Array<plat.routing.IDelegateParameterNames>}
-         * 
+         *
          * @description
-         * The associated {@link plat.routing.IDelegateParameterNames|delegate} objects for this 
+         * The associated {@link plat.routing.IDelegateParameterNames|delegate} objects for this
          * state, with their parameter names.
          */
         delegates: Array<IDelegateParameterNames>;
@@ -60,9 +60,9 @@
          * @memberof plat.routing.State
          * @kind property
          * @access public
-         * 
+         *
          * @type {RegExp}
-         * 
+         *
          * @description
          * A regular expression to match this state to a path.
          */
@@ -73,11 +73,11 @@
          * @memberof plat.routing.State
          * @kind property
          * @access public
-         * 
+         *
          * @type {Array<plat.routing.ISegmentTypeCount>}
-         * 
+         *
          * @description
-         * The totals for the different segment {@link plat.routing.ISegmentTypeCount|types} 
+         * The totals for the different segment {@link plat.routing.ISegmentTypeCount|types}
          * for this state.
          */
         types: ISegmentTypeCount;
@@ -88,13 +88,13 @@
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
          * Compiles a {@link plat.routing.BaseSegment|segment} into a state tree.
-         * 
+         *
          * @param {plat.routing.BaseSegment} segment The segment to compile.
          * @param {plat.routing.State} state The initial state with which to start compilation.
-         * 
+         *
          * @returns {plat.routing.State} The final state reached for the compiled segment.
          */
         static compile(segment: BaseSegment, state: State): State {
@@ -109,17 +109,17 @@
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
          * Links a path to a compiled state, and returns the {@link plat.routing.IRecognizeResult|result}.
-         * 
+         *
          * @param {plat.routing.State} state The state with which to link the result.
          * @param {string} path The path to link to the given state.
-         * 
+         *
          * @returns {plat.routing.IRecognizeResult} The result from the linking.
          */
         static link(state: State, path: string): IRecognizeResult {
-            var delegates: Array<IDelegateParameterNames> = state.delegates,
+            let delegates: Array<IDelegateParameterNames> = state.delegates,
                 regex = state.regex,
                 length = delegates.length,
                 matches = path.match(regex),
@@ -131,7 +131,7 @@
                 jLength: number,
                 delegate: IDelegateParameterNames;
 
-            for (var i = 0; i < length; ++i) {
+            for (let i = 0; i < length; ++i) {
                 delegate = delegates[i];
                 names = delegate.names;
                 parameters = {};
@@ -156,21 +156,21 @@
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
          * Finds all the next states for a given character.
-         * 
+         *
          * @param {string} char The character used to match next states.
          * @param {Array<plat.routing.State>} states The states with which to match the character.
-         * 
+         *
          * @returns {Array<plat.routing.State>} The matched next states.
          */
         static recognize(char: string, states: Array<State>): Array<State> {
-            var nextStates: Array<State> = [],
+            let nextStates: Array<State> = [],
                 length = states.length,
                 state: State;
 
-            for (var i = 0; i < length; ++i) {
+            for (let i = 0; i < length; ++i) {
                 state = states[i];
 
                 nextStates = nextStates.concat(state.match(char));
@@ -185,17 +185,17 @@
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
          * Sorts states by statics/dynamics/splats.
-         * 
-         * Favors less splat (*) segments 
+         *
+         * Favors less splat (*) segments
          * Favors less dynamic (:) segments
          * Favors more static segments
-         * 
-         * 
+         *
+         *
          * @param {Array<plat.routing.State>} states The states to sort.
-         * 
+         *
          * @returns {Array<plat.routing.State>} The sorted states.
          */
         static sort(states: Array<State>): Array<State> {
@@ -203,7 +203,7 @@
                 return states;
             }
 
-            var aTypes: ISegmentTypeCount,
+            let aTypes: ISegmentTypeCount,
                 aSplats: number,
                 aStatics: number,
                 aDynamics: number,
@@ -254,10 +254,10 @@
          * @memberof plat.routing.State
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * The constructor for a State.
-         * 
+         *
          * @returns {plat.routing.State}
          */
         constructor() {
@@ -269,12 +269,12 @@
          * @memberof plat.routing.State
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Initializes the state with the given {@link plat.routing.ICharacterSpecification|specification}.
-         * 
+         *
          * @param {plat.routing.ICharacterSpecification} specification? The character specification for the state.
-         * 
+         *
          * @returns {void}
          */
         initialize(specification?: ICharacterSpecification): void {
@@ -287,18 +287,18 @@
          * @memberof plat.routing.State
          * @kind function
          * @access public
-         * 
+         *
          * @description
-         * Adds a new {@link plat.routing.ICharacterSpecification|specification} to the next states. If the specification 
+         * Adds a new {@link plat.routing.ICharacterSpecification|specification} to the next states. If the specification
          * already exists as a next state a new one won't be used.
-         * 
-         * @param {plat.routing.ICharacterSpecification} specification? The character specification used to create 
+         *
+         * @param {plat.routing.ICharacterSpecification} specification? The character specification used to create
          * the next state if necessary.
-         * 
+         *
          * @returns {plat.routing.State} A state with the given specification.
          */
         add(specification: ICharacterSpecification): State {
-            var state = this._find(specification);
+            let state = this._find(specification);
 
             if (isObject(state)) {
                 return state;
@@ -321,19 +321,19 @@
          * @memberof plat.routing.State
          * @kind function
          * @access public
-         * 
+         *
          * @description
-         * Finds next states that match the input character. If the character exists 
-         * in the state's specification for valid characters, or if it does not 
-         * exist in the specification for invalid characters, then the state is considered 
+         * Finds next states that match the input character. If the character exists
+         * in the state's specification for valid characters, or if it does not
+         * exist in the specification for invalid characters, then the state is considered
          * a match.
-         * 
+         *
          * @param {string} char The character with which to match next states.
-         * 
+         *
          * @returns {Array<plat.routing.State>} The matching states.
          */
         match(char: string): Array<State> {
-            var matches: Array<State> = [],
+            let matches: Array<State> = [],
                 spec: ICharacterSpecification,
                 chars: string;
 
@@ -362,18 +362,18 @@
          * @memberof plat.routing.State
          * @kind function
          * @access protected
-         * 
+         *
          * @description
-         * Finds the next state that shares the same {@link plat.routing.ICharacterSpecification|specification} 
+         * Finds the next state that shares the same {@link plat.routing.ICharacterSpecification|specification}
          * as the input spec.
-         * 
-         * @param {plat.routing.ICharacterSpecification} spec The character specification used to find 
+         *
+         * @param {plat.routing.ICharacterSpecification} spec The character specification used to find
          * the next state.
-         * 
+         *
          * @returns {Array<plat.routing.State>} The matching states.
          */
         protected _find(spec: ICharacterSpecification): State {
-            var validChars = spec.validCharacters,
+            let validChars = spec.validCharacters,
                 invalidChars = spec.invalidCharacters,
                 s: ICharacterSpecification,
                 found: State;
@@ -397,14 +397,14 @@
          * @kind function
          * @access protected
          * @variation 0
-         * 
+         *
          * @description
-         * Iterates through the next states and calls the input callback with each state. Acts like 
+         * Iterates through the next states and calls the input callback with each state. Acts like
          * {@link plat.Utils.some|Utils.some}. If the callback returns true, it will break out of the loop.
-         * 
-         * @param {(child: plat.routing.State) => boolean} iterator The function with which to call for each 
+         *
+         * @param {(child: plat.routing.State) => boolean} iterator The function with which to call for each
          * State. Can return true to break out of the loop
-         * 
+         *
          * @returns {boolean} Whether or not the loop was escaped.
          */
         protected _someChildren(iterator: (child: State) => boolean): boolean;
@@ -414,21 +414,21 @@
          * @kind function
          * @access protected
          * @variation 1
-         * 
+         *
          * @description
          * Iterates through the next states and calls the input callback with each state.
-         * 
-         * @param {(child: plat.routing.State) => void} iterator The function with which to call for each 
+         *
+         * @param {(child: plat.routing.State) => void} iterator The function with which to call for each
          * State.
-         * 
+         *
          * @returns {boolean}
          */
         protected _someChildren(iterator: (child: State) => void): boolean;
         protected _someChildren(iterator: (child: State) => any): boolean {
-            var nextStates = this.nextStates,
+            let nextStates = this.nextStates,
                 length = nextStates.length;
 
-            for (var i = 0; i < length; ++i) {
+            for (let i = 0; i < length; ++i) {
                 if (iterator(nextStates[i]) === true) {
                     return true;
                 }
@@ -452,9 +452,9 @@
      * @name IDelegateParameterNames
      * @memberof plat.routing
      * @kind interface
-     * 
+     *
      * @description
-     * Contains a delegate and its associated segment names. Used for populating 
+     * Contains a delegate and its associated segment names. Used for populating
      * the parameters in an {@link plat.routing.IDelegateInfo|IDelegateInfo} object.
      */
     export interface IDelegateParameterNames {
@@ -462,9 +462,9 @@
          * @name delegate
          * @memberof plat.routing.IDelegateParameterNames
          * @kind property
-         * 
+         *
          * @type {any}
-         * 
+         *
          * @description
          * The delegate for a registered route
          */
@@ -474,9 +474,9 @@
          * @name names
          * @memberof plat.routing.IDelegateParameterNames
          * @kind property
-         * 
+         *
          * @type {Array<string>}
-         * 
+         *
          * @description
          * Contains the parameter names for a given delegate
          */

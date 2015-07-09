@@ -5,7 +5,7 @@ module plat.processing {
      * @name NodeManager
      * @memberof plat.processing
      * @kind class
-     * 
+     *
      * @description
      * Responsible for data binding a data context to a Node.
      */
@@ -16,9 +16,9 @@ module plat.processing {
          * @kind property
          * @access protected
          * @static
-         * 
+         *
          * @type {plat.observable.IContextManagerStatic}
-         * 
+         *
          * @description
          * Reference to the {@link plat.observable.IContextManagerStatic|IContextManagerStatic} injectable.
          */
@@ -30,9 +30,9 @@ module plat.processing {
          * @kind property
          * @access protected
          * @static
-         * 
+         *
          * @type {plat.expressions.Parser}
-         * 
+         *
          * @description
          * Reference to the {@link plat.expressions.Parser|Parser} injectable.
          */
@@ -44,9 +44,9 @@ module plat.processing {
          * @kind property
          * @access protected
          * @static
-         * 
+         *
          * @type {plat.ui.ITemplateControlFactory}
-         * 
+         *
          * @description
          * Reference to the {@link plat.ui.ITemplateControlFactory|ITemplateControlFactory} injectable.
          */
@@ -58,7 +58,7 @@ module plat.processing {
          * @kind property
          * @access protected
          * @static
-         * 
+         *
          * @type {plat.debug.Log}
          * @description
          * Reference to the {@link plat.debug.Log|Log} injectable.
@@ -71,9 +71,9 @@ module plat.processing {
          * @kind property
          * @access protected
          * @static
-         * 
+         *
          * @type {RegExp}
-         * 
+         *
          * @description
          * A regular expression for finding markup
          */
@@ -85,9 +85,9 @@ module plat.processing {
          * @kind property
          * @access protected
          * @static
-         * 
+         *
          * @type {RegExp}
-         * 
+         *
          * @description
          * A regular expression for finding newline characters.
          */
@@ -98,9 +98,9 @@ module plat.processing {
          * @memberof plat.processing.NodeManager
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The type of {@link plat.processing.NodeManager|NodeManager}.
          */
@@ -111,11 +111,11 @@ module plat.processing {
          * @memberof plat.processing.NodeManager
          * @kind property
          * @access public
-         * 
+         *
          * @type {plat.processing.INodeMap}
-         * 
+         *
          * @description
-         * The {@link plat.processing.INodeMap|INodeMap} for this {@link plat.processing.NodeManager|NodeManager}. 
+         * The {@link plat.processing.INodeMap|INodeMap} for this {@link plat.processing.NodeManager|NodeManager}.
          * Contains the compiled Node.
          */
         nodeMap: INodeMap;
@@ -125,9 +125,9 @@ module plat.processing {
          * @memberof plat.processing.NodeManager
          * @kind property
          * @access public
-         * 
+         *
          * @type {plat.processing.ElementManager}
-         * 
+         *
          * @description
          * The parent {@link plat.processing.ElementManager|ElementManager}.
          */
@@ -138,9 +138,9 @@ module plat.processing {
          * @memberof plat.processing.NodeManager
          * @kind property
          * @access public
-         * 
+         *
          * @type {boolean}
-         * 
+         *
          * @description
          * Whether or not this {@link plat.processing.NodeManager|NodeManager} is a clone.
          */
@@ -152,12 +152,12 @@ module plat.processing {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
          * Determines if a string has the markup notation.
-         * 
+         *
          * @param {string} text The text string in which to search for markup.
-         * 
+         *
          * @returns {boolean} Indicates whether or not there is markup.
          */
         static hasMarkup(text: string): boolean {
@@ -170,18 +170,18 @@ module plat.processing {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
-         * Given a string, finds markup in the string and creates an array of 
+         * Given a string, finds markup in the string and creates an array of
          * {@link plat.expressions.IParsedExpression|IParsedExpression}.
-         * 
+         *
          * @param {string} text The text string in which to search for markup.
-         * 
-         * @returns {Array<plat.expressions.IParsedExpression>} An array of parsed expressions that 
+         *
+         * @returns {Array<plat.expressions.IParsedExpression>} An array of parsed expressions that
          * composes the output given a proper context.
          */
         static findMarkup(text: string): Array<expressions.IParsedExpression> {
-            var start: number,
+            let start: number,
                 end: number,
                 parsedExpressions: Array<expressions.IParsedExpression> = [],
                 wrapExpression = NodeManager._wrapExpression,
@@ -228,26 +228,26 @@ module plat.processing {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
-         * Takes in a control with a data context and an array of {@link plat.expressions.IParsedExpression|IParsedExpression} 
+         * Takes in a control with a data context and an array of {@link plat.expressions.IParsedExpression|IParsedExpression}
          * and outputs a string of the evaluated expressions.
-         * 
+         *
          * @param {Array<plat.expressions.IParsedExpression>} expressions The composition array to evaluate.
-         * @param {plat.ui.TemplateControl} control? The {@link plat.ui.TemplateControl|TemplateControl} used to parse 
+         * @param {plat.ui.TemplateControl} control? The {@link plat.ui.TemplateControl|TemplateControl} used to parse
          * the expressions.
-         * 
+         *
          * @returns {string} The output text with all markup bound.
          */
         static build(expressions: Array<expressions.IParsedExpression>, control?: ui.TemplateControl): string {
-            var text = '',
+            let text = '',
                 length = expressions.length,
                 resources = <IObject<any>>{},
                 expression: expressions.IParsedExpression,
                 value: any,
                 evaluateExpression = NodeManager._TemplateControlFactory.evaluateExpression;
 
-            for (var i = 0; i < length; ++i) {
+            for (let i = 0; i < length; ++i) {
                 expression = expressions[i];
 
                 value = evaluateExpression(expression, control, resources);
@@ -277,21 +277,21 @@ module plat.processing {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
          * Registers a listener to be notified of a change in any associated identifier.
-         * 
-         * @param {Array<plat.expressions.IParsedExpression>} expressions An Array of 
+         *
+         * @param {Array<plat.expressions.IParsedExpression>} expressions An Array of
          * {@link plat.expressions.IParsedExpression|IParsedExpressions} to observe.
-         * @param {plat.ui.TemplateControl} control The {@link plat.ui.TemplateControl|TemplateControl} associated 
+         * @param {plat.ui.TemplateControl} control The {@link plat.ui.TemplateControl|TemplateControl} associated
          * to the identifiers.
          * @param {(...args: Array<any>) => void} listener The listener to call when any identifier property changes.
-         * 
+         *
          * @returns {void}
          */
         static observeExpressions(expressions: Array<expressions.IParsedExpression>, control: ui.TemplateControl,
             listener: (...args: Array<any>) => void): void {
-            var uniqueIdentifiers = NodeManager.__findUniqueIdentifiers(expressions),
+            let uniqueIdentifiers = NodeManager.__findUniqueIdentifiers(expressions),
                 identifiers = uniqueIdentifiers.identifiers,
                 oneTimeIdentifiers = uniqueIdentifiers.oneTimeIdentifiers,
                 oneTimeIdentifier: string,
@@ -335,12 +335,12 @@ module plat.processing {
          * @kind function
          * @access protected
          * @static
-         * 
+         *
          * @description
          * Wraps constant text as a static {@link plat.expressions.IParsedExpression|IParsedExpression}.
-         * 
+         *
          * @param text The text to wrap into a static expression.
-         * 
+         *
          * @returns {plat.expressions.IParsedExpression} The wrapped, static expression.
          */
         protected static _wrapExpression(text: string): expressions.IParsedExpression {
@@ -358,18 +358,18 @@ module plat.processing {
          * @kind function
          * @access private
          * @static
-         * 
+         *
          * @description
-         * Given an {@link plat.expressions.IParsedExpression|IParsedExpression} array, creates an array of unique identifers 
+         * Given an {@link plat.expressions.IParsedExpression|IParsedExpression} array, creates an array of unique identifers
          * to use with binding. This allows us to avoid creating multiple listeners for the identifier and node.
-         * 
+         *
          * @param {Array<plat.expressions.IParsedExpression>} expressions An array of parsed expressions to search for identifiers.
-         * 
-         * @returns {plat.processing.IUniqueIdentifiers} An object containing both an array of unique identifiers for 
+         *
+         * @returns {plat.processing.IUniqueIdentifiers} An object containing both an array of unique identifiers for
          * one way binding as well as an array of unique identifiers for one time binding.
          */
         private static __findUniqueIdentifiers(expressions: Array<expressions.IParsedExpression>): IUniqueIdentifiers {
-            var length = expressions.length,
+            let length = expressions.length,
                 expression: expressions.IParsedExpression;
 
             if (length === 1) {
@@ -387,7 +387,7 @@ module plat.processing {
                 };
             }
 
-            var uniqueIdentifierObject: IObject<boolean> = {},
+            let uniqueIdentifierObject: IObject<boolean> = {},
                 oneTimeIdentifierObject: IObject<boolean> = {},
                 uniqueIdentifiers: Array<string> = [],
                 oneTimeIdentifiers: Array<string> = [],
@@ -397,7 +397,7 @@ module plat.processing {
                 jLength: number,
                 oneTime: boolean;
 
-            for (var i = 0; i < length; ++i) {
+            for (let i = 0; i < length; ++i) {
                 expression = expressions[i];
                 oneTime = expression.oneTime;
                 identifiers = expression.identifiers;
@@ -440,20 +440,20 @@ module plat.processing {
          * @kind function
          * @access private
          * @static
-         * 
+         *
          * @description
-         * Takes in an identifier and returns an object containing both its converted absolute path and the 
+         * Takes in an identifier and returns an object containing both its converted absolute path and the
          * {@link plat.observable.ContextManager|ContextManager} needed to observe it.
-         * 
+         *
          * @param {string} identifier The identifier looking to be observed.
-         * @param {plat.ui.TemplateControl} control The {@link plat.ui.TemplateControl|TemplateControl} associated 
+         * @param {plat.ui.TemplateControl} control The {@link plat.ui.TemplateControl|TemplateControl} associated
          * to the identifiers.
-         * 
-         * @returns {plat.processing.IObservationDetails} An object containing information needed for observing a the given 
+         *
+         * @returns {plat.processing.IObservationDetails} An object containing information needed for observing a the given
          * identifier.
          */
         private static __getObservationDetails(identifier: string, control: ui.TemplateControl): IObservationDetails {
-            var _ContextManager = NodeManager._ContextManager,
+            let _ContextManager = NodeManager._ContextManager,
                 manager: observable.ContextManager,
                 split = identifier.split('.'),
                 absoluteIdentifier = '',
@@ -461,7 +461,7 @@ module plat.processing {
 
             if (identifier[0] === '@') {
                 // we found an alias
-                var resourceObj: { resource: ui.IResource; control: ui.TemplateControl; },
+                let resourceObj: { resource: ui.IResource; control: ui.TemplateControl; },
                     resources: IObject<{ resource: ui.IResource; control: ui.TemplateControl; }> = {},
                     topIdentifier = split.shift(),
                     alias = topIdentifier.slice(1);
@@ -477,7 +477,7 @@ module plat.processing {
                 }
 
                 if (!isNull(resourceObj) && !isNull(resourceObj.resource)) {
-                    var type = resourceObj.resource.type;
+                    let type = resourceObj.resource.type;
                     if (alias === __CONTEXT_RESOURCE) {
                         manager = _ContextManager.getManager(Control.getRootControl(control));
                         absoluteIdentifier = control.absoluteContextPath + absoluteIdentifier;
@@ -513,14 +513,14 @@ module plat.processing {
          * @memberof plat.processing.NodeManager
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Initializes the manager's properties.
-         * 
-         * @param {plat.processing.INodeMap} nodeMap The mapping associated with this manager. We have to use an 
+         *
+         * @param {plat.processing.INodeMap} nodeMap The mapping associated with this manager. We have to use an
          * Used to treat all {@link plat.processing.NodeManager|NodeManagers} the same.
          * @param {plat.processing.ElementManager} parent The parent {@link plat.processing.ElementManager|ElementManager}.
-         * 
+         *
          * @returns {void}
          */
         initialize(nodeMap: INodeMap, parent: ElementManager): void {
@@ -538,14 +538,14 @@ module plat.processing {
          * @memberof plat.processing.NodeManager
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Retrieves the parent control associated with the parent manager.
-         * 
+         *
          * @returns {plat.ui.TemplateControl} The parent {@link plat.ui.TemplateControl|TemplateControl}.
          */
         getParentControl(): ui.TemplateControl {
-            var parent = this.parent,
+            let parent = this.parent,
                 control: ui.TemplateControl;
 
             while (isNull(control)) {
@@ -565,14 +565,14 @@ module plat.processing {
          * @memberof plat.processing.NodeManager
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Clones this {@link plat.processing.NodeManager|NodeManager} with the new node.
-         * 
+         *
          * @param {Node} newNode The new node associated with the new manager.
-         * @param {plat.processing.ElementManager} parentManager The parent 
+         * @param {plat.processing.ElementManager} parentManager The parent
          * {@link plat.processing.ElementManager|ElementManager} for the clone.
-         * 
+         *
          * @returns {number} The number of nodes to advance while node traversal is in progress.
          */
         clone(newNode: Node, parentManager: ElementManager): number {
@@ -584,10 +584,10 @@ module plat.processing {
          * @memberof plat.processing.NodeManager
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * The function used for data-binding a data context to the DOM.
-         * 
+         *
          * @returns {void}
          */
         bind(): void { }
@@ -624,9 +624,9 @@ module plat.processing {
      * @name INodeManagerStatic
      * @memberof plat.processing
      * @kind interface
-     * 
+     *
      * @description
-     * Performs essential Node management and binding functions. 
+     * Performs essential Node management and binding functions.
      */
     export interface INodeManagerStatic {
         /**
@@ -635,12 +635,12 @@ module plat.processing {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
          * Determines if a string has the markup notation.
-         * 
+         *
          * @param {string} text The text string in which to search for markup.
-         * 
+         *
          * @returns {boolean} Indicates whether or not there is markup.
          */
         hasMarkup(text: string): boolean;
@@ -651,14 +651,14 @@ module plat.processing {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
-         * Given a string, finds markup in the string and creates an array of 
+         * Given a string, finds markup in the string and creates an array of
          * {@link plat.expressions.IParsedExpression|IParsedExpression}.
-         * 
+         *
          * @param {string} text The text string in which to search for markup.
-         * 
-         * @returns {Array<plat.expressions.IParsedExpression>} An array of parsed expressions that 
+         *
+         * @returns {Array<plat.expressions.IParsedExpression>} An array of parsed expressions that
          * composes the output given a proper context.
          */
         findMarkup(text: string): Array<expressions.IParsedExpression>;
@@ -669,15 +669,15 @@ module plat.processing {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
-         * Takes in a control with a data context and an array of {@link plat.expressions.IParsedExpression|IParsedExpression} 
+         * Takes in a control with a data context and an array of {@link plat.expressions.IParsedExpression|IParsedExpression}
          * and outputs a string of the evaluated expressions.
-         * 
+         *
          * @param {Array<plat.expressions.IParsedExpression>} expressions The composition array to evaluate.
-         * @param {plat.ui.TemplateControl} control? The {@link plat.ui.TemplateControl|TemplateControl} used to parse 
+         * @param {plat.ui.TemplateControl} control? The {@link plat.ui.TemplateControl|TemplateControl} used to parse
          * the expressions.
-         * 
+         *
          * @returns {string} The output text with all markup bound.
          */
         build(expressions: Array<expressions.IParsedExpression>, control?: ui.TemplateControl): string;
@@ -688,16 +688,16 @@ module plat.processing {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
          * Registers a listener to be notified of a change in any associated identifier.
-         * 
-         * @param {Array<plat.expressions.IParsedExpression>} expressions An Array of 
+         *
+         * @param {Array<plat.expressions.IParsedExpression>} expressions An Array of
          * {@link plat.expressions.IParsedExpression|IParsedExpressions} to observe.
-         * @param {plat.ui.TemplateControl} control The {@link plat.ui.TemplateControl|TemplateControl} associated 
+         * @param {plat.ui.TemplateControl} control The {@link plat.ui.TemplateControl|TemplateControl} associated
          * to the identifiers.
          * @param {(...args: Array<any>) => void} listener The listener to call when any identifier property changes.
-         * 
+         *
          * @returns {void}
          */
         observeExpressions(expressions: Array<expressions.IParsedExpression>,
@@ -708,7 +708,7 @@ module plat.processing {
      * @name INode
      * @memberof plat.processing
      * @kind interface
-     * 
+     *
      * @description
      * Describes a compiled Node.
      */
@@ -718,9 +718,9 @@ module plat.processing {
          * @memberof plat.processing.INode
          * @kind property
          * @access public
-         * 
+         *
          * @type {plat.Control}
-         * 
+         *
          * @description
          * The control associated with the Node, if one exists.
          */
@@ -731,9 +731,9 @@ module plat.processing {
          * @memberof plat.processing.INode
          * @kind property
          * @access public
-         * 
+         *
          * @type {Node}
-         * 
+         *
          * @description
          * The Node that is compiled.
          */
@@ -744,9 +744,9 @@ module plat.processing {
          * @memberof plat.processing.INode
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The name of the Node.
          */
@@ -757,9 +757,9 @@ module plat.processing {
          * @memberof plat.processing.INode
          * @kind property
          * @access public
-         * 
+         *
          * @type {Array<plat.expressions.IParsedExpression>}
-         * 
+         *
          * @description
          * Any {@link plat.expressions.IParsedExpression|IParsedExpressions} contained in the Node.
          */
@@ -770,9 +770,9 @@ module plat.processing {
          * @memberof plat.processing.INode
          * @kind property
          * @access public
-         * 
+         *
          * @type {plat.dependency.Injector<plat.Control>}
-         * 
+         *
          * @description
          * The injector for a control associated with the Node, if one exists.
          */
@@ -783,9 +783,9 @@ module plat.processing {
      * @name IUiControlNode
      * @memberof plat.processing
      * @kind interface
-     * 
+     *
      * @extends {plat.processing.INode}
-     * 
+     *
      * @description
      * Defines the interface for a compiled Element.
      */
@@ -795,9 +795,9 @@ module plat.processing {
          * @memberof plat.processing.IUiControlNode
          * @kind property
          * @access public
-         * 
+         *
          * @type {plat.ui.TemplateControl}
-         * 
+         *
          * @description
          * The control associated with the Element, if one exists.
          */
@@ -808,9 +808,9 @@ module plat.processing {
          * @memberof plat.processing.IUiControlNode
          * @kind property
          * @access public
-         * 
+         *
          * @type {HTMLElement}
-         * 
+         *
          * @description
          * The resources element, if one exists, defined as the control element's first
          * element child.
@@ -822,9 +822,9 @@ module plat.processing {
      * @name INodeMap
      * @memberof plat.processing
      * @kind interface
-     * 
+     *
      * @description
-     * Describes a compiled Element with all 
+     * Describes a compiled Element with all
      * associated nodes contained within its tag.
      */
     export interface INodeMap {
@@ -833,9 +833,9 @@ module plat.processing {
          * @memberof plat.processing.INodeMap
          * @kind property
          * @access public
-         * 
+         *
          * @type {HTMLElement}
-         * 
+         *
          * @description
          * The Element that is compiled.
          */
@@ -846,9 +846,9 @@ module plat.processing {
          * @memberof plat.processing.INodeMap
          * @kind property
          * @access public
-         * 
+         *
          * @type {Array<plat.processing.INode>}
-         * 
+         *
          * @description
          * The compiled attribute Nodes for the Element.
          */
@@ -859,9 +859,9 @@ module plat.processing {
          * @memberof plat.processing.INodeMap
          * @kind property
          * @access public
-         * 
+         *
          * @type {plat.IObject<string>}
-         * 
+         *
          * @description
          * An object of key/value attribute pairs.
          */
@@ -872,11 +872,11 @@ module plat.processing {
          * @memberof plat.processing.INodeMap
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
-         * The relative context path for the node's corresponding 
+         * The relative context path for the node's corresponding
          * {@link plat.ui.TemplateControl|TemplateControl}, if specified.
          */
         childContext?: string;
@@ -886,9 +886,9 @@ module plat.processing {
          * @memberof plat.processing.INodeMap
          * @kind property
          * @access public
-         * 
+         *
          * @type {boolean}
-         * 
+         *
          * @description
          * Indicates whether or not an {@link plat.Control|Control} was found on the Element.
          */
@@ -899,11 +899,11 @@ module plat.processing {
          * @memberof plat.processing.INodeMap
          * @kind property
          * @access public
-         * 
+         *
          * @type {plat.processing.IUiControlNode}
-         * 
+         *
          * @description
-         * A type of {@link plat.processing.INode|INode} for a node that contains a {@link plat.ui.TemplateControl|TemplateControl}, 
+         * A type of {@link plat.processing.INode|INode} for a node that contains a {@link plat.ui.TemplateControl|TemplateControl},
          * if one was found for the Element.
          */
         uiControlNode?: IUiControlNode;
@@ -914,9 +914,9 @@ module plat.processing {
      * @memberof plat.processing
      * @kind interface
      * @exported false
-     * 
+     *
      * @description
-     * Holds an array of identifiers for one way bindings and an 
+     * Holds an array of identifiers for one way bindings and an
      * array of identifiers for one time bindings.
      */
     interface IUniqueIdentifiers {
@@ -925,9 +925,9 @@ module plat.processing {
          * @memberof plat.processing.IUniqueIdentifiers
          * @kind property
          * @access public
-         * 
+         *
          * @type {Array<string>}
-         * 
+         *
          * @description
          * An array of identifiers used for one way bindings.
          */
@@ -937,9 +937,9 @@ module plat.processing {
          * @memberof plat.processing.IUniqueIdentifiers
          * @kind property
          * @access public
-         * 
+         *
          * @type {Array<string>}
-         * 
+         *
          * @description
          * An array of identifiers used for one time bindings.
          */
@@ -951,7 +951,7 @@ module plat.processing {
      * @memberof plat.processing
      * @kind interface
      * @exported false
-     * 
+     *
      * @description
      * Contains information needed for observing properties.
      */
@@ -961,9 +961,9 @@ module plat.processing {
          * @memberof plat.processing.IObservationDetails
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The absolute identifier to be observed.
          */
@@ -973,11 +973,11 @@ module plat.processing {
          * @memberof plat.processing.IObservationDetails
          * @kind property
          * @access public
-         * 
+         *
          * @type {plat.observable.ContextManager}
-         * 
+         *
          * @description
-         * The {@link plat.observable.ContextManager|ContextManager} that will 
+         * The {@link plat.observable.ContextManager|ContextManager} that will
          * be doing the observing.
          */
         manager: observable.ContextManager;
@@ -986,9 +986,9 @@ module plat.processing {
          * @memberof plat.processing.IObservationDetails
          * @kind property
          * @access public
-         * 
+         *
          * @type {boolean}
-         * 
+         *
          * @description
          * Signifies that a context value is defined for one time data binding.
          */

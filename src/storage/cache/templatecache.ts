@@ -5,9 +5,9 @@ module plat.storage {
      * @name TemplateCache
      * @memberof plat.storage
      * @kind class
-     * 
+     *
      * @extends {plat.storage.Cache<any>}
-     * 
+     *
      * @description
      * Used for caching compiled nodes. This class will
      * clone a template when you put it in the cache. It will
@@ -24,9 +24,9 @@ module plat.storage {
          * @memberof plat.storage.TemplateCache
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.async.IPromise}
-         * 
+         *
          * @description
          * Reference to the {@link plat.async.IPromise|IPromise} injectable.
          */
@@ -37,7 +37,7 @@ module plat.storage {
          * @memberof plat.storage.TemplateCache
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.debug.Log}
          * @description
          * Reference to the {@link plat.debug.Log|Log} injectable.
@@ -49,11 +49,11 @@ module plat.storage {
          * @memberof plat.storage.TemplateCache
          * @kind function
          * @access public
-         * 
+         *
          * @description
-         * The constructor for a {@link plat.storage.TemplateCache|TemplateCache}. Creates a new {@link plat.storage.Cache|Cache}  
+         * The constructor for a {@link plat.storage.TemplateCache|TemplateCache}. Creates a new {@link plat.storage.Cache|Cache}
          * with the ID "__templateCache".
-         * 
+         *
          * @returns {plat.storage.TemplateCache}
          */
         constructor() {
@@ -66,14 +66,14 @@ module plat.storage {
          * @kind function
          * @access public
          * @variation 0
-         * 
+         *
          * @description
          * Serializes a string into a DocumentFragment and stores it in the cache.
-         * 
+         *
          * @param {string} key The key to use for storage/retrieval of the object.
          * @param {string} value The string html.
-         * 
-         * @returns {plat.async.IThenable<DocumentFragment>} A promise that resolves with a 
+         *
+         * @returns {plat.async.IThenable<DocumentFragment>} A promise that resolves with a
          * DocumentFragment containing the input Node.
          */
         put(key: string, value?: string): async.IThenable<DocumentFragment>;
@@ -83,14 +83,14 @@ module plat.storage {
          * @kind function
          * @access public
          * @variation 0
-         * 
+         *
          * @description
          * Stores a Node in the cache as a DocumentFragment.
-         * 
+         *
          * @param {string} key The key to use for storage/retrieval of the object.
          * @param {Node} value The Node.
-         * 
-         * @returns {plat.async.IThenable<DocumentFragment>} A promise that resolves with a 
+         *
+         * @returns {plat.async.IThenable<DocumentFragment>} A promise that resolves with a
          * DocumentFragment containing the input Node.
          */
         put(key: string, value?: Node): async.IThenable<DocumentFragment>;
@@ -100,26 +100,26 @@ module plat.storage {
          * @kind function
          * @access public
          * @variation 1
-         * 
+         *
          * @description
          * Stores a {@link plat.async.IPromise|IPromise} in the cache.
-         * 
+         *
          * @param {string} key The key to use for storage/retrieval of the object.
-         * @param {plat.async.IThenable<Node>} value {@link plat.async.Promise|Promise} that 
+         * @param {plat.async.IThenable<Node>} value {@link plat.async.Promise|Promise} that
          * should resolve with a Node.
-         * 
-         * @returns {plat.async.IThenable<DocumentFragment>} A {@link plat.async.Promise|Promise} that resolves when 
+         *
+         * @returns {plat.async.IThenable<DocumentFragment>} A {@link plat.async.Promise|Promise} that resolves when
          * the input {@link plat.async.Promise|Promise} resolves.
          */
         put(key: string, value?: async.IThenable<Node>): async.IThenable<DocumentFragment>;
         put(key: string, value?: any): async.IThenable<DocumentFragment> {
-            var Promise = this._Promise;
+            let Promise = this._Promise;
             super.put(key, Promise.resolve<DocumentFragment>(value));
 
             if (isDocumentFragment(value)) {
                 value = value.cloneNode(true);
             } else if (isNode(value)) {
-                var fragment = document.createDocumentFragment();
+                let fragment = document.createDocumentFragment();
                 fragment.appendChild(value.cloneNode(true));
                 value = fragment;
             } else if (isString(value) || isNull(value)) {
@@ -134,18 +134,18 @@ module plat.storage {
          * @memberof plat.storage.TemplateCache
          * @kind function
          * @access public
-         * 
+         *
          * @description
-         * Method for retrieving a Node from this cache. The DocumentFragment that resolves from the returned 
+         * Method for retrieving a Node from this cache. The DocumentFragment that resolves from the returned
          * {@link plat.async.Promise|Promise} will be cloned to avoid manipulating the cached template.
-         * 
+         *
          * @param {string} key The key to search for in this cache.
-         * 
-         * @returns {plat.async.IThenable<DocumentFragment>} The {@link plat.async.Promise|Promise} found at the associated key. 
+         *
+         * @returns {plat.async.IThenable<DocumentFragment>} The {@link plat.async.Promise|Promise} found at the associated key.
          * Returns undefined for a cache miss.
          */
         read(key: string): async.IThenable<DocumentFragment> {
-            var promise: async.IThenable<DocumentFragment> = super.read(key);
+            let promise: async.IThenable<DocumentFragment> = super.read(key);
 
             if (isNull(promise)) {
                 return <any>this._Promise.reject(null);

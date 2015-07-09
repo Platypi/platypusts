@@ -6,7 +6,7 @@ module plat.events {
      * @memberof plat.events
      * @kind class
      * @access public
-     * 
+     *
      * @description
      * Manages dispatching events, handling all propagating events as well as any error handling.
      */
@@ -17,7 +17,7 @@ module plat.events {
          * @kind property
          * @access protected
          * @static
-         * 
+         *
          * @type {plat.debug.Log}
          * @description
          * Reference to the {@link plat.debug.Log|Log} injectable.
@@ -30,9 +30,9 @@ module plat.events {
          * @kind property
          * @access protected
          * @static
-         * 
+         *
          * @type {plat.Compat}
-         * 
+         *
          * @description
          * Reference to the {@link plat.Compat|Compat} injectable.
          */
@@ -42,11 +42,11 @@ module plat.events {
          * @name _document
          * @memberof plat.events.EventManager
          * @kind protected
-         * @access 
+         * @access
          * @static
-         * 
+         *
          * @type {Document}
-         * 
+         *
          * @description
          * Reference to the Document injectable.
          */
@@ -58,9 +58,9 @@ module plat.events {
          * @kind property
          * @access protected
          * @static
-         * 
+         *
          * @type {Window}
-         * 
+         *
          * @description
          * Reference to the Window injectable.
          */
@@ -72,9 +72,9 @@ module plat.events {
          * @kind property
          * @access protected
          * @static
-         * 
+         *
          * @type {plat.ui.Dom}
-         * 
+         *
          * @description
          * Reference to the {@link plat.ui.Dom|Dom} injectable.
          */
@@ -87,11 +87,11 @@ module plat.events {
          * @access public
          * @static
          * @readonly
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
-         * An upward-moving event will start at the sender and move 
+         * An upward-moving event will start at the sender and move
          * up the parent chain.
          */
         static UP: string = 'up';
@@ -103,11 +103,11 @@ module plat.events {
          * @access public
          * @static
          * @readonly
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
-         * A downward-moving event will start at the sender and move 
+         * A downward-moving event will start at the sender and move
          * to its children and beyond.
          */
         static DOWN: string = 'down';
@@ -119,9 +119,9 @@ module plat.events {
          * @access public
          * @static
          * @readonly
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * Goes through all listeners for an event name, ignoring order.
          */
@@ -133,9 +133,9 @@ module plat.events {
          * @kind property
          * @access public
          * @static
-         * 
+         *
          * @type {plat.IObject<boolean>}
-         * 
+         *
          * @description
          * Keeps track of which events are currently propagating.
          */
@@ -147,9 +147,9 @@ module plat.events {
          * @kind property
          * @access private
          * @static
-         * 
+         *
          * @type {plat.IObject<plat.events.IEventsListener>}
-         * 
+         *
          * @description
          * Holds all the {@link plat.events.IEventsListener|event listeners} keyed by uid.
          */
@@ -161,9 +161,9 @@ module plat.events {
          * @kind property
          * @access private
          * @static
-         * 
+         *
          * @type {Array<{ name: string; value: () => void; }>}
-         * 
+         *
          * @description
          * Holds all the event listeners for the application lifefycle events.
          */
@@ -175,9 +175,9 @@ module plat.events {
          * @kind property
          * @access private
          * @static
-         * 
+         *
          * @type {boolean}
-         * 
+         *
          * @description
          * whether or not the event manager has been initialized.
          */
@@ -189,10 +189,10 @@ module plat.events {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
          * Initializes the {@link plat.events.EventManager|EventManager}, creating the initial ALM event listeners.
-         * 
+         *
          * @returns {void}
          */
         static initialize(): void {
@@ -202,7 +202,7 @@ module plat.events {
 
             EventManager.__initialized = true;
 
-            var lifecycleListeners = EventManager.__lifecycleEventListeners,
+            let lifecycleListeners = EventManager.__lifecycleEventListeners,
                 _compat = EventManager._compat,
                 _document = EventManager._document,
                 _window = EventManager._window,
@@ -216,7 +216,7 @@ module plat.events {
             }
 
             if (_compat.cordova) {
-                var eventNames = [__resume, __online, __offline],
+                let eventNames = [__resume, __online, __offline],
                     winJs = _compat.winJs,
                     length = eventNames.length,
                     event: string,
@@ -225,7 +225,7 @@ module plat.events {
                     },
                     fn: () => void;
 
-                for (var i = 0; i < length; ++i) {
+                for (let i = 0; i < length; ++i) {
                     event = eventNames[i];
                     fn = dispatcher(event);
                     lifecycleListeners.push({
@@ -235,7 +235,7 @@ module plat.events {
 
                     _dom.addEventListener(_document, event, fn, false);
                 }
-                
+
                 fn = dispatcher(__suspend);
                 lifecycleListeners.push({
                     name: __pause,
@@ -293,13 +293,13 @@ module plat.events {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
-         * Removes all event listeners for a given uid. Useful for garbage collection when 
+         * Removes all event listeners for a given uid. Useful for garbage collection when
          * certain objects that listen to events go out of scope.
-         * 
+         *
          * @param {string} uid The uid for which the event listeners will be removed.'
-         * 
+         *
          * @returns {void}
          */
         static dispose(uid: string): void {
@@ -312,21 +312,21 @@ module plat.events {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
-         * Registers a listener for a {@link plat.events.DispatchEvent|DispatchEvent}. The listener will be called when a {@link plat.events.DispatchEvent|DispatchEvent} is 
+         * Registers a listener for a {@link plat.events.DispatchEvent|DispatchEvent}. The listener will be called when a {@link plat.events.DispatchEvent|DispatchEvent} is
          * propagating over the given uid. Any number of listeners can exist for a single event name.
-         * 
+         *
          * @param {string} uid A unique id to associate with the object registering the listener.
          * @param {string} eventName The name of the event to listen to.
          * @param {(ev: DispatchEvent, ...args: any[]) => void} listener The method called when the event is fired.
          * @param {any} context? The context with which to call the listener method.
-         * 
+         *
          * @returns {plat.IRemoveListener} A method for removing the listener.
          */
         static on(uid: string, eventName: string, listener: (ev: DispatchEvent, ...args: any[]) => void,
             context?: any): IRemoveListener {
-            var eventsListener = EventManager.__eventsListeners[uid];
+            let eventsListener = EventManager.__eventsListeners[uid];
 
             if (isNull(eventsListener)) {
                 eventsListener = EventManager.__eventsListeners[uid] = {
@@ -335,7 +335,7 @@ module plat.events {
                 };
             }
 
-            var eventListeners = eventsListener.listeners[eventName];
+            let eventListeners = eventsListener.listeners[eventName];
 
             if (!isArray(eventListeners)) {
                 eventListeners = eventsListener.listeners[eventName] = [];
@@ -344,7 +344,7 @@ module plat.events {
             eventListeners.push(listener);
 
             return (): void => {
-                var index = eventListeners.indexOf(listener);
+                let index = eventListeners.indexOf(listener);
                 if (index === -1) {
                     return;
                 }
@@ -359,16 +359,16 @@ module plat.events {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
          * Looks for listeners to a given event name, and fires the listeners using the specified
          * event direction.
-         * 
+         *
          * @param {string} name The name of the event.
          * @param {any} sender The object sending the event.
          * @param {string} direction='up' Equivalent to {@link plat.events.EventManager.UP|EventManager.UP}.
          * @param {Array<any>} args? The arguments to send to the listeners.
-         * 
+         *
          * @returns {plat.events.DispatchEvent} The dispatched event.
          */
         static dispatch(name: string, sender: any, direction: 'up', args?: Array<any>): DispatchEvent;
@@ -378,16 +378,16 @@ module plat.events {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
          * Looks for listeners to a given event name, and fires the listeners using the specified
          * event direction.
-         * 
+         *
          * @param {string} name The name of the event.
          * @param {any} sender The object sending the event.
          * @param {string} direction='down' Equivalent to {@link plat.events.EventManager.DOWN|EventManager.DOWN}.
          * @param {Array<any>} args? The arguments to send to the listeners.
-         * 
+         *
          * @returns {plat.events.DispatchEvent} The dispatched event.
          */
         static dispatch(name: string, sender: any, direction: 'down', args?: Array<any>): DispatchEvent;
@@ -397,16 +397,16 @@ module plat.events {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
          * Looks for listeners to a given event name, and fires the listeners using the specified
          * event direction.
-         * 
+         *
          * @param {string} name The name of the event.
          * @param {any} sender The object sending the event.
          * @param {string} direction='direct' Equivalent to {@link plat.events.EventManager.DIRECT|EventManager.DIRECT}.
          * @param {Array<any>} args? The arguments to send to the listeners.
-         * 
+         *
          * @returns {plat.events.DispatchEvent} The dispatched event.
          */
         static dispatch(name: string, sender: any, direction: 'direct', args?: Array<any>): DispatchEvent;
@@ -416,21 +416,21 @@ module plat.events {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
          * Looks for listeners to a given event name, and fires the listeners using the specified
          * event direction.
-         * 
+         *
          * @param {string} name The name of the event.
          * @param {any} sender The object sending the event.
          * @param {string} direction The direction in which to send the event.
          * @param {Array<any>} args? The arguments to send to the listeners.
-         * 
+         *
          * @returns {plat.events.DispatchEvent} The dispatched event.
          */
         static dispatch(name: string, sender: any, direction: string, args?: Array<any>): DispatchEvent;
         static dispatch(name: string, sender: any, direction: string, args?: Array<any>): DispatchEvent {
-            var _dispatchEvent: DispatchEvent = acquire(__DispatchEventInstance);
+            let _dispatchEvent: DispatchEvent = acquire(__DispatchEventInstance);
             _dispatchEvent.initialize(name, sender, direction);
             EventManager.sendEvent(_dispatchEvent, args);
             return _dispatchEvent;
@@ -442,12 +442,12 @@ module plat.events {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
          * Returns whether or not the given string is a registered direction.
-         * 
+         *
          * @param {string} direction The direction of the event
-         * 
+         *
          * @returns {boolean} Whether or not the direction is valid.
          */
         static hasDirection(direction: string): boolean {
@@ -462,17 +462,17 @@ module plat.events {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
          * Determines the appropriate direction and dispatches the event accordingly.
-         * 
+         *
          * @param {plat.events.DispatchEvent} event The {@link plat.events.DispatchEvent|DispatchEvent} to send
          * @param {Array<any>} args The arguments associated with the event
-         * 
+         *
          * @returns {void}
          */
         static sendEvent(event: DispatchEvent, args?: Array<any>): void {
-            var name = event.name,
+            let name = event.name,
                 direction = event.direction;
 
             args = args || [];
@@ -501,17 +501,17 @@ module plat.events {
          * @kind function
          * @access protected
          * @static
-         * 
+         *
          * @description
          * Dispatches the event up the control chain.
-         * 
+         *
          * @param {plat.events.DispatchEvent} event The event being dispatched.
          * @param {Array<any>} args The arguments associated with the event.
-         * 
+         *
          * @returns {void}
          */
         protected static _dispatchUp(event: DispatchEvent, args: Array<any>): void {
-            var name = event.name,
+            let name = event.name,
                 parent = event.sender;
 
             while (!isNull(parent) && EventManager.propagatingEvents[name]) {
@@ -531,17 +531,17 @@ module plat.events {
          * @kind function
          * @access protected
          * @static
-         * 
+         *
          * @description
          * Dispatches the event down the control chain.
-         * 
+         *
          * @param {plat.events.DispatchEvent} event The event being dispatched.
          * @param {Array<any>} args The arguments associated with the event.
-         * 
+         *
          * @returns {void}
          */
         protected static _dispatchDown(event: DispatchEvent, args: Array<any>): void {
-            var controls: Array<Control> = [],
+            let controls: Array<Control> = [],
                 control: Control,
                 name = event.name;
 
@@ -570,22 +570,22 @@ module plat.events {
          * @kind function
          * @access protected
          * @static
-         * 
+         *
          * @description
          * Dispatches the event directly to all listeners.
-         * 
+         *
          * @param {plat.events.DispatchEvent} event The event being dispatched.
          * @param {Array<any>} args The arguments associated with the event.
-         * 
+         *
          * @returns {void}
          */
         protected static _dispatchDirect(event: DispatchEvent, args: Array<any>): void {
-            var uids = Object.keys(EventManager.__eventsListeners),
+            let uids = Object.keys(EventManager.__eventsListeners),
                 length = uids.length,
                 name = event.name,
                 eventsListener: IEventsListener;
 
-            for (var i = 0; i < length; ++i) {
+            for (let i = 0; i < length; ++i) {
                 if (!EventManager.propagatingEvents[name]) {
                     break;
                 }
@@ -606,23 +606,23 @@ module plat.events {
          * @kind function
          * @access private
          * @static
-         * 
+         *
          * @description
          * Dispatches the event to the listeners for the given uid.
-         * 
+         *
          * @param {string} uid The uid used to find the event listeners.
          * @param {plat.events.DispatchEvent} The event.
          * @param {Array<any>} args The arguments to send to the listeners.
-         * 
+         *
          * @returns {void}
          */
         private static __executeEvent(uid: string, ev: DispatchEvent, args: Array<any>): void {
-            var eventsListener = EventManager.__eventsListeners[uid];
+            let eventsListener = EventManager.__eventsListeners[uid];
 
             if (isNull(eventsListener)) {
                 return;
             }
-            var context = eventsListener.context,
+            let context = eventsListener.context,
                 listeners = eventsListener.listeners[ev.name];
 
             if (isNull(listeners)) {
@@ -638,20 +638,20 @@ module plat.events {
          * @kind function
          * @access private
          * @static
-         * 
+         *
          * @description
          * Calls event listeners with the given context, event, and arguments.
-         * 
+         *
          * @param {any} context The context with which to call the listeners.
          * @param {plat.events.DispatchEvent} The event.
          * @param {Array<(ev: DispatchEvent, ...args: any[]) => void>} The event listeners.
          * @param {Array<any>} args The arguments to send to the listeners.
-         * 
+         *
          * @returns {void}
          */
         private static __callListeners(context: any, ev: DispatchEvent,
             listeners: Array<(ev: DispatchEvent, ...args: any[]) => void>, args: Array<any>): void {
-            var name = ev.name,
+            let name = ev.name,
                 length = listeners.length,
                 index = -1;
 
@@ -697,7 +697,7 @@ module plat.events {
      * @memberof plat.events
      * @kind interface
      * @access public
-     * 
+     *
      * @description
      * Manages dispatching events, handling all propagating events as well as any error handling.
      */
@@ -709,9 +709,9 @@ module plat.events {
          * @access public
          * @static
          * @readonly
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * An upward-moving event will start at the sender and move
          * up the parent chain.
@@ -725,9 +725,9 @@ module plat.events {
          * @access public
          * @static
          * @readonly
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * A downward-moving event will start at the sender and move
          * to its children and beyond.
@@ -741,9 +741,9 @@ module plat.events {
          * @access public
          * @static
          * @readonly
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * Goes through all listeners for an event name, ignoring order.
          */
@@ -755,9 +755,9 @@ module plat.events {
          * @kind property
          * @access public
          * @static
-         * 
+         *
          * @type {plat.IObject<boolean>}
-         * 
+         *
          * @description
          * Keeps track of which events are currently propagating.
          */
@@ -769,10 +769,10 @@ module plat.events {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
          * Initializes the {@link plat.events.EventManager|EventManager}, creating the initial ALM event listeners.
-         * 
+         *
          * @returns {void}
          */
         initialize(): void;
@@ -783,13 +783,13 @@ module plat.events {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
-         * Removes all event listeners for a given uid. Useful for garbage collection when 
+         * Removes all event listeners for a given uid. Useful for garbage collection when
          * certain objects that listen to events go out of scope.
-         * 
+         *
          * @param {string} uid The uid for which the event listeners will be removed.'
-         * 
+         *
          * @returns {void}
          */
         dispose(uid: string): void;
@@ -801,16 +801,16 @@ module plat.events {
          * @access public
          * @static
          * @variation 0
-         * 
+         *
          * @description
-         * Registers a listener for the ready AlmEvent. The ready event will be called when the app 
+         * Registers a listener for the ready AlmEvent. The ready event will be called when the app
          * is ready to start.
-         * 
+         *
          * @param {string} uid A unique id to associate with the object registering the listener.
          * @param {string} eventName='ready' Specifies that the listener is for the ready event.
          * @param {(ev: plat.events.LifecycleEvent) => void} listener The method called when the event is fired.
          * @param {any} context? The context with which to call the listener method.
-         * 
+         *
          * @returns {plat.IRemoveListener} A method for removing the listener.
          */
         on(uid: string, eventName: 'ready', listener: (ev: LifecycleEvent) => void,
@@ -822,16 +822,16 @@ module plat.events {
          * @access public
          * @static
          * @variation 1
-         * 
+         *
          * @description
-         * Registers a listener for the suspend AlmEvent. The listener will be called when an app 
+         * Registers a listener for the suspend AlmEvent. The listener will be called when an app
          * is being suspended.
-         * 
+         *
          * @param {string} uid A unique id to associate with the object registering the listener.
          * @param {string} eventName='suspend' Specifies the listener is for the suspend event.
          * @param {(ev: plat.events.LifecycleEvent) => void} listener The method called when the event is fired.
          * @param {any} context? The context with which to call the listener method.
-         * 
+         *
          * @returns {plat.IRemoveListener} A method for removing the listener.
          */
         on(uid: string, eventName: 'suspend', listener: (ev: LifecycleEvent) => void,
@@ -843,16 +843,16 @@ module plat.events {
          * @access public
          * @static
          * @variation 2
-         * 
+         *
          * @description
-         * Registers a listener for the resume AlmEvent. The listener will be called when an app 
+         * Registers a listener for the resume AlmEvent. The listener will be called when an app
          * is being resumeed.
-         * 
+         *
          * @param {string} uid A unique id to associate with the object registering the listener.
          * @param {string} eventName='suspend' Specifies the listener is for the resume event.
          * @param {(ev: plat.events.LifecycleEvent) => void} listener The method called when the event is fired.
          * @param {any} context? The context with which to call the listener method.
-         * 
+         *
          * @returns {plat.IRemoveListener} A method for removing the listener.
          */
         on(uid: string, eventName: 'resume', listener: (ev: LifecycleEvent) => void,
@@ -864,16 +864,16 @@ module plat.events {
          * @access public
          * @static
          * @variation 3
-         * 
+         *
          * @description
-         * Registers a listener for the online AlmEvent. This event fires when the app's network 
+         * Registers a listener for the online AlmEvent. This event fires when the app's network
          * connection changes to be online.
-         * 
+         *
          * @param {string} uid A unique id to associate with the object registering the listener.
          * @param {string} eventName='online' Specifies the listener is for the online event.
          * @param {(ev: plat.events.LifecycleEvent) => void} listener The method called when the event is fired.
          * @param {any} context? The context with which to call the listener method.
-         * 
+         *
          * @returns {plat.IRemoveListener} A method for removing the listener.
          */
         on(uid: string, eventName: 'online', listener: (ev: LifecycleEvent) => void,
@@ -885,16 +885,16 @@ module plat.events {
          * @access public
          * @static
          * @variation 4
-         * 
+         *
          * @description
-         * Registers a listener for the offline AlmEvent. This event fires when the app's network 
+         * Registers a listener for the offline AlmEvent. This event fires when the app's network
          * connection changes to be offline.
-         * 
+         *
          * @param {string} uid A unique id to associate with the object registering the listener.
          * @param {string} eventName='offline' Specifies the listener is for the offline event.
          * @param {(ev: plat.events.LifecycleEvent) => void} listener The method called when the event is fired.
          * @param {any} context? The context with which to call the listener method.
-         * 
+         *
          * @returns {plat.IRemoveListener} A method for removing the listener.
          */
         on(uid: string, eventName: 'offline', listener: (ev: LifecycleEvent) => void,
@@ -906,16 +906,16 @@ module plat.events {
          * @access public
          * @static
          * @variation 5
-         * 
+         *
          * @description
          * Registers a listener for an AlmEvent. The listener will be called when an AlmEvent is
          * propagating over the given uid. Any number of listeners can exist for a single event name.
-         * 
+         *
          * @param {string} uid A unique id to associate with the object registering the listener.
          * @param {string} eventName The name of the event to listen to.
          * @param {(ev: plat.events.LifecycleEvent) => void} listener The method called when the event is fired.
          * @param {any} context? The context with which to call the listener method.
-         * 
+         *
          * @returns {plat.IRemoveListener} A method for removing the listener.
          */
         on(uid: string, eventName: string, listener: (ev: LifecycleEvent) => void,
@@ -927,16 +927,16 @@ module plat.events {
          * @access public
          * @static
          * @variation 6
-         * 
+         *
          * @description
          * Registers a listener for a ErrorEvent. The listener will be called when a ErrorEvent is
          * propagating over the given uid. Any number of listeners can exist for a single event name.
-         * 
+         *
          * @param {string} uid A unique id to associate with the object registering the listener.
          * @param {string} eventName The name of the event to listen to.
          * @param {(ev: plat.events.ErrorEvent<Error>) => void} listener The method called when the event is fired.
          * @param {any} context? The context with which to call the listener method.
-         * 
+         *
          * @returns {plat.IRemoveListener} A method for removing the listener.
          */
         on(uid: string, eventName: 'error', listener: (ev: ErrorEvent<Error>) => void,
@@ -948,16 +948,16 @@ module plat.events {
          * @access public
          * @static
          * @variation 7
-         * 
+         *
          * @description
          * Registers a listener for a DispatchEvent. The listener will be called when a DispatchEvent is
          * propagating over the given uid. Any number of listeners can exist for a single event name.
-         * 
+         *
          * @param {string} uid A unique id to associate with the object registering the listener.
          * @param {string} eventName The name of the event to listen to.
          * @param {(ev: plat.events.DispatchEvent, ...args: any[]) => void} listener The method called when the event is fired.
          * @param {any} context? The context with which to call the listener method.
-         * 
+         *
          * @returns {plat.IRemoveListener} A method for removing the listener.
          */
         on(uid: string, eventName: string, listener: (ev: DispatchEvent, ...args: any[]) => void,
@@ -969,16 +969,16 @@ module plat.events {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
          * Looks for listeners to a given event name, and fires the listeners using the specified
          * event direction.
-         * 
+         *
          * @param {string} name The name of the event.
          * @param {any} sender The object sending the event.
          * @param {string} direction='up' Equivalent to {@link plat.events.EventManager.UP|EventManager.UP}.
          * @param {Array<any>} args? The arguments to send to the listeners.
-         * 
+         *
          * @returns {plat.events.DispatchEvent} The dispatched event.
          */
         dispatch(name: string, sender: any, direction: 'up', args?: Array<any>): DispatchEvent;
@@ -988,16 +988,16 @@ module plat.events {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
          * Looks for listeners to a given event name, and fires the listeners using the specified
          * event direction.
-         * 
+         *
          * @param {string} name The name of the event.
          * @param {any} sender The object sending the event.
          * @param {string} direction='down' Equivalent to {@link plat.events.EventManager.DOWN|EventManager.DOWN}.
          * @param {Array<any>} args? The arguments to send to the listeners.
-         * 
+         *
          * @returns {plat.events.DispatchEvent} The dispatched event.
          */
         dispatch(name: string, sender: any, direction: 'down', args?: Array<any>): DispatchEvent;
@@ -1007,16 +1007,16 @@ module plat.events {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
          * Looks for listeners to a given event name, and fires the listeners using the specified
          * event direction.
-         * 
+         *
          * @param {string} name The name of the event.
          * @param {any} sender The object sending the event.
          * @param {string} direction='direct' Equivalent to {@link plat.events.EventManager.DIRECT|EventManager.DIRECT}.
          * @param {Array<any>} args? The arguments to send to the listeners.
-         * 
+         *
          * @returns {plat.events.DispatchEvent} The dispatched event.
          */
         dispatch(name: string, sender: any, direction: 'direct', args?: Array<any>): DispatchEvent;
@@ -1026,16 +1026,16 @@ module plat.events {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
          * Looks for listeners to a given event name, and fires the listeners using the specified
          * event direction.
-         * 
+         *
          * @param {string} name The name of the event.
          * @param {any} sender The object sending the event.
          * @param {string} direction The direction in which to send the event.
          * @param {Array<any>} args? The arguments to send to the listeners.
-         * 
+         *
          * @returns {plat.events.DispatchEvent} The dispatched event.
          */
         dispatch(name: string, sender: any, direction: string, args?: Array<any>): DispatchEvent;
@@ -1046,12 +1046,12 @@ module plat.events {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
          * Returns whether or not the given string is a registered direction.
-         * 
+         *
          * @param {string} direction The direction of the event
-         * 
+         *
          * @returns {boolean} Whether or not the direction is valid.
          */
         hasDirection(direction: string): boolean;
@@ -1062,13 +1062,13 @@ module plat.events {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
          * Determines the appropriate direction and dispatches the event accordingly.
-         * 
+         *
          * @param {plat.events.DispatchEvent} event The {@link plat.events.DispatchEvent|DispatchEvent} to send
          * @param {Array<any>} args The arguments associated with the event
-         * 
+         *
          * @returns {void}
          */
         sendEvent(event: DispatchEvent, args?: Array<any>): void;
@@ -1079,7 +1079,7 @@ module plat.events {
      * @memberof plat.events
      * @kind interface
      * @access public
-     * 
+     *
      * @description
      * An object that contains event listeners.
      */
@@ -1090,9 +1090,9 @@ module plat.events {
          * @kind property
          * @access public
          * @static
-         * 
+         *
          * @type {plat.IObject<Array<(ev: plat.events.DispatchEvent, ...args: any[]) => void>>}
-         * 
+         *
          * @description
          * An IObject of listener arrays, keyed by event name.
          */
@@ -1104,9 +1104,9 @@ module plat.events {
          * @kind property
          * @access public
          * @static
-         * 
+         *
          * @type {any}
-         * 
+         *
          * @description
          * The context with which to call each event listener.
          */

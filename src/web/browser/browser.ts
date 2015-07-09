@@ -4,7 +4,7 @@
  * @memberof plat
  * @kind namespace
  * @access public
- * 
+ *
  * @description
  * Holds classes and interfaces related to web components in platypus.
  */
@@ -15,7 +15,7 @@ module plat.web {
      * @name Browser
      * @memberof plat.web
      * @kind class
-     * 
+     *
      * @description
      * The class that handles all interaction with the browser.
      */
@@ -36,9 +36,9 @@ module plat.web {
          * @kind property
          * @access public
          * @static
-         * 
+         *
          * @type {plat.web.IBrowserConfig}
-         * 
+         *
          * @description
          * The {@link plat.web.IBrowserConfig|IBrowserConfig} injectable object.
          */
@@ -55,9 +55,9 @@ module plat.web {
          * @memberof plat.web.Browser
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.events.IEventManagerStatic}
-         * 
+         *
          * @description
          * Reference to the {@link plat.events.IEventManagerStatic|IEventManagerStatic} injectable.
          */
@@ -68,9 +68,9 @@ module plat.web {
          * @memberof plat.web.Browser
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.Compat}
-         * 
+         *
          * @description
          * Reference to the {@link plat.Compat|Compat} injectable.
          */
@@ -81,9 +81,9 @@ module plat.web {
          * @memberof plat.web.Browser
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.expressions.Regex}
-         * 
+         *
          * @description
          * Reference to the {@link plat.expressions.Regex|Regex} injectable.
          */
@@ -94,9 +94,9 @@ module plat.web {
          * @memberof plat.web.Browser
          * @kind property
          * @access protected
-         * 
+         *
          * @type {Window}
-         * 
+         *
          * @description
          * Reference to the Window injectable.
          */
@@ -107,9 +107,9 @@ module plat.web {
          * @memberof plat.web.Browser
          * @kind property
          * @access protected
-         * 
+         *
          * @type {Location}
-         * 
+         *
          * @description
          * Reference to the Location injectable.
          */
@@ -120,9 +120,9 @@ module plat.web {
          * @memberof plat.web.Browser
          * @kind property
          * @access protected
-         * 
+         *
          * @type {History}
-         * 
+         *
          * @description
          * Reference to the History injectable.
          */
@@ -133,9 +133,9 @@ module plat.web {
          * @memberof plat.web.Browser
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.ui.Dom}
-         * 
+         *
          * @description
          * Reference to the {@link plat.ui.Dom|Dom} injectable.
          */
@@ -146,9 +146,9 @@ module plat.web {
          * @memberof plat.web.Browser
          * @kind property
          * @access protected
-         * 
+         *
          * @type {Array<string>}
-         * 
+         *
          * @description
          * Keeps a history stack if using a windows store app.
          */
@@ -160,9 +160,9 @@ module plat.web {
          * @kind property
          * @access public
          * @readonly
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * A unique string identifier.
          */
@@ -173,9 +173,9 @@ module plat.web {
          * @memberof plat.web.Browser
          * @kind property
          * @access private
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The browser's current URL.
          */
@@ -186,9 +186,9 @@ module plat.web {
          * @memberof plat.web.Browser
          * @kind property
          * @access private
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The browser's last URL.
          */
@@ -199,9 +199,9 @@ module plat.web {
          * @memberof plat.web.Browser
          * @kind property
          * @access private
-         * 
+         *
          * @type {boolean}
-         * 
+         *
          * @description
          * Whether or not the browser is in an initialization state.
          */
@@ -212,10 +212,10 @@ module plat.web {
          * @memberof plat.web.Browser
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * The constructor for a {@link plat.web.Browser|Browser}. Assigns a uid and subscribes to the 'beforeLoad' event.
-         * 
+         *
          * @returns {plat.web.Browser}
          */
         constructor() {
@@ -231,15 +231,15 @@ module plat.web {
          * @memberof plat.web.Browser
          * @kind function
          * @access public
-         * 
+         *
          * @description
-         * Initializes the {@link plat.web.Browser|Browser} instance, trims the url, and 
+         * Initializes the {@link plat.web.Browser|Browser} instance, trims the url, and
          * adds events for popstate and hashchange.
-         * 
+         *
          * @returns {void}
          */
         initialize(): void {
-            var _compat = this._compat;
+            let _compat = this._compat;
 
             this._EventManager.dispose(this.uid);
 
@@ -247,7 +247,7 @@ module plat.web {
 
             acquire(__UrlUtilsInstance);
 
-            var url = this.url(),
+            let url = this.url(),
                 trimmedUrl = url,
                 changed = this._urlChanged.bind(this),
                 _dom = this._dom,
@@ -271,18 +271,18 @@ module plat.web {
          * @memberof plat.web.Browser
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Sets or gets the current _window.location
-         * 
+         *
          * @param {string} url? The URL to set the location to.
-         * @param {boolean} replace? Whether or not to replace the current URL in 
+         * @param {boolean} replace? Whether or not to replace the current URL in
          * the history.
-         * 
+         *
          * @returns {string} The current URL or current location.
          */
         url(url?: string, replace?: boolean): string {
-            var location = this._location;
+            let location = this._location;
 
             if (isString(url) && this.__lastUrl !== url) {
                 if (!replace && isArray(this._stack)) {
@@ -300,12 +300,12 @@ module plat.web {
          * @memberof plat.web.Browser
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Navigates back in the browser history
-         * 
+         *
          * @param {number} length=1 The length to go back
-         * 
+         *
          * @returns {void}
          */
         back(length?: number): void {
@@ -313,7 +313,7 @@ module plat.web {
                 length = 1;
             }
 
-            var _stack = this._stack;
+            let _stack = this._stack;
 
             if (isArray(_stack) && _stack.length > 1) {
                 this._stack = _stack = _stack.slice(0, _stack.length - (length - 1));
@@ -330,12 +330,12 @@ module plat.web {
          * @memberof plat.web.Browser
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Navigates forward in the browser history
-         * 
+         *
          * @param {number} length=1 The length to go forward
-         * 
+         *
          * @returns {void}
          */
         forward(length?: number): void {
@@ -351,19 +351,19 @@ module plat.web {
          * @memberof plat.web.Browser
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Creates a new {@link plat.web.UrlUtils|UrlUtils} object.
-         * 
-         * @param url? The URL to associate with the new {@link plat.web.UrlUtils|UrlUtils} 
+         *
+         * @param url? The URL to associate with the new {@link plat.web.UrlUtils|UrlUtils}
          * instance.
-         * 
+         *
          * @returns {@link plat.web.UrlUtils|UrlUtils} The new {@link plat.web.UrlUtils|UrlUtils} object.
          */
         urlUtils(url?: string): UrlUtils {
             url = url || this.url();
 
-            var _urlUtils: UrlUtils = acquire(__UrlUtilsInstance),
+            let _urlUtils: UrlUtils = acquire(__UrlUtilsInstance),
                 _config = Browser.config;
 
             if (_config.routingType === _config.HASH) {
@@ -380,12 +380,12 @@ module plat.web {
          * @memberof plat.web.Browser
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Checks to see if the requested URL is cross domain.
-         * 
+         *
          * @param url The URL to verify whether or not it's cross domain.
-         * 
+         *
          * @returns {boolean} Whether or not the URL argument is cross domain.
          */
         isCrossDomain(url: string): boolean {
@@ -393,7 +393,7 @@ module plat.web {
                 return false;
             }
 
-            var urlUtils = this.urlUtils(url),
+            let urlUtils = this.urlUtils(url),
                 locationUtils = this.urlUtils();
 
             // check for protocol:host:port mismatch
@@ -407,13 +407,13 @@ module plat.web {
          * @memberof plat.web.Browser
          * @kind function
          * @access public
-         * 
+         *
          * @description
-         * The event to fire in the case of a URL change. It kicks 
+         * The event to fire in the case of a URL change. It kicks
          * off a 'urlChanged' direct event notification.
-         * 
+         *
          * @param url The URL to verify whether or not it's cross domain.
-         * 
+         *
          * @returns {void}
          */
         protected _urlChanged(): void {
@@ -422,7 +422,7 @@ module plat.web {
             }
 
             this.__currentUrl = null;
-            var url = this.url(),
+            let url = this.url(),
                 $config = Browser.config;
 
             if (this.__lastUrl === url ||
@@ -433,7 +433,7 @@ module plat.web {
 
             this.__lastUrl = url;
 
-            var $manager = this._EventManager;
+            let $manager = this._EventManager;
             $manager.dispatch(__urlChanged,
                 this,
                 $manager.DIRECT,
@@ -445,21 +445,21 @@ module plat.web {
          * @memberof plat.web.Browser
          * @kind function
          * @access public
-         * 
+         *
          * @description
-         * Checks for the existence of pushState and 
+         * Checks for the existence of pushState and
          * sets the browser URL accordingly.
-         * 
+         *
          * @param {string} url The URL to set.
-         * @param {boolean} replace? Whether or not to replace the 
+         * @param {boolean} replace? Whether or not to replace the
          * current URL in the history.
-         * 
+         *
          * @returns {void}
          */
         protected _setUrl(url: string, replace?: boolean): void {
             url = this.formatUrl(url);
 
-            var utils = this.urlUtils(url),
+            let utils = this.urlUtils(url),
                 baseUrl = Browser.config.baseUrl,
                 _history = this._history,
                 _location = this._location;
@@ -499,16 +499,16 @@ module plat.web {
          * @memberof plat.web.Browser
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Formats the URL in the case of HASH routing.
-         * 
+         *
          * @param url The URL to format.
-         * 
+         *
          * @returns {string} The formatted URL.
          */
         formatUrl(url: string): string {
-            var config = Browser.config,
+            let config = Browser.config,
                 baseUrl = config.baseUrl,
                 isLocal = !this._regex.fullUrlRegex.test(url) || url.indexOf(baseUrl) > -1;
 
@@ -525,7 +525,7 @@ module plat.web {
             }
 
             if (isLocal && config.routingType === config.HASH) {
-                var hasProtocol = url.indexOf(this.urlUtils().protocol) !== -1,
+                let hasProtocol = url.indexOf(this.urlUtils().protocol) !== -1,
                     prefix = config.hashPrefix || '',
                     append = '#' + prefix,
                     hashRegex = new RegExp(append + '|#/');
@@ -564,9 +564,9 @@ module plat.web {
      * @name IBrowserConfig
      * @memberof plat.web
      * @kind interface
-     * 
+     *
      * @description
-     * Specifies configuration properties for the {@link plat.web.Browser|Browser}  
+     * Specifies configuration properties for the {@link plat.web.Browser|Browser}
      * injectable.
      */
     export interface IBrowserConfig {
@@ -575,11 +575,11 @@ module plat.web {
          * @memberof plat.web.IBrowserConfig
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
-         * Specifies that the application wants to use hash-based 
+         * Specifies that the application wants to use hash-based
          * routing.
          */
         HASH: string;
@@ -589,16 +589,16 @@ module plat.web {
          * @memberof plat.web.IBrowserConfig
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
-         * Specifies that the application wants to use the HTML5 
-         * popstate method for managing routing. If the browser 
-         * does not support HTML5 popstate events, hash routing 
+         * Specifies that the application wants to use the HTML5
+         * popstate method for managing routing. If the browser
+         * does not support HTML5 popstate events, hash routing
          * will be used instead.
-         * 
-         * Note: In 'state' mode, the web server must be configured to 
+         *
+         * Note: In 'state' mode, the web server must be configured to
          * route every url to the root url.
          */
         STATE: string;
@@ -608,24 +608,24 @@ module plat.web {
          * @memberof plat.web.IBrowserConfig
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * Allows you to define how your app will route. There are
-         * three modes, NONE ('none'), HASH ('hash'), and STATE ('state'). 
-         * 
-         * In NONE, the application will not be responding to 
+         * three modes, NONE ('none'), HASH ('hash'), and STATE ('state').
+         *
+         * In NONE, the application will not be responding to
          * url changes.
-         * 
-         * In HASH, the application will use a hash prefix and 
+         *
+         * In HASH, the application will use a hash prefix and
          * all navigation will be managed with hash changes.
-         * 
-         * In STATE mode, the application will use the 'popstate' 
-         * event and will be able to manage routes. The web server 
-         * must be configured to route every URL to the root URL if 
+         *
+         * In STATE mode, the application will use the 'popstate'
+         * event and will be able to manage routes. The web server
+         * must be configured to route every URL to the root URL if
          * using STATE mode.
-         * 
+         *
          * The default mode is NONE.
          */
         routingType: string;
@@ -635,12 +635,12 @@ module plat.web {
          * @memberof plat.web.IBrowserConfig
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
-         * If routingType is set to HASH ('hash'), this value will be 
-         * appended to the '#' at the beginning of every route. The 
+         * If routingType is set to HASH ('hash'), this value will be
+         * appended to the '#' at the beginning of every route. The
          * default prefix is '!', meaning each path will be '#!/<path>'.
          */
         hashPrefix: string;
@@ -650,9 +650,9 @@ module plat.web {
          * @memberof plat.web.IBrowserConfig
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * Specifies the base URL used to normalize URL routing.
          */

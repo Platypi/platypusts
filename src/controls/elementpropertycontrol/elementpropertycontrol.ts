@@ -5,9 +5,9 @@ module plat.controls {
      * @name ElementPropertyControl
      * @memberof plat.controls
      * @kind class
-     * 
+     *
      * @extends {plat.controls.SetAttributeControl}
-     * 
+     *
      * @description
      * Base class used for setting the property of an element (e.g. href for anchor elements).
      */
@@ -17,15 +17,15 @@ module plat.controls {
          * @memberof plat.controls.ElementPropertyControl
          * @kind function
          * @access public
-         * 
+         *
          * @description
-         * The function for setting the corresponding 
+         * The function for setting the corresponding
          * attribute property value to the evaluated expression.
-         * 
+         *
          * @returns {void}
          */
         setter(): void {
-            var element = this.element,
+            let element = this.element,
                 elementProperty = this.property,
                 expression = this.attributes[this.attribute];
 
@@ -43,9 +43,9 @@ module plat.controls {
      * @name Href
      * @memberof plat.controls
      * @kind class
-     * 
+     *
      * @extends {plat.controls.ElementPropertyControl}
-     * 
+     *
      * @description
      * A type of {@link plat.controls.ElementPropertyControl|ElementPropertyControl} used to set 'href' on an anchor tag.
      */
@@ -56,9 +56,9 @@ module plat.controls {
          * @kind property
          * @access public
          * @readonly
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * Used to set the element's href property.
          */
@@ -69,9 +69,9 @@ module plat.controls {
      * @name Src
      * @memberof plat.controls
      * @kind class
-     * 
+     *
      * @extends {plat.controls.ElementPropertyControl}
-     * 
+     *
      * @description
      * A type of {@link plat.controls.ElementPropertyControl|ElementPropertyControl} used to set 'src' on an anchor tag.
      */
@@ -86,9 +86,9 @@ module plat.controls {
          * @kind property
          * @access public
          * @readonly
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * Used to set the element's src property.
          */
@@ -99,9 +99,9 @@ module plat.controls {
          * @memberof plat.controls.Src
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.web.Browser}
-         * 
+         *
          * @description
          * The plat.web.Browser injectable instance
          */
@@ -112,15 +112,15 @@ module plat.controls {
          * @memberof plat.controls.Src
          * @kind function
          * @access public
-         * 
+         *
          * @description
-         * The function for setting the corresponding 
+         * The function for setting the corresponding
          * attribute property value to the evaluated expression.
-         * 
+         *
          * @returns {void}
          */
         setter(): void {
-            var element = this.element,
+            let element = this.element,
                 elementProperty = this.property,
                 expression = this.attributes[this.attribute];
 

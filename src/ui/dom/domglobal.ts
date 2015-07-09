@@ -1,9 +1,10 @@
 ﻿/* tslint:disable:no-unused-variable */
-var ___document: Document,
+let ___document: Document,
     ___templateCache: plat.storage.TemplateCache,
     ___http: plat.async.Http,
-    ___log: plat.debug.Log,
-    __nodeNameRegex = /<([\w:]+)/,
+    ___log: plat.debug.Log;
+
+const __nodeNameRegex = /<([\w:]+)/,
     __whiteSpaceRegex = /\s+/g,
     __option = [1, '<select multiple="multiple">', '</select>'],
     __table = [1, '<table>', '</table>'],
@@ -38,7 +39,7 @@ var ___document: Document,
     });
 
 function appendChildren(nodeList: any, root?: Node, clone?: boolean): Node {
-    var isFragment = isDocumentFragment(root),
+    let isFragment = isDocumentFragment(root),
         nullRoot = !isNode(root),
         fragment: DocumentFragment = isFragment ?
         <DocumentFragment>root :
@@ -48,12 +49,12 @@ function appendChildren(nodeList: any, root?: Node, clone?: boolean): Node {
         root = fragment;
     }
 
-    var list: Array<Node> = isArray(nodeList) ? nodeList : Array.prototype.slice.call(nodeList),
+    let list: Array<Node> = isArray(nodeList) ? nodeList : Array.prototype.slice.call(nodeList),
         length = list.length,
         i: number;
 
     if (clone === true) {
-        var item: Node;
+        let item: Node;
         for (i = 0; i < length; ++i) {
             item = list[i].cloneNode(true);
             fragment.insertBefore(item, null);
@@ -72,7 +73,7 @@ function appendChildren(nodeList: any, root?: Node, clone?: boolean): Node {
 }
 
 function clearNode(node: Node): void {
-    var childNodes = Array.prototype.slice.call(node.childNodes);
+    let childNodes = Array.prototype.slice.call(node.childNodes);
 
     while (childNodes.length > 0) {
         node.removeChild(childNodes.pop());
@@ -89,7 +90,7 @@ function clearNodeBlock(nodeList: any, parent: Node): void {
         return;
     }
 
-    var node: Node;
+    let node: Node;
 
     while (nodeList.length > 0) {
         node = nodeList.pop();
@@ -113,7 +114,7 @@ function stringToNode(html: string): Node {
     // ___compat is a global variable in utilsglobal
     ___compat = ___compat || (___compat = plat.acquire(__Compat));
     ___document = ___document || (___document = plat.acquire(__Document));
-    var nodeName = __nodeNameRegex.exec(html),
+    let nodeName = __nodeNameRegex.exec(html),
         element = <HTMLElement>___document.createElement('div');
 
     if (isNull(nodeName)) {
@@ -124,7 +125,7 @@ function stringToNode(html: string): Node {
     // trim html string
     html = html.trim();
 
-    var mapTag = nodeName[1];
+    let mapTag = nodeName[1];
 
     if (___compat.pushState && isUndefined(__innerTableWrappers[mapTag])) {
         return innerHtml(element, html);
@@ -133,7 +134,7 @@ function stringToNode(html: string): Node {
         return element.removeChild(element.lastChild);
     }
 
-    var wrapper = __innerHtmlWrappers[mapTag] || (<any>__innerHtmlWrappers)._default,
+    let wrapper = __innerHtmlWrappers[mapTag] || (<any>__innerHtmlWrappers)._default,
         depth = wrapper[0],
         parentStart = wrapper[1],
         parentEnd = wrapper[2];
@@ -154,7 +155,7 @@ function setInnerHtml(node: Node, html: string): Node {
         return;
     }
 
-    var element = stringToNode(html);
+    let element = stringToNode(html);
 
     if (element.childNodes.length > 0) {
         appendChildren(element.childNodes, node);
@@ -172,7 +173,7 @@ function insertBefore(parent: Node, nodes: any, endNode?: Node): Array<Node> {
         endNode = null;
     }
 
-    var fragment: DocumentFragment;
+    let fragment: DocumentFragment;
 
     if (isNode(nodes)) {
         fragment = nodes;
@@ -188,11 +189,11 @@ function insertBefore(parent: Node, nodes: any, endNode?: Node): Array<Node> {
     }
 
     ___document = ___document || (___document = plat.acquire(__Document));
-    var length = nodes.length;
+    let length = nodes.length;
 
     fragment = ___document.createDocumentFragment();
 
-    for (var i = 0; i < length; ++i) {
+    for (let i = 0; i < length; ++i) {
         fragment.insertBefore(nodes[i], null);
     }
 
@@ -202,7 +203,7 @@ function insertBefore(parent: Node, nodes: any, endNode?: Node): Array<Node> {
 }
 
 function replace(node: Node): Array<Node> {
-    var parent = node.parentNode,
+    let parent = node.parentNode,
         nodes = insertBefore(parent, node.childNodes, node);
 
     parent.removeChild(node);
@@ -219,17 +220,17 @@ function replaceWith(node: any, newNode: any): any {
     }
 
     if (node.nodeType === Node.ELEMENT_NODE) {
-        var attributes = node.attributes,
+        let attributes = node.attributes,
             length = attributes.length,
             attribute: Attr;
 
-        for (var i = 0; i < length; ++i) {
+        for (let i = 0; i < length; ++i) {
             attribute = attributes[i];
             newNode.setAttribute(attribute.name, attribute.value);
         }
     }
 
-    var parent = node.parentNode;
+    let parent = node.parentNode;
 
     insertBefore(newNode, node.childNodes);
     parent.replaceChild(newNode, node);
@@ -239,7 +240,7 @@ function replaceWith(node: any, newNode: any): any {
 
 function serializeHtml(html?: string): DocumentFragment {
     ___document = ___document || (___document = plat.acquire(__Document));
-    var templateElement = ___document.createDocumentFragment();
+    let templateElement = ___document.createDocumentFragment();
 
     if (!isEmpty(html)) {
         setInnerHtml(templateElement, html);
@@ -253,7 +254,7 @@ function removeBetween(startNode: Node, endNode?: Node): void {
         return;
     }
 
-    var currentNode = startNode.nextSibling,
+    let currentNode = startNode.nextSibling,
         parentNode = startNode.parentNode,
         tempNode: Node;
 
@@ -284,7 +285,7 @@ function removeAll(startNode: Node, endNode?: Node): void {
 }
 
 /**
- * Safely sets innerHTML of an element. Uses MSApp.execUnsafeLocalFunction if 
+ * Safely sets innerHTML of an element. Uses MSApp.execUnsafeLocalFunction if
  * available.
  */
 function innerHtml(element: HTMLElement, html: string): HTMLElement {
@@ -306,7 +307,7 @@ function removeNode(node: Node): void {
         return;
     }
 
-    var parentNode = node.parentNode;
+    let parentNode = node.parentNode;
 
     if (!isNull(parentNode)) {
         parentNode.removeChild(node);
@@ -314,12 +315,12 @@ function removeNode(node: Node): void {
 }
 
 function addClass(element: HTMLElement, className: string): void {
-    var cName = (element || <HTMLElement>{}).className;
+    let cName = (element || <HTMLElement>{}).className;
     if (!isString(cName) || !isString(className) || className === '') {
         return;
     }
 
-    var split = className.split(__whiteSpaceRegex),
+    let split = className.split(__whiteSpaceRegex),
         name: string,
         classNameRegex: RegExp;
     if (isUndefined(element.classList)) {
@@ -349,12 +350,12 @@ function addClass(element: HTMLElement, className: string): void {
 }
 
 function removeClass(element: HTMLElement, className: string): void {
-    var cName = (element || <HTMLElement>{}).className;
+    let cName = (element || <HTMLElement>{}).className;
     if (!isString(cName) || !isString(className) || className === '') {
         return;
     }
 
-    var split = className.split(__whiteSpaceRegex),
+    let split = className.split(__whiteSpaceRegex),
         name: string;
     if (isUndefined(element.classList)) {
         if (cName === className) {
@@ -381,15 +382,15 @@ function removeClass(element: HTMLElement, className: string): void {
 }
 
 function toggleClass(element: HTMLElement, className: string): void {
-    var cName = (element || <HTMLElement>{}).className;
+    let cName = (element || <HTMLElement>{}).className;
     if (!isString(cName) || !isString(className) || className === '') {
         return;
     }
 
-    var split = className.split(__whiteSpaceRegex),
+    let split = className.split(__whiteSpaceRegex),
         name: string;
     if (isUndefined(element.classList)) {
-        var classNameRegex: RegExp;
+        let classNameRegex: RegExp;
         if (cName === '') {
             element.className = className;
         } else if (cName === className) {
@@ -421,13 +422,13 @@ function toggleClass(element: HTMLElement, className: string): void {
 }
 
 function replaceClass(element: HTMLElement, oldClass: string, newClass: string): void {
-    var cName = (element || <HTMLElement>{}).className;
+    let cName = (element || <HTMLElement>{}).className;
     if (!isString(cName) || !isString(newClass) || newClass === '') {
         return;
     }
 
     if (isUndefined(element.classList)) {
-        var startRegex = new RegExp('^' + oldClass + '\\s+', 'g'),
+        let startRegex = new RegExp('^' + oldClass + '\\s+', 'g'),
             midRegex = new RegExp('\\s+' + oldClass + '\\s+', 'g'),
             endRegex = new RegExp('\\s+' + oldClass + '$', 'g');
         element.className = cName.replace(startRegex, newClass + ' ')
@@ -441,12 +442,12 @@ function replaceClass(element: HTMLElement, oldClass: string, newClass: string):
 }
 
 function hasClass(element: HTMLElement, className: string): boolean {
-    var cName = (element || <HTMLElement>{}).className;
+    let cName = (element || <HTMLElement>{}).className;
     if (!isString(cName) || !isString(className) || className === '') {
         return false;
     }
 
-    var split = className.split(__whiteSpaceRegex);
+    let split = className.split(__whiteSpaceRegex);
     if (isUndefined(element.classList)) {
         if (cName === '') {
             return false;
@@ -454,7 +455,7 @@ function hasClass(element: HTMLElement, className: string): boolean {
             return true;
         }
 
-        var name: string;
+        let name: string;
         while (split.length > 0) {
             name = split.shift();
             if (!(name === '' || new RegExp('^' + name + '\\s|\\s' + name + '$|\\s' + name + '\\s', 'g').test(cName))) {
@@ -492,7 +493,7 @@ function getTemplate(templateUrl: string): plat.async.IThenable<DocumentFragment
                 return ___templateCache.put(templateUrl);
             }
 
-            var templateString = success.response;
+            let templateString = success.response;
 
             if (isEmpty(templateString.trim())) {
                 return ___templateCache.put(templateUrl);

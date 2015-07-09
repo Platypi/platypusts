@@ -4,7 +4,7 @@
  * @memberof plat.ui
  * @kind namespace
  * @access public
- * 
+ *
  * @description
  * Holds all the classes and interfaces related to UI animation components for platypus.
  */
@@ -15,11 +15,11 @@ module plat.ui.animations {
      * @name SimpleCssAnimation
      * @memberof plat.ui.animations
      * @kind class
-     * 
+     *
      * @extends {plat.ui.animations.CssAnimation}
-     * 
+     *
      * @description
-     * A simple CSS Animation class that places the 'plat-animation' class on an 
+     * A simple CSS Animation class that places the 'plat-animation' class on an
      * element, checks for animation properties, and waits for the animation to end.
      */
     export class SimpleCssAnimation extends CssAnimation {
@@ -28,9 +28,9 @@ module plat.ui.animations {
          * @memberof plat.ui.animations.SimpleCssAnimation
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The class name added to the animated element.
          */
@@ -41,9 +41,9 @@ module plat.ui.animations {
          * @memberof plat.ui.animations.SimpleCssAnimation
          * @kind property
          * @access public
-         * 
+         *
          * @type {plat.ui.animations.ISimpleAnimationOptions}
-         * 
+         *
          * @description
          * An optional options object that can denote a pseudo element animation.
          */
@@ -54,9 +54,9 @@ module plat.ui.animations {
          * @memberof plat.ui.animations.SimpleCssAnimation
          * @kind property
          * @access public
-         * 
+         *
          * @type {plat.IRemoveListener}
-         * 
+         *
          * @description
          * A function for stopping a potential callback in the animation chain.
          */
@@ -67,10 +67,10 @@ module plat.ui.animations {
          * @memberof plat.ui.animations.SimpleCssAnimation
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Adds the class to initialize the animation.
-         * 
+         *
          * @returns {void}
          */
         initialize(): void {
@@ -82,15 +82,15 @@ module plat.ui.animations {
          * @memberof plat.ui.animations.SimpleCssAnimation
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * A function denoting the start of the animation.
-         * 
+         *
          * @returns {void}
          */
         start(): void {
             this._animationCanceled = requestAnimationFrameGlobal((): void => {
-                var element = this.element,
+                let element = this.element,
                     className = this.className;
 
                 if (element.offsetParent === null) {
@@ -101,7 +101,7 @@ module plat.ui.animations {
 
                 addClass(element, className);
 
-                var animationId = this._animationEvents.$animation,
+                let animationId = this._animationEvents.$animation,
                     options = this.options || <ISimpleCssAnimationOptions>{},
                     computedStyle = this._window.getComputedStyle(element, options.pseudo),
                     animationName = computedStyle[<any>(animationId + 'Name')];
@@ -132,10 +132,10 @@ module plat.ui.animations {
          * @kind function
          * @access public
          * @virtual
-         * 
+         *
          * @description
          * A function to be called to pause the animation.
-         * 
+         *
          * @returns {plat.async.IThenable<void>} A new promise that resolves when the animation has been paused.
          */
         pause(): async.IThenable<void> {
@@ -143,7 +143,7 @@ module plat.ui.animations {
                 return this._Promise.resolve();
             }
 
-            var animationEvents = this._compat.animationEvents;
+            let animationEvents = this._compat.animationEvents;
             return new this._Promise<void>((resolve): void => {
                 requestAnimationFrameGlobal((): void => {
                     if (this._animationCanceled !== noop) {
@@ -160,10 +160,10 @@ module plat.ui.animations {
          * @kind function
          * @access public
          * @virtual
-         * 
+         *
          * @description
          * A function to be called to resume a paused animation.
-         * 
+         *
          * @returns {plat.async.IThenable<void>} A new promise that resolves when the animation has resumed.
          */
         resume(): async.IThenable<void> {
@@ -171,7 +171,7 @@ module plat.ui.animations {
                 return this._Promise.resolve();
             }
 
-            var animationEvents = this._compat.animationEvents;
+            let animationEvents = this._compat.animationEvents;
             return new this._Promise<void>((resolve): void => {
                 requestAnimationFrameGlobal((): void => {
                     if (this._animationCanceled !== noop) {
@@ -187,11 +187,11 @@ module plat.ui.animations {
          * @memberof plat.ui.animations.SimpleCssAnimation
          * @kind function
          * @access public
-         * 
+         *
          * @description
-         * A function to be called to let it be known the animation is being cancelled. 
+         * A function to be called to let it be known the animation is being cancelled.
          * Removes the animation class and the animation "-init" class.
-         * 
+         *
          * @returns {void}
          */
         cancel(): void {
@@ -205,14 +205,14 @@ module plat.ui.animations {
          * @memberof plat.ui.animations.SimpleCssAnimation
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Removes the animation class and the animation "-init" class.
-         * 
+         *
          * @returns {void}
          */
         protected _dispose(): void {
-            var className = this.className;
+            let className = this.className;
             removeClass(this.element, className + ' ' + className + __INIT_SUFFIX);
             this._animationCanceled = noop;
         }
@@ -224,7 +224,7 @@ module plat.ui.animations {
      * @name ISimpleCssAnimationOptions
      * @memberof plat.ui.animations
      * @kind interface
-     * 
+     *
      * @description
      * An interface describing the options for {@link plat.ui.animations.SimpleCssAnimation|SimpleCssAnimation}.
      */
@@ -234,9 +234,9 @@ module plat.ui.animations {
          * @memberof plat.ui.animations.ISimpleCssAnimationOptions
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The pseudo element identifier (i.e. '::before' if defined as .red::before).
          */
@@ -247,12 +247,12 @@ module plat.ui.animations {
          * @memberof plat.ui.animations.ISimpleCssAnimationOptions
          * @kind property
          * @access public
-         * 
+         *
          * @type {boolean}
-         * 
+         *
          * @description
-         * A boolean specifying whether or not to leave the '*-init' class on the element 
-         * after the animation has started. Defaults to false as we want to remove 
+         * A boolean specifying whether or not to leave the '*-init' class on the element
+         * after the animation has started. Defaults to false as we want to remove
          * any initial state after an animation has kicked off.
          */
         preserveInit?: boolean;
@@ -262,9 +262,9 @@ module plat.ui.animations {
      * @name FadeIn
      * @memberof plat.ui.animations
      * @kind class
-     * 
+     *
      * @extends {plat.ui.animations.SimpleCssAnimation}
-     * 
+     *
      * @description
      * An animation control that fades in an element as defined by the included CSS.
      */
@@ -274,9 +274,9 @@ module plat.ui.animations {
          * @memberof plat.ui.animations.FadeIn
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The class name added to the element fading in.
          */
@@ -289,9 +289,9 @@ module plat.ui.animations {
      * @name FadeOut
      * @memberof plat.ui.animations
      * @kind class
-     * 
+     *
      * @extends {plat.ui.animations.SimpleCssAnimation}
-     * 
+     *
      * @description
      * An animation control that fades out an element as defined by the included CSS.
      */
@@ -301,9 +301,9 @@ module plat.ui.animations {
          * @memberof plat.ui.animations.FadeOut
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The class name added to the element fading out.
          */
@@ -316,9 +316,9 @@ module plat.ui.animations {
      * @name Enter
      * @memberof plat.ui.animations
      * @kind class
-     * 
+     *
      * @extends {plat.ui.animations.SimpleCssAnimation}
-     * 
+     *
      * @description
      * An animation control that causes an element to enter as defined by the included CSS.
      */
@@ -328,9 +328,9 @@ module plat.ui.animations {
          * @memberof plat.ui.animations.Enter
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The class name added to the entering element.
          */
@@ -343,9 +343,9 @@ module plat.ui.animations {
      * @name Leave
      * @memberof plat.ui.animations
      * @kind class
-     * 
+     *
      * @extends {plat.ui.animations.SimpleCssAnimation}
-     * 
+     *
      * @description
      * An animation control that causes an element to leave as defined by the included CSS.
      */
@@ -355,9 +355,9 @@ module plat.ui.animations {
          * @memberof plat.ui.animations.Leave
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The class name added to the leaving element.
          */
@@ -370,9 +370,9 @@ module plat.ui.animations {
      * @name Move
      * @memberof plat.ui.animations
      * @kind class
-     * 
+     *
      * @extends {plat.ui.animations.SimpleCssAnimation}
-     * 
+     *
      * @description
      * An animation control that causes an element to move as defined by the included CSS.
      */
@@ -382,9 +382,9 @@ module plat.ui.animations {
          * @memberof plat.ui.animations.Move
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The class name added to the leaving element.
          */

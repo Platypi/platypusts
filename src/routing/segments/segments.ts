@@ -1,12 +1,12 @@
 ﻿module plat.routing {
     'use strict';
 
-    var specialCharacters = [
+    const specialCharacters = [
         '/', '.', '*', '+', '?', '|',
         '(', ')', '[', ']', '{', '}', '\\'
-    ],
-        escapeRegex = new RegExp('(\\' + specialCharacters.join('|\\') + ')', 'g'),
-        baseSegment: BaseSegment,
+    ], escapeRegex = new RegExp('(\\' + specialCharacters.join('|\\') + ')', 'g');
+
+    let baseSegment: BaseSegment,
         dynamicSegments: IObject<DynamicSegment> = {},
         splatSegments: IObject<SplatSegment> = {},
         staticSegments: IObject<StaticSegment> = {};
@@ -15,9 +15,9 @@
      * @name BaseSegment
      * @memberof plat.routing
      * @kind class
-     * 
+     *
      * @description
-     * Stores information about a segment, publishes a regex for matching the segment as well as 
+     * Stores information about a segment, publishes a regex for matching the segment as well as
      * methods for generating the segment and iterating over the characters in the segment.
      */
     export class BaseSegment {
@@ -27,9 +27,9 @@
          * @kind property
          * @access protected
          * @static
-         * 
+         *
          * @type {plat.expressions.Regex}
-         * 
+         *
          * @description
          * Reference to the {@link plat.expressions.Regex|Regex} injectable.
          */
@@ -41,9 +41,9 @@
          * @kind property
          * @access public
          * @virtual
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * Denotes the type of segment for this instance.
          */
@@ -54,9 +54,9 @@
          * @memberof plat.routing.BaseSegment
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The name of the segment.
          */
@@ -67,9 +67,9 @@
          * @memberof plat.routing.BaseSegment
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * A regular expression string which can be used to match the segment.
          */
@@ -80,9 +80,9 @@
          * @memberof plat.routing.BaseSegment
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * A regular expression string which can be used to match the segment.
          */
@@ -94,15 +94,15 @@
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
-         * Parses a route into segments, populating an array of names (for dynamic and splat segments) as well as 
+         * Parses a route into segments, populating an array of names (for dynamic and splat segments) as well as
          * an {@link plat.routing.ISegmentTypeCount|ISegmentTypeCount} object.
-         * 
+         *
          * @param {string} route The route to parse.
          * @param {Array<string>} names An array to populate with dynamic/splat segment names
          * @param {plat.routing.ISegmentTypeCount} types An object to use for counting segment types in the route.
-         * 
+         *
          * @returns {Array<plat.routing.BaseSegment>} The parsed segments.
          */
         static parse(route: string, names: Array<string>, types: ISegmentTypeCount): Array<BaseSegment> {
@@ -112,7 +112,7 @@
                 route = route.slice(1);
             }
 
-            var segments: Array<string> = route.split('/'),
+            let segments: Array<string> = route.split('/'),
                 length = segments.length,
                 findSegment = BaseSegment.__findSegment,
                 results: Array<BaseSegment> = [],
@@ -121,7 +121,7 @@
                 match: RegExpMatchArray,
                 _regex = BaseSegment._regex;
 
-            for (var i = 0; i < length; ++i) {
+            for (let i = 0; i < length; ++i) {
                 segment = segments[i];
 
                 if (segment === '') {
@@ -157,19 +157,19 @@
          * @kind function
          * @access private
          * @static
-         * 
+         *
          * @description
-         * Parses a route into segments, populating an array of names (for dynamic and splat segments) as well as 
+         * Parses a route into segments, populating an array of names (for dynamic and splat segments) as well as
          * an {@link plat.routing.ISegmentTypeCount|ISegmentTypeCount} object.
-         * 
+         *
          * @param {string} name The name of the segment to look for.
          * @param {string} token The token used to {@link plat.acquire|acquire} a new segment if necessary.
          * @param {plat.IObject<plat.routing.BaseSegment>} cache The cache in which to look for/store the segment.
-         * 
+         *
          * @returns {plat.routing.BaseSegment} The located segment.
          */
         private static __findSegment(name: string, token: string, cache: IObject<BaseSegment>): BaseSegment {
-            var segment = cache[name];
+            let segment = cache[name];
 
             if (!isObject(segment)) {
                 segment = cache[name] = <BaseSegment>acquire(token);
@@ -184,12 +184,12 @@
          * @memberof plat.routing.BaseSegment
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Initializes the segment.
-         * 
+         *
          * @param {string} name? The name for the new segment.
-         * 
+         *
          * @returns {void}
          */
         initialize(name?: string): void {
@@ -201,16 +201,16 @@
          * @memberof plat.routing.BaseSegment
          * @kind function
          * @access public
-         * 
+         *
          * @description
-         * Iterates over the characters in the segment, calling an iterator method and accumulating the result of each call in 
+         * Iterates over the characters in the segment, calling an iterator method and accumulating the result of each call in
          * a defined object.
-         * 
+         *
          * @typeparam {any} T The type of the accumulated object.
-         * 
+         *
          * @param {(previousValue: T, spec: plat.routing.ICharacterSpecification) => T} iterator The iterator to call with each character.
          * @param {T} initialValue? An optional initial value with which to start the accumulation.
-         * 
+         *
          * @returns {T} The accumulated object.
          */
         reduceCharacters<T>(iterator: (previousValue: T, spec: ICharacterSpecification) => T, initialValue?: T): T {
@@ -226,12 +226,12 @@
          * @memberof plat.routing.BaseSegment
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Generates a new segment, using the input parameters if necessary.
-         * 
+         *
          * @param {plat.IObject<string>} parameters? The input parameters for the segment.
-         * 
+         *
          * @returns {string} The generated segment.
          */
         generate(parameters?: IObject<string>): string {
@@ -255,9 +255,9 @@
      * @name StaticSegment
      * @memberof plat.routing
      * @kind class
-     * 
+     *
      * @description
-     * Stores information about a static segment, publishes a regex for matching the segment as well as 
+     * Stores information about a static segment, publishes a regex for matching the segment as well as
      * methods for generating the segment and iterating over the characters in the segment.
      */
     export class StaticSegment extends BaseSegment {
@@ -266,9 +266,9 @@
          * @memberof plat.routing.StaticSegment
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * Denotes that this is a static segment.
          */
@@ -279,12 +279,12 @@
          * @memberof plat.routing.StaticSegment
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Initializes the segment.
-         * 
+         *
          * @param {string} name? The name for the new segment.
-         * 
+         *
          * @returns {void}
          */
         initialize(name?: string): void {
@@ -298,24 +298,24 @@
          * @memberof plat.routing.StaticSegment
          * @kind function
          * @access public
-         * 
+         *
          * @description
-         * Iterates over the characters in the segment, calling an iterator method and accumulating the result of each call in 
+         * Iterates over the characters in the segment, calling an iterator method and accumulating the result of each call in
          * a defined object.
-         * 
+         *
          * @typeparam {any} T The type of the accumulated object.
-         * 
+         *
          * @param {(previousValue: T, spec: plat.routing.ICharacterSpecification) => T} iterator The iterator to call with each character.
          * @param {T} initialValue? An optional initial value with which to start the accumulation.
-         * 
+         *
          * @returns {T} The accumulated object.
          */
         reduceCharacters<T>(iterator: (previousValue: T, spec: ICharacterSpecification) => T, initialValue?: T): T {
-            var name: string = this.name,
+            let name: string = this.name,
                 length = name.length,
                 value = initialValue;
 
-            for (var i = 0; i < length; ++i) {
+            for (let i = 0; i < length; ++i) {
                 value = iterator(value, { validCharacters: name[i] });
             }
 
@@ -329,9 +329,9 @@
      * @name VariableSegment
      * @memberof plat.routing
      * @kind class
-     * 
+     *
      * @description
-     * Stores information about a variable segment (either dynamic or splat), publishes a regex for matching the segment as well as 
+     * Stores information about a variable segment (either dynamic or splat), publishes a regex for matching the segment as well as
      * methods for generating the segment and iterating over the characters in the segment.
      */
     export class VariableSegment extends BaseSegment {
@@ -340,9 +340,9 @@
          * @memberof plat.routing.VariableSegment
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * Denotes that this is a variable segment.
          */
@@ -353,12 +353,12 @@
          * @memberof plat.routing.VariableSegment
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Generates a new segment, using the input parameters.
-         * 
+         *
          * @param {plat.IObject<string>} parameters? The input parameters for the segment.
-         * 
+         *
          * @returns {string} The generated segment.
          */
         generate(parameters?: IObject<string>): string {
@@ -374,9 +374,9 @@
      * @name SplatSegment
      * @memberof plat.routing
      * @kind class
-     * 
+     *
      * @description
-     * Stores information about a splat segment, publishes a regex for matching the segment as well as 
+     * Stores information about a splat segment, publishes a regex for matching the segment as well as
      * methods for generating the segment and iterating over the characters in the segment.
      */
     export class SplatSegment extends VariableSegment {
@@ -385,9 +385,9 @@
          * @memberof plat.routing.SplatSegment
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * Denotes that this is a splat segment.
          */
@@ -398,9 +398,9 @@
          * @memberof plat.routing.SplatSegment
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * A regular expression string which can be used to match the segment.
          */
@@ -411,9 +411,9 @@
          * @memberof plat.routing.SplatSegment
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * A regular expression string which can be used to match the segment.
          */
@@ -429,9 +429,9 @@
      * @name DynamicSegment
      * @memberof plat.routing
      * @kind class
-     * 
+     *
      * @description
-     * Stores information about a dynamic segment, publishes a regex for matching the segment as well as 
+     * Stores information about a dynamic segment, publishes a regex for matching the segment as well as
      * methods for generating the segment and iterating over the characters in the segment.
      */
     export class DynamicSegment extends VariableSegment {
@@ -440,9 +440,9 @@
          * @memberof plat.routing.DynamicSegment
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * Denotes that this is a dynamic segment.
          */
@@ -453,9 +453,9 @@
          * @memberof plat.routing.DynamicSegment
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * A regular expression string which can be used to match the segment.
          */
@@ -466,9 +466,9 @@
          * @memberof plat.routing.DynamicSegment
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * A regular expression string which can be used to match the segment.
          */
@@ -484,7 +484,7 @@
      * @name ICharacterSpecification
      * @memberof plat.routing
      * @kind interface
-     * 
+     *
      * @description
      * Contains information for validating characters.
      */
@@ -493,9 +493,9 @@
          * @name invalidCharacters
          * @memberof plat.routing.ICharacterSpecification
          * @kind property
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
          * Contains all the invalid characters
          */
@@ -505,9 +505,9 @@
          * @name validCharacters
          * @memberof plat.routing.ICharacterSpecification
          * @kind property
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * Contains all the valid characters
          */
@@ -517,9 +517,9 @@
          * @name repeat
          * @memberof plat.routing.ICharacterSpecification
          * @kind property
-         * 
+         *
          * @type {boolean}
-         * 
+         *
          * @description
          * Whether or not the character should repeat.
          */
@@ -530,10 +530,10 @@
      * @name ISegmentTypeCount
      * @memberof plat.routing
      * @kind interface
-     * 
+     *
      * @description
-     * Contains the total number of each segment type for a registered route. 
-     * Used to sort recognized route solutions for more accurate route 
+     * Contains the total number of each segment type for a registered route.
+     * Used to sort recognized route solutions for more accurate route
      * matching.
      */
     export interface ISegmentTypeCount {
@@ -541,9 +541,9 @@
          * @name statics
          * @memberof plat.routing.ISegmentTypeCount
          * @kind property
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
          * A count of how many static segments exist in the route.
          */
@@ -553,9 +553,9 @@
          * @name dynamics
          * @memberof plat.routing.ISegmentTypeCount
          * @kind property
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
          * A count of how many dynamic segments exist in the route.
          */
@@ -565,9 +565,9 @@
          * @name splats
          * @memberof plat.routing.ISegmentTypeCount
          * @kind property
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
          * A count of how many splat segments exist in the route.
          */

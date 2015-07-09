@@ -5,11 +5,11 @@ module plat.processing {
      * @name CommentManager
      * @memberof plat.processing
      * @kind class
-     * 
+     *
      * @extends {plat.processing.NodeManager}
-     * 
+     *
      * @description
-     * A class used to manage Comment nodes. Provides a way to 
+     * A class used to manage Comment nodes. Provides a way to
      * clone a Comment node.
      */
     export class CommentManager extends NodeManager {
@@ -18,11 +18,11 @@ module plat.processing {
          * @memberof plat.processing.CommentManager
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
-         * Specifies the type for this {@link plat.processing.NodeManager|NodeManager}. 
+         * Specifies the type for this {@link plat.processing.NodeManager|NodeManager}.
          * It's value is "comment".
          */
         type: string = 'comment';
@@ -33,19 +33,19 @@ module plat.processing {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
          * Creates a new CommentManager for the given Comment node.
-         * 
+         *
          * @param {Node} node The Comment to associate with the new manager.
-         * @param {plat.processing.ElementManager} parent The parent 
+         * @param {plat.processing.ElementManager} parent The parent
          * {@link plat.processing.ElementManager|ElementManager}.
-         * 
-         * @returns {plat.processing.CommentManager} The newly created {@link plat.processing.CommentManager|CommentManager} 
+         *
+         * @returns {plat.processing.CommentManager} The newly created {@link plat.processing.CommentManager|CommentManager}
          * responsible for the passed in Comment Node.
          */
         static create(node: Node, parent: ElementManager): CommentManager {
-            var manager = new CommentManager();
+            let manager = new CommentManager();
 
             manager.initialize({
                 nodes: [{
@@ -61,15 +61,15 @@ module plat.processing {
          * @memberof plat.processing.CommentManager
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * A method for cloning this manager with a new Comment.
-         * 
+         *
          * @param {Node} newNode The new Comment node to associate with the cloned
          * manager.
-         * @param {plat.processing.ElementManager} parentManager The parent {@link plat.processing.ElementManager|ElementManager} 
+         * @param {plat.processing.ElementManager} parentManager The parent {@link plat.processing.ElementManager|ElementManager}
          * for the clone.
-         * 
+         *
          * @returns {number} The number of nodes to advance while node traversal is in progress (returns 1).
          */
         clone(newNode: Node, parentManager: ElementManager): number {
@@ -92,7 +92,7 @@ module plat.processing {
      * @name ICommentManagerFactory
      * @memberof plat.processing
      * @kind interface
-     * 
+     *
      * @description
      * Creates and manages a class for dealing with Comment nodes.
      */
@@ -103,15 +103,15 @@ module plat.processing {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
          * Creates a new CommentManager for the given Comment node.
-         * 
+         *
          * @param {Node} node The Comment to associate with the new manager.
-         * @param {plat.processing.ElementManager} parent The parent 
+         * @param {plat.processing.ElementManager} parent The parent
          * {@link plat.processing.ElementManager|ElementManager}.
-         * 
-         * @returns {plat.processing.CommentManager} The newly created {@link plat.processing.CommentManager|CommentManager} 
+         *
+         * @returns {plat.processing.CommentManager} The newly created {@link plat.processing.CommentManager|CommentManager}
          * responsible for the passed in Comment Node.
          */
         create(node: Node, parent: ElementManager): CommentManager;

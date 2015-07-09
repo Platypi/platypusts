@@ -7,9 +7,9 @@
  * @static
  * @readonly
  * @exported false
- * 
+ *
  * @type {plat.IObject<plat.expressions.ITokenDetails>}
- * 
+ *
  * @description
  * An object used to create {@link plat.expressions.ITokenDetails|ITokenDetails} for every operator.
  */
@@ -171,7 +171,7 @@ var OPERATORS: plat.IObject<plat.expressions.ITokenDetails> = {
         fn: (context: any, aliases: any,
             a: (context: any, aliases: any) => any,
             b: (context: any, aliases: any) => any): void => {
-            var _log: plat.debug.Log = plat.acquire(__Log);
+            let _log: plat.debug.Log = plat.acquire(__Log);
             _log.error(new Error('Assignment operators are not supported'));
         }
     },
@@ -179,7 +179,7 @@ var OPERATORS: plat.IObject<plat.expressions.ITokenDetails> = {
         precedence: 3, associativity: '',
         fn: (context: any, aliases: any,
             a: (context: any, aliases: any) => any): void => {
-            var _log: plat.debug.Log = plat.acquire(__Log);
+            let _log: plat.debug.Log = plat.acquire(__Log);
             _log.error(new Error('Assignment operators are not supported'));
         }
     },
@@ -187,7 +187,7 @@ var OPERATORS: plat.IObject<plat.expressions.ITokenDetails> = {
         precedence: 3, associativity: '',
         fn: (context: any, aliases: any,
             a: (context: any, aliases: any) => any): void => {
-            var _log: plat.debug.Log = plat.acquire(__Log);
+            let _log: plat.debug.Log = plat.acquire(__Log);
             _log.error(new Error('Assignment operators are not supported'));
         }
     },
@@ -196,7 +196,7 @@ var OPERATORS: plat.IObject<plat.expressions.ITokenDetails> = {
         fn: (context: any, aliases: any,
             a: (context: any, aliases: any) => any,
             b: (context: any, aliases: any) => any): void => {
-            var _log: plat.debug.Log = plat.acquire(__Log);
+            let _log: plat.debug.Log = plat.acquire(__Log);
             _log.error(new Error('Assignment operators are not supported'));
         }
     },
@@ -205,7 +205,7 @@ var OPERATORS: plat.IObject<plat.expressions.ITokenDetails> = {
         fn: (context: any, aliases: any,
             a: (context: any, aliases: any) => any,
             b: (context: any, aliases: any) => any): void => {
-            var _log: plat.debug.Log = plat.acquire(__Log);
+            let _log: plat.debug.Log = plat.acquire(__Log);
             _log.error(new Error('Assignment operators are not supported'));
         }
     },
@@ -214,7 +214,7 @@ var OPERATORS: plat.IObject<plat.expressions.ITokenDetails> = {
         fn: (context: any, aliases: any,
             a: (context: any, aliases: any) => any,
             b: (context: any, aliases: any) => any): void => {
-            var _log: plat.debug.Log = plat.acquire(__Log);
+            let _log: plat.debug.Log = plat.acquire(__Log);
             _log.error(new Error('Assignment operators are not supported'));
         }
     },
@@ -223,7 +223,7 @@ var OPERATORS: plat.IObject<plat.expressions.ITokenDetails> = {
         fn: (context: any, aliases: any,
             a: (context: any, aliases: any) => any,
             b: (context: any, aliases: any) => any): void => {
-            var _log: plat.debug.Log = plat.acquire(__Log);
+            let _log: plat.debug.Log = plat.acquire(__Log);
             _log.error(new Error('Assignment operators are not supported'));
         }
     },
@@ -232,7 +232,7 @@ var OPERATORS: plat.IObject<plat.expressions.ITokenDetails> = {
         fn: (context: any, aliases: any,
             a: (context: any, aliases: any) => any,
             b: (context: any, aliases: any) => any): void => {
-            var _log: plat.debug.Log = plat.acquire(__Log);
+            let _log: plat.debug.Log = plat.acquire(__Log);
             _log.error(new Error('Assignment operators are not supported'));
         }
     }
@@ -246,13 +246,13 @@ var OPERATORS: plat.IObject<plat.expressions.ITokenDetails> = {
  * @static
  * @readonly
  * @exported false
- * 
+ *
  * @type {plat.IObject<plat.expressions.ITokenDetails>}
- * 
+ *
  * @description
  * An object used to create {@link plat.expressions.ITokenDetails|ITokenDetails} for every accessor.
  */
-var ACCESSORS: plat.IObject<plat.expressions.ITokenDetails> = {
+const ACCESSORS: plat.IObject<plat.expressions.ITokenDetails> = {
     '()': { precedence: 2, associativity: null, fn: null },
     '[]': { precedence: 2, associativity: null, fn: null },
     '.': { precedence: 2, associativity: null, fn: null },
@@ -267,13 +267,13 @@ var ACCESSORS: plat.IObject<plat.expressions.ITokenDetails> = {
  * @static
  * @readonly
  * @exported false
- * 
+ *
  * @type {plat.IObject<plat.expressions.ITokenDetails>}
- * 
+ *
  * @description
  * An object used to create {@link plat.expressions.ITokenDetails|ITokenDetails} for every delimiter.
  */
-var DELIMITERS: plat.IObject<plat.expressions.ITokenDetails> = {
+const DELIMITERS: plat.IObject<plat.expressions.ITokenDetails> = {
     '{': { precedence: 1, associativity: null, fn: null },
     '}': { precedence: 1, associativity: null, fn: null },
     '[': { precedence: 2, associativity: null, fn: null },
@@ -294,13 +294,13 @@ var DELIMITERS: plat.IObject<plat.expressions.ITokenDetails> = {
  * @static
  * @readonly
  * @exported false
- * 
+ *
  * @type {plat.IObject<plat.expressions.ITokenDetails>}
- * 
+ *
  * @description
  * An object used to get literal values from string values of false, true, and undefined
  */
-var KEYWORDS: plat.IObject<any> = {
+const KEYWORDS: plat.IObject<any> = {
     false: false,
     true: true,
     null: null,
@@ -314,12 +314,12 @@ var KEYWORDS: plat.IObject<any> = {
  * @access private
  * @static
  * @exported false
- * 
+ *
  * @description
  * Checks if a string is in the {@link plat.expressions.DELIMITERS|DELIMITERS} array.
- * 
+ *
  * @param {string} key The string to index into the DELIMITERS array.
- * 
+ *
  * @returns {boolean} Whether or not the key is a delimiter.
  */
 function isDelimiter(key: string): boolean {
@@ -333,12 +333,12 @@ function isDelimiter(key: string): boolean {
  * @access private
  * @static
  * @exported false
- * 
+ *
  * @description
  * Checks if a string is in the {@link plat.expressions.ACCESSORS|ACCESSORS} array.
- * 
+ *
  * @param {string} key The string to index into the ACCESSORS array.
- * 
+ *
  * @returns {boolean} Whether or not the key is a accessor.
  */
 function isAccessor(key: string): boolean {
@@ -352,12 +352,12 @@ function isAccessor(key: string): boolean {
  * @access private
  * @static
  * @exported false
- * 
+ *
  * @description
  * Checks if a string is in the {@link plat.expressions.OPERATORS|OPERATORS} array.
- * 
+ *
  * @param {string} key The string to index into the OPERATORS array.
- * 
+ *
  * @returns {boolean} Whether or not the key is a operator.
  */
 function isOperator(key: string): boolean {
@@ -371,12 +371,12 @@ function isOperator(key: string): boolean {
  * @access private
  * @static
  * @exported false
- * 
+ *
  * @description
  * Checks if a string is in the {@link plat.expressions.KEYWORDS|KEYWORDS} array.
- * 
+ *
  * @param {string} key The string to index into the KEYWORDS array.
- * 
+ *
  * @returns {boolean} Whether or not the key is a keyword.
  */
 function isKeyword(key: string): boolean {

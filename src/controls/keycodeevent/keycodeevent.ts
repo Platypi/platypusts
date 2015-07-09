@@ -6,13 +6,13 @@ module plat.controls {
      * @memberof plat.controls
      * @kind property
      * @access public
-     * 
+     *
      * @type {any}
-     * 
+     *
      * @description
      * A mapping of all keys to their equivalent keyCode.
      */
-    export var KeyCodes = {
+    export const KeyCodes = {
         'backspace': 8,
         'tab': 9,
         'enter': 13,
@@ -113,10 +113,10 @@ module plat.controls {
      * @name KeyCodeEventControl
      * @memberof plat.controls
      * @kind class
-     * 
+     *
      * @extends {plat.controls.SimpleEventControl}
      * @implements {plat.controls.IKeyCodeEventControl}
-     * 
+     *
      * @description
      * Base class used for filtering keys on KeyboardEvents.
      */
@@ -126,9 +126,9 @@ module plat.controls {
          * @memberof plat.controls.KeyCodeEventControl
          * @kind property
          * @access public
-         * 
+         *
          * @type {plat.IObject<boolean>}
-         * 
+         *
          * @description
          * Holds the key mappings to filter for in a KeyboardEvent.
          */
@@ -139,22 +139,22 @@ module plat.controls {
          * @memberof plat.controls.KeyCodeEventControl
          * @kind function
          * @access protected
-         * 
+         *
          * @description
-         * Checks if the {@link plat.controls.IKeyboardEventInput|IKeyboardEventInput} is an expression object 
+         * Checks if the {@link plat.controls.IKeyboardEventInput|IKeyboardEventInput} is an expression object
          * and sets the necessary listener.
-         * 
+         *
          * @returns {void}
          */
         protected _setListener(): void {
-            var attr = this.attribute;
+            let attr = this.attribute;
             if (isEmpty(this.event) || isEmpty(attr)) {
                 return;
             }
 
-            var expression = this.attributes[attr].trim();
+            let expression = this.attributes[attr].trim();
             if (expression[0] === '{') {
-                var eventObject: IKeyboardEventInput = this.evaluateExpression(expression) || { method: '' },
+                let eventObject: IKeyboardEventInput = this.evaluateExpression(expression) || { method: '' },
                     keys = this._filterArgs(eventObject);
 
                 this._setKeyCodes(keys);
@@ -170,15 +170,15 @@ module plat.controls {
          * @memberof plat.controls.KeyCodeEventControl
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Parses the proper method args and finds any key code filters.
-         * 
-         * @returns {Array<number|string>} An array of either characters or key codes 
+         *
+         * @returns {Array<number|string>} An array of either characters or key codes
          * used for filtering.
          */
         protected _filterArgs(input: IKeyboardEventInput): Array<any> {
-            var key = input.key,
+            let key = input.key,
                 keys = input.keys;
 
             this._parseArgs(input.method);
@@ -204,13 +204,13 @@ module plat.controls {
          * @memberof plat.controls.KeyCodeEventControl
          * @kind function
          * @access protected
-         * 
+         *
          * @description
-         * Matches the event's keyCode if necessary and then handles the event if 
+         * Matches the event's keyCode if necessary and then handles the event if
          * a match is found or if there are no filter keyCodes.
-         * 
+         *
          * @param {KeyboardEvent} ev The keyboard event object.
-         * 
+         *
          * @returns {void}
          */
         protected _onEvent(ev: KeyboardEvent): void {
@@ -224,16 +224,16 @@ module plat.controls {
          * @memberof plat.controls.KeyCodeEventControl
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Matches the event's keyCode if necessary.
-         * 
+         *
          * @param {KeyboardEvent} ev The keyboard event object.
-         * 
+         *
          * @returns {boolean} Whether or not there is a match.
          */
         protected _compareKeys(ev: KeyboardEvent): boolean {
-            var keyCodes = this.keyCodes,
+            let keyCodes = this.keyCodes,
                 keyCode = ev.keyCode || ev.which;
 
             return isEmpty(keyCodes) || keyCodes[keyCode] === true;
@@ -244,14 +244,14 @@ module plat.controls {
          * @memberof plat.controls.KeyCodeEventControl
          * @kind function
          * @access protected
-         * 
+         *
          * @description
-         * Sets the defined key codes as they correspond to 
+         * Sets the defined key codes as they correspond to
          * the {@link plat.controls.KeyCodes|KeyCodes} map.
-         * 
-         * @param {Array<string>} keys? The array of defined keys to satisfy the 
+         *
+         * @param {Array<string>} keys? The array of defined keys to satisfy the
          * key press condition.
-         * 
+         *
          * @returns {void}
          */
         protected _setKeyCodes(keys?: Array<string>): void {
@@ -259,12 +259,12 @@ module plat.controls {
                 keys = [];
             }
 
-            var length = keys.length,
+            let length = keys.length,
                 key: string,
                 keyCodes = this.keyCodes,
                 index: string;
 
-            for (var i = 0; i < length; ++i) {
+            for (let i = 0; i < length; ++i) {
                 key = keys[i];
                 index = isNumber(key) ? key : (<any>KeyCodes)[key.toLowerCase()];
                 keyCodes[index] = true;
@@ -276,9 +276,9 @@ module plat.controls {
      * @name IKeyCodeEventControl
      * @memberof plat.controls
      * @kind interface
-     * 
+     *
      * @extends {plat.controls.ISendEvents}
-     * 
+     *
      * @description
      * An attribute object that binds to specified key code scenarios.
      */
@@ -288,9 +288,9 @@ module plat.controls {
          * @memberof plat.controls.IKeyCodeEventControl
          * @kind property
          * @access public
-         * 
+         *
          * @type {plat.IObject<boolean>}
-         * 
+         *
          * @description
          * Holds the key mappings to filter for in a KeyboardEvent.
          */
@@ -301,7 +301,7 @@ module plat.controls {
      * @name IKeyboardEventInput
      * @memberof plat.controls
      * @kind interface
-     * 
+     *
      * @description
      * The available options for {@link plat.controls.KeyCodeEventControl|KeyCodeEventControl}.
      */
@@ -311,9 +311,9 @@ module plat.controls {
          * @memberof plat.controls.IKeyboardEventInput
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The method to call when the condition is satisfied.
          */
@@ -324,12 +324,12 @@ module plat.controls {
          * @memberof plat.controls.IKeyboardEventInput
          * @kind property
          * @access public
-         * 
+         *
          * @type {string|number}
-         * 
+         *
          * @description
-         * The key to satisfy the press condition. Can be specified either as a numeric key code 
-         * or a string representation as seen by the KeyCodes mapping. Used for keydown, 
+         * The key to satisfy the press condition. Can be specified either as a numeric key code
+         * or a string representation as seen by the KeyCodes mapping. Used for keydown,
          * keypress, and keyup events where capitalization is disregarded.
          */
         key?: any;
@@ -339,11 +339,11 @@ module plat.controls {
          * @memberof plat.controls.IKeyboardEventInput
          * @kind property
          * @access public
-         * 
+         *
          * @type {Array<string|number>}
-         * 
+         *
          * @description
-         * An optional array of keys or key codes if more than one key can satisfy the condition. Used for keydown, 
+         * An optional array of keys or key codes if more than one key can satisfy the condition. Used for keydown,
          * keypress, and keyup events where capitalization is disregarded.
          */
         keys?: Array<any>;
@@ -353,11 +353,11 @@ module plat.controls {
          * @memberof plat.controls.IKeyboardEventInput
          * @kind property
          * @access public
-         * 
+         *
          * @type {string|number}
-         * 
+         *
          * @description
-         * The character to satisfy the press condition. Can be specified either as a numeric char code 
+         * The character to satisfy the press condition. Can be specified either as a numeric char code
          * or the char itself. Used for the charpress event where capitalization is regarded.
          */
         char?: any;
@@ -367,11 +367,11 @@ module plat.controls {
          * @memberof plat.controls.IKeyboardEventInput
          * @kind property
          * @access public
-         * 
+         *
          * @type {Array<string|number>}
-         * 
+         *
          * @description
-         * An optional array of characters or char codes if more than one char can satisfy the condition. 
+         * An optional array of characters or char codes if more than one char can satisfy the condition.
          * Used for the charpress event where capitalization is regarded.
          */
         chars?: Array<any>;
@@ -381,9 +381,9 @@ module plat.controls {
      * @name KeyDown
      * @memberof plat.controls
      * @kind class
-     * 
+     *
      * @extends {plat.controls.KeyCodeEventControl}
-     * 
+     *
      * @description
      * Used for filtering keys on keydown events. Does not take capitalization into account.
      */
@@ -393,9 +393,9 @@ module plat.controls {
          * @memberof plat.controls.KeyDown
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The event name.
          */
@@ -406,11 +406,11 @@ module plat.controls {
      * @name KeyPress
      * @memberof plat.controls
      * @kind class
-     * 
+     *
      * @extends {plat.controls.KeyCodeEventControl}
-     * 
+     *
      * @description
-     * Used for filtering only printing keys (a-z, A-Z, 0-9, and special characters) on keydown events. 
+     * Used for filtering only printing keys (a-z, A-Z, 0-9, and special characters) on keydown events.
      * Does not take capitalization into account.
      */
     export class KeyPress extends KeyCodeEventControl {
@@ -419,9 +419,9 @@ module plat.controls {
          * @memberof plat.controls.KeyPress
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The event name.
          */
@@ -432,20 +432,20 @@ module plat.controls {
          * @memberof plat.controls.KeyPress
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Filters only 'printing keys' (a-z, A-Z, 0-9, and special characters).
-         * 
+         *
          * @param {KeyboardEvent} ev The KeyboardEvent object.
-         * 
+         *
          * @returns {void}
          */
         _onEvent(ev: KeyboardEvent): void {
-            var keyCode = ev.keyCode || ev.which;
+            let keyCode = ev.keyCode || ev.which;
 
             if (super._compareKeys(ev) && ((keyCode >= 48 && keyCode <= 90) ||
                 (keyCode >= 186) || (keyCode >= 96 && keyCode <= 111))) {
-                var remove = this.addEventListener(this.element, 'keypress',(e: KeyboardEvent): void => {
+                let remove = this.addEventListener(this.element, 'keypress',(e: KeyboardEvent): void => {
                     remove();
                     super._onEvent(e);
                 }, false);
@@ -457,12 +457,12 @@ module plat.controls {
          * @memberof plat.controls.KeyPress
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Matches the event's keyCode if necessary.
-         * 
+         *
          * @param {KeyboardEvent} ev The keyboard event object.
-         * 
+         *
          * @returns {boolean} Whether or not there is a match.
          */
         protected _compareKeys(ev: KeyboardEvent): boolean {
@@ -474,9 +474,9 @@ module plat.controls {
      * @name KeyUp
      * @memberof plat.controls
      * @kind class
-     * 
+     *
      * @extends {plat.controls.KeyCodeEventControl}
-     * 
+     *
      * @description
      * Used for filtering keys on keyup events. Does not take capitalization into account.
      */
@@ -486,9 +486,9 @@ module plat.controls {
          * @memberof plat.controls.KeyUp
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The event name.
          */
@@ -499,9 +499,9 @@ module plat.controls {
      * @name CharPress
      * @memberof plat.controls
      * @kind class
-     * 
+     *
      * @extends {plat.controls.KeyCodeEventControl}
-     * 
+     *
      * @description
      * Used for filtering keys on keypress events. Takes capitalization into account.
      */
@@ -511,9 +511,9 @@ module plat.controls {
          * @memberof plat.controls.CharPress
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The event name.
          */
@@ -524,15 +524,15 @@ module plat.controls {
          * @memberof plat.controls.CharPress
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Parses the proper method args and finds any char code filters.
-         * 
-         * @returns {Array<number|string>} An array of either characters or char codes 
+         *
+         * @returns {Array<number|string>} An array of either characters or char codes
          * used for filtering.
          */
         protected _filterArgs(input: IKeyboardEventInput): Array<any> {
-            var char = input.char,
+            let char = input.char,
                 chars = input.chars;
 
             this._parseArgs(input.method);
@@ -558,17 +558,17 @@ module plat.controls {
          * @memberof plat.controls.CharPress
          * @kind function
          * @access protected
-         * 
+         *
          * @description
-         * Matches the event's keyCode if necessary and then handles the event if 
+         * Matches the event's keyCode if necessary and then handles the event if
          * a match is found or if there are no filter keyCodes.
-         * 
+         *
          * @param {KeyboardEvent} ev The keyboard event object.
-         * 
+         *
          * @returns {void}
          */
         protected _onEvent(ev: KeyboardEvent): void {
-            var keyCodes = this.keyCodes,
+            let keyCodes = this.keyCodes,
                 keyCode = ev.charCode || ev.which,
                 key: string;
 
@@ -591,12 +591,12 @@ module plat.controls {
          * @memberof plat.controls.CharPress
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Matches the event's keyCode if necessary.
-         * 
+         *
          * @param {KeyboardEvent} ev The keyboard event object.
-         * 
+         *
          * @returns {boolean} Whether or not there is a match.
          */
         protected _compareKeys(ev: KeyboardEvent): boolean {
@@ -608,14 +608,14 @@ module plat.controls {
          * @memberof plat.controls.CharPress
          * @kind function
          * @access protected
-         * 
+         *
          * @description
-         * Sets the defined key codes as they correspond to 
+         * Sets the defined key codes as they correspond to
          * the {@link plat.controls.KeyCodes|KeyCodes} map.
-         * 
-         * @param {Array<string>} keys? The array of defined keys to satisfy the 
+         *
+         * @param {Array<string>} keys? The array of defined keys to satisfy the
          * key press condition.
-         * 
+         *
          * @returns {void}
          */
         protected _setKeyCodes(keys?: Array<string>): void {
@@ -623,12 +623,12 @@ module plat.controls {
                 keys = [];
             }
 
-            var length = keys.length,
+            let length = keys.length,
                 key: any,
                 keyCodes = this.keyCodes,
                 index: string;
 
-            for (var i = 0; i < length; ++i) {
+            for (let i = 0; i < length; ++i) {
                 key = keys[i];
                 index = isNumber(key) ? String.fromCharCode(key) : key;
                 keyCodes[index] = true;

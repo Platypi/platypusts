@@ -5,11 +5,11 @@
      * @name SimpleCssTransition
      * @memberof plat.ui.animations
      * @kind class
-     * 
+     *
      * @extends {plat.ui.animations.CssAnimation}
-     * 
+     *
      * @description
-     * A simple CSS Animation class that places the 'plat-transition' class on an 
+     * A simple CSS Animation class that places the 'plat-transition' class on an
      * element, checks for transition properties, and waits for the transition to end.
      */
     export class SimpleCssTransition extends CssAnimation {
@@ -18,11 +18,11 @@
          * @memberof plat.ui.animations.SimpleCssTransition
          * @kind property
          * @access public
-         * 
+         *
          * @type {plat.ui.animations.ISimpleCssTransitionOptions}
-         * 
+         *
          * @description
-         * An optional options object that can denote a pseudo element animation and specify 
+         * An optional options object that can denote a pseudo element animation and specify
          * properties to modify during the transition.
          */
         options: ISimpleCssTransitionOptions;
@@ -32,9 +32,9 @@
          * @memberof plat.ui.animations.SimpleCssTransition
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The class name added to the animated element.
          */
@@ -45,9 +45,9 @@
          * @memberof plat.ui.animations.SimpleCssTransition
          * @kind property
          * @access public
-         * 
+         *
          * @type {plat.IRemoveListener}
-         * 
+         *
          * @description
          * A function for stopping a potential callback in the animation chain.
          */
@@ -58,12 +58,12 @@
          * @memberof plat.ui.animations.SimpleCssTransition
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.IObject<string>}
-         * 
+         *
          * @description
-         * A JavaScript object containing all modified properties as a result 
-         * of this animation. Used in the case of a disposal to reset the changed 
+         * A JavaScript object containing all modified properties as a result
+         * of this animation. Used in the case of a disposal to reset the changed
          * properties.
          */
         protected _modifiedProperties: IObject<string> = {};
@@ -73,9 +73,9 @@
          * @memberof plat.ui.animations.SimpleCssTransition
          * @kind property
          * @access protected
-         * 
+         *
          * @type {RegExp}
-         * 
+         *
          * @description
          * A regular expression to normalize modified property keys.
          */
@@ -86,9 +86,9 @@
          * @memberof plat.ui.animations.SimpleCssTransition
          * @kind property
          * @access protected
-         * 
+         *
          * @type {RegExp}
-         * 
+         *
          * @description
          * A regular expression grab everything that is not a number.
          */
@@ -99,9 +99,9 @@
          * @memberof plat.ui.animations.SimpleCssTransition
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.IObject<boolean>}
-         * 
+         *
          * @description
          * An Object whose keys are the normalized keys of modified properties.
          */
@@ -112,9 +112,9 @@
          * @memberof plat.ui.animations.SimpleCssTransition
          * @kind property
          * @access protected
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
          * The "transitionend" event handler call count.
          */
@@ -125,9 +125,9 @@
          * @memberof plat.ui.animations.SimpleCssTransition
          * @kind property
          * @access protected
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
          * The user defined "transitionend" event handler call count.
          */
@@ -138,9 +138,9 @@
          * @memberof plat.ui.animations.SimpleCssTransition
          * @kind property
          * @access protected
-         * 
+         *
          * @type {boolean}
-         * 
+         *
          * @description
          * Denotes whether or not the transition was ever started.
          */
@@ -151,11 +151,11 @@
          * @memberof plat.ui.animations.SimpleCssTransition
          * @kind property
          * @access protected
-         * 
+         *
          * @type {boolean}
-         * 
+         *
          * @description
-         * Denotes whether or not the transition changes are being performed 
+         * Denotes whether or not the transition changes are being performed
          * with CSS or with JS through this.options.
          */
         protected _usingCss: boolean = false;
@@ -165,10 +165,10 @@
          * @memberof plat.ui.animations.SimpleCssTransition
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Adds the class to enable the transition.
-         * 
+         *
          * @returns {void}
          */
         initialize(): void {
@@ -180,15 +180,15 @@
          * @memberof plat.ui.animations.SimpleCssTransition
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * A function denoting the start of the animation.
-         * 
+         *
          * @returns {void}
          */
         start(): void {
             this._animationCanceled = requestAnimationFrameGlobal((): void => {
-                var element = this.element,
+                let element = this.element,
                     className = this.className;
 
                 if (element.offsetParent === null) {
@@ -200,7 +200,7 @@
                 addClass(element, className);
                 this._started = true;
 
-                var utils = this.utils,
+                let utils = this.utils,
                     transitionId = this._animationEvents.$transition,
                     options = this.options || <ISimpleCssTransitionOptions>{},
                     count = options.count,
@@ -243,10 +243,10 @@
          * @memberof plat.ui.animations.SimpleCssTransition
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * A function to be called to let it be known the animation is being cancelled.
-         * 
+         *
          * @returns {void}
          */
         cancel(): void {
@@ -265,14 +265,14 @@
          * @memberof plat.ui.animations.SimpleCssTransition
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Removes the animation class and the animation "-init" class.
-         * 
+         *
          * @returns {void}
          */
         protected _dispose(): void {
-            var className = this.className;
+            let className = this.className;
             removeClass(this.element, className + ' ' + className + __INIT_SUFFIX);
             this._animationCanceled = noop;
         }
@@ -282,20 +282,20 @@
          * @memberof plat.ui.animations.SimpleCssTransition
          * @kind function
          * @access protected
-         * 
+         *
          * @description
-         * A handler for the "transitionend" event. Will clean up the class and resolve the 
+         * A handler for the "transitionend" event. Will clean up the class and resolve the
          * promise when necessary based on the options that were input.
-         * 
+         *
          * @param {TransitionEvent} ev? The transition event object.
          * @param {boolean} immediate? Whether clean up should be immediate or conditional.
-         * 
+         *
          * @returns {void}
          */
         protected _done(ev: TransitionEvent): void {
-            var propertyName = ev.propertyName;
+            let propertyName = ev.propertyName;
             if (isString(propertyName)) {
-                var count = ++this._transitionCount;
+                let count = ++this._transitionCount;
                 propertyName = propertyName.replace(this._normalizeRegex, '').toLowerCase();
 
                 if ((count < this._count) ||
@@ -315,15 +315,15 @@
          * @memberof plat.ui.animations.SimpleCssTransition
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Animate the element based on the options passed in.
-         * 
-         * @returns {boolean} Whether or not the element is going to animate with the options passed in. 
+         *
+         * @returns {boolean} Whether or not the element is going to animate with the options passed in.
          * If false, the control should begin cleaning up.
          */
         protected _animate(): boolean {
-            var style: CSSStyleDeclaration = this.element.style || <CSSStyleDeclaration>{},
+            let style: CSSStyleDeclaration = this.element.style || <CSSStyleDeclaration>{},
                 properties = (this.options || <ISimpleCssTransitionOptions>{}).properties || {},
                 keys = Object.keys(properties),
                 length = keys.length,
@@ -361,17 +361,17 @@
          * @memberof plat.ui.animations.SimpleCssTransition
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Handles element transitions that are defined with CSS.
-         * 
-         * @param {CSSStyleDeclaration} computedStyle The computed style of the 
+         *
+         * @param {CSSStyleDeclaration} computedStyle The computed style of the
          * element.
-         * 
+         *
          * @returns {void}
          */
         protected _cssTransition(computedStyle: CSSStyleDeclaration): void {
-            var transitionId = this._animationEvents.$transition,
+            let transitionId = this._animationEvents.$transition,
                 durations = computedStyle[<any>(transitionId + 'Duration')].split(','),
                 delays = computedStyle[<any>(transitionId + 'Delay')].split(','),
                 properties = computedStyle[<any>(transitionId + 'Property')].split(','),
@@ -427,17 +427,17 @@
          * @memberof plat.ui.animations.SimpleCssTransition
          * @kind function
          * @access protected
-         * 
+         *
          * @description
-         * A function that converts a string value expressed as either seconds or milliseconds 
+         * A function that converts a string value expressed as either seconds or milliseconds
          * to a numerical millisecond value.
-         * 
+         *
          * @param {string} duration The transition duration specified by the computed style.
-         * 
+         *
          * @returns {number} The millisecond value as a number.
          */
         protected _toMs(duration: string): number {
-            var regex = this._nonNumRegex,
+            let regex = this._nonNumRegex,
                 units = duration.match(regex)[0],
                 time = Number(duration.replace(regex, ''));
 
@@ -459,9 +459,9 @@
      * @name ISimpleCssTransitionOptions
      * @memberof plat.ui.animations
      * @kind interface
-     * 
+     *
      * @extends {plat.ui.animations.ISimpleCssAnimationOptions}
-     * 
+     *
      * @description
      * An interface describing the options for {@link plat.ui.animations.SimpleCssTransition|SimpleCssTransition}.
      */
@@ -471,11 +471,11 @@
          * @memberof plat.ui.animations.ISimpleCssTransitionOptions
          * @kind property
          * @access public
-         * 
+         *
          * @type {plat.IObject<string>}
-         * 
+         *
          * @description
-         * A JavaScript object with key value pairs for adjusting transition values. 
+         * A JavaScript object with key value pairs for adjusting transition values.
          * (e.g. { width: '800px' } would set the element's width to 800px.
          */
         properties?: IObject<string>;
@@ -485,13 +485,13 @@
          * @memberof plat.ui.animations.ISimpleCssTransitionOptions
          * @kind property
          * @access public
-         * 
+         *
          * @type {boolean}
-         * 
+         *
          * @description
-         * A boolean specifying whether or not to leave the '*-init' class on the element 
-         * after the transition has started. Defaults to true as we want to keep all  
-         * initial states and definitions throughout the transition 
+         * A boolean specifying whether or not to leave the '*-init' class on the element
+         * after the transition has started. Defaults to true as we want to keep all
+         * initial states and definitions throughout the transition
          * (and/or initial transition states will be overwritten upon start).
          */
         preserveInit?: boolean;
@@ -501,12 +501,12 @@
          * @memberof plat.ui.animations.ISimpleCssTransitionOptions
          * @kind property
          * @access public
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
-         * A defined transition count number. Useful when the transition property name 'all' 
-         * is used in conjunction with another transition property and transitions are being 
+         * A defined transition count number. Useful when the transition property name 'all'
+         * is used in conjunction with another transition property and transitions are being
          * performed through CSS.
          */
         count?: number;

@@ -5,9 +5,9 @@ module plat {
      * @name Control
      * @memberof plat
      * @kind class
-     * 
+     *
      * @description
-     * Used for facilitating data and DOM manipulation. Contains lifecycle events 
+     * Used for facilitating data and DOM manipulation. Contains lifecycle events
      * as well as properties for communicating with other controls. This is the base
      * class for all types of controls.
      */
@@ -18,7 +18,7 @@ module plat {
          * @kind property
          * @access protected
          * @static
-         * 
+         *
          * @type {plat.debug.Log}
          * @description
          * Reference to the {@link plat.debug.Log|Log} injectable.
@@ -31,9 +31,9 @@ module plat {
          * @kind property
          * @access protected
          * @static
-         * 
+         *
          * @type {plat.ui.Dom}
-         * 
+         *
          * @description
          * Reference to the {@link plat.ui.Dom|Dom} injectable.
          */
@@ -45,9 +45,9 @@ module plat {
          * @kind property
          * @access protected
          * @static
-         * 
+         *
          * @type {plat.expressions.Parser}
-         * 
+         *
          * @description
          * Reference to the {@link plat.expressions.Parser|Parser} injectable.
          */
@@ -59,9 +59,9 @@ module plat {
          * @kind property
          * @access protected
          * @static
-         * 
+         *
          * @type {plat.observable.IContextManagerStatic}
-         * 
+         *
          * @description
          * Reference to the {@link plat.observable.IContextManagerStatic|ContextManagerStatic} injectable.
          */
@@ -73,9 +73,9 @@ module plat {
          * @kind property
          * @access protected
          * @static
-         * 
+         *
          * @type {plat.events.IEventManagerStatic}
-         * 
+         *
          * @description
          * Reference to the {@link plat.events.IEventManagerStatic|IEventManagerStatic} injectable.
          */
@@ -87,9 +87,9 @@ module plat {
          * @kind property
          * @access protected
          * @static
-         * 
+         *
          * @type {plat.async.IPromise}
-         * 
+         *
          * @description
          * Reference to the {@link plat.async.IPromise|IPromise} injectable.
          */
@@ -101,9 +101,9 @@ module plat {
          * @kind property
          * @access private
          * @static
-         * 
+         *
          * @type {plat.IObject<Array<plat.IRemoveListener>>}
-         * 
+         *
          * @description
          * An object containing all controls' registered event listeners.
          */
@@ -115,9 +115,9 @@ module plat {
          * @kind property
          * @access public
          * @readonly
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * A unique id, created during instantiation and found on every {@link plat.Control|Control}.
          */
@@ -129,9 +129,9 @@ module plat {
          * @kind property
          * @access public
          * @readonly
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The type of a {@link plat.Control|Control}.
          */
@@ -142,14 +142,14 @@ module plat {
          * @memberof plat.Control
          * @kind property
          * @access public
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
-         * Specifies the priority of the control. The purpose of 
-         * this is so that controls like plat-bind can have a higher 
-         * priority than plat-tap. The plat-bind will be initialized 
-         * and loaded before plat-tap, meaning it has the first chance 
+         * Specifies the priority of the control. The purpose of
+         * this is so that controls like plat-bind can have a higher
+         * priority than plat-tap. The plat-bind will be initialized
+         * and loaded before plat-tap, meaning it has the first chance
          * to respond to events.
          */
         priority: number = 0;
@@ -160,9 +160,9 @@ module plat {
          * @kind property
          * @access public
          * @readonly
-         * 
+         *
          * @type {plat.ui.TemplateControl}
-         * 
+         *
          * @description
          * The parent control that created this control.
          */
@@ -173,14 +173,14 @@ module plat {
          * @memberof plat.Control
          * @kind property
          * @access public
-         * 
+         *
          * @type {HTMLElement}
-         * 
+         *
          * @description
-         * The HTMLElement that represents this {@link plat.Control|Control}. Should only be modified by controls that implement 
+         * The HTMLElement that represents this {@link plat.Control|Control}. Should only be modified by controls that implement
          * {@link plat.ui.TemplateControl|TemplateControl}. During initialize the control should populate this element with what it wishes
-         * to render to the user. 
-         * 
+         * to render to the user.
+         *
          * @remarks
          * When there is innerHTML in the element prior to instantiating the control:
          *     The element will include the innerHTML
@@ -196,11 +196,11 @@ module plat {
          * @memberof plat.Control
          * @kind property
          * @access public
-         * 
+         *
          * @type {plat.ui.Attributes}
-         * 
+         *
          * @description
-         * The attributes object representing all the attributes for a {@link plat.Control|Control's} element. All attributes are 
+         * The attributes object representing all the attributes for a {@link plat.Control|Control's} element. All attributes are
          * converted from dash notation to camelCase.
          */
         attributes: ui.Attributes;
@@ -211,9 +211,9 @@ module plat {
          * @kind property
          * @access public
          * @readonly
-         * 
+         *
          * @type {plat.ui.Dom}
-         * 
+         *
          * @description
          * Contains DOM helper methods for manipulating this control's element.
          */
@@ -224,9 +224,9 @@ module plat {
          * @memberof plat.Control
          * @kind property
          * @access public
-         * 
+         *
          * @type {plat.Utils}
-         * 
+         *
          * @description
          * Contains helper methods for data manipulation.
          */
@@ -237,7 +237,7 @@ module plat {
          * @memberof plat.Control
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.debug.Log}
          * @description
          * Reference to the {@link plat.debug.Log|Log} injectable.
@@ -250,13 +250,13 @@ module plat {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
-         * Finds the ancestor control for the given control that contains the root 
+         * Finds the ancestor control for the given control that contains the root
          * context.
-         * 
+         *
          * @param {plat.Control} control The control with which to find the root.
-         * 
+         *
          * @returns {plat.ui.TemplateControl} The root control.
          */
         static getRootControl(control: Control): ui.TemplateControl;
@@ -288,25 +288,25 @@ module plat {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
          * Given a control, calls the loaded method for the control if it exists.
-         * 
+         *
          * @param {plat.Control} control The control to load.
-         * 
+         *
          * @returns {plat.async.IThenable<void>} A Promise that resolves when the control has loaded.
          */
         static load(control: Control): async.IThenable<void> {
-            var _Promise = Control._Promise;
+            let _Promise = Control._Promise;
 
             if (isNull(control)) {
                 return _Promise.resolve();
             }
 
-            var ctrl = <ui.TemplateControl>control;
+            let ctrl = <ui.TemplateControl>control;
             if (isString(ctrl.absoluteContextPath)) {
                 if (isFunction(ctrl.contextChanged)) {
-                    var contextManager = Control._ContextManager.getManager(ctrl.root);
+                    let contextManager = Control._ContextManager.getManager(ctrl.root);
 
                     contextManager.observe(ctrl.absoluteContextPath, {
                         uid: control.uid,
@@ -322,7 +322,7 @@ module plat {
                     }
                 }
 
-                var element = ctrl.element;
+                let element = ctrl.element;
                 if (isNode(element) && isFunction(element.removeAttribute)) {
                     element.removeAttribute(__Hide);
                 }
@@ -341,17 +341,17 @@ module plat {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
-         * Disposes all the necessary memory for a control. Uses specific dispose 
+         * Disposes all the necessary memory for a control. Uses specific dispose
          * methods related to a control's constructor if necessary.
-         * 
+         *
          * @param {plat.Control} control The {@link plat.Control|Control} to dispose.
-         * 
+         *
          * @returns {void}
          */
         static dispose(control: Control): void {
-            var ctrl = <any>control;
+            let ctrl = <any>control;
 
             if (isNull(ctrl)) {
                 return;
@@ -376,7 +376,7 @@ module plat {
             Control.removeParent(control);
 
             if ((<IInternal>control).__injectable__type === __STATIC) {
-                var injector = controlInjectors[control.type];
+                let injector = controlInjectors[control.type];
                 register.control(control.type, (<any>control).constructor, injector.dependencies, true);
             }
         }
@@ -387,13 +387,13 @@ module plat {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
-         * Splices a control from its parent's controls list. Sets the control's parent 
+         * Splices a control from its parent's controls list. Sets the control's parent
          * to null.
-         * 
+         *
          * @param {plat.Control} control The control whose parent will be removed.
-         * 
+         *
          * @returns {void}
          */
         static removeParent(control: Control): void {
@@ -401,13 +401,13 @@ module plat {
                 return;
             }
 
-            var parent = control.parent;
+            let parent = control.parent;
 
             if (isNull(parent)) {
                 return;
             }
 
-            var controls = parent.controls || [],
+            let controls = parent.controls || [],
                 index = controls.indexOf(control);
 
             if (index !== -1) {
@@ -423,12 +423,12 @@ module plat {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
          * Removes all event listeners for a control with the given uid.
-         * 
+         *
          * @param {plat.Control} control The control having its event listeners removed.
-         * 
+         *
          * @returns {void}
          */
         static removeEventListeners(control: Control): void {
@@ -436,12 +436,12 @@ module plat {
                 return;
             }
 
-            var removeListeners = Control.__eventListeners,
+            let removeListeners = Control.__eventListeners,
                 uid = control.uid;
 
-            var listeners = removeListeners[uid];
+            let listeners = removeListeners[uid];
             if (isArray(listeners)) {
-                var index = listeners.length;
+                let index = listeners.length;
                 while (index-- > 0) {
                     listeners[index]();
                 }
@@ -456,10 +456,10 @@ module plat {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
          * Returns a new instance of {@link plat.Control|Control}.
-         * 
+         *
          * @returns {plat.Control} The newly instantiated control.
          */
         static getInstance(): Control {
@@ -472,18 +472,18 @@ module plat {
          * @kind function
          * @access private
          * @static
-         * 
+         *
          * @description
-         * Adds a function to remove an event listener for the control specified 
+         * Adds a function to remove an event listener for the control specified
          * by its uid.
-         * 
+         *
          * @param {string} uid The uid of the control associated with the remove function.
          * @param {plat.IRemoveListener} listener The remove function to add.
-         * 
+         *
          * @returns {void}
          */
         private static __addRemoveListener(uid: string, listener: IRemoveListener): void {
-            var removeListeners = Control.__eventListeners;
+            let removeListeners = Control.__eventListeners;
 
             if (isArray(removeListeners[uid])) {
                 removeListeners[uid].push(listener);
@@ -499,21 +499,21 @@ module plat {
          * @kind function
          * @access private
          * @static
-         * 
+         *
          * @description
          * Removes a {@link plat.IRemoveListener|IRemoveListener} from a control's listeners.
-         * 
+         *
          * @param {string} uid The uid of the control associated with the remove function.
          * @param {plat.IRemoveListener} listener The remove function to add.
-         * 
+         *
          * @returns {void}
          */
         private static __spliceRemoveListener(uid: string, listener: IRemoveListener): void {
-            var removeListeners = Control.__eventListeners,
+            let removeListeners = Control.__eventListeners,
                 controlListeners = removeListeners[uid];
 
             if (isArray(controlListeners)) {
-                var index = controlListeners.indexOf(listener);
+                let index = controlListeners.indexOf(listener);
                 if (index === -1) {
                     return;
                 }
@@ -528,19 +528,19 @@ module plat {
          * @kind function
          * @access private
          * @static
-         * 
+         *
          * @description
          * Gets controls that have a specific key/value string pair.
-         * 
-         * 
+         *
+         *
          * @param {plat.Control} control The at which to start searching for key/value pairs.
          * @param {string} key The key to search for on all the controls in the tree.
          * @param {string} value The expected value used to find similar controls.
-         * 
+         *
          * @returns {Array<plat.Control>} The controls matching the input key/value pair.
          */
         private static __getControls(control: Control, key: string, value: string): Array<Control> {
-            var controls: Array<Control> = [],
+            let controls: Array<Control> = [],
                 root = Control.getRootControl(control),
                 child: Control;
 
@@ -548,13 +548,13 @@ module plat {
                 controls.push(root);
             }
 
-            var children = root.controls;
+            let children = root.controls;
 
             if (isNull(children)) {
                 return controls;
             }
 
-            var queue = (<Array<Control>>[]).concat(children);
+            let queue = (<Array<Control>>[]).concat(children);
             while (queue.length > 0) {
                 child = queue.shift();
 
@@ -577,12 +577,12 @@ module plat {
          * @memberof plat.Control
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * The constructor for a control. Any injectables specified during control registration will be
          * passed into the constructor as arguments as long as the control is instantiated with its associated
          * injector.
-         * 
+         *
          * @returns {plat.Control}
          */
         constructor() { }
@@ -593,14 +593,14 @@ module plat {
          * @kind function
          * @access public
          * @virtual
-         * 
+         *
          * @description
-         * The initialize event method for a control. In this method a control should initialize all the necessary 
-         * variables. This method is typically only necessary for view controls. If a control does not implement 
-         * {@link plat.ui.IBaseViewControl|IBaseViewControl} then it is not safe to access, observe, or modify 
-         * the context property in this method. A view control should call services/set context in this method in 
+         * The initialize event method for a control. In this method a control should initialize all the necessary
+         * variables. This method is typically only necessary for view controls. If a control does not implement
+         * {@link plat.ui.IBaseViewControl|IBaseViewControl} then it is not safe to access, observe, or modify
+         * the context property in this method. A view control should call services/set context in this method in
          * order to fire the loaded event. No control will be loaded until the view control has specified a context.
-         * 
+         *
          * @returns {void}
          */
         initialize(): void { }
@@ -611,12 +611,12 @@ module plat {
          * @kind function
          * @access public
          * @virtual
-         * 
+         *
          * @description
          * The loaded event method for a control. This event is fired after a control has been loaded,
-         * meaning all of its children have also been loaded and initial DOM has been created and populated. It is now 
+         * meaning all of its children have also been loaded and initial DOM has been created and populated. It is now
          * safe for all controls to access, observe, and modify the context property.
-         * 
+         *
          * @returns {void}
          */
         loaded(): void { }
@@ -626,12 +626,12 @@ module plat {
          * @memberof plat.Control
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Retrieves all the controls with the specified name.
-         * 
+         *
          * @param {string} name The string name with which to populate the returned controls array.
-         * 
+         *
          * @returns {Array<plat.Control>} The controls that match the input name.
          */
         getControlsByName(name: string): Array<Control> {
@@ -644,14 +644,14 @@ module plat {
          * @kind function
          * @access public
          * @variation 0
-         * 
+         *
          * @description
          * Retrieves all the controls of the specified type.
-         * 
+         *
          * @typeparam {plat.Control} T The type of control to be returned in an Array.
-         * 
+         *
          * @param {string} type The type used to find controls (e.g. 'plat-foreach')
-         * 
+         *
          * @returns {Array<T>} The controls matching the input type.
          */
         getControlsByType<T extends Control>(type: string): Array<T>;
@@ -661,14 +661,14 @@ module plat {
          * @kind function
          * @access public
          * @variation 1
-         * 
+         *
          * @description
          * Retrieves all the controls of the specified type.
-         * 
+         *
          * @typeparam {plat.Control} T The type of control to be returned in an Array.
-         * 
+         *
          * @param {new () => T} Constructor The constructor used to find controls.
-         * 
+         *
          * @returns {Array<T>} The controls matching the input type.
          */
         getControlsByType<T extends Control>(Constructor: new () => T): Array<T>;
@@ -685,17 +685,17 @@ module plat {
          * @kind function
          * @access public
          * @variation 0
-         * 
+         *
          * @description
-         * Adds an event listener of the specified type to the specified element. Removal of the 
+         * Adds an event listener of the specified type to the specified element. Removal of the
          * event is handled automatically upon disposal.
-         * 
+         *
          * @param {EventTarget} element The element to add the event listener to.
          * @param {string} type The type of event to listen to.
          * @param {plat.ui.IGestureListener} listener The listener to fire when the event occurs.
-         * @param {boolean} useCapture? Whether to fire the event on the capture or the bubble phase 
+         * @param {boolean} useCapture? Whether to fire the event on the capture or the bubble phase
          * of event propagation.
-         * 
+         *
          * @returns {plat.IRemoveListener} A function to call in order to stop listening to the event.
          */
         addEventListener(element: EventTarget, type: string, listener: ui.IGestureListener, useCapture?: boolean): IRemoveListener;
@@ -705,17 +705,17 @@ module plat {
          * @kind function
          * @access public
          * @variation 1
-         * 
+         *
          * @description
-         * Adds an event listener of the specified type to the specified element. Removal of the 
+         * Adds an event listener of the specified type to the specified element. Removal of the
          * event is handled automatically upon disposal.
-         * 
+         *
          * @param {EventTarget} element The element to add the event listener to.
          * @param {string}  type The type of event to listen to.
          * @param {EventListener} listener The listener to fire when the event occurs.
-         * @param {boolean} useCapture? Whether to fire the event on the capture or the bubble phase 
+         * @param {boolean} useCapture? Whether to fire the event on the capture or the bubble phase
          * of event propagation.
-         * 
+         *
          * @returns {plat.IRemoveListener} A function to call in order to stop listening to the event.
          */
         addEventListener(element: EventTarget, type: string, listener: EventListener, useCapture?: boolean): IRemoveListener;
@@ -726,7 +726,7 @@ module plat {
             }
 
             listener = listener.bind(this);
-            var removeListener = this.dom.addEventListener(element, type, listener, useCapture),
+            let removeListener = this.dom.addEventListener(element, type, listener, useCapture),
                 uid = this.uid;
 
             Control.__addRemoveListener(uid, removeListener);
@@ -743,18 +743,18 @@ module plat {
          * @kind function
          * @access public
          * @variation 0
-         * 
+         *
          * @description
          * Allows a {@link plat.Control|Control} to observe any property on its context and receive updates when
          * the property is changed.
-         * 
+         *
          * @typeparam {any} T The type of object to observe.
-         * 
-         * @param {plat.IIdentifierChangedListener<T>} listener The method called when the property is changed. 
+         *
+         * @param {plat.IIdentifierChangedListener<T>} listener The method called when the property is changed.
          * This method will have its 'this' context set to the control instance.
-         * @param {string} identifier? The property string that denotes the item in the context (e.g. "foo.bar.baz" is observing the 
+         * @param {string} identifier? The property string that denotes the item in the context (e.g. "foo.bar.baz" is observing the
          * property `baz` in the object `bar` in the object `foo` in the control's context.
-         * 
+         *
          * @returns {plat.IRemoveListener} A function to call in order to stop observing the property.
          */
         observe<T>(listener: (value: T, oldValue: T, identifier: string) => void, identifier?: string): IRemoveListener;
@@ -764,32 +764,32 @@ module plat {
          * @kind function
          * @access public
          * @variation 1
-         * 
+         *
          * @description
          * Allows a {@link plat.Control|Control} to observe any property on its context and receive updates when
          * the property is changed.
-         * 
+         *
          * @typeparam {any} T The type of object to observe.
-         * 
-         * @param {plat.IIdentifierChangedListener<T>} listener The method called when the property is changed. This method 
+         *
+         * @param {plat.IIdentifierChangedListener<T>} listener The method called when the property is changed. This method
          * will have its 'this' context set to the control instance.
          * @param {number} index? The index that denotes the item in the context if the context is an Array.
-         * 
+         *
          * @returns {plat.IRemoveListener} A function to call in order to stop observing the property.
          */
         observe<T>(listener: (value: T, oldValue: T, index: number) => void, index?: number): IRemoveListener;
         observe(listener: (value: any, oldValue: any, identifier: any) => void, identifier?: any): IRemoveListener {
-            var control = isObject((<ui.TemplateControl>this).context) ? <ui.TemplateControl>this : this.parent,
+            let control = isObject((<ui.TemplateControl>this).context) ? <ui.TemplateControl>this : this.parent,
                 root = Control.getRootControl(control);
             if (isNull(control)) {
                 return noop;
             }
 
-            var absoluteIdentifier: string;
+            let absoluteIdentifier: string;
             if (isEmpty(identifier)) {
                 absoluteIdentifier = control.absoluteContextPath;
             } else if (isString(identifier)) {
-                var identifierExpression = (Control._parser || <expressions.Parser>acquire(__Parser)).parse(identifier),
+                let identifierExpression = (Control._parser || <expressions.Parser>acquire(__Parser)).parse(identifier),
                     expression = identifierExpression.identifiers[0],
                     split: Array<string> = expression.split('.'),
                     start = split.shift().slice(1),
@@ -806,7 +806,7 @@ module plat {
                 absoluteIdentifier = control.absoluteContextPath + '.' + identifier;
             }
 
-            var _ContextManager: observable.IContextManagerStatic = Control._ContextManager || acquire(__ContextManagerStatic),
+            let _ContextManager: observable.IContextManagerStatic = Control._ContextManager || acquire(__ContextManagerStatic),
                 contextManager = _ContextManager.getManager(root);
 
             return contextManager.observe(absoluteIdentifier, {
@@ -823,18 +823,18 @@ module plat {
          * @kind function
          * @access public
          * @variation 0
-         * 
+         *
          * @description
          * Allows a {@link plat.Control|Control} to observe an array and receive updates when certain array-changing methods are called.
          * The methods watched are push, pop, shift, sort, splice, reverse, and unshift. This method currently does not watch
          * every item in the array.
-         * 
+         *
          * @typeparam {any} T The type of the Array to observe.
-         * 
-         * @param {(changes: Array<plat.observable.IArrayChanges<any>>, identifier: string) => void} listener The method called 
+         *
+         * @param {(changes: Array<plat.observable.IArrayChanges<any>>, identifier: string) => void} listener The method called
          * after an array-changing method is called. This method will have its 'this' context set to the control instance.
          * @param {string} identifier? The property string that denotes the array in the context.
-         * 
+         *
          * @returns {plat.IRemoveListener} A function to call in order to stop observing the array.
          */
         observeArray<T>(listener: (changes: Array<observable.IArrayChanges<T>>, identifier: string) => void,
@@ -845,38 +845,38 @@ module plat {
          * @kind function
          * @access public
          * @variation 1
-         * 
+         *
          * @description
          * Allows a {@link plat.Control|Control} to observe an array and receive updates when certain array-changing methods are called.
          * The methods watched are push, pop, shift, sort, splice, reverse, and unshift. This method currently does not watch
          * every item in the array.
-         * 
+         *
          * @typeparam {any} T The type of the Array to observe.
-         * 
-         * @param {(changes: Array<plat.observable.IArrayChanges<T>>, identifier: number) => void} listener The method called 
+         *
+         * @param {(changes: Array<plat.observable.IArrayChanges<T>>, identifier: number) => void} listener The method called
          * after an array-changing method is called. This method will have its 'this' context set to the control instance.
          * @param {number} identifier? The index that denotes the array in the context if the context is an Array.
-         * 
+         *
          * @returns {plat.IRemoveListener} A function to call in order to stop observing the array.
          */
         observeArray<T>(listener: (changes: Array<observable.IArrayChanges<T>>, identifier: number) => void,
             identifier?: number): IRemoveListener;
         observeArray<T>(listener: (changes: Array<observable.IArrayChanges<T>>, identifier: any) => void,
             identifier?: any): IRemoveListener {
-            var control = isObject((<ui.TemplateControl>this).context) ? <ui.TemplateControl>this : this.parent,
+            let control = isObject((<ui.TemplateControl>this).context) ? <ui.TemplateControl>this : this.parent,
                 context = control.context;
             if (isNull(control) || !isObject(context)) {
                 return noop;
             }
 
-            var array: Array<any>,
+            let array: Array<any>,
                 absoluteIdentifier: string;
 
             if (isEmpty(identifier)) {
                 array = context;
                 absoluteIdentifier = control.absoluteContextPath;
             } else if (isString(identifier)) {
-                var identifierExpression = (Control._parser || <expressions.Parser>acquire(__Parser)).parse(identifier);
+                let identifierExpression = (Control._parser || <expressions.Parser>acquire(__Parser)).parse(identifier);
                 array = identifierExpression.evaluate(context);
                 absoluteIdentifier = control.absoluteContextPath + '.' + identifierExpression.identifiers[0];
             } else {
@@ -888,14 +888,14 @@ module plat {
                 return noop;
             }
 
-            var listenerIsFunction = isFunction(listener);
+            let listenerIsFunction = isFunction(listener);
             if (!listenerIsFunction) {
                 return noop;
             }
 
             listener = listener.bind(this);
 
-            var ContextManager: observable.IContextManagerStatic = Control._ContextManager || acquire(__ContextManagerStatic),
+            let ContextManager: observable.IContextManagerStatic = Control._ContextManager || acquire(__ContextManagerStatic),
                 contextManager = ContextManager.getManager(Control.getRootControl(control)),
                 uid = this.uid,
                 callback = (changes: Array<observable.IArrayChanges<any>>): void => {
@@ -923,16 +923,16 @@ module plat {
          * @kind function
          * @access public
          * @variation 0
-         * 
+         *
          * @description
          * Parses an expression string and observes any associated identifiers. When an identifier
          * value changes, the listener will be called.
-         * 
+         *
          * @typeparam {any} T The type of value the expression will evaluate out to.
-         * 
+         *
          * @param {plat.IIdentifierChangedListener<T>} listener The listener to call when the expression identifer values change.
          * @param {string} expression The expression string to watch for changes.
-         * 
+         *
          * @returns {plat.IRemoveListener} A function to call in order to stop observing the expression.
          */
         observeExpression<T>(listener: (value: T, oldValue: T, expression: string) => void, expression: string): IRemoveListener;
@@ -942,16 +942,16 @@ module plat {
          * @kind function
          * @access public
          * @variation 1
-         * 
+         *
          * @description
          * Using a {@link plat.expressions.IParsedExpression|IParsedExpression} observes any associated identifiers. When an identifier
          * value changes, the listener will be called.
-         * 
+         *
          * @typeparam {any} T The type of value the expression will evaluate out to.
-         * 
+         *
          * @param {plat.IIdentifierChangedListener<T>} listener The listener to call when the expression identifer values change.
          * @param {plat.expressions.IParsedExpression} expression The expression string to watch for changes.
-         * 
+         *
          * @returns {plat.IRemoveListener} A function to call in order to stop observing the expression.
          */
         observeExpression<T>(listener: (value: T, oldValue: T, expression: string) => void, expression: expressions.IParsedExpression): IRemoveListener;
@@ -966,7 +966,7 @@ module plat {
                 return noop;
             }
 
-            var control: ui.TemplateControl = !isNull((<ui.TemplateControl>(<any>this)).resources) ?
+            let control: ui.TemplateControl = !isNull((<ui.TemplateControl>(<any>this)).resources) ?
                 <ui.TemplateControl>(<any>this) :
                 <ui.TemplateControl>this.parent;
 
@@ -974,7 +974,7 @@ module plat {
                 return noop;
             }
 
-            var aliases = expression.aliases,
+            let aliases = expression.aliases,
                 alias: string,
                 length = aliases.length,
                 resources: IObject<observable.ContextManager> = {},
@@ -999,7 +999,7 @@ module plat {
                 }
             }
 
-            var identifiers = expression.identifiers,
+            let identifiers = expression.identifiers,
                 contextManager = getManager(Control.getRootControl(control)),
                 identifier: string,
                 split: Array<string> = [],
@@ -1039,11 +1039,11 @@ module plat {
             identifiers = Object.keys(managers);
             length = identifiers.length;
 
-            var oldValue = evaluateExpression(expression, control),
+            let oldValue = evaluateExpression(expression, control),
                 listeners: Array<IRemoveListener> = [],
                 uid = this.uid,
                 observableListener = (): void => {
-                    var value = evaluateExpression(expression, control);
+                    let value = evaluateExpression(expression, control);
                     listener.call(this, value, oldValue, (<expressions.IParsedExpression>expression).expression);
                     oldValue = value;
                 };
@@ -1058,9 +1058,9 @@ module plat {
             }
 
             return (): void => {
-                var length = listeners.length;
+                let length = listeners.length;
 
-                for (var i = 0; i < length; ++i) {
+                for (let i = 0; i < length; ++i) {
                     listeners[i]();
                 }
             };
@@ -1072,13 +1072,13 @@ module plat {
          * @kind function
          * @access public
          * @variation 0
-         * 
+         *
          * @description
          * Evaluates an expression string, using the control.parent.context.
-         * 
+         *
          * @param {string} expression The expression string to evaluate.
          * @param {IObject<any>} aliases Optional alias values to parse with the expression
-         * 
+         *
          * @returns {any} The evaluated expression
          */
         evaluateExpression(expression: string, aliases?: IObject<any>): any;
@@ -1088,13 +1088,13 @@ module plat {
          * @kind function
          * @access public
          * @variation 1
-         * 
+         *
          * @description
          * Evaluates an {@link plat.expressions.IParsedExpression|IParsedExpression} using the control.parent.context.
-         * 
+         *
          * @param {string} expression The expression string to evaluate.
          * @param {IObject<any>} aliases Optional alias values to parse with the expression
-         * 
+         *
          * @returns {any} The evaluated expression
          */
         evaluateExpression(expression: expressions.IParsedExpression, aliases?: IObject<any>): any;
@@ -1107,18 +1107,18 @@ module plat {
          * @memberof plat.Control
          * @kind function
          * @access public
-         * 
+         *
          * @description
-         * Finds the first instance of the specified property 
+         * Finds the first instance of the specified property
          * in the parent control chain. Returns undefined if not found.
-         * 
+         *
          * @param {string} property The property identifer
-         * 
-         * @returns {plat.IControlProperty} An object containing the property's parsed expression, the 
+         *
+         * @returns {plat.IControlProperty} An object containing the property's parsed expression, the
          * evaluated property value, and the control that it's on.
          */
         findProperty(property: string): IControlProperty {
-            var control = <Control>this,
+            let control = <Control>this,
                 expression = (Control._parser || <expressions.Parser>acquire(__Parser)).parse(property),
                 value: any;
 
@@ -1143,19 +1143,19 @@ module plat {
          * @kind function
          * @access public
          * @variation 0
-         * 
+         *
          * @description
-         * Creates a new {@link plat.events.DispatchEvent|DispatchEvent} and propagates it to controls based on the 
+         * Creates a new {@link plat.events.DispatchEvent|DispatchEvent} and propagates it to controls based on the
          * provided direction mechanism. Controls in the propagation chain that registered
          * the event using the control.on() method will receive the event. Propagation will
          * always start with the sender, so the sender can both produce and consume the same
          * event.
-         * 
+         *
          * @param {string} name The name of the event to send, coincides with the name used in the
          * control.on() method.
          * @param {string} direction='up' Equivalent to {@link plat.events.EventManager.UP|EventManager.UP}
          * @param {Array<any>} ...args Any number of arguments to send to all the listeners.
-         * 
+         *
          * @returns {void}
          */
         dispatchEvent(name: string, direction?: 'up', ...args: any[]): void;
@@ -1165,19 +1165,19 @@ module plat {
          * @kind function
          * @access public
          * @variation 1
-         * 
+         *
          * @description
-         * Creates a new {@link plat.events.DispatchEvent|DispatchEvent} and propagates it to controls based on the 
+         * Creates a new {@link plat.events.DispatchEvent|DispatchEvent} and propagates it to controls based on the
          * provided direction mechanism. Controls in the propagation chain that registered
          * the event using the control.on() method will receive the event. Propagation will
          * always start with the sender, so the sender can both produce and consume the same
          * event.
-         * 
+         *
          * @param {string} name The name of the event to send, coincides with the name used in the
          * control.on() method.
          * @param {string} direction='down' Equivalent to {@link plat.events.EventManager.DOWN|EventManager.DOWN}
          * @param {Array<any>} ...args Any number of arguments to send to all the listeners.
-         * 
+         *
          * @returns {void}
          */
         dispatchEvent(name: string, direction?: 'down', ...args: any[]): void;
@@ -1187,19 +1187,19 @@ module plat {
          * @kind function
          * @access public
          * @variation 2
-         * 
+         *
          * @description
-         * Creates a new {@link plat.events.DispatchEvent|DispatchEvent} and propagates it to controls based on the 
+         * Creates a new {@link plat.events.DispatchEvent|DispatchEvent} and propagates it to controls based on the
          * provided direction mechanism. Controls in the propagation chain that registered
          * the event using the control.on() method will receive the event. Propagation will
          * always start with the sender, so the sender can both produce and consume the same
          * event.
-         * 
+         *
          * @param {string} name The name of the event to send, coincides with the name used in the
          * control.on() method.
          * @param {string} direction='direct' Equivalent to {@link plat.events.EventManager.DIRECT|EventManager.DIRECT}
          * @param {Array<any>} ...args Any number of arguments to send to all the listeners.
-         * 
+         *
          * @returns {void}
          */
         dispatchEvent(name: string, direction?: 'direct', ...args: any[]): void;
@@ -1209,24 +1209,24 @@ module plat {
          * @kind function
          * @access public
          * @variation 3
-         * 
+         *
          * @description
-         * Creates a new {@link plat.events.DispatchEvent|DispatchEvent} and propagates it to controls based on the 
+         * Creates a new {@link plat.events.DispatchEvent|DispatchEvent} and propagates it to controls based on the
          * provided direction mechanism. Controls in the propagation chain that registered
          * the event using the control.on() method will receive the event. Propagation will
          * always start with the sender, so the sender can both produce and consume the same
          * event.
-         * 
+         *
          * @param {string} name The name of the event to send, coincides with the name used in the
          * control.on() method.
          * @param {string} direction The direction in which to send the event.
          * @param {Array<any>} ...args Any number of arguments to send to all the listeners.
-         * 
+         *
          * @returns {void}
          */
         dispatchEvent(name: string, direction?: string, ...args: any[]): void;
         dispatchEvent(name: string, direction?: string, ...args: any[]): void {
-            var manager: events.IEventManagerStatic = Control._EventManager || acquire(__EventManagerStatic);
+            let manager: events.IEventManagerStatic = Control._EventManager || acquire(__EventManagerStatic);
 
             if (!manager.hasDirection(direction)) {
                 if (!isUndefined(direction)) {
@@ -1234,7 +1234,7 @@ module plat {
                 }
                 direction = manager.UP;
             }
-            var sender: any = this;
+            let sender: any = this;
 
             if (!isNull(sender.templateControl)) {
                 sender = sender.templateControl;
@@ -1248,20 +1248,20 @@ module plat {
          * @memberof plat.Control
          * @kind function
          * @access public
-         * 
+         *
          * @description
-         * Registers a listener for a {@link plat.events.DispatchEvent|DispatchEvent}. The listener will be called when a 
-         * {@link plat.events.DispatchEvent|DispatchEvent} is propagating over the control. Any number of listeners can exist 
+         * Registers a listener for a {@link plat.events.DispatchEvent|DispatchEvent}. The listener will be called when a
+         * {@link plat.events.DispatchEvent|DispatchEvent} is propagating over the control. Any number of listeners can exist
          * for a single event name.
-         * 
+         *
          * @param {string} name The name of the event, cooinciding with the {@link plat.events.DispatchEvent|DispatchEvent} name.
-         * @param {(ev: plat.events.DispatchEvent, ...args: Array<any>) => void} listener The method called when the 
+         * @param {(ev: plat.events.DispatchEvent, ...args: Array<any>) => void} listener The method called when the
          * {@link plat.events.DispatchEvent|DispatchEvent} is fired.
-         * 
+         *
          * @returns {plat.IRemoveListener} A function to call in order to stop listening for this event.
          */
         on(name: string, listener: (ev: events.DispatchEvent, ...args: any[]) => void): IRemoveListener {
-            var _EventManager: events.IEventManagerStatic = Control._EventManager || acquire(__EventManagerStatic);
+            let _EventManager: events.IEventManagerStatic = Control._EventManager || acquire(__EventManagerStatic);
             return _EventManager.on(this.uid, name, listener, this);
         }
 
@@ -1271,11 +1271,11 @@ module plat {
          * @kind function
          * @access public
          * @virtual
-         * 
+         *
          * @description
-         * The dispose event is called when a control is being removed from memory. A control should release 
+         * The dispose event is called when a control is being removed from memory. A control should release
          * all of the memory it is using, including DOM event and property listeners.
-         * 
+         *
          * @returns {void}
          */
         dispose(): void { }
@@ -1313,7 +1313,7 @@ module plat {
      * @name IControlFactory
      * @memberof plat
      * @kind interface
-     * 
+     *
      * @description
      * Creates and manages instances of {@link plat.Control|Control}.
      */
@@ -1324,13 +1324,13 @@ module plat {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
-         * Finds the ancestor control for the given control that contains the root 
+         * Finds the ancestor control for the given control that contains the root
          * context.
-         * 
+         *
          * @param {plat.Control} control The control with which to find the root.
-         * 
+         *
          * @returns {plat.ui.TemplateControl} The root control.
          */
         getRootControl(control: Control): ui.TemplateControl;
@@ -1341,12 +1341,12 @@ module plat {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
          * Given a control, calls the loaded method for the control if it exists.
-         * 
+         *
          * @param {plat.Control} control The control to load.
-         * 
+         *
          * @returns {plat.async.IThenable<void>} A promise that resolves when the control has loaded.
          */
         load(control: Control): async.IThenable<void>;
@@ -1357,13 +1357,13 @@ module plat {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
-         * Disposes all the necessary memory for a control. Uses specific dispose 
+         * Disposes all the necessary memory for a control. Uses specific dispose
          * methods related to a control's constructor if necessary.
-         * 
+         *
          * @param {plat.Control} control The {@link plat.Control|Control} to dispose.
-         * 
+         *
          * @returns {void}
          */
         dispose(control: Control): void;
@@ -1374,13 +1374,13 @@ module plat {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
-         * Splices a control from its parent's controls list. Sets the control's parent 
+         * Splices a control from its parent's controls list. Sets the control's parent
          * to null.
-         * 
+         *
          * @param {plat.Control} control The control whose parent will be removed.
-         * 
+         *
          * @returns {void}
          */
         removeParent(control: Control): void;
@@ -1391,12 +1391,12 @@ module plat {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
          * Removes all event listeners for a control with the given uid.
-         * 
+         *
          * @param {plat.Control} control The control having its event listeners removed.
-         * 
+         *
          * @returns {void}
          */
         removeEventListeners(control: Control): void;
@@ -1407,10 +1407,10 @@ module plat {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
          * Returns a new instance of {@link plat.Control|Control}.
-         * 
+         *
          * @returns {plat.Control} The newly instantiated control.
          */
         getInstance(): Control;
@@ -1420,7 +1420,7 @@ module plat {
      * @name IControlProperty
      * @memberof plat
      * @kind interface
-     * 
+     *
      * @description
      * An object that links a property to a control.
      */
@@ -1430,9 +1430,9 @@ module plat {
          * @memberof plat.IControlProperty
          * @kind property
          * @access public
-         * 
+         *
          * @type {plat.expressions.IParsedExpression}
-         * 
+         *
          * @description
          * The parsed expression of the control property.
          */
@@ -1443,9 +1443,9 @@ module plat {
          * @memberof plat.IControlProperty
          * @kind property
          * @access public
-         * 
+         *
          * @type {any}
-         * 
+         *
          * @description
          * The value of the property.
          */
@@ -1456,9 +1456,9 @@ module plat {
          * @memberof plat.IControlProperty
          * @kind property
          * @access public
-         * 
+         *
          * @type {plat.Control}
-         * 
+         *
          * @description
          * The control on which the property is found.
          */
@@ -1471,21 +1471,21 @@ module plat {
          * @memberof plat.observable
          * @access public
          * @kind interface
-         * 
+         *
          * @description
-         * Defines the object added to a template control when its element 
+         * Defines the object added to a template control when its element
          * has an attribute control that extends {@link plat.controls.ObservableAttributeControl|ObservableAttributeControl}.
-         * 
-         * This will contain the value of the expression as well as a way to observe the 
+         *
+         * This will contain the value of the expression as well as a way to observe the
          * attribute value for changes.
-         * 
+         *
          * @remarks
-         * {@link plat.controls.Option|plat-options} is a control that implements this interface, and puts an 'options' 
+         * {@link plat.controls.Option|plat-options} is a control that implements this interface, and puts an 'options'
          * property on its associated template control.
-         * 
-         * The generic type corresponds to the type of object created when the attribute 
+         *
+         * The generic type corresponds to the type of object created when the attribute
          * expression is evaluated.
-         * 
+         *
          * @typeparam {any} T The type of the value obtained from the attribute's expression.
          */
         export interface IObservableProperty<T> {
@@ -1494,9 +1494,9 @@ module plat {
              * @memberof plat.observable.IObservableProperty
              * @access public
              * @kind property
-             * 
+             *
              * @type {T}
-             * 
+             *
              * @description
              * The value obtained from evaluating the attribute's expression.
              */
@@ -1507,13 +1507,13 @@ module plat {
              * @memberof plat.observable.IObservableProperty
              * @access public
              * @kind function
-             * 
+             *
              * @description
              * A method for observing the attribute for changes.
-             * 
-             * @param {(newValue: T, oldValue: T) => void} listener The listener callback which will be pre-bound to the 
+             *
+             * @param {(newValue: T, oldValue: T) => void} listener The listener callback which will be pre-bound to the
              * template control.
-             * 
+             *
              * @returns {plat.IRemoveListener} A method for removing the listener.
              */
             observe(listener: (newValue: T, oldValue: T) => void): IRemoveListener;
@@ -1523,9 +1523,9 @@ module plat {
          * @name ISupportTwoWayBinding
          * @memberof plat.observable
          * @kind interface
-         * 
+         *
          * @description
-         * Defines methods that interact with a control that implements {@link plat.observable.IImplementTwoWayBinding|IImplementTwoWayBinding} 
+         * Defines methods that interact with a control that implements {@link plat.observable.IImplementTwoWayBinding|IImplementTwoWayBinding}
          * (e.g. {@link plat.controls.Bind|Bind}.
          */
         export interface ISupportTwoWayBinding {
@@ -1534,12 +1534,12 @@ module plat {
              * @memberof plat.observable.ISupportTwoWayBinding
              * @kind function
              * @access public
-             * 
+             *
              * @description
              * Adds a listener to be called when the bindable property changes.
-             * 
+             *
              * @param {plat.IPropertyChangedListener<any>} listener The function that acts as a listener.
-             * 
+             *
              * @returns {plat.IRemoveListener} A function to stop listening for property changes.
              */
             onInput(listener: (newValue: any, oldValue: any) => void): IRemoveListener;
@@ -1549,14 +1549,14 @@ module plat {
              * @memberof plat.observable.ISupportTwoWayBinding
              * @kind function
              * @access public
-             * 
+             *
              * @description
-             * A function that allows this control to observe both the bound property itself as well as 
+             * A function that allows this control to observe both the bound property itself as well as
              * potential child properties if being bound to an object.
-             * 
-             * @param {plat.observable.IImplementTwoWayBinding} binder The control that facilitates the 
+             *
+             * @param {plat.observable.IImplementTwoWayBinding} binder The control that facilitates the
              * databinding.
-             * 
+             *
              * @returns {void}
              */
             observeProperties(binder: observable.IImplementTwoWayBinding): void;
@@ -1566,9 +1566,9 @@ module plat {
          * @name IImplementTwoWayBinding
          * @memberof plat.observable
          * @kind interface
-         * 
+         *
          * @description
-         * Defines methods that interact with a control that implements {@link plat.observable.ISupportTwoWayBinding|ISupportTwoWayBinding} 
+         * Defines methods that interact with a control that implements {@link plat.observable.ISupportTwoWayBinding|ISupportTwoWayBinding}
          * (e.g. any control that extends {@link plat.ui.BindControl|BindControl}.
          */
         export interface IImplementTwoWayBinding {
@@ -1578,17 +1578,17 @@ module plat {
              * @kind function
              * @access public
              * @variation 0
-             * 
+             *
              * @description
-             * A function that allows a {@link plat.observable.ISupportTwoWayBinding|ISupportTwoWayBinding} to observe both the 
+             * A function that allows a {@link plat.observable.ISupportTwoWayBinding|ISupportTwoWayBinding} to observe both the
              * bound property itself as well as potential child properties if being bound to an object.
-             * 
+             *
              * @typeparam {any} T The type of item being observed.
-             * 
+             *
              * @param {plat.observable.IBoundPropertyChangedListener<T>} listener The listener function.
-             * @param {string} identifier? The identifier off of the bound object to listen to for changes. If undefined or empty  
+             * @param {string} identifier? The identifier off of the bound object to listen to for changes. If undefined or empty
              * the listener will listen for changes to the bound item itself.
-             * 
+             *
              * @returns {plat.IRemoveListener} A function to stop listening for changes.
              */
             observeProperty<T>(listener: IBoundPropertyChangedListener<T>, identifier?: string): IRemoveListener;
@@ -1598,17 +1598,17 @@ module plat {
              * @kind function
              * @access public
              * @variation 1
-             * 
+             *
              * @description
-             * A function that allows a {@link plat.observable.ISupportTwoWayBinding|ISupportTwoWayBinding} to observe both the 
+             * A function that allows a {@link plat.observable.ISupportTwoWayBinding|ISupportTwoWayBinding} to observe both the
              * bound property itself as well as potential child properties if being bound to an object.
-             * 
+             *
              * @typeparam {any} T The type of item being observed.
-             * 
+             *
              * @param {plat.observable.IBoundPropertyChangedListener<T>} listener The listener function.
-             * @param {number} index? The index off of the bound object to listen to for changes if the bound object is an Array. 
+             * @param {number} index? The index off of the bound object to listen to for changes if the bound object is an Array.
              * If undefined or empty the listener will listen for changes to the bound Array itself.
-             * 
+             *
              * @returns {plat.IRemoveListener} A function to stop listening for changes.
              */
             observeProperty<T>(listener: IBoundPropertyChangedListener<T>, index?: number): IRemoveListener;
@@ -1618,19 +1618,19 @@ module plat {
              * @kind function
              * @access public
              * @variation 2
-             * 
+             *
              * @description
-             * A function that allows a {@link plat.observable.ISupportTwoWayBinding|ISupportTwoWayBinding} to observe both the 
+             * A function that allows a {@link plat.observable.ISupportTwoWayBinding|ISupportTwoWayBinding} to observe both the
              * bound property itself as well as potential child properties if being bound to an object.
-             * 
-             * @typeparam {any} T The type of items in the Array if listening for Array mutations. 
-             * 
+             *
+             * @typeparam {any} T The type of items in the Array if listening for Array mutations.
+             *
              * @param {(changes: Array<plat.observable.IArrayChanges<T>>, identifier: string) => void} listener The listener function.
-             * @param {string} identifier? The identifier off of the bound object to listen to for changes. If undefined or empty  
+             * @param {string} identifier? The identifier off of the bound object to listen to for changes. If undefined or empty
              * the listener will listen for changes to the bound item itself.
-             * @param {boolean} arrayMutationsOnly? Whether or not to listen only for Array mutation changes. Should be set to true with a 
+             * @param {boolean} arrayMutationsOnly? Whether or not to listen only for Array mutation changes. Should be set to true with a
              * listener of this type.
-             * 
+             *
              * @returns {plat.IRemoveListener} A function to stop listening for changes.
              */
             observeProperty<T>(listener: (changes: Array<IArrayChanges<T>>, identifier: string) => void,
@@ -1641,19 +1641,19 @@ module plat {
              * @kind function
              * @access public
              * @variation 3
-             * 
+             *
              * @description
-             * A function that allows a {@link plat.observable.ISupportTwoWayBinding|ISupportTwoWayBinding} to observe both the 
+             * A function that allows a {@link plat.observable.ISupportTwoWayBinding|ISupportTwoWayBinding} to observe both the
              * bound property itself as well as potential child properties if being bound to an object.
-             * 
-             * @typeparam {any} T The type of items in the Array if listening for Array mutations. 
-             * 
+             *
+             * @typeparam {any} T The type of items in the Array if listening for Array mutations.
+             *
              * @param {(changes: Array<plat.observable.IArrayChanges<T>>, identifier: number) => void} listener The listener function.
-             * @param {number} index? The index off of the bound object to listen to for changes if the bound object is an Array. 
+             * @param {number} index? The index off of the bound object to listen to for changes if the bound object is an Array.
              * If undefined or empty the listener will listen for changes to the bound Array itself.
-             * @param {boolean} arrayMutationsOnly? Whether or not to listen only for Array mutation changes. Should be set to true with a 
+             * @param {boolean} arrayMutationsOnly? Whether or not to listen only for Array mutation changes. Should be set to true with a
              * listener of this type.
-             * 
+             *
              * @returns {plat.IRemoveListener} A function to stop listening for changes.
              */
             observeProperty<T>(listener: (changes: Array<IArrayChanges<T>>, identifier: number) => void,
@@ -1664,10 +1664,10 @@ module plat {
              * @memberof plat.observable.IImplementTwoWayBinding
              * @kind function
              * @access public
-             * 
+             *
              * @description
              * Gets the current value of the bound property.
-             * 
+             *
              * @returns {any} The current value of the bound property.
              */
             evaluate(): any;
@@ -1677,10 +1677,10 @@ module plat {
          * @name IBoundPropertyChangedListener
          * @memberof plat.observable
          * @kind interface
-         * 
+         *
          * @description
          * Defines a function that will be called whenever a bound property specified by a given identifier has changed.
-         * 
+         *
          * @typeparam {any} T The type of each value changing.
          */
         export interface IBoundPropertyChangedListener<T> {
@@ -1690,17 +1690,17 @@ module plat {
              * @kind function
              * @access public
              * @static
-             * 
+             *
              * @description
              * The method signature for {@link plat.observable.IBoundPropertyChangedListener|IBoundPropertyChangedListener}.
-             * 
+             *
              * @typeparam {any} T The type of values.
-             * 
+             *
              * @param {T} newValue The new value of the observed property.
              * @param {T} oldValue The previous value of the observed property.
              * @param {any} identifier The string or number identifier that specifies the changed property.
              * @param {boolean} firstTime? True if this is the first case where the bound property is being set.
-             * 
+             *
              * @returns {void}
              */
             (newValue: T, oldValue: T, identifier: any, firstTime?: boolean): void;

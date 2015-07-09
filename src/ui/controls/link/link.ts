@@ -4,7 +4,7 @@
  * @memberof plat.ui
  * @kind namespace
  * @access public
- * 
+ *
  * @description
  * Holds classes and interfaces related to UI control components in platypus.
  */
@@ -15,11 +15,11 @@ module plat.ui.controls {
      * @name Link
      * @memberof plat.ui.controls
      * @kind class
-     * 
+     *
      * @extends {plat.ui.TemplateControl}
-     * 
+     *
      * @description
-     * A {@link plat.ui.TemplateControl|TemplateControl} for adding additonal 
+     * A {@link plat.ui.TemplateControl|TemplateControl} for adding additonal
      * functionality to a native HTML anchor tag.
      */
     export class Link extends TemplateControl {
@@ -34,9 +34,9 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Link
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * Replaces the {@link plat.ui.controls.Link|Link's} element with a native anchor tag.
          */
@@ -47,9 +47,9 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Link
          * @kind property
          * @access public
-         * 
+         *
          * @type {plat.observable.IObservableProperty<plat.ui.controls.ILinkOptions>}
-         * 
+         *
          * @description
          * The options for Link, if ignore is true, anchor will ignore changing the url.
          */
@@ -60,9 +60,9 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Link
          * @kind property
          * @access public
-         * 
+         *
          * @type {HTMLAnchorElement}
-         * 
+         *
          * @description
          * The control's anchor element.
          */
@@ -73,9 +73,9 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Link
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.routing.RouterStatic}
-         * 
+         *
          * @description
          * The {@link plat.routing.RouterStatic|RouterStatic} injectable instance
          */
@@ -86,9 +86,9 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Link
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.web.Browser}
-         * 
+         *
          * @description
          * The {@link plat.web.Browser|Browser} injectable instance
          */
@@ -99,9 +99,9 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Link
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.routing.Router}
-         * 
+         *
          * @description
          * The {@link plat.routing.Router|router} associated with this link.
          */
@@ -112,9 +112,9 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Link
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.IRemoveListener}
-         * 
+         *
          * @description
          * The a method for removing the click event listener for this control's element.
          */
@@ -125,10 +125,10 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Link
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Initializes click event.
-         * 
+         *
          * @returns {void}
          */
         initialize(): void {
@@ -140,14 +140,14 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Link
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Calls to normalize the href for internal links and initializes the tap event.
-         * 
+         *
          * @returns {void}
          */
         loaded(): void {
-            var options = this.options,
+            let options = this.options,
                 setHref = this.setHref.bind(this);
 
             if (!isObject(options)) {
@@ -172,17 +172,17 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Link
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Sets the element href to the one formed using the associated options.
-         * 
+         *
          * @returns {void}
          */
         setHref(): void {
-            var href = this.getHref();
+            let href = this.getHref();
 
             if (!isEmpty(href)) {
-                var element = this.element;
+                let element = this.element;
                 element.href = href;
             }
         }
@@ -192,10 +192,10 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Link
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Determines the href based on the input options.
-         * 
+         *
          * @returns {string} The href, normalized.
          */
         getHref(): string {
@@ -203,11 +203,11 @@ module plat.ui.controls {
                 return;
             }
 
-            var value = this.options.value,
+            let value = this.options.value,
                 href = value.view;
 
             if (value.isUrl !== true) {
-                var parameters = value.parameters,
+                let parameters = value.parameters,
                     query = value.query;
 
                 if (isEmpty(href)) {
@@ -225,14 +225,14 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Link
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Determines Whether or not the default click behavior should be prevented.
-         * 
+         *
          * @returns {void}
          */
         protected _handleClick(ev: Event): void {
-            var buttons: number;
+            let buttons: number;
 
             if (isNumber((<any>ev).buttons) && (<any>ev).buttons !== 0) {
                 buttons = (<any>ev).buttons;
@@ -274,10 +274,10 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Link
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Determines the proper link upon $tap.
-         * 
+         *
          * @returns {void}
          */
         protected _handleTap(ev: IGestureEvent): void {
@@ -285,7 +285,7 @@ module plat.ui.controls {
                 return;
             }
 
-            var href = this.getHref();
+            let href = this.getHref();
             if (isUndefined(href)) {
                 return;
             }
@@ -301,10 +301,10 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Link
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Calls to remove the click eater after a delay.
-         * 
+         *
          * @returns {void}
          */
         dispose(): void {
@@ -316,9 +316,9 @@ module plat.ui.controls {
      * @name ILinkOptions
      * @memberof plat.ui.controls
      * @kind interface
-     * 
+     *
      * @extends {plat.routing.INavigateOptions}
-     * 
+     *
      * @description
      * The available {@link plat.controls.Options|options} for the {@link plat.ui.controls.Link|Link} control.
      */
@@ -328,11 +328,11 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.ILinkOptions
          * @kind property
          * @access public
-         * 
+         *
          * @type {any}
-         * 
+         *
          * @description
-         * The view to which the Navigator should navigate. Can be specified by either a string path, the 
+         * The view to which the Navigator should navigate. Can be specified by either a string path, the
          * registered name of the view, or the registered Constructor.
          */
         view: any;

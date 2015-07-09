@@ -3,7 +3,7 @@
  * @memberof plat
  * @kind namespace
  * @access public
- * 
+ *
  * @description
  * Holds classes and interfaces related to Document processing in platypus.
  */
@@ -14,7 +14,7 @@ module plat.processing {
      * @name Compiler
      * @memberof plat.processing
      * @kind class
-     * 
+     *
      * @description
      * Responsible for iterating through the DOM and collecting controls.
      */
@@ -31,9 +31,9 @@ module plat.processing {
          * @memberof plat.processing.Compiler
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.processing.IElementManagerFactory}
-         * 
+         *
          * @description
          * Reference to the {@link plat.processing.IElementManagerFactory|IElementManagerFactory} injectable.
          */
@@ -44,9 +44,9 @@ module plat.processing {
          * @memberof plat.processing.Compiler
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.processing.IElementManagerFactory}
-         * 
+         *
          * @description
          * Reference to the {@link plat.processing.ITextManagerFactory|ITextManagerFactory} injectable.
          */
@@ -57,9 +57,9 @@ module plat.processing {
          * @memberof plat.processing.Compiler
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.processing.ICommentManagerFactory}
-         * 
+         *
          * @description
          * Reference to the {@link plat.processing.ICommentManagerFactory|ICommentManagerFactory} injectable.
          */
@@ -70,9 +70,9 @@ module plat.processing {
          * @memberof plat.processing.Compiler
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.storage.Cache<processing.ElementManager>}
-         * 
+         *
          * @description
          * Reference to a cache injectable that stores {@link plat.processing.ElementManager|ElementManagers}.
          */
@@ -84,15 +84,15 @@ module plat.processing {
          * @kind function
          * @access public
          * @variation 0
-         * 
+         *
          * @description
          * Goes through the child Nodes of the given Node, finding elements that contain controls as well as
          * text that contains markup.
-         * 
+         *
          * @param {Node} node The node whose childNodes are going to be compiled.
-         * @param {plat.ui.TemplateControl} control? The parent control for the given Node. The parent must implement the 
+         * @param {plat.ui.TemplateControl} control? The parent control for the given Node. The parent must implement the
          * {@link plat.ui.TemplateControl|TemplateControl interface} since only they can contain templates.
-         * 
+         *
          * @returns {void}
          */
         compile(node: Node, control?: ui.TemplateControl): void;
@@ -102,15 +102,15 @@ module plat.processing {
          * @kind function
          * @access public
          * @variation 1
-         * 
+         *
          * @description
          * Goes through the Node array, finding elements that contain controls as well as
          * text that contains markup.
-         * 
+         *
          * @param {Array<Node>} nodes The nodes that are going to be compiled.
-         * @param {plat.ui.TemplateControl} control? The parent control for the given Node. The parent must implement the 
+         * @param {plat.ui.TemplateControl} control? The parent control for the given Node. The parent must implement the
          * {@link plat.ui.TemplateControl|TemplateControl interface} since only they can contain templates.
-         * 
+         *
          * @returns {void}
          */
         compile(nodes: Array<Node>, control?: ui.TemplateControl): void;
@@ -120,20 +120,20 @@ module plat.processing {
          * @kind function
          * @access public
          * @variation 2
-         * 
+         *
          * @description
          * Goes through the NodeList, finding elements that contain controls as well as
          * text that contains markup.
-         * 
+         *
          * @param {NodeList} nodes The NodeList that is going to be compiled.
-         * @param {plat.ui.TemplateControl} control? The parent control for the given Node. The parent must implement the 
+         * @param {plat.ui.TemplateControl} control? The parent control for the given Node. The parent must implement the
          * {@link plat.ui.TemplateControl|TemplateControl interface} since only they can contain templates.
-         * 
+         *
          * @returns {void}
          */
         compile(nodes: NodeList, control?: ui.TemplateControl): void;
         compile(node: any, control?: ui.TemplateControl): void {
-            var childNodes = node.childNodes,
+            let childNodes = node.childNodes,
                 length: number,
                 newLength: number,
                 childNode: Node,
@@ -174,27 +174,27 @@ module plat.processing {
          * @memberof plat.processing.Compiler
          * @kind function
          * @access protected
-         * 
+         *
          * @description
-         * Iterates through the array of nodes creating {@link plat.processing.ElementManager|ElementManagers} on Element 
-         * nodes, {@link plat.processing.TextManager|TextManagers} on text nodes, and 
+         * Iterates through the array of nodes creating {@link plat.processing.ElementManager|ElementManagers} on Element
+         * nodes, {@link plat.processing.TextManager|TextManagers} on text nodes, and
          * {@link plat.processing.CommentManager|CommentManagers} on comment nodes.
-         * 
-         * @param {Array<Node>} nodes The array of nodes to be compiled. 
-         * @param {plat.processing.ElementManager} manager The parent {@link plat.processing.ElementManager|ElementManagers} 
+         *
+         * @param {Array<Node>} nodes The array of nodes to be compiled.
+         * @param {plat.processing.ElementManager} manager The parent {@link plat.processing.ElementManager|ElementManagers}
          * for the given array of nodes.
-         * 
+         *
          * @returns {void}
          */
         /**
-         * Iterates through the array of nodes creating Element Managers on Element 
+         * Iterates through the array of nodes creating Element Managers on Element
          * nodes, Text Managers on text nodes, and Comment Managers on comment nodes.
-         * 
-         * @param nodes The NodeList to be compiled. 
+         *
+         * @param nodes The NodeList to be compiled.
          * @param manager The parent Element Manager for the given array of nodes.
          */
         protected _compileNodes(nodes: Array<Node>, manager: ElementManager): void {
-            var length = nodes.length,
+            let length = nodes.length,
                 node: Node,
                 newManager: ElementManager,
                 newLength: number,

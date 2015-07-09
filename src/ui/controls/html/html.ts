@@ -96,7 +96,7 @@ module plat.ui.controls {
          * @returns {void}
          */
         loaded(): void {
-            var options = this.options;
+            let options = this.options;
             if (!isObject(options)) {
                 return;
             }
@@ -127,14 +127,14 @@ module plat.ui.controls {
                 return;
             }
 
-            var html = newValue.html;
+            let html = newValue.html;
             if (html === this._html) {
                 return;
             }
 
             this._html = html;
 
-            var htmlIsString = isString(html);
+            let htmlIsString = isString(html);
             if (isNull(html) || (htmlIsString && html.trim() === '')) {
                 if (this.controls.length > 0) {
                     this._TemplateControlFactory.dispose(this.controls[0]);
@@ -147,7 +147,7 @@ module plat.ui.controls {
                 this._log.debug('Trying to bind a non-string value to ' + this.type + '.');
                 return;
             } else if (newValue.compile === true) {
-                var hasControl = this.controls.length > 0;
+                let hasControl = this.controls.length > 0;
                 this.bindableTemplates.once(html).then((template) => {
                     if (hasControl) {
                         this._TemplateControlFactory.dispose(this.controls[0]);

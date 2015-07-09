@@ -3,7 +3,7 @@
  * @memberof plat
  * @kind namespace
  * @access public
- * 
+ *
  * @description
  * Holds classes and interfaces related to storage in platypus.
  */
@@ -17,14 +17,14 @@ module plat.storage {
      * @access private
      * @static
      * @exported false
-     * 
+     *
      * @type {plat.IObject<plat.storage.Cache<any>>}
-     * 
+     *
      * @description
-     * The keyed collection of all created {@link plat.storage.Cache|Caches} in the 
+     * The keyed collection of all created {@link plat.storage.Cache|Caches} in the
      * {@link plat.storage.ICacheFactory|ICacheFactory}.
      */
-    var caches: IObject<Cache<any>> = {},
+    let caches: IObject<Cache<any>> = {},
         /**
          * @name internalCaches
          * @memberof plat.storage
@@ -32,9 +32,9 @@ module plat.storage {
          * @access private
          * @static
          * @exported false
-         * 
+         *
          * @type {any}
-         * 
+         *
          * @description
          * Internal storage for all the items stored in each {@link plat.storage.Cache|Cache}.
          */
@@ -44,11 +44,11 @@ module plat.storage {
      * @name Cache
      * @memberof plat.storage
      * @kind class
-     * 
+     *
      * @description
-     * A Cache class, for use with the {@link plat.storage.ICacheFactory|ICacheFactory} injectable. 
+     * A Cache class, for use with the {@link plat.storage.ICacheFactory|ICacheFactory} injectable.
      * Used for storing objects. Takes in a generic type corresponding to the type of objects it contains.
-     * 
+     *
      * @typeparam {any} T The type of objects stored in the cache.
      */
     export class Cache<T> {
@@ -57,9 +57,9 @@ module plat.storage {
          * @memberof plat.storage.Cache
          * @kind property
          * @access private
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
          * The size of this cache specified by its ID.
          */
@@ -70,9 +70,9 @@ module plat.storage {
          * @memberof plat.storage.Cache
          * @kind property
          * @access private
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The ID of this cache.
          */
@@ -83,9 +83,9 @@ module plat.storage {
          * @memberof plat.storage.Cache
          * @kind property
          * @access private
-         * 
+         *
          * @type {plat.storage.ICacheOptions}
-         * 
+         *
          * @description
          * The options for this cache.
          */
@@ -97,22 +97,22 @@ module plat.storage {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
          * Method for creating a new cache object. Takes a generic type to denote the
          * type of objects stored in the new cache.  If a cache with the same ID already exists
          * in the {@link plat.storage.ICacheFactory|ICacheFactory}, a new cache will not be created.
-         * 
+         *
          * @param {string} uid The ID of the new Cache.
-         * @param {plat.storage.ICacheOptions} options {@link plat.storage.ICacheOptions|ICacheOptions} 
+         * @param {plat.storage.ICacheOptions} options {@link plat.storage.ICacheOptions|ICacheOptions}
          * for customizing the Cache.
-         * 
+         *
          * @typeparam {any} T Denotes the type of objects stored in the new Cache.
-         * 
+         *
          * @returns {plat.storage.Cache<T>} The new cache.
          */
         static create<T>(uid: string, options?: ICacheOptions): Cache<T> {
-            var cache: Cache<T> = caches[uid];
+            let cache: Cache<T> = caches[uid];
 
             if (isNull(cache)) {
                 cache = caches[uid] = new Cache<T>(uid, options);
@@ -127,14 +127,14 @@ module plat.storage {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
          * Gets a cache out of the {@link plat.storage.ICacheFactory|ICacheFactory} if it exists.
-         * 
+         *
          * @param {string} uid The identifier used to search for the cache.
-         * 
+         *
          * @typeparam {any} T Denotes the type of objects stored in the new Cache.
-         * 
+         *
          * @returns {plat.storage.Cache<T>} The cache with the input ID or undefined if it does not exist.
          */
         static fetch<T>(uid: string): Cache<T> {
@@ -147,17 +147,17 @@ module plat.storage {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
          * Clears the {@link plat.storage.ICacheFactory|ICacheFactory} and all of its caches.
-         * 
+         *
          * @returns {void}
          */
         static clear(): void {
-            var keys = Object.keys(caches),
+            let keys = Object.keys(caches),
                 length = keys.length;
 
-            for (var i = 0; i < length; ++i) {
+            for (let i = 0; i < length; ++i) {
                 caches[keys[i]].clear();
             }
 
@@ -169,13 +169,13 @@ module plat.storage {
          * @memberof plat.storage.Cache
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * The constructor for a {@link plat.storage.Cache|Cache}.
-         * 
+         *
          * @param {string} id The id to use to retrieve the cache from the {@link plat.storage.ICacheFactory|ICacheFactory}.
          * @param {plat.storage.ICacheOptions} options The {@link plat.storage.ICacheOptions|ICacheOptions} for customizing the cache.
-         * 
+         *
          * @returns {plat.storage.Cache} A new {@link plat.storage.Cache|Cache} instance specified by the ID.
          */
         constructor(uid: string, options?: ICacheOptions) {
@@ -197,11 +197,11 @@ module plat.storage {
          * @memberof plat.storage.Cache
          * @kind function
          * @access public
-         * 
+         *
          * @description
-         * Retrieves the {@link plat.storage.ICacheInfo|ICacheInfo} about this cache 
+         * Retrieves the {@link plat.storage.ICacheInfo|ICacheInfo} about this cache
          * (i.e. ID, size, options)
-         * 
+         *
          * @returns {plat.storage.ICacheInfo} The information about this cache.
          */
         info(): ICacheInfo {
@@ -217,24 +217,24 @@ module plat.storage {
          * @memberof plat.storage.Cache
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Method for inserting an object into an {@link plat.storage.Cache|Cache}.
-         * 
+         *
          * @param {string} key The key to use for storage/retrieval of the object.
          * @param {T} value The value to store with the associated key.
-         * 
+         *
          * @returns {T} The value inserted into an {@link plat.storage.Cache|Cache}.
          */
         put(key: string, value: T): T {
-            var val = internalCaches[this.__uid][key];
+            let val = internalCaches[this.__uid][key];
             internalCaches[this.__uid][key] = value;
 
             if (isUndefined(val)) {
                 this.__size++;
             }
 
-            var timeout = this.__options.timeout;
+            let timeout = this.__options.timeout;
 
             if (isNumber(timeout) && timeout > 0) {
                 defer(<(key?: string) => void>this.remove, timeout, [key], this);
@@ -248,12 +248,12 @@ module plat.storage {
          * @memberof plat.storage.Cache
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Method for retrieving an object from an {@link plat.storage.Cache|Cache}.
-         * 
+         *
          * @param key The key to search for in an {@link plat.storage.Cache|Cache}.
-         * 
+         *
          * @returns {T} The value found at the associated key. Returns undefined for a cache miss.
          */
         read(key: string): T {
@@ -265,12 +265,12 @@ module plat.storage {
          * @memberof plat.storage.Cache
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Method for removing an object from an {@link plat.storage.Cache|Cache}.
-         * 
+         *
          * @param {string} key The key to remove from the {@link plat.storage.Cache|Cache}.
-         * 
+         *
          * @returns {void}
          */
         remove(key: string): void {
@@ -283,10 +283,10 @@ module plat.storage {
          * @memberof plat.storage.Cache
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Method for clearing an {@link plat.storage.Cache|Cache}, removing all of its keys.
-         * 
+         *
          * @returns {void}
          */
         clear(): void {
@@ -299,10 +299,10 @@ module plat.storage {
          * @memberof plat.storage.Cache
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Method for removing an {@link plat.storage.Cache|ICache} from the {@link plat.storage.ICacheFactory|ICacheFactory}.
-         * 
+         *
          * @returns {void}
          */
         dispose(): void {
@@ -324,7 +324,7 @@ module plat.storage {
      * @name ICacheFactory
      * @memberof plat.storage
      * @kind interface
-     * 
+     *
      * @description
      * Used to manage all the defined caches for the current application session.
      */
@@ -335,18 +335,18 @@ module plat.storage {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
          * Method for creating a new cache object. Takes a generic type to denote the
          * type of objects stored in the new cache.  If a cache with the same ID already exists
          * in the {@link plat.storage.ICacheFactory|ICacheFactory}, a new cache will not be created.
-         * 
+         *
          * @param {string} uid The ID of the new Cache.
-         * @param {plat.storage.ICacheOptions} options {@link plat.storage.ICacheOptions|ICacheOptions} 
+         * @param {plat.storage.ICacheOptions} options {@link plat.storage.ICacheOptions|ICacheOptions}
          * for customizing the Cache.
-         * 
+         *
          * @typeparam {any} T Denotes the type of objects stored in the new Cache.
-         * 
+         *
          * @returns {plat.storage.Cache<T>} The new cache.
          */
         create<T>(uid: string, options?: ICacheOptions): Cache<T>;
@@ -357,14 +357,14 @@ module plat.storage {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
          * Gets a cache out of the {@link plat.storage.ICacheFactory|ICacheFactory} if it exists.
-         * 
+         *
          * @param {string} uid The identifier used to search for the cache.
-         * 
+         *
          * @typeparam {any} T Denotes the type of objects stored in the new Cache.
-         * 
+         *
          * @returns {plat.storage.Cache<T>} The cache with the input ID or undefined if it does not exist.
          */
         fetch<T>(uid: string): Cache<T>;
@@ -375,10 +375,10 @@ module plat.storage {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
          * Clears the {@link plat.storage.ICacheFactory|ICacheFactory} and all of its caches.
-         * 
+         *
          * @returns {void}
          */
         clear(): void;
@@ -387,7 +387,7 @@ module plat.storage {
     /**
      * A cache for persisting NodeManager trees.
      */
-    export var managerCache = Cache.create<processing.NodeManager>('__managerCache');
+    export let managerCache = Cache.create<processing.NodeManager>('__managerCache');
 
     /**
      * The Type for referencing the '_managerCache' injectable as a dependency.
@@ -402,7 +402,7 @@ module plat.storage {
      * @name ICacheOptions
      * @memberof plat.storage
      * @kind interface
-     * 
+     *
      * @description
      * Options for a cache.
      */
@@ -412,13 +412,13 @@ module plat.storage {
          * @memberof plat.storage.ICacheOptions
          * @kind property
          * @access public
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
-         * Specifies a timeout for a cache value. When a value 
+         * Specifies a timeout for a cache value. When a value
          * is put in the cache, it will be valid for the given
-         * period of time (in milliseconds). After the timeout 
+         * period of time (in milliseconds). After the timeout
          * is reached, the value will automatically be removed
          * from the cache.
          */
@@ -429,7 +429,7 @@ module plat.storage {
      * @name ICacheInfo
      * @memberof plat.storage
      * @kind interface
-     * 
+     *
      * @description
      * Contains information about an {@link plat.storage.Cache|Cache}.
      */
@@ -439,11 +439,11 @@ module plat.storage {
          * @memberof plat.storage.ICacheInfo
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
-         * A unique id for the {@link plat.storage.Cache|Cache} object, used to 
+         * A unique id for the {@link plat.storage.Cache|Cache} object, used to
          * retrieve the {@link plat.storage.Cache|ICache} out of the {@link plat.storage.ICacheFactory|CacheFactory}.
          */
         uid: string;
@@ -453,9 +453,9 @@ module plat.storage {
          * @memberof plat.storage.ICacheInfo
          * @kind property
          * @access public
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
          * Represents the number of items in the {@link plat.storage.Cache|Cache}.
          */
@@ -466,11 +466,11 @@ module plat.storage {
          * @memberof plat.storage.ICacheInfo
          * @kind property
          * @access public
-         * 
+         *
          * @type {plat.storage.ICacheOptions}
-         * 
+         *
          * @description
-         * Represents the {@link plat.storage.ICacheOptions|ICacheOptions} that the 
+         * Represents the {@link plat.storage.ICacheOptions|ICacheOptions} that the
          * {@link plat.storage.Cache|Cache} is using.
          */
         options: ICacheOptions;

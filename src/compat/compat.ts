@@ -408,11 +408,11 @@
          * @returns {boolean} Whether or not the event exists.
          */
         hasEvent(event: string): boolean {
-            var events = this.__events,
+            let events = this.__events,
                 eventExists = events[event];
 
             if (isUndefined(eventExists)) {
-                var element = this._document.createElement('div');
+                let element = this._document.createElement('div');
                 if (event === 'input' && this.IE === 9) {
                     eventExists = events[event] = false;
                 } else {
@@ -435,7 +435,7 @@
          * @returns {void}
          */
         private __defineBooleans(): void {
-            var _window = this._window,
+            let _window = this._window,
                 navigator = _window.navigator || <Navigator>{},
                 userAgent = (navigator.userAgent || '').toLowerCase(),
                 history = this._history,
@@ -468,7 +468,7 @@
                 return;
             }
 
-            var ie = parseInt((<any>/msie (\d+)/.exec(userAgent) || [])[1], 10) ||
+            let ie = parseInt((<any>/msie (\d+)/.exec(userAgent) || [])[1], 10) ||
                 parseInt((<any>(/trident\/.*; rv:(\d+)/.exec(userAgent) || []))[1], 10);
             if (isNumber(ie)) {
                 this.IE = ie;
@@ -531,7 +531,7 @@
          * @returns {void}
          */
         private __defineVendorDependencies(): void {
-            var _window = this._window,
+            let _window = this._window,
                 documentElement = this._document.documentElement,
                 styles = _window.getComputedStyle(documentElement, ''),
                 matches = Array.prototype.slice.call(styles).join('').match(/-(moz|webkit|ms)-/),
@@ -565,7 +565,7 @@
             (<any>_window)[prefix + 'CancelRequestAnimationFrame'] ||
             (<any>_window)[prefix + 'CancelAnimationFrame'];
 
-            var style = documentElement.style;
+            let style = documentElement.style;
             // handle Android issue where style.transition exists but transition events still need vendor prefix
             // should only affect version 4.1 but we will handle for < 4.4.
             if ((isUndefined(this.ANDROID) || Math.floor(this.ANDROID / 10) >= 44) &&
@@ -608,14 +608,14 @@
          * @returns {void}
          */
         private __determineCss(): void {
-            var _document = this._document,
+            let _document = this._document,
                 head = _document.head,
                 element = _document.createElement('div');
 
             element.setAttribute(__Hide, '');
             head.insertBefore(element, null);
 
-            var computedStyle = this._window.getComputedStyle(element),
+            let computedStyle = this._window.getComputedStyle(element),
                 display = computedStyle.display,
                 visibility = computedStyle.visibility;
 

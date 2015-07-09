@@ -5,7 +5,7 @@
      * @name Regex
      * @memberof plat.expressions
      * @kind class
-     * 
+     *
      * @description
      * A class for keeping track of commonly used regular expressions.
      */
@@ -15,9 +15,9 @@
          * @memberof plat.expressions.Regex
          * @kind property
          * @access public
-         * 
+         *
          * @type {RegExp}
-         * 
+         *
          * @description
          * A regular expression for finding markup in a string.
          */
@@ -28,12 +28,12 @@
          * @memberof plat.expressions.Regex
          * @kind property
          * @access public
-         * 
+         *
          * @type {RegExp}
-         * 
+         *
          * @description
          * Finds the arguments in a method expression.
-         * 
+         *
          * @example
          * // outputs ["('foo', 'bar', 'baz')", "'foo', 'bar', 'baz'"]
          * exec("myFunction('foo', 'bar', 'baz')");
@@ -45,13 +45,13 @@
          * @memberof plat.expressions.Regex
          * @kind property
          * @access public
-         * 
+         *
          * @type {RegExp}
-         * 
+         *
          * @description
-         * Finds '/*.html' or '/*.htm' in a url. Useful for removing 
+         * Finds '/*.html' or '/*.htm' in a url. Useful for removing
          * the html file out of the url.
-         * 
+         *
          * @example
          * // outputs ['/index.html']
          * exec('http://localhost:8080/index.html');
@@ -63,9 +63,9 @@
          * @memberof plat.expressions.Regex
          * @kind property
          * @access public
-         * 
+         *
          * @type {RegExp}
-         * 
+         *
          * @description
          * Finds a protocol delimeter in a string (e.g. ://).
          */
@@ -76,9 +76,9 @@
          * @memberof plat.expressions.Regex
          * @kind property
          * @access public
-         * 
+         *
          * @type {RegExp}
-         * 
+         *
          * @description
          * Looks for any invalid variable syntax.
          */
@@ -89,9 +89,9 @@
          * @memberof plat.expressions.Regex
          * @kind property
          * @access public
-         * 
+         *
          * @type {RegExp}
-         * 
+         *
          * @description
          * Grabs the file name from a file path.
          */
@@ -102,9 +102,9 @@
          * @memberof plat.expressions.Regex
          * @kind property
          * @access public
-         * 
+         *
          * @type {RegExp}
-         * 
+         *
          * @description
          * Determines if a character is correlated with a shifted key code.
          */
@@ -115,9 +115,9 @@
          * @memberof plat.expressions.Regex
          * @kind property
          * @access public
-         * 
+         *
          * @type {RegExp}
-         * 
+         *
          * @description
          * Determines if a url is relative or absolute.
          */
@@ -128,9 +128,9 @@
          * @memberof plat.expressions.Regex
          * @kind property
          * @access public
-         * 
+         *
          * @type {RegExp}
-         * 
+         *
          * @description
          * Determines if an email address is valid.
          */
@@ -143,9 +143,9 @@
          * @memberof plat.expressions.Regex
          * @kind property
          * @access public
-         * 
+         *
          * @type {RegExp}
-         * 
+         *
          * @description
          * Determines if a telephone number is valid.
          */
@@ -156,9 +156,9 @@
          * @memberof plat.expressions.Regex
          * @kind property
          * @access public
-         * 
+         *
          * @type {RegExp}
-         * 
+         *
          * @description
          * A regular expression for matching dynamic segments in a route.
          */
@@ -169,9 +169,9 @@
          * @memberof plat.expressions.Regex
          * @kind property
          * @access public
-         * 
+         *
          * @type {RegExp}
-         * 
+         *
          * @description
          * A regular expression for matching splat segments in a route.
          */
@@ -183,9 +183,9 @@
          * @kind property
          * @access public
          * @readonly
-         * 
+         *
          * @type {RegExp}
-         * 
+         *
          * @description
          * A regular expression for matching or removing all newline characters.
          */
@@ -199,16 +199,16 @@
          * @kind property
          * @access public
          * @readonly
-         * 
+         *
          * @type {RegExp}
-         * 
+         *
          * @description
          * Finds optional parameters in a route string.
-         * 
+         *
          * @example
          * // outputs ['(/foo)', '/foo']
          * exec('(/foo)/bar');
-         * 
+         *
          * // outputs ['(/foo)', '/foo']
          * exec('(/foo))');
          */
@@ -222,16 +222,16 @@
          * @kind property
          * @access public
          * @readonly
-         * 
+         *
          * @type {RegExp}
-         * 
+         *
          * @description
          * Finds named parameters in a route string.
-         * 
+         *
          * @example
          * // outputs [':foo']
          * exec('/:foo/bar')
-         * 
+         *
          * // outputs [':foo']
          * exec('(/:foo)/bar');
          */
@@ -245,12 +245,12 @@
          * @kind property
          * @access public
          * @readonly
-         * 
+         *
          * @type {RegExp}
-         * 
+         *
          * @description
          * Finds an alphanumeric wildcard match in a route string.
-         * 
+         *
          * @example
          * // outputs ['*bar']
          * exec('/foo/*bar/baz');
@@ -265,12 +265,12 @@
          * @kind property
          * @access public
          * @readonly
-         * 
+         *
          * @type {RegExp}
-         * 
+         *
          * @description
          * Finds invalid characters in a route string.
-         * 
+         *
          * @example
          * // outputs ['?']
          * exec('/foo/bar?query=baz');
@@ -285,24 +285,24 @@
          * @kind property
          * @access public
          * @readonly
-         * 
+         *
          * @type {RegExp}
-         * 
+         *
          * @description
          * Finds delimeters for spinal-case, snake_case, and dot.case.
          * useful for converting to camelCase. Also can turn a string
          * into camelCase with space as a delimeter.
-         * 
+         *
          * @example
          * // outputs ['-o', '-', 'o']
          * exec('plat-options');
-         * 
+         *
          * // outputs ['.c', '.', 'c']
          * exec('plat.config');
-         * 
+         *
          * // outputs ['_v', '_', 'v']
          * exec('plat_var');
-         * 
+         *
          * // outputs [' W', ' ', 'W']
          * exec('Hello World');
          */
@@ -316,9 +316,9 @@
          * @kind property
          * @access public
          * @readonly
-         * 
+         *
          * @type {RegExp}
-         * 
+         *
          * @description
          * Finds all capital letters.
          */
@@ -332,12 +332,12 @@
          * @kind property
          * @access public
          * @readonly
-         * 
+         *
          * @type {RegExp}
-         * 
+         *
          * @description
-         * Finds all whitespace and newline characters 
-         * not in string literals. Needs to be combined 
+         * Finds all whitespace and newline characters
+         * not in string literals. Needs to be combined
          * with string replace function using $1 argument.
          */
         get whiteSpaceRegex(): RegExp {
@@ -350,9 +350,9 @@
          * @kind property
          * @access public
          * @readonly
-         * 
+         *
          * @type {RegExp}
-         * 
+         *
          * @description
          * Finds all single and double quotes.
          */

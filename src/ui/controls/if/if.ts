@@ -5,11 +5,11 @@ module plat.ui.controls {
      * @name If
      * @memberof plat.ui.controls
      * @kind class
-     * 
+     *
      * @extends {plat.ui.TemplateControl}
-     * 
+     *
      * @description
-     * A {@link plat.ui.TemplateControl|TemplateControl} conditionally adding or removing 
+     * A {@link plat.ui.TemplateControl|TemplateControl} conditionally adding or removing
      * a block of nodes to or from the DOM.
      */
     export class If extends TemplateControl {
@@ -24,9 +24,9 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.If
          * @kind property
          * @access protected
-         * 
+         *
          * @type {Document}
-         * 
+         *
          * @description
          * The document injectable.
          */
@@ -37,9 +37,9 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.If
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.ui.animations.Animator}
-         * 
+         *
          * @description
          * Reference to the {@link plat.ui.animations.Animator|Animator} injectable.
          */
@@ -51,9 +51,9 @@ module plat.ui.controls {
          * @kind property
          * @access protected
          * @static
-         * 
+         *
          * @type {plat.async.IPromise}
-         * 
+         *
          * @description
          * Reference to the {@link plat.async.IPromise|IPromise} injectable.
          */
@@ -64,9 +64,9 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.If
          * @kind property
          * @access public
-         * 
+         *
          * @type {plat.observable.IObservableProperty<plat.ui.controls.IIfOptions>}
-         * 
+         *
          * @description
          * The evaluated {@link plat.controls.Options|plat-options} object.
          */
@@ -77,9 +77,9 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.If
          * @kind property
          * @access public
-         * 
+         *
          * @type {Comment}
-         * 
+         *
          * @description
          * The Comment used to hold the place of the plat-if element.
          */
@@ -90,9 +90,9 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.If
          * @kind property
          * @access public
-         * 
+         *
          * @type {DocumentFragment}
-         * 
+         *
          * @description
          * The DocumentFragment that stores the plat-if element when hidden.
          */
@@ -103,11 +103,11 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.If
          * @kind property
          * @access private
-         * 
+         *
          * @type {boolean}
-         * 
+         *
          * @description
-         * The current evaluated condition (whether or not the 
+         * The current evaluated condition (whether or not the
          * control is visible) of the control.
          */
         private __condition: boolean = true;
@@ -117,11 +117,11 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.If
          * @kind property
          * @access private
-         * 
+         *
          * @type {boolean}
-         * 
+         *
          * @description
-         * A boolean value stating whether or not the condition has already 
+         * A boolean value stating whether or not the condition has already
          * been evaluated.
          */
         private __firstTime: boolean = true;
@@ -131,9 +131,9 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.If
          * @kind property
          * @access private
-         * 
+         *
          * @type {plat.IRemoveListener}
-         * 
+         *
          * @description
          * A function to stop listening to changes on the options object.
          */
@@ -144,9 +144,9 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.If
          * @kind property
          * @access private
-         * 
+         *
          * @type {plat.ui.animations.IAnimationThenable<any>}
-         * 
+         *
          * @description
          * A promise that resolves when the leave animation is finished.
          */
@@ -157,9 +157,9 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.If
          * @kind property
          * @access private
-         * 
+         *
          * @type {plat.ui.animations.IAnimationThenable<any>}
-         * 
+         *
          * @description
          * A promise that resolves when the entrance animation is finished.
          */
@@ -170,9 +170,9 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.If
          * @kind property
          * @access private
-         * 
+         *
          * @type {plat.async.IThenable<void>}
-         * 
+         *
          * @description
          * A promise that resolves when the template has been bound.
          */
@@ -183,17 +183,17 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.If
          * @kind function
          * @access public
-         * 
+         *
          * @description
-         * The constructor for a {@link plat.ui.controls.If|If}. Creates the comment node and document fragment storage 
+         * The constructor for a {@link plat.ui.controls.If|If}. Creates the comment node and document fragment storage
          * used by this control.
-         * 
+         *
          * @returns {plat.ui.controls.If} A {@link plat.ui.controls.If|If} instance.
          */
         constructor() {
             super();
 
-            var _document = this._document;
+            let _document = this._document;
             this.commentNode = _document.createComment(__If + __BOUND_PREFIX + 'placeholder');
             this.fragmentStore = _document.createDocumentFragment();
         }
@@ -203,15 +203,15 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.If
          * @kind function
          * @access public
-         * 
+         *
          * @description
-         * Checks the options and initializes the 
+         * Checks the options and initializes the
          * evaluation.
-         * 
+         *
          * @returns {plat.async.IThenable<void>} A promise that resolves when the template has been added/removed.
          */
         contextChanged(): async.IThenable<void> {
-            var options = this.options.value;
+            let options = this.options.value;
 
             if (isEmpty(options)) {
                 return;
@@ -225,10 +225,10 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.If
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Creates a bindable template with the control element's childNodes (innerHTML).
-         * 
+         *
          * @returns {void}
          */
         setTemplate(): void {
@@ -240,12 +240,12 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.If
          * @kind function
          * @access public
-         * 
+         *
          * @description
-         * Sets the visibility to true if no options are 
-         * defined, kicks off the evaluation, and observes 
+         * Sets the visibility to true if no options are
+         * defined, kicks off the evaluation, and observes
          * the options for changes.
-         * 
+         *
          * @returns {void}
          */
         loaded(): async.IThenable<void> {
@@ -260,7 +260,7 @@ module plat.ui.controls {
                 };
             }
 
-            var promise = this.contextChanged();
+            let promise = this.contextChanged();
 
             this.__removeListener = this.options.observe(this._setter);
 
@@ -272,10 +272,10 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.If
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Stops listening to the options for changes.
-         * 
+         *
          * @returns {void}
          */
         dispose(): void {
@@ -293,16 +293,16 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.If
          * @kind function
          * @access protected
-         * 
+         *
          * @description
-         * Checks the condition and decides 
-         * whether or not to add or remove 
+         * Checks the condition and decides
+         * whether or not to add or remove
          * the node from the DOM.
-         * 
+         *
          * @returns {void}
          */
         protected _setter(options: IIfOptions): async.IThenable<void> {
-            var value = !!options.condition,
+            let value = !!options.condition,
                 promise: async.IThenable<void>;
 
             if (value === this.__condition && !this.__firstTime) {
@@ -340,10 +340,10 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.If
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Adds the conditional nodes to the DOM.
-         * 
+         *
          * @returns {void}
          */
         protected _addItem(): async.IThenable<void> {
@@ -354,7 +354,7 @@ module plat.ui.controls {
             if (this.__firstTime) {
                 this.__firstTime = false;
                 this.__initialBind = this.bindableTemplates.bind('template').then((template): animations.IAnimatingThenable => {
-                    var element = this.element;
+                    let element = this.element;
                     this.__initialBind = null;
 
                     if (element.parentNode === this.fragmentStore) {
@@ -386,14 +386,14 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.If
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Animates the template as it enters the DOM.
-         * 
+         *
          * @returns {plat.animations.IAnimationThenable<void>} A promise that resolves when the template is done animating
          */
         protected _animateEntrance(): animations.IAnimationThenable<void> {
-            var commentNode = this.commentNode,
+            let commentNode = this.commentNode,
                 parentNode = commentNode.parentNode;
 
             if (!isNode(parentNode)) {
@@ -410,10 +410,10 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.If
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Removes the conditional nodes from the DOM.
-         * 
+         *
          * @returns {void}
          */
         protected _removeItem(): async.IThenable<void> {
@@ -431,14 +431,14 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.If
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Animates the template as it leaves the DOM.
-         * 
+         *
          * @returns {plat.animations.IAnimationThenable<void>} A promise that resolves when the template is done animating
          */
         protected _animateLeave(): animations.IAnimationThenable<void> {
-            var element = this.element,
+            let element = this.element,
                 parent = element.parentElement,
                 nextSibling = element.nextSibling;
 
@@ -458,7 +458,7 @@ module plat.ui.controls {
      * @name IIfOptions
      * @memberof plat.ui.controls
      * @kind interface
-     * 
+     *
      * @description
      * The available {@link plat.controls.Options|options} for the {@link plat.ui.controls.If|If} control.
      */
@@ -468,11 +468,11 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.IIfOptions
          * @kind property
          * @access public
-         * 
+         *
          * @type {boolean}
-         * 
+         *
          * @description
-         * A boolean expression to bind to whether or not the conditional 
+         * A boolean expression to bind to whether or not the conditional
          * nodes are present on the DOM.
          */
         condition: boolean;

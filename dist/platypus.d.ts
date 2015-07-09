@@ -1,5 +1,5 @@
 /**
-  * PlatypusTS v0.13.12 (https://platypi.io)
+  * PlatypusTS v0.13.14 (https://platypi.io)
   * Copyright 2015 Platypi, LLC. All rights reserved.
   *
   * PlatypusTS is licensed under the MIT license found at
@@ -77,30 +77,30 @@ declare module plat {
               * Static injectables will be injected before the application loads. This provides a way to create
               * a static constructor and load dependencies into static class properties.
               */
-            var STATIC: string;
+            let STATIC: string;
             /**
               * Singleton injectables will contain a constructor. A Singleton injectable will be instantiated once and
               * used throughout the application lifetime. It will be instantiated when another component is injected
               * and lists it as a dependency.
               */
-            var SINGLETON: string;
+            let SINGLETON: string;
             /**
               * Instance injectables will contain a constructor. An Instance injectable will be instantiated multiple times
               * throughout the application lifetime. It will be instantiated whenever another component is injected
               * and lists it as a dependency.
               */
-            var INSTANCE: string;
+            let INSTANCE: string;
             /**
               * Factory injectables will not contain a constructor but will instead contain a method for obtaining an
               * instance, such as getInstance() or create(). It will be injected before the application loads, similar to a Static
               * injectable.
               */
-            var FACTORY: string;
+            let FACTORY: string;
             /**
               * Class injectables are essentially a direct reference to a class's constructor. It may contain both
               * static and instance methods as well as a constructor for creating a new instance.
               */
-            var CLASS: string;
+            let CLASS: string;
         }
         /**
           * Adds a CSS animation denoted by its name. If you wish to also support legacy browsers, make sure to register a
@@ -133,11 +133,11 @@ declare module plat {
             /**
               * A CSS animation.
               */
-            var CSS: string;
+            const CSS: string;
             /**
               * A JavaScript animation.
               */
-            var JS: string;
+            const JS: string;
         }
     }
     /**
@@ -274,30 +274,30 @@ declare module plat {
               * An InjectorObject of Controls.
               * Contains all the registered controls for an application.
               */
-            var control: InjectorObject<Control>;
+            const control: InjectorObject<Control>;
             /**
               * An InjectorObject of IBaseViewControls.
               * Contains all the registered view controls for an application.
               */
-            var viewControl: InjectorObject<ui.ViewControl>;
+            const viewControl: InjectorObject<ui.ViewControl>;
             /**
               * An InjectorObject of objects. Contains all the registered
               * injectables for an application.
               */
-            var injectable: InjectorObject<any>;
+            const injectable: InjectorObject<any>;
             /**
               * An InjectorObject of static objects. Contains all the registered
               * static injectables for an application. Once the injectables have been injected, they are removed from this object.
               */
-            var staticInjectable: InjectorObject<any>;
+            const staticInjectable: InjectorObject<any>;
             /**
               * An InjectorObject of animations. Can be either CSS or JS implementations.
               */
-            var animation: InjectorObject<ui.animations.BaseAnimation>;
+            const animation: InjectorObject<ui.animations.BaseAnimation>;
             /**
               * An InjectorObject  of animations. Should only contain JS implementations.
               */
-            var jsAnimation: InjectorObject<ui.animations.BaseAnimation>;
+            const jsAnimation: InjectorObject<ui.animations.BaseAnimation>;
         }
     }
     /**
@@ -2200,10 +2200,6 @@ declare module plat {
               */
             protected _config: IHttpConfig;
             /**
-              * The injectable instance of Compat
-              */
-            protected _compat: Compat;
-            /**
               * Whether or not the browser supports the File API.
               */
             private __fileSupported;
@@ -2788,7 +2784,7 @@ declare module plat {
         }
         /**
           */
-        var managerCache: Cache<processing.NodeManager>;
+        let managerCache: Cache<processing.NodeManager>;
         /**
           */
         function IManagerCache(): typeof managerCache;
@@ -5209,6 +5205,150 @@ declare module plat {
               * @param {plat.ui.TemplateControl} control The potential bound control.
               */
             static isBoundControl(control: TemplateControl): boolean;
+            /**
+              * Adds a template to this object. The template will be stored with the key,
+              * and it will be transformed into a DocumentFragment.
+              * @param {Element} template An Element representing the DOM template.
+              * @param {string} relativeIdentifier? The identifier string relative to this control's context
+              * (e.g. 'foo.bar.baz' would signify the object this.context.foo.bar.baz). This is the
+              * most efficient way of specifying context, else the framework has to search for the
+              * object.
+              * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
+              * controls created in the template.
+              */
+            once(template: Element, relativeIdentifier?: string, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
+            /**
+              * Adds a template to this object. The template will be stored with the key,
+              * and it will be transformed into a DocumentFragment.
+              * @param {Element} template An Element representing the DOM template.
+              * @param {number} relativeIdentifier? The identifier number relative to this control's context
+              * (e.g. '1' would signify the object this.context[1]). Only necessary when context is an array.
+              * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
+              * controls created in the template.
+              * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
+              * controls created in the template.
+              */
+            once(template: Element, relativeIdentifier?: number, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
+            /**
+              * Adds a template to this object. The template will be stored with the key,
+              * and it will be transformed into a DocumentFragment.
+              * @param {Array<Node>} template A node Array representing the DOM template.
+              * @param {string} relativeIdentifier? The identifier string relative to this control's context
+              * (e.g. 'foo.bar.baz' would signify the object this.context.foo.bar.baz). This is the
+              * most efficient way of specifying context, else the framework has to search for the
+              * object.
+              * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
+              * controls created in the template.
+              */
+            once(template: Array<Node>, relativeIdentifier?: string, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
+            /**
+              * Adds a template to this object. The template will be stored with the key,
+              * and it will be transformed into a DocumentFragment.
+              * @param {Array<Node>} template A node Array representing the DOM template.
+              * @param {number} relativeIdentifier? The identifier number relative to this control's context
+              * (e.g. '1' would signify the object this.context[1]). Only necessary when context is an array.
+              * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
+              * controls created in the template.
+              * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
+              * controls created in the template.
+              */
+            once(template: Array<Node>, relativeIdentifier?: number, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
+            /**
+              * Adds a template to this object. The template will be stored with the key,
+              * and it will be transformed into a DocumentFragment.
+              * @param {NodeList} template A NodeList representing the DOM template.
+              * @param {string} relativeIdentifier? The identifier string relative to this control's context
+              * (e.g. 'foo.bar.baz' would signify the object this.context.foo.bar.baz). This is the
+              * most efficient way of specifying context, else the framework has to search for the
+              * object.
+              * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
+              * controls created in the template.
+              */
+            once(template: NodeList, relativeIdentifier?: string, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
+            /**
+              * Adds a template to this object. The template will be stored with the key,
+              * and it will be transformed into a DocumentFragment.
+              * @param {NodeList} template A NodeList representing the DOM template.
+              * @param {number} relativeIdentifier? The identifier number relative to this control's context
+              * (e.g. '1' would signify the object this.context[1]). Only necessary when context is an array.
+              * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
+              * controls created in the template.
+              * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
+              * controls created in the template.
+              */
+            once(template: NodeList, relativeIdentifier?: number, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
+            /**
+              * Adds a template to this object. The template will be stored with the key,
+              * and it will be transformed into a DocumentFragment.
+              * @param {DocumentFragment} template A DocumentFragment representing the DOM template.
+              * @param {string} relativeIdentifier? The identifier string relative to this control's context
+              * (e.g. 'foo.bar.baz' would signify the object this.context.foo.bar.baz). This is the
+              * most efficient way of specifying context, else the framework has to search for the
+              * object.
+              * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
+              * controls created in the template.
+              */
+            once(template: DocumentFragment, relativeIdentifier?: string, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
+            /**
+              * Adds a template to this object. The template will be stored with the key,
+              * and it will be transformed into a DocumentFragment.
+              * @param {DocumentFragment} template A DocumentFragment representing the DOM template.
+              * @param {number} relativeIdentifier? The identifier number relative to this control's context
+              * (e.g. '1' would signify the object this.context[1]). Only necessary when context is an array.
+              * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
+              * controls created in the template.
+              * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
+              * controls created in the template.
+              */
+            once(template: DocumentFragment, relativeIdentifier?: number, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
+            /**
+              * Adds a template to this object. The template will be stored with the key,
+              * and it will be transformed into a DocumentFragment.
+              * @param {Node} template A Node representing the DOM template.
+              * @param {string} relativeIdentifier? The identifier string relative to this control's context
+              * (e.g. 'foo.bar.baz' would signify the object this.context.foo.bar.baz). This is the
+              * most efficient way of specifying context, else the framework has to search for the
+              * object.
+              * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
+              * controls created in the template.
+              */
+            once(template: Node, relativeIdentifier?: string, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
+            /**
+              * Adds a template to this object. The template will be stored with the key,
+              * and it will be transformed into a DocumentFragment.
+              * @param {Node} template A Node representing the DOM template.
+              * @param {number} relativeIdentifier? The identifier number relative to this control's context
+              * (e.g. '1' would signify the object this.context[1]). Only necessary when context is an array.
+              * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
+              * controls created in the template.
+              * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
+              * controls created in the template.
+              */
+            once(template: Node, relativeIdentifier?: number, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
+            /**
+              * Adds a template to this object. The template will be stored with the key,
+              * and it will be transformed into a DocumentFragment.
+              * @param {string} template A template string representing the DOM template.
+              * @param {string} relativeIdentifier? The identifier string relative to this control's context
+              * (e.g. 'foo.bar.baz' would signify the object this.context.foo.bar.baz). This is the
+              * most efficient way of specifying context, else the framework has to search for the
+              * object.
+              * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
+              * controls created in the template.
+              */
+            once(template: string, relativeIdentifier?: string, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
+            /**
+              * Adds a template to this object. The template will be stored with the key,
+              * and it will be transformed into a DocumentFragment.
+              * @param {string} template A template string representing the DOM template.
+              * @param {number} relativeIdentifier? The identifier number relative to this control's context
+              * (e.g. '1' would signify the object this.context[1]). Only necessary when context is an array.
+              * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
+              * controls created in the template.
+              * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
+              * controls created in the template.
+              */
+            once(template: string, relativeIdentifier?: number, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
             /**
               * Method for linking a compiled template to a data context and returning a clone of the template,
               * with all new Controls created if the template contains controls. If no data context
@@ -7652,6 +7792,10 @@ declare module plat {
                   */
                 controls: Array<ViewControl>;
                 /**
+                  * The options for the Viewport control.
+                  */
+                options: observable.IObservableProperty<IViewportOptions>;
+                /**
                   * Used to grab the current Router instance.
                   */
                 protected _Router: routing.IRouterStatic;
@@ -7699,6 +7843,10 @@ declare module plat {
                   * The next ViewControl to which to navigate.
                   */
                 protected _nextView: ViewControl;
+                /**
+                  * Whether or not to animate Array mutations.
+                  */
+                protected _animate: boolean;
                 /**
                   * Allows the viewport to initialize its navigator with the current
                   * router.
@@ -7751,6 +7899,15 @@ declare module plat {
                   * router as a child of the parent viewport's router.
                   */
                 protected _getParentViewport(): Viewport;
+            }
+            /**
+              * The available options for the Viewport control.
+              */
+            interface IViewportOptions {
+                /**
+                  * Will allow for page transition animations if set to true.
+                  */
+                animate: boolean;
             }
             /**
               * A TemplateControl for easily reusing a
@@ -8103,7 +8260,7 @@ declare module plat {
               */
             interface IForEachOptions {
                 /**
-                  * Will animate the Array mutations if set to true.
+                  * Will allow for Array mutation animations if set to true.
                   */
                 animate?: boolean;
                 /**
@@ -8354,11 +8511,6 @@ declare module plat {
                   * @param {IInnerHtmlOptions} oldValue? The old value of the options property.
                   */
                 protected _onOptionsChanged(newValue: IInnerHtmlOptions, oldValue?: IInnerHtmlOptions): void;
-                /**
-                  * Compiles the bound template and adds it to the element.
-                  * @param {string} templateString The template string to compile and bind.
-                  */
-                protected _generateTemplate(templateString: string): void;
             }
             /**
               * The options object for the
@@ -9696,7 +9848,7 @@ declare module plat {
               */
             protected _previousUrl: string;
             /**
-              * A method to call to stop listening for url changes, only works on the root navigator.
+              * Whether or not the current navigation is a backward navigation
               */
             protected _backNavigate: boolean;
             /**
@@ -9726,6 +9878,10 @@ declare module plat {
               * Tells the router to go back with the given options.
               */
             goBack(options?: IBackNavigateOptions): async.IThenable<void>;
+            /**
+              * Indicates whether or not the current navigation is a backward navigation.
+              */
+            isBackNavigation(): boolean;
             /**
               * Lets the router dispose of all of the necessary properties.
               */
@@ -11084,7 +11240,7 @@ declare module plat {
         /**
           * A mapping of all keys to their equivalent keyCode.
           */
-        var KeyCodes: {
+        const KeyCodes: {
             '0': number;
             '1': number;
             '2': number;

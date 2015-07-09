@@ -235,7 +235,7 @@ module plat.ui.controls {
          * @returns {void}
          */
         initialize(): void {
-            var router = this._router = this._Router.currentRouter(),
+            let router = this._router = this._Router.currentRouter(),
                 parentViewport = this._getParentViewport(),
                 parentRouter: routing.Router;
 
@@ -261,7 +261,7 @@ module plat.ui.controls {
          */
         loaded(): void {
             if (isObject(this.options)) {
-                var animate = this.options.value.animate === true;
+                let animate = this.options.value.animate === true;
                 if (animate) {
                     this.dom.addClass(this.element, __Viewport + '-animate');
                 }
@@ -291,7 +291,7 @@ module plat.ui.controls {
          * @returns {plat.async.IThenable<boolean>} Whether or not it is safe to navigate.
          */
         canNavigateTo(routeInfo: routing.IRouteInfo): async.IThenable<boolean> {
-            var getRouter = this._Router.currentRouter,
+            let getRouter = this._Router.currentRouter,
                 currentRouter = getRouter(),
                 response: any = true,
                 injector: dependency.Injector<ViewControl> = this._Injector.getDependency(routeInfo.delegate.view),
@@ -305,7 +305,7 @@ module plat.ui.controls {
 
             if (currentRouter !== nextRouter) {
                 nextRouter.initialize(this._router);
-                var navigator: routing.Navigator = acquire(__NavigatorInstance);
+                let navigator: routing.Navigator = acquire(__NavigatorInstance);
                 view.navigator = navigator;
                 navigator.initialize(nextRouter);
             } else {
@@ -337,7 +337,7 @@ module plat.ui.controls {
          * @returns {plat.async.IThenable<boolean>} Whether or not it is safe to navigate.
          */
         canNavigateFrom(): async.IThenable<boolean> {
-            var view = this.controls[0],
+            let view = this.controls[0],
                 response: any = true;
 
             if (isObject(view) && isFunction(view.canNavigateFrom)) {
@@ -365,7 +365,7 @@ module plat.ui.controls {
          * new ViewControl has finished instantiating.
          */
         navigateTo(routeInfo: routing.IRouteInfo): async.IThenable<void> {
-            var injector = this._nextInjector || this._Injector.getDependency(routeInfo.delegate.view),
+            let injector = this._nextInjector || this._Injector.getDependency(routeInfo.delegate.view),
                 nodeMap = this._createNodeMap(injector),
                 element = this.element,
                 node = nodeMap.element,
@@ -374,13 +374,13 @@ module plat.ui.controls {
                 control = <ViewControl>nodeMap.uiControlNode.control;
 
             if (this._animate) {
-                var animator = this._animator,
+                let animator = this._animator,
                     dom = this.dom,
                     isNavigatingBack = this._navigator.isBackNavigation(),
                     view = this.controls[0];
 
                 if (isObject(view)) {
-                    var oldElement = view.element;
+                    let oldElement = view.element;
                     if (isNavigatingBack) {
                         dom.addClass(oldElement, __NavigatingBack);
                     }
@@ -403,7 +403,7 @@ module plat.ui.controls {
                 this.element.insertBefore(node, null);
             }
 
-            var viewportManager = this._managerCache.read(this.uid),
+            let viewportManager = this._managerCache.read(this.uid),
                 manager = this._ElementManagerFactory.getInstance();
 
             viewportManager.children = [];
@@ -436,7 +436,7 @@ module plat.ui.controls {
          * has finished navigating from the current state.
          */
         navigateFrom(): async.IThenable<void> {
-            var view = this.controls[0],
+            let view = this.controls[0],
                 promise: async.IThenable<void>;
 
             if (isObject(view) && isFunction(view.navigatingFrom)) {
@@ -491,7 +491,7 @@ module plat.ui.controls {
          * @returns {plat.processing.INodeMap} The INodeMap for the ViewControl
          */
         protected _createNodeMap(injector: dependency.Injector<ViewControl>): processing.INodeMap {
-            var control = this._nextView || injector.inject(),
+            let control = this._nextView || injector.inject(),
                 doc = this._document,
                 type = injector.name,
                 replaceWith = control.replaceWith,
@@ -528,7 +528,7 @@ module plat.ui.controls {
          * @returns {plat.ui.controls.Viewport} The parent Viewport.
          */
         protected _getParentViewport(): Viewport {
-            var viewport = this.parent,
+            let viewport = this.parent,
                 type = this.type;
 
             while (!isNull(viewport) && viewport.type !== type) {

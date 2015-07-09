@@ -2,7 +2,7 @@
  * @name plat
  * @kind namespace
  * @access public
- * 
+ *
  * @description
  * The entry point into the platypus library.
  */
@@ -26,14 +26,14 @@ module plat {
      * @variation 0
      * @access public
      * @static
-     * 
+     *
      * @description
      * Returns the requested injectable dependency.
-     * 
+     *
      * @typeparam {any} T The type of the requested dependency.
-     * 
+     *
      * @param {() => T} dependency The dependency Type to return.
-     * 
+     *
      * @returns T The requested dependency.
      */
     export function acquire<T>(dependency: (...args: Array<any>) => T): T;
@@ -44,14 +44,14 @@ module plat {
      * @variation 0
      * @access public
      * @static
-     * 
+     *
      * @description
      * Returns the requested injectable dependency.
-     * 
+     *
      * @typeparam {any} T The type of the requested dependency.
-     * 
+     *
      * @param {() => T} dependency The dependency Type to return.
-     * 
+     *
      * @returns T The requested dependency.
      */
     export function acquire<T>(dependency: new (...args: Array<any>) => T): T;
@@ -62,12 +62,12 @@ module plat {
      * @variation 1
      * @access public
      * @static
-     * 
+     *
      * @description
      * Returns the requested injectable dependency.
-     * 
+     *
      * @param {Function} dependency The dependency Type to return.
-     * 
+     *
      * @returns {any} The requested dependency.
      */
     export function acquire(dependency: Function): any;
@@ -78,12 +78,12 @@ module plat {
      * @variation 2
      * @access public
      * @static
-     * 
+     *
      * @description
      * Returns the requested injectable dependency.
-     * 
+     *
      * @param {Function} dependency An array of Types specifying the injectable dependencies.
-     * 
+     *
      * @returns {Array<any>} The dependencies, in the order they were requested.
      */
     export function acquire(dependencies: Array<Function>): Array<any>;
@@ -94,12 +94,12 @@ module plat {
      * @variation 3
      * @access public
      * @static
-     * 
+     *
      * @description
      * Returns the requested injectable dependency.
-     * 
+     *
      * @param {string} dependency The injectable dependency type to return.
-     * 
+     *
      * @returns {any} The requested dependency.
      */
     export function acquire(dependency: string): any;
@@ -110,12 +110,12 @@ module plat {
      * @variation 4
      * @access public
      * @static
-     * 
+     *
      * @description
      * Gathers dependencies and returns them as an array in the order they were requested.
-     * 
+     *
      * @param {Array<string>} dependencies An array of strings specifying the injectable dependencies.
-     * 
+     *
      * @returns {Array<any>} The dependencies, in the order they were requested.
      */
     export function acquire(dependencies: Array<string>): Array<any>;
@@ -126,17 +126,17 @@ module plat {
      * @variation 5
      * @access public
      * @static
-     * 
+     *
      * @description
      * Gathers dependencies and returns them as an array in the order they were requested.
-     * 
+     *
      * @param {Array<any>} dependencies An array of strings or Functions specifying the injectable dependencies.
-     * 
+     *
      * @returns {Array<any>} The dependencies, in the order they were requested.
      */
     export function acquire(dependencies: Array<any>): Array<any>;
     export function acquire(dependencies: any): Array<any> {
-        var deps: Array<dependency.Injector<any>>,
+        let deps: Array<dependency.Injector<any>>,
             array = isArray(dependencies);
 
         if (array) {
@@ -145,10 +145,10 @@ module plat {
             deps = dependency.Injector.getDependencies([dependencies]);
         }
 
-        var length = deps.length,
+        let length = deps.length,
             output: Array<any> = [];
 
-        for (var i = 0; i < length; ++i) {
+        for (let i = 0; i < length; ++i) {
             output.push(deps[i].inject());
         }
 

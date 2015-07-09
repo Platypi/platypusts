@@ -710,7 +710,7 @@
          */
         addEventListener(element: Window, type: string, listener: EventListener, useCapture?: boolean): IRemoveListener;
         addEventListener(element: any, type: string, listener: IGestureListener, useCapture?: boolean): IRemoveListener {
-            var _compat = this._compat,
+            let _compat = this._compat,
                 mappedGestures = _compat.mappedEvents,
                 mappedType = mappedGestures[type],
                 mappingExists = !isNull(mappedType),
@@ -721,7 +721,7 @@
                 listenerRemoved = false;
 
             if (mappingExists) {
-                var count = mappedCount[type];
+                let count = mappedCount[type];
                 this.__reverseMap[mappedType] = type;
                 this.__registerElement(element, type);
                 mappedCount[type]++;
@@ -744,7 +744,7 @@
                     if (listenerRemoved) {
                         return;
                     } else if (mappingExists) {
-                        var currentCount = mappedCount[type];
+                        let currentCount = mappedCount[type];
                         if (isNumber(currentCount)) {
                             if (currentCount > 0) {
                                 currentCount = --mappedCount[type];
@@ -763,12 +763,12 @@
                 };
             }
 
-            var swipeGesture = gestures.$swipe,
+            let swipeGesture = gestures.$swipe,
                 trackGesture = gestures.$track,
                 countType = type;
 
             if (type.indexOf(trackGesture) !== -1) {
-                var trackend = gestures.$trackend;
+                let trackend = gestures.$trackend;
                 countType = type === trackend ? trackend : trackGesture;
             } else if (type.indexOf(swipeGesture) !== -1) {
                 countType = swipeGesture;
@@ -846,7 +846,7 @@
                 return true;
             }
 
-            var eventType = ev.type;
+            let eventType = ev.type;
             if (eventType !== 'mousedown') {
                 this._inTouch = true;
             } else if (this._inTouch === true) {
@@ -866,7 +866,7 @@
             this.__capturedTarget = this.__lastMoveEvent = null;
             this.__hasMoved = false;
 
-            var clientX = ev.clientX,
+            let clientX = ev.clientX,
                 clientY = ev.clientY,
                 timeStamp = ev.timeStamp,
                 target = ev.target,
@@ -895,7 +895,7 @@
                     [gestures.$swipe, gestures.$swipedown, gestures.$swipeleft, gestures.$swiperight, gestures.$swipeup]).length > 0;
             }
 
-            var gestureCount = this._gestureCount,
+            let gestureCount = this._gestureCount,
                 noHolds = gestureCount.$hold <= 0,
                 noRelease = gestureCount.$release <= 0;
 
@@ -911,7 +911,7 @@
                 return true;
             }
 
-            var holdInterval = DomEvents.config.intervals.holdInterval,
+            let holdInterval = DomEvents.config.intervals.holdInterval,
                 domEvent: DomEvent,
                 subscribeFn: () => void,
                 domEventFound = false;
@@ -972,12 +972,12 @@
                 return true;
             }
 
-            var evt = this.__standardizeEventObject(ev);
+            let evt = this.__standardizeEventObject(ev);
             if (isNull(evt)) {
                 return true;
             }
 
-            var gestureCount = this._gestureCount,
+            let gestureCount = this._gestureCount,
                 noTracking = gestureCount.$track <= 0,
                 noSwiping = gestureCount.$swipe <= 0,
                 config = DomEvents.config,
@@ -999,12 +999,12 @@
                 return true;
             }
 
-            var lastMove = <ITouchStartEventProperties>this.__lastMoveEvent || swipeOrigin,
+            let lastMove = <ITouchStartEventProperties>this.__lastMoveEvent || swipeOrigin,
                 direction = evt.direction = this.__getDirection(x - lastMove.clientX, y - lastMove.clientY);
 
             this.__handleOriginChange(direction);
 
-            var dx = Math.abs(x - swipeOrigin.clientX),
+            let dx = Math.abs(x - swipeOrigin.clientX),
                 dy = Math.abs(y - swipeOrigin.clientY);
 
             evt.velocity = this.__getVelocity(dx, dy, evt.timeStamp - swipeOrigin.xTimestamp, evt.timeStamp - swipeOrigin.yTimestamp);
@@ -1035,7 +1035,7 @@
          * @returns {boolean} Prevents default and stops propagation if false is returned.
          */
         protected _onTouchEnd(ev: IPointerEvent): boolean {
-            var eventType = ev.type,
+            let eventType = ev.type,
                 hasMoved = this.__hasMoved,
                 notMouseUp = eventType !== 'mouseup';
 
@@ -1114,7 +1114,7 @@
             // handle swipe events
             this.__handleSwipe();
 
-            var config = DomEvents.config,
+            let config = DomEvents.config,
                 intervals = config.intervals,
                 touchEnd = ev.timeStamp,
                 touchDown = this.__lastTouchDown;
@@ -1130,7 +1130,7 @@
                 return true;
             }
 
-            var lastTouchUp = this.__lastTouchUp,
+            let lastTouchUp = this.__lastTouchUp,
                 x = ev.clientX,
                 y = ev.clientY;
 
@@ -1208,7 +1208,7 @@
          * @returns {void}
          */
         private __handleCanceled(ev: IPointerEvent): void {
-            var touches = ev.touches || this.__pointerEvents,
+            let touches = ev.touches || this.__pointerEvents,
                 index = this.__getTouchIndex(touches);
 
             ev = index >= 0 ? touches[index] : this.__standardizeEventObject(ev);
@@ -1248,7 +1248,7 @@
                 return;
             }
 
-            var gestures = this._gestures,
+            let gestures = this._gestures,
                 domEvent = this.__findFirstSubscriber(<ICustomElement>ev.target, gestures.$tap);
 
             if (isNull(domEvent)) {
@@ -1297,7 +1297,7 @@
                 return;
             }
 
-            var domEvent = this.__findFirstSubscriber(<ICustomElement>ev.target, this._gestures.$dbltap);
+            let domEvent = this.__findFirstSubscriber(<ICustomElement>ev.target, this._gestures.$dbltap);
             if (isNull(domEvent)) {
                 return;
             }
@@ -1322,7 +1322,7 @@
          * @returns {void}
          */
         private __handleRelease(ev: IPointerEvent): void {
-            var domEvent = this.__findFirstSubscriber(<ICustomElement>ev.target, this._gestures.$release);
+            let domEvent = this.__findFirstSubscriber(<ICustomElement>ev.target, this._gestures.$release);
             if (!isNull(domEvent)) {
                 domEvent.trigger(ev);
             }
@@ -1347,13 +1347,13 @@
                 return;
             }
 
-            var lastMove = this.__lastMoveEvent;
+            let lastMove = this.__lastMoveEvent;
 
             if (isNull(lastMove)) {
                 return;
             }
 
-            var origin = this.__swipeOrigin,
+            let origin = this.__swipeOrigin,
                 dx = Math.abs(lastMove.clientX - origin.clientX),
                 dy = Math.abs(lastMove.clientY - origin.clientY),
                 swipeSubscribers = this.__getRegisteredSwipes(lastMove.direction, lastMove.velocity, dx, dy);
@@ -1381,16 +1381,16 @@
          * @returns {void}
          */
         private __handleTrack(ev: IPointerEvent, originalEv: IPointerEvent): void {
-            var gestures = this._gestures,
+            let gestures = this._gestures,
                 trackGesture = gestures.$track,
                 direction = ev.direction,
                 eventTarget = this.__capturedTarget || <ICustomElement>ev.target;
 
-            var domEvents = this.__findFirstSubscribers(eventTarget,
+            let domEvents = this.__findFirstSubscribers(eventTarget,
                 [trackGesture, (trackGesture + direction.x), (trackGesture + direction.y)]);
 
             if (this._android44orBelow) {
-                var anyEvents = this.__findFirstSubscribers(eventTarget,
+                let anyEvents = this.__findFirstSubscribers(eventTarget,
                     [trackGesture, gestures.$trackdown, gestures.$trackup,
                         gestures.$trackleft, gestures.$trackright, gestures.$trackend]);
 
@@ -1428,7 +1428,7 @@
                 return;
             }
 
-            var eventTarget = this.__capturedTarget || <ICustomElement>ev.target,
+            let eventTarget = this.__capturedTarget || <ICustomElement>ev.target,
                 domEvent = this.__findFirstSubscriber(eventTarget, this._gestures.$trackend);
             if (isNull(domEvent)) {
                 return;
@@ -1451,7 +1451,7 @@
          * @returns {void}
          */
         private __handleMappedEvent(ev: IExtendedEvent): void {
-            var mappedType = ev.type,
+            let mappedType = ev.type,
                 eventType = this.__reverseMap[mappedType],
                 domEvent = this.__findFirstSubscriber(<ICustomElement>ev.target, eventType);
 
@@ -1481,7 +1481,7 @@
          * @returns {void}
          */
         private __getTypes(): void {
-            var _compat = this._compat,
+            let _compat = this._compat,
                 touchEvents = _compat.mappedEvents,
                 listeners = this.__listeners,
                 startEvents: string,
@@ -1497,7 +1497,7 @@
                 moveEvents = this._moveEvents = touchEvents.$touchmove + ' mousemove';
                 endEvents = this._endEvents = touchEvents.$touchend + ' mouseup ' + touchEvents.$touchcancel;
             } else {
-                var cancelEvent = touchEvents.$touchcancel;
+                let cancelEvent = touchEvents.$touchcancel;
                 startEvents = this._startEvents = touchEvents.$touchstart;
                 moveEvents = this._moveEvents = touchEvents.$touchmove;
                 endEvents = this._endEvents = touchEvents.$touchend + (!cancelEvent ? '' : (' ' + cancelEvent));
@@ -1558,7 +1558,7 @@
          * @returns {void}
          */
         private __registerType(events: string): void {
-            var listener = this.__listeners[events],
+            let listener = this.__listeners[events],
                 _document = this._document,
                 eventSplit = events.split(' '),
                 index = eventSplit.length;
@@ -1582,7 +1582,7 @@
          * @returns {void}
          */
         private __unregisterType(events: string): void {
-            var listener = this.__listeners[events],
+            let listener = this.__listeners[events],
                 _document = this._document,
                 eventSplit = events.split(' '),
                 index = eventSplit.length;
@@ -1607,7 +1607,7 @@
          * @returns {void}
          */
         private __registerElement(element: ICustomElement, type: string): void {
-            var id: string,
+            let id: string,
                 plat = element.__plat;
             if (isNull(plat)) {
                 id = uniqueId('domEvent_');
@@ -1630,9 +1630,9 @@
                 this._isActive = true;
             }
 
-            var _domEvent: DomEvent;
+            let _domEvent: DomEvent;
             if (isNull(id)) {
-                var subscriber = this._subscribers[plat.domEvent];
+                let subscriber = this._subscribers[plat.domEvent];
                 if (isUndefined((<any>subscriber)[type])) {
                     _domEvent = new CustomDomEvent(element, type);
                     (<any>subscriber)[type] = _domEvent;
@@ -1643,7 +1643,7 @@
                 return;
             }
 
-            var newSubscriber = { gestureCount: 1 };
+            let newSubscriber = { gestureCount: 1 };
             _domEvent = new CustomDomEvent(element, type);
             (<any>newSubscriber)[type] = _domEvent;
             this._subscribers[id] = newSubscriber;
@@ -1669,12 +1669,12 @@
          * @returns {void}
          */
         private __unregisterElement(element: ICustomElement, type: string): void {
-            var plat = element.__plat;
+            let plat = element.__plat;
             if (isNull(plat) || isNull(plat.domEvent)) {
                 return;
             }
 
-            var domEventId = plat.domEvent,
+            let domEventId = plat.domEvent,
                 eventSubscriber = this._subscribers[domEventId],
                 domEvent: CustomDomEvent = (<any>eventSubscriber)[type];
 
@@ -1708,7 +1708,7 @@
          * @returns {void}
          */
         private __setTouchPoint(ev: IPointerEvent): void {
-            var eventType = ev.type,
+            let eventType = ev.type,
                 _compat = this._compat;
 
             if (_compat.hasPointerEvents || _compat.hasMsPointerEvents) {
@@ -1753,7 +1753,7 @@
          * @returns {void}
          */
         private __updatePointers(ev: IPointerEvent, remove: boolean): void {
-            var id = ev.pointerId,
+            let id = ev.pointerId,
                 pointerHash = this.__pointerHash,
                 pointer = pointerHash[id],
                 index: number;
@@ -1807,7 +1807,7 @@
                 return;
             }
 
-            var plat: ICustomElementProperty,
+            let plat: ICustomElementProperty,
                 subscriber: IEventSubscriber,
                 domEvent: DomEvent;
 
@@ -1849,7 +1849,7 @@
                 return [];
             }
 
-            var plat: ICustomElementProperty,
+            let plat: ICustomElementProperty,
                 subscriber: IEventSubscriber,
                 subscriberKeys: Array<string>,
                 subscriberKey: string,
@@ -1894,7 +1894,7 @@
          * @returns {plat.IRemoveListener} A function for removing the added mapped listener.
          */
         private __addMappedEvent(count: number, mappedEvent: string, useCapture?: boolean): IRemoveListener {
-            var _document = this._document;
+            let _document = this._document;
 
             if (count === 0) {
                 _document.addEventListener(mappedEvent, this.__mappedEventListener, useCapture);
@@ -1923,16 +1923,16 @@
          */
         private __removeEventListener(element: ICustomElement, type: string, listener: IGestureListener,
             useCapture?: boolean): void {
-            var gestures = this._gestures;
+            let gestures = this._gestures;
 
             element.removeEventListener(type, listener, useCapture);
 
-            var swipeGesture = gestures.$swipe,
+            let swipeGesture = gestures.$swipe,
                 trackGesture = gestures.$track,
                 countType = type;
 
             if (type.indexOf(trackGesture) !== -1) {
-                var trackend = gestures.$trackend;
+                let trackend = gestures.$trackend;
                 countType = type === trackend ? trackend : trackGesture;
             } else if (type.indexOf(swipeGesture) !== -1) {
                 countType = swipeGesture;
@@ -1962,7 +1962,7 @@
                 removeClass(element, DomEvents.config.styleConfig[0].className);
             }
 
-            var plat = element.__plat;
+            let plat = element.__plat;
             deleteProperty(plat, 'domEvent');
             if (isEmpty(plat)) {
                 deleteProperty(element, '__plat');
@@ -1990,7 +1990,7 @@
         private __standardizeEventObject(ev: IExtendedEvent): IExtendedEvent {
             this.__setTouchPoint(ev);
 
-            var isStart = this._startEvents.indexOf(ev.type) !== -1,
+            let isStart = this._startEvents.indexOf(ev.type) !== -1,
                 touches = ev.touches || this.__pointerEvents,
                 changedTouches = ev.changedTouches,
                 changedTouchesExist = !isUndefined(changedTouches),
@@ -2003,7 +2003,7 @@
                     ev = changedTouches[0];
                     ev.preventDefault = preventDefault;
                 } else {
-                    var changedTouchIndex = this.__getTouchIndex(changedTouches);
+                    let changedTouchIndex = this.__getTouchIndex(changedTouches);
                     if (changedTouchIndex >= 0) {
                         preventDefault = ev.preventDefault.bind(ev);
                         ev = changedTouches[changedTouchIndex];
@@ -2046,7 +2046,7 @@
          * @returns {void}
          */
         private __normalizeButtons(ev: IExtendedEvent): void {
-            var buttons: number;
+            let buttons: number;
             if (isNumber(ev.buttons) && ev.buttons !== 0) {
                 buttons = ev.buttons;
             } else if (isNumber((<any>ev).which) && (<any>ev).which > 0) {
@@ -2097,10 +2097,10 @@
          * not found.
          */
         private __getTouchIndex(touches: Array<IExtendedEvent>): number {
-            var identifier = (this.__lastTouchDown || <ITouchStartEventProperties>{}).identifier,
+            let identifier = (this.__lastTouchDown || <ITouchStartEventProperties>{}).identifier,
                 length = touches.length;
 
-            for (var i = 0; i < length; ++i) {
+            for (let i = 0; i < length; ++i) {
                 if (touches[i].identifier === identifier) {
                     return i;
                 }
@@ -2123,7 +2123,7 @@
          * @returns {plat.ui.IPoint} An object containing the x and y offsets.
          */
         private __getOffset(ev: IExtendedEvent): IPoint {
-            var target = this.__capturedTarget || <any>ev.target;
+            let target = this.__capturedTarget || <any>ev.target;
             if (isDocument(target)) {
                 return {
                     x: ev.clientX,
@@ -2136,7 +2136,7 @@
                 };
             }
 
-            var x = target.offsetLeft,
+            let x = target.offsetLeft,
                 y = target.offsetTop;
             while (!isNull(target = target.offsetParent)) {
                 x += target.offsetLeft;
@@ -2168,7 +2168,7 @@
          * @returns {number} The distance between the points.
          */
         private __getDistance(x1: number, x2: number, y1: number, y2: number): number {
-            var x = x2 - x1,
+            let x = x2 - x1,
                 y = y2 - y1;
             return Math.sqrt((x * x) + (y * y));
         }
@@ -2190,7 +2190,7 @@
          * @returns {plat.ui.IVelocity} A velocity object containing horiztonal and vertical velocities.
          */
         private __getVelocity(dx: number, dy: number, dtx: number, dty: number): IVelocity {
-            var x = 0,
+            let x = 0,
                 y = 0;
 
             if (dtx > 0) {
@@ -2223,7 +2223,7 @@
          * horiztonal and vertical directions of movement.
          */
         private __getDirection(dx: number, dy: number): IDirection {
-            var distanceX = Math.abs(dx),
+            let distanceX = Math.abs(dx),
                 distanceY = Math.abs(dy),
                 lastDirection = (this.__lastMoveEvent || <IPointerEvent>{}).direction || <IDirection>{},
                 horizontal = dx === 0 ? (lastDirection.x || 'none') : (dx < 0 ? 'left' : 'right'),
@@ -2251,12 +2251,12 @@
          * @returns {void}
          */
         private __handleOriginChange(direction: IDirection): void {
-            var lastMove = this.__lastMoveEvent;
+            let lastMove = this.__lastMoveEvent;
             if (isNull(lastMove)) {
                 return;
             }
 
-            var swipeDirection = lastMove.direction,
+            let swipeDirection = lastMove.direction,
                 xSame = swipeDirection.x === direction.x,
                 ySame = swipeDirection.y === direction.y;
 
@@ -2264,7 +2264,7 @@
                 return;
             }
 
-            var origin = this.__swipeOrigin,
+            let origin = this.__swipeOrigin,
                 gestures = this._gestures,
                 swipes = [gestures.$swipe, gestures.$swipedown, gestures.$swipeleft, gestures.$swiperight, gestures.$swipeup];
 
@@ -2306,7 +2306,7 @@
          * @returns {Array<plat.ui.DomEvent>} The swipe event subscribers.
          */
         private __getRegisteredSwipes(direction: IDirection, velocity: IVelocity, dx: number, dy: number): Array<DomEvent> {
-            var swipeTarget: ICustomElement,
+            let swipeTarget: ICustomElement,
                 swipeGesture = this._gestures.$swipe,
                 minSwipeVelocity = DomEvents.config.velocities.minSwipeVelocity,
                 events = [swipeGesture],
@@ -2358,14 +2358,14 @@
          * @returns {void}
          */
         private __appendGestureStyle(): void {
-            var _document = this._document,
+            let _document = this._document,
                 styleClasses: Array<IDefaultStyle>,
                 classLength: number;
 
             if (this._compat.platCss) {
                 return;
             } else if (!isNull(_document.styleSheets) && _document.styleSheets.length > 0) {
-                var styleSheet = <CSSStyleSheet>_document.styleSheets[0];
+                let styleSheet = <CSSStyleSheet>_document.styleSheets[0];
                 styleClasses = DomEvents.config.styleConfig;
                 classLength = styleClasses.length;
                 while (classLength-- > 0) {
@@ -2374,7 +2374,7 @@
                 return;
             }
 
-            var head = _document.head,
+            let head = _document.head,
                 style = <HTMLStyleElement>_document.createElement('style'),
                 textContent = '';
 
@@ -2403,14 +2403,14 @@
          * @returns {string} The style text.
          */
         private __createStyle(styleClass: IDefaultStyle): string {
-            var styles: Array<string> = styleClass.styles || [],
+            let styles: Array<string> = styleClass.styles || [],
                 styleLength = styles.length,
                 style = '.' + styleClass.className + ' { ',
                 textContent = '';
 
             styleLength = styles.length;
 
-            for (var j = 0; j < styleLength; ++j) {
+            for (let j = 0; j < styleLength; ++j) {
                 textContent += styles[j] + ';';
             }
 
@@ -2450,7 +2450,7 @@
          * @returns {void}
          */
         private __handleInput(target: HTMLInputElement): void {
-            var nodeName = target.nodeName,
+            let nodeName = target.nodeName,
                 focusedElement = this.__focusedElement || <HTMLInputElement>{};
 
             if (!isString(nodeName)) {
@@ -2461,7 +2461,7 @@
                 return;
             }
 
-            var remover: IRemoveListener;
+            let remover: IRemoveListener;
             switch (nodeName.toLowerCase()) {
                 case 'input':
                     switch (target.type) {
@@ -2523,9 +2523,9 @@
                         focusedElement.blur();
                     }
                     postpone((): void => {
-                        var _document = this._document;
+                        let _document = this._document;
                         if (_document.body.contains(target)) {
-                            var event = <MouseEvent>_document.createEvent('MouseEvents');
+                            let event = <MouseEvent>_document.createEvent('MouseEvents');
                             event.initMouseEvent('mousedown', false, false, null, null, null,
                                 null, null, null, null, null, null, null, null, null);
                             target.dispatchEvent(event);
@@ -2559,7 +2559,7 @@
          * @returns {void}
          */
         private __preventClickFromTouch(): void {
-            var _document = this._document,
+            let _document = this._document,
                 preventDefault: (ev: Event) => boolean,
                 delayedClickRemover = defer((): void => {
                     _document.removeEventListener('click', preventDefault, true);
@@ -2577,7 +2577,7 @@
                 delayedClickRemover();
                 delayedClickRemover = noop;
 
-                var touchDown = this.__lastTouchDown;
+                let touchDown = this.__lastTouchDown;
                 if (isNull(touchDown) || this.__isFocused(touchDown.target)) {
                     return false;
                 }
@@ -2659,7 +2659,7 @@
          * @returns {boolean} Prevents default and stops propagation if false.
          */
         private __preventDefault(ev: Event): boolean {
-            var nodeName = (<Node>ev.target).nodeName;
+            let nodeName = (<Node>ev.target).nodeName;
             if (isString(nodeName)) {
                 nodeName = nodeName.toLowerCase();
             }
@@ -2803,7 +2803,7 @@
          * @returns {boolean} Whether or not the Event was cancelled in at least one Event handler.
          */
         trigger(eventExtension?: Object, detailArg?: any, dispatchElement?: Node): boolean {
-            var customEv = <CustomEvent>this._document.createEvent(this.eventType);
+            let customEv = <CustomEvent>this._document.createEvent(this.eventType);
             if (isObject(eventExtension)) {
                 _extend(false, false, customEv, eventExtension);
             }
@@ -2895,14 +2895,14 @@
          * @returns {boolean} Whether or not the Event was cancelled in at least one Event handler.
          */
         trigger(ev: IPointerEvent): boolean {
-            var customEv = <CustomEvent>this._document.createEvent('CustomEvent'),
+            let customEv = <CustomEvent>this._document.createEvent('CustomEvent'),
                 element = this.element,
                 target = ev.target;
 
             this.__extendEventObject(customEv, ev);
             customEv.initCustomEvent(this.event, true, true, 0);
 
-            var success = element.contains(target) ? target.dispatchEvent(customEv) : element.dispatchEvent(customEv);
+            let success = element.contains(target) ? target.dispatchEvent(customEv) : element.dispatchEvent(customEv);
             if (!success) {
                 ev.preventDefault();
             }
@@ -2926,7 +2926,7 @@
          */
         private __extendEventObject(customEv: IGestureEvent, ev: IPointerEvent): void {
             // not using extend function because this gets called so often for certain events.
-            var pointerType = ev.pointerType;
+            let pointerType = ev.pointerType;
 
             customEv.clientX = ev.clientX;
             customEv.clientY = ev.clientY;

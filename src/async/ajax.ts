@@ -170,7 +170,7 @@ module plat.async {
          * @returns {plat.async.HttpRequest}
          */
         constructor() {
-            var compat: plat.Compat = acquire(__Compat);
+            let compat: plat.Compat = acquire(__Compat);
             this.__fileSupported = compat.fileSupported;
         }
 
@@ -205,7 +205,7 @@ module plat.async {
          * @returns {plat.async.AjaxPromise} A promise that fulfills when the XMLHttpRequest is done.
          */
         execute<R>(): AjaxPromise<R> {
-            var options = this.__options,
+            let options = this.__options,
                 url = options.url;
 
             if (!isString(url) || isEmpty(url.trim())) {
@@ -214,7 +214,7 @@ module plat.async {
 
             options.url = this._browser.urlUtils(url).toString();
 
-            var isCrossDomain = options.isCrossDomain || false,
+            let isCrossDomain = options.isCrossDomain || false,
                 xDomain = false;
 
             // check if forced cross domain call or cors is not supported (IE9)
@@ -250,7 +250,7 @@ module plat.async {
          * @returns {plat.async.AjaxPromise} A promise that fulfills when the JSONP request is done.
          */
         executeJsonp<R>(): AjaxPromise<R> {
-            var options = this.__options,
+            let options = this.__options,
                 url = options.url;
 
             if (!isString(url) || isEmpty(url.trim())) {
@@ -262,8 +262,8 @@ module plat.async {
                 this.jsonpCallback = options.jsonpCallback || uniqueId(__Callback);
             }
 
-            var promise = new AjaxPromise((resolve, reject): void => {
-                var _window = <any>this._window,
+            let promise = new AjaxPromise((resolve, reject): void => {
+                let _window = <any>this._window,
                     _document = this._document,
                     scriptTag = _document.createElement('script'),
                     jsonpCallback = this.jsonpCallback,
@@ -271,7 +271,7 @@ module plat.async {
 
                 scriptTag.src = url + ((url.indexOf('?') > -1) ? '&' : '?') + jsonpIdentifier + '=' + jsonpCallback;
 
-                var oldValue = _window[jsonpCallback];
+                let oldValue = _window[jsonpCallback];
                 _window[jsonpCallback] = (response: any): void => {
                     // clean up
                     if (isFunction(this.clearTimeout)) {
@@ -295,7 +295,7 @@ module plat.async {
 
                 _document.head.appendChild(scriptTag);
 
-                var timeout = options.timeout;
+                let timeout = options.timeout;
                 if (isNumber(timeout) && timeout > 0) {
                     // we first postpone to avoid always timing out when debugging, though this is not
                     // a foolproof method.
@@ -331,12 +331,12 @@ module plat.async {
          * an error.
          */
         protected _xhrOnReadyStateChange(): boolean {
-            var xhr = this.xhr;
+            let xhr = this.xhr;
             if (xhr.readyState === 4) {
-                var status = xhr.status;
+                let status = xhr.status;
 
                 if (status === 0) {
-                    var response = xhr.response;
+                    let response = xhr.response;
                     if (isNull(response)) {
                         try {
                             response = xhr.responseText;
@@ -376,19 +376,19 @@ module plat.async {
          * {@link plat.async.AjaxError|IAjaxError}.
          */
         protected _sendXhrRequest(): AjaxPromise<any> {
-            var xhr = this.xhr,
+            let xhr = this.xhr,
                 options = this.__options,
                 method = options.method,
                 url = options.url,
                 promise = new AjaxPromise((resolve, reject): void => {
                     xhr.onreadystatechange = (): void => {
-                        var success = this._xhrOnReadyStateChange();
+                        let success = this._xhrOnReadyStateChange();
 
                         if (isNull(success)) {
                             return;
                         }
 
-                        var response = this._formatResponse(options.responseType, success);
+                        let response = this._formatResponse(options.responseType, success);
 
                         if (success) {
                             resolve(response);
@@ -413,7 +413,7 @@ module plat.async {
                         options.password
                         );
 
-                    var responseType = options.responseType;
+                    let responseType = options.responseType;
                     if (!(this.__fileSupported || responseType === '' || responseType === 'text')) {
                         responseType = '';
                     }
@@ -430,7 +430,7 @@ module plat.async {
 
                     xhr.withCredentials = options.withCredentials;
 
-                    var mimeType = options.overrideMimeType,
+                    let mimeType = options.overrideMimeType,
                         data = options.data;
 
                     if (isString(mimeType) && !isEmpty(mimeType)) {
@@ -442,7 +442,7 @@ module plat.async {
                         this.__setHeaders();
                         xhr.send();
                     } else {
-                        var transforms = options.transforms || [],
+                        let transforms = options.transforms || [],
                             length = transforms.length,
                             contentType = options.contentType,
                             contentTypeExists = isString(contentType) && !isEmpty(contentType);
@@ -450,7 +450,7 @@ module plat.async {
                         if (length > 0) {
                             // if data transforms defined, assume they're going to take care of
                             // any and all transformations.
-                            for (var i = 0; i < length; ++i) {
+                            for (let i = 0; i < length; ++i) {
                                 data = transforms[i](data, xhr);
                             }
 
@@ -465,7 +465,7 @@ module plat.async {
                         } else if (isObject(data)) {
                             // if isObject and contentType exists we want to transform the data
                             if (contentTypeExists) {
-                                var contentTypeLower = contentType.toLowerCase();
+                                let contentTypeLower = contentType.toLowerCase();
                                 if (contentTypeLower.indexOf('x-www-form-urlencoded') !== -1) {
                                     // perform an encoded form transformation
                                     data = this.__serializeFormData();
@@ -518,7 +518,7 @@ module plat.async {
                         }
                     }
 
-                    var timeout = options.timeout;
+                    let timeout = options.timeout;
                     if (isNumber(timeout) && timeout > 0) {
                         // we first postpone to avoid always timing out when debugging, though this is not
                         // a foolproof method.
@@ -584,7 +584,7 @@ module plat.async {
          * the requester.
          */
         protected _formatResponse(responseType: string, success: boolean): IAjaxResponse<any> {
-            var xhr = this.xhr,
+            let xhr = this.xhr,
                 status = xhr.status,
                 response = xhr.response;
 
@@ -634,7 +634,7 @@ module plat.async {
          * @returns {void}
          */
         private __setHeaders(): void {
-            var headers = this.__options.headers,
+            let headers = this.__options.headers,
                 keys = Object.keys(headers || {}),
                 xhr = this.xhr,
                 length = keys.length,
@@ -659,7 +659,7 @@ module plat.async {
          * @returns {string}
          */
         private __serializeFormData(): string {
-            var data = this.__options.data,
+            let data = this.__options.data,
                 keys = Object.keys(data),
                 key: string,
                 val: any,
@@ -694,7 +694,7 @@ module plat.async {
          * @returns {FormData}
          */
         private __appendFormData(): FormData {
-            var data = this.__options.data,
+            let data = this.__options.data,
                 formData = new FormData(),
                 keys = Object.keys(data),
                 key: string,
@@ -733,7 +733,7 @@ module plat.async {
          * @returns {plat.async.IThenable} A promise that fulfills after the form data is submitted.
          */
         private __submitFramedFormData(): IThenable<IAjaxResponse<any>> {
-            var options = this.__options,
+            let options = this.__options,
                 data = options.data,
                 url = options.url,
                 _document = this._document,
@@ -766,7 +766,7 @@ module plat.async {
                 };
 
                 iframe.onload = (): void => {
-                    var content = iframe.contentDocument.body.innerHTML;
+                    let content = iframe.contentDocument.body.innerHTML;
 
                     $body.removeChild(form);
                     $body.removeChild(iframe);
@@ -798,7 +798,7 @@ module plat.async {
          * @returns {HTMLInputElement}
          */
         private __createInput(key: string, val: any): HTMLInputElement {
-            var _document = this._document,
+            let _document = this._document,
                 input = <HTMLInputElement>_document.createElement('input');
 
             input.type = 'hidden';
@@ -809,7 +809,7 @@ module plat.async {
             } else if (isObject(val)) {
                 // check if val is an pseudo File
                 if (isFunction(val.slice) && !(isUndefined(val.name) || isUndefined(val.path))) {
-                    var fileList = _document.querySelectorAll('input[type="file"][name="' + key + '"]'),
+                    let fileList = _document.querySelectorAll('input[type="file"][name="' + key + '"]'),
                         length = fileList.length;
                     // if no inputs found, stringify the data
                     if (length === 0) {
@@ -819,19 +819,19 @@ module plat.async {
                     } else if (length === 1) {
                         input = <HTMLInputElement>fileList[0];
                         // swap nodes
-                        var clone = input.cloneNode(true);
+                        let clone = input.cloneNode(true);
                         input.parentNode.insertBefore(clone, input);
                     } else {
                         // rare case but may have multiple forms with file inputs
                         // that have the same name
-                        var fileInput: HTMLInputElement,
+                        let fileInput: HTMLInputElement,
                             path = val.path;
                         while (length-- > 0) {
                             fileInput = <HTMLInputElement>fileList[length];
                             if (fileInput.value === path) {
                                 input = fileInput;
                                 // swap nodes
-                                var inputClone = input.cloneNode(true);
+                                let inputClone = input.cloneNode(true);
                                 input.parentNode.insertBefore(inputClone, input);
                                 break;
                             }
@@ -1360,7 +1360,7 @@ module plat.async {
          * @returns {string}
          */
         toString(): string {
-            var response = this.response,
+            let response = this.response,
                 responseText = response;
 
             if (isObject(response) && !response.hasOwnProperty('toString')) {
@@ -1487,7 +1487,7 @@ module plat.async {
          * @returns {void}
          */
         cancel(): void {
-            var http = this.__http,
+            let http = this.__http,
                 xhr = http.xhr,
                 jsonpCallback = http.jsonpCallback;
 
@@ -2073,7 +2073,7 @@ module plat.async {
          * or rejected, will return an {@link plat.async.IAjaxResponse|IAjaxResponse} object.
          */
         ajax<R>(options: IHttpConfig): AjaxPromise<R> {
-            var request: HttpRequest = acquire(__HttpRequestInstance);
+            let request: HttpRequest = acquire(__HttpRequestInstance);
             request.initialize(options);
             return request.execute<R>();
         }
@@ -2095,7 +2095,7 @@ module plat.async {
          * {@link plat.async.IAjaxResponse|IAjaxResponse} object.
          */
         jsonp<R>(options: IJsonpConfig): AjaxPromise<R> {
-            var request: HttpRequest = acquire(__HttpRequestInstance);
+            let request: HttpRequest = acquire(__HttpRequestInstance);
             request.initialize(options);
             return request.executeJsonp<R>();
         }
@@ -2119,7 +2119,7 @@ module plat.async {
          * being a parsed JSON object (assuming valid JSON).
          */
         json<R>(options: IHttpConfig): AjaxPromise<R> {
-            var request: HttpRequest = acquire(__HttpRequestInstance);
+            let request: HttpRequest = acquire(__HttpRequestInstance);
             request.initialize(_extend(false, false, {}, options, { responseType: 'json' }));
             return request.execute<R>();
         }

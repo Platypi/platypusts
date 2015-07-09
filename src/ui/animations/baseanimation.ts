@@ -5,9 +5,9 @@
      * @name BaseAnimation
      * @memberof plat.ui.animations
      * @kind class
-     * 
+     *
      * @implements {plat.ui.animations.IAnimationEssentials}
-     * 
+     *
      * @description
      * A class representing a single animation for a single element.
      */
@@ -26,9 +26,9 @@
          * @memberof plat.ui.animations.BaseAnimation
          * @kind property
          * @access public
-         * 
+         *
          * @type {HTMLElement}
-         * 
+         *
          * @description
          * The node having the animation performed on it.
          */
@@ -39,9 +39,9 @@
          * @memberof plat.ui.animations.BaseAnimation
          * @kind property
          * @access public
-         * 
+         *
          * @type {plat.ui.Dom}
-         * 
+         *
          * @description
          * Contains DOM helper methods for manipulating this control's element.
          */
@@ -52,9 +52,9 @@
          * @memberof plat.ui.animations.BaseAnimation
          * @kind property
          * @access public
-         * 
+         *
          * @type {plat.Utils}
-         * 
+         *
          * @description
          * Contains helper methods for data manipulation.
          */
@@ -65,9 +65,9 @@
          * @memberof plat.ui.animations.BaseAnimation
          * @kind property
          * @access public
-         * 
+         *
          * @type {any}
-         * 
+         *
          * @description
          * Specified options for the animation.
          */
@@ -78,7 +78,7 @@
          * @memberof plat.ui.animations.BaseAnimation
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.debug.Log}
          * @description
          * Reference to the {@link plat.debug.Log|Log} injectable.
@@ -90,9 +90,9 @@
          * @memberof plat.ui.animations.BaseAnimation
          * @kind property
          * @access protected
-         * 
+         *
          * @type {Window}
-         * 
+         *
          * @description
          * Reference to the Window injectable.
          */
@@ -103,9 +103,9 @@
          * @memberof plat.ui.animations.BaseAnimation
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.Compat}
-         * 
+         *
          * @description
          * Reference to the {@link plat.Compat|Compat} injectable.
          */
@@ -116,9 +116,9 @@
          * @memberof plat.ui.animations.BaseAnimation
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.async.IPromise}
-         * 
+         *
          * @description
          * Reference to the {@link plat.async.IPromise|IPromise} injectable.
          */
@@ -129,9 +129,9 @@
          * @memberof plat.ui.animations.BaseAnimation
          * @kind property
          * @access protected
-         * 
+         *
          * @type {() => void}
-         * 
+         *
          * @description
          * The resolve function for the end of the animation.
          */
@@ -142,9 +142,9 @@
          * @memberof plat.ui.animations.BaseAnimation
          * @kind property
          * @access private
-         * 
+         *
          * @type {Array<plat.IRemoveListener>}
-         * 
+         *
          * @description
          * An Array of remove functions to dispose of event listeners.
          */
@@ -156,10 +156,10 @@
          * @kind function
          * @access public
          * @virtual
-         * 
+         *
          * @description
          * A function for initializing the animation or any of its properties before start.
-         * 
+         *
          * @returns {void}
          */
         initialize(): void { }
@@ -170,10 +170,10 @@
          * @kind function
          * @access public
          * @virtual
-         * 
+         *
          * @description
          * A function denoting the start of the animation.
-         * 
+         *
          * @returns {void}
          */
         start(): void { }
@@ -183,14 +183,14 @@
          * @memberof plat.ui.animations.BaseAnimation
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * A function to be called when the animation is over.
-         * 
+         *
          * @returns {void}
          */
         end(): void {
-            var eventListeners = this.__eventListeners;
+            let eventListeners = this.__eventListeners;
             while (eventListeners.length > 0) {
                 eventListeners.pop()();
             }
@@ -207,10 +207,10 @@
          * @kind function
          * @access public
          * @virtual
-         * 
+         *
          * @description
          * A function to be called to pause the animation.
-         * 
+         *
          * @returns {plat.async.IThenable<void>} A new promise that resolves when the animation has been paused.
          */
         pause(): async.IThenable<void> {
@@ -223,10 +223,10 @@
          * @kind function
          * @access public
          * @virtual
-         * 
+         *
          * @description
          * A function to be called to resume a paused animation.
-         * 
+         *
          * @returns {plat.async.IThenable<void>} A new promise that resolves when the animation has resumed.
          */
         resume(): async.IThenable<void> {
@@ -239,11 +239,11 @@
          * @kind function
          * @access public
          * @virtual
-         * 
+         *
          * @description
-         * A function to be called to let it be known the animation is being cancelled. Although not 
+         * A function to be called to let it be known the animation is being cancelled. Although not
          * necessary, we call end() in this function as well for safe measure.
-         * 
+         *
          * @returns {void}
          */
         cancel(): void {
@@ -255,16 +255,16 @@
          * @memberof plat.ui.animations.BaseAnimation
          * @kind function
          * @access public
-         * 
+         *
          * @description
-         * Adds an event listener of the specified type to this animation's element. Removal of the 
+         * Adds an event listener of the specified type to this animation's element. Removal of the
          * event is handled automatically upon animation end.
-         * 
+         *
          * @param {string} type The type of event to listen to.
          * @param {EventListener} listener The listener to fire when the event occurs.
-         * @param {boolean} useCapture? Whether to fire the event on the capture or the bubble phase 
+         * @param {boolean} useCapture? Whether to fire the event on the capture or the bubble phase
          * of event propagation.
-         * 
+         *
          * @returns {plat.IRemoveListener} A function to call in order to stop listening to the event.
          */
         addEventListener(type: string, listener: EventListener, useCapture?: boolean): IRemoveListener {
@@ -274,7 +274,7 @@
             }
 
             listener = listener.bind(this);
-            var removeListener = this.dom.addEventListener(this.element, type, (ev: Event) => {
+            let removeListener = this.dom.addEventListener(this.element, type, (ev: Event) => {
                 ev.stopPropagation();
                 listener(ev);
             }, useCapture),
@@ -283,7 +283,7 @@
             eventListeners.push(removeListener);
             return (): void => {
                 removeListener();
-                var index = eventListeners.indexOf(removeListener);
+                let index = eventListeners.indexOf(removeListener);
                 if (index !== -1) {
                     eventListeners.splice(index, 1);
                 }
@@ -295,22 +295,22 @@
          * @memberof plat.ui.animations.BaseAnimation
          * @kind function
          * @access public
-         * 
+         *
          * @description
-         * Initializes the element and key properties of this animation and grabs a 
+         * Initializes the element and key properties of this animation and grabs a
          * reference to its resolve function.
-         * 
+         *
          * @param {Element} element The element on which the animation will occur.
          * @param {any} options Specified options for the animation.
-         * 
-         * @returns {plat.ui.animations.IAnimationPromise} The promise that will resolve when the 
+         *
+         * @returns {plat.ui.animations.IAnimationPromise} The promise that will resolve when the
          * animation is complete and end() is called.
          */
         instantiate(element: Element, options?: any): IAnimatingThenable {
             this.element = <HTMLElement>element;
             this.options = options;
 
-            var promise = new AnimationPromise((resolve): void => {
+            let promise = new AnimationPromise((resolve): void => {
                 this._resolve = resolve;
                 this.initialize();
             });

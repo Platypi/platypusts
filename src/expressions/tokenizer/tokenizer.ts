@@ -5,7 +5,7 @@ module plat.expressions {
      * @name Tokenizer
      * @memberof plat.expressions
      * @kind class
-     * 
+     *
      * @description
      * A class that is responsible for taking in a JavaScript expression string and
      * finding all of its tokens (i.e. delimiters, operators, etc).
@@ -20,7 +20,7 @@ module plat.expressions {
          * @memberof plat.expressions.Tokenizer
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.debug.Log}
          * @description
          * Reference to the {@link plat.debug.Log|Log} injectable.
@@ -32,9 +32,9 @@ module plat.expressions {
          * @memberof plat.expressions.Tokenizer
          * @kind property
          * @access protected
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The input string to tokenize.
          */
@@ -45,9 +45,9 @@ module plat.expressions {
          * @memberof plat.expressions.Tokenizer
          * @kind property
          * @access private
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The previous character during tokenization.
          */
@@ -57,9 +57,9 @@ module plat.expressions {
          * @memberof plat.expressions.Tokenizer
          * @kind property
          * @access private
-         * 
+         *
          * @type {RegExp}
-         * 
+         *
          * @description
          * A regular expression for determining if a potential variable is valid syntax.
          */
@@ -69,9 +69,9 @@ module plat.expressions {
          * @memberof plat.expressions.Tokenizer
          * @kind property
          * @access private
-         * 
+         *
          * @type {Array<plat.expressions.IToken>}
-         * 
+         *
          * @description
          * A queue used for determining the output of the tokenization.
          */
@@ -81,11 +81,11 @@ module plat.expressions {
          * @memberof plat.expressions.Tokenizer
          * @kind property
          * @access private
-         * 
+         *
          * @type {Array<plat.expressions.IToken>}
-         * 
+         *
          * @description
-         * A stack used for determining operator precedence and aiding with the evaluation 
+         * A stack used for determining operator precedence and aiding with the evaluation
          * operands.
          */
         private __operatorStack: Array<IToken> = [];
@@ -94,9 +94,9 @@ module plat.expressions {
          * @memberof plat.expressions.Tokenizer
          * @kind property
          * @access private
-         * 
+         *
          * @type {Array<any>}
-         * 
+         *
          * @description
          * A collection used for determining argument count for certain operations.
          */
@@ -106,9 +106,9 @@ module plat.expressions {
          * @memberof plat.expressions.Tokenizer
          * @kind property
          * @access private
-         * 
+         *
          * @type {Array<any>}
-         * 
+         *
          * @description
          * A collection used for determining argument count for certain object literal operations.
          */
@@ -118,11 +118,11 @@ module plat.expressions {
          * @memberof plat.expressions.Tokenizer
          * @kind property
          * @access private
-         * 
+         *
          * @type {Array<string>}
-         * 
+         *
          * @description
-         * The last character encountered while in an operation dealing with the colon operator. 
+         * The last character encountered while in an operation dealing with the colon operator.
          * Needs to be an array due to the possibility of nested colon operations.
          */
         private __lastColonChar: Array<string> = [];
@@ -131,11 +131,11 @@ module plat.expressions {
          * @memberof plat.expressions.Tokenizer
          * @kind property
          * @access private
-         * 
+         *
          * @type {Array<string>}
-         * 
+         *
          * @description
-         * The last character encountered while in an operation dealing with commas. 
+         * The last character encountered while in an operation dealing with commas.
          * Needs to be an array due to the possibility of nested comma operations.
          */
         private __lastCommaChar: Array<string> = [];
@@ -145,14 +145,14 @@ module plat.expressions {
          * @memberof plat.expressions.Tokenizer
          * @kind function
          * @access public
-         * 
+         *
          * @description
-         * Takes in an expression string and outputs a tokenized collection of 
+         * Takes in an expression string and outputs a tokenized collection of
          * {@link plat.expressions.IToken|ITokens}.
-         * 
+         *
          * @param {string} input The JavaScript expression string to tokenize.
-         * 
-         * @returns {Array<plat.expressions.IToken>} The tokenized collection of 
+         *
+         * @returns {Array<plat.expressions.IToken>} The tokenized collection of
          * {@link plat.expressions.IToken|ITokens}.
          */
         createTokens(input: string): Array<IToken> {
@@ -162,7 +162,7 @@ module plat.expressions {
 
             this._input = input;
 
-            var char: string,
+            let char: string,
                 length = input.length,
                 ternary = 0,
                 ternaryFound = false,
@@ -239,7 +239,7 @@ module plat.expressions {
             }
 
             this.__popRemainingOperators();
-            var output = this.__outputQueue;
+            let output = this.__outputQueue;
             this._resetTokenizer();
 
             return output;
@@ -250,13 +250,13 @@ module plat.expressions {
          * @memberof plat.expressions.Tokenizer
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Determines character type.
-         * 
+         *
          * @param {string} char The character to check.
          * @param {boolean} isNumberLike Whether or not the character resembles a number.
-         * 
+         *
          * @returns {boolean} Whether or not the character corresponds with its type.
          */
         protected _checkType(char: string, isNumberLike: boolean): boolean {
@@ -272,18 +272,18 @@ module plat.expressions {
          * @memberof plat.expressions.Tokenizer
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Looks ahead in the expression to group similar character types.
-         * 
+         *
          * @param {string} char The current character in the expression string.
          * @param {number} index The current index in the expression string.
          * @param {boolean} isNumberLike Whether or not the character resembles a number.
-         * 
+         *
          * @returns {string} The grouped characters.
          */
         protected _lookAhead(char: string, index: number, isNumberLike: boolean): string {
-            var ch: string,
+            let ch: string,
                 input = this._input,
                 maxLength = input.length;
 
@@ -304,18 +304,18 @@ module plat.expressions {
          * @memberof plat.expressions.Tokenizer
          * @kind function
          * @access protected
-         * 
+         *
          * @description
-         * Looks ahead in the expression to try and complete the 
+         * Looks ahead in the expression to try and complete the
          * current operator.
-         * 
+         *
          * @param {string} char The operator to find.
          * @param {number} index The current index in the expression string.
-         * 
+         *
          * @returns {string} The completed current operator.
          */
         protected _lookAheadForOperatorFn(char: string, index: number): string {
-            var ch: string,
+            let ch: string,
                 fn = char,
                 input = this._input,
                 maxLength = input.length;
@@ -339,21 +339,21 @@ module plat.expressions {
          * @memberof plat.expressions.Tokenizer
          * @kind function
          * @access protected
-         * 
+         *
          * @description
-         * Looks ahead in the expression until it comes to the ending 
-         * character to try and complete a particular sequence 
-         * (e.g. - a string literal). Also strips the first and last 
+         * Looks ahead in the expression until it comes to the ending
+         * character to try and complete a particular sequence
+         * (e.g. - a string literal). Also strips the first and last
          * characters of the result (i.e. removes the delimiters).
-         * 
+         *
          * @param {string} endChar The ending character.
          * @param {number} index The current index in the expression string.
-         * 
-         * @returns {string} The resultant inner character string between 
+         *
+         * @returns {string} The resultant inner character string between
          * the first character and end character being looked ahead for.
          */
         protected _lookAheadForDelimiter(endChar: string, index: number): string {
-            var char = '',
+            let char = '',
                 ch: string,
                 input = this._input,
                 maxLength = input.length;
@@ -370,20 +370,20 @@ module plat.expressions {
          * @memberof plat.expressions.Tokenizer
          * @kind function
          * @access protected
-         * 
+         *
          * @description
-         * Pops the operator stack onto the output queue until a particular 
+         * Pops the operator stack onto the output queue until a particular
          * operator value is reached.
-         * 
+         *
          * @param {plat.expressions.IToken} topOperator The top of the operator stack.
          * @param {string} char The operator value being searched for.
-         * @param {string} error The error to throw in the case that the expression 
+         * @param {string} error The error to throw in the case that the expression
          * is invalid.
-         * 
+         *
          * @returns {void}
          */
         protected _popStackForVal(topOperator: IToken, char: string, error: string): void {
-            var outputQueue = this.__outputQueue,
+            let outputQueue = this.__outputQueue,
                 operatorStack = this.__operatorStack;
 
             while (topOperator.val !== char) {
@@ -400,15 +400,15 @@ module plat.expressions {
          * @memberof plat.expressions.Tokenizer
          * @kind function
          * @access protected
-         * 
+         *
          * @description
-         * Check if the "val" property on an {@link plat.expressions.IToken|IToken} 
+         * Check if the "val" property on an {@link plat.expressions.IToken|IToken}
          * is present in a particular character string.
-         * 
-         * @param {plat.expressions.IToken} obj The {@link plat.expressions.IToken|IToken} 
+         *
+         * @param {plat.expressions.IToken} obj The {@link plat.expressions.IToken|IToken}
          * with the "val" property to compare.
          * @param {string} char The char to compare with.
-         * 
+         *
          * @returns {boolean} Whether or not the val is equal to the input character.
          */
         protected _isValEqual(obj: IToken, char: string): boolean {
@@ -425,15 +425,15 @@ module plat.expressions {
          * @memberof plat.expressions.Tokenizer
          * @kind function
          * @access protected
-         * 
+         *
          * @description
-         * Check if the "val" property on an {@link plat.expressions.IToken|IToken} 
+         * Check if the "val" property on an {@link plat.expressions.IToken|IToken}
          * is not present in a particular character string.
-         * 
-         * @param {plat.expressions.IToken} obj The {@link plat.expressions.IToken|IToken} 
+         *
+         * @param {plat.expressions.IToken} obj The {@link plat.expressions.IToken|IToken}
          * with the "val" property to compare.
          * @param {string} char The char to compare with.
-         * 
+         *
          * @returns {boolean} Whether or not the val is not equal to the input character.
          */
         protected _isValUnequal(obj: IToken, char: string): boolean {
@@ -450,10 +450,10 @@ module plat.expressions {
          * @memberof plat.expressions.Tokenizer
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Resets all the tokenizer's properties.
-         * 
+         *
          * @returns {void}
          */
         protected _resetTokenizer(): void {
@@ -472,12 +472,12 @@ module plat.expressions {
          * @memberof plat.expressions.Tokenizer
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Throws a fatal exception in the case of an error.
-         * 
+         *
          * @param {string} error The error message to throw.
-         * 
+         *
          * @returns {void}
          */
         protected _throwError(error: string): void {
@@ -489,12 +489,12 @@ module plat.expressions {
          * @memberof plat.expressions.Tokenizer
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Checks if a single character is numeric.
-         * 
+         *
          * @param {string} char The character to check.
-         * 
+         *
          * @returns {boolean} Whether or not the character is numeric.
          */
         protected _isNumeric(char: string): boolean {
@@ -506,12 +506,12 @@ module plat.expressions {
          * @memberof plat.expressions.Tokenizer
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Checks if a single character is a space.
-         * 
+         *
          * @param {string} char The character to check.
-         * 
+         *
          * @returns {boolean} Whether or not the character is a space.
          */
         protected _isSpace(char: string): boolean {
@@ -528,12 +528,12 @@ module plat.expressions {
          * @memberof plat.expressions.Tokenizer
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Checks if a single character is alphanumeric.
-         * 
+         *
          * @param {string} char The character to check.
-         * 
+         *
          * @returns {boolean} Whether or not the character is alphanumeric.
          */
         protected _isAlphaNumeric(char: string): boolean {
@@ -550,13 +550,13 @@ module plat.expressions {
          * @memberof plat.expressions.Tokenizer
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Checks if a string has proper JavaScript variable syntax.
-         * 
+         *
          * @param {string} input The string to check.
-         * 
-         * @returns {boolean} Whether or not the input string could be a valid 
+         *
+         * @returns {boolean} Whether or not the input string could be a valid
          * JavaScript variable.
          */
         protected _isStringValidVariable(input: string): boolean {
@@ -568,17 +568,17 @@ module plat.expressions {
          * @memberof plat.expressions.Tokenizer
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * Handles tokenizing an alphanumeric character.
-         * 
+         *
          * @param {number} index The current index in the string being tokenized.
          * @param {string} char The current char.
-         * 
+         *
          * @returns {number} The new index to pick up tokenization from.
          */
         private __handleAplhaNumeric(index: number, char: string): number {
-            var isNumberLike = this._isNumeric(char),
+            let isNumberLike = this._isNumeric(char),
                 lookAhead = this._lookAhead(char, index, isNumberLike);
 
             this.__outputQueue.push(isNumberLike ? ({ val: Number(lookAhead), args: 0 }) :
@@ -592,17 +592,17 @@ module plat.expressions {
          * @memberof plat.expressions.Tokenizer
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * Handles tokenizing a "." character.
-         * 
+         *
          * @param {number} index The current index in the string being tokenized.
          * @param {string} char The current char.
-         * 
+         *
          * @returns {number} The new index to pick up tokenization from.
          */
         private __handlePeriod(index: number, char: string): number {
-            var outputQueue = this.__outputQueue,
+            let outputQueue = this.__outputQueue,
                 operatorStack = this.__operatorStack,
                 topOutputLength = outputQueue.length - 1,
                 previousChar = this.__previousChar,
@@ -636,12 +636,12 @@ module plat.expressions {
          * @memberof plat.expressions.Tokenizer
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * Handles tokenizing a "{" character.
-         * 
+         *
          * @param {string} char The current char.
-         * 
+         *
          * @returns {void}
          */
         private __handleLeftBrace(char: string): void {
@@ -655,16 +655,16 @@ module plat.expressions {
          * @memberof plat.expressions.Tokenizer
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * Handles tokenizing a "}" character.
-         * 
+         *
          * @param {string} char The current char.
-         * 
+         *
          * @returns {void}
          */
         private __handleRightBrace(char: string): void {
-            var operatorStack = this.__operatorStack,
+            let operatorStack = this.__operatorStack,
                 topOperator = operatorStack[0],
                 lastArgCount = this.__objArgCount.pop();
 
@@ -687,16 +687,16 @@ module plat.expressions {
          * @memberof plat.expressions.Tokenizer
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * Handles tokenizing a "[" character.
-         * 
+         *
          * @param {string} char The current char.
-         * 
+         *
          * @returns {void}
          */
         private __handleLeftBracket(char: string): void {
-            var previousChar = this.__previousChar,
+            let previousChar = this.__previousChar,
                 operatorStack = this.__operatorStack;
 
             if (this._isValEqual(operatorStack[0], '.')) {
@@ -719,16 +719,16 @@ module plat.expressions {
          * @memberof plat.expressions.Tokenizer
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * Handles tokenizing a "]" character.
-         * 
+         *
          * @param {string} char The current char.
-         * 
+         *
          * @returns {void}
          */
         private __handleRightBracket(char: string): void {
-            var operatorStack = this.__operatorStack,
+            let operatorStack = this.__operatorStack,
                 topOperator = operatorStack[0],
                 lastArgCountObj = this.__argCount.pop();
 
@@ -757,20 +757,20 @@ module plat.expressions {
          * @memberof plat.expressions.Tokenizer
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * Handles tokenizing a "(" character.
-         * 
+         *
          * @param {string} char The current char.
-         * 
+         *
          * @returns {void}
          */
         private __handleLeftParenthesis(char: string): void {
-            var previousChar = this.__previousChar,
+            let previousChar = this.__previousChar,
                 operatorStack = this.__operatorStack;
 
             if (this._isAlphaNumeric(previousChar) || previousChar === ']' || previousChar === ')') {
-                var outputQueue = this.__outputQueue,
+                let outputQueue = this.__outputQueue,
                     topOutput = outputQueue[outputQueue.length - 1];
 
                 if (this._isValEqual(topOutput, '[]')) {
@@ -791,16 +791,16 @@ module plat.expressions {
          * @memberof plat.expressions.Tokenizer
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * Handles tokenizing a ")" character.
-         * 
+         *
          * @param {string} char The current char.
-         * 
+         *
          * @returns {void}
          */
         private __handleRightParenthesis(char: string): void {
-            var operatorStack = this.__operatorStack,
+            let operatorStack = this.__operatorStack,
                 topOperator = operatorStack[0],
                 localArgCountObj = this.__argCount.pop();
 
@@ -817,7 +817,7 @@ module plat.expressions {
 
             // check if function on top of stack
             if (!isNull(localArgCountObj)) {
-                var localArgNum = localArgCountObj.num;
+                let localArgNum = localArgCountObj.num;
                 if (this.__previousChar === '(') {
                     if (this.__removeFnFromStack(localArgNum)) {
                         this.__outputQueue.push({
@@ -839,20 +839,20 @@ module plat.expressions {
          * @memberof plat.expressions.Tokenizer
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * Handles tokenizing a "," character.
-         * 
+         *
          * @param {string} char The current char.
-         * 
+         *
          * @returns {void}
          */
         private __handleComma(char: string): void {
-            var lastCommaArray = this.__lastCommaChar,
+            let lastCommaArray = this.__lastCommaChar,
                 lastCommaArg = lastCommaArray[lastCommaArray.length - 1];
 
             if (lastCommaArg === '(' || lastCommaArg === '[') {
-                var argCountArray = this.__argCount,
+                let argCountArray = this.__argCount,
                     length = argCountArray.length;
 
                 if (length > 0) {
@@ -863,7 +863,7 @@ module plat.expressions {
                 }
             }
 
-            var topOperator = this.__operatorStack[0];
+            let topOperator = this.__operatorStack[0];
             if (isNull(topOperator)) {
                 return this._throwError('Unexpected comma');
             }
@@ -875,17 +875,17 @@ module plat.expressions {
          * @memberof plat.expressions.Tokenizer
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * Handles tokenizing a string literal.
-         * 
+         *
          * @param {number} index The current index in the string being tokenized.
          * @param {string} char The current char.
-         * 
+         *
          * @returns {number} The new index to pick up tokenization from.
          */
         private __handleStringLiteral(index: number, char: string): number {
-            var lookAhead = this._lookAheadForDelimiter(char, index),
+            let lookAhead = this._lookAheadForDelimiter(char, index),
                 operatorStack = this.__operatorStack;
 
             if (this._isValEqual(operatorStack[0], '([')) {
@@ -901,12 +901,12 @@ module plat.expressions {
          * @memberof plat.expressions.Tokenizer
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * Handles tokenizing a "?" character.
-         * 
+         *
          * @param {string} char The current char.
-         * 
+         *
          * @returns {void}
          */
         private __handleQuestion(char: string): void {
@@ -918,23 +918,23 @@ module plat.expressions {
          * @memberof plat.expressions.Tokenizer
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * Handles tokenizing a ":" character.
-         * 
+         *
          * @param {string} char The current char.
-         * @param {number} ternary The current ternary counter. Increments when a ternary is found, 
+         * @param {number} ternary The current ternary counter. Increments when a ternary is found,
          * decrements when a ternary is completed. It can be very useful when there is nested ternaries.
-         * 
+         *
          * @returns {number} The potentially modified ternary counter.
          */
         private __handleColon(char: string, ternary: number): number {
-            var lastColonCharArray = this.__lastColonChar,
+            let lastColonCharArray = this.__lastColonChar,
                 lastColonCharacter = lastColonCharArray[lastColonCharArray.length - 1],
                 outputQueue = this.__outputQueue;
 
             if (lastColonCharacter === '?') {
-                var operatorStack = this.__operatorStack,
+                let operatorStack = this.__operatorStack,
                     topOperator = operatorStack[0];
 
                 if (isNull(topOperator)) {
@@ -951,7 +951,7 @@ module plat.expressions {
                 outputQueue.push(operatorStack.shift());
                 operatorStack.unshift({ val: char, args: -2 });
             } else if (lastColonCharacter === '{') {
-                var objArgCount = this.__objArgCount,
+                let objArgCount = this.__objArgCount,
                     outputLast = outputQueue.length - 1;
 
                 objArgCount[objArgCount.length - 1]++;
@@ -974,17 +974,17 @@ module plat.expressions {
          * @memberof plat.expressions.Tokenizer
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * Handles tokenizing all other operators.
-         * 
+         *
          * @param {number} index The current index in the string being tokenized.
          * @param {string} char The current char.
-         * 
+         *
          * @returns {number} The new index to pick up tokenization from.
          */
         private __handleOtherOperator(index: number, char: string): number {
-            var lookAhead = this._lookAheadForOperatorFn(char, index);
+            let lookAhead = this._lookAheadForOperatorFn(char, index);
             this.__determinePrecedence(lookAhead);
 
             return index + lookAhead.length - 1;
@@ -994,15 +994,15 @@ module plat.expressions {
          * @memberof plat.expressions.Tokenizer
          * @kind function
          * @access private
-         * 
+         *
          * @description
-         * Pops operators left on the operator stack onto the output queue 
+         * Pops operators left on the operator stack onto the output queue
          * checking for mismatches.
-         * 
+         *
          * @returns {void}
          */
         private __popRemainingOperators(): void {
-            var outputQueue = this.__outputQueue,
+            let outputQueue = this.__outputQueue,
                 operatorStack = this.__operatorStack,
                 topOperator: IToken,
                 topOperatorVal: any;
@@ -1023,14 +1023,14 @@ module plat.expressions {
          * @memberof plat.expressions.Tokenizer
          * @kind function
          * @access private
-         * 
+         *
          * @description
          * Grabs essential token details for a given operator.
-         * 
+         *
          * @param {string} operator The operator whose details are being requested.
-         * 
-         * @returns {plat.expressions.ITokenDetails} Essential information regarding the 
-         * operator including precedence, associativity, and an evaluation function denoted as 
+         *
+         * @returns {plat.expressions.ITokenDetails} Essential information regarding the
+         * operator including precedence, associativity, and an evaluation function denoted as
          * an {@link plat.expressions.ITokenDetails|ITokenDetails} object.
          */
         private __determineOperator(operator: string): ITokenDetails {
@@ -1049,17 +1049,17 @@ module plat.expressions {
          * @memberof plat.expressions.Tokenizer
          * @kind function
          * @access private
-         * 
+         *
          * @description
-         * Determines the precedence of a given operator in relation to other operators 
+         * Determines the precedence of a given operator in relation to other operators
          * in the operator stack and places it in the operator stack.
-         * 
+         *
          * @param {string} operator The operator whose precedence is being determined.
-         * 
+         *
          * @returns {void}
          */
         private __determinePrecedence(operator: string): void {
-            var operatorFn = this.__determineOperator(operator),
+            let operatorFn = this.__determineOperator(operator),
                 operatorPrecedence = operatorFn.precedence,
                 isLtR = operatorFn.associativity === 'ltr',
                 operatorStack = this.__operatorStack,
@@ -1097,18 +1097,18 @@ module plat.expressions {
          * @memberof plat.expressions.Tokenizer
          * @kind function
          * @access private
-         * 
+         *
          * @description
-         * Removes a reference to a function that is present in the operator stack and places 
+         * Removes a reference to a function that is present in the operator stack and places
          * it in the output queue.
-         * 
-         * @param {number} argCount The current local argument count used with functions, 
+         *
+         * @param {number} argCount The current local argument count used with functions,
          * arrays, and object literals.
-         * 
+         *
          * @returns {boolean} Whether or not the function had at least one argument.
          */
         private __removeFnFromStack(argCount: number): boolean {
-            var outputQueue = this.__outputQueue,
+            let outputQueue = this.__outputQueue,
                 operatorStack = this.__operatorStack,
                 topOperator = operatorStack[0],
                 isValEqual = this._isValEqual,
@@ -1144,7 +1144,7 @@ module plat.expressions {
      * @name IToken
      * @memberof plat.expressions
      * @kind interface
-     * 
+     *
      * @description
      * Describes a single token in a string expression.
      */
@@ -1154,9 +1154,9 @@ module plat.expressions {
          * @memberof plat.expressions.IToken
          * @kind property
          * @access public
-         * 
+         *
          * @type {any}
-         * 
+         *
          * @description
          * The string or number value of the token.
          */
@@ -1167,13 +1167,13 @@ module plat.expressions {
          * @memberof plat.expressions.IToken
          * @kind property
          * @access public
-         * 
+         *
          * @type {any}
-         * 
+         *
          * @description
          * Denotes the type of token, as well as the number
          * of arguments for a function if it is the token.
-         * 
+         *
          * @remarks
          * If -2: Denotes a function name unless indexed into with [] or a ternary expression.
          * If -1: Denotes a variable or empty array literal.
@@ -1191,7 +1191,7 @@ module plat.expressions {
      * @name ITokenDetails
      * @memberof plat.expressions
      * @kind interface
-     * 
+     *
      * @description
      * Provides all the necessary details on how to evaluate a token.
      */
@@ -1201,11 +1201,11 @@ module plat.expressions {
          * @memberof plat.expressions.ITokenDetails
          * @kind property
          * @access public
-         * 
+         *
          * @type {number}
-         * 
+         *
          * @description
-         * The precedence that this token takes with respect to the 
+         * The precedence that this token takes with respect to the
          * evaluation order.
          */
         precedence: number;
@@ -1215,9 +1215,9 @@ module plat.expressions {
          * @memberof plat.expressions.ITokenDetails
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * Whether or not the token associates with the expression on
          * their left or right.
@@ -1229,9 +1229,9 @@ module plat.expressions {
          * @memberof plat.expressions.ITokenDetails
          * @kind property
          * @access public
-         * 
+         *
          * @type {Function}
-         * 
+         *
          * @description
          * A function used to evaluate an operator expression.
          */

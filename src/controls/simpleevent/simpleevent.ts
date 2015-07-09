@@ -5,10 +5,10 @@ module plat.controls {
      * @name SimpleEventControl
      * @memberof plat.controls
      * @kind class
-     * 
+     *
      * @extends {plat.AttributeControl}
      * @implements {plat.controls.ISendEvents}
-     * 
+     *
      * @description
      * An {@link plat.AttributeControl|AttributeControl} that binds to a specified DOM event handler.
      */
@@ -23,9 +23,9 @@ module plat.controls {
          * @memberof plat.controls.SimpleEventControl
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.expressions.Parser}
-         * 
+         *
          * @description
          * Reference to the {@link plat.expressions.Parser|Parser} injectable.
          */
@@ -36,9 +36,9 @@ module plat.controls {
          * @memberof plat.controls.SimpleEventControl
          * @kind property
          * @access protected
-         * 
+         *
          * @type {plat.expressions.Regex}
-         * 
+         *
          * @description
          * Reference to the {@link plat.expressions.Regex|Regex} injectable.
          */
@@ -49,9 +49,9 @@ module plat.controls {
          * @memberof plat.controls.SimpleEventControl
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The event name.
          */
@@ -62,9 +62,9 @@ module plat.controls {
          * @memberof plat.controls.SimpleEventControl
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The camel-cased name of the control as it appears as an attribute.
          */
@@ -75,9 +75,9 @@ module plat.controls {
          * @memberof plat.controls.SimpleEventControl
          * @kind property
          * @access protected
-         * 
+         *
          * @type {Array<string>}
-         * 
+         *
          * @description
          * A parsed form of the expression found in the attribute's value.
          */
@@ -88,9 +88,9 @@ module plat.controls {
          * @memberof plat.controls.SimpleEventControl
          * @kind property
          * @access protected
-         * 
+         *
          * @type {Array<string>}
-         * 
+         *
          * @description
          * An array of the aliases used in the expression.
          */
@@ -101,10 +101,10 @@ module plat.controls {
          * @memberof plat.controls.SimpleEventControl
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Kicks off finding and setting the listener.
-         * 
+         *
          * @returns {void}
          */
         loaded(): void {
@@ -121,14 +121,14 @@ module plat.controls {
          * @memberof plat.controls.SimpleEventControl
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Parses function args and sets the event listener.
-         * 
+         *
          * @returns {void}
          */
         protected _setListener(): void {
-            var fn = this.attributes[this.attribute];
+            let fn = this.attributes[this.attribute];
 
             if (isEmpty(this.event) || isEmpty(fn)) {
                 return;
@@ -143,10 +143,10 @@ module plat.controls {
          * @memberof plat.controls.SimpleEventControl
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Adds any and all necessary event listeners.
-         * 
+         *
          * @returns {void}
          */
         protected _addEventListeners(): void {
@@ -158,17 +158,17 @@ module plat.controls {
          * @memberof plat.controls.SimpleEventControl
          * @kind function
          * @access protected
-         * 
+         *
          * @description
-         * Constructs the function to evaluate with 
-         * the evaluated arguments taking resources 
+         * Constructs the function to evaluate with
+         * the evaluated arguments taking resources
          * into account.
-         * 
-         * @returns {{ fn: () => void; control: any; args: Array<expressions.IParsedExpression>; }} 
+         *
+         * @returns {{ fn: () => void; control: any; args: Array<expressions.IParsedExpression>; }}
          * The function to call and the associated arguments, as well as the control context with which to call the function.
          */
         protected _buildExpression(): { fn: () => void; context: any; args: Array<expressions.IParsedExpression>; } {
-            var expression = this._expression.slice(0),
+            let expression = this._expression.slice(0),
                 _parser = this._parser,
                 parent = this.parent,
                 listenerStr = expression.shift(),
@@ -195,7 +195,7 @@ module plat.controls {
                     };
                 }
 
-                var parsedExpression = listener.expresssion,
+                let parsedExpression = listener.expresssion,
                     identifiers = parsedExpression.identifiers;
 
                 if (identifiers.length > 1) {
@@ -208,7 +208,7 @@ module plat.controls {
                     };
                 }
 
-                var identifier = identifiers[0],
+                let identifier = identifiers[0],
                     split = identifier.split('.');
 
                 // pop key
@@ -220,10 +220,10 @@ module plat.controls {
                 context = undefined;
             }
 
-            var length = expression.length,
+            let length = expression.length,
                 args: Array<expressions.IParsedExpression> = [];
 
-            for (var i = 0; i < length; ++i) {
+            for (let i = 0; i < length; ++i) {
                 args.push(_parser.parse(expression[i]).evaluate(argContext, aliases));
             }
 
@@ -239,16 +239,16 @@ module plat.controls {
          * @memberof plat.controls.SimpleEventControl
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Calls the specified function when the DOM event is fired.
-         * 
+         *
          * @param {Event} ev The event object.
-         * 
+         *
          * @returns {void}
          */
         protected _onEvent(ev: Event): void {
-            var expression = this._buildExpression(),
+            let expression = this._buildExpression(),
                 fn = expression.fn;
 
             if (!isFunction(fn)) {
@@ -265,16 +265,16 @@ module plat.controls {
          * @memberof plat.controls.SimpleEventControl
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Finds all alias contained within the expression.
-         * 
+         *
          * @param {Array<string>} args The array of arguments as strings.
-         * 
+         *
          * @returns {Array<string>} The aliases.
          */
         protected _findAliases(args: Array<string>): Array<string> {
-            var length = args.length,
+            let length = args.length,
                 arg: string,
                 hash: IObject<boolean> = {},
                 aliases: Array<string> = [],
@@ -302,13 +302,13 @@ module plat.controls {
          * @memberof plat.controls.SimpleEventControl
          * @kind function
          * @access protected
-         * 
+         *
          * @description
-         * Parses the expression and separates the function 
+         * Parses the expression and separates the function
          * from its arguments.
-         * 
+         *
          * @param {string} expression The expression to parse.
-         * 
+         *
          * @returns {void}
          */
         protected _parseArgs(expression: string): void {
@@ -316,7 +316,7 @@ module plat.controls {
                 return;
             }
 
-            var exec = this._regex.argumentRegex.exec(expression);
+            let exec = this._regex.argumentRegex.exec(expression);
             if (!isNull(exec)) {
                 this._expression = [expression.slice(0, exec.index)]
                     .concat((exec[1] !== '') ? exec[1].split(',') : []);
@@ -332,7 +332,7 @@ module plat.controls {
      * @name ISendEvents
      * @memberof plat.controls
      * @kind interface
-     * 
+     *
      * @description
      * An {@link plat.AttributeControl|AttributeControl} that binds to a specified DOM event handler.
      */
@@ -342,9 +342,9 @@ module plat.controls {
          * @memberof plat.controls.ISendEvents
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The event name.
          */
@@ -355,9 +355,9 @@ module plat.controls {
          * @memberof plat.controls.ISendEvents
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The camel-cased name of the control as it appears as an attribute.
          */
@@ -368,9 +368,9 @@ module plat.controls {
      * @name Tap
      * @memberof plat.controls
      * @kind class
-     * 
+     *
      * @extends {plat.controls.SimpleEventControl}
-     * 
+     *
      * @description
      * A {@link plat.controls.SimpleEventControl|SimpleEventControl} for the '$tap' event.
      */
@@ -380,9 +380,9 @@ module plat.controls {
          * @memberof plat.controls.Tap
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The event name.
          */
@@ -393,9 +393,9 @@ module plat.controls {
      * @name Blur
      * @memberof plat.controls
      * @kind class
-     * 
+     *
      * @extends {plat.controls.SimpleEventControl}
-     * 
+     *
      * @description
      * A {@link plat.controls.SimpleEventControl|SimpleEventControl} for the 'blur' event.
      */
@@ -405,9 +405,9 @@ module plat.controls {
          * @memberof plat.controls.Blur
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The event name.
          */
@@ -418,9 +418,9 @@ module plat.controls {
      * @name Change
      * @memberof plat.controls
      * @kind class
-     * 
+     *
      * @extends {plat.controls.SimpleEventControl}
-     * 
+     *
      * @description
      * A {@link plat.controls.SimpleEventControl|SimpleEventControl} for the 'change' event.
      */
@@ -430,9 +430,9 @@ module plat.controls {
          * @memberof plat.controls.Change
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The event name.
          */
@@ -443,9 +443,9 @@ module plat.controls {
      * @name Copy
      * @memberof plat.controls
      * @kind class
-     * 
+     *
      * @extends {plat.controls.SimpleEventControl}
-     * 
+     *
      * @description
      * A {@link plat.controls.SimpleEventControl|SimpleEventControl} for the 'copy' event.
      */
@@ -455,9 +455,9 @@ module plat.controls {
          * @memberof plat.controls.Copy
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The event name.
          */
@@ -468,9 +468,9 @@ module plat.controls {
      * @name Cut
      * @memberof plat.controls
      * @kind class
-     * 
+     *
      * @extends {plat.controls.SimpleEventControl}
-     * 
+     *
      * @description
      * A {@link plat.controls.SimpleEventControl|SimpleEventControl} for the 'cut' event.
      */
@@ -480,9 +480,9 @@ module plat.controls {
          * @memberof plat.controls.Cut
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The event name.
          */
@@ -493,9 +493,9 @@ module plat.controls {
      * @name Paste
      * @memberof plat.controls
      * @kind class
-     * 
+     *
      * @extends {plat.controls.SimpleEventControl}
-     * 
+     *
      * @description
      * A {@link plat.controls.SimpleEventControl|SimpleEventControl} for the 'paste' event.
      */
@@ -505,9 +505,9 @@ module plat.controls {
          * @memberof plat.controls.Paste
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The event name.
          */
@@ -518,9 +518,9 @@ module plat.controls {
      * @name DblTap
      * @memberof plat.controls
      * @kind class
-     * 
+     *
      * @extends {plat.controls.SimpleEventControl}
-     * 
+     *
      * @description
      * A {@link plat.controls.SimpleEventControl|SimpleEventControl} for the '$dbltap' event.
      */
@@ -530,9 +530,9 @@ module plat.controls {
          * @memberof plat.controls.DblTap
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The event name.
          */
@@ -543,9 +543,9 @@ module plat.controls {
      * @name Focus
      * @memberof plat.controls
      * @kind class
-     * 
+     *
      * @extends {plat.controls.SimpleEventControl}
-     * 
+     *
      * @description
      * A {@link plat.controls.SimpleEventControl|SimpleEventControl} for the 'focus' event.
      */
@@ -555,9 +555,9 @@ module plat.controls {
          * @memberof plat.controls.Focus
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The event name.
          */
@@ -568,9 +568,9 @@ module plat.controls {
      * @name TouchStart
      * @memberof plat.controls
      * @kind class
-     * 
+     *
      * @extends {plat.controls.SimpleEventControl}
-     * 
+     *
      * @description
      * A {@link plat.controls.SimpleEventControl|SimpleEventControl} for the '$touchstart' event.
      */
@@ -580,9 +580,9 @@ module plat.controls {
          * @memberof plat.controls.TouchStart
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The event name.
          */
@@ -593,9 +593,9 @@ module plat.controls {
      * @name TouchEnd
      * @memberof plat.controls
      * @kind class
-     * 
+     *
      * @extends {plat.controls.SimpleEventControl}
-     * 
+     *
      * @description
      * A {@link plat.controls.SimpleEventControl|SimpleEventControl} for the '$touchend' event.
      */
@@ -605,9 +605,9 @@ module plat.controls {
          * @memberof plat.controls.TouchEnd
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The event name.
          */
@@ -618,9 +618,9 @@ module plat.controls {
      * @name TouchMove
      * @memberof plat.controls
      * @kind class
-     * 
+     *
      * @extends {plat.controls.SimpleEventControl}
-     * 
+     *
      * @description
      * A {@link plat.controls.SimpleEventControl|SimpleEventControl} for the '$touchmove' event.
      */
@@ -630,9 +630,9 @@ module plat.controls {
          * @memberof plat.controls.TouchMove
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The event name.
          */
@@ -643,9 +643,9 @@ module plat.controls {
      * @name TouchCancel
      * @memberof plat.controls
      * @kind class
-     * 
+     *
      * @extends {plat.controls.SimpleEventControl}
-     * 
+     *
      * @description
      * A {@link plat.controls.SimpleEventControl|SimpleEventControl} for the '$touchcancel' event.
      */
@@ -655,9 +655,9 @@ module plat.controls {
          * @memberof plat.controls.TouchCancel
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The event name.
          */
@@ -668,9 +668,9 @@ module plat.controls {
      * @name Hold
      * @memberof plat.controls
      * @kind class
-     * 
+     *
      * @extends {plat.controls.SimpleEventControl}
-     * 
+     *
      * @description
      * A {@link plat.controls.SimpleEventControl|SimpleEventControl} for the '$hold' event.
      */
@@ -680,9 +680,9 @@ module plat.controls {
          * @memberof plat.controls.Hold
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The event name.
          */
@@ -693,9 +693,9 @@ module plat.controls {
      * @name Release
      * @memberof plat.controls
      * @kind class
-     * 
+     *
      * @extends {plat.controls.SimpleEventControl}
-     * 
+     *
      * @description
      * A {@link plat.controls.SimpleEventControl|SimpleEventControl} for the '$release' event.
      */
@@ -705,9 +705,9 @@ module plat.controls {
          * @memberof plat.controls.Release
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The event name.
          */
@@ -718,9 +718,9 @@ module plat.controls {
      * @name Swipe
      * @memberof plat.controls
      * @kind class
-     * 
+     *
      * @extends {plat.controls.SimpleEventControl}
-     * 
+     *
      * @description
      * A {@link plat.controls.SimpleEventControl|SimpleEventControl} for the '$swipe' event.
      */
@@ -730,9 +730,9 @@ module plat.controls {
          * @memberof plat.controls.Swipe
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The event name.
          */
@@ -743,9 +743,9 @@ module plat.controls {
      * @name SwipeLeft
      * @memberof plat.controls
      * @kind class
-     * 
+     *
      * @extends {plat.controls.SimpleEventControl}
-     * 
+     *
      * @description
      * A {@link plat.controls.SimpleEventControl|SimpleEventControl} for the '$swipeleft' event.
      */
@@ -755,9 +755,9 @@ module plat.controls {
          * @memberof plat.controls.SwipeLeft
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The event name.
          */
@@ -768,9 +768,9 @@ module plat.controls {
      * @name SwipeRight
      * @memberof plat.controls
      * @kind class
-     * 
+     *
      * @extends {plat.controls.SimpleEventControl}
-     * 
+     *
      * @description
      * A {@link plat.controls.SimpleEventControl|SimpleEventControl} for the '$swiperight' event.
      */
@@ -780,9 +780,9 @@ module plat.controls {
          * @memberof plat.controls.SwipeRight
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The event name.
          */
@@ -793,9 +793,9 @@ module plat.controls {
      * @name SwipeUp
      * @memberof plat.controls
      * @kind class
-     * 
+     *
      * @extends {plat.controls.SimpleEventControl}
-     * 
+     *
      * @description
      * A {@link plat.controls.SimpleEventControl|SimpleEventControl} for the '$swipeup' event.
      */
@@ -805,9 +805,9 @@ module plat.controls {
          * @memberof plat.controls.SwipeUp
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The event name.
          */
@@ -818,9 +818,9 @@ module plat.controls {
      * @name SwipeDown
      * @memberof plat.controls
      * @kind class
-     * 
+     *
      * @extends {plat.controls.SimpleEventControl}
-     * 
+     *
      * @description
      * A {@link plat.controls.SimpleEventControl|SimpleEventControl} for the '$swipedown' event.
      */
@@ -830,9 +830,9 @@ module plat.controls {
          * @memberof plat.controls.SwipeDown
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The event name.
          */
@@ -843,9 +843,9 @@ module plat.controls {
      * @name Track
      * @memberof plat.controls
      * @kind class
-     * 
+     *
      * @extends {plat.controls.SimpleEventControl}
-     * 
+     *
      * @description
      * A {@link plat.controls.SimpleEventControl|SimpleEventControl} for the '$track' event.
      */
@@ -855,9 +855,9 @@ module plat.controls {
          * @memberof plat.controls.Track
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The event name.
          */
@@ -868,9 +868,9 @@ module plat.controls {
      * @name TrackLeft
      * @memberof plat.controls
      * @kind class
-     * 
+     *
      * @extends {plat.controls.SimpleEventControl}
-     * 
+     *
      * @description
      * A {@link plat.controls.SimpleEventControl|SimpleEventControl} for the '$trackleft' event.
      */
@@ -880,9 +880,9 @@ module plat.controls {
          * @memberof plat.controls.TrackLeft
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The event name.
          */
@@ -893,9 +893,9 @@ module plat.controls {
      * @name TrackRight
      * @memberof plat.controls
      * @kind class
-     * 
+     *
      * @extends {plat.controls.SimpleEventControl}
-     * 
+     *
      * @description
      * A {@link plat.controls.SimpleEventControl|SimpleEventControl} for the '$trackright' event.
      */
@@ -905,9 +905,9 @@ module plat.controls {
          * @memberof plat.controls.TrackRight
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The event name.
          */
@@ -918,9 +918,9 @@ module plat.controls {
      * @name TrackUp
      * @memberof plat.controls
      * @kind class
-     * 
+     *
      * @extends {plat.controls.SimpleEventControl}
-     * 
+     *
      * @description
      * A {@link plat.controls.SimpleEventControl|SimpleEventControl} for the '$trackup' event.
      */
@@ -930,9 +930,9 @@ module plat.controls {
          * @memberof plat.controls.TrackUp
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The event name.
          */
@@ -943,9 +943,9 @@ module plat.controls {
      * @name TrackDown
      * @memberof plat.controls
      * @kind class
-     * 
+     *
      * @extends {plat.controls.SimpleEventControl}
-     * 
+     *
      * @description
      * A {@link plat.controls.SimpleEventControl|SimpleEventControl} for the '$trackdown' event.
      */
@@ -955,9 +955,9 @@ module plat.controls {
          * @memberof plat.controls.TrackDown
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The event name.
          */
@@ -968,9 +968,9 @@ module plat.controls {
      * @name TrackEnd
      * @memberof plat.controls
      * @kind class
-     * 
+     *
      * @extends {plat.controls.SimpleEventControl}
-     * 
+     *
      * @description
      * A {@link plat.controls.SimpleEventControl|SimpleEventControl} for the '$trackend' event.
      */
@@ -980,9 +980,9 @@ module plat.controls {
          * @memberof plat.controls.TrackEnd
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The event name.
          */
@@ -993,9 +993,9 @@ module plat.controls {
      * @name Submit
      * @memberof plat.controls
      * @kind class
-     * 
+     *
      * @extends {plat.controls.SimpleEventControl}
-     * 
+     *
      * @description
      * A {@link plat.controls.SimpleEventControl|SimpleEventControl} for the 'submit' event.
      */
@@ -1005,9 +1005,9 @@ module plat.controls {
          * @memberof plat.controls.Submit
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The event name.
          */
@@ -1018,11 +1018,11 @@ module plat.controls {
          * @memberof plat.controls.SimpleEventControl
          * @kind function
          * @access protected
-         * 
+         *
          * @description
-         * Prevents the default submit action unless 
+         * Prevents the default submit action unless
          * the "action" attribute is present.
-         * 
+         *
          * @param {Event} ev The event object.
          */
         protected _onEvent(ev: Event): void {
@@ -1038,12 +1038,12 @@ module plat.controls {
      * @name React
      * @memberof plat.controls
      * @kind class
-     * 
+     *
      * @extends {plat.controls.SimpleEventControl}
-     * 
+     *
      * @description
-     * A {@link plat.controls.SimpleEventControl|SimpleEventControl} for the 'input' event. If 
-     * 'input' is not an event, it will simulate an 'input' using other events like 'keydown', 
+     * A {@link plat.controls.SimpleEventControl|SimpleEventControl} for the 'input' event. If
+     * 'input' is not an event, it will simulate an 'input' using other events like 'keydown',
      * 'cut', 'paste', etc. Also fires on the 'change' event.
      */
     export class React extends SimpleEventControl {
@@ -1057,9 +1057,9 @@ module plat.controls {
          * @kind property
          * @access protected
          * @static
-         * 
+         *
          * @type {plat.Compat}
-         * 
+         *
          * @description
          * Reference to the {@link plat.Compat|Compat} injectable.
          */
@@ -1070,9 +1070,9 @@ module plat.controls {
          * @memberof plat.controls.React
          * @kind property
          * @access public
-         * 
+         *
          * @type {string}
-         * 
+         *
          * @description
          * The event name.
          */
@@ -1083,14 +1083,14 @@ module plat.controls {
          * @memberof plat.controls.React
          * @kind function
          * @access protected
-         * 
+         *
          * @description
          * Adds any and all necessary event listeners.
-         * 
+         *
          * @returns {void}
          */
         protected _addEventListeners(): void {
-            var element = this.element,
+            let element = this.element,
                 _compat = this._compat,
                 composing = false,
                 input = 'input',
@@ -1129,7 +1129,7 @@ module plat.controls {
             }
 
             this.addEventListener(element, 'keydown',(ev: KeyboardEvent): void => {
-                var key = ev.keyCode,
+                let key = ev.keyCode,
                     codes = KeyCodes;
 
                 if (key === codes.lwk ||

@@ -285,7 +285,7 @@
          */
         navigate(view: any, options?: INavigateOptions): async.IThenable<void> {
             options = isObject(options) ? options : {};
-            var url: string;
+            let url: string;
 
             return this.finishNavigating().then((): async.IThenable<void> => {
                 if (options.isUrl) {
@@ -295,7 +295,7 @@
                 }
 
                 if (!isString(url)) {
-                    var error = new Error('Cannot serialize url from input parameters, check your view reference.');
+                    let error = new Error('Cannot serialize url from input parameters, check your view reference.');
                     this._log.error(error);
                 }
 
@@ -315,7 +315,7 @@
          * @returns {plat.async.IThenable<void>} A promise that resolves when the navigation has finished.
          */
         finishNavigating(): async.IThenable<void> {
-            var router = Navigator._root._router;
+            let router = Navigator._root._router;
 
             if (router.navigating) {
                 return router.finishNavigating.catch(noop);
@@ -338,7 +338,7 @@
         goBack(options?: IBackNavigateOptions): async.IThenable<void> {
             options = isObject(options) ? options : {};
 
-            var length = Number(options.length);
+            let length = Number(options.length);
             if (!isNumber(length)) {
                 length = 1;
             }
@@ -447,7 +447,7 @@
                 return;
             }
 
-            var EventManager = this._EventManager,
+            let EventManager = this._EventManager,
                 previousUrl: string,
                 headControl: ui.controls.Head = acquire(__Head),
                 headExists = isObject(headControl) && isFunction(headControl.navigated),
@@ -472,7 +472,7 @@
             // Protect against accidentally calling this method twice.
             EventManager.dispose(this.uid);
             EventManager.on(this.uid, __backButton,(): void => {
-                var ev = EventManager.dispatch(__backButtonPressed, this, EventManager.DIRECT);
+                let ev = EventManager.dispatch(__backButtonPressed, this, EventManager.DIRECT);
                 if (ev.defaultPrevented) {
                     return;
                 }

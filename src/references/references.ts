@@ -2,7 +2,7 @@
 /*
  * Injectables
  */
-var __prefix = '$',
+const __prefix = '$',
     __CONTEXT = 'context',
     __AppStatic = __prefix + 'AppStatic',
     __App = __prefix + 'App',

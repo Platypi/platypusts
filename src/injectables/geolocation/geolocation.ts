@@ -13,7 +13,7 @@ module plat {
 
         /**
          * Attempts to acquire position information of the device.
-         * 
+         *
          * @param positionOptions Optional GeolocationPositionOptions for configuring the acquisition.
          * @returns {async.IThenable<GeolocationPosition, GeolocationPositionError>} A promise,
          * resolving when the position is found, and rejecting in the event of a position error.
@@ -28,11 +28,11 @@ module plat {
         /**
          * An asynchronous operation for receiving notifications when a device location changes. Cannot return
          * a promise because the callbacks may be called multiple times.
-         * 
+         *
          * @param updateCallback A method that receives GeolocationPosition updates from the geolocation service.
          * @param errorCallback A method that receives GeolocationPositionError updates from the geolocation service.
          * @param positionOptions Optional GeolocationPositionOptions for configuring the acquisition.
-         * 
+         *
          * @returns {IRemoveListener} A method for removing the watch listener when the app wants to stop listening for position updates.
          */
         watchPosition(updateCallback: (position: GeolocationPosition) => void,
@@ -44,7 +44,7 @@ module plat {
                 errorCallback = null;
             }
 
-            var timeoutId = navigator.geolocation.watchPosition(updateCallback, errorCallback, positionOptions);
+            let timeoutId = navigator.geolocation.watchPosition(updateCallback, errorCallback, positionOptions);
 
             return (): void => {
                 navigator.geolocation.clearWatch(timeoutId);
@@ -61,7 +61,7 @@ module plat {
      */
     export interface GeolocationPosition extends Position {
         /**
-         * Contains the GeolocationPositionCoordinates for the 
+         * Contains the GeolocationPositionCoordinates for the
          * position.
          */
         coordinates: GeolocationPositionCoordinates;
@@ -74,12 +74,12 @@ module plat {
     }
 
     /**
-     * Wrapper interface for the PositionError interface, adding documentation 
+     * Wrapper interface for the PositionError interface, adding documentation
      * to the members.
      */
     export interface GeolocationPositionError extends PositionError, Error {
         /**
-         * Returns the error code indicating whether the position is 
+         * Returns the error code indicating whether the position is
          * unavailable, permission was denied, or a timeout occurred.
          */
         code: number;
@@ -90,7 +90,7 @@ module plat {
         message: string;
 
         /**
-         * The position acquisition failed because the position of the 
+         * The position acquisition failed because the position of the
          * device could not be found.
          * value = 2;
          */
@@ -104,7 +104,7 @@ module plat {
         PERMISSION_DENIED: number;
 
         /**
-         * The position acquisition failed because the timeout specified 
+         * The position acquisition failed because the timeout specified
          * in the position options was reached before the position could
          * be found.
          * value = 3;
@@ -113,7 +113,7 @@ module plat {
     }
 
     /**
-     * Describes an object that stores coordinate information for a 
+     * Describes an object that stores coordinate information for a
      * geolocation position.
      */
     export interface GeolocationPositionCoordinates extends Coordinates {
@@ -128,8 +128,8 @@ module plat {
         longitude: number;
 
         /**
-         * Denotes the height of position in meters. Can be 
-         * null, indicating the device does not provide altitude 
+         * Denotes the height of position in meters. Can be
+         * null, indicating the device does not provide altitude
          * information.
          */
         altitude: number;
@@ -148,7 +148,7 @@ module plat {
         /**
          * Denotes the direction in which the device is travelling in degrees.
          * Range is from 0 (North) to 360. If the device cannot provide heading
-         * information, this value is null. If the device is not in motion, this 
+         * information, this value is null. If the device is not in motion, this
          * value is NaN.
          */
         heading: number;
@@ -173,8 +173,8 @@ module plat {
         enableHighAccuracy?: boolean;
 
         /**
-         * Specifies the time (in milliseconds) alotted from when a geolocation 
-         * acquisition operation starts to when the value is returned. If it takes 
+         * Specifies the time (in milliseconds) alotted from when a geolocation
+         * acquisition operation starts to when the value is returned. If it takes
          * longer than the timeout, an error will be thrown. Defaults to 0, meaning
          * there is no timeout.
          */
