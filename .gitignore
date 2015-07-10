@@ -165,6 +165,7 @@ typings
 tscommand*
 
 !gruntfile.js
+!karma.conf.js
 !*.less
 !*.ts
 !build/*.js
