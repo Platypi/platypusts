@@ -1,14 +1,14 @@
 module plat.async {
     'use strict';
-    declare let process: any;
     let __promiseQueue: Array<any> = [],
         browserGlobal: any = (typeof window !== 'undefined') ? window : {},
         BrowserMutationObserver = browserGlobal.MutationObserver || browserGlobal.WebKitMutationObserver,
-        proc: any = process,
         scheduleFlush: () => void;
 
+    var process: any = process;
+
     // decide what async method to use to triggering processing of queued callbacks:
-    if (typeof proc !== 'undefined' && {}.toString.call(proc) === '[object process]') {
+    if (typeof process !== 'undefined' && {}.toString.call(process) === '[object process]') {
         scheduleFlush = useNextTick();
     } else if (BrowserMutationObserver) {
         scheduleFlush = useMutationObserver();
@@ -958,11 +958,9 @@ module plat.async {
         };
     }
 
-    declare let global: any;
-
     function useSetTimeout(): () => void {
-        let glob: any = global,
-            local = (typeof glob !== 'undefined') ? glob : this;
+        var global: any = global;
+        let local = (typeof global !== 'undefined') ? global : this;
 
         return (): void => {
             local.setTimeout(flush, 1);

@@ -358,7 +358,7 @@
         }
 
         /**
-         * @name _trimLeadingSlash
+         * @name _addLeadingSlash
          * @memberof plat.routing.RouteRecognizer
          * @kind function
          * @access protected

@@ -407,7 +407,13 @@
             return new this._Promise<void>((resolve, reject): void => {
                 this._resolveNavigate = resolve;
                 this._rejectNavigate = reject;
-                this._browser.url(url, replace);
+
+                let current = this._browser.url(),
+                    next = this._browser.url(url, replace);
+
+                if(current === next) {
+                    this._resolveNavigate();
+                }
             });
         }
 

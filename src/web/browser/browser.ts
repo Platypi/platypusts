@@ -284,7 +284,7 @@ module plat.web {
         url(url?: string, replace?: boolean): string {
             let location = this._location;
 
-            if (isString(url) && this.__lastUrl !== url) {
+            if (isString(url) && !this._isLastUrl(url)) {
                 if (!replace && isArray(this._stack)) {
                     this._stack.push(location.href);
                 }
@@ -403,98 +403,6 @@ module plat.web {
         }
 
         /**
-         * @name _urlChanged
-         * @memberof plat.web.Browser
-         * @kind function
-         * @access public
-         *
-         * @description
-         * The event to fire in the case of a URL change. It kicks
-         * off a 'urlChanged' direct event notification.
-         *
-         * @param url The URL to verify whether or not it's cross domain.
-         *
-         * @returns {void}
-         */
-        protected _urlChanged(): void {
-            if (this.__initializing) {
-                return;
-            }
-
-            this.__currentUrl = null;
-            let url = this.url(),
-                $config = Browser.config;
-
-            if (this.__lastUrl === url ||
-                ($config.routingType === $config.STATE &&
-                url.indexOf(this.__lastUrl + '#') > -1)) {
-                return;
-            }
-
-            this.__lastUrl = url;
-
-            let $manager = this._EventManager;
-            $manager.dispatch(__urlChanged,
-                this,
-                $manager.DIRECT,
-                [this.urlUtils()]);
-        }
-
-        /**
-         * @name _setUrl
-         * @memberof plat.web.Browser
-         * @kind function
-         * @access public
-         *
-         * @description
-         * Checks for the existence of pushState and
-         * sets the browser URL accordingly.
-         *
-         * @param {string} url The URL to set.
-         * @param {boolean} replace? Whether or not to replace the
-         * current URL in the history.
-         *
-         * @returns {void}
-         */
-        protected _setUrl(url: string, replace?: boolean): void {
-            url = this.formatUrl(url);
-
-            let utils = this.urlUtils(url),
-                baseUrl = Browser.config.baseUrl,
-                _history = this._history,
-                _location = this._location;
-
-            if (utils.href.indexOf(baseUrl) === -1) {
-                _location.href = url;
-                return;
-            }
-
-            // make sure URL is absolute
-            if (!this._regex.fullUrlRegex.test(url) && url[0] !== '/') {
-                url = baseUrl + url;
-            }
-
-            if (this._compat.pushState) {
-                if (replace) {
-                    _history.replaceState(null, '', url);
-                } else {
-                    _history.pushState(null, '', url);
-                }
-
-                if (!this.__initializing) {
-                    this._urlChanged();
-                }
-            } else {
-                this.__currentUrl = url;
-                if (replace) {
-                    _location.replace(url);
-                } else {
-                    _location.href = url;
-                }
-            }
-        }
-
-        /**
          * @name formatUrl
          * @memberof plat.web.Browser
          * @kind function
@@ -546,6 +454,142 @@ module plat.web {
             }
 
             return url;
+        }
+
+        /**
+         * @name _urlChanged
+         * @memberof plat.web.Browser
+         * @kind function
+         * @access protected
+         *
+         * @description
+         * The event to fire in the case of a URL change. It kicks
+         * off a 'urlChanged' direct event notification.
+         *
+         * @param url The URL to verify whether or not it's cross domain.
+         *
+         * @returns {void}
+         */
+        protected _urlChanged(): void {
+            if (this.__initializing) {
+                return;
+            }
+
+            this.__currentUrl = null;
+            let url = this.url(),
+                $config = Browser.config;
+
+            if (this.__lastUrl === url ||
+                ($config.routingType === $config.STATE &&
+                url.indexOf(this.__lastUrl + '#') > -1)) {
+                return;
+            }
+
+            this.__lastUrl = this._trimSlashes(this.urlUtils().href);
+
+            let $manager = this._EventManager;
+            $manager.dispatch(__urlChanged,
+                this,
+                $manager.DIRECT,
+                [this.urlUtils()]);
+        }
+
+        /**
+         * @name _setUrl
+         * @memberof plat.web.Browser
+         * @kind function
+         * @access protected
+         *
+         * @description
+         * Checks for the existence of pushState and
+         * sets the browser URL accordingly.
+         *
+         * @param {string} url The URL to set.
+         * @param {boolean} replace? Whether or not to replace the
+         * current URL in the history.
+         *
+         * @returns {void}
+         */
+        protected _setUrl(url: string, replace?: boolean): void {
+            url = this.formatUrl(url);
+
+            let utils = this.urlUtils(url),
+                baseUrl = Browser.config.baseUrl,
+                _history = this._history,
+                _location = this._location;
+
+            if (utils.href.indexOf(baseUrl) === -1) {
+                _location.href = url;
+                return;
+            }
+
+            // make sure URL is absolute
+            if (!this._regex.fullUrlRegex.test(url) && url[0] !== '/') {
+                url = baseUrl + url;
+            }
+
+            if (this._compat.pushState) {
+                if (replace) {
+                    _history.replaceState(null, '', url);
+                } else {
+                    _history.pushState(null, '', url);
+                }
+
+                if (!this.__initializing) {
+                    this._urlChanged();
+                }
+            } else {
+                this.__currentUrl = url;
+                if (replace) {
+                    _location.replace(url);
+                } else {
+                    _location.href = url;
+                }
+            }
+        }
+
+        /**
+         * @name _isLastUrl
+         * @memberof plat.web.Browser
+         * @kind function
+         * @access protected
+         *
+         * @description
+         * Determines if the url is equal to the last url
+         *
+         * @param {string} url The URL to match
+         *
+         * @returns {boolean} Whether or not the url is the last url.
+         */
+        protected _isLastUrl(url: string): boolean {
+            var last = this.__lastUrl;
+
+            if(isString(url)) {
+                url = this._trimSlashes(this.urlUtils(url).href);
+            }
+
+            return url === last;
+        }
+
+        /**
+         * @name _trimSlashes
+         * @memberof plat.web.Browser
+         * @kind function
+         * @access protected
+         *
+         * @description
+         * Trims trailing slashes from a url.
+         *
+         * @param {string} url The URL to trim
+         *
+         * @returns {string} The trimmed url
+         */
+        protected _trimSlashes(url: string): string {
+            if(!isString(url) || url[url.length - 1] !== '/') {
+                return url;
+            }
+
+            return url.slice(0, -1);
         }
     }
 

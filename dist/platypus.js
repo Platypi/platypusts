@@ -6,7 +6,7 @@ var __extends = this.__extends || function (d, b) {
 };
 /* tslint:disable */
 /**
- * PlatypusTS v0.13.14 (https://platypi.io)
+ * PlatypusTS v0.13.15 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
@@ -3484,7 +3484,7 @@ var plat;
              */
             Browser.prototype.url = function (url, replace) {
                 var location = this._location;
-                if (isString(url) && this.__lastUrl !== url) {
+                if (isString(url) && !this._isLastUrl(url)) {
                     if (!replace && isArray(this._stack)) {
                         this._stack.push(location.href);
                     }
@@ -3548,6 +3548,38 @@ var plat;
                     urlUtils.port !== locationUtils.port;
             };
             /**
+             * Formats the URL in the case of HASH routing.
+             * @param url The URL to format.
+             */
+            Browser.prototype.formatUrl = function (url) {
+                var config = Browser.config, baseUrl = config.baseUrl, isLocal = !this._regex.fullUrlRegex.test(url) || url.indexOf(baseUrl) > -1;
+                if (!isString(url)) {
+                    return '';
+                }
+                if (url === baseUrl) {
+                    return url;
+                }
+                if (url[0] === '/') {
+                    url = url.slice(1);
+                }
+                if (isLocal && config.routingType === config.HASH) {
+                    var hasProtocol = url.indexOf(this.urlUtils().protocol) !== -1, prefix = config.hashPrefix || '', append = '#' + prefix, hashRegex = new RegExp(append + '|#/');
+                    if (url[url.length - 1] !== '/' && url.indexOf('?') === -1) {
+                        url += '/';
+                    }
+                    if (hasProtocol && !hashRegex.test(url)) {
+                        url = url + append + '/';
+                    }
+                    else if (!hashRegex.test(url)) {
+                        url = append + ((url[0] !== '/') ? '/' : '') + url;
+                    }
+                }
+                if (isLocal && url.indexOf(baseUrl) === -1) {
+                    url = baseUrl + url;
+                }
+                return url;
+            };
+            /**
              * The event to fire in the case of a URL change. It kicks
              * off a 'urlChanged' direct event notification.
              * @param url The URL to verify whether or not it's cross domain.
@@ -3563,7 +3595,7 @@ var plat;
                         url.indexOf(this.__lastUrl + '#') > -1)) {
                     return;
                 }
-                this.__lastUrl = url;
+                this.__lastUrl = this._trimSlashes(this.urlUtils().href);
                 var $manager = this._EventManager;
                 $manager.dispatch(__urlChanged, this, $manager.DIRECT, [this.urlUtils()]);
             };
@@ -3607,36 +3639,25 @@ var plat;
                 }
             };
             /**
-             * Formats the URL in the case of HASH routing.
-             * @param url The URL to format.
+             * Determines if the url is equal to the last url
+             * @param {string} url The URL to match
              */
-            Browser.prototype.formatUrl = function (url) {
-                var config = Browser.config, baseUrl = config.baseUrl, isLocal = !this._regex.fullUrlRegex.test(url) || url.indexOf(baseUrl) > -1;
-                if (!isString(url)) {
-                    return '';
+            Browser.prototype._isLastUrl = function (url) {
+                var last = this.__lastUrl;
+                if (isString(url)) {
+                    url = this._trimSlashes(this.urlUtils(url).href);
                 }
-                if (url === baseUrl) {
+                return url === last;
+            };
+            /**
+             * Trims trailing slashes from a url.
+             * @param {string} url The URL to trim
+             */
+            Browser.prototype._trimSlashes = function (url) {
+                if (!isString(url) || url[url.length - 1] !== '/') {
                     return url;
                 }
-                if (url[0] === '/') {
-                    url = url.slice(1);
-                }
-                if (isLocal && config.routingType === config.HASH) {
-                    var hasProtocol = url.indexOf(this.urlUtils().protocol) !== -1, prefix = config.hashPrefix || '', append = '#' + prefix, hashRegex = new RegExp(append + '|#/');
-                    if (url[url.length - 1] !== '/' && url.indexOf('?') === -1) {
-                        url += '/';
-                    }
-                    if (hasProtocol && !hashRegex.test(url)) {
-                        url = url + append + '/';
-                    }
-                    else if (!hashRegex.test(url)) {
-                        url = append + ((url[0] !== '/') ? '/' : '') + url;
-                    }
-                }
-                if (isLocal && url.indexOf(baseUrl) === -1) {
-                    url = baseUrl + url;
-                }
-                return url;
+                return url.slice(0, -1);
             };
             Browser._inject = {
                 _EventManager: __EventManagerStatic,
@@ -3784,9 +3805,10 @@ var plat;
      */
     var async;
     (function (async) {
-        var __promiseQueue = [], browserGlobal = (typeof window !== 'undefined') ? window : {}, BrowserMutationObserver = browserGlobal.MutationObserver || browserGlobal.WebKitMutationObserver, proc = process, scheduleFlush;
+        var __promiseQueue = [], browserGlobal = (typeof window !== 'undefined') ? window : {}, BrowserMutationObserver = browserGlobal.MutationObserver || browserGlobal.WebKitMutationObserver, scheduleFlush;
+        var process = process;
         // decide what async method to use to triggering processing of queued callbacks: 
-        if (typeof proc !== 'undefined' && {}.toString.call(proc) === '[object process]') {
+        if (typeof process !== 'undefined' && {}.toString.call(process) === '[object process]') {
             scheduleFlush = useNextTick();
         }
         else if (BrowserMutationObserver) {
@@ -4123,7 +4145,8 @@ var plat;
             };
         }
         function useSetTimeout() {
-            var glob = global, local = (typeof glob !== 'undefined') ? glob : this;
+            var global = global;
+            var local = (typeof global !== 'undefined') ? global : this;
             return function () {
                 local.setTimeout(flush, 1);
             };
@@ -15365,7 +15388,10 @@ var plat;
                 return new this._Promise(function (resolve, reject) {
                     _this._resolveNavigate = resolve;
                     _this._rejectNavigate = reject;
-                    _this._browser.url(url, replace);
+                    var current = _this._browser.url(), next = _this._browser.url(url, replace);
+                    if (current === next) {
+                        _this._resolveNavigate();
+                    }
                 });
             };
             /**
