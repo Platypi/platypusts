@@ -6,7 +6,7 @@ var __extends = this.__extends || function (d, b) {
 };
 /* tslint:disable */
 /**
- * PlatypusTS v0.13.15 (https://platypi.io)
+ * PlatypusTS v0.13.16 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
@@ -3645,6 +3645,9 @@ var plat;
             Browser.prototype._isLastUrl = function (url) {
                 var last = this.__lastUrl;
                 if (isString(url)) {
+                    if (isEmpty(url)) {
+                        url = '/';
+                    }
                     url = this._trimSlashes(this.urlUtils(url).href);
                 }
                 return url === last;
