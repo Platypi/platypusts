@@ -1685,6 +1685,11 @@ declare module plat {
               */
             isCrossDomain(url: string): boolean;
             /**
+              * Formats the URL in the case of HASH routing.
+              * @param url The URL to format.
+              */
+            formatUrl(url: string): string;
+            /**
               * The event to fire in the case of a URL change. It kicks
               * off a 'urlChanged' direct event notification.
               * @param url The URL to verify whether or not it's cross domain.
@@ -1699,10 +1704,15 @@ declare module plat {
               */
             protected _setUrl(url: string, replace?: boolean): void;
             /**
-              * Formats the URL in the case of HASH routing.
-              * @param url The URL to format.
+              * Determines if the url is equal to the last url
+              * @param {string} url The URL to match
               */
-            formatUrl(url: string): string;
+            protected _isLastUrl(url: string): boolean;
+            /**
+              * Trims trailing slashes from a url.
+              * @param {string} url The URL to trim
+              */
+            protected _trimSlashes(url: string): string;
         }
         /**
           */
@@ -11240,7 +11250,7 @@ declare module plat {
         /**
           * A mapping of all keys to their equivalent keyCode.
           */
-        const KeyCodes: {
+        var KeyCodes: {
             '0': number;
             '1': number;
             '2': number;

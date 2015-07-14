@@ -12,7 +12,7 @@ module plat.controls {
      * @description
      * A mapping of all keys to their equivalent keyCode.
      */
-    export const KeyCodes = {
+    export var KeyCodes = {
         'backspace': 8,
         'tab': 9,
         'enter': 13,
