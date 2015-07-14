@@ -3644,9 +3644,15 @@ var plat;
              */
             Browser.prototype._isLastUrl = function (url) {
                 var last = this.__lastUrl;
+                console.log(url);
                 if (isString(url)) {
+                    if (isEmpty(url)) {
+                        url = '/';
+                    }
                     url = this._trimSlashes(this.urlUtils(url).href);
                 }
+                console.log(url);
+                console.log(last);
                 return url === last;
             };
             /**

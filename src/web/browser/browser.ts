@@ -565,6 +565,10 @@ module plat.web {
             var last = this.__lastUrl;
 
             if(isString(url)) {
+                if(isEmpty(url)) {
+                    url = '/';
+                }
+
                 url = this._trimSlashes(this.urlUtils(url).href);
             }
 
