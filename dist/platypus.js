@@ -6,7 +6,7 @@ var __extends = this.__extends || function (d, b) {
 };
 /* tslint:disable */
 /**
- * PlatypusTS v0.13.16 (https://platypi.io)
+ * PlatypusTS v0.13.17 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
@@ -12673,8 +12673,8 @@ var plat;
                     }
                     var meta = __Meta, og = __OpenGraph, twitter = __Twitter, ogElement, twitterElement;
                     forEach(function (image) {
-                        ogElement = _this._createElement(meta, og + __MetaImage);
-                        twitterElement = _this._createElement(meta, twitter + __MetaImage);
+                        ogElement = _this._createElement(meta, og + __MetaImage, true);
+                        twitterElement = _this._createElement(meta, twitter + __MetaImage, true);
                         image = _this._browser.urlUtils(image).href;
                         _this._setContent([
                             ogElement,
@@ -12693,7 +12693,7 @@ var plat;
                     }
                     var meta = __Meta, og = __OpenGraph, metaVideo = __MetaVideo, _browser = this._browser, ogElement;
                     forEach(function (video) {
-                        ogElement = _this._createElement(meta, og + metaVideo);
+                        ogElement = _this._createElement(meta, og + metaVideo, true);
                         video = _browser.urlUtils(video).href;
                         _this._setContent([
                             ogElement
@@ -12756,16 +12756,17 @@ var plat;
                  * the tag/name combination.
                  * @param {string} tag The tag name for the element.
                  * @param {string} name? The name corresponding to the type of meta/link tag.
+                 * @param {boolean} multiple? Whether or not there can be multiple of this tag/name in the dom
                  */
-                Head.prototype._createElement = function (tag, name) {
+                Head.prototype._createElement = function (tag, name, multiple) {
                     var el, hasName = isString(name), attr = (hasName && (name.indexOf(__OpenGraph) === 0 || name.indexOf(__Article) === 0)) ? __MetaProperty : __MetaName, element = this.element;
                     if (tag === __MetaLink) {
                         attr = __Rel;
                     }
-                    if (hasName) {
+                    if (!multiple && hasName) {
                         el = element.querySelector(tag + '[' + attr + '="' + name + '"]');
                     }
-                    else {
+                    else if (!multiple) {
                         el = element.querySelector(tag);
                     }
                     if (!isNode(el)) {

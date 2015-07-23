@@ -537,8 +537,8 @@
                 twitterElement: HTMLMetaElement;
 
             forEach((image: string): void => {
-                ogElement = this._createElement<HTMLMetaElement>(meta, og + __MetaImage);
-                twitterElement = this._createElement<HTMLMetaElement>(meta, twitter + __MetaImage);
+                ogElement = this._createElement<HTMLMetaElement>(meta, og + __MetaImage, true);
+                twitterElement = this._createElement<HTMLMetaElement>(meta, twitter + __MetaImage, true);
 
                 image = this._browser.urlUtils(image).href;
 
@@ -574,7 +574,7 @@
                 ogElement: HTMLMetaElement;
 
             forEach((video: string): void => {
-                ogElement = this._createElement<HTMLMetaElement>(meta, og + metaVideo);
+                ogElement = this._createElement<HTMLMetaElement>(meta, og + metaVideo, true);
                 video = _browser.urlUtils(video).href;
 
                 this._setContent([
@@ -695,10 +695,11 @@
          *
          * @param {string} tag The tag name for the element.
          * @param {string} name? The name corresponding to the type of meta/link tag.
+         * @param {boolean} multiple? Whether or not there can be multiple of this tag/name in the dom
          *
          * @returns {T} The created element.
          */
-        protected _createElement<T extends HTMLElement>(tag: string, name?: string): T {
+        protected _createElement<T extends HTMLElement>(tag: string, name?: string, multiple?: boolean): T {
             let el: T,
                 hasName = isString(name),
                 attr: string = (hasName && (name.indexOf(__OpenGraph) === 0 || name.indexOf(__Article) === 0)) ? __MetaProperty : __MetaName,
@@ -708,9 +709,9 @@
                 attr = __Rel;
             }
 
-            if (hasName) {
+            if (!multiple && hasName) {
                 el = <T>element.querySelector(tag + '[' + attr + '="' + name + '"]');
-            } else {
+            } else if(!multiple) {
                 el = <T>element.querySelector(tag);
             }
 
