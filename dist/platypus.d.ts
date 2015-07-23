@@ -1,5 +1,5 @@
 /**
-  * PlatypusTS v0.13.16 (https://platypi.io)
+  * PlatypusTS v0.13.17 (https://platypi.io)
   * Copyright 2015 Platypi, LLC. All rights reserved.
   *
   * PlatypusTS is licensed under the MIT license found at
@@ -8473,8 +8473,9 @@ declare module plat {
                   * the tag/name combination.
                   * @param {string} tag The tag name for the element.
                   * @param {string} name? The name corresponding to the type of meta/link tag.
+                  * @param {boolean} multiple? Whether or not there can be multiple of this tag/name in the dom
                   */
-                protected _createElement<T extends HTMLElement>(tag: string, name?: string): T;
+                protected _createElement<T extends HTMLElement>(tag: string, name?: string, multiple?: boolean): T;
                 /**
                   * Removes all the unnecessary elements from the <head /> to avoid having
                   * incorrect tags on the page.
