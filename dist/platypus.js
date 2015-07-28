@@ -6,7 +6,7 @@ var __extends = this.__extends || function (d, b) {
 };
 /* tslint:disable */
 /**
- * PlatypusTS v0.13.18 (https://platypi.io)
+ * PlatypusTS v0.13.19 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
@@ -18108,7 +18108,15 @@ var plat;
                     return;
                 }
                 requestAnimationFrameGlobal(function () {
-                    element.setAttribute(_this.property, expression);
+                    var property = _this.property, style = element.getAttribute(property);
+                    if (isString(style) && style.length > 0) {
+                        style = style.trim();
+                        style += (style[style.length - 1] !== ';' ? (';' + expression) : expression);
+                    }
+                    else {
+                        style = expression;
+                    }
+                    element.setAttribute(property, style);
                 });
             };
             return Style;

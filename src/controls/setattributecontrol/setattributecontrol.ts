@@ -501,7 +501,17 @@ module plat.controls {
             }
 
             requestAnimationFrameGlobal((): void => {
-                element.setAttribute(this.property, expression);
+                let property = this.property,
+                    style = element.getAttribute(property);
+
+                if (isString(style) && style.length > 0) {
+                    style = style.trim();
+                    style += (style[style.length - 1] !== ';' ? (';' + expression) : expression);
+                } else {
+                    style = expression;
+                }
+                
+                element.setAttribute(property, style);
             });
         }
     }
