@@ -1,5 +1,5 @@
 /**
-  * PlatypusTS v0.13.17 (https://platypi.io)
+  * PlatypusTS v0.13.18 (https://platypi.io)
   * Copyright 2015 Platypi, LLC. All rights reserved.
   *
   * PlatypusTS is licensed under the MIT license found at
@@ -6275,9 +6275,9 @@ declare module plat {
             private __isFocused(target);
             /**
               * Handles HTMLInputElements in WebKit based touch applications.
-              * @param {HTMLInputElement} target The event target.
+              * @param {Event} ev The touchend event.
               */
-            private __handleInput(target);
+            private __handleInput(ev);
             /**
               * Handles the phantom click in WebKit based touch applications.
               */
