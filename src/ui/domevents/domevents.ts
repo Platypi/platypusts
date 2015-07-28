@@ -1058,15 +1058,12 @@
                     } else if (this._inTouch === true) {
                         // handleInput must be called prior to preventClickFromTouch due to an
                         // order of operations issue / potential race condition
-                        this.__handleInput(<HTMLInputElement>ev.target);
-                        if (ev.cancelable === true) {
-                            ev.preventDefault();
-                        }
+                        this.__handleInput(ev);
                     } else {
-                        this.__preventClickFromTouch();
                         if (ev.cancelable === true) {
                             ev.preventDefault();
                         }
+                        this.__preventClickFromTouch();
                         return true;
                     }
 
@@ -2445,12 +2442,13 @@
          * @description
          * Handles HTMLInputElements in WebKit based touch applications.
          *
-         * @param {HTMLInputElement} target The event target.
+         * @param {Event} ev The touchend event.
          *
          * @returns {void}
          */
-        private __handleInput(target: HTMLInputElement): void {
-            let nodeName = target.nodeName,
+        private __handleInput(ev: Event): void {
+            let target = <HTMLInputElement>ev.target,
+                nodeName = target.nodeName,
                 focusedElement = this.__focusedElement || <HTMLInputElement>{};
 
             if (!isString(nodeName)) {
@@ -2545,6 +2543,10 @@
             }
 
             this.__focusedElement = null;
+
+            if (ev.cancelable === true) {
+                ev.preventDefault();
+            }
         }
 
         /**
@@ -2581,7 +2583,11 @@
                 if (isNull(touchDown) || this.__isFocused(touchDown.target)) {
                     return false;
                 }
-                this.__handleInput(<HTMLInputElement>touchDown.target);
+                this.__handleInput(<Event>{
+                    target: touchDown.target,
+                    cancelable: false,
+                    preventDefault: () => {}
+                });
                 return false;
             };
 

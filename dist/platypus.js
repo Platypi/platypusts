@@ -6,7 +6,7 @@ var __extends = this.__extends || function (d, b) {
 };
 /* tslint:disable */
 /**
- * PlatypusTS v0.13.17 (https://platypi.io)
+ * PlatypusTS v0.13.18 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
@@ -9206,16 +9206,13 @@ var plat;
                         else if (this._inTouch === true) {
                             // handleInput must be called prior to preventClickFromTouch due to an 
                             // order of operations issue / potential race condition 
-                            this.__handleInput(ev.target);
-                            if (ev.cancelable === true) {
-                                ev.preventDefault();
-                            }
+                            this.__handleInput(ev);
                         }
                         else {
-                            this.__preventClickFromTouch();
                             if (ev.cancelable === true) {
                                 ev.preventDefault();
                             }
+                            this.__preventClickFromTouch();
                             return true;
                         }
                         this.__preventClickFromTouch();
@@ -10034,11 +10031,11 @@ var plat;
             };
             /**
              * Handles HTMLInputElements in WebKit based touch applications.
-             * @param {HTMLInputElement} target The event target.
+             * @param {Event} ev The touchend event.
              */
-            DomEvents.prototype.__handleInput = function (target) {
+            DomEvents.prototype.__handleInput = function (ev) {
                 var _this = this;
-                var nodeName = target.nodeName, focusedElement = this.__focusedElement || {};
+                var target = ev.target, nodeName = target.nodeName, focusedElement = this.__focusedElement || {};
                 if (!isString(nodeName)) {
                     this.__focusedElement = null;
                     if (isFunction(focusedElement.blur)) {
@@ -10128,6 +10125,9 @@ var plat;
                         break;
                 }
                 this.__focusedElement = null;
+                if (ev.cancelable === true) {
+                    ev.preventDefault();
+                }
             };
             /**
              * Handles the phantom click in WebKit based touch applications.
@@ -10152,7 +10152,11 @@ var plat;
                     if (isNull(touchDown) || _this.__isFocused(touchDown.target)) {
                         return false;
                     }
-                    _this.__handleInput(touchDown.target);
+                    _this.__handleInput({
+                        target: touchDown.target,
+                        cancelable: false,
+                        preventDefault: function () { }
+                    });
                     return false;
                 };
                 postpone(function () {
