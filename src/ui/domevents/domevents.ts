@@ -1519,6 +1519,9 @@
         private __registerTypes(): void {
             this.__registerType(this._startEvents);
             this.__registerType(this._endEvents);
+
+            // dragstart will cause touchend to not fire
+            this._document.addEventListener('dragstart', this.__preventDefault, false);
         }
 
         /**
@@ -1539,6 +1542,8 @@
                 this.__unregisterType(this._moveEvents);
                 this.__detectingMove = false;
             }
+
+            this._document.removeEventListener('dragstart', this.__preventDefault, false);
         }
 
         /**
@@ -2678,6 +2683,7 @@
             return false;
         }
     }
+
     register.injectable(__DomEvents, DomEvents);
 
     /**
