@@ -2496,6 +2496,10 @@
                                 }
                                 remover();
                             }, false);
+
+                            if (this._androidVersion === -1 && ev.cancelable === true) {
+                                ev.preventDefault();
+                            }
                             return;
                     }
                     break;
@@ -2520,6 +2524,10 @@
                         }
                         remover();
                     }, false);
+
+                    if (this._androidVersion === -1 && ev.cancelable === true) {
+                        ev.preventDefault();
+                    }
                     return;
                 case 'select':
                     if (isFunction(focusedElement.blur)) {
