@@ -238,6 +238,19 @@ module plat.ui.controls {
         private __resolveFn: () => void;
 
         /**
+         * @name __rejectFn
+         * @memberof plat.ui.controls.ForEach
+         * @kind property
+         * @access private
+         *
+         * @type {() => void}
+         *
+         * @description
+         * The reject function for the itemsLoaded Promise.
+         */
+        private __rejectFn: () => void;
+
+        /**
          * @name constructor
          * @memberof plat.ui.controls.ForEach
          * @kind function
@@ -250,9 +263,10 @@ module plat.ui.controls {
          */
         constructor() {
             super();
-            this.itemsLoaded = new this._Promise<void>((resolve): void => {
+            this.itemsLoaded = new this._Promise<void>((resolve, reject): void => {
                 this.__resolveFn = resolve;
-            });
+                this.__rejectFn = reject;
+            }).catch(noop);
         }
 
         /**
@@ -356,7 +370,12 @@ module plat.ui.controls {
          * @returns {void}
          */
         dispose(): void {
-            this.__resolveFn = this._animationQueue = this._addQueue = null;
+            if (this.utils.isFunction(this.__rejectFn)) {
+                this.__rejectFn();
+                this.__resolveFn = this.__rejectFn = null;
+            }
+
+            this._animationQueue = this._addQueue = null;
         }
 
         /**
@@ -445,16 +464,16 @@ module plat.ui.controls {
 
                     if (isFunction(this.__resolveFn)) {
                         this.__resolveFn();
-                        this.__resolveFn = null;
+                        this.__resolveFn = this.__rejectFn = null;
                     }
                 }).catch((error: any): void => {
-                        postpone((): void => {
-                            if(isString(error)) {
-                                error = new Error(error);
-                            }
-                            this._log.error(error);
-                        });
+                    postpone((): void => {
+                        if (isString(error)) {
+                            error = new Error(error);
+                        }
+                        this._log.error(error);
                     });
+                });
             }
 
             return this.itemsLoaded;
