@@ -494,21 +494,21 @@
             return this._resolve(this.finishNavigating)
                 .catch(noop)
                 .then((): async.IThenable<void> => {
-                let routeInfo = _clone(this.currentRouteInfo, true);
-                return this.finishNavigating = this._canNavigateTo(routeInfo)
-                    .then((canNavigateTo): async.IThenable<void> => {
-                    if (!canNavigateTo) {
-                        return;
-                    }
-                    this.currentRouteInfo = undefined;
-                    return this._performNavigation(routeInfo);
-                }).then((): void => {
-                    this.navigating = false;
-                    this.currentRouteInfo = routeInfo;
-                },(): void => {
-                        this.navigating = false;
-                    });
-            });
+                    let routeInfo = _clone(this.currentRouteInfo, true);
+                    return this.finishNavigating = this._canNavigateTo(routeInfo)
+                        .then((canNavigateTo): async.IThenable<void> => {
+                            if (!canNavigateTo) {
+                                return;
+                            }
+                            this.currentRouteInfo = undefined;
+                            return this._performNavigation(routeInfo);
+                        }).then((): void => {
+                            this.navigating = false;
+                            this.currentRouteInfo = routeInfo;
+                        }, (): void => {
+                            this.navigating = false;
+                        });
+                });
         }
 
         /**
@@ -802,10 +802,11 @@
 
             let result: IRouteResult = this._recognizer.recognize(url),
                 routeInfo: IRouteInfo,
+                emptyResult = isEmpty(result),
                 pattern: string,
                 segment: string;
 
-            if (isEmpty(result)) {
+            if (emptyResult || this._isSameRoute(result[0])) {
                 result = this._childRecognizer.recognize(url);
 
                 if (isEmpty(result)) {
@@ -839,16 +840,17 @@
                 routeInfo.query = query;
                 pattern = routeInfo.delegate.pattern;
                 pattern = pattern.substr(0, pattern.length - __CHILD_ROUTE_LENGTH);
-                if (this._previousPattern === pattern) {
+
+                if (!emptyResult || this._previousPattern === pattern) {
                     // the pattern for this router is the same as the last pattern so
                     // only navigate child routers.
                     this.navigating = true;
                     return this.finishNavigating = this._navigateChildren(routeInfo)
                         .then((): void => {
-                        this._previousUrl = url;
-                        this._previousQuery = queryString;
-                        this.navigating = false;
-                    },(e: any): void => {
+                            this._previousUrl = url;
+                            this._previousQuery = queryString;
+                            this.navigating = false;
+                        }, (e: any): void => {
                             this.navigating = false;
                             throw e;
                         });
@@ -870,25 +872,25 @@
             let routeInfoCopy = this._nextRouteInfo = _clone(routeInfo, true);
             return this.finishNavigating = this._canNavigate(routeInfo)
                 .then((canNavigate: boolean): async.IThenable<void> => {
-                if (!canNavigate) {
+                    if (!canNavigate) {
+                        this.navigating = false;
+                        throw new Error('Not cleared to navigate');
+                    }
+
+                    this._previousUrl = url;
+                    this._previousQuery = queryString;
+
+                    return this._performNavigation(routeInfo);
+                }).then((): void => {
+                    this._previousPattern = pattern;
+                    this._previousSegment = segment;
+                    this.currentRouteInfo = routeInfoCopy;
                     this.navigating = false;
-                    throw new Error('Not cleared to navigate');
-                }
-
-                this._previousUrl = url;
-                this._previousQuery = queryString;
-
-                return this._performNavigation(routeInfo);
-            }).then((): void => {
-                this._previousPattern = pattern;
-                this._previousSegment = segment;
-                this.currentRouteInfo = routeInfoCopy;
-                this.navigating = false;
-            }, (e: any): void => {
-                this._previousSegment = previousSegment;
-                this.navigating = false;
-                throw e;
-            });
+                }, (e: any): void => {
+                    this._previousSegment = previousSegment;
+                    this.navigating = false;
+                    throw e;
+                });
         }
 
         /**
@@ -1167,8 +1169,8 @@
                 }, this._ports);
             })
                 .then((): async.IThenable<void> => {
-                return this._navigateChildren(info);
-            });
+                    return this._navigateChildren(info);
+                });
         }
 
         /**
@@ -1189,14 +1191,14 @@
                 return child._performNavigateFrom();
             }, this.children)
                 .then((): async.IThenable<Array<void>> => {
-                if (ignorePorts) {
-                    return;
-                }
+                    if (ignorePorts) {
+                        return;
+                    }
 
-                return mapAsync((port: ISupportRouteNavigation): async.IThenable<void> => {
-                    return port.navigateFrom();
-                }, this._ports);
-            }).then(noop);
+                    return mapAsync((port: ISupportRouteNavigation): async.IThenable<void> => {
+                        return port.navigateFrom();
+                    }, this._ports);
+                }).then(noop);
         }
 
         /**
@@ -1217,8 +1219,8 @@
 
             return this._canNavigateFrom(sameRoute)
                 .then((canNavigateFrom: boolean): async.IThenable<boolean> => {
-                return canNavigateFrom && this._canNavigateTo(info, sameRoute);
-            });
+                    return canNavigateFrom && this._canNavigateTo(info, sameRoute);
+                });
         }
 
         /**
@@ -1240,14 +1242,14 @@
             }, <Array<async.IThenable<boolean>>>[]))
                 .then(booleanReduce)
                 .then((canNavigateFrom: boolean): async.IThenable<Array<boolean>> => {
-                if (!canNavigateFrom || ignorePorts) {
-                    return <any>[canNavigateFrom];
-                }
+                    if (!canNavigateFrom || ignorePorts) {
+                        return <any>[canNavigateFrom];
+                    }
 
-                return mapAsync((port: ISupportRouteNavigation): async.IThenable<boolean> => {
-                    return port.canNavigateFrom();
-                }, this._ports);
-            }).then(booleanReduce);
+                    return mapAsync((port: ISupportRouteNavigation): async.IThenable<boolean> => {
+                        return port.canNavigateFrom();
+                    }, this._ports);
+                }).then(booleanReduce);
         }
 
         /**
@@ -1354,14 +1356,14 @@
             }, this._interceptors['*'])
                 .then(booleanReduce)
                 .then((canNavigate: boolean): async.IThenable<Array<boolean>> => {
-                if (!canNavigate) {
-                    return <any>[canNavigate];
-                }
+                    if (!canNavigate) {
+                        return <any>[canNavigate];
+                    }
 
-                return mapAsync((handler: (routeInfo: IRouteInfo) => any): async.IThenable<boolean> => {
-                    return resolve(handler(info));
-                }, this._interceptors[info.delegate.alias]);
-            })
+                    return mapAsync((handler: (routeInfo: IRouteInfo) => any): async.IThenable<boolean> => {
+                        return resolve(handler(info));
+                    }, this._interceptors[info.delegate.alias]);
+                })
                 .then(booleanReduce);
         }
 

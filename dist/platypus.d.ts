@@ -790,6 +790,11 @@ declare module plat {
           */
         isNumber(obj: any): boolean;
         /**
+          * Takes in anything and determines if it is a File.
+          * @param {any} obj Anything.
+          */
+        isFile(obj: any): boolean;
+        /**
           * Takes in anything and determines if it is a function.
           * @param {any} obj Anything.
           */
@@ -8115,6 +8120,10 @@ declare module plat {
                   */
                 private __resolveFn;
                 /**
+                  * The reject function for the itemsLoaded Promise.
+                  */
+                private __rejectFn;
+                /**
                   * The constructor for a ForEach. Creates the itemsLoaded promise.
                   */
                 constructor();
@@ -8606,6 +8615,10 @@ declare module plat {
                   * The function to resolve the itemsLoaded promise.
                   */
                 private __resolveFn;
+                /**
+                  * The reject function for the itemsLoaded Promise.
+                  */
+                private __rejectFn;
                 /**
                   * The constructor for a Select. Creates the itemsLoaded promise.
                   */

@@ -12,16 +12,16 @@ module app.viewcontrols {
         constructor(private Promise: plat.async.IPromise, router: plat.routing.Router) {
             super();
 
-            router.configure([
-                { pattern: '/one', view: One },
-                { pattern: '/two', view: Two },
-                { pattern: '/three', view: Three },
-                { pattern: '/four', view: Four }
-            ]);
+            // router.configure([
+            //     { pattern: '/one', view: One },
+            //     { pattern: '/two', view: Two },
+            //     { pattern: '/three', view: Three },
+            //     { pattern: '/four', view: Four }
+            // ]);
         }
 
         navigatedTo() {
-            
+
         }
 
         navigatingFrom() {
@@ -52,6 +52,6 @@ module app.viewcontrols {
 
     plat.register.viewControl('four', Four, [
         plat.async.IPromise,
-        plat.routing.Router
+        // plat.routing.Router
     ]);
 }

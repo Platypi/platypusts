@@ -172,7 +172,7 @@ module test.routing.router {
                 });
 
                 it('should generate urls', (done: Function) => {
-                    // a child router can only generate urls after the 
+                    // a child router can only generate urls after the
                     // child router has been navigated to
                     router.navigate('/posts/new').then(() => {
                         expect(router.generate('posts', {})).toBe('/posts');
