@@ -3,7 +3,7 @@
 module tests.observable.contextManager {
     var ContextManager = plat.acquire(plat.observable.IContextManagerStatic);
 
-    describe('ContextManager Tests', () => {
+    xdescribe('ContextManager Tests', () => {
         var control: plat.ui.TemplateControl,
             manager: plat.observable.ContextManager;
 
@@ -450,7 +450,7 @@ module tests.observable.contextManager {
                     'c',
                     'd'
                 ];
-            
+
             function listener(changes: Array<plat.observable.IArrayChanges<any>>) {
                 var ev = changes[0];
                 ++called;

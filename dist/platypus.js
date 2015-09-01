@@ -1,4 +1,4 @@
-var __extends = this.__extends || function (d, b) {
+var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
     __.prototype = b.prototype;
@@ -6,7 +6,7 @@ var __extends = this.__extends || function (d, b) {
 };
 /* tslint:disable */
 /**
- * PlatypusTS v0.13.21 (https://platypi.io)
+ * PlatypusTS v0.13.22 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
@@ -1875,6 +1875,13 @@ var plat;
          */
         Utils.prototype.isNumber = function (obj) {
             return isNumber(obj);
+        };
+        /**
+         * Takes in anything and determines if it is a File.
+         * @param {any} obj Anything.
+         */
+        Utils.prototype.isFile = function (obj) {
+            return isFile(obj);
         };
         /**
          * Takes in anything and determines if it is a function.
@@ -11963,9 +11970,10 @@ var plat;
                      * Whether or not the Array listener has been set.
                      */
                     this.__listenerSet = false;
-                    this.itemsLoaded = new this._Promise(function (resolve) {
+                    this.itemsLoaded = new this._Promise(function (resolve, reject) {
                         _this.__resolveFn = resolve;
-                    });
+                        _this.__rejectFn = reject;
+                    }).catch(noop);
                 }
                 /**
                  * Creates a bindable template with the control element's childNodes (innerHTML).
@@ -12022,7 +12030,11 @@ var plat;
                  * Removes any potentially held memory.
                  */
                 ForEach.prototype.dispose = function () {
-                    this.__resolveFn = this._animationQueue = this._addQueue = null;
+                    if (this.utils.isFunction(this.__rejectFn)) {
+                        this.__rejectFn();
+                        this.__resolveFn = this.__rejectFn = null;
+                    }
+                    this._animationQueue = this._addQueue = null;
                 };
                 /**
                  * Sets the alias tokens to use for all the items in the ForEach context Array.
@@ -12078,7 +12090,7 @@ var plat;
                             _this._updateResource(initialIndex - 1);
                             if (isFunction(_this.__resolveFn)) {
                                 _this.__resolveFn();
-                                _this.__resolveFn = null;
+                                _this.__resolveFn = _this.__rejectFn = null;
                             }
                         }).catch(function (error) {
                             postpone(function () {
@@ -12932,9 +12944,10 @@ var plat;
                      * optgroups.
                      */
                     this.groups = {};
-                    this.itemsLoaded = new this._Promise(function (resolve) {
+                    this.itemsLoaded = new this._Promise(function (resolve, reject) {
                         _this.__resolveFn = resolve;
-                    });
+                        _this.__rejectFn = reject;
+                    }).catch(noop);
                 }
                 /**
                  * Creates the bindable option template and grouping
@@ -13011,7 +13024,10 @@ var plat;
                  */
                 Select.prototype.dispose = function () {
                     _super.prototype.dispose.call(this);
-                    this.__resolveFn = null;
+                    if (this.utils.isFunction(this.__rejectFn)) {
+                        this.__rejectFn();
+                        this.__resolveFn = this.__rejectFn = null;
+                    }
                     this._defaultOption = null;
                 };
                 /**
@@ -13188,18 +13204,16 @@ var plat;
                         this.itemsLoaded = this._Promise.all(promises).then(function () {
                             if (isFunction(_this.__resolveFn)) {
                                 _this.__resolveFn();
-                                _this.__resolveFn = null;
+                                _this.__resolveFn = _this.__rejectFn = null;
                             }
                             return;
-                        });
-                    }
-                    else {
-                        if (isFunction(this.__resolveFn)) {
-                            this.__resolveFn();
-                            this.__resolveFn = null;
-                        }
-                        this.itemsLoaded = new this._Promise(function (resolve) {
-                            _this.__resolveFn = resolve;
+                        }).catch(function (error) {
+                            postpone(function () {
+                                if (isString(error)) {
+                                    error = new Error(error);
+                                }
+                                _this._log.error(error);
+                            });
                         });
                     }
                     return this.itemsLoaded;
@@ -16410,8 +16424,8 @@ var plat;
                     }
                     return resolve();
                 }
-                var result = this._recognizer.recognize(url), routeInfo, pattern, segment;
-                if (isEmpty(result)) {
+                var result = this._recognizer.recognize(url), routeInfo, emptyResult = isEmpty(result), pattern, segment;
+                if (emptyResult || this._isSameRoute(result[0])) {
                     result = this._childRecognizer.recognize(url);
                     if (isEmpty(result)) {
                         // route has not been matched 
@@ -16439,7 +16453,7 @@ var plat;
                     routeInfo.query = query;
                     pattern = routeInfo.delegate.pattern;
                     pattern = pattern.substr(0, pattern.length - __CHILD_ROUTE_LENGTH);
-                    if (this._previousPattern === pattern) {
+                    if (!emptyResult || this._previousPattern === pattern) {
                         // the pattern for this router is the same as the last pattern so 
                         // only navigate child routers. 
                         this.navigating = true;
@@ -18908,7 +18922,7 @@ var plat;
             Bind.prototype._observingBindableProperty = function () {
                 var _this = this;
                 var templateControl = this.templateControl;
-                if (!isNull(templateControl) && isFunction(templateControl.onInput) && isFunction(templateControl.observeProperties)) {
+                if (isObject(templateControl) && isFunction(templateControl.onInput) && isFunction(templateControl.observeProperties)) {
                     templateControl.onInput(function (newValue) {
                         _this._getter = function () { return newValue; };
                         _this._propertyChanged();

@@ -217,6 +217,19 @@ module plat.ui.controls {
         private __resolveFn: () => void;
 
         /**
+         * @name __rejectFn
+         * @memberof plat.ui.controls.Select
+         * @kind property
+         * @access private
+         *
+         * @type {() => void}
+         *
+         * @description
+         * The reject function for the itemsLoaded Promise.
+         */
+        private __rejectFn: () => void;
+
+        /**
          * @name constructor
          * @memberof plat.ui.controls.Select
          * @kind function
@@ -229,9 +242,10 @@ module plat.ui.controls {
          */
         constructor() {
             super();
-            this.itemsLoaded = new this._Promise<void>((resolve): void => {
+            this.itemsLoaded = new this._Promise<void>((resolve, reject): void => {
                 this.__resolveFn = resolve;
-            });
+                this.__rejectFn = reject;
+            }).catch(noop);
         }
 
         /**
@@ -361,7 +375,12 @@ module plat.ui.controls {
          */
         dispose(): void {
             super.dispose();
-            this.__resolveFn = null;
+
+            if (this.utils.isFunction(this.__rejectFn)) {
+                this.__rejectFn();
+                this.__resolveFn = this.__rejectFn = null;
+            }
+
             this._defaultOption = null;
         }
 
@@ -636,17 +655,16 @@ module plat.ui.controls {
                 this.itemsLoaded = this._Promise.all(promises).then((): void => {
                     if (isFunction(this.__resolveFn)) {
                         this.__resolveFn();
-                        this.__resolveFn = null;
+                        this.__resolveFn = this.__rejectFn = null;
                     }
                     return;
-                });
-            } else {
-                if (isFunction(this.__resolveFn)) {
-                    this.__resolveFn();
-                    this.__resolveFn = null;
-                }
-                this.itemsLoaded = new this._Promise<void>((resolve): void => {
-                    this.__resolveFn = resolve;
+                }).catch((error: any): void => {
+                    postpone((): void => {
+                        if (isString(error)) {
+                            error = new Error(error);
+                        }
+                        this._log.error(error);
+                    });
                 });
             }
 

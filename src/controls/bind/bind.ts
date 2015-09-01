@@ -1347,7 +1347,7 @@ module plat.controls {
         protected _observingBindableProperty(): boolean {
             let templateControl = <ui.BindControl>this.templateControl;
 
-            if (!isNull(templateControl) && isFunction(templateControl.onInput) && isFunction(templateControl.observeProperties)) {
+            if (isObject(templateControl) && isFunction(templateControl.onInput) && isFunction(templateControl.observeProperties)) {
                 templateControl.onInput((newValue: any): void => {
                     this._getter = (): any => newValue;
                     this._propertyChanged();

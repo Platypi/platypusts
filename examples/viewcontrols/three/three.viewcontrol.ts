@@ -6,18 +6,18 @@ module app.viewcontrols {
     export class Three extends BaseViewControl {
         templateUrl = 'viewcontrols/three/three.viewcontrol.html';
         context: { views: Array<Function>; } = {
-            views: [One, Two, Three, Four]
+            views: []
         };
 
         constructor(router: plat.routing.Router) {
             super();
 
-            router.configure([
-                { pattern: '', view: One },
-                { pattern: '/two', view: Two },
-                { pattern: '/three', view: Three },
-                { pattern: '/four', view: Four }
-            ]);
+            // router.configure([
+            //     { pattern: '', view: One },
+            //     { pattern: '/two', view: Two },
+            //     { pattern: '/three', view: Three },
+            //     { pattern: '/four', view: Four }
+            // ]);
         }
 
 
@@ -44,6 +44,6 @@ module app.viewcontrols {
     }
 
     plat.register.viewControl('three', Three, [
-        plat.routing.Router
+        // plat.routing.Router
     ]);
 }
