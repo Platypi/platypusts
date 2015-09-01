@@ -810,50 +810,57 @@
                 result = this._childRecognizer.recognize(url);
 
                 if (isEmpty(result)) {
-                    // route has not been matched
-                    this._previousUrl = url;
-                    this._previousQuery = queryString;
+                    if(!emptyResult) {
+                        result = this._recognizer.recognize(url);
+                        routeInfo = result[0];
+                        routeInfo.query = query;
+                        pattern = routeInfo.delegate.pattern;
+                    } else {
+                        // route has not been matched
+                        this._previousUrl = url;
+                        this._previousQuery = queryString;
 
-                    if (isFunction(this._unknownHandler)) {
-                        let unknownRouteConfig: IUnknownRouteInfo = {
-                            segment: url,
-                            view: <any>undefined
-                        };
+                        if (isFunction(this._unknownHandler)) {
+                            let unknownRouteConfig: IUnknownRouteInfo = {
+                                segment: url,
+                                view: <any>undefined
+                            };
 
-                        return resolve(this._unknownHandler(unknownRouteConfig)).then(() => {
-                            let view = unknownRouteConfig.view;
-                            if (isUndefined(view)) {
-                                return;
-                            }
+                            return resolve(this._unknownHandler(unknownRouteConfig)).then(() => {
+                                let view = unknownRouteConfig.view;
+                                if (isUndefined(view)) {
+                                    return;
+                                }
 
-                            return this.configure({
-                                pattern: url,
-                                view: view
+                                return this.configure({
+                                    pattern: url,
+                                    view: view
+                                });
                             });
-                        });
+                        }
+
+                        return resolve();
                     }
+                } else {
+                    routeInfo = result[0];
+                    routeInfo.query = query;
+                    pattern = routeInfo.delegate.pattern;
+                    pattern = pattern.substr(0, pattern.length - __CHILD_ROUTE_LENGTH);
 
-                    return resolve();
-                }
-
-                routeInfo = result[0];
-                routeInfo.query = query;
-                pattern = routeInfo.delegate.pattern;
-                pattern = pattern.substr(0, pattern.length - __CHILD_ROUTE_LENGTH);
-
-                if (!emptyResult || this._previousPattern === pattern) {
-                    // the pattern for this router is the same as the last pattern so
-                    // only navigate child routers.
-                    this.navigating = true;
-                    return this.finishNavigating = this._navigateChildren(routeInfo)
-                        .then((): void => {
-                            this._previousUrl = url;
-                            this._previousQuery = queryString;
-                            this.navigating = false;
-                        }, (e: any): void => {
-                            this.navigating = false;
-                            throw e;
-                        });
+                    if (!emptyResult || this._previousPattern === pattern) {
+                        // the pattern for this router is the same as the last pattern so
+                        // only navigate child routers.
+                        this.navigating = true;
+                        return this.finishNavigating = this._navigateChildren(routeInfo)
+                            .then((): void => {
+                                this._previousUrl = url;
+                                this._previousQuery = queryString;
+                                this.navigating = false;
+                            }, (e: any): void => {
+                                this.navigating = false;
+                                throw e;
+                            });
+                    }
                 }
             } else {
                 routeInfo = result[0];
@@ -1381,7 +1388,9 @@
          * @returns {boolean} Whether or not it is the same route.
          */
         protected _isSameRoute(info: IRouteInfo): boolean {
-            let currentRouteInfo = this.currentRouteInfo;
+            let currentRouteInfo = _clone(this.currentRouteInfo);
+
+            this._sanitizeRouteInfo(currentRouteInfo);
 
             if (!isObject(currentRouteInfo) || !isObject(info)) {
                 return false;
@@ -1399,6 +1408,28 @@
                 currentDelegate.pattern === delegate.pattern &&
                 currentParameters === parameters &&
                 currentQuery === query;
+        }
+
+        /**
+         * @name _sanitizeRouteInfo
+         * @memberof plat.routing.Router
+         * @kind function
+         * @access protected
+         *
+         * @description
+         * Removes childRoute from routeInfo
+         *
+         * @param {plat.routing.IRouteInfo} info The route information.
+         *
+         * @returns {void}
+         */
+        protected _sanitizeRouteInfo(info: IRouteInfo): void {
+            if(isObject(info)) {
+                if(info.parameters.hasOwnProperty('childRoute')) {
+                    info.delegate.pattern = info.delegate.pattern.substr(0, info.delegate.pattern.length - __CHILD_ROUTE_LENGTH);
+                    deleteProperty(info.parameters, 'childRoute');
+                }
+            }
         }
 
         /**

@@ -139,8 +139,8 @@
         "noImplicitAny": true,
         "removeComments": true,
         "preserveConstEnums": true,
-        "sourceMap": true,
-        "watch": false
+        "watch": false,
+        "inlineSourceMap": true
     },
     "filesGlob": [
         "src/**/*.ts"

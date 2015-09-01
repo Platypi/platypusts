@@ -10763,6 +10763,11 @@ declare module plat {
               */
             protected _isSameRoute(info: IRouteInfo): boolean;
             /**
+              * Removes childRoute from routeInfo
+              * @param {plat.routing.IRouteInfo} info The route information.
+              */
+            protected _sanitizeRouteInfo(info: IRouteInfo): void;
+            /**
               * Clears all the router information, essentially setting the router back to its initialized state.
               */
             protected _clearInfo(): void;
