@@ -1,5 +1,5 @@
 /**
-  * PlatypusTS v0.13.22 (https://platypi.io)
+  * PlatypusTS v0.13.23 (https://platypi.io)
   * Copyright 2015 Platypi, LLC. All rights reserved.
   *
   * PlatypusTS is licensed under the MIT license found at
@@ -10762,6 +10762,11 @@ declare module plat {
               * @param {plat.routing.IRouteInfo} info The route information.
               */
             protected _isSameRoute(info: IRouteInfo): boolean;
+            /**
+              * Removes childRoute from routeInfo
+              * @param {plat.routing.IRouteInfo} info The route information.
+              */
+            protected _sanitizeRouteInfo(info: IRouteInfo): void;
             /**
               * Clears all the router information, essentially setting the router back to its initialized state.
               */

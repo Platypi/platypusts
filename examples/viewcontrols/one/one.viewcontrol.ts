@@ -5,7 +5,7 @@ module app.viewcontrols {
         templateUrl = 'viewcontrols/one/one.viewcontrol.html';
         context = {
             views: [
-                { route: Main, name: 'main' },
+                { route: Two, name: 'two' },
                 { route: Three, name: 'three' },
                 { route: Four, name: 'four' }
             ]
@@ -14,7 +14,7 @@ module app.viewcontrols {
             super();
             console.log('constructing 1');
             router.configure([
-                { pattern: '', view: Main },
+                { pattern: '', view: Two },
                 { pattern: '/three', view: Three },
                 { pattern: '/four', view: Four }
             ]);

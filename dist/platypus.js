@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 /* tslint:disable */
 /**
- * PlatypusTS v0.13.22 (https://platypi.io)
+ * PlatypusTS v0.13.23 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
@@ -16428,44 +16428,54 @@ var plat;
                 if (emptyResult || this._isSameRoute(result[0])) {
                     result = this._childRecognizer.recognize(url);
                     if (isEmpty(result)) {
-                        // route has not been matched 
-                        this._previousUrl = url;
-                        this._previousQuery = queryString;
-                        if (isFunction(this._unknownHandler)) {
-                            var unknownRouteConfig = {
-                                segment: url,
-                                view: undefined
-                            };
-                            return resolve(this._unknownHandler(unknownRouteConfig)).then(function () {
-                                var view = unknownRouteConfig.view;
-                                if (isUndefined(view)) {
-                                    return;
-                                }
-                                return _this.configure({
-                                    pattern: url,
-                                    view: view
+                        if (!emptyResult) {
+                            result = this._recognizer.recognize(url);
+                            routeInfo = result[0];
+                            routeInfo.query = query;
+                            pattern = routeInfo.delegate.pattern;
+                        }
+                        else {
+                            // route has not been matched 
+                            this._previousUrl = url;
+                            this._previousQuery = queryString;
+                            if (isFunction(this._unknownHandler)) {
+                                var unknownRouteConfig = {
+                                    segment: url,
+                                    view: undefined
+                                };
+                                return resolve(this._unknownHandler(unknownRouteConfig)).then(function () {
+                                    var view = unknownRouteConfig.view;
+                                    if (isUndefined(view)) {
+                                        return;
+                                    }
+                                    return _this.configure({
+                                        pattern: url,
+                                        view: view
+                                    });
                                 });
+                            }
+                            return resolve();
+                        }
+                    }
+                    else {
+                        routeInfo = result[0];
+                        routeInfo.query = query;
+                        pattern = routeInfo.delegate.pattern;
+                        pattern = pattern.substr(0, pattern.length - __CHILD_ROUTE_LENGTH);
+                        if (!emptyResult || this._previousPattern === pattern) {
+                            // the pattern for this router is the same as the last pattern so 
+                            // only navigate child routers. 
+                            this.navigating = true;
+                            return this.finishNavigating = this._navigateChildren(routeInfo)
+                                .then(function () {
+                                _this._previousUrl = url;
+                                _this._previousQuery = queryString;
+                                _this.navigating = false;
+                            }, function (e) {
+                                _this.navigating = false;
+                                throw e;
                             });
                         }
-                        return resolve();
-                    }
-                    routeInfo = result[0];
-                    routeInfo.query = query;
-                    pattern = routeInfo.delegate.pattern;
-                    pattern = pattern.substr(0, pattern.length - __CHILD_ROUTE_LENGTH);
-                    if (!emptyResult || this._previousPattern === pattern) {
-                        // the pattern for this router is the same as the last pattern so 
-                        // only navigate child routers. 
-                        this.navigating = true;
-                        return this.finishNavigating = this._navigateChildren(routeInfo)
-                            .then(function () {
-                            _this._previousUrl = url;
-                            _this._previousQuery = queryString;
-                            _this.navigating = false;
-                        }, function (e) {
-                            _this.navigating = false;
-                            throw e;
-                        });
                     }
                 }
                 else {
@@ -16775,7 +16785,8 @@ var plat;
              * @param {plat.routing.IRouteInfo} info The route information.
              */
             Router.prototype._isSameRoute = function (info) {
-                var currentRouteInfo = this.currentRouteInfo;
+                var currentRouteInfo = _clone(this.currentRouteInfo);
+                this._sanitizeRouteInfo(currentRouteInfo);
                 if (!isObject(currentRouteInfo) || !isObject(info)) {
                     return false;
                 }
@@ -16785,6 +16796,18 @@ var plat;
                     currentDelegate.pattern === delegate.pattern &&
                     currentParameters === parameters &&
                     currentQuery === query;
+            };
+            /**
+             * Removes childRoute from routeInfo
+             * @param {plat.routing.IRouteInfo} info The route information.
+             */
+            Router.prototype._sanitizeRouteInfo = function (info) {
+                if (isObject(info)) {
+                    if (info.parameters.hasOwnProperty('childRoute')) {
+                        info.delegate.pattern = info.delegate.pattern.substr(0, info.delegate.pattern.length - __CHILD_ROUTE_LENGTH);
+                        deleteProperty(info.parameters, 'childRoute');
+                    }
+                }
             };
             /**
              * Clears all the router information, essentially setting the router back to its initialized state.
