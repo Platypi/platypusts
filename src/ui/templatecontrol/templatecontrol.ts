@@ -555,6 +555,10 @@ module plat.ui {
                 }
 
                 if (isNull(resourceObj)) {
+                    if (control.type.indexOf(__COMPILED) !== -1) {
+                        continue;
+                    }
+
                     TemplateControl._log.warn('Resource alias: ' + alias + ' is not defined.');
                     continue;
                 }
