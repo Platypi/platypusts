@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 /* tslint:disable */
 /**
- * PlatypusTS v0.13.24 (https://platypi.io)
+ * PlatypusTS v0.13.25 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
@@ -7489,6 +7489,9 @@ var plat;
                         resourceObj = TemplateControl.findResource(control, alias);
                     }
                     if (isNull(resourceObj)) {
+                        if (control.type.indexOf(__COMPILED) !== -1) {
+                            continue;
+                        }
                         TemplateControl._log.warn('Resource alias: ' + alias + ' is not defined.');
                         continue;
                     }
