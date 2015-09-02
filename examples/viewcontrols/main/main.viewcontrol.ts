@@ -27,13 +27,7 @@ module app.viewcontrols {
                 { value: 1, textContent: 'bar' },
                 { value: 2, textContent: 'baz' }
             ],
-            selectedVal: <any>null,
-            width: 100,
-            red: 50,
-            green: 50,
-            blue: 50,
-            opacity: 99,
-            style: 'width:100px;background-color:rgba(200,100,255,1);opacity:0.5;'
+            selectedVal: <any>null
         };
 
         constructor(router: plat.routing.Router) {
@@ -67,8 +61,7 @@ module app.viewcontrols {
             this.context.items = items;
             setTimeout(() => {
                 items.reverse();
-                this.context.style = 'width:100px;background-color:rgba(200,100,255,1);';
-            }, 5000);
+            });
         }
 
         navigateTo(view: string) {
