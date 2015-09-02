@@ -40,6 +40,19 @@ module plat.controls {
         attribute: string;
 
         /**
+         * @name _stopSetter
+         * @memberof plat.controls.SetAttributeControl
+         * @kind property
+         * @access protected
+         *
+         * @type {IRemoveListener}
+         *
+         * @description
+         * The function to stop listening for the delayed attribute set.
+         */
+        protected _stopSetter: IRemoveListener = noop;
+
+        /**
          * @name __removeListener
          * @memberof plat.controls.SetAttributeControl
          * @kind property
@@ -106,6 +119,7 @@ module plat.controls {
          * @returns {void}
          */
         dispose(): void {
+            this._stopSetter();
             if (isFunction(this.__removeListener)) {
                 this.__removeListener();
                 this.__removeListener = null;
@@ -126,7 +140,8 @@ module plat.controls {
          * @returns {void}
          */
         setter(): void {
-            requestAnimationFrameGlobal((): void => {
+            this._stopSetter();
+            this._stopSetter = requestAnimationFrameGlobal((): void => {
                 let element = this.element,
                     property = this.property;
 
@@ -401,7 +416,8 @@ module plat.controls {
          * @returns {void}
          */
         setter(): void {
-            requestAnimationFrameGlobal((): void => {
+            this._stopSetter();
+            this._stopSetter = requestAnimationFrameGlobal((): void => {
                 if (!isNode(this.element)) {
                     return;
                 }
@@ -482,6 +498,32 @@ module plat.controls {
         property: string = 'style';
 
         /**
+         * @name __addedStyles
+         * @memberof plat.controls.Style
+         * @kind property
+         * @access private
+         *
+         * @type {Array<string>}
+         *
+         * @description
+         * An object storing all the added styles.
+         */
+        private __addedStyles: Array<string> = [];
+
+        /**
+         * @name __oldStyles
+         * @memberof plat.controls.Style
+         * @kind property
+         * @access private
+         *
+         * @type {IObject<string>}
+         *
+         * @description
+         * An object storing all the old style values.
+         */
+        private __oldStyles: IObject<string> = {};
+
+        /**
          * @name setter
          * @memberof plat.controls.Style
          * @kind function
@@ -493,25 +535,59 @@ module plat.controls {
          * @returns {void}
          */
         setter(): void {
+            this._stopSetter();
+
             let element = this.element,
-                expression = this.attributes[this.attribute];
+                expression: string = this.attributes[this.attribute];
 
             if (isEmpty(expression) || isNull(element)) {
                 return;
             }
 
-            requestAnimationFrameGlobal((): void => {
-                let property = this.property,
-                    style = element.getAttribute(property);
+            this._stopSetter = requestAnimationFrameGlobal((): void => {
+                let style = element.style,
+                    addedStyles = this.__addedStyles,
+                    oldStyles = this.__oldStyles,
+                    newStyles = <Array<string>>[],
+                    props = expression.split(';'),
+                    colon = ':',
+                    length = props.length,
+                    pairs: Array<string>,
+                    prop: string,
+                    styleChanges: IObject<string> = {},
+                    i: number;
 
-                if (isString(style) && style.length > 0) {
-                    style = style.trim();
-                    style += (style[style.length - 1] !== ';' ? (';' + expression) : expression);
-                } else {
-                    style = expression;
+                for (i = 0; i < length; ++i) {
+                    pairs = props[i].split(colon);
+                    prop = pairs[0];
+
+                    if (isEmpty(prop) || isUndefined(style[<any>prop])) {
+                        continue;
+                    } else if (addedStyles.indexOf(prop) === -1) {
+                        oldStyles[prop] = style[<any>prop];
+                    }
+
+                    newStyles.push(prop);
+                    styleChanges[prop] = pairs[1];
                 }
-                
-                element.setAttribute(property, style);
+
+                length = addedStyles.length;
+                while (length-- > 0) {
+                    prop = addedStyles[length];
+                    if (newStyles.indexOf(prop) === -1) {
+                        styleChanges[prop] = oldStyles[prop];
+                        addedStyles.splice(length, 1);
+                    }
+                }
+
+                let keys = Object.keys(styleChanges);
+                length = keys.length;
+                while (length-- > 0) {
+                    prop = keys[length];
+                    style[<any>prop] = styleChanges[prop];
+                }
+
+                this.__addedStyles = addedStyles.concat(newStyles);
             });
         }
     }

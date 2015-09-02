@@ -629,6 +629,29 @@ module plat.controls {
         }
 
         /**
+         * @name _addChangeEventListener
+         * @memberof plat.controls.Bind
+         * @kind function
+         * @access protected
+         *
+         * @description
+         * Adds a change event as the event listener.
+         * Used for select, input[type="radio"], and input[type="range"].
+         *
+         * @returns {void}
+         */
+        protected _addRangeEventListener(): void {
+            let element = this.element,
+                input = 'input';
+
+            if (this._compat.hasEvent(input)) {
+                this.addEventListener(element, input, this._propertyChanged, false);
+            }
+
+            this.addEventListener(element, 'change', this._propertyChanged, false);
+        }
+
+        /**
          * @name _getChecked
          * @memberof plat.controls.Bind
          * @kind function
@@ -1124,7 +1147,7 @@ module plat.controls {
                             this._initializeRadio();
                             break;
                         case 'range':
-                            this._addEventType = this._addChangeEventListener;
+                            this._addEventType = this._addRangeEventListener;
                             this._getter = this._getValue;
                             this._setter = this._setRange;
                             break;

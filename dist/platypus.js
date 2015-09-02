@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 /* tslint:disable */
 /**
- * PlatypusTS v0.13.23 (https://platypi.io)
+ * PlatypusTS v0.13.24 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
@@ -4155,10 +4155,8 @@ var plat;
             };
         }
         function useSetTimeout() {
-            var global = global;
-            var local = (typeof global !== 'undefined') ? global : this;
             return function () {
-                local.setTimeout(flush, 1);
+                postpone(flush);
             };
         }
         function flush() {
@@ -17928,6 +17926,10 @@ var plat;
                  * The property to set on the associated element.
                  */
                 this.property = '';
+                /**
+                 * The function to stop listening for the delayed attribute set.
+                 */
+                this._stopSetter = noop;
             }
             /**
              * Sets the corresponding attribute {property} value and
@@ -17955,6 +17957,7 @@ var plat;
              * Stops listening to attribute changes.
              */
             SetAttributeControl.prototype.dispose = function () {
+                this._stopSetter();
                 if (isFunction(this.__removeListener)) {
                     this.__removeListener();
                     this.__removeListener = null;
@@ -17966,7 +17969,8 @@ var plat;
              */
             SetAttributeControl.prototype.setter = function () {
                 var _this = this;
-                requestAnimationFrameGlobal(function () {
+                this._stopSetter();
+                this._stopSetter = requestAnimationFrameGlobal(function () {
                     var element = _this.element, property = _this.property;
                     if (!isNode(element)) {
                         return;
@@ -18090,7 +18094,8 @@ var plat;
              */
             Visible.prototype.setter = function () {
                 var _this = this;
-                requestAnimationFrameGlobal(function () {
+                this._stopSetter();
+                this._stopSetter = requestAnimationFrameGlobal(function () {
                     if (!isNode(_this.element)) {
                         return;
                     }
@@ -18143,26 +18148,54 @@ var plat;
                  * The property to set on the associated template control.
                  */
                 this.property = 'style';
+                /**
+                 * An object storing all the added styles.
+                 */
+                this.__addedStyles = [];
+                /**
+                 * An object storing all the old style values.
+                 */
+                this.__oldStyles = {};
             }
             /**
              * Sets the evaluated styles on the element.
              */
             Style.prototype.setter = function () {
                 var _this = this;
+                this._stopSetter();
                 var element = this.element, expression = this.attributes[this.attribute];
                 if (isEmpty(expression) || isNull(element)) {
                     return;
                 }
-                requestAnimationFrameGlobal(function () {
-                    var property = _this.property, style = element.getAttribute(property);
-                    if (isString(style) && style.length > 0) {
-                        style = style.trim();
-                        style += (style[style.length - 1] !== ';' ? (';' + expression) : expression);
+                this._stopSetter = requestAnimationFrameGlobal(function () {
+                    var style = element.style, addedStyles = _this.__addedStyles, oldStyles = _this.__oldStyles, newStyles = [], props = expression.split(';'), colon = ':', length = props.length, pairs, prop, styleChanges = {}, i;
+                    for (i = 0; i < length; ++i) {
+                        pairs = props[i].split(colon);
+                        prop = pairs[0];
+                        if (isEmpty(prop) || isUndefined(style[prop])) {
+                            continue;
+                        }
+                        else if (addedStyles.indexOf(prop) === -1) {
+                            oldStyles[prop] = style[prop];
+                        }
+                        newStyles.push(prop);
+                        styleChanges[prop] = pairs[1];
                     }
-                    else {
-                        style = expression;
+                    length = addedStyles.length;
+                    while (length-- > 0) {
+                        prop = addedStyles[length];
+                        if (newStyles.indexOf(prop) === -1) {
+                            styleChanges[prop] = oldStyles[prop];
+                            addedStyles.splice(length, 1);
+                        }
                     }
-                    element.setAttribute(property, style);
+                    var keys = Object.keys(styleChanges);
+                    length = keys.length;
+                    while (length-- > 0) {
+                        prop = keys[length];
+                        style[prop] = styleChanges[prop];
+                    }
+                    _this.__addedStyles = addedStyles.concat(newStyles);
                 });
             };
             return Style;
@@ -18483,6 +18516,17 @@ var plat;
                 this.addEventListener(this.element, __tap, this._propertyChanged, false);
             };
             /**
+             * Adds a change event as the event listener.
+             * Used for select, input[type="radio"], and input[type="range"].
+             */
+            Bind.prototype._addRangeEventListener = function () {
+                var element = this.element, input = 'input';
+                if (this._compat.hasEvent(input)) {
+                    this.addEventListener(element, input, this._propertyChanged, false);
+                }
+                this.addEventListener(element, 'change', this._propertyChanged, false);
+            };
+            /**
              * Getter for input[type="checkbox"] and input[type="radio"].
              */
             Bind.prototype._getChecked = function () {
@@ -18797,7 +18841,7 @@ var plat;
                                 this._initializeRadio();
                                 break;
                             case 'range':
-                                this._addEventType = this._addChangeEventListener;
+                                this._addEventType = this._addRangeEventListener;
                                 this._getter = this._getValue;
                                 this._setter = this._setRange;
                                 break;

@@ -1,5 +1,5 @@
 /**
-  * PlatypusTS v0.13.23 (https://platypi.io)
+  * PlatypusTS v0.13.24 (https://platypi.io)
   * Copyright 2015 Platypi, LLC. All rights reserved.
   *
   * PlatypusTS is licensed under the MIT license found at
@@ -11608,6 +11608,10 @@ declare module plat {
               */
             attribute: string;
             /**
+              * The function to stop listening for the delayed attribute set.
+              */
+            protected _stopSetter: IRemoveListener;
+            /**
               * The function to stop listening for attribute changes.
               */
             private __removeListener;
@@ -11729,6 +11733,14 @@ declare module plat {
               * The property to set on the associated template control.
               */
             property: string;
+            /**
+              * An object storing all the added styles.
+              */
+            private __addedStyles;
+            /**
+              * An object storing all the old style values.
+              */
+            private __oldStyles;
             /**
               * Sets the evaluated styles on the element.
               */
@@ -11912,6 +11924,11 @@ declare module plat {
               * Used for input[type="button"] and button.
               */
             protected _addButtonEventListener(): void;
+            /**
+              * Adds a change event as the event listener.
+              * Used for select, input[type="radio"], and input[type="range"].
+              */
+            protected _addRangeEventListener(): void;
             /**
               * Getter for input[type="checkbox"] and input[type="radio"].
               */
