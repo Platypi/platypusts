@@ -959,11 +959,8 @@ module plat.async {
     }
 
     function useSetTimeout(): () => void {
-        var global: any = global;
-        let local = (typeof global !== 'undefined') ? global : this;
-
         return (): void => {
-            local.setTimeout(flush, 1);
+            postpone(flush);
         };
     }
 
