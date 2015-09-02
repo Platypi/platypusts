@@ -1,4 +1,4 @@
-var __extends = (this && this.__extends) || function (d, b) {
+var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
     __.prototype = b.prototype;
@@ -17928,6 +17928,10 @@ var plat;
                  * The property to set on the associated element.
                  */
                 this.property = '';
+                /**
+                 * The function to stop listening for the delayed attribute set.
+                 */
+                this._stopSetter = noop;
             }
             /**
              * Sets the corresponding attribute {property} value and
@@ -17955,6 +17959,7 @@ var plat;
              * Stops listening to attribute changes.
              */
             SetAttributeControl.prototype.dispose = function () {
+                this._stopSetter();
                 if (isFunction(this.__removeListener)) {
                     this.__removeListener();
                     this.__removeListener = null;
@@ -17966,7 +17971,8 @@ var plat;
              */
             SetAttributeControl.prototype.setter = function () {
                 var _this = this;
-                requestAnimationFrameGlobal(function () {
+                this._stopSetter();
+                this._stopSetter = requestAnimationFrameGlobal(function () {
                     var element = _this.element, property = _this.property;
                     if (!isNode(element)) {
                         return;
@@ -18090,7 +18096,8 @@ var plat;
              */
             Visible.prototype.setter = function () {
                 var _this = this;
-                requestAnimationFrameGlobal(function () {
+                this._stopSetter();
+                this._stopSetter = requestAnimationFrameGlobal(function () {
                     if (!isNode(_this.element)) {
                         return;
                     }
@@ -18153,7 +18160,7 @@ var plat;
                 if (isEmpty(expression) || isNull(element)) {
                     return;
                 }
-                requestAnimationFrameGlobal(function () {
+                this._stopSetter = requestAnimationFrameGlobal(function () {
                     var property = _this.property, style = element.getAttribute(property);
                     if (isString(style) && style.length > 0) {
                         style = style.trim();

@@ -11608,6 +11608,10 @@ declare module plat {
               */
             attribute: string;
             /**
+              * The function to stop listening for the delayed attribute set.
+              */
+            protected _stopSetter: IRemoveListener;
+            /**
               * The function to stop listening for attribute changes.
               */
             private __removeListener;
