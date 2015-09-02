@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 /* tslint:disable */
 /**
- * PlatypusTS v0.13.25 (https://platypi.io)
+ * PlatypusTS v0.14.0 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
@@ -883,6 +883,30 @@ var plat;
             });
             return error;
         }));
+    }
+    function whenVisible(cb, element) {
+        if (!isNode(element)) {
+            ___log = ___log || (___log = plat.acquire(__Log));
+            ___log.error(new Error('Attempting to check visibility of something that isn\'t a Node.'));
+            return noop;
+        }
+        var clientWidth = element.clientWidth, clientHeight = element.clientHeight;
+        if (!(isNumber(clientWidth) && isNumber(clientHeight))) {
+            ___log = ___log || (___log = plat.acquire(__Log));
+            ___log.error(new Error('Attempting to check visibility of something that isn\'t an Element.'));
+            return noop;
+        }
+        if (clientWidth > 0 && clientHeight > 0) {
+            cb();
+            return noop;
+        }
+        var remove = setIntervalGlobal(function () {
+            if (element.clientWidth > 0 && element.clientHeight > 0) {
+                remove();
+                cb();
+            }
+        }, 100);
+        return remove;
     }
     /* tslint:enable:no-unused-variable */
     var controlInjectors = {}, viewControlInjectors = {}, instanceInjectorDependencies = {}, injectableInjectors = {}, unregisteredInjectors = {}, staticInjectors = {}, animationInjectors = {}, jsAnimationInjectors = {};
@@ -8053,6 +8077,14 @@ var plat;
              */
             Dom.prototype.getTemplate = function (templateUrl) {
                 return getTemplate(templateUrl);
+            };
+            /**
+             * Inspects the Element and resolves when the Element is visible in the DOM.
+             * @param {() => void} cb A callback that will fire when the element is visible in the DOM.
+             * @param {Element} element The element whose visibility is being inspected.
+             */
+            Dom.prototype.whenVisible = function (cb, element) {
+                return whenVisible(cb, element);
             };
             Dom._inject = {
                 _domEvents: __DomEvents
