@@ -1,5 +1,5 @@
 /**
-  * PlatypusTS v0.13.25 (https://platypi.io)
+  * PlatypusTS v0.14.0 (https://platypi.io)
   * Copyright 2015 Platypi, LLC. All rights reserved.
   *
   * PlatypusTS is licensed under the MIT license found at
@@ -5107,6 +5107,12 @@ declare module plat {
               * @param {string} templateUrl The url where the HTML template is stored.
               */
             getTemplate(templateUrl: string): async.IThenable<DocumentFragment>;
+            /**
+              * Inspects the Element and resolves when the Element is visible in the DOM.
+              * @param {() => void} cb A callback that will fire when the element is visible in the DOM.
+              * @param {Element} element The element whose visibility is being inspected.
+              */
+            whenVisible(cb: () => void, element: Element): IRemoveListener;
         }
         /**
           * An object describing custom element properties added to elements for hashing purposes.

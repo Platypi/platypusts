@@ -509,4 +509,35 @@ function getTemplate(templateUrl: string): plat.async.IThenable<DocumentFragment
         }));
 }
 
+function whenVisible(cb: () => void, element: Element): plat.IRemoveListener {
+    if (!isNode(element)) {
+        ___log = ___log || (___log = plat.acquire(__Log));
+        ___log.error(new Error('Attempting to check visibility of something that isn\'t a Node.'));
+        return noop;
+    }
+
+    let clientWidth = element.clientWidth,
+        clientHeight = element.clientHeight;
+
+    if (!(isNumber(clientWidth) && isNumber(clientHeight))) {
+        ___log = ___log || (___log = plat.acquire(__Log));
+        ___log.error(new Error('Attempting to check visibility of something that isn\'t an Element.'));
+        return noop;
+    }
+
+    if (clientWidth > 0 && clientHeight > 0) {
+        cb();
+        return noop;
+    }
+
+    let remove = setIntervalGlobal((): void => {
+        if (element.clientWidth > 0 && element.clientHeight > 0) {
+            remove();
+            cb();
+        }
+    }, 100);
+
+    return remove;
+}
+
 /* tslint:enable:no-unused-variable */
