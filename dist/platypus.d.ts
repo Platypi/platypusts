@@ -7592,7 +7592,7 @@ declare module plat {
                 /**
                   * A function for stopping a potential callback in the animation chain.
                   */
-                protected _animationCanceled: IRemoveListener;
+                protected _cancelAnimation: IRemoveListener;
                 /**
                   * Adds the class to initialize the animation.
                   */
@@ -7698,11 +7698,9 @@ declare module plat {
                   */
                 protected _animationCanceled: IRemoveListener;
                 /**
-                  * A JavaScript object containing all modified properties as a result
-                  * of this animation. Used in the case of a disposal to reset the changed
-                  * properties.
+                  * An Array of all the properties the transition will be affecting.
                   */
-                protected _modifiedProperties: IObject<string>;
+                protected _properties: Array<string>;
                 /**
                   * A regular expression to normalize modified property keys.
                   */
@@ -7763,8 +7761,9 @@ declare module plat {
                   * Handles element transitions that are defined with CSS.
                   * @param {CSSStyleDeclaration} computedStyle The computed style of the
                   * element.
+                  * @param {Array<string>} durations The array of declared transition duration values.
                   */
-                protected _cssTransition(computedStyle: CSSStyleDeclaration): void;
+                private __cssTransition(computedStyle, durations);
                 /**
                   * A function that converts a string value expressed as either seconds or milliseconds
                   * to a numerical millisecond value.
