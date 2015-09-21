@@ -509,8 +509,7 @@ module plat.ui.controls {
                     control: <any>control,
                     nodeName: type,
                     expressions: <Array<expressions.IParsedExpression>>[],
-                    injector: <any>injector,
-                    childManagerLength: 0
+                    injector: <any>injector
                 }
             };
         }
