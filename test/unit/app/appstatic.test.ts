@@ -52,21 +52,6 @@ module tests.appStatic {
             expect(error).toBe(false);
             expect(spy).toHaveBeenCalled();
         });
-        
-        it('should send a ready event when compat.amd', (done) => {
-            var compat: plat.Compat = plat.acquire(plat.Compat),
-                _LifecycleEvent: plat.events.ILifecycleEventStatic = plat.acquire(plat.events.ILifecycleEventStatic),
-                spy = spyOn(_LifecycleEvent, 'dispatch');
-
-            spy.and.callFake((str: string) => {
-                expect(str).toBe(__ready);
-                done();
-            });
-            
-            compat.amd = true;
-            _AppStatic.registerApp(undefined);
-            compat.amd = false;
-        });
 
         document.addEventListener('load', () => {
             it('should test load', () => {

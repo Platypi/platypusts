@@ -1,8 +1,7 @@
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 /* tslint:disable */
 /**
@@ -5979,7 +5978,7 @@ var plat;
              * @param {any} oldRootContext The old context.
              */
             ContextManager.prototype._getValues = function (split, newRootContext, oldRootContext) {
-                var property, doNew = true, doOld = true;
+                var property, doNew = isObject(newRootContext), doOld = isObject(oldRootContext);
                 while (split.length > 1) {
                     property = split.shift();
                     if (doNew) {
@@ -5995,7 +5994,7 @@ var plat;
                         }
                     }
                     if (!(doNew || doOld)) {
-                        return null;
+                        break;
                     }
                 }
                 property = split[0];
@@ -6063,15 +6062,11 @@ var plat;
                         value = values[parentProperty];
                         if (isNull(value)) {
                             value = values[parentProperty] = this._getValues(split, newValue, oldValue);
-                            if (isNull(value)) {
-                                this._execute(binding, null, null);
-                                continue;
-                            }
                         }
                         newParent = value.newValue;
                         oldParent = value.oldValue;
-                        newChild = isNull(newParent) ? undefined : newParent[key];
-                        oldChild = isNull(oldParent) ? undefined : oldParent[key];
+                        newChild = isNull(newParent) ? newParent : newParent[key];
+                        oldChild = isNull(oldParent) ? oldParent : oldParent[key];
                     }
                     values[property] = {
                         newValue: newChild,
@@ -6201,7 +6196,9 @@ var plat;
                     if (selfNotify) {
                         _this._notifyChildProperties(absoluteIdentifier, this, originalArray);
                     }
-                    _this._execute(absoluteIdentifier + '.length', newLength, oldLength);
+                    else {
+                        _this._execute(absoluteIdentifier + '.length', newLength, oldLength);
+                    }
                     return returnValue;
                 };
             };
@@ -11767,8 +11764,7 @@ var plat;
                             control: control,
                             nodeName: type,
                             expressions: [],
-                            injector: injector,
-                            childManagerLength: 0
+                            injector: injector
                         }
                     };
                 };

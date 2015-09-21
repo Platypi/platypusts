@@ -211,15 +211,6 @@ module plat {
             }
 
             App.__injector = appInjector;
-
-            if (App._compat.amd) {
-                let _LifecycleEvent = App._LifecycleEvent,
-                    dispatch = _LifecycleEvent.dispatch;
-
-                postpone((): void => {
-                    dispatch(__ready, _LifecycleEvent);
-                });
-            }
         }
 
         /**

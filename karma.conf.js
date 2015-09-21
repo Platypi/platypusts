@@ -17,7 +17,6 @@ function cfg(config) {
             './src/dependency/injector/*.js',
             './src/acquire/*.js',
             './src/debug/*.js',
-            './src/exception/*.js',
             './src/compat/*.js',
             './src/utils/utils.js',
             './src/window/window.js',
