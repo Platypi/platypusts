@@ -3,7 +3,7 @@
 module tests.observable.contextManager {
     var ContextManager = plat.acquire(plat.observable.IContextManagerStatic);
 
-    xdescribe('ContextManager Tests', () => {
+    describe('ContextManager Tests', () => {
         var control: plat.ui.TemplateControl,
             manager: plat.observable.ContextManager;
 
@@ -173,6 +173,7 @@ module tests.observable.contextManager {
                 uid: control.uid,
                 listener: (newValue, oldValue) => {
                     called++;
+
                     if (called === 1) {
                         expect(oldValue).toBe(0);
                         expect(newValue).toBe(1);
