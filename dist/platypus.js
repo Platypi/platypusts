@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 /* tslint:disable */
 /**
- * PlatypusTS v0.13.25 (https://platypi.io)
+ * PlatypusTS v0.14.1 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
@@ -883,6 +883,30 @@ var plat;
             });
             return error;
         }));
+    }
+    function whenVisible(cb, element) {
+        if (!isNode(element)) {
+            ___log = ___log || (___log = plat.acquire(__Log));
+            ___log.error(new Error('Attempting to check visibility of something that isn\'t a Node.'));
+            return noop;
+        }
+        var clientWidth = element.clientWidth, clientHeight = element.clientHeight;
+        if (!(isNumber(clientWidth) && isNumber(clientHeight))) {
+            ___log = ___log || (___log = plat.acquire(__Log));
+            ___log.error(new Error('Attempting to check visibility of something that isn\'t an Element.'));
+            return noop;
+        }
+        if (clientWidth > 0 && clientHeight > 0) {
+            cb();
+            return noop;
+        }
+        var remove = setIntervalGlobal(function () {
+            if (element.clientWidth > 0 && element.clientHeight > 0) {
+                remove();
+                cb();
+            }
+        }, 100);
+        return remove;
     }
     /* tslint:enable:no-unused-variable */
     var controlInjectors = {}, viewControlInjectors = {}, instanceInjectorDependencies = {}, injectableInjectors = {}, unregisteredInjectors = {}, staticInjectors = {}, animationInjectors = {}, jsAnimationInjectors = {};
@@ -8054,6 +8078,14 @@ var plat;
             Dom.prototype.getTemplate = function (templateUrl) {
                 return getTemplate(templateUrl);
             };
+            /**
+             * Inspects the Element and resolves when the Element is visible in the DOM.
+             * @param {() => void} cb A callback that will fire when the element is visible in the DOM.
+             * @param {Element} element The element whose visibility is being inspected.
+             */
+            Dom.prototype.whenVisible = function (cb, element) {
+                return whenVisible(cb, element);
+            };
             Dom._inject = {
                 _domEvents: __DomEvents
             };
@@ -11136,7 +11168,7 @@ var plat;
                     /**
                      * A function for stopping a potential callback in the animation chain.
                      */
-                    this._animationCanceled = noop;
+                    this._cancelAnimation = noop;
                 }
                 /**
                  * Adds the class to initialize the animation.
@@ -11149,7 +11181,7 @@ var plat;
                  */
                 SimpleCssAnimation.prototype.start = function () {
                     var _this = this;
-                    this._animationCanceled = requestAnimationFrameGlobal(function () {
+                    this._cancelAnimation = requestAnimationFrameGlobal(function () {
                         var element = _this.element, className = _this.className;
                         if (element.offsetParent === null) {
                             _this._dispose();
@@ -11167,8 +11199,8 @@ var plat;
                         if (!options.preserveInit) {
                             removeClass(element, className + __INIT_SUFFIX);
                         }
-                        _this._animationCanceled = _this.animationEnd(function () {
-                            _this._animationCanceled = requestAnimationFrameGlobal(function () {
+                        _this._cancelAnimation = _this.animationEnd(function () {
+                            _this._cancelAnimation = requestAnimationFrameGlobal(function () {
                                 _this._dispose();
                                 _this.end();
                             });
@@ -11180,13 +11212,13 @@ var plat;
                  */
                 SimpleCssAnimation.prototype.pause = function () {
                     var _this = this;
-                    if (this._animationCanceled === noop) {
+                    if (this._cancelAnimation === noop) {
                         return this._Promise.resolve();
                     }
                     var animationEvents = this._compat.animationEvents;
                     return new this._Promise(function (resolve) {
                         requestAnimationFrameGlobal(function () {
-                            if (_this._animationCanceled !== noop) {
+                            if (_this._cancelAnimation !== noop) {
                                 _this.element.style[(animationEvents.$animation + 'PlayState')] = 'paused';
                             }
                             resolve();
@@ -11198,13 +11230,13 @@ var plat;
                  */
                 SimpleCssAnimation.prototype.resume = function () {
                     var _this = this;
-                    if (this._animationCanceled === noop) {
+                    if (this._cancelAnimation === noop) {
                         return this._Promise.resolve();
                     }
                     var animationEvents = this._compat.animationEvents;
                     return new this._Promise(function (resolve) {
                         requestAnimationFrameGlobal(function () {
-                            if (_this._animationCanceled !== noop) {
+                            if (_this._cancelAnimation !== noop) {
                                 _this.element.style[(animationEvents.$animation + 'PlayState')] = 'running';
                             }
                             resolve();
@@ -11216,7 +11248,7 @@ var plat;
                  * Removes the animation class and the animation "-init" class.
                  */
                 SimpleCssAnimation.prototype.cancel = function () {
-                    this._animationCanceled();
+                    this._cancelAnimation();
                     this._dispose();
                     this.end();
                 };
@@ -11226,7 +11258,7 @@ var plat;
                 SimpleCssAnimation.prototype._dispose = function () {
                     var className = this.className;
                     removeClass(this.element, className + ' ' + className + __INIT_SUFFIX);
-                    this._animationCanceled = noop;
+                    this._cancelAnimation = noop;
                 };
                 return SimpleCssAnimation;
             })(CssAnimation);
@@ -11329,12 +11361,6 @@ var plat;
                      */
                     this._animationCanceled = noop;
                     /**
-                     * A JavaScript object containing all modified properties as a result
-                     * of this animation. Used in the case of a disposal to reset the changed
-                     * properties.
-                     */
-                    this._modifiedProperties = {};
-                    /**
                      * A regular expression to normalize modified property keys.
                      */
                     this._normalizeRegex = /-/g;
@@ -11384,16 +11410,42 @@ var plat;
                         }
                         addClass(element, className);
                         _this._started = true;
-                        var utils = _this.utils, transitionId = _this._animationEvents.$transition, options = _this.options || {}, count = options.count, computedStyle = _this._window.getComputedStyle(element, options.pseudo), transitionProperty = computedStyle[(transitionId + 'Property')], transitionDuration = computedStyle[(transitionId + 'Duration')];
-                        if (utils.isNumber(count) && count > 0) {
-                            _this._count = count;
+                        var utils = _this.utils, transitionId = _this._animationEvents.$transition, options = _this.options || {}, computedStyle = _this._window.getComputedStyle(element, options.pseudo), properties = _this._properties = computedStyle[(transitionId + 'Property')].split(','), durations = computedStyle[(transitionId + 'Duration')].split(','), length = properties.length, propLength = length, noTransition = false, prop;
+                        while (length-- > 0) {
+                            prop = properties[length];
+                            if (prop === '' || prop === 'none') {
+                                properties.splice(length, 1);
+                            }
+                            else if (propLength > 1 && prop === 'all') {
+                                // most likely developer error (extra comma at end of shorthand multi transition declaration) 
+                                // so we will splice 
+                                _this._log.debug("Improper transition declaration on class \"" + element.className + "\"");
+                                properties.splice(length, 1);
+                            }
                         }
-                        if (transitionProperty === '' || transitionProperty === 'none' ||
-                            transitionDuration === '' || transitionDuration === '0s') {
+                        if (properties.length === 0) {
+                            noTransition = true;
+                        }
+                        else {
+                            length = durations.length;
+                            while (length-- > 0) {
+                                prop = durations[length];
+                                if (!(prop === '' || prop === '0s')) {
+                                    break;
+                                }
+                            }
+                            if (length < 0) {
+                                noTransition = true;
+                            }
+                        }
+                        if (noTransition) {
                             _this._animate();
                             _this._dispose();
                             _this.end();
                             return;
+                        }
+                        if (utils.isNumber(options.count) && options.count > 0) {
+                            _this._count = options.count;
                         }
                         if (options.preserveInit === false) {
                             removeClass(element, className + __INIT_SUFFIX);
@@ -11403,7 +11455,7 @@ var plat;
                             return;
                         }
                         else if (utils.isEmpty(options.properties)) {
-                            _this._cssTransition(computedStyle);
+                            _this.__cssTransition(computedStyle, durations);
                             return;
                         }
                         _this._dispose();
@@ -11441,9 +11493,8 @@ var plat;
                         var count = ++this._transitionCount;
                         propertyName = propertyName.replace(this._normalizeRegex, '').toLowerCase();
                         if ((count < this._count) ||
-                            (!this._usingCss &&
-                                this._normalizedKeys[propertyName] === true &&
-                                count < Object.keys(this._modifiedProperties).length)) {
+                            (!this._usingCss && this._normalizedKeys[propertyName] === true &&
+                                count < this._properties.length)) {
                             return;
                         }
                     }
@@ -11454,7 +11505,7 @@ var plat;
                  * Animate the element based on the options passed in.
                  */
                 SimpleCssTransition.prototype._animate = function () {
-                    var style = this.element.style || {}, properties = (this.options || {}).properties || {}, keys = Object.keys(properties), length = keys.length, key, modifiedProperties = this._modifiedProperties, normalizedKeys = this._normalizedKeys, normalizeRegex = this._normalizeRegex, currentProperty, newProperty, unchanged = 0;
+                    var style = this.element.style || {}, properties = (this.options || {}).properties || {}, keys = Object.keys(properties), length = keys.length, key, normalizedKeys = this._normalizedKeys, normalizeRegex = this._normalizeRegex, currentProperty, newProperty, unchanged = 0;
                     while (keys.length > 0) {
                         key = keys.shift();
                         currentProperty = style[key];
@@ -11468,7 +11519,6 @@ var plat;
                             unchanged++;
                         }
                         else {
-                            modifiedProperties[key] = currentProperty;
                             normalizedKeys[key.replace(normalizeRegex, '').toLowerCase()] = true;
                         }
                     }
@@ -11478,22 +11528,20 @@ var plat;
                  * Handles element transitions that are defined with CSS.
                  * @param {CSSStyleDeclaration} computedStyle The computed style of the
                  * element.
+                 * @param {Array<string>} durations The array of declared transition duration values.
                  */
-                SimpleCssTransition.prototype._cssTransition = function (computedStyle) {
+                SimpleCssTransition.prototype.__cssTransition = function (computedStyle, durations) {
                     var _this = this;
-                    var transitionId = this._animationEvents.$transition, durations = computedStyle[(transitionId + 'Duration')].split(','), delays = computedStyle[(transitionId + 'Delay')].split(','), properties = computedStyle[(transitionId + 'Property')].split(','), property, duration, delay, length = properties.length, computedProperties = [], computedProperty, normalizedKeys = this._normalizedKeys, normalizeRegex = this._normalizeRegex, modifiedProperties = this._modifiedProperties, i = 0, count = 0, changed = false, defer = this.utils.defer.bind(this, function (prop, computedProp) {
+                    var transitionId = this._animationEvents.$transition, delays = computedStyle[(transitionId + 'Delay')].split(','), properties = this._properties, property, duration, delay, length = properties.length, computedProperty, normalizedKeys = this._normalizedKeys, normalizeRegex = this._normalizeRegex, i = 0, count = 0, changed = false, defer = this.utils.defer.bind(this, function (prop, computedProp) {
                         if (_this._animationCanceled === noop) {
                             // disposal has already occurred 
                             return;
                         }
-                        else if (prop === 'all') {
+                        else if (prop === 'all' || computedStyle[prop] !== computedProp) {
                             // we can't know if the transition started due to 'all' being set and have to rely on this.options.count 
+                            // or 
+                            // we know the transition started due to the properties being different 
                             changed = true;
-                        }
-                        else if (computedStyle[prop] !== computedProp) {
-                            // we know the transition started 
-                            changed = true;
-                            modifiedProperties[prop] = computedProp;
                         }
                         if (++count < length || changed) {
                             return;
@@ -11509,7 +11557,6 @@ var plat;
                         delay = delays.length > i ? delays[i].trim() : delays[delays.length - 1].trim();
                         normalizedKeys[property.replace(normalizeRegex, '').toLowerCase()] = true;
                         computedProperty = computedStyle[property];
-                        computedProperties.push(computedProperty);
                         defer(this._toMs(duration) + this._toMs(delay), [property, computedProperty]);
                     }
                 };

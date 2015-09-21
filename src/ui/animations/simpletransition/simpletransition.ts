@@ -54,19 +54,17 @@
         protected _animationCanceled: IRemoveListener = noop;
 
         /**
-         * @name _modifiedProperties
+         * @name _properties
          * @memberof plat.ui.animations.SimpleCssTransition
          * @kind property
          * @access protected
          *
-         * @type {plat.IObject<string>}
+         * @type {Array<string>}
          *
          * @description
-         * A JavaScript object containing all modified properties as a result
-         * of this animation. Used in the case of a disposal to reset the changed
-         * properties.
+         * An Array of all the properties the transition will be affecting.
          */
-        protected _modifiedProperties: IObject<string> = {};
+        protected _properties: Array<string>;
 
         /**
          * @name _normalizeRegex
@@ -203,21 +201,51 @@
                 let utils = this.utils,
                     transitionId = this._animationEvents.$transition,
                     options = this.options || <ISimpleCssTransitionOptions>{},
-                    count = options.count,
                     computedStyle = this._window.getComputedStyle(element, options.pseudo),
-                    transitionProperty = computedStyle[<any>(transitionId + 'Property')],
-                    transitionDuration = computedStyle[<any>(transitionId + 'Duration')];
+                    properties = this._properties = computedStyle[<any>(transitionId + 'Property')].split(','),
+                    durations = computedStyle[<any>(transitionId + 'Duration')].split(','),
+                    length = properties.length,
+                    propLength = length,
+                    noTransition = false,
+                    prop: string;
 
-                if (utils.isNumber(count) && count > 0) {
-                    this._count = count;
+                while (length-- > 0) {
+                    prop = properties[length];
+                    if (prop === '' || prop === 'none') {
+                        properties.splice(length, 1);
+                    } else if ( propLength > 1 && prop === 'all') {
+                        // most likely developer error (extra comma at end of shorthand multi transition declaration)
+                        // so we will splice
+                        this._log.debug(`Improper transition declaration on class "${element.className}"`);
+                        properties.splice(length, 1);
+                    }
                 }
 
-                if (transitionProperty === '' || transitionProperty === 'none' ||
-                    transitionDuration === '' || transitionDuration === '0s') {
+                if (properties.length === 0) {
+                    noTransition = true;
+                } else {
+                    length = durations.length;
+                    while (length-- > 0) {
+                        prop = durations[length];
+                        if (!(prop === '' || prop === '0s')) {
+                            break;
+                        }
+                    }
+
+                    if (length < 0) {
+                        noTransition = true;
+                    }
+                }
+
+                if (noTransition) {
                     this._animate();
                     this._dispose();
                     this.end();
                     return;
+                }
+
+                if (utils.isNumber(options.count) && options.count > 0) {
+                    this._count = options.count;
                 }
 
                 if (options.preserveInit === false) {
@@ -229,7 +257,7 @@
                 if (this._animate()) {
                     return;
                 } else if (utils.isEmpty(options.properties)) {
-                    this._cssTransition(computedStyle);
+                    this.__cssTransition(computedStyle, durations);
                     return;
                 }
 
@@ -299,9 +327,8 @@
                 propertyName = propertyName.replace(this._normalizeRegex, '').toLowerCase();
 
                 if ((count < this._count) ||
-                    (!this._usingCss &&
-                        this._normalizedKeys[propertyName] === true &&
-                        count < Object.keys(this._modifiedProperties).length)) {
+                    (!this._usingCss && this._normalizedKeys[propertyName] === true &&
+                        count < this._properties.length)) {
                     return;
                 }
             }
@@ -328,7 +355,6 @@
                 keys = Object.keys(properties),
                 length = keys.length,
                 key: any,
-                modifiedProperties = this._modifiedProperties,
                 normalizedKeys = this._normalizedKeys,
                 normalizeRegex = this._normalizeRegex,
                 currentProperty: string,
@@ -348,7 +374,6 @@
                 if (currentProperty === style[key]) {
                     unchanged++;
                 } else {
-                    modifiedProperties[key] = currentProperty;
                     normalizedKeys[key.replace(normalizeRegex, '').toLowerCase()] = true;
                 }
             }
@@ -367,23 +392,21 @@
          *
          * @param {CSSStyleDeclaration} computedStyle The computed style of the
          * element.
+         * @param {Array<string>} durations The array of declared transition duration values.
          *
          * @returns {void}
          */
-        protected _cssTransition(computedStyle: CSSStyleDeclaration): void {
+        private __cssTransition(computedStyle: CSSStyleDeclaration, durations: Array<string>): void {
             let transitionId = this._animationEvents.$transition,
-                durations = computedStyle[<any>(transitionId + 'Duration')].split(','),
                 delays = computedStyle[<any>(transitionId + 'Delay')].split(','),
-                properties = computedStyle[<any>(transitionId + 'Property')].split(','),
+                properties = this._properties,
                 property: any,
                 duration: string,
                 delay: string,
                 length = properties.length,
-                computedProperties = <Array<string>>[],
                 computedProperty: string,
                 normalizedKeys = this._normalizedKeys,
                 normalizeRegex = this._normalizeRegex,
-                modifiedProperties = this._modifiedProperties,
                 i = 0,
                 count = 0,
                 changed = false,
@@ -391,13 +414,11 @@
                     if (this._animationCanceled === noop) {
                         // disposal has already occurred
                         return;
-                    } else if (prop === 'all') {
+                    } else if (prop === 'all' || computedStyle[prop] !== computedProp) {
                         // we can't know if the transition started due to 'all' being set and have to rely on this.options.count
+                        // or
+                        // we know the transition started due to the properties being different
                         changed = true;
-                    } else if (computedStyle[prop] !== computedProp) {
-                        // we know the transition started
-                        changed = true;
-                        modifiedProperties[prop] = computedProp;
                     }
 
                     if (++count < length || changed) {
@@ -417,7 +438,6 @@
                 delay = delays.length > i ? delays[i].trim() : delays[delays.length - 1].trim();
                 normalizedKeys[property.replace(normalizeRegex, '').toLowerCase()] = true;
                 computedProperty = computedStyle[property];
-                computedProperties.push(computedProperty);
                 defer(this._toMs(duration) + this._toMs(delay), [property, computedProperty]);
             }
         }

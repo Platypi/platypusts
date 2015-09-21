@@ -1,5 +1,5 @@
 /**
-  * PlatypusTS v0.13.25 (https://platypi.io)
+  * PlatypusTS v0.14.1 (https://platypi.io)
   * Copyright 2015 Platypi, LLC. All rights reserved.
   *
   * PlatypusTS is licensed under the MIT license found at
@@ -5107,6 +5107,12 @@ declare module plat {
               * @param {string} templateUrl The url where the HTML template is stored.
               */
             getTemplate(templateUrl: string): async.IThenable<DocumentFragment>;
+            /**
+              * Inspects the Element and resolves when the Element is visible in the DOM.
+              * @param {() => void} cb A callback that will fire when the element is visible in the DOM.
+              * @param {Element} element The element whose visibility is being inspected.
+              */
+            whenVisible(cb: () => void, element: Element): IRemoveListener;
         }
         /**
           * An object describing custom element properties added to elements for hashing purposes.
@@ -7586,7 +7592,7 @@ declare module plat {
                 /**
                   * A function for stopping a potential callback in the animation chain.
                   */
-                protected _animationCanceled: IRemoveListener;
+                protected _cancelAnimation: IRemoveListener;
                 /**
                   * Adds the class to initialize the animation.
                   */
@@ -7692,11 +7698,9 @@ declare module plat {
                   */
                 protected _animationCanceled: IRemoveListener;
                 /**
-                  * A JavaScript object containing all modified properties as a result
-                  * of this animation. Used in the case of a disposal to reset the changed
-                  * properties.
+                  * An Array of all the properties the transition will be affecting.
                   */
-                protected _modifiedProperties: IObject<string>;
+                protected _properties: Array<string>;
                 /**
                   * A regular expression to normalize modified property keys.
                   */
@@ -7757,8 +7761,9 @@ declare module plat {
                   * Handles element transitions that are defined with CSS.
                   * @param {CSSStyleDeclaration} computedStyle The computed style of the
                   * element.
+                  * @param {Array<string>} durations The array of declared transition duration values.
                   */
-                protected _cssTransition(computedStyle: CSSStyleDeclaration): void;
+                private __cssTransition(computedStyle, durations);
                 /**
                   * A function that converts a string value expressed as either seconds or milliseconds
                   * to a numerical millisecond value.
