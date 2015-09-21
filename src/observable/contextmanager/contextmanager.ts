@@ -1028,8 +1028,8 @@ module plat.observable {
          */
         protected _getValues(split: Array<string>, newRootContext: any, oldRootContext: any): { newValue: any; oldValue: any; } {
             let property: string,
-                doNew = true,
-                doOld = true;
+                doNew = isObject(newRootContext),
+                doOld = isObject(oldRootContext);
 
             while (split.length > 1) {
                 property = split.shift();
@@ -1047,7 +1047,7 @@ module plat.observable {
                 }
 
                 if (!(doNew || doOld)) {
-                    return null;
+                    break;
                 }
             }
 
@@ -1154,17 +1154,12 @@ module plat.observable {
 
                     if (isNull(value)) {
                         value = values[parentProperty] = this._getValues(split, newValue, oldValue);
-
-                        if (isNull(value)) {
-                            this._execute(binding, null, null);
-                            continue;
-                        }
                     }
 
                     newParent = value.newValue;
                     oldParent = value.oldValue;
-                    newChild = isNull(newParent) ? undefined : newParent[key];
-                    oldChild = isNull(oldParent) ? undefined : oldParent[key];
+                    newChild = isNull(newParent) ? newParent : newParent[key];
+                    oldChild = isNull(oldParent) ? oldParent : oldParent[key];
                 }
 
                 values[property] = {
