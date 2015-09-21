@@ -16478,8 +16478,14 @@ var plat;
                     routeInfo = result[0];
                     routeInfo.query = query;
                 }
-                if (emptyResult || this._isSameRoute(routeInfo)) {
-                    result = this._childRecognizer.recognize(url);
+                var sameRoute = this._isSameRoute(routeInfo);
+                if (emptyResult || sameRoute) {
+                    var childUrl = url;
+                    if (sameRoute) {
+                        segment = this._recognizer.generate(routeInfo.delegate.view, routeInfo.parameters);
+                        childUrl = childUrl.replace(segment, '');
+                    }
+                    result = this._childRecognizer.recognize(childUrl);
                     if (isEmpty(result)) {
                         if (!emptyResult) {
                             result = this._recognizer.recognize(url);
@@ -16489,7 +16495,7 @@ var plat;
                         }
                         else {
                             // route has not been matched 
-                            this._previousUrl = url;
+                            this._previousUrl = childUrl;
                             this._previousQuery = queryString;
                             if (isFunction(this._unknownHandler)) {
                                 var unknownRouteConfig = {

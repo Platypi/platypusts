@@ -811,8 +811,17 @@
                 routeInfo.query = query;
             }
 
-            if (emptyResult || this._isSameRoute(routeInfo)) {
-                result = this._childRecognizer.recognize(url);
+            let sameRoute: boolean = this._isSameRoute(routeInfo);
+
+            if (emptyResult || sameRoute) {
+                let childUrl = url;
+
+                if(sameRoute) {
+                    segment = this._recognizer.generate(routeInfo.delegate.view, routeInfo.parameters);
+                    childUrl = childUrl.replace(segment, '');
+                }
+
+                result = this._childRecognizer.recognize(childUrl);
 
                 if (isEmpty(result)) {
                     if(!emptyResult) {
@@ -822,7 +831,7 @@
                         pattern = routeInfo.delegate.pattern;
                     } else {
                         // route has not been matched
-                        this._previousUrl = url;
+                        this._previousUrl = childUrl;
                         this._previousQuery = queryString;
 
                         if (isFunction(this._unknownHandler)) {
