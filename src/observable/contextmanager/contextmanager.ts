@@ -1352,9 +1352,9 @@ module plat.observable {
 
                 if (selfNotify) {
                     _this._notifyChildProperties(absoluteIdentifier, this, originalArray);
+                } else {
+                    _this._execute(absoluteIdentifier + '.length', newLength, oldLength);
                 }
-
-                _this._execute(absoluteIdentifier + '.length', newLength, oldLength);
 
                 return returnValue;
             };

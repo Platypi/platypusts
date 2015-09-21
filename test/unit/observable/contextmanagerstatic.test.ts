@@ -3,7 +3,7 @@
 module tests.observable.contextManagerStatic {
     var ContextManager: plat.observable.IContextManagerStatic = plat.acquire(plat.observable.IContextManagerStatic);
 
-    xdescribe('ContextManagerStatic Tests', () => {
+    describe('ContextManagerStatic Tests', () => {
         var control: plat.ui.TemplateControl,
             manager: plat.observable.ContextManager;
 
