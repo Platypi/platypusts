@@ -479,9 +479,14 @@ var plat;
         return query;
     }
     function serializeQuery(query) {
-        return (isArray(query) || isObject(query)) && !isEmpty(query) ? '?' + map(function (value, key) {
+        var q = '';
+        q += map(function (value, key) {
             return key + '=' + value;
-        }, query).join('&') : '';
+        }, query).join('&');
+        if (!isEmpty(q)) {
+            q = '?' + q;
+        }
+        return q;
     }
     function booleanReduce(values) {
         if (!isArray(values)) {
@@ -16468,8 +16473,12 @@ var plat;
                     }
                     return resolve();
                 }
-                var result = this._recognizer.recognize(url), routeInfo, emptyResult = isEmpty(result), pattern, segment;
-                if (emptyResult || this._isSameRoute(result[0])) {
+                var result = this._recognizer.recognize(url), routeInfo, emptyResult = isEmpty(result), pattern, segment, info;
+                if (!emptyResult) {
+                    info = _clone(result[0]);
+                    info.query = query;
+                }
+                if (emptyResult || this._isSameRoute(info)) {
                     result = this._childRecognizer.recognize(url);
                     if (isEmpty(result)) {
                         if (!emptyResult) {

@@ -804,9 +804,15 @@
                 routeInfo: IRouteInfo,
                 emptyResult = isEmpty(result),
                 pattern: string,
-                segment: string;
+                segment: string,
+                info: IRouteInfo;
 
-            if (emptyResult || this._isSameRoute(result[0])) {
+            if(!emptyResult) {
+                info = _clone(result[0]);
+                info.query = query;
+            }
+
+            if (emptyResult || this._isSameRoute(info)) {
                 result = this._childRecognizer.recognize(url);
 
                 if (isEmpty(result)) {
