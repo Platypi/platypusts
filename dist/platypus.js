@@ -16511,6 +16511,8 @@ var plat;
                         }
                     }
                     else {
+                        routeInfo = result[0];
+                        routeInfo.query = query;
                         pattern = routeInfo.delegate.pattern;
                         pattern = pattern.substr(0, pattern.length - __CHILD_ROUTE_LENGTH);
                         if (!emptyResult || this._previousPattern === pattern) {
