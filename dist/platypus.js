@@ -16473,12 +16473,12 @@ var plat;
                     }
                     return resolve();
                 }
-                var result = this._recognizer.recognize(url), routeInfo, emptyResult = isEmpty(result), pattern, segment, info;
+                var result = this._recognizer.recognize(url), routeInfo, emptyResult = isEmpty(result), pattern, segment;
                 if (!emptyResult) {
-                    info = _clone(result[0]);
-                    info.query = query;
+                    routeInfo = result[0];
+                    routeInfo.query = query;
                 }
-                if (emptyResult || this._isSameRoute(info)) {
+                if (emptyResult || this._isSameRoute(routeInfo)) {
                     result = this._childRecognizer.recognize(url);
                     if (isEmpty(result)) {
                         if (!emptyResult) {
@@ -16511,8 +16511,6 @@ var plat;
                         }
                     }
                     else {
-                        routeInfo = result[0];
-                        routeInfo.query = query;
                         pattern = routeInfo.delegate.pattern;
                         pattern = pattern.substr(0, pattern.length - __CHILD_ROUTE_LENGTH);
                         if (!emptyResult || this._previousPattern === pattern) {
@@ -16532,8 +16530,6 @@ var plat;
                     }
                 }
                 else {
-                    routeInfo = result[0];
-                    routeInfo.query = query;
                     pattern = routeInfo.delegate.pattern;
                 }
                 segment = this._recognizer.generate(routeInfo.delegate.view, routeInfo.parameters);

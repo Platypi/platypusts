@@ -804,15 +804,14 @@
                 routeInfo: IRouteInfo,
                 emptyResult = isEmpty(result),
                 pattern: string,
-                segment: string,
-                info: IRouteInfo;
+                segment: string;
 
             if(!emptyResult) {
-                info = _clone(result[0]);
-                info.query = query;
+                routeInfo = result[0];
+                routeInfo.query = query;
             }
 
-            if (emptyResult || this._isSameRoute(info)) {
+            if (emptyResult || this._isSameRoute(routeInfo)) {
                 result = this._childRecognizer.recognize(url);
 
                 if (isEmpty(result)) {
@@ -848,8 +847,6 @@
                         return resolve();
                     }
                 } else {
-                    routeInfo = result[0];
-                    routeInfo.query = query;
                     pattern = routeInfo.delegate.pattern;
                     pattern = pattern.substr(0, pattern.length - __CHILD_ROUTE_LENGTH);
 
@@ -869,8 +866,6 @@
                     }
                 }
             } else {
-                routeInfo = result[0];
-                routeInfo.query = query;
                 pattern = routeInfo.delegate.pattern;
             }
 
