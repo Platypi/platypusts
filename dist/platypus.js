@@ -19237,12 +19237,6 @@ var plat;
                 App._EventManager.dispose(App.app.uid);
             }
             App.__injector = appInjector;
-            if (App._compat.amd) {
-                var _LifecycleEvent = App._LifecycleEvent, dispatch = _LifecycleEvent.dispatch;
-                postpone(function () {
-                    dispatch(__ready, _LifecycleEvent);
-                });
-            }
         };
         /**
          * Kicks off compilation of the DOM from the specified node. If no node is specified,
