@@ -541,9 +541,17 @@ function deserializeQuery(search: string): plat.IObject<string> {
 }
 
 function serializeQuery(query: plat.IObject<string>): string {
-    return (isArray(query) || isObject(query)) && !isEmpty(query) ? '?' + map((value, key): string => {
+    let q = '';
+
+    q += map((value, key): string => {
         return key + '=' + value;
-    }, query).join('&') : '';
+    }, query).join('&');
+
+    if(!isEmpty(q)) {
+        q = '?' + q;
+    }
+
+    return q;
 }
 
 function booleanReduce(values: Array<boolean>): boolean {

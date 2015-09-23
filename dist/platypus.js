@@ -5,7 +5,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 /* tslint:disable */
 /**
- * PlatypusTS v0.14.1 (https://platypi.io)
+ * PlatypusTS v0.14.5 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
@@ -479,9 +479,14 @@ var plat;
         return query;
     }
     function serializeQuery(query) {
-        return (isArray(query) || isObject(query)) && !isEmpty(query) ? '?' + map(function (value, key) {
+        var q = '';
+        q += map(function (value, key) {
             return key + '=' + value;
-        }, query).join('&') : '';
+        }, query).join('&');
+        if (!isEmpty(q)) {
+            q = '?' + q;
+        }
+        return q;
     }
     function booleanReduce(values) {
         if (!isArray(values)) {
@@ -16469,8 +16474,18 @@ var plat;
                     return resolve();
                 }
                 var result = this._recognizer.recognize(url), routeInfo, emptyResult = isEmpty(result), pattern, segment;
-                if (emptyResult || this._isSameRoute(result[0])) {
-                    result = this._childRecognizer.recognize(url);
+                if (!emptyResult) {
+                    routeInfo = result[0];
+                    routeInfo.query = query;
+                }
+                var sameRoute = this._isSameRoute(routeInfo);
+                if (emptyResult || sameRoute) {
+                    var childUrl = url;
+                    if (sameRoute) {
+                        segment = this._recognizer.generate(routeInfo.delegate.view, routeInfo.parameters);
+                        childUrl = childUrl.replace(segment, '');
+                    }
+                    result = this._childRecognizer.recognize(childUrl);
                     if (isEmpty(result)) {
                         if (!emptyResult) {
                             result = this._recognizer.recognize(url);
@@ -16480,7 +16495,7 @@ var plat;
                         }
                         else {
                             // route has not been matched 
-                            this._previousUrl = url;
+                            this._previousUrl = childUrl;
                             this._previousQuery = queryString;
                             if (isFunction(this._unknownHandler)) {
                                 var unknownRouteConfig = {
@@ -16523,8 +16538,6 @@ var plat;
                     }
                 }
                 else {
-                    routeInfo = result[0];
-                    routeInfo.query = query;
                     pattern = routeInfo.delegate.pattern;
                 }
                 segment = this._recognizer.generate(routeInfo.delegate.view, routeInfo.parameters);
@@ -19237,12 +19250,6 @@ var plat;
                 App._EventManager.dispose(App.app.uid);
             }
             App.__injector = appInjector;
-            if (App._compat.amd) {
-                var _LifecycleEvent = App._LifecycleEvent, dispatch = _LifecycleEvent.dispatch;
-                postpone(function () {
-                    dispatch(__ready, _LifecycleEvent);
-                });
-            }
         };
         /**
          * Kicks off compilation of the DOM from the specified node. If no node is specified,

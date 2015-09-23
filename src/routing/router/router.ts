@@ -806,8 +806,22 @@
                 pattern: string,
                 segment: string;
 
-            if (emptyResult || this._isSameRoute(result[0])) {
-                result = this._childRecognizer.recognize(url);
+            if(!emptyResult) {
+                routeInfo = result[0];
+                routeInfo.query = query;
+            }
+
+            let sameRoute: boolean = this._isSameRoute(routeInfo);
+
+            if (emptyResult || sameRoute) {
+                let childUrl = url;
+
+                if(sameRoute) {
+                    segment = this._recognizer.generate(routeInfo.delegate.view, routeInfo.parameters);
+                    childUrl = childUrl.replace(segment, '');
+                }
+
+                result = this._childRecognizer.recognize(childUrl);
 
                 if (isEmpty(result)) {
                     if(!emptyResult) {
@@ -817,7 +831,7 @@
                         pattern = routeInfo.delegate.pattern;
                     } else {
                         // route has not been matched
-                        this._previousUrl = url;
+                        this._previousUrl = childUrl;
                         this._previousQuery = queryString;
 
                         if (isFunction(this._unknownHandler)) {
@@ -863,8 +877,6 @@
                     }
                 }
             } else {
-                routeInfo = result[0];
-                routeInfo.query = query;
                 pattern = routeInfo.delegate.pattern;
             }
 
