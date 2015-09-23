@@ -5,7 +5,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 /* tslint:disable */
 /**
- * PlatypusTS v0.14.5 (https://platypi.io)
+ * PlatypusTS v0.14.6 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
@@ -13089,7 +13089,7 @@ var plat;
                     var element = this.element, setter;
                     this._binder = binder;
                     if (element.multiple) {
-                        setter = this._setSelectedIndices.bind(this);
+                        setter = this._setSelectedIndices;
                         if (isNull(binder.evaluate())) {
                             this.inputChanged([]);
                         }
@@ -13098,7 +13098,7 @@ var plat;
                         }, null, true);
                     }
                     else {
-                        setter = this._setSelectedIndex.bind(this);
+                        setter = this._setSelectedIndex;
                     }
                     binder.observeProperty(setter);
                     this.addEventListener(element, 'change', this._observeChange, false);
@@ -13136,20 +13136,20 @@ var plat;
                             message = 'Trying to bind a value that is not a string to a ' + this.type + '\'s element. ' +
                                 'The element\'s selected index will be set to -1.';
                         }
-                        this._log.debug(message);
+                        this._log.info(message);
                     }
                     else if (value === newValue) {
                         return;
                     }
-                    else if (!this._document.body.contains(element)) {
-                        element.value = newValue;
-                        if (element.value !== newValue) {
-                            element.value = value;
-                            this.inputChanged(element.value);
-                        }
-                        return;
-                    }
                     this.itemsLoaded.then(function () {
+                        if (!_this._document.body.contains(element)) {
+                            element.value = newValue;
+                            if (element.value !== newValue) {
+                                element.value = value;
+                                _this.inputChanged(element.value);
+                            }
+                            return;
+                        }
                         element.value = newValue;
                         // check to make sure the user changed to a valid value 
                         // second boolean argument is an ie fix for inconsistency 
@@ -18815,7 +18815,7 @@ var plat;
                 else if (value === newValue) {
                     return;
                 }
-                else if (!this._document.body.contains(element)) {
+                if (!this._document.body.contains(element)) {
                     element.value = newValue;
                     if (element.value !== newValue) {
                         element.value = value;
