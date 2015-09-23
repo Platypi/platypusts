@@ -407,7 +407,7 @@ module plat.ui.controls {
             this._binder = binder;
 
             if (element.multiple) {
-                setter = this._setSelectedIndices.bind(this);
+                setter = this._setSelectedIndices;
                 if (isNull(binder.evaluate())) {
                     this.inputChanged([]);
                 }
@@ -416,7 +416,7 @@ module plat.ui.controls {
                     setter(binder.evaluate(), null, null);
                 }, null, true);
             } else {
-                setter = this._setSelectedIndex.bind(this);
+                setter = this._setSelectedIndex;
             }
 
             binder.observeProperty(setter);
@@ -464,19 +464,21 @@ module plat.ui.controls {
                     'The element\'s selected index will be set to -1.';
                 }
 
-                this._log.debug(message);
+                this._log.info(message);
             } else if (value === newValue) {
-                return;
-            } else if (!this._document.body.contains(element)) {
-                element.value = newValue;
-                if (element.value !== newValue) {
-                    element.value = value;
-                    this.inputChanged(element.value);
-                }
                 return;
             }
 
             this.itemsLoaded.then((): void => {
+                if (!this._document.body.contains(element)) {
+                    element.value = newValue;
+                    if (element.value !== newValue) {
+                        element.value = value;
+                        this.inputChanged(element.value);
+                    }
+                    return;
+                }
+
                 element.value = newValue;
                 // check to make sure the user changed to a valid value
                 // second boolean argument is an ie fix for inconsistency
