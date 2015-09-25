@@ -776,7 +776,7 @@
          * @returns {plat.async.IThenable<void>} A {@link plat.async.IPromise|Promise} that resolves/rejects based on the success of
          * the navigation.
          */
-        navigate(url: string, query?: IObject<any>, force?: boolean): async.IThenable<void> {
+        navigate(url: string, query?: IObject<any>, force?: boolean, poll?: boolean): async.IThenable<void> {
             if (!isObject(query)) {
                 query = {};
             }
@@ -889,7 +889,7 @@
             this.navigating = true;
 
             let routeInfoCopy = this._nextRouteInfo = _clone(routeInfo, true);
-            return this.finishNavigating = this._canNavigate(routeInfo)
+            return this.finishNavigating = this._canNavigate(routeInfo, poll)
                 .then((canNavigate: boolean): async.IThenable<void> => {
                     if (!canNavigate) {
                         this.navigating = false;
@@ -1123,7 +1123,7 @@
          *
          * @returns {plat.async.IThenable<void>} A {@link plat.async.IPromise|Promise} that resolves when the navigation is complete.
          */
-        protected _navigateChildren(info: IRouteInfo): async.IThenable<void> {
+        protected _navigateChildren(info: IRouteInfo, poll: boolean = true): async.IThenable<void> {
             let childRoute = this._getChildRoute(info);
 
             if (isNull(childRoute)) {
@@ -1131,7 +1131,7 @@
             }
 
             return mapAsync((child: Router): async.IThenable<void> => {
-                return child.navigate(childRoute, info.query);
+                return child.navigate(childRoute, info.query, undefined, poll);
             }, this.children).then(noop);
         }
 
@@ -1188,7 +1188,7 @@
                 }, this._ports);
             })
                 .then((): async.IThenable<void> => {
-                    return this._navigateChildren(info);
+                    return this._navigateChildren(info, false);
                 });
         }
 
@@ -1233,8 +1233,12 @@
          *
          * @returns {plat.async.IThenable<boolean>} Whether or not we can navigate to the next state.
          */
-        protected _canNavigate(info: IRouteInfo): async.IThenable<boolean> {
+        protected _canNavigate(info: IRouteInfo, poll: boolean = true): async.IThenable<boolean> {
             let sameRoute = this._isSameRoute(this._nextRouteInfo);
+
+            if(!poll) {
+                return this._resolve(true);
+            }
 
             return this._canNavigateFrom(sameRoute)
                 .then((canNavigateFrom: boolean): async.IThenable<boolean> => {

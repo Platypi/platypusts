@@ -3620,6 +3620,7 @@ var plat;
              * @param url The URL to verify whether or not it's cross domain.
              */
             Browser.prototype._urlChanged = function () {
+                var _this = this;
                 if (this.__initializing) {
                     return;
                 }
@@ -3630,9 +3631,12 @@ var plat;
                         url.indexOf(this.__lastUrl + '#') > -1)) {
                     return;
                 }
-                this.__lastUrl = this._trimSlashes(this.urlUtils().href);
+                var utils = this.urlUtils();
+                this.__lastUrl = this._trimSlashes(utils.href);
                 var $manager = this._EventManager;
-                $manager.dispatch(__urlChanged, this, $manager.DIRECT, [this.urlUtils()]);
+                postpone(function () {
+                    $manager.dispatch(__urlChanged, _this, $manager.DIRECT, [utils]);
+                });
             };
             /**
              * Checks for the existence of pushState and
@@ -3654,10 +3658,18 @@ var plat;
                 }
                 if (this._compat.pushState) {
                     if (replace) {
-                        _history.replaceState(null, '', url);
+                        var state = _history.state;
+                        if (!isObject(state)) {
+                            state = {};
+                        }
+                        _history.replaceState({
+                            previousLocation: state.previousLocation
+                        }, '', url);
                     }
                     else {
-                        _history.pushState(null, '', url);
+                        _history.pushState({
+                            previousLocation: this.urlUtils().pathname
+                        }, '', url);
                     }
                     if (!this.__initializing) {
                         this._urlChanged();
@@ -11682,6 +11694,7 @@ var plat;
                  */
                 Viewport.prototype.navigateTo = function (routeInfo) {
                     var injector = this._nextInjector || this._Injector.getDependency(routeInfo.delegate.view), nodeMap = this._createNodeMap(injector), element = this.element, node = nodeMap.element, parameters = routeInfo.parameters, query = routeInfo.query, control = nodeMap.uiControlNode.control;
+                    this._nextInjector = this._nextView = undefined;
                     if (this._animate) {
                         var animator = this._animator, dom = this.dom, isNavigatingBack = this._navigator.isBackNavigation(), view = this.controls[0];
                         if (isObject(view)) {
@@ -15495,11 +15508,17 @@ var plat;
                     return;
                 }
                 var EventManager = this._EventManager, previousUrl, headControl = acquire(__Head), headExists = isObject(headControl) && isFunction(headControl.navigated), onFailedNavigaton = function (e) {
-                    _this._ignoreOnce = true;
                     _this._previousUrl = previousUrl;
-                    _this._browser.url(previousUrl, !_this._backNavigate);
+                    var _history = _this._history, state = _history.state;
+                    _this._ignoreOnce = true;
+                    if (isNull(state.previousLocation) || state.previousLocation === previousUrl) {
+                        // this._browser.url(state.previousLocation || previousUrl, true); 
+                        _history.go(-1);
+                    }
+                    else {
+                        _history.go(1);
+                    }
                     _this._backNavigate = false;
-                    _this._history.go(-1);
                     if (isFunction(_this._rejectNavigate)) {
                         _this._rejectNavigate(e);
                     }
@@ -16455,7 +16474,7 @@ var plat;
              * @param {plat.IObject<any>} query The query parameters for the route.
              * @param {boolean} force Whether or not to force navigation, even if the same url has already been matched.
              */
-            Router.prototype.navigate = function (url, query, force) {
+            Router.prototype.navigate = function (url, query, force, poll) {
                 var _this = this;
                 if (!isObject(query)) {
                     query = {};
@@ -16545,7 +16564,7 @@ var plat;
                 this._previousSegment = segment;
                 this.navigating = true;
                 var routeInfoCopy = this._nextRouteInfo = _clone(routeInfo, true);
-                return this.finishNavigating = this._canNavigate(routeInfo)
+                return this.finishNavigating = this._canNavigate(routeInfo, poll)
                     .then(function (canNavigate) {
                     if (!canNavigate) {
                         _this.navigating = false;
@@ -16672,13 +16691,14 @@ var plat;
              * Navigates the child routers.
              * @param {plat.routing.IRouteInfo} info The information necessary to build the childRoute for the child routers.
              */
-            Router.prototype._navigateChildren = function (info) {
+            Router.prototype._navigateChildren = function (info, poll) {
+                if (poll === void 0) { poll = true; }
                 var childRoute = this._getChildRoute(info);
                 if (isNull(childRoute)) {
                     return this._resolve();
                 }
                 return mapAsync(function (child) {
-                    return child.navigate(childRoute, info.query);
+                    return child.navigate(childRoute, info.query, undefined, poll);
                 }, this.children).then(noop);
             };
             /**
@@ -16711,7 +16731,7 @@ var plat;
                     }, _this._ports);
                 })
                     .then(function () {
-                    return _this._navigateChildren(info);
+                    return _this._navigateChildren(info, false);
                 });
             };
             /**
@@ -16736,9 +16756,13 @@ var plat;
              * Determines if we can navigate from the current state and navigate to the next state.
              * @param {plat.routing.IRouteInfo} info The route information.
              */
-            Router.prototype._canNavigate = function (info) {
+            Router.prototype._canNavigate = function (info, poll) {
                 var _this = this;
+                if (poll === void 0) { poll = true; }
                 var sameRoute = this._isSameRoute(this._nextRouteInfo);
+                if (!poll) {
+                    return this._resolve(true);
+                }
                 return this._canNavigateFrom(sameRoute)
                     .then(function (canNavigateFrom) {
                     return canNavigateFrom && _this._canNavigateTo(info, sameRoute);

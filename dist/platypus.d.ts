@@ -9968,6 +9968,15 @@ declare module plat {
           */
         function History(_window?: Window): History;
         /**
+          * An interface for the state object in history.
+          */
+        interface IHistoryState {
+            /**
+              * The location that existed before navigating to this page
+              */
+            previousLocation: string;
+        }
+        /**
           * Stores information about a segment, publishes a regex for matching the segment as well as
           * methods for generating the segment and iterating over the characters in the segment.
           */
@@ -10672,7 +10681,7 @@ declare module plat {
               * @param {plat.IObject<any>} query The query parameters for the route.
               * @param {boolean} force Whether or not to force navigation, even if the same url has already been matched.
               */
-            navigate(url: string, query?: IObject<any>, force?: boolean): async.IThenable<void>;
+            navigate(url: string, query?: IObject<any>, force?: boolean, poll?: boolean): async.IThenable<void>;
             /**
               * Attempts to generate a route with the specified route name. Will generate the full-path from the root
               * router.
@@ -10711,7 +10720,7 @@ declare module plat {
               * Navigates the child routers.
               * @param {plat.routing.IRouteInfo} info The information necessary to build the childRoute for the child routers.
               */
-            protected _navigateChildren(info: IRouteInfo): async.IThenable<void>;
+            protected _navigateChildren(info: IRouteInfo, poll?: boolean): async.IThenable<void>;
             /**
               * Parses out the child route from route information.
               * @param {plat.routing.IRouteInfo} info The information necessary to get the child route.
@@ -10731,7 +10740,7 @@ declare module plat {
               * Determines if we can navigate from the current state and navigate to the next state.
               * @param {plat.routing.IRouteInfo} info The route information.
               */
-            protected _canNavigate(info: IRouteInfo): async.IThenable<boolean>;
+            protected _canNavigate(info: IRouteInfo, poll?: boolean): async.IThenable<boolean>;
             /**
               * Determines if we can navigate from the current state and navigate to the next state.
               * @param {boolean} ignorePorts Ignores the ports if necessary.

@@ -373,6 +373,8 @@ module plat.ui.controls {
                 query = routeInfo.query,
                 control = <ViewControl>nodeMap.uiControlNode.control;
 
+            this._nextInjector = this._nextView = undefined;
+
             if (this._animate) {
                 let animator = this._animator,
                     dom = this.dom,

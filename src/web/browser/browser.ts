@@ -481,17 +481,21 @@ module plat.web {
 
             if (this.__lastUrl === url ||
                 ($config.routingType === $config.STATE &&
-                url.indexOf(this.__lastUrl + '#') > -1)) {
+                    url.indexOf(this.__lastUrl + '#') > -1)) {
                 return;
             }
 
-            this.__lastUrl = this._trimSlashes(this.urlUtils().href);
+            let utils = this.urlUtils();
+
+            this.__lastUrl = this._trimSlashes(utils.href);
 
             let $manager = this._EventManager;
-            $manager.dispatch(__urlChanged,
-                this,
-                $manager.DIRECT,
-                [this.urlUtils()]);
+            postpone(() => {
+                $manager.dispatch(__urlChanged,
+                    this,
+                    $manager.DIRECT,
+                    [utils]);
+            });
         }
 
         /**
@@ -530,9 +534,19 @@ module plat.web {
 
             if (this._compat.pushState) {
                 if (replace) {
-                    _history.replaceState(null, '', url);
+                    let state = _history.state;
+
+                    if(!isObject(state)) {
+                        state = {};
+                    }
+
+                    _history.replaceState(<routing.IHistoryState>{
+                        previousLocation: state.previousLocation
+                    }, '', url);
                 } else {
-                    _history.pushState(null, '', url);
+                    _history.pushState(<routing.IHistoryState>{
+                        previousLocation: this.urlUtils().pathname
+                    }, '', url);
                 }
 
                 if (!this.__initializing) {
@@ -564,8 +578,8 @@ module plat.web {
         protected _isLastUrl(url: string): boolean {
             var last = this.__lastUrl;
 
-            if(isString(url)) {
-                if(isEmpty(url)) {
+            if (isString(url)) {
+                if (isEmpty(url)) {
                     url = '/';
                 }
 
@@ -589,7 +603,7 @@ module plat.web {
          * @returns {string} The trimmed url
          */
         protected _trimSlashes(url: string): string {
-            if(!isString(url) || url[url.length - 1] !== '/') {
+            if (!isString(url) || url[url.length - 1] !== '/') {
                 return url;
             }
 

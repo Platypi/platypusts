@@ -411,7 +411,7 @@
                 let current = this._browser.url(),
                     next = this._browser.url(url, replace);
 
-                if(current === next) {
+                if (current === next) {
                     this._resolveNavigate();
                 }
             });
@@ -458,11 +458,19 @@
                 headControl: ui.controls.Head = acquire(__Head),
                 headExists = isObject(headControl) && isFunction(headControl.navigated),
                 onFailedNavigaton: (e: any) => void = (e: any): void => {
-                    this._ignoreOnce = true;
                     this._previousUrl = previousUrl;
-                    this._browser.url(previousUrl, !this._backNavigate);
+
+                    let _history = this._history,
+                        state: IHistoryState = _history.state;
+
+                    this._ignoreOnce = true;
+                    if (isNull(state.previousLocation) || state.previousLocation === previousUrl) {
+                        _history.go(-1);
+                    } else {
+                        _history.go(1);
+                    }
+
                     this._backNavigate = false;
-                    this._history.go(-1);
 
                     if (isFunction(this._rejectNavigate)) {
                         this._rejectNavigate(e);
@@ -477,7 +485,7 @@
 
             // Protect against accidentally calling this method twice.
             EventManager.dispose(this.uid);
-            EventManager.on(this.uid, __backButton,(): void => {
+            EventManager.on(this.uid, __backButton, (): void => {
                 let ev = EventManager.dispatch(__backButtonPressed, this, EventManager.DIRECT);
                 if (ev.defaultPrevented) {
                     return;
@@ -510,22 +518,22 @@
                 this.finishNavigating()
                     .then((): async.IThenable<void> => {
 
-                    EventManager.dispatch(__navigating, this, EventManager.DIRECT, [utils]);
-                    return this._router.navigate(utils.pathname, utils.query);
-                }).then((): void => {
-                    this._previousUrl = utils.pathname;
+                        EventManager.dispatch(__navigating, this, EventManager.DIRECT, [utils]);
+                        return this._router.navigate(utils.pathname, utils.query);
+                    }).then((): void => {
+                        this._previousUrl = utils.pathname;
 
-                    if (isFunction(this._resolveNavigate)) {
-                        this._backNavigate = false;
-                        this._resolveNavigate();
-                    }
+                        if (isFunction(this._resolveNavigate)) {
+                            this._backNavigate = false;
+                            this._resolveNavigate();
+                        }
 
-                    if (headExists) {
-                        headControl.navigated(utils.href);
-                    }
+                        if (headExists) {
+                            headControl.navigated(utils.href);
+                        }
 
-                    EventManager.dispatch(__navigated, this, EventManager.DIRECT, [utils]);
-                }, onFailedNavigaton);
+                        EventManager.dispatch(__navigated, this, EventManager.DIRECT, [utils]);
+                    }, onFailedNavigaton);
             });
         }
 
