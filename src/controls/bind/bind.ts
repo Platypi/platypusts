@@ -1029,7 +1029,9 @@ module plat.controls {
                 this._log.info(message);
             } else if (value === newValue) {
                 return;
-            } else if (!this._document.body.contains(element)) {
+            }
+
+            if (!this._document.body.contains(element)) {
                 element.value = newValue;
                 if (element.value !== newValue) {
                     element.value = value;
