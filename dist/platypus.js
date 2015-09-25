@@ -5,7 +5,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 /* tslint:disable */
 /**
- * PlatypusTS v0.14.6 (https://platypi.io)
+ * PlatypusTS v0.15.0 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
@@ -15512,7 +15512,6 @@ var plat;
                     var _history = _this._history, state = _history.state;
                     _this._ignoreOnce = true;
                     if (isNull(state.previousLocation) || state.previousLocation === previousUrl) {
-                        // this._browser.url(state.previousLocation || previousUrl, true); 
                         _history.go(-1);
                     }
                     else {
