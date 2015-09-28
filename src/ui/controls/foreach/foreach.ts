@@ -334,14 +334,14 @@ module plat.ui.controls {
                 this._animationQueue = [];
             }
 
+            this._setAliases();
+
             if (!isArray(context)) {
                 if (!isNull(context)) {
                     this._log.debug(this.type + ' context set to something other than an Array.');
                 }
                 return;
             }
-
-            this._setAliases();
 
             let addQueue = this._addQueue,
                 itemCount = context.length;
@@ -392,7 +392,7 @@ module plat.ui.controls {
         protected _setAliases(): void {
             let options: observable.IObservableProperty<IForEachOptions> = this.options;
 
-            if(isUndefined(options)) {
+            if (isUndefined(options)) {
                 return;
             }
 
