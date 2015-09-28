@@ -512,6 +512,32 @@ module plat.controls {
         protected _styleRegex: RegExp = /(.*?):(.*)/;
 
         /**
+         * @name _urlRegex
+         * @memberof plat.controls.Style
+         * @kind property
+         * @access protected
+         *
+         * @type {RegExp}
+         *
+         * @description
+         * A regular expression for temporarily finding and removing url declarations in the style attribute.
+         */
+        protected _urlRegex: RegExp = /url\([^\)]*\)/gi;
+
+        /**
+         * @name _urlRegex
+         * @memberof plat.controls.Style
+         * @kind property
+         * @access protected
+         *
+         * @type {string}
+         *
+         * @description
+         * The temporary replace value of urls found in the style attribute.
+         */
+        protected _urlReplace: string = '[PLAT-STYLE-URL]';
+
+        /**
          * @name __addedStyles
          * @memberof plat.controls.Style
          * @kind property
@@ -559,6 +585,13 @@ module plat.controls {
             }
 
             this._stopSetter = requestAnimationFrameGlobal((): void => {
+                let urls: Array<string> = [],
+                    urlReplace = this._urlReplace;
+                expression.replace(this._urlRegex, (match): string => {
+                    urls.push(match);
+                    return urlReplace;
+                });
+
                 let style = element.style,
                     addedStyles = this.__addedStyles,
                     oldStyles = this.__oldStyles,
@@ -566,6 +599,7 @@ module plat.controls {
                     props = expression.split(';'),
                     length = props.length,
                     prop: string,
+                    val: string,
                     styleRegex = this._styleRegex,
                     exec: Array<string>,
                     styleChanges: IObject<string> = {},
@@ -587,7 +621,13 @@ module plat.controls {
                     }
 
                     newStyles.push(prop);
-                    styleChanges[prop] = exec[2].trim();
+                    
+                    val = exec[2].trim();
+                    if (urls.length > 0 && val.indexOf(urlReplace) !== -1) {
+                        val.replace(urlReplace, urls.shift());
+                    }
+
+                    styleChanges[prop] = val;
                 }
 
                 length = addedStyles.length;
