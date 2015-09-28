@@ -5,7 +5,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 /* tslint:disable */
 /**
- * PlatypusTS v0.15.2 (https://platypi.io)
+ * PlatypusTS v0.15.3 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
@@ -15256,6 +15256,10 @@ var plat;
         var AttributeManager = (function () {
             function AttributeManager() {
                 /**
+                 * A regular expression for finding markup in a string.
+                 */
+                this._markupRegex = new RegExp("^" + __startSymbol + "[\\S\\s]*" + __endSymbol + "\\S*\\s*|\\s*\\S*" + __startSymbol + "[\\S\\s]*" + __endSymbol + "\\S*", 'g');
+                /**
                  * Keeps track of the previous bound values of a "dynamic" attribute.
                  */
                 this._lastValues = {};
@@ -15266,7 +15270,6 @@ var plat;
             AttributeManager.getInstance = function () {
                 var manager = new AttributeManager();
                 manager._NodeManager = acquire(__NodeManagerStatic);
-                manager._markupRegex = acquire(__Regex).markupRegex;
                 return manager;
             };
             /**
@@ -15289,29 +15292,17 @@ var plat;
                 }
                 else {
                     this.attributeChanged = this._dynamicAttributeChanged;
-                    this._bindingExpressions = this._getBindingExpressions(node.expressions);
                 }
-            };
-            /**
-             * In the event that the attribute is dynamic (i.e. a "class"-like attribute) this will filter out
-             * expressions that don't have identifiers/aliases.
-             * @param {Array<plat.expressions.IParsedExpression>} expressions The expressions to filter.
-             */
-            AttributeManager.prototype._getBindingExpressions = function (expressions) {
-                return filter(function (expression) {
-                    return expression.identifiers.length > 0 || expression.aliases.length > 0 || expression.expression.trim() === '';
-                }, expressions);
             };
             /**
              * Handles changes to dynamic attributes. Takes into account that the attribute may have been changed programmatically, and
              * we need to only mutate the piece of the attribute corresponding to expressions with markup.
              */
             AttributeManager.prototype._dynamicAttributeChanged = function () {
-                var node = this.node, attr = node.node, value = this._NodeManager.build(this._bindingExpressions, this.parent), classes = value.split(/\s/), last = this._lastValues, element = this.element, c, length, i;
-                if (this._NodeManager.hasMarkup(attr.value)) {
-                    attr.value = attr.value.replace(this._markupRegex, '');
+                var node = this.node, attr = node.node, nodeValue = attr.value, classes = this._NodeManager.build(node.expressions, this.parent).trim().split(/\s/), last = this._lastValues, element = this.element, c, length = classes.length, i;
+                if (this._NodeManager.hasMarkup(nodeValue)) {
+                    attr.value = nodeValue.replace(this._markupRegex, '');
                 }
-                length = classes.length;
                 for (i = 0; i < length; ++i) {
                     last[classes[i]] = true;
                 }
@@ -15328,8 +15319,7 @@ var plat;
                         removeClass(element, c);
                     }
                 }
-                value = attr.value;
-                this._notifyAttributes(node.nodeName, value);
+                this._notifyAttributes(node.nodeName, attr.value);
             };
             /**
              * Handles changes to static attributes. Builds a string from the node expressions, then sets the attribute value
@@ -18236,6 +18226,14 @@ var plat;
                  */
                 this._styleRegex = /(.*?):(.*)/;
                 /**
+                 * A regular expression for temporarily finding and removing url declarations in the style attribute.
+                 */
+                this._urlRegex = /url\([^\)]*\)/gi;
+                /**
+                 * The temporary replace value of urls found in the style attribute.
+                 */
+                this._urlReplace = '[PLAT-STYLE-URL]';
+                /**
                  * An object storing all the added styles.
                  */
                 this.__addedStyles = [];
@@ -18255,7 +18253,12 @@ var plat;
                     return;
                 }
                 this._stopSetter = requestAnimationFrameGlobal(function () {
-                    var style = element.style, addedStyles = _this.__addedStyles, oldStyles = _this.__oldStyles, newStyles = [], props = expression.split(';'), length = props.length, prop, styleRegex = _this._styleRegex, exec, styleChanges = {}, i;
+                    var urls = [], urlReplace = _this._urlReplace;
+                    expression = expression.replace(_this._urlRegex, function (match) {
+                        urls.push(match);
+                        return urlReplace;
+                    });
+                    var style = element.style, addedStyles = _this.__addedStyles, oldStyles = _this.__oldStyles, newStyles = [], props = expression.split(';'), length = props.length, prop, val, styleRegex = _this._styleRegex, exec, styleChanges = {}, i;
                     for (i = 0; i < length; ++i) {
                         exec = styleRegex.exec(props[i]);
                         if (isNull(exec) || exec.length < 3) {
@@ -18269,7 +18272,11 @@ var plat;
                             oldStyles[prop] = style[prop];
                         }
                         newStyles.push(prop);
-                        styleChanges[prop] = exec[2].trim();
+                        val = exec[2].trim();
+                        if (urls.length > 0 && val.indexOf(urlReplace) !== -1) {
+                            val = val.replace(urlReplace, urls.shift());
+                        }
+                        styleChanges[prop] = val;
                     }
                     length = addedStyles.length;
                     while (length-- > 0) {

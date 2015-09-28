@@ -1,5 +1,5 @@
 /**
-  * PlatypusTS v0.15.2 (https://platypi.io)
+  * PlatypusTS v0.15.3 (https://platypi.io)
   * Copyright 2015 Platypi, LLC. All rights reserved.
   *
   * PlatypusTS is licensed under the MIT license found at
@@ -9788,12 +9788,6 @@ declare module plat {
               */
             initialize(element: Element, node: INode, parent: ui.TemplateControl, controls: Array<Control>, replace?: boolean): void;
             /**
-              * In the event that the attribute is dynamic (i.e. a "class"-like attribute) this will filter out
-              * expressions that don't have identifiers/aliases.
-              * @param {Array<plat.expressions.IParsedExpression>} expressions The expressions to filter.
-              */
-            protected _getBindingExpressions(expressions: Array<expressions.IParsedExpression>): Array<expressions.IParsedExpression>;
-            /**
               * Handles changes to dynamic attributes. Takes into account that the attribute may have been changed programmatically, and
               * we need to only mutate the piece of the attribute corresponding to expressions with markup.
               */
@@ -11752,6 +11746,14 @@ declare module plat {
               * individual style declarations.
               */
             protected _styleRegex: RegExp;
+            /**
+              * A regular expression for temporarily finding and removing url declarations in the style attribute.
+              */
+            protected _urlRegex: RegExp;
+            /**
+              * The temporary replace value of urls found in the style attribute.
+              */
+            protected _urlReplace: string;
             /**
               * An object storing all the added styles.
               */
