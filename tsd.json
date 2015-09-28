@@ -6,7 +6,7 @@
   "bundle": "typings/tsd.d.ts",
   "installed": {
     "jasmine/jasmine.d.ts": {
-      "commit": "d0adccc436197cc7c3559322721e9df86b892bd6"
+      "commit": "3b7f250dcf631f1c3c545e28d9ff25920c60b5f7"
     }
   }
 }

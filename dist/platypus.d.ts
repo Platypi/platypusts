@@ -1,5 +1,5 @@
 /**
-  * PlatypusTS v0.15.1 (https://platypi.io)
+  * PlatypusTS v0.15.2 (https://platypi.io)
   * Copyright 2015 Platypi, LLC. All rights reserved.
   *
   * PlatypusTS is licensed under the MIT license found at
@@ -11747,6 +11747,11 @@ declare module plat {
               * The property to set on the associated template control.
               */
             property: string;
+            /**
+              * A regular expression for separating style properties from style values in
+              * individual style declarations.
+              */
+            protected _styleRegex: RegExp;
             /**
               * An object storing all the added styles.
               */

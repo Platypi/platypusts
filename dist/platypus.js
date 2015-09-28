@@ -5,7 +5,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 /* tslint:disable */
 /**
- * PlatypusTS v0.15.1 (https://platypi.io)
+ * PlatypusTS v0.15.2 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
@@ -18231,6 +18231,11 @@ var plat;
                  */
                 this.property = 'style';
                 /**
+                 * A regular expression for separating style properties from style values in
+                 * individual style declarations.
+                 */
+                this._styleRegex = /(.*?):(.*)/;
+                /**
                  * An object storing all the added styles.
                  */
                 this.__addedStyles = [];
@@ -18250,18 +18255,21 @@ var plat;
                     return;
                 }
                 this._stopSetter = requestAnimationFrameGlobal(function () {
-                    var style = element.style, addedStyles = _this.__addedStyles, oldStyles = _this.__oldStyles, newStyles = [], props = expression.split(';'), colon = ':', length = props.length, pairs, prop, styleChanges = {}, i;
+                    var style = element.style, addedStyles = _this.__addedStyles, oldStyles = _this.__oldStyles, newStyles = [], props = expression.split(';'), length = props.length, prop, styleRegex = _this._styleRegex, exec, styleChanges = {}, i;
                     for (i = 0; i < length; ++i) {
-                        pairs = props[i].split(colon);
-                        prop = pairs[0];
-                        if (isEmpty(prop) || isUndefined(style[prop])) {
+                        exec = styleRegex.exec(props[i]);
+                        if (isNull(exec) || exec.length < 3) {
+                            continue;
+                        }
+                        prop = exec[1].trim();
+                        if (prop.length === 0 || isUndefined(style[prop])) {
                             continue;
                         }
                         else if (addedStyles.indexOf(prop) === -1) {
                             oldStyles[prop] = style[prop];
                         }
                         newStyles.push(prop);
-                        styleChanges[prop] = pairs[1];
+                        styleChanges[prop] = exec[2].trim();
                     }
                     length = addedStyles.length;
                     while (length-- > 0) {
