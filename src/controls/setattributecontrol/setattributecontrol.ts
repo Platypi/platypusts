@@ -498,6 +498,20 @@ module plat.controls {
         property: string = 'style';
 
         /**
+         * @name _styleRegex
+         * @memberof plat.controls.Style
+         * @kind property
+         * @access protected
+         *
+         * @type {RegExp}
+         *
+         * @description
+         * A regular expression for separating style properties from style values in
+         * individual style declarations.
+         */
+        protected _styleRegex: RegExp = /(.*?):(.*)/;
+
+        /**
          * @name __addedStyles
          * @memberof plat.controls.Style
          * @kind property
@@ -550,25 +564,30 @@ module plat.controls {
                     oldStyles = this.__oldStyles,
                     newStyles = <Array<string>>[],
                     props = expression.split(';'),
-                    colon = ':',
                     length = props.length,
-                    pairs: Array<string>,
                     prop: string,
+                    styleRegex = this._styleRegex,
+                    exec: Array<string>,
                     styleChanges: IObject<string> = {},
                     i: number;
 
                 for (i = 0; i < length; ++i) {
-                    pairs = props[i].split(colon);
-                    prop = pairs[0];
+                    exec = styleRegex.exec(props[i]);
 
-                    if (isEmpty(prop) || isUndefined(style[<any>prop])) {
+                    if (isNull(exec) || exec.length < 3) {
+                        continue;
+                    }
+
+                    prop = exec[1].trim();
+
+                    if (prop.length === 0 || isUndefined(style[<any>prop])) {
                         continue;
                     } else if (addedStyles.indexOf(prop) === -1) {
                         oldStyles[prop] = style[<any>prop];
                     }
 
                     newStyles.push(prop);
-                    styleChanges[prop] = pairs[1];
+                    styleChanges[prop] = exec[2].trim();
                 }
 
                 length = addedStyles.length;
