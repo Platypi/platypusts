@@ -99,7 +99,7 @@
          * @description
          * A regular expression for finding markup in a string.
          */
-        protected _markupRegex: RegExp;
+        protected _markupRegex: RegExp = new RegExp(`^${__startSymbol}[\\S\\s]*${__endSymbol}\\S*\\s*|\\s*\\S*${__startSymbol}[\\S\\s]*${__endSymbol}\\S*`, 'g');
 
         /**
          * @name _controls
@@ -155,7 +155,6 @@
         static getInstance(): AttributeManager {
             let manager = new AttributeManager();
             manager._NodeManager = <INodeManagerStatic>acquire(__NodeManagerStatic);
-            manager._markupRegex = (<expressions.Regex>acquire(__Regex)).markupRegex;
             return manager;
         }
 
@@ -188,28 +187,7 @@
                 this.attributeChanged = this._staticAttributeChanged;
             } else {
                 this.attributeChanged = this._dynamicAttributeChanged;
-                this._bindingExpressions = this._getBindingExpressions(node.expressions);
             }
-        }
-
-        /**
-         * @name _getBindingExpressions
-         * @memberof plat.processing.AttributeManager
-         * @kind function
-         * @access protected
-         *
-         * @description
-         * In the event that the attribute is dynamic (i.e. a "class"-like attribute) this will filter out
-         * expressions that don't have identifiers/aliases.
-         *
-         * @param {Array<plat.expressions.IParsedExpression>} expressions The expressions to filter.
-         *
-         * @returns {Array<plat.expressions.IParsedExpression>} The filtered expressions.
-         */
-        protected _getBindingExpressions(expressions: Array<expressions.IParsedExpression>): Array<expressions.IParsedExpression> {
-            return filter((expression: expressions.IParsedExpression) => {
-                return expression.identifiers.length > 0 || expression.aliases.length > 0 || expression.expression.trim() === '';
-            }, expressions);
         }
 
         /**
@@ -227,19 +205,17 @@
         protected _dynamicAttributeChanged(): void {
             let node = this.node,
                 attr: Attr = <Attr>node.node,
-                value = this._NodeManager.build(this._bindingExpressions, this.parent),
-                classes = value.split(/\s/),
+                nodeValue = attr.value,
+                classes = this._NodeManager.build(node.expressions, this.parent).trim().split(/\s/),
                 last = this._lastValues,
                 element: HTMLElement = this.element,
                 c: string,
-                length: number,
+                length = classes.length,
                 i: number;
 
-            if (this._NodeManager.hasMarkup(attr.value)) {
-                attr.value = attr.value.replace(this._markupRegex, '');
+            if (this._NodeManager.hasMarkup(nodeValue)) {
+                attr.value = nodeValue.replace(this._markupRegex, '');
             }
-
-            length = classes.length;
 
             for (i = 0; i < length; ++i) {
                 last[classes[i]] = true;
@@ -259,9 +235,7 @@
                 }
             }
 
-            value = attr.value;
-
-            this._notifyAttributes(node.nodeName, value);
+            this._notifyAttributes(node.nodeName, attr.value);
         }
 
         /**
