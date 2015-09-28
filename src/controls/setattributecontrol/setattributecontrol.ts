@@ -587,7 +587,8 @@ module plat.controls {
             this._stopSetter = requestAnimationFrameGlobal((): void => {
                 let urls: Array<string> = [],
                     urlReplace = this._urlReplace;
-                expression.replace(this._urlRegex, (match): string => {
+
+                expression = expression.replace(this._urlRegex, (match: string): string => {
                     urls.push(match);
                     return urlReplace;
                 });
@@ -621,10 +622,10 @@ module plat.controls {
                     }
 
                     newStyles.push(prop);
-                    
+
                     val = exec[2].trim();
                     if (urls.length > 0 && val.indexOf(urlReplace) !== -1) {
-                        val.replace(urlReplace, urls.shift());
+                        val = val.replace(urlReplace, urls.shift());
                     }
 
                     styleChanges[prop] = val;
