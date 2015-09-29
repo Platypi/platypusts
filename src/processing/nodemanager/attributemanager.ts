@@ -99,7 +99,7 @@
          * @description
          * A regular expression for finding markup in a string.
          */
-        protected _markupRegex: RegExp = new RegExp(`^${__startSymbol}[\\S\\s]*${__endSymbol}\\S*\\s*|\\s*\\S*${__startSymbol}[\\S\\s]*${__endSymbol}\\S*`, 'g');
+        protected _markupRegex: RegExp = new RegExp(`^${__startSymbol}[\\S\\s]*?${__endSymbol}\\S*\\s*|\\s*\\S*${__startSymbol}[\\S\\s]*?${__endSymbol}\\S*`, 'g');
 
         /**
          * @name _controls
@@ -214,7 +214,7 @@
                 i: number;
 
             if (this._NodeManager.hasMarkup(nodeValue)) {
-                attr.value = nodeValue.replace(this._markupRegex, '');
+                attr.value = nodeValue.replace(this._markupRegex, '').trim();
             }
 
             for (i = 0; i < length; ++i) {
