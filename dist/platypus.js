@@ -5,7 +5,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 /* tslint:disable */
 /**
- * PlatypusTS v0.15.3 (https://platypi.io)
+ * PlatypusTS v0.15.4 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
@@ -15258,7 +15258,7 @@ var plat;
                 /**
                  * A regular expression for finding markup in a string.
                  */
-                this._markupRegex = new RegExp("^" + __startSymbol + "[\\S\\s]*" + __endSymbol + "\\S*\\s*|\\s*\\S*" + __startSymbol + "[\\S\\s]*" + __endSymbol + "\\S*", 'g');
+                this._markupRegex = new RegExp("^" + __startSymbol + "[\\S\\s]*?" + __endSymbol + "\\S*\\s*|\\s*\\S*" + __startSymbol + "[\\S\\s]*?" + __endSymbol + "\\S*", 'g');
                 /**
                  * Keeps track of the previous bound values of a "dynamic" attribute.
                  */
@@ -15301,7 +15301,7 @@ var plat;
             AttributeManager.prototype._dynamicAttributeChanged = function () {
                 var node = this.node, attr = node.node, nodeValue = attr.value, classes = this._NodeManager.build(node.expressions, this.parent).trim().split(/\s/), last = this._lastValues, element = this.element, c, length = classes.length, i;
                 if (this._NodeManager.hasMarkup(nodeValue)) {
-                    attr.value = nodeValue.replace(this._markupRegex, '');
+                    attr.value = nodeValue.replace(this._markupRegex, '').trim();
                 }
                 for (i = 0; i < length; ++i) {
                     last[classes[i]] = true;
