@@ -5,7 +5,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 /* tslint:disable */
 /**
- * PlatypusTS v0.15.4 (https://platypi.io)
+ * PlatypusTS v0.15.5 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
@@ -11693,29 +11693,19 @@ var plat;
                     var injector = this._nextInjector || this._Injector.getDependency(routeInfo.delegate.view), nodeMap = this._createNodeMap(injector), element = this.element, node = nodeMap.element, parameters = routeInfo.parameters, query = routeInfo.query, control = nodeMap.uiControlNode.control;
                     this._nextInjector = this._nextView = undefined;
                     if (this._animate) {
-                        var animator = this._animator, dom = this.dom, isNavigatingBack = this._navigator.isBackNavigation();
-                        // view = this.controls[0]; 
-                        // if (isObject(view)) { 
-                        //     let oldElement = view.element; 
-                        //     if (isNavigatingBack) { 
-                        //         dom.addClass(oldElement, __NavigatingBack); 
-                        //     } 
-                        //     animator.leave(oldElement, __Leave).then((): void => { 
-                        //        Control.dispose(view); 
-                        //     }); 
-                        // } 
-                        if (isNavigatingBack) {
+                        var animator = this._animator, dom = this.dom;
+                        if (this._navigator.isBackNavigation()) {
                             dom.addClass(node, __NavigatingBack);
-                            animator.enter(node, __Enter, this.element).then(function () {
+                            animator.enter(node, __Enter, element).then(function () {
                                 dom.removeClass(node, __NavigatingBack);
                             });
                         }
                         else {
-                            animator.enter(node, __Enter, this.element);
+                            animator.enter(node, __Enter, element);
                         }
                     }
                     else {
-                        this.element.insertBefore(node, null);
+                        element.insertBefore(node, null);
                     }
                     var viewportManager = this._managerCache.read(this.uid), manager = this._ElementManagerFactory.getInstance();
                     viewportManager.children = [];
@@ -11753,15 +11743,15 @@ var plat;
                         }
                         _this._log.debug(error);
                     }).then(function () {
-                        if (!_this._animate || !viewExists) {
+                        if (!(_this._animate && viewExists)) {
                             Control.dispose(view);
                             return;
                         }
-                        var animator = _this._animator, dom = _this.dom, isNavigatingBack = _this._navigator.isBackNavigation(), oldElement = view.element;
-                        if (isNavigatingBack) {
-                            dom.addClass(oldElement, __NavigatingBack);
+                        var oldElement = view.element;
+                        if (_this._navigator.isBackNavigation()) {
+                            _this.dom.addClass(oldElement, __NavigatingBack);
                         }
-                        animator.leave(oldElement, __Leave).then(function () {
+                        _this._animator.leave(oldElement, __Leave).then(function () {
                             Control.dispose(view);
                         });
                     });
